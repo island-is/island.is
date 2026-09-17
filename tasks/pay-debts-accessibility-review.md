@@ -9,7 +9,7 @@ the new shared components it introduces (`InteractiveTableField`, `StickyFooterF
 `HoverTooltip`, changes to `PaymentChargeOverviewFormField`, `AlertMessageFormField`,
 `InputController`, `FinanceStatus`).
 
-Verdict: the interaction *semantics* are sound — real `<input type="checkbox">`, real `<button>`
+Verdict: the interaction _semantics_ are sound — real `<input type="checkbox">`, real `<button>`
 with `aria-expanded`/`aria-controls`, no div-with-onClick anywhere, focus styles untouched. What is
 missing is almost entirely **naming and announcement**: the controls have no accessible names, and
 nothing on the screen is announced when it changes. Both groups are blocking for the two largest
@@ -20,6 +20,7 @@ audiences in the guidelines (screen-reader users and keyboard-only users).
 ## Blockers (WCAG level A — must fix before release)
 
 ### 1. No accessible name on any checkbox
+
 `InteractiveTableFormField.tsx:226-230` (select-all) and `InteractiveTableFormFieldRow.tsx:244-248`
 (per row) pass only `id`, `checked`, `onChange`. island-ui `Checkbox` supports both `label` and
 `ariaLabel` (`Checkbox.tsx:13-14,118`); neither is used, so the rendered `<label>` is empty.
@@ -33,6 +34,7 @@ Fix: `ariaLabel` per row built from the row's charge type + amount ("Velja Bifre
 kr."), and a real label for select-all ("Velja allar skuldir").
 
 ### 2. No accessible name on the amount input
+
 `InteractiveTableFormFieldRow.tsx:295-307` renders `InputController` with no `label`. island-ui
 `Input` only produces an accessible name via `<label htmlFor>` when `label` is set
 (`Input.tsx:102-103`) and has **no `aria-label` passthrough at all**. The placeholder `kr.` is not
@@ -44,6 +46,7 @@ So this needs a component change, not just a prop: either add `aria-label` suppo
 WCAG 4.1.2 (A); 3.3.2 (A).
 
 ### 3. Select-all never reports mixed state
+
 `InteractiveTableFormField.tsx:126-132` only computes `allSelected`. With 3 of 10 debts selected the
 header checkbox reports "ómerkt". island-ui `Checkbox` already supports `indeterminate`
 (`Checkbox.tsx:16,86-90`).
@@ -51,6 +54,7 @@ header checkbox reports "ómerkt". island-ui `Checkbox` already supports `indete
 WCAG 4.1.2 (A).
 
 ### 4. Column-header tooltips are mouse-only
+
 `InteractiveTableFormField.tsx:252-257` anchors `HoverTooltip` on a bare `<span>`, and
 `InteractiveTableFormFieldRow.tsx:87-101` (`TruncatedCell`) does the same.
 
@@ -68,6 +72,7 @@ anchor `tabIndex={0}` when the child is not focusable, and wire `aria-describedb
 id.
 
 ### 5. Submit is blocked with an empty error message
+
 `DebtsLoader/index.tsx:177` — `return hasSelection() ? [true, null] : [false, '']`. The user presses
 "Áfram í greiðslu", the submit is refused, and there is no message: nothing rendered, nothing
 announced, no focus move. This is invisible to everyone, not only assistive-tech users.
@@ -75,6 +80,7 @@ announced, no focus move. This is invisible to everyone, not only assistive-tech
 WCAG 3.3.1 Error Identification (A).
 
 ### 6. No validation layer at all
+
 `lib/dataSchema.ts` is still the scaffolding dummy (`dummy: { dummyTextField }`). Nothing validates
 `selectedDebts`/`debtsToPay`, so no field-level error text exists anywhere in the flow. Combined
 with #5 and #8 below, the screen has no error mechanism whatsoever.
@@ -86,6 +92,7 @@ WCAG 3.3.1 (A); 3.3.3 Error Suggestion (AA).
 ## Serious (WCAG level AA)
 
 ### 7. Nothing on the screen is announced when it changes
+
 island-ui `AlertMessage` sets no `role="alert"` and no `aria-live` (verified — no role/aria in
 `AlertMessage.tsx`), and `SkeletonLoader` has no aria either. So all four state changes in
 `DebtsLoader/index.tsx:183-240` are silent:
@@ -100,6 +107,7 @@ WCAG 4.1.3 Status Messages (AA). Fix: `role="status"` / `aria-live="polite"` wra
 for the error and the wiped-selection warning), plus moving focus to the retry button on error.
 
 ### 8. Live totals are never announced
+
 `StickyFooterFormField.tsx:145-181` recomputes "Samtals til greiðslu" and "Eftirstöðvar skuldar" on
 every keystroke and every checkbox toggle. It is the primary feedback mechanism for the whole
 screen, and it is not a live region.
@@ -108,6 +116,7 @@ WCAG 4.1.3 (AA). Fix: `aria-live="polite"` on the footer container (debounced), 
 `ariaLive` on `StickyFooterField` rather than hard-coding it.
 
 ### 9. Out-of-range amounts are rejected silently
+
 `InputController.tsx:150-157` — `isAllowed` drops keystrokes above `max` (the debt amount). The
 character simply never appears. Nothing is announced, no error text, no explanation of the limit.
 Users with cognitive/dyslexic profiles read this as a broken field.
@@ -116,6 +125,7 @@ WCAG 3.3.1 (A); 3.3.3 (AA). Fix: state the maximum in the field's description/`a
 and prefer a validated error over silent truncation.
 
 ### 10. A row silently unchecks itself on blur
+
 `InteractiveTableFormFieldRow.tsx:285-293` — leaving the amount empty unchecks the debt. A state
 change the user did not request, with no announcement. Tabbing through the table can therefore
 clear selections without the user knowing.
@@ -123,6 +133,7 @@ clear selections without the user knowing.
 WCAG 3.2.2 On Input (A); 4.1.3 (AA).
 
 ### 11. Disabled "Áfram í greiðslu" with no reason
+
 `debtsSection.ts:97` disables the next button until something is selected
 (`InteractiveTableFormField.tsx:144-147` → `ScreenFooter.tsx:115`). Nothing programmatically
 explains why, and a disabled button is skipped in the tab order, so a keyboard user cannot even
@@ -131,12 +142,14 @@ land on it to investigate.
 WCAG 3.3.1 (A) / 3.3.3 (AA). Preferred fix: keep it enabled and fail with a real, announced error.
 
 ### 12. Fixed footer can cover content at high zoom
+
 `StickyFooterFormField.tsx:126-131` positions the footer `fixed` at the bottom. At 200–400% zoom
 (WCAG 1.4.4 AA / 1.4.10 AA) it occupies a large share of the viewport and overlays the table with no
 reserved space. The 700px-min-width table itself is exempt from Reflow (data tables are), but the
 footer is not.
 
 ### 13. Table has no accessible name and no row headers
+
 - No `<caption>` and no `aria-labelledby`; the title is a detached `<Text>`
   (`InteractiveTableFormField.tsx:192-201`) and defaults to `''` anyway.
 - Every body cell is `<td>` — the first column should be `<th scope="row">`, and header cells should
@@ -149,9 +162,10 @@ footer is not.
 WCAG 1.3.1 Info and Relationships (A).
 
 ### 14. `!important` px font size
+
 `PaymentChargeOverviewFormField.css.ts:3-5` — `fontSize: '14px !important'` overrides the theme's
 rem-based scale and blocks user stylesheets. Browser zoom still works, but a user who raises the
-*default font size* gets nothing. It also renders an `<h4>` at 14px, so heading semantics no longer
+_default font size_ gets nothing. It also renders an `<h4>` at 14px, so heading semantics no longer
 match the visual hierarchy.
 
 WCAG 1.4.4 (AA) / 1.4.12 Text Spacing (AA) risk.
@@ -167,7 +181,7 @@ WCAG 1.4.4 (AA) / 1.4.12 Text Spacing (AA) risk.
   `overflow: auto` div (`Table.tsx:31`) with no `tabIndex={0}`/`role="region"`/`aria-label`, while
   the CSS forces `minWidth: 700` (`InteractiveTableFormField.css.ts:4-12`). Tabbing into the inputs
   does scroll it, so this is partially mitigated — still the standard WCAG 2.1.1 technique.
-- **Truncated cells** (`css.ts:47-53`) — the full text *is* in the DOM, so screen readers are fine;
+- **Truncated cells** (`css.ts:47-53`) — the full text _is_ in the DOM, so screen readers are fine;
   the loss falls on sighted keyboard, low-vision and dyslexic users, who cannot reveal it without a
   mouse. Fixing #4 resolves this.
 - **No `prefers-reduced-motion` guard** on the 300 ms expand (`Row.tsx:323-331`). 2.3.3 is AAA and
@@ -192,7 +206,7 @@ consumer to supply accessible names or announcements: no per-row label, no check
 caption, no live-region option. `buildInteractiveTableField`/`buildStickyFooterField`
 (`fieldBuilders.ts:1137-1245`) mirror that.
 
-These are new *shared* field types that other teams will reuse, so patching names into the pay-debts
+These are new _shared_ field types that other teams will reuse, so patching names into the pay-debts
 template only would leave the next consumer with the same failures. The accessible-name hooks should
 land in the type + builder:
 

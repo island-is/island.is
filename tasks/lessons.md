@@ -12,7 +12,7 @@ answer anywhere between 56 and 72.
 arithmetic on a screenshot is not evidence strong enough to question it.
 
 **How to apply:** when a design instruction names a constant, implement it literally
-and only ask if something in the *code* contradicts it -- not because an image looks a
+and only ask if something in the _code_ contradicts it -- not because an image looks a
 few pixels off. Ask which element the offset is measured from if that is unclear;
 don't offer a menu of derived numbers.
 
@@ -38,14 +38,14 @@ two gitignored artifacts: `apps/application-system/api/src/openapi.yaml` and the
 `gen/fetch` client generated from it, both left over from a pay-debts branch.
 
 Re-running the codegen appeared to do nothing because
-`application-system-api:codegen/backend-schema` was *failing*, and nx reports the
+`application-system-api:codegen/backend-schema` was _failing_, and nx reports the
 failure well below the visible tail of the output. The real cause was an unrelated
 one-character typo in the working tree -- `extraInformation` renamed to
 `extraInformration` in `secondary-school/src/lib/dataSchema.ts` -- which broke
 `secondary-school.service.ts`, which broke the whole-app compile that `buildOpenApi.ts`
 performs, which left `openapi.yaml` stale.
 
-**Why:** `buildOpenApi.ts` bootstraps the entire Nest app, so *any* type error anywhere
+**Why:** `buildOpenApi.ts` bootstraps the entire Nest app, so _any_ type error anywhere
 in the app silently freezes every downstream generated client at its previous contents.
 The error then surfaces in a file that has nothing to do with the change.
 
@@ -55,8 +55,8 @@ tracked source, suspect a stale generated artifact -- check mtimes first. If a c
 with `--skip-nx-cache` and read the head of the output, not the tail. Fix the compile
 error the generator trips over before touching the file that reported the symptom.
 
-**Also:** distinguish a stale *TS server* (disk is correct, real `tsc` passes -- restart
-fixes it) from a stale *artifact on disk* (real `tsc` reproduces -- a restart cannot
+**Also:** distinguish a stale _TS server_ (disk is correct, real `tsc` passes -- restart
+fixes it) from a stale _artifact on disk_ (real `tsc` reproduces -- a restart cannot
 help). Run `tsc` against a tsconfig extending `tsconfig.base.json` to tell them apart.
 
 ## Get the log line before theorising about which call failed

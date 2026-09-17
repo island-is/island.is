@@ -1,12 +1,14 @@
 # Guard against OpenAPI drift in car-rental-dayrate-returns
 
 ## Context
+
 The regenerated Skatturinn spec changed
 `GET /api/RentalDays/{EntityId}/periods/{Period}` from `RentalDaysEntry[]` to a
 single `RentalDayRegistrationModel`. `tsc` caught the shape change; nothing
 covered the behaviour of the code that consumed it.
 
 ## Plan
+
 - [ ] Add `car-rental-dayrate-returns.service.spec.ts` in template-api-modules
 - [ ] Type every client fixture as the generated model, so a future spec change
       breaks the spec file at compile time instead of silently at runtime
@@ -18,6 +20,7 @@ covered the behaviour of the code that consumed it.
 - [ ] Run the suite
 
 ## Review
+
 (filled in after implementation)
 
 ## Fix 404 from getPreviousPeriodDayRateReturns (skilagrein daggjalds)
@@ -37,7 +40,7 @@ and fails the whole data provider.
 ### Review
 
 `handle404` (`@island.is/clients/middlewares`) was already the repo convention for this
--- ~20 other clients use it. Chained it *before* the logging `.catch` so a 404 resolves
+-- ~20 other clients use it. Chained it _before_ the logging `.catch` so a 404 resolves
 to `null` without being logged as a failure, while every other status is still logged
 and rethrown. `sumRentalDaysByPermno` now takes `RentalDayRegistrationModel | null` and
 returns an empty map for a missing registration, which the existing
@@ -62,14 +65,14 @@ is server-side in Skatturinn's dev deployment.
 Probed the local X-Road proxy unauthenticated, where an existing route answers 401 and a
 missing one answers 404:
 
-| endpoint (v1)                                    | result        |
-|--------------------------------------------------|---------------|
-| `DayRate/entries/{id}`                           | 401 healthy   |
-| `DayRate/entries/{id}/eligible-vehicles`         | 401 healthy   |
-| `DayRate/entries/{id}/{permno}`                  | 401 healthy   |
-| `RentalDays/{id}/periods/2026-08`                | 401 healthy   |
-| **`DayRate/entries/{id}/periods/2026-08`**       | **404, later 500** |
-| `DayRate/entries/{id}/periods/2026-8`            | 401 (falls through to `{Permno}/{Id}`) |
+| endpoint (v1)                              | result                                 |
+| ------------------------------------------ | -------------------------------------- |
+| `DayRate/entries/{id}`                     | 401 healthy                            |
+| `DayRate/entries/{id}/eligible-vehicles`   | 401 healthy                            |
+| `DayRate/entries/{id}/{permno}`            | 401 healthy                            |
+| `RentalDays/{id}/periods/2026-08`          | 401 healthy                            |
+| **`DayRate/entries/{id}/periods/2026-08`** | **404, later 500**                     |
+| `DayRate/entries/{id}/periods/2026-8`      | 401 (falls through to `{Permno}/{Id}`) |
 
 Only a Period matching `^\d{4}-\d{2}$` reaches the broken handler; anything else falls
 through to the `{Permno}/{Id}` route and is auth-gated normally. So the route is
@@ -98,12 +101,12 @@ to an empty list would silently show the applicant nothing to report.
 
 With two cars added to daggjald, probing entity 5005101370 on the v1 periods endpoint:
 
-| period    | result |
-|-----------|--------|
+| period    | result                          |
+| --------- | ------------------------------- |
 | `2026-09` | **200** - both entries returned |
-| `2026-08` | 404    |
-| `2026-07` | 404    |
-| `2026-06` | 404    |
+| `2026-08` | 404                             |
+| `2026-07` | 404                             |
+| `2026-06` | 404                             |
 
 So `404` means "no day rate entries for this entity in this period". Not a fault, and
 nothing was ever wrong upstream -- the earlier transient 500 aside. The endpoint is also
@@ -111,7 +114,7 @@ anonymous, unlike its siblings, which is why it answered 404 rather than 401 to 
 unauthenticated probe and made it look broken.
 
 The new entries carry `gildirFra: 2026-09-12`, so they can never appear in an August
-query. The provider asks for the *previous* month, so this test data cannot exercise the
+query. The provider asks for the _previous_ month, so this test data cannot exercise the
 real path until October unless Skatturinn backdates `gildirFra` into August.
 
 Note: v2 returns `200 []` for an empty period where v1 returns 404. v2 has no

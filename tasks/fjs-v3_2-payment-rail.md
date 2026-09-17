@@ -51,6 +51,7 @@ column is what `PaymentService.createCharge` resolves against the FJS catalog
 ### Work, by layer
 
 Template (small, independent, unblocks the rest) — DONE:
+
 - ~~`payID` onto `CustomerDebt` and `SelectedDebt`~~ — done; `getSelectedDebts` now emits
   everything needed to build `{ payid, payAmount }`.
 - ~~`debtsSignature` should include `payID`~~ — done; a debt whose `payID` moved invalidates
@@ -60,8 +61,8 @@ Template (small, independent, unblocks the rest) — DONE:
 - `template.ts` `chargeItems` stays wrong until the rail exists — do not "fix" it in place.
 
 client (`libs/clients/finance-v3`) — DONE:
-- `FinanceClientV3Service.payDebt(user, PaymentsInDt)` and `.validatePayment(user,
-  ValidatePaymentsInDt)` wrap the generated `payDebtPost3` / `validatePaymentPost4`.
+
+- `FinanceClientV3Service.payDebt(user, PaymentsInDt)` and `.validatePayment(user, ValidatePaymentsInDt)` wrap the generated `payDebtPost3` / `validatePaymentPost4`.
   Both use `data()` rather than `dataOr404Null()` — a settlement must not swallow a 404 into a
   silent `null`. `payDebt` casts its response because `/payDebt`'s documented 200 has an empty
   body, so the generated union collapses to `unknown`; `null` means "no receipt", not "failed".
@@ -74,6 +75,7 @@ client (`libs/clients/finance-v3`) — DONE:
   service methods — a new endpoint stays invisible until someone writes the wrapper.
 
 payments service (the actual work):
+
 - Carry debt lines on a flow (new table, or a `payDebts` column) instead of catalog charges —
   `payID` per line is now a hard requirement, not a nice-to-have.
 - Bypass catalog resolution/validation for those flows.
@@ -153,14 +155,14 @@ card must not be offered.
 
 Partial, overpay, zero and **negative** `payAmount` all return 200 `CARD;TRANSFER`:
 
-| case | result |
-| --- | --- |
+| case                           | result            |
+| ------------------------------ | ----------------- |
 | full debt (219.683 of 219.683) | 200 CARD;TRANSFER |
-| partial (100.000 of 219.683) | 200 CARD;TRANSFER |
-| 1 kr | 200 CARD;TRANSFER |
-| overpay (300.000 of 219.683) | 200 CARD;TRANSFER |
-| 0 kr | 200 CARD;TRANSFER |
-| −500 kr | 200 CARD;TRANSFER |
+| partial (100.000 of 219.683)   | 200 CARD;TRANSFER |
+| 1 kr                           | 200 CARD;TRANSFER |
+| overpay (300.000 of 219.683)   | 200 CARD;TRANSFER |
+| 0 kr                           | 200 CARD;TRANSFER |
+| −500 kr                        | 200 CARD;TRANSFER |
 
 So **paying an arbitrary amount is allowed by the API** — nothing requires a debt to be
 settled in full. Amount sanity (non-negative, not above the debt, minimum) is ours to enforce;
@@ -190,12 +192,12 @@ passes. Empty `payDebts` and a missing `totalAmount` both trip the same code.
 
 ### Error codes (`title` is a numeric code as a string)
 
-| `title` | HTTP | `detail` | trigger |
-| --- | --- | --- | --- |
-| `2` | 400 | `Kennitala finnst ekki <nid>` | national ID unknown to FJS (also for malformed IDs) |
-| `3` | 400 | `Reikningur <payid> finnst ekki` | unknown/stale `payID` |
-| `5` | 400 | `Samtals greiðsla stemmir ekki við fjárhæð skulda.` | `totalAmount` ≠ sum of `payAmount` |
-| `10` | 400 | `Gildisdagur ekki á formati YYYY-MM-DD)` | bad `paymentDate` |
+| `title` | HTTP | `detail`                                            | trigger                                             |
+| ------- | ---- | --------------------------------------------------- | --------------------------------------------------- |
+| `2`     | 400  | `Kennitala finnst ekki <nid>`                       | national ID unknown to FJS (also for malformed IDs) |
+| `3`     | 400  | `Reikningur <payid> finnst ekki`                    | unknown/stale `payID`                               |
+| `5`     | 400  | `Samtals greiðsla stemmir ekki við fjárhæð skulda.` | `totalAmount` ≠ sum of `payAmount`                  |
+| `10`    | 400  | `Gildisdagur ekki á formati YYYY-MM-DD)`            | bad `paymentDate`                                   |
 
 **The spec is wrong about the error envelope.** It documents only 200/401 for
 `/validatePayment` and puts errors inside `validatePayment_POST_response.error` as
@@ -209,7 +211,7 @@ on these, and the code/`detail` need extracting by hand if we want to map them t
 - **`paymentDate` format** — `YYYY-MM-DD` confirmed (code 10 states it). Past (2020-01-01) and
   future (2027-12-31) dates are both accepted; no range check.
 - **Stale `payID`** — yes, `/validatePayment` is a usable guard: an unknown `payID` fails with
-  code 3 naming the offending id. Still unknown is *when* FJS rotates a `payID`.
+  code 3 naming the offending id. Still unknown is _when_ FJS rotates a `payID`.
 - **Not enforced** — duplicate `payid` in one payload (200), and a missing `payFlowId` (200).
   Do not rely on FJS to reject either.
 
@@ -221,8 +223,8 @@ on these, and the code/`detail` need extracting by hand if we want to map them t
   `@island.is/clients/dev` with scope `@fjs.is/finance` is accepted by FJS and reads any
   kennitala's debts — the token carries no `nationalId`/actor claim at all. So the scheduled
   worker does not need a user context to reach `/payDebt`; it needs its own machine client with
-  that scope. Corollary: FJS does not *require* user context to serve a kennitala's debts, so
+  that scope. Corollary: FJS does not _require_ user context to serve a kennitala's debts, so
   the per-person authorization check has to be ours. (Precisely: a token carrying no user claim
-  was accepted. Whether FJS validates the subject when a user token *is* present — the
+  was accepted. Whether FJS validates the subject when a user token _is_ present — the
   `tokenExchange` path the app actually uses — was not tested.)
 - Payload size is not a concern: all 278 debts in one call (12 KB) validated fine.
