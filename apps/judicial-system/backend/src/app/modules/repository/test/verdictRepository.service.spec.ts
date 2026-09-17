@@ -12,13 +12,17 @@ describe('VerdictRepositoryService', () => {
   const caseId = 'some-case-id'
   const newCaseId = 'some-new-case-id'
   const defendantId = 'some-defendant-id'
+  const verdictId = 'some-verdict-id'
   const transaction = {} as Transaction
 
   let service: VerdictRepositoryService
-  let model: { update: jest.Mock }
+  let model: { update: jest.Mock; findOne: jest.Mock }
 
   beforeEach(async () => {
-    model = { update: jest.fn().mockResolvedValue([0]) }
+    model = {
+      update: jest.fn().mockResolvedValue([0]),
+      findOne: jest.fn().mockResolvedValue(null),
+    }
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -32,6 +36,106 @@ describe('VerdictRepositoryService', () => {
     }).compile()
 
     service = moduleRef.get(VerdictRepositoryService)
+  })
+
+  describe('findById', () => {
+    it('finds the verdict by id within the transaction', async () => {
+      const verdict = { id: verdictId } as Verdict
+      model.findOne.mockResolvedValueOnce(verdict)
+
+      const result = await service.findById(verdictId, { transaction })
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { id: verdictId },
+        transaction,
+      })
+      expect(result).toBe(verdict)
+    })
+
+    it('returns null when no verdict has the id', async () => {
+      const result = await service.findById(verdictId)
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { id: verdictId },
+        transaction: undefined,
+      })
+      expect(result).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.findById(verdictId)).rejects.toThrow(error)
+    })
+  })
+
+  describe('findByExternalPoliceDocumentId', () => {
+    const externalPoliceDocumentId = 'some-police-document-id'
+
+    it('finds the verdict by its police document id', async () => {
+      const verdict = { id: verdictId } as Verdict
+      model.findOne.mockResolvedValueOnce(verdict)
+
+      const result = await service.findByExternalPoliceDocumentId(
+        externalPoliceDocumentId,
+      )
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { externalPoliceDocumentId },
+      })
+      expect(result).toBe(verdict)
+    })
+
+    it('returns null when no verdict has the police document id', async () => {
+      const result = await service.findByExternalPoliceDocumentId(
+        externalPoliceDocumentId,
+      )
+
+      expect(result).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(
+        service.findByExternalPoliceDocumentId(externalPoliceDocumentId),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('findLatestForDefendant', () => {
+    it('finds the most recently created verdict of the defendant', async () => {
+      const verdict = { id: verdictId } as Verdict
+      model.findOne.mockResolvedValueOnce(verdict)
+
+      const result = await service.findLatestForDefendant(defendantId, {
+        transaction,
+      })
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { defendantId },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+      expect(result).toBe(verdict)
+    })
+
+    it('returns null when the defendant has no verdict', async () => {
+      const result = await service.findLatestForDefendant(defendantId)
+
+      expect(result).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(service.findLatestForDefendant(defendantId)).rejects.toThrow(
+        error,
+      )
+    })
   })
 
   describe('moveAllForDefendantToCase', () => {

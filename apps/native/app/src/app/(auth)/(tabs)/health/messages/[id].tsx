@@ -89,6 +89,8 @@ const replyBlockedMessageId = (
       return 'health.messages.replyBlocked.awaitingStaff'
     case HealthDirectorateHealthConversationReplyBlockedReason.RepliesDisabled:
       return 'health.messages.replyBlocked.repliesDisabled'
+    case HealthDirectorateHealthConversationReplyBlockedReason.AwaitingAcknowledgement:
+      return 'health.messages.replyBlocked.awaitingAcknowledgement'
     default:
       return 'health.messages.replyBlocked.default'
   }
@@ -531,7 +533,8 @@ export default function HealthMessageDetailScreen() {
               onRefresh={refreshConversation}
             />
           }
-          contentContainerStyle={{ flexGrow: 1 }}
+          // No `flexGrow: 1`: it stretches the content past the visible area
+          // by the header's content inset, so even one message scrolled.
           contentInsetAdjustmentBehavior="automatic"
           automaticallyAdjustContentInsets
           ListHeaderComponent={
@@ -584,48 +587,56 @@ export default function HealthMessageDetailScreen() {
               </View>
             ) : null
           }
-          ListFooterComponent={
-            <SafeAreaView
-              style={{ height: conversation?.patientCanReply ? 160 : 24 }}
-            />
-          }
+          // Just an end-of-thread gap — the reply drawer below is a flow
+          // sibling, not an overlay, so it needs no space reserved here.
+          ListFooterComponent={<View style={{ height: theme.spacing[3] }} />}
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
             <SafeAreaView>
-              {isSkeleton ? (
-                <GeneralCardSkeleton height={48} />
-              ) : conversation?.patientCanReply ? (
-                <Button
-                  title={intl.formatMessage({
-                    id: 'health.messages.replyButton',
-                  })}
-                  isTransparent
-                  isOutlined
-                  iconPosition="start"
-                  icon={require('@/assets/icons/reply.png')}
-                  onPress={() =>
-                    router.push({
-                      pathname: composeHref,
-                      params: {
-                        conversationId: id,
-                        recipientName:
-                          conversation?.organization?.name ??
-                          conversation?.lastSenderGroupName ??
-                          '',
-                        subject: conversation?.title ?? '',
-                      },
-                    })
-                  }
-                />
-              ) : (
-                <Alert
-                  type="info"
-                  size="small"
-                  message={replyBlockedMessage}
-                  hasBorder
-                />
-              )}
+              {/* Lift the reply button / blocked alert clear of the home
+                  indicator so it doesn't sit on the bottom edge. */}
+              <View style={{ paddingBottom: theme.spacing[1] }}>
+                {isSkeleton ? (
+                  // The card skeleton carries a bottom margin of its own, which
+                  // would leave the placeholder sitting higher than the button
+                  // or alert that replaces it.
+                  <GeneralCardSkeleton
+                    height={48}
+                    style={{ marginBottom: 0 }}
+                  />
+                ) : conversation?.patientCanReply ? (
+                  <Button
+                    title={intl.formatMessage({
+                      id: 'health.messages.replyButton',
+                    })}
+                    isTransparent
+                    isOutlined
+                    iconPosition="start"
+                    icon={require('@/assets/icons/reply.png')}
+                    onPress={() =>
+                      router.push({
+                        pathname: composeHref,
+                        params: {
+                          conversationId: id,
+                          recipientName:
+                            conversation?.organization?.name ??
+                            conversation?.lastSenderGroupName ??
+                            '',
+                          subject: conversation?.title ?? '',
+                        },
+                      })
+                    }
+                  />
+                ) : (
+                  <Alert
+                    type="info"
+                    size="small"
+                    message={replyBlockedMessage}
+                    hasBorder
+                  />
+                )}
+              </View>
             </SafeAreaView>
           </ButtonDrawer>
         ) : null}

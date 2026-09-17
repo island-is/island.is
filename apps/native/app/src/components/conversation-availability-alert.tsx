@@ -27,8 +27,11 @@ export const ConversationAvailabilityAlert = ({
   })
 
   // Messaging-not-allowed keeps its own dedicated message (no window text).
+  // Keyed off canCreateConversation rather than the reason: the reason is
+  // dropped when the server sends one this client doesn't know, and a recipient
+  // that can't be messaged must never fall through to the availability text.
   const isNotAllowed =
-    !!blockedReason &&
+    !recipient.canCreateConversation &&
     blockedReason !==
       HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
 

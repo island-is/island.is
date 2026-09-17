@@ -181,7 +181,7 @@ export const Table: React.FC<TableProps> = ({
             value={cellValue}
             onChange={(value) => handleCurrentRowChange(column.id, value)}
             disabled={disabled || rows.length >= maxRows}
-            type="number"
+            type={column.decimal === false ? 'number' : 'decimal'}
             backgroundColor="white"
           />
         )

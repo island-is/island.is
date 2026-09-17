@@ -223,3 +223,13 @@ export enum AppointmentCancelBlockedReasonEnum {
 registerEnumType(AppointmentCancelBlockedReasonEnum, {
   name: 'HealthDirectorateAppointmentCancelBlockedReason',
 })
+
+export enum AppointmentCancelOutcomeEnum {
+  CANCELLED = 'cancelled',
+  REFUSED = 'refused',
+  BLOCKED = 'blocked',
+  UNCONFIRMED = 'unconfirmed',
+}
+registerEnumType(AppointmentCancelOutcomeEnum, {
+  name: 'HealthDirectorateAppointmentCancelOutcome',
+})

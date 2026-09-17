@@ -1190,9 +1190,21 @@ export class CaseController {
     return duplicatedCase
   }
 
+  // RolesGuard runs first here, ahead of the guard that takes the write lock.
+  // It can, because this route's three rules are bare user roles with no
+  // canActivate: none of them reads request.case, so the role decision needs
+  // nothing from the database and a caller this route has no rule for is
+  // turned away before any case row is locked. That is what RouteRolesGuard
+  // does for the transition route, whose rules do read the case - it would be
+  // a second reader of the same metadata here, deciding the same thing.
+  // splitRolesRules.spec.ts pins the assumption, so a rule that starts reading
+  // the case cannot silently reopen the exposure.
+  //
+  // CaseExistsForUpdateGuard reads the case under FOR UPDATE, and the three
+  // guards after it all decide from request.case, so they see the locked row.
   @UseGuards(
     RolesGuard,
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     DefendantExistsGuard,
@@ -1217,18 +1229,25 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
 
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the count
+    // is decided against a row no one else can change. Without the lock two
+    // concurrent splits of a two-defendant case both count two, both proceed,
+    // and the case is left with no defendants at all.
     if (!theCase.defendants || theCase.defendants.length < 2) {
       throw new BadRequestException(
         'Cannot split defendant from case with less than two defendants',
       )
     }
 
-    return this.sequelize.transaction((transaction) =>
-      this.caseService.splitDefendantFromCase(
-        theCase,
-        theDefendant,
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.caseService.splitDefendantFromCase(
+      theCase,
+      theDefendant,
+      transaction,
     )
   }
 

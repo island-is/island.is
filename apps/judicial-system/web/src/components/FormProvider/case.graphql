@@ -364,22 +364,7 @@ query Case($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
-        mergedDocumentOrder
-        name
-        caseFileId
-        generatedPdfUri
-        submittedBy
-      }
-      mergedFiledDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedCourtSessionId
-        mergedDocumentOrder
+        mergedFromCaseId
         name
         caseFileId
         generatedPdfUri
@@ -401,6 +386,7 @@ query Case($input: CaseQueryInput!) {
       courtSessionId
       documentType
       documentOrder
+      mergedFromCaseId
       name
       caseFileId
       generatedPdfUri
@@ -600,22 +586,7 @@ query Case($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
-          mergedDocumentOrder
-          name
-          caseFileId
-          generatedPdfUri
-          submittedBy
-        }
-        mergedFiledDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedCourtSessionId
-          mergedDocumentOrder
+          mergedFromCaseId
           name
           caseFileId
           generatedPdfUri

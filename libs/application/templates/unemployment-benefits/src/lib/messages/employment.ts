@@ -84,6 +84,18 @@ export const employment = {
         defaultMessage: 'Læknisvottorð',
         description: 'Health reason file upload label',
       },
+      resignationReasonLabel: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.resignationReasonLabel',
+        defaultMessage: 'Ástæða þess að þú sagðir upp starfi',
+        description:
+          'Label for textarea asking why the applicant resigned from their job',
+      },
+      resignationReasonPlaceholder: {
+        id: 'vmst.ub.application:employment.reasonForJobSearch.labels.resignationReasonPlaceholder',
+        defaultMessage: 'Lýstu ástæðum þess að þú sagðir upp starfinu',
+        description:
+          'Placeholder for textarea asking why the applicant resigned from their job',
+      },
       onYesIdOne: {
         id: 'vmst.ub.application:employment.reasonForJobSearch.labels.onYesIdOne#markdown',
         defaultMessage: 'Vantar texta',
