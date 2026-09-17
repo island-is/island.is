@@ -4,6 +4,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import {
   DirectorateOfEqualityClientService,
+  EqualityCoverageSourceEnum,
   ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -33,6 +34,19 @@ import {
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
+
+/**
+ * What meets the company's equality obligation at submit time.
+ *
+ * Only one of the two kinds has an id. An approved equality report filed here
+ * is named by `equalityReportId`; an unexpired certificate from
+ * Jafnrettisstofa's retired register has no report row behind it, so the field
+ * is left off and DMR resolves the same certificate server-side. Either way the
+ * company is covered — `covered: false` is the only answer that blocks.
+ */
+type EqualityCoverage =
+  | { covered: true; equalityReportId?: string }
+  | { covered: false; equalityReportId?: undefined }
 
 @Injectable()
 export class DirectorateOfEqualityService extends BaseTemplateApiService {
@@ -254,6 +268,10 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     try {
       const report =
         await this.directorateOfEqualityService.getActiveEqualityReport(auth)
+      // The flag means "the equality obligation is met", which a legacy
+      // certificate does just as well as a report filed here. `source` rides
+      // along for the screens that need to tell the two apart — a legacy
+      // certificate has no report row, so no content and no providerId.
       return { hasActiveEqualityReport: true, ...report }
     } catch (error) {
       const errorDetails = this.extractFetchErrorDetails(error)
@@ -626,21 +644,33 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  // The id captured at PREREQUISITES goes stale if the equality report is
+  // The coverage captured at PREREQUISITES goes stale if the equality report is
   // re-approved while this draft sits open, so re-resolve it live here.
-  private async resolveEqualityReportId(
+  private async resolveEqualityCoverage(
     auth: TemplateApiModuleActionProps['auth'],
     application: TemplateApiModuleActionProps['application'],
-  ): Promise<string | undefined> {
-    const persistedId = getValueViaPath<string>(
-      application.externalData,
-      'activeEqualityReport.data.id',
-    )
+  ): Promise<EqualityCoverage> {
+    const persisted = getValueViaPath<{
+      source?: string
+      id?: string | null
+    }>(application.externalData, 'activeEqualityReport.data')
 
     try {
       const activeReport =
         await this.directorateOfEqualityService.getActiveEqualityReport(auth)
-      return activeReport?.id ?? persistedId
+
+      // Branch on `source`, never on a null id: legacy coverage answers 200
+      // with `id`, `identifier`, `providerId` and `approvedAt` all null, and
+      // reading that as "no plan" would reject a company that holds a valid
+      // one. There is no id to send — DMR resolves the certificate itself.
+      if (activeReport?.source === EqualityCoverageSourceEnum.LEGACY) {
+        return { covered: true }
+      }
+
+      const equalityReportId = activeReport?.id ?? persisted?.id ?? undefined
+      return equalityReportId
+        ? { covered: true, equalityReportId }
+        : { covered: false }
     } catch (error) {
       const errorDetails = this.extractFetchErrorDetails(error)
       this.logger.error(
@@ -652,10 +682,22 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         },
       )
 
-      // 404 is DMR's definitive "no approved report" — the persisted id is
-      // known-stale, so don't fall back to it.
-      if (errorDetails.status === 404) return undefined
-      return persistedId
+      // DMR's definitive "nothing covers this company" — the persisted coverage
+      // is known-stale, so don't fall back to it. Same test the provider above
+      // makes on this endpoint, because DMR does not always say it with a
+      // status: an unknown company comes back 400 with `name: 'NotFound'`.
+      if (this.isNotFoundApiError(error)) return { covered: false }
+
+      // DMR did not answer. The coverage read at PREREQUISITES is the best
+      // guess left, and for a legacy certificate that is a source with no id
+      // rather than an id — submitting without one lets DMR resolve it.
+      if (persisted?.source === EqualityCoverageSourceEnum.LEGACY) {
+        return { covered: true }
+      }
+
+      return persisted?.id
+        ? { covered: true, equalityReportId: persisted.id }
+        : { covered: false }
     }
   }
 
@@ -670,11 +712,11 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
       application.id,
     )
 
-    const equalityReportId = await this.resolveEqualityReportId(
+    const equalityCoverage = await this.resolveEqualityCoverage(
       auth,
       application,
     )
-    if (!equalityReportId) {
+    if (!equalityCoverage.covered) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.defaultTemplateApiError,
@@ -726,16 +768,19 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
                   answers.generalInformation?.isatClassification ?? '',
               },
               subsidiaries: mapSubsidiaries(answers.subsidiaries),
-              equalityReportId,
+              // Omitted entirely for legacy coverage — see resolveEqualityCoverage.
+              equalityReportId: equalityCoverage.equalityReportId,
               outliersPostponed:
                 answers.salaryAnalysis?.postponed?.includes(YES) ?? false,
             },
           )
         } catch (error) {
+          const status = this.extractFetchErrorDetails(error).status
+
           // DMR returns 409 when the company already has a report in progress
           // with the reviewing body — worth its own message instead of the
           // generic defaultTemplateApiError text.
-          if (this.extractFetchErrorDetails(error).status === 409) {
+          if (status === 409) {
             throw new TemplateApiError(
               {
                 title: coreErrorMessages.defaultTemplateApiError,
@@ -744,6 +789,22 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
               409,
             )
           }
+
+          // 404 here is the server's own coverage check failing, not a missing
+          // draft — updateDraft above just succeeded on the same providerId.
+          // It is reachable now that coverage can be left for DMR to resolve:
+          // a certificate that lapses between the read and the submit lands
+          // here, and the applicant needs the same answer the pre-check gives.
+          if (status === 404) {
+            throw new TemplateApiError(
+              {
+                title: coreErrorMessages.defaultTemplateApiError,
+                summary: salaryReportMessages.errors.missingEqualityReport,
+              },
+              404,
+            )
+          }
+
           throw error
         }
       },

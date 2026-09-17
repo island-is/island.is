@@ -928,6 +928,8 @@ export const en: TranslatedMessages = {
     "You can't reply to messages older than {days} days.",
   'health.messages.replyBlocked.awaitingStaff':
     "You can't reply to this conversation until staff have responded to you.",
+  'health.messages.replyBlocked.awaitingAcknowledgement':
+    "You can't reply until your previous message has reached the recipient.",
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
   'health.messages.compose.selectService': 'Select service',
