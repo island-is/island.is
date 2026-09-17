@@ -179,11 +179,11 @@ The suite is timed for a production build of the web app, which is also how e2e 
 
 ```bash
 yarn nx run judicial-system-web:build:production
-NODE_ENV=production PORT=4200 ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node -r ./apps/system-e2e/src/support/load-local-env.js dist/apps/judicial-system/web/main.js
+NODE_ENV=production PORT=4200 ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node dist/apps/judicial-system/web/main.js
 yarn playwright test -c apps/system-e2e/src --project judicial-system
 ```
 
-Stop the dev server first - the production server needs port 4200, both because the dev S3 upload bucket only allows that origin in its CORS rules and because the dev server also holds port 4201 for metrics. The `-r` preload loads the workspace `.env` and `.env.secret` files, which nx does for a dev server but plain `node` does not, and `MOCK_NATIONAL_REGISTRY=true` keeps the fake national registry lookups the tests depend on.
+Stop the dev server first - the production server needs port 4200, both because the dev S3 upload bucket only allows that origin in its CORS rules and because the dev server also holds port 4201 for metrics. `MOCK_NATIONAL_REGISTRY=true` keeps the fake national registry lookups the tests depend on; the web server needs nothing from the workspace `.env` files.
 
 Make sure the backend database has all migrations applied first (`yarn nx run judicial-system-backend:migrate`); a stale schema makes every case creation fail with a 500. Run the seeders too (`yarn nx run judicial-system-backend:seed`) - besides the test users they add the e2e defender to the lawyer registry, which every lawyer login requires.
 

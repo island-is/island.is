@@ -41,7 +41,7 @@ Set `PLAYWRIGHT_JSON_OUTPUT_NAME` to a file in your scratchpad so the JSON repor
 is readable afterwards. With nothing on 4200 the config runs
 `nx build:production` (fast on an nx cache hit, about two minutes cold) and
 serves `dist/apps/judicial-system/web/main.js` with `ENABLE_LOCAL_PROXY`,
-`MOCK_NATIONAL_REGISTRY` and the workspace `.env` files, then shuts it down.
+and `MOCK_NATIONAL_REGISTRY`, then shuts it down.
 A full run is about five minutes. Run it in the background and watch the log.
 
 Do not pass `--workers`; the config pins one worker because the specs share

@@ -23,10 +23,9 @@ const judicialSystemWebServer: PlaywrightTestConfig['webServer'] =
     ? {
         command: [
           'yarn nx run judicial-system-web:build:production',
-          // The preload gives the server the same .env files nx gives a dev
-          // server. The tests use fake national ids, so the registry lookups
-          // have to answer with the fakes a dev server would use.
-          `NODE_ENV=production PORT=${localPort} ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node -r ./apps/system-e2e/src/support/load-local-env.js dist/apps/judicial-system/web/main.js`,
+          // The tests use fake national ids, so the registry lookups have to
+          // answer with the fakes a dev server would use.
+          `NODE_ENV=production PORT=${localPort} ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node dist/apps/judicial-system/web/main.js`,
         ].join(' && '),
         cwd: join(__dirname, '../../..'),
         url: `http://localhost:${localPort}/liveness`,
