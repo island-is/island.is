@@ -39,7 +39,10 @@ export interface RoleInState<
   id: ApplicationRole
   read?: ReadWriteValues
   write?: ReadWriteValues
-  delete?: boolean
+  // Either a static value or a predicate evaluated per application so a role can
+  // lose the ability to delete once the application meets some condition (e.g.
+  // has been submitted to VMST).
+  delete?: boolean | ((application: Application) => boolean)
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
   shouldBeListedForRole?: boolean

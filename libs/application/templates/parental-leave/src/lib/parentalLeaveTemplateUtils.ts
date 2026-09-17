@@ -1,15 +1,18 @@
-import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
-import { ApplicationContext } from '@island.is/application/types'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { Application, ApplicationContext } from '@island.is/application/types'
 import {
+  ApplicationAction,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
-  States,
 } from '../constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getChangeBaseline,
+  normalize,
   requiresOtherParentApproval,
+  requiresOtherParentApprovalForEdits,
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow, Period } from '../types'
@@ -70,9 +73,40 @@ export const needsOtherParentApproval = (context: ApplicationContext) => {
   )
 }
 
-export const currentDateStartTime = () => {
-  const date = new Date().toDateString()
-  return new Date(date).getTime()
+export const needsOtherParentApprovalForEdits = (
+  context: ApplicationContext,
+) => {
+  return requiresOtherParentApprovalForEdits(
+    context.application.answers,
+    context.application.externalData,
+  )
+}
+
+export const hasEmployerRelevantChange = (context: ApplicationContext) => {
+  if (!hasEmployer(context)) {
+    return false
+  }
+
+  const { application } = context
+  const baseline = getChangeBaseline(application.externalData)
+
+  if (!baseline) {
+    return true
+  }
+
+  const { employers, isSelfEmployed, periods } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const employersChanged =
+    isSelfEmployed !== YES &&
+    JSON.stringify(employers) !== JSON.stringify(baseline.employers)
+  const selfEmployedChanged =
+    normalize(baseline.employment.isSelfEmployed) !== normalize(isSelfEmployed)
+  const periodsChanged =
+    JSON.stringify(periods) !== JSON.stringify(baseline.periods)
+
+  return employersChanged || selfEmployedChanged || periodsChanged
 }
 
 export const disableResidenceGrantApplication = (dateOfBirth: string) => {
@@ -86,50 +120,78 @@ export const hasDateOfBirth = (context: ApplicationContext) => {
   return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
 }
 
-export const goToState = (
-  applicationContext: ApplicationContext,
-  state: States,
-) => {
-  const { previousState } = getApplicationAnswers(
-    applicationContext.application.answers,
+/**
+ * True when this application was created to change an already submitted one.
+ * Drives the prerequisites routing straight into the change form instead of the
+ * full draft form.
+ */
+export const isChangeApplication = (context: ApplicationContext) => {
+  const { applicationAction } = getApplicationAnswers(
+    context.application.answers,
   )
-  if (previousState === state) return true
-  return false
+  return applicationAction === ApplicationAction.CHANGE
 }
 
-export const restructureVMSTPeriods = (context: ApplicationContext) => {
-  const { application } = context
-  const { VMSTPeriods } = getApplicationExternalData(application.externalData)
-  const { periods } = getApplicationAnswers(application.answers)
+/**
+ * True once VMST has a record of the application (either a fund id was returned
+ * from `sendApplication` / `setApplicationFundId`, or the application was
+ * created as a change of an already-submitted one). Used to hide the delete
+ * button from states like DRAFT that can be re-entered after VMST approval —
+ * once VMST has the application, deleting it from our side would leave the
+ * two systems out of sync.
+ */
+export const hasBeenSubmittedToVMST = (application: Application) => {
+  const navIdData = getValueViaPath<string>(
+    application.externalData,
+    'navId.data',
+  )
+  const rawNavId = getValueViaPath<string>(application.externalData, 'navId')
+  const sendApplicationId = getValueViaPath<string>(
+    application.externalData,
+    'sendApplication.data.id',
+  )
+  return Boolean(
+    (typeof navIdData === 'string' && navIdData) ||
+      (typeof rawNavId === 'string' && rawNavId) ||
+      sendApplicationId,
+  )
+}
 
-  const today = new Date()
+export const isInPlaceRewind = (context: ApplicationContext) =>
+  getValueViaPath<boolean>(
+    context.application.externalData,
+    'inPlaceRewind.data.value',
+  ) === true
+
+/** True when this application was created to apply for the residence grant. */
+export const isResidenceGrantApplication = (context: ApplicationContext) => {
+  const { applicationAction } = getApplicationAnswers(
+    context.application.answers,
+  )
+  return applicationAction === ApplicationAction.RESIDENCE_GRANT
+}
+
+/** True when the application uses mock data and should bypass VMST approval. */
+export const isMockApplication = (context: ApplicationContext) => {
+  return (
+    getValueViaPath(context.application.answers, 'mock.useMockData') === YES &&
+    !isChangeApplication(context)
+  )
+}
+
+export const restructureVMSTPeriods = (
+  externalData: Application['externalData'],
+): Period[] => {
+  const { VMSTPeriods } = getApplicationExternalData(externalData)
+
   const newPeriods: Period[] = []
   VMSTPeriods?.forEach((period, index) => {
-    /*
-     ** VMST could change startDate but still return 'date_of_birth'
-     ** Make sure if period is in the past then we use the date they sent
-     */
-    let firstPeriodStart =
-      period.firstPeriodStart === 'date_of_birth'
-        ? 'actualDateOfBirth'
-        : 'specificDate'
-    if (new Date(period.from).getTime() <= today.getTime()) {
-      firstPeriodStart = 'specificDate'
-    }
-
-    let useLength = NO
-    if (firstPeriodStart === 'actualDateOfBirth') {
-      useLength = periods[0].useLength ?? NO
-    }
-
     const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
     const obj = {
       startDate: period.from,
       endDate: period.to,
       ratio: period.ratio.split(',')[0],
       rawIndex: index,
-      firstPeriodStart: firstPeriodStart,
-      useLength: useLength as YesOrNo,
       rightCodePeriod: rightsCodePeriod,
       daysToUse: period.days,
       paid: period.paid,

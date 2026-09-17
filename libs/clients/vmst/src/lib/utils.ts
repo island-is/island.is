@@ -128,7 +128,20 @@ export const createWrappedFetchWithLogging = (
               success: false,
             },
           })
-          return reject(requestBody)
+          // Previously rejected with `requestBody`, which handed callers back
+          // their own request as the "error". Reject with a real Error so the
+          // response fields are what surfaces upstream.
+          return reject(
+            Object.assign(
+              new Error(`${response.status} ${response.statusText}`),
+              {
+                name: 'VmstError',
+                status: response.status,
+                statusText: response.statusText,
+                body: responseBody,
+              },
+            ),
+          )
         }
 
         return resolve(response)

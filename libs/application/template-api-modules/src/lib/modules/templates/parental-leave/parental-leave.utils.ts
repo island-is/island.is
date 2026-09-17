@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import get from 'lodash/get'
+import set from 'lodash/set'
 import { join } from 'path'
 
 import {
@@ -20,6 +21,7 @@ import {
   getOtherParentId,
   getSelectedChild,
   getSpouse,
+  getVmstApplicationId,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
@@ -37,7 +39,7 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
-import { NO, YES } from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 
 // Check whether phoneNumber is GSM
 export const checkIfPhoneNumberIsGSM = (phoneNumber: string): boolean => {
@@ -109,9 +111,9 @@ export const getEmployer = (
   return employers.map((e) => ({
     email: e.email,
     nationalRegistryId:
-      e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+      e.companyNationalRegistryId || employerNationalRegistryId || '',
     approverNationalRegistryId:
-      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
+      e.reviewerNationalRegistryId || employerReviewerNationalRegistryId || '',
   }))
 }
 
@@ -409,7 +411,9 @@ export const transformApplicationToParentalLeaveDTO = (
     isPrimaryAdoption(selectedChild, application)
 
   return {
-    applicationId: application.id,
+    // Not `application.id` — a change application descends from an earlier one and
+    // has to keep identifying itself to VMST by the id of the root application.
+    applicationId: getVmstApplicationId(application),
     applicationFundId: applicationFundId,
     applicant: application.applicant,
     otherParentId:
@@ -515,20 +519,20 @@ export const getType = (application: ApplicationWithAttachments) => {
   // Check if we can get the the action name. Used when valiating application
   const tmpActionName = getActionName(application)
 
-  if (tmpActionName) {
-    return tmpActionName
-  }
-
+  // `'other'` is an internal marker for an info-only change (base info, rights,
+  // payments, personal allowance, other parent). VMST rejects it as an unknown
+  // type, and the field is nullable there, so drop it before sending.
+  const resolved = tmpActionName ?? actionName
   if (
-    actionName === 'document' ||
-    actionName === 'documentPeriod' ||
-    actionName === 'period' ||
-    actionName === 'empper' ||
-    actionName === 'employer' ||
-    actionName === 'empdoc' ||
-    actionName === 'empdocper'
+    resolved === 'document' ||
+    resolved === 'documentPeriod' ||
+    resolved === 'period' ||
+    resolved === 'empper' ||
+    resolved === 'employer' ||
+    resolved === 'empdoc' ||
+    resolved === 'empdocper'
   ) {
-    return actionName
+    return resolved
   }
 
   return undefined
@@ -555,4 +559,48 @@ export const isFixedRight = (right: string | undefined) => {
     return false
   }
   return ['VEIKMEÐG', 'ÖRYGGI-L', 'DVALSTYRK', 'DVAL.FJÖL'].includes(right)
+}
+
+/**
+ * Answer paths a follow-up application inherits from the application it
+ * continues. These describe the leave itself, so a `change` application starts
+ * from what the applicant already told us rather than asking again.
+ *
+ * Deliberately absent: anything scoped to a single action. `actionName`,
+ * `addEmployer`, `addPeriods`, `changeEmployer`, `changePeriods`,
+ * `changeApplicationInfo`, `isResidenceGrant`, `hasAppliedForReidenceGrant` and
+ * the per-action file uploads all describe what the *previous* action did and
+ * would make the new application look like it had already changed something.
+ */
+const CARRY_OVER_ANSWER_PATHS = [
+  // A mock application was never really sent to VMST — its fund id is the literal
+  // 'mock-application-fund-id'. A follow-up therefore has to stay in mock mode,
+  // otherwise it calls VMST for real with a fund id that does not exist there.
+  'mock',
+  'noChildrenFound',
+  'fosterCareOrAdoption',
+  'noPrimaryParent',
+] as const
+
+/**
+ * Picks the answers a follow-up application inherits. Paths that are absent on
+ * the source are left out entirely rather than written as `undefined`, so the new
+ * application's answers stay clean and `getValueViaPath` defaults still apply.
+ */
+export const pickCarryOverAnswers = (
+  answers: Application['answers'],
+): Record<string, unknown> => {
+  const carried: Record<string, unknown> = {}
+
+  for (const path of CARRY_OVER_ANSWER_PATHS) {
+    const value = getValueViaPath(answers, path)
+
+    if (value === undefined || value === null) {
+      continue
+    }
+
+    set(carried, path, value)
+  }
+
+  return carried
 }

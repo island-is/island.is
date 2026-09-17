@@ -12,6 +12,13 @@ export const PERMANENT_FOSTER_CARE = 'foster_care'
 export const ADOPTION = 'primary_adoption'
 export const OTHER_NO_CHILDREN_FOUND = 'other'
 
+/**
+ * `selectedChild` sentinel for "my child is not in this list" — foster care,
+ * adoption, or no registered primary parent. Routes to the no-children-found
+ * questions, which synthesize the child instead of reading it from the registry.
+ */
+export const CHILD_NOT_IN_DATA = 'new'
+
 export const FILE_SIZE_LIMIT = 2000000 // 2MB
 
 export const NO_UNION = 'F000'
@@ -70,9 +77,21 @@ export enum ApiModuleActions {
    * except states that are still pending employer approval.
    */
   setVMSTPeriods = 'setVMSTPeriods',
+  setApplicationInformation = 'setApplicationInformation',
   setApplicationFundId = 'setApplicationFundId',
   setApplicationRights = 'setApplicationRights',
   setOtherParent = 'setOtherParent',
+  /**
+   * Loads the application this one continues (`answers.initialQuery`) and returns
+   * the answers to carry over plus its `vmstApplicationId`.
+   */
+  getPreviousApplication = 'getPreviousApplication',
+}
+
+export enum ApplicationAction {
+  APPLY = 'apply',
+  CHANGE = 'change',
+  RESIDENCE_GRANT = 'residenceGrant',
 }
 
 export enum StartDateOptions {
@@ -105,12 +124,16 @@ export enum States {
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
+  ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS = 'additionalDocumentsRequiredForEdits',
 
   APPROVED = 'approved',
   CLOSED = 'closed',
 
   // Edit Flow
   EDIT_OR_ADD_EMPLOYERS_AND_PERIODS = 'editOrAddEmployersAndPeriods',
+
+  OTHER_PARENT_APPROVAL_FOR_EDITS = 'otherParentApprovalForEdits',
+  OTHER_PARENT_EDITS_ACTION = 'otherParentRequiresActionOnEdits',
 
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
@@ -146,6 +169,7 @@ export enum FileType {
   EMPLOYER = 'employer',
   EMPDOC = 'empdoc',
   EMPDOCPER = 'empdocper',
+  OTHER = 'other',
 }
 
 export enum Languages {

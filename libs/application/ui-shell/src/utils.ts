@@ -6,6 +6,7 @@ import {
 import {
   AccordionField,
   Application,
+  CustomField,
   DataProviderItem,
   ExternalData,
   Field,
@@ -171,6 +172,11 @@ export const extractAnswersToSubmitFromScreen = (
             ? resolveFieldId(c as Field, application, user)
             : (c.id as string),
           ...getAccordionChildFieldIds(c as Field, application, user),
+          // Respect childInputIds declared by nested custom fields so their
+          // additional answer keys aren't dropped on submit.
+          ...(c.type === FieldTypes.CUSTOM
+            ? (c as CustomField).childInputIds ?? []
+            : []),
         ]),
       )
     case FormItemTypes.REPEATER:

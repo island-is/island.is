@@ -16,11 +16,13 @@ import {
   showResidenceGrant,
 } from '../../lib/parentalLeaveUtils'
 import {
+  ApplicationAction,
   States as ApplicationStates,
   StartDateOptions,
   States,
 } from '../../constants'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { useStartFollowUpApplication } from '../../hooks/useStartFollowUpApplication'
 import { YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -29,6 +31,9 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     application.answers,
   )
   const showResidenceGrantCard = showResidenceGrant(application)
+  const { start: startResidenceGrant } = useStartFollowUpApplication(
+    ApplicationAction.RESIDENCE_GRANT,
+  )
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -40,12 +45,18 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const dobDate = dob ? new Date(dob) : null
 
+  // States where EDIT still rewinds *this* application to its own form — i.e. the
+  // action it represents is not finished yet. VMST accepts updates to an
+  // application it already has via `vmstApplicationId`, so
+  // `vinnumalastofnunApproval` and `vinnumalastofnunApproveEdits` are still
+  // editable until VMST has approved them. Once VMST has approved (`approved`)
+  // the action is done and a change is a new application, started from the
+  // select-child screen.
   const canBeEdited =
     application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
     application.state === ApplicationStates.EMPLOYER_APPROVAL ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVAL ||
-    application.state === ApplicationStates.APPROVED ||
     application.state ===
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
@@ -165,7 +176,16 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
                   parentalLeaveFormMessages.residenceGrantMessage
                     .residenceGrantApplyTitle,
                 ),
-                onClick: () => handleSubmit(DefaultEvents.SUBMIT),
+                // The residence grant is its own action, so it gets its own
+                // application seeded from this one. Marking this application as
+                // applied-for is what hides this card from now on.
+                onClick: () =>
+                  startResidenceGrant({
+                    previousApplicationId: application.id,
+                    previousAnswersPatch: {
+                      hasAppliedForReidenceGrant: YES,
+                    },
+                  }),
               }}
             />
           </Box>

@@ -476,6 +476,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
                 onUpdateRepeater={onUpdateRepeater}
+                goToScreen={goToScreen}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField

@@ -69,7 +69,7 @@ export class TemplateAPIService {
    */
   handleError(action: ApplicationApiAction, error: Error): TemplateApiError {
     const problemError: TemplateApiError =
-      'problem' in error
+      error && typeof error === 'object' && 'problem' in error
         ? (error as TemplateApiError)
         : new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
 

@@ -245,6 +245,7 @@ export type RepeaterProps = {
   ) => Promise<{ errors?: ReadonlyArray<GraphQLError> }>
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
+  goToScreen?: (id: string) => void
 }
 
 export type ValidationRecord = { [key: string]: string | ValidationRecord }

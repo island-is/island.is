@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/types'
 
 import {
+  ApplicationAction,
   MANUAL,
   SINGLE,
   SPOUSE,
@@ -34,8 +35,12 @@ import {
   getOtherParentName,
   getSpouse,
   isEligibleForParentalLeave,
+  isFollowUpApplication,
+  getChildrenOptions,
+  isChildNotInDataSelected,
   getPeriodIndex,
   getApplicationExternalData,
+  getVmstApplicationId,
   requiresOtherParentApproval,
   getMaxMultipleBirthsDays,
   getMultipleBirthsDays,
@@ -54,9 +59,17 @@ import {
   residentGrantIsOpenForApplication,
   setTestBirthAndExpectedDate,
   getActionName,
+  getVMSTApplicationAnswers,
+  getChangeBaseline,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 import { NO, YES } from '@island.is/application/core'
+import {
+  ApplicationTypeSubSection,
+  FollowUpSubSection,
+  MockDataSubSection,
+  SelectChildSubSection,
+} from '../forms/Prerequisites'
 
 const buildApplication = (data?: {
   answers?: FormValue
@@ -1161,12 +1174,286 @@ describe('getSpouse', () => {
   })
 })
 
-describe('isEligableForParentalLeave', () => {
-  it('should return undefined without data', () => {
-    const application = buildApplication()
-    expect(isEligibleForParentalLeave(application.externalData)).toEqual(
-      undefined,
+describe('getChildrenOptions', () => {
+  const childrenExternalData = (
+    children: Record<string, unknown>[],
+  ): ExternalData => ({
+    children: {
+      data: { children, existingApplications: [] },
+      date: new Date(),
+      status: 'success',
+    },
+  })
+
+  const build = (children: Record<string, unknown>[]) =>
+    getChildrenOptions(
+      buildApplication({ externalData: childrenExternalData(children) }),
     )
+
+  it('should list children without an application before ones that have one', () => {
+    const options = build([
+      // Deliberately the order collectChildren produces: the applicant's own
+      // earlier applications come first there, for dedup precedence.
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        existingApplicationId: 'previous-application-id',
+      },
+      {
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options.map((o) => o.dataTestId)).toEqual([
+      'child-1',
+      'existing-application-0',
+      'child-not-in-data',
+    ])
+  })
+
+  it('should keep the original child index as the value, not the sorted position', () => {
+    // `selectedChild` is an index into externalData.children.data.children, so
+    // reordering for display must not renumber it.
+    const options = build([
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        existingApplicationId: 'previous-application-id',
+      },
+      {
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options[0].value).toBe('1')
+    expect(options[1].value).toBe('0')
+  })
+
+  it('should disable a child with an in-progress change application', () => {
+    const options = build([
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        existingApplicationId: 'pending-change-id',
+        existingApplicationIsChangeInProgress: true,
+      },
+      {
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options.map((option) => option.dataTestId)).toEqual([
+      'child-1',
+      'existing-application-0',
+      'child-not-in-data',
+    ])
+    expect(options[1].value).toBe('0')
+    expect(options[1].disabled).toBe(true)
+  })
+
+  it('should always offer the not-in-the-data option last', () => {
+    expect(build([]).map((o) => o.dataTestId)).toEqual(['child-not-in-data'])
+  })
+})
+
+describe('prerequisites screens hidden for a follow-up application', () => {
+  // A change or residence grant inherits all of this from the application it
+  // continues, so none of these questions should be put to the applicant again.
+  const cases: [
+    string,
+    { condition?: (a: FormValue, e: ExternalData) => boolean },
+  ][] = [
+    ['mock data', MockDataSubSection],
+    ['select child', SelectChildSubSection],
+    ['application type', ApplicationTypeSubSection],
+  ]
+
+  const externalData: ExternalData = {
+    children: {
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: '2027-03-04',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+        existingApplications: [],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  }
+
+  it.each(cases)('should hide the %s screen', (_name, section) => {
+    expect(
+      section.condition?.(
+        { applicationAction: ApplicationAction.CHANGE },
+        externalData,
+      ),
+    ).toBe(false)
+  })
+
+  it.each(cases)(
+    'should show the %s screen for a first-time application',
+    (_name, section) => {
+      expect(section.condition?.({}, externalData)).toBe(true)
+    },
+  )
+
+  it('should show the follow-up screen only for a follow-up', () => {
+    expect(
+      FollowUpSubSection.condition?.(
+        { applicationAction: ApplicationAction.CHANGE },
+        externalData,
+      ),
+    ).toBe(true)
+    expect(FollowUpSubSection.condition?.({}, externalData)).toBe(false)
+  })
+})
+
+describe('multiple births questions on the select-child screen', () => {
+  // They must not be asked for a child that already has an application: the
+  // answer arrives with the application being changed (multipleBirths is in
+  // CARRY_OVER_ANSWER_PATHS) and asking again could contradict it.
+  const screen = SelectChildSubSection.children[0] as unknown as {
+    children: {
+      id: string
+      condition?: (a: FormValue, e: ExternalData) => boolean
+    }[]
+  }
+
+  const externalDataFor = (child: Record<string, unknown>): ExternalData => ({
+    children: {
+      data: { children: [child], existingApplications: [] },
+      date: new Date(),
+      status: 'success',
+    },
+  })
+
+  const conditionFor = (id: string) =>
+    screen.children.find((field) => field.id === id)?.condition
+
+  const freshChild = {
+    expectedDateOfBirth: '2028-01-01',
+    parentalRelation: ParentalRelations.primary,
+  }
+  const childBeingChanged = {
+    ...freshChild,
+    existingApplicationId: 'previous-application-id',
+  }
+
+  it('should ask for a child with no application yet', () => {
+    const condition = conditionFor('multipleBirths.hasMultipleBirths')
+
+    expect(
+      condition?.({ selectedChild: '0' }, externalDataFor(freshChild)),
+    ).toBe(true)
+  })
+
+  it('should not ask for a child that already has an application', () => {
+    expect(
+      conditionFor('multipleBirths.hasMultipleBirths')?.(
+        { selectedChild: '0' },
+        externalDataFor(childBeingChanged),
+      ),
+    ).toBe(false)
+
+    expect(
+      conditionFor('multipleBirths.multipleBirths')?.(
+        { selectedChild: '0', multipleBirths: { hasMultipleBirths: YES } },
+        externalDataFor(childBeingChanged),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('isChildNotInDataSelected', () => {
+  it('should recognise the sentinel', () => {
+    expect(isChildNotInDataSelected({ selectedChild: 'new' })).toBe(true)
+    expect(isChildNotInDataSelected({ selectedChild: '0' })).toBe(false)
+    expect(isChildNotInDataSelected({})).toBe(false)
+  })
+})
+
+describe('isFollowUpApplication', () => {
+  it('should be false for a first-time application', () => {
+    expect(isFollowUpApplication({})).toBe(false)
+    expect(
+      isFollowUpApplication({ applicationAction: ApplicationAction.APPLY }),
+    ).toBe(false)
+  })
+
+  it('should be true for a change or residence grant', () => {
+    // This is what stops the change flow looping: the child keeps its
+    // existingApplicationId in the change application, so the screen that starts a
+    // change has to know not to fire again.
+    expect(
+      isFollowUpApplication({ applicationAction: ApplicationAction.CHANGE }),
+    ).toBe(true)
+    expect(
+      isFollowUpApplication({
+        applicationAction: ApplicationAction.RESIDENCE_GRANT,
+      }),
+    ).toBe(true)
+  })
+})
+
+describe('isEligibleForParentalLeave', () => {
+  it('should not be eligible without data', () => {
+    const application = buildApplication()
+    expect(isEligibleForParentalLeave(application.externalData)).toBe(false)
+  })
+
+  it('should be eligible once the provider has resolved a child', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-10-31',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isEligibleForParentalLeave(application.externalData)).toBe(true)
+  })
+
+  it('should be eligible for a child that already has an application, so it can be changed', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 0,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-10-31',
+                existingApplicationId: 'previous-application-id',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isEligibleForParentalLeave(application.externalData)).toBe(true)
   })
 })
 
@@ -1262,11 +1549,263 @@ describe('getApplicationExternalData', () => {
       dataProvider: {
         children: 'Mock child',
       },
+      existingApplications: [],
       VMSTOtherParent: {},
+      VMSTPeriods: undefined,
+      VMSTApplicationRights: undefined,
+      VMSTApplicationInformation: undefined,
+      dateOfBirth: undefined,
+      previousApplication: undefined,
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',
     })
+  })
+
+  it('should map VMST application information to follow-up answers', () => {
+    const application = buildApplication({
+      externalData: {
+        VMSTApplicationInformation: {
+          data: {
+            email: 'applicant@island.is',
+            phoneNumber: '6612345',
+            paymentInfo: {
+              bankAccount: '011126111111',
+              personalAllowance: 50,
+              personalAllowanceFromSpouse: 100,
+              union: { id: 'F001', name: 'Union' },
+              pensionFund: { id: 'L001', name: 'Pension' },
+              privatePensionFund: { id: 'X001', name: 'Private pension' },
+              privatePensionFundRatio: 2,
+            },
+            otherParentId: '0101307789',
+            otherParentName: 'Other Parent',
+            periods: [
+              {
+                from: '2027-01-01',
+                to: '2027-03-01',
+                ratio: '100,50',
+                firstPeriodStart: 'specificDate',
+                rightsCodePeriod: 'M-L-GR,ORLOF-FBF',
+                days: '60',
+                paid: false,
+                approved: true,
+              },
+            ],
+            employers: [
+              {
+                email: 'employer@island.is',
+                nationalRegistryId: '1111111119',
+              },
+            ],
+            applicationRights: [
+              {
+                rightsUnit: 'M-S-GR',
+                rightsDescription: 'Self employed personal right',
+                months: '6.0',
+                days: '180',
+                daysLeft: '120',
+              },
+              {
+                rightsUnit: 'ORLOF-FBF',
+                rightsDescription: 'Multiple births',
+                months: '12.0',
+                days: '360',
+                daysLeft: '360',
+              },
+            ],
+          },
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
+      applicant: {
+        email: 'applicant@island.is',
+        phoneNumber: '6612345',
+        language: 'IS',
+      },
+      applicationType: {
+        option: 'parentalLeave',
+      },
+      employment: {
+        isSelfEmployed: YES,
+      },
+      payments: {
+        bank: '011126111111',
+        pensionFund: 'L001',
+        useUnion: YES,
+        union: 'F001',
+        usePrivatePensionFund: YES,
+        privatePensionFund: 'X001',
+        privatePensionFundPercentage: '2',
+      },
+      personalAllowance: {
+        usePersonalAllowance: YES,
+        useAsMuchAsPossible: NO,
+        usage: '50',
+      },
+      personalAllowanceFromSpouse: {
+        usePersonalAllowance: YES,
+        useAsMuchAsPossible: YES,
+        usage: '100',
+      },
+      otherParent: MANUAL,
+      otherParentObj: {
+        chooseOtherParent: MANUAL,
+        otherParentId: '0101307789',
+        otherParentName: 'Other Parent',
+      },
+      periods: [
+        {
+          startDate: '2027-01-01',
+          endDate: '2027-03-01',
+          ratio: '100',
+          firstPeriodStart: 'specificDate',
+          rightCodePeriod: 'M-L-GR',
+          daysToUse: '60',
+          paid: false,
+          approved: true,
+        },
+      ],
+      employers: [
+        {
+          email: 'employer@island.is',
+          companyNationalRegistryId: '1111111119',
+        },
+      ],
+      multipleBirths: {
+        hasMultipleBirths: YES,
+        multipleBirths: '2',
+      },
+      multipleBirthsRequestDays: 360,
+    })
+  })
+
+  it('should not build a change baseline from null VMST data on first-time applications', () => {
+    const application = buildApplication({
+      externalData: {
+        previousApplication: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTApplicationInformation: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTPeriods: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTApplicationRights: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTOtherParent: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toEqual({})
+    expect(getChangeBaseline(application.externalData)).toBeNull()
+  })
+
+  it('should ignore failed VMST provider object payloads on mock applications', () => {
+    const application = buildApplication({
+      externalData: {
+        previousApplication: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTApplicationInformation: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTPeriods: {
+          data: {},
+          status: 'failure',
+          statusCode: 500,
+          reason: {
+            title: 'Eitthvað fór úrskeiðis',
+            summary: 'Villa kom upp',
+          },
+          date: new Date(),
+        },
+        VMSTApplicationRights: {
+          data: {},
+          status: 'failure',
+          statusCode: 500,
+          reason: {
+            title: 'Eitthvað fór úrskeiðis',
+            summary: 'Villa kom upp',
+          },
+          date: new Date(),
+        },
+        VMSTOtherParent: {
+          data: {
+            otherParentId: '',
+            otherParentName: '',
+          },
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toEqual({})
+    expect(getChangeBaseline(application.externalData)).toBeNull()
+  })
+
+  it('should inherit the fund id and VMST id from the predecessor', () => {
+    // A change application updates its predecessor's record at VMST, so it needs
+    // both ids. It has to read them from the provider rather than from answers:
+    // the template apis that need them run on exit from prerequisites, before
+    // `prefillFromPreviousApplication` has seeded anything.
+    const application = buildApplication({
+      externalData: {
+        previousApplication: {
+          data: {
+            applicationId: 'previous-application-id',
+            vmstApplicationId: 'root-application-id',
+            applicationFundId: '2025-03076',
+            selectedChild: null,
+            answers: {},
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getApplicationExternalData(application.externalData)).toMatchObject({
+      applicationFundId: '2025-03076',
+    })
+    expect(getVmstApplicationId(application)).toBe('root-application-id')
+  })
+
+  it('should prefer the seeded VMST id over the provider once prefill has run', () => {
+    const application = buildApplication({
+      answers: { vmstApplicationId: 'root-application-id' },
+    })
+
+    expect(getVmstApplicationId(application)).toBe('root-application-id')
+  })
+
+  it('should fall back to its own id for a first-time application', () => {
+    const application = buildApplication()
+
+    expect(getVmstApplicationId(application)).toBe(application.id)
   })
 
   it('should get applicationFundId from persisted navId external data', () => {
@@ -1331,6 +1870,7 @@ describe('requiresOtherParentApproval', () => {
   it('should return true when usePersonalAllowanceFromSpouse === YES ', () => {
     const application = buildApplication({
       answers: {
+        otherParent: 'spouse',
         usePersonalAllowanceFromSpouse: YES,
       },
     })
@@ -1702,11 +2242,70 @@ describe('getActionName', () => {
     expect(result).toBe(FileType.DOCUMENT)
   })
 
+  it('should return FileType.DOCUMENT if state is ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS', () => {
+    application.state = States.ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.DOCUMENT)
+  })
+
   it('should return undefined if no conditions met', () => {
     application.state = application.state = States.CLOSED
 
     const result = getActionName(application)
 
     expect(result).toBeUndefined()
+  })
+})
+
+describe('getApplicationExternalData applicationFundId', () => {
+  // Regression: `getValueViaPath` only substitutes its default when a path is
+  // absent, so a path that exists and holds `null` came back as `null`. That is
+  // what `previousApplication.data` is on a first-time application, and it made
+  // the last fallback in the chain return null instead of ''. Readers compare
+  // against '' — the other-parent filter in ChildrenService among them — so the
+  // null quietly defeated them.
+  it('should be an empty string, not null, when nothing has reached VMST', () => {
+    const { applicationFundId } = getApplicationExternalData({
+      navId: { data: null, date: new Date(), status: 'success' },
+      previousApplication: { data: null, date: new Date(), status: 'success' },
+    } as unknown as ExternalData)
+
+    expect(applicationFundId).toBe('')
+  })
+
+  it('should be an empty string when no provider has run at all', () => {
+    const { applicationFundId } = getApplicationExternalData(
+      {} as unknown as ExternalData,
+    )
+
+    expect(applicationFundId).toBe('')
+  })
+
+  it('should take the fund id from sendApplication once the application is sent', () => {
+    const { applicationFundId } = getApplicationExternalData({
+      navId: { data: null, date: new Date(), status: 'success' },
+      sendApplication: {
+        data: { id: '2017-05140' },
+        date: new Date(),
+        status: 'success',
+      },
+    } as unknown as ExternalData)
+
+    expect(applicationFundId).toBe('2017-05140')
+  })
+
+  it('should inherit the fund id from the predecessor of a follow-up', () => {
+    const { applicationFundId } = getApplicationExternalData({
+      navId: { data: null, date: new Date(), status: 'success' },
+      previousApplication: {
+        data: { applicationFundId: '2017-05140' },
+        date: new Date(),
+        status: 'success',
+      },
+    } as unknown as ExternalData)
+
+    expect(applicationFundId).toBe('2017-05140')
   })
 })

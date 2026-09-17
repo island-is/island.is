@@ -117,6 +117,9 @@ export class ApplicationAccessService {
     nationalId: string,
   ): Promise<boolean> {
     const role = await this.getRoleInState(application, nationalId)
+    if (typeof role?.delete === 'function') {
+      return role.delete(application)
+    }
     return role?.delete ?? false
   }
 

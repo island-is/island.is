@@ -4,7 +4,6 @@ import {
   buildAlertMessageField,
   buildAsyncSelectField,
   buildCustomField,
-  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
@@ -17,9 +16,7 @@ import {
   buildSubSection,
   buildTableRepeaterField,
   buildTextField,
-  buildSliderField,
   formatText,
-  NO_ANSWER,
   YES,
   NO,
 } from '@island.is/application/core'
@@ -36,6 +33,8 @@ import {
 } from '@island.is/application/ui-components'
 
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { useLocale } from '@island.is/localization'
 import { maxDaysToGiveOrReceive } from '../config'
 import {
   ADOPTION,
@@ -51,7 +50,6 @@ import {
   PERMANENT_FOSTER_CARE,
   SINGLE,
   SPOUSE,
-  StartDateOptions,
   UnEmployedBenefitTypes,
 } from '../constants'
 import {
@@ -63,17 +61,12 @@ import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   allowOtherParent,
   allowOtherParentToUsePersonalAllowance,
-  getAllPeriodDates,
   getApplicationAnswers,
   getApplicationExternalData,
   getBeginningOfMonth3MonthsAgo,
   getConclusionScreenSteps,
-  getDurationTitle,
-  getFirstPeriodTitle,
   getLeavePlanTitle,
   getMaxMultipleBirthsDays,
-  getMinimumEndDate,
-  getMinimumStartDate,
   getMultipleBirthRequestDays,
   getOtherParentOptions,
   getPeriodSectionTitle,
@@ -81,15 +74,10 @@ import {
   getRightsDescTitle,
   getSelectedChild,
   getSpouse,
-  getStartDateDesc,
-  getStartDateTitle,
   isParentWithoutBirthParent,
   requiresOtherParentApproval,
 } from '../lib/parentalLeaveUtils'
 import { Query } from '@island.is/api/schema'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { useLocale } from '@island.is/localization'
-import { theme } from '@island.is/island-ui/theme'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -176,9 +164,7 @@ export const ParentalLeaveForm: Form = buildForm({
             const selectedChild = getSelectedChild(answers, externalData)
 
             if (selectedChild !== null) {
-              return (
-                selectedChild.parentalRelation === ParentalRelations.primary
-              )
+              return selectedChild.parentalRelation === ParentalRelations.primary
             }
 
             return true
@@ -303,8 +289,7 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'payments',
               children: [
                 buildTextField({
-                  title:
-                    parentalLeaveFormMessages.shared.paymentInformationBank,
+                  title: parentalLeaveFormMessages.shared.paymentInformationBank,
                   id: 'payments.bank',
                   dataTestId: 'bank-account-number',
                   format: '####-##-######',
@@ -346,8 +331,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildRadioField({
                   id: 'payments.useUnion',
                   title: parentalLeaveFormMessages.shared.unionName,
-                  description:
-                    parentalLeaveFormMessages.shared.unionDescription,
+                  description: parentalLeaveFormMessages.shared.unionDescription,
                   condition: (answers) => {
                     const { applicationType } = getApplicationAnswers(answers)
 
@@ -401,8 +385,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'payments.usePrivatePensionFund',
-                  title:
-                    parentalLeaveFormMessages.shared.privatePensionFundName,
+                  title: parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
@@ -492,8 +475,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'personalAllowance.alertMessage',
                   title: parentalLeaveFormMessages.employer.alertTitle,
                   message:
-                    parentalLeaveFormMessages.personalAllowance
-                      .alertDescription,
+                    parentalLeaveFormMessages.personalAllowance.alertDescription,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
                   marginTop: 0,
@@ -543,8 +525,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
-                  title:
-                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
+                  title: parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -635,8 +616,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
-                  title:
-                    parentalLeaveFormMessages.personalAllowance.oneToHundred,
+                  title: parentalLeaveFormMessages.personalAllowance.oneToHundred,
                   description:
                     parentalLeaveFormMessages.personalAllowance.manual,
                   suffix: '%',
@@ -749,8 +729,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildSelectField({
                   id: 'employment.unemploymentBenefits',
-                  title:
-                    parentalLeaveFormMessages.employer.unemploymentBenefits,
+                  title: parentalLeaveFormMessages.employer.unemploymentBenefits,
                   options: [
                     {
                       label: UnEmployedBenefitTypes.vmst,
@@ -872,17 +851,15 @@ export const ParentalLeaveForm: Form = buildForm({
                   dataTestId: 'employer-phone-number',
                 },
                 ratio: {
-                  component: 'select',
+                  component: 'input',
                   label: parentalLeaveFormMessages.employer.ratio,
                   placeholder:
                     parentalLeaveFormMessages.employer.ratioPlaceholder,
                   dataTestId: 'employment-ratio',
-                  options: Array(100)
-                    .fill(undefined)
-                    .map((_, idx, array) => ({
-                      value: `${array.length - idx}`,
-                      label: `${array.length - idx}%`,
-                    })),
+                  type: 'number',
+                  suffix: '%',
+                  min: 0,
+                  max: 100,
                 },
                 stillEmployed: {
                   component: 'radio',
@@ -1210,37 +1187,16 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               children: [
-                buildSliderField({
-                  id: 'multipleBirthsRequestDays',
-                  label: {
-                    singular: parentalLeaveFormMessages.shared.day,
-                    plural: parentalLeaveFormMessages.shared.days,
-                  },
-                  min: 0,
-                  max: (application: Application) =>
-                    getMaxMultipleBirthsDays(application.answers),
-                  step: 1,
-                  defaultValue: (application: Application) =>
-                    getMultipleBirthRequestDays(application.answers),
-                  showMinMaxLabels: true,
-                  showToolTip: true,
-                  trackStyle: { gridTemplateRows: 8 },
-                  calculateCellStyle: () => {
-                    return {
-                      background: theme.color.dark200,
-                    }
-                  },
-                  saveAsString: true,
-                }),
                 buildCustomField({
-                  id: 'requestRights',
+                  id: 'multipleBirthsRequestDays',
                   childInputIds: [
+                    'multipleBirthsRequestDays',
                     'requestRights.isRequestingRights',
                     'requestRights.requestDays',
                     'giveRights.isGivingRights',
                     'giveRights.giveDays',
                   ],
-                  component: 'RequestMultipleBirthsDaysBoxChart',
+                  component: 'MultipleBirthsDaysInput',
                 }),
               ],
             }),
@@ -1280,8 +1236,11 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildMultiField({
               id: 'requestRights',
-              title:
-                parentalLeaveFormMessages.shared.transferRightsRequestTitle,
+              title: parentalLeaveFormMessages.shared.transferRightsRequestTitle,
+              description: (_application) => ({
+                ...parentalLeaveFormMessages.shared.requestDaysInputDescription,
+                values: { maxDays: maxDaysToGiveOrReceive },
+              }),
               condition: (answers, externalData) => {
                 const { hasMultipleBirths, otherParent } =
                   getApplicationAnswers(answers)
@@ -1303,36 +1262,23 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               children: [
-                buildSliderField({
-                  id: 'requestRights.requestDays',
-                  label: {
-                    singular: parentalLeaveFormMessages.shared.day,
-                    plural: parentalLeaveFormMessages.shared.days,
-                  },
-                  min: 1,
-                  max: maxDaysToGiveOrReceive,
-                  step: 1,
-                  defaultValue: 1,
-                  showMinMaxLabels: true,
-                  showToolTip: true,
-                  trackStyle: { gridTemplateRows: 8 },
-                  calculateCellStyle: () => {
-                    return {
-                      background: theme.color.dark200,
-                    }
-                  },
-                  saveAsString: true,
-                }),
                 buildCustomField({
                   id: 'requestRights.isRequestingRights',
-                  childInputIds: ['requestRights.isRequestingRights'],
-                  component: 'RequestDaysBoxChart',
+                  childInputIds: [
+                    'requestRights.isRequestingRights',
+                    'requestRights.requestDays',
+                  ],
+                  component: 'RequestDaysInput',
                 }),
               ],
             }),
             buildMultiField({
               id: 'giveRights',
               title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
+              description: (_application) => ({
+                ...parentalLeaveFormMessages.shared.giveDaysInputDescription,
+                values: { maxDays: maxDaysToGiveOrReceive },
+              }),
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
@@ -1350,30 +1296,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               children: [
-                buildSliderField({
-                  id: 'giveRights.giveDays',
-                  label: {
-                    singular: parentalLeaveFormMessages.shared.day,
-                    plural: parentalLeaveFormMessages.shared.days,
-                  },
-                  min: 1,
-                  max: maxDaysToGiveOrReceive,
-                  step: 1,
-                  defaultValue: 1,
-                  showMinMaxLabels: true,
-                  showToolTip: true,
-                  trackStyle: { gridTemplateRows: 8 },
-                  calculateCellStyle: () => {
-                    return {
-                      background: theme.color.dark200,
-                    }
-                  },
-                  saveAsString: true,
-                }),
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
-                  childInputIds: ['giveRights.isGivingRights'],
-                  component: 'GiveDaysBoxChart',
+                  childInputIds: [
+                    'giveRights.isGivingRights',
+                    'giveRights.giveDays',
+                  ],
+                  component: 'GiveDaysInput',
                 }),
               ],
             }),
@@ -1393,8 +1322,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'otherParentEmail',
                   title: parentalLeaveFormMessages.applicant.email,
                   description:
-                    parentalLeaveFormMessages.shared
-                      .otherParentEmailDescription,
+                    parentalLeaveFormMessages.shared.otherParentEmailDescription,
                 }),
                 buildTextField({
                   id: 'otherParentPhoneNumber',
@@ -1407,29 +1335,6 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        /*
-        TODO: add back once payment plan is implemented
-        buildSubSection({
-          id: 'rightsReview',
-          title: parentalLeaveFormMessages.shared.rightsSummarySubSection,
-          children: [
-            buildMultiField({
-              id: 'reviewRights',
-              title: parentalLeaveFormMessages.shared.rightsSummaryName,
-              description: (application) =>
-                `${formatIsk(
-                  getEstimatedMonthlyPay(application),
-                )} er áætluð mánaðarleg útborgun þín fyrir hvern heilan mánuð eftir skatt.`, // TODO messages
-              children: [
-                buildCustomField({
-                  id: 'reviewRights',
-                  component: 'ReviewRights',
-                }),
-              ],
-            }),
-          ],
-        }),
-        */
       ],
     }),
     buildSection({
@@ -1445,138 +1350,35 @@ export const ParentalLeaveForm: Form = buildForm({
               title: getLeavePlanTitle,
               component: 'PeriodsRepeater',
               children: [
-                buildCustomField({
-                  id: 'firstPeriodStart',
-                  title: getFirstPeriodTitle,
-                  condition: (answers) => {
-                    const { periods } = getApplicationAnswers(answers)
-
-                    return periods.length === 0
-                  },
-                  component: 'FirstPeriodStart',
-                }),
-                buildDateField({
-                  id: 'startDate',
-                  title: getStartDateTitle,
-                  description: getStartDateDesc,
-                  placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  defaultValue: NO_ANSWER,
-                  condition: (answers) => {
-                    const { periods, rawPeriods } =
-                      getApplicationAnswers(answers)
-                    const currentPeriod = rawPeriods[rawPeriods.length - 1]
-                    const firstPeriodRequestingSpecificStartDate =
-                      currentPeriod?.firstPeriodStart ===
-                      StartDateOptions.SPECIFIC_DATE
-
-                    return (
-                      firstPeriodRequestingSpecificStartDate ||
-                      periods.length !== 0
-                    )
-                  },
-                  minDate: (application: Application) =>
-                    getMinimumStartDate(application),
-                  excludeDates: (application) => {
-                    const { periods } = getApplicationAnswers(
-                      application.answers,
-                    )
-
-                    return getAllPeriodDates(periods)
-                  },
-                }),
-                buildRadioField({
-                  id: 'useLength',
-                  title: getDurationTitle,
-                  description: parentalLeaveFormMessages.duration.description,
-                  defaultValue: YES,
-                  options: [
-                    {
-                      label: parentalLeaveFormMessages.duration.monthsOption,
-                      value: YES,
-                    },
-                    {
-                      label:
-                        parentalLeaveFormMessages.duration.specificDateOption,
-                      value: NO,
-                    },
+                buildMultiField({
+                  id: 'periodDateAndRatio',
+                  title: parentalLeaveFormMessages.dateRange.title,
+                  description: parentalLeaveFormMessages.dateRange.description,
+                  isPartOfRepeater: true,
+                  children: [
+                    buildCustomField({
+                      id: 'dateRange',
+                      title: parentalLeaveFormMessages.dateRange.title,
+                      component: 'PeriodDateRange',
+                      width: 'half',
+                    }),
+                    buildCustomField({
+                      id: 'ratio',
+                      title: getRatioTitle,
+                      component: 'PeriodPercentage',
+                      width: 'half',
+                    }),
+                    buildCustomField({
+                      id: 'ratioWarning',
+                      title: '',
+                      component: 'PeriodRatioWarning',
+                    }),
                   ],
-                }),
-                buildCustomField({
-                  id: 'endDate',
-                  condition: (answers) => {
-                    const { rawPeriods } = getApplicationAnswers(answers)
-                    const period = rawPeriods[rawPeriods.length - 1]
-
-                    return period?.useLength === YES && !!period?.startDate
-                  },
-                  title: getDurationTitle,
-                  component: 'Duration',
-                }),
-                buildCustomField(
-                  {
-                    id: 'endDate',
-                    title: parentalLeaveFormMessages.endDate.title,
-                    component: 'PeriodEndDate',
-                    condition: (answers) => {
-                      const { rawPeriods } = getApplicationAnswers(answers)
-                      const period = rawPeriods[rawPeriods.length - 1]
-
-                      return period?.useLength === NO && !!period?.startDate
-                    },
-                  },
-                  {
-                    minDate: getMinimumEndDate,
-                    excludeDates: (application: Application) => {
-                      const { periods } = getApplicationAnswers(
-                        application.answers,
-                      )
-
-                      return getAllPeriodDates(periods)
-                    },
-                  },
-                ),
-                buildCustomField({
-                  id: 'ratio',
-                  title: getRatioTitle,
-                  description: parentalLeaveFormMessages.ratio.description,
-                  component: 'PeriodPercentage',
-                  condition: (answers) => {
-                    const { rawPeriods } = getApplicationAnswers(answers)
-                    const period = rawPeriods[rawPeriods.length - 1]
-
-                    return !!period?.startDate && !!period?.endDate
-                  },
                 }),
               ],
             }),
           ],
         }),
-
-        // TODO: Bring back this feature post v1 launch
-        // https://app.asana.com/0/1182378413629561/1200214178491339/f
-        // buildSubSection({
-        //   id: 'shareInformation',
-        //   title: parentalLeaveFormMessages.shareInformation.subSection,
-        //   condition: (answers) => answers.otherParent !== NO,
-        //   children: [
-        //     buildRadioField({
-        //       id: 'shareInformationWithOtherParent',
-        //       title: parentalLeaveFormMessages.shareInformation.title,
-        //       description:
-        //         parentalLeaveFormMessages.shareInformation.description,
-        //       options: [
-        //         {
-        //           label: parentalLeaveFormMessages.shareInformation.yesOption,
-        //           value: YES,
-        //         },
-        //         {
-        //           label: parentalLeaveFormMessages.shareInformation.noOption,
-        //           value: NO,
-        //         },
-        //       ],
-        //     }),
-        //   ],
-        // }),
       ],
     }),
     buildSection({

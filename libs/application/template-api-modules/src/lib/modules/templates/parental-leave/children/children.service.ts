@@ -1,7 +1,9 @@
 import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
+  ChildApplicationLink,
   ChildInformation,
   ChildInformationWithoutRights,
+  ExistingChildApplication,
   ParentalRelations,
   PregnancyStatus,
   States,
@@ -26,10 +28,14 @@ import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import formatISO from 'date-fns/formatISO'
+import { MOCK_APPLICATION_FUND_ID } from '../constants'
 import {
   applicationsToChildInformation,
+  applicationsToExistingChildApplication,
+  collectChildren,
   getChildren,
   getChildrenFromMockData,
+  vmstParentalLeavesToChildApplicationLinks,
 } from './children-utils'
 
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
@@ -52,28 +58,45 @@ export class ChildrenService {
   async provideChildren(
     application: Application,
     nationalId: string,
-  ): Promise<{ children: ChildInformation[] }> {
+  ): Promise<{
+    children: ChildInformation[]
+    existingApplications: ExistingChildApplication[]
+    childApplicationLinks: ChildApplicationLink[]
+  }> {
     const customTemplateFindQuery =
       this.applicationApiService.customTemplateFindQuery(
         application.typeId,
       ) as CustomTemplateFindQuery
-    const useMockData =
+    const hasOwnMockAnswers =
       getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
       YES
-    const shouldUseMockData = useMockData && !this.isRunningOnProduction
+    const inheritedMock =
+      getValueViaPath<string>(
+        application.externalData,
+        'previousApplication.data.answers.mock.useMockData',
+        NO,
+      ) === YES
+    const shouldUseMockData =
+      (hasOwnMockAnswers || inheritedMock) && !this.isRunningOnProduction
 
     if (shouldUseMockData) {
-      return await this.getMockData(application, customTemplateFindQuery)
+      return await this.getMockData(
+        application,
+        customTemplateFindQuery,
+        hasOwnMockAnswers,
+      )
     }
 
     const parentalLeavesAndPregnancyStatus =
       await this.queryParentalLeavesAndPregnancyStatus(nationalId)
 
-    const children = await this.childrenAndExistingApplications(
-      application,
-      customTemplateFindQuery,
-      parentalLeavesAndPregnancyStatus.getPregnancyStatus,
-    )
+    const { children, existingApplications, childApplicationLinks } =
+      await this.childrenAndExistingApplications(
+        application,
+        customTemplateFindQuery,
+        parentalLeavesAndPregnancyStatus.getPregnancyStatus,
+        parentalLeavesAndPregnancyStatus.getParentalLeaves,
+      )
 
     const childrenResult: ChildInformation[] = []
 
@@ -132,13 +155,47 @@ export class ChildrenService {
 
     return {
       children: childrenResult,
+      existingApplications,
+      childApplicationLinks,
     }
   }
 
   async getMockData(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
-  ) {
+    hasOwnMockAnswers = true,
+  ): Promise<{
+    children: ChildInformation[]
+    existingApplications: ExistingChildApplication[]
+    childApplicationLinks: ChildApplicationLink[]
+  }> {
+    // Resolved the same way as the real path so the change flow can be exercised
+    // with mock data: mock-apply for a child, then start another application and
+    // the child comes back as changeable — without having to retype the exact same
+    // date of birth, which is the only thing children are matched on.
+    const applicationsWhereApplicant = await this.applicationsWhereApplicant(
+      application,
+      customTemplateFindQuery,
+    )
+    const existingApplications = applicationsToExistingChildApplication(
+      applicationsWhereApplicant,
+    )
+    const childrenFromEarlierApplications = applicationsToChildInformation(
+      applicationsWhereApplicant,
+    ) as ChildInformation[]
+
+    // Mock inherited from the predecessor rather than answered here: there are no
+    // mock answers on this application to synthesize a child from, and none are
+    // wanted — the child being changed is the predecessor's, which is already in
+    // `childrenFromEarlierApplications`.
+    if (!hasOwnMockAnswers) {
+      return {
+        children: childrenFromEarlierApplications,
+        existingApplications,
+        childApplicationLinks: [],
+      }
+    }
+
     const useApplication = getValueViaPath(
       application.answers,
       'mock.useMockedApplication',
@@ -154,8 +211,9 @@ export class ChildrenService {
 
       if (useNoPrimaryParent === YES) {
         return {
-          children: [],
-          existingApplications: [],
+          children: childrenFromEarlierApplications,
+          existingApplications,
+          childApplicationLinks: [],
         }
       }
 
@@ -180,8 +238,12 @@ export class ChildrenService {
       }
 
       return {
-        children: [children],
-        existingApplications: [],
+        children: collectChildren(
+          [childrenFromEarlierApplications, [children]],
+          existingApplications,
+        ) as ChildInformation[],
+        existingApplications,
+        childApplicationLinks: [],
       }
     }
 
@@ -231,6 +293,7 @@ export class ChildrenService {
         transferredDays +
         multipleBirthsDays
 
+      // Linking to an existing application is `collectChildren`'s job below.
       children.push({
         ...child,
         remainingDays,
@@ -241,15 +304,42 @@ export class ChildrenService {
     }
 
     return {
-      children,
+      children: collectChildren(
+        [childrenFromEarlierApplications, children],
+        existingApplications,
+      ) as ChildInformation[],
+      existingApplications,
+      childApplicationLinks: [],
     }
+  }
+
+  /**
+   * The applicant's own parental leave applications. Excludes prerequisites-state
+   * applications: those are throwaway shells created just to reach the
+   * select-child screen, including the one this provider is running for.
+   */
+  private async applicationsWhereApplicant(
+    application: Application,
+    customTemplateFindQuery: CustomTemplateFindQuery,
+  ): Promise<Application[]> {
+    return (
+      await customTemplateFindQuery({ applicant: application.applicant })
+    ).filter(
+      ({ id, state }) =>
+        state !== States.PREREQUISITES && id !== application.id,
+    )
   }
 
   async childrenAndExistingApplications(
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
     pregnancyStatus?: PregnancyStatus | null,
-  ): Promise<ChildInformationWithoutRights[]> {
+    vmstParentalLeaves?: ParentalLeave[] | null,
+  ): Promise<{
+    children: ChildInformationWithoutRights[]
+    existingApplications: ExistingChildApplication[]
+    childApplicationLinks: ChildApplicationLink[]
+  }> {
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
       await customTemplateFindQuery({
@@ -291,8 +381,25 @@ export class ChildrenService {
           state === States.EMPLOYER_APPROVAL ||
           state === States.EMPLOYER_ACTION
 
-        if (isInProgress && applicationFundId === '') {
-          // The application of the primary parent has to be completed
+        // The primary parent's application has to have reached VMST, otherwise the
+        // secondary parent is offered a child they cannot apply for: VMST answers
+        // their submit with "Móðir þarf að stofna umsókn fyrst".
+
+        // A mock application was never sent to VMST — `sendApplication` hands back
+        // the mock fund id without calling out at all — so it cannot support a real
+        // secondary parent no matter what state it reached. Deliberately not gated
+        // on `isInProgress`: mock-approving walks the application straight to
+        // `vinnumalastofnunApproval`, which that list does not cover.
+        //
+        // Only real applicants get here; `provideChildren` diverts a mock one to
+        // `getMockData`, which never consults the other-parent list.
+        if (applicationFundId === MOCK_APPLICATION_FUND_ID) {
+          return false
+        }
+
+        // `!applicationFundId` rather than `=== ''`: "no fund id" arrives as both
+        // an empty string and null, depending on which provider last ran.
+        if (isInProgress && !applicationFundId) {
           return false
         }
 
@@ -314,10 +421,45 @@ export class ChildrenService {
         return true
       })
 
+    const vmstExistingApplications = vmstParentalLeaves
+      ? vmstParentalLeaves
+          .filter(
+            ({ applicationId, expectedDateOfBirth, adoptionDate }) =>
+              !!applicationId && (!!expectedDateOfBirth || !!adoptionDate),
+          )
+          .map(
+            ({
+              applicationId,
+              expectedDateOfBirth,
+              adoptionDate,
+              applicationFundId,
+            }) => ({
+              applicationId: applicationId!,
+              expectedDateOfBirth: expectedDateOfBirth ?? '',
+              adoptionDate: adoptionDate || undefined,
+              hasApplicationFundId: !!applicationFundId,
+              isChangeInProgress: false,
+            }),
+          )
+      : []
+
+    // Preserve prior links so a transient VMST omission cannot forget a link
+    // the applicant already relies on.
+    const previousChildApplicationLinks = getValueViaPath<
+      ChildApplicationLink[]
+    >(application.externalData, 'children.data.childApplicationLinks', [])
+
+    const childApplicationLinks = vmstParentalLeavesToChildApplicationLinks(
+      vmstParentalLeaves ?? [],
+      previousChildApplicationLinks,
+    )
+
     return getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
       pregnancyStatus,
+      vmstExistingApplications,
+      childApplicationLinks,
     )
   }
 

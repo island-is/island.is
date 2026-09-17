@@ -645,4 +645,46 @@ describe('when constructing a new period', () => {
       values: {},
     })
   })
+
+  it('should accept period data from simplified date-range + ratio UI', () => {
+    // This simulates the data format produced by the new PeriodDateRange + PeriodPercentage UI
+    // where firstPeriodStart and useLength are set via hidden inputs
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        ratio: '100',
+      }),
+    ).toEqual(undefined)
+  })
+
+  it('should accept second period from simplified UI without firstPeriodStart', () => {
+    const firstPeriodEnd = addDays(DEFAULT_DOB_DATE, 30)
+    const secondPeriodStart = addDays(firstPeriodEnd, 1)
+    const secondPeriodEnd = addDays(secondPeriodStart, 30)
+
+    expect(
+      answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          {
+            firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+            startDate: DEFAULT_DOB,
+            useLength: NO,
+            endDate: formatDate(firstPeriodEnd),
+            ratio: '100',
+          },
+          {
+            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+            startDate: formatDate(secondPeriodStart),
+            useLength: NO,
+            endDate: formatDate(secondPeriodEnd),
+            ratio: '80',
+          },
+        ],
+        application,
+      ),
+    ).toEqual(undefined)
+  })
 })

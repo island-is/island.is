@@ -1,3 +1,10 @@
+/**
+ * Fund id handed out instead of calling VMST when an application runs on mock
+ * data. Its presence means there is no real VMST record behind the application,
+ * so nothing may be sent to or validated against VMST for it.
+ */
+export const MOCK_APPLICATION_FUND_ID = 'mock-application-fund-id'
+
 export const apiConstants = {
   actualDateOfBirth: 'date_of_birth',
   actualDateOfBirthMonths: 'date_of_birth_months',

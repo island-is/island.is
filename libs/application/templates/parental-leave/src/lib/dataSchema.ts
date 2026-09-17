@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import {
+  ApplicationAction,
   MANUAL,
   SPOUSE,
   TransferRightsOption,
@@ -26,24 +27,43 @@ import { defaultMultipleBirthsMonths } from '../config'
 
 const PersonalAllowance = z
   .object({
-    usePersonalAllowance: z.enum([YES, NO]),
+    usePersonalAllowance: z.enum([YES, NO]).optional(),
     usage: z.string().optional(),
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
+    doNotUsePersonalAllowance: z.array(z.string()).optional(),
   })
   .refine(
-    ({ usePersonalAllowance, useAsMuchAsPossible }) =>
-      usePersonalAllowance === YES ? !!useAsMuchAsPossible : true,
+    ({
+      usePersonalAllowance,
+      useAsMuchAsPossible,
+      doNotUsePersonalAllowance,
+    }) => {
+      if (doNotUsePersonalAllowance !== undefined) return true
+      return usePersonalAllowance === YES ? !!useAsMuchAsPossible : true
+    },
     {
       path: ['useAsMuchAsPossible'],
     },
   )
   .refine(
-    ({ usePersonalAllowance, usage, useAsMuchAsPossible }) =>
-      usePersonalAllowance === YES && useAsMuchAsPossible === NO
+    ({
+      usePersonalAllowance,
+      usage,
+      useAsMuchAsPossible,
+      doNotUsePersonalAllowance,
+    }) => {
+      if (doNotUsePersonalAllowance?.includes(YES)) return true
+      if (doNotUsePersonalAllowance !== undefined) {
+        return usage
+          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
+          : false
+      }
+      return usePersonalAllowance === YES && useAsMuchAsPossible === NO
         ? usage
           ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
           : false
-        : true,
+        : true
+    },
     {
       path: ['usage'],
     },
@@ -63,6 +83,19 @@ const FileSchema = z.object({
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().min(1),
+  // What this application is for. Optional so applications created before
+  // one-application-per-action still validate; readers default to APPLY.
+  applicationAction: z
+    .enum([
+      ApplicationAction.APPLY,
+      ApplicationAction.CHANGE,
+      ApplicationAction.RESIDENCE_GRANT,
+    ])
+    .optional(),
+  // The application this one continues, and the id VMST knows the whole
+  // sequence by. Both empty/absent for a first-time application.
+  previousApplicationId: z.string().optional(),
+  vmstApplicationId: z.string().optional(),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
@@ -296,7 +329,7 @@ export const dataSchema = z.object({
     .optional(),
   multipleBirths: z
     .object({
-      hasMultipleBirths: z.enum([YES, NO]),
+      hasMultipleBirths: z.enum([YES, NO]).optional(),
       multipleBirths: z.string().optional(),
     })
     .refine(
@@ -326,11 +359,18 @@ export const dataSchema = z.object({
         path: ['multipleBirths'],
         params: errorMessages.tooManyMultipleBirthsAnswer,
       },
-    ),
+    )
+    .optional(),
   addEmployer: z.enum([YES, NO]),
   addPeriods: z.enum([YES, NO]),
   fileUpload: z.object({
     studentFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    selfEmployedFile: z
       .array(FileSchema)
       .optional()
       .refine((a) => a === undefined || a.length > 0, {
@@ -414,9 +454,7 @@ export const dataSchema = z.object({
           path: ['stillEmployed'],
         }),
     )
-    .refine((e) => e === undefined || e.length > 0, {
-      params: errorMessages.employersRequired,
-    }),
+    .optional(),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

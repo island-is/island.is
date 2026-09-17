@@ -8,11 +8,15 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { PARENTAL_LEAVE, States } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getChangeBaseline,
+  normalize,
+} from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
 import { NO, YES } from '@island.is/application/core'
 
@@ -30,6 +34,20 @@ export const Employment = ({
     employerLastSixMonths,
     applicationType,
   } = getApplicationAnswers(application.answers)
+
+  const previous = getChangeBaseline(application.externalData)?.employment
+  const hasChanges =
+    !!previous &&
+    (normalize(previous.isSelfEmployed) !== normalize(isSelfEmployed) ||
+      normalize(previous.isReceivingUnemploymentBenefits) !==
+        normalize(isReceivingUnemploymentBenefits) ||
+      JSON.stringify(previous.employers) !==
+        JSON.stringify(
+          employers.map((employer) => ({
+            email: employer.email,
+            ratio: employer.ratio,
+          })),
+        ))
 
   const shouldShowApproved = application.state !== States.DRAFT
 
@@ -90,9 +108,18 @@ export const Employment = ({
         employerLastSixMonths === YES) && (
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <Label>
-              {formatMessage(parentalLeaveFormMessages.employer.title)}
-            </Label>
+            <Box display="flex" alignItems="center" columnGap={1}>
+              <Label>
+                {formatMessage(parentalLeaveFormMessages.employer.title)}
+              </Label>
+              {hasChanges && (
+                <Tag variant="purple">
+                  {formatMessage(
+                    parentalLeaveFormMessages.shared.changesMadeTag,
+                  )}
+                </Tag>
+              )}
+            </Box>
             {employers?.length > 0 && (
               <Box paddingTop={3}>
                 <StaticTableFormField

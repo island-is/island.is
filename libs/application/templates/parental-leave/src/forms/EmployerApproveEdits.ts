@@ -37,6 +37,7 @@ export const EmployerApproveEdits: Form = buildForm({
               }),
               format: '######-####',
               placeholder: '000000-0000',
+              required: true,
             }),
           ],
         }),

@@ -9,6 +9,9 @@ import {
   Tooltip,
   ContentBlock,
   AlertMessage,
+  Table,
+  Text,
+  Icon,
 } from '@island.is/island-ui/core'
 import {
   findProblemInApolloError,
@@ -16,11 +19,11 @@ import {
 } from '@island.is/shared/problem'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { Timeline } from '../components/Timeline/Timeline'
 import {
   formatPeriods,
   getAvailableRightsInDays,
   getApplicationAnswers,
+  getVmstApplicationId,
   synchronizeVMSTPeriods,
   getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
 } from '../../lib/parentalLeaveUtils'
@@ -47,15 +50,15 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
   setRepeaterItems,
   setBeforeSubmitCallback,
   setFieldLoadingState,
+  goToScreen,
 }) => {
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const editable =
-    application.state === States.DRAFT ||
+  const isEditOrAddState =
     application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+  const editable = application.state === States.DRAFT || isEditOrAddState
 
   // Need to be consider again when applicant could change basic information
-  const shouldCall =
-    application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+  const shouldCall = isEditOrAddState
 
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
@@ -66,7 +69,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
   const { rawPeriods, periods } = getApplicationAnswers(application.answers)
   const { data, loading } = useQuery(GetApplicationInformation, {
     variables: {
-      applicationId: application.id,
+      applicationId: getVmstApplicationId(application),
       nationalId: application.applicant,
     },
     skip: !shouldCall,
@@ -129,6 +132,12 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
           return [false, formatMessage(errorMessages.periodsCouldNotContinue)]
         }
 
+        // In edit flow, navigate back to the overview instead of advancing
+        if (isEditOrAddState && goToScreen) {
+          goToScreen('confirmation')
+          return [false, '']
+        }
+
         return [true, null]
       } catch (e) {
         const problem = findProblemInApolloError(e as any)
@@ -150,6 +159,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
     editable,
     expandRepeater,
     formatMessage,
+    goToScreen,
     locale,
     periods,
     rawPeriods,
@@ -170,8 +180,6 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
     return null
   }
 
-  const dobDate = new Date(dob)
-
   const hasAddedPeriods = periods?.length > 0
   const canAddAnotherPeriod = remainingRights >= 1
 
@@ -188,19 +196,108 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
       )}
 
       <Box marginTop={showDescription ? 3 : undefined} marginBottom={3}>
-        <Timeline
-          initDate={dobDate}
-          title={formatMessage(
-            parentalLeaveFormMessages.shared.dateOfBirthTitle,
-          )}
-          titleSmall={formatMessage(
-            parentalLeaveFormMessages.shared.dateOfBirthTitle,
-          )}
-          periods={formatPeriods(application, formatMessage)}
-          onDeletePeriod={onDeletePeriod}
-          editable={editable}
-        />
-        {!hasAddedPeriods && (
+        {hasAddedPeriods ? (
+          <Table.Table>
+            <Table.Head>
+              <Table.Row>
+                <Table.HeadData></Table.HeadData>
+                <Table.HeadData>
+                  {formatMessage(
+                    parentalLeaveFormMessages.leavePlan.periodTitle,
+                  )}
+                </Table.HeadData>
+                <Table.HeadData>
+                  {formatMessage(
+                    parentalLeaveFormMessages.leavePlan.periodFrom,
+                  )}
+                </Table.HeadData>
+                <Table.HeadData>
+                  {formatMessage(parentalLeaveFormMessages.leavePlan.periodTo)}
+                </Table.HeadData>
+                <Table.HeadData>
+                  {formatMessage(
+                    parentalLeaveFormMessages.leavePlan.periodRatio,
+                  )}
+                </Table.HeadData>
+                <Table.HeadData>
+                  {formatMessage(
+                    parentalLeaveFormMessages.leavePlan.periodParent,
+                  )}
+                </Table.HeadData>
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {formatPeriods(application, formatMessage).map(
+                (period, index) => (
+                  <Table.Row key={index}>
+                    <Table.Data>
+                      <Box display="flex" alignItems="center">
+                        {editable && period.canDelete && (
+                          <Tooltip
+                            placement="left"
+                            text={formatMessage(
+                              parentalLeaveFormMessages.leavePlan.deletePeriod,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => onDeletePeriod(period.startDate)}
+                            >
+                              <Icon
+                                icon="trash"
+                                type="outline"
+                                color="blue400"
+                              />
+                            </button>
+                          </Tooltip>
+                        )}
+                      </Box>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text variant="small" fontWeight="medium">
+                        {formatMessage(
+                          parentalLeaveFormMessages.reviewScreen.period,
+                          { index: index + 1, ratio: period.ratio },
+                        )}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text variant="small">
+                        {new Date(period.startDate).toLocaleDateString(
+                          'is-IS',
+                          {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          },
+                        )}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text variant="small">
+                        {new Date(period.endDate).toLocaleDateString('is-IS', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text variant="small">{period.ratio}%</Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text variant="small">
+                        {formatMessage(
+                          parentalLeaveFormMessages.leavePlan.periodYou,
+                        )}
+                      </Text>
+                    </Table.Data>
+                  </Table.Row>
+                ),
+              )}
+            </Table.Body>
+          </Table.Table>
+        ) : (
           <FieldDescription
             description={formatMessage(
               parentalLeaveFormMessages.leavePlan.empty,
