@@ -550,7 +550,10 @@ export const caseInclude: Includeable[] = [
 ]
 
 // The case counts only need to know when an indictment was confirmed, so the
-// event log is joined filtered down to that one event.
+// event log is joined filtered down to that one event. The alias is spelled out
+// on every association here, as caseInclude does - Sequelize infers it from the
+// single Case-EventLog relation either way, but naming it keeps the graph
+// readable and survives a second relation being added.
 export const caseStatisticsInclude: Includeable[] = [
   {
     model: EventLog,
