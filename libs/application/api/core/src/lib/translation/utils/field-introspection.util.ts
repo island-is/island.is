@@ -6,10 +6,8 @@ import type {
   FormText,
   FormTextArray,
   FormTextWithLocale,
-  ImageField,
   RepeaterItem,
   StaticText,
-  TextField,
 } from '@island.is/application/types'
 import { FieldTypes } from '@island.is/application/types'
 import type { MessageDescriptorInfo } from '@island.is/application/types'
@@ -20,6 +18,7 @@ import {
   isMessageDescriptor,
   mergeMessageDescriptors,
   extractStaticText,
+  toMessageDescriptorInfo,
 } from './message-descriptor.util'
 
 export const extractDisplayFieldMessageDescriptors = (
@@ -27,18 +26,10 @@ export const extractDisplayFieldMessageDescriptors = (
 ): MessageDescriptorInfo[] => {
   const extra: MessageDescriptorInfo[] = []
   if (df.label != null && isMessageDescriptor(df.label)) {
-    extra.push({
-      id: String(df.label.id),
-      defaultMessage: df.label.defaultMessage as string | undefined,
-      description: df.label.description as string | undefined,
-    })
+    extra.push(toMessageDescriptorInfo(df.label))
   }
   if (df.suffix != null && isMessageDescriptor(df.suffix)) {
-    extra.push({
-      id: String(df.suffix.id),
-      defaultMessage: df.suffix.defaultMessage as string | undefined,
-      description: df.suffix.description as string | undefined,
-    })
+    extra.push(toMessageDescriptorInfo(df.suffix))
   }
   return extra
 }
@@ -56,7 +47,7 @@ export const displayFieldStaticIntrospectionFromLeaf = (
   if (leaf.type !== FieldTypes.DISPLAY) {
     return {}
   }
-  const df = leaf as DisplayField
+  const df = leaf
   let displayLabelMessageId: string | null = null
   let displaySuffixMessageId: string | null = null
   let displayLabelStatic: string | null = null
@@ -94,7 +85,7 @@ export const textFieldIntrospectionFromLeaf = (
   if (leaf.type !== FieldTypes.TEXT) {
     return {}
   }
-  const tf = leaf as TextField
+  const tf = leaf
   const variant = tf.variant ?? 'text'
   if (variant === 'textarea' && typeof tf.rows === 'number') {
     return {
@@ -119,13 +110,13 @@ export const imageFieldIntrospectionFromLeaf = (
   if (leaf.type !== FieldTypes.IMAGE) {
     return {}
   }
-  const im = leaf as ImageField
+  const im = leaf
   let imageUrl: string | null = null
   let imageSvgComponentName: string | null = null
   if (typeof im.image === 'string') {
     imageUrl = im.image
   } else if (typeof im.image === 'function') {
-    const fn = im.image as Function & { displayName?: string }
+    const fn = im.image
     const name = (fn.displayName || fn.name || '').trim()
     imageSvgComponentName = name && name !== 'anonymous' ? name : null
   }
@@ -305,7 +296,7 @@ export const extractMessageDescriptorsFromField = (
   return mergeMessageDescriptors(
     descriptors,
     field.type === FieldTypes.DISPLAY
-      ? extractDisplayFieldMessageDescriptors(field as DisplayField)
+      ? extractDisplayFieldMessageDescriptors(field)
       : [],
   )
 }
@@ -326,7 +317,7 @@ export const enrichNationalIdWithNameFieldDescriptors = (
     out = mergeMessageDescriptors(
       out,
       extractMessageDescriptorsFromFormText(
-        coreErrorMessages.nationalRegistryNationalId as FormText,
+        coreErrorMessages.nationalRegistryNationalId,
       ),
     )
   }
@@ -334,7 +325,7 @@ export const enrichNationalIdWithNameFieldDescriptors = (
     out = mergeMessageDescriptors(
       out,
       extractMessageDescriptorsFromFormText(
-        coreErrorMessages.nationalRegistryName as FormText,
+        coreErrorMessages.nationalRegistryName,
       ),
     )
   }
@@ -342,7 +333,7 @@ export const enrichNationalIdWithNameFieldDescriptors = (
     out = mergeMessageDescriptors(
       out,
       extractMessageDescriptorsFromFormText(
-        coreErrorMessages.nationalRegistryPhone as FormText,
+        coreErrorMessages.nationalRegistryPhone,
       ),
     )
   }
@@ -350,7 +341,7 @@ export const enrichNationalIdWithNameFieldDescriptors = (
     out = mergeMessageDescriptors(
       out,
       extractMessageDescriptorsFromFormText(
-        coreErrorMessages.nationalRegistryEmail as FormText,
+        coreErrorMessages.nationalRegistryEmail,
       ),
     )
   }

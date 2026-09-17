@@ -1,5 +1,10 @@
 import type { MessageDescriptor } from 'react-intl'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import type {
+  Application,
   FormText,
   FormTextArray,
   FormTextWithLocale,
@@ -14,7 +19,10 @@ export const extractStaticText = (
   if (!text) return null
   if (typeof text === 'string') return text
   if (typeof text === 'object' && 'defaultMessage' in text) {
-    return (text.defaultMessage as string) ?? text.id ?? null
+    if (typeof text.defaultMessage === 'string') {
+      return text.defaultMessage
+    }
+    return text.id != null ? String(text.id) : null
   }
   return null
 }
@@ -28,7 +36,7 @@ export const isMessageDescriptor = (obj: unknown): obj is MessageDescriptor => {
   )
 }
 
-const toMessageDescriptorInfo = (
+export const toMessageDescriptorInfo = (
   value: MessageDescriptor,
 ): MessageDescriptorInfo => ({
   id: String(value.id),
@@ -82,7 +90,7 @@ export const flattenMessageDescriptors = (
       return
     }
 
-    for (const nested of Object.values(value as Record<string, unknown>)) {
+    for (const nested of Object.values(value)) {
       visit(nested)
     }
   }
@@ -98,31 +106,24 @@ export const tryInvokeFormTextFunction = (
   staticText: string | null
 } => {
   try {
-    const mockApp = {
+    const mockApp: Application = {
       answers: {},
       externalData: {},
       id: '',
       state: '',
-      typeId: '',
+      typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
       applicant: '',
       assignees: [],
       applicantActors: [],
       modified: new Date(),
       created: new Date(),
-      attachments: {},
-      status: 'draft',
+      status: ApplicationStatus.DRAFT,
     }
     const result = fn(mockApp, 'is')
     if (isMessageDescriptor(result)) {
       return {
-        descriptors: [
-          {
-            id: String(result.id),
-            defaultMessage: result.defaultMessage as string | undefined,
-            description: result.description as string | undefined,
-          },
-        ],
-        staticText: extractStaticText(result as StaticText),
+        descriptors: [toMessageDescriptorInfo(result)],
+        staticText: extractStaticText(result),
       }
     }
   } catch {
@@ -138,13 +139,7 @@ export const extractMessageDescriptorsFromFormText = (
   if (typeof text === 'function') return []
   if (typeof text === 'string') return []
   if (isMessageDescriptor(text)) {
-    return [
-      {
-        id: String(text.id),
-        defaultMessage: text.defaultMessage as string | undefined,
-        description: text.description as string | undefined,
-      },
-    ]
+    return [toMessageDescriptorInfo(text)]
   }
   return []
 }
@@ -179,17 +174,7 @@ export const extractMessageDescriptorsFromPropsDeep = (
     return []
   }
   if (isMessageDescriptor(value)) {
-    return [
-      {
-        id: String((value as MessageDescriptor).id),
-        defaultMessage: (value as MessageDescriptor).defaultMessage as
-          | string
-          | undefined,
-        description: (value as MessageDescriptor).description as
-          | string
-          | undefined,
-      },
-    ]
+    return [toMessageDescriptorInfo(value)]
   }
   if (Array.isArray(value)) {
     if (visited.has(value)) {
@@ -205,13 +190,12 @@ export const extractMessageDescriptorsFromPropsDeep = (
     return out
   }
   if (typeof value === 'object') {
-    const obj = value as object
-    if (visited.has(obj)) {
+    if (visited.has(value)) {
       return []
     }
-    visited.add(obj)
+    visited.add(value)
     const out: MessageDescriptorInfo[] = []
-    for (const v of Object.values(value as Record<string, unknown>)) {
+    for (const v of Object.values(value)) {
       out.push(...extractMessageDescriptorsFromPropsDeep(v, depth + 1, visited))
     }
     return out
@@ -251,12 +235,12 @@ export const extractDescriptorsFromFormTextMaybeArray = (
     for (const t of text) {
       acc = mergeMessageDescriptors(
         acc,
-        extractMessageDescriptorsFromFormText(t as FormText),
+        extractMessageDescriptorsFromFormText(t),
       )
     }
     return acc
   }
-  return extractMessageDescriptorsFromFormText(text as FormText)
+  return extractMessageDescriptorsFromFormText(text)
 }
 
 export const extractDescriptorsFromKeyValueItem = (

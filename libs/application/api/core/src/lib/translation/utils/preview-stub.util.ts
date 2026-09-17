@@ -1,3 +1,7 @@
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import type {
   Application,
   CheckboxField,
@@ -21,7 +25,6 @@ import {
   extractDescriptorsFromKeyValueItem,
   extractStaticText,
   isMessageDescriptor,
-  extractMessageDescriptorsFromFormText,
 } from './message-descriptor.util'
 
 export const stubApplicationForOptionPreview = (): Application => {
@@ -30,23 +33,29 @@ export const stubApplicationForOptionPreview = (): Application => {
     externalData: {},
     id: '',
     state: '',
-    typeId: '',
+    typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
     applicant: '',
     assignees: [],
     applicantActors: [],
     modified: new Date(),
     created: new Date(),
-    attachments: {},
-    status: 'draft',
-  } as unknown as Application
+    status: ApplicationStatus.DRAFT,
+  }
 }
 
 export const stubUserForIdPreview = (): BffUser => {
   const nationalId = '0000000000'
   return {
-    nationalId,
-    profile: { nationalId },
-  } as unknown as BffUser
+    scopes: [],
+    profile: {
+      sid: '',
+      nationalId,
+      name: '',
+      idp: '',
+      subjectType: 'person',
+      iss: '',
+    },
+  }
 }
 
 export const extractStaticId = (id: unknown): string => {
