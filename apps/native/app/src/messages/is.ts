@@ -925,6 +925,14 @@ export const is = {
     'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
   'health.messages.replyBlocked.awaitingAcknowledgement':
     'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
+  'health.messages.compose.introTitle': 'Hafa samband',
+  'health.messages.compose.introBody1':
+    'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma.',
+  'health.messages.compose.introBody2':
+    'Ef erindið er brýnt og þarfnast svars samdægurs hringdu í <b>1700</b> eða hafðu samband við þitt meðferðarteymi.',
+  'health.messages.compose.introBody3':
+    'Í neyðartilvikum, hringdu í <b>112.</b>',
+  'health.messages.compose.continue': 'Halda áfram',
   'health.messages.compose.newTitle': 'Ný skilaboð',
   'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
   'health.messages.compose.selectService': 'Veldu þjónustu',

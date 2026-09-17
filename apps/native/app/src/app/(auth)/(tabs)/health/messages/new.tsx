@@ -1,10 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Platform, ScrollView, View } from 'react-native'
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { NativeStackHeaderItem } from '@react-navigation/native-stack'
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+} from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
+import { HealthMessageIntro } from '@/components/health-message-intro'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
@@ -21,7 +28,6 @@ import { getMessagingWindowInfo } from '@/utils/messaging-window'
 import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
-  Checkbox,
   GeneralCardSkeleton,
   Problem,
   ProblemTemplate,
@@ -54,6 +60,9 @@ export default function HealthMessageComposeScreen() {
   const theme = useTheme()
   const locale = useLocale()
   const isReply = !!conversationId
+  // Replies go straight to the form: the intro explains starting a new
+  // conversation, and the consent it collects only applies to new ones.
+  const hasIntro = !isReply
 
   const [message, setMessage] = useState('')
   const [recipientKey, setRecipientKey] = useState<string>()
@@ -61,6 +70,9 @@ export default function HealthMessageComposeScreen() {
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [recipientMenuOpen, setRecipientMenuOpen] = useState(false)
   const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
+  const [step, setStep] = useState<'intro' | 'compose'>(
+    hasIntro ? 'intro' : 'compose',
+  )
 
   const recipientsRes = useGetHealthConversationRecipientsQuery({
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
@@ -181,7 +193,6 @@ export default function HealthMessageComposeScreen() {
       !!selectedRecipient &&
       !!typeCode &&
       !isCertificateSelected &&
-      termsAccepted &&
       !isFormLocked
 
   const onSend = () => {
@@ -255,11 +266,64 @@ export default function HealthMessageComposeScreen() {
   // path lets us dismiss the menu before the sheet goes.
   const isMenuOpen = recipientMenuOpen || serviceMenuOpen
 
+  const goBackToIntro = useCallback(() => setStep('intro'), [])
+
+  // Android has no close item in the modal header, so the header arrow and the
+  // hardware/gesture back all pop the sheet. Intercept those to step back to
+  // the intro instead, while letting programmatic navigation (the replace after
+  // a message is created) through untouched.
+  const navigation = useNavigation()
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !hasIntro || step !== 'compose') {
+      return
+    }
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (e.data.action.type !== 'GO_BACK' && e.data.action.type !== 'POP') {
+        return
+      }
+      e.preventDefault()
+      goBackToIntro()
+    })
+    return unsubscribe
+  }, [navigation, hasIntro, step, goBackToIntro])
+
+  // iOS clears the header's left slot for modals (close lives on the right), so
+  // the step-back chevron is added explicitly. Mirrors `blueBackItem`.
+  const headerLeftItems = useCallback(
+    (): NativeStackHeaderItem[] => [
+      {
+        type: 'button',
+        label: '',
+        icon: { type: 'sfSymbol', name: 'chevron.backward' },
+        tintColor: theme.color.blue400,
+        onPress: goBackToIntro,
+      },
+    ],
+    [theme.color.blue400, goBackToIntro],
+  )
+
+  if (step === 'intro') {
+    return (
+      <>
+        <StackScreen closeable options={{ title: '', gestureEnabled: true }} />
+        <HealthMessageIntro
+          termsAccepted={termsAccepted}
+          onToggleTerms={() => setTermsAccepted(!termsAccepted)}
+          onContinue={() => setStep('compose')}
+        />
+      </>
+    )
+  }
+
   return (
     <>
       <StackScreen
         closeable
-        options={{ title: '', gestureEnabled: !isMenuOpen }}
+        options={{
+          title: '',
+          gestureEnabled: !isMenuOpen,
+          ...(hasIntro && Platform.OS === 'ios' && { headerLeftItems }),
+        }}
       />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
       <ScrollView
@@ -400,44 +464,30 @@ export default function HealthMessageComposeScreen() {
               )}
 
               {!isCertificateSelected && (
-                <>
-                  <View style={{ rowGap: theme.spacing.smallGutter }}>
-                    <TextField
-                      label={intl.formatMessage({
-                        id: 'health.messages.compose.messageLabel',
-                      })}
-                      placeholder={intl.formatMessage({
-                        id: 'health.messages.compose.messagePlaceholder',
-                      })}
-                      value={message}
-                      onChangeText={setMessage}
-                      multiline
-                      numberOfLines={6}
-                      inputStyle={{ minHeight: 120 }}
-                      maxLength={MESSAGE_MAX_LENGTH}
-                      disabled={isFormLocked}
-                    />
-                    <Typography
-                      variant="body3"
-                      color={theme.color.dark300}
-                      textAlign="right"
-                    >
-                      {`${message.length}/${MESSAGE_MAX_LENGTH}`}
-                    </Typography>
-                  </View>
-
-                  {!isReply && (
-                    <View style={{ marginTop: -theme.spacing[2] }}>
-                      <Checkbox
-                        checked={termsAccepted}
-                        onPress={() => setTermsAccepted(!termsAccepted)}
-                        label={intl.formatMessage({
-                          id: 'health.messages.compose.termsAccept',
-                        })}
-                      />
-                    </View>
-                  )}
-                </>
+                <View style={{ rowGap: theme.spacing.smallGutter }}>
+                  <TextField
+                    label={intl.formatMessage({
+                      id: 'health.messages.compose.messageLabel',
+                    })}
+                    placeholder={intl.formatMessage({
+                      id: 'health.messages.compose.messagePlaceholder',
+                    })}
+                    value={message}
+                    onChangeText={setMessage}
+                    multiline
+                    numberOfLines={6}
+                    inputStyle={{ minHeight: 120 }}
+                    maxLength={MESSAGE_MAX_LENGTH}
+                    disabled={isFormLocked}
+                  />
+                  <Typography
+                    variant="body3"
+                    color={theme.color.dark300}
+                    textAlign="right"
+                  >
+                    {`${message.length}/${MESSAGE_MAX_LENGTH}`}
+                  </Typography>
+                </View>
               )}
             </View>
             {/* Certificate requests aren't supported in the app — point the
