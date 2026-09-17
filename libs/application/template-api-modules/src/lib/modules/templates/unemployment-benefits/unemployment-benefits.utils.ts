@@ -235,9 +235,9 @@ export const getJobCareer = (
     ) || []
   const previousJobCareer =
     employmentHistory?.lastJobs
-      // filters out stray empty {} objects
-      ?.filter((job) => job && Object.keys(job).length > 0)
-      .map((job) => {
+      ?.map((job) => {
+        // filters out stray empty {} objects
+        if (!job || Object.keys(job).length === 0) return null
         const employerSSN =
           job.nationalIdWithName && job.nationalIdWithName !== '-'
             ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
@@ -256,13 +256,14 @@ export const getJobCareer = (
           workRatio: parseInt(job.percentage || ''),
           jobCodeId: job.jobCodeId || '',
         }
-      }) || []
+      })
+      .filter((job): job is NonNullable<typeof job> => job !== null) || []
 
   const currentJobCareer =
     employmentHistory?.currentJobs
-      // filters out stray empty {} objects
-      ?.filter((job) => job && Object.keys(job).length > 0)
-      .map((job, index) => {
+      ?.map((job, index) => {
+        // filters out stray empty {} objects, index preserved to keep workHours lookup aligned
+        if (!job || Object.keys(job).length === 0) return null
         let workHours
         if (currentJob && currentJob.length > index) {
           workHours = getValueViaPath<string>(
@@ -289,7 +290,8 @@ export const getJobCareer = (
           workHours: workHours || '',
           jobCodeId: job.jobCodeId || '',
         }
-      }) || []
+      })
+      .filter((job): job is NonNullable<typeof job> => job !== null) || []
 
   return { jobs: [previousJobCareer, currentJobCareer].flat() || [] }
 }
