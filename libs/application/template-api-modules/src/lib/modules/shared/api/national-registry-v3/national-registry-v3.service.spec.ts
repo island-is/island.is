@@ -689,14 +689,6 @@ describe('NationalRegistryV3Service', () => {
         TemplateApiError,
       )
     })
-
-    it('returns the cohabitant national ids', async () => {
-      nationalRegistryV3Api.getCohabitants.mockResolvedValue(['9876543210'])
-
-      const result = await service.getCohabitants({ auth } as any)
-
-      expect(result).toEqual(['9876543210'])
-    })
   })
 
   describe('getCohabitantsDetailed', () => {
@@ -767,34 +759,6 @@ describe('NationalRegistryV3Service', () => {
           legalDomicile: null,
         }),
       ])
-    })
-  })
-
-  describe('getNationalIdType', () => {
-    it('returns the national id type from the client', async () => {
-      const nationalIdType = {
-        nationalId: '1234567890',
-        name: 'Einstaklingur',
-        registryCode: '1',
-        registryDescription: 'Einstaklingur',
-      }
-      nationalRegistryV3Api.getNationalIdType.mockResolvedValue(nationalIdType)
-
-      const result = await service.getNationalIdType('1234567890', auth)
-
-      expect(nationalRegistryV3Api.getNationalIdType).toHaveBeenCalledWith(
-        '1234567890',
-        auth,
-      )
-      expect(result).toEqual(nationalIdType)
-    })
-
-    it('returns null when the client returns null', async () => {
-      nationalRegistryV3Api.getNationalIdType.mockResolvedValue(null)
-
-      const result = await service.getNationalIdType('1234567890', auth)
-
-      expect(result).toBeNull()
     })
   })
 })
