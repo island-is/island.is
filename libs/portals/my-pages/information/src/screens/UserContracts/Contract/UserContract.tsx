@@ -13,6 +13,8 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
 import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
+import { mapPropertyTypeToMessage } from '../../../utils/mapPropertyTypeToMessage'
+import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { useParams } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useUserContractQuery } from './UserContract.generated'
@@ -42,10 +44,20 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
+  const address = useMemo(() => {
+    return generateRentalAgreementAddress(
+      contract?.contractProperty ?? undefined,
+    )
+  }, [contract?.contractProperty])
+
+  const propertyTypeMessage = mapPropertyTypeToMessage(
+    contract?.contractProperty?.type,
+  )
+
   return (
     <IntroWrapper
-      title={cm.contractsOverviewTitle}
-      intro={cm.contractDetailSubtitle}
+      title={address ?? cm.contractsOverviewTitle}
+      intro={propertyTypeMessage}
       serviceProvider={{
         slug: HMS_SLUG,
         tooltip: formatMessage(m.rentalAgreementsTooltip),
@@ -112,6 +124,7 @@ const UserContract = () => {
                 contract?.tenants?.map((l) => l.name).join(', ') ?? undefined
               }
             />
+            <InfoLine loading={loading} label={cm.location} content={address} />
             <InfoLine
               loading={loading}
               label={cm.lengthOfRentalAgreement}

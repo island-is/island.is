@@ -12,6 +12,14 @@ query UserContract($id: ID!) {
     dateFrom
     dateTo
     terminationDate
+    contractProperty {
+      id
+      propertyId
+      type
+      streetAndHouseNumber
+      municipality
+      postalCode
+    }
     landlords {
       ...Party
     }
