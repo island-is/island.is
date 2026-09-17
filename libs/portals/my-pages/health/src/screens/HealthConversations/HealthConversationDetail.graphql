@@ -29,6 +29,7 @@ fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
   paid
   amountIsk
   pendingPaymentId
+  pendingPaymentStartedAt
   content {
     __typename
     ...HealthConversationTextContent

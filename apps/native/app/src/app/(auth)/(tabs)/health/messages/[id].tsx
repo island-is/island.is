@@ -89,6 +89,8 @@ const replyBlockedMessageId = (
       return 'health.messages.replyBlocked.awaitingStaff'
     case HealthDirectorateHealthConversationReplyBlockedReason.RepliesDisabled:
       return 'health.messages.replyBlocked.repliesDisabled'
+    case HealthDirectorateHealthConversationReplyBlockedReason.AwaitingAcknowledgement:
+      return 'health.messages.replyBlocked.awaitingAcknowledgement'
     default:
       return 'health.messages.replyBlocked.default'
   }
@@ -592,39 +594,49 @@ export default function HealthMessageDetailScreen() {
         {isSkeleton || conversation ? (
           <ButtonDrawer>
             <SafeAreaView>
-              {isSkeleton ? (
-                <GeneralCardSkeleton height={48} />
-              ) : conversation?.patientCanReply ? (
-                <Button
-                  title={intl.formatMessage({
-                    id: 'health.messages.replyButton',
-                  })}
-                  isTransparent
-                  isOutlined
-                  iconPosition="start"
-                  icon={require('@/assets/icons/reply.png')}
-                  onPress={() =>
-                    router.push({
-                      pathname: composeHref,
-                      params: {
-                        conversationId: id,
-                        recipientName:
-                          conversation?.organization?.name ??
-                          conversation?.lastSenderGroupName ??
-                          '',
-                        subject: conversation?.title ?? '',
-                      },
-                    })
-                  }
-                />
-              ) : (
-                <Alert
-                  type="info"
-                  size="small"
-                  message={replyBlockedMessage}
-                  hasBorder
-                />
-              )}
+              {/* Lift the reply button / blocked alert clear of the home
+                  indicator so it doesn't sit on the bottom edge. */}
+              <View style={{ paddingBottom: theme.spacing[1] }}>
+                {isSkeleton ? (
+                  // The card skeleton carries a bottom margin of its own, which
+                  // would leave the placeholder sitting higher than the button
+                  // or alert that replaces it.
+                  <GeneralCardSkeleton
+                    height={48}
+                    style={{ marginBottom: 0 }}
+                  />
+                ) : conversation?.patientCanReply ? (
+                  <Button
+                    title={intl.formatMessage({
+                      id: 'health.messages.replyButton',
+                    })}
+                    isTransparent
+                    isOutlined
+                    iconPosition="start"
+                    icon={require('@/assets/icons/reply.png')}
+                    onPress={() =>
+                      router.push({
+                        pathname: composeHref,
+                        params: {
+                          conversationId: id,
+                          recipientName:
+                            conversation?.organization?.name ??
+                            conversation?.lastSenderGroupName ??
+                            '',
+                          subject: conversation?.title ?? '',
+                        },
+                      })
+                    }
+                  />
+                ) : (
+                  <Alert
+                    type="info"
+                    size="small"
+                    message={replyBlockedMessage}
+                    hasBorder
+                  />
+                )}
+              </View>
             </SafeAreaView>
           </ButtonDrawer>
         ) : null}

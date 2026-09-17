@@ -923,6 +923,8 @@ export const is = {
     'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagar.',
   'health.messages.replyBlocked.awaitingStaff':
     'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
+  'health.messages.replyBlocked.awaitingAcknowledgement':
+    'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
   'health.messages.compose.newTitle': 'Ný skilaboð',
   'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
   'health.messages.compose.selectService': 'Veldu þjónustu',
