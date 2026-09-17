@@ -41,6 +41,15 @@ export const messages = {
       defaultMessage:
         'Engin samþykkt jafnréttisáætlun fannst hjá Jafnréttisstofu. Ekki er hægt að senda inn launagreiningu fyrr en jafnréttisáætlun fyrirtækisins hefur verið samþykkt.',
     },
+    // The submit-side twin of notAllowed.renewalWindowDescription, without the
+    // date: a TemplateApiError summary is rendered through formatMessage with no
+    // values argument (see handleServerError), so an interpolated date would
+    // reach the applicant as a literal placeholder.
+    renewalWindowNotOpen: {
+      id: 'doe.sr.application:errors.renewalWindowNotOpen',
+      defaultMessage:
+        'Ekki er komið að skilum á launagreiningu hjá fyrirtækinu. Hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -105,6 +114,24 @@ export const messages = {
       id: 'doe.sr.application:notAllowed.notCompanyDescription',
       defaultMessage:
         'Vinsamlegast skráðu þig inn í umboði fyrirtækis til að senda inn launagreiningu.',
+    },
+    // The other half of DMR's eligibility answer: the company holds an approved
+    // jafnréttisáætlun, it is simply too early in the three-year cycle.
+    renewalWindowTitle: {
+      id: 'doe.sr.application:notAllowed.renewalWindowTitle',
+      defaultMessage: 'Ekki er komið að skilum á launagreiningu',
+    },
+    renewalWindowDescription: {
+      id: 'doe.sr.application:notAllowed.renewalWindowDescription',
+      defaultMessage:
+        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Fyrirtækið getur sent inn launagreiningu frá og með {earliestSubmissionDate}.',
+    },
+    // `earliestSubmissionDate` is null until DMR has a due date to anchor the
+    // window on, so the same refusal has to stand without one.
+    renewalWindowDescriptionNoDate: {
+      id: 'doe.sr.application:notAllowed.renewalWindowDescriptionNoDate',
+      defaultMessage:
+        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Ekki er komið að næstu skilum hjá fyrirtækinu.',
     },
   }),
 
@@ -1001,6 +1028,10 @@ export const messages = {
       subCriterionInfo: {
         id: 'doe.sr.application:report.jobClassification.subCriterionInfo',
         defaultMessage: '{description} {weight}% = {max} stig',
+      },
+      selectedStepDescription: {
+        id: 'doe.sr.application:report.jobClassification.selectedStepDescription',
+        defaultMessage: '{order}. þrep: {description}',
       },
       noRolesMessage: {
         id: 'doe.sr.application:report.jobClassification.noRolesMessage',

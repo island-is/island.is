@@ -1,4 +1,4 @@
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
@@ -12,8 +12,6 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
-  CaseState,
-  CaseType,
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
@@ -572,22 +570,9 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantRepositoryService.findAll({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: CaseState.ACCEPTED,
-            type: CaseType.CUSTODY,
-            valid_to_date: { [Op.gte]: literal('current_date') },
-          },
-        },
-      ],
-      where: { nationalId: defendants[0].nationalId },
-    })
-
-    return defendantsInCustody.some((d) => d.case)
+    return this.defendantRepositoryService.existsInActiveCustody(
+      defendants[0].nationalId,
+    )
   }
 
   async deliverDefendantToCourt(

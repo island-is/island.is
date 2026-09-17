@@ -292,9 +292,6 @@
       "@island.is/api/domains/vmst-applications": [
         "libs/api/domains/vmst-applications/src/index.ts"
       ],
-      "@island.is/api/domains/watson-assistant-chat": [
-        "libs/api/domains/watson-assistant-chat/src/index.ts"
-      ],
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
@@ -414,14 +411,14 @@
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],
+      "@island.is/application/templates/district-commissioners/driving-license": [
+        "libs/application/templates/district-commissioners/driving-license/src/index.ts"
+      ],
       "@island.is/application/templates/district-commissioners/driving-license-additional": [
         "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
-      ],
-      "@island.is/application/templates/district-commissioners/driving-license": [
-        "libs/application/templates/district-commissioners/driving-license/src/index.ts"
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
