@@ -14,6 +14,7 @@ import {
   CompanyRegistryApi,
   DoeCompanyApi,
   IdentityApiProvider,
+  SalaryReportEligibilityApi,
   SubCriterionCatalogApi,
   UserProfileApi,
 } from '../../dataProviders'
@@ -60,6 +61,9 @@ export const Prerequisites = buildForm({
               provider: ActiveEqualityReportApi,
               title: messages.prerequisites.activeEqualityReport.title,
               subTitle: messages.prerequisites.activeEqualityReport.intro,
+            }),
+            buildDataProviderItem({
+              provider: SalaryReportEligibilityApi,
             }),
             buildDataProviderItem({
               provider: CompanyRegistryApi,
