@@ -30,14 +30,14 @@ const courtOfAppealsVerdictAppealsTableGroup = {
       type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
       route: 'afryjud-mal-i-vinnslu',
       title: 'Mál í vinnslu',
-      description: 'Áfrýjaðir dómar í sakamálum.',
+      description: 'Áfrýjuð sakamál.',
       includeCounter: true,
     },
     {
       type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
       route: 'afryjud-afgreidd-mal',
       title: 'Afgreidd mál',
-      description: 'Áfrýjuð sakamál sem búið er að ljúka.',
+      description: 'Mál sem búið er að ljúka.',
     },
   ],
 }

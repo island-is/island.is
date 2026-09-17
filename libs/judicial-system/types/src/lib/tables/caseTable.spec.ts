@@ -127,6 +127,19 @@ describe('court of appeals verdict appeal tables', () => {
     }
   })
 
+  // The group overview renders these straight from the group definition, so the
+  // card copy is only ever as right as this is.
+  it('describes the tables as the design does', () => {
+    const group = getCaseTableGroups(courtOfAppealsUser)[1]
+
+    expect(
+      group.tables.map((t) => [t.title, t.description, t.includeCounter]),
+    ).toEqual([
+      ['Mál í vinnslu', 'Áfrýjuð sakamál.', true],
+      ['Afgreidd mál', 'Mál sem búið er að ljúka.', undefined],
+    ])
+  })
+
   it('titles the columns as the design does', () => {
     expect(
       caseTables[
