@@ -46,6 +46,7 @@ export type {
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
   SalaryByGenderAndScoreDto,
+  SalaryReportEligibilityDto,
   SalaryTotalsDto,
   SubCriterionCatalogEntryDto,
   SubmitApplicationReportCommentDto,
