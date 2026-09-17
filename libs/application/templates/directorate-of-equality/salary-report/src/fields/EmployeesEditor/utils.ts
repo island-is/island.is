@@ -83,11 +83,11 @@ export const getSalaryComponentLabels = (
     additionalFixedCarAllowance: formatMessage(
       m.additionalFixedCarAllowanceLabel,
     ),
+    additionalFixedOther: formatMessage(m.additionalFixedOtherLabel),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
     bonusOccasionalCarAllowance: formatMessage(
       m.bonusOccasionalCarAllowanceLabel,
     ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
     bonusOther: formatMessage(m.bonusOtherLabel),
   }
 }

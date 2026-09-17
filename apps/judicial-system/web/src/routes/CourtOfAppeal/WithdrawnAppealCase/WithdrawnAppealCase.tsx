@@ -65,7 +65,7 @@ const WithdrawnAppealCase = () => {
           <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <CaseNumberInput />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section">
           <SectionHeading
             title={formatMessage(strings.courtRecordFileTitle)}
             marginBottom={1}

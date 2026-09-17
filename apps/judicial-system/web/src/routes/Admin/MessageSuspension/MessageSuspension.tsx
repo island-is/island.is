@@ -6,7 +6,6 @@ import {
   Checkbox,
   Input,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
@@ -22,6 +21,7 @@ import {
   MessageSuspensionCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useMessageSuspensionsQuery } from './messageSuspensions.generated'
 import { useUpdateMessageSuspensionMutation } from './updateMessageSuspension.generated'

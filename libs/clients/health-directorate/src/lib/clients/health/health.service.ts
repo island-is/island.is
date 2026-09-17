@@ -5,6 +5,7 @@ import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  CancelAppointmentConflictReason,
   DispensationHistoryDto,
   DispensationHistoryItemDto,
   OrganDonorDto,
@@ -47,6 +48,8 @@ import {
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
+  meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentV1,
   meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
   questionnaireControllerGetAllQuestionnairesV1,
@@ -84,9 +87,12 @@ import {
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
   TreatmentBaseDto,
+  TreatmentDetailDto,
+  TreatmentDocumentDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
+import { CancelAppointmentResult } from './dtos/cancelAppointmentResult.dto'
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
 export type AttachmentDownloadResult =
@@ -593,16 +599,67 @@ export class HealthDirectorateHealthService {
     return appointment ?? null
   }
 
-  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
-    await withAuthContext(auth, () =>
-      data(
-        meAppointmentControllerCancelAppointmentV1({
-          path: { id },
-        }),
-      ),
-    )
+  public async cancelAppointment(
+    auth: Auth,
+    id: string,
+  ): Promise<CancelAppointmentResult> {
+    try {
+      await withAuthContext(auth, () =>
+        data(
+          meAppointmentControllerCancelAppointmentV1({
+            path: { id },
+          }),
+        ),
+      )
 
-    return true
+      return 'CANCELLED'
+    } catch (e) {
+      if (e instanceof FetchError) {
+        const mapped = this.mapCancelAppointmentAnswer(e)
+        if (mapped) {
+          return mapped
+        }
+      }
+      throw e
+    }
+  }
+
+  /*
+   * Refusals and timeouts arrive as problem documents with content type
+   * application/json, so FetchError.problem is never set and the parsed
+   * document is on FetchError.body (logErrorResponseBody is enabled).
+   */
+  private mapCancelAppointmentAnswer(
+    e: FetchError,
+  ): CancelAppointmentResult | undefined {
+    const body = e.body as { errorCode?: string } | undefined
+    if (!body || typeof body !== 'object') {
+      return undefined
+    }
+
+    if (e.status === 409) {
+      if (
+        body.errorCode === CancelAppointmentConflictReason.CANCELLATION_REFUSED
+      ) {
+        return 'REFUSED'
+      }
+
+      const blockedReasons: string[] = [
+        CancelAppointmentConflictReason.NOT_CANCELLABLE,
+        CancelAppointmentConflictReason.CANCELLATION_DEADLINE_PASSED,
+        CancelAppointmentConflictReason.UNSUPPORTED_CANCEL_METHOD,
+        CancelAppointmentConflictReason.INVALID_STATUS,
+      ]
+      if (body.errorCode && blockedReasons.includes(body.errorCode)) {
+        return 'BLOCKED'
+      }
+    }
+
+    if (e.status === 504 && body.errorCode === 'ACK_NOT_CONFIRMED') {
+      return 'UNCONFIRMED'
+    }
+
+    return undefined
   }
 
   /* Conversations (Health Messages) */
@@ -815,5 +872,35 @@ export class HealthDirectorateHealthService {
     )
 
     return treatments ?? null
+  }
+
+  public async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<TreatmentDetailDto | null> {
+    const treatment = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meTreatmentControllerGetTreatmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return treatment ?? null
+  }
+
+  public async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<TreatmentDocumentDto[] | null> {
+    const documents = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentDocumentsV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return documents ?? null
   }
 }

@@ -2,12 +2,7 @@ import archiver from 'archiver'
 import { col, Includeable, literal, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,11 +23,8 @@ import {
   isRequestCase,
   isRulingOrderWithoutDocument,
   stringTypes,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory, uuidFactory } from '../../factories'
-import { CivilClaimantService, DefendantService } from '../defendant'
 import {
   FileService,
   getConfirmedDefendantsForDefender,
@@ -116,14 +108,13 @@ export const attributes: (keyof Case)[] = [
   'withCourtSessions',
 ]
 
-export interface LimitedAccessUpdateCase
-  extends Pick<
-    Case,
-    | 'caseModifiedExplanation'
-    | 'isolationToDate'
-    | 'validToDate'
-    | 'openedByDefender'
-  > {}
+export type LimitedAccessUpdateCase = Pick<
+  Case,
+  | 'caseModifiedExplanation'
+  | 'isolationToDate'
+  | 'validToDate'
+  | 'openedByDefender'
+>
 
 const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
   'id',
@@ -667,10 +658,6 @@ export const getInclude = (user?: TUser): Includeable[] => [
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
-    @Inject(forwardRef(() => DefendantService))
-    private readonly defendantService: DefendantService,
-    @Inject(forwardRef(() => CivilClaimantService))
-    private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
     private readonly caseRepositoryService: CaseRepositoryService,
@@ -709,86 +696,6 @@ export class LimitedAccessCaseService {
 
     // Return limited access case (read within transaction so we see the updated row)
     return this.findById(theCase.id, { transaction, user })
-  }
-
-  private constructDefender(
-    nationalId: string,
-    name?: string,
-    mobileNumber?: string,
-    email?: string,
-  ): User {
-    const now = nowFactory()
-
-    return {
-      id: uuidFactory(),
-      created: now,
-      modified: now,
-      nationalId,
-      name: name ?? '',
-      title: 'verjandi',
-      mobileNumber: mobileNumber ?? '',
-      email: email ?? '',
-      role: UserRole.DEFENDER,
-      active: true,
-      canConfirmIndictment: false,
-    } as User
-  }
-
-  async findDefenderByNationalId(nationalId: string): Promise<User> {
-    // nationalId comes from a raw @Query param, so normalize it once here and
-    // pass the dash-free value down to the lookups and the constructed user.
-    const normalizedNationalId = nationalId.replace(/-/g, '')
-
-    return this.caseRepositoryService
-      .findOne({
-        where: {
-          defenderNationalId: normalizedNationalId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-        order: [['created', 'DESC']],
-      })
-      .then((theCase) => {
-        if (theCase) {
-          // The national id is associated with a defender in a request case
-          return this.constructDefender(
-            normalizedNationalId,
-            theCase.defenderName,
-            theCase.defenderPhoneNumber,
-            theCase.defenderEmail,
-          )
-        }
-
-        return this.defendantService
-          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
-          .then((defendant) => {
-            if (defendant) {
-              // The national id is associated with a defender in an indictment case
-              return this.constructDefender(
-                normalizedNationalId,
-                defendant.defenderName,
-                defendant.defenderPhoneNumber,
-                defendant.defenderEmail,
-              )
-            }
-
-            return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
-              .then((civilClaimant) => {
-                if (civilClaimant) {
-                  // The national id is associated with a spokesperson for a civil claimant in an indictment case
-                  return this.constructDefender(
-                    normalizedNationalId,
-                    civilClaimant.spokespersonName,
-                    civilClaimant.spokespersonPhoneNumber,
-                    civilClaimant.spokespersonEmail,
-                  )
-                }
-
-                throw new NotFoundException('Defender not found')
-              })
-          })
-      })
   }
 
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {

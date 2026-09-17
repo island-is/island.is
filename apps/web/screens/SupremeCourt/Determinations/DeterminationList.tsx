@@ -121,7 +121,6 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
         },
       },
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, fetchDeterminations, selectedCaseType, searchTerm])
 
   useDebounce(

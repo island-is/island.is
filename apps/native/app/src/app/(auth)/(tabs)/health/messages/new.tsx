@@ -32,6 +32,18 @@ import {
 
 const MESSAGE_MAX_LENGTH = 300
 
+// A recipient is only unique across all three identifiers: the same node and
+// group can appear more than once, once per treatment. Mirrors the my-pages
+// getRecipientKey so both clients key the dropdown the same way.
+const getRecipientKey = (recipient: {
+  nodeId: string
+  groupId: number
+  treatmentId?: string | null
+}) =>
+  `${recipient.nodeId}-${recipient.groupId}${
+    recipient.treatmentId ? `-${recipient.treatmentId}` : ''
+  }`
+
 export default function HealthMessageComposeScreen() {
   const { conversationId, recipientName, subject } = useLocalSearchParams<{
     conversationId?: string
@@ -44,41 +56,40 @@ export default function HealthMessageComposeScreen() {
   const isReply = !!conversationId
 
   const [message, setMessage] = useState('')
-  const [recipientNodeId, setRecipientNodeId] = useState<string>()
+  const [recipientKey, setRecipientKey] = useState<string>()
   const [typeCode, setTypeCode] = useState<string>()
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [recipientMenuOpen, setRecipientMenuOpen] = useState(false)
+  const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
 
   const recipientsRes = useGetHealthConversationRecipientsQuery({
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
     skip: isReply,
   })
-  const allRecipients = useMemo(
+  // Every recipient the user has stays in the picker; whether each one can take
+  // a new conversation right now is decided per selection by
+  // canCreateConversation and explained by the availability alert.
+  const recipients = useMemo(
     () =>
       recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
     [recipientsRes.data],
   )
-  // Only recipients that currently accept patient-initiated messages can start
-  // a new conversation.
-  const recipients = useMemo(
-    () => allRecipients.filter((r) => r.allowsMessaging),
-    [allRecipients],
+  const selectedRecipient = recipients.find(
+    (r) => getRecipientKey(r) === recipientKey,
   )
-  const selectedRecipient = recipients.find((r) => r.nodeId === recipientNodeId)
 
-  // When the user has a single recipient that can't take messages (its window
-  // is closed, or it doesn't offer messaging at all), we replace the whole form
-  // with a full-screen explanation instead of a disabled form.
+  // When the user has a single recipient that can't take a new conversation
+  // (its window is closed, or it doesn't accept patient-initiated messages at
+  // all), we replace the whole form with a full-screen explanation instead of a
+  // disabled form.
   const soleRecipient =
-    !isReply && allRecipients.length === 1 ? allRecipients[0] : undefined
+    !isReply && recipients.length === 1 ? recipients[0] : undefined
+  const isSoleBlocked = !!soleRecipient && !soleRecipient.canCreateConversation
   const soleWindowClosed =
+    isSoleBlocked &&
     soleRecipient?.conversationBlockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
-  const soleNotAllowed =
-    !!soleRecipient &&
-    !soleWindowClosed &&
-    (!soleRecipient.allowsMessaging ||
-      !!soleRecipient.conversationBlockedReason)
-  const isSoleBlocked = soleWindowClosed || soleNotAllowed
+      HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
+  const soleNotAllowed = isSoleBlocked && !soleWindowClosed
   const soleWindowInfo = getMessagingWindowInfo({
     windowOpen: soleRecipient?.messagingWindowOpen,
     windowClose: soleRecipient?.messagingWindowClose,
@@ -104,10 +115,10 @@ export default function HealthMessageComposeScreen() {
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
-    if (!isReply && !recipientNodeId && recipients.length === 1) {
-      setRecipientNodeId(recipients[0].nodeId)
+    if (!isReply && !recipientKey && recipients.length === 1) {
+      setRecipientKey(getRecipientKey(recipients[0]))
     }
-  }, [isReply, recipients, recipientNodeId])
+  }, [isReply, recipients, recipientKey])
 
   // Reset / default the service when the recipient changes.
   useEffect(() => {
@@ -160,10 +171,9 @@ export default function HealthMessageComposeScreen() {
   const isFormLocked =
     !isReply && selectedRecipient?.canCreateConversation === false
 
-  // Any blocked reason means the patient can't message this recipient right now,
-  // so hide the send button. Closing-soon is only a warning (no blocked reason),
-  // so it keeps the button.
-  const hideSendButton = !!selectedRecipient?.conversationBlockedReason
+  // A recipient that can't take a new conversation right now can't be sent to,
+  // so hide the send button. Closing-soon still allows sending, so it keeps it.
+  const hideSendButton = selectedRecipient?.canCreateConversation === false
 
   const canSend = isReply
     ? !!message.trim()
@@ -192,6 +202,9 @@ export default function HealthMessageComposeScreen() {
           input: {
             groupId: selectedRecipient.groupId,
             nodeId: selectedRecipient.nodeId,
+            // Treatment-scoped recipients share a node and group with their
+            // siblings, so the treatment is what tells them apart on send.
+            treatmentId: selectedRecipient.treatmentId,
             patientInitiatedTypeCode: typeCode,
             title: selectedType?.title,
             messageTextContent: message.trim(),
@@ -235,9 +248,19 @@ export default function HealthMessageComposeScreen() {
       ? sendButtonHeight + theme.spacing[4]
       : 0
 
+  // A selection menu lives in its own platform view controller that is not
+  // torn down with this sheet, so dragging the sheet away while one is open
+  // leaves the menu stranded over whatever is shown next. Block the dismiss
+  // gesture while a menu is up; the close button still works, because that
+  // path lets us dismiss the menu before the sheet goes.
+  const isMenuOpen = recipientMenuOpen || serviceMenuOpen
+
   return (
     <>
-      <StackScreen closeable options={{ title: '' }} />
+      <StackScreen
+        closeable
+        options={{ title: '', gestureEnabled: !isMenuOpen }}
+      />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
       <ScrollView
         style={{ flex: 1 }}
@@ -265,6 +288,7 @@ export default function HealthMessageComposeScreen() {
         ) : recipientsError ? (
           <Problem
             type="error"
+            error={recipientsRes.error}
             title={intl.formatMessage({ id: 'problem.error.title' })}
             message={intl.formatMessage({
               id: 'health.messages.errorMessage',
@@ -337,12 +361,13 @@ export default function HealthMessageComposeScreen() {
                 label={intl.formatMessage({
                   id: 'health.messages.compose.selectRecipient',
                 })}
-                value={recipientNodeId}
+                value={recipientKey}
                 options={recipients.map((r) => ({
                   label: r.name,
-                  value: r.nodeId,
+                  value: getRecipientKey(r),
                 }))}
-                onSelect={setRecipientNodeId}
+                onSelect={setRecipientKey}
+                onOpenChange={setRecipientMenuOpen}
               />
             )}
             {selectedRecipient && (
@@ -369,6 +394,7 @@ export default function HealthMessageComposeScreen() {
                     value: s.patientInitiatedTypeCode,
                   }))}
                   onSelect={setTypeCode}
+                  onOpenChange={setServiceMenuOpen}
                   disabled={isFormLocked}
                 />
               )}

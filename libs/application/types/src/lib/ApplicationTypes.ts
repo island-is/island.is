@@ -10,6 +10,7 @@ export enum ApplicationTypes {
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
+  DISTRICT_COMMISSIONER_DRIVING_LICENSE = 'DistrictCommissionerDrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
@@ -108,6 +109,7 @@ export enum ApplicationTypes {
   CONFIRM_JOB_OR_INCOME = 'ConfirmJobOrIncome',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
+  U2_CERTIFICATE = 'U2Certificate',
 }
 
 export const ApplicationConfigurations = {
@@ -154,6 +156,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
     translation: ['dl.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    slug: 'okuskirteini-syslumadur',
+    translation: ['dl.dc.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',
@@ -550,5 +556,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SALARY_REPORT]: {
     slug: 'jafnrettisstofa-skyrslugjof',
     translation: ['doe.sr.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    slug: 'u2-vottord',
+    translation: ['vmst.u2c.application', 'uiForms.application'],
   },
 }

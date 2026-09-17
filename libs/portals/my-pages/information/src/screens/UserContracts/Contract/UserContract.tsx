@@ -8,6 +8,7 @@ import {
   InfoLineStack,
   InfoLine,
   formSubmit,
+  formatDate,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
@@ -15,11 +16,7 @@ import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
 import { useParams } from 'react-router-dom'
 import { useMemo } from 'react'
 import { useUserContractQuery } from './UserContract.generated'
-import {
-  HmsRentalAgreement,
-  HmsRentalAgreementStatusType,
-} from '@island.is/api/schema'
-import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
+import { HmsRentalAgreementStatusType } from '@island.is/api/schema'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
 
 const UserContract = () => {
@@ -34,16 +31,7 @@ const UserContract = () => {
     },
   })
 
-  const contract: HmsRentalAgreement | undefined =
-    data?.hmsRentalAgreement ?? undefined
-
-  const address = useMemo(() => {
-    if (data?.hmsRentalAgreement?.contractProperty) {
-      return generateRentalAgreementAddress(
-        data.hmsRentalAgreement.contractProperty ?? undefined,
-      )
-    }
-  }, [data?.hmsRentalAgreement?.contractProperty])
+  const contract = data?.hmsRentalAgreement ?? undefined
 
   const status = useMemo(() => {
     if (
@@ -56,7 +44,7 @@ const UserContract = () => {
 
   return (
     <IntroWrapper
-      title={address ?? cm.contractsOverviewTitle}
+      title={cm.contractsOverviewTitle}
       intro={cm.contractDetailSubtitle}
       serviceProvider={{
         slug: HMS_SLUG,
@@ -66,30 +54,27 @@ const UserContract = () => {
         actions: [
           <Button
             key="download-button"
-            title={formatMessage(cm.downloadAsPdf)}
             icon="download"
             iconType="outline"
+            variant="utility"
             disabled={
-              !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
+              !!error || loading || !contract?.latestDocumentDownloadUrl
             }
             onClick={() =>
-              formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
+              contract?.latestDocumentDownloadUrl &&
+              formSubmit(contract.latestDocumentDownloadUrl)
             }
-            variant="utility"
           >
-            {formatMessage(cm.downloadAsPdf)}
+            {formatMessage(m.getDocument)}
           </Button>,
-          ...(contract?.status === HmsRentalAgreementStatusType.VALID
-            ? [
-                <LinkButton
-                  key="terminate-button"
-                  to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
-                  text={formatMessage(cm.terminateRentalAgreement)}
-                  icon="open"
-                  variant="utility"
-                />,
-              ]
-            : []),
+          <LinkButton
+            key="terminate-button"
+            to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
+            text={formatMessage(cm.terminateRentalAgreement)}
+            icon="open"
+            variant="utility"
+            disabled={!contract?.canTerminate || loading}
+          />,
         ],
       }}
       desktopContentSpan="10/12"
@@ -127,21 +112,29 @@ const UserContract = () => {
                 contract?.tenants?.map((l) => l.name).join(', ') ?? undefined
               }
             />
-            <InfoLine loading={loading} label={cm.location} content={address} />
             <InfoLine
               loading={loading}
               label={cm.lengthOfRentalAgreement}
               content={
                 contract?.dateFrom
-                  ? formatMessage(cm.rentalAgreementDate, {
-                      from: new Date(contract.dateFrom),
-                      to: contract.dateTo
-                        ? new Date(contract.dateTo)
-                        : undefined,
-                    })
+                  ? contract.dateTo
+                    ? formatMessage(cm.rentalAgreementDate, {
+                        from: new Date(contract.dateFrom),
+                        to: new Date(contract.dateTo),
+                      })
+                    : formatMessage(cm.rentalAgreementDateFrom, {
+                        from: new Date(contract.dateFrom),
+                      })
                   : undefined
               }
             />
+            {contract?.terminationDate && (
+              <InfoLine
+                loading={loading}
+                label={cm.terminationDate}
+                content={formatDate(contract.terminationDate)}
+              />
+            )}
             <InfoLine
               loading={loading}
               label={cm.status}

@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   ActionCardLoader,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
   formatDate,
@@ -62,8 +62,10 @@ const MedicineDelegation = () => {
       title={formatMessage(messages.medicineDelegation)}
       intro={formatMessage(messages.medicineDelegationIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirMedicineDelegationTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(
+          messages.stafraenHeilsaMedicineDelegationTooltip,
+        ),
       }}
       loading={loading}
       buttonGroup={{

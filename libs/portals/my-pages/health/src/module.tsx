@@ -26,6 +26,9 @@ const AidsAndNutrition = lazy(() =>
 const MovementPrescriptions = lazy(() =>
   import('./screens/MovementPrescriptions/MovementPrescriptions'),
 )
+const OldPregnancies = lazy(() =>
+  import('./screens/OldPregnancies/OldPregnancies'),
+)
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
@@ -164,6 +167,10 @@ const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
 
 const TreatmentOverview = lazy(() =>
   import('./screens/Treatments/TreatmentOverview'),
+)
+
+const TreatmentEducationalContent = lazy(() =>
+  import('./screens/Treatments/TreatmentEducationalContent'),
 )
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
@@ -542,6 +549,13 @@ export const healthModule: PortalModule = {
       element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
     },
     {
+      name: hm.oldPregnanciesTitle,
+      path: HealthPaths.HealthOldPregnancies,
+      key: 'HealthOldPregnancies',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <OldPregnancies />,
+    },
+    {
       name: hm.questionnaires,
       path: HealthPaths.HealthQuestionnaires,
       key: 'HealthQuestionnaires',
@@ -683,7 +697,7 @@ export const healthModule: PortalModule = {
       element: <HealthConversationDetail />,
     },
     {
-      name: m.healthTreatments,
+      name: m.healthTreatment,
       path: HealthPaths.HealthTreatments,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
@@ -695,6 +709,13 @@ export const healthModule: PortalModule = {
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <TreatmentOverview />,
+    },
+    {
+      name: m.healthTreatmentEducationalContent,
+      path: HealthPaths.HealthTreatmentEducationalContent,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentEducationalContent />,
     },
   ],
 }

@@ -286,6 +286,9 @@ query getAppointmentDetail($id: String!) {
     date
     duration
     modality
+    status
+    canCancel
+    canCancelBefore
     practitioners
     assignees {
       type
@@ -319,6 +322,10 @@ query getAppointmentDetail($id: String!) {
       }
     }
   }
+}
+
+mutation cancelAppointment($id: String!) {
+  healthDirectorateCancelAppointment(id: $id)
 }
 
 query GetHealthConversations(
@@ -355,6 +362,7 @@ query GetHealthConversation($id: ID!) {
     isRead
     patientCanReply
     replyBlockedReason
+    patientReplyWindowDays
     organization {
       name
       logoUrl
@@ -386,6 +394,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
     nodeId
     groupId
+    treatmentId
     name
     allowsMessaging
     isCurrentlyWithinWindow

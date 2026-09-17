@@ -18,7 +18,7 @@ import {
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
 import { CreateCaseButton } from '@island.is/judicial-system-web/src/routes/Shared/CreateCaseButton/CreateCaseButton'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import * as styles from './CaseTableGroups.css'
 
@@ -41,7 +41,7 @@ const CaseTableGroups: FC = () => {
           />
         </div>
       ) : (
-        <div className={grid({ gap: 6 })}>
+        <div className={stack({ gap: 6 })}>
           {isDefenceUser(user) ? (
             <SectionHeading
               heading="h1"

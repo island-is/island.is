@@ -48,9 +48,15 @@ export const TextInput: React.FC<TextInputProps> = ({
         return
       }
 
-      if (!/^-?\d*\.?\d*$/.test(newValue)) {
+      const allowedPattern = type === 'decimal' ? /^-?\d*[.,]?\d*$/ : /^-?\d*$/
+      if (!allowedPattern.test(newValue)) {
         return
       }
+
+      // Icelandic decimal commas are accepted but stored with a dot so
+      // downstream parsing (formulas, triggers, submission) keeps working;
+      // the input renders the stored value back with a comma
+      newValue = newValue.replace(',', '.')
 
       const numValue = parseFloat(newValue)
       if (!isNaN(numValue)) {
@@ -91,7 +97,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         id={id}
         name={id}
         placeholder={placeholder}
-        value={value}
+        value={type === 'decimal' ? value.replace('.', ',') : value}
         onChange={handleChange}
         onBlur={handleBlur}
         hasError={!!error}

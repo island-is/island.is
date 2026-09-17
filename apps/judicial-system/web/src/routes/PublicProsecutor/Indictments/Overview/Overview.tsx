@@ -7,6 +7,7 @@ import { Box } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   canDefendantAppealVerdict,
+  Feature,
   isRulingOrDismissalCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -15,6 +16,7 @@ import {
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -26,6 +28,7 @@ import {
   PageTitle,
   RulingModifiedAlert,
   UserContext,
+  VerdictAppealFiles,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
@@ -39,13 +42,14 @@ import {
   REVIEWER_ASSIGNED,
 } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 
 export const Overview = () => {
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
@@ -154,8 +158,8 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
-          <div className={grid({ gap: 2 })}>{verdictStatusAlerts}</div>
+        <div className={stack({ gap: 5 })}>
+          <div className={stack({ gap: 2 })}>{verdictStatusAlerts}</div>
           {verdictTimelineCards}
           <AppealRulingModifiedAlert />
           <RulingModifiedAlert />
@@ -184,6 +188,9 @@ export const Overview = () => {
                 conclusionText={workingCase.appealCase?.appealConclusion}
               />
             )}
+          {features.includes(Feature.INDICTMENT_APPEAL) && (
+            <VerdictAppealFiles />
+          )}
           <AllIndictmentCaseFiles />
           <Box component="section">
             {isReviewMissing && (

@@ -1,5 +1,7 @@
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
 import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
+import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
+import { U2CertificateService } from './vmst/u2-certificate/u2-certificate.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
 import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { SubmitDocumentsModule } from './vmst/submit-documents/submit-documents.module'
@@ -300,6 +302,7 @@ export const modules = [
   ConfirmJobOrIncomeModule,
   DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
+  U2CertificateModule,
 ]
 
 export const services = [
@@ -402,4 +405,5 @@ export const services = [
   ConfirmJobOrIncomeService,
   DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
+  U2CertificateService,
 ]

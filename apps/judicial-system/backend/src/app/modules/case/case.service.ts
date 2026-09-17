@@ -12,7 +12,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
@@ -81,6 +80,7 @@ import {
 } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -97,7 +97,6 @@ import {
   CaseRepositoryService,
   CaseStringRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSessionRepositoryService,
   DateLog,
   DateLogRepositoryService,
   Defendant,
@@ -114,6 +113,7 @@ import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
+import { CaseCloningService } from './caseCloning.service'
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -178,12 +178,14 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
-    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
+    @Inject(forwardRef(() => CourtSessionService))
+    private readonly courtSessionService: CourtSessionService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -1087,6 +1089,16 @@ export class CaseService {
             caseId: theCase.id,
             elementId: [defendant.id, subpoena.id],
           })
+          // After arraignment so defender choice on the certificate is correct.
+          // Only LOKE cases have a police case to update.
+          if (theCase.origin === CaseOrigin.LOKE) {
+            addMessagesToQueue({
+              type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+              user,
+              caseId: theCase.id,
+              elementId: [defendant.id, subpoena.id],
+            })
+          }
         }
       }
     }
@@ -2077,7 +2089,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          created,
+          created ? { created } : undefined,
         )
       }),
     )
@@ -2177,6 +2189,8 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
+    const isReopeningCase = update.reopenReason !== undefined
+
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2185,7 +2199,7 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    if (update.reopenReason !== undefined) {
+    if (isReopeningCase) {
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
@@ -2475,10 +2489,10 @@ export class CaseService {
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]
           .isConfirmed
       ) {
-        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
+        await this.courtSessionService.addMergedCaseToLatestCourtSession(
           parentCase.id,
           theCase.id,
-          { transaction },
+          transaction,
         )
       }
     }
@@ -2530,6 +2544,10 @@ export class CaseService {
         from: theCase.court?.name,
         to: updatedCase?.court?.name,
       })
+    }
+
+    if (isReopeningCase) {
+      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
     }
 
     if (returnUpdatedCase) {
@@ -2857,25 +2875,13 @@ export class CaseService {
     return extendedCase
   }
 
-  async duplicateIndictmentCase(
-    theCase: Case,
-    user: TUser,
-    transaction: Transaction,
-  ): Promise<Case> {
-    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
-      transaction,
-      prosecutorId: user.id,
-      prosecutorsOfficeId: user.institution?.id,
-    })
-  }
-
   async splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    const splitCase = await this.caseRepositoryService.split(
-      theCase.id,
+    const splitCase = await this.caseCloningService.split(
+      theCase,
       defendant.id,
       { transaction },
     )
