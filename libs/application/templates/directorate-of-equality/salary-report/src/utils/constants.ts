@@ -38,6 +38,7 @@ export enum ApiActions {
   getDoeCompany = 'getDoeCompany',
   getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
+  getSalaryReportEligibility = 'getSalaryReportEligibility',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
   createSalaryDraft = 'createSalaryDraft',
