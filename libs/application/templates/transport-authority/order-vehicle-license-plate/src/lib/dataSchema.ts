@@ -29,7 +29,7 @@ export const OrderVehicleLicensePlateSchema = z.object({
   plateDelivery: z
     .object({
       deliveryMethodIsDeliveryStation: z.enum([YES, NO]),
-      deliveryStationTypeCode: z.string().optional(),
+      deliveryStationTypeCode: z.string().nullish(),
       includeRushFee: z.array(z.enum([YES])).optional(),
     })
     .refine(
