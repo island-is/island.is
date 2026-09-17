@@ -2,8 +2,41 @@ import type {
   PlaywrightTestConfig,
   ReporterDescription,
 } from '@playwright/test'
+import { join } from 'path'
 import './addons'
-import { urls } from './support/urls'
+import { env, urls } from './support/urls'
+
+const localPort = process.env.PORT ?? '4200'
+
+/**
+ * The judicial-system suite is timed for a production build (the way CI runs
+ * e2e). In dev mode Next compiles every route on first visit, which blows the
+ * request waits and makes the suite look flaky. So for local runs of that
+ * project, build and serve the production bundle - unless something already
+ * listens on the port (e.g. a dev server), which is then reused as-is.
+ * The port has to stay 4200 for file uploads to work: the dev S3 bucket only
+ * allows that origin in its CORS rules.
+ * The islandis project targets remote environments and needs no server.
+ */
+const judicialSystemWebServer: PlaywrightTestConfig['webServer'] =
+  env === 'local' && process.argv.some((arg) => arg.includes('judicial-system'))
+    ? {
+        command: [
+          'yarn nx run judicial-system-web:build:production',
+          // The preload gives the server the same .env files nx gives a dev
+          // server. The tests use fake national ids, so the registry lookups
+          // have to answer with the fakes a dev server would use.
+          `NODE_ENV=production PORT=${localPort} ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node -r ./apps/system-e2e/src/support/load-local-env.js dist/apps/judicial-system/web/main.js`,
+        ].join(' && '),
+        cwd: join(__dirname, '../../..'),
+        url: `http://localhost:${localPort}/liveness`,
+        reuseExistingServer: true,
+        // The production build takes several minutes on a cold nx cache.
+        timeout: 15 * 60 * 1000,
+        stdout: 'ignore',
+        stderr: 'pipe',
+      }
+    : undefined
 
 /**
  * Read environment variables from file.
@@ -31,8 +64,9 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 0 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* The specs share one database and one server, so parallel files only
+     overload the stack - a single worker everywhere, as on CI. */
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ...((process.env.CI
@@ -138,11 +172,8 @@ const config: PlaywrightTestConfig = {
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   outputDir: 'dist/test-results/',
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   port: 3000,
-  // },
+  /* Build and serve the app under test before starting the tests */
+  webServer: judicialSystemWebServer,
 }
 
 export default config
