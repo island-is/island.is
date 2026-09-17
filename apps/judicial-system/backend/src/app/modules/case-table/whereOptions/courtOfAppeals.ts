@@ -3,7 +3,10 @@ import { Op } from 'sequelize'
 import { AppealCaseState } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions, expandCasesWithAppeals } from '../caseTable.types'
-import { courtOfAppealsCasesAccessWhereOptions } from './access'
+import {
+  courtOfAppealsCasesAccessWhereOptions,
+  courtOfAppealsVerdictAppealsAccessWhereOptions,
+} from './access'
 
 // Court of appeals cases
 
@@ -78,4 +81,59 @@ export const courtOfAppealsCasesCompletedWhereOptions =
       ],
     },
     displayCases: expandCasesWithAppeals,
+  })
+
+// Appealed verdicts
+
+// In progress from the court's point of view means the appeal has not been
+// disposed of: filed and waiting to be received, or received and being worked
+// on. A withdrawn appeal is finished, not in progress - which is where this
+// parts company with the ruling-appeal list above, on the design's word
+// (the withdrawn tag appears under Niðurstaða in "Afgreidd mál").
+export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      verdictAppealCase: {
+        attributes: [],
+        required: true,
+        where: {
+          appeal_state: [AppealCaseState.APPEALED, AppealCaseState.RECEIVED],
+        },
+      },
+    },
+    where: {
+      [Op.and]: [
+        courtOfAppealsVerdictAppealsAccessWhereOptions(),
+        {
+          '$verdictAppealCase.appeal_state$': [
+            AppealCaseState.APPEALED,
+            AppealCaseState.RECEIVED,
+          ],
+        },
+      ],
+    },
+  })
+
+export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      verdictAppealCase: {
+        attributes: [],
+        required: true,
+        where: {
+          appeal_state: [AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN],
+        },
+      },
+    },
+    where: {
+      [Op.and]: [
+        courtOfAppealsVerdictAppealsAccessWhereOptions(),
+        {
+          '$verdictAppealCase.appeal_state$': [
+            AppealCaseState.COMPLETED,
+            AppealCaseState.WITHDRAWN,
+          ],
+        },
+      ],
+    },
   })

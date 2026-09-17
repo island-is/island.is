@@ -19,6 +19,30 @@ const courtOfAppealsCasesTableGroup = {
   ],
 }
 
+// Appealed indictment verdicts. Their own group rather than more tables in the
+// one above: a verdict appeal is a different proceeding from a ruling appeal,
+// and the two lists carry different columns. Routes are matched across every group, so
+// these cannot reuse the routes above.
+const courtOfAppealsVerdictAppealsTableGroup = {
+  title: 'Áfrýjuð sakamál',
+  tables: [
+    {
+      type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      route: 'afryjud-mal-i-vinnslu',
+      title: 'Mál í vinnslu',
+      description: 'Áfrýjaðir dómar í sakamálum.',
+      includeCounter: true,
+    },
+    {
+      type: CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
+      route: 'afryjud-afgreidd-mal',
+      title: 'Afgreidd mál',
+      description: 'Áfrýjuð sakamál sem búið er að ljúka.',
+    },
+  ],
+}
+
 export const courtOfAppealsTableGroups: CaseTableGroup[] = [
   courtOfAppealsCasesTableGroup,
+  courtOfAppealsVerdictAppealsTableGroup,
 ]

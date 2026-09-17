@@ -11,6 +11,7 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealEventType,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -41,6 +42,7 @@ import {
   VerdictInfo,
 } from '@island.is/judicial-system/types'
 
+import { standingVerdictAppellants } from '../appeal-case/appealCase.helpers'
 import { Case, DateLog, DefendantEventLog, EventLog } from '../repository'
 import {
   CaseTableCellValue,
@@ -685,6 +687,148 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
   },
 }
 
+// Appealed verdicts. These read the case's verdict appeal rather than its
+// ruling appeal, so none of the appealCase-backed generators above can be
+// reused even where the column title is the same.
+
+// Who the appeal is on behalf of. Both sides may appeal the same verdict, and
+// the list has one row per case, so the prosecution takes precedence when both
+// have (owner, 2026-09-17).
+const verdictAppealAppellant: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: [],
+      includes: {
+        appealEventLogs: {
+          attributes: ['eventType', 'defendantId', 'userRole', 'created'],
+        },
+      },
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    if (!c.verdictAppealCase) {
+      return generateCell()
+    }
+
+    const appellants = standingVerdictAppellants(c.verdictAppealCase)
+
+    if (appellants.length === 0) {
+      return generateCell()
+    }
+
+    const isProsecution = appellants.some(
+      (appellant) => appellant.side === 'PROSECUTION',
+    )
+    const text = isProsecution ? 'Ákæruvald' : 'Dómfelldi'
+
+    return generateCell({ str: text }, text)
+  },
+}
+
+// A verdict appeal is filed and then waits for the court of appeals to receive
+// it, so unlike a ruling appeal the court sees it before it is theirs - as
+// "Nýtt". Everything past receipt belongs to the court of appeals process,
+// which is not built yet, so nothing else is reachable today.
+const verdictAppealState: CaseTableCellGenerator<TagValue> = {
+  includes: {
+    verdictAppealCase: { attributes: ['appealState'] },
+  },
+  generate: (c: Case): CaseTableCell<TagValue> => {
+    switch (c.verdictAppealCase?.appealState) {
+      case AppealCaseState.APPEALED:
+        return generateCell({ color: 'purple', text: 'Nýtt' }, 'A')
+      case AppealCaseState.RECEIVED:
+        return generateCell({ color: 'darkerBlue', text: 'Móttekið' }, 'B')
+      default:
+        return generateCell()
+    }
+  },
+}
+
+const verdictAppealHead: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: [],
+      includes: { appealJudge1: { attributes: ['name'] } },
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.verdictAppealCase?.appealJudge1?.name)
+
+    if (!initials) {
+      return generateCell()
+    }
+
+    return generateCell({ str: initials }, initials)
+  },
+}
+
+// A completed appeal is dated by its ruling; a withdrawn one has no ruling, so
+// the withdrawal itself is when the case ended.
+const verdictAppealCompletedDate: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: ['appealState', 'appealRulingDate'],
+      includes: {
+        appealEventLogs: { attributes: ['eventType', 'created'] },
+      },
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const appealCase = c.verdictAppealCase
+
+    if (appealCase?.appealState === AppealCaseState.WITHDRAWN) {
+      const withdrawnDates = (appealCase.appealEventLogs ?? [])
+        .filter(
+          (eventLog) => eventLog.eventType === AppealEventType.APPEAL_WITHDRAWN,
+        )
+        .map((eventLog) => eventLog.created)
+
+      return generateDate(
+        withdrawnDates.length > 0
+          ? new Date(Math.max(...withdrawnDates.map((d) => d.getTime())))
+          : undefined,
+      )
+    }
+
+    return generateDate(appealCase?.appealRulingDate)
+  },
+}
+
+// The result values are the ones appealed rulings already use (owner,
+// 2026-09-17), plus the withdrawal, which ends the case without a ruling.
+const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: ['appealState', 'appealRulingDecision'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<TagValue> => {
+    const appealCase = c.verdictAppealCase
+
+    if (appealCase?.appealState === AppealCaseState.WITHDRAWN) {
+      return generateCell({ color: 'red', text: 'Afturkallað' }, 'Z')
+    }
+
+    if (appealCase?.appealState !== AppealCaseState.COMPLETED) {
+      return generateCell()
+    }
+
+    const color =
+      appealCase.appealRulingDecision === AppealCaseRulingDecision.ACCEPTING
+        ? 'mint'
+        : 'blueberry'
+
+    return generateCell(
+      {
+        color,
+        text: getAppealResultTextByValue(appealCase.appealRulingDecision),
+      },
+      getAppealResultTextByValue(appealCase.appealRulingDecision),
+    )
+  },
+}
+
 const created: CaseTableCellGenerator<StringValue> = {
   attributes: ['created'],
   generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.created),
@@ -1236,4 +1380,12 @@ export const caseTableCellGenerators: Record<
   indictmentArraignmentDate,
   indictmentRulingDecision,
   indictmentRulingDecisionWithoutAppealState,
+  // The district court's ruling date, which the verdict appeal lists show under
+  // a title of their own.
+  districtCourtRulingDate: rulingDate,
+  verdictAppealAppellant,
+  verdictAppealState,
+  verdictAppealHead,
+  verdictAppealCompletedDate,
+  verdictAppealResult,
 }

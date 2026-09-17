@@ -132,4 +132,38 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
 
     expect(sql).toMatch(/appeal_type.{0,20}'RULING'/)
   })
+
+  // The isolation has to hold in both directions: the court of appeals' own
+  // ruling appeal lists must not pick up verdict appeals, and its verdict
+  // appeal lists must not pick up ruling appeals.
+  describe('the court of appeals lists', () => {
+    const courtOfAppealsUser = {
+      id: 'judge_id',
+      role: UserRole.COURT_OF_APPEALS_JUDGE,
+      institution: {
+        id: 'court_of_appeals_id',
+        type: InstitutionType.COURT_OF_APPEALS,
+      },
+    } as User
+
+    it.each([
+      CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED,
+    ])('keeps verdict appeals out of %s', async (tableType) => {
+      const sql = await sqlForTable(tableType, courtOfAppealsUser)
+
+      expect(sql).toMatch(/appeal_type.{0,20}'RULING'/)
+      expect(sql).not.toMatch(/"verdictAppealCase"/)
+    })
+
+    it.each([
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
+    ])('selects only verdict appeals in %s', async (tableType) => {
+      const sql = await sqlForTable(tableType, courtOfAppealsUser)
+
+      expect(sql).toMatch(/appeal_type.{0,20}'VERDICT'/)
+      expect(sql).not.toMatch(/appeal_type.{0,20}'RULING'/)
+    })
+  })
 })

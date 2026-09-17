@@ -85,6 +85,22 @@ export const courtOfAppealsCasesAccessWhereOptions = () => ({
   ],
 })
 
+// Appealed verdicts reach the court of appeals earlier than appealed rulings
+// do. A ruling appeal is the court's to see only once it has received it - the
+// clauses above all require RECEIVED, COMPLETED, or a withdrawal that had been
+// received. A verdict appeal is filed and then waits for the court to pick it
+// up, so the court has to see it while it is still APPEALED, or it could never
+// receive it at all (owner, 2026-09-17).
+//
+// Which appeal states belong in which list is the lists' own business; all this
+// settles is which cases the court may see at all. The appeal type needs no
+// clause here: the `verdictAppealCase` association is scoped to it, and the
+// lists join it as required.
+export const courtOfAppealsVerdictAppealsAccessWhereOptions = () => ({
+  is_archived: false,
+  type: indictmentCases,
+})
+
 // District court access
 
 export const districtCourtRequestCasesAccessWhereOptions = (user: User) => ({
