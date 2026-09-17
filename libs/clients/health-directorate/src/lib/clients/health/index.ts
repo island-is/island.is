@@ -5,4 +5,5 @@ export {
 export * from './health.config'
 export * from './gen/fetch/types.gen'
 export { HealthDirectorateHealthModule } from './health.module'
+export { CancelAppointmentResult } from './dtos/cancelAppointmentResult.dto'
 export { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'

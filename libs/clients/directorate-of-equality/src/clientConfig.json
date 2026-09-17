@@ -350,7 +350,7 @@
     },
     "/api/v1/application/reports/equality/active": {
       "get": {
-        "description": "Returns the resolved company's currently-APPROVED equality report (if any). The application portal references the returned `id` as `equalityReportId` when submitting a salary report, and passes the returned `providerId` to `GET /application/reports/:providerId` to read the report itself. Neither `id` nor `identifier` is a lookup handle here: `id` only resolves against the admin-only `GET /reports/:id`, and `identifier` is a human-facing display code.",
+        "description": "Returns whatever currently meets the resolved company's equality obligation, and **`source` says which of the two it is**. `REPORT` is an APPROVED, in-force equality report filed here: the portal references the returned `id` as `equalityReportId` when submitting a salary report, and passes `providerId` to `GET /application/reports/:providerId` to read the report itself. `LEGACY` is an unexpired certificate from the Directorate's retired register — it has no report row behind it, so `id`, `identifier`, `providerId` and `approvedAt` are all null and only `validUntil` is populated; the portal omits `equalityReportId` on submission and the server records the legacy basis on the report. Branch on `source`, not on a null `id`. Neither `id` nor `identifier` is a lookup handle here: `id` only resolves against the admin-only `GET /reports/:id`, and `identifier` is a human-facing display code. A **404** means neither kind of coverage is in force.",
         "operationId": "getApplicationActiveEqualityReport",
         "parameters": [],
         "responses": {
@@ -412,7 +412,7 @@
     },
     "/api/v1/application/reports/salary/eligibility": {
       "get": {
-        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. Two preconditions are checked: (1) the company must have an APPROVED, in-force equality report (`MISSING_EQUALITY_REPORT`, checked first — a salary report must reference one); and (2) the 3-year renewal window must be open, i.e. the current report is due in 6 months or less (`RENEWAL_WINDOW_NOT_OPEN`). The renewal rule is also enforced as a 409 on `POST reports/salary`, and the equality precondition as a 404.",
+        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. Two preconditions are checked: (1) the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`, checked first) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts and the same answer `GET reports/equality/active` gives; and (2) the 3-year renewal window must be open, i.e. the current report is due in 6 months or less (`RENEWAL_WINDOW_NOT_OPEN`). The renewal rule is also enforced as a 409 on `POST reports/salary`, and the equality precondition as a 404.",
         "operationId": "getApplicationSalaryReportEligibility",
         "parameters": [],
         "responses": {
@@ -1724,7 +1724,7 @@
     },
     "/api/v1/application/reports/{providerId}/draft/submit": {
       "post": {
-        "description": "Finalises a DRAFT (DRAFT → SUBMITTED, or POSTPONED when a salary report's outliers are acknowledged but not yet explained). Freezes derived scores + the result snapshot, creates the company_report snapshot from the payload (parent + subsidiaries), and makes the report visible to reviewers. For salary reports, equalityReportId is required and must reference an APPROVED equality report.",
+        "description": "Finalises a DRAFT (DRAFT → SUBMITTED, or POSTPONED when a salary report's outliers are acknowledged but not yet explained). Freezes derived scores + the result snapshot, creates the company_report snapshot from the payload (parent + subsidiaries), and makes the report visible to reviewers. For salary reports, `equalityReportId` must reference an APPROVED equality report if it is sent at all; omit it and the server resolves the company's current coverage — which is the only option when that coverage is a legacy certificate, since it has no report row to name. A 404 means nothing covers the company.",
         "operationId": "submitApplicationReportDraft",
         "parameters": [
           {
@@ -1878,7 +1878,7 @@
     },
     "/api/v1/application/reports/{providerId}/draft/sync": {
       "post": {
-        "description": "Applies a batch of create/update/remove commands to the draft's content (criteria tree, roles, employees, outlier groups) in one atomic transaction — the single write path for the portal, flushed once per screen navigate. Ids are client-minted UUIDs, so a command may reference a sibling created in the same batch; a repeated CREATE is an idempotent upsert. Omitted collections are untouched; an empty array is a no-op. At most 1000 employee commands per call. 204 on success (the portal refetches the affected reads); 404 if the draft is not owned or already submitted; 400/409 on a malformed or referentially-inconsistent batch (the whole batch rolls back).",
+        "description": "Applies a batch of create/update/remove commands to the draft's content (criteria tree, roles, employees, outlier groups) in one atomic transaction — the single write path for the portal, flushed once per screen navigate. Ids are client-minted UUIDs, so a command may reference a sibling created in the same batch; a repeated CREATE is an idempotent upsert. Omitted collections are untouched; an empty array is a no-op. At most 1000 employee commands per call. 204 on success (the portal refetches the affected reads); 404 if the draft is not owned or already submitted (also if a REMOVE names a step that is already gone, so a batch is not safe to re-send blindly); 400/409 on a malformed or referentially-inconsistent batch (the whole batch rolls back).\n\nREMOVING A STEP DOES NOT DISCARD THE CLASSIFICATIONS STANDING ON IT. Once every command in the batch has been applied, each role/employee assignment whose step no longer exists is moved to the nearest surviving step of the SAME sub-criterion: taking `o` as the order that step held before the batch, the surviving step with the greatest order ≤ `o`, else the smallest order > `o`. Prefer-lower is deliberate — shrinking a scale removes from the top, so a role on the old top step lands on the new top step at full marks rather than dropping to the first step and its minimum score. The surviving step is identified by id, not by order, so a batch that also renumbers a survivor resolves on one scale rather than two; when the batch replaced a sub-criterion's steps wholesale (all removed, a fresh set created) there is no pre-batch step left to name and the orders of the new set decide, under the same prefer-lower rule. Three exceptions: if the sub-criterion is left with no steps at all the assignment is simply dropped, without error; if the SUB-CRITERION ITSELF is REMOVEd its assignments are dropped outright, with no move; and if the same batch also sends `stepIds` for that role or employee, the explicit value wins and nothing is moved for it. The rule is deterministic and idempotent — an assignment already resolved for a sub-criterion is never moved again.",
         "operationId": "syncApplicationReportDraft",
         "parameters": [
           {
@@ -2085,7 +2085,7 @@
     },
     "/api/v1/application/reports/{providerId}/draft/roles-with-steps": {
       "get": {
-        "description": "Lists the draft's employee roles with their assigned step ids inlined — the aggregate of GET …/draft/roles plus one GET …/draft/roles/:roleId/steps per role, so the portal does not have to stitch them together. Ordered by title. `stepIds` is empty for a role that has not been scored yet.",
+        "description": "Lists the draft's employee roles with their assigned step ids inlined — the aggregate of GET …/draft/roles plus one GET …/draft/roles/:roleId/steps per role, so the portal does not have to stitch them together. Ordered by title. `stepIds` is empty for a role that has not been scored yet. A step removed through POST …/draft/sync usually leaves the role assigned to the nearest surviving step of that sub-criterion rather than unassigned — see that endpoint for the rule and the three exceptions that do clear the assignment.",
         "operationId": "listApplicationDraftRolesWithSteps",
         "parameters": [
           {
@@ -2235,7 +2235,7 @@
     },
     "/api/v1/application/reports/{providerId}/draft/employees-with-steps": {
       "get": {
-        "description": "Same page as GET …/draft/employees (same role-title-then-ordinal ordering), with each employee's personal step ids inlined — the aggregate that replaces one GET …/draft/employees/:employeeId/steps per row. Paginated on the same terms (a report can carry thousands of employees); raise pageSize to fetch the whole set in one call. `stepIds` is empty for an employee scored purely through its role. Scores are NULL until the report is submitted.",
+        "description": "Same page as GET …/draft/employees (same role-title-then-ordinal ordering), with each employee's personal step ids inlined — the aggregate that replaces one GET …/draft/employees/:employeeId/steps per row. Paginated on the same terms (a report can carry thousands of employees); raise pageSize to fetch the whole set in one call. `stepIds` is empty for an employee scored purely through its role. A step removed through POST …/draft/sync usually leaves the employee assigned to the nearest surviving step of that sub-criterion rather than unassigned — see that endpoint for the rule and the three exceptions that do clear the assignment. Scores are NULL until the report is submitted.",
         "operationId": "listApplicationDraftEmployeesWithSteps",
         "parameters": [
           {
@@ -2984,7 +2984,13 @@
           "MISSING_SALARY_REPORT",
           "MISSING_ACTION_PLAN",
           "SATISFACTORY"
-        ]
+        ],
+        "description": "Derived roll-up: the single most pressing compliance problem, in priority order. Drives the detail header, list sorting and the status filter. Collapses a company missing several obligations to one value — render per-obligation columns from `equalityObligationStatus` / `salaryObligationStatus` instead."
+      },
+      "CompanyObligationStatusEnum": {
+        "type": "string",
+        "description": "One reporting obligation's own state. NOT_REQUIRED means the company does not owe this report at all — it is the absence of an obligation, not a compliance failure. ACTION_PLAN_MISSING applies only to a salary report, which alone can be postponed pending outlier explanations.",
+        "enum": ["NOT_REQUIRED", "MISSING", "ACTION_PLAN_MISSING", "COVERED"]
       },
       "CompanyDto": {
         "type": "object",
@@ -3060,17 +3066,30 @@
             "description": "RSK's raw legal-form name. Useful for seeing the form behind an UNKNOWN sector."
           },
           "reportStatus": {
+            "description": "Derived roll-up: the single most pressing compliance problem, in priority order. Drives the detail header, list sorting and the status filter. Collapses a company missing several obligations to one value — render per-obligation columns from `equalityObligationStatus` / `salaryObligationStatus` instead.",
             "allOf": [
               { "$ref": "#/components/schemas/CompanyReportStatusEnum" }
             ]
           },
+          "equalityObligationStatus": {
+            "description": "Derived: the equality plan's own state. NOT_REQUIRED below 25 employees (and for UNKNOWN) with no salary obligation. Never ACTION_PLAN_MISSING — an equality report has no outlier groups and cannot be postponed.",
+            "allOf": [
+              { "$ref": "#/components/schemas/CompanyObligationStatusEnum" }
+            ]
+          },
+          "salaryObligationStatus": {
+            "description": "Derived: the salary report's own state. NOT_REQUIRED unless 50+ employees or an admin override. ACTION_PLAN_MISSING means the report was filed and sits in POSTPONED awaiting outlier explanations — it is a state of the report, so it is mutually exclusive with MISSING.",
+            "allOf": [
+              { "$ref": "#/components/schemas/CompanyObligationStatusEnum" }
+            ]
+          },
           "equalityReportOverdue": {
             "type": "boolean",
-            "description": "Derived: the company's next equality-report due date has passed."
+            "description": "Derived: the company owes an equality plan AND its next due date has passed. Gated on the obligation — the register load seeded due dates for companies of every size, so an ungated read marks companies below 25 as overdue against a plan they do not owe."
           },
           "salaryReportOverdue": {
             "type": "boolean",
-            "description": "Derived: the company's next salary-report due date has passed."
+            "description": "Derived: the company owes a salary report AND its next due date has passed. Gated on the obligation, as above."
           },
           "hasLegacyReports": {
             "type": "boolean",
@@ -3090,6 +3109,8 @@
           "sector",
           "sectorOverride",
           "reportStatus",
+          "equalityObligationStatus",
+          "salaryObligationStatus",
           "equalityReportOverdue",
           "salaryReportOverdue",
           "hasLegacyReports"
@@ -3888,10 +3909,21 @@
           "payDispersion"
         ]
       },
+      "EqualityCoverageSourceEnum": {
+        "type": "string",
+        "enum": ["REPORT", "LEGACY"],
+        "description": "Where the coverage comes from: `REPORT` (an approved, in-force equality report filed in this system) or `LEGACY` (an unexpired certificate from the Directorate’s retired register, which has no report row behind it)."
+      },
       "EqualityReportSummaryDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "format": "uuid" },
+          "source": {
+            "description": "Where the coverage comes from: `REPORT` (an approved, in-force equality report filed in this system) or `LEGACY` (an unexpired certificate from the Directorate’s retired register, which has no report row behind it).",
+            "allOf": [
+              { "$ref": "#/components/schemas/EqualityCoverageSourceEnum" }
+            ]
+          },
+          "id": { "type": "string", "format": "uuid", "nullable": true },
           "identifier": { "type": "string", "nullable": true },
           "providerId": { "type": "string", "nullable": true },
           "approvedAt": {
@@ -3907,7 +3939,7 @@
             "nullable": true
           }
         },
-        "required": ["id"]
+        "required": ["source"]
       },
       "SalaryReportEligibilityDto": {
         "type": "object",
@@ -4009,7 +4041,8 @@
           "equalityReportId": {
             "type": "string",
             "format": "uuid",
-            "description": "FK to the approved EQUALITY report this salary was audited against."
+            "nullable": true,
+            "description": "FK to the approved EQUALITY report this salary was audited against. Send null, or omit it, when `GET reports/equality/active` answered `source: LEGACY` (there is no id to send) — or to have the server resolve the company’s current coverage, which is the same answer that route gave."
           },
           "importedFromExcel": { "type": "boolean" },
           "providerId": {
@@ -4071,7 +4104,6 @@
           }
         },
         "required": [
-          "equalityReportId",
           "importedFromExcel",
           "providerId",
           "companyAdminName",
@@ -4095,9 +4127,13 @@
             "type": "string",
             "format": "uuid",
             "description": "Identifier of the newly created report row."
+          },
+          "replayed": {
+            "type": "boolean",
+            "description": "True when the providerId had already been used and this call filed nothing — the report named here is the earlier one, and the body just sent was not read. A corrected re-file needs a new providerId."
           }
         },
-        "required": ["reportId"]
+        "required": ["reportId", "replayed"]
       },
       "SubmitEqualityReportDto": {
         "type": "object",
@@ -4622,10 +4658,15 @@
           },
           "scopes": {
             "type": "array",
-            "description": "Narrows what the key may do. Omit to grant the full set. An unrecognised scope is rejected rather than stored.",
+            "description": "What the key may do. Omit for the default set — `report:read`, `salary:submit` and `equality:submit`, which is everything a vendor needs to file. `scoring:write` is never granted implicitly and must be named here: it authors the company’s starfsmat, which is a different act from filing against one, and it carries a delete that cascades the whole model away. An unrecognised scope is rejected rather than stored.",
             "items": {
               "type": "string",
-              "enum": ["salary:submit", "equality:submit", "report:read"]
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
             }
           },
           "expiresAt": {
@@ -4651,7 +4692,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["salary:submit", "equality:submit", "report:read"]
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
             }
           },
           "createdAt": {
@@ -4692,7 +4738,12 @@
             "description": "What this key is permitted to do.",
             "items": {
               "type": "string",
-              "enum": ["salary:submit", "equality:submit", "report:read"]
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
             }
           },
           "createdVia": {
@@ -4938,7 +4989,7 @@
             "type": "string",
             "format": "uuid",
             "nullable": true,
-            "description": "Required for SALARY reports: the APPROVED equality report this salary submission is audited against."
+            "description": "SALARY only: the APPROVED equality report this salary submission is audited against. Omit it to have the server resolve the company’s current coverage — the same answer `GET reports/equality/active` gives, and the only option for a company covered by a legacy certificate, which has no id to send. A 404 on submit means nothing covers the company."
           },
           "outliersPostponed": {
             "type": "boolean",

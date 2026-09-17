@@ -66,35 +66,30 @@ export default function HealthMessageComposeScreen() {
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
     skip: isReply,
   })
-  const allRecipients = useMemo(
+  // Every recipient the user has stays in the picker; whether each one can take
+  // a new conversation right now is decided per selection by
+  // canCreateConversation and explained by the availability alert.
+  const recipients = useMemo(
     () =>
       recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
     [recipientsRes.data],
-  )
-  // Only recipients that currently accept patient-initiated messages can start
-  // a new conversation.
-  const recipients = useMemo(
-    () => allRecipients.filter((r) => r.allowsMessaging),
-    [allRecipients],
   )
   const selectedRecipient = recipients.find(
     (r) => getRecipientKey(r) === recipientKey,
   )
 
-  // When the user has a single recipient that can't take messages (its window
-  // is closed, or it doesn't offer messaging at all), we replace the whole form
-  // with a full-screen explanation instead of a disabled form.
+  // When the user has a single recipient that can't take a new conversation
+  // (its window is closed, or it doesn't accept patient-initiated messages at
+  // all), we replace the whole form with a full-screen explanation instead of a
+  // disabled form.
   const soleRecipient =
-    !isReply && allRecipients.length === 1 ? allRecipients[0] : undefined
+    !isReply && recipients.length === 1 ? recipients[0] : undefined
+  const isSoleBlocked = !!soleRecipient && !soleRecipient.canCreateConversation
   const soleWindowClosed =
+    isSoleBlocked &&
     soleRecipient?.conversationBlockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
-  const soleNotAllowed =
-    !!soleRecipient &&
-    !soleWindowClosed &&
-    (!soleRecipient.allowsMessaging ||
-      !!soleRecipient.conversationBlockedReason)
-  const isSoleBlocked = soleWindowClosed || soleNotAllowed
+      HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
+  const soleNotAllowed = isSoleBlocked && !soleWindowClosed
   const soleWindowInfo = getMessagingWindowInfo({
     windowOpen: soleRecipient?.messagingWindowOpen,
     windowClose: soleRecipient?.messagingWindowClose,
@@ -176,10 +171,9 @@ export default function HealthMessageComposeScreen() {
   const isFormLocked =
     !isReply && selectedRecipient?.canCreateConversation === false
 
-  // Any blocked reason means the patient can't message this recipient right now,
-  // so hide the send button. Closing-soon is only a warning (no blocked reason),
-  // so it keeps the button.
-  const hideSendButton = !!selectedRecipient?.conversationBlockedReason
+  // A recipient that can't take a new conversation right now can't be sent to,
+  // so hide the send button. Closing-soon still allows sending, so it keeps it.
+  const hideSendButton = selectedRecipient?.canCreateConversation === false
 
   const canSend = isReply
     ? !!message.trim()
