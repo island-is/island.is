@@ -37,6 +37,17 @@ export const ActiveEqualityReportApi = defineTemplateApi({
   namespace: 'DirectorateOfEquality',
 })
 
+// The entry gate out of PREREQUISITES. Answers both preconditions in one read:
+// whether the company owes an equality plan, and whether its 3-year renewal
+// window has opened. throwOnError stays at its default of true — a guard that
+// cannot read its own answer has to stop the applicant on the screen rather
+// than wave them through or reject them blind.
+export const SalaryReportEligibilityApi = defineTemplateApi({
+  action: ApiActions.getSalaryReportEligibility,
+  externalDataId: 'salaryReportEligibility',
+  namespace: 'DirectorateOfEquality',
+})
+
 export const BlankExcelTemplateApi = defineTemplateApi({
   action: ApiActions.getBlankExcelTemplate,
   externalDataId: 'blankExcelTemplate',

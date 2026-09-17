@@ -4,26 +4,56 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, StaticText } from '@island.is/application/types'
 import { isCompany } from 'kennitala'
 import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
 import { DirectorateOfEqualityLogo } from '@island.is/application/assets/institution-logos'
 import { messages } from '../../lib/messages'
+import {
+  getEarliestSubmissionDate,
+  getSalaryIneligibilityReason,
+  SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN,
+} from '../../utils/eligibility'
+import { formatBackendDate } from '../../utils/dates'
 
-// This form renders for two different rejection reasons: mapUserToRole sends
-// non-company applicants here directly (no externalData fetched yet), while
-// company applicants without an active equality report are sent here by the
-// PREREQUISITES state guard. isCompany(application.applicant) is what tells
-// the two apart, since it's available in both cases.
-const notAllowedTitle = (application: Application) =>
-  isCompany(application.applicant)
-    ? messages.notAllowed.title
-    : messages.notAllowed.notCompanyTitle
+// This form renders for three different rejection reasons. mapUserToRole sends
+// non-company applicants here directly (no externalData fetched yet), which
+// isCompany(application.applicant) is what tells apart — it is available in
+// every case. The other two are DMR's own answer, and the state's read scope
+// grants this form the eligibility externalData precisely so it can tell them
+// apart: the company owes a jafnréttisáætlun, or it holds one and the
+// three-year renewal window has not opened yet.
+const isRenewalWindowClosed = (application: Application) =>
+  getSalaryIneligibilityReason(application) ===
+  SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN
 
-const notAllowedDescription = (application: Application) =>
-  isCompany(application.applicant)
-    ? messages.notAllowed.description
-    : messages.notAllowed.notCompanyDescription
+const notAllowedTitle = (application: Application): StaticText => {
+  if (!isCompany(application.applicant)) {
+    return messages.notAllowed.notCompanyTitle
+  }
+  return isRenewalWindowClosed(application)
+    ? messages.notAllowed.renewalWindowTitle
+    : messages.notAllowed.title
+}
+
+const notAllowedDescription = (application: Application): StaticText => {
+  if (!isCompany(application.applicant)) {
+    return messages.notAllowed.notCompanyDescription
+  }
+  if (!isRenewalWindowClosed(application)) {
+    return messages.notAllowed.description
+  }
+
+  const earliestSubmissionDate = formatBackendDate(
+    getEarliestSubmissionDate(application),
+  )
+  return earliestSubmissionDate
+    ? {
+        ...messages.notAllowed.renewalWindowDescription,
+        values: { earliestSubmissionDate },
+      }
+    : messages.notAllowed.renewalWindowDescriptionNoDate
+}
 
 export const NotAllowedForm = buildForm({
   id: 'NotAllowedForm',
