@@ -132,7 +132,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     emailNotifications: true,
     isRestricted: false,
     smsNotifications: true,
-  onlyActionablePriorityNotifications: false,
+    onlyActionablePriorityNotifications: false,
   }
 
 export const inactiveCompanyUser: MockUserProfileDto = {
