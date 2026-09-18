@@ -196,6 +196,8 @@ import { ExemptionForTransportationModule } from './transport-authority/exemptio
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
 import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
+import { ChildProtectionNotificationService } from './national-agency-for-children-and-families/child-protection-notification/child-protection-notification.service'
+import { ChildProtectionNotificationModule } from './national-agency-for-children-and-families/child-protection-notification/child-protection-notification.module'
 import { DrivingLicenseAdditionalModule } from './district-commissioner/driving-license-additional/driving-license-additional.module'
 import { DrivingLicenseAdditionalService } from './district-commissioner/driving-license-additional/driving-license-additional.service'
 
@@ -299,6 +301,7 @@ export const modules = [
   ConfirmTravelModule,
   DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
+  ChildProtectionNotificationModule,
   U2CertificateModule,
 ]
 
@@ -401,5 +404,6 @@ export const services = [
   ConfirmTravelService,
   DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
+  ChildProtectionNotificationService,
   U2CertificateService,
 ]

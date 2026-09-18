@@ -1,0 +1,25 @@
+import { defineMessages } from 'react-intl'
+
+export const protectiveFactorsMessages = defineMessages({
+  sectionTitle: {
+    id: 'cpn.application:protectiveFactors.sectionTitle',
+    defaultMessage: 'Verndandi þættir',
+    description: 'Protective factors section title',
+  },
+  description: {
+    id: 'cpn.application:protectiveFactors.description',
+    defaultMessage:
+      'Allar fjölskyldur og öll börn hafa yfir að búa sterkum hliðum og verndandi þáttum sem stuðla að velferð þeirra og seiglu og geta dregið úr neikvæðum áhrifum áfalla eða álags. \n\nVeist þú hvaða verndandi þætti, ef einhverja, er hægt að nefna í máli barnsins sem um ræðir? Veldu alla þá þætti sem þú hefur vitneskju um og telur vera lýsandi. \n\nEf þú þekkir ekki til verndandi þátta, þá hakarðu einfaldlega við þann möguleika og heldur svo áfram.',
+    description: 'Protective factors page description with instructions',
+  },
+  itemsLabel: {
+    id: 'cpn.application:protectiveFactors.itemsLabel',
+    defaultMessage: 'Eiginleikar',
+    description: 'Label for the sub-category items multi-select',
+  },
+  itemsPlaceholder: {
+    id: 'cpn.application:protectiveFactors.itemsPlaceholder',
+    defaultMessage: 'Veldu þá eiginleika sem eiga við',
+    description: 'Placeholder for the sub-category items multi-select',
+  },
+})

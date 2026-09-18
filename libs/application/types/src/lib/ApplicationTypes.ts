@@ -108,6 +108,7 @@ export enum ApplicationTypes {
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
+  CHILD_PROTECTION_NOTIFICATION = 'ChildProtectionNotification',
   U2_CERTIFICATE = 'U2Certificate',
 }
 
@@ -551,6 +552,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SALARY_REPORT]: {
     slug: 'jafnrettisstofa-skyrslugjof',
     translation: ['doe.sr.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CHILD_PROTECTION_NOTIFICATION]: {
+    slug: 'tilkynning-til-barnaverndar',
+    translation: 'cpn.application',
   },
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
