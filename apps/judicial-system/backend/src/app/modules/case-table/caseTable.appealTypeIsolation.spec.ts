@@ -138,6 +138,29 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     return queries[0] ?? ''
   }
 
+  // Every alias a query's WHERE names, other than the root. Sequelize emits a
+  // reference to an association the query did not join without complaint, and
+  // Postgres then rejects the whole query for a missing FROM-clause entry - so
+  // an include that exists only to satisfy a shared predicate is load-bearing
+  // and nothing else would notice it going.
+  const referencedAliases = (sql: string): string[] => {
+    const where = sql.slice(sql.indexOf(' WHERE '))
+
+    return [
+      ...new Set(
+        [...where.matchAll(/"([A-Za-z][A-Za-z0-9]*)"\."/g)]
+          .map((match) => match[1])
+          .filter((alias) => alias !== 'Case'),
+      ),
+    ]
+  }
+
+  const joinedAliases = (sql: string): string[] => [
+    ...new Set(
+      [...sql.matchAll(/ AS "([A-Za-z][A-Za-z0-9]*)"/g)].map((m) => m[1]),
+    ),
+  ]
+
   // The tab a verdict appeal in APPEALED would surface in if the type were not
   // filtered - the reason this isolation exists at all.
   it('filters the appeal type in the district court appealed request cases', async () => {
@@ -206,6 +229,24 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
         /INNER JOIN "appeal_case" AS "verdictAppealCase"[\s\S]*?"verdictAppealCase"\."appeal_type" = 'VERDICT'/,
       )
       expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "appealCase"/)
+    })
+
+    // The access options name the ruling appeal by alias, so every list that
+    // applies them has to join it - including the verdict appeal lists, which
+    // otherwise have no use for it. Removing that include leaves SQL Postgres
+    // will not run.
+    it.each([
+      CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
+    ])('joins every association %s filters on', async (tableType) => {
+      const sql = await sqlForTable(tableType, courtOfAppealsUser)
+
+      expect(sql).not.toBe('')
+      expect(joinedAliases(sql)).toEqual(
+        expect.arrayContaining(referencedAliases(sql)),
+      )
     })
 
     // The access options are the whole guard for search, which applies no table
