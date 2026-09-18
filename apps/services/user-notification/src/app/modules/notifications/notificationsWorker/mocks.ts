@@ -35,6 +35,7 @@ export const userWithDelegations: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithDelegations2: MockUserProfileDto = {
@@ -48,6 +49,7 @@ export const userWithDelegations2: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithNoDelegations: MockUserProfileDto = {
@@ -61,6 +63,7 @@ export const userWithNoDelegations: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithNoEmail: MockUserProfileDto = {
@@ -73,6 +76,7 @@ export const userWithNoEmail: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
@@ -85,6 +89,7 @@ export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   emailNotifications: false,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
@@ -98,6 +103,7 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
@@ -111,6 +117,7 @@ export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
@@ -125,6 +132,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     emailNotifications: true,
     isRestricted: false,
     smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
   }
 
 export const inactiveCompanyUser: MockUserProfileDto = {
@@ -138,6 +146,7 @@ export const inactiveCompanyUser: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const inactiveCompanyStatus = INACTIVE_COMPANY_STATUS
@@ -153,6 +162,7 @@ export const companyUser: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const deceasedUser: MockUserProfileDto = {
@@ -166,6 +176,7 @@ export const deceasedUser: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 // Children with controlled ages for the health-notification / legal-guardian flow.
@@ -180,6 +191,7 @@ export const childUnder16: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const childOver16: MockUserProfileDto = {
@@ -193,6 +205,7 @@ export const childOver16: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 // Legal guardians who have NOT opted in to SMS (smsNotifications: false) but have a
@@ -208,6 +221,7 @@ export const legalGuardianOne: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const legalGuardianTwo: MockUserProfileDto = {
@@ -221,6 +235,7 @@ export const legalGuardianTwo: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const mockTemplateId = 'HNIPP.DEMO.ID'
