@@ -17,6 +17,9 @@ import { InvoicePaymentsGroupsInput } from '../../dtos/getInvoicePaymentsGroups.
 import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
 import { InvoicePaymentTypes } from '../../models/invoicePaymentTypes.model'
 import { mapInvoicePaymentTypes } from '../../mappers/invoicePaymentTypeMapper'
+import { InvoicePaymentTypeGroupsInput } from '../../dtos/getInvoicePaymentTypeGroups.input'
+import { InvoicePaymentTypeGroups } from '../../models/invoicePaymentTypeGroups.model'
+import { mapInvoicePaymentTypeGroups } from '../../mappers/invoicePaymentTypeGroupMapper'
 
 @Injectable()
 export class InvoicesService {
@@ -88,6 +91,20 @@ export class InvoicesService {
     }
 
     return mapInvoicePaymentTypes(data)
+  }
+
+  async getInvoicePaymentTypeGroups(
+    input?: InvoicePaymentTypeGroupsInput,
+  ): Promise<InvoicePaymentTypeGroups | null> {
+    const data = await this.govInvoicesService.getInvoicePaymentTypeGroups(
+      input,
+    )
+
+    if (!data) {
+      return null
+    }
+
+    return mapInvoicePaymentTypeGroups(data)
   }
 
   async getSuppliers(input?: SuppliersInput): Promise<Suppliers | null> {

@@ -1,23 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 
-export interface LookupItem {
-  value: string
-  label: string
-}
+import { AsyncFilterItem } from '../components/AsyncFilterSearchAccordion'
 
 /**
- * Resolves display labels for a set of already-selected filter values (e.g.
+ * Resolves display data for a set of already-selected filter values (e.g.
  * values coming from URL query state on initial load) that may not be
  * present in the currently loaded page of an async filter.
  *
- * Fetches labels only for values not yet resolved, and never re-fetches a
- * value once its label has been resolved.
+ * Fetches only values not yet resolved, and never re-fetches a value once its
+ * item has been resolved.
  */
-export const useLookupLabels = (
+export const useLookupItems = (
   values: string[] | null | undefined,
-  fetchLookup: (lookup: string[]) => Promise<LookupItem[]>,
+  fetchLookup: (lookup: string[]) => Promise<AsyncFilterItem[]>,
 ) => {
-  const [labels, setLabels] = useState<Record<string, string>>({})
+  const [items, setItems] = useState<Record<string, AsyncFilterItem>>({})
   const resolvedRef = useRef<Set<string>>(new Set())
   const key = (values ?? []).join(',')
 
@@ -33,14 +30,14 @@ export const useLookupLabels = (
     let cancelled = false
 
     fetchLookup(missing)
-      .then((items) => {
+      .then((resolved) => {
         if (cancelled) {
           return
         }
-        setLabels((prev) => {
+        setItems((prev) => {
           const next = { ...prev }
-          items.forEach((item) => {
-            next[item.value] = item.label
+          resolved.forEach((item) => {
+            next[item.value] = item
           })
           return next
         })
@@ -55,5 +52,5 @@ export const useLookupLabels = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key])
 
-  return labels
+  return items
 }

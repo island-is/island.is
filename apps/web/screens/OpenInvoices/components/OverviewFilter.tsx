@@ -16,6 +16,7 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../messages'
 import {
+  AsyncFilterItem,
   AsyncFilterPage,
   AsyncFilterSearchAccordion,
   AsyncSearchInputHandle,
@@ -48,13 +49,16 @@ interface AsyncSelectProps {
   type: 'asyncSelect'
   id: string
   label: string
-  /** Fetches a page of items from the server, see `AsyncFilterSearchAccordion`. */
   fetchPage: (args: {
     search: string
     after?: string | null
   }) => Promise<AsyncFilterPage>
-  /** Labels for currently selected values not necessarily present in the loaded page. */
-  selectedLabels?: Record<string, string>
+  selectedItems?: Record<string, AsyncFilterItem>
+  /**
+   * Defaults to whether anything is selected. Needed where `selected` resolves
+   * asynchronously, since `startExpanded` is only read on mount.
+   */
+  initiallyExpanded?: boolean
 }
 
 interface Props {
@@ -212,10 +216,11 @@ export const OverviewFilter = ({
                     }}
                     selected={searchState?.[category.id] ?? []}
                     initiallyExpanded={
+                      category.initiallyExpanded ??
                       (searchState?.[category.id] ?? []).length > 0
                     }
                     fetchPage={category.fetchPage}
-                    selectedLabels={category.selectedLabels}
+                    selectedItems={category.selectedItems}
                     onChange={(values) =>
                       onSearchUpdate(
                         category.id as keyof SearchState,

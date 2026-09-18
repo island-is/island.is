@@ -7,6 +7,7 @@ import {
   getV1OpeninvoicesDebtors,
   getV1OpeninvoicesMinistries,
   getV1OpeninvoicesPaymenttypes,
+  getV1OpeninvoicesPaymenttypesGroups,
 } from '../../gen/fetch'
 import { SearchRequestDto } from './dtos/searchRequest.dto'
 import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
@@ -30,6 +31,9 @@ import {
 } from './dtos/invoicePaymentsGroup.dto'
 import { InvoicePaymentTypesDto } from './dtos/invoicePaymentTypes.dto'
 import { mapInvoicePaymentTypeDto } from './dtos/invoicePaymentType.dto'
+import { InvoicePaymentTypeGroupsDto } from './dtos/invoicePaymentTypeGroups.dto'
+import { mapInvoicePaymentTypeGroupDto } from './dtos/invoicePaymentTypeGroup.dto'
+import { groupIdentity } from './utils/groupIdentity.util'
 
 @Injectable()
 export class GovernmentInvoicesClientService {
@@ -190,6 +194,33 @@ export class GovernmentInvoicesClientService {
           .map(mapInvoicePaymentTypeDto)
           .filter(isDefined),
         (paymentType) => paymentType.code,
+      ),
+      pageInfo: mapPageInfo(data.pageInfo),
+      totalCount: data.totalCount,
+    }
+  }
+
+  public async getInvoicePaymentTypeGroups(
+    requestParams?: SearchRequestDto,
+  ): Promise<InvoicePaymentTypeGroupsDto | null> {
+    const { data } = await getV1OpeninvoicesPaymenttypesGroups({
+      query: requestParams,
+    })
+
+    if (
+      !data?.pageInfo ||
+      data.pageInfo.hasNextPage === undefined ||
+      data.totalCount == null
+    ) {
+      return null
+    }
+
+    return {
+      invoicePaymentTypeGroups: dedupeById(
+        (data.paymentTypeGroups ?? [])
+          .map(mapInvoicePaymentTypeGroupDto)
+          .filter(isDefined),
+        groupIdentity,
       ),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,

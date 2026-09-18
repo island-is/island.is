@@ -2,13 +2,14 @@ import { useCallback } from 'react'
 import { DocumentNode } from 'graphql'
 import { useApolloClient } from '@apollo/client'
 
+import { isDefined } from '@island.is/shared/utils'
 import { IcelandicGovernmentInstitutionsSortDirection } from '@island.is/web/graphql/schema'
 
 import {
   AsyncFilterItem,
   AsyncFilterPage,
 } from '../components/AsyncFilterSearchAccordion'
-import { useLookupLabels } from './useLookupLabels'
+import { useLookupItems } from './useLookupItems'
 
 interface PagedListResult<TItem> {
   data: TItem[]
@@ -19,7 +20,7 @@ interface PagedListResult<TItem> {
 }
 
 /**
- * Builds a `fetchPage`/`selectedLabels` pair for `AsyncFilterSearchAccordion`
+ * Builds a `fetchPage`/`selectedItems` pair for `AsyncFilterSearchAccordion`
  * from a single paginated+lookup-capable GraphQL query, so each filter only
  * has to describe how to read its own query result — not repeat the
  * query/lookup fetching logic itself.
@@ -27,7 +28,7 @@ interface PagedListResult<TItem> {
 export const useAsyncFilterSource = <TData, TItem>(
   query: DocumentNode,
   extractResult: (data: TData) => PagedListResult<TItem> | null | undefined,
-  mapItem: (item: TItem) => AsyncFilterItem,
+  mapItem: (item: TItem) => AsyncFilterItem | null,
   selectedValues: string[] | null | undefined,
 ) => {
   const apolloClient = useApolloClient()
@@ -59,7 +60,7 @@ export const useAsyncFilterSource = <TData, TItem>(
       const result = extractResult(data)
 
       return {
-        items: result?.data.map(mapItem) ?? [],
+        items: result?.data.map(mapItem).filter(isDefined) ?? [],
         hasNextPage: result?.pageInfo.hasNextPage ?? false,
         endCursor: result?.pageInfo.endCursor,
       }
@@ -74,12 +75,12 @@ export const useAsyncFilterSource = <TData, TItem>(
         variables: { lookup },
       })
 
-      return extractResult(data)?.data.map(mapItem) ?? []
+      return extractResult(data)?.data.map(mapItem).filter(isDefined) ?? []
     },
     [apolloClient, query, extractResult, mapItem],
   )
 
-  const selectedLabels = useLookupLabels(selectedValues, fetchLookup)
+  const selectedItems = useLookupItems(selectedValues, fetchLookup)
 
-  return { fetchPage, selectedLabels }
+  return { fetchPage, selectedItems }
 }

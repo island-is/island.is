@@ -2,6 +2,8 @@ import {
   IcelandicGovernmentInstitutionsDebtor,
   IcelandicGovernmentInstitutionsDebtors,
   IcelandicGovernmentInstitutionsInvoicePaymentType,
+  IcelandicGovernmentInstitutionsInvoicePaymentTypeGroup,
+  IcelandicGovernmentInstitutionsInvoicePaymentTypeGroups,
   IcelandicGovernmentInstitutionsInvoicePaymentTypes,
   IcelandicGovernmentInstitutionsMinistries,
   IcelandicGovernmentInstitutionsMinistry,
@@ -55,3 +57,17 @@ export const mapInvoicePaymentType = (
   value: invoicePaymentType.id,
   label: invoicePaymentType.name,
 })
+
+export const extractInvoicePaymentTypeGroups = (data: {
+  icelandicGovernmentInstitutionsInvoicePaymentTypeGroups: IcelandicGovernmentInstitutionsInvoicePaymentTypeGroups
+}) => data.icelandicGovernmentInstitutionsInvoicePaymentTypeGroups
+
+export const mapInvoicePaymentTypeGroup = (
+  group: IcelandicGovernmentInstitutionsInvoicePaymentTypeGroup,
+) =>
+  group.codes.length > 0
+    ? {
+        value: group.id,
+        label: group.name,
+      }
+    : null

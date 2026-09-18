@@ -92,6 +92,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES = gql`
     $search: String
     $after: String
     $lookup: [String!]
+    $limit: Int
     $sortDirection: IcelandicGovernmentInstitutionsSortDirection
   ) {
     icelandicGovernmentInstitutionsInvoicePaymentTypes(
@@ -99,12 +100,45 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES = gql`
         search: $search
         after: $after
         lookup: $lookup
+        limit: $limit
         sortDirection: $sortDirection
       }
     ) {
       data {
         id
         name
+      }
+      totalCount
+      pageInfo {
+        __typename
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`
+
+export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS = gql`
+  query IcelandicGovernmentInstitutionsInvoicePaymentTypeGroups(
+    $search: String
+    $after: String
+    $lookup: [String!]
+    $limit: Int
+    $sortDirection: IcelandicGovernmentInstitutionsSortDirection
+  ) {
+    icelandicGovernmentInstitutionsInvoicePaymentTypeGroups(
+      input: {
+        search: $search
+        after: $after
+        lookup: $lookup
+        limit: $limit
+        sortDirection: $sortDirection
+      }
+    ) {
+      data {
+        id
+        name
+        codes
       }
       totalCount
       pageInfo {

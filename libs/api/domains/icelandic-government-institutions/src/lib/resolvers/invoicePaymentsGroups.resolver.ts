@@ -1,4 +1,6 @@
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { InvoicesService } from '../services/invoices/invoices.service'
@@ -12,9 +14,12 @@ import { Debtors } from '../models/debtors.model'
 import { DebtorsInput } from '../dtos/getDebtors.input'
 import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
 import { InvoicePaymentTypesInput } from '../dtos/getInvoicePaymentTypes.input'
+import { InvoicePaymentTypeGroups } from '../models/invoicePaymentTypeGroups.model'
+import { InvoicePaymentTypeGroupsInput } from '../dtos/getInvoicePaymentTypeGroups.input'
 
 @Resolver(() => InvoicePaymentsGroupCollection)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class InvoicePaymentsGroupsResolver {
   constructor(private readonly invoiceService: InvoicesService) {}
 
@@ -76,5 +81,17 @@ export class InvoicePaymentsGroupsResolver {
     input: InvoicePaymentTypesInput,
   ): Promise<InvoicePaymentTypes | null> {
     return this.invoiceService.getInvoicePaymentTypes(input)
+  }
+
+  @Query(() => InvoicePaymentTypeGroups, {
+    name: 'icelandicGovernmentInstitutionsInvoicePaymentTypeGroups',
+    nullable: true,
+  })
+  @BypassAuth()
+  async getInvoicePaymentTypeGroupsList(
+    @Args('input', { type: () => InvoicePaymentTypeGroupsInput })
+    input: InvoicePaymentTypeGroupsInput,
+  ): Promise<InvoicePaymentTypeGroups | null> {
+    return this.invoiceService.getInvoicePaymentTypeGroups(input)
   }
 }

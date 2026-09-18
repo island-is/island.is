@@ -19,6 +19,7 @@ import {
   Input,
   LoadingDots,
   Tag,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
 
@@ -30,6 +31,7 @@ const SEARCH_DEBOUNCE_MS = 300
 export interface AsyncFilterItem {
   value: string
   label: string
+  tooltip?: string
 }
 
 export interface AsyncFilterPage {
@@ -48,23 +50,11 @@ interface Props {
   selected: string[]
   onChange: (selected: string[]) => void
   initiallyExpanded?: boolean
-  /**
-   * Fetches a single page of items from the server.
-   *
-   * Called with `after: undefined` whenever the (debounced) search term
-   * changes, to start a fresh first page, and with the previous page's
-   * `endCursor` when the user scrolls to the bottom of the list.
-   */
   fetchPage: (args: {
     search: string
     after?: string | null
   }) => Promise<AsyncFilterPage>
-  /**
-   * Labels for currently selected values that may not be present in the
-   * currently loaded page (e.g. selected via URL query state before the
-   * list has finished loading). Falls back to the raw value if missing.
-   */
-  selectedLabels?: Record<string, string>
+  selectedItems?: Record<string, AsyncFilterItem>
   ref: Ref<AsyncSearchInputHandle>
 }
 
@@ -75,7 +65,7 @@ export const AsyncFilterSearchAccordion = ({
   onChange,
   initiallyExpanded = false,
   fetchPage,
-  selectedLabels,
+  selectedItems,
   ref,
 }: Props) => {
   useImperativeHandle(ref, () => ({
@@ -223,16 +213,14 @@ export const AsyncFilterSearchAccordion = ({
     }
   }
 
-  const selectedItems = useMemo(
+  const selectedRows = useMemo(
     () =>
       selected.map((value) => {
-        const found = items.find((item) => item.value === value)
-        return {
-          value,
-          label: found?.label ?? selectedLabels?.[value] ?? value,
-        }
+        const found =
+          items.find((item) => item.value === value) ?? selectedItems?.[value]
+        return found ?? { value, label: value }
       }),
-    [selected, items, selectedLabels],
+    [selected, items, selectedItems],
   )
 
   // Selected items float to the top of the list, followed by the rest of
@@ -240,8 +228,8 @@ export const AsyncFilterSearchAccordion = ({
   const displayItems = useMemo(() => {
     const selectedSet = new Set(selected)
     const unselected = items.filter((item) => !selectedSet.has(item.value))
-    return [...selectedItems, ...unselected]
-  }, [selectedItems, items, selected])
+    return [...selectedRows, ...unselected]
+  }, [selectedRows, items, selected])
 
   return (
     <Box paddingTop={1} paddingX={3}>
@@ -272,10 +260,10 @@ export const AsyncFilterSearchAccordion = ({
             />
           </Box>
 
-          {selectedItems.length > 0 && (
+          {selectedRows.length > 0 && (
             <Box marginTop={1} marginBottom={2} className={styles.tagList}>
               <Inline space={1}>
-                {selectedItems.map((item) => (
+                {selectedRows.map((item) => (
                   <Tag
                     key={item.value}
                     variant="blue"
@@ -306,13 +294,22 @@ export const AsyncFilterSearchAccordion = ({
             ) : (
               <>
                 {displayItems.map((item) => (
-                  <Checkbox
+                  <Box
                     key={item.value}
-                    name={`${id}-${item.value}`}
-                    label={item.label}
-                    checked={selected.includes(item.value)}
-                    onChange={() => toggle(item.value)}
-                  />
+                    display="flex"
+                    alignItems="center"
+                    columnGap={1}
+                  >
+                    <Checkbox
+                      name={`${id}-${item.value}`}
+                      label={item.label}
+                      checked={selected.includes(item.value)}
+                      onChange={() => toggle(item.value)}
+                    />
+                    {item.tooltip && (
+                      <Tooltip text={item.tooltip} placement="right" />
+                    )}
+                  </Box>
                 ))}
                 {hasNextPage && (
                   <div ref={sentinelRef} className={styles.sentinel} />

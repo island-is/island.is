@@ -161,6 +161,12 @@ export const m = {
       id: 'web.openinvoices:search.types',
       defaultMessage: 'Flokkun',
     },
+    listConjunction: {
+      id: 'web.openinvoices:search.listConjunction',
+      defaultMessage: 'og',
+      description:
+        'Conjunction joining the final two items of a list, e.g. the payment type codes in a group tooltip.',
+    },
     suppliers: {
       id: 'web.openinvoices:search.suppliers',
       defaultMessage: 'Seljendur',

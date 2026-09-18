@@ -48,20 +48,18 @@ import { OverviewFilter } from '../components/OverviewFilter'
 import { MAX_DATE_RANGE_DAYS, ORGANIZATION_SLUG } from '../constants'
 import {
   extractDebtors,
-  extractInvoicePaymentTypes,
   extractMinistries,
   extractSuppliers,
   mapDebtor,
-  mapInvoicePaymentType,
   mapMinistry,
   mapSupplier,
 } from '../hooks/asyncFilterSources'
 import { useAsyncFilterSource } from '../hooks/useAsyncFilterSource'
+import { useInvoicePaymentTypeGroupFilter } from '../hooks/useInvoicePaymentTypeGroupFilter'
 import { m } from '../messages'
 import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
 } from './Overview.graphql'
@@ -196,7 +194,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     parseAsArrayOf(parseAsString),
   )
 
-  const { fetchPage: fetchMinistriesPage, selectedLabels: ministriesLabels } =
+  const { fetchPage: fetchMinistriesPage, selectedItems: ministriesItems } =
     useAsyncFilterSource(
       GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
       extractMinistries,
@@ -204,7 +202,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       ministries,
     )
 
-  const { fetchPage: fetchSuppliersPage, selectedLabels: suppliersLabels } =
+  const { fetchPage: fetchSuppliersPage, selectedItems: suppliersItems } =
     useAsyncFilterSource(
       GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
       extractSuppliers,
@@ -212,7 +210,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       suppliers,
     )
 
-  const { fetchPage: fetchDebtorsPage, selectedLabels: debtorsLabels } =
+  const { fetchPage: fetchDebtorsPage, selectedItems: debtorsItems } =
     useAsyncFilterSource(
       GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
       extractDebtors,
@@ -221,14 +219,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     )
 
   const {
-    fetchPage: fetchInvoicePaymentTypesPage,
-    selectedLabels: invoicePaymentTypesLabels,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
-    extractInvoicePaymentTypes,
-    mapInvoicePaymentType,
-    invoicePaymentTypes,
-  )
+    fetchPage: fetchInvoicePaymentTypeGroupsPage,
+    selected: selectedInvoicePaymentTypeGroups,
+    selectedItems: invoicePaymentTypeGroupItems,
+    toPaymentTypeCodes,
+  } = useInvoicePaymentTypeGroupFilter(invoicePaymentTypes)
 
   const totalHits = totalCount
 
@@ -383,7 +378,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         break
       }
       case 'invoicePaymentTypes': {
-        setInvoiceTypes(filteredValues)
+        const codes = filteredValues ? toPaymentTypeCodes(filteredValues) : null
+        setInvoiceTypes(codes?.length ? codes : null)
         break
       }
       case 'suppliers': {
@@ -410,8 +406,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   const filterSearchState = {
-    invoicePaymentTypes:
-      invoicePaymentTypes?.map((i) => i.toString()) ?? undefined,
+    invoicePaymentTypes: selectedInvoicePaymentTypeGroups,
     suppliers: suppliers ?? undefined,
     debtors: debtors ?? undefined,
     ministries: ministries ?? undefined,
@@ -436,28 +431,29 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       id: 'suppliers',
       label: formatMessage(m.search.suppliers),
       fetchPage: fetchSuppliersPage,
-      selectedLabels: suppliersLabels,
+      selectedItems: suppliersItems,
     },
     {
       type: 'asyncSelect' as const,
       id: 'debtors',
       label: formatMessage(m.search.customers),
       fetchPage: fetchDebtorsPage,
-      selectedLabels: debtorsLabels,
+      selectedItems: debtorsItems,
     },
     {
       type: 'asyncSelect' as const,
       id: 'invoicePaymentTypes',
       label: formatMessage(m.search.types),
-      fetchPage: fetchInvoicePaymentTypesPage,
-      selectedLabels: invoicePaymentTypesLabels,
+      fetchPage: fetchInvoicePaymentTypeGroupsPage,
+      selectedItems: invoicePaymentTypeGroupItems,
+      initiallyExpanded: (invoicePaymentTypes?.length ?? 0) > 0,
     },
     {
       type: 'asyncSelect' as const,
       id: 'ministries',
       label: formatMessage(m.search.ministries),
       fetchPage: fetchMinistriesPage,
-      selectedLabels: ministriesLabels,
+      selectedItems: ministriesItems,
     },
   ]
 
