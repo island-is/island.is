@@ -482,7 +482,7 @@ export class UserProfileService {
         previousNotificationSettings.onlyPriorityNotifications
     ) {
       this.metrics.increment('notification.setting.changed', 1, {
-        setting: 'email',
+        setting: 'onlyActionablePriorityNotifications',
         value: userProfile.onlyActionablePriorityNotifications ? 'on' : 'off',
       })
     }
