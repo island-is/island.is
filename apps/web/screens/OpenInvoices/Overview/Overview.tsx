@@ -524,22 +524,24 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           fullWidthContent={true}
           paddingTop={[3, 3, 8]}
           sidebarContent={
-            <Stack space={3}>
-              <Text variant="h4" as="h4" paddingY={1}>
-                Leit og síun
-              </Text>
-              <OverviewFilter
-                onSearchUpdate={onSearchFilterUpdate}
-                onReset={onResetFilter}
-                onApply={applyFilters}
-                applyDisabled={invoiceGroupsLoading}
-                url={baseUrl}
-                hits={totalPayments}
-                locale={locale}
-                searchState={filterSearchState}
-                categories={filterCategories}
-              />
-            </Stack>
+            <Box className={styles.sidebarScroller}>
+              <Stack space={3}>
+                <Text variant="h4" as="h4" paddingY={1}>
+                  {formatMessage(m.overview.searchTitle)}
+                </Text>
+                <OverviewFilter
+                  onSearchUpdate={onSearchFilterUpdate}
+                  onReset={onResetFilter}
+                  onApply={applyFilters}
+                  applyDisabled={invoiceGroupsLoading}
+                  url={baseUrl}
+                  hits={totalPayments}
+                  locale={locale}
+                  searchState={filterSearchState}
+                  categories={filterCategories}
+                />
+              </Stack>
+            </Box>
           }
         >
           <Box marginLeft={[0, 0, 2]} marginRight={[0, 0, 0]}>
