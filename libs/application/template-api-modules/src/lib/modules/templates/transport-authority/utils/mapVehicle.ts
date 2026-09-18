@@ -109,6 +109,5 @@ export const mapVehicle = async (
       : null,
     requireMileage: vehicle.requiresMileageRegistration,
     mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
-    isDebtLess: true,
   }
 }
