@@ -177,11 +177,15 @@ jobs:
               sha: process.env.TEST_SHA,
             })
           " > /dev/null
-          git diff --stat -- charts
-          # A release goes to staging and prod, with the tag of the reused images
+          git diff --shortstat -- charts
+          # A release goes to staging and prod, with the tag of the reused images.
+          # Not piped into grep -q: it stops reading at the first match, which
+          # fails a large git diff under pipefail.
           for stage in staging prod; do
-            git diff -- "charts/**/values*.${stage}.yaml" | grep -q "^+.*tag: ${RELEASE_TAG}" ||
-              { echo "No ${stage} values were given ${RELEASE_TAG}"; exit 1; }
+            git diff -- "charts/**/values*.${stage}.yaml" > "${RUNNER_TEMP}/helm-${stage}.diff"
+            COUNT="$(grep -c "^+.*tag: ${RELEASE_TAG}" "${RUNNER_TEMP}/helm-${stage}.diff" || true)"
+            echo "${stage}: ${COUNT} values files were given ${RELEASE_TAG}"
+            [[ "$COUNT" -gt 0 ]] || { echo "No ${stage} values were given ${RELEASE_TAG}"; exit 1; }
           done
 
       - name: Summary
