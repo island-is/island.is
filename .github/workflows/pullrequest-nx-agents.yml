@@ -191,7 +191,10 @@ jobs:
         if: ${{ needs.plan.outputs.agent-count != '0' }}
         # Knowing every target of the run lets Nx Cloud stop agents as they run out of
         # work, instead of all of them idling until the longest task is done
-        run: npx nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after="$TARGETS"
+        #
+        # Completion is explicit (see the last step) instead of relying on Nx Cloud's background
+        # heartbeat process, which is unreliable in pipelines with multiple jobs
+        run: npx nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after="$TARGETS" --require-explicit-completion
         env:
           TARGETS: ${{ needs.plan.outputs.targets }}
 
@@ -200,10 +203,10 @@ jobs:
         env:
           NX_AGENTS_ARGS: ${{ needs.plan.outputs.nx-args }}
 
-      # Agents wait for work until they are told to stop, also when this job fails or is cancelled
-      - name: Stop agents
+      # Agents wait for work until the run is completed, also when this job fails or is cancelled
+      - name: Complete CI run
         if: ${{ always() && needs.plan.outputs.agent-count != '0' }}
-        run: npx nx-cloud stop-all-agents
+        run: npx nx-cloud complete-ci-run
 
   success:
     name: Nx Agents success
