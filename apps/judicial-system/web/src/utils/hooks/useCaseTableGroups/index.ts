@@ -12,6 +12,13 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 // Tables that belong to a feature which is still hidden. The lists themselves
 // are harmless with the feature off - there is nothing for them to show - but
 // they must not be offered until it is on.
+//
+// This whole module is scaffolding for that wait. When the last entry below
+// goes - INDICTMENT_APPEAL being lifted empties it - the groups are static
+// again: delete the hook and getVisibleCaseTableGroups with its spec, and put
+// `getCaseTableGroups(user)` back in CaseTableGroups, BreadCrumbs and
+// SearchModal. Keeping an empty filter around would leave three components
+// depending on FeatureContext for nothing.
 const tableFeatures: Partial<Record<CaseTableType, Feature>> = {
   [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS]:
     Feature.INDICTMENT_APPEAL,
