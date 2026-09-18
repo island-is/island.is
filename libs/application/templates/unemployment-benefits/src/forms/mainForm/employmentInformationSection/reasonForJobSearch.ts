@@ -405,7 +405,7 @@ export const reasonForJobSearchSubSection = buildSubSection({
           variant: 'textarea',
           required: true,
           rows: 5,
-          maxLength: 500,
+          maxLength: 1500,
           showMaxLength: true,
           title:
             employmentMessages.reasonForJobSearch.labels.resignationReasonLabel,
