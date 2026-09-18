@@ -299,6 +299,9 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
       <Box
         // The left content box
+        className={
+          hasTag && hasCTAElements ? styles.contentBoxTagAndCta : undefined
+        }
         alignItems={['stretch', 'center', 'stretch', 'center']}
         display="flex"
         flexDirection={['column', 'row', 'column', 'row']}
