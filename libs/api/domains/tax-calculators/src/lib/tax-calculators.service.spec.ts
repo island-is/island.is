@@ -362,7 +362,11 @@ describe('TaxCalculatorsService calculate', () => {
 
       await service.calculate({
         type: TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES,
-        values: [{ key: 'salary', value: { numberValue: 800000 } }],
+        values: [
+          { key: 'salary', value: { numberValue: 800000 } },
+          { key: 'incomeYear', value: { numberValue: 2026 } },
+          { key: 'payMonth', value: { numberValue: 9 } },
+        ],
       })
 
       expect(call).toHaveBeenCalledWith(

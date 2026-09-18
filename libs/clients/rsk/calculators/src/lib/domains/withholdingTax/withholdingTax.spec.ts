@@ -81,10 +81,12 @@ describe('withholdingTax contract', () => {
     })
   })
 
-  it('marks every field optional', () => {
-    for (const field of withholdingTaxCalculator.inputFields) {
-      expect(field.required).toBe(false)
-    }
+  it('marks only the fields RSK cannot calculate without as required', () => {
+    const required = withholdingTaxCalculator.inputFields
+      .filter((field) => field.required)
+      .map((field) => field.name)
+
+    expect(required).toEqual(['incomeYear', 'payMonth', 'salary'])
   })
 })
 
