@@ -45,7 +45,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # The images come from test-pre-release.yml on this branch, rather than
-      # from push.yml on a pre-release branch
+      # from push.yml on a pre-release branch, and have test- tags
       PRE_RELEASE_WORKFLOW: test-pre-release.yml
       PRE_RELEASE_BRANCH: ${{ github.head_ref || github.ref_name }}
     steps:
@@ -82,6 +82,7 @@ jobs:
         id: reuse
         env:
           RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
           RELEASE_SHA: ${{ env.TEST_SHA }}
           DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
@@ -109,6 +110,7 @@ jobs:
         id: again
         env:
           RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
           RELEASE_SHA: ${{ env.TEST_SHA }}
           DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
@@ -126,6 +128,7 @@ jobs:
         id: other-commit
         env:
           RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
           RELEASE_SHA: '0000000000000000000000000000000000000000'
           DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}-other
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}

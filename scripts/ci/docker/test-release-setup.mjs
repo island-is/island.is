@@ -2,7 +2,10 @@
 import core from '@actions/core'
 import github from '@actions/github'
 import { isReleaseBranch } from './const.mjs'
-import { getPreReleaseImageTag } from './release-reuse-utils.mjs'
+import {
+  getPreReleaseImageTag,
+  getPreReleaseTagPrefix,
+} from './release-reuse-utils.mjs'
 import { isMainModule } from './utils.mjs'
 
 /**
@@ -14,6 +17,10 @@ import { isMainModule } from './utils.mjs'
  * can work it out again later. The run number keeps it clear of real releases.
  */
 export const PRE_RELEASE_TEST_WORKFLOW = 'test-pre-release.yml'
+
+// The images go to the real repositories, so their tags must not look like the
+// tags of a real pre-release (pre-release-*) or release (release_*)
+const TEST_TAG_PREFIX = 'test-'
 
 // Small images of different docker types, built by test-pre-release.yml
 const DEFAULT_PROJECTS = 'services-xroad-collector,payments'
@@ -40,16 +47,25 @@ export function getTestSetup(preReleaseRun, sha, releaseTagSuffix) {
     throw new Error(`${releaseBranch} is not a valid release branch`)
   }
 
+  const preReleaseTagPrefix = `${TEST_TAG_PREFIX}${getPreReleaseTagPrefix(
+    releaseBranch,
+  )}`
+
   return {
     version,
     releaseBranch,
+    preReleaseTagPrefix,
     preReleaseTag: getPreReleaseImageTag(
       releaseBranch,
       sha,
       preReleaseRun.run_number,
+      preReleaseTagPrefix,
     ),
     // Same shape as generate-tag.mjs gives a release
-    releaseTag: `release_${version}_${sha.slice(0, 7)}_${releaseTagSuffix}`,
+    releaseTag: `${TEST_TAG_PREFIX}release_${version}_${sha.slice(
+      0,
+      7,
+    )}_${releaseTagSuffix}`,
   }
 }
 
@@ -123,11 +139,12 @@ export async function main() {
   const setup = getTestSetup(
     preReleaseRun,
     TEST_SHA,
-    `test${GITHUB_RUN_ID}a${process.env.GITHUB_RUN_ATTEMPT ?? 1}`,
+    `${GITHUB_RUN_ID}a${process.env.GITHUB_RUN_ATTEMPT ?? 1}`,
   )
   console.info(setup)
   core.setOutput('VERSION', setup.version)
   core.setOutput('RELEASE_BRANCH', setup.releaseBranch)
+  core.setOutput('PRE_RELEASE_TAG_PREFIX', setup.preReleaseTagPrefix)
   core.setOutput('PRE_RELEASE_TAG', setup.preReleaseTag)
   core.setOutput('RELEASE_TAG', setup.releaseTag)
   core.setOutput(

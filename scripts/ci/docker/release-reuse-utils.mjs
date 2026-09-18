@@ -26,8 +26,13 @@ export function getPreReleaseBranch(branch) {
 }
 
 // Mirrors the docker tag generated for pre-release pushes in push.yml
-export function getPreReleaseImageTag(branch, sha, runNumber) {
-  return `${getPreReleaseTagPrefix(branch)}${sha.slice(0, 10)}_${runNumber}`
+export function getPreReleaseImageTag(
+  branch,
+  sha,
+  runNumber,
+  tagPrefix = getPreReleaseTagPrefix(branch),
+) {
+  return `${tagPrefix}${sha.slice(0, 10)}_${runNumber}`
 }
 
 export function chunkToBuildMatrix(chunks) {

@@ -35,9 +35,10 @@ export async function findPreReleaseSourceTags({
   releaseBranch,
   sha,
   // Only overridden by test-release.yml, where the images come from
-  // test-pre-release.yml running on a pull request branch
+  // test-pre-release.yml running on a pull request branch, with test- tags
   workflow = PRE_RELEASE_WORKFLOW,
   preReleaseBranch = getPreReleaseBranch(releaseBranch),
+  tagPrefix = undefined,
 }) {
   const response = await octokit.request(
     'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
@@ -57,7 +58,9 @@ export async function findPreReleaseSourceTags({
     )
     .map((run) => run.run_number)
     .sort((a, b) => b - a)
-    .map((runNumber) => getPreReleaseImageTag(releaseBranch, sha, runNumber))
+    .map((runNumber) =>
+      getPreReleaseImageTag(releaseBranch, sha, runNumber, tagPrefix),
+    )
 }
 
 export async function prepareReleaseImageReuse({
@@ -181,6 +184,7 @@ export async function main() {
       sha: RELEASE_SHA,
       workflow: process.env.PRE_RELEASE_WORKFLOW || undefined,
       preReleaseBranch: process.env.PRE_RELEASE_BRANCH || undefined,
+      tagPrefix: process.env.PRE_RELEASE_TAG_PREFIX || undefined,
     })
   } catch (error) {
     core.warning(`Unable to look up pre-release runs, building all: ${error}`)

@@ -84,7 +84,7 @@ describe('reuse-release-images.mjs', () => {
       )
     })
 
-    test('looks up another workflow and branch when told to', async () => {
+    test('looks up another workflow, branch and tag prefix when told to', async () => {
       const octokit = octokitMock([run(7, { head_branch: 'my-pr-branch' })])
 
       await expect(
@@ -96,8 +96,9 @@ describe('reuse-release-images.mjs', () => {
           sha,
           workflow: 'test-pre-release.yml',
           preReleaseBranch: 'my-pr-branch',
+          tagPrefix: 'test-pre-release-2026-5-26-0_',
         }),
-      ).resolves.toEqual(['pre-release-2026-5-26-0_abcd123456_7'])
+      ).resolves.toEqual(['test-pre-release-2026-5-26-0_abcd123456_7'])
       expect(octokit.request).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({

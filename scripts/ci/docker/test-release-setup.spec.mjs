@@ -22,15 +22,19 @@ describe('test-release-setup.mjs', () => {
   })
 
   test('gives a valid release branch and the tags of push.yml and generate-tag.mjs', () => {
-    const setup = getTestSetup(run(412), sha, 'test1a1')
+    const setup = getTestSetup(run(412), sha, '1a1')
 
     expect(isReleaseBranch(setup.releaseBranch)).toBe(true)
     expect(setup).toEqual({
       version: '2026.9.8.412',
       releaseBranch: 'release/2026.9.8.412',
-      preReleaseTag: 'pre-release-2026-9-8-412_abcd123456_412',
-      releaseTag: 'release_2026.9.8.412_abcd123_test1a1',
+      preReleaseTagPrefix: 'test-pre-release-2026-9-8-412_',
+      preReleaseTag: 'test-pre-release-2026-9-8-412_abcd123456_412',
+      releaseTag: 'test-release_2026.9.8.412_abcd123_1a1',
     })
+    // Must never look like the tags of a real pre-release or release
+    expect(setup.preReleaseTag.startsWith('pre-release-')).toBe(false)
+    expect(setup.releaseTag.startsWith('release_')).toBe(false)
   })
 
   test('release test also gets the project that is never built', () => {
