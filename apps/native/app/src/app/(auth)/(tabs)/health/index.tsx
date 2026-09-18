@@ -161,7 +161,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         style={{
           flexDirection: 'row',
           borderBottomWidth: 1,
-          borderBottomColor: theme.color.dark300,
+          borderBottomColor: theme.color.blue400,
         }}
       >
         <Typography
