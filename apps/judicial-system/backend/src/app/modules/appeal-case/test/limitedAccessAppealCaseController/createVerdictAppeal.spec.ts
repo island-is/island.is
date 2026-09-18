@@ -1,7 +1,10 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { addMessagesToQueue } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -10,6 +13,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentCaseNotificationType,
   ServiceRequirement,
   User,
   UserRole,
@@ -219,8 +223,19 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
 
     // The notification to the public prosecution office is its own story, and none of the
     // ruling appeal notifications apply to a verdict appeal.
-    it('should queue no messages', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    // The public prosecution is told when a defender files through the portal.
+    // Nothing else is queued: the court of appeals learns of the appeal when it
+    // receives it, which is the court of appeals process, not this one.
+    it('should queue the verdict appealed notification and nothing else', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledTimes(1)
+      expect(addMessagesToQueue).toHaveBeenCalledWith({
+        type: MessageType.NOTIFICATION,
+        user: defender,
+        caseId,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
+        },
+      })
     })
   })
 
