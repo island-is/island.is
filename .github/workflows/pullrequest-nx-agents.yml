@@ -25,8 +25,11 @@ env:
   NX_PARALLEL: '3'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  # Ties the main job and the agents of this attempt together
-  NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+  # Ties the main job and the agents of this attempt together. Only the steps that take part in
+  # the distributed run use it as NX_CI_EXECUTION_ID. Everything else (e.g. codegen in load-deps)
+  # gets an id of its own: any nx command creates the CI execution in Nx Cloud, and when the job
+  # that created it ends the execution is closed, so agents exit and the main job fails
+  NX_AGENTS_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agents
   NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
   # The `web` build output is over Nx Cloud's 300MB artifact limit. Without agents that is
   # only a warning (the build is just never cached), but an agent has to upload the output
@@ -56,6 +59,8 @@ jobs:
       }}
     runs-on: arc-shared
     timeout-minutes: 30
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-plan
     permissions:
       contents: 'read'
       actions: 'read'
@@ -113,6 +118,8 @@ jobs:
       fail-fast: false
       matrix:
         agent: ${{ fromJson(needs.plan.outputs.agents) }}
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agent-${{ matrix.agent }}-setup
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -146,6 +153,7 @@ jobs:
       - name: Start Nx agent
         run: ./scripts/ci/nx-agents/start-agent.sh
         env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
           NX_AGENT_NAME: agent-${{ matrix.agent }}
           DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -174,6 +182,7 @@ jobs:
       NX_BASE: ${{ needs.plan.outputs.NX_BASE }}
       NX_HEAD: ${{ needs.plan.outputs.NX_HEAD }}
       NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.plan.outputs.agent-count }}
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-main-setup
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -193,20 +202,24 @@ jobs:
         # work, instead of all of them idling until the longest task is done
         #
         # Completion is explicit (see the last step) instead of relying on Nx Cloud's background
-        # heartbeat process, which is unreliable in pipelines with multiple jobs
+        # heartbeat process, which Nx advises against in pipelines with multiple jobs
         run: npx nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after="$TARGETS" --require-explicit-completion
         env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
           TARGETS: ${{ needs.plan.outputs.targets }}
 
       - name: Run lint, typecheck, build, test and e2e on the agents
         run: ./scripts/ci/nx-agents/run.sh
         env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
           NX_AGENTS_ARGS: ${{ needs.plan.outputs.nx-args }}
 
       # Agents wait for work until the run is completed, also when this job fails or is cancelled
       - name: Complete CI run
         if: ${{ always() && needs.plan.outputs.agent-count != '0' }}
         run: npx nx-cloud complete-ci-run
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
 
   success:
     name: Nx Agents success
