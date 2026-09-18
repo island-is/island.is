@@ -58,7 +58,10 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
 
   if (isInternal) {
     const hrefString = href?.toString()
-    const renderAnchorTag = shouldLinkBeAnAnchorTag(hrefString) || newTab
+    // Object hrefs fall through to NextLink so it can resolve them properly
+    const renderAnchorTag =
+      typeof href === 'string' &&
+      (shouldLinkBeAnAnchorTag(hrefString) || newTab)
 
     if (renderAnchorTag) {
       return (
