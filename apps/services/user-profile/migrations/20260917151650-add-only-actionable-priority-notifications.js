@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn(
       'user_profile',
-      'only_priority_notifications',
+      'only_actionable_priority_notifications',
       {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
@@ -16,7 +16,7 @@ module.exports = {
   async down(queryInterface) {
     await queryInterface.removeColumn(
       'user_profile',
-      'only_priority_notifications',
+      'only_actionable_priority_notifications',
     )
   },
 }
