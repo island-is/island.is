@@ -63,5 +63,5 @@ export class PatchUserProfileDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
-  onlyPriorityNotifications?: boolean
+  onlyActionablePriorityNotifications?: boolean
 }

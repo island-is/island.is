@@ -130,5 +130,5 @@ export class UserProfile extends Model {
     allowNull: false,
   })
   @ApiProperty()
-  onlyPriorityNotifications!: boolean
+  onlyActionablePriorityNotifications!: boolean
 }

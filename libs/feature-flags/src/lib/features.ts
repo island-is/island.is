@@ -204,6 +204,9 @@ export enum Features {
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
+  // Notifications settings
+  isOnlyActionablePriorityNotificationsEnabled = 'isOnlyActionablePriorityNotificationsEnabled',
+
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
   // Primary school PDF viewer modal
@@ -231,7 +234,6 @@ export enum Features {
   secondarySchoolScheduledNotifications = 'isSecondarySchoolScheduledNotificationsEnabled',
   passportScheduledNotifications = 'isPassportScheduledNotificationsEnabled',
   idCardScheduledNotifications = 'isIdCardScheduledNotificationsEnabled',
-  isOnlyPriorityNotificationsEnabled = 'isOnlyPriorityNotificationsEnabled',
 }
 
 export enum ServerSideFeature {

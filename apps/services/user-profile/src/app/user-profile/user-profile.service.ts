@@ -67,7 +67,7 @@ export class UserProfileService {
     @InjectModel(ActorProfile)
     private readonly actorProfileModel: typeof ActorProfile,
     private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  ) { }
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
     // Validate search term
@@ -111,6 +111,7 @@ export class UserProfileService {
       smsNotifications: userProfile.smsNotifications,
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,
+      onlyActionablePriorityNotifications: userProfile.onlyActionablePriorityNotifications,
     }))
 
     return {
@@ -155,6 +156,7 @@ export class UserProfileService {
         emailNotifications: true,
         smsNotifications: false,
         isRestricted: false,
+        onlyActionablePriorityNotifications: false,
       }
     }
 
@@ -285,7 +287,7 @@ export class UserProfileService {
           currentUserProfile?.documentNotifications ?? undefined,
         emailNotifications: currentUserProfile?.emailNotifications ?? undefined,
         onlyPriorityNotifications:
-          currentUserProfile?.onlyPriorityNotifications,
+          currentUserProfile?.onlyActionablePriorityNotifications,
       }
 
       // Check if SMS notifications feature is enabled
@@ -302,14 +304,14 @@ export class UserProfileService {
 
       // Check if Only Priority Notification feature flag is enabled
       isOnlyPrioNotificationsEnabled = await this.featureFlagService.getValue(
-        Features.isOnlyPriorityNotificationsEnabled,
+        Features.isOnlyActionablePriorityNotificationsEnabled,
         false,
       )
 
       const onlyPrioNotificationsUpdate =
-        isDefined(userProfile.onlyPriorityNotifications) &&
-        isOnlyPrioNotificationsEnabled
-          ? { onlyPriorityNotifications: userProfile.onlyPriorityNotifications }
+        isDefined(userProfile.onlyActionablePriorityNotifications) &&
+          isOnlyPrioNotificationsEnabled
+          ? { onlyActionablePriorityNotifications: userProfile.onlyActionablePriorityNotifications }
           : {}
 
       const update = {
@@ -320,8 +322,8 @@ export class UserProfileService {
           mobileStatus: formattedPhoneNumber
             ? DataStatus.VERIFIED
             : currentUserProfile?.mobileStatus === DataStatus.NOT_VERIFIED
-            ? DataStatus.NOT_DEFINED
-            : DataStatus.EMPTY,
+              ? DataStatus.NOT_DEFINED
+              : DataStatus.EMPTY,
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
@@ -346,10 +348,10 @@ export class UserProfileService {
           ? DataStatus.VERIFIED
           : currentUserProfile?.emails?.[0]?.emailStatus ===
             DataStatus.NOT_VERIFIED
-          ? DataStatus.NOT_DEFINED
-          : DataStatus.EMPTY
+            ? DataStatus.NOT_DEFINED
+            : DataStatus.EMPTY
         : (currentUserProfile?.emails?.[0]?.emailStatus as DataStatus) ||
-          DataStatus.EMPTY
+        DataStatus.EMPTY
 
       await this.userProfileModel.upsert(
         {
@@ -368,7 +370,7 @@ export class UserProfileService {
               emailVerified:
                 updateEmailVerified ??
                 currentUserProfile?.emails?.[0]?.emailStatus ===
-                  DataStatus.VERIFIED,
+                DataStatus.VERIFIED,
               mobileStatus:
                 update.mobileStatus ??
                 (currentUserProfile?.mobileStatus as DataStatus),
@@ -442,7 +444,7 @@ export class UserProfileService {
     if (
       isDefined(userProfile.smsNotifications) &&
       userProfile.smsNotifications !==
-        previousNotificationSettings.smsNotifications
+      previousNotificationSettings.smsNotifications
     ) {
       this.metrics.increment('notification.setting.changed', 1, {
         setting: 'sms',
@@ -452,7 +454,7 @@ export class UserProfileService {
     if (
       isDefined(userProfile.documentNotifications) &&
       userProfile.documentNotifications !==
-        previousNotificationSettings.documentNotifications
+      previousNotificationSettings.documentNotifications
     ) {
       this.metrics.increment('notification.setting.changed', 1, {
         setting: 'push',
@@ -462,7 +464,7 @@ export class UserProfileService {
     if (
       isDefined(userProfile.emailNotifications) &&
       userProfile.emailNotifications !==
-        previousNotificationSettings.emailNotifications
+      previousNotificationSettings.emailNotifications
     ) {
       this.metrics.increment('notification.setting.changed', 1, {
         setting: 'email',
@@ -471,13 +473,13 @@ export class UserProfileService {
     }
     if (
       isOnlyPrioNotificationsEnabled &&
-      isDefined(userProfile.onlyPriorityNotifications) &&
-      userProfile.onlyPriorityNotifications !==
-        previousNotificationSettings.onlyPriorityNotifications
+      isDefined(userProfile.onlyActionablePriorityNotifications) &&
+      userProfile.onlyActionablePriorityNotifications !==
+      previousNotificationSettings.onlyPriorityNotifications
     ) {
       this.metrics.increment('notification.setting.changed', 1, {
         setting: 'email',
-        value: userProfile.onlyPriorityNotifications ? 'on' : 'off',
+        value: userProfile.onlyActionablePriorityNotifications ? 'on' : 'off',
       })
     }
 
@@ -581,8 +583,8 @@ export class UserProfileService {
       ),
       ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
         nudgeType === NudgeType.NUDGE && {
-          mobileStatus: DataStatus.EMPTY,
-        }),
+        mobileStatus: DataStatus.EMPTY,
+      }),
     }
 
     await this.sequelize.transaction(async (t) => {
@@ -863,18 +865,18 @@ export class UserProfileService {
       fromNationalId,
       ...(emailPreferences
         ? {
-            emailNotifications: emailPreferences.emailNotifications,
-            email: emailPreferences.emails?.email,
-            emailVerified:
-              emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
-          }
+          emailNotifications: emailPreferences.emailNotifications,
+          email: emailPreferences.emails?.email,
+          emailVerified:
+            emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
+        }
         : {
-            emailNotifications: kennitala.isCompany(fromNationalId)
-              ? false
-              : true,
-            email: userProfile.email,
-            emailVerified: userProfile.emailVerified,
-          }),
+          emailNotifications: kennitala.isCompany(fromNationalId)
+            ? false
+            : true,
+          email: userProfile.email,
+          emailVerified: userProfile.emailVerified,
+        }),
       documentNotifications: userProfile.documentNotifications,
       locale: userProfile.locale,
     }
@@ -1532,6 +1534,7 @@ export class UserProfileService {
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,
       isRestricted: false,
+      onlyActionablePriorityNotifications: userProfile.onlyActionablePriorityNotifications,
     }
 
     if (
