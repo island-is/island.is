@@ -28,6 +28,10 @@ env:
   # Ties the main job and the agents of this attempt together
   NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}
   NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
+  # The `web` build output is over Nx Cloud's 300MB artifact limit. Without agents that is
+  # only a warning (the build is just never cached), but an agent has to upload the output
+  # of every task it runs. Remove when `.next/cache` is no longer part of the build outputs
+  NX_CLOUD_NO_TIMEOUTS: 'true'
   MIN_AGENTS: '1'
   MAX_AGENTS: '10'
   AWS_REGION: eu-west-1
@@ -61,6 +65,7 @@ jobs:
       agents: ${{ steps.plan.outputs.agents }}
       agent-count: ${{ steps.plan.outputs.agent-count }}
       nx-args: ${{ steps.plan.outputs.nx-args }}
+      targets: ${{ steps.plan.outputs.targets }}
       has-test: ${{ steps.plan.outputs.has-test }}
       has-e2e: ${{ steps.plan.outputs.has-e2e }}
     steps:
@@ -184,7 +189,11 @@ jobs:
 
       - name: Start distributed CI run
         if: ${{ needs.plan.outputs.agent-count != '0' }}
-        run: npx nx-cloud start-ci-run --distribute-on="manual"
+        # Knowing every target of the run lets Nx Cloud stop agents as they run out of
+        # work, instead of all of them idling until the longest task is done
+        run: npx nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after="$TARGETS"
+        env:
+          TARGETS: ${{ needs.plan.outputs.targets }}
 
       - name: Run lint, typecheck, build, test and e2e on the agents
         run: ./scripts/ci/nx-agents/run.sh

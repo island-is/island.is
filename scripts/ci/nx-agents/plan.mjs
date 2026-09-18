@@ -10,7 +10,7 @@
  * `generate-chunks.sh` so both pipelines select the same projects.
  *
  * Usage: node scripts/ci/nx-agents/plan.mjs
- * Writes `agents`, `agent-count`, `nx-args`, `has-test` and `has-e2e` to $GITHUB_OUTPUT.
+ * Writes `agents`, `agent-count`, `nx-args`, `targets`, `has-test` and `has-e2e` to $GITHUB_OUTPUT.
  */
 import { execFileSync } from 'child_process'
 import { appendFileSync, mkdtempSync, readFileSync } from 'fs'
@@ -158,6 +158,7 @@ const main = () => {
     agents: JSON.stringify(Array.from({ length: agents }, (_, i) => i + 1)),
     'agent-count': agents,
     'nx-args': JSON.stringify(nxArgs),
+    targets: targets.join(','),
     'has-test': (counts.test ?? 0) > 0,
     'has-e2e': (counts.e2e ?? 0) > 0,
   }
