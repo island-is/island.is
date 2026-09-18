@@ -611,7 +611,7 @@ export class DrivingLicenseService {
   // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF.
   // Removed alongside `postRenewLicenseOver65` in the wrapper once the flag
   // has been ON in prod long enough to retire the legacy submit path.
-  // Note: unlike the redesigned `applyForRenewal65` (V5 `postApplyForRenewal65`,
+  // Note: unlike the redesigned `applyForRenewal65` (v6 `postApplyForRenewal65`,
   // which dropped `pickupPlasticAtDistrict` in favor of the single
   // `sendPlasticToPerson` flag), the legacy `postRenewLicenseOver65` endpoint's
   // schema still supports the old two-flag model, so `pickupPlasticAtDistrict`

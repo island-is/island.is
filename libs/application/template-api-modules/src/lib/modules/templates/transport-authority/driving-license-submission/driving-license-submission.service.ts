@@ -750,7 +750,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         studentEmail: renewalEmail ?? '',
         ...(deliveryMethod
           ? {
-              // Note: the redesigned renewal-65 flow (V5 postApplyForRenewal65)
+              // Note: the redesigned renewal-65 flow (v6 postApplyForRenewal65)
               // only supports a single `sendPlasticToPerson` flag; the old
               // `pickupPlasticAtDistrict` flag was intentionally dropped since
               // the underlying schema has no such field.
