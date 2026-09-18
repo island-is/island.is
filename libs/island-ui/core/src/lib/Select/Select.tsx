@@ -2,8 +2,10 @@ import React from 'react'
 import cn from 'classnames'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
-import ReactSelect, { createFilter, GroupBase } from 'react-select'
+import ReactSelect, { GroupBase } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
+
+import { createIcelandicFilter } from './icelandicFilter'
 
 import {
   Option,
@@ -108,7 +110,7 @@ export const Select = <
         formatCreateLabel={() => currentValue}
         createOptionPosition="first"
         onInputChange={(inputValue) => setCurrentValue(inputValue)}
-        filterOption={createFilter(filterConfig)}
+        filterOption={createIcelandicFilter(filterConfig)}
         components={{
           Control,
           Input,
@@ -173,7 +175,7 @@ export const Select = <
         size={size}
         required={required}
         formatGroupLabel={formatGroupLabel}
-        filterOption={createFilter(filterConfig)}
+        filterOption={createIcelandicFilter(filterConfig)}
         hideSelectedOptions={hideSelectedOptions}
         components={{
           Control,
