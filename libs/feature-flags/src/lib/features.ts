@@ -173,9 +173,6 @@ export enum Features {
   // Should auth api use national registry v3 (Midlun) for incoming ward (legal guardian) delegations
   isDelegationIncomingWardV3Enabled = 'isDelegationIncomingWardV3Enabled',
 
-  // Should applicaton-system use national registry v3
-  shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
-
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 
   // Should user-notification worker check deceased status via national registry
@@ -221,6 +218,7 @@ export enum Features {
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
   // Housing Benefits
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
+  isDriversDeprivationsEnabled = 'isDriversDeprivationsEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 

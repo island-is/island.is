@@ -1,11 +1,14 @@
-import { col, Includeable, literal, Op } from 'sequelize'
+import { col, Includeable, literal, Op, Order, WhereOptions } from 'sequelize'
 
 import {
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseState,
   completedIndictmentCaseStates,
+  CourtSessionRulingType,
+  DateType,
   dateTypes,
   defendantEventTypes,
   DefendantPlea,
@@ -14,7 +17,9 @@ import {
   eventTypes,
   Gender,
   IndictmentCaseReviewDecision,
+  investigationCases,
   PunishmentType,
+  restrictionCases,
   stringTypes,
   SubpoenaType,
   trackedNotificationTypes,
@@ -546,6 +551,233 @@ export const caseInclude: Includeable[] = [
       },
     ],
     separate: true,
+  },
+]
+
+// A case is archivable ninety days after it stopped being worked on - the
+// window is measured by the database's own clock, so it does not depend on
+// when the archiving job happens to run.
+const archiveLifetime = literal('current_date - 90')
+
+// Which cases have outlived their retention window: request and investigation
+// cases that were deleted, ones that never got past the court, and ones whose
+// ruling or custody period is ninety days behind us.
+export const archivableCaseWhere: WhereOptions = {
+  [Op.and]: [
+    { isArchived: false },
+    {
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
+            { state: CaseState.DELETED },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
+            {
+              state: [
+                CaseState.NEW,
+                CaseState.DRAFT,
+                CaseState.SUBMITTED,
+                CaseState.RECEIVED,
+              ],
+            },
+            { created: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: restrictionCases },
+            { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+            { ruling_date: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: restrictionCases },
+            { state: CaseState.ACCEPTED },
+            { valid_to_date: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: investigationCases },
+            {
+              state: [
+                CaseState.ACCEPTED,
+                CaseState.REJECTED,
+                CaseState.DISMISSED,
+              ],
+            },
+            { ruling_date: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+      ],
+    },
+  ],
+}
+
+// Everything the archive is built from: every model that carries an encrypted
+// property is read here, because the same transaction writes the archive and
+// clears those properties off the live rows.
+export const archivableCaseInclude: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+      },
+    ],
+  },
+  { model: CaseFile, as: 'caseFiles' },
+  { model: CaseString, as: 'caseStrings' },
+  { model: AppealCase, as: 'appealCase' },
+  { model: AppealDecision, as: 'appealDecisions' },
+]
+
+// The archived children are stored as arrays of property values carrying no ids
+// of their own, so a child's position is its only identity - this order is the
+// order they are written to the archive in, and the order any future restore
+// would have to assume. Nothing in this codebase reads the archive back.
+export const archivableCaseOrder: Order = [
+  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'displayOrder', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
+  [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
+  [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
+]
+
+// A verdict appeal deadline is decided per defendant, from that defendant's
+// verdicts and the events already filed against them. Only cases with a
+// defendant who has a verdict are of interest, hence the required joins; the
+// judge and their institution ride along for the notification that follows.
+export const verdictAppealDeadlineCaseInclude: Includeable[] = [
+  {
+    model: User,
+    as: 'judge',
+    required: false,
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: true,
+    include: [
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: true,
+        separate: true,
+        order: [['created', 'DESC']],
+      },
+    ],
+  },
+]
+
+// The digital mailbox lists a defendant's indictment cases by their
+// arraignment, so the date log is joined required and filtered down to it.
+export const defendantIndictmentCaseListInclude: Includeable[] = [
+  {
+    model: Defendant,
+    as: 'defendants',
+  },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    where: {
+      dateType: DateType.ARRAIGNMENT_DATE,
+    },
+    required: true,
+  },
+]
+
+// One indictment case as the digital mailbox shows it to a defendant: the
+// defendant's own subpoenas and verdicts, who is handling the case, its dates,
+// the event that sent it to the public prosecutor, and the judgement text from
+// the court session that delivered it.
+export const defendantIndictmentCaseInclude: Includeable[] = [
+  {
+    model: Defendant,
+    as: 'defendants',
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+  },
+  { model: Institution, as: 'court' },
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: User, as: 'judge' },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: DateLog, as: 'dateLogs' },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    order: [['created', 'DESC']],
+    separate: true,
+    where: {
+      event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    },
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'DESC']],
+    separate: true,
+    attributes: ['ruling'],
+    where: {
+      ruling_type: CourtSessionRulingType.JUDGEMENT,
+    },
+  },
+]
+
+// A case waiting for its indictment review: only the defendants no one has
+// decided on yet, and the event that handed the case to the public prosecutor.
+export const indictmentReviewCaseInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    order: [['created', 'DESC']],
+    separate: true,
+    where: {
+      event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    },
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: true,
+    where: {
+      indictmentReviewDecision: null,
+    },
   },
 ]
 

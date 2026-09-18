@@ -19,18 +19,30 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseIndictmentRulingDecision,
+  CaseOrigin,
   CaseState,
   CaseType,
+  completedIndictmentCaseStates,
+  DateType,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 import {
+  archivableCaseInclude,
+  archivableCaseOrder,
+  archivableCaseWhere,
   caseInclude,
   caseStatisticsInclude,
+  defendantIndictmentCaseInclude,
+  defendantIndictmentCaseListInclude,
   indictmentCaseEventExportInclude,
+  indictmentReviewCaseInclude,
   requestCaseEventExportInclude,
   UpdateCase,
+  verdictAppealDeadlineCaseInclude,
 } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
@@ -235,6 +247,251 @@ export class CaseRepositoryService {
     }
 
     return originalAncestorId
+  }
+
+  // The next case that has outlived its retention window, with the whole graph
+  // the archive is built from. The caller writes the archive and clears the
+  // encrypted properties in the same transaction, so this read joins the
+  // transaction too.
+  async findNextCaseToArchive(transaction: Transaction): Promise<Case | null> {
+    try {
+      this.logger.debug('Finding the next case to archive')
+
+      const result = await this.caseModel.findOne({
+        where: archivableCaseWhere,
+        include: archivableCaseInclude,
+        order: archivableCaseOrder,
+        transaction,
+      })
+
+      this.logger.debug(`Case to archive ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error('Error finding the next case to archive:', { error })
+
+      throw error
+    }
+  }
+
+  // Every ruled indictment case that came from LOKE, with each defendant's
+  // verdicts and the events already filed for them - the caller decides per
+  // defendant whether the verdict appeal deadline has passed. Only LOKE cases
+  // have a police case to report the outcome back to.
+  async findIndictmentCasesForVerdictAppealDeadlineCheck(): Promise<Case[]> {
+    try {
+      this.logger.debug(
+        'Finding indictment cases for the verdict appeal deadline check',
+      )
+
+      const results = await this.caseModel.findAll({
+        where: {
+          state: completedIndictmentCaseStates,
+          type: CaseType.INDICTMENT,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+          origin: CaseOrigin.LOKE,
+        },
+        include: verdictAppealDeadlineCaseInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases for the verdict appeal deadline check`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding indictment cases for the verdict appeal deadline check:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The received cases with a hearing arranged on a given day, earliest
+  // hearing first. The day is bounded here rather than by the caller, on a
+  // copy of the date - setHours mutates the Date it is called on.
+  async findCasesWithHearingArrangementsOnDate(date: Date): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding cases with hearing arrangements on a date')
+
+      const startOfDay = new Date(date)
+      startOfDay.setHours(0, 0, 0, 0)
+      const endOfDay = new Date(date)
+      endOfDay.setHours(23, 59, 59, 999)
+
+      const results = await this.caseModel.findAll({
+        where: { state: { [Op.eq]: CaseState.RECEIVED } },
+        include: [
+          {
+            model: DateLog,
+            as: 'dateLogs',
+            where: {
+              dateType: [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE],
+              date: {
+                [Op.gte]: startOfDay,
+                [Op.lte]: endOfDay,
+              },
+            },
+            required: true,
+          },
+        ],
+        order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+      })
+
+      this.logger.debug(
+        `Found ${results.length} cases with hearing arrangements on the date`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding cases with hearing arrangements on a date:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The indictment cases a defendant has been summoned to, newest arraignment
+  // first, reduced to what the digital mailbox lists them by. National ids are
+  // stored without a separator, so one is stripped off the argument - it
+  // reaches this repository from a raw request parameter.
+  async findDefendantIndictmentCases(
+    defendantNationalId: string,
+  ): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding indictment cases for a defendant')
+
+      // Police case numbers are not among the attributes read here, so they
+      // are deliberately left unresolved
+      const results = await this.caseModel.findAll({
+        where: {
+          type: CaseType.INDICTMENT,
+          // Cases in deleted or otherwise inaccessible states stay hidden
+          state: [
+            CaseState.RECEIVED,
+            CaseState.WAITING_FOR_CANCELLATION,
+            ...completedIndictmentCaseStates,
+          ],
+          '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
+        },
+        include: defendantIndictmentCaseListInclude,
+        order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
+        attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases for the defendant`,
+      )
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding indictment cases for a defendant:', {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  // One live indictment case as the digital mailbox shows it to a defendant.
+  // The case only carries the defendant matching the national id - the join
+  // condition selects them, so the other defendants are not read at all.
+  async findIndictmentCaseByIdAndDefendantNationalId(
+    caseId: string,
+    defendantNationalId: string,
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding indictment case ${caseId} for a defendant`)
+
+      // Police case numbers are not among the attributes read here, so they
+      // are deliberately left unresolved
+      const result = await this.caseModel.findOne({
+        where: {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+          // The national id reaches this repository from a raw request
+          // parameter, and is stored without a separator
+          '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
+        },
+        include: defendantIndictmentCaseInclude,
+        attributes: [
+          'courtCaseNumber',
+          'id',
+          'state',
+          'indictmentRulingDecision',
+          'rulingDate',
+          'ruling',
+        ],
+      })
+
+      this.logger.debug(
+        `Indictment case ${caseId} ${result ? 'found' : 'not found'}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding indictment case ${caseId}:`, { error })
+
+      throw error
+    }
+  }
+
+  // The indictment cases assigned to one reviewer whose ruling landed inside a
+  // period, with the defendants no one has decided on yet. The caller derives
+  // the period from the appeal deadline it is chasing.
+  async findIndictmentCasesAwaitingReviewByRulingDate(
+    indictmentReviewerId: string,
+    fromRulingDate: Date,
+    toRulingDate: Date,
+  ): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding indictment cases awaiting review')
+
+      const results = await this.caseModel.findAll({
+        where: {
+          indictmentReviewerId,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+          rulingDate: { [Op.gte]: fromRulingDate, [Op.lte]: toRulingDate },
+        },
+        include: indictmentReviewCaseInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases awaiting review`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding indictment cases awaiting review:', {
+        error,
+      })
+
+      throw error
+    }
   }
 
   async findOne(options?: FindOneOptions): Promise<Case | null> {
