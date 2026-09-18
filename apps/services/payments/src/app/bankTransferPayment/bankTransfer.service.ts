@@ -873,7 +873,7 @@ export class BankTransferService {
     }
   }
 
-  /** Race-guarded persist of a terminal failure + payment_failed event (only the race winner fires). */
+  /** Persists a terminal failure + payment_failed event, once per actual transition. */
   private async finalizeBankTransferFailure(
     row: BankTransferPayment,
     result: BankTransferPaymentResult,
@@ -884,7 +884,12 @@ export class BankTransferService {
         where: {
           id: row.id,
           isDeleted: false,
-          lastKnownStatus: row.lastKnownStatus,
+          // `eq` is the compare-and-set. `ne` rejects a re-entry rewriting the same status,
+          // which Postgres still counts as a row updated — that fired `payment_failed` twice.
+          lastKnownStatus: {
+            [Op.eq]: row.lastKnownStatus,
+            [Op.ne]: result.rawStatus,
+          },
         },
       },
     )
