@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseIndictmentRulingDecision,
+  CaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -16,6 +18,26 @@ import {
 import InfoCardClosedIndictment from './InfoCardClosedIndictment'
 
 const DEFENDER_NATIONAL_ID = '1234567890'
+
+const caseWithDismissedDefendant = (): Case => {
+  const theCase = mockCase(CaseType.INDICTMENT)
+
+  return {
+    ...theCase,
+    state: CaseState.COMPLETED,
+    defendants: [
+      ...(theCase.defendants ?? []),
+      {
+        id: 'dismissed_defendant_id',
+        name: 'Mickey Mouse',
+        indictmentCancelledOrDismissedState: {
+          type: CaseIndictmentRulingDecision.DISMISSAL,
+          time: '2026-01-15T10:00:00.000Z',
+        },
+      },
+    ],
+  }
+}
 
 const renderClosedIndictment = (
   theCase: Case,
@@ -121,5 +143,24 @@ describe('InfoCardClosedIndictment', () => {
 
     await screen.findByText('S-64/2026')
     expect(screen.queryByRole('link', { name: 'S-64/2026' })).toBeNull()
+  })
+
+  test('lists dismissed defendants in their own section for prosecutors', async () => {
+    renderClosedIndictment(caseWithDismissedDefendant())
+
+    await screen.findByRole('heading', { name: 'Frávísun' })
+    expect(screen.getByText('Mickey Mouse')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ákærði' })).toBeInTheDocument()
+  })
+
+  test('shows dismissed defendants alongside the others for defenders on completed cases', async () => {
+    renderClosedIndictment(
+      caseWithDismissedDefendant(),
+      UserRole.DEFENDER,
+      DEFENDER_NATIONAL_ID,
+    )
+
+    await screen.findByRole('heading', { name: 'Ákærðu' })
+    expect(screen.queryByRole('heading', { name: 'Frávísun' })).toBeNull()
   })
 })

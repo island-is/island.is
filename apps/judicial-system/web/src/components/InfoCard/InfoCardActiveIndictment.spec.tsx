@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseIndictmentRulingDecision,
+  CaseState,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -16,6 +18,26 @@ import {
 import InfoCardActiveIndictment from './InfoCardActiveIndictment'
 
 const DEFENDER_NATIONAL_ID = '1234567890'
+
+const caseWithCancelledDefendant = (): Case => {
+  const theCase = mockCase(CaseType.INDICTMENT)
+
+  return {
+    ...theCase,
+    state: CaseState.COMPLETED,
+    defendants: [
+      ...(theCase.defendants ?? []),
+      {
+        id: 'cancelled_defendant_id',
+        name: 'Mickey Mouse',
+        indictmentCancelledOrDismissedState: {
+          type: CaseIndictmentRulingDecision.CANCELLATION,
+          time: '2026-01-15T10:00:00.000Z',
+        },
+      },
+    ],
+  }
+}
 
 const renderActiveIndictment = (
   theCase: Case,
@@ -128,6 +150,27 @@ describe('InfoCardActiveIndictment', () => {
     expect(screen.queryByRole('heading', { name: 'Sameinað úr' })).toBeNull()
     expect(
       document.querySelector(`a[href="${ROUTE_HANDLER_ROUTE}/merged-from-id"]`),
+    ).toBeNull()
+  })
+
+  test('lists cancelled defendants in their own section for court users', async () => {
+    renderActiveIndictment(caseWithCancelledDefendant())
+
+    await screen.findByRole('heading', { name: 'Niðurfelling máls' })
+    expect(screen.getByText('Mickey Mouse')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ákærði' })).toBeInTheDocument()
+  })
+
+  test('shows cancelled defendants alongside the others for defenders on completed cases', async () => {
+    renderActiveIndictment(
+      caseWithCancelledDefendant(),
+      UserRole.DEFENDER,
+      DEFENDER_NATIONAL_ID,
+    )
+
+    await screen.findByRole('heading', { name: 'Ákærðu' })
+    expect(
+      screen.queryByRole('heading', { name: 'Niðurfelling máls' }),
     ).toBeNull()
   })
 })

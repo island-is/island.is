@@ -31,7 +31,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
+  InfoCardRequestCase,
   Modal,
   PageHeader,
   PageLayout,
@@ -42,7 +42,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseOrigin,
   CaseState,
@@ -70,19 +69,6 @@ export const Overview = () => {
   } = useCase()
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const {
-    defendants,
-    policeCaseNumbers,
-    courtCaseNumber,
-    court,
-    prosecutorsOffice,
-    judge,
-    requestedCourtDate,
-    registrar,
-    prosecutor,
-    caseType,
-    victims,
-  } = useInfoCardItems()
 
   const [modal, setModal] = useState<
     'noModal' | 'caseSubmittedModal' | 'caseResubmitModal'
@@ -185,33 +171,7 @@ export const Overview = () => {
               </Box>
             )}
           <Box component="section">
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                {
-                  id: 'victims-section',
-                  items: [victims],
-                },
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    ...(workingCase.courtCaseNumber ? [courtCaseNumber] : []),
-                    court,
-                    prosecutorsOffice,
-                    ...(workingCase.judge ? [judge] : []),
-                    requestedCourtDate,
-                    ...(workingCase.registrar ? [registrar] : []),
-                    prosecutor(workingCase.type),
-                    caseType,
-                  ],
-                  columns: 2,
-                },
-              ]}
-            />
+            <InfoCardRequestCase displayRequestDetails />
           </Box>
           {workingCase.description && (
             <Box component="section">
