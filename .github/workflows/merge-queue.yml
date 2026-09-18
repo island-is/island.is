@@ -275,6 +275,9 @@ jobs:
       - tests
       - typecheck
       - docker-build
+    env:
+      # There is something to deploy: images were built and/or reused
+      HAS_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -291,25 +294,25 @@ jobs:
         with:
           matrix-step-name: docker-build
       - name: checkout
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         uses: actions/checkout@v4
 
       - name: Record deploy start time
         id: dora-start
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         uses: ./.github/actions/dora-deployment
         with:
           mode: start
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
       - name: Prepare artifact to be uploaded
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
           REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
@@ -317,7 +320,7 @@ jobs:
           node scripts/ci/docker/write-data.mjs
       - name: Get manifest data
         id: manifest
-        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -325,7 +328,7 @@ jobs:
           node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
-        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && env.HAS_DOCKER_DATA == 'true' }}
         with:
           files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
           ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}

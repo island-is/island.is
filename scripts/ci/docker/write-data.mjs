@@ -2,6 +2,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { isMainModule } from './utils.mjs'
 
 export function matrixOutputToData(data) {
   if (!data || Object.keys(data).length === 0) {
@@ -46,4 +47,6 @@ export function main() {
   fs.writeFileSync(tmpFilePath, JSON.stringify(result, null, 2))
 }
 
-main()
+if (isMainModule(import.meta.url)) {
+  main()
+}
