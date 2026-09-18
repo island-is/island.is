@@ -357,7 +357,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.IN_REVIEW,
             cond: ({ application }: ApplicationContext) =>
-              shouldShowApplicantSubmitAccessAgreementSection(
+              !shouldShowApplicantSubmitAccessAgreementSection(
                 application.answers,
                 application.externalData,
               ),
