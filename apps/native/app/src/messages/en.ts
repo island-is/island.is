@@ -935,8 +935,7 @@ export const en: TranslatedMessages = {
     'Here you can send a message. Messages are usually answered within three business days, during working hours.',
   'health.messages.compose.introBody2':
     'If your matter is urgent and needs an answer the same day, call <b>1700</b> or contact your treatment team.',
-  'health.messages.compose.introBody3':
-    'In an emergency, call <b>112.</b>',
+  'health.messages.compose.introBody3': 'In an emergency, call <b>112.</b>',
   'health.messages.compose.continue': 'Continue',
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
