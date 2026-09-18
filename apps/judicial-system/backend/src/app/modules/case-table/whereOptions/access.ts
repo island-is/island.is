@@ -80,8 +80,15 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
     // does. The clauses above all wait for receipt; a verdict appeal is filed
     // and then waits for the court to pick it up, so the court has to see it
     // from the moment it is filed or it could never receive it at all (owner,
-    // 2026-09-17). Every state of one is therefore the court's to see, which
-    // is why this asks only that the appeal exists.
+    // 2026-09-17). Every state of one is therefore the court's to see, so this
+    // asks only that the appeal exists.
+    //
+    // A correlated EXISTS rather than the `$verdictAppealCase.appeal_state$`
+    // alias these options use for the ruling appeal: this predicate is shared
+    // by every court of appeals list, and the ruling appeal lists have no
+    // reason to join the verdict appeal. Referring to an alias a caller has not
+    // joined still compiles - Sequelize emits the reference and Postgres then
+    // rejects the query for a missing FROM-clause entry.
     literal(`EXISTS (
       SELECT 1 FROM "appeal_case" ac
       WHERE ac."case_id" = "Case"."id"
