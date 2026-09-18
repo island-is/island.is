@@ -150,8 +150,8 @@ describe('CaseController - Update', () => {
     mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue(theCase)
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockResolvedValue(theCase)
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockResolvedValue(theCase)
 
     givenWhenThen = async (
       caseId: string,
@@ -185,8 +185,9 @@ describe('CaseController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       then = await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
@@ -441,8 +442,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -548,8 +550,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -581,8 +584,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -624,8 +628,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -824,8 +829,9 @@ describe('CaseController - Update', () => {
       const updatedCase = { ...theCase, type, courtCaseNumber }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
@@ -879,8 +885,9 @@ describe('CaseController - Update', () => {
       const updatedCase = { ...theCase, type, defenderEmail }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
@@ -928,8 +935,9 @@ describe('CaseController - Update', () => {
         role: UserRole.PROSECUTOR,
         institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       })
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
@@ -993,8 +1001,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
@@ -1054,8 +1063,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, originalCase, caseToUdate)
       })
@@ -1097,8 +1107,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, originalCase, caseToUdate)
       })
@@ -1144,8 +1155,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUdate)
     })
@@ -1184,8 +1196,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUdate)
     })
@@ -1224,8 +1237,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUdate)
     })
@@ -1263,8 +1277,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1304,8 +1319,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1342,8 +1358,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1389,8 +1406,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         type: CaseType.INDICTMENT,
         dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
@@ -1420,8 +1438,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         type: CaseType.INDICTMENT,
         isArraignmentSummonsSkipped: true,
@@ -1451,8 +1470,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         type: CaseType.INDICTMENT,
         isArraignmentSummonsSkipped: true,
@@ -1485,8 +1505,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1767,7 +1788,9 @@ describe('CaseController - Update', () => {
         ...reopeningCase,
         state: CaseState.RECEIVED,
       })
-      ;(mockCaseRepositoryService.findOne as jest.Mock).mockResolvedValueOnce({
+      ;(
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      ).mockResolvedValueOnce({
         ...reopeningCase,
         state: CaseState.RECEIVED,
       })
