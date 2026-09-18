@@ -10,6 +10,8 @@ import {
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
+  ExternalData,
+  FormValue,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
@@ -19,11 +21,46 @@ type UIFields = Record<
   string,
   FC<React.PropsWithChildren<FieldBaseProps | RepeaterProps>>
 >
+
+/**
+ * Message shape for optional `getCustomFieldMessageDescriptors` (admin Translation Workspace).
+ * Keys must match `CustomField.component` in the form; values are descriptors used only in that component subtree.
+ */
+export type CustomFieldMessageDescriptorInfo = {
+  id: string
+  defaultMessage?: string
+  description?: string
+}
+
+/**
+ * Optional answers / externalData for Translation Workspace custom-field preview.
+ * Custom components often read `application.externalData.*.data` and crash on the
+ * empty stub application the workspace uses by default.
+ */
+export type TranslationWorkspacePreviewApplicationData = {
+  answers?: FormValue
+  externalData?: ExternalData
+}
+
 type TemplateLibraryModule = {
   default: unknown
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
+  getCustomFieldMessageDescriptors?: () => Promise<
+    Record<string, CustomFieldMessageDescriptorInfo[]>
+  >
+  getTranslationWorkspacePreviewApplication?: () => Promise<TranslationWorkspacePreviewApplicationData>
 }
+
+const TEMPLATE_LIB_NON_MESSAGE_EXPORTS = new Set([
+  'default',
+  '__esModule',
+  'getDataProviders',
+  'getFields',
+  'getCustomFieldMessageDescriptors',
+  'getTranslationWorkspacePreviewApplication',
+])
+
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 
 const loadTemplateLib = async (
@@ -77,6 +114,51 @@ export const getApplicationUIFields = async (
     return await templateLib.getFields()
   }
   return Promise.resolve({})
+}
+
+/**
+ * Optional manifest of translation descriptors for `CUSTOM` fields, keyed by `field.component`.
+ * Used by Translation Workspace introspection when `getCustomFieldMessageDescriptors` is exported from the template library.
+ */
+export const getApplicationCustomFieldMessageDescriptors = async (
+  templateId: ApplicationTypes,
+): Promise<Record<string, CustomFieldMessageDescriptorInfo[]>> => {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getCustomFieldMessageDescriptors) {
+    return await templateLib.getCustomFieldMessageDescriptors()
+  }
+  return {}
+}
+
+/**
+ * Optional mock `answers` / `externalData` for Translation Workspace preview.
+ * Used so `CUSTOM` field components can render without live national-registry data.
+ */
+export const getApplicationTranslationWorkspacePreview = async (
+  templateId: ApplicationTypes,
+): Promise<TranslationWorkspacePreviewApplicationData> => {
+  const templateLib = await loadTemplateLib(templateId)
+  if (templateLib.getTranslationWorkspacePreviewApplication) {
+    return await templateLib.getTranslationWorkspacePreviewApplication()
+  }
+  return {}
+}
+
+/**
+ * Message-module roots for Translation Workspace.
+ * Uses named template-library exports (typically `export * from './lib/messages'`).
+ */
+export const getApplicationMessageRoots = async (
+  templateId: ApplicationTypes,
+): Promise<unknown[]> => {
+  const templateLib = await loadTemplateLib(templateId)
+  const roots: unknown[] = []
+  for (const [key, value] of Object.entries(templateLib)) {
+    if (TEMPLATE_LIB_NON_MESSAGE_EXPORTS.has(key)) continue
+    if (typeof value === 'function') continue
+    roots.push(value)
+  }
+  return roots
 }
 
 export const getApplicationDataProviders = async (

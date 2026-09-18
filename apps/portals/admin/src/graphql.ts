@@ -31,6 +31,9 @@ export const client = new ApolloClient({
   link: ApolloLink.from([retryLink, errorLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
+      ScreenIntrospectionGql: {
+        keyFields: false,
+      },
       UserProfile: {
         keyFields: ['nationalId'],
       },

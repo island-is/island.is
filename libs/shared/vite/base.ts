@@ -17,6 +17,42 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 export const mainFields = ['browser', 'module', 'main']
 
 /**
+ * `import './foo.css'` is the vanilla-extract convention for `foo.css.ts`.
+ * Vite 8 treats a `.css` specifier as a stylesheet and will not try `.css.ts`
+ * unless we remap it. Real `.css` files still resolve when no `.css.ts` exists.
+ *
+ * Only relative specifiers are remapped: package CSS (e.g. react-pdf's
+ * `dist/Page/TextLayer.css`) is not exported as `.css.ts`, and Vite throws
+ * on unmatched package exports instead of returning null.
+ *
+ * Registered through `nodeBuiltinPolyfills()` so each SPA vite.config does
+ * not have to list this plugin itself.
+ */
+const resolveVanillaExtractCss = (): Plugin => ({
+  name: 'resolve-vanilla-extract-css',
+  enforce: 'pre',
+  async resolveId(source, importer, options) {
+    if (
+      !importer ||
+      !source.startsWith('.') ||
+      !source.endsWith('.css') ||
+      source.endsWith('.vanilla.css') ||
+      source.includes('\0')
+    ) {
+      return null
+    }
+    try {
+      return await this.resolve(`${source}.ts`, importer, {
+        ...options,
+        skipSelf: true,
+      })
+    } catch {
+      return null
+    }
+  },
+})
+
+/**
  * The compile-time constants the webpack builds define (see
  * libs/shared/webpack/nrwl-config.js). Runtime configuration goes through the
  * __SI_ENVIRONMENT__ script tag instead, not compile-time env.
@@ -75,15 +111,20 @@ export const injectDevSiEnvironment = (): Plugin => ({
  * The node builtins the webpack builds polyfill (see resolve.fallback and the
  * Buffer ProvidePlugin in libs/shared/webpack/nrwl-config.js) — browser code
  * really uses them, e.g. csv-stringify for table exports and simpleEncryption.
+ *
+ * Also registers the vanilla-extract `.css` → `.css.ts` remap. Vite flattens
+ * nested plugin arrays, so SPA configs keep calling this once.
  */
-export const nodeBuiltinPolyfills = () =>
+export const nodeBuiltinPolyfills = (): Plugin[] => [
+  resolveVanillaExtractCss(),
   nodePolyfills({
     include: ['crypto', 'stream', 'buffer', 'events', 'string_decoder', 'vm'],
     // The polyfilled crypto/stream modules reference the process global at
     // runtime (process.nextTick, process.browser) — without the shim the
     // chunks that bundle them throw "process is not defined" on load.
     globals: { Buffer: true, global: false, process: true },
-  })
+  }),
+]
 
 const assetMimeTypes: Record<string, string> = {
   svg: 'image/svg+xml',

@@ -8,9 +8,9 @@ import {
   PracticalExamAnswers,
   InformationType,
 } from './lib/dataSchema'
-export * from './lib/messages/shared'
-export * from './lib/messages/externalData'
 export const getFields = () => import('./fields/')
+
+export * from './lib/messages'
 
 export type PracticalExam = PracticalExamAnswers
 export type ExamLocation = ExamLocationType

@@ -1,0 +1,138 @@
+import { ForbiddenException } from '@nestjs/common'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
+
+import { TranslationAccessService } from './translation-access.service'
+
+describe('TranslationAccessService', () => {
+  const service = new TranslationAccessService()
+
+  const superAdminUser = {
+    nationalId: '0101302989',
+    scope: [AdminPortalScope.applicationSystemAdmin],
+    authorization: 'Bearer token',
+    client: 'client',
+  }
+
+  const hmsUser = {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    scope: [AdminPortalScope.applicationSystemInstitution],
+    authorization: 'Bearer token',
+    client: 'client',
+  }
+
+  const superAdminActingAsHms = {
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    scope: [AdminPortalScope.applicationSystemInstitution],
+    actor: {
+      nationalId: '0101302989',
+      scope: [AdminPortalScope.applicationSystemAdmin],
+    },
+    authorization: 'Bearer token',
+    client: 'client',
+  }
+
+  it('does not throw for super admin accessing any typeId', () => {
+    expect(() =>
+      service.assertTypeIdAccess(superAdminUser, ApplicationTypes.PASSPORT),
+    ).not.toThrow()
+  })
+
+  it('throws for institution user accessing another institution typeId', () => {
+    expect(() =>
+      service.assertTypeIdAccess(hmsUser, ApplicationTypes.PASSPORT),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('allows institution user to access own typeId', () => {
+    expect(() =>
+      service.assertTypeIdAccess(hmsUser, ApplicationTypes.RENTAL_AGREEMENT),
+    ).not.toThrow()
+  })
+
+  it('throws for institution user accessing unauthorized namespace', () => {
+    expect(() =>
+      service.assertNamespaceAccess(hmsUser, 'pa.application'),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('allows institution user to read a shared namespace used by their templates', () => {
+    expect(() =>
+      service.assertNamespaceAccess(hmsUser, 'uiForms.application'),
+    ).not.toThrow()
+  })
+
+  it('allows institution user to write their own exclusive namespace', () => {
+    expect(() =>
+      service.assertNamespaceWriteAccess(hmsUser, 'ra.application'),
+    ).not.toThrow()
+  })
+
+  it('throws for institution user writing a shared namespace even when they own a using template', () => {
+    expect(() =>
+      service.assertNamespaceWriteAccess(hmsUser, 'uiForms.application'),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('allows super admin to write a shared namespace', () => {
+    expect(() =>
+      service.assertNamespaceWriteAccess(superAdminUser, 'uiForms.application'),
+    ).not.toThrow()
+  })
+
+  it('narrows a super admin acting as an institution to that institution', () => {
+    expect(() =>
+      service.assertTypeIdAccess(
+        superAdminActingAsHms,
+        ApplicationTypes.RENTAL_AGREEMENT,
+      ),
+    ).not.toThrow()
+    expect(() =>
+      service.assertTypeIdAccess(
+        superAdminActingAsHms,
+        ApplicationTypes.PASSPORT,
+      ),
+    ).toThrow(ForbiddenException)
+    expect(() =>
+      service.assertNamespaceWriteAccess(
+        superAdminActingAsHms,
+        'uiForms.application',
+      ),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('throws for institution user asserting global translation access', () => {
+    expect(() => service.assertGlobalTranslationAccess(hmsUser)).toThrow(
+      ForbiddenException,
+    )
+  })
+
+  it('filters type IDs for institution users', () => {
+    const filtered = service.filterTypeIds(hmsUser, [
+      ApplicationTypes.RENTAL_AGREEMENT,
+      ApplicationTypes.PASSPORT,
+    ])
+
+    expect(filtered).toEqual([ApplicationTypes.RENTAL_AGREEMENT])
+  })
+
+  it('returns all type IDs for super admin', () => {
+    const typeIds = [
+      ApplicationTypes.RENTAL_AGREEMENT,
+      ApplicationTypes.PASSPORT,
+    ]
+    expect(service.filterTypeIds(superAdminUser, typeIds)).toEqual(typeIds)
+  })
+
+  it('filters namespaces for institution users', () => {
+    const filtered = service.filterNamespaces(hmsUser, [
+      'ra.application',
+      'pa.application',
+    ])
+
+    expect(filtered).toEqual(['ra.application'])
+  })
+})
