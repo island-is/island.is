@@ -3,8 +3,8 @@ name: Test pre-release images (no deploy)
 # Rehearsal of the image part of a pre-release, for testing that a release can
 # reuse pre-release images (scripts/ci/docker/reuse-release-images.mjs).
 #
-# Add the 'test-pre-release' label to a pull request to build a few images and
-# push them tagged like push.yml tags a pre-release, for a made up version.
+# Add the 'test-pre-release' label to a pull request to build all images, like a
+# pre-release does, and push them with test- tags for a made up version.
 # Nothing is deployed and helm-values is not touched. When it has finished, add
 # the 'test-release' label to run test-release.yml against those images.
 
@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       projects:
-        description: 'Comma separated projects to build images for'
+        description: 'Comma separated projects to build images for, instead of all'
         required: false
         type: string
 
@@ -71,16 +71,23 @@ jobs:
       - name: Prepare docker build targets
         id: chunks
         env:
-          ADDITIONAL_PROJECTS: ${{ steps.setup.outputs.PROJECTS }}
-          # Nothing is affected between a commit and itself, which leaves us
-          # with chunks for ADDITIONAL_PROJECTS only
-          BASE: ${{ env.TEST_SHA }}
-          HEAD: ${{ env.TEST_SHA }}
+          PROJECTS: ${{ steps.setup.outputs.PROJECTS }}
+          UNBUILT_PROJECT: ${{ steps.setup.outputs.UNBUILT_PROJECT }}
         run: |
+          if [[ -n "$PROJECTS" ]]; then
+            # Nothing is affected between a commit and itself, which leaves us
+            # with chunks for ADDITIONAL_PROJECTS only
+            export ADDITIONAL_PROJECTS="$PROJECTS" BASE="$TEST_SHA" HEAD="$TEST_SHA"
+          else
+            # All images, like a real pre-release and the release of it
+            export NX_AFFECTED_ALL=true
+          fi
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          # test-release.yml must also see an image that it can not reuse
+          CHUNKS="$(echo "$CHUNKS" | jq -cM --arg unbuilt "$UNBUILT_PROJECT" 'map(select(.projects != $unbuilt))')"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" == "[]" ]]; then
-            echo "No docker projects found in '$ADDITIONAL_PROJECTS'"
+            echo "No docker projects found in '$PROJECTS'"
             exit 1
           fi
           echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"

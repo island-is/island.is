@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       projects:
-        description: 'Comma separated projects, same as given to test-pre-release'
+        description: 'Comma separated projects, same as given to test-pre-release, instead of all'
         required: false
         type: string
 
@@ -41,8 +41,6 @@ jobs:
     runs-on: arc-shared
     timeout-minutes: 30
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # The images come from test-pre-release.yml on this branch, rather than
       # from push.yml on a pre-release branch, and have test- tags
@@ -67,12 +65,16 @@ jobs:
       - name: Prepare docker build targets
         id: docker_projects
         env:
-          ADDITIONAL_PROJECTS: ${{ steps.setup.outputs.PROJECTS }}
-          # Nothing is affected between a commit and itself, which leaves us
-          # with chunks for ADDITIONAL_PROJECTS only
-          BASE: ${{ env.TEST_SHA }}
-          HEAD: ${{ env.TEST_SHA }}
+          PROJECTS: ${{ steps.setup.outputs.PROJECTS }}
         run: |
+          if [[ -n "$PROJECTS" ]]; then
+            # Nothing is affected between a commit and itself, which leaves us
+            # with chunks for ADDITIONAL_PROJECTS only
+            export ADDITIONAL_PROJECTS="$PROJECTS" BASE="$TEST_SHA" HEAD="$TEST_SHA"
+          else
+            # All images, like a real pre-release and the release of it
+            export NX_AFFECTED_ALL=true
+          fi
           CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           # Quoted like the output of the same step in install.yml
@@ -83,6 +85,8 @@ jobs:
         env:
           RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
           PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           RELEASE_SHA: ${{ env.TEST_SHA }}
           DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
@@ -90,6 +94,8 @@ jobs:
 
       - name: Check reused images against ECR
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
           BUILD_CHUNKS: ${{ steps.reuse.outputs.BUILD_CHUNKS }}
           REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
@@ -99,6 +105,8 @@ jobs:
 
       - name: Check reused images can be pulled
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
         run: |
           ./scripts/ci/docker-login-ecr.sh
@@ -111,6 +119,8 @@ jobs:
         env:
           RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
           PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           RELEASE_SHA: ${{ env.TEST_SHA }}
           DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
@@ -129,6 +139,8 @@ jobs:
         env:
           RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
           PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           RELEASE_SHA: '0000000000000000000000000000000000000000'
           DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}-other
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
@@ -176,21 +188,11 @@ jobs:
         env:
           VERSION: ${{ steps.setup.outputs.VERSION }}
           BUILD_CHUNKS: ${{ steps.reuse.outputs.BUILD_CHUNKS }}
+          REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
         run: |
           {
             echo "### Test release \`${VERSION}\` passed"
-            echo "Left to build: $(echo "$BUILD_CHUNKS" | jq -c 'map(fromjson | .projects)')"
+            echo "Reused $(echo "$REUSED_DOCKER_DATA" | jq 'length') images, left to build: $(echo "$BUILD_CHUNKS" | jq -c 'map(fromjson | .projects)')"
             echo
-            echo "Nothing was deployed and helm-values was not touched."
+            echo "Nothing was deployed and helm-values was not touched. The \`test-\` tags stay in ECR, CI is not allowed to remove tags."
           } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Remove test release tags
-        if: ${{ always() && steps.reuse.outputs.REUSED_DOCKER_DATA }}
-        env:
-          REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
-        run: |
-          # Best effort, the pre-release tags are kept so this can be run again.
-          # Removing a tag does not remove an image that has other tags.
-          for image in $(echo "$REUSED_DOCKER_DATA" | jq -r '.[] | "\(.imageName):\(.imageTag)"'); do
-            aws ecr batch-delete-image --repository-name "${image%%:*}" --image-ids "imageTag=${image##*:}" || true
-          done

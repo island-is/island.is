@@ -22,16 +22,22 @@ export const PRE_RELEASE_TEST_WORKFLOW = 'test-pre-release.yml'
 // tags of a real pre-release (pre-release-*) or release (release_*)
 const TEST_TAG_PREFIX = 'test-'
 
-// Small images of different docker types, built by test-pre-release.yml
-const DEFAULT_PROJECTS = 'services-xroad-collector,payments'
-// Never built, so test-release.yml also sees an image it can not reuse
-const UNBUILT_PROJECT = 'github-actions-cache'
+// Never built by test-pre-release.yml, so that test-release.yml also sees an
+// image it can not reuse
+export const UNBUILT_PROJECT = 'github-actions-cache'
 
-export function getTestProjects(mode, projects = DEFAULT_PROJECTS) {
+/**
+ * All images are built by default, like for a real pre-release. Returns the
+ * projects to limit it to, or nothing when it is not limited.
+ */
+export function getTestProjects(mode, projects = '') {
   const built = projects
     .split(',')
     .map((project) => project.trim())
     .filter((project) => project && project !== UNBUILT_PROJECT)
+  if (built.length === 0) {
+    return ''
+  }
   return (mode === 'release' ? [...built, UNBUILT_PROJECT] : built).join(',')
 }
 
@@ -151,6 +157,7 @@ export async function main() {
     'PROJECTS',
     getTestProjects(MODE, process.env.TEST_PROJECTS || undefined),
   )
+  core.setOutput('UNBUILT_PROJECT', UNBUILT_PROJECT)
 }
 
 if (isMainModule(import.meta.url)) {

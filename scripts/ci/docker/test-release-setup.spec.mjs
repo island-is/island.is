@@ -5,6 +5,7 @@ import {
   getTestProjects,
   getTestSetup,
   getTestVersion,
+  UNBUILT_PROJECT,
 } from './test-release-setup.mjs'
 
 const sha = 'abcd123456789000000000000000000000000000'
@@ -37,14 +38,18 @@ describe('test-release-setup.mjs', () => {
     expect(setup.releaseTag.startsWith('release_')).toBe(false)
   })
 
+  test('builds all images unless it is limited to some projects', () => {
+    expect(getTestProjects('pre-release')).toBe('')
+    expect(getTestProjects('release')).toBe('')
+    expect(getTestProjects('pre-release', ' , ')).toBe('')
+  })
+
   test('release test also gets the project that is never built', () => {
     expect(getTestProjects('pre-release', 'web, api')).toBe('web,api')
     expect(getTestProjects('release', 'web, api')).toBe(
-      'web,api,github-actions-cache',
+      `web,api,${UNBUILT_PROJECT}`,
     )
-    expect(getTestProjects('pre-release', 'web,github-actions-cache')).toBe(
-      'web',
-    )
+    expect(getTestProjects('pre-release', `web,${UNBUILT_PROJECT}`)).toBe('web')
   })
 
   test('finds newest successful test pre-release run of the commit', async () => {
