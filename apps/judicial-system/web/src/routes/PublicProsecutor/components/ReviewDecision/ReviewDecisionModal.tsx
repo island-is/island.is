@@ -1,16 +1,26 @@
 import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
+import { Text } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { Modal } from '@island.is/judicial-system-web/src/components'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import {
+  getReviewDecisionLabel,
+  isLateVerdictAppeal,
+} from './ReviewDecision.logic'
 import { strings } from './ReviewDecision.strings'
 
 interface Props {
   caseId: string
   // The defendants whose review decision changed - the only ones saved.
   changedDefendants: Defendant[]
+  isFine: boolean
+  // The prosecution's own deadline to appeal. Passing it late is allowed, and
+  // only changes what the confirmation says.
+  indictmentAppealDeadline?: string | null
   onClose: () => void
   // Called with the defendants whose decision was saved, whether or not every
   // save succeeded, so the page can stop counting them as changed and a retry
@@ -25,11 +35,28 @@ interface Props {
  * changed. One modal for the page, whatever the number of defendants: the
  * decisions are confirmed together, and the page - not each defendant's radio
  * pair - knows which of them changed.
+ *
+ * For the public prosecution the decision is the appeal, but filing it is not
+ * done from here: the backend files and withdraws the verdict appeal in the
+ * same transaction as the decision, so the two cannot drift apart.
  */
 export const ReviewDecisionModal: FC<Props> = (props) => {
-  const { caseId, changedDefendants, onClose, onSaved, onConfirmed } = props
+  const {
+    caseId,
+    changedDefendants,
+    isFine,
+    indictmentAppealDeadline,
+    onClose,
+    onSaved,
+    onConfirmed,
+  } = props
   const { formatMessage: fm } = useIntl()
   const { updateDefendant, isUpdatingDefendant } = useDefendants()
+
+  const isLate = isLateVerdictAppeal(
+    changedDefendants,
+    indictmentAppealDeadline,
+  )
 
   // The saves are independent requests, not one transaction: some may succeed
   // while another fails. Those that did are reported back so they are not sent
@@ -65,11 +92,33 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
 
   return (
     <Modal
-      title={fm(strings.reviewModalTitle)}
-      text="Ertu viss um að þú viljir ljúka yfirlestri?"
+      title={
+        isLate ? 'Áfrýjun eftir að fresti lauk' : fm(strings.reviewModalTitle)
+      }
+      text={
+        <>
+          {isLate && (
+            <Text marginBottom={2}>
+              {`Áfrýjunarfrestur rann út ${formatDate(
+                indictmentAppealDeadline,
+              )}.`}
+            </Text>
+          )}
+          <Text marginBottom={2}>Viltu staðfesta eftirfarandi ákvörðun:</Text>
+          {changedDefendants.map((defendant) => (
+            <Text key={defendant.id}>
+              <strong>{`${defendant.name}: `}</strong>
+              {getReviewDecisionLabel(
+                defendant.indictmentReviewDecision,
+                isFine,
+              )}
+            </Text>
+          ))}
+        </>
+      }
       buttons={[
         {
-          text: fm(strings.reviewModalSecondaryButtonText),
+          text: 'Til baka',
           onClick: onClose,
           variant: 'ghost',
         },

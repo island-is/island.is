@@ -1,8 +1,13 @@
 import { render, screen } from '@testing-library/react'
 
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  AppealCase,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealEventType,
   ServiceRequirement,
+  UserRole,
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/testHelpers'
@@ -18,10 +23,16 @@ import DefenderVerdictTimelineCard from './DefenderVerdictTimelineCard'
 describe('DefenderVerdictTimelineCard', () => {
   const name = 'Jón Sigurður Jónsson'
 
-  const renderComponent = (defendant: Defendant) =>
+  const renderComponent = (
+    defendant: Defendant,
+    verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'>,
+  ) =>
     render(
       <IntlProviderWrapper>
-        <DefenderVerdictTimelineCard defendant={defendant} />
+        <DefenderVerdictTimelineCard
+          defendant={defendant}
+          verdictAppealCase={verdictAppealCase}
+        />
       </IntlProviderWrapper>,
     )
 
@@ -70,6 +81,26 @@ describe('DefenderVerdictTimelineCard', () => {
 
     // The appeal stands out from the rest of the timeline, see the design
     expect(appealItem.className).toMatch(/red600/)
+  })
+
+  // The defence is told when the prosecution appeals the verdict against their
+  // client, on the same card as everything else about it.
+  it('renders the appeal the prosecution made', async () => {
+    renderComponent(servedDefendant, {
+      appealEventLogs: [
+        {
+          id: 'event_id',
+          created: '2026-06-10T09:00:00.000Z',
+          eventType: AppealEventType.APPEALED,
+          defendantId: 'defendant_id',
+          userRole: UserRole.PROSECUTOR,
+        },
+      ],
+    })
+
+    expect(
+      await screen.findByText('• Ákæruvaldið áfrýjaði 10.06.2026'),
+    ).toBeInTheDocument()
   })
 
   // The appeal deadline is already on InfoCardClosedIndictment for defence
