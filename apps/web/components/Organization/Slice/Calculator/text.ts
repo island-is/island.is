@@ -13,7 +13,6 @@ export const CHROME_TEXT = {
     is: 'Ekki tókst að sækja reiknivélina',
     en: 'Could not load the calculator',
   },
-  results: { is: 'Niðurstaða', en: 'Result' },
   /* RSK was unreachable, or answered with something that is not a result. */
   calculationError: {
     is: 'Ekki tókst að reikna',

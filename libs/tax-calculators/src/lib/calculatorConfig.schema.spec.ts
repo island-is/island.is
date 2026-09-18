@@ -27,7 +27,22 @@ const itemField = (overrides = {}) => ({
 
 const outputField = (overrides = {}) => ({
   uid: 'o1',
+  kind: 'value' as const,
   key: 'totalChildBenefit',
+  ...overrides,
+})
+
+const outputContent = (overrides = {}) => ({
+  uid: 'oc1',
+  kind: 'content' as const,
+  content: { is: 'Athugið að útreikningur er til viðmiðunar.' },
+  ...overrides,
+})
+
+const outputTotal = (overrides = {}) => ({
+  uid: 'total',
+  key: 'netSalary',
+  label: { is: 'Heildarlaun eftir frádrátt' },
   ...overrides,
 })
 
@@ -39,6 +54,7 @@ const outputSection = (overrides = {}) => ({
 
 const config = (overrides = {}) => ({
   inputSections: [section()],
+  outputTotal: outputTotal(),
   outputSections: [outputSection()],
   ...overrides,
 })
@@ -48,6 +64,7 @@ describe('calculatorConfigSchema', () => {
     it('accepts a config with no sections at all', () => {
       const result = calculatorConfigSchema.safeParse({
         inputSections: [],
+        outputTotal: outputTotal(),
         outputSections: [],
       })
       expect(result.success).toBe(true)
@@ -356,6 +373,46 @@ describe('calculatorConfigSchema', () => {
     })
   })
 
+  describe('outputTotal', () => {
+    it('rejects a config with no total', () => {
+      const { outputTotal: _omitted, ...withoutTotal } = config()
+      expect(
+        calculatorConfigSchema.safeParse(withoutTotal).success,
+      ).toBe(false)
+    })
+
+    it('rejects a total with no label -- the label is the result heading', () => {
+      const { label: _omitted, ...withoutLabel } = outputTotal()
+      const result = calculatorConfigSchema.safeParse(
+        config({ outputTotal: withoutLabel }),
+      )
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error.issues[0].path).toEqual(['outputTotal', 'label'])
+      }
+    })
+
+    it('rejects a total with no key', () => {
+      expect(
+        calculatorConfigSchema.safeParse(
+          config({ outputTotal: outputTotal({ key: '' }) }),
+        ).success,
+      ).toBe(false)
+    })
+
+    it('rejects a section row reusing the total uid', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          outputTotal: outputTotal({ uid: 'shared' }),
+          outputSections: [
+            outputSection({ fields: [outputField({ uid: 'shared' })] }),
+          ],
+        }),
+      )
+      expect(result.success).toBe(false)
+    })
+  })
+
   describe('output presentation', () => {
     it('accepts an accordion section with a title', () => {
       const result = calculatorConfigSchema.safeParse(
@@ -396,13 +453,25 @@ describe('calculatorConfigSchema', () => {
       expect(result.success).toBe(true)
     })
 
-    it('accepts a section with content and no fields', () => {
+    it('accepts a section holding only a content row', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          outputSections: [outputSection({ fields: [outputContent()] })],
+        }),
+      )
+      expect(result.success).toBe(true)
+    })
+
+    it('accepts content interleaved between two value rows', () => {
       const result = calculatorConfigSchema.safeParse(
         config({
           outputSections: [
             outputSection({
-              fields: [],
-              content: { is: 'Athugið að útreikningur er til viðmiðunar.' },
+              fields: [
+                outputField({ uid: 'o1', key: 'taxBase' }),
+                outputContent(),
+                outputField({ uid: 'o2', key: 'totalChildBenefit' }),
+              ],
             }),
           ],
         }),
@@ -410,29 +479,39 @@ describe('calculatorConfigSchema', () => {
       expect(result.success).toBe(true)
     })
 
-    it('accepts a section with neither content nor fields', () => {
+    it('rejects a row that is both a value and content', () => {
+      const result = calculatorConfigSchema.safeParse(
+        config({
+          outputSections: [
+            outputSection({
+              fields: [outputField({ content: { is: 'Skýring' } })],
+            }),
+          ],
+        }),
+      )
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.outputSections[0].fields[0]).not.toHaveProperty(
+          'content',
+        )
+      }
+    })
+
+    it('rejects a row with no kind', () => {
+      const { kind, ...withoutKind } = outputField()
+      const result = calculatorConfigSchema.safeParse(
+        config({ outputSections: [outputSection({ fields: [withoutKind] })] }),
+      )
+      expect(result.success).toBe(false)
+    })
+
+    it('accepts a section with no fields at all', () => {
       const result = calculatorConfigSchema.safeParse(
         config({ outputSections: [outputSection({ fields: [] })] }),
       )
       expect(result.success).toBe(true)
     })
 
-    it.each(['none', 'before', 'after', 'both'])(
-      'accepts divider %p',
-      (divider) => {
-        const result = calculatorConfigSchema.safeParse(
-          config({ outputSections: [outputSection({ divider })] }),
-        )
-        expect(result.success).toBe(true)
-      },
-    )
-
-    it('rejects an unknown divider', () => {
-      const result = calculatorConfigSchema.safeParse(
-        config({ outputSections: [outputSection({ divider: 'middle' })] }),
-      )
-      expect(result.success).toBe(false)
-    })
   })
 
   describe('localized text', () => {
@@ -469,7 +548,11 @@ describe('calculatorConfigSchema', () => {
 
     it('rejects empty markdown content', () => {
       const result = calculatorConfigSchema.safeParse(
-        config({ outputSections: [outputSection({ content: { is: '' } })] }),
+        config({
+          outputSections: [
+            outputSection({ fields: [outputContent({ content: { is: '' } })] }),
+          ],
+        }),
       )
       expect(result.success).toBe(false)
     })
@@ -542,7 +625,32 @@ describe('collectOutputFieldKeys', () => {
         ],
       }),
     )
-    expect(keys).toEqual(['total', 'taxBase'])
+    expect(keys).toEqual(['netSalary', 'total', 'taxBase'])
+  })
+
+  it('leads with the total and dedupes it against a section placing the same key', () => {
+    const keys = collectOutputFieldKeys(
+      config({
+        outputTotal: outputTotal({ key: 'total' }),
+        outputSections: [
+          outputSection({ fields: [outputField({ uid: 'o1', key: 'total' })] }),
+        ],
+      }),
+    )
+    expect(keys).toEqual(['total'])
+  })
+
+  it('ignores content rows, which carry no key', () => {
+    const keys = collectOutputFieldKeys(
+      config({
+        outputSections: [
+          outputSection({
+            fields: [outputContent(), outputField({ key: 'taxBase' })],
+          }),
+        ],
+      }),
+    )
+    expect(keys).toEqual(['netSalary', 'taxBase'])
   })
 })
 
@@ -551,6 +659,7 @@ describe('collectOutputItemFieldKeys', () => {
     expect(
       collectOutputItemFieldKeys({
         uid: 'o1',
+        kind: 'value' as const,
         key: 'taxBrackets',
         itemFields: [
           { uid: 'i1', key: 'lowerBound' },
@@ -561,6 +670,8 @@ describe('collectOutputItemFieldKeys', () => {
   })
 
   it('returns an empty list for a field with no itemFields', () => {
-    expect(collectOutputItemFieldKeys({ uid: 'o1', key: 'total' })).toEqual([])
+    expect(
+      collectOutputItemFieldKeys({ uid: 'o1', kind: 'value' as const, key: 'total' }),
+    ).toEqual([])
   })
 })

@@ -1,6 +1,18 @@
 import { calculatorConfigSchema } from '@island.is/tax-calculators'
 
-import { filterConfigForPersistence, resolveIssuePath } from './utils'
+import {
+  filterConfigForPersistence,
+  OUTPUT_TOTAL_SECTION_KEY,
+  resolveIssuePath,
+} from './utils'
+
+const outputTotal = (extra = {}) => ({
+  uid: 'hero',
+  kind: 'value',
+  key: 'total',
+  label: { is: 'Samtals' },
+  ...extra,
+})
 
 const inputField = (uid: string, key: string, extra = {}) => ({
   uid,
@@ -18,6 +30,7 @@ const inputSection = (key: string, fields: unknown[], extra = {}) => ({
 describe('filterConfigForPersistence', () => {
   it('drops draft rows but keeps complete ones', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [
         inputSection('s1', [
           inputField('u1', ''),
@@ -33,6 +46,7 @@ describe('filterConfigForPersistence', () => {
 
   it('omits a localized value whose Icelandic half is empty', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [
         inputSection('s1', [
           inputField('u1', 'income', { label: { is: '', en: 'Income' } }),
@@ -44,19 +58,27 @@ describe('filterConfigForPersistence', () => {
     expect(payload.inputSections[0].fields[0].label).toBeUndefined()
   })
 
-  it('treats whitespace-only markdown as empty', () => {
+  it('drops a content row whose markdown is whitespace only', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [],
       outputSections: [
-        { key: 'o1', fields: [], content: { is: '  \n ', en: '' } },
+        {
+          key: 'o1',
+          fields: [
+            { uid: 'c1', kind: 'content', content: { is: '  \n ', en: '' } },
+            { uid: 'c2', kind: 'content', content: { is: 'Skýring' } },
+          ],
+        },
       ],
     } as never)
 
-    expect(payload.outputSections[0].content).toBeUndefined()
+    expect(payload.outputSections[0].fields.map((f) => f.uid)).toEqual(['c2'])
   })
 
   it('drops an unlabelled toggle and any gate pointing at it', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [
         inputSection('s1', [], { toggle: { key: 't1', label: { is: '' } } }),
         inputSection('s2', [], { gate: { toggle: 't1' } }),
@@ -70,6 +92,7 @@ describe('filterConfigForPersistence', () => {
 
   it('keeps a labelled toggle and the gate referencing it', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [
         inputSection('s1', [], { toggle: { key: 't1', label: { is: 'On' } } }),
         inputSection('s2', [], { gate: { toggle: 't1' } }),
@@ -83,6 +106,7 @@ describe('filterConfigForPersistence', () => {
 
   it('drops an accordion variant when the title is not persistable', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [],
       outputSections: [
         { key: 'o1', fields: [], variant: 'accordion', title: { is: '' } },
@@ -92,17 +116,23 @@ describe('filterConfigForPersistence', () => {
     expect(payload.outputSections[0].variant).toBeUndefined()
   })
 
-  it('passes unknown-to-the-filter schema keys through untouched', () => {
+  it('keeps an incomplete total rather than dropping it to a valid payload', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal({ key: '', label: { is: '' } }),
       inputSections: [],
-      outputSections: [{ key: 'o1', fields: [], divider: 'before' }],
+      outputSections: [],
     } as never)
 
-    expect(payload.outputSections[0].divider).toBe('before')
+    expect(payload.outputTotal.uid).toBe('hero')
+    expect(calculatorConfigSchema.safeParse(payload)).toHaveProperty(
+      'success',
+      false,
+    )
   })
 
   it('produces a payload the shared schema accepts', () => {
     const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [
         inputSection('s1', [
           inputField('u1', ''),
@@ -112,7 +142,7 @@ describe('filterConfigForPersistence', () => {
       outputSections: [
         {
           key: 'o1',
-          fields: [{ uid: 'f1', key: '', itemFields: [] }],
+          fields: [{ uid: 'f1', kind: 'value', key: '', itemFields: [] }],
           variant: 'accordion',
         },
       ],
@@ -131,6 +161,7 @@ describe('resolveIssuePath', () => {
    * at the wrong row. */
   it('resolves a payload index back to the row that owns it', () => {
     const { identity } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [
         inputSection('s1', [
           inputField('draft', ''),
@@ -158,6 +189,7 @@ describe('resolveIssuePath', () => {
 
   it('resolves an output item row three levels deep', () => {
     const { identity } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [],
       outputSections: [
         {
@@ -165,6 +197,7 @@ describe('resolveIssuePath', () => {
           fields: [
             {
               uid: 'f1',
+              kind: 'value',
               key: 'rows',
               itemFields: [
                 { uid: 'i-draft', key: '' },
@@ -203,10 +236,25 @@ describe('resolveIssuePath', () => {
 
   it('returns undefined for a root-level issue', () => {
     const { identity } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
       inputSections: [],
       outputSections: [],
     } as never)
 
     expect(resolveIssuePath([], identity)).toBeUndefined()
+  })
+
+  it('resolves an issue on the total to the total row', () => {
+    const { identity } = filterConfigForPersistence({
+      outputTotal: outputTotal({ label: { is: '' } }),
+      inputSections: [],
+      outputSections: [],
+    } as never)
+
+    expect(resolveIssuePath(['outputTotal', 'label'], identity)).toEqual({
+      tab: 'output',
+      sectionKey: OUTPUT_TOTAL_SECTION_KEY,
+      fieldUid: 'hero',
+    })
   })
 })

@@ -83,6 +83,12 @@ const metadata = {
         type: TaxCalculatorOutputFieldType.Number,
         semantic: TaxCalculatorOutputFieldSemantic.Currency,
       },
+      {
+        __typename: 'TaxCalculatorNumberOutputField',
+        key: 'netTotal',
+        type: TaxCalculatorOutputFieldType.Number,
+        semantic: TaxCalculatorOutputFieldSemantic.Currency,
+      },
     ],
   },
 }
@@ -109,11 +115,19 @@ const config: CalculatorConfig = {
       ],
     },
   ],
+  outputTotal: {
+    uid: 'hero',
+    kind: 'value',
+    key: 'netTotal',
+    label: { is: 'Heildarlaun eftir frádrátt' },
+  },
   outputSections: [
     {
       key: 'result',
       title: { is: 'Niðurstaða reiknings' },
-      fields: [{ uid: 'o1', key: 'total', label: { is: 'Samtals' } }],
+      fields: [
+        { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+      ],
     },
   ],
 }
@@ -140,6 +154,14 @@ const calculationResult = {
           key: 'total',
           type: TaxCalculatorOutputFieldType.Number,
           numberValue: 120000,
+          stringValue: null,
+          booleanValue: null,
+          arrayValue: null,
+        },
+        {
+          key: 'netTotal',
+          type: TaxCalculatorOutputFieldType.Number,
+          numberValue: 692762,
           stringValue: null,
           booleanValue: null,
           arrayValue: null,
@@ -360,6 +382,52 @@ describe('Calculator', () => {
 
     expect(await screen.findByText('Niðurstaða reiknings')).toBeTruthy()
     expect(screen.getByText('120.000 kr.')).toBeTruthy()
+  })
+
+  it('renders the total as the result heading, above the sections', async () => {
+    const { container } = renderSlice([
+      { request, result: { data: metadata } },
+      { request: calculationRequest, result: { data: calculationResult } },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(await screen.findByText('Heildarlaun eftir frádrátt')).toBeTruthy()
+    expect(screen.getByText('692.762 kr.')).toBeTruthy()
+
+    const text = container.textContent ?? ''
+    expect(text.indexOf('Heildarlaun eftir frádrátt')).toBeLessThan(
+      text.indexOf('Niðurstaða reiknings'),
+    )
+  })
+
+  it('keeps the result area when only the total survives', async () => {
+    const onlyTotal = {
+      ...calculationResult,
+      taxCalculatorCalculate: {
+        ...calculationResult.taxCalculatorCalculate,
+        calculation: {
+          ...calculationResult.taxCalculatorCalculate.calculation,
+          values: calculationResult.taxCalculatorCalculate.calculation.values.filter(
+            (value) => value.key === 'netTotal',
+          ),
+        },
+      },
+    }
+
+    renderSlice([
+      { request, result: { data: metadata } },
+      { request: calculationRequest, result: { data: onlyTotal } },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(await screen.findByText('692.762 kr.')).toBeTruthy()
+    expect(screen.queryByText('Niðurstaða reiknings')).toBeNull()
   })
 
   /* The visible result must not drift away from the visible inputs. */

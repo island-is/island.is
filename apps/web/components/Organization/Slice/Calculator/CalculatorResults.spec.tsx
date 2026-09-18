@@ -57,7 +57,11 @@ const renderResults = (
 ) =>
   render(
     <CalculatorResults
-      config={{ inputSections: [], outputSections }}
+      config={{
+        inputSections: [],
+        outputTotal: { uid: 'hero', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+        outputSections,
+      }}
       contract={contract}
       values={lookup}
       locale="is"
@@ -72,8 +76,8 @@ describe('CalculatorResults', () => {
           key: 'result',
           title: { is: 'Niðurstaða' },
           fields: [
-            { uid: 'o1', key: 'total', label: { is: 'Samtals' } },
-            { uid: 'o2', key: 'rate', label: { is: 'Hlutfall' } },
+            { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+            { uid: 'o2', kind: 'value', key: 'rate', label: { is: 'Hlutfall' } },
           ],
         },
       ],
@@ -106,6 +110,7 @@ describe('CalculatorResults', () => {
           fields: [
             {
               uid: 'o1',
+              kind: 'value',
               key: 'months',
               label: { is: 'Mánuðir' },
               itemFields: [
@@ -154,6 +159,7 @@ describe('CalculatorResults', () => {
           fields: [
             {
               uid: 'o1',
+              kind: 'value',
               key: 'months',
               label: { is: 'Mánuðir' },
               itemFields: [
@@ -182,9 +188,9 @@ describe('CalculatorResults', () => {
           title: { is: 'Niðurstaða' },
           fields: [
             /* Labelled, but keyed to a field the calculator no longer carries. */
-            { uid: 'o1', key: 'renamedAway', label: { is: 'Horfið' } },
+            { uid: 'o1', kind: 'value', key: 'renamedAway', label: { is: 'Horfið' } },
             /* In the contract and returned, but never labelled. */
-            { uid: 'o2', key: 'total' },
+            { uid: 'o2', kind: 'value', key: 'total' },
           ],
         },
       ],
@@ -207,8 +213,8 @@ describe('CalculatorResults', () => {
           key: 'result',
           title: { is: 'Niðurstaða' },
           fields: [
-            { uid: 'o1', key: 'total', label: { is: 'Samtals' } },
-            { uid: 'o2', key: 'rate', label: { is: 'Hlutfall' } },
+            { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+            { uid: 'o2', kind: 'value', key: 'rate', label: { is: 'Hlutfall' } },
           ],
         },
       ],
@@ -228,13 +234,67 @@ describe('CalculatorResults', () => {
       [
         {
           key: 'note',
-          content: { is: 'Athugið að þetta er áætlun.' },
-          fields: [],
+          fields: [
+            {
+              uid: 'oc1',
+              kind: 'content',
+              content: { is: 'Athugið að þetta er áætlun.' },
+            },
+          ],
         },
       ],
       values(),
     )
 
     expect(screen.getByText('Athugið að þetta er áætlun.')).toBeTruthy()
+  })
+
+  it('renders prose in the authored position between two values', () => {
+    const { container } = renderResults(
+      [
+        {
+          key: 'result',
+          fields: [
+            { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+            {
+              uid: 'oc1',
+              kind: 'content',
+              content: { is: 'Skýring á milli.' },
+            },
+            { uid: 'o2', kind: 'value', key: 'rate', label: { is: 'Hlutfall' } },
+          ],
+        },
+      ],
+      values(
+        {
+          key: 'total',
+          type: TaxCalculatorOutputFieldType.Number,
+          numberValue: 1,
+        },
+        {
+          key: 'rate',
+          type: TaxCalculatorOutputFieldType.Number,
+          numberValue: 2,
+        },
+      ),
+    )
+
+    const text = container.textContent ?? ''
+    expect(text.indexOf('Samtals')).toBeLessThan(text.indexOf('Skýring á milli.'))
+    expect(text.indexOf('Skýring á milli.')).toBeLessThan(text.indexOf('Hlutfall'))
+  })
+
+  it('omits a content row with no text for the active locale', () => {
+    const { container } = renderResults(
+      [
+        {
+          key: 'note',
+          fields: [{ uid: 'oc1', kind: 'content', content: { is: '' } }],
+        },
+      ],
+      values(),
+    )
+
+    expect(container.firstChild).toBeNull()
   })
 })

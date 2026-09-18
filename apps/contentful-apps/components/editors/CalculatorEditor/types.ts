@@ -1,7 +1,6 @@
 import type {
   CalculatorInputSection,
   CalculatorInputSectionField,
-  CalculatorLocalizedMarkdown,
   CalculatorLocalizedText,
   CalculatorOutputItemField,
   CalculatorOutputSection,
@@ -181,9 +180,9 @@ export interface InputSectionActions {
 
 export interface OutputSectionActions {
   update: (patch: Partial<CalculatorOutputSection>) => void
-  setContent: (content: CalculatorLocalizedMarkdown | undefined) => void
   remove: () => void
-  addField: () => void
+  addValueField: () => void
+  addContentField: () => void
   updateField: (
     fieldIndex: number,
     patch: Partial<CalculatorOutputSectionField>,

@@ -10,7 +10,7 @@ import {
 import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
-import type { CalculatorOutputSectionField } from '@island.is/tax-calculators'
+import type { CalculatorOutputValueField } from '@island.is/tax-calculators'
 
 import { TaxCalculatorOutputFieldType } from '../../../../graphql/schema'
 import { OutputFieldContract, OutputSectionActions } from '../types'
@@ -19,7 +19,7 @@ import { SortableRow } from './SortableRow'
 import { OutputItemFieldRow } from './OutputItemFieldRow'
 
 interface Props {
-  field: CalculatorOutputSectionField
+  field: CalculatorOutputValueField
   fieldIndex: number
   contract: OutputFieldContract
   isLoading: boolean

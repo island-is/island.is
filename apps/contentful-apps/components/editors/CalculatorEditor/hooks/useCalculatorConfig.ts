@@ -9,6 +9,8 @@ import type {
   CalculatorOutputItemField,
   CalculatorOutputSection,
   CalculatorOutputSectionField,
+  CalculatorOutputTotal,
+  CalculatorOutputValueField,
   CalculatorSectionToggle,
 } from '@island.is/tax-calculators'
 import {
@@ -24,6 +26,7 @@ import {
 } from '../types'
 import {
   createEmptyConfig,
+  emptyOutputTotal,
   filterConfigForPersistence,
   generateKey,
   resolveIssuePath,
@@ -46,6 +49,17 @@ const emptyOutputSection = (): CalculatorOutputSection => ({
   key: generateKey(),
   fields: [],
 })
+
+/* Item fields exist only on value rows, so every item action maps through this
+ * rather than narrowing at each of its six call sites. */
+const atValueField = (
+  fields: CalculatorOutputSectionField[],
+  fieldIndex: number,
+  mapper: (field: CalculatorOutputValueField) => CalculatorOutputValueField,
+): CalculatorOutputSectionField[] =>
+  fields.map((field, i) =>
+    i === fieldIndex && field.kind === 'value' ? mapper(field) : field,
+  )
 
 export const useCalculatorConfig = (
   sdk: FieldExtensionSDK,
@@ -95,13 +109,23 @@ export const useCalculatorConfig = (
             fields: (section.fields ?? []).map(withUid),
           }))
         : [],
+      /* An entry written before the total existed opens with an empty one
+       * rather than throwing -- it shows as invalid until authored. */
+      outputTotal: stored.outputTotal
+        ? { ...withUid(stored.outputTotal) }
+        : emptyOutputTotal(),
       outputSections: Array.isArray(stored.outputSections)
         ? stored.outputSections.map((section: CalculatorOutputSection) => ({
             ...withKeys(section),
             fields: (section.fields ?? []).map(
               (field: CalculatorOutputSectionField) => ({
                 ...withUid(field),
-                itemFields: field.itemFields?.map(withUid),
+                /* Rows written before the union existed carry no `kind`, and
+                 * every one of them was a value. */
+                kind: field.kind ?? 'value',
+                ...(field.kind !== 'content'
+                  ? { itemFields: field.itemFields?.map(withUid) }
+                  : {}),
               }),
             ),
           }))
@@ -369,16 +393,18 @@ export const useCalculatorConfig = (
           i === index ? { ...section, ...patch } : section,
         ),
       ),
-    setContent: (content) =>
-      mapOutput((current) =>
-        current.map((section, i) =>
-          i === index ? { ...section, content } : section,
-        ),
-      ),
     remove: () => mapOutput((current) => current.filter((_, i) => i !== index)),
-    addField: () =>
+    addValueField: () =>
       mapOutputFields(index, (fields) =>
-        fields.concat({ uid: generateKey(), key: '' }),
+        fields.concat({ uid: generateKey(), kind: 'value', key: '' }),
+      ),
+    addContentField: () =>
+      mapOutputFields(index, (fields) =>
+        fields.concat({
+          uid: generateKey(),
+          kind: 'content',
+          content: { is: '' },
+        }),
       ),
     updateField: (fieldIndex, patch) =>
       mapOutputFields(index, (fields) =>
@@ -388,7 +414,12 @@ export const useCalculatorConfig = (
           /* Item fields belong to the array the key names, so a changed key
            * makes them meaningless -- cleared immediately rather than left to
            * look valid against the wrong array. */
-          if (patch.key !== undefined && patch.key !== field.key) {
+          if (
+            next.kind === 'value' &&
+            field.kind === 'value' &&
+            'key' in patch &&
+            patch.key !== field.key
+          ) {
             delete next.itemFields
           }
           return next
@@ -400,22 +431,17 @@ export const useCalculatorConfig = (
       ),
     addItemField: (fieldIndex) =>
       mapOutputFields(index, (fields) =>
-        fields.map((field, i) =>
-          i === fieldIndex
-            ? {
-                ...field,
-                itemFields: (field.itemFields ?? []).concat({
-                  uid: generateKey(),
-                  key: '',
-                }),
-              }
-            : field,
-        ),
+        atValueField(fields, fieldIndex, (field) => ({
+          ...field,
+          itemFields: (field.itemFields ?? []).concat({
+            uid: generateKey(),
+            key: '',
+          }),
+        })),
       ),
     addAllItemFields: (fieldIndex, available: OutputContractItemField[]) =>
       mapOutputFields(index, (fields) =>
-        fields.map((field, i) => {
-          if (i !== fieldIndex) return field
+        atValueField(fields, fieldIndex, (field) => {
           const used = new Set((field.itemFields ?? []).map((item) => item.key))
           return {
             ...field,
@@ -429,29 +455,19 @@ export const useCalculatorConfig = (
       ),
     updateItemField: (fieldIndex, itemIndex, patch) =>
       mapOutputFields(index, (fields) =>
-        fields.map((field, i) =>
-          i === fieldIndex
-            ? {
-                ...field,
-                itemFields: (field.itemFields ?? []).map((item, j) =>
-                  j === itemIndex ? { ...item, ...patch } : item,
-                ),
-              }
-            : field,
-        ),
+        atValueField(fields, fieldIndex, (field) => ({
+          ...field,
+          itemFields: (field.itemFields ?? []).map((item, j) =>
+            j === itemIndex ? { ...item, ...patch } : item,
+          ),
+        })),
       ),
     removeItemField: (fieldIndex, itemIndex) =>
       mapOutputFields(index, (fields) =>
-        fields.map((field, i) =>
-          i === fieldIndex
-            ? {
-                ...field,
-                itemFields: (field.itemFields ?? []).filter(
-                  (_, j) => j !== itemIndex,
-                ),
-              }
-            : field,
-        ),
+        atValueField(fields, fieldIndex, (field) => ({
+          ...field,
+          itemFields: (field.itemFields ?? []).filter((_, j) => j !== itemIndex),
+        })),
       ),
   })
 
@@ -467,14 +483,10 @@ export const useCalculatorConfig = (
       to: number,
     ) =>
       mapOutputFields(sectionIndex, (fields) =>
-        fields.map((field, i) =>
-          i === fieldIndex
-            ? {
-                ...field,
-                itemFields: moveWithin(field.itemFields ?? [], from, to),
-              }
-            : field,
-        ),
+        atValueField(fields, fieldIndex, (field) => ({
+          ...field,
+          itemFields: moveWithin(field.itemFields ?? [], from, to),
+        })),
       ),
   }
 
@@ -538,6 +550,14 @@ export const useCalculatorConfig = (
     addInputSection: () => mapInput((current) => current.concat(emptyInputSection())),
     addOutputSection: () =>
       mapOutput((current) => current.concat(emptyOutputSection())),
+    outputTotal: config.outputTotal ?? emptyOutputTotal(),
+    outputTotalActions: {
+      update: (patch: Partial<CalculatorOutputTotal>) =>
+        setConfig((prev) => ({
+          ...prev,
+          outputTotal: { ...(prev.outputTotal ?? emptyOutputTotal()), ...patch },
+        })),
+    },
     otherToggles,
     inputSectionActions,
     outputSectionActions,

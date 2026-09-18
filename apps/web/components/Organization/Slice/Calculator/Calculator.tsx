@@ -33,6 +33,7 @@ import {
 import { canSubmit, collectApplicableFields, isInPlay } from './applicability'
 import { CalculatorResults, collectVisibleSections } from './CalculatorResults'
 import { CalculatorSection } from './CalculatorSection'
+import { CalculatorTotal, resolveTotal } from './CalculatorTotal'
 import { toInputFieldContract, toOutputFieldContract } from './contract'
 import {
   reportCalculationErrors,
@@ -242,14 +243,15 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     shown && shown.errors.length === 0 ? shown.calculation : undefined
   const outputValues = calculation ? toOutputValues(calculation) : undefined
 
-  /* Asked before the heading and the box are rendered: `CalculatorResults`
-   * legitimately renders nothing when the config places only keys the
-   * calculation returned no value for, and a heading over an empty box is the
-   * same defect one level up. */
+  /* Asked before the box is rendered: both halves legitimately render nothing
+   * when the config places only keys the calculation returned no value for, and
+   * an empty box is the same defect one level up. */
   const hasResults =
     outputValues !== undefined &&
-    collectVisibleSections(config, outputContract, outputValues, activeLocale)
-      .length > 0
+    (resolveTotal(config, outputContract, outputValues, activeLocale) !==
+      undefined ||
+      collectVisibleSections(config, outputContract, outputValues, activeLocale)
+        .length > 0)
 
   return (
     <FormProvider {...methods}>
@@ -295,9 +297,12 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
             {hasResults && outputValues && (
               <Box background="white" borderRadius="large" padding={[3, 3, 4]}>
                 <Stack space={3}>
-                  <Text variant="h3" as="h2">
-                    {localized(CHROME_TEXT.results, activeLocale)}
-                  </Text>
+                  <CalculatorTotal
+                    config={config}
+                    contract={outputContract}
+                    values={outputValues}
+                    locale={activeLocale}
+                  />
                   <CalculatorResults
                     config={config}
                     contract={outputContract}

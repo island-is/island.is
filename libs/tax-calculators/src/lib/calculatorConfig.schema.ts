@@ -46,46 +46,37 @@ const outputItemFieldSchema = z.object({
   label: localizedTextSchema.optional(),
 })
 
-const outputSectionFieldSchema = z
-  .object({
-    uid: rowUidSchema,
-    key: z.string().min(1),
-    label: localizedTextSchema.optional(),
-    variant: z.enum(['default', 'emphasis']).optional(),
-    itemFields: z.array(outputItemFieldSchema).optional(),
-  })
-  .superRefine((field, ctx) => {
-    const seenUids = new Set<string>()
-    const seenKeys = new Set<string>()
+const outputValueFieldSchema = z.object({
+  uid: rowUidSchema,
+  kind: z.literal('value'),
+  key: z.string().min(1),
+  label: localizedTextSchema.optional(),
+  variant: z.enum(['default', 'emphasis']).optional(),
+  itemFields: z.array(outputItemFieldSchema).optional(),
+})
 
-    field.itemFields?.forEach((itemField, itemIndex) => {
-      if (seenUids.has(itemField.uid)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['itemFields', itemIndex, 'uid'],
-          message: `Duplicate item field uid "${itemField.uid}"`,
-        })
-      }
-      seenUids.add(itemField.uid)
+const outputContentFieldSchema = z.object({
+  uid: rowUidSchema,
+  kind: z.literal('content'),
+  content: localizedMarkdownSchema,
+})
 
-      if (seenKeys.has(itemField.key)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['itemFields', itemIndex, 'key'],
-          message: `Duplicate item field key "${itemField.key}"`,
-        })
-      }
-      seenKeys.add(itemField.key)
-    })
-  })
+const outputSectionFieldSchema = z.discriminatedUnion('kind', [
+  outputValueFieldSchema,
+  outputContentFieldSchema,
+])
+
+const outputTotalSchema = z.object({
+  uid: rowUidSchema,
+  key: z.string().min(1),
+  label: localizedTextSchema,
+})
 
 const outputSectionSchema = z
   .object({
     key: z.string().min(1),
     title: localizedTextSchema.optional(),
-    content: localizedMarkdownSchema.optional(),
     variant: z.enum(['default', 'accordion']).optional(),
-    divider: z.enum(['none', 'before', 'after', 'both']).optional(),
     fields: z.array(outputSectionFieldSchema),
   })
   .superRefine((section, ctx) => {
@@ -101,6 +92,7 @@ const outputSectionSchema = z
 export const calculatorConfigSchema = z
   .object({
     inputSections: z.array(inputSectionSchema),
+    outputTotal: outputTotalSchema,
     outputSections: z.array(outputSectionSchema),
   })
   .superRefine((config, ctx) => {
@@ -183,7 +175,7 @@ export const calculatorConfigSchema = z
     })
 
     const seenOutputSectionKeys = new Set<string>()
-    const seenOutputFieldUids = new Set<string>()
+    const seenOutputFieldUids = new Set<string>([config.outputTotal.uid])
 
     config.outputSections.forEach((section, sectionIndex) => {
       if (seenOutputSectionKeys.has(section.key)) {
@@ -196,14 +188,41 @@ export const calculatorConfigSchema = z
       seenOutputSectionKeys.add(section.key)
 
       section.fields.forEach((field, fieldIndex) => {
+        const path = ['outputSections', sectionIndex, 'fields', fieldIndex]
+
         if (seenOutputFieldUids.has(field.uid)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            path: ['outputSections', sectionIndex, 'fields', fieldIndex, 'uid'],
+            path: [...path, 'uid'],
             message: `Duplicate output field uid "${field.uid}"`,
           })
         }
         seenOutputFieldUids.add(field.uid)
+
+        if (field.kind !== 'value') return
+
+        const seenItemUids = new Set<string>()
+        const seenItemKeys = new Set<string>()
+
+        field.itemFields?.forEach((itemField, itemIndex) => {
+          if (seenItemUids.has(itemField.uid)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [...path, 'itemFields', itemIndex, 'uid'],
+              message: `Duplicate item field uid "${itemField.uid}"`,
+            })
+          }
+          seenItemUids.add(itemField.uid)
+
+          if (seenItemKeys.has(itemField.key)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: [...path, 'itemFields', itemIndex, 'key'],
+              message: `Duplicate item field key "${itemField.key}"`,
+            })
+          }
+          seenItemKeys.add(itemField.key)
+        })
       })
     })
   })
@@ -219,9 +238,14 @@ export type CalculatorInputSectionField = z.infer<
 >
 export type CalculatorInputSection = z.infer<typeof inputSectionSchema>
 export type CalculatorOutputItemField = z.infer<typeof outputItemFieldSchema>
+export type CalculatorOutputValueField = z.infer<typeof outputValueFieldSchema>
+export type CalculatorOutputContentField = z.infer<
+  typeof outputContentFieldSchema
+>
 export type CalculatorOutputSectionField = z.infer<
   typeof outputSectionFieldSchema
 >
+export type CalculatorOutputTotal = z.infer<typeof outputTotalSchema>
 export type CalculatorOutputSection = z.infer<typeof outputSectionSchema>
 export type CalculatorConfig = z.infer<typeof calculatorConfigSchema>
 
@@ -237,14 +261,19 @@ export const collectInputFieldKeys = (config: CalculatorConfig): string[] =>
     section.fields.map((field) => field.key),
   )
 
+export const isOutputValueField = (
+  field: CalculatorOutputSectionField,
+): field is CalculatorOutputValueField => field.kind === 'value'
+
 export const collectOutputFieldKeys = (config: CalculatorConfig): string[] => [
-  ...new Set(
-    config.outputSections.flatMap((section) =>
-      section.fields.map((field) => field.key),
+  ...new Set([
+    config.outputTotal.key,
+    ...config.outputSections.flatMap((section) =>
+      section.fields.filter(isOutputValueField).map((field) => field.key),
     ),
-  ),
+  ]),
 ]
 
 export const collectOutputItemFieldKeys = (
-  field: CalculatorOutputSectionField,
+  field: CalculatorOutputValueField,
 ): string[] => (field.itemFields ?? []).map((itemField) => itemField.key)

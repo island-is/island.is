@@ -1,5 +1,8 @@
 import type { CalculatorConfig } from '@island.is/tax-calculators'
-import { collectOutputItemFieldKeys } from '@island.is/tax-calculators'
+import {
+  collectOutputItemFieldKeys,
+  isOutputValueField,
+} from '@island.is/tax-calculators'
 import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
 import type { OutputFieldContract } from './contract'
@@ -33,41 +36,46 @@ export const collectOutputConfigIssues = (
   const seenFieldKeys = new Set<string>()
   const seenItemFieldKeys = new Set<string>()
 
-  for (const section of config.outputSections) {
-    for (const field of section.fields) {
-      const contractField = contract.get(field.key)
+  const valueRows = [
+    config.outputTotal,
+    ...config.outputSections.flatMap((section) =>
+      section.fields.filter(isOutputValueField),
+    ),
+  ]
 
-      if (!contractField) {
-        if (!seenFieldKeys.has(field.key)) staleFieldKeys.push(field.key)
-        seenFieldKeys.add(field.key)
-        continue
-      }
+  for (const field of valueRows) {
+    const contractField = contract.get(field.key)
+
+    if (!contractField) {
+      if (!seenFieldKeys.has(field.key)) staleFieldKeys.push(field.key)
       seenFieldKeys.add(field.key)
+      continue
+    }
+    seenFieldKeys.add(field.key)
 
-      if (!field.itemFields?.length) continue
+    if (!('itemFields' in field) || !field.itemFields?.length) continue
 
-      if (contractField.type !== TaxCalculatorOutputFieldType.Array) {
-        if (!itemFieldsOnScalarKeys.includes(field.key)) {
-          itemFieldsOnScalarKeys.push(field.key)
-        }
-        continue
+    if (contractField.type !== TaxCalculatorOutputFieldType.Array) {
+      if (!itemFieldsOnScalarKeys.includes(field.key)) {
+        itemFieldsOnScalarKeys.push(field.key)
       }
+      continue
+    }
 
-      const itemKeys = new Set(
-        (contractField.itemFields ?? []).map((itemField) => itemField.key),
-      )
-      const stale = collectOutputItemFieldKeys(field).filter(
-        (itemKey) =>
-          !itemKeys.has(itemKey) &&
-          !seenItemFieldKeys.has(`${field.key}.${itemKey}`),
-      )
-      stale.forEach((itemKey) =>
-        seenItemFieldKeys.add(`${field.key}.${itemKey}`),
-      )
+    const itemKeys = new Set(
+      (contractField.itemFields ?? []).map((itemField) => itemField.key),
+    )
+    const stale = collectOutputItemFieldKeys(field).filter(
+      (itemKey) =>
+        !itemKeys.has(itemKey) &&
+        !seenItemFieldKeys.has(`${field.key}.${itemKey}`),
+    )
+    stale.forEach((itemKey) =>
+      seenItemFieldKeys.add(`${field.key}.${itemKey}`),
+    )
 
-      if (stale.length > 0) {
-        staleItemFieldKeys.push({ fieldKey: field.key, itemKeys: stale })
-      }
+    if (stale.length > 0) {
+      staleItemFieldKeys.push({ fieldKey: field.key, itemKeys: stale })
     }
   }
 
@@ -79,13 +87,15 @@ export const collectOutputConfigIssues = (
  * of that warning, so an unlabelled output row is reported once, not twice. */
 export const collectOutputLabelledRows = (
   config: CalculatorConfig,
-): CalculatorLabelledRow[] =>
-  config.outputSections.flatMap((section) =>
-    section.fields.flatMap((field) => [
+): CalculatorLabelledRow[] => [
+  { key: config.outputTotal.key, label: config.outputTotal.label },
+  ...config.outputSections.flatMap((section) =>
+    section.fields.filter(isOutputValueField).flatMap((field) => [
       { key: field.key, label: field.label },
       ...(field.itemFields ?? []).map((itemField) => ({
         key: `${field.key}.${itemField.key}`,
         label: itemField.label,
       })),
     ]),
-  )
+  ),
+]

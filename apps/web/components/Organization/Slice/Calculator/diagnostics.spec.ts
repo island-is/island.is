@@ -21,6 +21,7 @@ const label = (is: string) => ({ is })
 
 const config = (patch: Partial<CalculatorConfig> = {}): CalculatorConfig => ({
   inputSections: [],
+  outputTotal: { uid: 'hero', kind: 'value', key: 'total', label: label('Samtals') },
   outputSections: [],
   ...patch,
 })
@@ -114,9 +115,10 @@ describe('collectUnlabelledKeys', () => {
       {
         key: 'result',
         fields: [
-          { uid: 'o1', key: 'total' },
+          { uid: 'o1', kind: 'value', key: 'total' },
           {
             uid: 'o2',
+            kind: 'value',
             key: 'breakdown',
             label: label('Sundurliðun'),
             itemFields: [{ uid: 'i1', key: 'note' }],
@@ -168,14 +170,16 @@ describe('collectOutputConfigIssues', () => {
           {
             key: 'result',
             fields: [
-              { uid: 'o1', key: 'removedOutput' },
+              { uid: 'o1', kind: 'value', key: 'removedOutput' },
               {
                 uid: 'o2',
+                kind: 'value',
                 key: 'total',
                 itemFields: [{ uid: 'i1', key: 'note' }],
               },
               {
                 uid: 'o3',
+                kind: 'value',
                 key: 'breakdown',
                 itemFields: [
                   { uid: 'i2', key: 'note' },
@@ -203,7 +207,7 @@ describe('collectOutputConfigIssues', () => {
       collectOutputConfigIssues(
         config({
           outputSections: [
-            { key: 'result', fields: [{ uid: 'o1', key: 'total' }] },
+            { key: 'result', fields: [{ uid: 'o1', kind: 'value', key: 'total' }] },
           ],
         }),
         outputContract(),

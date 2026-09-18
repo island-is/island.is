@@ -2,15 +2,17 @@ import { AccordionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import type {
   CalculatorConfig,
+  CalculatorOutputContentField,
   CalculatorOutputSection,
+  CalculatorOutputValueField,
 } from '@island.is/tax-calculators'
 import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 import { MarkdownText } from '@island.is/web/components'
 
 import { CalculatorOutputField } from './CalculatorOutputField'
-import type { OutputFieldContract } from './contract'
+import type { OutputContractField, OutputFieldContract } from './contract'
 import { formatOutputValue } from './format'
-import type { OutputValues } from './outputValues'
+import type { OutputValue, OutputValues } from './outputValues'
 import { localized } from './text'
 
 interface Props {
@@ -24,13 +26,29 @@ interface Props {
  * section left with nothing to show can be dropped whole rather than leaving a
  * heading standing over an empty box. Each is silent here on purpose -- the
  * unlabelled and stale warnings are emitted once from the diagnostics effect. */
+export type VisibleRow =
+  | { kind: 'content'; field: CalculatorOutputContentField; markdown: string }
+  | {
+      kind: 'value'
+      field: CalculatorOutputValueField
+      contractField: OutputContractField
+      label: string
+      value: OutputValue
+    }
+
 const visibleRows = (
   section: CalculatorOutputSection,
   contract: OutputFieldContract,
   values: OutputValues,
   locale: Locale,
-) =>
-  section.fields.flatMap((field) => {
+): VisibleRow[] =>
+  section.fields.flatMap((field): VisibleRow[] => {
+    if (field.kind === 'content') {
+      const markdown = localized(field.content, locale)
+      if (!markdown) return []
+      return [{ kind: 'content', field, markdown }]
+    }
+
     const contractField = contract.get(field.key)
     if (!contractField) return []
 
@@ -54,7 +72,7 @@ const visibleRows = (
       return []
     }
 
-    return [{ field, contractField, label, value }]
+    return [{ kind: 'value', field, contractField, label, value }]
   })
 
 /* Exported because the caller has to know whether there is anything to show
@@ -69,13 +87,10 @@ export const collectVisibleSections = (
 ) =>
   config.outputSections.flatMap((section) => {
     const rows = visibleRows(section, contract, values, locale)
-    const content = localized(section.content, locale)
 
-    /* A section authored as prose alone stands on its own; one whose every row
-     * was omitted does not. */
-    if (rows.length === 0 && !content) return []
+    if (rows.length === 0) return []
 
-    return [{ section, rows, content }]
+    return [{ section, rows }]
   })
 
 /* Renders the calculation through `config.outputSections`: the CMS owns order,
@@ -92,22 +107,25 @@ export const CalculatorResults = ({
 
   return (
     <Stack space={3} dividers>
-      {sections.map(({ section, rows, content }) => {
+      {sections.map(({ section, rows }) => {
         const title = localized(section.title, locale)
 
         const body = (
           <Stack space={2}>
-            {content && <MarkdownText>{content}</MarkdownText>}
-            {rows.map(({ field, contractField, label, value }) => (
-              <CalculatorOutputField
-                key={field.uid}
-                field={field}
-                contractField={contractField}
-                label={label}
-                value={value}
-                locale={locale}
-              />
-            ))}
+            {rows.map((row) =>
+              row.kind === 'content' ? (
+                <MarkdownText key={row.field.uid}>{row.markdown}</MarkdownText>
+              ) : (
+                <CalculatorOutputField
+                  key={row.field.uid}
+                  field={row.field}
+                  contractField={row.contractField}
+                  label={row.label}
+                  value={row.value}
+                  locale={locale}
+                />
+              ),
+            )}
           </Stack>
         )
 

@@ -1,6 +1,6 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
-import type { CalculatorOutputSectionField } from '@island.is/tax-calculators'
+import type { CalculatorOutputValueField } from '@island.is/tax-calculators'
 import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
 import type { OutputContractField } from './contract'
@@ -9,7 +9,7 @@ import { itemValue, type OutputValue } from './outputValues'
 import { localized } from './text'
 
 interface Props {
-  field: CalculatorOutputSectionField
+  field: CalculatorOutputValueField
   contractField: OutputContractField
   /* Resolved by the section, which drops the row outright when the editor
    * authored no label -- so this component never has to represent that case. */

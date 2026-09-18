@@ -4,6 +4,7 @@ import type {
   CalculatorLocalizedMarkdown,
   CalculatorLocalizedText,
   CalculatorOutputSection,
+  CalculatorOutputTotal,
 } from '@island.is/tax-calculators'
 
 // Persisted: a section's `key` and a field's `uid` are written into the
@@ -11,8 +12,15 @@ import type {
 // not just per-render distinctness.
 export const generateKey = () => crypto.randomUUID()
 
+export const emptyOutputTotal = (): CalculatorOutputTotal => ({
+  uid: generateKey(),
+  key: '',
+  label: { is: '' },
+})
+
 export const createEmptyConfig = (): CalculatorConfig => ({
   inputSections: [],
+  outputTotal: emptyOutputTotal(),
   outputSections: [],
 })
 
@@ -27,6 +35,10 @@ export interface RowIdentity {
   fieldUid?: string
   itemUid?: string
 }
+
+/* The total has no section of its own, so it borrows the section slot: nothing
+ * else can claim this key, and the editor renders it above the section list. */
+export const OUTPUT_TOTAL_SECTION_KEY = 'outputTotal'
 
 export type IdentityMap = Map<string, RowIdentity>
 
@@ -123,13 +135,21 @@ const filterOutputSections = (
     const title = filterText(section.title)
 
     const fields = section.fields
-      .filter((field) => hasText(field.key))
+      .filter((field) =>
+        field.kind === 'content'
+          ? hasText(field.content?.is)
+          : hasText(field.key),
+      )
       .map((field, fieldIndex) => {
         identity.set(`outputSections.${sectionIndex}.fields.${fieldIndex}`, {
           tab: 'output',
           sectionKey: section.key,
           fieldUid: field.uid,
         })
+
+        if (field.kind === 'content') {
+          return { ...field, content: filterMarkdown(field.content)! }
+        }
 
         const itemFields = field.itemFields
           ?.filter((item) => hasText(item.key))
@@ -156,7 +176,6 @@ const filterOutputSections = (
     return {
       ...section,
       title,
-      content: filterMarkdown(section.content),
       /* An accordion without a persistable title is rejected by the schema, so
        * the variant is dropped rather than allowed to invalidate the document.
        * The checkbox is disabled in that state too; this covers the author who
@@ -168,16 +187,27 @@ const filterOutputSections = (
   })
 
 /* Removes only incomplete draft rows and unpersistable localized values. This is
- * a PASSTHROUGH, not a whitelist: a schema-valid key it knows nothing about --
- * `divider`, which this round authors but does not expose -- survives untouched. */
+ * a PASSTHROUGH, not a whitelist: a schema-valid key it knows nothing about
+ * survives untouched. */
 export const filterConfigForPersistence = (
   config: CalculatorConfig,
 ): FilteredConfig => {
   const identity: IdentityMap = new Map()
 
+  const outputTotal = config.outputTotal ?? emptyOutputTotal()
+  identity.set('outputTotal', {
+    tab: 'output',
+    sectionKey: OUTPUT_TOTAL_SECTION_KEY,
+    fieldUid: outputTotal.uid,
+  })
+
   return {
     payload: {
       inputSections: filterInputSections(config.inputSections ?? [], identity),
+      /* Deliberately unfiltered: an incomplete total is an error the author has
+       * to resolve, not a draft row to drop -- dropping it would make the
+       * required field silently pass. */
+      outputTotal: { ...outputTotal, label: filterText(outputTotal.label)! },
       outputSections: filterOutputSections(
         config.outputSections ?? [],
         identity,

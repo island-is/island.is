@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  FormControl,
   IconButton,
   Stack,
   Subheading,
@@ -9,18 +8,12 @@ import {
 import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
 import { DialogsAPI } from '@contentful/app-sdk'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import type { Node } from 'slate'
 
-import type {
-  CalculatorLocalizedMarkdown,
-  CalculatorOutputSection as OutputSectionModel,
-} from '@island.is/tax-calculators'
+import type { CalculatorOutputSection as OutputSectionModel } from '@island.is/tax-calculators'
 
-import { MarkdownEditor } from '../../../translation-namespace/components/MarkdownEditor'
-import { unifyAndDeserialize } from '../../../translation-namespace/utils/deserialize'
-import { serializeAndFormat } from '../../../translation-namespace/utils/serialize'
 import { OutputFieldContract, OutputSectionActions } from '../types'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import { OutputContentRow } from './OutputContentRow'
 import { OutputFieldRow } from './OutputFieldRow'
 import { EmptyDropZone, SortableRow } from './SortableRow'
 
@@ -34,11 +27,6 @@ interface Props {
   dialogs: DialogsAPI
   actions: OutputSectionActions
 }
-
-const LOCALES: { id: 'is' | 'en'; label: string }[] = [
-  { id: 'is', label: 'Content (Icelandic)' },
-  { id: 'en', label: 'Content (English)' },
-]
 
 export const OutputSection = ({
   section,
@@ -54,15 +42,6 @@ export const OutputSection = ({
    * rather than allowed to invalidate the document. The filter drops the
    * variant too, for the author who ticks this and then clears the title. */
   const canBeAccordion = Boolean(section.title?.is?.trim())
-
-  const setLocaleContent = (locale: 'is' | 'en', markdown: string) => {
-    const trimmed = markdown.trim() ? markdown : ''
-    const next: CalculatorLocalizedMarkdown = {
-      is: locale === 'is' ? trimmed : section.content?.is ?? '',
-      en: locale === 'en' ? trimmed : section.content?.en,
-    }
-    actions.setContent(next.is || next.en ? next : undefined)
-  }
 
   return (
     <Stack
@@ -91,30 +70,6 @@ export const OutputSection = ({
         clearWhenEmpty
       />
 
-      {LOCALES.map((locale) => (
-        <FormControl key={locale.id} marginBottom="none">
-          <FormControl.Label>{locale.label}</FormControl.Label>
-          <MarkdownEditor
-            /* Uncontrolled: it seeds state once and ignores the prop after
-             * mount, so the key must pin it to this section and locale. */
-            key={`${section.key}-${locale.id}`}
-            value={unifyAndDeserialize(section.content?.[locale.id])}
-            dialogs={dialogs}
-            readOnly={isDisabled}
-            ariaLabel={locale.label}
-            onChange={(value: Node[]) => {
-              const serialized = serializeAndFormat(
-                value as Parameters<typeof serializeAndFormat>[0],
-              )
-              /* `<Slate onChange>` fires on SELECTION changes too, so without
-               * this a click into the editor would dirty a clean entry. */
-              if (serialized === (section.content?.[locale.id] ?? '')) return
-              setLocaleContent(locale.id, serialized)
-            }}
-          />
-        </FormControl>
-      ))}
-
       <Checkbox
         isChecked={section.variant === 'accordion'}
         isDisabled={isDisabled || !canBeAccordion}
@@ -142,34 +97,57 @@ export const OutputSection = ({
               label={`Reorder output field ${fieldIndex + 1} in section ${position}`}
               isDisabled={isDisabled}
             >
-              <OutputFieldRow
-                field={field}
-                fieldIndex={fieldIndex}
-                contract={contract}
-                isLoading={isLoading}
-                isDisabled={isDisabled}
-                rowIssues={rowIssues}
-                actions={actions}
-              />
+              {field.kind === 'content' ? (
+                <OutputContentRow
+                  field={field}
+                  isDisabled={isDisabled}
+                  issues={rowIssues.get(field.uid)}
+                  dialogs={dialogs}
+                  onChange={(content) =>
+                    actions.updateField(fieldIndex, { content })
+                  }
+                  onRemove={() => actions.removeField(fieldIndex)}
+                />
+              ) : (
+                <OutputFieldRow
+                  field={field}
+                  fieldIndex={fieldIndex}
+                  contract={contract}
+                  isLoading={isLoading}
+                  isDisabled={isDisabled}
+                  rowIssues={rowIssues}
+                  actions={actions}
+                />
+              )}
             </SortableRow>
           ))}
           {section.fields.length === 0 && (
             <EmptyDropZone
               id={`output-empty-${section.key}`}
-              label="Drag an output field here, or add one below"
+              label="Drag an output row here, or add one below"
             />
           )}
         </Stack>
       </SortableContext>
 
-      <Button
-        size="small"
-        startIcon={<PlusIcon />}
-        isDisabled={isDisabled}
-        onClick={actions.addField}
-      >
-        Add output field
-      </Button>
+      <Stack flexDirection="row" spacing="spacingXs">
+        <Button
+          size="small"
+          startIcon={<PlusIcon />}
+          isDisabled={isDisabled}
+          onClick={actions.addValueField}
+        >
+          Add output field
+        </Button>
+        <Button
+          size="small"
+          startIcon={<PlusIcon />}
+          isDisabled={isDisabled}
+          onClick={actions.addContentField}
+        >
+          Add content
+        </Button>
+      </Stack>
     </Stack>
   )
 }

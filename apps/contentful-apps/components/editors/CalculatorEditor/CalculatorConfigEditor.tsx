@@ -30,6 +30,7 @@ import type {
 import { TaxCalculatorOutputFieldType } from '../../../graphql/schema'
 import { InputSection } from './components/InputSection'
 import { OutputSection } from './components/OutputSection'
+import { OutputTotalEditor } from './components/OutputTotalEditor'
 import { useCalculatorConfig } from './hooks/useCalculatorConfig'
 import { GET_TAX_CALCULATOR_FIELDS, toApiCalculatorType } from './constants'
 import {
@@ -160,7 +161,7 @@ export const CalculatorConfigEditor = () => {
 
       return outputSections.some((section) =>
         section.fields.some((field) => {
-          if (!field.key) return false
+          if (field.kind !== 'value' || !field.key) return false
           const meta = outputContract.get(field.key)
           if (!meta) return true
           const items = field.itemFields ?? []
@@ -248,7 +249,8 @@ export const CalculatorConfigEditor = () => {
     for (let s = 0; s < state.outputSections.length; s += 1) {
       const fields = state.outputSections[s].fields
       for (let f = 0; f < fields.length; f += 1) {
-        const items = fields[f].itemFields ?? []
+        const field = fields[f]
+        const items = (field.kind === 'value' && field.itemFields) || []
         const fromItem = items.findIndex((item) => item.uid === active.id)
         const toItem = items.findIndex((item) => item.uid === over.id)
         if (fromItem !== -1 && toItem !== -1) {
@@ -360,10 +362,10 @@ export const CalculatorConfigEditor = () => {
       <Tabs currentTab={activeTab} onTabChange={setActiveTab}>
         <Tabs.List>
           <Tabs.Tab panelId="input">
-            Input sections ({state.inputSections.length})
+            Input form ({state.inputSections.length} sections)
           </Tabs.Tab>
           <Tabs.Tab panelId="output">
-            Output sections ({state.outputSections.length})
+            Result ({state.outputSections.length} sections)
           </Tabs.Tab>
         </Tabs.List>
 
@@ -430,6 +432,15 @@ export const CalculatorConfigEditor = () => {
               spacing="spacingM"
               marginTop="spacingM"
             >
+              <OutputTotalEditor
+                total={state.outputTotal}
+                contract={outputContract}
+                isLoading={loading}
+                isDisabled={isDisabled}
+                issues={state.rowIssues.get(state.outputTotal.uid)}
+                onChange={state.outputTotalActions.update}
+              />
+
               {state.outputSections.map((section, sectionIndex) => (
                 <OutputSection
                   key={section.key}
