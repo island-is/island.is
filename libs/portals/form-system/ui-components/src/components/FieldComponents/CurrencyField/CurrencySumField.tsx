@@ -24,7 +24,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
   const { currentScreen } = state || {}
   const { formatMessage, lang } = useLocale()
   const label = item?.name?.[lang]
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   // Calculates the sum of all ISK_NUMBERBOX fields that are before the current ISK_SUMBOX field, and after the previous ISK_SUMBOX field (if any)
   const sum = useMemo(() => {
@@ -82,6 +82,8 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
     sum === '' ? '' : sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
   useEffect(() => {
+    setValue(item.id, formattedSum)
+
     if (dispatch) {
       dispatch({
         type: 'SET_CURRENCY',
@@ -91,7 +93,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
         },
       })
     }
-  }, [dispatch, formattedSum, item.id])
+  }, [dispatch, formattedSum, item.id, setValue])
 
   return (
     <Row marginTop={2}>
