@@ -95,6 +95,7 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
           <a
             className={classNames}
             data-testid={dataTestId}
+            {...(newTab && { target: '_blank', rel: 'noopener noreferrer' })}
             {...linkProps}
             tabIndex={skipTab ? -1 : undefined}
           >
