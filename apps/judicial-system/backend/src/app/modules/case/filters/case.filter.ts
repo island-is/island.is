@@ -377,9 +377,12 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
     return false
   }
 
-  // Check case defender assignment
-  return (
-    theCase.defenderNationalId && theCase.defenderNationalId === user.nationalId
+  // Defendant-level assignment. A defender of any defendant on the case gets
+  // access, subject to the requestSharedWithDefender timing rules above.
+  return Boolean(
+    theCase.defendants?.some(
+      (defendant) => defendant.defenderNationalId === user.nationalId,
+    ),
   )
 }
 
