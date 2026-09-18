@@ -158,11 +158,9 @@ export default function AppointmentDetailScreen() {
 
   const [cancelAppointment, { loading: cancelling }] =
     useCancelAppointmentMutation({
-      // The list carries the status that just changed.
+      // Not awaited: a failed list refetch would reject the mutation and
+      // hide the outcome below.
       refetchQueries: ['getAppointments'],
-      // Hold the mutation until it has settled, so the cancelled appointment
-      // is already gone from the list the sheet returns to.
-      awaitRefetchQueries: true,
     })
 
   const appointment =
@@ -352,9 +350,7 @@ export default function AppointmentDetailScreen() {
             break
           case HealthDirectorateAppointmentCancelOutcome.Refused:
           case HealthDirectorateAppointmentCancelOutcome.Blocked:
-            // Online cancellation isn't happening either way. The refusal
-            // itself says nothing about whether the button should still be
-            // offered, so refetch and let the detail answer that.
+            // Refetch so the detail says whether the button is still offered.
             void refetch()
             showCancelError('health.appointments.cancelContactProvider')
             break
