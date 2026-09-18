@@ -44,6 +44,16 @@ describe('test-release-setup.mjs', () => {
     expect(getTestProjects('pre-release', ' , ')).toBe('')
   })
 
+  test('rejects a selection of only the project that is never built', () => {
+    // An empty result means all images, which is not what was asked for
+    expect(() => getTestProjects('pre-release', UNBUILT_PROJECT)).toThrow(
+      'never built',
+    )
+    expect(() => getTestProjects('release', ` ${UNBUILT_PROJECT} ,`)).toThrow(
+      'never built',
+    )
+  })
+
   test('release test also gets the project that is never built', () => {
     expect(getTestProjects('pre-release', 'web, api')).toBe('web,api')
     expect(getTestProjects('release', 'web, api')).toBe(

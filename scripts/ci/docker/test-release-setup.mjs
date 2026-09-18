@@ -31,10 +31,17 @@ export const UNBUILT_PROJECT = 'github-actions-cache'
  * projects to limit it to, or nothing when it is not limited.
  */
 export function getTestProjects(mode, projects = '') {
-  const built = projects
+  const selected = projects
     .split(',')
     .map((project) => project.trim())
-    .filter((project) => project && project !== UNBUILT_PROJECT)
+    .filter(Boolean)
+  const built = selected.filter((project) => project !== UNBUILT_PROJECT)
+  if (selected.length > 0 && built.length === 0) {
+    // Would otherwise be taken as not limited, and build all images
+    throw new Error(
+      `${UNBUILT_PROJECT} is never built, select at least one other project`,
+    )
+  }
   if (built.length === 0) {
     return ''
   }

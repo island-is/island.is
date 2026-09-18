@@ -214,7 +214,7 @@ jobs:
           for stage in staging prod; do
             git diff -- "charts/**/values*.${stage}.yaml" > "${RUNNER_TEMP}/helm-${stage}.diff"
             COUNT="$(grep -c "^+.*tag: ${RELEASE_TAG}" "${RUNNER_TEMP}/helm-${stage}.diff" || true)"
-            echo "${stage}: ${COUNT} values files were given ${RELEASE_TAG}"
+            echo "${stage}: ${COUNT} image tags were set to ${RELEASE_TAG}"
             [[ "$COUNT" -gt 0 ]] || { echo "No ${stage} values were given ${RELEASE_TAG}"; exit 1; }
           done
 
