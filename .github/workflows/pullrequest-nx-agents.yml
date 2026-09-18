@@ -1,0 +1,246 @@
+name: Monorepo pipeline - pull request (Nx Agents)
+
+# Runs the pull request checks as one distributed Nx Cloud CI run: the `main` job
+# orchestrates and 1-10 `agents` jobs (our own runners) execute the tasks.
+# Opt-in with the `nx-agents` label while it runs next to `pullrequest.yml`.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: pullrequest-nx-agents-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
+  NX_PARALLEL: '3'
+  NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  # Ties the main job and the agents of this attempt together. Only the steps that take part in
+  # the distributed run use it as NX_CI_EXECUTION_ID. Everything else (e.g. codegen in load-deps)
+  # gets an id of its own: any nx command creates the CI execution in Nx Cloud, and when the job
+  # that created it ends the execution is closed, so agents exit and the main job fails
+  NX_AGENTS_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agents
+  NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
+  # The `web` build output is over Nx Cloud's 300MB artifact limit. Without agents that is
+  # only a warning (the build is just never cached), but an agent has to upload the output
+  # of every task it runs. Remove when `.next/cache` is no longer part of the build outputs
+  NX_CLOUD_NO_TIMEOUTS: 'true'
+  MIN_AGENTS: '1'
+  MAX_AGENTS: '10'
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+  SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+
+jobs:
+  plan:
+    # On `labeled` events only the opt-in label itself should start a run
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        (contains(github.event.pull_request.labels.*.name, 'nx-agents') &&
+          (github.event.action != 'labeled' || github.event.label.name == 'nx-agents'))
+      }}
+    runs-on: arc-shared
+    timeout-minutes: 30
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-plan
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    outputs:
+      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+      agents: ${{ steps.plan.outputs.agents }}
+      agent-count: ${{ steps.plan.outputs.agent-count }}
+      nx-args: ${{ steps.plan.outputs.nx-args }}
+      targets: ${{ steps.plan.outputs.targets }}
+      has-test: ${{ steps.plan.outputs.has-test }}
+      has-e2e: ${{ steps.plan.outputs.has-e2e }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      # The main job and the agents all start after this job, so make sure the
+      # generated files cache is warm instead of having each of them run codegen
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: ${{ github.base_ref || 'main' }}
+
+      - name: Set base/head sha output
+        id: export-sha
+        run: |
+          echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+          echo "Current base SHA is $NX_BASE and head SHA is $NX_HEAD"
+
+      - name: test-everything
+        uses: ./.github/actions/test-everything
+
+      - name: Plan Nx command and agents
+        id: plan
+        run: node scripts/ci/nx-agents/plan.mjs
+
+  agents:
+    name: Nx agent ${{ matrix.agent }}
+    needs:
+      - plan
+    if: ${{ needs.plan.outputs.agent-count != '0' }}
+    runs-on: arc-shared
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        agent: ${{ fromJson(needs.plan.outputs.agents) }}
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agent-${{ matrix.agent }}-setup
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        if: ${{ needs.plan.outputs.has-test == 'true' }}
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+
+      - name: Configure Datadog Test Optimization
+        if: ${{ needs.plan.outputs.has-test == 'true' }}
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: 'js'
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
+
+      - name: Setup Playwright
+        if: ${{ needs.plan.outputs.has-e2e == 'true' }}
+        uses: ./.github/actions/setup-playwright
+
+      - name: Start Nx agent
+        run: ./scripts/ci/nx-agents/start-agent.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          NX_AGENT_NAME: agent-${{ matrix.agent }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          CYPRESS_PROJECT_ID: 4q7jz8
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload coverage reports to Datadog
+        if: ${{ !cancelled() && needs.plan.outputs.has-test == 'true' }}
+        run: |
+          if [[ -d coverage ]]; then
+            yarn datadog-ci coverage upload .
+          else
+            echo "No tests with coverage ran on this agent"
+          fi
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: datadoghq.eu
+
+  main:
+    name: Nx main job
+    needs:
+      - plan
+    runs-on: arc-shared
+    timeout-minutes: 60
+    env:
+      NX_BASE: ${{ needs.plan.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.plan.outputs.NX_HEAD }}
+      NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.plan.outputs.agent-count }}
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-main-setup
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Start distributed CI run
+        if: ${{ needs.plan.outputs.agent-count != '0' }}
+        # Knowing every target of the run lets Nx Cloud stop agents as they run out of
+        # work, instead of all of them idling until the longest task is done
+        #
+        # Completion is explicit (see the last step) instead of relying on Nx Cloud's background
+        # heartbeat process, which Nx advises against in pipelines with multiple jobs
+        run: npx nx-cloud start-ci-run --distribute-on="manual" --stop-agents-after="$TARGETS" --require-explicit-completion
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          TARGETS: ${{ needs.plan.outputs.targets }}
+
+      - name: Run lint, typecheck, build, test and e2e on the agents
+        run: ./scripts/ci/nx-agents/run.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          NX_AGENTS_ARGS: ${{ needs.plan.outputs.nx-args }}
+
+      # Agents wait for work until the run is completed, also when this job fails or is cancelled
+      - name: Complete CI run
+        if: ${{ always() && needs.plan.outputs.agent-count != '0' }}
+        run: npx nx-cloud complete-ci-run
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+
+  success:
+    name: Nx Agents success
+    runs-on: arc-shared
+    if: ${{ !cancelled() && needs.plan.result != 'skipped' }}
+    needs:
+      - plan
+      - agents
+      - main
+    steps:
+      - name: Collect
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          # "failed" here is everything that wasn't successful or skipped (e.g. "failure", "cancelled")
+          failed_dependencies=$(jq -nr --argjson needs "$NEEDS" ' $needs | with_entries(select(.value.result != "success" and .value.result != "skipped")) ')
+          echo -n "Did any dependency fail? "
+          if jq -ne --argjson failures "$failed_dependencies" '$failures | length > 0'; then
+            failure_statuses=$(jq -nr --argjson failures "$failed_dependencies" '[ $failures | to_entries | .[] | "\(.key) (\(.value.result))" ] | join(", ")')
+            echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
+            exit 1
+          fi
+          echo "::info title=NEEDS::No failing dependencies 🎉"
+          exit 0
