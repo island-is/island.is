@@ -1,0 +1,193 @@
+name: Test release image reuse (no deploy)
+
+# Rehearsal of the image part of a release, see test-pre-release.yml.
+#
+# Add the 'test-release' label to a pull request, after 'test-pre-release' has
+# finished for the same commit. Runs reuse-release-images.mjs like install.yml
+# does for a release, against the images of that test pre-release, and checks
+# the outcome. The helm values are generated but never pushed.
+
+on:
+  pull_request:
+    types:
+      - labeled
+  workflow_dispatch:
+    inputs:
+      projects:
+        description: 'Comma separated projects, same as given to test-pre-release'
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  AWS_REGION: eu-west-1
+  YARN_ENABLE_HARDENED_MODE: '0'
+  TEST_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  TEST_BRANCH: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  release:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.label.name == 'test-release' }}
+    runs-on: arc-shared
+    timeout-minutes: 30
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # The images come from test-pre-release.yml on this branch, rather than
+      # from push.yml on a pre-release branch
+      PRE_RELEASE_WORKFLOW: test-pre-release.yml
+      PRE_RELEASE_BRANCH: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TEST_SHA }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Find the test pre-release
+        id: setup
+        env:
+          MODE: release
+          TEST_PROJECTS: ${{ inputs.projects }}
+        run: node scripts/ci/docker/test-release-setup.mjs
+
+      - name: Prepare docker build targets
+        id: docker_projects
+        env:
+          ADDITIONAL_PROJECTS: ${{ steps.setup.outputs.PROJECTS }}
+          # Nothing is affected between a commit and itself, which leaves us
+          # with chunks for ADDITIONAL_PROJECTS only
+          BASE: ${{ env.TEST_SHA }}
+          HEAD: ${{ env.TEST_SHA }}
+        run: |
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          echo "CHUNKS: '$CHUNKS'"
+          # Quoted like the output of the same step in install.yml
+          echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
+
+      - name: Reuse pre-release docker images
+        id: reuse
+        env:
+          RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          RELEASE_SHA: ${{ env.TEST_SHA }}
+          DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
+          DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+        run: node scripts/ci/docker/reuse-release-images.mjs
+
+      - name: Check reused images against ECR
+        env:
+          DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+          BUILD_CHUNKS: ${{ steps.reuse.outputs.BUILD_CHUNKS }}
+          REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
+          PRE_RELEASE_TAG: ${{ steps.setup.outputs.PRE_RELEASE_TAG }}
+          RELEASE_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
+        run: node scripts/ci/docker/test-release-verify.mjs
+
+      - name: Check reused images can be pulled
+        env:
+          REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
+        run: |
+          ./scripts/ci/docker-login-ecr.sh
+          for image in $(echo "$REUSED_DOCKER_DATA" | jq -r '.[] | "\(.imageName):\(.imageTag)"'); do
+            docker buildx imagetools inspect "${DOCKER_REGISTRY}/${image}"
+          done
+
+      - name: Reuse again with the same tag
+        id: again
+        env:
+          RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          RELEASE_SHA: ${{ env.TEST_SHA }}
+          DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
+          DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+        run: node scripts/ci/docker/reuse-release-images.mjs
+
+      - name: Check that reusing again gives the same result
+        env:
+          FIRST: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
+          AGAIN: ${{ steps.again.outputs.REUSED_DOCKER_DATA }}
+        run: |
+          # Tags are immutable, this is what re-running a release job does
+          [[ "$FIRST" == "$AGAIN" ]] || { echo "Expected '$FIRST', got '$AGAIN'"; exit 1; }
+
+      - name: Reuse for another commit
+        id: other-commit
+        env:
+          RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          RELEASE_SHA: '0000000000000000000000000000000000000000'
+          DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}-other
+          DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+        run: node scripts/ci/docker/reuse-release-images.mjs
+
+      - name: Check that nothing is reused for another commit
+        env:
+          REUSED_DOCKER_DATA: ${{ steps.other-commit.outputs.REUSED_DOCKER_DATA }}
+          BUILD_CHUNKS: ${{ steps.other-commit.outputs.BUILD_CHUNKS }}
+          DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+        run: |
+          # This is what happens once a release branch has a hotfix
+          [[ "$REUSED_DOCKER_DATA" == "[]" ]] || { echo "Reused '$REUSED_DOCKER_DATA'"; exit 1; }
+          ALL="$(echo "${DOCKER_CHUNKS:1:-1}" | jq 'length')"
+          LEFT="$(echo "$BUILD_CHUNKS" | jq 'length')"
+          [[ "$ALL" == "$LEFT" ]] || { echo "Expected all $ALL chunks to be built, got $LEFT"; exit 1; }
+
+      - name: Generate helm values (never pushed)
+        env:
+          JSON_DATA: ''
+          REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
+          RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          RELEASE_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
+        run: |
+          # Same as the success job in merge-queue.yml, except that get-data.mjs
+          # is told we are on the made up release branch
+          node scripts/ci/docker/write-data.mjs
+          node scripts/ci/docker/bootstrap.mjs
+          node --input-type=module -e "
+            import { main } from './scripts/ci/docker/get-data.mjs'
+            await main({
+              eventName: 'workflow_dispatch',
+              ref: 'refs/heads/' + process.env.RELEASE_BRANCH,
+              sha: process.env.TEST_SHA,
+            })
+          " > /dev/null
+          git diff --stat -- charts
+          # A release goes to staging and prod, with the tag of the reused images
+          for stage in staging prod; do
+            git diff -- "charts/**/values*.${stage}.yaml" | grep -q "^+.*tag: ${RELEASE_TAG}" ||
+              { echo "No ${stage} values were given ${RELEASE_TAG}"; exit 1; }
+          done
+
+      - name: Summary
+        env:
+          VERSION: ${{ steps.setup.outputs.VERSION }}
+          BUILD_CHUNKS: ${{ steps.reuse.outputs.BUILD_CHUNKS }}
+        run: |
+          {
+            echo "### Test release \`${VERSION}\` passed"
+            echo "Left to build: $(echo "$BUILD_CHUNKS" | jq -c 'map(fromjson | .projects)')"
+            echo
+            echo "Nothing was deployed and helm-values was not touched."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove test release tags
+        if: ${{ always() && steps.reuse.outputs.REUSED_DOCKER_DATA }}
+        env:
+          REUSED_DOCKER_DATA: ${{ steps.reuse.outputs.REUSED_DOCKER_DATA }}
+        run: |
+          # Best effort, the pre-release tags are kept so this can be run again.
+          # Removing a tag does not remove an image that has other tags.
+          for image in $(echo "$REUSED_DOCKER_DATA" | jq -r '.[] | "\(.imageName):\(.imageTag)"'); do
+            aws ecr batch-delete-image --repository-name "${image%%:*}" --image-ids "imageTag=${image##*:}" || true
+          done
