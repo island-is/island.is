@@ -930,6 +930,13 @@ export const en: TranslatedMessages = {
     "You can't reply to this conversation until staff have responded to you.",
   'health.messages.replyBlocked.awaitingAcknowledgement':
     "You can't reply until your previous message has reached the recipient.",
+  'health.messages.compose.introTitle': 'Contact us',
+  'health.messages.compose.introBody1':
+    'Here you can send a message. Messages are usually answered within three business days, during working hours.',
+  'health.messages.compose.introBody2':
+    'If your matter is urgent and needs an answer the same day, call <b>1700</b> or contact your treatment team.',
+  'health.messages.compose.introBody3': 'In an emergency, call <b>112.</b>',
+  'health.messages.compose.continue': 'Continue',
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
   'health.messages.compose.selectService': 'Select service',
@@ -963,6 +970,7 @@ export const en: TranslatedMessages = {
   'health.messages.compose.certificateText':
     'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
   'health.messages.compose.certificateLink': 'Request a certificate',
+  'health.messages.compose.externalLink': 'Open web chat',
   'health.messages.certificatePayment.title': 'Certificate ready for payment',
   'health.messages.certificatePayment.text':
     'This certificate costs {amount} and is unpaid. Pay for it on Ísland.is My Pages.',
