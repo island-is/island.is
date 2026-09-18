@@ -42,7 +42,7 @@ import {
   VerdictInfo,
 } from '@island.is/judicial-system/types'
 
-import { standingVerdictAppellants } from '../appeal-case/appealCase.helpers'
+import { standingVerdictAppellants } from '../appeal-case'
 import { Case, DateLog, DefendantEventLog, EventLog } from '../repository'
 import {
   CaseTableCellValue,
