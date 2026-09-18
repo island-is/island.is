@@ -890,6 +890,10 @@ export const en: TranslatedMessages = {
   'health.appointments.cancelErrorTitle': 'Could not cancel the appointment',
   'health.appointments.cancelErrorMessage':
     'The action could not be completed, please try again.',
+  'health.appointments.cancelContactProvider':
+    'The appointment could not be cancelled, please call the service provider.',
+  'health.appointments.cancelUnconfirmed':
+    'The cancellation could not be confirmed, please try again.',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',
