@@ -181,6 +181,56 @@ describe('CaseController - Extend', () => {
         defendantTwo,
         transaction,
       )
+      expect(
+        mockDefendantService.syncDefenderToAllDefendants,
+      ).toHaveBeenCalledWith(
+        extendedCaseId,
+        {
+          defenderName,
+          defenderNationalId,
+          defenderEmail,
+          defenderPhoneNumber,
+        },
+        transaction,
+      )
+    })
+  })
+
+  describe('syncs defender contact fields even when case has no defender', () => {
+    const userId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: uuid() },
+    } as TUser
+    const caseId = uuid()
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      defendants: [{ nationalId: '0000000000', name: 'Defendant' }],
+    } as Case
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should call syncDefenderToAllDefendants with contact fields', () => {
+      expect(
+        mockDefendantService.syncDefenderToAllDefendants,
+      ).toHaveBeenCalledWith(
+        extendedCaseId,
+        {
+          defenderName: undefined,
+          defenderNationalId: undefined,
+          defenderEmail: undefined,
+          defenderPhoneNumber: undefined,
+        },
+        transaction,
+      )
     })
   })
 
