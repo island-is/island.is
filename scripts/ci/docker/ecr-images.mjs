@@ -1,83 +1,81 @@
 // @ts-check
 
-export async function getImageManifest(ecr, repositoryName, imageTag) {
-  const response = await ecr
-    .batchGetImage({
-      repositoryName,
-      imageIds: [{ imageTag }],
-    })
-    .promise()
+// Without these ECR may convert manifest lists / OCI indexes to a single
+// platform manifest, and the retagged image would no longer match its source.
+const ACCEPTED_MEDIA_TYPES = [
+  'application/vnd.docker.distribution.manifest.v2+json',
+  'application/vnd.docker.distribution.manifest.list.v2+json',
+  'application/vnd.oci.image.manifest.v1+json',
+  'application/vnd.oci.image.index.v1+json',
+]
 
-  return response.images?.[0]?.imageManifest
-}
-
-export async function findLatestImageTag(ecr, repositoryName, tagPrefix) {
-  let nextToken
-  let latest
-
-  do {
-    let response
-    try {
-      response = await ecr
-        .describeImages({
-          repositoryName,
-          filter: { tagStatus: 'TAGGED' },
-          nextToken,
-        })
-        .promise()
-    } catch (error) {
-      if (error?.code === 'RepositoryNotFoundException') {
-        return undefined
-      }
-      throw error
-    }
-
-    for (const image of response.imageDetails ?? []) {
-      const pushedAt = new Date(image.imagePushedAt ?? 0).getTime()
-      for (const tag of image.imageTags ?? []) {
-        if (!tag.startsWith(tagPrefix)) {
-          continue
-        }
-        if (!latest || pushedAt > latest.pushedAt) {
-          latest = { tag, pushedAt }
-        }
-      }
-    }
-
-    nextToken = response.nextToken
-  } while (nextToken)
-
-  return latest?.tag
-}
-
-export async function hasImageTagWithPrefix(ecr, repositoryName, tagPrefix) {
-  return Boolean(await findLatestImageTag(ecr, repositoryName, tagPrefix))
-}
-
-export async function retagImage(ecr, repositoryName, sourceTag, targetTag) {
-  const targetManifest = await getImageManifest(ecr, repositoryName, targetTag)
-  if (targetManifest) {
-    return { reused: true, targetExisted: true }
+/**
+ * Returns the first image found for `imageTags`, in the order given.
+ */
+export async function findImage(ecr, repositoryName, imageTags) {
+  if (imageTags.length === 0) {
+    return undefined
   }
 
-  const sourceManifest = await getImageManifest(ecr, repositoryName, sourceTag)
-  if (!sourceManifest) {
-    return { reused: false, sourceMissing: true }
+  let response
+  try {
+    response = await ecr
+      .batchGetImage({
+        repositoryName,
+        imageIds: imageTags.map((imageTag) => ({ imageTag })),
+        acceptedMediaTypes: ACCEPTED_MEDIA_TYPES,
+      })
+      .promise()
+  } catch (error) {
+    if (error?.code === 'RepositoryNotFoundException') {
+      return undefined
+    }
+    throw error
   }
 
+  for (const tag of imageTags) {
+    const image = response.images?.find(
+      (candidate) => candidate.imageId?.imageTag === tag,
+    )
+    if (image?.imageManifest) {
+      return {
+        tag,
+        manifest: image.imageManifest,
+        mediaType: image.imageManifestMediaType,
+      }
+    }
+  }
+
+  return undefined
+}
+
+/**
+ * Adds `targetTag` to the `source` image. Tags are immutable in our
+ * repositories, so this never overwrites: it either creates the tag or throws.
+ */
+export async function retagImage(ecr, repositoryName, source, targetTag) {
   try {
     await ecr
       .putImage({
         repositoryName,
-        imageManifest: sourceManifest,
+        imageManifest: source.manifest,
+        ...(source.mediaType && { imageManifestMediaType: source.mediaType }),
         imageTag: targetTag,
       })
       .promise()
   } catch (error) {
-    if (error?.code !== 'ImageAlreadyExistsException') {
-      throw error
+    if (error?.code === 'ImageAlreadyExistsException') {
+      return
     }
+    // The request may have gone through even though we got an error back. If
+    // the tag is there and points at our image we are done, otherwise the
+    // caller must not assume anything about the target tag.
+    const target = await findImage(ecr, repositoryName, [targetTag]).catch(
+      () => undefined,
+    )
+    if (target?.manifest === source.manifest) {
+      return
+    }
+    throw error
   }
-
-  return { reused: true, targetExisted: false }
 }

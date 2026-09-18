@@ -285,11 +285,15 @@ jobs:
 
       - name: Reuse pre-release docker images
         id: release-docker-reuse
-        if: ${{ inputs.run_merge_queue == true && startsWith(steps.get-branch.outputs.MAIN_BRANCH, 'release/') && steps.docker_projects.outputs.CHUNKS }}
+        # A release is started with a workflow dispatch on the renamed pre-release
+        # branch. Merge groups never match a pre-release commit, so skip them.
+        if: ${{ inputs.run_merge_queue == true && github.event_name == 'workflow_dispatch' && startsWith(steps.get-branch.outputs.MAIN_BRANCH, 'release/') && steps.docker_projects.outputs.CHUNKS }}
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           RELEASE_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+          RELEASE_SHA: ${{ github.sha }}
           DOCKER_TAG: ${{ steps.prepare-merge-queue.outputs.DOCKER_TAG }}
           DOCKER_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
         run: |

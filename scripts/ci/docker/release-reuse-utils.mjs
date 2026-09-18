@@ -13,18 +13,21 @@ export function getReleaseVersion(branch) {
   return branch?.startsWith('release/') ? branch.slice('release/'.length) : ''
 }
 
-export function getReleaseTagPrefix(branch) {
-  return `release_${getReleaseVersion(branch)}_`
-}
-
 export function normalizePushBranchTag(branch) {
   return branch.slice(0, 45).replace(/[/.]/g, '-')
 }
 
 export function getPreReleaseTagPrefix(branch) {
-  return `${normalizePushBranchTag(
-    `pre-release/${getReleaseVersion(branch)}`,
-  )}_`
+  return `${normalizePushBranchTag(getPreReleaseBranch(branch))}_`
+}
+
+export function getPreReleaseBranch(branch) {
+  return `pre-release/${getReleaseVersion(branch)}`
+}
+
+// Mirrors the docker tag generated for pre-release pushes in push.yml
+export function getPreReleaseImageTag(branch, sha, runNumber) {
+  return `${getPreReleaseTagPrefix(branch)}${sha.slice(0, 10)}_${runNumber}`
 }
 
 export function chunkToBuildMatrix(chunks) {
@@ -40,7 +43,7 @@ export function getSingleProject(chunk) {
   return projects.length === 1 ? projects[0] : undefined
 }
 
-export function buildImageData(chunk, imageTag) {
+export function buildImageData(chunk, imageTag, sourceTag) {
   const project = getSingleProject(chunk)
   if (!project) {
     throw new Error(`Expected exactly one project in chunk: ${chunk.projects}`)
@@ -52,5 +55,7 @@ export function buildImageData(chunk, imageTag) {
     target: DOCKER_TARGETS[chunk.docker_type] ?? chunk.docker_type,
     imageName: project,
     imageTag,
+    // Only for traceability, get-data.mjs does not read it
+    ...(sourceTag && { sourceTag }),
   }
 }

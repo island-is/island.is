@@ -1,101 +1,148 @@
 import { describe, expect, jest, test } from '@jest/globals'
-import {
-  findLatestImageTag,
-  getImageManifest,
-  retagImage,
-} from './ecr-images.mjs'
+import { findImage, retagImage } from './ecr-images.mjs'
 
-const ecrMock = ({ pages = [{}], manifests = {}, putImage } = {}) => ({
-  describeImages: jest.fn(({ nextToken }) => ({
-    promise: async () => pages[nextToken ? Number(nextToken) : 0],
-  })),
-  batchGetImage: jest.fn(({ imageIds }) => ({
-    promise: async () => {
-      const manifest = manifests[imageIds[0].imageTag]
-      return manifest
-        ? { images: [{ imageManifest: manifest }] }
-        : { images: [] }
-    },
-  })),
+const MEDIA_TYPE = 'application/vnd.oci.image.index.v1+json'
+
+const awsError = (code) => Object.assign(new Error(code), { code })
+
+const ecrMock = ({ manifests = {}, putImage, batchGetImage } = {}) => ({
+  batchGetImage:
+    batchGetImage ??
+    jest.fn(({ imageIds }) => ({
+      promise: async () => ({
+        images: imageIds
+          .filter(({ imageTag }) => manifests[imageTag])
+          .map(({ imageTag }) => ({
+            imageId: { imageTag },
+            imageManifest: manifests[imageTag],
+            imageManifestMediaType: MEDIA_TYPE,
+          }))
+          // ECR does not promise to keep the order of the request
+          .reverse(),
+      }),
+    })),
   putImage: putImage ?? jest.fn(() => ({ promise: async () => ({}) })),
 })
 
 describe('ecr-images.mjs', () => {
-  test('finds latest image tag matching prefix across pages', async () => {
-    const ecr = ecrMock({
-      pages: [
-        {
-          nextToken: '1',
-          imageDetails: [
-            {
-              imageTags: ['pre-release-2026-5-26-0_old'],
-              imagePushedAt: new Date('2026-05-01'),
-            },
-          ],
-        },
-        {
-          imageDetails: [
-            {
-              imageTags: ['other', 'pre-release-2026-5-26-0_new'],
-              imagePushedAt: new Date('2026-05-02'),
-            },
-          ],
-        },
-      ],
-    })
-
-    await expect(
-      findLatestImageTag(ecr, 'web', 'pre-release-2026-5-26-0_'),
-    ).resolves.toBe('pre-release-2026-5-26-0_new')
-  })
-
-  test('gets image manifest for exact tag', async () => {
+  test('finds image for exact tag with its media type', async () => {
     const ecr = ecrMock({ manifests: { source: '{manifest}' } })
 
-    await expect(getImageManifest(ecr, 'web', 'source')).resolves.toBe(
-      '{manifest}',
+    await expect(findImage(ecr, 'web', ['source'])).resolves.toEqual({
+      tag: 'source',
+      manifest: '{manifest}',
+      mediaType: MEDIA_TYPE,
+    })
+    expect(ecr.batchGetImage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        repositoryName: 'web',
+        imageIds: [{ imageTag: 'source' }],
+        acceptedMediaTypes: expect.arrayContaining([MEDIA_TYPE]),
+      }),
     )
   })
 
-  test('missing repository is treated as no reusable tag', async () => {
-    const ecr = {
-      describeImages: jest.fn(() => ({
-        promise: async () => {
-          const error = new Error('missing')
-          error.code = 'RepositoryNotFoundException'
-          throw error
-        },
-      })),
-    }
+  test('prefers the first tag given, in a single request', async () => {
+    const ecr = ecrMock({ manifests: { old: '{old}', new: '{new}' } })
 
-    await expect(findLatestImageTag(ecr, 'missing', 'prefix_')).resolves.toBe(
+    await expect(findImage(ecr, 'web', ['new', 'old'])).resolves.toMatchObject({
+      tag: 'new',
+      manifest: '{new}',
+    })
+    expect(ecr.batchGetImage).toHaveBeenCalledTimes(1)
+  })
+
+  test('returns undefined when no tag exists', async () => {
+    await expect(findImage(ecrMock(), 'web', ['missing'])).resolves.toBe(
       undefined,
     )
   })
 
-  test('retags source manifest when target does not exist', async () => {
-    const putImage = jest.fn(() => ({ promise: async () => ({}) }))
-    const ecr = ecrMock({ manifests: { source: '{manifest}' }, putImage })
-
-    await expect(retagImage(ecr, 'web', 'source', 'target')).resolves.toEqual({
-      reused: true,
-      targetExisted: false,
+  test('missing repository is treated as no reusable image', async () => {
+    const ecr = ecrMock({
+      batchGetImage: jest.fn(() => ({
+        promise: async () => {
+          throw awsError('RepositoryNotFoundException')
+        },
+      })),
     })
-    expect(putImage).toHaveBeenCalledWith({
+
+    await expect(findImage(ecr, 'missing', ['source'])).resolves.toBe(undefined)
+  })
+
+  test('other lookup errors are thrown', async () => {
+    const ecr = ecrMock({
+      batchGetImage: jest.fn(() => ({
+        promise: async () => {
+          throw awsError('AccessDeniedException')
+        },
+      })),
+    })
+
+    await expect(findImage(ecr, 'web', ['source'])).rejects.toThrow(
+      'AccessDeniedException',
+    )
+  })
+
+  test('retags with the manifest and media type of the source', async () => {
+    const ecr = ecrMock()
+
+    await retagImage(
+      ecr,
+      'web',
+      { tag: 'source', manifest: '{manifest}', mediaType: MEDIA_TYPE },
+      'target',
+    )
+
+    expect(ecr.putImage).toHaveBeenCalledWith({
       repositoryName: 'web',
       imageManifest: '{manifest}',
+      imageManifestMediaType: MEDIA_TYPE,
       imageTag: 'target',
     })
   })
 
-  test('treats existing target tag as successful reuse', async () => {
-    const putImage = jest.fn()
-    const ecr = ecrMock({ manifests: { target: '{manifest}' }, putImage })
-
-    await expect(retagImage(ecr, 'web', 'source', 'target')).resolves.toEqual({
-      reused: true,
-      targetExisted: true,
+  test('already retagged image is not an error', async () => {
+    const ecr = ecrMock({
+      putImage: jest.fn(() => ({
+        promise: async () => {
+          throw awsError('ImageAlreadyExistsException')
+        },
+      })),
     })
-    expect(putImage).not.toHaveBeenCalled()
+
+    await expect(
+      retagImage(ecr, 'web', { manifest: '{manifest}' }, 'target'),
+    ).resolves.toBe(undefined)
+  })
+
+  test('error is ignored when the target tag ended up on our image', async () => {
+    const ecr = ecrMock({
+      manifests: { target: '{manifest}' },
+      putImage: jest.fn(() => ({
+        promise: async () => {
+          throw awsError('TimeoutError')
+        },
+      })),
+    })
+
+    await expect(
+      retagImage(ecr, 'web', { manifest: '{manifest}' }, 'target'),
+    ).resolves.toBe(undefined)
+  })
+
+  test('throws when the target tag belongs to another image', async () => {
+    const ecr = ecrMock({
+      manifests: { target: '{other}' },
+      putImage: jest.fn(() => ({
+        promise: async () => {
+          throw awsError('ImageTagAlreadyExistsException')
+        },
+      })),
+    })
+
+    await expect(
+      retagImage(ecr, 'web', { manifest: '{manifest}' }, 'target'),
+    ).rejects.toThrow('ImageTagAlreadyExistsException')
   })
 })
