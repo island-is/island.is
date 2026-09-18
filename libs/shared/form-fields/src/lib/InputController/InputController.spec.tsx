@@ -79,6 +79,53 @@ describe('InputController', () => {
     expect(getByDisplayValue('new value')).toBeInTheDocument()
   })
 
+  it('should not allow a number above max', () => {
+    const { getByDisplayValue, getByLabelText } = render(
+      <Wrapper defaultValues={{ id: undefined }}>
+        <InputController id="id" label="great label" type="number" max={100} />
+      </Wrapper>,
+    )
+    const input = getByLabelText('great label')
+    fireEvent.change(input, { target: { value: '101' } })
+    expect(input).toHaveValue('')
+    fireEvent.change(input, { target: { value: '100' } })
+    expect(getByDisplayValue('100')).toBeInTheDocument()
+  })
+
+  it('should not allow zero or a negative number when min is positive', () => {
+    const { getByDisplayValue, getByLabelText } = render(
+      <Wrapper defaultValues={{ id: undefined }}>
+        <InputController id="id" label="great label" type="number" min={1} />
+      </Wrapper>,
+    )
+    const input = getByLabelText('great label')
+    fireEvent.change(input, { target: { value: '0' } })
+    expect(input).toHaveValue('')
+    fireEvent.change(input, { target: { value: '-5' } })
+    expect(input).toHaveValue('')
+    fireEvent.change(input, { target: { value: '1' } })
+    expect(getByDisplayValue('1')).toBeInTheDocument()
+  })
+
+  it('should allow typing a positive number on the way to min', () => {
+    const { getByDisplayValue, getByLabelText } = render(
+      <Wrapper defaultValues={{ id: undefined }}>
+        <InputController
+          id="id"
+          label="great label"
+          type="number"
+          min={1900}
+          max={2026}
+        />
+      </Wrapper>,
+    )
+    const input = getByLabelText('great label')
+    fireEvent.change(input, { target: { value: '1' } })
+    expect(getByDisplayValue('1')).toBeInTheDocument()
+    fireEvent.change(input, { target: { value: '1985' } })
+    expect(getByDisplayValue('1985')).toBeInTheDocument()
+  })
+
   it('should call passed in onChange prop when changed', () => {
     const onChange = jest.fn()
     const { getByDisplayValue, getByLabelText } = render(
