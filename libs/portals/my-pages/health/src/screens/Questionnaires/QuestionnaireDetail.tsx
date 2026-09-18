@@ -81,11 +81,15 @@ const QuestionnaireDetail: FC = () => {
     organization?.toLocaleLowerCase() ?? '',
   ).replace(':id', id)
 
-  const link = isAnswered
-    ? answeredLink
-    : canSubmit && (notAnswered || isDraft)
-    ? answerLink
-    : undefined
+  const hasSubmission =
+    questionnaire?.submissions?.some((sub) => !sub.isDraft) ?? false
+
+  const link =
+    isAnswered || (isExpired && hasSubmission)
+      ? answeredLink
+      : canSubmit && (notAnswered || isDraft)
+      ? answerLink
+      : undefined
 
   const statusLabel = isAnswered
     ? formatMessage(messages.answeredQuestionnaire)
@@ -149,11 +153,11 @@ const QuestionnaireDetail: FC = () => {
                   key={'answer-link'}
                   fluid
                   variant="utility"
-                  colorScheme={isAnswered ? 'light' : 'primary'}
+                  colorScheme={link === answeredLink ? 'light' : 'primary'}
                   size="small"
                   onClick={() => navigate(link)}
                 >
-                  {isAnswered && !isExpired
+                  {link === answeredLink
                     ? formatMessage(messages.seeAnswers)
                     : isDraft
                     ? formatMessage(messages.continueDraftQuestionnaire)

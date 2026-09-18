@@ -25,13 +25,14 @@ const mapBaseInformation = (
   id: q.questionnaireId,
   title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
   sentDate: q.createdDate?.toISOString() ?? '',
-  status: q.hasDraft
-    ? QuestionnairesStatusEnum.draft
-    : q.submissions?.length > 0
-    ? QuestionnairesStatusEnum.answered
-    : q.expiryDate && new Date(q.expiryDate) < new Date()
-    ? QuestionnairesStatusEnum.expired
-    : QuestionnairesStatusEnum.notAnswered,
+  status:
+    q.expiryDate && new Date(q.expiryDate) < new Date()
+      ? QuestionnairesStatusEnum.expired
+      : q.hasDraft
+      ? QuestionnairesStatusEnum.draft
+      : q.submissions?.length > 0
+      ? QuestionnairesStatusEnum.answered
+      : QuestionnairesStatusEnum.notAnswered,
   description: q.message ?? undefined,
   formId: q.questionnaireId,
   organization: QuestionnairesOrganizationEnum.EL,
@@ -95,13 +96,14 @@ export const mapElQuestionnaireListItem = (
   sentDate: q.createdDate?.toISOString() ?? '',
   lastSubmissionId: q.lastCreatedSubmissionId,
   organization: QuestionnairesOrganizationEnum.EL,
-  status: q.hasDraft
-    ? QuestionnairesStatusEnum.draft
-    : q.numSubmitted > 0 || q.lastSubmitted
-    ? QuestionnairesStatusEnum.answered
-    : q.expiryDate && new Date(q.expiryDate) < new Date()
-    ? QuestionnairesStatusEnum.expired
-    : QuestionnairesStatusEnum.notAnswered,
+  status:
+    q.expiryDate && new Date(q.expiryDate) < new Date()
+      ? QuestionnairesStatusEnum.expired
+      : q.hasDraft
+      ? QuestionnairesStatusEnum.draft
+      : q.numSubmitted > 0 || q.lastSubmitted
+      ? QuestionnairesStatusEnum.answered
+      : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: q.lastSubmitted,
   senderGroupName: q.senderGroupName ?? undefined,
 })
