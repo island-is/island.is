@@ -325,7 +325,9 @@ query getAppointmentDetail($id: String!) {
 }
 
 mutation cancelAppointment($id: String!) {
-  healthDirectorateCancelAppointment(id: $id)
+  healthDirectorateRequestAppointmentCancellation(id: $id) {
+    outcome
+  }
 }
 
 query GetHealthConversations(

@@ -26,6 +26,7 @@ import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
   HealthDirectorateAppointmentAssigneeType,
+  HealthDirectorateAppointmentCancelOutcome,
   HealthDirectorateAppointmentLinkType,
   HealthDirectorateAppointmentModality,
   HealthDirectorateAppointmentStatus,
@@ -149,17 +150,18 @@ export default function AppointmentDetailScreen() {
       returnPartialData: true,
     })
 
-  const { data, loading, error, networkStatus } = useGetAppointmentDetailQuery({
-    variables: { id: appointmentId ?? '' },
-    skip: !appointmentId,
-  })
+  const { data, loading, error, networkStatus, refetch } =
+    useGetAppointmentDetailQuery({
+      variables: { id: appointmentId ?? '' },
+      skip: !appointmentId,
+    })
 
   const [cancelAppointment, { loading: cancelling }] =
     useCancelAppointmentMutation({
-      // The list and the detail both carry the status that just changed.
-      refetchQueries: ['getAppointments', 'getAppointmentDetail'],
-      // Hold the mutation until they have settled, so the cancelled
-      // appointment is already gone from the list the sheet returns to.
+      // The list carries the status that just changed.
+      refetchQueries: ['getAppointments'],
+      // Hold the mutation until it has settled, so the cancelled appointment
+      // is already gone from the list the sheet returns to.
       awaitRefetchQueries: true,
     })
 
@@ -318,16 +320,17 @@ export default function AppointmentDetailScreen() {
     appointment?.status === HealthDirectorateAppointmentStatus.Booked
   const cancelDeadline = formatAppointmentDate(intl, detail?.canCancelBefore)
 
-  const showCancelError = useCallback(() => {
-    toast.error(
-      intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
-      {
-        message: intl.formatMessage({
-          id: 'health.appointments.cancelErrorMessage',
-        }),
-      },
-    )
-  }, [intl])
+  const showCancelError = useCallback(
+    (messageId: string) => {
+      toast.error(
+        intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
+        {
+          message: intl.formatMessage({ id: messageId }),
+        },
+      )
+    },
+    [intl],
+  )
 
   const confirmCancel = useCallback(() => {
     if (!appointmentId) {
@@ -335,18 +338,36 @@ export default function AppointmentDetailScreen() {
     }
     cancelAppointment({ variables: { id: appointmentId } })
       .then((res) => {
-        if (!res.data?.healthDirectorateCancelAppointment) {
-          showCancelError()
-          return
+        switch (
+          res.data?.healthDirectorateRequestAppointmentCancellation.outcome
+        ) {
+          case HealthDirectorateAppointmentCancelOutcome.Cancelled:
+            router.back()
+            // Rendered by the root ToastHost, the sheet having gone.
+            toast.success(
+              intl.formatMessage({
+                id: 'health.appointments.cancelSuccessTitle',
+              }),
+            )
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Refused:
+          case HealthDirectorateAppointmentCancelOutcome.Blocked:
+            // Online cancellation isn't happening either way. The refusal
+            // itself says nothing about whether the button should still be
+            // offered, so refetch and let the detail answer that.
+            void refetch()
+            showCancelError('health.appointments.cancelContactProvider')
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Unconfirmed:
+            // Sent but unanswered, so the button doubles as the retry.
+            showCancelError('health.appointments.cancelUnconfirmed')
+            break
+          default:
+            showCancelError('health.appointments.cancelErrorMessage')
         }
-        router.back()
-        // Rendered by the root ToastHost, the sheet having gone.
-        toast.success(
-          intl.formatMessage({ id: 'health.appointments.cancelSuccessTitle' }),
-        )
       })
-      .catch(showCancelError)
-  }, [appointmentId, cancelAppointment, intl, router, showCancelError])
+      .catch(() => showCancelError('health.appointments.cancelErrorMessage'))
+  }, [appointmentId, cancelAppointment, intl, refetch, router, showCancelError])
 
   const handleCancelPress = useCallback(() => {
     RNAlert.alert(

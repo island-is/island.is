@@ -886,6 +886,10 @@ export const is = {
   'health.appointments.cancelErrorTitle': 'Ekki tókst að afbóka tímann',
   'health.appointments.cancelErrorMessage':
     'Ekki tókst að framkvæma aðgerð, reyndu aftur.',
+  'health.appointments.cancelContactProvider':
+    'Ekki tókst að afbóka tíma, vinsamlegast hringdu í þjónustuveitanda.',
+  'health.appointments.cancelUnconfirmed':
+    'Ekki tókst að staðfesta afbókun, reyndu aftur.',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
