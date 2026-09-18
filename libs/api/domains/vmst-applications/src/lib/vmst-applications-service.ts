@@ -11,6 +11,7 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import { PartTimeJobValidationInput } from './dto/partTimeJobValidation.input'
 import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
@@ -19,6 +20,7 @@ import {
   VmstApplicationsApplicantAttachment,
   VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
+  PartTimeJobValidationResult,
   VmstApplicationsU2ValidationResponse,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
@@ -114,6 +116,34 @@ export class VMSTApplicationsService {
     return { ...response, isValid: response.isValid ?? false }
   }
 
+  async validatePartTimeJobs(
+    auth: User,
+    input: PartTimeJobValidationInput[],
+  ): Promise<PartTimeJobValidationResult> {
+    const response = await this.vmstUnemploymentService.validatIncome({
+      applicantId: auth.nationalId,
+      galdurExternalDomainRequestsIncomeCreateIncomesRequest: {
+        partTimeJobs: input.map((job) => ({
+          employerSSN: job.employerSSN,
+          periodFrom: new Date(job.periodFrom),
+          periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+          ratio: job.ratio,
+          estimatedIncome: job.estimatedIncome,
+        })),
+      },
+    })
+
+    // TODO: the client's request/response types don't carry validationId yet,
+    // so per-row correlation isn't possible until VMST adds it to the contract.
+    // Until then, treat every row as invalid when the overall response fails.
+    const isValid = response.success ?? false
+    return {
+      isValid,
+      title: isValid ? null : response.reason,
+      message: isValid ? null : response.reasonEN,
+      invalidValidationIds: isValid ? [] : input.map((job) => job.validationId),
+    }
+  }
   async validateU2(
     auth: User,
     input: VmstApplicationsU2ValidationInput,
