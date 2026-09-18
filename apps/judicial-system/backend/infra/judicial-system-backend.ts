@@ -25,6 +25,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       },
       S3_TIME_TO_LIVE_POST: '15',
       S3_TIME_TO_LIVE_GET: '5',
+      LAWYER_REGISTRY_INCLUDE_TEST_LAWYERS: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'false',
+      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',

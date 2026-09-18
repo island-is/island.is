@@ -48,6 +48,9 @@ export const getEnvironmentBaseUrl = (authority: string) => {
   return `https://${prefix}${authority}`
 }
 const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
+// The judicial-system suite is pinned to 4200 regardless of PORT: the dev S3
+// upload bucket only allows that origin, so any other port fails every upload.
+const judicialSystemLocalUrl = `http://${BaseAuthority.local}:4200`
 // This set of query params is used to hide the onboarding modal as well as force locale to Icelandic.
 // Useful if you need to test something that is using icelandic labels for example.
 const icelandicAndNoPopup = {
@@ -105,7 +108,7 @@ const envs: {
     authUrl: AuthUrl.local,
     islandisBaseUrl: localUrl,
     adsBaseUrl: localUrl,
-    judicialSystemBaseUrl: localUrl,
+    judicialSystemBaseUrl: judicialSystemLocalUrl,
   },
 }
 
