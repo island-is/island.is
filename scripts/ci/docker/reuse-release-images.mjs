@@ -138,7 +138,17 @@ export function parseChunks(value) {
   return parsed
 }
 
+/**
+ * Every image of the release was built by the pre-release, from the commit that
+ * is being released. merge-queue.yml then has nothing to build, and does not
+ * run tests, typecheck and e2e again either.
+ */
+export function allImagesReused(result) {
+  return result.buildChunks.length === 0 && result.reusedDockerData.length > 0
+}
+
 export function setReuseOutputs(coreApi, result) {
+  coreApi.setOutput('ALL_IMAGES_REUSED', String(allImagesReused(result)))
   coreApi.setOutput('BUILD_CHUNKS', chunkToBuildMatrix(result.buildChunks))
   coreApi.setOutput(
     'REUSED_DOCKER_DATA',

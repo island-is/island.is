@@ -40,6 +40,8 @@ on:
         value: ${{ jobs.install.outputs.MQ_SHOULD_RUN_BUILD}}
       MQ_REUSED_DOCKER_DATA:
         value: ${{ jobs.install.outputs.MQ_REUSED_DOCKER_DATA }}
+      MQ_ALL_IMAGES_REUSED:
+        value: ${{ jobs.install.outputs.MQ_ALL_IMAGES_REUSED }}
       TEST_CHUNKS:
         value: ${{ jobs.install.outputs.TEST_CHUNKS }}
       E2E_CHUNKS:
@@ -100,6 +102,8 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       DOCKER_CHUNKS: ${{ steps.release-docker-reuse.outputs.BUILD_CHUNKS || steps.docker_projects.outputs.BUILD_CHUNKS }}
       MQ_REUSED_DOCKER_DATA: ${{ steps.release-docker-reuse.outputs.REUSED_DOCKER_DATA || '[]' }}
+      # Only ever true when the reuse step says so, everything runs otherwise
+      MQ_ALL_IMAGES_REUSED: ${{ steps.release-docker-reuse.outputs.ALL_IMAGES_REUSED || 'false' }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.E2E_BUILD_ID }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}

@@ -196,7 +196,8 @@ jobs:
     uses: ./.github/workflows/e2e.yml
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    # Not run again for a release that reuses every image of its pre-release
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     secrets: inherit
     with:
       e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
@@ -211,7 +212,8 @@ jobs:
   tests:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    # Not run again for a release that reuses every image of its pre-release
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     runs-on: arc-mergequeue
     timeout-minutes: 45
     env:
@@ -242,6 +244,8 @@ jobs:
   typecheck:
     needs:
       - prepare
+    # Not run again for a release that reuses every image of its pre-release
+    if: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     permissions:
       contents: 'read'
     runs-on: arc-mergequeue
@@ -284,9 +288,20 @@ jobs:
       - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
       - name: Check typecheck success
-        run: '[[ ${{ needs.typecheck.result }} == "success" ]] || exit 1'
+        env:
+          RESULT: ${{ needs.typecheck.result }}
+          ALL_IMAGES_REUSED: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED }}
+        run: |
+          # Must succeed, and may only be skipped when every image is reused
+          [[ "$RESULT" == "success" || ( "$RESULT" == "skipped" && "$ALL_IMAGES_REUSED" == "true" ) ]] || exit 1
       - name: Check build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
+      - name: Summary of reused release
+        if: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED == 'true' }}
+        env:
+          REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
+        run: |
+          echo "All $(echo "$REUSED_DOCKER_DATA" | jq 'length') images were reused from the pre-release of this commit. Tests, typecheck, e2e and docker builds were not run again." >> "$GITHUB_STEP_SUMMARY"
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read

@@ -1,8 +1,10 @@
 import { describe, expect, jest, test } from '@jest/globals'
 import {
+  allImagesReused,
   findPreReleaseSourceTags,
   parseChunks,
   prepareReleaseImageReuse,
+  setReuseOutputs,
 } from './reuse-release-images.mjs'
 
 const webChunk = {
@@ -46,6 +48,45 @@ const reusedWeb = {
 describe('reuse-release-images.mjs', () => {
   test('parses docker chunks with existing single-quoted output shape', () => {
     expect(parseChunks(`'${JSON.stringify([webChunk])}'`)).toEqual([webChunk])
+  })
+
+  describe('allImagesReused', () => {
+    test('only when there were images and none is left to build', () => {
+      expect(
+        allImagesReused({ buildChunks: [], reusedDockerData: [reusedWeb] }),
+      ).toBe(true)
+      expect(
+        allImagesReused({
+          buildChunks: [apiChunk],
+          reusedDockerData: [reusedWeb],
+        }),
+      ).toBe(false)
+      // Nothing was reused, e.g. the commit has no pre-release run
+      expect(
+        allImagesReused({ buildChunks: [webChunk], reusedDockerData: [] }),
+      ).toBe(false)
+      expect(allImagesReused({ buildChunks: [], reusedDockerData: [] })).toBe(
+        false,
+      )
+    })
+
+    test('is given to the workflow as a string', () => {
+      const outputs = {}
+      const coreApi = { setOutput: (key, value) => (outputs[key] = value) }
+
+      setReuseOutputs(coreApi, {
+        buildChunks: [],
+        reusedDockerData: [reusedWeb],
+      })
+      expect(outputs.ALL_IMAGES_REUSED).toBe('true')
+      expect(outputs.BUILD_CHUNKS).toBe('[]')
+
+      setReuseOutputs(coreApi, {
+        buildChunks: [apiChunk],
+        reusedDockerData: [reusedWeb],
+      })
+      expect(outputs.ALL_IMAGES_REUSED).toBe('false')
+    })
   })
 
   describe('findPreReleaseSourceTags', () => {

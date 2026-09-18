@@ -158,6 +158,36 @@ jobs:
           LEFT="$(echo "$BUILD_CHUNKS" | jq 'length')"
           [[ "$ALL" == "$LEFT" ]] || { echo "Expected all $ALL chunks to be built, got $LEFT"; exit 1; }
 
+      - name: Reuse when every image has a pre-release image
+        id: all-reused
+        env:
+          RELEASE_BRANCH: ${{ steps.setup.outputs.RELEASE_BRANCH }}
+          PRE_RELEASE_TAG_PREFIX: ${{ steps.setup.outputs.PRE_RELEASE_TAG_PREFIX }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          RELEASE_SHA: ${{ env.TEST_SHA }}
+          DOCKER_TAG: ${{ steps.setup.outputs.RELEASE_TAG }}
+          ALL_CHUNKS: ${{ steps.docker_projects.outputs.CHUNKS }}
+          UNBUILT_PROJECT: ${{ steps.setup.outputs.UNBUILT_PROJECT }}
+        run: |
+          # The same release, without the project that has no image
+          DOCKER_CHUNKS="$(echo "${ALL_CHUNKS:1:-1}" | jq -cM --arg unbuilt "$UNBUILT_PROJECT" 'map(select(.projects != $unbuilt))')"
+          export DOCKER_CHUNKS
+          node scripts/ci/docker/reuse-release-images.mjs
+
+      - name: Check that only a fully reused release skips tests and builds
+        env:
+          WITH_MISSING_IMAGE: ${{ steps.reuse.outputs.ALL_IMAGES_REUSED }}
+          WITH_EVERY_IMAGE: ${{ steps.all-reused.outputs.ALL_IMAGES_REUSED }}
+          OTHER_COMMIT: ${{ steps.other-commit.outputs.ALL_IMAGES_REUSED }}
+          BUILD_CHUNKS: ${{ steps.all-reused.outputs.BUILD_CHUNKS }}
+        run: |
+          # merge-queue.yml skips tests, typecheck, e2e and docker-build on 'true'
+          [[ "$WITH_MISSING_IMAGE" == "false" ]] || { echo "Expected false with a missing image, got '$WITH_MISSING_IMAGE'"; exit 1; }
+          [[ "$OTHER_COMMIT" == "false" ]] || { echo "Expected false for another commit, got '$OTHER_COMMIT'"; exit 1; }
+          [[ "$WITH_EVERY_IMAGE" == "true" ]] || { echo "Expected true with every image, got '$WITH_EVERY_IMAGE'"; exit 1; }
+          [[ "$BUILD_CHUNKS" == "[]" ]] || { echo "Expected nothing to build, got '$BUILD_CHUNKS'"; exit 1; }
+
       - name: Generate helm values (never pushed)
         env:
           JSON_DATA: ''
