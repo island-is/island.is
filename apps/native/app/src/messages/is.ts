@@ -967,6 +967,7 @@ export const is = {
   'health.messages.compose.certificateText':
     'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
   'health.messages.compose.certificateLink': 'Sækja um vottorð',
+  'health.messages.compose.externalLink': 'Opna netspjall',
   'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
   'health.messages.certificatePayment.text':
     'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',

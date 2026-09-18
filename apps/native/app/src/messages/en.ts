@@ -970,6 +970,7 @@ export const en: TranslatedMessages = {
   'health.messages.compose.certificateText':
     'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
   'health.messages.compose.certificateLink': 'Request a certificate',
+  'health.messages.compose.externalLink': 'Open web chat',
   'health.messages.certificatePayment.title': 'Certificate ready for payment',
   'health.messages.certificatePayment.text':
     'This certificate costs {amount} and is unpaid. Pay for it on Ísland.is My Pages.',

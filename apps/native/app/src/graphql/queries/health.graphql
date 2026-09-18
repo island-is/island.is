@@ -409,6 +409,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
       description
       instructions
       isCertificate
+      externalLinkUrl
     }
   }
 }

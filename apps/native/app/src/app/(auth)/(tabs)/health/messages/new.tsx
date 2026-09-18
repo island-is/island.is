@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Platform, ScrollView, View } from 'react-native'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
@@ -115,6 +115,12 @@ export default function HealthMessageComposeScreen() {
     (s) => s.patientInitiatedTypeCode === typeCode,
   )
   const isCertificateSelected = !isReply && !!selectedType?.isCertificate
+  // Some types are handled somewhere else entirely (e.g. the Heilsuvera web
+  // chat) and carry the destination on the type itself.
+  const externalLinkUrl = !isReply ? selectedType?.externalLinkUrl : undefined
+  // Neither kind can be composed here: the message field and send button are
+  // replaced by a notice that points at the real destination.
+  const hidesComposer = isCertificateSelected || !!externalLinkUrl
   const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
   const recipientsLoading = !isReply && recipientsRes.loading
@@ -159,10 +165,17 @@ export default function HealthMessageComposeScreen() {
       onError,
     })
 
+  // Set while navigating away after a send, so the Android step-back listener
+  // below lets that navigation through. Without it the `router.back()` fallback
+  // dispatches GO_BACK, gets intercepted, and leaves the user on a compose
+  // screen for a conversation that was already created.
+  const isCompletingRef = useRef(false)
+
   const [createConversation, { loading: creating }] =
     useCreateHealthConversationMutation({
       refetchQueries: ['GetHealthConversations'],
       onCompleted: (data) => {
+        isCompletingRef.current = true
         const id = data.healthDirectorateCreateHealthConversation?.id
         if (id) {
           // Replace the compose screen so back returns to the inbox.
@@ -193,7 +206,7 @@ export default function HealthMessageComposeScreen() {
     : !!message.trim() &&
       !!selectedRecipient &&
       !!typeCode &&
-      !isCertificateSelected &&
+      !hidesComposer &&
       !isFormLocked
 
   const onSend = () => {
@@ -205,7 +218,7 @@ export default function HealthMessageComposeScreen() {
       })
       return
     }
-    if (isCertificateSelected) {
+    if (hidesComposer) {
       return
     }
     if (selectedRecipient && typeCode) {
@@ -271,14 +284,17 @@ export default function HealthMessageComposeScreen() {
 
   // Android has no close item in the modal header, so the header arrow and the
   // hardware/gesture back all pop the sheet. Intercept those to step back to
-  // the intro instead, while letting programmatic navigation (the replace after
-  // a message is created) through untouched.
+  // the intro instead, while letting navigation that follows a send through
+  // untouched (see `isCompletingRef`).
   const navigation = useNavigation()
   useEffect(() => {
     if (Platform.OS !== 'android' || !hasIntro || step !== 'compose') {
       return
     }
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (isCompletingRef.current) {
+        return
+      }
       if (e.data.action.type !== 'GO_BACK' && e.data.action.type !== 'POP') {
         return
       }
@@ -472,11 +488,11 @@ export default function HealthMessageComposeScreen() {
                   disabled={isFormLocked}
                 />
               )}
-              {!isCertificateSelected && !!selectedType?.instructions && (
+              {!hidesComposer && !!selectedType?.instructions && (
                 <ServiceInstructions text={selectedType.instructions} />
               )}
 
-              {!isCertificateSelected && (
+              {!hidesComposer && (
                 <View style={{ rowGap: theme.spacing.smallGutter }}>
                   <TextField
                     label={intl.formatMessage({
@@ -524,7 +540,24 @@ export default function HealthMessageComposeScreen() {
                 }}
               />
             )}
-            {!hideSendButton && !isCertificateSelected && (
+            {/* External services (the Heilsuvera web chat) are opened rather
+                than messaged. The description is written server-side and
+                already states whether the service is open right now. */}
+            {!!externalLinkUrl && (
+              <ProblemTemplate
+                variant="info"
+                showIcon
+                title={selectedType?.title ?? ''}
+                message={selectedType?.description ?? ''}
+                detailLink={{
+                  text: intl.formatMessage({
+                    id: 'health.messages.compose.externalLink',
+                  }),
+                  url: externalLinkUrl,
+                }}
+              />
+            )}
+            {!hideSendButton && !hidesComposer && (
               <View
                 onLayout={(e) =>
                   setSendButtonHeight(e.nativeEvent.layout.height)
