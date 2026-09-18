@@ -88,13 +88,8 @@ export async function findPreReleaseTestRun({
 }
 
 export async function main() {
-  const {
-    GITHUB_TOKEN,
-    GITHUB_RUN_ID,
-    MODE,
-    TEST_BRANCH,
-    TEST_SHA,
-  } = process.env
+  const { GITHUB_TOKEN, GITHUB_RUN_ID, MODE, TEST_BRANCH, TEST_SHA } =
+    process.env
   if (!GITHUB_TOKEN || !TEST_BRANCH || !TEST_SHA) {
     throw new Error('GITHUB_TOKEN, TEST_BRANCH and TEST_SHA are required')
   }

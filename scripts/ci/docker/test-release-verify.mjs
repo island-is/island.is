@@ -83,12 +83,8 @@ export async function verifyReuse({
 }
 
 export async function main() {
-  const {
-    BUILD_CHUNKS,
-    REUSED_DOCKER_DATA,
-    PRE_RELEASE_TAG,
-    RELEASE_TAG,
-  } = process.env
+  const { BUILD_CHUNKS, REUSED_DOCKER_DATA, PRE_RELEASE_TAG, RELEASE_TAG } =
+    process.env
   if (
     !BUILD_CHUNKS ||
     !REUSED_DOCKER_DATA ||
