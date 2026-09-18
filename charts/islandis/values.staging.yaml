@@ -1240,6 +1240,7 @@ consultation-portal:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://beta.staging01.devland.is/samradsgatt/api/auth'
+    NEXTAUTH_URL_INTERNAL: 'http://localhost:3333/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
