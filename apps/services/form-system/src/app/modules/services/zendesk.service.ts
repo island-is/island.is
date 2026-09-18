@@ -613,7 +613,8 @@ export class ZendeskService {
 
                 const val = this.formatValue(raw, field.fieldType)
                 if (
-                  field.fieldType === FieldTypesEnum.APPLICANT &&
+                  (field.fieldType === FieldTypesEnum.APPLICANT ||
+                    isMultiAttribute) &&
                   val.trim().length === 0
                 ) {
                   continue
