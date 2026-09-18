@@ -32,6 +32,22 @@ export const healthNavigation: PortalNavigationItem = {
           name: messages.myPregnancy,
           path: HealthPaths.HealthPregnancyOverview,
         },
+        {
+          name: messages.pregnancyCommunicationsTitle,
+          path: HealthPaths.HealthPregnancyCommunications,
+          children: [
+            {
+              name: messages.pregnancyCommunicationsTitle,
+              path: HealthPaths.HealthPregnancyCommunicationDetail,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+          ],
+        },
+        {
+          name: messages.pregnancyMeasurementsAndDocumentsCard,
+          path: HealthPaths.HealthPregnancyMeasurementsAndDocuments,
+        },
       ],
     },
     {

@@ -233,3 +233,19 @@ export enum AppointmentCancelOutcomeEnum {
 registerEnumType(AppointmentCancelOutcomeEnum, {
   name: 'HealthDirectorateAppointmentCancelOutcome',
 })
+
+export enum CommunicationKindEnum {
+  EXAMINATION = 'EXAMINATION',
+  PHONE_CALL = 'PHONE_CALL',
+}
+registerEnumType(CommunicationKindEnum, {
+  name: 'HealthDirectorateCommunicationKind',
+})
+
+export enum PregnancyDocumentKindEnum {
+  CERTIFICATE = 'CERTIFICATE',
+  ATTACHMENT = 'ATTACHMENT',
+}
+registerEnumType(PregnancyDocumentKindEnum, {
+  name: 'HealthDirectoratePregnancyDocumentKind',
+})

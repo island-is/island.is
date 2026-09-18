@@ -164,6 +164,15 @@ const HealthConversationDetail = lazy(() =>
 )
 
 const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
+const PregnancyCommunications = lazy(
+  () => import('./screens/Pregnancy/PregnancyCommunications'),
+)
+const PregnancyCommunicationDetail = lazy(
+  () => import('./screens/Pregnancy/PregnancyCommunicationDetail'),
+)
+const PregnancyMeasurementsAndDocuments = lazy(
+  () => import('./screens/Pregnancy/PregnancyMeasurementsAndDocuments'),
+)
 
 const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
 
@@ -713,6 +722,29 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.health),
       dynamic: true,
       element: <Pregnancy />,
+    },
+    {
+      name: hm.pregnancyCommunicationsTitle,
+      path: HealthPaths.HealthPregnancyCommunications,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
+      element: <PregnancyCommunications />,
+    },
+    {
+      name: hm.pregnancyCommunicationsTitle,
+      path: HealthPaths.HealthPregnancyCommunicationDetail,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <PregnancyCommunicationDetail />,
+    },
+    {
+      name: hm.pregnancyMeasurementsAndDocumentsCard,
+      path: HealthPaths.HealthPregnancyMeasurementsAndDocuments,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
+      element: <PregnancyMeasurementsAndDocuments />,
     },
     {
       name: m.healthTreatment,

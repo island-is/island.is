@@ -4,6 +4,7 @@ const therapiesAndAids = '/heilsa/thjalfun-og-hjalpartaeki'
 const medicine = '/heilsa/lyf'
 const patientData = '/heilsa/sjukraskra'
 const payments = '/heilsa/greidslur'
+const pregnancy = '/heilsa/medganga'
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
@@ -77,8 +78,11 @@ export enum HealthPaths {
   HealthTreatment = '/heilsa/medferd/:id',
   HealthTreatmentEducationalContent = '/heilsa/medferd/:id/fraedsluefni',
 
-  HealthPregnancy = '/heilsa/medganga',
-  HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
+  HealthPregnancy = `${pregnancy}`,
+  HealthPregnancyOverview = `${pregnancy}/min-medganga`,
+  HealthPregnancyCommunications = `${pregnancy}/samskiptasaga`,
+  HealthPregnancyCommunicationDetail = `${pregnancy}/samskiptasaga/:id`,
+  HealthPregnancyMeasurementsAndDocuments = `${pregnancy}/maelingar-og-skjol`,
 
   // Deprecated paths - kept for redirects
   HealthOverviewOld = `${basicInformation}/yfirlit`,

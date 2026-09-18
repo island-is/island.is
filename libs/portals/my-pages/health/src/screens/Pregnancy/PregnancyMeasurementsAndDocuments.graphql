@@ -1,0 +1,22 @@
+query GetPregnancyMeasurements($pregnancyId: ID!) {
+  healthDirectoratePregnancyMeasurements(pregnancyId: $pregnancyId) {
+    id
+    examinationDate
+    weight
+    bloodPressureUpper
+    bloodPressureLower
+    pulse
+    cervixHeight
+    albumenInUrineScore
+  }
+}
+
+query GetPregnancyDocuments($pregnancyId: ID!) {
+  healthDirectoratePregnancyDocuments(pregnancyId: $pregnancyId) {
+    id
+    kind
+    title
+    date
+    organizationName
+  }
+}

@@ -124,6 +124,18 @@ import { HealthDirectorateHealthConversationRecipient } from './models/healthCon
 import { HealthDirectorateCertificate } from './models/certificate.model'
 import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
 import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
+import { ActivePregnancy } from './models/activePregnancy.model'
+import { Communication } from './models/communication.model'
+import { HealthDirectorateCommunicationDetail } from './models/communicationDetail.model'
+import { ExaminationMeasurement } from './models/examinationMeasurement.model'
+import { PregnancyDocument } from './models/pregnancyDocument.model'
+import {
+  mapActivePregnancy,
+  mapCommunication,
+  mapCommunicationDetail,
+  mapExaminationMeasurement,
+  mapPregnancyDocument,
+} from './mappers/pregnancyMapper'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -186,6 +198,67 @@ export class HealthDirectorateService {
   /* Pregnancy */
   async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
     return this.healthApi.hasActivePregnancy(auth)
+  }
+
+  async getActivePregnancy(auth: Auth): Promise<ActivePregnancy | null> {
+    const pregnancy = await this.healthApi.getActivePregnancy(auth)
+    if (!pregnancy) return null
+
+    return mapActivePregnancy(pregnancy)
+  }
+
+  async getPregnancyCommunications(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<Communication[] | null> {
+    const communications = await this.healthApi.getPregnancyCommunications(
+      auth,
+      pregnancyId,
+    )
+    if (!communications) return null
+
+    return communications.map(mapCommunication)
+  }
+
+  async getPregnancyCommunicationDetail(
+    auth: Auth,
+    pregnancyId: string,
+    communicationId: string,
+  ): Promise<typeof HealthDirectorateCommunicationDetail | null> {
+    const detail = await this.healthApi.getPregnancyCommunicationDetail(
+      auth,
+      pregnancyId,
+      communicationId,
+    )
+    if (!detail) return null
+
+    return mapCommunicationDetail(detail)
+  }
+
+  async getPregnancyMeasurements(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<ExaminationMeasurement[] | null> {
+    const measurements = await this.healthApi.getPregnancyMeasurements(
+      auth,
+      pregnancyId,
+    )
+    if (!measurements) return null
+
+    return measurements.map(mapExaminationMeasurement)
+  }
+
+  async getPregnancyDocuments(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyDocument[] | null> {
+    const documents = await this.healthApi.getPregnancyDocuments(
+      auth,
+      pregnancyId,
+    )
+    if (!documents) return null
+
+    return documents.map(mapPregnancyDocument).filter(isDefined)
   }
 
   async updateDonorStatus(

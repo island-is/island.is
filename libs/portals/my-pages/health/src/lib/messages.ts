@@ -2360,6 +2360,152 @@ export const messages = defineMessages({
       'https://www.heilsuvera.is/efnisflokkar/throskaferlid/medganga/',
     id: 'sp.health:reading-material-pregnancy-link',
   },
+  stafraenHeilsaPregnancyTooltip: {
+    defaultMessage: 'Stafræn heilsa hefur umsjón með gögnum um meðgöngu þína.',
+    id: 'sp.health:stafraen-heilsa-pregnancy-tooltip',
+  },
+  pregnancyLength: {
+    defaultMessage: 'Lengd meðgöngu',
+    id: 'sp.health:pregnancy-length',
+  },
+  pregnancyLengthWeeksAndDays: {
+    defaultMessage: '{weeks} vikur + {days} dagar',
+    id: 'sp.health:pregnancy-length-weeks-and-days',
+  },
+  pregnancyLengthWeeks: {
+    defaultMessage: '{weeks} vikur',
+    id: 'sp.health:pregnancy-length-weeks',
+  },
+  dueDatePregnancy: {
+    defaultMessage: 'Væntanlegur fæðingardagur',
+    id: 'sp.health:due-date-pregnancy',
+  },
+  partner: {
+    defaultMessage: 'Maki',
+    id: 'sp.health:partner',
+  },
+  pregnancyMessagesTitle: {
+    defaultMessage: 'Skilaboð frá Mæðravernd',
+    id: 'sp.health:pregnancy-messages-title',
+  },
+  pregnancyMeasurementsAndDocumentsCard: {
+    defaultMessage: 'Mælingar og skjöl',
+    id: 'sp.health:pregnancy-measurements-and-documents-card',
+  },
+  pregnancyCommunicationsTitle: {
+    defaultMessage: 'Samskiptasaga',
+    id: 'sp.health:pregnancy-communications-title',
+  },
+  pregnancyCommunicationsIntro: {
+    defaultMessage:
+      'Á þessari síðu getur þú séð samskiptasögu vegna meðgöngu þinnar, þar á meðal skoðanir, símtöl og skilaboð.',
+    id: 'sp.health:pregnancy-communications-intro',
+  },
+  pregnancyCommunicationsSearchPlaceholder: {
+    defaultMessage: 'Sía eftir leitarorði',
+    id: 'sp.health:pregnancy-communications-search-placeholder',
+  },
+  pregnancyCommunicationExamination: {
+    defaultMessage: 'Skoðun',
+    id: 'sp.health:pregnancy-communication-examination',
+  },
+  pregnancyCommunicationPhoneCall: {
+    defaultMessage: 'Símtal',
+    id: 'sp.health:pregnancy-communication-phone-call',
+  },
+  pregnancyMeasurementsAndDocumentsIntro: {
+    defaultMessage:
+      'Á þessari síðu getur þú skoðað mælingar sem skráðar hafa verið í mæðravernd og önnur skjöl sem tilheyra þér.',
+    id: 'sp.health:pregnancy-measurements-and-documents-intro',
+  },
+  pregnancyMeasurementsTab: {
+    defaultMessage: 'Mælingar',
+    id: 'sp.health:pregnancy-measurements-tab',
+  },
+  pregnancyDocumentsTab: {
+    defaultMessage: 'Skjöl',
+    id: 'sp.health:pregnancy-documents-tab',
+  },
+  pregnancyRegisteredBy: {
+    defaultMessage: 'Skráð af',
+    id: 'sp.health:pregnancy-registered-by',
+  },
+  pregnancyReason: {
+    defaultMessage: 'Ástæða',
+    id: 'sp.health:pregnancy-reason',
+  },
+  pregnancyDivision: {
+    defaultMessage: 'Deild',
+    id: 'sp.health:pregnancy-division',
+  },
+  pregnancyOrganization: {
+    defaultMessage: 'Stofnun',
+    id: 'sp.health:pregnancy-organization',
+  },
+  pregnancyExaminationDate: {
+    defaultMessage: 'Skoðun dags.',
+    id: 'sp.health:pregnancy-examination-date',
+  },
+  pregnancyPhoneCallDate: {
+    defaultMessage: 'Símtal dags.',
+    id: 'sp.health:pregnancy-phone-call-date',
+  },
+  pregnancyDetailedDescription: {
+    defaultMessage: 'Nánari lýsing',
+    id: 'sp.health:pregnancy-detailed-description',
+  },
+  pregnancyWeight: {
+    defaultMessage: 'Þyngd',
+    id: 'sp.health:pregnancy-weight',
+  },
+  pregnancyBloodPressure: {
+    defaultMessage: 'Blóðþrýstingur',
+    id: 'sp.health:pregnancy-blood-pressure',
+  },
+  pregnancyPulse: {
+    defaultMessage: 'Púls',
+    id: 'sp.health:pregnancy-pulse',
+  },
+  pregnancyBeatsPerMinute: {
+    defaultMessage: '{value} sl/mín',
+    id: 'sp.health:pregnancy-beats-per-minute',
+  },
+  pregnancyCervixHeight: {
+    defaultMessage: 'Hæð legbotns',
+    id: 'sp.health:pregnancy-cervix-height',
+  },
+  pregnancyAlbumenInUrine: {
+    defaultMessage: 'Prótein í þvagi',
+    id: 'sp.health:pregnancy-albumen-in-urine',
+  },
+  pregnancyFetalHeartRate: {
+    defaultMessage: 'Fósturhjartsláttur',
+    id: 'sp.health:pregnancy-fetal-heart-rate',
+  },
+  pregnancyFetus: {
+    defaultMessage: 'Fóstur {id}',
+    id: 'sp.health:pregnancy-fetus',
+  },
+  pregnancyCommunicationsColumnHeader: {
+    defaultMessage: 'Samskipti',
+    id: 'sp.health:pregnancy-communications-column-header',
+  },
+  pregnancyDocumentSent: {
+    defaultMessage: 'Sent dags: {date}',
+    id: 'sp.health:pregnancy-document-sent',
+  },
+  pregnancyFetalPosition: {
+    defaultMessage: 'Staða fósturs',
+    id: 'sp.health:pregnancy-fetal-position',
+  },
+  pregnancyDocumentsEmpty: {
+    defaultMessage: 'Engin skjöl fundust',
+    id: 'sp.health:pregnancy-documents-empty',
+  },
+  pregnancyCommunicationNotFound: {
+    defaultMessage: 'Samskipti fundust ekki',
+    id: 'sp.health:pregnancy-communication-not-found',
+  },
   oldPregnanciesTitle: {
     defaultMessage: 'Eldri meðgöngur',
     id: 'sp.health:old-pregnancies-title',

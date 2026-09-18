@@ -1,0 +1,60 @@
+query GetPregnancyCommunicationDetail(
+  $pregnancyId: ID!
+  $communicationId: ID!
+) {
+  healthDirectoratePregnancyCommunicationDetail(
+    pregnancyId: $pregnancyId
+    communicationId: $communicationId
+  ) {
+    __typename
+    ... on HealthDirectorateExaminationCommunicationDetail {
+      id
+      kind
+      weeks
+      days
+      dateTime
+      text
+      authorName
+      subjectTerm
+      registeredBy {
+        name
+        role
+        profession
+        divisionName
+        organizationName
+      }
+      weight
+      pulse
+      bloodPressureUpper
+      bloodPressureLower
+      albumenInUrineScore
+      cervixHeight
+      fetalHeartRates {
+        identifier
+        soundLower
+        soundUpper
+        position
+      }
+    }
+    ... on HealthDirectoratePhoneCallCommunicationDetail {
+      id
+      kind
+      weeks
+      days
+      dateTime
+      text
+      authorName
+      subjectTerm
+      registeredBy {
+        name
+        role
+        profession
+        divisionName
+        organizationName
+      }
+      phoneCallReason
+      phoneCallResult
+      checklist
+    }
+  }
+}

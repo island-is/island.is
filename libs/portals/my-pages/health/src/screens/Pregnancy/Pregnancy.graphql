@@ -1,0 +1,24 @@
+query GetActivePregnancy {
+  healthDirectorateActivePregnancy {
+    id
+    dueDate
+    lengthWeeks
+    lengthDays
+    partnerName
+    staff {
+      name
+      profession
+    }
+  }
+}
+
+query GetPregnancyCommunicationsPreview($pregnancyId: ID!) {
+  healthDirectoratePregnancyCommunications(pregnancyId: $pregnancyId) {
+    id
+    kind
+    text
+    authorName
+    subjectTerm
+    dateTime
+  }
+}

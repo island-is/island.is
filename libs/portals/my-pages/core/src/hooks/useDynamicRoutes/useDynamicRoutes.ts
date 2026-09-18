@@ -188,6 +188,8 @@ export const useDynamicRoutes = () => {
     if (pregnancyData?.healthDirectorateHasActivePregnancy) {
       dynamicPathArray.push(DynamicPaths.HealthPregnancy)
       dynamicPathArray.push(DynamicPaths.HealthPregnancyOverview)
+      dynamicPathArray.push(DynamicPaths.HealthPregnancyCommunications)
+      dynamicPathArray.push(DynamicPaths.HealthPregnancyMeasurementsAndDocuments)
     }
 
     // Combine routes, no duplicates.

@@ -11,6 +11,8 @@ export enum DynamicPaths {
 
   HealthPregnancy = '/heilsa/medganga',
   HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
+  HealthPregnancyCommunications = '/heilsa/medganga/samskiptasaga',
+  HealthPregnancyMeasurementsAndDocuments = '/heilsa/medganga/maelingar-og-skjol',
 
   SocialBenefitsUnemploymentStatus = '/framfaersla/atvinnuleysisbaetur/minstada',
   SocialBenefitsUnemploymentMyData = '/framfaersla/atvinnuleysisbaetur/mingogn',

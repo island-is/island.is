@@ -1,0 +1,12 @@
+query GetPregnancyCommunications($pregnancyId: ID!) {
+  healthDirectoratePregnancyCommunications(pregnancyId: $pregnancyId) {
+    id
+    kind
+    weeks
+    days
+    dateTime
+    text
+    authorName
+    subjectTerm
+  }
+}
