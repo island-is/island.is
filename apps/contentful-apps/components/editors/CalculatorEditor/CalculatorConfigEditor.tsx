@@ -40,9 +40,9 @@ import {
   toOutputContractField,
 } from './types'
 
-// Every entry of the `calculator` content type IS a calculator, so -- unlike
-// ConnectedComponent's shared configJson field, which also serves unrelated
-// embed types -- no sibling `type` gate or plain-JSON fallback is needed.
+// Every entry of the `calculator` content type IS a calculator, so unlike
+// ConnectedComponent's shared configJson field, no sibling `type` gate or
+// plain-JSON fallback is needed.
 export const CalculatorConfigEditor = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [calculatorTypeValue, setCalculatorTypeValue] = useState<string>(
@@ -52,9 +52,8 @@ export const CalculatorConfigEditor = () => {
   const [isDisabled, setIsDisabled] = useState(false)
   const [schemaErrors, setSchemaErrors] = useState<ValidationError[]>([])
 
-  /* Plain `startAutoResizer()`, deliberately not `{ absoluteElements: true }`:
-   * the SDK documents an infinite resize loop for that option with transformed
-   * children, which is exactly what a drag preview is. */
+  /* Not `{ absoluteElements: true }`: the SDK documents an infinite resize loop
+   * for that option with transformed children, i.e. a drag preview. */
   useEffect(() => {
     sdk.window.startAutoResizer()
     return () => sdk.window.stopAutoResizer()
@@ -69,8 +68,7 @@ export const CalculatorConfigEditor = () => {
   )
 
   /* Both `on*Changed` callbacks fire immediately with the current value, so no
-   * separate `getIsDisabled()` / `getSchemaErrors()` read is needed. Both
-   * return an unsubscribe, returned here as the effect cleanup. */
+   * separate read is needed. Both return an unsubscribe. */
   useEffect(() => sdk.field.onIsDisabledChanged(setIsDisabled), [sdk.field])
   useEffect(
     () => sdk.field.onSchemaErrorsChanged(setSchemaErrors),
@@ -87,8 +85,6 @@ export const CalculatorConfigEditor = () => {
     skip: !apiCalculatorType,
   })
 
-  /* The raw selections are unions keyed on `__typename`; the normalizers in
-   * types.ts are the only code that touches them. */
   const inputContract: InputFieldContract = useMemo(
     () =>
       new Map(
@@ -113,29 +109,20 @@ export const CalculatorConfigEditor = () => {
 
   const metadataChecked = Boolean(data) && !loading && !error
 
-  /* Publishing is a release to production, so it must never be possible for
-   * content that is unfinished OR unverified. "We could not check" is therefore
-   * treated exactly like "we found a problem": both block publish. Saving is
-   * unaffected either way -- the draft keeps the editor's work.
-   *
-   * This covers an unknown calculator type too: the query is skipped there, so
-   * nothing is ever verified and publish must stay blocked rather than fall
-   * through as if checked.
-   *
-   * Note this only ever BLOCKS. Nothing in this widget calls publish() --
-   * releasing stays a human action, and clearing the flag merely permits it. */
+  /* "We could not check" blocks publish exactly like "we found a problem" --
+   * including an unknown calculator type, where the query is skipped and
+   * nothing is ever verified. Saving is unaffected. */
   const metadataUnverified =
     Boolean(calculatorTypeValue) &&
     (!apiCalculatorType || !data || loading || Boolean(error))
 
   /* Computed over whichever config is being persisted, so the hook can call it
-   * inside the one debounce that owns `setInvalid`. Memoized on the contracts
-   * rather than rebuilt per render, since it walks every section in both tabs. */
+   * inside the debounce that owns `setInvalid`. */
   const validateMetadata = useCallback(
     (config: CalculatorConfig) => {
       if (metadataUnverified) return true
-      /* Reached only when no calculator type is selected at all -- the entry's
-       * own required-field validation covers that case. */
+      /* Reached only when no calculator type is selected; the entry's own
+       * required-field validation covers that. */
       if (!metadataChecked) return false
 
       const inputSections = config.inputSections ?? []
@@ -184,8 +171,8 @@ export const CalculatorConfigEditor = () => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    /* Without this, reordering is mouse-only -- and drag is the only
-     * reordering affordance this editor offers. */
+    /* Without this, reordering is mouse-only, and drag is the only reordering
+     * affordance this editor offers. */
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

@@ -57,10 +57,8 @@ type CalculationResponse = NonNullable<
   GetTaxCalculatorCalculationQuery['taxCalculatorCalculate']
 >
 
-/* Five of the seven codes say why one value is unacceptable, in terms a visitor
- * has no way to act on differently -- so they collapse to one string beside the
- * control. Closed with a `never` guard: an eighth code must fail to compile
- * rather than render nothing. */
+/* Five of the seven codes collapse to one string beside the control -- they
+ * differ in ways a visitor cannot act on. Closed with a `never` guard. */
 const errorText = (code: TaxCalculatorCalculationErrorCode) => {
   switch (code) {
     case TaxCalculatorCalculationErrorCode.InvalidValue:
@@ -90,10 +88,9 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     ),
   )
 
-  /* What was submitted, serialized. The result is shown only while it still
-   * matches what the form would send now -- compared against this rather than
-   * against raw form values, because `useWatch` hands back a fresh object every
-   * render and the toggles live outside form state yet change the payload. */
+  /* Compared against the serialized payload rather than raw form values:
+   * `useWatch` returns a fresh object every render, and toggles live outside
+   * form state yet change the payload. */
   const [submitted, setSubmitted] = useState<string>()
   const [response, setResponse] = useState<CalculationResponse>()
   const [transportFailed, setTransportFailed] = useState(false)
@@ -103,7 +100,6 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     GetTaxCalculatorQueryVariables
   >(GET_TAX_CALCULATOR, { variables: { type: calculatorType } })
 
-  /* The raw per-`__typename` unions never leave `contract.ts`. */
   const inputContract = useMemo(
     () => toInputFieldContract(data?.taxCalculator.inputFields ?? []),
     [data],
@@ -116,9 +112,8 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const values = useWatch({ control: methods.control })
 
-  /* Computed once, here, and passed down: the field deciding its own visibility
-   * while the serializer decided the payload would let a field render enabled
-   * and then be dropped from the request without the visitor knowing. */
+  /* Computed once and passed down -- deciding visibility and payload
+   * separately lets a field render enabled and then be dropped. */
   const applicable = useMemo(
     () =>
       collectApplicableFields(
@@ -138,17 +133,15 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const snapshot = useMemo(() => JSON.stringify(payload), [payload])
 
-  /* `network-only`: pressing Calculate means calling RSK. The response carries
-   * no `id`, so the default policy would normalize it under ROOT_QUERY and
-   * replay a cached errored response on retry. */
+  /* `network-only`: the response carries no `id`, so the default policy would
+   * normalize it under ROOT_QUERY and replay an errored response on retry. */
   const [calculate, { loading: calculating }] = useLazyQuery<
     GetTaxCalculatorCalculationQuery,
     GetTaxCalculatorCalculationQueryVariables
   >(GET_TAX_CALCULATOR_CALCULATION, { fetchPolicy: 'network-only' })
 
-  /* Above the early returns below, and guarded on `data` instead: a hook placed
-   * after a conditional return is a rules-of-hooks violation that `nx lint web`
-   * fails on. */
+  /* Above the early returns, guarded on `data`: a hook after a conditional
+   * return is a rules-of-hooks violation. */
   useEffect(() => {
     if (!data) return
 
@@ -189,8 +182,8 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
         variables: { input: { type: calculatorType, values: payload } },
       })
 
-      /* Nullable by design: a null here means the transport failed, since every
-       * failure a consumer can cause comes back as a populated wrapper. */
+      /* Null means the transport failed -- every consumer-caused failure comes
+       * back as a populated wrapper. */
       if (result.error || !result.data?.taxCalculatorCalculate) {
         setTransportFailed(true)
         return
@@ -202,22 +195,19 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
       )
       setResponse(result.data.taxCalculatorCalculate)
     } catch {
-      /* `useLazyQuery` rejects rather than resolving when the network itself
-       * fails, and the thrown error carries nothing the visitor can act on. */
+      /* `useLazyQuery` rejects when the network fails, and the thrown error
+       * carries nothing the visitor can act on. */
       setTransportFailed(true)
     }
   }
 
-  /* The visible result must not drift away from the visible inputs, so it is
-   * dropped the moment the form would send something else. */
+  /* The visible result must not drift from the visible inputs. */
   const isCurrent = submitted === snapshot
   const shown = isCurrent ? response : undefined
   const failed = isCurrent && transportFailed
 
-  /* An error whose `key` names a field that was not submitted -- dependency
-   * hidden, or in a shut `disableOnly` section, which renders but stays out of
-   * play -- has nowhere a visitor could act on, so it falls back to the
-   * result-area alert rather than landing on a dead control. */
+  /* An error keyed to a field that was not submitted has no live control to
+   * land on, so it falls back to the result-area alert. */
   const fieldErrors = new Map<string, string>()
   const alerts: string[] = failed
     ? [localized(CHROME_TEXT.calculationError, activeLocale) ?? '']
@@ -230,22 +220,20 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     if (returned.key && entry && isInPlay(entry)) {
       fieldErrors.set(returned.key, text)
     } else if (!alerts.includes(text)) {
-      /* Validation reports every failing field at once, so the same code
-       * arrives repeatedly -- one alert per distinct reason, not per error. */
+      /* One alert per distinct reason: validation reports every failing field
+       * at once, so the same code arrives repeatedly. */
       alerts.push(text)
     }
   }
 
-  /* Any returned error means no calculation is rendered. The domain never sends
-   * both today, so this is the contract being restored rather than a case that
-   * arises. */
+  /* The domain never sends both today; this restores the contract rather than
+   * handling a case that arises. */
   const calculation =
     shown && shown.errors.length === 0 ? shown.calculation : undefined
   const outputValues = calculation ? toOutputValues(calculation) : undefined
 
-  /* Asked before the box is rendered: both halves legitimately render nothing
-   * when the config places only keys the calculation returned no value for, and
-   * an empty box is the same defect one level up. */
+  /* Asked before the box renders: both halves legitimately render nothing when
+   * the config places only keys the calculation returned no value for. */
   const hasResults =
     outputValues !== undefined &&
     (resolveTotal(config, outputContract, outputValues, activeLocale) !==
@@ -319,18 +307,17 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   )
 }
 
-/* Split from the form so the hooks below never run against a half-configured
- * slice: `configJson` crosses a JSON scalar and regains its type here. */
+/* Split from the form so its hooks never run against a half-configured slice;
+ * `configJson` crosses a JSON scalar and regains its type here. */
 const Calculator = ({ slice }: CalculatorProps) => {
-  /* Memoized so the effect below fires once per config rather than once per
-   * render -- and twice per render under StrictMode. */
+  /* Memoized so the effect below fires once per config, not per render. */
   const parsed = useMemo(
     () => calculatorConfigSchema.safeParse(slice.configJson),
     [slice.configJson],
   )
 
-  /* The form component never mounts when the config is invalid, so its own
-   * diagnostics effect cannot be where this is reported. */
+  /* The form never mounts when the config is invalid, so its own diagnostics
+   * effect cannot report this. */
   useEffect(() => {
     if (parsed.success) return
     reportConfigParseIssues(slice.id, parsed.error.issues)

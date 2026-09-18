@@ -1,22 +1,14 @@
 import type { CalculatorContract } from './field'
 import { calculatorRegistry } from './registry'
 
-/* Widened from the registry's per-calculator `as const` types: mapping over the
- * union of six distinct readonly tuple types is what TypeScript rejects with
- * "none of those signatures are compatible with each other". */
+/* Widened from the registry's per-calculator `as const` types: mapping over a
+ * union of six readonly tuple types is what TypeScript rejects. */
 const contracts: CalculatorContract[] = Object.values(calculatorRegistry)
 
 describe('calculatorRegistry', () => {
-  /* Query mappers are hand-written per calculator, so a `percentage` input
-   * added to any contract is silently forwarded to RSK unconverted unless its
-   * mapper wires `percentToRskRatio` -- the exact bug this assertion exists to
-   * catch. Failing here is the intended signal, not a chore: add the field to
-   * the list only once its mapper divides.
-   *
-   * The set is asserted whole rather than per calculator, so a seventh
-   * percentage input added inside `withholdingTax` fails too. Sorted because
-   * `Object.values` walks declaration order, and `toEqual` on an array is
-   * order-sensitive. */
+  /* Query mappers are hand-written, so a `percentage` input is forwarded to RSK
+   * unconverted unless its mapper wires `percentToRskRatio`. Failing here is
+   * the intended signal: add the field only once its mapper divides. */
   it('carries percentage inputs only where the mapper converts them', () => {
     const percentageInputs = contracts
       .flatMap((contract) =>
@@ -32,13 +24,9 @@ describe('calculatorRegistry', () => {
     ])
   })
 
-  /* The mirror of the assertion above, for the return trip: an output declared
-   * `percentage` that its mapper forwards unconverted publishes RSK's 0-1 ratio
-   * where the contract promises a whole 0-100 figure. Add a field here only
-   * once its output mapper wires `rskRatioToPercent`.
-   *
-   * Array item fields are included, since `taxBrackets.withholdingRate` is a
-   * percentage that the scalar walk alone would miss. */
+  /* The mirror of the above for the return trip; add a field only once its
+   * mapper wires `rskRatioToPercent`. Item fields are included because
+   * `taxBrackets.withholdingRate` would otherwise be missed. */
   it('carries percentage outputs only where the mapper converts them', () => {
     const percentageOutputs = contracts
       .flatMap((contract) =>

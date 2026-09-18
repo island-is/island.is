@@ -8,14 +8,9 @@ import type { ApplicableFields, FormValues } from './applicability'
 import { isInPlay } from './applicability'
 import { toTypedValue } from './values'
 
-/* `TaxCalculatorInputValue` is a `@oneOf` input, which codegen emits as a union
- * whose other members are `?: never`. Building the object by assignment would
- * satisfy none of them, so each branch returns a complete member.
- *
- * A member present as `null` is rejected by coercion exactly as a second
- * populated one is, which is why absence is handled before this is ever
- * reached: a cleared control omits its whole row rather than sending an empty
- * payload. */
+/* `TaxCalculatorInputValue` is a `@oneOf` input, emitted as a union whose other
+ * members are `?: never`, so each branch returns a complete member rather than
+ * building one by assignment. */
 const toInputValue = (
   value: string | number | boolean,
   type: TaxCalculatorInputFieldType,
@@ -38,16 +33,9 @@ const toInputValue = (
   }
 }
 
-/* The only place form state becomes a GraphQL payload. It dispatches on
- * metadata `type`, never on which control rendered the field: `year` and
- * `month` are `number`-typed yet rendered as selects, and a text input and a
- * currency input both hand back a string.
- *
- * `0` and `false` survive, because absence is decided in `toTypedValue` before
- * any coercion -- `Number('')` is `0`, so testing the coerced value would
- * submit every untouched numeric field as a zero. For `withholdingTax`, whose
- * fields are all optional and whose absent values fall back to RSK's own
- * defaults, that would corrupt the calculation rather than fail it. */
+/* Dispatches on metadata `type`, never on which control rendered the field --
+ * `year` and `month` are `number`-typed yet rendered as selects. `0` and
+ * `false` survive because absence is decided in `toTypedValue` first. */
 export const toInputFieldValues = (
   applicable: ApplicableFields,
   values: FormValues,
@@ -55,9 +43,8 @@ export const toInputFieldValues = (
   const rows: TaxCalculatorInputFieldValue[] = []
 
   for (const [key, entry] of applicable) {
-    /* A field in a `disableOnly` section whose gate is shut renders, but is not
-     * in play -- react-hook-form still holds its value, so it has to be
-     * excluded explicitly rather than by unmounting. */
+    /* A `disableOnly` field renders but is not in play, and react-hook-form
+     * still holds its value, so it must be excluded explicitly. */
     if (!isInPlay(entry)) continue
 
     const { contractField } = entry

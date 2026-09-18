@@ -8,10 +8,8 @@ import {
 import { LOCALE_TAG } from './optionSources'
 import { CHROME_TEXT, localized } from './text'
 
-/* The payload half of an output value, shared by a top-level value and by one
- * inside an array row -- the two differ only in their `__typename` and in the
- * top-level one's `arrayValue`, which is unwrapped before anything reaches
- * here. Declared structurally so both fit without a cast. */
+/* Shared by a top-level value and one inside an array row; declared
+ * structurally so both fit without a cast. */
 export interface FormattableValue {
   type: TaxCalculatorOutputFieldType
   numberValue?: number | null
@@ -19,10 +17,8 @@ export interface FormattableValue {
   booleanValue?: boolean | null
 }
 
-/* Formatting derives from output metadata, not from config: the editor places
- * and labels a value, the contract says what it means. Returns undefined when
- * the payload the `type` points at is absent, which is how a row RSK returned
- * nothing for gets omitted rather than rendered blank. */
+/* Derived from output metadata, not config: the editor places and labels a
+ * value, the contract says what it means. */
 export const formatOutputValue = (
   value: FormattableValue,
   semantic: TaxCalculatorOutputFieldSemantic | undefined,
@@ -50,8 +46,7 @@ export const formatOutputValue = (
     case TaxCalculatorOutputFieldType.String:
       return value.stringValue ?? undefined
 
-    /* `ARRAY` is in the enum because one type covers both levels, but a row's
-     * values never nest -- so it is unreachable here rather than unhandled. */
+    /* One enum covers both levels, but a row's values never nest. */
     case TaxCalculatorOutputFieldType.Array:
       return undefined
 
@@ -68,19 +63,17 @@ const formatNumber = (
   locale: Locale,
 ): string => {
   switch (semantic) {
-    /* RSK returns whole ISK, so the flooring `formatCurrency` does by grouping
-     * the integer part loses nothing. ` kr.` in both locales: the currency is
-     * Icelandic whichever language the page is in. */
+    /* ` kr.` in both locales: the currency is Icelandic whichever language the
+     * page is in. */
     case TaxCalculatorOutputFieldSemantic.Currency:
       return formatCurrency(Math.round(value))
 
-    /* Whole percent by contract, in both directions -- the client's mappers
-     * convert to and from RSK's 0-1 ratio, so nothing here scales. */
+    /* Whole percent by contract -- the client's mappers already converted from
+     * RSK's 0-1 ratio. */
     case TaxCalculatorOutputFieldSemantic.Percentage:
       return `${formatPlainNumber(value, locale)}%`
 
-    /* A year is an identifier, not a quantity: grouped, `2024` would read
-     * `2.024`. */
+    /* Grouped, `2024` would read `2.024`. */
     case TaxCalculatorOutputFieldSemantic.Year:
     case TaxCalculatorOutputFieldSemantic.Month:
       return String(value)
@@ -88,8 +81,7 @@ const formatNumber = (
     case TaxCalculatorOutputFieldSemantic.Count:
       return formatPlainNumber(value, locale)
 
-    /* Not closed with a `never` guard, unlike the switches above: a number
-     * output carrying no semantic at all is a real case, not an unhandled one. */
+    /* No `never` guard: a number output with no semantic is a real case. */
     default:
       return formatPlainNumber(value, locale)
   }
@@ -100,9 +92,8 @@ const formatPlainNumber = (value: number, locale: Locale): string =>
     maximumFractionDigits: 2,
   }).format(value)
 
-/* The contract states `yyyy-MM-dd`, so the string is split rather than handed
- * to `new Date(...)`, which would read it as UTC midnight and shift the day
- * backwards for any viewer west of Greenwich. */
+/* Split rather than handed to `new Date(...)`, which reads `yyyy-MM-dd` as UTC
+ * midnight and shifts the day back west of Greenwich. */
 const formatDate = (value: string, locale: Locale): string => {
   const [year, month, day] = value.split('-').map(Number)
   if (!year || !month || !day) return value

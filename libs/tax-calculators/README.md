@@ -18,8 +18,6 @@ dependencies. That metadata comes from `TaxCalculator.inputFields` and
 `TaxCalculator.outputFields` in `libs/api/domains/tax-calculators`, and joins
 to this config by `key`.
 
-`ROADMAP.md` is the control document for the contract's design.
-
 ## Running unit tests
 
 Run `nx test tax-calculators` to execute the unit tests via [Jest](https://jestjs.io).

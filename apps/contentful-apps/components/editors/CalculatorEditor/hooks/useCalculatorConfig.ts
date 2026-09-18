@@ -51,7 +51,7 @@ const emptyOutputSection = (): CalculatorOutputSection => ({
 })
 
 /* Item fields exist only on value rows, so every item action maps through this
- * rather than narrowing at each of its six call sites. */
+ * rather than narrowing at each call site. */
 const atValueField = (
   fields: CalculatorOutputSectionField[],
   fieldIndex: number,
@@ -68,27 +68,17 @@ export const useCalculatorConfig = (
     validateMetadata,
     isDisabled,
   }: {
-    /* Passed as a function rather than a boolean so the verdict is computed
-     * from the very config being persisted, inside the one debounce that owns
-     * `setInvalid`. Taking it as a value would mean computing it from state the
-     * hook returns -- which is circular, and the only way out of that is a
-     * second hook instance with its own state and its own `setInvalid` call. */
+    /* A function, not a boolean, so the verdict is computed from the config
+     * being persisted inside the debounce that owns `setInvalid`. Taking a
+     * value would mean computing it from state this hook returns. */
     validateMetadata: (config: CalculatorConfig) => boolean
     isDisabled: boolean
   },
 ) => {
-  /* `uid` became required after the first configs were authored, and the editor
-   * has no way to type one in -- an entry missing it would fail safeParse
-   * forever, so setValue would never fire and the widget would be permanently
-   * unsaveable. Backfill on load instead.
-   *
-   * Old `{ sections: [...] }` values are NOT migrated (round 2 is greenfield for
-   * the new contract). Note the effect is stronger than "ignore": the empty
-   * fallback plus the auto-create effect plus the debounce means opening such an
-   * entry overwrites it. That is accepted because dev entries are disposable.
-   *
-   * Each half is guarded independently, so an entry holding only one of them
-   * does not lose the other. */
+  /* `uid` and `key` are backfilled on load: the editor has no way to type one
+   * in, so an entry missing them would fail safeParse forever and never save.
+   * Old `{ sections: [...] }` values are not migrated -- opening such an entry
+   * overwrites it, which is accepted because dev entries are disposable. */
   const [config, setConfig] = useState<CalculatorConfig>(() => {
     const stored = sdk.field.getValue()
     if (!stored) return createEmptyConfig()
@@ -109,8 +99,8 @@ export const useCalculatorConfig = (
             fields: (section.fields ?? []).map(withUid),
           }))
         : [],
-      /* An entry written before the total existed opens with an empty one
-       * rather than throwing -- it shows as invalid until authored. */
+      /* Opens with an empty total rather than throwing; invalid until
+       * authored. */
       outputTotal: stored.outputTotal
         ? { ...withUid(stored.outputTotal) }
         : emptyOutputTotal(),
@@ -120,8 +110,7 @@ export const useCalculatorConfig = (
             fields: (section.fields ?? []).map(
               (field: CalculatorOutputSectionField) => ({
                 ...withUid(field),
-                /* Rows written before the union existed carry no `kind`, and
-                 * every one of them was a value. */
+                /* Rows predating the union carry no `kind`; all were values. */
                 kind: field.kind ?? 'value',
                 ...(field.kind !== 'content'
                   ? { itemFields: field.itemFields?.map(withUid) }
@@ -146,10 +135,9 @@ export const useCalculatorConfig = (
   const inputSections = config.inputSections ?? []
   const outputSections = config.outputSections ?? []
 
-  /* Checked against the UNFILTERED state: the schema only ever sees the
-   * filtered payload, so two on-screen rows sharing a key would raise nothing
-   * until the second one was complete -- exactly when the author is looking at
-   * them. */
+  /* Checked against the UNFILTERED state: the schema sees only the filtered
+   * payload, so two on-screen rows sharing a key would raise nothing until the
+   * second was complete. */
   const duplicateUids = useMemo(() => {
     const seen = new Map<string, string>()
     const duplicates = new Set<string>()
@@ -172,16 +160,14 @@ export const useCalculatorConfig = (
     () => {
       const { payload, identity } = filterConfigForPersistence(config)
       const result = calculatorConfigSchema.safeParse(payload)
-      /* This app sets `strict: false`, which defeats zod's discriminated-union
-       * narrowing on `success` -- reach for the `error` key directly, and do it
-       * once so the consumers below cannot drift apart. */
+      /* This app sets `strict: false`, which defeats zod's narrowing on
+       * `success` -- reach for `error` directly. */
       const schemaInvalid = 'error' in result
       const metadataMismatch = validateMetadata(config)
       setMetadataInvalid(metadataMismatch)
 
-      /* The single owner: three independent writers on a last-one-wins API
-       * would clear each other, so every input to publish-blocking is combined
-       * here and `setInvalid` is called nowhere else in the feature. */
+      /* Single owner: `setInvalid` is last-one-wins, so every input to
+       * publish-blocking is combined here and it is called nowhere else. */
       sdk.field.setInvalid(
         schemaInvalid || metadataMismatch || duplicateUids.size > 0,
       )
@@ -210,29 +196,25 @@ export const useCalculatorConfig = (
       setRowIssues(new Map())
       setTopLevelIssues([])
 
-      /* A read-only or locked field must not be written to: the auto-create
-       * effect would otherwise fire `setValue`, fail, and show a save error to
-       * an author who did nothing. */
+      /* A read-only field must not be written to, or the auto-create effect
+       * fires `setValue`, fails, and shows a save error for nothing. */
       if (isDisabled) return
 
       /* The debounce fires on mount too, and the filtered payload routinely
-       * differs from what is stored (draft rows dropped, empty localized values
-       * omitted), so without this guard merely opening an entry marks it
-       * changed. */
+       * differs from what is stored, so without this guard merely opening an
+       * entry marks it changed. */
       if (JSON.stringify(sdk.field.getValue()) === JSON.stringify(result.data))
         return
 
-      /* `setValue` returns a promise; leaving it unhandled makes a failed save
-       * look successful, so surface the failure instead of dropping it. */
+      /* Unhandled, a failed `setValue` promise looks like a successful save. */
       sdk.field.setValue(result.data).catch(() => {
         sdk.notifier.error('Could not save the calculator configuration.')
       })
     },
     DEBOUNCE_TIME,
-    /* `validateMetadata` and `duplicateUids` change independently of `config` --
-     * when the query resolves, when a refetch succeeds, when the entry's type
-     * changes. Left at `[config]` the verdict would go stale in both
-     * directions. Safe to widen only because of the equality guard above. */
+    /* `validateMetadata` and `duplicateUids` change independently of `config`,
+     * so `[config]` alone goes stale. Safe to widen only because of the
+     * equality guard above. */
     [config, validateMetadata, duplicateUids, isDisabled],
   )
 
@@ -292,9 +274,7 @@ export const useCalculatorConfig = (
       ),
     )
 
-  // Toggles are pure authoring constructs the editor names here, so a gate can
-  // always be authored no matter what the calculator's backend field list
-  // contains. A section never gates itself -- its own toggle already controls it.
+  // A section never gates itself -- its own toggle already controls it.
   const otherToggles = (index: number): CalculatorSectionToggle[] =>
     collectInputSectionToggles(config).filter(
       (toggle) => toggle.key !== inputSections[index]?.toggle?.key,
@@ -367,9 +347,8 @@ export const useCalculatorConfig = (
             : section,
         ),
       ),
-    /* No `?? ''` fallback on `toggle`: `sectionGateSchema` requires min(1), and
-     * an empty string would invalidate the document. A gate always has a toggle
-     * by the time this control renders. */
+    /* No `?? ''` fallback: `sectionGateSchema` requires min(1), and a gate
+     * always has a toggle by the time this control renders. */
     toggleGateDisableOnly: () =>
       mapInput((current) =>
         current.map((section, i) =>
@@ -411,9 +390,8 @@ export const useCalculatorConfig = (
         fields.map((field, i) => {
           if (i !== fieldIndex) return field
           const next = { ...field, ...patch }
-          /* Item fields belong to the array the key names, so a changed key
-           * makes them meaningless -- cleared immediately rather than left to
-           * look valid against the wrong array. */
+          /* A changed key makes item fields meaningless, so clear them rather
+           * than leave them looking valid against the wrong array. */
           if (
             next.kind === 'value' &&
             field.kind === 'value' &&
@@ -490,9 +468,8 @@ export const useCalculatorConfig = (
       ),
   }
 
-  /* Fields move between sections as well as within one, which a single
-   * `arrayMove` cannot express -- remove from the source list, insert into the
-   * target, in one state update so the two halves cannot tear. */
+  /* Fields move between sections, which `arrayMove` cannot express -- both
+   * halves in one state update so they cannot tear. */
   const moveInputField = (
     fromSection: number,
     fromIndex: number,

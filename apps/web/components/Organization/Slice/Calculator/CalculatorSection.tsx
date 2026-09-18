@@ -14,9 +14,7 @@ import { localized } from './text'
 
 interface Props {
   section: CalculatorInputSection
-  /* Computed once, above the whole form. A section renders exactly the fields
-   * that would be submitted -- so nothing can render enabled and then be left
-   * out of the request. */
+  /* A section renders exactly the fields that would be submitted. */
   applicable: ApplicableFields
   locale: Locale
   toggles: Record<string, boolean>
@@ -32,9 +30,8 @@ export const CalculatorSection = ({
   errors,
   onToggle,
 }: Props) => {
-  /* An unmet gate removes the section outright, unless the editor asked for it
-   * to stay visible with its controls dead. In that case the fields render but
-   * are not applicable, which is why the two are asked separately. */
+  /* A `disableOnly` section renders its fields while they stay inapplicable,
+   * which is why the two are asked separately. */
   const isGateOpen = section.gate ? toggles[section.gate.toggle] : true
   if (!isGateOpen && !section.gate?.disableOnly) return null
 
@@ -43,21 +40,16 @@ export const CalculatorSection = ({
   const title = localized(section.title, locale)
   const description = localized(section.description, locale)
 
-  /* Resolved before rendering so that a section whose fields are ALL omitted
-   * can be dropped whole, rather than leaving a heading standing over an empty
-   * row. A field in a shut `disableOnly` section is in this set too, carrying
-   * `disabled` -- it renders, it just does not submit. */
+  /* Resolved before rendering so a section whose fields are all omitted can be
+   * dropped whole rather than leaving a heading over nothing. */
   const fields = section.fields.flatMap((field) => {
     const entry = applicable.get(field.key)
     return entry ? [entry] : []
   })
 
-  /* A section the editor authored with no fields at all is text-only and stands
-   * on its own; one whose every field was omitted is not.
-   *
-   * Only while the body is actually shown, though: a section whose own toggle
-   * is off has no applicable fields by definition, and dropping it here would
-   * take the toggle that turns it back on with it. */
+  /* A section authored with no fields is text-only and stands on its own; one
+   * whose every field was omitted does not. Only while the body is shown --
+   * dropping a toggled-off section would take its toggle with it. */
   if (section.fields.length > 0 && fields.length === 0 && isOwnToggleOn) {
     return null
   }
@@ -95,9 +87,8 @@ export const CalculatorSection = ({
   return (
     <Stack space={2}>
       <ToggleSwitchCheckbox
-        /* `sectionToggleSchema.label` is required and `localized` falls back
-         * en -> is, so the fallback is unreachable -- but the label prop is a
-         * required string and `localized` returns `string | undefined`. */
+        /* Unreachable: the schema requires the label. Present only because
+         * `localized` returns `string | undefined`. */
         label={localized(section.toggle.label, locale) ?? ''}
         checked={isOwnToggleOn}
         onChange={(checked) =>

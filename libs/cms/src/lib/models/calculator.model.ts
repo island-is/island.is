@@ -9,11 +9,8 @@ import { logger } from '@island.is/logging'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator, ICalculatorFields } from '../generated/contentfulTypes'
 
-// The generic content type behind this model is deliberately named
-// 'calculator', not 'rskCalculator' -- a cheap hedge in case the unrelated
-// ECOI/WHODAS calculators are ever routed through the same mechanism. The
-// GraphQL contract it renders against (calculatorType values, field/kind
-// lookups) stays 100% RSK-specific for now; see tax-calculators domain.
+// Named 'calculator', not 'rskCalculator' -- a hedge in case the unrelated
+// ECOI/WHODAS calculators are ever routed through the same mechanism.
 registerEnumType(TaxCalculatorType, {
   name: 'TaxCalculatorType',
   description: 'The tax calculator to use.',
@@ -36,8 +33,6 @@ export class Calculator {
   configJson?: CalculatorConfig
 }
 
-/* A string literal does not satisfy a string enum type, so the generated
- * Contentful union maps across explicitly rather than being cast. */
 const CALCULATOR_TYPE_BY_CONTENTFUL_VALUE: Record<
   ICalculatorFields['type'],
   TaxCalculatorType
@@ -52,15 +47,10 @@ export const mapCalculator = ({
   sys,
   fields,
 }: ICalculator): SystemMetadata<Calculator> => {
-  /* Degrade, don't throw. `configJson` is declared nullable and the web client
-   * already handles a missing config; throwing would instead be swallowed by
-   * `safelyMapSliceUnion`, dropping the slice from the response entirely so
-   * nothing downstream can tell "no calculator" from "a broken one". Editors
-   * are gated at authoring time by the Contentful widget's setInvalid.
-   *
-   * Caught rather than `safeParse`d: search-indexer compiles this library with
-   * `strict: false`, where narrowing on zod's boolean discriminant does not
-   * apply and `.error` is unreachable. */
+  /* Degrade, don't throw: throwing is swallowed by `safelyMapSliceUnion`, which
+   * drops the slice entirely so nothing can tell "no calculator" from "a broken
+   * one". Caught rather than `safeParse`d because search-indexer compiles this
+   * library with `strict: false`, where zod's discriminant does not narrow. */
   let configJson: CalculatorConfig | undefined
 
   try {

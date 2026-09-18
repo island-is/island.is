@@ -1,17 +1,13 @@
 import { Field, Float, InputType } from '@nestjs/graphql'
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
-/* A GraphQL one-of input object: coercion rejects a payload carrying anything
- * other than exactly one non-null member, before the resolver runs.
+/* A GraphQL one-of input: every member must be declared nullable with no
+ * default or schema construction throws, which reads backwards here --
+ * exclusivity comes from the directive, not from nullability.
  *
- * Every member must still be declared nullable with no default, or schema
- * construction throws -- which reads backwards for a type whose whole point is
- * "exactly one". Exclusivity comes from the directive, not from nullability.
- *
- * One consequence for consumers: `{}` and `{ stringValue: null }` are both
- * rejected during variable coercion and surface as a top-level GraphQL error,
- * not as an entry in `errors`. A cleared form control must omit its whole
- * TaxCalculatorInputFieldValue row rather than send an empty payload. */
+ * `{}` and `{ stringValue: null }` are rejected during variable coercion and
+ * surface as a top-level error, not in `errors`, so a cleared control must omit
+ * its whole row rather than send an empty payload. */
 @InputType('TaxCalculatorInputValue', {
   isOneOf: true,
   description:

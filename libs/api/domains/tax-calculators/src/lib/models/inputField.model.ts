@@ -7,22 +7,14 @@ import {
 import { InputFieldDependency } from './inputFieldDependency.model'
 import { InputFieldOption } from './inputFieldOption.model'
 
-/* The interface and its five implementors share this file deliberately, which
- * is what lets the implementors use `extends` and inherit the four shared
- * fields -- and their descriptions -- instead of restating them five times.
- *
- * `extends` is evaluated at class-definition time, so it only works while the
- * interface and its implementors are in the same module: a custom resolveType
- * forces the interface to reference the concrete classes, and across separate
- * files that cycle makes module load order decide whether the library throws
- * `TypeError: Class extends value undefined`. Referencing them from the same
- * file is safe because resolveType's body runs long after evaluation.
- * `auth/src/lib/models/delegation.model.ts` is the precedent.
+/* The interface and its implementors share this file so they can use `extends`.
+ * `extends` is evaluated at class-definition time, and resolveType forces the
+ * interface to reference the concrete classes -- split across files, that cycle
+ * lets module load order throw `Class extends value undefined`. Precedent:
+ * `auth/src/lib/models/delegation.model.ts`.
  *
  * `value` is annotated explicitly because NestJS types the resolveType
- * parameter loosely; without it the exhaustive `never` below is dead code
- * rather than a compile-time guarantee that every member of
- * TaxCalculatorInputFieldType has a concrete type. */
+ * parameter loosely, which would make the `never` below dead code. */
 @InterfaceType('TaxCalculatorInputField', {
   description:
     'One input a calculator accepts. Carries no display text: labels, placeholders, ordering and layout are editor-authored per placement in the Contentful `configJson`, which joins to this on `key`.',

@@ -10,19 +10,13 @@ export type OutputValue = Calculation['values'][number]
 export type OutputRow = NonNullable<OutputValue['arrayValue']>[number]
 export type OutputScalarValue = OutputRow['values'][number]
 
-/* Keyed by output field key, as `config.outputSections` references them. A map
- * rather than the array the query returns, because every configured row looks
- * up the one value its `key` points at -- and a key RSK returned nothing for is
- * simply absent from `values`, which is how such a row gets omitted instead of
- * rendering an empty one. */
 export type OutputValues = Map<string, OutputValue>
 
 export const toOutputValues = (calculation: Calculation): OutputValues =>
   new Map(calculation.values.map((value) => [value.key, value]))
 
-/* A row omits keys RSK returned no value for, so rows are not guaranteed to be
- * the same shape. Looked up per item field rather than by position for exactly
- * that reason. */
+/* Rows omit keys RSK returned nothing for, so they are not guaranteed to share
+ * a shape -- hence lookup by key, not position. */
 export const itemValue = (
   row: OutputRow,
   key: string,

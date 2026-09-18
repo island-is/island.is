@@ -21,10 +21,8 @@ export const LocalizedTextFields = ({
   clearWhenEmpty?: boolean
   isDisabled?: boolean
 }) => {
-  /* One label over two inputs cannot be associated by `htmlFor` alone, so the
-   * label points at the Icelandic input and each input carries its own
-   * `aria-label` -- otherwise both are announced unlabelled, and this component
-   * now has six callers. */
+  /* One label cannot be associated with two inputs by `htmlFor` alone, so each
+   * input carries its own `aria-label` or both announce unlabelled. */
   const isId = useId()
   const is = value?.is ?? ''
   const en = value?.en ?? ''

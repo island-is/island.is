@@ -9,26 +9,17 @@ import type { OutputFieldValueRow } from '../models/outputFieldValueRow.model'
 import type { OutputScalarValue } from '../models/outputScalarValue.model'
 import { OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE } from './outputField'
 
-/* Driven by the contract, not by the result: which keys a calculator can
- * return is metadata, so anything RSK sends that the contract does not declare
- * is ignored rather than published unannounced.
- *
- * Runs against the client contract for the same reason validation does -- the
- * mapped models only discriminate array from scalar through __typename, while
- * `kind` narrows here. `name` is the public `key`, one to one.
- *
- * Entries rather than index access: the client output interfaces declare no
- * index signature, so a runtime key cannot be read off them directly, and this
- * is the alternative to asserting one. */
+/* Driven by the contract, not the result: anything RSK sends that the contract
+ * does not declare is ignored rather than published unannounced. Entries rather
+ * than index access, since the client interfaces declare no index signature. */
 const entriesOf = (value: unknown): Map<string, unknown> =>
   typeof value === 'object' && value !== null
     ? new Map(Object.entries(value))
     : new Map()
 
-/* Exclusivity is structural: each branch builds one literal with one payload
- * key, so a value carrying two payloads is not constructible. A value whose
- * runtime kind contradicts the contract is omitted rather than coerced --
- * client drift should read as a missing value, not a wrong one. */
+/* Each branch builds one literal with one payload key, so a value carrying two
+ * is not constructible. Client drift reads as a missing value, not a wrong
+ * one. */
 const toScalarPayload = (
   field: CalculatorScalarOutputField,
   raw: unknown,
@@ -41,11 +32,9 @@ const toScalarPayload = (
         ? { type, numberValue: raw }
         : undefined
     case 'string':
-    /* The date branch is unreached today -- no contract declares a date
-     * output. Whoever adds the first one must check what actually arrives:
-     * the client generates with `{ dates: true }` and `transformer: true`, so
-     * a date-typed response field is converted to a Date before it gets here
-     * and this check would silently omit it. */
+    /* Unreached today. Whoever adds the first date output must check what
+     * arrives: the client generates with `{ dates: true }`, so a Date reaches
+     * here and this check would silently omit it. */
     case 'date':
       return typeof raw === 'string' ? { type, stringValue: raw } : undefined
     case 'boolean':

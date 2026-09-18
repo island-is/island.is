@@ -11,16 +11,14 @@ import { localized } from './text'
 interface Props {
   field: CalculatorOutputValueField
   contractField: OutputContractField
-  /* Resolved by the section, which drops the row outright when the editor
-   * authored no label -- so this component never has to represent that case. */
+  /* The section drops a row the editor left unlabelled, so this never has to
+   * represent that case. */
   label: string
   value: OutputValue
   locale: Locale
 }
 
-/* One row of a result: its authored label and the value the calculation
- * produced, formatted from the contract's semantic. An array field is the same
- * row repeated, one group per row RSK returned. */
+/* An array field is this same row repeated, one group per row RSK returned. */
 export const CalculatorOutputField = ({
   field,
   contractField,
@@ -33,9 +31,8 @@ export const CalculatorOutputField = ({
   const heading = <Text variant={emphasis ? 'h4' : 'default'}>{label}</Text>
 
   if (contractField.type === TaxCalculatorOutputFieldType.Array) {
-    /* An empty list is a result, not a missing value: RSK ran the calculation
-     * and it produced no rows. The label stands alone rather than the whole
-     * field disappearing, so the visitor can tell the two apart. */
+    /* An empty list is a result, not a missing value, so the label stands alone
+     * rather than the field disappearing. */
     const rows = value.arrayValue ?? []
     const itemFields = contractField.itemFields ?? []
 
@@ -44,9 +41,8 @@ export const CalculatorOutputField = ({
         {heading}
         <Stack space={2}>
           {rows.flatMap((row, index) => {
-            /* Built before the row's own box, so a row whose every item field
-             * was omitted takes its padding with it rather than leaving an
-             * empty block behind. */
+            /* Built before the box so a fully omitted row takes its padding
+             * with it. */
             const items = (field.itemFields ?? []).flatMap((itemField) => {
               const itemLabel = localized(itemField.label, locale)
               if (!itemLabel) return []
@@ -82,8 +78,8 @@ export const CalculatorOutputField = ({
             if (items.length === 0) return []
 
             return [
-              /* Rows carry no identity of their own and RSK's order is the only
-               * thing that distinguishes them, so the index is the key. */
+              /* Rows carry no identity; RSK's order is all that distinguishes
+               * them. */
               <Box key={index} paddingLeft={2}>
                 <Stack space={0}>{items}</Stack>
               </Box>,
@@ -95,9 +91,7 @@ export const CalculatorOutputField = ({
   }
 
   const formatted = formatOutputValue(value, contractField.semantic, locale)
-  /* Unreachable in practice -- the section only renders a row whose value
-   * formatted to something -- but the row must not render half of itself if
-   * that ever stops holding. */
+  /* Unreachable: the section only renders rows whose value formatted. */
   if (formatted === undefined) return null
 
   return (
