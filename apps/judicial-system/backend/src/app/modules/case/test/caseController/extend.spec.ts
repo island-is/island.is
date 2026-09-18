@@ -7,7 +7,6 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  DefenderChoice,
   Gender,
   User as TUser,
 } from '@island.is/judicial-system/types'
@@ -191,15 +190,13 @@ describe('CaseController - Extend', () => {
           defenderNationalId,
           defenderEmail,
           defenderPhoneNumber,
-          defenderChoice: DefenderChoice.CHOOSE,
-          isDefenderChoiceConfirmed: true,
         },
         transaction,
       )
     })
   })
 
-  describe('does not sync defender when case has no defender', () => {
+  describe('syncs defender contact fields even when case has no defender', () => {
     const userId = uuid()
     const user = {
       id: userId,
@@ -221,10 +218,19 @@ describe('CaseController - Extend', () => {
       await givenWhenThen(caseId, user, theCase)
     })
 
-    it('should not call syncDefenderToAllDefendants', () => {
+    it('should call syncDefenderToAllDefendants with contact fields', () => {
       expect(
         mockDefendantService.syncDefenderToAllDefendants,
-      ).not.toHaveBeenCalled()
+      ).toHaveBeenCalledWith(
+        extendedCaseId,
+        {
+          defenderName: undefined,
+          defenderNationalId: undefined,
+          defenderEmail: undefined,
+          defenderPhoneNumber: undefined,
+        },
+        transaction,
+      )
     })
   })
 

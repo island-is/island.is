@@ -22,7 +22,6 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
-  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -1862,7 +1861,7 @@ describe('CaseController - Update', () => {
         } as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with merged fields', () => {
+      it('should call syncDefenderToAllDefendants with merged contact fields', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1872,8 +1871,6 @@ describe('CaseController - Update', () => {
             defenderNationalId,
             defenderEmail,
             defenderPhoneNumber,
-            defenderChoice: DefenderChoice.CHOOSE,
-            isDefenderChoiceConfirmed: true,
           },
           transaction,
         )
@@ -1887,7 +1884,7 @@ describe('CaseController - Update', () => {
         } as unknown as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with null and no choice', () => {
+      it('should call syncDefenderToAllDefendants with null name and remaining contacts', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1897,22 +1894,20 @@ describe('CaseController - Update', () => {
             defenderNationalId: '0000000000',
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
-            defenderChoice: null,
-            isDefenderChoiceConfirmed: null,
           },
           transaction,
         )
       })
     })
 
-    describe('sets WAIVE when defendantWaivesRightToCounsel is true', () => {
+    describe('syncs contact fields when defendantWaivesRightToCounsel changes', () => {
       beforeEach(async () => {
         await givenWhenThen(caseId, user, requestCase, {
           defendantWaivesRightToCounsel: true,
         } as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with WAIVE choice', () => {
+      it('should sync contact fields without setting defenderChoice', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1922,8 +1917,6 @@ describe('CaseController - Update', () => {
             defenderNationalId: '0000000000',
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
-            defenderChoice: DefenderChoice.WAIVE,
-            isDefenderChoiceConfirmed: true,
           },
           transaction,
         )

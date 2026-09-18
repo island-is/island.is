@@ -597,6 +597,10 @@ export class DefendantService {
         defenderFields.isDefenderChoiceConfirmed
     }
 
+    if (Object.keys(update).length === 0) {
+      return
+    }
+
     await this.defendantRepositoryService.updateAllForCase(caseId, update, {
       transaction,
     })

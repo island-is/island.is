@@ -51,7 +51,6 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
-  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   IndictmentDecision,
@@ -1482,7 +1481,7 @@ export class CaseService {
 
     await this.defendantService.createForNewCase(theCase.id, {}, transaction)
 
-    if (isRequestCase(caseToCreate.type) && caseToCreate.defenderName) {
+    if (isRequestCase(caseToCreate.type)) {
       await this.defendantService.syncDefenderToAllDefendants(
         theCase.id,
         {
@@ -1490,8 +1489,6 @@ export class CaseService {
           defenderNationalId: caseToCreate.defenderNationalId,
           defenderEmail: caseToCreate.defenderEmail,
           defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
-          defenderChoice: DefenderChoice.CHOOSE,
-          isDefenderChoiceConfirmed: true,
         },
         transaction,
       )
@@ -2394,21 +2391,9 @@ export class CaseService {
         caseUpdate.defendantWaivesRightToCounsel !== undefined
 
       if (defenderFieldChanged) {
-        const mergedName =
-          caseUpdate.defenderName !== undefined
-            ? caseUpdate.defenderName
-            : theCase.defenderName
-        const waives =
-          caseUpdate.defendantWaivesRightToCounsel !== undefined
-            ? caseUpdate.defendantWaivesRightToCounsel
-            : theCase.defendantWaivesRightToCounsel
-
-        const defenderChoice = waives
-          ? DefenderChoice.WAIVE
-          : mergedName
-          ? DefenderChoice.CHOOSE
-          : null
-
+        // Contact fields only. R-cases do not use defenderChoice /
+        // isDefenderChoiceConfirmed (indictment confirmation workflow).
+        // Waive stays on case.defendantWaivesRightToCounsel for now.
         await this.defendantService.syncDefenderToAllDefendants(
           theCase.id,
           {
@@ -2428,8 +2413,6 @@ export class CaseService {
               caseUpdate.defenderPhoneNumber !== undefined
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
-            defenderChoice,
-            isDefenderChoiceConfirmed: defenderChoice !== null ? true : null,
           },
           transaction,
         )
@@ -2942,7 +2925,7 @@ export class CaseService {
         ),
       )
 
-      if (theCase.defenderName) {
+      if (isRequestCase(theCase.type)) {
         await this.defendantService.syncDefenderToAllDefendants(
           extendedCase.id,
           {
@@ -2950,8 +2933,6 @@ export class CaseService {
             defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
-            defenderChoice: DefenderChoice.CHOOSE,
-            isDefenderChoiceConfirmed: true,
           },
           transaction,
         )

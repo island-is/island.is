@@ -3,18 +3,18 @@
 // Phase 1 of the per-defendant defender migration for request cases.
 //
 // Request cases (restriction, investigation) currently store a single defender
-// on the case row. The target model stores defender info per defendant, matching
-// indictment cases. This migration copies the case-level defender fields to
-// every defendant in each request case that has a defender assigned or where
-// the defendant waived their right to counsel, so the dual-write introduced
-// in the application code has correct data for existing cases.
+// on the case row. The target model stores defender info per defendant. This
+// migration copies the case-level defender contact fields to every defendant
+// in each request case so the dual-write introduced in the application code
+// has correct data for existing cases — including cleaned/encrypted cases
+// whose contact fields may already be empty.
 //
-// Safety: only defendants whose defender_choice is still NULL are touched, and
-// only when the case has either a defender_name set or
-// defendant_waives_right_to_counsel enabled. Indictment defendants already have
-// their own defender fields populated through the per-defendant write path, so
-// these conditions exclude them naturally. This makes the migration idempotent
-// and safe to re-run.
+// R-cases do not use the indictment confirmation workflow, so defender_choice
+// and is_defender_choice_confirmed are left untouched. Waive stays on
+// case.defendant_waives_right_to_counsel until that is migrated separately.
+//
+// Scope: all non-indictment, non-DELETED cases. Copy regardless of whether
+// the case currently has a defender or waive flag set.
 
 module.exports = {
   async up(queryInterface) {
@@ -24,22 +24,11 @@ module.exports = {
          SET defender_name = c.defender_name,
              defender_national_id = c.defender_national_id,
              defender_email = c.defender_email,
-             defender_phone_number = c.defender_phone_number,
-             defender_choice = CASE
-               WHEN c.defendant_waives_right_to_counsel = true THEN 'WAIVE'
-               WHEN c.defender_name IS NOT NULL THEN 'CHOOSE'
-               ELSE NULL
-             END,
-             is_defender_choice_confirmed = CASE
-               WHEN c.defendant_waives_right_to_counsel = true THEN true
-               WHEN c.defender_name IS NOT NULL THEN true
-               ELSE NULL
-             END
+             defender_phone_number = c.defender_phone_number
          FROM "case" c
          WHERE d.case_id = c.id
-           AND d.defender_choice IS NULL
-           AND (c.defender_name IS NOT NULL
-                OR c.defendant_waives_right_to_counsel = true)`,
+           AND c.type <> 'INDICTMENT'
+           AND c.state <> 'DELETED'`,
         { transaction },
       ),
     )
