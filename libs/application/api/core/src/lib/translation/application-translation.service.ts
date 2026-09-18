@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import { Op, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import type { Transaction } from 'sequelize'
@@ -76,6 +76,7 @@ export class ApplicationTranslationService {
     private readonly publishModel: typeof ApplicationTranslationPublish,
     @InjectModel(ApplicationTranslationPublishSnapshot)
     private readonly snapshotModel: typeof ApplicationTranslationPublishSnapshot,
+    @InjectConnection()
     private readonly sequelize: Sequelize,
   ) {}
 
