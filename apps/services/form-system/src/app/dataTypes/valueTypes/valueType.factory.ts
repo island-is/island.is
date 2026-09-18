@@ -138,7 +138,10 @@ export class ValueTypeFactory {
             key === 'address' ||
             key === 'postalCode' ||
             key === 'municipality' ||
-            key === 'time'
+            key === 'time' ||
+            key === 'model' ||
+            key === 'registrationNumber' ||
+            key === 'propertyNumber'
           ) {
             return ''
           }
