@@ -62,3 +62,41 @@ export const GET_TAX_CALCULATOR = gql`
     }
   }
 `
+
+/* The result of running one calculator. Unlike the metadata query above, every
+ * type here is a concrete object rather than an interface, so nothing needs to
+ * be asked for by name and no aliases are required.
+ *
+ * `message` is developer-facing English. It is selected so a failing
+ * calculation can be logged with something specific, and is never rendered --
+ * `code` is the contract the renderer switches on. */
+export const GET_TAX_CALCULATOR_CALCULATION = gql`
+  query GetTaxCalculatorCalculation($input: TaxCalculatorCalculateInput!) {
+    taxCalculatorCalculate(input: $input) {
+      calculation {
+        type
+        values {
+          key
+          type
+          numberValue
+          stringValue
+          booleanValue
+          arrayValue {
+            values {
+              key
+              type
+              numberValue
+              stringValue
+              booleanValue
+            }
+          }
+        }
+      }
+      errors {
+        code
+        key
+        message
+      }
+    }
+  }
+`

@@ -20,8 +20,16 @@ export const toTypedValue = (
   if (value === '' || value === null || value === undefined) return undefined
 
   switch (type) {
-    case TaxCalculatorInputFieldType.Number:
-      return Number(value)
+    /* `Number('-')` and `Number('.')` are NaN, and NumberFormat hands back the
+     * raw numeric string, so both reach form state mid-typing. Absence is the
+     * single authority on what does not submit, so an unparseable number is
+     * absent here rather than passing the submit gate and being dropped by the
+     * serializer -- which would let a field render enabled and then be left out
+     * of the request without the visitor knowing. */
+    case TaxCalculatorInputFieldType.Number: {
+      const parsed = Number(value)
+      return Number.isFinite(parsed) ? parsed : undefined
+    }
     case TaxCalculatorInputFieldType.Boolean:
       return Boolean(value)
     case TaxCalculatorInputFieldType.String:

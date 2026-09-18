@@ -128,3 +128,25 @@ export const reportContractDiagnostics = ({
     warn(`configured item fields of "${fieldKey}" are absent`, itemKeys),
   )
 }
+
+/* `message` is developer-facing English, deliberately never rendered -- it is
+ * neither localized nor stable, and `code` is the contract the renderer
+ * switches on. This is the one place it is read, so that a calculation RSK
+ * refused says something specific in a development console.
+ *
+ * Called from the submit handler rather than from an effect: it fires once per
+ * response, which StrictMode does not repeat. */
+export const reportCalculationErrors = (
+  calculatorType: TaxCalculatorType,
+  errors: readonly { code: string; key?: string | null; message: string }[],
+) => {
+  if (!isDevelopment() || errors.length === 0) return
+
+  errors.forEach(({ code, key, message }) =>
+    console.warn(
+      `Calculator "${calculatorType}": calculation rejected [${code}]${
+        key ? ` on "${key}"` : ''
+      }: ${message}`,
+    ),
+  )
+}

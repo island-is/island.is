@@ -8,27 +8,33 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorInputSection } from '@island.is/tax-calculators'
 
+import type { ApplicableFields } from './applicability'
 import { CalculatorField } from './CalculatorField'
-import type { InputFieldContract } from './contract'
 import { localized } from './text'
 
 interface Props {
   section: CalculatorInputSection
-  contract: InputFieldContract
+  /* Computed once, above the whole form. A section renders exactly the fields
+   * that would be submitted -- so nothing can render enabled and then be left
+   * out of the request. */
+  applicable: ApplicableFields
   locale: Locale
   toggles: Record<string, boolean>
+  errors: Map<string, string>
   onToggle: (key: string, checked: boolean) => void
 }
 
 export const CalculatorSection = ({
   section,
-  contract,
+  applicable,
   locale,
   toggles,
+  errors,
   onToggle,
 }: Props) => {
   /* An unmet gate removes the section outright, unless the editor asked for it
-   * to stay visible with its controls dead. */
+   * to stay visible with its controls dead. In that case the fields render but
+   * are not applicable, which is why the two are asked separately. */
   const isGateOpen = section.gate ? toggles[section.gate.toggle] : true
   if (!isGateOpen && !section.gate?.disableOnly) return null
 
@@ -39,24 +45,22 @@ export const CalculatorSection = ({
 
   /* Resolved before rendering so that a section whose fields are ALL omitted
    * can be dropped whole, rather than leaving a heading standing over an empty
-   * row. Both omissions are silent here on purpose -- the warning for each is
-   * emitted once from the diagnostics effect, where StrictMode's double render
-   * cannot repeat it. */
+   * row. A field in a shut `disableOnly` section is in this set too, carrying
+   * `disabled` -- it renders, it just does not submit. */
   const fields = section.fields.flatMap((field) => {
-    const contractField = contract.get(field.key)
-    if (!contractField) return []
-
-    /* A raw key must never reach the public page, so an unlabelled field is
-     * dropped rather than labelled with its key. */
-    const label = localized(field.label, locale)
-    if (!label) return []
-
-    return [{ field, contractField, label }]
+    const entry = applicable.get(field.key)
+    return entry ? [entry] : []
   })
 
   /* A section the editor authored with no fields at all is text-only and stands
-   * on its own; one whose every field was omitted is not. */
-  if (section.fields.length > 0 && fields.length === 0) return null
+   * on its own; one whose every field was omitted is not.
+   *
+   * Only while the body is actually shown, though: a section whose own toggle
+   * is off has no applicable fields by definition, and dropping it here would
+   * take the toggle that turns it back on with it. */
+  if (section.fields.length > 0 && fields.length === 0 && isOwnToggleOn) {
+    return null
+  }
 
   const body = (
     <Stack space={2}>
@@ -71,15 +75,15 @@ export const CalculatorSection = ({
         </Stack>
       )}
       <GridRow rowGap={2}>
-        {fields.map(({ field, contractField, label }) => (
+        {fields.map(({ field, contractField, label, disabled }) => (
           <CalculatorField
             key={field.uid}
             field={field}
             contractField={contractField}
-            contract={contract}
             label={label}
             locale={locale}
-            disabled={!isGateOpen}
+            disabled={disabled}
+            error={errors.get(field.key)}
           />
         ))}
       </GridRow>

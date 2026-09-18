@@ -7,7 +7,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { CalculatorField } from './CalculatorField'
-import type { InputContractField, InputFieldContract } from './contract'
+import type { InputContractField } from './contract'
 
 /* What is under test is the two-stage resolution table -- which control a
  * `type`/`semantic` pair picks, and with which props -- not how island-ui
@@ -24,13 +24,18 @@ jest.mock('@island.is/shared/form-fields', () => ({
       data-min={String(props.min ?? '')}
       data-max={String(props.max ?? '')}
       data-decimal-scale={String(props.decimalScale ?? '')}
+      data-error={String(props.error ?? '')}
     />
   ),
-  SelectController: (props: { options?: { value: string }[] }) => (
+  SelectController: (props: {
+    options?: { value: string }[]
+    error?: string
+  }) => (
     <div
       data-control="select"
       data-option-count={String(props.options?.length ?? 0)}
       data-first-option={props.options?.[0]?.value ?? ''}
+      data-error={String(props.error ?? '')}
     />
   ),
   DatePickerController: () => <div data-control="datepicker" />,
@@ -41,19 +46,16 @@ const Form = ({ children }: { children: React.ReactNode }) => {
   return <FormProvider {...methods}>{children}</FormProvider>
 }
 
-const renderField = (
-  contractField: InputContractField,
-  contract: InputFieldContract = new Map([[contractField.key, contractField]]),
-) =>
+const renderField = (contractField: InputContractField, error?: string) =>
   render(
     <Form>
       <CalculatorField
         field={{ uid: 'uid-1', key: contractField.key, span: 6 }}
         contractField={contractField}
-        contract={contract}
         label="Reitur"
         locale="is"
         disabled={false}
+        error={error}
       />
     </Form>,
   )
@@ -183,69 +185,35 @@ describe('CalculatorField control resolution', () => {
     expect(screen.getByRole('checkbox')).toBeTruthy()
   })
 
-  it('renders nothing at all while a dependency is unmet -- not an empty column', () => {
-    const target: InputContractField = {
-      key: 'isMarried',
-      type: TaxCalculatorInputFieldType.Boolean,
-      required: false,
-    }
-    const dependent: InputContractField = {
-      key: 'spouseName',
-      type: TaxCalculatorInputFieldType.String,
-      required: false,
-      dependsOn: { fieldKey: 'isMarried', equals: true },
-    }
+  /* Domain validation answers are not react-hook-form validation results, so
+   * they arrive as a prop and every control has to surface them itself. */
+  it('forwards a domain error to an input control', () => {
+    const { container } = renderField(numberField(), 'Ógilt gildi')
 
-    const { container } = renderField(
-      dependent,
-      new Map([
-        [target.key, target],
-        [dependent.key, dependent],
-      ]),
-    )
-
-    expect(container.firstChild).toBeNull()
+    expect(control(container)?.getAttribute('data-error')).toBe('Ógilt gildi')
   })
 
-  /* The target is a `number` field rendered as a select, so form state holds
-   * `'2024'` where `equals` holds `2024`. Compared raw, the two never match and
-   * the dependent stays hidden whatever the user picks. */
-  it('matches a number dependency against the string its select holds', () => {
-    const target: InputContractField = {
-      key: 'incomeYear',
-      type: TaxCalculatorInputFieldType.Number,
-      semantic: TaxCalculatorInputFieldSemantic.Year,
-      required: true,
-    }
-    const dependent: InputContractField = {
-      key: 'retroactive',
-      type: TaxCalculatorInputFieldType.String,
-      required: false,
-      dependsOn: { fieldKey: 'incomeYear', equals: 2024 },
-    }
-    const contract = new Map([
-      [target.key, target],
-      [dependent.key, dependent],
-    ])
+  it('forwards a domain error to a select control', () => {
+    const { container } = renderField(
+      numberField(TaxCalculatorInputFieldSemantic.Year),
+      'Ógilt gildi',
+    )
 
-    const Harness = () => {
-      const methods = useForm({ defaultValues: { incomeYear: '2024' } })
-      return (
-        <FormProvider {...methods}>
-          <CalculatorField
-            field={{ uid: 'uid-1', key: dependent.key, span: 6 }}
-            contractField={dependent}
-            contract={contract}
-            label="Reitur"
-            locale="is"
-            disabled={false}
-          />
-        </FormProvider>
-      )
-    }
+    expect(control(container)?.getAttribute('data-error')).toBe('Ógilt gildi')
+  })
 
-    const { container } = render(<Harness />)
+  /* `Checkbox` takes `hasError`/`errorMessage` rather than an `error` prop, so
+   * the boolean branch is the one that could silently swallow an error. */
+  it('surfaces a domain error on a checkbox', () => {
+    renderField(
+      {
+        key: 'isMarried',
+        type: TaxCalculatorInputFieldType.Boolean,
+        required: false,
+      },
+      'Ógilt gildi',
+    )
 
-    expect(control(container)).toBeTruthy()
+    expect(screen.getByText('Ógilt gildi')).toBeTruthy()
   })
 })

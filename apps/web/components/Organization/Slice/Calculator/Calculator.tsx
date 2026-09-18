@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import { useQuery } from '@apollo/client'
+import { FormProvider, useForm, useWatch } from 'react-hook-form'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -8,6 +8,7 @@ import {
   Button,
   SkeletonLoader,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import type { CalculatorConfig } from '@island.is/tax-calculators'
 import {
@@ -16,19 +17,30 @@ import {
 } from '@island.is/tax-calculators'
 import {
   Calculator as CalculatorSlice,
+  GetTaxCalculatorCalculationQuery,
+  GetTaxCalculatorCalculationQueryVariables,
   GetTaxCalculatorQuery,
   GetTaxCalculatorQueryVariables,
+  TaxCalculatorCalculationErrorCode,
   TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
-import { GET_TAX_CALCULATOR } from '@island.is/web/screens/queries/TaxCalculators'
+import {
+  GET_TAX_CALCULATOR,
+  GET_TAX_CALCULATOR_CALCULATION,
+} from '@island.is/web/screens/queries/TaxCalculators'
 
+import { canSubmit, collectApplicableFields, isInPlay } from './applicability'
+import { CalculatorResults, collectVisibleSections } from './CalculatorResults'
 import { CalculatorSection } from './CalculatorSection'
 import { toInputFieldContract, toOutputFieldContract } from './contract'
 import {
+  reportCalculationErrors,
   reportConfigParseIssues,
   reportContractDiagnostics,
 } from './diagnostics'
+import { toOutputValues } from './outputValues'
+import { toInputFieldValues } from './serialize'
 import { CHROME_TEXT, localized } from './text'
 
 interface CalculatorProps {
@@ -40,6 +52,33 @@ interface FormProps {
   config: CalculatorConfig
 }
 
+type CalculationResponse = NonNullable<
+  GetTaxCalculatorCalculationQuery['taxCalculatorCalculate']
+>
+
+/* Five of the seven codes say why one value is unacceptable, in terms a visitor
+ * has no way to act on differently -- so they collapse to one string beside the
+ * control. Closed with a `never` guard: an eighth code must fail to compile
+ * rather than render nothing. */
+const errorText = (code: TaxCalculatorCalculationErrorCode) => {
+  switch (code) {
+    case TaxCalculatorCalculationErrorCode.InvalidValue:
+    case TaxCalculatorCalculationErrorCode.MissingRequiredValue:
+    case TaxCalculatorCalculationErrorCode.InapplicableValue:
+    case TaxCalculatorCalculationErrorCode.UnknownField:
+    case TaxCalculatorCalculationErrorCode.DuplicateField:
+      return CHROME_TEXT.invalidValue
+    case TaxCalculatorCalculationErrorCode.CalculationFailed:
+      return CHROME_TEXT.calculationError
+    case TaxCalculatorCalculationErrorCode.EmptyResult:
+      return CHROME_TEXT.emptyResult
+    default: {
+      const unhandled: never = code
+      return unhandled
+    }
+  }
+}
+
 const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const { activeLocale } = useI18n()
   const methods = useForm({ shouldUnregister: true })
@@ -49,6 +88,14 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
       collectInputSectionToggles(config).map((toggle) => [toggle.key, false]),
     ),
   )
+
+  /* What was submitted, serialized. The result is shown only while it still
+   * matches what the form would send now -- compared against this rather than
+   * against raw form values, because `useWatch` hands back a fresh object every
+   * render and the toggles live outside form state yet change the payload. */
+  const [submitted, setSubmitted] = useState<string>()
+  const [response, setResponse] = useState<CalculationResponse>()
+  const [transportFailed, setTransportFailed] = useState(false)
 
   const { data, loading, error } = useQuery<
     GetTaxCalculatorQuery,
@@ -65,6 +112,38 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     () => toOutputFieldContract(data?.taxCalculator.outputFields ?? []),
     [data],
   )
+
+  const values = useWatch({ control: methods.control })
+
+  /* Computed once, here, and passed down: the field deciding its own visibility
+   * while the serializer decided the payload would let a field render enabled
+   * and then be dropped from the request without the visitor knowing. */
+  const applicable = useMemo(
+    () =>
+      collectApplicableFields(
+        config,
+        inputContract,
+        toggles,
+        values,
+        activeLocale,
+      ),
+    [config, inputContract, toggles, values, activeLocale],
+  )
+
+  const payload = useMemo(
+    () => toInputFieldValues(applicable, values),
+    [applicable, values],
+  )
+
+  const snapshot = useMemo(() => JSON.stringify(payload), [payload])
+
+  /* `network-only`: pressing Calculate means calling RSK. The response carries
+   * no `id`, so the default policy would normalize it under ROOT_QUERY and
+   * replay a cached errored response on retry. */
+  const [calculate, { loading: calculating }] = useLazyQuery<
+    GetTaxCalculatorCalculationQuery,
+    GetTaxCalculatorCalculationQueryVariables
+  >(GET_TAX_CALCULATOR_CALCULATION, { fetchPolicy: 'network-only' })
 
   /* Above the early returns below, and guarded on `data` instead: a hook placed
    * after a conditional return is a rules-of-hooks violation that `nx lint web`
@@ -99,30 +178,138 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     )
   }
 
+  const onSubmit = async () => {
+    setSubmitted(snapshot)
+    setResponse(undefined)
+    setTransportFailed(false)
+
+    try {
+      const result = await calculate({
+        variables: { input: { type: calculatorType, values: payload } },
+      })
+
+      /* Nullable by design: a null here means the transport failed, since every
+       * failure a consumer can cause comes back as a populated wrapper. */
+      if (result.error || !result.data?.taxCalculatorCalculate) {
+        setTransportFailed(true)
+        return
+      }
+
+      reportCalculationErrors(
+        calculatorType,
+        result.data.taxCalculatorCalculate.errors,
+      )
+      setResponse(result.data.taxCalculatorCalculate)
+    } catch {
+      /* `useLazyQuery` rejects rather than resolving when the network itself
+       * fails, and the thrown error carries nothing the visitor can act on. */
+      setTransportFailed(true)
+    }
+  }
+
+  /* The visible result must not drift away from the visible inputs, so it is
+   * dropped the moment the form would send something else. */
+  const isCurrent = submitted === snapshot
+  const shown = isCurrent ? response : undefined
+  const failed = isCurrent && transportFailed
+
+  /* An error whose `key` names a field that was not submitted -- dependency
+   * hidden, or in a shut `disableOnly` section, which renders but stays out of
+   * play -- has nowhere a visitor could act on, so it falls back to the
+   * result-area alert rather than landing on a dead control. */
+  const fieldErrors = new Map<string, string>()
+  const alerts: string[] = failed
+    ? [localized(CHROME_TEXT.calculationError, activeLocale) ?? '']
+    : []
+
+  for (const returned of shown?.errors ?? []) {
+    const text = localized(errorText(returned.code), activeLocale) ?? ''
+    const entry = returned.key ? applicable.get(returned.key) : undefined
+
+    if (returned.key && entry && isInPlay(entry)) {
+      fieldErrors.set(returned.key, text)
+    } else if (!alerts.includes(text)) {
+      /* Validation reports every failing field at once, so the same code
+       * arrives repeatedly -- one alert per distinct reason, not per error. */
+      alerts.push(text)
+    }
+  }
+
+  /* Any returned error means no calculation is rendered. The domain never sends
+   * both today, so this is the contract being restored rather than a case that
+   * arises. */
+  const calculation =
+    shown && shown.errors.length === 0 ? shown.calculation : undefined
+  const outputValues = calculation ? toOutputValues(calculation) : undefined
+
+  /* Asked before the heading and the box are rendered: `CalculatorResults`
+   * legitimately renders nothing when the config places only keys the
+   * calculation returned no value for, and a heading over an empty box is the
+   * same defect one level up. */
+  const hasResults =
+    outputValues !== undefined &&
+    collectVisibleSections(config, outputContract, outputValues, activeLocale)
+      .length > 0
+
   return (
     <FormProvider {...methods}>
-      <Box background="blue100" borderRadius="large" padding={[3, 3, 5]}>
-        <Stack space={5}>
-          {config.inputSections.map((section) => (
-            <CalculatorSection
-              key={section.key}
-              section={section}
-              contract={inputContract}
-              locale={activeLocale}
-              toggles={toggles}
-              onToggle={(key, checked) =>
-                setToggles((current) => ({ ...current, [key]: checked }))
-              }
-            />
-          ))}
-          <Box>
-            {/* Wired to nothing: the calculation query is a later pass. */}
-            <Button disabled>
-              {localized(CHROME_TEXT.submit, activeLocale)}
-            </Button>
-          </Box>
-        </Stack>
-      </Box>
+      <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
+        <Box background="blue100" borderRadius="large" padding={[3, 3, 5]}>
+          <Stack space={5}>
+            {config.inputSections.map((section) => (
+              <CalculatorSection
+                key={section.key}
+                section={section}
+                applicable={applicable}
+                locale={activeLocale}
+                toggles={toggles}
+                errors={fieldErrors}
+                onToggle={(key, checked) =>
+                  setToggles((current) => ({ ...current, [key]: checked }))
+                }
+              />
+            ))}
+            <Box>
+              <Button
+                type="submit"
+                loading={calculating}
+                disabled={!canSubmit(applicable, values)}
+              >
+                {localized(CHROME_TEXT.submit, activeLocale)}
+              </Button>
+            </Box>
+
+            {alerts.map((title) => (
+              <AlertMessage key={title} type="error" title={title} />
+            ))}
+
+            {/* A response that carried neither a result nor a reason is still
+             * an answer, and must not read as a silent no-op. */}
+            {shown && shown.errors.length === 0 && !hasResults && (
+              <AlertMessage
+                type="info"
+                title={localized(CHROME_TEXT.emptyResult, activeLocale) ?? ''}
+              />
+            )}
+
+            {hasResults && outputValues && (
+              <Box background="white" borderRadius="large" padding={[3, 3, 4]}>
+                <Stack space={3}>
+                  <Text variant="h3" as="h2">
+                    {localized(CHROME_TEXT.results, activeLocale)}
+                  </Text>
+                  <CalculatorResults
+                    config={config}
+                    contract={outputContract}
+                    values={outputValues}
+                    locale={activeLocale}
+                  />
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      </form>
     </FormProvider>
   )
 }

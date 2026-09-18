@@ -6,7 +6,9 @@ import type { Locale } from '@island.is/shared/types'
  * applied to every calculator, so the floor is a guess for the others. */
 const EARLIEST_INCOME_YEAR = 2004
 
-const LOCALE_TAG: Record<Locale, string> = {
+/* Exported rather than duplicated: `format.ts` needs the same mapping to render
+ * numbers and dates in the locale the page is already using. */
+export const LOCALE_TAG: Record<Locale, string> = {
   is: 'is-IS',
   en: 'en-GB',
 }

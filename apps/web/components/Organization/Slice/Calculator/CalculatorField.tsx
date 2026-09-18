@@ -1,4 +1,4 @@
-import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 
 import { Checkbox, GridColumn } from '@island.is/island-ui/core'
 import {
@@ -13,22 +13,22 @@ import {
   TaxCalculatorInputFieldType,
 } from '@island.is/web/graphql/schema'
 
-import type { InputContractField, InputFieldContract } from './contract'
+import type { InputContractField } from './contract'
 import { monthOptions, yearOptions } from './optionSources'
 import { localized } from './text'
-import { toTypedValue } from './values'
 
 interface Props {
   field: CalculatorInputSectionField
   contractField: InputContractField
-  /* The whole contract, not just this field's entry: a dependency is resolved
-   * against its target's metadata `type`, which lives in another entry. */
-  contract: InputFieldContract
   /* Resolved by the section, which drops the field outright when the editor
    * authored no label -- so this component never has to represent that case. */
   label: string
   locale: Locale
   disabled: boolean
+  /* A domain validation error keyed to this field. Not react-hook-form's own
+   * error state: this is an answer from RSK, not a validation result, so it is
+   * passed in rather than read off the form. */
+  error?: string
 }
 
 /* `span` is a number 1-12 in the config, but GridColumn takes the fraction as a
@@ -51,37 +51,13 @@ const TWELFTHS = [
 export const CalculatorField = ({
   field,
   contractField,
-  contract,
   label,
   locale,
   disabled,
+  error,
 }: Props) => {
   const { control } = useFormContext()
-  const { dependsOn, key, type, semantic, required } = contractField
-
-  /* Hooks cannot be conditional, so this always runs: an empty name matches no
-   * registered field and yields undefined, which no dependency ever equals. */
-  const rawDependencyValue = useWatch({
-    control,
-    name: dependsOn?.fieldKey ?? '',
-  })
-
-  /* Compared through the coercion rather than raw, because form state holds a
-   * string where `equals` holds the scalar metadata declares: a dependency on a
-   * `number` field would otherwise never match and hide its dependent forever.
-   * A target missing from the contract is a publication bug the domain rejects;
-   * hiding the dependent is the safe reading of it here. */
-  const dependencyType = dependsOn && contract.get(dependsOn.fieldKey)?.type
-
-  /* The column lives inside the field, not around it, so that this return --
-   * and the section's own omissions -- leave no empty column behind. */
-  if (
-    dependsOn &&
-    (!dependencyType ||
-      toTypedValue(rawDependencyValue, dependencyType) !== dependsOn.equals)
-  ) {
-    return null
-  }
+  const { key, type, semantic, required } = contractField
 
   const placeholder = localized(field.placeholder, locale)
 
@@ -93,6 +69,7 @@ export const CalculatorField = ({
     required,
     size: 'sm' as const,
     backgroundColor: 'white' as const,
+    error,
   }
 
   /* `DatePickerController` takes no `control` prop -- it reads `useFormContext`
@@ -132,6 +109,8 @@ export const CalculatorField = ({
                 label={label}
                 checked={Boolean(value)}
                 disabled={disabled}
+                hasError={Boolean(error)}
+                errorMessage={error}
                 onChange={(event) => onChange(event.target.checked)}
               />
             )}

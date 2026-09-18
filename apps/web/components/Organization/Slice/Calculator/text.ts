@@ -13,6 +13,25 @@ export const CHROME_TEXT = {
     is: 'Ekki tókst að sækja reiknivélina',
     en: 'Could not load the calculator',
   },
+  results: { is: 'Niðurstaða', en: 'Result' },
+  /* RSK was unreachable, or answered with something that is not a result. */
+  calculationError: {
+    is: 'Ekki tókst að reikna',
+    en: 'The calculation could not be completed',
+  },
+  /* The calculation ran but produced nothing to place in the output sections --
+   * either an empty result from RSK, or a config that places no value the
+   * calculation returned. */
+  emptyResult: {
+    is: 'Engin niðurstaða fannst fyrir þessar forsendur',
+    en: 'No result was found for these values',
+  },
+  /* Every field-level validation code collapses to this: the codes distinguish
+   * why a value is unacceptable in terms the visitor has no way to act on
+   * differently. */
+  invalidValue: { is: 'Ógilt gildi', en: 'Invalid value' },
+  yes: { is: 'Já', en: 'Yes' },
+  no: { is: 'Nei', en: 'No' },
 } satisfies Record<string, CalculatorLocalizedText>
 
 /* Anything editor-authored that carries an optional label: an input section
