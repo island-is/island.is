@@ -886,6 +886,10 @@ export const is = {
   'health.appointments.cancelErrorTitle': 'Ekki tókst að afbóka tímann',
   'health.appointments.cancelErrorMessage':
     'Ekki tókst að framkvæma aðgerð, reyndu aftur.',
+  'health.appointments.cancelContactProvider':
+    'Ekki tókst að afbóka tíma, vinsamlegast hringdu í þjónustuveitanda.',
+  'health.appointments.cancelUnconfirmed':
+    'Ekki tókst að staðfesta afbókun, reyndu aftur.',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
@@ -925,6 +929,14 @@ export const is = {
     'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
   'health.messages.replyBlocked.awaitingAcknowledgement':
     'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
+  'health.messages.compose.introTitle': 'Hafa samband',
+  'health.messages.compose.introBody1':
+    'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma.',
+  'health.messages.compose.introBody2':
+    'Ef erindið er brýnt og þarfnast svars samdægurs hringdu í <b>1700</b> eða hafðu samband við þitt meðferðarteymi.',
+  'health.messages.compose.introBody3':
+    'Í neyðartilvikum, hringdu í <b>112.</b>',
+  'health.messages.compose.continue': 'Halda áfram',
   'health.messages.compose.newTitle': 'Ný skilaboð',
   'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
   'health.messages.compose.selectService': 'Veldu þjónustu',
@@ -959,6 +971,7 @@ export const is = {
   'health.messages.compose.certificateText':
     'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
   'health.messages.compose.certificateLink': 'Sækja um vottorð',
+  'health.messages.compose.externalLink': 'Opna netspjall',
   'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
   'health.messages.certificatePayment.text':
     'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',

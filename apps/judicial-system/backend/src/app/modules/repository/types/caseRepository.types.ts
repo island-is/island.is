@@ -781,6 +781,125 @@ export const indictmentReviewCaseInclude: Includeable[] = [
   },
 ]
 
+// The case counts only need to know when an indictment was confirmed, so the
+// event log is joined filtered down to that one event. The alias is spelled out
+// on every association here, as caseInclude does - Sequelize infers it from the
+// single Case-EventLog relation either way, but naming it keeps the graph
+// readable and survives a second relation being added.
+export const caseStatisticsInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    attributes: ['created', 'eventType'],
+    where: { eventType: EventType.INDICTMENT_CONFIRMED },
+  },
+]
+
+// A request case's export rows are derived from its event log, the
+// institutions handling it, its court dates and its appeal.
+export const requestCaseEventExportInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    attributes: ['created', 'eventType'],
+  },
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: Institution, as: 'court' },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        attributes: ['eventType', 'userRole'],
+        separate: true,
+      },
+    ],
+  },
+]
+
+// An indictment case's export rows are derived from the same case-level graph
+// as a request case, plus the charges it brings and what happened to each
+// defendant - service of the subpoena, the defendant's own events and the
+// verdicts against them.
+export const indictmentCaseEventExportInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    attributes: ['created', 'eventType'],
+  },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: Institution, as: 'court' },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+]
+
 // The case columns a limited access user is allowed to see. Every read on
 // this path is restricted to them, on the case itself and on the cases linked
 // to it.

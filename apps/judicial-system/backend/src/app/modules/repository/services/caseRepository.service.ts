@@ -38,11 +38,14 @@ import {
   archivableCaseOrder,
   archivableCaseWhere,
   caseInclude,
+  caseStatisticsInclude,
   defendantIndictmentCaseInclude,
   defendantIndictmentCaseListInclude,
   getLimitedAccessCaseInclude,
+  indictmentCaseEventExportInclude,
   indictmentReviewCaseInclude,
   limitedAccessCaseAttributes,
+  requestCaseEventExportInclude,
   UpdateCase,
   verdictAppealDeadlineCaseInclude,
 } from '../types/caseRepository.types'
@@ -98,6 +101,14 @@ interface CreateCaseOptions {
 
 interface UpdateCaseOptions {
   transaction: Transaction
+}
+
+// The period the statistics are asked for, and the institution they are asked
+// about - an institution matches a case it either prosecutes or presides over.
+export type CaseStatisticsFilter = {
+  from?: Date
+  to?: Date
+  institutionId?: string
 }
 
 @Injectable()
@@ -845,6 +856,124 @@ export class CaseRepositoryService {
       return true
     } catch (error) {
       this.logger.error(`Error locking case ${id} for update:`, { error })
+
+      throw error
+    }
+  }
+
+  private caseStatisticsWhere(filter: CaseStatisticsFilter): WhereOptions {
+    return {
+      // Cases that never left the prosecutor's desk are not part of any count
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      ...(filter.from || filter.to
+        ? {
+            created: {
+              ...(filter.from ? { [Op.gte]: filter.from } : {}),
+              ...(filter.to ? { [Op.lte]: filter.to } : {}),
+            },
+          }
+        : {}),
+      ...(filter.institutionId
+        ? {
+            [Op.or]: [
+              { courtId: filter.institutionId },
+              { prosecutorsOfficeId: filter.institutionId },
+            ],
+          }
+        : {}),
+    }
+  }
+
+  // Every case that counts towards the statistics for a period, with the event
+  // that confirmed its indictment - what the caller needs to count cases and
+  // measure how long a ruling took.
+  async findCasesForStatistics(filter: CaseStatisticsFilter): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding cases for statistics')
+
+      const results = await this.caseModel.findAll({
+        where: this.caseStatisticsWhere(filter),
+        include: caseStatisticsInclude,
+      })
+
+      this.logger.debug(`Found ${results.length} cases for statistics`)
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding cases for statistics:', { error })
+
+      throw error
+    }
+  }
+
+  // Every request case, oldest first, with the graph the event export derives
+  // its rows from. The export is not bounded by a period here - it filters the
+  // events it derives, not the cases it derives them from.
+  async findRequestCasesForEventExport(): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding request cases for the event export')
+
+      const results = await this.caseModel.findAll({
+        where: { type: { [Op.not]: [CaseType.INDICTMENT] } },
+        order: [['created', 'ASC']],
+        include: requestCaseEventExportInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} request cases for the event export`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding request cases for the event export:', {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  // Every indictment case, oldest first, with the graph the event export
+  // derives its rows from - see findRequestCasesForEventExport on the period.
+  async findIndictmentCasesForEventExport(): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding indictment cases for the event export')
+
+      const results = await this.caseModel.findAll({
+        where: { type: CaseType.INDICTMENT },
+        order: [['created', 'ASC']],
+        include: indictmentCaseEventExportInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases for the event export`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding indictment cases for the event export:',
+        { error },
+      )
 
       throw error
     }
