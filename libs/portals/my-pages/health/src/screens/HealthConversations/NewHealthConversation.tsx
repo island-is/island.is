@@ -60,6 +60,14 @@ const isRecipientOutsideWindow = (recipient: {
   recipient.conversationBlockedReason ===
     HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
 
+const isMessagingNotAllowed = (recipient: {
+  canCreateConversation: boolean
+  conversationBlockedReason?: HealthDirectorateHealthConversationRecipientBlockedReason | null
+}) =>
+  !recipient.canCreateConversation &&
+  recipient.conversationBlockedReason ===
+    HealthDirectorateHealthConversationRecipientBlockedReason.MESSAGING_NOT_ALLOWED
+
 const getRecipientKey = (recipient: {
   nodeId: string
   groupId: number
@@ -104,10 +112,10 @@ const NewHealthConversation = () => {
       refetchQueries: ['GetHealthConversations'],
     })
 
-  const allRecipients = data?.healthDirectorateHealthConversationRecipients
-  const recipients = allRecipients?.filter((r) => r.allowsMessaging)
+  const recipients = data?.healthDirectorateHealthConversationRecipients
   const hasRecipients = !!recipients?.length
-  const messagingUnavailable = !!allRecipients && !hasRecipients
+  const messagingUnavailable =
+    !!recipients && recipients.every(isMessagingNotAllowed)
   const hasMultipleRecipients = (recipients?.length ?? 0) > 1
 
   const recipientOptions =
@@ -118,7 +126,9 @@ const NewHealthConversation = () => {
       return {
         label: r.name,
         value: getRecipientKey(r),
-        description: !isRecipientOutsideWindow(r)
+        description: isMessagingNotAllowed(r)
+          ? formatMessage(messages.healthConversationRecipientNotAllowedOption)
+          : !isRecipientOutsideWindow(r)
           ? undefined
           : r.isClosedToday || !openTime || !closeTime
           ? formatMessage(messages.healthConversationRecipientClosedTodayOption)
@@ -131,14 +141,19 @@ const NewHealthConversation = () => {
     }) ?? []
 
   // A recipient closed for new conversations never accepts certificate
-  // requests either, so conversation availability alone decides this.
+  // requests either, so conversation availability alone decides this. Only
+  // recipients that ever take conversations count towards "all closed".
+  const openableRecipients = recipients?.filter(
+    (r) => !isMessagingNotAllowed(r),
+  )
   const allRecipientsClosed =
-    hasRecipients &&
-    !!recipients?.every((r) => !r.canCreateConversation) &&
-    !!recipients?.some(isRecipientOutsideWindow)
+    !!openableRecipients?.length &&
+    openableRecipients.every((r) => !r.canCreateConversation) &&
+    openableRecipients.some(isRecipientOutsideWindow)
 
   const allClosedAlertRecipient =
-    recipients?.find(isRecipientOutsideWindow) ?? recipients?.[0]
+    openableRecipients?.find(isRecipientOutsideWindow) ??
+    openableRecipients?.[0]
 
   const preselectedTreatment = searchParams.get('treatment')
   const treatmentMatch = preselectedTreatment
@@ -344,7 +359,7 @@ const NewHealthConversation = () => {
       >
         {initialLoading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!initialLoading && !error && !allRecipients && (
+        {!initialLoading && !error && !recipients && (
           <Problem
             type="no_data"
             noBorder={false}

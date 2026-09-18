@@ -3,7 +3,6 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   groupId
   treatmentId
   name
-  allowsMessaging
   isClosedToday
   dayType
   nextOpensAt {

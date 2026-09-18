@@ -2154,6 +2154,10 @@ export const messages = defineMessages({
     defaultMessage: 'Lokað núna.',
     id: 'sp.health:health-messages-recipient-closed-today-option',
   },
+  healthConversationRecipientNotAllowedOption: {
+    defaultMessage: 'Býður ekki upp á skilaboð.',
+    id: 'sp.health:health-messages-recipient-not-allowed-option',
+  },
   healthConversationMessagingNotAllowedTitle: {
     defaultMessage: 'Ekki hægt að senda skilaboð',
     id: 'sp.health:health-messages-messaging-not-allowed-title',
