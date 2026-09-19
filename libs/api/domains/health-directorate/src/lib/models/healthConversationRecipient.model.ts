@@ -28,7 +28,10 @@ export class HealthDirectorateHealthConversationRecipient {
   @Field()
   name!: string
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'Use canCreateConversation and conversationBlockedReason instead.',
+  })
   allowsMessaging!: boolean
 
   @Field({

@@ -227,7 +227,10 @@ export const mapMessagingRecipient = (
   groupId: r.groupId,
   treatmentId: r.treatmentId,
   name: r.name,
-  allowsMessaging: r.allowsMessaging,
+  allowsMessaging:
+    r.canCreateConversation ||
+    r.conversationBlockedReason !==
+      RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED,
   messagingWindowOpen: r.messagingWindowOpen,
   messagingWindowClose: r.messagingWindowClose,
   isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,

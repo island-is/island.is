@@ -25,7 +25,7 @@ const ConversationAvailabilityAlert = ({ recipient }: Props) => {
     )
   }
 
-  if (blockedReason) {
+  if (!recipient.canCreateConversation) {
     return (
       <Box marginBottom={3}>
         <AlertMessage
