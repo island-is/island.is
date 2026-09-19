@@ -290,6 +290,28 @@ describe('display mappers', () => {
       )
     })
 
+    it('sets expired status even when answered, when validToDateTime is in the past', () => {
+      const answeredAndExpired = {
+        ...baseLshItem,
+        answerDateTime: new Date('2024-06-01T12:00:00.000Z'),
+        validToDateTime: new Date('2000-01-01T00:00:00.000Z'),
+      } as unknown as LshQuestionnaireType
+
+      const overview = mapLshQuestionnaireOverview(
+        answeredAndExpired,
+        formatMessage,
+      )
+      expect(overview.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
+      // Answers must still be reachable on an expired questionnaire
+      expect(overview.baseInformation.lastSubmissionId).toBe('lsh-guid-h1')
+      expect(overview.submissions).toHaveLength(1)
+      expect(
+        mapLshQuestionnaireListItem(answeredAndExpired, formatMessage).status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+    })
+
     it('sets notAnswered status when validToDateTime is null', () => {
       const noExpiry = {
         ...baseLshItem,
@@ -452,6 +474,53 @@ describe('display mappers', () => {
       expect(mapped.sentDate).toBe('2024-01-01T00:00:00.000Z')
       expect(mapped.status).toBe(QuestionnairesStatusEnum.draft)
       expect(mapped.lastSubmissionId).toBe('sub-1')
+    })
+
+    it('sets expired status even when answered or drafted, when expiryDate is in the past', () => {
+      const pastExpiry = new Date('2000-01-01T00:00:00.000Z')
+
+      const answeredDetail = {
+        questionnaireId: 'el-q-10',
+        title: 'Answered but expired',
+        message: null,
+        groups: [],
+        triggers: {},
+        submissions: [{ id: 'sub-1', isDraft: false }],
+        replies: [],
+        canSubmit: false,
+        hasDraft: false,
+        expiryDate: pastExpiry,
+      } as unknown as QuestionnaireDetailDto
+
+      expect(
+        mapElQuestionnaireOverview(answeredDetail, formatMessage)
+          .baseInformation.status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+
+      const answeredBase = {
+        questionnaireId: 'el-q-11',
+        title: 'Answered but expired',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        numSubmitted: 1,
+        hasDraft: false,
+        lastSubmitted: new Date('2024-06-01T00:00:00.000Z'),
+        expiryDate: pastExpiry,
+      } as unknown as QuestionnaireBaseDto
+
+      expect(
+        mapElQuestionnaireListItem(answeredBase, formatMessage).status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+
+      const draftBase = {
+        ...answeredBase,
+        numSubmitted: 0,
+        lastSubmitted: null,
+        hasDraft: true,
+      } as unknown as QuestionnaireBaseDto
+
+      expect(mapElQuestionnaireListItem(draftBase, formatMessage).status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
     })
 
     it('sets dependsOn and visibilityConditions for EL question triggers', () => {

@@ -386,9 +386,13 @@ export const ProgressBar: FC<Props> = ({
                     [styles.textMiddle]: isMiddle,
                     [styles.textFirst]: isFirst,
                     [styles.textLast]: isLast,
+                    [styles.textClickable]: !!onOptionClick,
                   })}
                   textAlign={isMiddle ? 'center' : textAlign}
                   marginTop={vertical ? undefined : 1}
+                  onClick={() => onOptionClick?.(option.value)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   style={
                     vertical
                       ? {

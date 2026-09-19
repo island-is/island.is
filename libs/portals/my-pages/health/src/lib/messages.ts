@@ -2460,6 +2460,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svarað',
     id: 'sp.health:answered-questionnaire',
   },
+  answeredDate: {
+    defaultMessage: 'Svarað dags',
+    id: 'sp.health:answered-date',
+  },
   draftQuestionnaire: {
     defaultMessage: 'Drög',
     id: 'sp.health:draft-questionnaire',
@@ -2510,13 +2514,19 @@ export const messages = defineMessages({
       'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
     id: 'sp.health:questionnaire-not-found-detail',
   },
-  singleQuestionnaire: {
-    defaultMessage: '1 spurningalisti',
-    id: 'sp.health:single-questionnaire',
-  },
   numberOfQuestionnaires: {
-    defaultMessage: '{number} spurningalistar',
+    defaultMessage:
+      '{number, plural, one {# spurningalisti} other {# spurningalistar}}',
     id: 'sp.health:number-of-questionnaires',
+  },
+  numberOfQuestionnairesFound: {
+    defaultMessage:
+      '{number, plural, one {# spurningalisti fannst} other {# spurningalistar fundust}}',
+    id: 'sp.health:number-of-questionnaires-found',
+  },
+  questionnaireSeeMore: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:questionnaire-see-more',
   },
   answers: {
     defaultMessage: 'Svör',

@@ -66,6 +66,24 @@ const Questionnaires: FC = () => {
 
   const dataLength = data?.questionnairesList?.questionnaires?.length ?? 0
 
+  const statusFilterOptions = [
+    {
+      name: 'unanswered',
+      label: formatMessage(messages.unAnsweredQuestionnaire),
+      status: QuestionnairesStatusEnum.notAnswered,
+    },
+    {
+      name: 'answered',
+      label: formatMessage(messages.answeredQuestionnaire),
+      status: QuestionnairesStatusEnum.answered,
+    },
+    {
+      name: 'draft',
+      label: formatMessage(messages.draftQuestionnaire),
+      status: QuestionnaireQuestionnairesStatusEnum.draft,
+    },
+  ]
+
   const toggleStatus = (status: QuestionnaireQuestionnairesStatusEnum) => {
     setFilterValues((prev) => ({
       ...prev,
@@ -173,6 +191,7 @@ const Questionnaires: FC = () => {
           labelClearAll={formatMessage(m.clearAllFilters)}
           labelClear={formatMessage(m.clearFilter)}
           labelOpen={formatMessage(m.openFilter)}
+          filterCount={filterValues.status.length}
           onFilterClear={() => {
             debouncedSetSearchQuery.cancel()
             setInputValue('')
@@ -183,7 +202,6 @@ const Questionnaires: FC = () => {
               placeholder={formatMessage(m.searchPlaceholder)}
               name="rafraen-skjol-input"
               size="xs"
-              label={formatMessage(m.searchLabel)}
               value={inputValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               backgroundColor="blue"
@@ -202,23 +220,7 @@ const Questionnaires: FC = () => {
             </Text>
 
             <Stack space={2}>
-              {[
-                {
-                  name: 'unanswered',
-                  label: formatMessage(messages.unAnsweredQuestionnaire),
-                  status: QuestionnairesStatusEnum.notAnswered,
-                },
-                {
-                  name: 'answered',
-                  label: formatMessage(messages.answeredQuestionnaire),
-                  status: QuestionnairesStatusEnum.answered,
-                },
-                {
-                  name: 'draft',
-                  label: formatMessage(messages.draftQuestionnaire),
-                  status: QuestionnaireQuestionnairesStatusEnum.draft,
-                },
-              ].map(({ name, label, status }) => (
+              {statusFilterOptions.map(({ name, label, status }) => (
                 <Checkbox
                   key={name}
                   name={name}
@@ -259,11 +261,14 @@ const Questionnaires: FC = () => {
             className={styles.toggleBox}
           >
             <Text variant="medium">
-              {filteredData?.length === 1
-                ? formatMessage(messages.singleQuestionnaire)
-                : formatMessage(messages.numberOfQuestionnaires, {
-                    number: filteredData?.length,
-                  })}
+              {formatMessage(
+                filterIsEmpty
+                  ? messages.numberOfQuestionnaires
+                  : messages.numberOfQuestionnairesFound,
+                {
+                  number: filteredData?.length ?? 0,
+                },
+              )}
             </Text>
             <ToggleSwitchButton
               className={styles.toggleButton}
@@ -317,7 +322,7 @@ const Questionnaires: FC = () => {
                   variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
                 }}
                 cta={{
-                  label: formatMessage(messages.seeMore),
+                  label: formatMessage(messages.questionnaireSeeMore),
                   variant: 'text',
                   icon: 'arrowForward',
                   onClick: () =>
