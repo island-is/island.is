@@ -200,6 +200,7 @@ const Questionnaires: FC = () => {
           filterInput={
             <Input
               placeholder={formatMessage(m.searchPlaceholder)}
+              aria-label={formatMessage(m.searchLabel)}
               name="rafraen-skjol-input"
               size="xs"
               value={inputValue}
@@ -260,16 +261,18 @@ const Questionnaires: FC = () => {
             marginBottom={2}
             className={styles.toggleBox}
           >
-            <Text variant="medium">
-              {formatMessage(
-                filterIsEmpty
-                  ? messages.numberOfQuestionnaires
-                  : messages.numberOfQuestionnairesFound,
-                {
-                  number: filteredData?.length ?? 0,
-                },
-              )}
-            </Text>
+            <Box role="status">
+              <Text variant="medium">
+                {formatMessage(
+                  filterIsEmpty
+                    ? messages.numberOfQuestionnaires
+                    : messages.numberOfQuestionnairesFound,
+                  {
+                    number: filteredData?.length ?? 0,
+                  },
+                )}
+              </Text>
+            </Box>
             <ToggleSwitchButton
               className={styles.toggleButton}
               label={formatMessage(messages.showExpiredQuestionnaires)}
