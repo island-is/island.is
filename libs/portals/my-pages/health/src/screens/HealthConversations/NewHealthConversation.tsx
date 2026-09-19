@@ -143,17 +143,17 @@ const NewHealthConversation = () => {
   // A recipient closed for new conversations never accepts certificate
   // requests either, so conversation availability alone decides this. Only
   // recipients that ever take conversations count towards "all closed".
-  const openableRecipients = recipients?.filter(
+  const messagingAllowedRecipients = recipients?.filter(
     (r) => !isMessagingNotAllowed(r),
   )
   const allRecipientsClosed =
-    !!openableRecipients?.length &&
-    openableRecipients.every((r) => !r.canCreateConversation) &&
-    openableRecipients.some(isRecipientOutsideWindow)
+    !!messagingAllowedRecipients?.length &&
+    messagingAllowedRecipients.every((r) => !r.canCreateConversation) &&
+    messagingAllowedRecipients.some(isRecipientOutsideWindow)
 
   const allClosedAlertRecipient =
-    openableRecipients?.find(isRecipientOutsideWindow) ??
-    openableRecipients?.[0]
+    messagingAllowedRecipients?.find(isRecipientOutsideWindow) ??
+    messagingAllowedRecipients?.[0]
 
   const preselectedTreatment = searchParams.get('treatment')
   const treatmentMatch = preselectedTreatment
