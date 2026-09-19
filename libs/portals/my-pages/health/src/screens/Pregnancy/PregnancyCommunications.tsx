@@ -1,18 +1,20 @@
 import { useState } from 'react'
-import { Box, FilterInput, Icon, Text } from '@island.is/island-ui/core'
+import { Link } from 'react-router-dom'
+import { Box, FilterInput, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
   IntroWrapper,
-  LinkResolver,
   STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import * as conversationStyles from '../HealthConversations/HealthConversations.css'
 import { useGetActivePregnancyQuery } from './Pregnancy.generated'
 import { useGetPregnancyCommunicationsQuery } from './PregnancyCommunications.generated'
+import { formatSubjectTerm } from './utils'
 
 const PregnancyCommunications = () => {
   useNamespaces('sp.health')
@@ -55,6 +57,7 @@ const PregnancyCommunications = () => {
     <IntroWrapper
       title={formatMessage(messages.pregnancyCommunicationsTitle)}
       intro={formatMessage(messages.pregnancyCommunicationsIntro)}
+      desktopContentSpan="10/12"
       serviceProvider={{
         slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(messages.stafraenHeilsaPregnancyTooltip),
@@ -79,13 +82,14 @@ const PregnancyCommunications = () => {
       ) : communications.length === 0 ? (
         <Problem type="no_data" noBorder={false} />
       ) : (
-        <Box border="standard" borderColor="blue200" borderRadius="large">
+        <>
           <Box
+            background="blue100"
+            borderColor="blue200"
+            borderBottomWidth="standard"
             display="flex"
             justifyContent="spaceBetween"
-            alignItems="center"
-            background="blue100"
-            paddingX={3}
+            paddingX={2}
             paddingY={2}
           >
             <Text variant="medium" fontWeight="semiBold">
@@ -95,64 +99,80 @@ const PregnancyCommunications = () => {
               {formatMessage(messages.date)}
             </Text>
           </Box>
-          {communications.map((item) => {
-            const kindLabel = formatMessage(
-              item.kind === 'PHONE_CALL'
-                ? messages.pregnancyCommunicationPhoneCall
-                : messages.pregnancyCommunicationExamination,
-            )
-            const subject = item.subjectTerm ?? item.text
-            return (
-              <LinkResolver
-                key={item.id}
-                href={HealthPaths.HealthPregnancyCommunicationDetail.replace(
-                  ':id',
-                  item.id,
-                )}
-              >
+          <Stack space={0}>
+            {communications.map((item) => {
+              const kindLabel = formatMessage(
+                item.kind === 'PHONE_CALL'
+                  ? messages.pregnancyCommunicationPhoneCall
+                  : messages.pregnancyCommunicationExamination,
+              )
+              const subject = item.subjectTerm
+                ? formatSubjectTerm(item.subjectTerm)
+                : item.text
+              return (
                 <Box
+                  key={item.id}
+                  className={conversationStyles.conversationRow}
                   display="flex"
                   alignItems="center"
-                  columnGap={2}
-                  paddingX={3}
-                  paddingY={2}
-                  borderTopWidth="standard"
+                  justifyContent="spaceBetween"
                   borderColor="blue200"
+                  borderBottomWidth="standard"
+                  paddingX={2}
+                  paddingY="p2"
+                  columnGap={2}
                 >
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    background="blue100"
-                    borderRadius="full"
-                    padding={2}
-                    flexShrink={0}
-                  >
-                    <Icon
-                      icon={item.kind === 'PHONE_CALL' ? 'call' : 'reader'}
-                      type="outline"
-                      color="blue400"
-                    />
-                  </Box>
-                  <Box minWidth={0} flexGrow={1}>
-                    {item.authorName && (
-                      <Text variant="medium">{item.authorName}</Text>
+                  <Link
+                    to={HealthPaths.HealthPregnancyCommunicationDetail.replace(
+                      ':id',
+                      item.id,
                     )}
-                    <Text variant="medium" color="blue400" truncate>
-                      {kindLabel}
-                      {subject ? `: ${subject}` : ''}
-                    </Text>
-                  </Box>
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 16,
+                      minWidth: 0,
+                      flexGrow: 1,
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
+                    <Box
+                      aria-hidden="true"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      borderRadius="full"
+                      background="blue100"
+                      flexShrink={0}
+                      style={{ width: 48, height: 48 }}
+                    >
+                      <Icon
+                        icon={item.kind === 'PHONE_CALL' ? 'call' : 'reader'}
+                        type="outline"
+                        color="blue400"
+                      />
+                    </Box>
+                    <Box minWidth={0}>
+                      {item.authorName && (
+                        <Text variant="medium">{item.authorName}</Text>
+                      )}
+                      <Text color="blue400" truncate>
+                        {kindLabel}
+                        {subject ? `: ${subject}` : ''}
+                      </Text>
+                    </Box>
+                  </Link>
                   {item.dateTime && (
-                    <Box flexShrink={0}>
+                    <Box style={{ flexShrink: 0 }}>
                       <Text variant="medium">{formatDate(item.dateTime)}</Text>
                     </Box>
                   )}
                 </Box>
-              </LinkResolver>
-            )
-          })}
-        </Box>
+              )
+            })}
+          </Stack>
+        </>
       )}
     </IntroWrapper>
   )

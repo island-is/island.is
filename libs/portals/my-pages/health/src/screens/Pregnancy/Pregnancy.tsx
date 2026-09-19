@@ -1,12 +1,12 @@
-import { Box, Icon, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
-  InfoCard,
   InfoCardGrid,
   IntroWrapper,
   LinkButton,
+  LinkResolver,
   m,
   STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -16,11 +16,15 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
+import * as conversationStyles from '../HealthOverview/components/HealthConversationsBox/HealthConversationsBox.css'
+import * as listStyles from '../HealthConversations/HealthConversations.css'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 import {
   useGetActivePregnancyQuery,
   useGetPregnancyCommunicationsPreviewQuery,
 } from './Pregnancy.generated'
+import PregnancyDetailCard from './PregnancyDetailCard'
+import { formatSubjectTerm } from './utils'
 
 const MAX_COMMUNICATIONS_PREVIEW = 3
 
@@ -66,8 +70,9 @@ const Pregnancy = () => {
     communicationsData?.healthDirectoratePregnancyCommunications ?? []
   ).slice(0, MAX_COMMUNICATIONS_PREVIEW)
 
-  const staffWithProfession = (pregnancy?.staff ?? []).filter(
-    (staffMember) => staffMember.profession,
+  const midwives = (pregnancy?.staff ?? []).filter(
+    (staffMember) =>
+      staffMember.profession?.toLocaleLowerCase() === 'ljósmóðir',
   )
 
   const initialLoading = pregnancyLoading && !pregnancyData
@@ -115,65 +120,103 @@ const Pregnancy = () => {
 
           {(communicationsLoading || communicationsPreview.length > 0) && (
             <Box
+              background="white"
               border="standard"
               borderColor="blue200"
               borderRadius="large"
-              padding={3}
+              paddingY={3}
               marginBottom={3}
             >
               <Box
                 display="flex"
                 alignItems="center"
-                columnGap={1}
-                marginBottom={2}
+                columnGap={2}
+                marginBottom={3}
+                paddingX={3}
               >
-                <Icon icon="chatbubble" color="blue400" type="outline" />
-                <Text variant="h4" color="blue400">
-                  {formatMessage(messages.pregnancyMessagesTitle)}
+                <Icon
+                  icon="chatbubble"
+                  type="outline"
+                  color="blue400"
+                  size="medium"
+                />
+                <Text variant="h4" as="h2" color="blue400">
+                  {formatMessage(messages.pregnancyCommunicationsTitle)}
                 </Text>
               </Box>
               {communicationsLoading ? (
-                <CardLoader />
+                <Box paddingX={3}>
+                  <CardLoader />
+                </Box>
               ) : (
-                <Stack space={0}>
-                  {communicationsPreview.map((item) => (
-                    <Box
+                communicationsPreview.map((item) => {
+                  const kindLabel = formatMessage(
+                    item.kind === 'PHONE_CALL'
+                      ? messages.pregnancyCommunicationPhoneCall
+                      : messages.pregnancyCommunicationExamination,
+                  )
+                  const subject = item.subjectTerm
+                    ? formatSubjectTerm(item.subjectTerm)
+                    : item.text
+                  return (
+                    <LinkResolver
                       key={item.id}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="spaceBetween"
-                      borderColor="blue200"
-                      borderTopWidth="standard"
-                      paddingY={2}
-                      columnGap={2}
-                    >
-                      <Box minWidth={0}>
-                        <Text variant="medium">
-                          {item.authorName ??
-                            formatMessage(messages.pregnancyMessagesTitle)}
-                        </Text>
-                        <Text color="blue400" truncate>
-                          {item.subjectTerm ?? item.text}
-                        </Text>
-                      </Box>
-                      {item.dateTime && (
-                        <Box flexShrink={0}>
-                          <Text variant="medium">
-                            {formatDate(item.dateTime)}
-                          </Text>
-                        </Box>
+                      href={HealthPaths.HealthPregnancyCommunicationDetail.replace(
+                        ':id',
+                        item.id,
                       )}
-                    </Box>
-                  ))}
-                </Stack>
+                      className={conversationStyles.conversationLink}
+                    >
+                      <Box paddingX={[0, 0, 3]}>
+                        <Box
+                          display="flex"
+                          justifyContent="spaceBetween"
+                          alignItems="flexStart"
+                          columnGap={2}
+                          paddingY={2}
+                          paddingX={[3, 3, 2]}
+                          borderTopWidth="standard"
+                          borderColor="blue200"
+                          className={listStyles.conversationRow}
+                        >
+                          <Box overflow="hidden">
+                            {item.authorName && (
+                              <Text variant="medium" marginBottom="smallGutter">
+                                {item.authorName}
+                              </Text>
+                            )}
+                            <Text color="blue400" truncate>
+                              {kindLabel}
+                              {subject ? `: ${subject}` : ''}
+                            </Text>
+                          </Box>
+                          {item.dateTime && (
+                            <Text variant="medium" whiteSpace="nowrap">
+                              {formatDate(item.dateTime)}
+                            </Text>
+                          )}
+                        </Box>
+                      </Box>
+                    </LinkResolver>
+                  )
+                })
               )}
-              <Box display="flex" justifyContent="center" marginTop={2}>
-                <LinkButton
-                  to={HealthPaths.HealthPregnancyCommunications}
-                  text={formatMessage(messages.seeAllMessages)}
-                  variant="text"
-                  size="small"
-                />
+              <Box paddingX={[0, 0, 3]}>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  paddingTop={3}
+                  borderTopWidth="standard"
+                  borderColor="blue200"
+                >
+                  <LinkButton
+                    to={HealthPaths.HealthPregnancyCommunications}
+                    text={formatMessage(messages.seeAllCommunications)}
+                    variant="text"
+                    size="small"
+                    icon="arrowForward"
+                  />
+                </Box>
               </Box>
             </Box>
           )}
@@ -196,11 +239,8 @@ const Pregnancy = () => {
           />
 
           {pregnancy && (
-            <InfoCard
-              title={formatMessage(messages.pregnancy)}
-              size="large"
-              variant="detail"
-              detail={[
+            <PregnancyDetailCard
+              details={[
                 ...(pregnancy.lengthWeeks != null
                   ? [
                       {
@@ -228,7 +268,7 @@ const Pregnancy = () => {
                       },
                     ]
                   : []),
-                ...staffWithProfession.map((staffMember) => ({
+                ...midwives.map((staffMember) => ({
                   label: staffMember.profession as string,
                   value: staffMember.name,
                 })),

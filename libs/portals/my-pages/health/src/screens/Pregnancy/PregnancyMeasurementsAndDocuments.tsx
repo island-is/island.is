@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
-import { Box, Stack, Tabs, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Tabs, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   createColumnHelper,
   formatDate,
   IntroWrapper,
+  m,
   PortalTable,
   STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -145,20 +146,37 @@ const DocumentsTab = ({ pregnancyId }: { pregnancyId: string }) => {
           borderColor="blue200"
           borderRadius="large"
           padding={3}
+          display="flex"
+          alignItems="flexEnd"
+          justifyContent="spaceBetween"
+          columnGap={2}
         >
-          {doc.organizationName && (
-            <Text variant="eyebrow" color="purple400" marginBottom={1}>
-              {doc.organizationName}
-            </Text>
-          )}
-          <Text variant="h5">{doc.title}</Text>
-          {doc.date && (
-            <Text variant="medium" color="dark400">
-              {formatMessage(messages.pregnancyDocumentSent, {
-                date: formatDate(doc.date),
-              })}
-            </Text>
-          )}
+          <Box minWidth={0}>
+            {doc.organizationName && (
+              <Text variant="eyebrow" color="purple400" marginBottom={1}>
+                {doc.organizationName}
+              </Text>
+            )}
+            <Text variant="h5">{doc.title}</Text>
+            {doc.date && (
+              <Text variant="medium" color="dark400">
+                {formatMessage(messages.pregnancyDocumentSent, {
+                  date: formatDate(doc.date),
+                })}
+              </Text>
+            )}
+          </Box>
+          <Box flexShrink={0}>
+            {/* TODO: wire to the document once EL exposes a content URL/endpoint */}
+            <Button
+              variant="text"
+              size="small"
+              icon="arrowForward"
+              onClick={() => undefined}
+            >
+              {formatMessage(m.seeDetails)}
+            </Button>
+          </Box>
         </Box>
       ))}
     </Stack>
@@ -181,6 +199,7 @@ const PregnancyMeasurementsAndDocuments = () => {
     <IntroWrapper
       title={formatMessage(messages.pregnancyMeasurementsAndDocumentsCard)}
       intro={formatMessage(messages.pregnancyMeasurementsAndDocumentsIntro)}
+      desktopContentSpan="10/12"
       serviceProvider={{
         slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(messages.stafraenHeilsaPregnancyTooltip),
@@ -199,11 +218,19 @@ const PregnancyMeasurementsAndDocuments = () => {
           tabs={[
             {
               label: formatMessage(messages.pregnancyMeasurementsTab),
-              content: <MeasurementsTab pregnancyId={pregnancyId} />,
+              content: (
+                <Box marginTop={4}>
+                  <MeasurementsTab pregnancyId={pregnancyId} />
+                </Box>
+              ),
             },
             {
               label: formatMessage(messages.pregnancyDocumentsTab),
-              content: <DocumentsTab pregnancyId={pregnancyId} />,
+              content: (
+                <Box marginTop={4}>
+                  <DocumentsTab pregnancyId={pregnancyId} />
+                </Box>
+              ),
             },
           ]}
         />

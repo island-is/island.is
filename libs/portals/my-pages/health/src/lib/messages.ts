@@ -2384,10 +2384,6 @@ export const messages = defineMessages({
     defaultMessage: 'Maki',
     id: 'sp.health:partner',
   },
-  pregnancyMessagesTitle: {
-    defaultMessage: 'Skilaboð frá Mæðravernd',
-    id: 'sp.health:pregnancy-messages-title',
-  },
   pregnancyMeasurementsAndDocumentsCard: {
     defaultMessage: 'Mælingar og skjöl',
     id: 'sp.health:pregnancy-measurements-and-documents-card',
@@ -2400,6 +2396,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Á þessari síðu getur þú séð samskiptasögu vegna meðgöngu þinnar, þar á meðal skoðanir, símtöl og skilaboð.',
     id: 'sp.health:pregnancy-communications-intro',
+  },
+  seeAllCommunications: {
+    defaultMessage: 'Sjá öll samskipti',
+    id: 'sp.health:see-all-communications',
   },
   pregnancyCommunicationsSearchPlaceholder: {
     defaultMessage: 'Sía eftir leitarorði',
@@ -2433,6 +2433,10 @@ export const messages = defineMessages({
   pregnancyReason: {
     defaultMessage: 'Ástæða',
     id: 'sp.health:pregnancy-reason',
+  },
+  pregnancyResult: {
+    defaultMessage: 'Niðurstaða',
+    id: 'sp.health:pregnancy-result',
   },
   pregnancyDivision: {
     defaultMessage: 'Deild',

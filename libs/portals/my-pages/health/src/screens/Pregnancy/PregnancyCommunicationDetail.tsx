@@ -1,9 +1,10 @@
 import { ReactNode } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
   Divider,
   GridColumn,
+  GridContainer,
   GridRow,
   Icon,
   Stack,
@@ -13,13 +14,15 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDateWithTime,
-  IntroWrapper,
-  STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import ConversationBackButton from '../HealthConversations/components/ConversationBackButton'
+import * as conversationStyles from '../HealthConversations/HealthConversations.css'
 import { useGetActivePregnancyQuery } from './Pregnancy.generated'
 import { useGetPregnancyCommunicationDetailQuery } from './PregnancyCommunicationDetail.generated'
+import { formatSubjectTerm, parsePhoneCallText } from './utils'
 
 type UseParams = {
   id: string
@@ -31,22 +34,26 @@ interface InfoRow {
 }
 
 const InfoRows = ({ rows }: { rows: InfoRow[] }) => (
-  <Stack space={2}>
+  <Stack space={0}>
     {rows.map((row) => (
-      <GridRow key={row.label}>
-        <GridColumn span={['12/12', '4/12']}>
-          <Text variant="medium" fontWeight="semiBold">
-            {row.label}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['12/12', '8/12']}>
-          {typeof row.value === 'string' ? (
-            <Text variant="medium">{row.value}</Text>
-          ) : (
-            row.value
-          )}
-        </GridColumn>
-      </GridRow>
+      <Box paddingY="p2" key={row.label}>
+        <GridRow>
+          <GridColumn span={['12/12', '4/12']}>
+            <Text variant="medium" fontWeight="semiBold">
+              {row.label}
+            </Text>
+          </GridColumn>
+          <GridColumn span={['12/12', '8/12']}>
+            {typeof row.value === 'string' ? (
+              <Text variant="medium" whiteSpace="preLine">
+                {row.value}
+              </Text>
+            ) : (
+              row.value
+            )}
+          </GridColumn>
+        </GridRow>
+      </Box>
     ))}
   </Stack>
 )
@@ -55,6 +62,7 @@ const PregnancyCommunicationDetail = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
+  const navigate = useNavigate()
 
   const {
     data: pregnancyData,
@@ -97,8 +105,17 @@ const PregnancyCommunicationDetail = () => {
         .join(', ')
     : undefined
 
+  const subjectTerm = detail?.subjectTerm
+    ? formatSubjectTerm(detail.subjectTerm)
+    : undefined
+
+  const parsedPhoneCall = phoneCall?.text
+    ? parsePhoneCallText(phoneCall.text)
+    : undefined
+
   const reason =
-    detail?.subjectTerm ??
+    parsedPhoneCall?.reason ??
+    subjectTerm ??
     (phoneCall?.phoneCallReason != null
       ? `#${phoneCall.phoneCallReason}`
       : undefined)
@@ -228,115 +245,143 @@ const PregnancyCommunicationDetail = () => {
       ]
     : []
 
-  const checklistRows: InfoRow[] = phoneCall
-    ? Object.entries((phoneCall.checklist as Record<string, unknown>) ?? {})
-        .filter(
-          ([, value]) =>
-            typeof value === 'string' ||
-            typeof value === 'number' ||
-            typeof value === 'boolean',
-        )
-        .map(([key, value]) => ({
-          label: key,
-          value: String(value),
-        }))
-    : []
+  const phoneCallRows: InfoRow[] = parsedPhoneCall?.rows ?? []
 
-  const middleRows = examination ? examinationRows : checklistRows
+  const middleRows = examination ? examinationRows : phoneCallRows
+
+  const titleSuffix = phoneCall
+    ? parsedPhoneCall?.reason ?? subjectTerm
+    : subjectTerm
 
   return (
-    <IntroWrapper
-      title={
-        detail?.subjectTerm ? `${kindTitle}: ${detail.subjectTerm}` : kindTitle
-      }
-      serviceProvider={{
-        slug: STAFRAEN_HEILSA_SLUG,
-        tooltip: formatMessage(messages.stafraenHeilsaPregnancyTooltip),
-      }}
-    >
-      {error && !loading ? (
-        <Problem error={error} noBorder={false} />
-      ) : loading ? (
-        <CardLoader />
-      ) : !detail ? (
-        <Problem type="not_found" noBorder={false} />
-      ) : (
-        <>
-          <Box display="flex" alignItems="center" columnGap={2} marginBottom={3}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              background="blue100"
-              borderRadius="full"
-              padding={2}
-              flexShrink={0}
-            >
-              <Icon
-                icon={isPhoneCall ? 'call' : 'reader'}
-                type="outline"
-                color="blue400"
-              />
-            </Box>
-            <Box>
-              {detail.registeredBy?.divisionName && (
-                <Text variant="medium" fontWeight="semiBold">
-                  {detail.registeredBy.divisionName}
+    <GridContainer>
+      <GridRow marginTop={[1, 0, 0]}>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box
+            className={conversationStyles.messageCard}
+            background="white"
+            paddingTop={[2, 2, 3]}
+            paddingBottom={[10, 5, 5]}
+            paddingX={[2, 5, 5]}
+          >
+            {error && !loading ? (
+              <Problem error={error} noBorder={false} />
+            ) : loading ? (
+              <CardLoader />
+            ) : !detail ? (
+              <Problem type="not_found" noBorder={false} />
+            ) : (
+              <>
+                <Box className={conversationStyles.backButton} marginBottom={1}>
+                  <ConversationBackButton
+                    onClick={() =>
+                      navigate(HealthPaths.HealthPregnancyCommunications)
+                    }
+                  />
+                </Box>
+
+                <Text variant="h4" as="h1" marginBottom={2}>
+                  {titleSuffix ? `${kindTitle}: ${titleSuffix}` : kindTitle}
                 </Text>
-              )}
-              <Box display="flex" alignItems="center" columnGap={1}>
-                {detail.dateTime && (
-                  <Text variant="medium">
-                    {formatDateWithTime(detail.dateTime)}
-                  </Text>
+
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  columnGap={2}
+                  paddingBottom={3}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    background="blue100"
+                    borderRadius="full"
+                    flexShrink={0}
+                    style={{ width: 56, height: 56 }}
+                  >
+                    <Icon
+                      icon={isPhoneCall ? 'call' : 'reader'}
+                      type="outline"
+                      color="blue400"
+                    />
+                  </Box>
+                  <Box>
+                    {detail.registeredBy?.divisionName && (
+                      <Text variant="small" fontWeight="semiBold">
+                        {detail.registeredBy.divisionName}
+                      </Text>
+                    )}
+                    <Box display="flex" alignItems="center" columnGap={1}>
+                      {detail.dateTime && (
+                        <Text variant="medium">
+                          {formatDateWithTime(detail.dateTime)}
+                        </Text>
+                      )}
+                      {detail.dateTime && detail.registeredBy?.name && (
+                        <Text variant="medium" color="dark300">
+                          |
+                        </Text>
+                      )}
+                      {detail.registeredBy?.name && (
+                        <Text variant="medium" color="dark400">
+                          {detail.registeredBy.name}
+                        </Text>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Divider />
+
+                <Box paddingY={2}>
+                  <InfoRows rows={metaRows} />
+                </Box>
+
+                {middleRows.length > 0 && (
+                  <>
+                    <Divider />
+                    <Box paddingY={2}>
+                      <InfoRows rows={middleRows} />
+                    </Box>
+                  </>
                 )}
-                {detail.dateTime && detail.registeredBy?.name && (
-                  <Text variant="medium" color="dark300">
-                    |
-                  </Text>
+
+                {(phoneCall
+                  ? parsedPhoneCall?.result ??
+                    (phoneCallRows.length === 0 ? phoneCall.text : undefined)
+                  : detail.text) && (
+                  <>
+                    <Divider />
+                    <Box paddingTop={2}>
+                      <Box paddingY="p2">
+                        <GridRow>
+                          <GridColumn span={['12/12', '4/12']}>
+                            <Text variant="medium" fontWeight="semiBold">
+                              {formatMessage(
+                                phoneCall && parsedPhoneCall?.result
+                                  ? messages.pregnancyResult
+                                  : messages.pregnancyDetailedDescription,
+                              )}
+                            </Text>
+                          </GridColumn>
+                          <GridColumn span={['12/12', '8/12']}>
+                            <Text variant="medium" whiteSpace="preLine">
+                              {phoneCall
+                                ? parsedPhoneCall?.result ?? phoneCall.text
+                                : detail.text}
+                            </Text>
+                          </GridColumn>
+                        </GridRow>
+                      </Box>
+                    </Box>
+                  </>
                 )}
-                {detail.registeredBy?.name && (
-                  <Text variant="medium">{detail.registeredBy.name}</Text>
-                )}
-              </Box>
-            </Box>
+              </>
+            )}
           </Box>
-
-          <Divider />
-
-          <Box marginY={3}>
-            <InfoRows rows={metaRows} />
-          </Box>
-
-          {middleRows.length > 0 && (
-            <>
-              <Divider />
-              <Box marginY={3}>
-                <InfoRows rows={middleRows} />
-              </Box>
-            </>
-          )}
-
-          {detail.text && (
-            <>
-              <Divider />
-              <Box marginTop={3}>
-                <GridRow>
-                  <GridColumn span={['12/12', '4/12']}>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(messages.pregnancyDetailedDescription)}
-                    </Text>
-                  </GridColumn>
-                  <GridColumn span={['12/12', '8/12']}>
-                    <Text variant="medium">{detail.text}</Text>
-                  </GridColumn>
-                </GridRow>
-              </Box>
-            </>
-          )}
-        </>
-      )}
-    </IntroWrapper>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 
