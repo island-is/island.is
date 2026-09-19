@@ -341,7 +341,7 @@ const HealthConversationDetail = () => {
                         paddingTop={index > 0 ? 3 : 0}
                         marginBottom={3}
                       >
-                        <Box display="flex" flexDirection="row">
+                        <Box display="flex" flexDirection="row" minWidth={0}>
                           {isPatient ? (
                             <ConversationAvatar
                               variant="user"
@@ -360,6 +360,7 @@ const HealthConversationDetail = () => {
                             flexDirection="column"
                             marginLeft={2}
                             justifyContent="center"
+                            minWidth={0}
                           >
                             <Text
                               variant="eyebrow"
