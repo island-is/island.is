@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, ScrollView, View, useWindowDimensions } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
 import illustrationSrc from '@/assets/illustrations/health-messages-intro.png'
@@ -29,6 +29,7 @@ export const HealthMessageIntro = ({
   const intl = useIntl()
   const theme = useTheme()
   const { height } = useWindowDimensions()
+  const insets = useSafeAreaInsets()
 
   // Weights map to font families here, so a bare `fontWeight` on a nested Text
   // would keep the inherited light face — the chunk has to go through
@@ -40,7 +41,7 @@ export const HealthMessageIntro = ({
   }
 
   return (
-    <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
@@ -86,6 +87,18 @@ export const HealthMessageIntro = ({
             id: 'health.messages.compose.termsAccept',
           })}
         />
+      </ScrollView>
+      {/* Pinned so the consent action stays reachable without scrolling. The
+          bottom inset is applied here rather than on a SafeAreaView wrapper,
+          so devices without one (Android 3-button nav) still get a gap. */}
+      <View
+        style={{
+          paddingHorizontal: theme.spacing[2],
+          paddingTop: theme.spacing[2],
+          paddingBottom: Math.max(insets.bottom, theme.spacing[2]),
+          backgroundColor: theme.color.white,
+        }}
+      >
         <Button
           title={intl.formatMessage({
             id: 'health.messages.compose.continue',
@@ -93,7 +106,7 @@ export const HealthMessageIntro = ({
           onPress={onContinue}
           disabled={!termsAccepted}
         />
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </View>
   )
 }
