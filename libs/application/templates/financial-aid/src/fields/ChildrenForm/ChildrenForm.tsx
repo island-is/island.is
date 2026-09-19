@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box, Input } from '@island.is/island-ui/core'
@@ -23,6 +23,28 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   const childrenInfo = sortChildrenUnderAgeByAge(childrenExternalData)
   const summaryCommentType = SummaryCommentType.CHILDRENCOMMENT
 
+  useEffect(() => {
+    if (!childrenInfo?.length) {
+      return
+    }
+
+    childrenInfo.forEach((child, index) => {
+      const fieldIndex = `${field.id}[${index}]`
+      const setOptions = { shouldDirty: false, shouldValidate: false }
+
+      setValue(
+        `${fieldIndex}.livesWithApplicant`,
+        child.livesWithApplicant,
+        setOptions,
+      )
+      setValue(
+        `${fieldIndex}.livesWithBothParents`,
+        child.livesWithBothParents,
+        setOptions,
+      )
+    })
+  }, [childrenInfo, field.id, setValue])
+
   return (
     <>
       <Text variant="h3" fontWeight="light" marginBottom={3}>
@@ -35,14 +57,15 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
       {childrenInfo?.map((child, index) => {
         const fieldIndex = `${field.id}[${index}]`
 
-        setValue(`${fieldIndex}.livesWithApplicant`, child.livesWithApplicant)
-        setValue(
-          `${fieldIndex}.livesWithBothParents`,
-          child.livesWithBothParents,
-        )
+        // setValue(`${fieldIndex}.livesWithApplicant`, child.livesWithApplicant)
+        // setValue(
+        //   `${fieldIndex}.livesWithBothParents`,
+        //   child.livesWithBothParents,
+        // )
 
         return (
           <ChildInput
+            key={child.nationalId}
             fieldIndex={fieldIndex}
             errors={errors}
             childFullName={child.fullName}
@@ -80,10 +103,11 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
                 textarea={true}
                 rows={8}
                 backgroundColor="white"
-                onChange={(e) => {
-                  onChange(e.target.value)
-                  setValue(summaryCommentType, e.target.value)
-                }}
+                // onChange={(e) => {
+                //   onChange(e.target.value)
+                //   setValue(summaryCommentType, e.target.value)
+                // }}
+                onChange={(e) => onChange(e.target.value)}
               />
             )
           }}
