@@ -37,6 +37,7 @@ const mapBaseInformation = (
   formId: q.questionnaireId,
   organization: QuestionnairesOrganizationEnum.EL,
   lastSubmissionId: q.lastCreatedSubmissionId,
+  lastSubmitted: q.lastSubmitted ?? undefined,
   senderGroupName: q.senderGroupName ?? undefined,
 })
 

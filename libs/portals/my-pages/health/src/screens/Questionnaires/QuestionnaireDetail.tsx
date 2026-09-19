@@ -133,7 +133,13 @@ const QuestionnaireDetail: FC = () => {
       buttonGroup={{
         actions: [
           link ? (
-            <>
+            <Box
+              key="answer-buttons"
+              display="flex"
+              flexWrap="wrap"
+              columnGap={2}
+              rowGap={2}
+            >
               {!isDraft && canSubmitAgain && (
                 <Box className={styles.button} key={'answer-again-link-box'}>
                   <Button
@@ -164,13 +170,13 @@ const QuestionnaireDetail: FC = () => {
                     : formatMessage(messages.answer)}
                 </Button>
               </Box>
-            </>
+            </Box>
           ) : null,
           isDraft && answeredLink ? (
-            <Box className={styles.button} key={'answer-link-box'}>
+            <Box className={styles.button} key={'answer-link-draft-box'}>
               <Button
+                key={'answer-link-draft'}
                 fluid
-                key={'answer-link'}
                 variant="utility"
                 colorScheme="light"
                 size="small"
@@ -200,6 +206,14 @@ const QuestionnaireDetail: FC = () => {
               </Tag>
             }
           />
+          {questionnaire?.baseInformation.lastSubmitted && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-answered-date"
+              label={formatMessage(messages.answeredDate)}
+              content={formatDate(questionnaire.baseInformation.lastSubmitted)}
+            />
+          )}
           <InfoLine
             loading={loading}
             key="questionnaire-organization"
