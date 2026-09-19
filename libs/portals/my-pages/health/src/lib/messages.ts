@@ -2346,6 +2346,24 @@ export const messages = defineMessages({
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
   },
+  myPregnancyIntro: {
+    defaultMessage:
+      'Hér finnur þú allar upplýsingar sem tengjast meðgöngu þinni á einum stað. Þú getur skoðað fræðsluefni frá mæðravernd, tímalínu samskipta, næstu tímabókanir, mælingar, skjöl og annað sem tengist meðgöngu þinni.',
+    id: 'sp.health:my-pregnancy-intro',
+  },
+  pregnancy: {
+    defaultMessage: 'Meðganga',
+    id: 'sp.health:pregnancy',
+  },
+  readingMaterialPregnancy: {
+    defaultMessage: 'Lesefni um meðgöngu',
+    id: 'sp.health:reading-material-pregnancy',
+  },
+  readingMaterialPregnancyLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/throskaferlid/medganga/',
+    id: 'sp.health:reading-material-pregnancy-link',
+  },
   oldPregnanciesTitle: {
     defaultMessage: 'Eldri meðgöngur',
     id: 'sp.health:old-pregnancies-title',
