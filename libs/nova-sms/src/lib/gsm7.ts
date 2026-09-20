@@ -69,21 +69,26 @@ const COMBINING_MARKS = /[̀-ͯ]/g
 
 const URL_PATTERN = /https?:\/\/\S+/g
 
+/** Punctuation trailing a URL match, e.g. a closing quote, dash or period. */
+const TRAILING_PUNCTUATION = /\p{P}+$/u
+
 /**
- * Percent-encode non-ASCII letters and digits in URLs so the link survives
+ * Percent-encode non-ASCII characters in URLs so the link survives
  * transliteration intact. Existing percent-encoding is left alone.
- * Non-ASCII punctuation and symbols are left for the substitution pass, since
- * they are far more likely to be quotes or dashes trailing the link than part
- * of it.
+ * Punctuation trailing the URL is split off first and left for the
+ * substitution pass, since a closing quote or dash after a link is far more
+ * likely than one inside it.
  */
 const encodeUrls = (text: string): string =>
-  text.replace(URL_PATTERN, (url) =>
-    url.replace(
+  text.replace(URL_PATTERN, (match) => {
+    const suffix = match.match(TRAILING_PUNCTUATION)?.[0] ?? ''
+    const url = match.slice(0, match.length - suffix.length)
+    return (
       // eslint-disable-next-line no-control-regex
-      /[^\u0000-\u007f\p{P}\p{S}]/gu,
-      (char) => encodeURIComponent(char),
-    ),
-  )
+      url.replace(/[^\u0000-\u007f]/gu, (char) => encodeURIComponent(char)) +
+      suffix
+    )
+  })
 
 const isUpperCase = (char: string | undefined): boolean =>
   char !== undefined &&

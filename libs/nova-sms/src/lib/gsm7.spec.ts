@@ -70,9 +70,15 @@ describe('toGsm7', () => {
     ).toBe('Sja http://island.is/a/b?c=d og https://x.is/%C3%BE\nThakka thér')
   })
 
-  it('drops emoji attached to a URL without throwing', () => {
+  it('percent-encodes emoji inside a URL without throwing', () => {
     expect(toGsm7('Sjá https://island.is/x📄 núna')).toBe(
-      'Sja https://island.is/x nuna',
+      'Sja https://island.is/x%F0%9F%93%84 nuna',
+    )
+  })
+
+  it('percent-encodes non-ASCII punctuation inside a URL path', () => {
+    expect(toGsm7('https://island.is/a–b/„c“/d já')).toBe(
+      'https://island.is/a%E2%80%93b/%E2%80%9Ec%E2%80%9C/d ja',
     )
   })
 
