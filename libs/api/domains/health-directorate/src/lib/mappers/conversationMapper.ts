@@ -16,7 +16,9 @@ import {
 import {
   HealthConversationDayTypeEnum,
   HealthConversationDirectionEnum,
+  HealthConversationRecipientAvailabilityEnum,
   HealthConversationRecipientBlockedReasonEnum,
+  HealthConversationReplyAvailabilityEnum,
   HealthConversationReplyBlockedReasonEnum,
   HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
@@ -165,12 +167,114 @@ const toConversationDayTypeEnum = (
   }
 }
 
-const mapOpeningWindow = (
+export const toReplyAvailability = (c: {
+  patientCanReply: boolean
+  replyBlockedReason?: ConversationReplyBlockedReason
+}): HealthConversationReplyAvailabilityEnum => {
+  if (c.patientCanReply)
+    return HealthConversationReplyAvailabilityEnum.CAN_REPLY
+  switch (c.replyBlockedReason) {
+    case ConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT:
+      return HealthConversationReplyAvailabilityEnum.WAITING
+    case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
+      return HealthConversationReplyAvailabilityEnum.EXPIRED
+    default:
+      return HealthConversationReplyAvailabilityEnum.NEVER
+  }
+}
+
+export const toRecipientAvailability = (r: {
+  canCreateConversation: boolean
+  conversationBlockedReason?: RecipientCreateBlockedReason
+}): HealthConversationRecipientAvailabilityEnum => {
+  if (r.canCreateConversation)
+    return HealthConversationRecipientAvailabilityEnum.OPEN
+  return r.conversationBlockedReason ===
+    RecipientCreateBlockedReason.OUTSIDE_MESSAGING_WINDOW
+    ? HealthConversationRecipientAvailabilityEnum.CLOSED
+    : HealthConversationRecipientAvailabilityEnum.NEVER
+}
+
+const parseTime = (
+  time: string,
+): { hours: number; minutes: number; seconds: number } | undefined => {
+  const match = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(time)
+  return match
+    ? {
+        hours: Number(match[1]),
+        minutes: Number(match[2]),
+        seconds: Number(match[3] ?? 0),
+      }
+    : undefined
+}
+
+// Hekla writes an all-day window as 00:00:00-23:59:59.
+const isAllDayWindow = (window: OpeningHoursWindowDto): boolean => {
+  const open = parseTime(window.windowOpen)
+  const close = parseTime(window.windowClose)
+  return (
+    !!open &&
+    !!close &&
+    open.hours === 0 &&
+    open.minutes === 0 &&
+    close.hours === 23 &&
+    close.minutes === 59
+  )
+}
+
+export const mapOpeningWindow = (
   window?: OpeningHoursWindowDto,
 ): HealthDirectorateHealthConversationOpeningWindow | undefined =>
   window
-    ? { windowOpen: window.windowOpen, windowClose: window.windowClose }
+    ? {
+        windowOpen: window.windowOpen,
+        windowClose: window.windowClose,
+        isAllDay: isAllDayWindow(window),
+      }
     : undefined
+
+export const getTodaysWindow = (r: {
+  dayType: MessagingDayType
+  openingHours: MessagingRecipientDto['openingHours']
+}): OpeningHoursWindowDto | undefined => {
+  switch (r.dayType) {
+    case MessagingDayType.HOLIDAY:
+      return r.openingHours.holiday
+    case MessagingDayType.WEEKEND:
+      return r.openingHours.weekend
+    default:
+      return r.openingHours.weekday
+  }
+}
+
+export const getClosesAt = (
+  availability: HealthConversationRecipientAvailabilityEnum,
+  todaysWindow: OpeningHoursWindowDto | undefined,
+  now: Date,
+): Date | undefined => {
+  if (
+    availability !== HealthConversationRecipientAvailabilityEnum.OPEN ||
+    !todaysWindow ||
+    isAllDayWindow(todaysWindow)
+  )
+    return undefined
+  const close = parseTime(todaysWindow.windowClose)
+  if (!close) return undefined
+
+  const closesAt = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      close.hours,
+      close.minutes,
+      close.seconds,
+    ),
+  )
+  // Open with a close time already passed today: the window runs past midnight.
+  if (closesAt <= now) closesAt.setUTCDate(closesAt.getUTCDate() + 1)
+  return closesAt
+}
 
 /* 
   The Heilsuvera web chat is not a Hekla conversation type, it's appended
@@ -223,51 +327,59 @@ const TYPE_INSTRUCTIONS: Record<string, MessageDescriptor> = {
 export const mapMessagingRecipient = (
   r: MessagingRecipientDto,
   formatMessage: FormatMessage,
-): HealthDirectorateHealthConversationRecipient => ({
-  nodeId: r.nodeId,
-  groupId: r.groupId,
-  treatmentId: r.treatmentId,
-  name: r.name,
-  allowsMessaging:
-    r.canCreateConversation ||
-    r.conversationBlockedReason !==
-      RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED,
-  messagingWindowOpen: r.messagingWindowOpen,
-  messagingWindowClose: r.messagingWindowClose,
-  isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-  isClosedToday: r.isClosedToday,
-  dayType: toConversationDayTypeEnum(r.dayType),
-  nextOpensAt: r.nextOpensAt
-    ? {
-        date: new Date(r.nextOpensAt.date),
-        windowOpen: r.nextOpensAt.windowOpen,
-        windowClose: r.nextOpensAt.windowClose,
-      }
-    : undefined,
-  openingHours: {
-    weekday: mapOpeningWindow(r.openingHours.weekday),
-    weekend: mapOpeningWindow(r.openingHours.weekend),
-    holiday: mapOpeningWindow(r.openingHours.holiday),
-  },
-  patientReplyWindowDays: r.patientReplyWindowDays,
-  allowedMessageTypes: r.allowedConversationTypes.map(
-    (t): HealthDirectorateHealthConversationType => {
-      const instructions = TYPE_INSTRUCTIONS[t.patientInitiatedTypeCode]
-      return {
-        patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-        title: t.title,
-        description: t.description,
-        instructions: instructions ? formatMessage(instructions) : undefined,
-        isCertificate: t.isCertificate,
-      }
+  now: Date = new Date(),
+): HealthDirectorateHealthConversationRecipient => {
+  const availability = toRecipientAvailability(r)
+  const todaysWindow = getTodaysWindow(r)
+  return {
+    availability,
+    todaysWindow: mapOpeningWindow(todaysWindow),
+    closesAt: getClosesAt(availability, todaysWindow, now),
+    nodeId: r.nodeId,
+    groupId: r.groupId,
+    treatmentId: r.treatmentId,
+    name: r.name,
+    allowsMessaging:
+      r.canCreateConversation ||
+      r.conversationBlockedReason !==
+        RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED,
+    messagingWindowOpen: r.messagingWindowOpen,
+    messagingWindowClose: r.messagingWindowClose,
+    isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+    isClosedToday: r.isClosedToday,
+    dayType: toConversationDayTypeEnum(r.dayType),
+    nextOpensAt: r.nextOpensAt
+      ? {
+          date: new Date(r.nextOpensAt.date),
+          windowOpen: r.nextOpensAt.windowOpen,
+          windowClose: r.nextOpensAt.windowClose,
+        }
+      : undefined,
+    openingHours: {
+      weekday: mapOpeningWindow(r.openingHours.weekday),
+      weekend: mapOpeningWindow(r.openingHours.weekend),
+      holiday: mapOpeningWindow(r.openingHours.holiday),
     },
-  ),
-  canCreateConversation: r.canCreateConversation,
-  conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
-    r.conversationBlockedReason,
-  ),
-  canRequestCertificate: r.canRequestCertificate,
-  certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
-    r.certificateBlockedReason,
-  ),
-})
+    patientReplyWindowDays: r.patientReplyWindowDays,
+    allowedMessageTypes: r.allowedConversationTypes.map(
+      (t): HealthDirectorateHealthConversationType => {
+        const instructions = TYPE_INSTRUCTIONS[t.patientInitiatedTypeCode]
+        return {
+          patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+          title: t.title,
+          description: t.description,
+          instructions: instructions ? formatMessage(instructions) : undefined,
+          isCertificate: t.isCertificate,
+        }
+      },
+    ),
+    canCreateConversation: r.canCreateConversation,
+    conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
+      r.conversationBlockedReason,
+    ),
+    canRequestCertificate: r.canRequestCertificate,
+    certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
+      r.certificateBlockedReason,
+    ),
+  }
+}

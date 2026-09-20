@@ -2108,8 +2108,7 @@ export const messages = defineMessages({
     id: 'sp.health:health-messages-closing-soon-title',
   },
   healthConversationClosingSoonText: {
-    defaultMessage:
-      'Sendu skilaboðin þín áður en lokað er kl. {closeTime}. Eftir það er ekki hægt að senda skilaboð fyrr en {hasOpenTime, select, false {á morgun} other {kl. {openTime} á morgun}}.',
+    defaultMessage: 'Sendu skilaboðin þín áður en lokað er kl. {closeTime}.',
     id: 'sp.health:health-messages-closing-soon-text',
   },
   healthConversationClosedTitle: {
@@ -2145,6 +2144,10 @@ export const messages = defineMessages({
     defaultMessage: 'Lokað',
     id: 'sp.health:health-messages-opening-hours-closed',
   },
+  healthConversationOpeningHoursAllDay: {
+    defaultMessage: 'Allan sólarhringinn',
+    id: 'sp.health:health-messages-opening-hours-all-day',
+  },
   healthConversationRecipientClosedOption: {
     defaultMessage:
       'Lokað núna. {name} tekur við skilaboðum frá kl. {openTime} til {closeTime}.',
@@ -2167,34 +2170,10 @@ export const messages = defineMessages({
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
   },
-  healthConversationReplyBlockedMissingRecipientText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
-    id: 'sp.health:health-messages-reply-blocked-missing-recipient-text',
-  },
-  healthConversationReplyBlockedRepliesDisabledText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
-    id: 'sp.health:health-messages-reply-blocked-replies-disabled-text',
-  },
-  healthConversationReplyBlockedNoReplyGroupText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-no-reply-group-text',
-  },
-  healthConversationReplyBlockedMessagingNotAllowedText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-messaging-not-allowed-text',
-  },
-  healthConversationReplyBlockedPatientReplyNotAllowedText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-patient-reply-not-allowed-text',
-  },
   healthConversationReplyBlockedAwaitingAcknowledgementText: {
     defaultMessage:
       'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda',
     id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
-  },
-  healthConversationReplyBlockedOutsideWindowText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-outside-window-text',
   },
   healthConversationReplyBlockedWindowExpiredText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',

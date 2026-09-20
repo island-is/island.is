@@ -1,11 +1,13 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 import {
   HealthConversationDayTypeEnum,
+  HealthConversationRecipientAvailabilityEnum,
   HealthConversationRecipientBlockedReasonEnum,
 } from './enums'
 import {
   HealthDirectorateHealthConversationNextOpening,
   HealthDirectorateHealthConversationOpeningHours,
+  HealthDirectorateHealthConversationOpeningWindow,
 } from './healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationType } from './healthConversationType.model'
 
@@ -36,28 +38,48 @@ export class HealthDirectorateHealthConversationRecipient {
 
   @Field({
     nullable: true,
-    description:
-      'Effective window open time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s.',
+    deprecationReason:
+      'Resolves to the next open day when closed today. Use todaysWindow and nextOpensAt instead.',
   })
   messagingWindowOpen?: string
 
   @Field({
     nullable: true,
-    description:
-      'Effective window close time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s.',
+    deprecationReason:
+      'Resolves to the next open day when closed today. Use todaysWindow and nextOpensAt instead.',
   })
   messagingWindowClose?: string
 
-  @Field()
+  @Field({ deprecationReason: 'Use availability instead.' })
   isCurrentlyWithinWindow!: boolean
 
-  @Field()
+  @Field({ deprecationReason: 'Use todaysWindow instead, absent when closed.' })
   isClosedToday!: boolean
 
   @Field(() => HealthConversationDayTypeEnum, {
-    description: 'Which kind of day today’s window was resolved for, in UTC.',
+    deprecationReason: 'Use todaysWindow instead, which is already resolved.',
   })
   dayType!: HealthConversationDayTypeEnum
+
+  @Field(() => HealthConversationRecipientAvailabilityEnum, {
+    description:
+      'The one field to branch the UI on. As of the time of the request.',
+  })
+  availability!: HealthConversationRecipientAvailabilityEnum
+
+  @Field(() => HealthDirectorateHealthConversationOpeningWindow, {
+    nullable: true,
+    description:
+      'The hours the recipient keeps today. Absent when it is closed all of today.',
+  })
+  todaysWindow?: HealthDirectorateHealthConversationOpeningWindow
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When the current window closes. Only set while availability is OPEN and the window is not all day, so a client can warn that closing is near.',
+  })
+  closesAt?: Date
 
   @Field(() => HealthDirectorateHealthConversationNextOpening, {
     nullable: true,

@@ -5,6 +5,7 @@ import { HealthConversationRecipientFragment } from '../NewHealthConversation.ge
 import {
   getNextOpeningInfo,
   getOpeningHoursLabels,
+  WindowLabels,
 } from '../utils/messagingWindow'
 
 interface Props {
@@ -24,10 +25,12 @@ const ClosedRecipientAlert = ({ recipient }: Props) => {
   const hours = getOpeningHoursLabels(recipient.openingHours)
   const nextOpening = getNextOpeningInfo(recipient.nextOpensAt)
 
-  const hourRange = (window?: { openLabel: string; closeLabel: string }) =>
-    window
-      ? `${window.openLabel}–${window.closeLabel}`
-      : formatMessage(messages.healthConversationOpeningHoursClosed)
+  const hourRange = (window?: WindowLabels) =>
+    !window
+      ? formatMessage(messages.healthConversationOpeningHoursClosed)
+      : window.isAllDay
+      ? formatMessage(messages.healthConversationOpeningHoursAllDay)
+      : `${window.openLabel}–${window.closeLabel}`
 
   return (
     <Box

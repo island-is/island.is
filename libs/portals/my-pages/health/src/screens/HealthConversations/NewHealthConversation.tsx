@@ -34,10 +34,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
-import { formatTimeLabel, getTodaysWindow } from './utils/messagingWindow'
+import { getWindowLabels } from './utils/messagingWindow'
+import {
+  getNewConversationPageMode,
+  pickClosedRecipient,
+} from './utils/recipientAvailability'
 import { MAX_MESSAGE_LENGTH } from './utils/constants'
 import { Markdown } from '@island.is/shared/components'
-import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
+import { HealthDirectorateHealthConversationRecipientAvailability as Availability } from '@island.is/api/schema'
 import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
 import {
@@ -51,22 +55,6 @@ interface CertificateAlert {
   title?: string
   message?: string
 }
-
-const isRecipientOutsideWindow = (recipient: {
-  canCreateConversation: boolean
-  conversationBlockedReason?: HealthDirectorateHealthConversationRecipientBlockedReason | null
-}) =>
-  !recipient.canCreateConversation &&
-  recipient.conversationBlockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW
-
-const isMessagingNotAllowed = (recipient: {
-  canCreateConversation: boolean
-  conversationBlockedReason?: HealthDirectorateHealthConversationRecipientBlockedReason | null
-}) =>
-  !recipient.canCreateConversation &&
-  recipient.conversationBlockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.MESSAGING_NOT_ALLOWED
 
 const getRecipientKey = (recipient: {
   nodeId: string
@@ -113,47 +101,38 @@ const NewHealthConversation = () => {
     })
 
   const recipients = data?.healthDirectorateHealthConversationRecipients
-  const hasRecipients = !!recipients?.length
-  const messagingUnavailable =
-    !!recipients && recipients.every(isMessagingNotAllowed)
+  const pageMode = recipients
+    ? getNewConversationPageMode(recipients)
+    : undefined
+  const closedRecipient = recipients
+    ? pickClosedRecipient(recipients)
+    : undefined
   const hasMultipleRecipients = (recipients?.length ?? 0) > 1
 
   const recipientOptions =
     recipients?.map((r) => {
-      const todaysWindow = getTodaysWindow(r)
-      const openTime = formatTimeLabel(todaysWindow?.windowOpen)
-      const closeTime = formatTimeLabel(todaysWindow?.windowClose)
+      const hours = getWindowLabels(r.todaysWindow)
       return {
         label: r.name,
         value: getRecipientKey(r),
-        description: isMessagingNotAllowed(r)
-          ? formatMessage(messages.healthConversationRecipientNotAllowedOption)
-          : !isRecipientOutsideWindow(r)
-          ? undefined
-          : r.isClosedToday || !openTime || !closeTime
-          ? formatMessage(messages.healthConversationRecipientClosedTodayOption)
-          : formatMessage(messages.healthConversationRecipientClosedOption, {
-              name: r.name,
-              openTime,
-              closeTime,
-            }),
+        description:
+          r.availability === Availability.NEVER
+            ? formatMessage(
+                messages.healthConversationRecipientNotAllowedOption,
+              )
+            : r.availability === Availability.OPEN
+            ? undefined
+            : hours && !hours.isAllDay
+            ? formatMessage(messages.healthConversationRecipientClosedOption, {
+                name: r.name,
+                openTime: hours.openLabel,
+                closeTime: hours.closeLabel,
+              })
+            : formatMessage(
+                messages.healthConversationRecipientClosedTodayOption,
+              ),
       }
     }) ?? []
-
-  // A recipient closed for new conversations never accepts certificate
-  // requests either, so conversation availability alone decides this. Only
-  // recipients that ever take conversations count towards "all closed".
-  const messagingAllowedRecipients = recipients?.filter(
-    (r) => !isMessagingNotAllowed(r),
-  )
-  const allRecipientsClosed =
-    !!messagingAllowedRecipients?.length &&
-    messagingAllowedRecipients.every((r) => !r.canCreateConversation) &&
-    messagingAllowedRecipients.some(isRecipientOutsideWindow)
-
-  const allClosedAlertRecipient =
-    messagingAllowedRecipients?.find(isRecipientOutsideWindow) ??
-    messagingAllowedRecipients?.[0]
 
   const preselectedTreatment = searchParams.get('treatment')
   const treatmentMatch = preselectedTreatment
@@ -201,7 +180,8 @@ const NewHealthConversation = () => {
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
 
-  const isConversationBlocked = recipient?.canCreateConversation === false
+  const isConversationBlocked =
+    !!recipient && recipient.availability !== Availability.OPEN
 
   const isFormLocked = isConversationBlocked || isCertificateBlocked
 
@@ -312,7 +292,7 @@ const NewHealthConversation = () => {
     }
   }
 
-  if (!initialLoading && !error && messagingUnavailable) {
+  if (!initialLoading && !error && pageMode === 'contactOnly') {
     return (
       <Box marginTop={[1, 0, 0]}>
         <ConversationMobileBackHeader
@@ -368,14 +348,14 @@ const NewHealthConversation = () => {
         )}
         {!initialLoading &&
           !error &&
-          allRecipientsClosed &&
-          allClosedAlertRecipient && (
-            <ClosedRecipientAlert recipient={allClosedAlertRecipient} />
+          pageMode === 'allClosed' &&
+          closedRecipient && (
+            <ClosedRecipientAlert recipient={closedRecipient} />
           )}
-        {!initialLoading && !error && !allRecipientsClosed && recipient && (
+        {!initialLoading && !error && pageMode === 'form' && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!initialLoading && !error && !allRecipientsClosed && hasRecipients && (
+        {!initialLoading && !error && pageMode === 'form' && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box

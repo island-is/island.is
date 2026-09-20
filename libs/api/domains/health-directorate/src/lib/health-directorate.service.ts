@@ -60,6 +60,7 @@ import {
   mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
+  toReplyAvailability,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
@@ -865,6 +866,7 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      replyAvailability: toReplyAvailability(c),
       messagingWindowOpen: c.messagingWindowOpen ?? undefined,
       messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
