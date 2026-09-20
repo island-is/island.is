@@ -217,6 +217,7 @@ const TYPE_INSTRUCTIONS: Record<string, MessageDescriptor> = {
   MEDICATION_INQUIRY: m.instructionsMedication,
   CERTIFICATE: m.instructionsCertificate,
   REFERRAL_REQUEST: m.instructionsReferral,
+  GENERAL_INQUIRY: m.instructionsGeneralInquiry,
 }
 
 export const mapMessagingRecipient = (
