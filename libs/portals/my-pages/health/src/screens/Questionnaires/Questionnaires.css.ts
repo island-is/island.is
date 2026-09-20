@@ -9,6 +9,9 @@ export const select = style({
 
 export const button = style(
   themeUtils.responsiveStyle({
+    xs: {
+      minWidth: 140, // minWidth from design
+    },
     md: {
       minWidth: 175, // minWidth from design
     },

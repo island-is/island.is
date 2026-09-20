@@ -195,7 +195,7 @@ const QuestionnaireDetail: FC = () => {
       desktopContentSpan="10/12"
     >
       {questionnaire && !error && (
-        <InfoLineStack>
+        <InfoLineStack space={[0, 0, 2]}>
           <InfoLine
             loading={loading}
             key="questionnaire-status"
