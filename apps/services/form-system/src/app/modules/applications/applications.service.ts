@@ -256,7 +256,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -339,7 +339,7 @@ export class ApplicationsService {
       const loginTypes = await this.getLoginTypes(user)
       const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
       if (
-        !this.doesUserMatchApplication(application, user, loginTypes) ||
+        !this.doesUserMatchApplication(application, user) ||
         !hasRequiredDelegation
       ) {
         throw new ForbiddenException(
@@ -574,7 +574,7 @@ export class ApplicationsService {
         const loginTypes = await this.getLoginTypes(user)
         if (
           !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
-          !this.doesUserMatchApplication(application, user, loginTypes)
+          !this.doesUserMatchApplication(application, user)
         ) {
           const responseDto = new ApplicationResponseDto()
           responseDto.isLoginTypeAllowed = false
@@ -668,13 +668,10 @@ export class ApplicationsService {
     locale: Locale,
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-
     const applications = await this.applicationModel.findAll({
       where: {
-        nationalId,
+        nationalId: user.nationalId,
+        actorNationalId: user.actor?.nationalId || user.nationalId,
         pruned: false,
         isTest: false,
       },
@@ -730,20 +727,16 @@ export class ApplicationsService {
     formId: string,
     slug: string,
   ): Promise<ApplicationDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-
     const applications = await this.applicationModel.findAll({
       where: {
-        nationalId,
+        nationalId: user.nationalId,
+        actorNationalId: user.actor?.nationalId || user.nationalId,
         formId,
         status: { [Op.in]: [ApplicationStatus.DRAFT] },
         pruned: false,
       },
       include: [{ model: Value, as: 'values' }],
     })
-
     const loginTypes = await this.getLoginTypes(user)
     const applicationsByUser = await this.getApplicationsByUser(
       applications,
@@ -827,40 +820,12 @@ export class ApplicationsService {
   private doesUserMatchApplication(
     application: Application,
     user: User,
-    loginTypes: string[],
   ): boolean {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
-
-    const loggedInUser = application.values?.find(
-      (value) =>
-        value.fieldType === FieldTypesEnum.APPLICANT &&
-        value.json?.nationalId === nationalId &&
-        loginTypes.includes(value.json?.applicantType ?? ''),
+    return (
+      application.nationalId === user.nationalId &&
+      application.actorNationalId ===
+        (user.actor?.nationalId ?? user.nationalId)
     )
-
-    const delegator = delegatorNationalId
-      ? application.values?.find(
-          (value) =>
-            value.fieldType === FieldTypesEnum.APPLICANT &&
-            value.json?.nationalId === delegatorNationalId &&
-            loginTypes.includes(value.json?.applicantType ?? ''),
-        )
-      : null
-
-    if (hasDelegation === true) {
-      if (loggedInUser && delegator) {
-        return true
-      }
-    } else {
-      if (loggedInUser) {
-        return true
-      }
-    }
-
-    return false
   }
 
   private async getApplicationsByUser(
@@ -871,7 +836,7 @@ export class ApplicationsService {
     const filteredApplications: Application[] = []
 
     for (const application of applications) {
-      if (this.doesUserMatchApplication(application, user, loginTypes)) {
+      if (this.doesUserMatchApplication(application, user)) {
         filteredApplications.push(application)
       }
     }
@@ -1057,7 +1022,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1229,7 +1194,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1392,7 +1357,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(

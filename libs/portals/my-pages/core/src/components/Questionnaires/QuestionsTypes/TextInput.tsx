@@ -1,4 +1,5 @@
 import { Box, Input } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import React from 'react'
 import * as styles from './QuestionTypes.css'
 
@@ -13,6 +14,7 @@ export interface TextInputProps {
   required?: boolean
   multiline?: boolean
   rows?: number
+  resizable?: boolean
   maxLength?: number
   type?: 'text' | 'number' | 'decimal'
   min?: string
@@ -31,6 +33,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   required = false,
   multiline = false,
   rows = 4,
+  resizable = false,
   maxLength,
   type = 'text',
   min,
@@ -86,9 +89,10 @@ export const TextInput: React.FC<TextInputProps> = ({
   return (
     <Box
       width="full"
-      className={
-        type === 'number' || type === 'decimal' ? styles.numberInput : undefined
-      }
+      className={cn({
+        [styles.numberInput]: type === 'number' || type === 'decimal',
+        [styles.noResizeTextarea]: multiline && !resizable,
+      })}
     >
       <Input
         label={label}
