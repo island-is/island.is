@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 
 import type { CaseTableGroup } from '@island.is/judicial-system/types'
 import {
@@ -54,7 +54,14 @@ const useCaseTableGroups = (): CaseTableGroup[] => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
 
-  return getVisibleCaseTableGroups(getCaseTableGroups(user), features)
+  // Memoised because the result is rebuilt from scratch every time - the groups
+  // are mapped and their tables filtered, so nothing survives by identity.
+  // Callers that memoise on it would otherwise never cache: SearchModal holds
+  // the search string, so it renders on every keystroke.
+  return useMemo(
+    () => getVisibleCaseTableGroups(getCaseTableGroups(user), features),
+    [user, features],
+  )
 }
 
 export default useCaseTableGroups
