@@ -2426,6 +2426,10 @@ export const messages = defineMessages({
     defaultMessage: 'Gildir til',
     id: 'sp.health:questionnaire-expiration',
   },
+  questionnaireSentDate: {
+    defaultMessage: 'Sent dags',
+    id: 'sp.health:questionnaire-sent-date',
+  },
   questionnaireSender: {
     defaultMessage: 'Sent af',
     id: 'sp.health:questionnaire-sender',
@@ -2433,6 +2437,10 @@ export const messages = defineMessages({
   expiredQuestionnaire: {
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
+  },
+  expiredQuestionnaires: {
+    defaultMessage: 'Útrunnir',
+    id: 'sp.health:expired-questionnaires',
   },
   answeredQuestionnaire: {
     defaultMessage: 'Svarað',
@@ -2709,6 +2717,14 @@ export const messages = defineMessages({
       'Þú getur valið ákveðið tímabil eða allt að 3 ár fram í tímann.',
     id: 'sp.health:how-long-description',
   },
+  expiredPermits: {
+    defaultMessage: 'Útrunnar',
+    id: 'sp.health:expired-permits',
+  },
+  noExpiredPermitsRegistered: {
+    defaultMessage: 'Þú ert ekki með neinar útrunnar heimildir.',
+    id: 'sp.health:no-expired-permits-registered',
+  },
   showExpiredPermits: {
     defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
@@ -2921,13 +2937,17 @@ export const messages = defineMessages({
   },
   noActivePermitsRegistered: {
     defaultMessage:
-      'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
+      'Þú ert ekki með neinar heimildir í gildi. Útrunnar heimildir má finna undir flipanum "Útrunnar".',
     id: 'sp.health:no-active-permits-registered',
   },
   noActiveQuestionnairesRegistered: {
     defaultMessage:
-      'Þú ert ekki með neina virka spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
+      'Þú ert ekki með neina virka spurningalista. Útrunna spurningalista má finna undir flipanum "Útrunnir".',
     id: 'sp.health:no-active-questionnaires-registered',
+  },
+  noExpiredQuestionnairesRegistered: {
+    defaultMessage: 'Þú ert ekki með neina útrunna spurningalista.',
+    id: 'sp.health:no-expired-questionnaires-registered',
   },
   active: {
     defaultMessage: 'Virk',
