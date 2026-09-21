@@ -401,8 +401,8 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         const grantable =
           testCase.domains
             .find((d) => d.name === domain.name)
-            ?.apiScopes?.filter((s) => s.allowExplicitDelegationGrant)
-            .length ?? 0
+            ?.apiScopes?.filter((s) => s.allowExplicitDelegationGrant).length ??
+          0
         return domain.scopes.length > 0 && grantable >= 2
       })
 
