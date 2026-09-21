@@ -80,6 +80,29 @@ describe('CaseRepositoryService - case reads', () => {
       )
     })
 
+    // A document copied from a merged case is an ordinary filed document of
+    // the case it was copied into, so a court session reads its documents in
+    // one place - here and under a merged case alike.
+    it('should read the documents of a court session in one place', () => {
+      const include = findOneOptions().include
+      const courtSessions = included(include, 'courtSessions')
+      const mergedCaseCourtSessions = included(
+        included(include, 'mergedCases')?.include,
+        'courtSessions',
+      )
+
+      expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
+      expect(
+        included(courtSessions?.include, 'mergedFiledDocuments'),
+      ).toBeUndefined()
+      expect(
+        included(mergedCaseCourtSessions?.include, 'filedDocuments'),
+      ).toBeDefined()
+      expect(
+        included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
+      ).toBeUndefined()
+    })
+
     describe('no live case', () => {
       beforeEach(async () => {
         mockCaseModel.findOne.mockReset()
@@ -171,6 +194,26 @@ describe('CaseRepositoryService - case reads', () => {
           [theCase],
           { transaction },
         )
+      })
+
+      it('should read the documents of a court session in one place', () => {
+        const include = findOneOptions().include
+        const courtSessions = included(include, 'courtSessions')
+        const mergedCaseCourtSessions = included(
+          included(include, 'mergedCases')?.include,
+          'courtSessions',
+        )
+
+        expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
+        expect(
+          included(courtSessions?.include, 'mergedFiledDocuments'),
+        ).toBeUndefined()
+        expect(
+          included(mergedCaseCourtSessions?.include, 'filedDocuments'),
+        ).toBeDefined()
+        expect(
+          included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
+        ).toBeUndefined()
       })
 
       it('should not narrow the parties on the linked cases', () => {
