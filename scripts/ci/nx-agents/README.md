@@ -68,8 +68,12 @@ still builds the images in a matrix.
   as the matrix does.
 - The target is not cached, so an agent builds one image at a time. It keeps its Docker builder
   between builds, so the layers the images share are built once per agent.
-- An image that is already in the registry is not built again. The tag is the same for every
-  attempt of a workflow run, so this is what makes re-running jobs cheap.
+- An image that is already in the registry is not built again (`docker-build.sh`). Either with the
+  tag of this run, which is the same for every attempt of a workflow run, so re-running jobs is
+  cheap. Or with a tag from the hash of the task (`nx-<hash>`) from an earlier run: that image gets
+  the tag of this run, which takes seconds. The services a feature deployment adds to what is
+  affected rarely change, so they are rarely built. Such an image has the commit and branch it was
+  built from in its environment (`GIT_COMMIT_SHA`, `DD_GIT_*`), everything else is the same.
 - Each task writes what it built to `dist/docker-build-data/`, the agent uploads that as an
   artifact and `deploy-feature` merges it (`merge-docker-build-data.mjs`), which fails if an
   image is missing.
