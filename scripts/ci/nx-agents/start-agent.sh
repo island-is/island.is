@@ -33,10 +33,10 @@ NODE_OPTIONS="--max-old-space-size=4096"
 API_MOCKS=true
 EOF
 
-# Same as `_common.sh`, used by `run-in-parallel-native.sh build`
+# Same as `_common.sh`, which the pull request builds used before Nx Agents
 echo 'NODE_OPTIONS="--max-old-space-size=8192"' >.env.build
 
-# Same as the linting and typecheck jobs
+# What the linting and typecheck jobs had before Nx Agents
 echo 'NODE_OPTIONS="--max-old-space-size=4096"' | tee .env.lint >.env.typecheck
 
 # Set Datadog config per-project

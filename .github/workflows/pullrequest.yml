@@ -4,9 +4,6 @@ name: Monorepo pipeline - pull request
 # orchestrates and the `agents` jobs (our own runners) execute the tasks, see
 # `scripts/ci/nx-agents/README.md`.
 #
-# The pipeline this replaced (the `legacy-*` jobs) runs instead for pull requests with the
-# `legacy-ci` label. Labels are read when a run is triggered, so push after adding the label.
-#
 # The `success` job is the required status check, and together with its `Announce success` step
 # and the `pr-event` artifact it is how `.github/actions/ci-io.ts` finds the last good run.
 
@@ -57,18 +54,9 @@ env:
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
   YARN_ENABLE_HARDENED_MODE: '0'
-  # Only used by the legacy jobs
-  DISABLE_CHUNKS: 'true'
-  DISABLE_GROUPING: 'false'
-  DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '8'
-  MAX_JOBS: '3'
-  NX_MAX_PARALLEL: '4'
 
 jobs:
   plan:
-    # Every job of the distributed pipeline needs this one, so this is the only place to check the label
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'legacy-ci') }}
     runs-on: arc-shared
     timeout-minutes: 30
     env:
@@ -76,6 +64,7 @@ jobs:
     permissions:
       contents: 'read'
       actions: 'read'
+      pull-requests: 'write'
     outputs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
@@ -93,6 +82,16 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      # The comment still has the result of the previous commit
+      - name: Comment that the checks are running
+        if: ${{ github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: node scripts/ci/nx-agents/pr-comment.mjs running
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 
       # The main job and the agents all start after this job, so make sure the
       # generated files cache is warm instead of having each of them run codegen
@@ -213,6 +212,10 @@ jobs:
       NX_HEAD: ${{ needs.plan.outputs.NX_HEAD }}
       NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.plan.outputs.agent-count }}
       NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-main-setup
+    outputs:
+      failed-checks: ${{ steps.run.outputs.failed-checks }}
+      failed-tasks: ${{ steps.run.outputs.failed-tasks }}
+      nx-cloud-url: ${{ steps.run.outputs.nx-cloud-url }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -250,11 +253,14 @@ jobs:
           NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
           TARGETS: ${{ needs.plan.outputs.targets }}
 
+      # Starts with the quick workspace checks, and fails right away if one of them does
       - name: Run lint, typecheck, build, test and e2e on the agents
+        id: run
         run: ./scripts/ci/nx-agents/run.sh
         env:
           NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
           NX_AGENTS_ARGS: ${{ needs.plan.outputs.nx-args }}
+          UNICORN_PROJECTS: ${{ needs.plan.outputs.unicorn-projects }}
 
       # Agents wait for work until the run is completed, also when this job fails or is cancelled
       - name: Complete CI run
@@ -263,50 +269,34 @@ jobs:
         env:
           NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
 
-  unicorn-tests:
-    name: All projects have some tests
-    needs:
-      - plan
-    if: ${{ needs.plan.outputs.unicorn-projects != '' }}
+  # Not Nx tasks of the distributed run: this job pushes commits to the pull request, and
+  # it needs no other job so the fixes are pushed (which restarts the pipeline) early
+  autofix:
+    name: Autofix (lint, format) and shellcheck
     runs-on: arc-shared
+    timeout-minutes: 30
+    permissions:
+      contents: 'read'
+      # Review comments from shellcheck, and the comment about what was pushed
+      pull-requests: 'write'
     env:
-      projects: ${{ needs.plan.outputs.unicorn-projects }}
-      # Listing tests is not something to distribute or cache, so keep it out of the agents' CI execution
-      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-unicorn-tests
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-autofix
+      BASE: origin/${{ github.base_ref || 'main' }}
     steps:
-      - name: checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the base commit
+          fetch-depth: 0
+          persist-credentials: false
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
+          ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Verify that projects have some tests
-        run: |
-          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted).
-          # NO_COLOR=1: Nx 22 (picocolors) forces ANSI colour on the stream prefix in CI even when stdout is piped,
-          # so lines start with escape codes instead of the project name and the anchored grep below matches nothing.
-          NO_COLOR=1 yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
-            grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
-          # Get affected projects sorted
-          echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
-          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
-            echo "These projects don't have any tests:"
-            echo "${d}"
-            exit 1
-          fi
-          echo "All projects ($projects) have tests."
-
-  # The jobs below are not Nx tasks (or push commits), so they run next to either pipeline
-
-  run-shellcheck:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - uses: reviewdog/action-shellcheck@v1
+      # First, so it checks the files as they were pushed and before there is a `node_modules`.
+      # The steps after it still run when it fails, so fixes are pushed either way
+      - name: Shellcheck
+        uses: reviewdog/action-shellcheck@v1
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
@@ -314,297 +304,69 @@ jobs:
           exclude: >-
             */node_modules/*
 
-  formatting:
-    needs:
-      - plan
-      - legacy-prepare
-    # One of the two is always skipped
-    if: ${{ !cancelled() && (needs.plan.result == 'success' || needs.legacy-prepare.result == 'success') }}
-    runs-on: arc-shared
-    timeout-minutes: 15
-    env:
-      NX_BASE: ${{ needs.plan.outputs.NX_BASE || needs.legacy-prepare.outputs.NX_BASE }}
-      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-formatting
-    steps:
-      - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          persist-credentials: false
-          # Need full repo for Nx to find the commits at NX_*
-          fetch-depth: 0
-
       - name: Setup yarn
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/setup-yarn
 
-      - name: NX format:write
-        env:
-          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
-          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-        run: |
-          yarn nx format:write
-          node scripts/ci/docker/git-check-dirty.mjs "." "format" "dirtybot"
-
-  lintfix-changed-files:
-    name: Lintfix Changed Files
-    runs-on: arc-shared
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-    env:
-      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-lintfix
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          # Need full repo for Nx to find the commits at NX_* below
-          fetch-depth: 0
-          persist-credentials: false
-          # Need ref to know where to push to
-          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Run lintfix
-        id: lintfix
+      # What can't be fixed fails the `lint` tasks of the distributed run, so it doesn't have to fail this job
+      - name: Lint fix
+        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        continue-on-error: true
         # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
         # and causes unintended lint changes when using a different commit
         run: |
-          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
-          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
-            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
-          fi
+          status=0
+          yarn nx affected -t lint --base="$BASE" --fix || status=$?
+          git diff --name-only | sort > "$RUNNER_TEMP/autofix-lint.txt"
+          exit "$status"
 
-      - name: Commit changed files
-        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+      # After the lint fixes, so they are formatted as well
+      - name: Format
+        if: ${{ !cancelled() }}
+        run: |
+          yarn nx format:write --base="$BASE"
+          touch "$RUNNER_TEMP/autofix-lint.txt"
+          git diff --name-only | sort | comm -13 "$RUNNER_TEMP/autofix-lint.txt" - > "$RUNNER_TEMP/autofix-format.txt"
+
+      # A single commit and push: the push starts a new run of this workflow, which cancels this one
+      - name: Push fixes
+        id: push
+        if: ${{ !cancelled() }}
         env:
           DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
           DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-        run: node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
-
-  # The pipeline from before Nx Agents, for pull requests with the `legacy-ci` label.
-  # Every legacy job needs `legacy-prepare`, so this is the only place to check the label
-
-  legacy-prepare:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'legacy-ci') }}
-    permissions:
-      contents: 'read'
-      actions: 'read'
-    uses: ./.github/workflows/install.yml
-    secrets: inherit
-    with:
-      main_branch: ${{ github.base_ref }}
-
-  legacy-tests:
-    needs:
-      - legacy-prepare
-    if: ${{ needs.legacy-prepare.outputs.TEST_CHUNKS && needs.legacy-prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-shared
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.legacy-prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.legacy-prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-
-  legacy-unicorn-tests:
-    name: All projects have some tests (legacy)
-    needs:
-      - legacy-prepare
-    if: ${{ needs.legacy-prepare.outputs.TEST_CHUNKS && needs.legacy-prepare.outputs.DEPLOY_FEATURE == 'false' && needs.legacy-prepare.outputs.is-unicorn == 'true' }}
-    runs-on: arc-shared
-    env:
-      CHUNKS: ${{ needs.legacy-prepare.outputs.TEST_CHUNKS }}
-      NX_BASE: ${{ needs.legacy-prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.legacy-prepare.outputs.NX_HEAD }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          # Need full repo for Nx to find the commits at NX_* below
-          fetch-depth: 0
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Find unicorn projects
-        id: unicorn
         run: |
-          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns --json)
-          jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
-            [
-                $chunks.projects
-              | .[]
-              | select( . | IN( $unicorns | .[] ) )
-            ]
-            | "projects=\(. | join(","))"
-          ' | tee -a "$GITHUB_OUTPUT"
-
-      - name: Verify that projects have some tests
-        if: ${{ steps.unicorn.outputs.projects != '' }}
-        env:
-          projects: ${{ steps.unicorn.outputs.projects }}
-        run: |
-          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted).
-          # NO_COLOR=1: Nx 22 (picocolors) forces ANSI colour on the stream prefix in CI even when stdout is piped,
-          # so lines start with escape codes instead of the project name and the anchored grep below matches nothing.
-          NO_COLOR=1 yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
-            grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
-          # Get affected projects sorted
-          echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
-          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
-            echo "These projects don't have any tests:"
-            echo "${d}"
-            exit 1
+          before=$(git rev-parse HEAD)
+          node scripts/ci/docker/git-check-dirty.mjs "." "autofix" "dirtybot"
+          after=$(git rev-parse HEAD)
+          if [[ "$before" != "$after" ]]; then
+            echo "sha=$after" >> "$GITHUB_OUTPUT"
           fi
-          echo "All projects ($projects) have tests."
 
-  legacy-e2e:
-    uses: ./.github/workflows/e2e.yml
-    needs:
-      - legacy-prepare
-    if: ${{ needs.legacy-prepare.outputs.E2E_CHUNKS && needs.legacy-prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    secrets: inherit
-    with:
-      e2e_build_id: '${{ needs.legacy-prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      nx_base: ${{ needs.legacy-prepare.outputs.NX_BASE }}
-      nx_head: ${{ needs.legacy-prepare.outputs.NX_HEAD }}
-      affected_projects: ${{ matrix.projects }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.legacy-prepare.outputs.E2E_CHUNKS) }}
-
-  legacy-linting-workspace:
-    needs:
-      - legacy-prepare
-    runs-on: arc-shared
-    timeout-minutes: 15
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Linting workspace
-        run: ./scripts/ci/20_lint-workspace.sh
-
-  legacy-linting:
-    needs:
-      - legacy-prepare
-    runs-on: arc-shared
-    timeout-minutes: 35
-    env:
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.legacy-prepare.outputs.NX_BASE }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Fetch NX_BASE commit
-        run: git fetch --depth=1 origin ${{ needs.legacy-prepare.outputs.NX_BASE }}
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Linting
-        run: yarn nx affected --target=lint
-
-  legacy-typecheck:
-    needs:
-      - legacy-prepare
-    permissions:
-      contents: 'read'
-    runs-on: arc-shared
-    timeout-minutes: 35
-    env:
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.legacy-prepare.outputs.NX_BASE }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Fetch NX_BASE commit
-        run: git fetch --depth=1 origin ${{ needs.legacy-prepare.outputs.NX_BASE }}
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      # The vite builds do not type check (unlike the webpack builds they
-      # replaced), so projects with a typecheck target are checked here.
-      - name: Type checking
-        run: yarn nx affected --target=typecheck
-
-  legacy-build:
-    needs:
-      - legacy-prepare
-    runs-on: arc-shared
-    timeout-minutes: 35
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.legacy-prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.legacy-prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.legacy-prepare.outputs.BUILD_CHUNKS && needs.legacy-prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
+      # `always()` since the run is most likely cancelled by now
+      - name: Comment what was pushed
+        if: ${{ always() && steps.push.outputs.sha != '' }}
+        continue-on-error: true
+        run: node scripts/ci/nx-agents/pr-comment.mjs autofix
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AUTOFIX_SHA: ${{ steps.push.outputs.sha }}
+          AUTOFIX_LINT_FILES: ${{ runner.temp }}/autofix-lint.txt
+          AUTOFIX_FORMAT_FILES: ${{ runner.temp }}/autofix-format.txt
 
   success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
+    permissions:
+      contents: 'read'
+      pull-requests: 'write'
     needs:
       - plan
       - agents
       - main
-      - unicorn-tests
-      - run-shellcheck
-      - formatting
-      - legacy-prepare
-      - legacy-linting-workspace
-      - legacy-tests
-      - legacy-linting
-      - legacy-typecheck
-      - legacy-e2e
-      - legacy-build
-      - legacy-unicorn-tests
+      - autofix
     steps:
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && env.DEPLOY_FEATURE == 'true' }}
@@ -624,10 +386,10 @@ jobs:
             echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
             exit 1
           fi
-          # Skipped jobs are fine, as long as one of the two pipelines did run
-          echo -n "Did a pipeline run? "
-          if ! jq -ne --argjson needs "$NEEDS" '[$needs.main, $needs["legacy-prepare"]] | any(.result == "success")'; then
-            echo "::error title=NEEDS::Neither the Nx Agents nor the legacy pipeline ran"
+          # Skipped jobs are fine (e.g. no agents when there are no tasks), the main job is not
+          echo -n "Did the main job run? "
+          if ! jq -ne --argjson needs "$NEEDS" '$needs.main.result == "success"'; then
+            echo "::error title=NEEDS::The main job did not run"
             exit 1
           fi
           echo "::info title=NEEDS::No failing dependencies 🎉"
@@ -635,3 +397,31 @@ jobs:
 
       - name: Announce success
         run: echo "Build is successful"
+
+      # The steps below must not change the result of this job, which is the required status check
+
+      - name: Checkout the comment script
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci/nx-agents/pr-comment.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Comment the result
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: node scripts/ci/nx-agents/pr-comment.mjs result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          NEEDS: ${{ toJSON(needs) }}
+          JOB_STATUS: ${{ job.status }}
