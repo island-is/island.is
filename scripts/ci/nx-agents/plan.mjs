@@ -14,9 +14,16 @@
  * A pull request that changes the CI configuration runs every task of every project, without
  * cache hits, to test the change. See `../ci-config-hash.mjs`.
  *
+ * With the `deploy-feature` label the pull request pipeline does not run, and the build and deploy
+ * pipeline plans with `PLAN_MODE=deploy`: the same checks except `build`, and a second command that
+ * builds the Docker images (`docker-build`, which depends on `build`). They are two commands
+ * because they need two configurations: `ci` for the tests, and `production` for the builds since
+ * that is what the Docker builds do. Both run at the same time, on the same agents.
+ *
  * Usage: node scripts/ci/nx-agents/plan.mjs
- * Writes `agents`, `agent-count`, `nx-args`, `targets`, `unicorn-projects` and `ci-config-hash`
- * to $GITHUB_OUTPUT.
+ * BUILD_CHUNKS (deploy): the images to build, a JSON list of JSON strings from `generate-docker-chunks.sh`
+ * Writes `agents`, `agent-count`, `nx-args`, `targets`, `unicorn-projects` and `ci-config-hash`,
+ * and for a deploy `image-nx-args` and `image-projects`, to $GITHUB_OUTPUT.
  */
 import { execFileSync } from 'child_process'
 import { appendFileSync, mkdtempSync, readFileSync } from 'fs'
@@ -57,7 +64,16 @@ const JUDICIAL_PATTERN = /judicial/
 // Rough relative cost of a task per target, used to size the agent pools.
 // Targets that are only in the run as a dependency (codegen, ...) weigh 1
 /** @type {Record<string, number>} */
-const TARGET_WEIGHTS = { lint: 1, typecheck: 2, test: 3, build: 4, e2e: 6 }
+const TARGET_WEIGHTS = {
+  lint: 1,
+  typecheck: 2,
+  test: 3,
+  build: 4,
+  e2e: 6,
+  // Not cached, so an agent runs one at a time
+  'docker-build': 8,
+}
+const DEPLOY = env.PLAN_MODE === 'deploy'
 // Targets without a `ci` configuration fall back to their default one, so this only
 // turns on `ci` and `codeCoverage` for the jest targets (see `targetDefaults` in nx.json).
 // CLI args like `--coverage` are not an option since they would go to every target.
@@ -193,11 +209,13 @@ const main = () => {
   const withTarget = (/** @type {string} */ target) =>
     projects.filter((p) => projectTargets[p]?.includes(target))
 
-  const skipWork = isTrue(env.SKIP_TESTS) || isTrue(env.DEPLOY_FEATURE)
+  // The images of a deploy depend on the builds, as `production` (see above)
   const targets = [
     'lint',
     'typecheck',
-    ...(skipWork ? [] : ['build', 'test', 'e2e']),
+    ...(isTrue(env.SKIP_TESTS)
+      ? []
+      : [...(DEPLOY ? [] : ['build']), 'test', 'e2e']),
   ].filter((target) => withTarget(target).length > 0)
   const nxArgs =
     targets.length === 0
@@ -211,33 +229,50 @@ const main = () => {
           `--parallel=${NX_PARALLEL}`,
         ]
 
+  /** @type {string[]} */
+  const imageProjects = DEPLOY
+    ? JSON.parse(env.BUILD_CHUNKS || '[]')
+        .map((/** @type {string} */ chunk) => JSON.parse(chunk).projects)
+        .sort()
+    : []
+  const imageNxArgs =
+    imageProjects.length === 0
+      ? []
+      : [
+          'run-many',
+          '--targets=docker-build',
+          `--projects=${imageProjects.join(',')}`,
+          // Not for `docker-build`, which has no configurations, but for the builds it depends on: Nx
+          // passes the configuration of the command on to them. The Docker build does
+          // `nx build <project> --prod`, and only the same tasks are cache hits in there
+          '--configuration=production',
+          `--parallel=${NX_PARALLEL}`,
+        ]
+
   /** @type {Record<AgentType, { counts: Record<string, number>, units: number }>} */
   const load = {
     shared: { counts: {}, units: 0 },
     judicial: { counts: {}, units: 0 },
   }
-  for (const { project, target } of getTasks(nxArgs)) {
+  for (const { project, target } of [
+    ...getTasks(nxArgs),
+    ...getTasks(imageNxArgs),
+  ]) {
     const pool = load[JUDICIAL_PATTERN.test(project) ? 'judicial' : 'shared']
     pool.counts[target] = (pool.counts[target] ?? 0) + 1
     pool.units += TARGET_WEIGHTS[target] ?? 1
   }
 
-  // With the `deploy-feature` label the agents belong to the build and deploy pipeline, which runs at
-  // the same time. What is left here (lint and typecheck) runs on the main job, like the jobs
-  // that were not skipped for the label before Nx Agents
-  const useAgents = !isTrue(env.DEPLOY_FEATURE)
-
   // The `agents` job is a matrix of these. An agent only sets up what its tasks need
-  const agents = /** @type {AgentType[]} */ (
-    useAgents ? Object.keys(AGENT_TYPES) : []
-  ).flatMap((type) =>
-    Array.from({ length: agentCount(type, load[type].units) }, (_, i) => ({
-      agent: `${type}-${i + 1}`,
-      type,
-      runner: AGENT_TYPES[type].runner,
-      test: (load[type].counts.test ?? 0) > 0,
-      e2e: (load[type].counts.e2e ?? 0) > 0,
-    })),
+  const agents = /** @type {AgentType[]} */ (Object.keys(AGENT_TYPES)).flatMap(
+    (type) =>
+      Array.from({ length: agentCount(type, load[type].units) }, (_, i) => ({
+        agent: `${type}-${i + 1}`,
+        type,
+        runner: AGENT_TYPES[type].runner,
+        test: (load[type].counts.test ?? 0) > 0,
+        e2e: (load[type].counts.e2e ?? 0) > 0,
+      })),
   )
   const unicornProjects = targets.includes('test')
     ? getUnicornProjects().filter((p) => withTarget('test').includes(p))
@@ -247,9 +282,19 @@ const main = () => {
     agents: JSON.stringify(agents),
     'agent-count': agents.length,
     'nx-args': JSON.stringify(nxArgs),
-    targets: targets.join(','),
+    // Every target of the run, for `--stop-agents-after`
+    targets: [
+      ...targets,
+      ...(imageNxArgs.length > 0 ? ['docker-build'] : []),
+    ].join(','),
     'unicorn-projects': unicornProjects.join(','),
     'ci-config-hash': configHash,
+    ...(DEPLOY
+      ? {
+          'image-nx-args': JSON.stringify(imageNxArgs),
+          'image-projects': imageProjects.join(','),
+        }
+      : {}),
   }
   console.log({ everything, debug, load, ...outputs })
   if (env.GITHUB_OUTPUT) {
