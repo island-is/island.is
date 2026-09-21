@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import type { MessageDescriptor } from 'react-intl'
 import {
   generatePath,
   useLoaderData,
@@ -19,25 +20,37 @@ import { EducationPaths } from '../../../lib/paths'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import type { PrimarySchoolStudentLoaderData } from './PrimarySchoolStudent.loader'
 import { usePrimarySchoolAssessmentDataQuery } from '../PrimarySchoolAssessment/PrimarySchoolAssessment.generated'
+import {
+  USE_MOCK_KEY_INFO,
+  mockStudent,
+} from '../PrimarySchoolOverview/keyInfo/mockData'
 
 export const PrimarySchoolStudentWrapper = ({
   children,
+  hideTabs = false,
+  intro = psm.studentHubIntro,
 }: {
   children: ReactNode
+  hideTabs?: boolean
+  intro?: MessageDescriptor
 }) => {
   useNamespaces('sp.education-primary-school')
   const { formatMessage } = useLocale()
   const { studentId } = useParams<{ studentId: string }>()
   const location = useLocation()
   const loaderData = useLoaderData() as PrimarySchoolStudentLoaderData
-  const title = loaderData?.studentName ?? psm.schoolLabel
+  const title = USE_MOCK_KEY_INFO
+    ? mockStudent.name ?? psm.schoolLabel
+    : loaderData?.studentName ?? psm.schoolLabel
 
   const { data: assessmentData, loading: assessmentLoading } =
     usePrimarySchoolAssessmentDataQuery({
       variables: { studentId: studentId ?? '' },
-      skip: !studentId,
+      skip: !studentId || USE_MOCK_KEY_INFO || hideTabs,
     })
+  // DEV-ONLY: force the tab/children to render even without assessment data.
   const hasAssessment =
+    USE_MOCK_KEY_INFO ||
     (assessmentData?.primarySchoolStudent?.assessmentHistory?.length ?? 0) > 0
 
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
@@ -50,10 +63,12 @@ export const PrimarySchoolStudentWrapper = ({
   return (
     <IntroWrapper
       title={title}
-      intro={psm.studentHubIntro}
+      intro={intro}
       serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
-      {hasAssessment ? (
+      {hideTabs ? (
+        <Box paddingTop={2}>{children}</Box>
+      ) : hasAssessment ? (
         <>
           <Hidden print>
             <TabNavigation
