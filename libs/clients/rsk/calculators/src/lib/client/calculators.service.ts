@@ -10,17 +10,32 @@ import {
 } from '../../../gen/fetch'
 import { calculatorRegistry } from '../catalog/registry'
 import type { CalculatorKey } from '../catalog/registry'
-import { toChildBenefitOutput, toChildBenefitQuery } from '../domains/childBenefit'
+import {
+  toChildBenefitOutput,
+  toChildBenefitQuery,
+} from '../domains/childBenefit'
 import type { ChildBenefitInput } from '../domains/childBenefit'
-import { toInterestBenefitOutput, toInterestBenefitQuery } from '../domains/interestBenefit'
+import {
+  toInterestBenefitOutput,
+  toInterestBenefitQuery,
+} from '../domains/interestBenefit'
 import type { InterestBenefitInput } from '../domains/interestBenefit'
-import { toVehicleBenefitOutput, toVehicleBenefitQuery } from '../domains/vehicleBenefit'
+import {
+  toVehicleBenefitOutput,
+  toVehicleBenefitQuery,
+} from '../domains/vehicleBenefit'
 import type { VehicleBenefitInput } from '../domains/vehicleBenefit'
-import { toVehicleDepreciationOutput, toVehicleDepreciationQuery } from '../domains/vehicleDepreciation'
+import {
+  toVehicleDepreciationOutput,
+  toVehicleDepreciationQuery,
+} from '../domains/vehicleDepreciation'
 import type { VehicleDepreciationInput } from '../domains/vehicleDepreciation'
 import { toVehicleTaxOutput, toVehicleTaxQuery } from '../domains/vehicleTax'
 import type { VehicleTaxInput } from '../domains/vehicleTax'
-import { toWithholdingTaxOutput, toWithholdingTaxQuery } from '../domains/withholdingTax'
+import {
+  toWithholdingTaxOutput,
+  toWithholdingTaxQuery,
+} from '../domains/withholdingTax'
 import type { WithholdingTaxInput } from '../domains/withholdingTax'
 import type { CalculatorContract } from '../types/calculator'
 import type { CalculatorOutputField } from '../types/output-field'

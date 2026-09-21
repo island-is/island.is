@@ -31,7 +31,8 @@ export const EMPLOYER_PENSION_MATCH_RATIOS = [
   '12%',
   '13.5%',
 ] as const
-export type EmployerPensionMatchRatio = typeof EMPLOYER_PENSION_MATCH_RATIOS[number]
+export type EmployerPensionMatchRatio =
+  typeof EMPLOYER_PENSION_MATCH_RATIOS[number]
 
 const toOptions = (values: readonly string[]) =>
   values.map((value) => ({ value }))
