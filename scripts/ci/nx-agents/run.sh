@@ -63,6 +63,11 @@ if [[ ${#nx_args[@]} -eq 0 ]]; then
   exit 0
 fi
 
+# Without agents the tasks run here. Agents get this from the `.env.<target>` files of `start-agent.sh`
+if [[ "${NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT:-0}" == "0" ]]; then
+  export NODE_OPTIONS="--max-old-space-size=4096"
+fi
+
 status=0
 yarn nx "${nx_args[@]}" 2>&1 | tee "$NX_LOG" || status=$?
 

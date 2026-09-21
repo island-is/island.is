@@ -19,7 +19,8 @@ runs:
       with:
         # The exact version of package.json, which is also the one of the Docker images: the
         # version is an input of the Nx hashes (`nodeVersion` in nx.json)
-        node-version-file: package.json
+        # Of the working directory: some jobs check the repository out in a subdirectory
+        node-version-file: ${{ inputs.working-directory }}/package.json
 
     - name: Corepack
       shell: bash
