@@ -36,4 +36,6 @@ export const PAST_APPOINTMENTS_STATUS = [
   HealthDirectorateAppointmentStatus.FULFILLED,
   HealthDirectorateAppointmentStatus.ARRIVED,
   HealthDirectorateAppointmentStatus.CHECKED_IN,
+  // Turns out sometimes appointments stay in the status BOOKED even though they have passed
+  HealthDirectorateAppointmentStatus.BOOKED,
 ]
