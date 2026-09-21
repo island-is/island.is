@@ -34,13 +34,13 @@ Row index is the index into `getDebts(application)`, so everything (`getSelected
 
 **`debtsSection.ts`** — `DebtsLoader` + a `buildInteractiveTableField` (`id: 'selectedDebts'`, `dataTestId: 'debts-table'`) + a `buildStickyFooterField`, all under one multi-field. Table and footer are gated on `hasDebtsToPay` (fetched **and** non-empty), so an empty result leaves the loader's own message on screen.
 
-- `selectable`, `inputColumn` (`id: 'debtsToPay'`, capped per row by `getMaxAmount`). Selecting a row pre-fills the full debt; deselecting clears it.
-- `header` cells are objects carrying `width`/`truncate`/`expandable`/`tooltip` (the abbreviated "Gjaldgr." header uses `tooltip` to spell out "Gjaldgrunnur"). `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður), all from the real `principal`/`interest`/`cost` fields.
-- `footerRow` totals **all** debts ("Heildarskuld"), not just selected. The sticky footer shows live "Til greiðslu"/"Eftirstöðvar" on every keystroke.
+- `selectable`, no `inputColumn` — deliberately commented out (`638de126d1` "Hide Til greidslu column for now"; the `debtsSection.spec.ts` test is now titled "offers no per-row amount, since a debt can only be paid in full"). A ticked row always pays the full debt. **This is why `getSelectedDebts`'s `amountToPay` fallback always fires** (`debtsToPay` answers are never written), which in turn means `paymentSection.ts`'s "remaining amount" sub-row can never actually render — see below.
+- `header` cells are objects carrying `width`/`truncate`/`expandable`/`tooltip`; none of the current headers use `tooltip`. `expandedRows` gives each row a sub-table (Gjalddagi, Tímabil, Höfuðstóll, Vextir, Kostnaður) from the real `principal`/`interest`/`cost` fields, **plus** an `info` message (`salaryWithholdingInfo`) shown only on rows where `debt.salaryPayerName` is set — `info` alone is enough to make a row expandable even with no sub-table (`isExpandable` in `InteractiveTableFormFieldRow` ORs `hasExpandedTable(...)` with `!!expandedInfo`).
+- `footerRow` totals **all** debts ("Heildarskuld"), not just selected. The sticky footer only updates on checkbox toggle now (no keystroke source since the amount input is gone).
 - `isSubmitDisabled` blocks submit until at least one row is ticked.
 - `shouldUseMockPayment` is a hidden input, dev/local only.
 
-**`paymentSection.ts`** — `buildPaymentChargeOverviewField` over `getSelectedDebts`. Its `chargeItemCode` is `chargeTypeId` suffixed with the index purely to keep React keys unique; it is display-only and unrelated to the charge actually created in `template.ts`.
+**`paymentSection.ts`** — `buildPaymentChargeOverviewField` over `getSelectedDebts`. `chargeItemCode` is `debt.payID` (FJS' per-debt identifier), used here purely as the list key — display-only, unrelated to the charge actually created in `template.ts`. `simplifiedList: { preventAmountWrap: true }` — see `PaymentChargeOverviewFormField` below for why it's an object and not `true`. Each item also sets `subLabel`/`subAmount` to show a "remaining" line when `debt.debts - debt.amountToPay > 0`, but since `debtsSection.ts` currently never lets `amountToPay` be less than the full debt, that sub-row is dead in production until per-row partial payment comes back.
 
 ## Field types (`libs/application/ui-fields`)
 
@@ -48,6 +48,7 @@ Row index is the index into `getDebts(application)`, so everything (`getSelected
 - **`InteractiveTableField`** (`FieldTypes.INTERACTIVE_TABLE`) — checkboxes, input column, footer row, expandable sub-rows. No pagination — every row renders at once (`pageSize` and the `<Pagination>` render were removed 9.9.2026 once pay-debts, the only consumer, stopped using them). Rows are `memo`-wrapped with a **value-based** comparator (`field.rows()` returns a fresh array each call, so reference equality would defeat the memo), each watching only its own `selectedDebts[rowIndex]`. `rows`/`footerRow`/`inputMaxAmounts` are memoized on `[field.x, application]` — safe because `application`'s reference only changes on an autosave landing, not per keystroke. **Scope**: only the first 100 debts are supported for now (decided 9.9.2026, not yet enforced in code), so rendering every row at once is fine; revisit the memoization and the missing pagination only if that cap is lifted.
   - Truncated cells are CSS-only (`text-overflow: ellipsis`), full text always in the DOM. Overflowing labels get a `HoverTooltip`; on the expandable column the tooltip anchors the toggle **button**, not the inner span, so it opens on `Tab` and the cell keeps one tab stop.
 - **`StickyFooterField`** — `position: fixed`, floats while the table extends below the viewport and docks into normal flow otherwise (so it structurally can't overlap the page's own "Halda áfram"). Aligns itself by measuring `thead th[data-column-index="0"|"1"]` of `widthReferenceTestId`, with `labelOffset`/`labelWidth`/`valueWidth` as fallbacks. **Gotcha**: if `widthReferenceTestId` matches no real `data-testid` it silently renders `null` forever — check that first if the footer "disappears".
+- **`PaymentChargeOverviewFormField`** (`buildPaymentChargeOverviewField`, used by `paymentSection.ts`) — **shared by 20+ application templates**, not pay-debts-specific, so it has to stay backward-compatible. Several of its props exist only for pay-debts and are (as of 21.9.2026) unused by every other consumer: `forPaymentLabelVariant`, `simplifiedList`, and the `chargeItemName`/`chargeItemAmount`/`subLabel`/`subAmount` fields on `getSelectedChargeItems`'s return type (the sub-label/sub-amount pair renders a same-row "remaining" line, independent of `simplifiedList` — it fires in both render branches). `simplifiedList` is `boolean | { preventAmountWrap?: boolean }`, not a plain boolean: the object form was chosen specifically so the "keep amount + currency on one line" fix (`891b42f56e`) stays opt-in to pay-debts instead of forcing `nowrap`/`flexShrink: 0` on every template's amounts — several other consumers (e.g. `estate`) can render much larger sums where that could overflow a narrow screen. `additionalSummaryLabel`/`getAdditionalSummaryAmount` are typed, threaded through the builder, and rendered, but **no template calls them yet** — reserved for planned use, not dead code to remove. No spec file exists for this component (unlike `InteractiveTableField`/`StickyFooterField`).
 
 ## Utils (`src/utils`)
 
@@ -58,13 +59,13 @@ Row index is the index into `getDebts(application)`, so everything (`getSelected
 
 ## Messages (`src/lib/messages`)
 
-One file per concern (`application`, `debts`, `payment`, `error`, `completedForm`), re-exported from `index.ts`, ids namespaced `pd.application:...`. **Gotcha**: `payment.buttons.submit`'s id is the leftover `pd.application:overview.buttons.submit`.
+One file per concern (`application`, `debts`, `payment`, `error`, `completedForm`), re-exported from `index.ts`, ids namespaced `pd.application:...`.
 
 ## Tests
 
 `yarn nx test pay-debts` and `yarn nx test application-ui-fields`.
 
-Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gating), `debtsSection` (declared answers, fetch/empty/failure gating, column config, loader ordering), `getDebts` helpers, `getSelectedDebts` clamping, and on the field side row rendering at 60/100/281 rows, answer seeding and the truncation/tooltip/keyboard behaviour.
+Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gating), `debtsSection` (declared answers, fetch/empty/failure gating, column config, salary-withholding info, loader ordering), `getDebts` helpers, `getSelectedDebts` clamping, and on the field side row rendering at 60/100/281 rows, answer seeding and the truncation/tooltip/keyboard behaviour.
 
 - Specs that render (`DebtsLoader`, the field specs) mock `@island.is/localization`. `debtsSection.spec.ts` only inspects the field tree, so it needs no mock — `formatCurrency` comes from `@island.is/shared/utils`, which doesn't drag vanilla-extract in.
 - jsdom reports `scrollWidth`/`clientWidth` as 0, so truncation tests stub them on `HTMLElement.prototype`.
@@ -79,4 +80,4 @@ Coverage: state machine + api allowlist, `DebtsLoader` (empty result, submit gat
 
 ## Notes
 
-Only comment non-obvious logic, don't restate what the code already says
+Comments should be at a minimum, only ever used for non-obvious logic
