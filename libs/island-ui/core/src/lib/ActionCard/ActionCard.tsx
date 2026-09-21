@@ -197,7 +197,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   const isTextVariant =
     cta?.variant === 'text' || cta.buttonType?.variant === 'text'
 
-  // varinat="text" buttons should be small
+  // variant="text" buttons should be small
   const smallButton = isTextVariant && _cta?.size === undefined
 
   // variant="text" buttons should not full width on mobile
