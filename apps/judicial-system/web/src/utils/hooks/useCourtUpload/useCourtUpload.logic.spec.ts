@@ -1,5 +1,5 @@
-import { ApolloError } from '@apollo/client'
 import { GraphQLError } from 'graphql'
+import { ApolloError } from '@apollo/client'
 
 import { resolveCourtUploadError } from './useCourtUpload.logic'
 
