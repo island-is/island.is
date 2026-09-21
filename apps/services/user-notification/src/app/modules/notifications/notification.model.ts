@@ -75,6 +75,14 @@ export class Notification extends Model<
   scope!: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+    allowNull: false,
+    field: 'was_sent',
+  })
+  wasSent!: boolean
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     field: 'args',

@@ -382,8 +382,29 @@ export class NotificationsWorkerService {
       message.templateId,
       locale,
     )
+
+    // This is a stopgap solution while we ensure better usage of notification templates.
+    // This allows users to quickly ignore notifications that are not urgent or actionable.
+    const onlyActionablePriorityNotification = false //TODO: Fetch from userprofile settings that is not yet here.
+    const shouldSendNotification =
+      args.urgent ||
+      !(
+        onlyActionablePriorityNotification &&
+        template.priorityType !== 'Actionable'
+      )
+
+    !shouldSendNotification &&
+      this.logger.info('Notification not sent because of user request', {
+        urgent: args.urgent,
+        priorityType: template.priorityType,
+      })
+
     const scope = template.scope || DocumentsScope.main
-    const dbRecord = await this.createUserNotificationDbRecord(args, scope)
+    const dbRecord = await this.createUserNotificationDbRecord(
+      args,
+      scope,
+      shouldSendNotification,
+    )
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     let pushPayload: PushQueueMessage | null = null
@@ -409,7 +430,8 @@ export class NotificationsWorkerService {
         this.buildPushPayload({
           messageId,
           nationalId,
-          documentNotifications: userProfile.documentNotifications,
+          documentNotifications:
+            userProfile.documentNotifications && shouldSendNotification,
           message,
           locale,
         }),
@@ -417,7 +439,8 @@ export class NotificationsWorkerService {
           messageId,
           nationalId,
           email: userProfile.email,
-          emailNotifications: userProfile.emailNotifications,
+          emailNotifications:
+            userProfile.emailNotifications && shouldSendNotification,
           fullName:
             message.onBehalfOf?.name ||
             onBehalfOfNames?.fullName ||
@@ -430,7 +453,8 @@ export class NotificationsWorkerService {
           messageId,
           nationalId,
           mobilePhoneNumber: userProfile.mobilePhoneNumber,
-          smsNotifications: userProfile.smsNotifications,
+          smsNotifications:
+            userProfile.smsNotifications && shouldSendNotification,
           formattedTemplate,
           fullName: recipientNames.shortName,
           onBehalfOf: onBehalfOfNames?.shortName,
@@ -721,6 +745,7 @@ export class NotificationsWorkerService {
   private async createUserNotificationDbRecord(
     args: CreateHnippNotificationDto & { messageId: string },
     scope: string,
+    wasSent: boolean,
   ) {
     const { messageId, ...message } = args
     const existing = await this.notificationModel.findOne({
@@ -743,6 +768,7 @@ export class NotificationsWorkerService {
         templateId: message.templateId,
         args: message.args,
         scope,
+        wasSent,
       })
       this.logger.info('notification written to db', {
         messageId,
@@ -876,6 +902,7 @@ export class NotificationsWorkerService {
               args: message.args,
               senderId: message.senderId,
               messageId: messageId,
+              urgent: message.urgent,
             },
             message.recipient,
           )

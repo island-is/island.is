@@ -58,6 +58,7 @@ import {
   legalGuardianTwo,
   mockTemplateId,
   userProfiles,
+  userWhoDeclinesInformationalNotifications,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
@@ -71,6 +72,7 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
 import { EmailWorkerService, EmailQueueMessage } from './emailWorker.service'
 import { SmsWorkerService, SmsQueueMessage } from './smsWorker.service'
 import { PushWorkerService, PushQueueMessage } from './pushWorker.service'
+import { HnippTemplatePriorityType } from '../dto/hnippTemplate.response'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -221,10 +223,11 @@ describe('NotificationsWorkerService', () => {
     await truncate(sequelize)
   })
 
-  const addToQueue = async (recipient: string) => {
+  const addToQueue = async (recipient: string, urgent?: boolean) => {
     await queue.add({
       recipient,
       templateId: mockTemplateId,
+      urgent,
       args: [{ key: 'organization', value: 'Test Crew' }],
     })
 
@@ -1036,6 +1039,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [{ key: 'organization', value: 'Test Crew' }],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       // Now add an actor notification to the queue (with onBehalfOf and rootMessageId)
@@ -1251,6 +1255,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await emailSubQueue.add({
@@ -1286,6 +1291,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await smsSubQueue.add({
@@ -1351,6 +1357,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await smsSubQueue.add({
@@ -1403,6 +1410,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true,
       })
 
       await smsSubQueue.add({
@@ -1440,6 +1448,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true
       })
 
       await pushSubQueue.add({
@@ -1477,6 +1486,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
+        wasSent: true
       })
 
       await emailSubQueue.add({
@@ -1502,5 +1512,57 @@ describe('NotificationsWorkerService', () => {
       })
       expect(record).toBeNull()
     })
+  })
+
+  describe('when user declines informational notification', () => {
+    // userWhoDeclinesInformationalNotifications carries the (not yet real)
+    // `onlyActionableNotifications` setting. notificationsWorker.service.ts
+    // does not read it yet - it hardcodes `onlyActionablePriorityNotification
+    // = false` pending the userProfile PR that exposes this field - so the
+    // `shouldSend: false` cases below are expected to fail until that lands
+    // and the service is wired to read it from the user profile.
+    const recipient = userWhoDeclinesInformationalNotifications.nationalId
+
+    describe.each<{
+      isUrgent: boolean
+      priorityType: HnippTemplatePriorityType
+      shouldSend: boolean
+    }>([
+      { isUrgent: true, priorityType: 'Informative', shouldSend: true },
+      { isUrgent: true, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: true, priorityType: undefined, shouldSend: true },
+      { isUrgent: false, priorityType: 'Informative', shouldSend: false },
+      { isUrgent: false, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: false, priorityType: undefined, shouldSend: false },
+    ])(
+      'and given notification urgency is $isUrgent and template priority is $priorityType',
+      ({ isUrgent, priorityType, shouldSend }) => {
+        beforeEach(() => {
+          jest
+            .spyOn(notificationsService, 'getTemplate')
+            .mockReturnValue(
+              Promise.resolve(getMockHnippTemplate({ priorityType })),
+            )
+        })
+
+        it(`should ${
+          shouldSend ? 'send' : 'not send'
+        } notifications`, async () => {
+          await addToQueue(recipient, isUrgent)
+
+          if (shouldSend) {
+            expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+            expect(
+              notificationDispatch.sendPushNotification,
+            ).toHaveBeenCalledTimes(1)
+          } else {
+            expect(emailService.sendEmail).not.toHaveBeenCalled()
+            expect(
+              notificationDispatch.sendPushNotification,
+            ).not.toHaveBeenCalled()
+          }
+        })
+      },
+    )
   })
 })

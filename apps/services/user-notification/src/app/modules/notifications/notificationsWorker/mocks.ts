@@ -22,6 +22,10 @@ export const delegationSubjectId = 'delegation-subject-id'
 
 interface MockUserProfileDto extends UserProfileDto {
   name: string
+  // TODO: not yet part of the generated UserProfileDto client - lands with the
+  // in-flight userProfile PR. notificationsWorker.service.ts should read this
+  // instead of its hardcoded `onlyActionablePriorityNotification = false`.
+  onlyActionableNotifications?: boolean
 }
 
 export const userWithDelegations: MockUserProfileDto = {
@@ -104,6 +108,20 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   isRestricted: false,
   smsNotifications: true,
   onlyActionablePriorityNotifications: false,
+}
+
+export const userWhoDeclinesInformationalNotifications: MockUserProfileDto = {
+  name: 'userWhoDeclinesInformationalNotifications',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'declinesinformational@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionableNotifications: true,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
@@ -250,6 +268,7 @@ export const getMockHnippTemplate = ({
   scope = '@island.is/documents',
   smsPayer = 'Landlæknir',
   smsDelivery = 'OPT_IN',
+  priorityType,
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -260,6 +279,7 @@ export const getMockHnippTemplate = ({
   scope,
   smsPayer,
   smsDelivery,
+  priorityType,
 })
 
 export const userProfiles = [
@@ -268,6 +288,7 @@ export const userProfiles = [
   userWithNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
+  userWhoDeclinesInformationalNotifications,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
   userWithNoEmail,
