@@ -55,6 +55,10 @@ const outputs = {
           'run-many',
           '--targets=docker-build',
           `--projects=${projects.join(',')}`,
+          // Not for `docker-build`, which has no configurations, but for the builds it depends on: Nx
+          // passes the configuration of the command on to them. The Docker build does
+          // `nx build <project> --prod`, and only the same tasks are cache hits in there
+          '--configuration=production',
           // For the builds the images depend on, an agent builds one image at a time regardless
           `--parallel=${env.NX_PARALLEL || '3'}`,
         ],
