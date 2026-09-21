@@ -70,11 +70,8 @@ const AppointmentsOverview = () => {
     skip: !pastTabVisited || !hasPastAppointmentsAccess,
   })
 
-  const upcomingAppointments = (
+  const upcomingAppointments =
     upcoming.data?.healthDirectorateAppointments?.data ?? []
-  )
-    // BOOKED also matches appointments whose date has already passed
-    .filter((appointment) => !isPastAppointment(appointment))
   const pastAppointments = (
     past.data?.healthDirectorateAppointments?.data ?? []
   )
