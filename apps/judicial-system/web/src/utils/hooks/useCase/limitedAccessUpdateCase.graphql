@@ -1,110 +1,45 @@
 mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
   limitedAccessUpdateCase(input: $input) {
     id
-    created
-    origin
-    type
-    indictmentSubtypes
-    state
-    policeCaseNumbers
-    caseFiles {
-      id
-      created
-      name
-      category
-      key
-      policeCaseNumber
-      isKeyAccessible
-    }
-    defendants {
-      id
-      noNationalId
-      nationalId
-      name
-      gender
-      address
-      citizenship
-      defenderName
-      defenderNationalId
-      defenderEmail
-      defenderPhoneNumber
-      defenderChoice
-    }
-    defenderName
-    defenderNationalId
-    defenderEmail
-    defenderPhoneNumber
-    requestSharedWithDefender
     court {
       id
       name
       type
     }
-    leadInvestigator
-    requestedCustodyRestrictions
-    creatingProsecutor {
-      id
-      name
-      title
-    }
     prosecutor {
       id
       name
       title
-    }
-    courtCaseNumber
-    courtEndTime
-    validToDate
-    decision
-    isValidToDateInThePast
-    isCustodyIsolation
-    isolationToDate
-    conclusion
-    rulingDate
-    rulingSignatureDate
-    registrar {
-      id
-      name
-      title
+      email
     }
     judge {
       id
       name
       title
+      email
     }
-    courtRecordSignatory {
+    registrar {
       id
       name
       title
+      email
     }
-    courtRecordSignatureDate
-    parentCase {
+    civilClaimants {
       id
-      state
-      validToDate
-      decision
-      courtCaseNumber
-      ruling
-    }
-    childCase {
-      id
-    }
-    caseModifiedExplanation
-    caseResentExplanation
-    isAppealDeadlineExpired
-    canBeAppealed
-    hasBeenAppealed
-    appealDeadline
-    appealCase {
-      id
-      appealedByRole
-      appealedDate
-      statementDeadline
-      isStatementDeadlineExpired
-    }
-    prosecutorsOffice {
-      id
+      caseId
       name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
+      policeCaseNumbers
+      defendantIds
     }
   }
 }

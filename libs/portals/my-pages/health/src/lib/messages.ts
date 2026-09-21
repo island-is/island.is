@@ -1955,8 +1955,8 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntro: {
     defaultMessage:
-      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í 1700 eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í 112.',
-    id: 'sp.health:health-messages-new-intro',
+      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í **1700** eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í **112**.',
+    id: 'sp.health:health-messages-new-intro#markdown',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -1977,11 +1977,6 @@ export const messages = defineMessages({
   healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
-  },
-  healthConversationsCertificateBlockedText: {
-    defaultMessage:
-      'Ekki er hægt að óska eftir vottorði hjá þessari stofnun núna.',
-    id: 'sp.health:health-messages-certificate-blocked-text',
   },
   healthConversationsCertificatePaymentNotice: {
     defaultMessage:
@@ -2087,8 +2082,8 @@ export const messages = defineMessages({
   },
   healthConversationsContactIntro: {
     defaultMessage:
-      'Heilsugæslan þín tekur ekki á móti skilaboðum á Ísland.is. Á vef heilsugæslunnar finnur þú upplýsingar um hvernig þú getur haft samband og nálgast þá þjónustu sem þú þarft. Ef erindið er brýnt, hringdu í <bold>1700</bold>. Í neyðartilvikum, hringdu í <bold>112</bold>.',
-    id: 'sp.health:health-messages-contact-intro',
+      'Heilsugæslan þín tekur ekki á móti skilaboðum á Ísland.is. Á vef heilsugæslunnar finnur þú upplýsingar um hvernig þú getur haft samband og nálgast þá þjónustu sem þú þarft. Ef erindið er brýnt, hringdu í **1700**. Í neyðartilvikum, hringdu í **112**.',
+    id: 'sp.health:health-messages-contact-intro#markdown',
   },
   healthConversationsContactWebChatTitle: {
     defaultMessage: 'Netspjall Heilsuveru',
@@ -2108,8 +2103,7 @@ export const messages = defineMessages({
     id: 'sp.health:health-messages-closing-soon-title',
   },
   healthConversationClosingSoonText: {
-    defaultMessage:
-      'Sendu skilaboðin þín áður en lokað er kl. {closeTime}. Eftir það er ekki hægt að senda skilaboð fyrr en {hasOpenTime, select, false {á morgun} other {kl. {openTime} á morgun}}.',
+    defaultMessage: 'Sendu skilaboðin þín áður en lokað er kl. {closeTime}.',
     id: 'sp.health:health-messages-closing-soon-text',
   },
   healthConversationClosedTitle: {
@@ -2122,7 +2116,7 @@ export const messages = defineMessages({
   },
   healthConversationClosedNextOpensText: {
     defaultMessage:
-      'Næst er hægt að senda skilaboð frá kl. {time} {when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
+      'Næst er hægt að senda skilaboð {hasTime, select, false {} other {frá kl. {time} }}{when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
     id: 'sp.health:health-messages-closed-next-opens-text',
   },
   healthConversationOpeningHoursTitle: {
@@ -2145,6 +2139,10 @@ export const messages = defineMessages({
     defaultMessage: 'Lokað',
     id: 'sp.health:health-messages-opening-hours-closed',
   },
+  healthConversationOpeningHoursAllDay: {
+    defaultMessage: 'Allan sólarhringinn',
+    id: 'sp.health:health-messages-opening-hours-all-day',
+  },
   healthConversationRecipientClosedOption: {
     defaultMessage:
       'Lokað núna. {name} tekur við skilaboðum frá kl. {openTime} til {closeTime}.',
@@ -2153,6 +2151,10 @@ export const messages = defineMessages({
   healthConversationRecipientClosedTodayOption: {
     defaultMessage: 'Lokað núna.',
     id: 'sp.health:health-messages-recipient-closed-today-option',
+  },
+  healthConversationRecipientNotAllowedOption: {
+    defaultMessage: 'Býður ekki upp á skilaboð.',
+    id: 'sp.health:health-messages-recipient-not-allowed-option',
   },
   healthConversationMessagingNotAllowedTitle: {
     defaultMessage: 'Ekki hægt að senda skilaboð',
@@ -2163,34 +2165,10 @@ export const messages = defineMessages({
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
   },
-  healthConversationReplyBlockedMissingRecipientText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
-    id: 'sp.health:health-messages-reply-blocked-missing-recipient-text',
-  },
-  healthConversationReplyBlockedRepliesDisabledText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum.',
-    id: 'sp.health:health-messages-reply-blocked-replies-disabled-text',
-  },
-  healthConversationReplyBlockedNoReplyGroupText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-no-reply-group-text',
-  },
-  healthConversationReplyBlockedMessagingNotAllowedText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-messaging-not-allowed-text',
-  },
-  healthConversationReplyBlockedPatientReplyNotAllowedText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-patient-reply-not-allowed-text',
-  },
   healthConversationReplyBlockedAwaitingAcknowledgementText: {
     defaultMessage:
       'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda',
     id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
-  },
-  healthConversationReplyBlockedOutsideWindowText: {
-    defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
-    id: 'sp.health:health-messages-reply-blocked-outside-window-text',
   },
   healthConversationReplyBlockedWindowExpiredText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
@@ -2342,6 +2320,24 @@ export const messages = defineMessages({
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
   },
+  myPregnancyIntro: {
+    defaultMessage:
+      'Hér finnur þú allar upplýsingar sem tengjast meðgöngu þinni á einum stað. Þú getur skoðað fræðsluefni frá mæðravernd, tímalínu samskipta, næstu tímabókanir, mælingar, skjöl og annað sem tengist meðgöngu þinni.',
+    id: 'sp.health:my-pregnancy-intro',
+  },
+  pregnancy: {
+    defaultMessage: 'Meðganga',
+    id: 'sp.health:pregnancy',
+  },
+  readingMaterialPregnancy: {
+    defaultMessage: 'Lesefni um meðgöngu',
+    id: 'sp.health:reading-material-pregnancy',
+  },
+  readingMaterialPregnancyLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/throskaferlid/medganga/',
+    id: 'sp.health:reading-material-pregnancy-link',
+  },
   oldPregnanciesTitle: {
     defaultMessage: 'Eldri meðgöngur',
     id: 'sp.health:old-pregnancies-title',
@@ -2442,6 +2438,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svarað',
     id: 'sp.health:answered-questionnaire',
   },
+  answeredDate: {
+    defaultMessage: 'Svarað dags',
+    id: 'sp.health:answered-date',
+  },
   draftQuestionnaire: {
     defaultMessage: 'Drög',
     id: 'sp.health:draft-questionnaire',
@@ -2492,13 +2492,19 @@ export const messages = defineMessages({
       'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
     id: 'sp.health:questionnaire-not-found-detail',
   },
-  singleQuestionnaire: {
-    defaultMessage: '1 spurningalisti',
-    id: 'sp.health:single-questionnaire',
-  },
   numberOfQuestionnaires: {
-    defaultMessage: '{number} spurningalistar',
+    defaultMessage:
+      '{number, plural, one {# spurningalisti} other {# spurningalistar}}',
     id: 'sp.health:number-of-questionnaires',
+  },
+  numberOfQuestionnairesFound: {
+    defaultMessage:
+      '{number, plural, one {# spurningalisti fannst} other {# spurningalistar fundust}}',
+    id: 'sp.health:number-of-questionnaires-found',
+  },
+  questionnaireSeeMore: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:questionnaire-see-more',
   },
   answers: {
     defaultMessage: 'Svör',

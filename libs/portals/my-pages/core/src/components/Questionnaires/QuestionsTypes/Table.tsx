@@ -6,8 +6,6 @@ import {
   Box,
   Button,
   DatePicker,
-  GridColumn,
-  GridRow,
   InputError,
   Table as T,
   Text,
@@ -16,6 +14,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../../lib/messages'
 import { QuestionAnswer } from '../../../types/questionnaire'
+import * as styles from './QuestionTypes.css'
 import { TextInput } from './TextInput'
 
 interface TableProps {
@@ -169,6 +168,8 @@ export const Table: React.FC<TableProps> = ({
             onChange={(value) => handleCurrentRowChange(column.id, value)}
             disabled={disabled || rows.length >= maxRows}
             multiline={column.multiline ?? false}
+            rows={1}
+            resizable
             maxLength={column.maxLength ?? undefined}
           />
         )
@@ -183,6 +184,8 @@ export const Table: React.FC<TableProps> = ({
             disabled={disabled || rows.length >= maxRows}
             type={column.decimal === false ? 'number' : 'decimal'}
             backgroundColor="white"
+            min={column.min ?? undefined}
+            max={column.max ?? undefined}
           />
         )
 
@@ -325,24 +328,11 @@ export const Table: React.FC<TableProps> = ({
             {formatMessage(m.addRow)}
           </Text>
 
-          <GridRow>
+          <Box className={styles.tableFormGrid}>
             {columns.map((column) => (
-              <GridColumn
-                key={column.id}
-                span={
-                  columns.length === 1
-                    ? '12/12'
-                    : columns.length === 2
-                    ? ['12/12', '12/12', '12/12', '6/12']
-                    : columns.length === 3
-                    ? ['12/12', '12/12', '12/12', '4/12']
-                    : '12/12'
-                }
-              >
-                {renderFormInput(column)}
-              </GridColumn>
+              <Box key={column.id}>{renderFormInput(column)}</Box>
             ))}
-          </GridRow>
+          </Box>
 
           <Box marginTop={3} display="flex" columnGap={2}>
             <Button

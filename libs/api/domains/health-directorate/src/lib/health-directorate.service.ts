@@ -60,6 +60,7 @@ import {
   mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
+  toReplyAvailability,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
@@ -181,6 +182,11 @@ export class HealthDirectorateService {
       }) ?? []
 
     return limitations
+  }
+
+  /* Pregnancy */
+  async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    return this.healthApi.hasActivePregnancy(auth)
   }
 
   async updateDonorStatus(
@@ -850,7 +856,8 @@ export class HealthDirectorateService {
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -859,6 +866,7 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      replyAvailability: toReplyAvailability(c),
       messagingWindowOpen: c.messagingWindowOpen ?? undefined,
       messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
@@ -915,7 +923,8 @@ export class HealthDirectorateService {
       title: c.title,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
