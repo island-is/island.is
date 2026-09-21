@@ -29,7 +29,6 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
       ...HealthConversationOpeningWindow
     }
   }
-  canRequestCertificate
   allowedMessageTypes {
     patientInitiatedTypeCode
     title

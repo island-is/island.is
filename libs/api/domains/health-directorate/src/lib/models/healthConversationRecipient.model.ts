@@ -39,14 +39,14 @@ export class HealthDirectorateHealthConversationRecipient {
   @Field({
     nullable: true,
     deprecationReason:
-      'Resolves to the next open day when closed today. Use todaysWindow and nextOpensAt instead.',
+      'Absent on a day the recipient is closed. Use todaysWindow and nextOpensAt instead.',
   })
   messagingWindowOpen?: string
 
   @Field({
     nullable: true,
     deprecationReason:
-      'Resolves to the next open day when closed today. Use todaysWindow and nextOpensAt instead.',
+      'Absent on a day the recipient is closed. Use todaysWindow and nextOpensAt instead.',
   })
   messagingWindowClose?: string
 
@@ -114,15 +114,15 @@ export class HealthDirectorateHealthConversationRecipient {
   conversationBlockedReason?: HealthConversationRecipientBlockedReasonEnum
 
   @Field({
-    description:
-      'Whether the patient can request a certificate from this recipient right now.',
+    deprecationReason:
+      'Always equals canCreateConversation. A certificate is a conversation type, flagged by isCertificate on allowedMessageTypes.',
   })
   canRequestCertificate!: boolean
 
   @Field(() => HealthConversationRecipientBlockedReasonEnum, {
     nullable: true,
-    description:
-      'Why requesting a certificate is blocked. Only set when canRequestCertificate is false.',
+    deprecationReason:
+      'Always equals conversationBlockedReason. A certificate is a conversation type, flagged by isCertificate on allowedMessageTypes.',
   })
   certificateBlockedReason?: HealthConversationRecipientBlockedReasonEnum
 }

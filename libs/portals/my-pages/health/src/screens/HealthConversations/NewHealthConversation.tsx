@@ -1,6 +1,4 @@
 import {
-  AlertMessage,
-  AlertMessageType,
   Box,
   Checkbox,
   GridColumn,
@@ -49,12 +47,6 @@ import {
   useCreateHealthConversationMutation,
   useCreateHealthCertificateRequestMutation,
 } from './NewHealthConversation.generated'
-
-interface CertificateAlert {
-  type: AlertMessageType
-  title?: string
-  message?: string
-}
 
 const bold = (str: React.ReactNode) => <strong>{str}</strong>
 
@@ -177,22 +169,8 @@ const NewHealthConversation = () => {
   )
   const isCertificateSelected = !!selectedType?.isCertificate
 
-  const isCertificateBlocked =
-    isCertificateSelected && recipient?.canRequestCertificate === false
-
   const isConversationBlocked =
     !!recipient && recipient.availability !== Availability.OPEN
-
-  const isFormLocked = isConversationBlocked || isCertificateBlocked
-
-  const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
-    ? undefined
-    : {
-        type: 'warning',
-        message: formatMessage(
-          messages.healthConversationsCertificateBlockedText,
-        ),
-      }
 
   const certificateInput = toCertificateRequestInput(certificateForm)
 
@@ -202,7 +180,7 @@ const NewHealthConversation = () => {
 
   const sendingAny = sending || sendingCertificate
 
-  const canSubmit = isFormValid && !sendingAny && !isFormLocked
+  const canSubmit = isFormValid && !sendingAny && !isConversationBlocked
 
   const handleTypeChange = (typeCode: string | null) => {
     const newType = recipient?.allowedMessageTypes.find(
@@ -441,16 +419,6 @@ const NewHealthConversation = () => {
                 </GridColumn>
               </GridRow>
 
-              {certificateAlert && (
-                <Box marginBottom={3}>
-                  <AlertMessage
-                    type={certificateAlert.type}
-                    title={certificateAlert.title}
-                    message={certificateAlert.message}
-                  />
-                </Box>
-              )}
-
               {!isCertificateSelected && selectedType?.instructions && (
                 <Box marginBottom={2} className={styles.typeInstructions}>
                   <Markdown>{selectedType.instructions}</Markdown>
@@ -463,8 +431,8 @@ const NewHealthConversation = () => {
                   onChange={(patch) =>
                     setCertificateForm((state) => ({ ...state, ...patch }))
                   }
-                  disabled={isFormLocked}
-                  hidePaymentNotice={isCertificateBlocked}
+                  disabled={isConversationBlocked}
+                  hidePaymentNotice={isConversationBlocked}
                   instructions={selectedType?.instructions}
                 />
               ) : (
@@ -483,7 +451,7 @@ const NewHealthConversation = () => {
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     maxLength={MAX_MESSAGE_LENGTH}
-                    disabled={isFormLocked}
+                    disabled={isConversationBlocked}
                   />
                 </Box>
               )}
@@ -500,7 +468,7 @@ const NewHealthConversation = () => {
                   label={formatMessage(
                     messages.healthConversationsNewTermsInline,
                   )}
-                  disabled={isFormLocked}
+                  disabled={isConversationBlocked}
                 />
               </Box>
 
