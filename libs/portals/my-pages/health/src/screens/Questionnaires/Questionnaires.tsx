@@ -50,22 +50,7 @@ const Questionnaires: FC = () => {
     fetchPolicy: 'network-only',
   })
 
-  // TEMP MOCK - remove before commit. ?mock=noActive | noExpired | none
-  const mock = new URLSearchParams(window.location.search).get('mock')
-  const allQuestionnaires = data?.questionnairesList?.questionnaires ?? []
-  const questionnaires =
-    mock === 'none'
-      ? []
-      : mock === 'noActive'
-      ? allQuestionnaires.map((item) => ({
-          ...item,
-          status: QuestionnairesStatusEnum.expired,
-        }))
-      : mock === 'noExpired'
-      ? allQuestionnaires.filter(
-          (item) => item.status !== QuestionnairesStatusEnum.expired,
-        )
-      : allQuestionnaires
+  const questionnaires = data?.questionnairesList?.questionnaires ?? []
   const dataIsEmpty =
     data?.questionnairesList === null || questionnaires.length === 0
 
@@ -298,6 +283,7 @@ const Questionnaires: FC = () => {
                         variant="popover"
                         align="left"
                         reverse
+                        filterInputFluid
                         labelClearAll={formatMessage(m.clearAllFilters)}
                         labelClear={formatMessage(m.clearFilter)}
                         labelOpen={formatMessage(m.openFilter)}
@@ -346,8 +332,8 @@ const Questionnaires: FC = () => {
                 content: (
                   <Box paddingTop={3}>
                     {expiredAll.length > 0 && (
-                      <Box marginBottom={3} display="flex">
-                        <Box className={styles.searchInput}>{searchInput}</Box>
+                      <Box marginBottom={3} className={styles.searchInput}>
+                        {searchInput}
                       </Box>
                     )}
                     {renderQuestionnaireList(expiredVisible, expiredEmptyState)}

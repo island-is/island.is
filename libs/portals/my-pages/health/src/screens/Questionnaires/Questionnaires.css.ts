@@ -15,7 +15,7 @@ export const button = style(
   }),
 )
 
-// Mirrors Filter's input box (flex item, maxWidth 420) so both tabs match
+// Same max width as Filter's fluid input so both tabs match
 export const searchInput = style({
   maxWidth: 420,
 })
