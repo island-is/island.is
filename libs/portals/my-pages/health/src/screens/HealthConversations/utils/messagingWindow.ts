@@ -77,6 +77,7 @@ export const getNextOpeningInfo = (
   | {
       when: 'today' | 'tomorrow' | 'later'
       timeLabel: string
+      opensAtMidnight: boolean
       dateLabel: string
     }
   | undefined => {
@@ -91,6 +92,8 @@ export const getNextOpeningInfo = (
   return {
     when: dayDiff <= 0 ? 'today' : dayDiff === 1 ? 'tomorrow' : 'later',
     timeLabel,
+    // "kl. 00:00 á morgun" reads oddly, so the day alone is shown for midnight.
+    opensAtMidnight: timeLabel === '00:00',
     dateLabel: `${pad(date.getUTCDate())}.${pad(
       date.getUTCMonth() + 1,
     )}.${date.getUTCFullYear()}`,

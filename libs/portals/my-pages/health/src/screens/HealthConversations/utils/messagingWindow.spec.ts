@@ -124,6 +124,17 @@ describe('getNextOpeningInfo', () => {
     expect(info?.dateLabel).toBe('01.08.2026')
   })
 
+  it('flags a midnight opening so the time can be left out', () => {
+    const now = new Date('2026-07-13T23:14:00Z')
+    expect(
+      getNextOpeningInfo(
+        { date: '2026-07-14T00:00:00.000Z', windowOpen: '00:00:00' },
+        now,
+      ),
+    ).toMatchObject({ when: 'tomorrow', opensAtMidnight: true })
+    expect(getNextOpeningInfo(nextOpensAt, now)?.opensAtMidnight).toBe(false)
+  })
+
   it('is undefined without a next opening', () => {
     expect(getNextOpeningInfo(undefined)).toBeUndefined()
     expect(getNextOpeningInfo(null)).toBeUndefined()

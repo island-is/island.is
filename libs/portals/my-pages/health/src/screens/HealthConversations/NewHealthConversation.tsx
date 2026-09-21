@@ -56,6 +56,8 @@ interface CertificateAlert {
   message?: string
 }
 
+const bold = (str: React.ReactNode) => <strong>{str}</strong>
+
 const getRecipientKey = (recipient: {
   nodeId: string
   groupId: number
@@ -174,8 +176,6 @@ const NewHealthConversation = () => {
     (t) => t.patientInitiatedTypeCode === selectedTypeCode,
   )
   const isCertificateSelected = !!selectedType?.isCertificate
-
-  const introText = formatMessage(messages.healthConversationsNewIntro)
 
   const isCertificateBlocked =
     isCertificateSelected && recipient?.canRequestCertificate === false
@@ -303,7 +303,7 @@ const NewHealthConversation = () => {
           introComponent={
             <Text>
               {formatMessage(messages.healthConversationsContactIntro, {
-                bold: (str: React.ReactNode) => <strong>{str}</strong>,
+                bold,
               })}
             </Text>
           }
@@ -334,7 +334,11 @@ const NewHealthConversation = () => {
       />
       <IntroWrapper
         title={messages.healthConversationsNewTitle}
-        intro={introText}
+        introComponent={
+          <Text>
+            {formatMessage(messages.healthConversationsNewIntro, { bold })}
+          </Text>
+        }
         desktopContentSpan="10/12"
       >
         {initialLoading && <CardLoader />}

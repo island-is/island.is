@@ -1955,7 +1955,7 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntro: {
     defaultMessage:
-      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í 1700 eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í 112.',
+      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í <bold>1700</bold> eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í <bold>112</bold>.',
     id: 'sp.health:health-messages-new-intro',
   },
   healthConversationsNewSelectService: {
@@ -2121,7 +2121,7 @@ export const messages = defineMessages({
   },
   healthConversationClosedNextOpensText: {
     defaultMessage:
-      'Næst er hægt að senda skilaboð frá kl. {time} {when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
+      'Næst er hægt að senda skilaboð {hasTime, select, false {} other {frá kl. {time} }}{when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
     id: 'sp.health:health-messages-closed-next-opens-text',
   },
   healthConversationOpeningHoursTitle: {
