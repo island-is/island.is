@@ -1,0 +1,28 @@
+{
+  "name": "application-templates-translation-workspace-smoke-test",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/translation-workspace-smoke-test/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/translation-workspace-smoke-test"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/translation-workspace-smoke-test/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/translation-workspace-smoke-test/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}
