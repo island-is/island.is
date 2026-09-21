@@ -90,7 +90,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                   age?.years,
                   age?.years ? formatMessage(messages.years) : undefined,
                   age?.months,
-                  formatMessage(messages.months),
+                  age?.months ? formatMessage(messages.months) : undefined,
                 ]
                   .filter(Boolean)
                   .join(' '),
