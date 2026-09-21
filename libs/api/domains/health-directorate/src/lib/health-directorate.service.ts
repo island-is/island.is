@@ -183,6 +183,11 @@ export class HealthDirectorateService {
     return limitations
   }
 
+  /* Pregnancy */
+  async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    return this.healthApi.hasActivePregnancy(auth)
+  }
+
   async updateDonorStatus(
     auth: Auth,
     input: DonorInput,

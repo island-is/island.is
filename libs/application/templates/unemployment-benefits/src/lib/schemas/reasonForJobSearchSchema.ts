@@ -16,7 +16,7 @@ export const reasonForJobSearchSchema = z
     reasonQuestionRequired: z.boolean().optional(),
     extraFileUpload: z.array(FileSchema).optional(),
     attachmentTypeId: z.string().optional(),
-    additionalDetails: z.string().max(500).optional(),
+    additionalDetails: z.string().max(1500).optional(),
     additionalDetailsRequired: z.boolean().optional(),
   })
   .refine(

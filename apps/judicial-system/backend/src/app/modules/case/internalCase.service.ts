@@ -1,4 +1,3 @@
-import addDays from 'date-fns/addDays'
 import endOfDay from 'date-fns/endOfDay'
 import format from 'date-fns/format'
 import startOfDay from 'date-fns/startOfDay'
@@ -7,7 +6,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import { Base64 } from 'js-base64'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -29,10 +28,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  completedIndictmentCaseStates,
-  CourtSessionRulingType,
   courtSubtypes,
-  DateType,
   EventType,
   getIndictmentAppealDeadline,
   isIndictmentCase,
@@ -79,18 +75,12 @@ import {
   CaseRepositoryService,
   CaseString,
   CaseStringRepositoryService,
-  CourtSession,
   DateLog,
   Defendant,
-  DefendantEventLog,
   DefendantRepositoryService,
   EventLog,
   IndictmentCount,
-  Institution,
-  Offense,
-  Subpoena,
   User,
-  Verdict,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
@@ -98,7 +88,6 @@ import { getLatestVerdict } from '../verdict/getLatestVerdict'
 import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusion.dto'
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
@@ -618,39 +607,9 @@ export class InternalCaseService {
   }
 
   async archive(transaction: Transaction): Promise<ArchiveResponse> {
-    const theCase = await this.caseRepositoryService.findOne({
-      include: [
-        { model: Defendant, as: 'defendants' },
-        {
-          model: IndictmentCount,
-          as: 'indictmentCounts',
-          include: [
-            {
-              model: Offense,
-              as: 'offenses',
-            },
-          ],
-        },
-        { model: CaseFile, as: 'caseFiles' },
-        { model: CaseString, as: 'caseStrings' },
-        { model: AppealCase, as: 'appealCase' },
-        { model: AppealDecision, as: 'appealDecisions' },
-      ],
-      order: [
-        [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-        [
-          { model: IndictmentCount, as: 'indictmentCounts' },
-          'displayOrder',
-          'ASC',
-        ],
-        [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
-        [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-        [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
-        [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
-      ],
-      where: archiveFilter,
+    const theCase = await this.caseRepositoryService.findNextCaseToArchive(
       transaction,
-    })
+    )
 
     if (!theCase) {
       return { caseArchived: false }
@@ -775,42 +734,8 @@ export class InternalCaseService {
   async getIndictmentCaseDefendantsWithExpiredAppealDeadline(): Promise<
     { theCase: Case; defendant: Defendant }[]
   > {
-    const cases = await this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: User,
-          as: 'judge',
-          required: false,
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          include: [
-            {
-              model: DefendantEventLog,
-              as: 'eventLogs',
-              required: false,
-            },
-            {
-              model: Verdict,
-              as: 'verdicts',
-              required: true,
-              separate: true,
-              order: [['created', 'DESC']],
-            },
-          ],
-        },
-      ],
-      where: {
-        state: completedIndictmentCaseStates,
-        type: CaseType.INDICTMENT,
-        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        // Only LOKE cases have a corresponding police case to update
-        origin: CaseOrigin.LOKE,
-      },
-    })
+    const cases =
+      await this.caseRepositoryService.findIndictmentCasesForVerdictAppealDeadlineCheck()
 
     return cases.flatMap((theCase) =>
       pipe(
@@ -853,27 +778,9 @@ export class InternalCaseService {
   }
 
   async getCaseHearingArrangements(date: Date): Promise<Case[]> {
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0))
-    const endOfDay = new Date(date.setHours(23, 59, 59, 999))
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: DateLog,
-          as: 'dateLogs',
-          where: {
-            dateType: [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE],
-            date: {
-              [Op.gte]: startOfDay,
-              [Op.lte]: endOfDay,
-            },
-          },
-          required: true,
-        },
-      ],
-      where: { state: { [Op.eq]: CaseState.RECEIVED } },
-      order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
-    })
+    return this.caseRepositoryService.findCasesWithHearingArrangementsOnDate(
+      date,
+    )
   }
 
   async deliverProsecutorToCourt(
@@ -1795,111 +1702,20 @@ export class InternalCaseService {
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
   async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-        },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-          where: {
-            dateType: 'ARRAIGNMENT_DATE',
-          },
-          required: true,
-        },
-      ],
-      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
-      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: {
-        type: CaseType.INDICTMENT,
-        // Make sure we don't send cases that are in deleted or other inaccessible states
-        state: [
-          CaseState.RECEIVED,
-          CaseState.WAITING_FOR_CANCELLATION,
-          ...completedIndictmentCaseStates,
-        ],
-        // nationalId comes from a raw @Param, so normalize it once here
-        '$defendants.national_id$': nationalId.replace(/-/g, ''),
-      },
-    })
+    return this.caseRepositoryService.findDefendantIndictmentCases(nationalId)
   }
 
   async findByIdAndDefendantNationalId(
     caseId: string,
     defendantNationalId: string,
   ): Promise<Case> {
-    const theCase = await this.caseRepositoryService.findOne({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          include: [
-            {
-              model: Subpoena,
-              as: 'subpoenas',
-              order: [['created', 'DESC']],
-              separate: true,
-            },
-            {
-              model: Verdict,
-              as: 'verdicts',
-              required: false,
-              order: [['created', 'DESC']],
-              separate: true,
-            },
-          ],
-        },
-        { model: Institution, as: 'court' },
-        { model: Institution, as: 'prosecutorsOffice' },
-        { model: User, as: 'judge' },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: DateLog, as: 'dateLogs' },
-        {
-          model: EventLog,
-          as: 'eventLogs',
-          required: false,
-          order: [['created', 'DESC']],
-          separate: true,
-          where: {
-            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-          },
-        },
-        {
-          model: CourtSession,
-          as: 'courtSessions',
-          required: false,
-          order: [['created', 'DESC']],
-          separate: true,
-          attributes: ['ruling'],
-          where: {
-            ruling_type: CourtSessionRulingType.JUDGEMENT,
-          },
-        },
-      ],
-      attributes: [
-        'courtCaseNumber',
-        'id',
-        'state',
-        'indictmentRulingDecision',
-        'rulingDate',
-        'ruling',
-      ],
-      where: {
-        type: CaseType.INDICTMENT,
-        id: caseId,
-        state: { [Op.not]: CaseState.DELETED },
-        isArchived: false,
-        // This only selects defendants with the given national id, other defendants are not included.
-        // defendantNationalId comes from a raw @Param, so normalize it once here.
-        '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
-      },
-    })
+    // This only selects defendants with the given national id, other
+    // defendants are not included
+    const theCase =
+      await this.caseRepositoryService.findIndictmentCaseByIdAndDefendantNationalId(
+        caseId,
+        defendantNationalId,
+      )
 
     if (!theCase) {
       throw new NotFoundException(`Case ${caseId} does not exist`)
@@ -1961,33 +1777,10 @@ export class InternalCaseService {
     const start = startOfDay(targetRulingDate)
     const end = endOfDay(targetRulingDate)
 
-    const cases = await this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: EventLog,
-          as: 'eventLogs',
-          required: false,
-          order: [['created', 'DESC']],
-          separate: true,
-          where: {
-            event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-          },
-        },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          where: {
-            indictmentReviewDecision: null,
-          },
-        },
-      ],
-      where: {
-        indictmentReviewerId: indictmentReviewerId,
-        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        rulingDate: { [Op.gte]: start, [Op.lte]: end },
-      },
-    })
-    return cases
+    return this.caseRepositoryService.findIndictmentCasesAwaitingReviewByRulingDate(
+      indictmentReviewerId,
+      start,
+      end,
+    )
   }
 }

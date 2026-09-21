@@ -48,6 +48,8 @@ fragment AnswerOptions on QuestionnaireAnswerOption {
     multiline
     maxLength
     decimal
+    min
+    max
   }
   options {
     __typename

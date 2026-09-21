@@ -15,6 +15,11 @@ const Content = styled(ScrollView)`
   padding-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
+const Title = styled(Typography)`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const Row = styled.View`
   border-bottom-width: 1px;
   border-color: ${({ theme }) => theme.color.blue200};
@@ -185,16 +190,13 @@ export default function MedicineDelegationDetailScreen() {
 
   return (
     <Content>
-      <StackScreen
-        options={{
-          title:
-            delegation?.name ??
-            intl.formatMessage({
-              id: 'health.medicineDelegation.screenTitle',
-            }),
-        }}
-        closeable
-      />
+      <StackScreen options={{ title: '' }} closeable />
+      <Title variant="heading3">
+        {delegation?.name ??
+          intl.formatMessage({
+            id: 'health.medicineDelegation.screenTitle',
+          })}
+      </Title>
       <Button
         loading={loadingRevokeMedicineDelegation}
         title={intl.formatMessage({
