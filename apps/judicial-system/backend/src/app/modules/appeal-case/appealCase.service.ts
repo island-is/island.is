@@ -31,6 +31,7 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -932,8 +933,19 @@ export class AppealCaseService {
       )
     }
 
-    // No notification: the one that tells the public prosecution office about a verdict appeal is
-    // its own story, and the ruling appeal notifications do not apply here.
+    // The public prosecution is told when a defender files an appeal through the
+    // portal, and only then: an appeal the office registered itself is one it
+    // already knows about, and the prosecution's own appeal needs no telling.
+    if (actor === 'DEFENDER') {
+      addMessagesToQueue({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
+        },
+      })
+    }
 
     return appealCase
   }
