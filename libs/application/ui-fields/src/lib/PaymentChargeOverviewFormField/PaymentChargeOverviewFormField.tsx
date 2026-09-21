@@ -28,6 +28,12 @@ export const PaymentChargeOverviewFormField: FC<
   React.PropsWithChildren<Props>
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
+  const simplifiedListOptions =
+    typeof field.simplifiedList === 'object' ? field.simplifiedList : undefined
+  const isSimplifiedList = Boolean(field.simplifiedList)
+  const amountClassName = simplifiedListOptions?.preventAmountWrap
+    ? styles.amountNoWrap
+    : undefined
 
   // get list of selected charge items with info
   const selectedChargeList = field.getSelectedChargeItems(application)
@@ -57,7 +63,9 @@ export const PaymentChargeOverviewFormField: FC<
         <Text variant="small">
           {formatText(charge.subLabel, application, formatMessage)}
         </Text>
-        <Text variant="small">{formatCurrency(charge.subAmount)}</Text>
+        <Text variant="small" className={amountClassName}>
+          {formatCurrency(charge.subAmount)}
+        </Text>
       </Box>
     ) : null
 
@@ -72,13 +80,13 @@ export const PaymentChargeOverviewFormField: FC<
       <Box>
         <Text
           variant={field.forPaymentLabelVariant ?? 'h3'}
-          className={field.simplifiedList ? styles.fontSize14 : undefined}
+          className={isSimplifiedList ? styles.fontSize14 : undefined}
           as="h4"
           marginY={2}
         >
           {formatText(field.forPaymentLabel, application, formatMessage)}
         </Text>
-        {field.simplifiedList
+        {isSimplifiedList
           ? selectedChargeWithInfoList.map((charge) => (
               <Box key={charge?.chargeItemCode} paddingTop={1}>
                 <Box display="flex" justifyContent="spaceBetween">
@@ -88,7 +96,7 @@ export const PaymentChargeOverviewFormField: FC<
                       ? ` - ${formatMessage(charge.extraLabel)}`
                       : ''}
                   </Text>
-                  <Text>
+                  <Text className={amountClassName}>
                     {formatCurrency(
                       (charge?.priceAmount || 0) * (charge?.quantity || 1),
                     )}
@@ -109,14 +117,18 @@ export const PaymentChargeOverviewFormField: FC<
             </Text>
             <Text
               variant={field.forPaymentLabelVariant ?? 'h3'}
-              className={styles.fontSize14}
+              className={
+                amountClassName
+                  ? `${styles.fontSize14} ${amountClassName}`
+                  : styles.fontSize14
+              }
               fontWeight="regular"
             >
               {formatCurrency(field.getAdditionalSummaryAmount(application))}
             </Text>
           </Box>
         )}
-        {!field.simplifiedList &&
+        {!isSimplifiedList &&
           selectedChargeWithInfoList.map((charge, index) => (
             <Box key={charge?.chargeItemCode}>
               <Text variant="h5">
@@ -133,7 +145,10 @@ export const PaymentChargeOverviewFormField: FC<
                         coreDefaultFieldMessages.defaultUnitPriceTitle,
                       )}
                 </Text>
-                <Text> {formatCurrency(charge?.priceAmount || 0)}</Text>
+                <Text className={amountClassName}>
+                  {' '}
+                  {formatCurrency(charge?.priceAmount || 0)}
+                </Text>
               </Box>
               <Box paddingTop={1} display="flex" justifyContent="spaceBetween">
                 <Text>
@@ -163,7 +178,7 @@ export const PaymentChargeOverviewFormField: FC<
                           coreDefaultFieldMessages.defaultTotalPerUnitTitle,
                         )}
                   </Text>
-                  <Text variant="h5">
+                  <Text variant="h5" className={amountClassName}>
                     {' '}
                     {formatCurrency(
                       (charge?.priceAmount || 0) * (charge?.quantity || 1),
@@ -185,7 +200,7 @@ export const PaymentChargeOverviewFormField: FC<
       </Box>
       <Box paddingBottom={4} display="flex" justifyContent="spaceBetween">
         <Text variant="h5">{formatMessage(field.totalLabel)}</Text>
-        <Text color="blue400" variant="h3">
+        <Text color="blue400" variant="h3" className={amountClassName}>
           {formatCurrency(totalPrice)}
         </Text>
       </Box>

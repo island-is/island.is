@@ -20,7 +20,7 @@ export const paymentSection = buildSection({
           forPaymentLabel: messages.summary.forPaymentLabel,
           forPaymentLabelVariant: 'h5',
           totalLabel: messages.summary.totalLabel,
-          simplifiedList: true,
+          simplifiedList: { preventAmountWrap: true },
           getSelectedChargeItems: (application) =>
             // payID is FJS' per-debt identifier - the one that goes with the
             // payment - so it is what identifies a line here as well.

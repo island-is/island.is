@@ -744,11 +744,16 @@ export interface PaymentChargeOverviewField extends BaseField {
   quantityUnitLabel?: StaticText
   totalPerUnitLabel?: StaticText
   /**
-   * When true, renders each selected charge item as a single name/price
-   * row instead of the default per-item unit-price/quantity/total-per-unit
-   * breakdown. Opt-in — defaults to false, existing consumers unaffected.
+   * When set (true, or an options object), renders each selected charge item
+   * as a single name/price row instead of the default per-item unit-price/
+   * quantity/total-per-unit breakdown. Opt-in — defaults to false/undefined,
+   * existing consumers unaffected.
    */
-  simplifiedList?: boolean
+  simplifiedList?:
+    | boolean
+    | {
+        preventAmountWrap?: boolean
+      }
   additionalSummaryLabel?: StaticText
   getAdditionalSummaryAmount?: (application: Application) => number
   getSelectedChargeItems: (application: Application) => {
