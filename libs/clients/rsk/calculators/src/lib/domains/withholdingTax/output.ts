@@ -42,5 +42,7 @@ export const toWithholdingTaxOutput = (
   employerPensionMatch: result.motframlag ?? undefined,
   payrollTaxBase: result.tryggingagjaldsstofn ?? undefined,
   payrollTax: result.tryggingagjald ?? undefined,
-  taxBrackets: (result.skattthrep ?? []).map(toWithholdingTaxBracketOutput),
+  taxBrackets: (Array.isArray(result.skattthrep) ? result.skattthrep : []).map(
+    toWithholdingTaxBracketOutput,
+  ),
 })
