@@ -635,35 +635,43 @@ const rewriteDevEnv = (
   return value
 }
 
-export const HelmOutput: OutputFormat<HelmService> = {
-  featureDeployment(s: ServiceDefinition, env): void {
-    const featureIdsHost = getFeatureIdsHost(env)
+/**
+ * 
+ * @param s Rewrites sercices parameters for ids feature.
+ * @param env 
+ * @returns 
+ */
+function rewriteIdsFeatureServiceUrls(
+  s: ServiceDefinition,
+  env: EnvironmentConfig,
+): ServiceDefinition {
+  const featureIdsHost = getFeatureIdsHost(env)
 
-    const idsServices = [
-      'identity-server',
-      'auth-admin-web',
-      'services-auth-admin-api',
-      'services-auth-public-api',
-      'services-auth-ids-api',
-      'services-auth-delegation-api',
-      'services-auth-personal-representative',
-      'services-auth-personal-representative-public',
-    ]
+  const idsServices = [
+    'identity-server',
+    'auth-admin-web',
+    'services-auth-admin-api',
+    'services-auth-public-api',
+    'services-auth-ids-api',
+    'services-auth-delegation-api',
+    'services-auth-personal-representative',
+    'services-auth-personal-representative-public',
+  ]
 
-    const serviceName = s.image ?? s.name
+  const serviceName = s.image ?? s.name
 
-    if (s.env.SERVICE_PORTAL_BASE_URL !== undefined) {
-      s.env.SERVICE_PORTAL_BASE_URL = rewriteDevEnv(
-        s.env.SERVICE_PORTAL_BASE_URL,
-        (value) => {
-          const url = new URL(value)
+  if (s.env.SERVICE_PORTAL_BASE_URL !== undefined) {
+    s.env.SERVICE_PORTAL_BASE_URL = rewriteDevEnv(
+      s.env.SERVICE_PORTAL_BASE_URL,
+      (value) => {
+        const url = new URL(value)
 
-          return `https://${env.feature}-beta.${env.domain}${url.pathname}${url.search}${url.hash}`
-        },
-      )
-    }
+        return `https://${env.feature}-beta.${env.domain}${url.pathname}${url.search}${url.hash}`
+      },
+    )
+  }
 
-    for (const [name, value] of Object.entries(s.env)) {
+  for (const [name, value] of Object.entries(s.env)) {
       if (
         typeof value === 'object' &&
         value !== null &&
@@ -675,16 +683,9 @@ export const HelmOutput: OutputFormat<HelmService> = {
           getFeatureInternalUrl(env, devValue),
         )
       }
-    }
+  }
 
-    if (s.env.IDENTITY_SERVER_ISSUER_URL) {
-      s.env.IDENTITY_SERVER_ISSUER_URL = rewriteDevEnv(
-        s.env.IDENTITY_SERVER_ISSUER_URL,
-        () => getFeatureIdsUrl(env),
-      )
-    }
-
-    if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
+  if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
       s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
         s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
         (value) => {
@@ -697,32 +698,31 @@ export const HelmOutput: OutputFormat<HelmService> = {
           ])
         },
       )
+  }
+
+  const idsUrlVariables = [
+    'IDENTITY_SERVER_ISSUER_URL',
+    'AUTH_PUBLIC_API_URL',
+    'AUTH_ADMIN_API_PATH',
+    'AUTH_IDS_API_URL',
+  ] as const
+
+  for (const name of idsUrlVariables) {
+    const value = s.env[name]
+
+    if (value === undefined) {
+      continue
     }
 
-    // Rewrite auth public API URL
-    if (s.env.AUTH_PUBLIC_API_URL) {
-      s.env.AUTH_PUBLIC_API_URL = rewriteDevEnv(
-        s.env.AUTH_PUBLIC_API_URL,
-        (value) => getFeatureIdsUrl(env, new URL(value).pathname),
-      )
-    }
+    s.env[name] = rewriteDevEnv(value, (currentValue) => {
+      const url = new URL(currentValue)
+      const path = url.pathname === '/' ? '' : url.pathname
 
-    // Rewrite auth admin API path
-    if (s.env.AUTH_ADMIN_API_PATH) {
-      s.env.AUTH_ADMIN_API_PATH = rewriteDevEnv(
-        s.env.AUTH_ADMIN_API_PATH,
-        (value) => getFeatureIdsUrl(env, new URL(value).pathname),
-      )
-    }
+      return getFeatureIdsUrl(env, `${path}${url.search}${url.hash}`)
+    })
+  }
 
-    // Rewrite auth IDS API URL
-    if (s.env.AUTH_IDS_API_URL) {
-      s.env.AUTH_IDS_API_URL = rewriteDevEnv(s.env.AUTH_IDS_API_URL, (value) =>
-        getFeatureIdsUrl(env, new URL(value).pathname),
-      )
-    }
-
-    if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
+  if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
       s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
         s.env.AUTH_ADMIN_API_PATHS,
         (value) => {
@@ -744,8 +744,9 @@ export const HelmOutput: OutputFormat<HelmService> = {
           })
         },
       )
-    }
-    if (idsServices.includes(serviceName)) {
+  }
+
+  if (idsServices.includes(serviceName)) {
       const rewriteIdsUrl = (value: string) => {
         const url = new URL(value)
         return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
@@ -767,10 +768,10 @@ export const HelmOutput: OutputFormat<HelmService> = {
           () => featureIdsHost,
         )
       }
-    }
+  }
 
 
-    if (s.env.Application__AllowedRedirectUris) {
+  if (s.env.Application__AllowedRedirectUris) {
       s.env.Application__AllowedRedirectUris = rewriteDevEnv(
         s.env.Application__AllowedRedirectUris,
         (value) =>
@@ -788,13 +789,33 @@ export const HelmOutput: OutputFormat<HelmService> = {
             })
             .join(','),
       )
-    }
+  }
+
+  return s
+}
+
+function prepareFeatureDeployment(
+  s: ServiceDefinition,
+  env: EnvironmentConfig,
+): ServiceDefinition {
+
+  s = rewriteIdsFeatureServiceUrls(s, env)
+
+  const featureIdsHost = getFeatureIdsHost(env)
+
+  const publicIdsServices = [
+    'identity-server',
+    'auth-admin-web',
+    'services-auth-admin-api',
+    'services-auth-public-api',
+  ]
+  const serviceName = s.image ?? s.name
 
     Object.values(s.ingress).forEach((ingress) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
       }
-      if (['identity-server','auth-admin-web','services-auth-admin-api','services-auth-public-api',].includes(serviceName)) {
+      if (publicIdsServices.includes(serviceName)) {
         ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
       } else {
         ingress.host.dev = ingress.host.dev.map(
@@ -802,6 +823,13 @@ export const HelmOutput: OutputFormat<HelmService> = {
         )
       }
     })
+
+    return s
+}
+
+export const HelmOutput: OutputFormat<HelmService> = {
+  featureDeployment(s: ServiceDefinition, env): void {
+    s = prepareFeatureDeployment(s, env)
 
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
