@@ -48,12 +48,20 @@ the hash is passed to the Nx build in the Docker build (`CI_CONFIG_HASH` build a
 To rebuild everything everywhere, e.g. after changing the `Dockerfile`, change
 `.github/actions/force-build.mjs`.
 
-## Docker images of feature deployments
+## Feature deployments
 
-`.github/workflows/push.yml` builds the images of a feature deployment the same way: `prepare`
-plans (`plan-docker.mjs`), `docker-agents` are the agents and `docker-main` runs one
-`nx run-many -t docker-build`. Everything else in that workflow (pre-releases) still builds the
-images in a matrix.
+With the `deploy-feature` label the pull request pipeline only has its `autofix` and `success` jobs.
+`.github/workflows/push.yml` deploys the feature and runs the checks, as one distributed run:
+`prepare` plans (`plan.mjs` with `PLAN_MODE=deploy`), `docker-agents` are the agents and
+`docker-main` runs two Nx commands at the same time (`run.sh`):
+
+- lint, typecheck, test and e2e, like the pull request pipeline
+- `docker-build` for the images, which depends on `build`
+
+They are two commands because they need two configurations: `ci` for the tests, and `production`
+for the builds (see below). It also means the feature is deployed when its images are built,
+whatever the checks say, like before Nx Agents. Everything else in that workflow (pre-releases)
+still builds the images in a matrix.
 
 - `docker-build` is a target that `tools/nx-plugins/docker-build.js` infers for every project with
   a `docker-*` marker target. It runs `docker-build.sh`, which calls the same `scripts/ci/90_*.sh`
@@ -63,14 +71,15 @@ images in a matrix.
 - An image that is already in the registry is not built again. The tag is the same for every
   attempt of a workflow run, so this is what makes re-running jobs cheap.
 - Each task writes what it built to `dist/docker-build-data/`, the agent uploads that as an
-  artifact and `deploy-feature` merges it (`merge-docker-build-data.mjs`).
+  artifact and `deploy-feature` merges it (`merge-docker-build-data.mjs`), which fails if an
+  image is missing.
 
-The build in a Docker build (`nx build` in `scripts/ci/Dockerfile`) is meant to have the same hash
-as the same build on an agent of the pull request pipeline, so it is a cache hit when the pull
-request was built first. For that the inputs of a build must be the same in both places: the
-node version (`setup-yarn` reads it from package.json), `force-build.mjs` (kept in the build
-context by `.dockerignore`), `CI_CONFIG_HASH` (a build arg) and no files that `.dockerignore`
-leaves out (see `production` in nx.json).
+The build in a Docker build (`nx build <project> --prod` in `scripts/ci/Dockerfile`) has the same
+hash as the build `docker-build` depends on, so in there it is a cache hit and the Docker build
+only packages. For that the task and its inputs must be the same in both places: the `production`
+configuration (the second command), the node version (`setup-yarn` reads it from package.json),
+`force-build.mjs` (kept in the build context by `.dockerignore`), `CI_CONFIG_HASH` (a build arg)
+and no files that `.dockerignore` leaves out (see `production` in nx.json).
 
 ## Agent types and count
 
@@ -103,8 +112,16 @@ would be passed to every target in the command.
 
 ## Re-running
 
-Use "Re-run all jobs". "Re-run failed jobs" only re-runs the main job and the agents
-that were lost, and a run without all of its agents can wait forever (e.g. for a
-judicial agent), so `check-agents.sh` fails the job right away.
+"Re-run all jobs" always works, and is cheap: what was done is a cache hit.
 
-One lost agent (e.g. a runner that is shut down) fails the whole distributed run.
+"Re-run failed jobs" only re-runs the jobs that failed, which is handled like this:
+
+- An agent that is still part of the run when it fails, fails with it (`start-agent.sh`). An agent
+  that had no tasks left does not. So the failed jobs are the main job and the agents that are
+  needed for what is left: all of them when the run failed early, a few when a test failed at the end.
+- The main job continues with the agents that were re-run (`check-agents.sh`).
+- An agent that is re-run without the main job (it was lost, but the run went on and succeeded)
+  has nothing to do and exits.
+
+`.github/workflows/retry-lost-runners.yml` re-runs a pipeline as a whole when a job was lost
+with its runner.

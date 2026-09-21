@@ -44,17 +44,52 @@ cp .env.build .env.build-custom-server
 # What the linting and typecheck jobs had before Nx Agents
 echo 'NODE_OPTIONS="--max-old-space-size=4096"' | tee .env.lint >.env.typecheck
 
-# Set Datadog config per-project
-if [[ "${DD_SERVICE_ENV_FILES:-true}" == "true" ]]; then
-  GRAPH_FILE="$(mktemp -d)/graph.json"
-  NX_DAEMON=false yarn nx graph --file="$GRAPH_FILE" >/dev/null
-  jq -r '.graph.nodes | to_entries[] | "\(.value.data.root)\t\(.key)"' "$GRAPH_FILE" |
-    while IFS=$'\t' read -r root name; do
-      echo "DD_SERVICE=$name" >>"$root/.env"
-    done
-fi
+# Set Datadog config per-project. `.dockerignore` keeps these files out of the Docker builds
+GRAPH_FILE="$(mktemp -d)/graph.json"
+NX_DAEMON=false yarn nx graph --file="$GRAPH_FILE" >/dev/null
+jq -r '.graph.nodes | to_entries[] | "\(.value.data.root)\t\(.key)"' "$GRAPH_FILE" |
+  while IFS=$'\t' read -r root name; do
+    echo "DD_SERVICE=$name" >>"$root/.env"
+  done
 
 unset NODE_OPTIONS DD_SERVICE API_MOCKS
 export NX_LOAD_DOT_ENV_FILES=true
 
-exec npx nx-cloud start-agent
+# The rest is about "Re-run failed jobs", which only re-runs the jobs that failed. GH_TOKEN is for
+# that and not something for the tasks, so it is not in the environment of the agent
+ATTEMPT_TOKEN="${GH_TOKEN:-}"
+unset GH_TOKEN
+# shellcheck source-path=SCRIPTDIR
+source "$DIR/_attempt.sh"
+
+# An agent that was lost is re-run on its own when the main job went on without it and succeeded.
+# Nobody starts a distributed run in that attempt, so there is nothing to wait for
+if [[ -n "$ATTEMPT_TOKEN" && "${GITHUB_RUN_ATTEMPT:-1}" -gt 1 ]]; then
+  state=$(main_job_state || echo unknown)
+  if [[ "$state" == "ok" || "$state" == "missing" ]]; then
+    echo "The main job is not part of this attempt (it is done), so there are no tasks for this agent"
+    exit 0
+  fi
+fi
+
+AGENT_LOG="$(mktemp)"
+status=0
+npx nx-cloud start-agent 2>&1 | tee "$AGENT_LOG" || status=$?
+
+# An agent exits when there are no tasks left for it, or when the run ends. In the second case it
+# may still have had work. If the run failed, fail this job too: then "Re-run failed jobs" re-runs
+# the main job together with every agent that is needed for what is left (all of them when the
+# run failed early, e.g. because a runner was lost)
+if [[ $status -eq 0 && -n "$ATTEMPT_TOKEN" ]] && ! grep -q "no further tasks for this agent" "$AGENT_LOG"; then
+  for _ in 1 2 3 4 5 6; do
+    state=$(main_job_state || echo unknown)
+    [[ "$state" != "live" ]] && break
+    # The main job is still at the step that ends the run, its failed step shows up in a moment
+    sleep 5
+  done
+  if [[ "$state" == "failed" ]]; then
+    echo "::error title=Nx Agents::The distributed run failed while this agent was part of it. This job fails with it so that \"Re-run failed jobs\" re-runs this agent too."
+    exit 1
+  fi
+fi
+exit "$status"

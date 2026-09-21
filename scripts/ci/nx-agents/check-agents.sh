@@ -1,26 +1,30 @@
 #!/bin/bash
 set -euo pipefail
 
-# Fails when not every agent job is part of this attempt of the workflow run.
+# For the main job of an attempt after the first one: checks which agents are part of the attempt.
 #
-# "Re-run failed jobs" only re-runs the jobs that failed: the main job, and the agents that
-# were lost (the other agents of a failed run succeed). A distributed run with some of its
-# agents is not good enough, e.g. without the judicial agents nothing can run the judicial
-# tasks and the run waits for them until the job times out.
+# "Re-run failed jobs" re-runs the main job with the agents that failed. Those are the agents
+# that still had work when the run failed (see `start-agent.sh`), so the run continues with them:
+# what was done before is a cache hit. Without any agent there is nobody to run the tasks.
 #
 # GH_TOKEN: token with `actions: read`
 # EXPECTED_AGENTS: number of agents, see `plan.mjs`
 
-jobs=$(curl -fsSL \
-  -H "Authorization: Bearer $GH_TOKEN" \
-  -H "Accept: application/vnd.github+json" \
-  "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100")
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+ATTEMPT_TOKEN="$GH_TOKEN"
+# shellcheck source-path=SCRIPTDIR
+source "$DIR/_attempt.sh"
 
-# Agents wait for the main job, so the ones from this attempt can't be completed yet
-live_agents=$(jq '[.jobs[] | select(.name | startswith("Nx agent")) | select(.status != "completed")] | length' <<<"$jobs")
-echo "Agents in attempt $GITHUB_RUN_ATTEMPT: $live_agents of $EXPECTED_AGENTS"
+agents=$(live_agents)
+echo "Agents in attempt $GITHUB_RUN_ATTEMPT: $agents of $EXPECTED_AGENTS"
 
-if [[ "$live_agents" -lt "$EXPECTED_AGENTS" ]]; then
-  echo "::error title=Nx Agents::Only $live_agents of $EXPECTED_AGENTS agents are running in this attempt. Use \"Re-run all jobs\" instead of \"Re-run failed jobs\"."
+if [[ "$agents" == "0" ]]; then
+  echo "::error title=Nx Agents::No agents are running in this attempt. Use \"Re-run all jobs\" instead of \"Re-run failed jobs\"."
   exit 1
+fi
+
+if [[ "$agents" -lt "$EXPECTED_AGENTS" ]]; then
+  echo "::notice title=Nx Agents::Continuing with the $agents agent(s) that were re-run. Use \"Re-run all jobs\" if that is too few for what is left."
+  # What Nx Cloud waits for before it starts handing out tasks
+  echo "NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT=$agents" >>"$GITHUB_ENV"
 fi

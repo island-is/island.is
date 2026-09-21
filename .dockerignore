@@ -8,6 +8,8 @@
 /.git/
 /scripts/ci/
 /.env.*
+# Written by CI for the tests (`scripts/ci/nx-agents/start-agent.sh`), and never something for an image
+**/.env
 /.envrc*
 /.nx/
 
