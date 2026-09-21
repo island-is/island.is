@@ -132,6 +132,10 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
   (`yarn nx run judicial-system-backend:migrate` and `:seed`). A stale schema
   makes every case creation fail with a 500, and the e2e defender
   (`0909090909`) only logs in because the seeders put it in `lawyer_registry`.
+  Check what holds port 5432 first (`lsof -nP -iTCP:5432 -sTCP:LISTEN`): the
+  development sequelize config is hardcoded to `localhost:5432`, so with
+  `yarn proxies db` running those commands hit the dev cluster's database
+  instead of the local container.
 - Every spec is `describe.serial`, so one failure skips the rest of that file.
   Read the trace (`apps/system-e2e/src/dist/test-results/*/trace.zip`) before
   changing a test: `0-trace.network` shows request timing, and most "flaky"

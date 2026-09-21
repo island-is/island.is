@@ -185,7 +185,7 @@ yarn playwright test -c apps/system-e2e/src --project judicial-system
 
 Stop the dev server first - the production server needs port 4200, both because the dev S3 upload bucket only allows that origin in its CORS rules and because the dev server also holds port 4201 for metrics. `MOCK_NATIONAL_REGISTRY=true` keeps the fake national registry lookups the tests depend on; the web server needs nothing from the workspace `.env` files.
 
-Make sure the backend database has all migrations applied first (`yarn nx run judicial-system-backend:migrate`); a stale schema makes every case creation fail with a 500. Run the seeders too (`yarn nx run judicial-system-backend:seed`) - besides the test users they add the e2e defender to the lawyer registry, which every lawyer login requires.
+Make sure the backend database has all migrations applied first (`yarn nx run judicial-system-backend:migrate`); a stale schema makes every case creation fail with a 500. Run the seeders too (`yarn nx run judicial-system-backend:seed`) - besides the test users they add the e2e defender to the lawyer registry, which every lawyer login requires. Both commands use the development sequelize config, which is hardcoded to `localhost:5432` - stop any `yarn proxies db` on that port first, or they will run against the dev cluster's database.
 
 ## Message Extraction from Contentful
 

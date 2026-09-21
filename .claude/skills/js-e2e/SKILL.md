@@ -18,6 +18,13 @@ Check all of these before running. Fix what is fixable, report the rest.
 - **Backend, api and database up**: `curl -s -o /dev/null -w '%{http_code}' http://localhost:3344/liveness`
   and the same on `:3333` both return 200, and `docker ps` lists `db_judicial_system`.
   If not, tell the user which one is down - do not start their services for them.
+- **The database on 5432 is the local one**: `lsof -nP -iTCP:5432 -sTCP:LISTEN`
+  must show a `com.docker` process. `sequelize.config.js` hardcodes
+  `localhost:5432` for development, and `yarn proxies db` forwards that same
+  port to the dev cluster - if a proxy holds it, migrations and seeders run
+  against the dev database. Only one process can bind the port, so anything
+  other than docker there means stop and tell the user; never run `db:migrate`
+  or `:seed` until docker owns 5432.
 - **Migrations applied**: in `apps/judicial-system/backend`, run
   `../../../node_modules/.bin/sequelize-cli db:migrate:status` and apply with
   `db:migrate` if any line says `down`. A stale schema makes every CreateCase
