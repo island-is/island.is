@@ -2243,7 +2243,7 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<DeliverResponse> {
     const courtCaseNumber = theCase.courtCaseNumber ?? ''
-    const subject = `Áfrýjun í mál ${courtCaseNumber}`
+    const subject = `Áfrýjun í máli ${courtCaseNumber}`
     const body = `Dómi héraðsdóms í máli ${courtCaseNumber} hefur verið áfrýjað. Sjá nánar á yfirliti málsins í Réttarvörslugátt.`
 
     const publicProsecutorEmail =
