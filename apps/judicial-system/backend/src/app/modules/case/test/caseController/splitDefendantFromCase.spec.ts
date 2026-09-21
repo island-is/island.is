@@ -1,4 +1,5 @@
 import { Op, Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
@@ -17,6 +18,8 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -25,6 +28,7 @@ import {
   CaseRepositoryService,
   CaseString,
   CaseStringRepositoryService,
+  CivilClaimantRepositoryService,
   DateLogRepositoryService,
   Defendant,
   DefendantEventLogRepositoryService,
@@ -34,7 +38,6 @@ import {
   OffenseRepositoryService,
   SubpoenaRepositoryService,
   VerdictRepositoryService,
-  VictimRepositoryService,
 } from '../../../repository'
 
 interface Then {
@@ -98,9 +101,12 @@ describe('CaseController - Split defendant from case', () => {
   ]
 
   let transaction: Transaction
+  let mockSequelize: Sequelize
   let splitCaseId: string
   let oldIndictmentCountId: string
   let newIndictmentCountId: string
+  let oldCivilClaimantId: string
+  let newCivilClaimantId: string
   let splitCase: Case
   let fullSplitCase: Case
 
@@ -112,10 +118,10 @@ describe('CaseController - Split defendant from case', () => {
   let mockDefendantEventLogRepositoryService: jest.Mocked<DefendantEventLogRepositoryService>
   let mockIndictmentCountRepositoryService: jest.Mocked<IndictmentCountRepositoryService>
   let mockOffenseRepositoryService: jest.Mocked<OffenseRepositoryService>
-  let mockVictimRepositoryService: jest.Mocked<VictimRepositoryService>
   let mockCaseStringRepositoryService: jest.Mocked<CaseStringRepositoryService>
   let mockDateLogRepositoryService: jest.Mocked<DateLogRepositoryService>
   let mockEventLogRepositoryService: jest.Mocked<EventLogRepositoryService>
+  let mockCivilClaimantRepositoryService: jest.Mocked<CivilClaimantRepositoryService>
   let mockCaseFileRepositoryService: jest.Mocked<CaseFileRepositoryService>
 
   let givenWhenThen: GivenWhenThen
@@ -131,14 +137,15 @@ describe('CaseController - Split defendant from case', () => {
       defendantEventLogRepositoryService,
       indictmentCountRepositoryService,
       offenseRepositoryService,
-      victimRepositoryService,
       caseStringRepositoryService,
       dateLogRepositoryService,
       eventLogRepositoryService,
+      civilClaimantRepositoryService,
       caseFileRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
+    mockSequelize = sequelize
     mockCaseRepositoryService =
       caseRepositoryService as jest.Mocked<CaseRepositoryService>
     mockPoliceCaseNumberRepositoryService =
@@ -155,14 +162,14 @@ describe('CaseController - Split defendant from case', () => {
       indictmentCountRepositoryService as jest.Mocked<IndictmentCountRepositoryService>
     mockOffenseRepositoryService =
       offenseRepositoryService as jest.Mocked<OffenseRepositoryService>
-    mockVictimRepositoryService =
-      victimRepositoryService as jest.Mocked<VictimRepositoryService>
     mockCaseStringRepositoryService =
       caseStringRepositoryService as jest.Mocked<CaseStringRepositoryService>
     mockDateLogRepositoryService =
       dateLogRepositoryService as jest.Mocked<DateLogRepositoryService>
     mockEventLogRepositoryService =
       eventLogRepositoryService as jest.Mocked<EventLogRepositoryService>
+    mockCivilClaimantRepositoryService =
+      civilClaimantRepositoryService as jest.Mocked<CivilClaimantRepositoryService>
     mockCaseFileRepositoryService =
       caseFileRepositoryService as jest.Mocked<CaseFileRepositoryService>
 
@@ -170,6 +177,8 @@ describe('CaseController - Split defendant from case', () => {
     splitCase = { id: splitCaseId } as Case
     oldIndictmentCountId = uuid()
     newIndictmentCountId = uuid()
+    oldCivilClaimantId = uuid()
+    newCivilClaimantId = uuid()
     // The re-read split case, as the initial court documents need it
     fullSplitCase = {
       id: splitCaseId,
@@ -194,32 +203,42 @@ describe('CaseController - Split defendant from case', () => {
     mockCaseStringRepositoryService.copyByTypesToCase.mockResolvedValue()
     mockDateLogRepositoryService.copyByTypesToCase.mockResolvedValue()
     mockEventLogRepositoryService.copyByTypesToCase.mockResolvedValue()
-    mockVictimRepositoryService.copyAllToCase.mockResolvedValue()
     mockIndictmentCountRepositoryService.copyAllToCase.mockResolvedValue(
       new Map([[oldIndictmentCountId, newIndictmentCountId]]),
     )
     mockOffenseRepositoryService.copyAllForIndictmentCounts.mockResolvedValue()
+    mockCivilClaimantRepositoryService.copyApplicableToCaseForDefendant.mockResolvedValue(
+      new Map([[oldCivilClaimantId, newCivilClaimantId]]),
+    )
     mockCaseFileRepositoryService.moveAllForDefendantToCase.mockResolvedValue(1)
+    mockCaseFileRepositoryService.remapCivilClaimantIdsForCase.mockResolvedValue()
     mockCaseFileRepositoryService.copyAllWithoutDefendantToCase.mockResolvedValue()
     mockPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant.mockResolvedValue()
     mockPoliceCaseNumberRepositoryService.resolvePoliceCaseNumbersForCases.mockResolvedValue()
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (theCase: Case, defendant: Defendant) => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.splitDefendantFromCase(
-          theCase.id,
-          defendant.id,
-          theCase,
-          defendant,
-        )
+        // The route is guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open - and holding a lock on this case row -
+        // by the time the handler runs. Guards do not execute in controller
+        // unit tests, so the request context and that transaction are set up
+        // here instead.
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await caseController.splitDefendantFromCase(
+            theCase.id,
+            defendant.id,
+            theCase,
+            defendant,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -327,11 +346,6 @@ describe('CaseController - Split defendant from case', () => {
         ],
         { transaction },
       )
-      expect(mockVictimRepositoryService.copyAllToCase).toHaveBeenCalledWith(
-        caseId,
-        splitCaseId,
-        { transaction },
-      )
       expect(
         mockIndictmentCountRepositoryService.copyAllToCase,
       ).toHaveBeenCalledWith(caseId, splitCaseId, { transaction })
@@ -346,7 +360,13 @@ describe('CaseController - Split defendant from case', () => {
       )
     })
 
-    it("should move the defendant's case files and copy the ones linked to no defendant", () => {
+    it('should copy civil claimants that apply to the split defendant', () => {
+      expect(
+        mockCivilClaimantRepositoryService.copyApplicableToCaseForDefendant,
+      ).toHaveBeenCalledWith(caseId, splitCaseId, defendantId, { transaction })
+    })
+
+    it("should move the defendant's case files, remap claimants, and copy the ones linked to no defendant", () => {
       expect(
         mockCaseFileRepositoryService.moveAllForDefendantToCase,
       ).toHaveBeenCalledWith(
@@ -357,9 +377,17 @@ describe('CaseController - Split defendant from case', () => {
         { transaction },
       )
       expect(
+        mockCaseFileRepositoryService.remapCivilClaimantIdsForCase,
+      ).toHaveBeenCalledWith(
+        splitCaseId,
+        new Map([[oldCivilClaimantId, newCivilClaimantId]]),
+        { transaction },
+      )
+      expect(
         mockCaseFileRepositoryService.copyAllWithoutDefendantToCase,
       ).toHaveBeenCalledWith(caseId, splitCaseId, splitCaseFileCategories, {
         transaction,
+        civilClaimantIdMap: new Map([[oldCivilClaimantId, newCivilClaimantId]]),
       })
     })
 

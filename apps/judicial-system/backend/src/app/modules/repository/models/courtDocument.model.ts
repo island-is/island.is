@@ -54,6 +54,16 @@ export class CourtDocument extends Model {
   @ApiPropertyOptional({ type: String })
   mergedCourtSessionId?: string
 
+  // Set on a court document that is a copy of a document from a case merged
+  // into this one, naming the case it was copied from. A copy is an ordinary
+  // document of the parent case - it is filed, reordered, renamed and removed
+  // like any other - and this is what tells the court record, the PDF and the
+  // web which merged case it came from. Null on the case's own documents.
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  mergedFromCaseId?: string
+
   @Column({
     type: DataType.ENUM,
     allowNull: false,

@@ -41,6 +41,7 @@ import { WaitlistDetail } from '.././models/waitlist.model'
 import { Waitlists } from '.././models/waitlists.model'
 import { Appointments } from '../models/appointments.model'
 import { AppointmentDetail } from '../models/appointmentDetail.model'
+import { CancelAppointmentResponse } from '../models/cancelAppointmentResponse.model'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
@@ -199,6 +200,8 @@ export class BasicInformationResolver {
 
   @Mutation(() => Boolean, {
     name: 'healthDirectorateCancelAppointment',
+    deprecationReason:
+      'Use healthDirectorateRequestAppointmentCancellation, which reports the provider’s actual answer. Kept for deployed native app versions.',
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
@@ -208,5 +211,18 @@ export class BasicInformationResolver {
     @CurrentUser() user: User,
   ): Promise<boolean> {
     return this.api.cancelAppointment(user, input)
+  }
+
+  @Mutation(() => CancelAppointmentResponse, {
+    name: 'healthDirectorateRequestAppointmentCancellation',
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
+  @Scopes(ApiScope.internal, ApiScope.health)
+  async requestAppointmentCancellation(
+    @Args() input: HealthDirectorateAppointmentInput,
+    @CurrentUser() user: User,
+  ): Promise<CancelAppointmentResponse> {
+    return this.api.requestAppointmentCancellation(user, input)
   }
 }

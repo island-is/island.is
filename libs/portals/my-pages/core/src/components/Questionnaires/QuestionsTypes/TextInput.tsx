@@ -1,4 +1,5 @@
 import { Box, Input } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import React from 'react'
 import * as styles from './QuestionTypes.css'
 
@@ -13,6 +14,7 @@ export interface TextInputProps {
   required?: boolean
   multiline?: boolean
   rows?: number
+  resizable?: boolean
   maxLength?: number
   type?: 'text' | 'number' | 'decimal'
   min?: string
@@ -31,6 +33,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   required = false,
   multiline = false,
   rows = 4,
+  resizable = false,
   maxLength,
   type = 'text',
   min,
@@ -48,9 +51,15 @@ export const TextInput: React.FC<TextInputProps> = ({
         return
       }
 
-      if (!/^-?\d*\.?\d*$/.test(newValue)) {
+      const allowedPattern = type === 'decimal' ? /^-?\d*[.,]?\d*$/ : /^-?\d*$/
+      if (!allowedPattern.test(newValue)) {
         return
       }
+
+      // Icelandic decimal commas are accepted but stored with a dot so
+      // downstream parsing (formulas, triggers, submission) keeps working;
+      // the input renders the stored value back with a comma
+      newValue = newValue.replace(',', '.')
 
       const numValue = parseFloat(newValue)
       if (!isNaN(numValue)) {
@@ -80,9 +89,10 @@ export const TextInput: React.FC<TextInputProps> = ({
   return (
     <Box
       width="full"
-      className={
-        type === 'number' || type === 'decimal' ? styles.numberInput : undefined
-      }
+      className={cn({
+        [styles.numberInput]: type === 'number' || type === 'decimal',
+        [styles.noResizeTextarea]: multiline && !resizable,
+      })}
     >
       <Input
         label={label}
@@ -91,7 +101,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         id={id}
         name={id}
         placeholder={placeholder}
-        value={value}
+        value={type === 'decimal' ? value.replace('.', ',') : value}
         onChange={handleChange}
         onBlur={handleBlur}
         hasError={!!error}

@@ -2295,6 +2295,15 @@ export const messages = defineMessages({
     defaultMessage: 'Ekki tókst að framkvæma aðgerð, reyndu aftur',
     id: 'sp.health:cancel-appointment-error',
   },
+  cancelContactProvider: {
+    defaultMessage:
+      'Ekki tókst að afbóka tíma, vinsamlegast hringdu í þjónustuveitanda.',
+    id: 'sp.health:cancel-contact-provider',
+  },
+  cancelUnconfirmed: {
+    defaultMessage: 'Ekki tókst að staðfesta afbókun, reyndu aftur.',
+    id: 'sp.health:cancel-unconfirmed',
+  },
   appointmentCancelledStatus: {
     defaultMessage: 'Afbókað',
     id: 'sp.health:appointment-cancelled-status',
@@ -2332,6 +2341,24 @@ export const messages = defineMessages({
   myPregnancy: {
     defaultMessage: 'Meðgangan mín',
     id: 'sp.health:my-pregnancy',
+  },
+  myPregnancyIntro: {
+    defaultMessage:
+      'Hér finnur þú allar upplýsingar sem tengjast meðgöngu þinni á einum stað. Þú getur skoðað fræðsluefni frá mæðravernd, tímalínu samskipta, næstu tímabókanir, mælingar, skjöl og annað sem tengist meðgöngu þinni.',
+    id: 'sp.health:my-pregnancy-intro',
+  },
+  pregnancy: {
+    defaultMessage: 'Meðganga',
+    id: 'sp.health:pregnancy',
+  },
+  readingMaterialPregnancy: {
+    defaultMessage: 'Lesefni um meðgöngu',
+    id: 'sp.health:reading-material-pregnancy',
+  },
+  readingMaterialPregnancyLink: {
+    defaultMessage:
+      'https://www.heilsuvera.is/efnisflokkar/throskaferlid/medganga/',
+    id: 'sp.health:reading-material-pregnancy-link',
   },
   oldPregnanciesTitle: {
     defaultMessage: 'Eldri meðgöngur',
@@ -2433,6 +2460,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svarað',
     id: 'sp.health:answered-questionnaire',
   },
+  answeredDate: {
+    defaultMessage: 'Svarað dags',
+    id: 'sp.health:answered-date',
+  },
   draftQuestionnaire: {
     defaultMessage: 'Drög',
     id: 'sp.health:draft-questionnaire',
@@ -2483,13 +2514,19 @@ export const messages = defineMessages({
       'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
     id: 'sp.health:questionnaire-not-found-detail',
   },
-  singleQuestionnaire: {
-    defaultMessage: '1 spurningalisti',
-    id: 'sp.health:single-questionnaire',
-  },
   numberOfQuestionnaires: {
-    defaultMessage: '{number} spurningalistar',
+    defaultMessage:
+      '{number, plural, one {# spurningalisti} other {# spurningalistar}}',
     id: 'sp.health:number-of-questionnaires',
+  },
+  numberOfQuestionnairesFound: {
+    defaultMessage:
+      '{number, plural, one {# spurningalisti fannst} other {# spurningalistar fundust}}',
+    id: 'sp.health:number-of-questionnaires-found',
+  },
+  questionnaireSeeMore: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:questionnaire-see-more',
   },
   answers: {
     defaultMessage: 'Svör',
