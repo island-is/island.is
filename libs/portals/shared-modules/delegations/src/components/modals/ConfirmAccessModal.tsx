@@ -91,11 +91,11 @@ export const ConfirmAccessModal = ({
           },
         },
       })
+      navigate(DelegationPaths.DelegationsNew)
     } catch {
       toast.error(formatMessage(m.confirmError))
     } finally {
       setSubmitting(false)
-      navigate(DelegationPaths.DelegationsNew)
     }
   }
 
