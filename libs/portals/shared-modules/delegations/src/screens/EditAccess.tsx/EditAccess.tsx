@@ -60,7 +60,6 @@ const EditAccess = () => {
     return () => clearForm()
   }, [clearForm])
 
-  // the recipient is only known via router state, so a direct visit has nothing to edit
   useEffect(() => {
     if (!nationalIdParam && !identities.length) {
       navigate(DelegationPaths.DelegationsNew, { replace: true })
