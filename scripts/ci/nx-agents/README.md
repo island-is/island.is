@@ -3,24 +3,32 @@
 `.github/workflows/pullrequest.yml` runs the pull request checks as a single
 distributed Nx Cloud CI run, on our own runners (`--distribute-on="manual"`).
 
-| Job             | What it does                                                                                                                                   |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `plan`          | `plan.mjs`: resolves labels to one `nx affected`/`run-many` command and sizes the agent pools                                                  |
-| `agents`        | `start-agent.sh`: a matrix of agents that execute whatever tasks Nx Cloud hands them                                                           |
-| `main`          | `run.sh`: starts the CI run and runs the one Nx command for lint, typecheck, build, test and e2e. Also runs `check-tags` and the license audit |
-| `unicorn-tests` | Verifies that the affected unicorn projects have tests                                                                                         |
-| `success`       | Collects the result. This is the required status check                                                                                         |
+| Job       | What it does                                                                                                                                 |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan`    | `plan.mjs`: resolves labels to one `nx affected`/`run-many` command and sizes the agent pools                                                |
+| `agents`  | `start-agent.sh`: a matrix of agents that execute whatever tasks Nx Cloud hands them                                                         |
+| `main`    | `run.sh`: the quick workspace checks, then the one Nx command for lint, typecheck, build, test and e2e                                       |
+| `autofix` | Shellcheck, then `lint --fix` and `format:write` which are pushed to the pull request as one commit. Needs no other job, so it reports early |
+| `success` | Collects the result and comments it on the pull request. This is the required status check, and how `ci-io.ts` finds the last good run       |
 
-`run-shellcheck`, `formatting` and `lintfix-changed-files` are not Nx tasks (or
-push commits to the pull request), so they are regular jobs next to the
-distributed run.
+If the pipeline itself is broken, revert the change that broke it: a pull request
+runs the workflow of its own branch, so the revert is checked by the pipeline it restores.
 
-## Legacy pipeline
+## Failing early
 
-The pipeline from before Nx Agents is still in the workflow as the `legacy-*`
-jobs. It runs instead of the distributed one for pull requests with the
-`legacy-ci` label, and reports to the same `success` check. Labels are read when
-a run is triggered, so push a commit (or close and reopen) after adding the label.
+`run.sh` starts with the checks that take seconds and need no agent (`check-tags`,
+the license audit and `check-unicorn-tests.sh`). If one of them fails the main job
+fails right away and the agents are stopped, instead of reporting it when the
+distributed run is done.
+
+## Comments on the pull request
+
+`pr-comment.mjs` keeps two comments up to date, instead of adding new ones:
+
+- The result: set to running by `plan`, and to the result by `success`. On a failure
+  it lists the failed checks of `run.sh` and the failed Nx tasks (`failed-tasks.mjs`
+  finds them in the output of the Nx command).
+- What `autofix` pushed, if anything: the commit and the files changed by lint and format.
 
 ## Agent types and count
 
@@ -34,7 +42,7 @@ An agent gets its type from `NX_AGENT_LAUNCH_TEMPLATE`, and each type can have i
 own runner label (`SHARED_RUNNER`, `JUDICIAL_RUNNER`).
 
 `plan.mjs` asks Nx for every task of the command (`--graph`), weighs them
-(`TARGET_WEIGHTS`) per agent type and starts one agent per `AGENT_CAPACITY` units.
+(`TARGET_WEIGHTS`) per agent type and starts one agent per `capacity` units of the type.
 It counts tasks and not projects since a task without an agent of its type would
 leave the run waiting, e.g. a judicial lib that is only built as a dependency.
 The count is based on tasks in the run, not on cache misses, so tune the

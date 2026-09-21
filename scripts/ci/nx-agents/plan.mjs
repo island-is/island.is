@@ -22,23 +22,27 @@ import { join } from 'path'
 const env = process.env
 const isTrue = (/** @type {string | undefined} */ v) => v === 'true'
 
-// Weighted task units a single agent is expected to handle
-const AGENT_CAPACITY = parseInt(env.AGENT_CAPACITY || '60')
 const NX_PARALLEL = env.NX_PARALLEL || '3'
 
 /**
+ * `capacity` is the weighted task units (see TARGET_WEIGHTS) a single agent is expected to handle
+ *
  * @typedef {'shared' | 'judicial'} AgentType
- * @type {Record<AgentType, { min: number, max: number, runner: string }>}
+ * @type {Record<AgentType, { min: number, max: number, capacity: number, runner: string }>}
  */
 const AGENT_TYPES = {
   shared: {
     min: parseInt(env.MIN_AGENTS || '1'),
     max: parseInt(env.MAX_AGENTS || '10'),
+    capacity: parseInt(env.AGENT_CAPACITY || '60'),
     runner: env.SHARED_RUNNER || 'arc-shared',
   },
   judicial: {
     min: parseInt(env.MIN_JUDICIAL_AGENTS || '1'),
     max: parseInt(env.MAX_JUDICIAL_AGENTS || '2'),
+    // Lower than for shared agents: `judicial-system-backend:test` takes over 10 minutes and
+    // with a single agent every other judicial task shares that agent with it
+    capacity: parseInt(env.JUDICIAL_AGENT_CAPACITY || '30'),
     runner: env.JUDICIAL_RUNNER || 'arc-shared',
   },
 }
@@ -108,7 +112,7 @@ const getTasks = (nxArgs) => {
   return Object.values(tasks.tasks).map((task) => task.target)
 }
 
-/** @returns {string[]} projects that must have tests, see the `unicorn-tests` job */
+/** @returns {string[]} projects that must have tests, see `check-unicorn-tests.sh` */
 const getUnicornProjects = () =>
   JSON.parse(
     execFileSync(
@@ -143,7 +147,10 @@ const agentCount = (type, units) =>
     ? 0
     : Math.min(
         AGENT_TYPES[type].max,
-        Math.max(AGENT_TYPES[type].min, Math.ceil(units / AGENT_CAPACITY)),
+        Math.max(
+          AGENT_TYPES[type].min,
+          Math.ceil(units / AGENT_TYPES[type].capacity),
+        ),
       )
 
 const main = () => {
@@ -261,7 +268,7 @@ const main = () => {
             } |`,
         ),
         '',
-        `Weighted task units: ${load.shared.units} shared, ${load.judicial.units} judicial (${AGENT_CAPACITY} per agent)`,
+        `Weighted task units: ${load.shared.units} shared (${AGENT_TYPES.shared.capacity} per agent), ${load.judicial.units} judicial (${AGENT_TYPES.judicial.capacity} per agent)`,
         '',
       ].join('\n'),
     )
