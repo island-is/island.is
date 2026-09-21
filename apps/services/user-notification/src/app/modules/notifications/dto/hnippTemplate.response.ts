@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+export type HnippTemplatePriorityType = 'Informative' | 'Actionable' | undefined
+
 export class HnippTemplate {
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
   templateId!: string
@@ -33,4 +35,9 @@ export class HnippTemplate {
     example: 'OPT_IN',
   })
   smsDelivery!: string
+
+  @ApiProperty({
+    example: 'Informative',
+  })
+  priorityType?: HnippTemplatePriorityType
 }
