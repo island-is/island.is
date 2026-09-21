@@ -286,7 +286,11 @@ export const AsyncFilterSearchAccordion = ({
             </Box>
           )}
 
-          <Box ref={scrollListRef} className={styles.scrollList} paddingX={1}>
+          <Box
+            ref={scrollListRef}
+            className={styles.scrollList}
+            paddingLeft={1}
+          >
             {loading && items.length === 0 ? (
               <Box className={styles.loadingMoreRow}>
                 <LoadingDots />
@@ -294,21 +298,20 @@ export const AsyncFilterSearchAccordion = ({
             ) : (
               <>
                 {displayItems.map((item) => (
-                  <Box
-                    key={item.value}
-                    display="flex"
-                    alignItems="center"
-                    columnGap={1}
-                  >
-                    <Checkbox
-                      name={`${id}-${item.value}`}
-                      label={item.label}
-                      checked={selected.includes(item.value)}
-                      onChange={() => toggle(item.value)}
-                    />
-                    {item.tooltip && (
-                      <Tooltip text={item.tooltip} placement="right" />
-                    )}
+                  <Box key={item.value} className={styles.filterOption}>
+                    <Box className={styles.filterOptionLabel}>
+                      <Checkbox
+                        name={`${id}-${item.value}`}
+                        label={item.label}
+                        checked={selected.includes(item.value)}
+                        onChange={() => toggle(item.value)}
+                      />
+                    </Box>
+                    <Box className={styles.filterOptionTooltip}>
+                      {item.tooltip && (
+                        <Tooltip text={item.tooltip} placement="right" />
+                      )}
+                    </Box>
                   </Box>
                 ))}
                 {hasNextPage && (

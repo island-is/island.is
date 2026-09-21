@@ -20,10 +20,34 @@ export const tagLabel = style({
 export const scrollList = style({
   maxHeight: 200,
   overflowY: 'auto',
+  overflowX: 'hidden',
   paddingTop: theme.spacing[2],
+  paddingRight: theme.spacing[2],
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing[1],
+})
+
+export const filterOption = style({
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: theme.spacing[1],
+})
+
+export const filterOptionLabel = style({
+  flex: 1,
+  minWidth: 0,
+})
+
+globalStyle(`${filterOptionLabel} span`, {
+  overflowWrap: 'anywhere',
+})
+
+export const filterOptionTooltip = style({
+  flexShrink: 0,
+  width: 16,
+  display: 'flex',
+  alignItems: 'center',
 })
 
 // Zero-height marker element observed by the infinite-scroll
