@@ -1,6 +1,11 @@
 import * as React from 'react'
 import cn from 'classnames'
-import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
+import {
+  Tooltip,
+  TooltipAnchor,
+  TooltipProvider,
+  useTooltipStore,
+} from '@ariakit/react'
 import * as styles from './HoverTooltip.css'
 
 export type HoverTooltipPlacement = 'top' | 'right' | 'bottom' | 'left'
@@ -19,11 +24,19 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
   placement = 'top',
   showTimeout = 100,
   className,
-}) => (
-  <TooltipProvider placement={placement} showTimeout={showTimeout}>
-    <TooltipAnchor render={children} />
-    <Tooltip portal className={cn(styles.tooltip, className)}>
-      {text}
-    </Tooltip>
-  </TooltipProvider>
-)
+}) => {
+  const tooltip = useTooltipStore({ placement, showTimeout })
+
+  return (
+    <TooltipProvider store={tooltip}>
+      <TooltipAnchor
+        store={tooltip}
+        render={children}
+        onClick={() => tooltip.toggle()}
+      />
+      <Tooltip store={tooltip} portal className={cn(styles.tooltip, className)}>
+        {text}
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
