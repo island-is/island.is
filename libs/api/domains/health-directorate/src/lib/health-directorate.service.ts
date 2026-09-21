@@ -1,6 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   ConversationAttachmentDto,
+  ConversationBaseDto,
   ConversationDetailDto,
   ConversationMessageDto,
   CreateCertificatePaymentIntentDto,
@@ -117,6 +118,8 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
+import { HealthDirectoratePaginatedHealthConversations } from './models/paginatedHealthConversations.model'
+import { HealthDirectoratePaginatedHealthConversationsInput } from './dto/paginatedHealthConversations.input'
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
@@ -918,7 +921,32 @@ export class HealthDirectorateService {
     )
     if (!items) return null
 
-    return items.map((c) => ({
+    return items.map((c) => this.mapConversationBase(c))
+  }
+
+  async getPaginatedHealthConversations(
+    auth: Auth,
+    input?: HealthDirectoratePaginatedHealthConversationsInput,
+  ): Promise<HealthDirectoratePaginatedHealthConversations | null> {
+    const page = await this.healthApi.getPaginatedConversations(auth, {
+      ...input,
+      status: input?.status
+        ? toConversationStatusFilter(input.status)
+        : undefined,
+    })
+    if (!page) return null
+
+    return {
+      data: page.data.map((c) => this.mapConversationBase(c)),
+      totalCount: page.totalCount,
+      pageInfo: page.pageInfo,
+    }
+  }
+
+  private mapConversationBase(
+    c: ConversationBaseDto,
+  ): HealthDirectorateHealthConversation {
+    return {
       id: c.id,
       title: c.title,
       messageCount: c.messageCount,
@@ -930,7 +958,7 @@ export class HealthDirectorateService {
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       isRead: !c.unread,
-    }))
+    }
   }
 
   async getHealthConversation(
