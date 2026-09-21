@@ -2456,6 +2456,10 @@ export const messages = defineMessages({
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
   },
+  expiredQuestionnaires: {
+    defaultMessage: 'Útrunnir',
+    id: 'sp.health:expired-questionnaires',
+  },
   answeredQuestionnaire: {
     defaultMessage: 'Svarað',
     id: 'sp.health:answered-questionnaire',
@@ -2948,8 +2952,12 @@ export const messages = defineMessages({
   },
   noActiveQuestionnairesRegistered: {
     defaultMessage:
-      'Þú ert ekki með neina virka spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
+      'Þú ert ekki með neina virka spurningalista. Útrunna spurningalista má finna undir flipanum "Útrunnir".',
     id: 'sp.health:no-active-questionnaires-registered',
+  },
+  noExpiredQuestionnairesRegistered: {
+    defaultMessage: 'Þú ert ekki með neina útrunna spurningalista.',
+    id: 'sp.health:no-expired-questionnaires-registered',
   },
   active: {
     defaultMessage: 'Virk',
