@@ -48,9 +48,9 @@ const withholdingTaxInputFields = [
     required: false,
     options: toOptions(MARITAL_STATUSES),
   },
-  { name: 'incomeYear', type: 'number', required: true, semantic: 'year' },
-  { name: 'payMonth', type: 'number', required: true, semantic: 'month' },
-  { name: 'salary', type: 'number', required: true, semantic: 'currency' },
+  { name: 'incomeYear', type: 'number', required: false, semantic: 'year' },
+  { name: 'payMonth', type: 'number', required: false, semantic: 'month' },
+  { name: 'salary', type: 'number', required: false, semantic: 'currency' },
   {
     name: 'pensionFundRatio',
     type: 'select',
