@@ -18,13 +18,14 @@ Check all of these before running. Fix what is fixable, report the rest.
 - **Backend, api and database up**: `curl -s -o /dev/null -w '%{http_code}' http://localhost:3344/liveness`
   and the same on `:3333` both return 200, and `docker ps` lists `db_judicial_system`.
   If not, tell the user which one is down - do not start their services for them.
-- **The database on 5432 is the local one**: `lsof -nP -iTCP:5432 -sTCP:LISTEN`
-  must show a `com.docker` process. `sequelize.config.js` hardcodes
-  `localhost:5432` for development, and `yarn proxies db` forwards that same
-  port to the dev cluster - if a proxy holds it, migrations and seeders run
-  against the dev database. Only one process can bind the port, so anything
-  other than docker there means stop and tell the user; never run `db:migrate`
-  or `:seed` until docker owns 5432.
+- **The database on 5432 is the local container**: `docker port db_judicial_system 5432/tcp`
+  must report host port 5432. `sequelize.config.js` hardcodes `localhost:5432`
+  for development, so whatever holds that port is what `db:migrate` and the
+  seeders write to - and `yarn proxies db` forwards it to the dev cluster.
+  Only one thing can bind the port, so the container publishing it is proof
+  the local database is the target. If the command prints nothing or a
+  different host port, stop and tell the user; never run `db:migrate` or
+  `:seed` on a guess.
 - **Migrations applied**: in `apps/judicial-system/backend`, run
   `../../../node_modules/.bin/sequelize-cli db:migrate:status` and apply with
   `db:migrate` if any line says `down`. A stale schema makes every CreateCase
@@ -32,11 +33,16 @@ Check all of these before running. Fix what is fixable, report the rest.
 - **Seeders run**: `yarn nx run judicial-system-backend:seed`. It is idempotent.
   It puts the e2e defender `0909090909` in `lawyer_registry`; without it the
   defender login redirects to `/?villa=innskraning-ekki-notandi`.
-- **Port 4200**: `lsof -nP -iTCP:4200 -sTCP:LISTEN`. If a dev server
-  (`nx serve judicial-system-web`) holds it, ask the user to stop it and wait.
-  The suite must run on 4200 (the dev S3 upload bucket only allows that origin)
-  and a dev server there would be reused, which brings the compile stalls back.
-  Do not kill the user's processes yourself.
+- **Port 4200 is free, or already serves this production build**:
+  `lsof -nP -iTCP:4200 -sTCP:LISTEN`. Free is the good case - the config then
+  builds and serves the bundle itself. The config sets `reuseExistingServer`,
+  so any listener is reused as-is without checking what it is. If something
+  holds the port, read its command with `ps -o command= -p <pid>`: only
+  `node dist/apps/judicial-system/web/main.js` is safe to reuse. A dev server
+  (`nx serve judicial-system-web`) brings the compile stalls back, and an
+  unrelated listener makes the whole run meaningless - either way ask the user
+  to stop it and wait. Do not kill their processes yourself. The port cannot
+  change: the dev S3 upload bucket only allows that origin.
 
 ## 2. Run
 
