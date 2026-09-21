@@ -34,8 +34,12 @@ uploads has to be named in all three of:
 - the visibility list for that user group in `file/guards/caseFileCategory.ts`,
 - the upload allowlist of the guard that accepts it, e.g.
   `file/guards/limitedAccessCreateDefendantCaseFile.guard.ts`,
-- the `caseFiles` category allowlist inside the include in
-  `case/limitedAccessCase.service.ts`.
+- the `caseFiles` category allowlists inside the limited access include,
+  `getLimitedAccessCaseInclude` in
+  `repository/types/caseRepository.types.ts`. There are **three** of them: the
+  case's own `caseFiles`, the narrower one under `mergedCases` and the one
+  under `splitCases` — a category that belongs in a linked case has to be
+  named there too.
 
 The third is the one that gets missed, and the symptom is confusing: the upload
 succeeds, the file is stored, and it is simply absent from every case payload,

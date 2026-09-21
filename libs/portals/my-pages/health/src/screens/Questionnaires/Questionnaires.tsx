@@ -158,7 +158,6 @@ const Questionnaires: FC = () => {
             : isDraft
             ? formatMessage(messages.draftQuestionnaire)
             : formatMessage(messages.unAnsweredQuestionnaire),
-          outlined: false,
           variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
         }}
         cta={{

@@ -900,6 +900,611 @@ export const indictmentCaseEventExportInclude: Includeable[] = [
   },
 ]
 
+// The case columns a limited access user is allowed to see. Every read on
+// this path is restricted to them, on the case itself and on the cases linked
+// to it.
+export const limitedAccessCaseAttributes: (keyof Case)[] = [
+  'id',
+  'created',
+  'modified',
+  'origin',
+  'type',
+  'indictmentSubtypes',
+  'state',
+  'policeCaseNumbers',
+  'defenderName',
+  'defenderNationalId',
+  'defenderEmail',
+  'defenderPhoneNumber',
+  'requestSharedWithDefender',
+  'courtId',
+  'leadInvestigator',
+  'requestedCustodyRestrictions',
+  'prosecutorId',
+  'courtCaseNumber',
+  'courtEndTime',
+  'decision',
+  'validToDate',
+  'isCustodyIsolation',
+  'isolationToDate',
+  'conclusion',
+  'rulingDate',
+  'rulingSignatureDate',
+  'registrarId',
+  'judgeId',
+  'courtRecordSignatoryId',
+  'courtRecordSignatureDate',
+  'parentCaseId',
+  'caseModifiedExplanation',
+  'openedByDefender',
+  'caseResentExplanation',
+  'prosecutorsOfficeId',
+  'indictmentDecision',
+  'indictmentRulingDecision',
+  'indictmentHash',
+  'courtSessionType',
+  'indictmentReviewerId',
+  'hasCivilClaims',
+  'isCompletedWithoutRuling',
+  'isArraignmentSummonsSkipped',
+  'rulingModifiedHistory',
+  'withCourtSessions',
+]
+
+const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
+  'id',
+  'defenderNationalId',
+  'isDefenderChoiceConfirmed',
+]
+
+const mergedCaseDefendantAttributes: (keyof Defendant)[] = [
+  ...linkedCaseDefendantAccessAttributes,
+  'isSentToPrisonAdmin',
+]
+
+const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
+  'id',
+  'hasSpokesperson',
+  'spokespersonNationalId',
+  'isSpokespersonConfirmed',
+]
+
+const normalizeNationalId = (nationalId: string): string =>
+  nationalId.replace(/-/g, '')
+
+const getLinkedCaseDefendantsInclude = (
+  defenderNationalId?: string,
+): Includeable => ({
+  model: Defendant,
+  as: 'defendants',
+  attributes: linkedCaseDefendantAccessAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  ...(defenderNationalId
+    ? {
+        where: {
+          defenderNationalId,
+          isDefenderChoiceConfirmed: true,
+        },
+      }
+    : {}),
+})
+
+const getMergedCaseDefendantsInclude = (
+  defenderNationalId?: string,
+): Includeable => ({
+  model: Defendant,
+  as: 'defendants',
+  attributes: mergedCaseDefendantAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  separate: true,
+  ...(defenderNationalId
+    ? {
+        where: {
+          defenderNationalId,
+          isDefenderChoiceConfirmed: true,
+        },
+      }
+    : {}),
+  include: [
+    {
+      model: Subpoena,
+      as: 'subpoenas',
+      required: false,
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+    {
+      model: DefendantEventLog,
+      as: 'eventLogs',
+      required: false,
+      where: { eventType: defendantEventTypes },
+      separate: true,
+    },
+    {
+      model: CaseDefendantPoliceCaseNumber,
+      as: 'caseDefendantPoliceCaseNumbers',
+      required: false,
+      separate: true,
+    },
+  ],
+})
+
+const getLinkedCaseCivilClaimantsInclude = (
+  defenderNationalId?: string,
+  separate = false,
+): Includeable => ({
+  model: CivilClaimant,
+  as: 'civilClaimants',
+  attributes: linkedCaseCivilClaimantAccessAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  ...(separate ? { separate: true } : {}),
+  ...(defenderNationalId
+    ? {
+        where: {
+          hasSpokesperson: true,
+          spokespersonNationalId: defenderNationalId,
+          isSpokespersonConfirmed: true,
+        },
+      }
+    : {}),
+})
+
+// The case graph a limited access user is served. A defence user only ever
+// sees the parties they act for on the cases linked to this one, so their
+// national id - stored without a separator - narrows those joins; any other
+// caller reads the links unfiltered.
+export const getLimitedAccessCaseInclude = (
+  defenceUserNationalId?: string,
+): Includeable[] => {
+  const defenderNationalId =
+    defenceUserNationalId && normalizeNationalId(defenceUserNationalId)
+
+  return [
+    { model: Institution, as: 'prosecutorsOffice' },
+    { model: Institution, as: 'court' },
+    {
+      model: User,
+      as: 'prosecutor',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'judge',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'registrar',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'courtRecordSignatory',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'indictmentReviewer',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'indictmentApprover',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: AppealCase,
+      as: 'appealCase',
+      required: false,
+      include: [
+        {
+          model: User,
+          as: 'appealAssistant',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'appealJudge1',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'appealJudge2',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'appealJudge3',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: AppealEventLog,
+          as: 'appealEventLogs',
+          required: false,
+          where: { eventType: appealEventTypes },
+          separate: true,
+        },
+      ],
+    },
+    {
+      model: AppealCase,
+      as: 'verdictAppealCase',
+      required: false,
+      include: [
+        {
+          model: AppealEventLog,
+          as: 'appealEventLogs',
+          required: false,
+          where: { eventType: appealEventTypes },
+          separate: true,
+        },
+      ],
+    },
+    {
+      model: AppealCase,
+      as: 'rulingOrderAppealCases',
+      required: false,
+      separate: true,
+      include: [
+        {
+          model: User,
+          as: 'appealAssistant',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'appealJudge1',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'appealJudge2',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'appealJudge3',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: AppealEventLog,
+          as: 'appealEventLogs',
+          required: false,
+          where: { eventType: appealEventTypes },
+          separate: true,
+        },
+      ],
+    },
+    {
+      model: AppealDecision,
+      as: 'appealDecisions',
+      required: false,
+      separate: true,
+    },
+    { model: Case, as: 'parentCase', attributes: limitedAccessCaseAttributes },
+    { model: Case, as: 'childCase', attributes: limitedAccessCaseAttributes },
+    {
+      model: Defendant,
+      as: 'defendants',
+      required: false,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: Subpoena,
+          as: 'subpoenas',
+          required: false,
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
+          model: Verdict,
+          as: 'verdicts',
+          required: false,
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
+          model: DefendantEventLog,
+          as: 'eventLogs',
+          required: false,
+          where: { eventType: defendantEventTypes },
+          separate: true,
+        },
+        {
+          model: CaseDefendantPoliceCaseNumber,
+          as: 'caseDefendantPoliceCaseNumbers',
+          required: false,
+          separate: true,
+        },
+      ],
+      separate: true,
+    },
+    {
+      model: CivilClaimant,
+      as: 'civilClaimants',
+      required: false,
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+    {
+      model: IndictmentCount,
+      as: 'indictmentCounts',
+      required: false,
+      order: [
+        ['displayOrder', 'ASC'],
+        ['created', 'ASC'],
+      ],
+      include: [
+        {
+          model: Offense,
+          as: 'offenses',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+        },
+      ],
+      separate: true,
+    },
+    {
+      model: CourtSession,
+      as: 'courtSessions',
+      required: false,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: User,
+          as: 'judge',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'attestingWitness',
+          required: false,
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: CourtDocument,
+          as: 'filedDocuments',
+          required: false,
+          order: [['documentOrder', 'ASC']],
+          separate: true,
+        },
+        {
+          model: CourtDocument,
+          as: 'mergedFiledDocuments',
+          required: false,
+          order: [['mergedDocumentOrder', 'ASC']],
+          separate: true,
+        },
+        {
+          model: CourtSessionString,
+          as: 'courtSessionStrings',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+        },
+      ],
+      separate: true,
+    },
+    {
+      model: CaseFile,
+      as: 'caseFiles',
+      required: false,
+      order: [['created', 'DESC']],
+      where: {
+        state: { [Op.not]: CaseFileState.DELETED },
+        category: [
+          CaseFileCategory.RULING,
+          CaseFileCategory.DEFENDANT_RULING,
+          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+          CaseFileCategory.APPEAL_RULING,
+          CaseFileCategory.APPEAL_COURT_RECORD,
+          CaseFileCategory.COURT_RECORD,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
+          CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+          CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        ],
+      },
+      separate: true,
+    },
+    {
+      model: EventLog,
+      as: 'eventLogs',
+      required: false,
+      where: { eventType: eventTypes },
+      separate: true,
+    },
+    {
+      model: DateLog,
+      as: 'dateLogs',
+      required: false,
+      where: { dateType: dateTypes },
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+    {
+      model: CaseString,
+      as: 'caseStrings',
+      required: false,
+      where: { stringType: stringTypes },
+      separate: true,
+    },
+    {
+      model: Case,
+      as: 'mergeCase',
+      attributes: limitedAccessCaseAttributes,
+      include: [
+        getLinkedCaseDefendantsInclude(defenderNationalId),
+        getLinkedCaseCivilClaimantsInclude(defenderNationalId),
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+        },
+      ],
+    },
+    {
+      model: Case,
+      as: 'mergedCases',
+      attributes: limitedAccessCaseAttributes,
+      where: { state: completedIndictmentCaseStates },
+      include: [
+        {
+          model: CaseFile,
+          as: 'caseFiles',
+          required: false,
+          where: {
+            state: { [Op.not]: CaseFileState.DELETED },
+            category: {
+              [Op.in]: [
+                CaseFileCategory.COURT_RECORD,
+                CaseFileCategory.CRIMINAL_RECORD,
+                CaseFileCategory.COST_BREAKDOWN,
+                CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+                CaseFileCategory.CASE_FILE,
+                CaseFileCategory.PROSECUTOR_CASE_FILE,
+                CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+                CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+                CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+                CaseFileCategory.DEFENDANT_CASE_FILE,
+                CaseFileCategory.CIVIL_CLAIM,
+                CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+              ],
+            },
+          },
+          separate: true,
+        },
+        getMergedCaseDefendantsInclude(defenderNationalId),
+        getLinkedCaseCivilClaimantsInclude(defenderNationalId, true),
+        {
+          model: CourtSession,
+          as: 'courtSessions',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+          include: [
+            {
+              model: CourtDocument,
+              as: 'filedDocuments',
+              required: false,
+              order: [['documentOrder', 'ASC']],
+              separate: true,
+            },
+            {
+              model: CourtDocument,
+              as: 'mergedFiledDocuments',
+              required: false,
+              order: [['mergedDocumentOrder', 'ASC']],
+              separate: true,
+            },
+            {
+              model: CourtSessionString,
+              as: 'courtSessionStrings',
+              required: false,
+              order: [['created', 'ASC']],
+              separate: true,
+            },
+          ],
+        },
+        { model: Institution, as: 'court' },
+        { model: User, as: 'judge' },
+        { model: Institution, as: 'prosecutorsOffice' },
+      ],
+      separate: true,
+    },
+    {
+      model: Victim,
+      as: 'victims',
+      required: false,
+      order: [['created', 'ASC']],
+      separate: true,
+    },
+    {
+      model: Case,
+      as: 'splitCase',
+    },
+    {
+      model: Case,
+      as: 'splitCases',
+      include: [
+        {
+          model: Defendant,
+          as: 'defendants',
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
+          include: [
+            {
+              model: Subpoena,
+              as: 'subpoenas',
+              required: false,
+              order: [['created', 'DESC']],
+              separate: true,
+              where: {
+                created: {
+                  [Op.lt]: literal(
+                    `(SELECT "created" FROM "case" WHERE "case"."id" = (SELECT "case_id" FROM "defendant" WHERE "defendant"."id" = "Subpoena"."defendant_id"))`,
+                  ),
+                },
+              },
+            },
+          ],
+        },
+        {
+          model: CaseFile,
+          as: 'caseFiles',
+          required: false,
+          where: {
+            state: { [Op.not]: CaseFileState.DELETED },
+            defendantId: { [Op.not]: null },
+            category: {
+              [Op.in]: [
+                CaseFileCategory.CRIMINAL_RECORD,
+                CaseFileCategory.COST_BREAKDOWN,
+                CaseFileCategory.CASE_FILE,
+                CaseFileCategory.PROSECUTOR_CASE_FILE,
+                CaseFileCategory.DEFENDANT_CASE_FILE,
+                CaseFileCategory.CIVIL_CLAIM,
+                CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+                CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+                CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              ],
+            },
+            created: { [Op.lt]: col('Case.created') },
+          },
+        },
+      ],
+      separate: true,
+    },
+  ]
+}
+
 export interface UpdateCaseDefendantEventLogDecision {
   defendantId: string
   rulingDate?: Date

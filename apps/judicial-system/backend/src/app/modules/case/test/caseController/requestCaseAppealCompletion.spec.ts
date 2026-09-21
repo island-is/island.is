@@ -88,8 +88,8 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
     mockToday.mockReturnValue(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue({})
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockResolvedValue({})
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockResolvedValue({})
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdAppealCase)
 
