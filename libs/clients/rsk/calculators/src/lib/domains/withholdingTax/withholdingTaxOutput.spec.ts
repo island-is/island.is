@@ -10,8 +10,8 @@ const outputFieldsByName: Record<string, CalculatorOutputField> =
 
 const result: WithholdingTaxResult = {
   manadarlaun: 1,
-  lifeyrisjodurProsenta: 2,
-  sereignProsenta: 3,
+  lifeyrisjodurProsenta: 0.02,
+  sereignProsenta: 0.03,
   lifeyrissjodur: 4,
   sereignarsjodur: 5,
   fradratturAlls: 6,
@@ -29,7 +29,7 @@ const result: WithholdingTaxResult = {
   launamanudur: 18,
   fritekjumarkBarns: 19,
   faedingararBarns: 20,
-  stadgreidsluhlutfall: 21,
+  stadgreidsluhlutfall: 0.21,
   motframlag: 22,
   tryggingagjaldsstofn: 23,
   tryggingagjald: 24,
@@ -37,7 +37,7 @@ const result: WithholdingTaxResult = {
     {
       nedriMork: BigInt(100),
       numerThreps: BigInt(200),
-      stadgreidsluhlutfall: 300,
+      stadgreidsluhlutfall: 0.3,
       reiknudStadgreidsla: BigInt(400),
     },
   ],
@@ -172,8 +172,8 @@ describe('toWithholdingTaxOutput', () => {
      * the contract publishes whole percent. */
     expect(toWithholdingTaxOutput(result)).toEqual({
       monthlySalary: 1,
-      appliedPensionFundRatio: 200,
-      appliedPrivatePensionRatio: 300,
+      appliedPensionFundRatio: 2,
+      appliedPrivatePensionRatio: 3,
       pensionFundPayment: 4,
       privatePensionPayment: 5,
       totalDeductions: 6,
@@ -191,7 +191,7 @@ describe('toWithholdingTaxOutput', () => {
       payMonth: 18,
       childIncomeLimit: 19,
       childBirthYear: 20,
-      withholdingRate: 2100,
+      withholdingRate: 21,
       employerPensionMatch: 22,
       payrollTaxBase: 23,
       payrollTax: 24,
@@ -199,7 +199,7 @@ describe('toWithholdingTaxOutput', () => {
         {
           lowerBound: 100,
           bracketNumber: 200,
-          withholdingRate: 30000,
+          withholdingRate: 30,
           calculatedWithholding: 400,
         },
       ],

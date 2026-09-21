@@ -18,7 +18,7 @@
     "update-openapi-document": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "curl -s https://reiknivelarapi.rsk.is/swagger/v1/swagger.json | jq > libs/clients/rsk/calculators/src/clientConfig.json"
+        "command": "tmp=$(mktemp) && curl --fail --silent --show-error https://reiknivelarapi.rsk.is/swagger/v1/swagger.json -o \"$tmp\" && jq -e 'if ((.openapi // .swagger) and ((.paths | type) == \"object\") and ((.paths | length) > 0)) then . else error(\"RSK did not return an OpenAPI document with paths\") end' \"$tmp\" > /dev/null && mv \"$tmp\" libs/clients/rsk/calculators/src/clientConfig.json"
       }
     },
     "codegen/backend-client": {

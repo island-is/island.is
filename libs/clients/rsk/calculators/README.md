@@ -95,11 +95,10 @@ not two.
 The generated `Get*Response` types are no longer exported. They are internal
 wire shapes.
 
-One thing this contract does **not** assert: the scale of output ratio fields.
-RSK documents ratio *inputs* as 0-1 but says nothing about ratios in a
-response, so `appliedPensionFundRatio`, `withholdingRate`, `reductionRate` and
-the interest-benefit reduction rates are passed through unchanged and their
-tests assert mapping only. Observe a real response before formatting them.
+The public contract uses whole percentages (`0-100`) on both sides of the
+boundary. RSK wire ratios use `0-1`, so input mappers divide by 100 and output
+mappers multiply by 100. This applies to `appliedPensionFundRatio`,
+`withholdingRate`, `reductionRate`, and the interest-benefit reduction rates.
 
 ## Configuration
 
