@@ -22,7 +22,6 @@ export {
   AttachmentReplyViewDto,
   BooleanReplyViewDto,
   DateReplyViewDto,
-  GridReplyViewDto,
   ListReplyViewDto,
   NumberReplyViewDto,
   StringReplyViewDto,
@@ -48,6 +47,7 @@ export {
 } from './lib/clients'
 export {
   AttachmentDownloadResult,
+  CancelAppointmentResult,
   CertificateDto,
   CertificateRequestDto,
   CertificateTypeCode,

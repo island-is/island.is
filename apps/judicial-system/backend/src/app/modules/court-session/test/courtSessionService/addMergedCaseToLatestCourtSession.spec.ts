@@ -70,9 +70,9 @@ describe('CourtSessionService - Add merged case to latest court session', () => 
     } as CourtSession)
     const mockFindById = mockCaseRepositoryService.findById as jest.Mock
     mockFindById.mockResolvedValue(mergedCase)
-    const mockUpdateMergedCourtDocuments =
-      mockCourtDocumentRepositoryService.updateMergedCourtDocuments as jest.Mock
-    mockUpdateMergedCourtDocuments.mockResolvedValue(true)
+    const mockCopyMergedCaseCourtDocuments =
+      mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession as jest.Mock
+    mockCopyMergedCaseCourtDocuments.mockResolvedValue(true)
     const mockFindLatestForCaseAndTypes =
       mockEventLogRepositoryService.findLatestForCaseAndTypes as jest.Mock
     mockFindLatestForCaseAndTypes.mockResolvedValue(null)
@@ -112,13 +112,13 @@ describe('CourtSessionService - Add merged case to latest court session', () => 
       )
     })
 
-    it('should file the merged case documents into the latest session', () => {
+    it('should copy the merged case documents into the latest session', () => {
       expect(
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments,
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession,
       ).toHaveBeenCalledWith({
         parentCaseId: caseId,
         parentCaseCourtSessionId: courtSessionId,
-        caseId: mergedCaseId,
+        mergedCaseId,
         transaction,
       })
     })
@@ -150,11 +150,11 @@ describe('CourtSessionService - Add merged case to latest court session', () => 
     })
   })
 
-  describe('merged case has no documents left to file', () => {
+  describe('merged case has no documents to copy', () => {
     beforeEach(async () => {
-      const mockUpdateMergedCourtDocuments =
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments as jest.Mock
-      mockUpdateMergedCourtDocuments.mockResolvedValue(false)
+      const mockCopyMergedCaseCourtDocuments =
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession as jest.Mock
+      mockCopyMergedCaseCourtDocuments.mockResolvedValue(false)
 
       await givenWhenThen()
     })
@@ -193,7 +193,7 @@ describe('CourtSessionService - Add merged case to latest court session', () => 
     it('should touch nothing', () => {
       expect(mockCaseRepositoryService.findById).not.toHaveBeenCalled()
       expect(
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments,
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession,
       ).not.toHaveBeenCalled()
       expect(
         mockCourtSessionStringRepositoryService.create,
@@ -217,7 +217,7 @@ describe('CourtSessionService - Add merged case to latest court session', () => 
         `Could not find case ${mergedCaseId} when adding it as a merged case to the latest court session of case ${caseId}`,
       )
       expect(
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments,
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession,
       ).not.toHaveBeenCalled()
     })
   })

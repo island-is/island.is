@@ -9,19 +9,11 @@ import { DefendantService } from '../../../defendant'
 import { FileService } from '../../../file'
 import { IndictmentCountService } from '../../../indictment-count'
 import {
-  AppealCase,
-  AppealDecision,
   AppealDecisionRepositoryService,
   CaseArchiveRepositoryService,
-  CaseFile,
   CaseRepositoryService,
-  CaseString,
   CaseStringRepositoryService,
-  Defendant,
-  IndictmentCount,
-  Offense,
 } from '../../../repository'
-import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 
 interface Then {
@@ -250,8 +242,9 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindNextCaseToArchive =
+        mockCaseRepositoryService.findNextCaseToArchive as jest.Mock
+      mockFindNextCaseToArchive.mockResolvedValueOnce(theCase)
       const mockUpdate = mockCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(theCase)
 
@@ -259,43 +252,9 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should lookup a case', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          {
-            model: IndictmentCount,
-            as: 'indictmentCounts',
-            include: [
-              {
-                model: Offense,
-                as: 'offenses',
-              },
-            ],
-          },
-          { model: CaseFile, as: 'caseFiles' },
-          { model: CaseString, as: 'caseStrings' },
-          { model: AppealCase, as: 'appealCase' },
-          { model: AppealDecision, as: 'appealDecisions' },
-        ],
-        order: [
-          [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-          [
-            { model: IndictmentCount, as: 'indictmentCounts' },
-            'displayOrder',
-            'ASC',
-          ],
-          [
-            { model: IndictmentCount, as: 'indictmentCounts' },
-            'created',
-            'ASC',
-          ],
-          [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-          [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
-          [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
-        ],
-        where: archiveFilter,
-        transaction,
-      })
+      expect(
+        mockCaseRepositoryService.findNextCaseToArchive,
+      ).toHaveBeenCalledWith(transaction)
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId1,
@@ -406,8 +365,9 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(null)
+      const mockFindNextCaseToArchive =
+        mockCaseRepositoryService.findNextCaseToArchive as jest.Mock
+      mockFindNextCaseToArchive.mockResolvedValueOnce(null)
 
       then = await givenWhenThen()
     })

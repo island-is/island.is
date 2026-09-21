@@ -8,6 +8,7 @@ export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
+  | { type: ApplicationEvents.REVIEW }
   | { type: U2Events.REVOKE }
 
 export enum States {
@@ -34,12 +35,14 @@ export enum ApplicationEvents {
   REJECT = 'REJECT',
   REVOKE = 'REVOKE',
   APPROVE = 'APPROVE',
+  REVIEW = 'REVIEW',
 }
 
 export interface Country {
   id: string
   abbr: string
   name: string
+  english: string
   otherId: number
   orderNumber: number
   isInTheEUAndOrEEA: boolean

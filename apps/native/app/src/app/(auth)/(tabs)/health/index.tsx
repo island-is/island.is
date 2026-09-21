@@ -161,7 +161,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         style={{
           flexDirection: 'row',
           borderBottomWidth: 1,
-          borderBottomColor: theme.color.dark300,
+          borderBottomColor: theme.color.blue400,
         }}
       >
         <Typography
@@ -265,7 +265,7 @@ export default function HealthOverviewScreen() {
         id: 'prescriptionsAndCertificates',
         titleId: 'health.drugCertificates.title',
         icon: medicineIcon,
-        route: '/health/medicine/legacy',
+        route: '/health/medicine/certificates',
         enabled: !isMedicineEnabled,
       },
       {
