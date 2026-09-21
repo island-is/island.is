@@ -15,7 +15,9 @@ export interface VerdictTimelineItem {
 }
 
 interface Props {
-  eyebrow: string
+  // The line above the bullets. Left out by cards that title themselves, such
+  // as the public prosecution reviewer's.
+  eyebrow?: string
   items: VerdictTimelineItem[]
 }
 
@@ -48,7 +50,7 @@ const VerdictTimelineBody: FC<PropsWithChildren<Props>> = (props) => {
 
   return (
     <Box className={styles.container}>
-      <Text variant="eyebrow">{eyebrow}</Text>
+      {eyebrow && <Text variant="eyebrow">{eyebrow}</Text>}
       <AnimatePresence initial={false}>
         {items.map((item, index) => {
           const staggerIndex = staggerIndices[index]
