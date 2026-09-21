@@ -206,11 +206,6 @@ export const useDynamicRoutes = () => {
   }
 }
 
-const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
-  ...item,
-  children: item.children?.map(cloneNavItem),
-})
-
 /**
  * Adds a "Meðferð" section under Heilsa with one child per treatment.
  */
@@ -223,7 +218,6 @@ const injectHealthTreatmentNavItems = (
     if (child.path !== HEALTH_ROUTE) {
       return child
     }
-    const health = cloneNavItem(child)
     const treatmentsParent: PortalNavigationItem = {
       name: m.healthTreatment,
       path: HEALTH_TREATMENT_BASE_ROUTE,
@@ -241,7 +235,7 @@ const injectHealthTreatmentNavItems = (
         ],
       })),
     }
-    const healthChildren = [...(health.children ?? [])]
+    const healthChildren = [...(child.children ?? [])]
     const conversationsIndex = healthChildren.findIndex(
       (item) => item.path === HEALTH_CONVERSATIONS_ROUTE,
     )
@@ -250,8 +244,7 @@ const injectHealthTreatmentNavItems = (
       0,
       treatmentsParent,
     )
-    health.children = healthChildren
-    return health
+    return { ...child, children: healthChildren }
   }),
 })
 

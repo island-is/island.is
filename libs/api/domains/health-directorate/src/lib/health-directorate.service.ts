@@ -68,6 +68,7 @@ import {
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
 import {
+  formatStrength,
   mapDelegationStatus,
   mapDispensationItem,
   mapPrescriptionCategory,
@@ -359,7 +360,7 @@ export class HealthDirectorateService {
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           url: item.product.url,
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
@@ -391,7 +392,7 @@ export class HealthDirectorateService {
                 count: item.dispensations.length,
                 itemId: dispensedItem.productId,
                 name: dispensedItem.productName,
-                strength: dispensedItem.productStrength,
+                strength: formatStrength(dispensedItem.productStrength),
                 amount: dispensedItem.dispensedAmountDisplay,
               }
             })
@@ -468,7 +469,7 @@ export class HealthDirectorateService {
         return {
           id: item.product.id,
           name: item.product.name,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
