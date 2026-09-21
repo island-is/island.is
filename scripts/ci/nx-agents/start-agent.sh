@@ -45,12 +45,14 @@ cp .env.build .env.build-custom-server
 echo 'NODE_OPTIONS="--max-old-space-size=4096"' | tee .env.lint >.env.typecheck
 
 # Set Datadog config per-project
-GRAPH_FILE="$(mktemp -d)/graph.json"
-NX_DAEMON=false yarn nx graph --file="$GRAPH_FILE" >/dev/null
-jq -r '.graph.nodes | to_entries[] | "\(.value.data.root)\t\(.key)"' "$GRAPH_FILE" |
-  while IFS=$'\t' read -r root name; do
-    echo "DD_SERVICE=$name" >>"$root/.env"
-  done
+if [[ "${DD_SERVICE_ENV_FILES:-true}" == "true" ]]; then
+  GRAPH_FILE="$(mktemp -d)/graph.json"
+  NX_DAEMON=false yarn nx graph --file="$GRAPH_FILE" >/dev/null
+  jq -r '.graph.nodes | to_entries[] | "\(.value.data.root)\t\(.key)"' "$GRAPH_FILE" |
+    while IFS=$'\t' read -r root name; do
+      echo "DD_SERVICE=$name" >>"$root/.env"
+    done
+fi
 
 unset NODE_OPTIONS DD_SERVICE API_MOCKS
 export NX_LOAD_DOT_ENV_FILES=true
