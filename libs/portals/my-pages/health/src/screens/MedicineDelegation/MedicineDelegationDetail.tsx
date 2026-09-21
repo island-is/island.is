@@ -30,8 +30,9 @@ const MedicineDelegationDetail = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [modalVisible, setModalVisible] = useState(false)
+  const [refetching, setRefetching] = useState(false)
 
-  const { data, loading, error } = useGetMedicineDelegationsQuery({
+  const { data, loading, error, refetch } = useGetMedicineDelegationsQuery({
     variables: {
       locale: lang,
       input: {
@@ -47,10 +48,7 @@ const MedicineDelegationDetail = () => {
   })
 
   const [deleteMedicineDelegation, { loading: deleteLoading }] =
-    useDeleteMedicineDelegationMutation({
-      refetchQueries: ['GetMedicineDelegations'],
-      awaitRefetchQueries: true,
-    })
+    useDeleteMedicineDelegationMutation()
 
   const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
     (item) => item.nationalId === id,
@@ -71,8 +69,13 @@ const MedicineDelegationDetail = () => {
         },
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         if (response.data?.healthDirectorateMedicineDelegationDelete.success) {
+          // Refresh the list before navigating so the overview is up to date.
+          // A failed refetch must not be reported as a failed deletion.
+          setRefetching(true)
+          await refetch().catch(() => undefined)
+          setRefetching(false)
           toast.success(formatMessage(messages.permitDeleted))
           setModalVisible(false)
           navigate(HealthPaths.HealthMedicineDelegation, { replace: true })
@@ -159,7 +162,7 @@ const MedicineDelegationDetail = () => {
           onSubmit={onSubmit}
           id={filteredData?.nationalId}
           activeDelegation={filteredData}
-          loading={deleteLoading}
+          loading={deleteLoading || refetching}
         />
       )}
     </IntroWrapper>

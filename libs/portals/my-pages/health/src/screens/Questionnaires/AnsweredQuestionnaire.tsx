@@ -43,6 +43,11 @@ const AnsweredQuestionnaire: FC = () => {
     submissionId ?? '',
   )
 
+  // The route can change submission while this component stays mounted
+  useEffect(() => {
+    setSelectedSubmissionId(submissionId ?? '')
+  }, [submissionId])
+
   const organization: QuestionnaireQuestionnairesOrganizationEnum =
     org === 'el'
       ? QuestionnaireQuestionnairesOrganizationEnum.EL
