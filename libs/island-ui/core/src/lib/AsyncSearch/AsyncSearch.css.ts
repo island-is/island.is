@@ -172,6 +172,13 @@ export const clear = style({
   cursor: 'pointer',
   top: '50%',
   transform: 'translateY(-50%)',
+  borderRadius: 4,
+  selectors: {
+    '&:focus-visible': {
+      outline: `2px solid ${theme.color.mint400}`,
+      outlineOffset: 2,
+    },
+  },
 })
 
 // Sits to the left of the search icon, clearing its focusable border box
