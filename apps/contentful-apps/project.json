@@ -7,7 +7,11 @@
   "targets": {
     "build": {
       "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}/!(.next)",
+        "{options.outputPath}/.next/!(cache)/**/*",
+        "{options.outputPath}/.next/!(cache)"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/contentful-apps",

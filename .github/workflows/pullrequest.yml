@@ -34,9 +34,10 @@ env:
   # that created it ends the execution is closed, so agents exit and the main job fails
   NX_AGENTS_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agents
   NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
-  # The `web` build output is over Nx Cloud's 300MB artifact limit. Without agents that is
+  # The `web` build output was over Nx Cloud's 300MB artifact limit. Without agents that is
   # only a warning (the build is just never cached), but an agent has to upload the output
-  # of every task it runs. Remove when `.next/cache` is no longer part of the build outputs
+  # of every task it runs. `.next/cache` is no longer part of the build outputs of the Next.js
+  # apps, so remove this when a run has shown that the `web` build output is under the limit
   NX_CLOUD_NO_TIMEOUTS: 'true'
   MIN_AGENTS: '1'
   MAX_AGENTS: '10'
@@ -233,12 +234,13 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      # "Re-run failed jobs" does not re-run the agents
+      # "Re-run failed jobs" does not re-run the agents that succeeded
       - name: Check that the agents are part of this attempt
         if: ${{ github.run_attempt > 1 && needs.plan.outputs.agent-count != '0' }}
         run: ./scripts/ci/nx-agents/check-agents.sh
         env:
           GH_TOKEN: ${{ github.token }}
+          EXPECTED_AGENTS: ${{ needs.plan.outputs.agent-count }}
 
       - name: Start distributed CI run
         if: ${{ needs.plan.outputs.agent-count != '0' }}

@@ -61,5 +61,8 @@ would be passed to every target in the command.
 
 ## Re-running
 
-Use "Re-run all jobs". "Re-run failed jobs" only re-runs the main job, which
-would start a CI run without agents, so `check-agents.sh` fails the job right away.
+Use "Re-run all jobs". "Re-run failed jobs" only re-runs the main job and the agents
+that were lost, and a run without all of its agents can wait forever (e.g. for a
+judicial agent), so `check-agents.sh` fails the job right away.
+
+One lost agent (e.g. a runner that is shut down) fails the whole distributed run.
