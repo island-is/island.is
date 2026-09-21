@@ -79,7 +79,6 @@ const PaymentsAndRights: React.FC<Props> = ({
             ],
             loading: payments.loading,
             error: payments.error,
-            noAccess: payments.noAccess,
           },
 
           {
@@ -107,7 +106,6 @@ const PaymentsAndRights: React.FC<Props> = ({
             ],
             loading: medicine.loading,
             error: medicine.error,
-            noAccess: medicine.noAccess,
           },
           {
             title: formatMessage(messages.hasHealthInsurance),
@@ -120,7 +118,6 @@ const PaymentsAndRights: React.FC<Props> = ({
 
             loading: insurance.loading,
             error: insurance.error,
-            noAccess: insurance.noAccess,
             tags: [
               {
                 label: isInsured
@@ -158,7 +155,6 @@ const PaymentsAndRights: React.FC<Props> = ({
             ],
             loading: insurance.loading,
             error: insurance.error,
-            noAccess: insurance.noAccess,
           },
         ]}
         size="small"

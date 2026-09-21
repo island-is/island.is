@@ -60,7 +60,6 @@ const BasicInformation: React.FC<Props> = ({
             to: HealthPaths.HealthCenter,
             loading: healthCenter.loading,
             error: healthCenter.error,
-            noAccess: healthCenter.noAccess,
           },
           {
             title: formatMessage(messages.dentist),
@@ -69,7 +68,6 @@ const BasicInformation: React.FC<Props> = ({
             to: HealthPaths.HealthDentists,
             loading: dentists.loading,
             error: dentists.error,
-            noAccess: dentists.noAccess,
           },
 
           {
@@ -83,7 +81,6 @@ const BasicInformation: React.FC<Props> = ({
             to: HealthPaths.HealthOrganDonation,
             loading: donor.loading,
             error: donor.error,
-            noAccess: donor.noAccess,
           },
           {
             title: formatMessage(messages.bloodtype),
@@ -96,7 +93,6 @@ const BasicInformation: React.FC<Props> = ({
             to: HealthPaths.HealthBloodtype,
             loading: blood.loading,
             error: blood.error,
-            noAccess: blood.noAccess,
           },
         ]}
         empty={

@@ -6,7 +6,6 @@ import {
   getTime,
   InfoCardGrid,
   LinkButton,
-  m,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { useWindowSize } from 'react-use'
@@ -33,12 +32,9 @@ const Appointments: React.FC<Props> = ({
   const { width } = useWindowSize()
   const isDesktop = width >= theme.breakpoints.lg
   const appointments = data?.data?.data
-  const noAccess = !!data?.noAccess
-  const isEmpty = noAccess || !appointments || appointments?.length === 0
+  const isEmpty = !appointments || appointments?.length === 0
 
-  const cards = noAccess
-    ? []
-    : data?.loading
+  const cards = data?.loading
     ? [{ loading: true, title: '', description: '' }]
     : data?.error
     ? [
@@ -90,7 +86,7 @@ const Appointments: React.FC<Props> = ({
                 {formatMessage(messages.myAppointments)}
               </Text>
             </Box>
-            {showLinkButton && !noAccess && (
+            {showLinkButton && (
               <Box>
                 <LinkButton
                   to={HealthPaths.HealthAppointments}
@@ -109,16 +105,10 @@ const Appointments: React.FC<Props> = ({
         size={isEmpty ? 'small' : undefined}
         empty={
           isEmpty && !data?.loading
-            ? noAccess
-              ? {
-                  title: formatMessage(m.accessNeeded),
-                  description: formatMessage(m.accessDeniedText),
-                  img: './assets/images/jobsGrid.svg',
-                }
-              : {
-                  title: formatMessage(messages.noAppointmentsTitle),
-                  description: formatMessage(messages.noAppointmentsText),
-                }
+            ? {
+                title: formatMessage(messages.noAppointmentsTitle),
+                description: formatMessage(messages.noAppointmentsText),
+              }
             : undefined
         }
         variant="appointment"

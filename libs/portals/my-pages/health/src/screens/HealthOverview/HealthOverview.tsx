@@ -285,13 +285,12 @@ export const HealthOverview = () => {
         </GridRow>
       )}
       {/* Appointments */}
-      {showAppointments && (
+      {showAppointments && hasAppointmentsAccess && (
         <Appointments
           data={{
             data: { data: firstTwoAppointments },
             loading: appointmentsLoading,
             error: !!appointmentsError,
-            noAccess: !hasAppointmentsAccess,
           }}
           showLinkButton
         />
@@ -304,19 +303,16 @@ export const HealthOverview = () => {
           data: paymentOverviewData?.rightsPortalCopaymentStatus,
           loading: paymentOverviewLoading,
           error: !!paymentOverviewError,
-          noAccess: !hasPaymentsAccess,
         }}
         medicine={{
           data: currentMedicinePeriod,
           loading: medicinePaymentOverviewLoading,
           error: !!medicinePaymentOverviewError,
-          noAccess: !hasMedicineAccess,
         }}
         insurance={{
           data: data?.rightsPortalInsuranceOverview,
           loading: loading,
           error: !!error,
-          noAccess: !hasInsuranceAccess,
         }}
       />
       {/* Displaying basic information like healthcenter, dentist etc, */}
@@ -325,26 +321,22 @@ export const HealthOverview = () => {
           data: healthCenterData?.rightsPortalHealthCenterRegistrationHistory,
           loading: healthCenterLoading,
           error: !!healthCenterError,
-          noAccess: !hasHealthCenterAccess,
         }}
         dentists={{
           data:
             dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
-          noAccess: !hasDentistsAccess,
         }}
         donor={{
           data: donorStatusData?.healthDirectorateOrganDonation.donor,
           loading: donorStatusLoading,
           error: !!donorStatusError,
-          noAccess: !hasBasicHealthAccess,
         }}
         blood={{
           data: bloodTypeData?.rightsPortalBloodType,
           loading: bloodTypeLoading,
           error: !!bloodTypeError,
-          noAccess: !hasBasicHealthAccess,
         }}
       />
     </>

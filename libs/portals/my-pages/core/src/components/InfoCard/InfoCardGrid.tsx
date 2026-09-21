@@ -5,7 +5,6 @@ import { useWindowSize } from 'react-use'
 import EmptyCard from './EmptyCard'
 import { ErrorCard } from './ErrorCard'
 import InfoCard, { InfoCardProps } from './InfoCard'
-import { NoAccessCard } from './NoAccessCard'
 import * as styles from './InfoCard.css'
 
 interface InfoCardGridProps {
@@ -51,9 +50,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
               className={styles.gridCard}
               key={card?.id ?? `infocard-${index}`}
             >
-              {card?.noAccess ? (
-                <NoAccessCard />
-              ) : card?.error ? (
+              {card?.error ? (
                 <ErrorCard title={card.title} to={card.to} />
               ) : (
                 card && (

@@ -77,8 +77,6 @@ export interface InfoCardProps {
   muted?: boolean
   loading?: boolean
   error?: boolean
-  /** Renders a "Umboð vantar" card instead, for missing delegation scopes */
-  noAccess?: boolean
 }
 
 export const InfoCard: React.FC<InfoCardProps> = ({

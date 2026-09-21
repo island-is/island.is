@@ -39,8 +39,9 @@ const AppointmentsOverview = () => {
 
   const [pastTabVisited, setPastTabVisited] = useState(false)
 
-  // Past appointments are only available to the person themselves — a
-  // delegation carries healthAppointments but never the full health scope
+  // Past appointments are only available for yourself and for parents of
+  // children under 16 — those are the cases that carry the full health scope,
+  // whereas other delegations only get healthAppointments
   const userInfo = useUserInfo()
   const hasPastAppointmentsAccess = !!userInfo?.scopes?.includes(
     ApiScope.health,
