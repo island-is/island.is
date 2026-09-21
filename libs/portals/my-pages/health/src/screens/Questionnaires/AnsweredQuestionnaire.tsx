@@ -15,6 +15,7 @@ import {
   Answered,
   formatDate,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -119,6 +120,10 @@ const AnsweredQuestionnaire: FC = () => {
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={
         data?.getAnsweredQuestionnaire?.data[0]?.title ??
         formatMessage(messages.questionnaire)

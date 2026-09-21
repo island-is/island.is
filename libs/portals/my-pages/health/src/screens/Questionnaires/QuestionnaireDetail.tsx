@@ -9,6 +9,7 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
@@ -119,6 +120,10 @@ const QuestionnaireDetail: FC = () => {
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={
         loading
           ? formatMessage(messages.questionnaire)

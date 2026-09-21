@@ -835,6 +835,11 @@ export const messages = defineMessages({
       'Stafræn heilsa hefur umsjón með gögnum um þínar tilvísanir.',
     id: 'sp.health:stafraen-heilsa-referral-tooltip',
   },
+  stafraenHeilsaQuestionnairesTooltip: {
+    defaultMessage:
+      'Stafræn heilsa hefur umsjón með gögnum um þína spurningalista.',
+    id: 'sp.health:stafraen-heilsa-questionnaires-tooltip',
+  },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
@@ -3109,8 +3114,7 @@ export const messages = defineMessages({
     id: 'sp.health:renewal-no-target',
   },
   renewalRequestSent: {
-    defaultMessage:
-      'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+    defaultMessage: 'Beiðni um endurnýjun send',
     id: 'sp.health:renewal-request-sent',
   },
   renewalRequestError: {

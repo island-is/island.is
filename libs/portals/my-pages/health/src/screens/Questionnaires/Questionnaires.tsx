@@ -19,6 +19,7 @@ import {
   CardLoader,
   formatDate,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { debounceTime } from '@island.is/shared/constants'
@@ -168,6 +169,10 @@ const Questionnaires: FC = () => {
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={formatMessage(messages.questionnaires)}
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
