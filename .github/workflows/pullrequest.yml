@@ -79,6 +79,8 @@ jobs:
         with:
           # Need full repo for Nx to find the commits at NX_*
           fetch-depth: 0
+          # All commits and trees, but only the files of this commit: Nx needs the history, not old file contents
+          filter: blob:none
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
@@ -222,6 +224,8 @@ jobs:
         with:
           # Need full repo for Nx to find the commits at NX_*
           fetch-depth: 0
+          # All commits and trees, but only the files of this commit: Nx needs the history, not old file contents
+          filter: blob:none
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
@@ -288,6 +292,8 @@ jobs:
         with:
           # Need full repo for Nx to find the base commit
           fetch-depth: 0
+          # All commits and trees, but only the files of this commit: Nx needs the history, not old file contents
+          filter: blob:none
           persist-credentials: false
           # Need ref to know where to push to
           # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
