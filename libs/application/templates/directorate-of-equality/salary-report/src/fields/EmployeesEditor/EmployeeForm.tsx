@@ -59,9 +59,11 @@ export const EmployeeForm: FC<Props> = ({
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
 
+  // Row 4 of the workbook, not the derived-total names: these head the input
+  // columns, and Viðbótarlaun / Aukagreiðslur are columns P and Q.
   const groupHeadings: Record<'additional' | 'bonus', string> = {
-    additional: formatMessage(m.additionalSalaryLabel),
-    bonus: formatMessage(m.bonusSalaryLabel),
+    additional: formatMessage(m.fixedPaymentsGroupLabel),
+    bonus: formatMessage(m.occasionalPaymentsGroupLabel),
   }
 
   const onValid = (data: EmployeeFormValues) => {
@@ -178,6 +180,14 @@ export const EmployeeForm: FC<Props> = ({
               rules={{ required: requiredMsg }}
               error={errors.baseSalary?.message}
             />
+          </GridColumn>
+          {/* Sits under the hours/base-salary pair rather than in a tooltip:
+              template 2.0 narrowed what Greiddar stundir means, and a
+              manual-entry applicant has no workbook header to read it off. */}
+          <GridColumn span="12/12">
+            <Text variant="small" color="dark400">
+              {formatMessage(m.paidHoursHelperText)}
+            </Text>
           </GridColumn>
           {SALARY_COMPONENT_GROUPS.map(({ group, keys }) => (
             <Fragment key={group}>

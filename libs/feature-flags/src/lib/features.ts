@@ -46,6 +46,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isTravelConfirmationEnabled = 'isTravelConfirmationEnabled',
   isSubmitDocumentsEnabled = 'isSubmitDocumentsEnabled',
+  isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   isU2ApplicationEnabled = 'isU2ApplicationEnabled',
   // Application System Delegations active
@@ -74,6 +75,7 @@ export enum Features {
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
   isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
+  isServicePortalHealthOldPregnanciesPageEnabled = 'isServicePortalHealthOldPregnanciesPageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
   servicePortalHealthAidAndNutritionRenewalEnabled = 'isServicePortalHealthAidAndNutritionRenewalEnabled',
@@ -89,6 +91,7 @@ export enum Features {
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthMessagesPageEnabled = 'isServicePortalHealthMessagesPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
+  isServicePortalHealthPregnancyPageEnabled = 'isServicePortalHealthPregnancyPageEnabled',
   isServicePortalHealthTreatmentsPageEnabled = 'isServicePortalHealthTreatmentsPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
@@ -171,9 +174,6 @@ export enum Features {
   // Should auth api use national registry v3 (Midlun) for incoming ward (legal guardian) delegations
   isDelegationIncomingWardV3Enabled = 'isDelegationIncomingWardV3Enabled',
 
-  // Should applicaton-system use national registry v3
-  shouldApplicationSystemUseNationalRegistryV3 = 'shouldApplicationSystemUseNationalRegistryV3',
-
   delegationTypesWithNotificationsEnabled = 'delegationTypesWithNotificationsEnabled',
 
   // Should user-notification worker check deceased status via national registry
@@ -219,6 +219,7 @@ export enum Features {
   isNewCarRecyclingBackendEnabled = 'isNewCarRecyclingBackendEnabled',
   // Housing Benefits
   isHousingBenefitsEnabled = 'isHousingBenefitsApplicationEnabled',
+  isDriversDeprivationsEnabled = 'isDriversDeprivationsEnabled',
 
   organizationFooterComesFromOrganizationPage = 'organizationFooterComesFromOrganizationPage',
 

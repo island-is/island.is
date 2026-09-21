@@ -20,6 +20,7 @@ import {
   formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
   normalizeAndFormatNationalId,
+  normalizePersonAddress,
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
@@ -244,6 +245,40 @@ describe('normalizeAndFormatNationalId', () => {
 
     // Assert
     expect(res).toEqual(['1234567890', '123456-7890'])
+  })
+})
+
+describe('normalizePersonAddress', () => {
+  test('should replace Ótilgreindu with ótilgreindu lögheimili', () => {
+    expect(normalizePersonAddress('Ótilgreindu')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should replace trimmed Ótilgreindu', () => {
+    expect(normalizePersonAddress('  Ótilgreindu  ')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should replace regardless of casing', () => {
+    expect(normalizePersonAddress('ótilgreindu')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+    expect(normalizePersonAddress('ÓTILGREINDU')).toEqual(
+      'ótilgreindu lögheimili',
+    )
+  })
+
+  test('should leave other addresses unchanged', () => {
+    expect(normalizePersonAddress('Aðalgata 1, 101 Reykjavík')).toEqual(
+      'Aðalgata 1, 101 Reykjavík',
+    )
+  })
+
+  test('should leave null and undefined unchanged', () => {
+    expect(normalizePersonAddress(null)).toBeNull()
+    expect(normalizePersonAddress(undefined)).toBeUndefined()
   })
 })
 

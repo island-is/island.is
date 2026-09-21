@@ -26,6 +26,9 @@ const AidsAndNutrition = lazy(() =>
 const MovementPrescriptions = lazy(() =>
   import('./screens/MovementPrescriptions/MovementPrescriptions'),
 )
+const OldPregnancies = lazy(() =>
+  import('./screens/OldPregnancies/OldPregnancies'),
+)
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
@@ -159,6 +162,8 @@ const NewHealthConversation = lazy(() =>
 const HealthConversationDetail = lazy(() =>
   import('./screens/HealthConversations/HealthConversationDetail'),
 )
+
+const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
 
 const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
 
@@ -546,6 +551,13 @@ export const healthModule: PortalModule = {
       element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
     },
     {
+      name: hm.oldPregnanciesTitle,
+      path: HealthPaths.HealthOldPregnancies,
+      key: 'HealthOldPregnancies',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <OldPregnancies />,
+    },
+    {
       name: hm.questionnaires,
       path: HealthPaths.HealthQuestionnaires,
       key: 'HealthQuestionnaires',
@@ -685,6 +697,22 @@ export const healthModule: PortalModule = {
       key: 'HealthMessages',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthConversationDetail />,
+    },
+    {
+      name: hm.pregnancy,
+      path: HealthPaths.HealthPregnancy,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
+      element: <Navigate to={HealthPaths.HealthPregnancyOverview} replace />,
+    },
+    {
+      name: hm.myPregnancy,
+      path: HealthPaths.HealthPregnancyOverview,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
+      element: <Pregnancy />,
     },
     {
       name: m.healthTreatment,

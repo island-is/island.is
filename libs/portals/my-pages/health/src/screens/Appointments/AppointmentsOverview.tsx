@@ -4,15 +4,22 @@ import { Box, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  HEALTH_DIRECTORATE_SLUG,
+  formatPlausiblePathToParams,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
+import {
+  healthAppointmentsHeilsuveraClick,
+  healthAppointmentsSendMessageClick,
+} from '@island.is/plausible'
+import { useLocation } from 'react-router-dom'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { isPastAppointment } from '../../utils/appointments'
 import {
   DEFAULT_APPOINTMENTS_STATUS,
   PAST_APPOINTMENTS_STATUS,
@@ -24,6 +31,7 @@ import { useGetAppointmentsQuery } from './Appointments.generated'
 const AppointmentsOverview = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const { pathname } = useLocation()
   useHealthPlausibleSwap()
 
   const [pastTabVisited, setPastTabVisited] = useState(false)
@@ -53,9 +61,12 @@ const AppointmentsOverview = () => {
 
   const upcomingAppointments =
     upcoming.data?.healthDirectorateAppointments?.data ?? []
-  const pastAppointments = [
-    ...(past.data?.healthDirectorateAppointments?.data ?? []),
-  ].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+  const pastAppointments = (
+    past.data?.healthDirectorateAppointments?.data ?? []
+  )
+    // The query includes BOOKED, which also matches upcoming appointments
+    .filter(isPastAppointment)
+    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 
   const renderAppointmentList = (
     appointments: HealthDirectorateAppointment[],
@@ -105,8 +116,8 @@ const AppointmentsOverview = () => {
       title={messages.appointmentsOverviewTitle}
       intro={messages.appointmentsIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirAppointmentsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaAppointmentsTooltip),
       }}
     >
       <Box
@@ -123,6 +134,11 @@ const AppointmentsOverview = () => {
             variant="utility"
             size="small"
             icon="arrowForward"
+            callback={() =>
+              healthAppointmentsSendMessageClick(
+                formatPlausiblePathToParams(pathname),
+              )
+            }
           />
         )}
         <LinkButton
@@ -131,6 +147,12 @@ const AppointmentsOverview = () => {
           variant="utility"
           size="small"
           icon="open"
+          callback={() =>
+            healthAppointmentsHeilsuveraClick(
+              formatPlausiblePathToParams(pathname),
+            )
+          }
+          skipOutboundTrack
         />
       </Box>
       <Tabs

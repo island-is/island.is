@@ -33,14 +33,6 @@ auth-admin-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 10
-        min: 2
   httpRoute:
     primary-gw:
       hostnames:
@@ -62,9 +54,9 @@ auth-admin-web:
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'

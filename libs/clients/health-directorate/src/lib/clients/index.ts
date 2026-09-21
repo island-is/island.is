@@ -13,7 +13,7 @@ export {
   AttachmentReplyViewDto,
   BooleanReplyViewDto,
   DateReplyViewDto,
-  ListReplyDto,
+  ListReplyViewDto,
   NumberReplyViewDto,
   StringReplyViewDto,
   TableReplyViewDto,

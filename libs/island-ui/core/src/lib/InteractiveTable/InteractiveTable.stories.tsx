@@ -174,6 +174,43 @@ export const Expandable = () => (
   />
 )
 
+// --- Footer / summary row ---
+
+type Invoice = { date: string; description: string; amount: number }
+
+const invoiceHelper = createColumnHelper<Invoice>()
+const invoiceData: Invoice[] = [
+  { date: '2024-01-15', description: 'January subscription', amount: 4900 },
+  { date: '2024-02-15', description: 'February subscription', amount: 4900 },
+  { date: '2024-03-15', description: 'March subscription', amount: 4900 },
+]
+const invoiceColumns = [
+  invoiceHelper.accessor('date', {
+    header: 'Date',
+    footer: () => 'Total:',
+  }),
+  invoiceHelper.accessor('description', { header: 'Description' }),
+  invoiceHelper.accessor('amount', {
+    header: 'Amount',
+    meta: { align: 'right' },
+    cell: (info) => info.getValue().toLocaleString('is-IS'),
+    footer: (info) =>
+      info.table
+        .getRowModel()
+        .rows.reduce((sum, row) => sum + row.original.amount, 0)
+        .toLocaleString('is-IS'),
+  }),
+]
+
+export const WithFooter = () => (
+  <InteractiveTable
+    columns={invoiceColumns}
+    data={invoiceData}
+    emptyMessage="No invoices found."
+    mobileTitleKey="date"
+  />
+)
+
 // --- Loading state ---
 
 export const Loading = () => (

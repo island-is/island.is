@@ -41,6 +41,15 @@ export const messages = {
       defaultMessage:
         'Engin samþykkt jafnréttisáætlun fannst hjá Jafnréttisstofu. Ekki er hægt að senda inn launagreiningu fyrr en jafnréttisáætlun fyrirtækisins hefur verið samþykkt.',
     },
+    // The submit-side twin of notAllowed.renewalWindowDescription, without the
+    // date: a TemplateApiError summary is rendered through formatMessage with no
+    // values argument (see handleServerError), so an interpolated date would
+    // reach the applicant as a literal placeholder.
+    renewalWindowNotOpen: {
+      id: 'doe.sr.application:errors.renewalWindowNotOpen',
+      defaultMessage:
+        'Ekki er komið að skilum á launagreiningu hjá fyrirtækinu. Hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -105,6 +114,24 @@ export const messages = {
       id: 'doe.sr.application:notAllowed.notCompanyDescription',
       defaultMessage:
         'Vinsamlegast skráðu þig inn í umboði fyrirtækis til að senda inn launagreiningu.',
+    },
+    // The other half of DMR's eligibility answer: the company holds an approved
+    // jafnréttisáætlun, it is simply too early in the three-year cycle.
+    renewalWindowTitle: {
+      id: 'doe.sr.application:notAllowed.renewalWindowTitle',
+      defaultMessage: 'Ekki er komið að skilum á launagreiningu',
+    },
+    renewalWindowDescription: {
+      id: 'doe.sr.application:notAllowed.renewalWindowDescription',
+      defaultMessage:
+        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Fyrirtækið getur sent inn launagreiningu frá og með {earliestSubmissionDate}.',
+    },
+    // `earliestSubmissionDate` is null until DMR has a due date to anchor the
+    // window on, so the same refusal has to stand without one.
+    renewalWindowDescriptionNoDate: {
+      id: 'doe.sr.application:notAllowed.renewalWindowDescriptionNoDate',
+      defaultMessage:
+        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Ekki er komið að næstu skilum hjá fyrirtækinu.',
     },
   }),
 
@@ -727,6 +754,37 @@ export const messages = {
         id: 'doe.sr.application:report.subCriteria.stepCountLabel',
         defaultMessage: 'Fjöldi þrepa',
       },
+      stepCountRange: {
+        id: 'doe.sr.application:report.subCriteria.stepCountRange',
+        defaultMessage:
+          'Fjöldi þrepa þarf að vera {min}–{max}. Þrepin hér að neðan fylgja síðasta gilda fjölda.',
+      },
+      // Shown while the reduction is still undoable — see useStepCountSync:
+      // raising the count back restores the same þrep, but once "Halda áfram"
+      // has flushed the screen their definitions are gone and DMR has moved
+      // everyone who stood in them down to the highest þrep left.
+      //
+      // Which, since a reduction only ever removes from the top of the scale,
+      // is the new count itself: dropping 5 þrep to 4 moves the roles that were
+      // on þrep 5 to þrep 4 — so name the number rather than describe the rule.
+      stepReductionWarningTitle: {
+        id: 'doe.sr.application:report.subCriteria.stepReductionWarningTitle',
+        defaultMessage: 'Þrepum hefur verið fækkað',
+      },
+      stepReductionWarning: {
+        id: 'doe.sr.application:report.subCriteria.stepReductionWarning',
+        defaultMessage:
+          'Þrepin voru {loaded} en eru nú {current}. Þegar þú heldur áfram eyðast skilgreiningar þrepanna sem falla brott og starfsheiti — og starfsfólk — sem voru í þeim færast í {current}. þrep.',
+      },
+      // Appended to the warning only while the þrep really can be put back —
+      // see canRestoreTrimmedSteps. Picking a sniðmát discards the þrep it
+      // replaced, so raising the count afterwards yields blank þrep and this
+      // sentence would be a promise the screen cannot keep.
+      stepReductionUndoHint: {
+        id: 'doe.sr.application:report.subCriteria.stepReductionUndoHint',
+        defaultMessage:
+          'Fjölgir þú þrepunum aftur upp í {loaded} áður en þú heldur áfram helst allt óbreytt.',
+      },
       stepsLabel: {
         id: 'doe.sr.application:report.subCriteria.stepsLabel',
         defaultMessage: 'Þrep',
@@ -834,16 +892,21 @@ export const messages = {
         id: 'doe.sr.application:report.employees.baseSalaryLabel',
         defaultMessage: 'Grunnlaun',
       },
-      additionalSalaryLabel: {
-        id: 'doe.sr.application:report.employees.additionalSalaryLabel',
-        defaultMessage: 'Viðbótarlaun',
+      // Band headings over the pay INPUTS, matching row 4 of the workbook. Named
+      // for the bands rather than for the derived read-only totals the API returns
+      // (Viðbótarlaun / Aukagreiðslur, workbook columns P and Q) — different
+      // things, and those two live in salaryAnalysis.components below.
+      fixedPaymentsGroupLabel: {
+        id: 'doe.sr.application:report.employees.fixedPaymentsGroupLabel',
+        defaultMessage: 'Fastar greiðslur',
       },
-      bonusSalaryLabel: {
-        id: 'doe.sr.application:report.employees.bonusSalaryLabel',
-        defaultMessage: 'Aukagreiðslur',
+      occasionalPaymentsGroupLabel: {
+        id: 'doe.sr.application:report.employees.occasionalPaymentsGroupLabel',
+        defaultMessage: 'Tilfallandi greiðslur',
       },
-      // Icelandic labels below are best-guess mappings of the API fields —
-      // adjust wording as needed.
+      // Verbatim from row 5 of the 2.0 workbook (DMR PR #1482), minus the sheet's
+      // "(kr.)" suffix — the row view formats these with formatCurrency. Declared
+      // in workbook column order J–O, the order SALARY_COMPONENT_GROUPS renders.
       additionalFixedOvertimeLabel: {
         id: 'doe.sr.application:report.employees.additionalFixedOvertimeLabel',
         defaultMessage: 'Föst yfirvinna',
@@ -852,21 +915,21 @@ export const messages = {
         id: 'doe.sr.application:report.employees.additionalFixedCarAllowanceLabel',
         defaultMessage: 'Föst bifreiðahlunnindi',
       },
-      bonusOccasionalCarAllowanceLabel: {
-        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
-        defaultMessage: 'Tilfallandi bifreiðahlunnindi',
+      additionalFixedOtherLabel: {
+        id: 'doe.sr.application:report.employees.additionalFixedOtherLabel',
+        defaultMessage: 'Aðrar reglulegar greiðslur / hlunnindi',
       },
       bonusOccasionalOvertimeLabel: {
         id: 'doe.sr.application:report.employees.bonusOccasionalOvertimeLabel',
-        defaultMessage: 'Tilfallandi yfirvinna',
+        defaultMessage: 'Tilfallandi / mæld yfirvinna',
       },
-      bonusPaymentsLabel: {
-        id: 'doe.sr.application:report.employees.bonusPaymentsLabel',
-        defaultMessage: 'Bónusgreiðslur',
+      bonusOccasionalCarAllowanceLabel: {
+        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
+        defaultMessage: 'Tilfallandi / mældur bifreiðastyrkur',
       },
       bonusOtherLabel: {
         id: 'doe.sr.application:report.employees.bonusOtherLabel',
-        defaultMessage: 'Aðrar greiðslur',
+        defaultMessage: 'Aðrar tilfallandi greiðslur / hlunnindi',
       },
       addButton: {
         id: 'doe.sr.application:report.employees.addButton',
@@ -917,6 +980,15 @@ export const messages = {
         id: 'doe.sr.application:report.employees.paidHoursPlaceholder',
         defaultMessage: 'T.d. 173,33',
       },
+      // Template 2.0 narrowed Greiddar stundir: fixed overtime hours still count,
+      // incidental paid hours no longer do. A manual-entry applicant never sees
+      // the workbook's column-E header, so this line is their only source for it —
+      // hence visible text rather than InputController's `tooltip`.
+      paidHoursHelperText: {
+        id: 'doe.sr.application:report.employees.paidHoursHelperText',
+        defaultMessage:
+          'Fastar yfirvinnustundir meðtaldar, en ekki tilfallandi greiddar stundir.',
+      },
       paidHoursRangeError: {
         id: 'doe.sr.application:report.employees.paidHoursRangeError',
         defaultMessage:
@@ -956,6 +1028,10 @@ export const messages = {
       subCriterionInfo: {
         id: 'doe.sr.application:report.jobClassification.subCriterionInfo',
         defaultMessage: '{description} {weight}% = {max} stig',
+      },
+      selectedStepDescription: {
+        id: 'doe.sr.application:report.jobClassification.selectedStepDescription',
+        defaultMessage: '{order}. þrep: {description}',
       },
       noRolesMessage: {
         id: 'doe.sr.application:report.jobClassification.noRolesMessage',
@@ -1159,7 +1235,7 @@ export const messages = {
       warningRowsExcluded: {
         id: 'doe.sr.application:salaryAnalysis.results.warningRowsExcluded',
         defaultMessage:
-          '{excluded} starfsmenn eru undanskildir í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim.',
+          '{excluded, plural, one {# starfsmaður er undanskilinn í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim starfsmanni.} other {# starfsmenn eru undanskildir í útreikningnum þar sem reglulegt tímakaup reiknaðist ekki hærra en núll. Kannaðu greiddar stundir og laun hjá þeim.}}',
       },
       warningNoScoreOverlap: {
         id: 'doe.sr.application:salaryAnalysis.results.warningNoScoreOverlap',
@@ -1411,6 +1487,23 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.genderNeutral',
         defaultMessage: 'Kynsegin',
       },
+      // Read only by screen readers, from the table's <caption>. It has to say
+      // that a third activation exists, because the order it returns to is the
+      // one `listRule` describes — the most extreme in each direction — and
+      // nothing on screen would otherwise tell a reader who sorted away from it
+      // that it can be had back.
+      tableCaption: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.tableCaption',
+        defaultMessage:
+          'Ábendingar um launadreifingu. Hægt er að raða eftir dálkum: fyrsti smellur raðar í hækkandi röð, annar í lækkandi og þriðji skilar upprunalegri röð.',
+      },
+      // On the sort button itself, so the control announces what activating it
+      // does rather than just reading out the column name. The state it is
+      // currently in is carried by aria-sort on the cell around it.
+      sortColumnLabel: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.sortColumnLabel',
+        defaultMessage: 'Raða eftir {column}',
+      },
     }),
     outlierGroup: defineMessages({
       ordinalColumn: {
@@ -1633,6 +1726,23 @@ export const messages = {
       removeGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',
         defaultMessage: 'Fjarlægja hóp',
+      },
+      saveGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.saveGroupButton',
+        defaultMessage: 'Vista',
+      },
+      groupSavedButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupSavedButton',
+        defaultMessage: 'Vistað',
+      },
+      saveGroupError: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.saveGroupError',
+        defaultMessage: 'Ekki tókst að vista hópinn. Reyndu aftur.',
+      },
+      removeGroupError: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupError',
+        defaultMessage:
+          'Ekki tókst að uppfæra vistuðu gögnin. Hópurinn getur birst aftur næst þegar þú opnar þennan skjá.',
       },
       unassignedWarning: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.unassignedWarning',

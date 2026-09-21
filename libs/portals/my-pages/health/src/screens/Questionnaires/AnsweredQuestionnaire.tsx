@@ -184,6 +184,7 @@ const AnsweredQuestionnaire: FC = () => {
             variant="utility"
             onClick={() => window.print()}
             preTextIcon="print"
+            preTextIconType="outline"
           >
             {formatMessage(m.print)}
           </Button>,

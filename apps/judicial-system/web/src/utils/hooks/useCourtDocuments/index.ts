@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import type {
   CreateCourtDocumentInput,
   DeleteCourtDocumentInput,
   FileCourtDocumentInCourtSessionInput,
   UpdateCourtDocumentInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateCourtDocumentMutation } from './createCourtDocument.generated'
 import { useDeleteCourtDocumentMutation } from './deleteCourtDocument.generated'
@@ -39,7 +39,7 @@ const useCourtDocuments = () => {
         }
 
         return data.createCourtDocument
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að búa til þingskjal')
 
         return
@@ -58,7 +58,7 @@ const useCourtDocuments = () => {
         })
 
         return Boolean(data?.updateCourtDocument)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra þingskjal')
 
         return false
@@ -77,7 +77,7 @@ const useCourtDocuments = () => {
         })
 
         return Boolean(data?.deleteCourtDocument)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða þingskjali')
 
         return false
@@ -102,7 +102,7 @@ const useCourtDocuments = () => {
         }
 
         return data.fileCourtDocumentInCourtSession
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að leggja fram þingskjal')
 
         return

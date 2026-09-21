@@ -171,9 +171,11 @@ export enum HealthConversationReplyBlockedReasonEnum {
   REPLIES_DISABLED = 'repliesDisabled',
   NO_REPLY_GROUP = 'noReplyGroup',
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  PATIENT_REPLY_NOT_ALLOWED = 'patientReplyNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
   REPLY_WINDOW_EXPIRED = 'replyWindowExpired',
   AWAITING_STAFF_REPLY = 'awaitingStaffReply',
+  AWAITING_ACKNOWLEDGEMENT = 'awaitingAcknowledgement',
 }
 registerEnumType(HealthConversationReplyBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationReplyBlockedReason',
@@ -189,11 +191,21 @@ registerEnumType(HealthConversationSegmentTypeEnum, {
 
 export enum HealthConversationRecipientBlockedReasonEnum {
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  PATIENT_INITIATED_NOT_ALLOWED = 'patientInitiatedNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
   NO_ALLOWED_TYPES = 'noAllowedTypes',
 }
 registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
+})
+
+export enum HealthConversationDayTypeEnum {
+  WEEKDAY = 'weekday',
+  WEEKEND = 'weekend',
+  HOLIDAY = 'holiday',
+}
+registerEnumType(HealthConversationDayTypeEnum, {
+  name: 'HealthDirectorateHealthConversationDayType',
 })
 
 export enum CertificateTypeEnum {
@@ -210,4 +222,14 @@ export enum AppointmentCancelBlockedReasonEnum {
 }
 registerEnumType(AppointmentCancelBlockedReasonEnum, {
   name: 'HealthDirectorateAppointmentCancelBlockedReason',
+})
+
+export enum AppointmentCancelOutcomeEnum {
+  CANCELLED = 'cancelled',
+  REFUSED = 'refused',
+  BLOCKED = 'blocked',
+  UNCONFIRMED = 'unconfirmed',
+}
+registerEnumType(AppointmentCancelOutcomeEnum, {
+  name: 'HealthDirectorateAppointmentCancelOutcome',
 })

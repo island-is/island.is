@@ -22,7 +22,7 @@ export {
   AttachmentReplyViewDto,
   BooleanReplyViewDto,
   DateReplyViewDto,
-  ListReplyDto,
+  ListReplyViewDto,
   NumberReplyViewDto,
   StringReplyViewDto,
   TableReplyViewDto,
@@ -47,6 +47,7 @@ export {
 } from './lib/clients'
 export {
   AttachmentDownloadResult,
+  CancelAppointmentResult,
   CertificateDto,
   CertificateRequestDto,
   CertificateTypeCode,
@@ -66,7 +67,11 @@ export {
   CreateReplyRequestDto,
   DispensationHistoryItemDto,
   MessageType,
+  MessagingDayType,
+  MessagingOpeningHoursDto,
   MessagingRecipientDto,
+  NextOpeningDto,
+  OpeningHoursWindowDto,
   AllowedInteraction,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
