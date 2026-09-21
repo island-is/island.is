@@ -34,6 +34,10 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
   const userId = uuid()
   const courtCaseNumber = 'S-123/2026'
   const { prosecutor } = createTestUsers(['prosecutor'])
+  // The domain has to be one the test whitelist lets through - the whitelist
+  // is on whenever CONTENTFUL_ENVIRONMENT is not master, as it is in CI, and
+  // it silently empties the recipient list otherwise.
+  const publicProsecutorEmail = 'saksoknari@omnitrix.is'
 
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
@@ -83,7 +87,7 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
     beforeEach(async () => {
       const mockGetInstitutionContact =
         mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
-      mockGetInstitutionContact.mockResolvedValue('saksoknari@saksoknari.is')
+      mockGetInstitutionContact.mockResolvedValue(publicProsecutorEmail)
 
       then = await givenWhenThen(theCase)
     })
@@ -102,9 +106,7 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
     it('should send the email the design asked for', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [
-            { name: 'Ríkissaksóknari', address: 'saksoknari@saksoknari.is' },
-          ],
+          to: [{ name: 'Ríkissaksóknari', address: publicProsecutorEmail }],
           subject: `Áfrýjun í máli ${courtCaseNumber}`,
           html: `Dómi héraðsdóms í máli ${courtCaseNumber} hefur verið áfrýjað. Sjá nánar á yfirliti málsins í Réttarvörslugátt.`,
         }),
