@@ -25,7 +25,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { PAST_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { isPastAppointment } from '../../utils/appointments'
 
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './AppointmentDetail.css'
@@ -61,9 +61,7 @@ const AppointmentDetail = () => {
   // Only booked (upcoming) appointments get actions
   const isBooked =
     appointment?.status === HealthDirectorateAppointmentStatus.BOOKED
-  const isPast =
-    !!appointment?.status &&
-    PAST_APPOINTMENTS_STATUS.includes(appointment.status)
+  const isPast = isPastAppointment(appointment)
 
   const onConfirmCancel = () => {
     if (!id) {
@@ -173,7 +171,7 @@ const AppointmentDetail = () => {
               )}
             </Box>
 
-            {isBooked && (
+            {isBooked && !isPast && (
               <Box
                 display="flex"
                 alignItems="center"
