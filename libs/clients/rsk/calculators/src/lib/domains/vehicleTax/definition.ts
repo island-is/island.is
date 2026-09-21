@@ -1,11 +1,13 @@
-import type { CalculatorContract } from '../../types/calculator'
-import type { CalculatorField } from '../../types/input-field'
-import type { CalculatorOutputField } from '../../types/output-field'
+import {
+  defineCalculator,
+  defineInputFields,
+  defineOutputFields,
+} from '../../types/define'
 
 export const VEHICLE_TAX_PERIODS = ['firstHalf', 'secondHalf'] as const
-export type VehicleTaxPeriod = (typeof VEHICLE_TAX_PERIODS)[number]
+export type VehicleTaxPeriod = typeof VEHICLE_TAX_PERIODS[number]
 
-const vehicleTaxInputFields = [
+const vehicleTaxInputFields = defineInputFields([
   { name: 'year', type: 'number', required: true, semantic: 'year' },
   { name: 'licensePlate', type: 'string', required: true },
   {
@@ -15,9 +17,9 @@ const vehicleTaxInputFields = [
     options: VEHICLE_TAX_PERIODS.map((value) => ({ value })),
   },
   { name: 'periodSplitDate', type: 'date', required: false },
-] as const satisfies readonly CalculatorField[]
+] as const)
 
-const vehicleTaxOutputFields = [
+const vehicleTaxOutputFields = defineOutputFields([
   { name: 'periodLabel', kind: 'scalar', type: 'string' },
   { name: 'feeYear', kind: 'scalar', type: 'number', semantic: 'year' },
   { name: 'vehicleWeight', kind: 'scalar', type: 'number' },
@@ -37,13 +39,13 @@ const vehicleTaxOutputFields = [
     type: 'number',
     semantic: 'currency',
   },
-] as const satisfies readonly CalculatorOutputField[]
+] as const)
 
-export const vehicleTaxCalculator = {
+export const vehicleTaxCalculator = defineCalculator({
   key: 'vehicleTax',
   inputFields: vehicleTaxInputFields,
   outputFields: vehicleTaxOutputFields,
-} as const satisfies CalculatorContract<'vehicleTax'>
+} as const)
 
 export interface VehicleTaxInput {
   year: number

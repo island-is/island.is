@@ -1,8 +1,10 @@
-import type { CalculatorContract } from '../../types/calculator'
-import type { CalculatorField } from '../../types/input-field'
-import type { CalculatorOutputField } from '../../types/output-field'
+import {
+  defineCalculator,
+  defineInputFields,
+  defineOutputFields,
+} from '../../types/define'
 
-const interestBenefitInputFields = [
+const interestBenefitInputFields = defineInputFields([
   {
     name: 'maritalStatus',
     type: 'select',
@@ -23,9 +25,9 @@ const interestBenefitInputFields = [
     required: true,
     semantic: 'currency',
   },
-] as const satisfies readonly CalculatorField[]
+] as const)
 
-const interestBenefitOutputFields = [
+const interestBenefitOutputFields = defineOutputFields([
   { name: 'maritalStatusLabel', kind: 'scalar', type: 'string' },
   { name: 'incomeYear', kind: 'scalar', type: 'number', semantic: 'year' },
   { name: 'benefitYear', kind: 'scalar', type: 'number', semantic: 'year' },
@@ -118,13 +120,13 @@ const interestBenefitOutputFields = [
   },
   { name: 'reachedMaximum', kind: 'scalar', type: 'boolean' },
   { name: 'wasBelowMinimum', kind: 'scalar', type: 'boolean' },
-] as const satisfies readonly CalculatorOutputField[]
+] as const)
 
-export const interestBenefitCalculator = {
+export const interestBenefitCalculator = defineCalculator({
   key: 'interestBenefit',
   inputFields: interestBenefitInputFields,
   outputFields: interestBenefitOutputFields,
-} as const satisfies CalculatorContract<'interestBenefit'>
+} as const)
 
 export interface InterestBenefitInput {
   maritalStatus: 'single' | 'singleParent' | 'marriedOrCohabiting'

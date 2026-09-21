@@ -1,22 +1,24 @@
-import type { CalculatorContract } from '../../types/calculator'
-import type { CalculatorField } from '../../types/input-field'
-import type { CalculatorOutputField } from '../../types/output-field'
+import {
+  defineCalculator,
+  defineInputFields,
+  defineOutputFields,
+} from '../../types/define'
 
 export const PAYMENT_FREQUENCIES = ['weekly', 'monthly'] as const
-export type PaymentFrequency = (typeof PAYMENT_FREQUENCIES)[number]
+export type PaymentFrequency = typeof PAYMENT_FREQUENCIES[number]
 
 export const MARITAL_STATUSES = [
   'single',
   'singleParent',
   'marriedOrCohabiting',
 ] as const
-export type MaritalStatus = (typeof MARITAL_STATUSES)[number]
+export type MaritalStatus = typeof MARITAL_STATUSES[number]
 
 export const PENSION_FUND_RATIOS = ['0%', '4%'] as const
-export type PensionFundRatio = (typeof PENSION_FUND_RATIOS)[number]
+export type PensionFundRatio = typeof PENSION_FUND_RATIOS[number]
 
 export const PRIVATE_PENSION_RATIOS = ['0%', '1%', '2%', '3%', '4%'] as const
-export type PrivatePensionRatio = (typeof PRIVATE_PENSION_RATIOS)[number]
+export type PrivatePensionRatio = typeof PRIVATE_PENSION_RATIOS[number]
 
 // Deliberately excludes 11%; these rates are negotiated.
 export const EMPLOYER_PENSION_MATCH_RATIOS = [
@@ -29,13 +31,12 @@ export const EMPLOYER_PENSION_MATCH_RATIOS = [
   '12%',
   '13.5%',
 ] as const
-export type EmployerPensionMatchRatio =
-  (typeof EMPLOYER_PENSION_MATCH_RATIOS)[number]
+export type EmployerPensionMatchRatio = typeof EMPLOYER_PENSION_MATCH_RATIOS[number]
 
 const toOptions = (values: readonly string[]) =>
   values.map((value) => ({ value }))
 
-const withholdingTaxInputFields = [
+const withholdingTaxInputFields = defineInputFields([
   {
     name: 'paymentFrequency',
     type: 'select',
@@ -112,9 +113,9 @@ const withholdingTaxInputFields = [
     required: false,
     semantic: 'currency',
   },
-] as const satisfies readonly CalculatorField[]
+] as const)
 
-const withholdingTaxOutputFields = [
+const withholdingTaxOutputFields = defineOutputFields([
   {
     name: 'monthlySalary',
     kind: 'scalar',
@@ -249,13 +250,13 @@ const withholdingTaxOutputFields = [
       },
     ],
   },
-] as const satisfies readonly CalculatorOutputField[]
+] as const)
 
-export const withholdingTaxCalculator = {
+export const withholdingTaxCalculator = defineCalculator({
   key: 'withholdingTax',
   inputFields: withholdingTaxInputFields,
   outputFields: withholdingTaxOutputFields,
-} as const satisfies CalculatorContract<'withholdingTax'>
+} as const)
 
 export interface WithholdingTaxInput {
   paymentFrequency?: PaymentFrequency

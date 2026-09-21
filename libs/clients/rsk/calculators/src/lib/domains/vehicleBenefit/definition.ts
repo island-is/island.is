@@ -1,8 +1,10 @@
-import type { CalculatorContract } from '../../types/calculator'
-import type { CalculatorField } from '../../types/input-field'
-import type { CalculatorOutputField } from '../../types/output-field'
+import {
+  defineCalculator,
+  defineInputFields,
+  defineOutputFields,
+} from '../../types/define'
 
-const vehicleBenefitInputFields = [
+const vehicleBenefitInputFields = defineInputFields([
   { name: 'purchaseYear', type: 'number', required: true, semantic: 'year' },
   {
     name: 'purchasePrice',
@@ -13,9 +15,9 @@ const vehicleBenefitInputFields = [
   { name: 'isElectric', type: 'boolean', required: false },
   { name: 'employeePaysCharging', type: 'boolean', required: false },
   { name: 'employeePaysRunningCosts', type: 'boolean', required: false },
-] as const satisfies readonly CalculatorField[]
+] as const)
 
-const vehicleBenefitOutputFields = [
+const vehicleBenefitOutputFields = defineOutputFields([
   { name: 'purchaseYear', kind: 'scalar', type: 'number', semantic: 'year' },
   {
     name: 'purchasePrice',
@@ -35,13 +37,13 @@ const vehicleBenefitOutputFields = [
     type: 'number',
     semantic: 'currency',
   },
-] as const satisfies readonly CalculatorOutputField[]
+] as const)
 
-export const vehicleBenefitCalculator = {
+export const vehicleBenefitCalculator = defineCalculator({
   key: 'vehicleBenefit',
   inputFields: vehicleBenefitInputFields,
   outputFields: vehicleBenefitOutputFields,
-} as const satisfies CalculatorContract<'vehicleBenefit'>
+} as const)
 
 export interface VehicleBenefitInput {
   purchaseYear: number
