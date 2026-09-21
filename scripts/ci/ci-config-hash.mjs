@@ -45,13 +45,9 @@ export const ciConfigHash = (base, head) => {
   console.error(`CI configuration changed:\n${changed.join('\n')}`)
 
   // `<mode> <type> <object hash>\t<file>` of every file, the object hash is from the content
-  const files = git([
-    'ls-tree',
-    '-r',
-    head,
-    '--',
-    ...CI_CONFIG_PATHS,
-  ]).filter((line) => isCiConfig(line.split('\t')[1]))
+  const files = git(['ls-tree', '-r', head, '--', ...CI_CONFIG_PATHS]).filter(
+    (line) => isCiConfig(line.split('\t')[1]),
+  )
   return createHash('sha256')
     .update(files.join('\n'))
     .digest('hex')
