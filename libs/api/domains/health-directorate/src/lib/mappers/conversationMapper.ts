@@ -209,18 +209,9 @@ const parseTime = (
 }
 
 // Hekla writes an all-day window as 00:00:00-23:59:59.
-const isAllDayWindow = (window: OpeningHoursWindowDto): boolean => {
-  const open = parseTime(window.windowOpen)
-  const close = parseTime(window.windowClose)
-  return (
-    !!open &&
-    !!close &&
-    open.hours === 0 &&
-    open.minutes === 0 &&
-    close.hours === 23 &&
-    close.minutes === 59
-  )
-}
+const isAllDayWindow = (window: OpeningHoursWindowDto): boolean =>
+  window.windowOpen.startsWith('00:00') &&
+  window.windowClose.startsWith('23:59')
 
 export const mapOpeningWindow = (
   window?: OpeningHoursWindowDto,
