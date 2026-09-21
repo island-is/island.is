@@ -201,7 +201,7 @@ const QuestionnaireDetail: FC = () => {
             key="questionnaire-status"
             label={formatMessage(messages.status)}
             content={
-              <Tag disabled outlined={false} variant={statusTagVariant}>
+              <Tag disabled outlined variant={statusTagVariant}>
                 {statusLabel}
               </Tag>
             }
