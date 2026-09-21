@@ -113,9 +113,6 @@ export const cmsCleanupSetup =
       })
       .command('node')
       .args('main.cjs', '--job', 'cms-cleanup')
-      // The job holds every Contentful asset in the master environment (~47k)
-      // in memory at once, which OOM-killed it at the default 256Mi limit.
-      // Sized well above the current working set so it keeps up with asset growth.
       .resources({
         limits: { cpu: '400m', memory: '4096Mi' },
         requests: { cpu: '100m', memory: '1024Mi' },
