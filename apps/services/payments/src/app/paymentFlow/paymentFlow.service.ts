@@ -80,6 +80,18 @@ interface PaymentFlowUpdateConfig {
   throwOnError?: boolean
 }
 
+/**
+ * Fields merged onto a log record. `message` and `level` are excluded: winston concatenates a
+ * `message` key onto the real text and drops a `level` key, corrupting the line either way.
+ */
+type LogContextFields = Record<
+  string,
+  string | number | boolean | undefined
+> & {
+  message?: never
+  level?: never
+}
+
 @Injectable()
 export class PaymentFlowService {
   constructor(
@@ -500,11 +512,19 @@ export class PaymentFlowService {
       reason: PaymentFlowEvent['reason']
       message: string
       metadata?: object
+      /**
+       * Identifiers for this call's log line only — unlike `metadata`, which is persisted and sent
+       * upstream. Lets the caller skip logging a second line of its own. Message text unchanged.
+       */
+      logContext?: LogContextFields
     },
     config: PaymentFlowUpdateConfig = { useRetry: false, throwOnError: false },
   ) {
     this.logger.info(
       `[${update.paymentFlowId}] ${update.type}: ${update.message}`,
+      // Spread, not passed through: an empty object contributes no fields, so callers that pass
+      // no context are unaffected.
+      { ...update.logContext },
     )
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
