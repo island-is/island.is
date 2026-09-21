@@ -312,6 +312,7 @@ export class QuestionnairesService {
 
       const submission = {
         id: questionnaireId,
+        submissionId,
         title: ELdata.title ?? formatMessage(m.questionnaireWithoutTitle),
         isDraft: ELdata.submission.isDraft ?? false,
         description: ELdata.message ?? undefined,

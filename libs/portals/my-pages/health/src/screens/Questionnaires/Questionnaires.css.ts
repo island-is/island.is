@@ -18,6 +18,11 @@ export const button = style(
   }),
 )
 
+// Same max width as Filter's fluid input so both tabs match
+export const searchInput = style({
+  maxWidth: 420,
+})
+
 export const toggleBox = style({})
 
 export const toggleButton = style({
