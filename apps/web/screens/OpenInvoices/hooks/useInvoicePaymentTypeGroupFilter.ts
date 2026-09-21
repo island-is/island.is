@@ -14,8 +14,8 @@ import {
 } from '../components/AsyncFilterSearchAccordion'
 import { m } from '../messages'
 import {
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
 } from '../Overview/Overview.graphql'
 import { formatPaymentTypeGroupTooltip } from '../utils'
 
