@@ -186,6 +186,33 @@ export const dark = style({
   },
 })
 
+export const clearButtonSizes = styleVariants({
+  medium: {
+    paddingRight: 80,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 88,
+      },
+    }),
+  },
+  'semi-large': {
+    paddingRight: 80,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 88,
+      },
+    }),
+  },
+  large: {
+    paddingRight: 116,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 116,
+      },
+    }),
+  },
+})
+
 export const hasError = style({
   borderColor: `${theme.color.red600}`,
   background: `${theme.color.red100}`,
