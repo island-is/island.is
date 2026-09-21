@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import { Children, isValidElement, ReactNode } from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -149,18 +150,34 @@ export const defaultRenderNodeObject: RenderNode = {
       <hr />
     </Box>
   ),
-  [BLOCKS.TABLE]: (_node, children) => (
-    <Box className={cn(styles.clearBoth, styles.tableContainer)}>
-      <T.Table>{children}</T.Table>
-    </Box>
-  ),
+  [BLOCKS.TABLE]: (_node, children) => {
+    // The HTML parser inserts the implied <tbody> when parsing the server
+    // HTML, and React 19 fails hydration on any structure the parser had to
+    // correct — so body rows must be wrapped in an explicit <tbody>.
+    const rows = Children.toArray(children as ReactNode)
+    const isHead = (row: unknown) => isValidElement(row) && row.type === T.Head
+    return (
+      <Box className={cn(styles.clearBoth, styles.tableContainer)}>
+        <T.Table>
+          {rows.filter(isHead)}
+          <T.Body>{rows.filter((row) => !isHead(row))}</T.Body>
+        </T.Table>
+      </Box>
+    )
+  },
   [BLOCKS.TABLE_ROW]: (_node, children) => {
     if (
       (children as { nodeType: string }[])?.every(
         (childNode) => childNode?.nodeType === BLOCKS.TABLE_HEADER_CELL,
       )
     ) {
-      return <T.Head>{children}</T.Head>
+      // Header cells need their row: bare <th> under <thead> is another
+      // parser-corrected structure that breaks React 19 hydration.
+      return (
+        <T.Head>
+          <T.Row>{children}</T.Row>
+        </T.Head>
+      )
     }
     return <T.Row>{children}</T.Row>
   },

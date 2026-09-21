@@ -2,7 +2,6 @@ query Case($input: CaseQueryInput!) {
   case(input: $input) {
     id
     created
-    modified
     type
     splitCases {
       id
@@ -41,6 +40,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     splitCase {
@@ -70,11 +70,18 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      isClosedWithoutEnforcement
+      closedWithoutEnforcementDate
       publicProsecutorIsRegisteredInPoliceSystem
       openedByPrisonAdminDate
       punishmentType
@@ -195,12 +202,6 @@ query Case($input: CaseQueryInput!) {
     isolationToDate
     conclusion
     endOfSessionBookings
-    accusedAppealDecision
-    accusedAppealAnnouncement
-    prosecutorAppealDecision
-    prosecutorAppealAnnouncement
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     judge {
@@ -285,6 +286,7 @@ query Case($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -325,6 +327,7 @@ query Case($input: CaseQueryInput!) {
       speedLimit
     }
     withCourtSessions
+    isArraignmentSummonsSkipped
     courtSessions {
       id
       created
@@ -361,22 +364,7 @@ query Case($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
-        mergedDocumentOrder
-        name
-        caseFileId
-        generatedPdfUri
-        submittedBy
-      }
-      mergedFiledDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedCourtSessionId
-        mergedDocumentOrder
+        mergedFromCaseId
         name
         caseFileId
         generatedPdfUri
@@ -398,6 +386,7 @@ query Case($input: CaseQueryInput!) {
       courtSessionId
       documentType
       documentOrder
+      mergedFromCaseId
       name
       caseFileId
       generatedPdfUri
@@ -410,9 +399,11 @@ query Case($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -451,14 +442,33 @@ query Case($input: CaseQueryInput!) {
       appealValidToDate
       isAppealCustodyIsolation
       appealIsolationToDate
+      rulingFileId
+    }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
     }
     rulingOrderAppealCases {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
       appealedInCourt
+      appealedOutOfCourt
       statementDeadline
       isStatementDeadlineExpired
       appealCaseNumber
@@ -507,8 +517,10 @@ query Case($input: CaseQueryInput!) {
       civilClaimantId
       decision
       announcement
+      withdrawnDate
     }
     indictmentDeniedExplanation
+    indictmentReviewReturnedExplanation
     arraignmentDate {
       date
       location
@@ -528,6 +540,10 @@ query Case($input: CaseQueryInput!) {
       id
       name
     }
+    indictmentApprover {
+      id
+      name
+    }
     indictmentAppealDeadline
     indictmentVerdictAppealDeadlineExpired
     indictmentVerdictViewedByAll
@@ -536,6 +552,18 @@ query Case($input: CaseQueryInput!) {
     mergeCase {
       id
       courtCaseNumber
+      type
+      defendants {
+        id
+        defenderNationalId
+        isDefenderChoiceConfirmed
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
     }
     mergedCases {
       id
@@ -558,22 +586,7 @@ query Case($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
-          mergedDocumentOrder
-          name
-          caseFileId
-          generatedPdfUri
-          submittedBy
-        }
-        mergedFiledDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedCourtSessionId
-          mergedDocumentOrder
+          mergedFromCaseId
           name
           caseFileId
           generatedPdfUri
@@ -650,6 +663,12 @@ query Case($input: CaseQueryInput!) {
           externalPoliceDocumentId
         }
       }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
       caseFiles {
         id
         created
@@ -667,14 +686,18 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes
       rulingOrderAppealCases {
         id
         appealState
-        appealedByNationalId
+        appealedByDefendantId
+        appealedByCivilClaimantId
         appealedByRole
+        appealedInCourt
+        appealedOutOfCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

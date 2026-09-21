@@ -2,19 +2,13 @@ import archiver from 'archiver'
 import { col, Includeable, literal, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  AppealCaseNotificationType,
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
@@ -24,14 +18,13 @@ import {
   defendantEventTypes,
   eventTypes,
   hasGeneratedCourtRecordPdf,
+  isDefenceUser,
   isIndictmentCase,
   isRequestCase,
+  isRulingOrderWithoutDocument,
   stringTypes,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory, uuidFactory } from '../../factories'
-import { CivilClaimantService, DefendantService } from '../defendant'
 import {
   FileService,
   getConfirmedDefendantsForDefender,
@@ -42,6 +35,7 @@ import {
 } from '../file'
 import {
   AppealCase,
+  AppealDecision,
   AppealEventLog,
   Case,
   CaseDefendantPoliceCaseNumber,
@@ -58,7 +52,6 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
-  Notification,
   Offense,
   Subpoena,
   User,
@@ -102,10 +95,6 @@ export const attributes: (keyof Case)[] = [
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
-  'accusedAppealDecision',
-  'prosecutorAppealDecision',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
   'prosecutorsOfficeId',
   'indictmentDecision',
   'indictmentRulingDecision',
@@ -114,20 +103,117 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
+  'isArraignmentSummonsSkipped',
   'rulingModifiedHistory',
   'withCourtSessions',
 ]
 
-export interface LimitedAccessUpdateCase
-  extends Pick<
-    Case,
-    | 'caseModifiedExplanation'
-    | 'isolationToDate'
-    | 'validToDate'
-    | 'openedByDefender'
-  > {}
+export type LimitedAccessUpdateCase = Pick<
+  Case,
+  | 'caseModifiedExplanation'
+  | 'isolationToDate'
+  | 'validToDate'
+  | 'openedByDefender'
+>
 
-export const include: Includeable[] = [
+const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
+  'id',
+  'defenderNationalId',
+  'isDefenderChoiceConfirmed',
+]
+
+const mergedCaseDefendantAttributes: (keyof Defendant)[] = [
+  ...linkedCaseDefendantAccessAttributes,
+  'isSentToPrisonAdmin',
+]
+
+const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
+  'id',
+  'hasSpokesperson',
+  'spokespersonNationalId',
+  'isSpokespersonConfirmed',
+]
+
+const normalizeNationalId = (nationalId: string): string =>
+  nationalId.replace(/-/g, '')
+
+const getLinkedCaseDefendantsInclude = (user?: TUser): Includeable => ({
+  model: Defendant,
+  as: 'defendants',
+  attributes: linkedCaseDefendantAccessAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  ...(user && isDefenceUser(user) && user.nationalId
+    ? {
+        where: {
+          defenderNationalId: normalizeNationalId(user.nationalId),
+          isDefenderChoiceConfirmed: true,
+        },
+      }
+    : {}),
+})
+
+const getMergedCaseDefendantsInclude = (user?: TUser): Includeable => ({
+  model: Defendant,
+  as: 'defendants',
+  attributes: mergedCaseDefendantAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  separate: true,
+  ...(user && isDefenceUser(user) && user.nationalId
+    ? {
+        where: {
+          defenderNationalId: normalizeNationalId(user.nationalId),
+          isDefenderChoiceConfirmed: true,
+        },
+      }
+    : {}),
+  include: [
+    {
+      model: Subpoena,
+      as: 'subpoenas',
+      required: false,
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+    {
+      model: DefendantEventLog,
+      as: 'eventLogs',
+      required: false,
+      where: { eventType: defendantEventTypes },
+      separate: true,
+    },
+    {
+      model: CaseDefendantPoliceCaseNumber,
+      as: 'caseDefendantPoliceCaseNumbers',
+      required: false,
+      separate: true,
+    },
+  ],
+})
+
+const getLinkedCaseCivilClaimantsInclude = (
+  user?: TUser,
+  separate = false,
+): Includeable => ({
+  model: CivilClaimant,
+  as: 'civilClaimants',
+  attributes: linkedCaseCivilClaimantAccessAttributes,
+  required: false,
+  order: [['created', 'ASC']],
+  ...(separate ? { separate: true } : {}),
+  ...(user && isDefenceUser(user) && user.nationalId
+    ? {
+        where: {
+          hasSpokesperson: true,
+          spokespersonNationalId: normalizeNationalId(user.nationalId),
+          isSpokespersonConfirmed: true,
+        },
+      }
+    : {}),
+})
+
+export const getInclude = (user?: TUser): Includeable[] => [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   {
@@ -156,6 +242,11 @@ export const include: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentApprover',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: AppealCase,
     as: 'appealCase',
     required: false,
@@ -180,6 +271,20 @@ export const include: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -223,6 +328,12 @@ export const include: Includeable[] = [
         separate: true,
       },
     ],
+  },
+  {
+    model: AppealDecision,
+    as: 'appealDecisions',
+    required: false,
+    separate: true,
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
@@ -347,6 +458,8 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+        CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
@@ -396,6 +509,8 @@ export const include: Includeable[] = [
     as: 'mergeCase',
     attributes,
     include: [
+      getLinkedCaseDefendantsInclude(user),
+      getLinkedCaseCivilClaimantsInclude(user),
       {
         model: CourtSession,
         as: 'courtSessions',
@@ -436,22 +551,8 @@ export const include: Includeable[] = [
         },
         separate: true,
       },
-      {
-        model: Defendant,
-        as: 'defendants',
-        required: false,
-        order: [['created', 'ASC']],
-        include: [
-          {
-            model: Subpoena,
-            as: 'subpoenas',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-          },
-        ],
-        separate: true,
-      },
+      getMergedCaseDefendantsInclude(user),
+      getLinkedCaseCivilClaimantsInclude(user, true),
       {
         model: CourtSession,
         as: 'courtSessions',
@@ -557,10 +658,6 @@ export const include: Includeable[] = [
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
-    @Inject(forwardRef(() => DefendantService))
-    private readonly defendantService: DefendantService,
-    @Inject(forwardRef(() => CivilClaimantService))
-    private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly fileService: FileService,
     private readonly caseRepositoryService: CaseRepositoryService,
@@ -569,11 +666,11 @@ export class LimitedAccessCaseService {
 
   async findById(
     caseId: string,
-    options?: { transaction?: Transaction },
+    options?: { transaction?: Transaction; user?: TUser },
   ): Promise<Case> {
     const theCase = await this.caseRepositoryService.findOne({
       attributes,
-      include,
+      include: getInclude(options?.user),
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
@@ -598,87 +695,7 @@ export class LimitedAccessCaseService {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
     // Return limited access case (read within transaction so we see the updated row)
-    return this.findById(theCase.id, { transaction })
-  }
-
-  private constructDefender(
-    nationalId: string,
-    name?: string,
-    mobileNumber?: string,
-    email?: string,
-  ): User {
-    const now = nowFactory()
-
-    return {
-      id: uuidFactory(),
-      created: now,
-      modified: now,
-      nationalId,
-      name: name ?? '',
-      title: 'verjandi',
-      mobileNumber: mobileNumber ?? '',
-      email: email ?? '',
-      role: UserRole.DEFENDER,
-      active: true,
-      canConfirmIndictment: false,
-    } as User
-  }
-
-  async findDefenderByNationalId(nationalId: string): Promise<User> {
-    // nationalId comes from a raw @Query param, so normalize it once here and
-    // pass the dash-free value down to the lookups and the constructed user.
-    const normalizedNationalId = nationalId.replace(/-/g, '')
-
-    return this.caseRepositoryService
-      .findOne({
-        where: {
-          defenderNationalId: normalizedNationalId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-        order: [['created', 'DESC']],
-      })
-      .then((theCase) => {
-        if (theCase) {
-          // The national id is associated with a defender in a request case
-          return this.constructDefender(
-            normalizedNationalId,
-            theCase.defenderName,
-            theCase.defenderPhoneNumber,
-            theCase.defenderEmail,
-          )
-        }
-
-        return this.defendantService
-          .findLatestDefendantByDefenderNationalId(normalizedNationalId)
-          .then((defendant) => {
-            if (defendant) {
-              // The national id is associated with a defender in an indictment case
-              return this.constructDefender(
-                normalizedNationalId,
-                defendant.defenderName,
-                defendant.defenderPhoneNumber,
-                defendant.defenderEmail,
-              )
-            }
-
-            return this.civilClaimantService
-              .findLatestClaimantBySpokespersonNationalId(normalizedNationalId)
-              .then((civilClaimant) => {
-                if (civilClaimant) {
-                  // The national id is associated with a spokesperson for a civil claimant in an indictment case
-                  return this.constructDefender(
-                    normalizedNationalId,
-                    civilClaimant.spokespersonName,
-                    civilClaimant.spokespersonPhoneNumber,
-                    civilClaimant.spokespersonEmail,
-                  )
-                }
-
-                throw new NotFoundException('Defender not found')
-              })
-          })
-      })
+    return this.findById(theCase.id, { transaction, user })
   }
 
   private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
@@ -779,11 +796,12 @@ export class LimitedAccessCaseService {
         }
 
         // A ruling order uploaded during the course of a case is only visible
-        // once it has been added to a confirmed court session.
+        // once it has been added to a confirmed court session. One pronounced
+        // orally has nothing to add to the zip until it has been written up.
         if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
-          return isRulingOrderInConfirmedCourtSession(
-            file.id,
-            theCase.courtSessions,
+          return (
+            !isRulingOrderWithoutDocument(file) &&
+            isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions)
           )
         }
 

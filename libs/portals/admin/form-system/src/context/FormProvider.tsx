@@ -83,6 +83,13 @@ export const FormProvider: React.FC<{
   const [submissionUrls, setSubmissionUrls] = useState<string[]>(
     formBuilder.submissionUrls ? (formBuilder.submissionUrls as string[]) : [],
   )
+  const [organizationDelegations, setOrganizationDelegations] = useState<
+    string[]
+  >(
+    formBuilder.organizationDelegations
+      ? (formBuilder.organizationDelegations as string[])
+      : [],
+  )
 
   const getTranslation = async (text: string): Promise<GoogleTranslation> => {
     try {
@@ -164,6 +171,8 @@ export const FormProvider: React.FC<{
       listTypes,
       submissionUrls,
       setSubmissionUrls,
+      organizationDelegations,
+      setOrganizationDelegations,
       submissionUrlInput,
       setSubmissionUrlInput,
       setInSettings,
@@ -191,6 +200,8 @@ export const FormProvider: React.FC<{
       selectStatus,
       selectedUrls,
       openComponents,
+      organizationDelegations,
+      setOrganizationDelegations,
       submissionUrlInput,
     ],
   )

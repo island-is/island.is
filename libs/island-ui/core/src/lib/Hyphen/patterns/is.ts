@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   id: 'is',
   leftmin: 4,

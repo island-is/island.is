@@ -16,6 +16,8 @@ const allowedCaseFileCategories = [
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
 ]
 
 @Injectable()
@@ -37,9 +39,7 @@ export class LimitedAccessCreateDefendantCaseFileGuard implements CanActivate {
 
     // Verify the logged-in user is the confirmed defender for this defendant
     if (
-      !defendant.isDefenderChoiceConfirmed ||
-      !defendant.defenderNationalId ||
-      defendant.defenderNationalId !== user.nationalId
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
     ) {
       return false
     }

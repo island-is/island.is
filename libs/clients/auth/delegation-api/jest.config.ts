@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-auth-delegation-api',
   preset: './jest.preset.js',
   rootDir: '../../../..',

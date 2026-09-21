@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-university-careers',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

@@ -1,14 +1,49 @@
+fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecipient {
+  nodeId
+  groupId
+  treatmentId
+  name
+  allowsMessaging
+  isClosedToday
+  dayType
+  nextOpensAt {
+    date
+    windowOpen
+    windowClose
+  }
+  openingHours {
+    weekday {
+      windowOpen
+      windowClose
+    }
+    weekend {
+      windowOpen
+      windowClose
+    }
+    holiday {
+      windowOpen
+      windowClose
+    }
+  }
+  patientReplyWindowDays
+  canCreateConversation
+  conversationBlockedReason
+  canRequestCertificate
+  certificateBlockedReason
+  allowedMessageTypes {
+    patientInitiatedTypeCode
+    title
+    description
+    instructions
+    isCertificate
+    externalLinkUrl
+    isCurrentlyOpen
+  }
+}
+
 query GetHealthConversationRecipientsForNew($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
-    nodeId
-    groupId
-    name
-    allowsMessaging
-    allowedMessageTypes {
-      patientInitiatedTypeCode
-      title
-      isCertificate
-    }
+    ...HealthConversationRecipient
   }
 }
 
@@ -17,5 +52,14 @@ mutation CreateHealthConversation(
 ) {
   healthDirectorateCreateHealthConversation(input: $input) {
     id
+  }
+}
+
+mutation CreateHealthCertificateRequest(
+  $input: HealthDirectorateCreateCertificateRequestInput!
+) {
+  healthDirectorateCreateCertificateRequest(input: $input) {
+    id
+    conversationId
   }
 }

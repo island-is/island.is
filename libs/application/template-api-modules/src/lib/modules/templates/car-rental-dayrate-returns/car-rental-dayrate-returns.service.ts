@@ -4,6 +4,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
+  DayRateEntry,
   InsertRentalDaysModel,
   RskRentalDayRateClient,
   RskRentalDaysClient,
@@ -18,8 +19,12 @@ import {
   UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
 import { AttachmentS3Service } from '../../shared/services'
 import { getValueViaPath } from '@island.is/application/core'
+
+const toPeriod = (year: number, monthIndex: number): string =>
+  `${year}-${String(monthIndex + 1).padStart(2, '0')}`
 
 @Injectable()
 export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
@@ -43,92 +48,83 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
   async getPreviousPeriodDayRateReturns({
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<DayRateRecord>> {
-    try {
-      const now = new Date()
-      const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-      const targetYear = lastMonthDate.getFullYear()
-      const targetMonthIndex = lastMonthDate.getMonth()
+    const now = new Date()
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const targetYear = lastMonthDate.getFullYear()
+    const targetMonthIndex = lastMonthDate.getMonth()
+    const period = toPeriod(targetYear, targetMonthIndex)
 
-      const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
-      const targetToUtc = new Date(
-        Date.UTC(targetYear, targetMonthIndex + 1, 0),
+    const noVehiclesFound = () =>
+      new TemplateApiError(
+        {
+          title: messages.serviceErrors.noVehiclesFound.title,
+          summary: {
+            ...messages.serviceErrors.noVehiclesFound.summary,
+            values: { period },
+          },
+        },
+        404,
       )
 
-      const resp = await this.rentalsApiWithAuth(auth)
-        .withPreMiddleware(async ({ url, init }) => {
-          const headers = init?.headers
-            ? Object.fromEntries(new Headers(init.headers).entries())
-            : undefined
-
-          const reqData = {
-            url,
-            method: init?.method,
-            headers: headers
-              ? {
-                  ...headers,
-                  authorization: headers.authorization
-                    ? '[REDACTED]'
-                    : undefined,
-                  cookie: headers.cookie ? '[REDACTED]' : undefined,
-                }
-              : undefined,
-          }
-          this.logger.info('RSK day-rate request', reqData)
-        })
+    const [dayRateEntries, periodRegistration] = await Promise.all([
+      this.rentalsApiWithAuth(auth)
         .apiDayRateEntriesEntityIdPeriodsPeriodGet({
           entityId: auth.nationalId,
-          period: `${targetYear}-${String(targetMonthIndex + 1).padStart(
-            2,
-            '0',
-          )}`,
+          period,
         })
-
-      const entries: Array<DayRateRecord> = resp
-        .map((entry) => {
-          if (!entry.fastnr || !entry.id) return null
-
-          const alreadySubmitted = entry.rentalDaysEntries?.some((rde) => {
-            if (!rde.timabil) return false
-            const t = new Date(rde.timabil)
-            return (
-              t.getUTCFullYear() === targetYear &&
-              t.getUTCMonth() === targetMonthIndex
-            )
-          })
-
-          if (alreadySubmitted) return null
-
-          const entryValidFrom = entry.gildirFra
-            ? new Date(entry.gildirFra)
-            : targetFromUtc
-          const entryValidTo = entry.gildirTil
-            ? new Date(entry.gildirTil)
-            : targetToUtc
-
-          const start =
-            entryValidFrom > targetFromUtc ? entryValidFrom : targetFromUtc
-          const end = entryValidTo < targetToUtc ? entryValidTo : targetToUtc
-
-          if (end < start) return null
-
-          const totalDays =
-            Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
-
-          if (totalDays <= 0) return null
-
-          return {
-            permno: entry.fastnr,
-            prevPeriodTotalDays: totalDays,
-            dayRateEntryId: entry.id,
+        .catch((error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            return [] as Array<DayRateEntry>
           }
-        })
-        .filter((entry): entry is DayRateRecord => entry !== null)
 
-      return entries
-    } catch (error) {
-      this.logger.error('Error getting previous period day rate entries', error)
-      throw error
+          this.logger.error(
+            'Error getting previous period day rate entries from Skatturinn',
+            { endpoint: 'dayRateEntriesPeriodsGet', error },
+          )
+          throw error
+        }),
+      this.rentalDaysApiWithAuth(auth)
+        .apiRentalDaysEntityIdPeriodsPeriodGet({
+          entityId: auth.nationalId,
+          period,
+        })
+        .catch((error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            throw noVehiclesFound()
+          }
+
+          this.logger.error(
+            'Error getting the day rate period registration from Skatturinn',
+            { endpoint: 'rentalDaysPeriodsGet', error },
+          )
+          throw error
+        }),
+    ])
+
+    const dayRateEntryIdByPermno = new Map<string, number | undefined>()
+    for (const entry of dayRateEntries) {
+      if (!entry.fastnr) continue
+      dayRateEntryIdByPermno.set(
+        entry.fastnr,
+        dayRateEntryIdByPermno.has(entry.fastnr) ? undefined : entry.id,
+      )
     }
+
+    const records = (periodRegistration.entries ?? [])
+      .map<DayRateRecord | null>((entry) => {
+        if (!entry.permno) return null
+
+        return {
+          permno: entry.permno,
+          prevPeriodTotalDays: entry.availableDays,
+          dayRateEntryId: dayRateEntryIdByPermno.get(entry.permno),
+        }
+      })
+      .filter((record): record is DayRateRecord => record !== null)
+
+    if (records.length === 0) throw noVehiclesFound()
+
+    return records
   }
 
   async postDataToSkatturinn({
@@ -170,32 +166,15 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         )
       }
 
-      const entries: Array<InsertRentalDaysModel> = records.map((record) => {
-        const dayRateEntryId = dayRateRecordsByPermno.get(
-          record.vehicleId,
-        )?.dayRateEntryId
-
-        if (!dayRateEntryId) {
-          throw new TemplateApiError(
-            {
-              title: messages.serviceErrors.missingDayRateEntry.title,
-              summary: {
-                ...messages.serviceErrors.missingDayRateEntry.summary,
-                values: {
-                  vehicleId: record.vehicleId,
-                },
-              },
-            },
-            400,
-          )
-        }
-
-        return {
-          permno: record.vehicleId,
-          numberOfDays: record.prevPeriodUsage,
-          dayRateEntryId,
-        }
-      })
+      // dayRateEntryId is optional for Skatturinn - when we cannot resolve it
+      // from the (cached) external data we let them pick the active entry
+      // rather than failing an otherwise valid submission.
+      const entries: Array<InsertRentalDaysModel> = records.map((record) => ({
+        permno: record.vehicleId,
+        numberOfDays: record.prevPeriodUsage,
+        dayRateEntryId: dayRateRecordsByPermno.get(record.vehicleId)
+          ?.dayRateEntryId,
+      }))
 
       await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
         entityId: auth.nationalId,
@@ -208,6 +187,13 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
       return true
     } catch (error) {
+      // Validation errors raised above are already user-facing. ProblemError has
+      // no top level `status`, so without this they fall through to the generic
+      // rewrap below and the applicant loses the actual reason.
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
+
       this.logger.error('Error posting data to skatturinn', error)
 
       const isSkatturinnError = (error: unknown): error is SkatturinnError =>
@@ -247,7 +233,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         Array<{
           permno: string
           prevPeriodUsage: number
-          dayRateEntryId: number
+          dayRateEntryId?: number
         }>
       >(application.answers, 'vehicleDayRateUsageRows') ?? []
 
@@ -291,7 +277,9 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     if (invalidRows.length > 0) {
       const uniqueInvalidRows = [...new Set(invalidRows)]
       const errorSummary = uniqueInvalidRows
-        .map((permno) => `${permno}: Invalid or ineligible row`)
+        // " - ", not ": ", so formatDayRateReturnsApiErrorMessages keeps the
+        // plate instead of stripping it as a prefix
+        .map((permno) => `${permno} - Invalid or ineligible row`)
         .join('\n')
 
       throw new TemplateApiError(
@@ -359,6 +347,16 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     )
 
     if (!parsed.ok) {
+      if (parsed.reason === 'unreadable') {
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.invalidFileType.title,
+            summary: messages.serviceErrors.invalidFileType.summary,
+          },
+          400,
+        )
+      }
+
       if (parsed.reason === 'no-data') {
         throw new TemplateApiError(
           {
@@ -375,7 +373,9 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
             typeof e.message === 'string'
               ? e.message
               : e.message.defaultMessage ?? e.message.id
-          return `${e.carNr}: ${msg}`
+          // " - " keeps the plate through formatDayRateReturnsApiErrorMessages
+          // and groups rows that failed for the same reason
+          return `${e.carNr?.trim() || `#${e.row}`} - ${msg}`
         })
         .filter((m) => m.length > 0)
         .join('\n')

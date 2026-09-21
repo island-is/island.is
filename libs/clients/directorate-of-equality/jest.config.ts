@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'directorate-of-equality',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',

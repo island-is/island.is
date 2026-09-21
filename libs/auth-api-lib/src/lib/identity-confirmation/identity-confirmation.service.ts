@@ -18,6 +18,7 @@ export const EXPIRATION = 2 * LIFE_TIME
 
 const ZENDESK_CUSTOM_FIELDS = {
   Link: 24596286118546,
+  NationalId: 24962773088530,
 }
 
 const ZENDESK_AUTHOR_ID = 372464383959
@@ -76,8 +77,8 @@ export class IdentityConfirmationService {
           author_id: ZENDESK_AUTHOR_ID,
           html_body:
             lang === 'is'
-              ? `Við þurfum að staðfesta hver þú ert til að geta afgreitt fyrirspurnina þína.<br><br>Hér er hlekkur svo þú getir auðkennt þig í gegnum innskráningu hjá Ísland.is.<br><br><a href="${link}">Smelltu hér til að auðkenna þig</a>`
-              : `We need to authenticate you to process your query.<br><br>Use this link to authenticate yourself through Ísland.is.<br><br><a href="${link}">Click here to authenticate:</a>`,
+              ? `Til að geta afgreitt fyrirspurnina þína þurfum við að staðfesta auðkenni þitt.<br><br>Vinsamlegast auðkenndu þig með innskráningu á Ísland.is með því að smella á hlekkinn hér að neðan.<br><br><a href="${link}">Smelltu hér til að auðkenna þig</a>`
+              : `To process your inquiry we need to confirm your identity.<br><br>Please authenticate yourself by logging in to Ísland.is using the link below.<br><br><a href="${link}">Click here to authenticate</a>`,
           public: true,
         },
       })
@@ -170,6 +171,12 @@ export class IdentityConfirmationService {
           `,
         public: false,
       },
+      custom_fields: [
+        {
+          id: ZENDESK_CUSTOM_FIELDS.NationalId,
+          value: user.nationalId,
+        },
+      ],
     })
 
     await identityConfirmation.destroy()

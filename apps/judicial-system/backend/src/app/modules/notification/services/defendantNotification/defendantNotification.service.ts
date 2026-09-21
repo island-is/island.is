@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -37,11 +36,10 @@ import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
   Case,
-  DateLog,
   Defendant,
   DefendantEventLog,
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -52,8 +50,7 @@ import { strings } from './defendantNotification.strings'
 @Injectable()
 export class DefendantNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -64,7 +61,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,
@@ -207,22 +204,25 @@ export class DefendantNotificationService extends BaseNotificationService {
       defendant,
       TrackedNotificationType.DEFENDER_COURT_DATE_FOLLOW_UP,
     )
-    const arraignmentDateLog = DateLog.arraignmentDate(theCase.dateLogs)
-    const hasFutureArraignmentDate =
-      arraignmentDateLog && arraignmentDateLog.date.getTime() > Date.now()
 
-    if (!shouldSendCourtDateFollowUp || !hasFutureArraignmentDate || !user) {
+    if (!shouldSendCourtDateFollowUp || !user) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
     }
 
-    const recipient = await this.sendArraignmentDateEmailNotification({
+    const recipient = await this.sendCourtDateFollowUpEmailNotification({
       theCase,
       user,
-      arraignmentDateLog,
       recipientName: defendant.defenderName ?? '',
       recipientEmail: defendant.defenderEmail ?? '',
+      recipientHasAccessToRVG: Boolean(defendant.defenderNationalId),
     })
+
+    if (!recipient) {
+      // Neither a court session nor an arraignment is scheduled in the future,
+      // so there is nothing to invite the defender to
+      return { delivered: true }
+    }
 
     const result = await this.recordNotification(
       theCase.id,
@@ -245,29 +245,30 @@ export class DefendantNotificationService extends BaseNotificationService {
 
     if (shouldSend) {
       const courtName = theCase.court?.name
+
+      if (!courtName) {
+        this.logger.error(
+          `Missing court name for case ${theCase.id} when sending defender assigned notification`,
+        )
+
+        return { delivered: false }
+      }
+
       const defenderHasAccessToRVG = !!defendant.defenderNationalId
 
-      const formattedSubject = this.formatMessage(
-        strings.defenderAssignedSubject,
-        {
-          courtName,
-        },
-      )
+      const subject = `${courtName} - aðgangur að máli`
 
-      const formattedBody = this.formatMessage(strings.defenderAssignedBody, {
-        courtName,
-        courtCaseNumber: theCase.courtCaseNumber,
-        defenderHasAccessToRVG,
-        // This link only works if the user is already logged in
-        linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
-        linkEnd: '</a>',
-      })
+      // This link only works if the user is already logged in
+      const accessInfo = defenderHasAccessToRVG
+        ? `Hægt er að nálgast málið á <a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+        : 'Þú getur nálgast málið hjá dómstólnum'
+      const body = `${courtName} hefur skráð þig sem verjanda í máli ${theCase.courtCaseNumber}.<br /><br />${accessInfo}.`
 
       return this.sendEmails(
         theCase,
         TrackedNotificationType.DEFENDER_ASSIGNED,
-        formattedSubject,
-        formattedBody,
+        subject,
+        body,
         [{ name: defendant.defenderName, email: defendant.defenderEmail }],
       )
     }

@@ -13,6 +13,7 @@ import {
   PaymentMethod,
   PaymentStatus,
 } from '../../types'
+import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferPayment.model'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { FjsCharge } from './models/fjsCharge.model'
 import { PaymentFlow } from './models/paymentFlow.model'
@@ -411,15 +412,19 @@ describe('PaymentFlowService', () => {
     })
   })
 
-  describe('findPaidFlowsWithoutFjsCharge — bank transfer exclusion', () => {
-    it('does not return a paid bank_transfer flow (no worker backfill for transfers)', async () => {
+  describe('findPaidFlowsWithoutFjsCharge — bank transfer backfill', () => {
+    it('returns a paid bank_transfer flow with its bank transfer payments eager-loaded', async () => {
       const paymentFlowModel = app.get<typeof PaymentFlow>(
         getModelToken(PaymentFlow),
       )
       const paymentFulfillmentModel = app.get<typeof PaymentFulfillment>(
         getModelToken(PaymentFulfillment),
       )
+      const bankTransferPaymentModel = app.get<typeof BankTransferPayment>(
+        getModelToken(BankTransferPayment),
+      )
       const paymentFlowId = uuid()
+      const bankTransferPaymentId = uuid()
 
       await paymentFlowModel.create({
         id: paymentFlowId,
@@ -428,18 +433,47 @@ describe('PaymentFlowService', () => {
         organisationId: '5534567890',
       } as TestPartial)
 
+      // The settled bank transfer row; the fulfillment references it via confirmationRefId.
+      await bankTransferPaymentModel.create({
+        id: bankTransferPaymentId,
+        paymentFlowId,
+        provider: 'test-provider',
+        providerPaymentId: 'provider-payment-id',
+        sourceReferenceId: bankTransferPaymentId,
+        amount: 900,
+        lastKnownStatus: 'Success',
+        expiresAt: new Date(Date.now() + 60_000),
+      })
+
       // A paid bank_transfer flow: fulfillment present, no FJS charge, no card details.
       await paymentFulfillmentModel.create({
         paymentFlowId,
         paymentMethod: 'bank_transfer',
-        confirmationRefId: uuid(),
+        confirmationRefId: bankTransferPaymentId,
       } as TestPartial)
 
       const result = await service.findPaidFlowsWithoutFjsCharge(
         new Date(Date.now() + 60_000),
+        'bank_transfer',
       )
 
-      expect(result.map((flow) => flow.id)).not.toContain(paymentFlowId)
+      const flow = result.find((f) => f.id === paymentFlowId)
+      expect(flow).toBeDefined()
+      // The worker rebuilds the PAID charge from this include — assert the real
+      // association wiring, not just that the flow is returned.
+      expect(flow?.bankTransferPayments).toHaveLength(1)
+      expect(flow?.bankTransferPayments?.[0]).toMatchObject({
+        id: bankTransferPaymentId,
+        providerPaymentId: 'provider-payment-id',
+        amount: 900,
+      })
+
+      // The sweeps are per-method: the card sweep must not pick up this flow.
+      const cardResult = await service.findPaidFlowsWithoutFjsCharge(
+        new Date(Date.now() + 60_000),
+        'card',
+      )
+      expect(cardResult.find((f) => f.id === paymentFlowId)).toBeUndefined()
     })
   })
 

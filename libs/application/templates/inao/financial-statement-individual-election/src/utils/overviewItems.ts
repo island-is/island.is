@@ -7,10 +7,7 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { FormValue } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import {
-  formatCurrency,
-  formatPhoneNumber,
-} from '@island.is/application/ui-components'
+import { formatCurrency, formatPhoneNumber } from '@island.is/shared/utils'
 
 const format = (answers: FormValue, path: string) => {
   return formatCurrency(getValueViaPath<string>(answers, path) ?? '')

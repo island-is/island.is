@@ -1,11 +1,5 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -44,20 +38,23 @@ import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import { ReviewDecision } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import type { ReviewDecisions } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision.logic'
+import { getChangedReviewDecisions } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision.logic'
+import { ReviewDecisionModal } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecisionModal'
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
   CONFIRM_PROSECUTOR_DECISION,
   DUPLICATE_INDICTMENT,
+  isConfirmProsecutorDecisionModal,
   isDuplicateIndictmentModal,
-  ModalId,
-} from '../../../PublicProsecutor/components/utils'
+} from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview: FC = () => {
@@ -117,9 +114,8 @@ const IndictmentOverview: FC = () => {
       workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
-  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
-    Record<string, IndictmentCaseReviewDecision | null | undefined>
-  >({})
+  const [originalReviewDecisions, setOriginalReviewDecisions] =
+    useState<ReviewDecisions>({})
 
   // Store original review decisions when workingCase loads to see if they change
   useEffect(() => {
@@ -128,19 +124,23 @@ const IndictmentOverview: FC = () => {
       defendantsRequiringReview.every((d) => d.id) &&
       !Object.keys(originalReviewDecisions).length
     ) {
-      const decisions = defendantsRequiringReview.reduce((acc, defendant) => {
-        acc[defendant.id] = defendant.indictmentReviewDecision
-        return acc
-      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      const decisions = defendantsRequiringReview.reduce<ReviewDecisions>(
+        (acc, defendant) => {
+          acc[defendant.id] = defendant.indictmentReviewDecision
+          return acc
+        },
+        {},
+      )
       setOriginalReviewDecisions(decisions)
     }
   }, [defendantsRequiringReview, originalReviewDecisions])
 
-  const hasReviewDecisionChanged = defendantsRequiringReview?.some(
-    (defendant) =>
-      defendant.indictmentReviewDecision !==
-      originalReviewDecisions[defendant.id],
+  // Confirming saves only the decisions that changed since the page loaded.
+  const changedReviewDecisions = getChangedReviewDecisions(
+    defendantsRequiringReview,
+    originalReviewDecisions,
   )
+  const hasReviewDecisionChanged = changedReviewDecisions.length > 0
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -187,7 +187,7 @@ const IndictmentOverview: FC = () => {
                 </Box>
               ),
           )}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
@@ -265,7 +265,7 @@ const IndictmentOverview: FC = () => {
                   }
                 />
                 {defendantsRequiringReview && (
-                  <div className={grid({ gap: 3 })}>
+                  <div className={stack({ gap: 3 })}>
                     {defendantsRequiringReview.map((defendant) => (
                       <BlueBox key={`${defendant.id}_review_decision`}>
                         <SectionHeading
@@ -277,8 +277,6 @@ const IndictmentOverview: FC = () => {
                         <ReviewDecision
                           caseId={workingCase.id}
                           defendant={defendant}
-                          modalVisible={modalVisible}
-                          setModalVisible={setModalVisible}
                           isFine={
                             workingCase.indictmentRulingDecision ===
                             CaseIndictmentRulingDecision.FINE
@@ -295,31 +293,55 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            hideNextButton={
+            actions={
               !shouldDisplayReviewDecision && !canDuplicateIndictment
-            }
-            nextIsDisabled={
-              !canDuplicateIndictment &&
-              shouldDisplayReviewDecision &&
-              (isReviewMissing || !hasReviewDecisionChanged)
-            }
-            nextButtonText={
-              canDuplicateIndictment
-                ? 'Afrita mál í drög'
-                : workingCase.indictmentReviewedDate
-                ? 'Breyta ákvörðun'
-                : 'Ljúka yfirlestri'
-            }
-            onNextButtonClick={() =>
-              setModalVisible(
-                canDuplicateIndictment
-                  ? DUPLICATE_INDICTMENT
-                  : CONFIRM_PROSECUTOR_DECISION,
-              )
+                ? []
+                : [
+                    {
+                      text: canDuplicateIndictment
+                        ? 'Afrita mál í drög'
+                        : workingCase.indictmentReviewedDate
+                        ? 'Breyta ákvörðun'
+                        : 'Ljúka yfirlestri',
+                      onClick: () =>
+                        setModalVisible(
+                          canDuplicateIndictment
+                            ? DUPLICATE_INDICTMENT
+                            : CONFIRM_PROSECUTOR_DECISION,
+                        ),
+                      disabled:
+                        !canDuplicateIndictment &&
+                        shouldDisplayReviewDecision &&
+                        (isReviewMissing || !hasReviewDecisionChanged),
+                      testId: 'continueButton',
+                    },
+                  ]
             }
           />
         </FormContentContainer>
         {appealModals}
+        {isConfirmProsecutorDecisionModal(modalVisible) && (
+          <ReviewDecisionModal
+            caseId={workingCase.id}
+            changedDefendants={changedReviewDecisions}
+            onClose={() => setModalVisible(undefined)}
+            // A saved decision is the new original: it no longer counts as
+            // changed, so a retry after a partial failure sends only the rest.
+            onSaved={(savedDefendantIds) =>
+              setOriginalReviewDecisions((previous) => ({
+                ...previous,
+                ...Object.fromEntries(
+                  savedDefendantIds.map((id) => [
+                    id,
+                    workingCase.defendants?.find((d) => d.id === id)
+                      ?.indictmentReviewDecision,
+                  ]),
+                ),
+              }))
+            }
+            onConfirmed={() => router.push(getStandardUserDashboardRoute(user))}
+          />
+        )}
         {isDuplicateIndictmentModal(modalVisible) && (
           <DuplicateIndictmentModal
             onClose={() => setModalVisible(undefined)}

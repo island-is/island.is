@@ -30,7 +30,7 @@ const Host = styled.Pressable<{
 
 interface CheckboxProps {
   borderBottom?: boolean
-  label: string
+  label: React.ReactNode
   checked: boolean
   onPress: () => void
   isFullWidth?: boolean
@@ -53,6 +53,7 @@ export const Checkbox = ({
     >
       <Typography
         style={{
+          flexShrink: 1,
           fontWeight: checked ? '600' : '300',
         }}
       >

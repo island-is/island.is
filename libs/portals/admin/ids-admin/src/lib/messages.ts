@@ -694,6 +694,26 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-applications-type',
     defaultMessage: 'Type',
   },
+  permissionApplicationsAdd: {
+    id: 'ap.ids-admin:permission-applications-add',
+    defaultMessage: 'Add client',
+  },
+  permissionApplicationsPlaceholder: {
+    id: 'ap.ids-admin:permission-applications-placeholder',
+    defaultMessage: 'Choose clients',
+  },
+  permissionApplicationsNoOptions: {
+    id: 'ap.ids-admin:permission-applications-no-options',
+    defaultMessage: 'No clients available',
+  },
+  permissionApplicationsRemove: {
+    id: 'ap.ids-admin:permission-applications-remove',
+    defaultMessage: 'Remove clients',
+  },
+  permissionApplicationsOtherTenantGroup: {
+    id: 'ap.ids-admin:permission-applications-other-tenant-group',
+    defaultMessage: 'Other tenants',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -1786,6 +1806,19 @@ export const m = defineMessages({
   tenantContactEmail: {
     id: 'ap.ids-admin:tenant-contact-email',
     defaultMessage: 'Contact email',
+  },
+  tenantMunicipalityCode: {
+    id: 'ap.ids-admin:tenant-municipality-code',
+    defaultMessage: 'Municipality number',
+  },
+  tenantMunicipalityCodeTooltip: {
+    id: 'ap.ids-admin:tenant-municipality-code-tooltip',
+    defaultMessage:
+      'Only for municipality domains: the 4-digit municipality number (sveitarfélagsnúmer). Used to match users to their municipality.',
+  },
+  errorMunicipalityCode: {
+    id: 'ap.ids-admin:error-municipality-code',
+    defaultMessage: 'Municipality number must be 4 digits',
   },
   errorTenantName: {
     id: 'ap.ids-admin:error-tenant-name',

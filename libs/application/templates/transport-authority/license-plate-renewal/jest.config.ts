@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName:
     'application-templates-transport-authority-license-plate-renewal',
   preset: '../../../../../jest.preset.js',

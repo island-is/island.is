@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'nest-swagger',
   preset: './jest.preset.js',
   rootDir: '../../..',

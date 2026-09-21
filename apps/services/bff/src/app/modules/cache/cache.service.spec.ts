@@ -185,7 +185,7 @@ describe('CacheService', () => {
     it('should delete cache entry', async () => {
       // Arrange
       const key = 'test-key'
-      mockCacheManager.del.mockResolvedValue(undefined)
+      mockCacheManager.del.mockResolvedValue(true)
 
       // Act
       await service.delete(key)

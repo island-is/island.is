@@ -5,6 +5,14 @@ export const m = defineMessages({
     id: 'service.portal:reference',
     defaultMessage: 'Tilvísun',
   },
+  healthTreatment: {
+    id: 'service.portal:health-treatment',
+    defaultMessage: 'Meðferð',
+  },
+  healthTreatmentEducationalContent: {
+    id: 'service.portal:health-treatment-educational-content',
+    defaultMessage: 'Fræðsluefni',
+  },
   goToPage: {
     id: 'service.portal:go-to-page',
     defaultMessage: 'Fara á síðu',
@@ -2123,6 +2131,22 @@ export const m = defineMessages({
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
+  driversPoints: {
+    id: 'service.portal:drivers-points',
+    defaultMessage: 'Punktastaða',
+  },
+  driversPointsIntro: {
+    id: 'service.portal:drivers-points-intro',
+    defaultMessage: 'Punktastaða ökumanns hjá lögreglu',
+  },
+  driversDeprivations: {
+    id: 'service.portal:drivers-deprivations',
+    defaultMessage: 'Svipting',
+  },
+  driversDeprivationsIntro: {
+    id: 'service.portal:drivers-deprivations-intro',
+    defaultMessage: 'Upplýsingar um sviptingu ökuréttinda',
+  },
   case: {
     id: 'service.portal:case',
     defaultMessage: 'Dómur',
@@ -2270,6 +2294,23 @@ export const m = defineMessages({
     id: 'service.portal:a11y-progress-bar-description',
     defaultMessage:
       'Notaðu örvatakka til að fara á milli valkosta. Ýttu á Enter eða Space til að velja.',
+  },
+  sidebarContactBoxTitle: {
+    id: 'service.portal:sidebar-contact-box-title',
+    defaultMessage: 'Aðstoð við Mínar síður',
+  },
+  sidebarContactBoxBody: {
+    id: 'service.portal:sidebar-contact-box-body',
+    defaultMessage:
+      'Finnurðu ekki það sem þú leitar að eða ertu í tæknilegum vandræðum? Sendu fyrirspurn eða ábendingu.',
+  },
+  sidebarContactBoxLinkText: {
+    id: 'service.portal:sidebar-contact-box-link-text',
+    defaultMessage: 'Opna form',
+  },
+  sidebarContactBoxLinkUrl: {
+    id: 'service.portal:sidebar-contact-box-link-url',
+    defaultMessage: 'https://island.is/s/stafraen-heilsa/hafa-samband',
   },
   unemploymentHasConfirmedJobSearch: {
     id: 'service.portal:unemployment-has-confirmed-job-search',

@@ -119,7 +119,16 @@ export const assigneeAccessAgreementChildOptions = (
   ]
 }
 
-export const assigneeAccessAgreementRepeaterMinRows = (
+const assigneeAccessAgreementRepeaterRowCount = (
+  answers: FormValue,
+  externalData: ExternalData,
+): number => {
+  const repeater = findAssigneeAccessAgreementRepeater(answers, externalData)
+  return Array.isArray(repeater) ? repeater.length : 0
+}
+
+/** Keep enough rows for still-missing children and for files already on this repeater. */
+const assigneeAccessAgreementRepeaterBound = (
   answers: FormValue,
   externalData: ExternalData,
 ): number => {
@@ -128,27 +137,28 @@ export const assigneeAccessAgreementRepeaterMinRows = (
   if (!assigneeId) {
     return 0
   }
-  return getAssigneeChildrenStillMissingAnyAccessAgreementUpload(
+  const missing = getAssigneeChildrenStillMissingAnyAccessAgreementUpload(
     answers,
     externalData,
     assigneeId,
   ).length
+  return Math.max(
+    missing,
+    assigneeAccessAgreementRepeaterRowCount(answers, externalData),
+  )
 }
+
+export const assigneeAccessAgreementRepeaterMinRows = (
+  answers: FormValue,
+  externalData: ExternalData,
+): number => assigneeAccessAgreementRepeaterBound(answers, externalData)
 
 export const assigneeAccessAgreementRepeaterMaxRows = (
   answers: FormValue,
   externalData: ExternalData,
 ): number => {
-  const app = applicationFromFormValue(answers, externalData)
-  const assigneeId = getAssigneeNationalIdForUmgengnissamningurForm(app)
-  if (!assigneeId) {
-    return 20
-  }
-  return getAssigneeChildrenStillMissingAnyAccessAgreementUpload(
-    answers,
-    externalData,
-    assigneeId,
-  ).length
+  const bound = assigneeAccessAgreementRepeaterBound(answers, externalData)
+  return bound > 0 ? bound : 20
 }
 
 /**

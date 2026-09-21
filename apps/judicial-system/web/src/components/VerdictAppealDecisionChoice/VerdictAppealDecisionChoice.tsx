@@ -1,12 +1,17 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
 import { RadioButton } from '@island.is/island-ui/core'
 import { getDefendantVerdictAppealDecisionLabel } from '@island.is/judicial-system/formatters'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
+import type {
+  Defendant,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { VerdictAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
-import { Defendant, Verdict, VerdictAppealDecision } from '../../graphql/schema'
-import useVerdict from '../../utils/hooks/useVerdict'
-import { FormContext } from '../FormProvider/FormProvider'
-import RadioGroup from '../RadioGroup/RadioGroup'
 import * as styles from './VerdictAppealDecisionChoice.css'
 
 interface Props {
@@ -26,27 +31,7 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
       hideLegend
       className={styles.gridRow}
     >
-      <RadioButton
-        id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
-        name={`defendant-${defendant.id}-verdict-appeal-decision`}
-        checked={verdict.appealDecision === VerdictAppealDecision.POSTPONE}
-        onChange={() => {
-          setAndSendVerdictToServer(
-            {
-              defendantId: defendant.id,
-              caseId: workingCase.id,
-              appealDecision: VerdictAppealDecision.POSTPONE,
-            },
-            setWorkingCase,
-          )
-        }}
-        large
-        backgroundColor="white"
-        label={getDefendantVerdictAppealDecisionLabel(
-          VerdictAppealDecision.POSTPONE,
-        )}
-        disabled={disabled}
-      />
+      {/* In the order the design draws them: accept, then take the appeal period. */}
       <RadioButton
         id={`defendant-${defendant.id}-verdict-appeal-decision-accept`}
         name={`defendant-${defendant.id}-verdict-appeal-decision`}
@@ -63,9 +48,38 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         }}
         large
         backgroundColor="white"
-        label={getDefendantVerdictAppealDecisionLabel(
-          VerdictAppealDecision.ACCEPT,
-        )}
+        label={
+          <span className={styles.label}>
+            {getDefendantVerdictAppealDecisionLabel(
+              VerdictAppealDecision.ACCEPT,
+            )}
+          </span>
+        }
+        disabled={disabled}
+      />
+      <RadioButton
+        id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
+        name={`defendant-${defendant.id}-verdict-appeal-decision`}
+        checked={verdict.appealDecision === VerdictAppealDecision.POSTPONE}
+        onChange={() => {
+          setAndSendVerdictToServer(
+            {
+              defendantId: defendant.id,
+              caseId: workingCase.id,
+              appealDecision: VerdictAppealDecision.POSTPONE,
+            },
+            setWorkingCase,
+          )
+        }}
+        large
+        backgroundColor="white"
+        label={
+          <span className={styles.label}>
+            {getDefendantVerdictAppealDecisionLabel(
+              VerdictAppealDecision.POSTPONE,
+            )}
+          </span>
+        }
         disabled={disabled}
       />
     </RadioGroup>

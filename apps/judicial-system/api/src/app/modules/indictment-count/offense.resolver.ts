@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -28,6 +28,7 @@ export class OffenseResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => Offense, { nullable: true })
@@ -35,8 +36,6 @@ export class OffenseResolver {
     @Args('input', { type: () => CreateOffenseInput })
     input: CreateOffenseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Offense> {
     const { caseId, indictmentCountId, ...createOffense } = input
 
@@ -47,7 +46,11 @@ export class OffenseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_OFFENSE,
-      backendService.createOffense(caseId, indictmentCountId, createOffense),
+      this.backendService.createOffense(
+        caseId,
+        indictmentCountId,
+        createOffense,
+      ),
       (theOffense) => theOffense.id,
     )
   }
@@ -57,8 +60,6 @@ export class OffenseResolver {
     @Args('input', { type: () => UpdateOffenseInput })
     input: UpdateOffenseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<Offense> {
     const { caseId, indictmentCountId, offenseId, ...updateOffense } = input
 
@@ -69,7 +70,7 @@ export class OffenseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_OFFENSE,
-      backendService.updateOffense(
+      this.backendService.updateOffense(
         caseId,
         indictmentCountId,
         offenseId,
@@ -84,8 +85,6 @@ export class OffenseResolver {
     @Args('input', { type: () => DeleteOffenseInput })
     input: DeleteOffenseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteResponse> {
     const { caseId, indictmentCountId, offenseId } = input
 
@@ -96,7 +95,7 @@ export class OffenseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.DELETE_OFFENSE,
-      backendService.deleteOffense(caseId, indictmentCountId, offenseId),
+      this.backendService.deleteOffense(caseId, indictmentCountId, offenseId),
       offenseId,
     )
   }

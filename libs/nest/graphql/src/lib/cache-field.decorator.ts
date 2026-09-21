@@ -4,7 +4,7 @@ import { FieldOptions } from '@nestjs/graphql/dist/decorators/field.decorator'
 import { ReturnTypeFunc } from '@nestjs/graphql/dist/interfaces/return-type-func.interface'
 import { CacheControl, CacheControlOptions } from './cache-control.decorator'
 
-export interface CacheFieldOptions extends FieldOptions {
+export type CacheFieldOptions = FieldOptions & {
   cacheControl?: CacheControlOptions
 }
 

@@ -19,16 +19,16 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
     fetchTimeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
     clientId: env.required(
       'NATIONAL_REGISTRY_B2C_CLIENT_ID',
-      'b464afdd-056b-406d-b650-6d41733cfeb7',
+      '8f4c5411-9caf-40a1-8764-bbe05fd6de50',
     ),
     clientSecret: env.required('NATIONAL_REGISTRY_B2C_CLIENT_SECRET', ''),
     scope: env.required(
       'NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE',
-      'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
+      'https://skraiddev.onmicrosoft.com/midlunUmsoknir/.default',
     ),
     endpoint: env.required(
       'NATIONAL_REGISTRY_B2C_ENDPOINT',
-      'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      'https://dev.identity.skra.is/dev.identity.skra.is/oauth2/v2.0/token',
     ),
     xRoadServicePath: env.required(
       'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',

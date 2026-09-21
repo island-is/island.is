@@ -1,7 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
-import { IndictmentSubtype } from '../repository'
 import { RepositoryModule } from '../repository/repository.module'
 import {
   AwsS3Module,
@@ -21,7 +19,6 @@ import { PoliceService } from './police.service'
     forwardRef(() => SubpoenaModule),
     forwardRef(() => IndictmentCountModule),
     RepositoryModule,
-    SequelizeModule.forFeature([IndictmentSubtype]),
   ],
   controllers: [PoliceController],
   providers: [PoliceService],

@@ -26,6 +26,7 @@ export const FormResponseFragment = gql`
       ...Form
     }
     submissionUrls
+    organizationDelegations
     organizations {
       value
       label

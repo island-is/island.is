@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'motion/react'
@@ -11,19 +12,20 @@ import {
 import {
   getCaseTableGroups,
   isCourtOfAppealsUser,
+  isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import {
+import { ModalContainer } from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
   CaseTableType,
   CaseType,
   SearchCasesRow,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { UserContext } from '../../UserProvider/UserProvider'
-import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
 import * as styles from './SearchModal.css'
 
@@ -282,18 +284,18 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
               }}
             >
-              <div className={grid({ gap: 2 })}>
+              <div className={stack({ gap: 2 })}>
                 <Text variant="eyebrow" color="dark300">
                   {`Leitarniðurstöður (${searchResults.rowCount})`}
                 </Text>
-                <ul className={grid({ gap: 2 })}>
+                <ul className={stack({ gap: 2 })}>
                   {searchResults.rowCount > 0 ? (
                     searchResults.rows.map((row, index) => {
                       const caseNumber = user
                         ? isProsecutionUser(user)
                           ? row.policeCaseNumbers[0]
-                          : isDistrictCourtUser(user)
-                          ? row.courtCaseNumber
+                          : isDistrictCourtUser(user) || isDefenceUser(user)
+                          ? row.courtCaseNumber ?? row.policeCaseNumbers[0]
                           : isCourtOfAppealsUser(user)
                           ? row.appealCaseNumber
                           : undefined

@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-regulations-admin',
   preset: '../../../jest.preset.js',
   globals: {},

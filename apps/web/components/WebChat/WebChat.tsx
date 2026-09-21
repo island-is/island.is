@@ -1,10 +1,8 @@
 import type { GetWebChatQuery } from '@island.is/web/graphql/schema'
-import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
 
 import {
   BoostChatPanel,
   LiveChatIncChatPanel,
-  WatsonChatPanel,
   ZendeskChatPanel,
 } from '../ChatPanel'
 
@@ -27,12 +25,18 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
       chatBubbleTitle,
     } = webChat.webChatConfiguration.zendesk ?? {}
     if (!snippetUrl) return renderFallback?.() ?? null
+
+    let ticketId: string = urlTrackingTicketId ?? ''
+    if (ticketId.length > 0 && ticketId.trim() === '') ticketId = ''
+    else if (!ticketId.trim()) ticketId = '36130758325906'
+    else ticketId = ticketId.trim()
+
     return (
       <ZendeskChatPanel
         snippetUrl={snippetUrl}
         pushUp={pushUp}
         chatBubbleVariant={chatBubbleVariant || 'circle'}
-        urlTrackingTicketId={urlTrackingTicketId}
+        urlTrackingTicketId={ticketId}
         chatBubbleTitle={chatBubbleTitle}
       />
     )
@@ -67,52 +71,6 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
     )
   }
 
-  if (webChatType === 'watson') {
-    const {
-      integrationID,
-      region,
-      serviceInstanceID,
-      showLauncher,
-      carbonTheme,
-      namespaceKey,
-      serviceDesk,
-      setupOneScreenWatsonChatBotParams,
-      clearSessionStorageParams,
-    } = webChat.webChatConfiguration.watson ?? {}
-    if (!integrationID || !region || !serviceInstanceID)
-      return renderFallback?.() ?? null
-
-    return (
-      <WatsonChatPanel
-        integrationID={integrationID}
-        region={region}
-        serviceInstanceID={serviceInstanceID}
-        showLauncher={showLauncher}
-        carbonTheme={carbonTheme}
-        namespaceKey={namespaceKey}
-        serviceDesk={serviceDesk}
-        onLoad={(instance) => {
-          const initialState = setupOneScreenWatsonChatBotParams
-          if (initialState?.categoryTitle && initialState?.categoryGroup) {
-            setupOneScreenWatsonChatBot(
-              instance,
-              initialState.categoryTitle,
-              initialState.categoryGroup,
-            )
-            return
-          }
-
-          const categoryGroupClearParam =
-            clearSessionStorageParams?.categoryGroup
-          if (
-            categoryGroupClearParam &&
-            sessionStorage.getItem(categoryGroupClearParam)
-          )
-            sessionStorage.clear()
-        }}
-      />
-    )
-  }
   return renderFallback?.() ?? null
 }
 

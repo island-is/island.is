@@ -6,12 +6,13 @@ import { Accordion } from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_CASE_ROUTE,
   COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
   CaseFilesAccordionItem,
@@ -30,18 +31,21 @@ import {
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseFilesOverview,
+  CaseOverviewHeader,
+} from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
+import {
   useAppealCaseBanner,
   usePoliceDigitalCaseFile,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import {
   appendAppealCaseIdQuery,
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { overview as strings } from './Overview.strings'
 
 const Overview = () => {
@@ -89,7 +93,7 @@ const Overview = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <CaseOverviewHeader
               alerts={
                 targetAppealCase?.requestAppealRulingNotToBePublished
@@ -181,14 +185,19 @@ const Overview = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                shouldUseAppealWithdrawnRoutes(targetAppealCase)
-                  ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
-                  : COURT_OF_APPEAL_CASE_ROUTE,
-              )
-            }
-            nextButtonIcon="arrowForward"
+            actions={[
+              {
+                text: formatMessage(core.continue),
+                icon: 'arrowForward',
+                onClick: () =>
+                  handleNavigationTo(
+                    shouldUseAppealWithdrawnRoutes(targetAppealCase)
+                      ? COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE
+                      : COURT_OF_APPEAL_CASE_ROUTE,
+                  ),
+                testId: 'continueButton',
+              },
+            ]}
           />
         </FormContentContainer>
       </PageLayout>

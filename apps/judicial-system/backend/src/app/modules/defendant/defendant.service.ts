@@ -1,6 +1,6 @@
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,8 +11,7 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseType,
+  AppealCaseState,
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
@@ -266,6 +265,7 @@ export class DefendantService {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      verdictId?: string
       user?: User
     },
     transaction: Transaction,
@@ -277,6 +277,7 @@ export class DefendantService {
         event.defendantId,
         event.user,
         transaction,
+        ...(event.verdictId ? [{ verdictId: event.verdictId }] : []),
       )
 
       return
@@ -336,6 +337,21 @@ export class DefendantService {
       )
     }
 
+    if (
+      update.isClosedWithoutEnforcement &&
+      !defendant.isClosedWithoutEnforcement
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+          user,
+        },
+        transaction,
+      )
+    }
+
     this.addMessagesForIndictmentCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -383,6 +399,28 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // Closing without enforcement is only valid for indictment defendants and
+    // is irreversible through this endpoint - reopening a case resets the flag
+    // in the case reopen workflow.
+    if (update.isClosedWithoutEnforcement !== undefined) {
+      if (
+        !isIndictmentCase(theCase.type) ||
+        update.isClosedWithoutEnforcement !== true
+      ) {
+        throw new BadRequestException(
+          'Closed without enforcement can only be set for indictment case defendants',
+        )
+      }
+
+      // Enforcement is mutually exclusive with closing without enforcement -
+      // a defendant sent to prison admin must be withdrawn first.
+      if (defendant.isSentToPrisonAdmin || update.isSentToPrisonAdmin) {
+        throw new BadRequestException(
+          'Closed without enforcement cannot be set for a defendant sent to prison admin',
+        )
+      }
+    }
+
     if (
       update.defenderNationalId === null &&
       !(
@@ -393,6 +431,22 @@ export class DefendantService {
     ) {
       const { defenderNationalId: _, ...rest } = update
       update = rest
+    }
+
+    // The reviewer's decision on an indictment verdict is the prosecution's
+    // appeal or its absence. Once the court of appeals has received the verdict
+    // appeal the decision is made; the web creates and withdraws the appeal
+    // from the decision, and this keeps the two from drifting apart.
+    if (
+      update.indictmentReviewDecision !== undefined &&
+      update.indictmentReviewDecision !== defendant.indictmentReviewDecision &&
+      theCase.verdictAppealCase &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.APPEALED &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN
+    ) {
+      throw new BadRequestException(
+        'The review decision cannot change once the court of appeals has received the verdict appeal',
+      )
     }
 
     if (isIndictmentCase(theCase.type)) {
@@ -516,41 +570,9 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantRepositoryService.findAll({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: CaseState.ACCEPTED,
-            type: CaseType.CUSTODY,
-            valid_to_date: { [Op.gte]: literal('current_date') },
-          },
-        },
-      ],
-      where: { nationalId: defendants[0].nationalId },
-    })
-
-    return defendantsInCustody.some((d) => d.case)
-  }
-
-  findLatestDefendantByDefenderNationalId(
-    nationalId: string,
-  ): Promise<Defendant | null> {
-    return this.defendantRepositoryService.findOne({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: { [Op.not]: CaseState.DELETED },
-            isArchived: false,
-          },
-        },
-      ],
-      where: { defenderNationalId: nationalId },
-      order: [['created', 'DESC']],
-    })
+    return this.defendantRepositoryService.existsInActiveCustody(
+      defendants[0].nationalId,
+    )
   }
 
   async deliverDefendantToCourt(

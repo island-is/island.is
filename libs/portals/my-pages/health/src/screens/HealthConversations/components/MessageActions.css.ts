@@ -11,15 +11,28 @@ globalStyle(`${filterActionButtons} button`, {
   boxShadow: 'none',
 })
 
-globalStyle(
-  `${filterActionButtons} button:hover, ${filterActionButtons} button:focus-visible`,
-  {
-    backgroundColor: theme.color.blue100,
-    boxShadow: 'none',
-  },
-)
+// Hover only — keyboard focus must keep island-ui's mint circle
+globalStyle(`${filterActionButtons} button:hover`, {
+  backgroundColor: theme.color.blue100,
+  boxShadow: 'none',
+})
 
-export const hoverWhite = style({})
-globalStyle(`${hoverWhite} button:hover, ${hoverWhite} button:focus-visible`, {
+// White instead of blue — unread rows are tinted blueberry100, where a blue
+// hover circle would disappear
+export const rowActionButtons = style({})
+
+globalStyle(`${rowActionButtons} button:hover`, {
   backgroundColor: theme.color.white,
+})
+
+export const circleActionButtons = style({})
+
+globalStyle(`${circleActionButtons} button`, {
+  width: 40,
+  height: 40,
+})
+
+globalStyle(`${circleActionButtons} button svg`, {
+  width: 20,
+  height: 20,
 })

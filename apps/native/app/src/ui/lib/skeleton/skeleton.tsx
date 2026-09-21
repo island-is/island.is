@@ -41,7 +41,7 @@ const Swoosh = styled(Animated.View)`
 
 export function Skeleton(props: SkeletonProps) {
   const theme = useTheme()
-  const ar = useRef<Animated.CompositeAnimation>()
+  const ar = useRef<Animated.CompositeAnimation>(undefined)
   const aw = useRef(Dimensions.get('window').width)
   const av = useRef(new Animated.Value(0))
   const mounted = useRef(true)

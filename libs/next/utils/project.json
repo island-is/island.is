@@ -1,0 +1,19 @@
+{
+  "name": "next-utils",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/next/utils/src",
+  "projectType": "library",
+  "tags": ["lib:react-next", "scope:react-next"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/next/utils"],
+      "options": {
+        "jestConfig": "libs/next/utils/jest.config.ts"
+      }
+    }
+  }
+}

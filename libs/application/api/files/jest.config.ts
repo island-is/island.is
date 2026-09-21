@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-api-files',
   preset: './jest.preset.js',
   rootDir: '../../../..',

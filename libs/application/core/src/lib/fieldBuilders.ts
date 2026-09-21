@@ -54,6 +54,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  ScaleField,
   MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -409,6 +410,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   } = data
 
   return {
@@ -426,6 +429,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   }
 }
 
@@ -1250,6 +1255,7 @@ export const buildAccordionField = (
     marginTop,
     marginBottom,
     condition,
+    singleExpand = true,
   } = data
   return {
     children: undefined,
@@ -1260,6 +1266,7 @@ export const buildAccordionField = (
     marginBottom,
     accordionItems,
     condition,
+    singleExpand,
     type: FieldTypes.ACCORDION,
     component: FieldComponents.ACCORDION,
   }
@@ -1376,5 +1383,25 @@ export const buildVehiclePermnoWithInfoField = (
     fallbackErrorMessage,
     validationFailedErrorMessage,
     isTrailer,
+  }
+}
+
+export const buildScaleField = (
+  data: Omit<ScaleField, 'type' | 'component' | 'children'>,
+): ScaleField => {
+  const { min, max, step, minLabel, maxLabel, showLabels, required } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.SCALE,
+    component: FieldComponents.SCALE,
+    min,
+    max,
+    step,
+    minLabel,
+    maxLabel,
+    showLabels,
+    required,
   }
 }

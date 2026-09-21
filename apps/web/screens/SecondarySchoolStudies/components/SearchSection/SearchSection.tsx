@@ -6,7 +6,7 @@ import { SelectedFilters } from '../../hooks/useSecondarySchoolFilters'
 import { m } from '../../messages/messages'
 
 interface SearchSectionProps {
-  titleRef: RefObject<HTMLDivElement>
+  titleRef: RefObject<HTMLDivElement | null>
   inputValue: string
   handleSearchInput: (value: string) => void
   selectedFilters: SelectedFilters

@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import type { GetServerSideProps } from 'next'
 import { NormalizedCacheObject } from '@apollo/client'
 
@@ -18,7 +19,7 @@ const deleteUndefined = (obj: Record<string, any> | undefined): void => {
       if (obj[key] && typeof obj[key] === 'object') {
         deleteUndefined(obj[key])
       } else if (typeof obj[key] === 'undefined') {
-        delete obj[key] // eslint-disable-line no-param-reassign
+        delete obj[key]
       }
     })
   }

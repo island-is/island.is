@@ -61,6 +61,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
@@ -212,6 +217,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.SYSLUMENN,
   },
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
     nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
@@ -527,6 +537,21 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.EQUALITY_REPORT]: {
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
+  },
+  [ApplicationTypes.SALARY_REPORT]: {
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,

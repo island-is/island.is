@@ -1,19 +1,19 @@
 import { useCallback, useContext, useState } from 'react'
 
-import { Box, toast } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtCaseNumberInput } from '@island.is/judicial-system-web/src/routes/Court/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { CourtCaseNumberInput } from '../../Court/components'
 
 export const useCancelCase = (
   onComplete: (caseId: string) => void,
@@ -119,20 +119,23 @@ export const useCancelCase = (
     <Modal
       title="Mál afturkallað"
       text="Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér."
-      primaryButton={{
-        text: 'Ljúka máli',
-        onClick: handlePrimaryButtonClick,
-        isLoading: isUpdatingCase || isTransitioningCase,
-        isDisabled:
-          !validate([[theCase.courtCaseNumber, ['empty', 'S-case-number']]])
-            .isValid ||
-          isUpdatingCase ||
-          isTransitioningCase,
-      }}
-      secondaryButton={{
-        text: 'Hætta við',
-        onClick: handleSecondaryButtonClick,
-      }}
+      buttons={[
+        {
+          text: 'Hætta við',
+          onClick: handleSecondaryButtonClick,
+          variant: 'ghost',
+        },
+        {
+          text: 'Ljúka máli',
+          onClick: handlePrimaryButtonClick,
+          isLoading: isUpdatingCase || isTransitioningCase,
+          isDisabled:
+            !validate([[theCase.courtCaseNumber, ['empty', 'S-case-number']]])
+              .isValid ||
+            isUpdatingCase ||
+            isTransitioningCase,
+        },
+      ]}
     >
       <Box marginBottom={8}>
         <CourtCaseNumberInput

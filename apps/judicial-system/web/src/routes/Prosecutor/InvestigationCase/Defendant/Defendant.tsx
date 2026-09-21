@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
@@ -26,22 +26,22 @@ import {
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
-  CaseOrigin,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DefendantInfo } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
   useDefendants,
   useSyncDefendantsFromPolice,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { DefendantInfo } from '../../components'
 
 const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
   origin === CaseOrigin.LOKE && Boolean(id)
@@ -185,13 +185,13 @@ const Defendant = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo
             workingCase={workingCase}
             hideDefendants
             hideCourt
           />
-          <Box component="section" className={grid({ gap: 3 })}>
+          <Box component="section" className={stack({ gap: 3 })}>
             <Box
               display="flex"
               alignItems="center"
@@ -317,18 +317,22 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
-          nextButtonText={formatMessage(
-            workingCase.id === '' ? core.createCase : core.continue,
-          )}
+          actions={[
+            {
+              text: formatMessage(
+                workingCase.id === '' ? core.createCase : core.continue,
+              ),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

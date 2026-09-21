@@ -7,7 +7,6 @@ import {
   FileUploadStatus,
   InputFileUpload,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -17,6 +16,7 @@ import {
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  isAppealFileDeletionLocked,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -41,14 +41,15 @@ import {
   AppealEventType,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useAppealCase,
   useFileList,
   useS3Upload,
   useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
   getAppealActorText,
   getDefenceUserPartyIds,
@@ -130,8 +131,6 @@ const Statement = () => {
       AppealEventType.APPEAL_STATEMENT_SENT,
     )
 
-    refreshCase()
-
     if (sent) {
       setVisibleModal('STATEMENT_SENT')
     }
@@ -142,11 +141,20 @@ const Statement = () => {
     targetAppealCaseId,
     createAppealEventLog,
     workingCase.id,
-    refreshCase,
   ])
 
-  const handleRemoveFile = (file: UploadFile) => {
+  const handleRemoveFile = (file: TUploadFile) => {
     if (file.key) {
+      // Files that have been sent to the court of appeals can no longer be
+      // deleted once it has registered its case number
+      if (isAppealFileDeletionLocked(file.category, targetAppealCase)) {
+        toast.error(
+          'Ekki er hægt að eyða gögnum eftir að Landsréttur hefur skráð málsnúmer',
+        )
+
+        return
+      }
+
       handleRemove(file, removeUploadFile)
     } else {
       removeUploadFile(file)
@@ -224,7 +232,7 @@ const Statement = () => {
               marginBottom={isProsecutionUser(user) ? 5 : 10}
             >
               <SectionHeading title="Gögn" marginBottom={1} />
-              <Text marginBottom={3} whiteSpace="pre">
+              <Text marginBottom={3} whiteSpace="preWrap">
                 Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim
                 upp hér að neðan.
                 {'\n'}
@@ -251,7 +259,7 @@ const Statement = () => {
               />
             </Box>
             {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-              <Box component="section" marginBottom={10}>
+              <Box component="section">
                 <RequestAppealRulingNotToBePublishedCheckbox />
               </Box>
             )}
@@ -261,26 +269,35 @@ const Statement = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={handleNextButtonClick}
-          nextButtonText={someFilesError ? 'Reyna aftur' : 'Senda greinargerð'}
-          nextIsDisabled={
-            !targetAppealCaseId ||
-            appealStatementFiles.length === 0 ||
-            isCreatingAppealEventLog
-          }
-          nextIsLoading={!allFilesDoneOrError || isCreatingAppealEventLog}
-          nextButtonIcon={undefined}
-          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          actions={[
+            {
+              text: someFilesError ? 'Reyna aftur' : 'Senda greinargerð',
+              colorScheme: someFilesError ? 'destructive' : 'default',
+              onClick: handleNextButtonClick,
+              disabled:
+                !targetAppealCaseId ||
+                appealStatementFiles.length === 0 ||
+                isCreatingAppealEventLog,
+              loading: !allFilesDoneOrError || isCreatingAppealEventLog,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {visibleModal === 'STATEMENT_SENT' && (
         <Modal
           title="Greinargerð hefur verið send Landsrétti"
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
-          secondaryButton={{
-            text: formatMessage(core.closeModal),
-            onClick: () => router.push(previousUrl),
-          }}
+          buttons={[
+            {
+              text: formatMessage(core.closeModal),
+              onClick: () => {
+                refreshCase()
+                router.push(previousUrl)
+              },
+              variant: 'ghost',
+            },
+          ]}
         />
       )}
     </PageLayout>

@@ -8,13 +8,18 @@ interface Props {
   item: FormSystemField
 }
 
-const applicantValues = [
+const baseApplicantValues = [
   'nationalId',
   'name',
   'email',
   'phoneNumber',
-  // 'address',
-  // 'postalCode',
+] as const
+
+const applicantAddressValues = ['address', 'postalCode'] as const
+
+const applicantValues = [
+  ...baseApplicantValues,
+  ...applicantAddressValues,
 ] as const
 
 type ApplicantKey = typeof applicantValues[number]
@@ -36,18 +41,21 @@ const valueTranslations: Record<ApplicantKey, { is: string; en: string }> = {
     is: 'Símanúmer',
     en: 'Phone number',
   },
-  // address: {
-  //   is: 'Heimilisfang',
-  //   en: 'Address',
-  // },
-  // postalCode: {
-  //   is: 'Póstnúmer',
-  //   en: 'Postal code',
-  // },
+  address: {
+    is: 'Heimilisfang',
+    en: 'Address',
+  },
+  postalCode: {
+    is: 'Póstnúmer',
+    en: 'Postal code',
+  },
 }
 
 export const ApplicantDisplay = ({ item }: Props) => {
-  const rawValues = (getValues(item, applicantValues as unknown as string[]) ||
+  const displayValues = item.fieldSettings?.isAddressRequired
+    ? applicantValues
+    : baseApplicantValues
+  const rawValues = (getValues(item, displayValues as unknown as string[]) ||
     {}) as Record<ApplicantKey, unknown>
   const { lang } = useLocale()
 
@@ -59,7 +67,7 @@ export const ApplicantDisplay = ({ item }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      {applicantValues.map((key) => {
+      {displayValues.map((key) => {
         let value = rawValues[key]
         if (typeof value === 'undefined' || value === null) return null
         if (key === 'phoneNumber')

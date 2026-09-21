@@ -37,7 +37,7 @@ export const reviewStatePendingAction = (
   } else {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
+      content: anPendingActionMessages.waitingForReviewDescription,
       displayStatus: 'info',
     }
   }

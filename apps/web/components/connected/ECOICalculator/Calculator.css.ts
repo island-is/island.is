@@ -21,3 +21,11 @@ export const tableRow = style({
 export const stayOnSinglePageWhenPrinting = style({
   pageBreakInside: 'avoid',
 })
+
+export const totalAverageBanner = style({
+  minHeight: 60,
+})
+
+export const tabPanelSpacer = style({
+  height: 40,
+})

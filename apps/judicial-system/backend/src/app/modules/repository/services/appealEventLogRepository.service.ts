@@ -1,4 +1,4 @@
-import { Transaction } from 'sequelize'
+import { FindOptions, Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -6,6 +6,11 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AppealEventLog } from '../models/appealEventLog.model'
+
+interface FindAllAppealEventLogOptions {
+  where?: FindOptions['where']
+  transaction?: Transaction
+}
 
 interface CreateAppealEventLogOptions {
   transaction: Transaction
@@ -22,6 +27,12 @@ export class AppealEventLogRepositoryService {
     private readonly appealEventLogModel: typeof AppealEventLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  async findAll(
+    options: FindAllAppealEventLogOptions,
+  ): Promise<AppealEventLog[]> {
+    return this.appealEventLogModel.findAll(options)
+  }
 
   async create(
     data: Partial<AppealEventLog>,
@@ -75,6 +86,35 @@ export class AppealEventLogRepositoryService {
         `Error deleting appeal event logs for appeal case ${appealCaseId}:`,
         { error },
       )
+
+      throw error
+    }
+  }
+
+  // Removes specific event log rows by id - used to converge an appeal case's
+  // APPEALED events with its current in-court appellants (dropping rows for
+  // parties that withdrew or were corrected away).
+  async deleteByIds(
+    ids: string[],
+    options: DeleteAppealEventLogOptions,
+  ): Promise<number> {
+    if (ids.length === 0) {
+      return 0
+    }
+
+    try {
+      this.logger.debug(`Deleting ${ids.length} appeal event log(s) by id`)
+
+      const numberOfDeletedRows = await this.appealEventLogModel.destroy({
+        where: { id: ids },
+        transaction: options.transaction,
+      })
+
+      this.logger.debug(`Deleted ${numberOfDeletedRows} appeal event log(s)`)
+
+      return numberOfDeletedRows
+    } catch (error) {
+      this.logger.error(`Error deleting appeal event logs by id:`, { error })
 
       throw error
     }

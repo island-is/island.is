@@ -8,6 +8,7 @@ import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 import { Sequelize } from 'sequelize-typescript'
 import { Transaction } from 'sequelize'
+import { Application } from '../applications/models/application.model'
 
 @Injectable()
 export class FileService {
@@ -19,6 +20,8 @@ export class FileService {
     private readonly fileStorageService: FileStorageService,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
+    @InjectModel(Application)
+    private readonly applicationModel: typeof Application,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -43,6 +46,9 @@ export class FileService {
       const exists = await this.fileExists(sourceKey)
       this.logger.info(`Starting attempt ${attempts + 1}`)
       if (exists) {
+        let applicationId = ''
+        let key = ''
+        let isTest: boolean | undefined
         try {
           await this.sequelize.transaction(async (transaction) => {
             const value = await this.valueModel.findByPk(valueId, {
@@ -54,8 +60,19 @@ export class FileService {
               throw new Error(`Value with PK: ${valueId} not found`)
             }
 
-            const applicationId = value.applicationId
-            const key = `${applicationId}/${sourceKey}`
+            applicationId = value.applicationId
+            key = `${applicationId}/${sourceKey}`
+
+            const application = await this.applicationModel.findByPk(
+              applicationId,
+              { transaction },
+            )
+            if (!application) {
+              throw new NotFoundException(
+                `Application with id '${applicationId}' not found`,
+              )
+            }
+            isTest = application.isTest
 
             const res =
               await this.fileStorageService.copyObjectFromUploadBucket(
@@ -79,15 +96,28 @@ export class FileService {
             }
 
             await value.save({ transaction })
+          })
 
-            this.logger.info(
-              `✅ Updated field ${fieldId} with new S3 key ${key}`,
-            )
+          this.logger.info('form system file uploaded', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            isTest,
+            datadogEvent: 'form_system_file_uploaded',
           })
 
           return
         } catch (error) {
-          this.logger.error(`❌ Copy failed: ${error}`)
+          this.logger.error('form system file upload failed', {
+            applicationId,
+            key,
+            fieldId,
+            valueId,
+            isTest,
+            datadogEvent: 'form_system_file_upload_failed',
+            error,
+          })
           throw error
         }
       }

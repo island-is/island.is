@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'registration-of-new-property-numbers',
   preset: '../../../../../jest.preset.js',
   transform: {

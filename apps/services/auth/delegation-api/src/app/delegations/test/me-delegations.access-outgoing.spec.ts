@@ -12,6 +12,7 @@ import {
   CreateDelegationDTO,
   Delegation,
   DelegationScope,
+  DelegationsIndexService,
   Domain,
   NamesService,
   PatchDelegationDTO,
@@ -68,6 +69,16 @@ describe.each(Object.keys(accessOutgoingTestCases))(
       jest
         .spyOn(namesService, 'getUserName')
         .mockResolvedValue(faker.name.findName())
+
+      // Stub fire-and-forget indexing so stray queries don't outlive the suite
+      // and hit the shared test database while it is being recreated.
+      const delegationIndexService = app.get(DelegationsIndexService)
+      jest
+        .spyOn(delegationIndexService, 'indexDelegations')
+        .mockImplementation()
+      jest
+        .spyOn(delegationIndexService, 'indexCustomDelegations')
+        .mockImplementation()
 
       factory = new FixtureFactory(app)
       domains = await Promise.all(
@@ -224,6 +235,57 @@ describe.each(Object.keys(accessOutgoingTestCases))(
           })
         },
       )
+
+      it('POST /v1/me/delegations/batch creates delegations across domains in one call', async () => {
+        const toNationalId = createNationalId('person')
+        const delegations = accessible.map((domain) => ({
+          toNationalId,
+          domainName: domain.name,
+          scopes: domain.scopes.map(({ name }) => ({
+            name,
+            validTo: startOfDay(addYears(new Date(), 1)),
+          })),
+        }))
+
+        const res = await server
+          .post('/v1/me/delegations/batch')
+          .send({ delegations })
+
+        expect(res.status).toEqual(201)
+        expect(res.body).toHaveLength(accessible.length)
+        expect(
+          (res.body as Array<{ domainName: string }>)
+            .map((delegation) => delegation.domainName)
+            .sort(),
+        ).toEqual(accessible.map((domain) => domain.name).sort())
+      })
+
+      it('POST /v1/me/delegations/batch rolls back earlier delegations when a later item fails', async () => {
+        const toNationalId = createNationalId('person')
+        const [domain] = accessible
+        const scopes = domain.scopes.map(({ name }) => ({
+          name,
+          validTo: startOfDay(addYears(new Date(), 1)),
+        }))
+
+        const res = await server.post('/v1/me/delegations/batch').send({
+          delegations: [
+            { toNationalId, domainName: domain.name, scopes },
+            {
+              toNationalId: testCase.user.nationalId,
+              domainName: domain.name,
+              scopes,
+            },
+          ],
+        })
+
+        expect(res.status).toEqual(400)
+        expect(
+          await Delegation.count({
+            where: { fromNationalId: testCase.user.nationalId, toNationalId },
+          }),
+        ).toEqual(0)
+      })
 
       it.each(accessible)(
         'POST /v1/me/delegations returns 400 when recipient is deceased',

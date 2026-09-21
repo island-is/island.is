@@ -99,7 +99,7 @@ export const useShortState = <S>(
   defaultDuration = DEFAULT_DURATION,
 ) => {
   const [state, _setState] = useState<S | undefined>(initialState)
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>()
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(undefined)
 
   const cancelTimeout = () => {
     timeout.current && clearTimeout(timeout.current)

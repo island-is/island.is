@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'nest-pagination',
   preset: './jest.preset.js',
   rootDir: '../../..',

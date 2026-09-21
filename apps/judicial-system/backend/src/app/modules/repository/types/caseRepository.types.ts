@@ -1,19 +1,25 @@
-import { col, Includeable, literal, Op } from 'sequelize'
+import { col, Includeable, literal, Op, Order, WhereOptions } from 'sequelize'
 
 import {
   appealEventTypes,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseState,
   completedIndictmentCaseStates,
+  CourtSessionRulingType,
+  DateType,
   dateTypes,
   defendantEventTypes,
   DefendantPlea,
   DefenderChoice,
+  EventType,
   eventTypes,
   Gender,
   IndictmentCaseReviewDecision,
+  investigationCases,
   PunishmentType,
+  restrictionCases,
   stringTypes,
   SubpoenaType,
   trackedNotificationTypes,
@@ -42,6 +48,7 @@ import { Subpoena } from '../models/subpoena.model'
 import { User } from '../models/user.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
+import { UpdateDateLog } from '../services/dateLogRepository.service'
 
 export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -72,6 +79,20 @@ export const caseInclude: Includeable[] = [
         as: 'appealJudge3',
         include: [{ model: Institution, as: 'institution' }],
       },
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        where: { eventType: appealEventTypes },
+        separate: true,
+      },
+    ],
+  },
+  {
+    model: AppealCase,
+    as: 'verdictAppealCase',
+    required: false,
+    include: [
       {
         model: AppealEventLog,
         as: 'appealEventLogs',
@@ -150,6 +171,11 @@ export const caseInclude: Includeable[] = [
   {
     model: User,
     as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'indictmentApprover',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -337,6 +363,27 @@ export const caseInclude: Includeable[] = [
     as: 'mergeCase',
     include: [
       {
+        model: Defendant,
+        as: 'defendants',
+        attributes: ['id', 'defenderNationalId', 'isDefenderChoiceConfirmed'],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
         model: CourtSession,
         as: 'courtSessions',
         required: false,
@@ -371,6 +418,19 @@ export const caseInclude: Includeable[] = [
             separate: true,
           },
         ],
+        separate: true,
+      },
+      {
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
         separate: true,
       },
       {
@@ -494,10 +554,351 @@ export const caseInclude: Includeable[] = [
   },
 ]
 
-interface UpdateDateLog {
-  date?: Date
-  location?: string
+// A case is archivable ninety days after it stopped being worked on - the
+// window is measured by the database's own clock, so it does not depend on
+// when the archiving job happens to run.
+const archiveLifetime = literal('current_date - 90')
+
+// Which cases have outlived their retention window: request and investigation
+// cases that were deleted, ones that never got past the court, and ones whose
+// ruling or custody period is ninety days behind us.
+export const archivableCaseWhere: WhereOptions = {
+  [Op.and]: [
+    { isArchived: false },
+    {
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
+            { state: CaseState.DELETED },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
+            {
+              state: [
+                CaseState.NEW,
+                CaseState.DRAFT,
+                CaseState.SUBMITTED,
+                CaseState.RECEIVED,
+              ],
+            },
+            { created: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: restrictionCases },
+            { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+            { ruling_date: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: restrictionCases },
+            { state: CaseState.ACCEPTED },
+            { valid_to_date: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: investigationCases },
+            {
+              state: [
+                CaseState.ACCEPTED,
+                CaseState.REJECTED,
+                CaseState.DISMISSED,
+              ],
+            },
+            { ruling_date: { [Op.lt]: archiveLifetime } },
+          ],
+        },
+      ],
+    },
+  ],
 }
+
+// Everything the archive is built from: every model that carries an encrypted
+// property is read here, because the same transaction writes the archive and
+// clears those properties off the live rows.
+export const archivableCaseInclude: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+      },
+    ],
+  },
+  { model: CaseFile, as: 'caseFiles' },
+  { model: CaseString, as: 'caseStrings' },
+  { model: AppealCase, as: 'appealCase' },
+  { model: AppealDecision, as: 'appealDecisions' },
+]
+
+// The archived children are stored as arrays of property values carrying no ids
+// of their own, so a child's position is its only identity - this order is the
+// order they are written to the archive in, and the order any future restore
+// would have to assume. Nothing in this codebase reads the archive back.
+export const archivableCaseOrder: Order = [
+  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'displayOrder', 'ASC'],
+  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
+  [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
+  [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
+]
+
+// A verdict appeal deadline is decided per defendant, from that defendant's
+// verdicts and the events already filed against them. Only cases with a
+// defendant who has a verdict are of interest, hence the required joins; the
+// judge and their institution ride along for the notification that follows.
+export const verdictAppealDeadlineCaseInclude: Includeable[] = [
+  {
+    model: User,
+    as: 'judge',
+    required: false,
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: true,
+    include: [
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: true,
+        separate: true,
+        order: [['created', 'DESC']],
+      },
+    ],
+  },
+]
+
+// The digital mailbox lists a defendant's indictment cases by their
+// arraignment, so the date log is joined required and filtered down to it.
+export const defendantIndictmentCaseListInclude: Includeable[] = [
+  {
+    model: Defendant,
+    as: 'defendants',
+  },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    where: {
+      dateType: DateType.ARRAIGNMENT_DATE,
+    },
+    required: true,
+  },
+]
+
+// One indictment case as the digital mailbox shows it to a defendant: the
+// defendant's own subpoenas and verdicts, who is handling the case, its dates,
+// the event that sent it to the public prosecutor, and the judgement text from
+// the court session that delivered it.
+export const defendantIndictmentCaseInclude: Includeable[] = [
+  {
+    model: Defendant,
+    as: 'defendants',
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+  },
+  { model: Institution, as: 'court' },
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: User, as: 'judge' },
+  {
+    model: User,
+    as: 'prosecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  { model: DateLog, as: 'dateLogs' },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    order: [['created', 'DESC']],
+    separate: true,
+    where: {
+      event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    },
+  },
+  {
+    model: CourtSession,
+    as: 'courtSessions',
+    required: false,
+    order: [['created', 'DESC']],
+    separate: true,
+    attributes: ['ruling'],
+    where: {
+      ruling_type: CourtSessionRulingType.JUDGEMENT,
+    },
+  },
+]
+
+// A case waiting for its indictment review: only the defendants no one has
+// decided on yet, and the event that handed the case to the public prosecutor.
+export const indictmentReviewCaseInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    order: [['created', 'DESC']],
+    separate: true,
+    where: {
+      event_type: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    },
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: true,
+    where: {
+      indictmentReviewDecision: null,
+    },
+  },
+]
+
+// The case counts only need to know when an indictment was confirmed, so the
+// event log is joined filtered down to that one event. The alias is spelled out
+// on every association here, as caseInclude does - Sequelize infers it from the
+// single Case-EventLog relation either way, but naming it keeps the graph
+// readable and survives a second relation being added.
+export const caseStatisticsInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    attributes: ['created', 'eventType'],
+    where: { eventType: EventType.INDICTMENT_CONFIRMED },
+  },
+]
+
+// A request case's export rows are derived from its event log, the
+// institutions handling it, its court dates and its appeal.
+export const requestCaseEventExportInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    attributes: ['created', 'eventType'],
+  },
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: Institution, as: 'court' },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: AppealEventLog,
+        as: 'appealEventLogs',
+        required: false,
+        attributes: ['eventType', 'userRole'],
+        separate: true,
+      },
+    ],
+  },
+]
+
+// An indictment case's export rows are derived from the same case-level graph
+// as a request case, plus the charges it brings and what happened to each
+// defendant - service of the subpoena, the defendant's own events and the
+// verdicts against them.
+export const indictmentCaseEventExportInclude: Includeable[] = [
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    attributes: ['created', 'eventType'],
+  },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Offense,
+        as: 'offenses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  { model: Institution, as: 'prosecutorsOffice' },
+  { model: Institution, as: 'court' },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdicts',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+]
 
 export interface UpdateCaseDefendantEventLogDecision {
   defendantId: string
@@ -538,7 +939,6 @@ export interface UpdateCase
     | 'sessionArrangements'
     | 'courtLocation'
     | 'courtStartDate'
-    | 'courtEndTime'
     | 'isClosedCourtHidden'
     | 'courtAttendees'
     | 'prosecutorDemands'
@@ -554,10 +954,6 @@ export interface UpdateCase
     | 'isolationToDate'
     | 'conclusion'
     | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
@@ -572,6 +968,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'isArraignmentSummonsSkipped'
     | 'hasCivilClaims'
     | 'isArchived'
   > {
@@ -579,6 +976,7 @@ export interface UpdateCase
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
+  courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
   courtCaseNumber?: Case['courtCaseNumber'] | null
   judgeId?: Case['judgeId'] | null
@@ -587,13 +985,12 @@ export interface UpdateCase
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
   rulingSignatureDate?: Case['rulingSignatureDate'] | null
   withCourtSessions?: Case['withCourtSessions']
   courtRecordHash?: Case['courtRecordHash'] | null
-  accusedPostponedAppealDate?: Case['accusedPostponedAppealDate'] | null
-  prosecutorPostponedAppealDate?: Case['prosecutorPostponedAppealDate'] | null
   arraignmentDate?: UpdateDateLog
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
@@ -601,6 +998,7 @@ export interface UpdateCase
   penalties?: string
   defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecision[]
   reopenReason?: string
+  indictmentReviewReturnedExplanation?: string | null
 }
 
 export interface UpdateAppealCase
@@ -620,11 +1018,18 @@ export interface UpdateAppealCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'appealedByNationalId'
     | 'rulingFileId'
     | 'appealDate'
   > {
   appealState?: AppealCase['appealState']
+}
+
+// An appeal case is created with its type and never changes it, so the type is
+// required here and absent from UpdateAppealCase. That is what keeps a new
+// creation path from quietly omitting it - the column's database default exists
+// for old pods mid-rollout, not for application code to lean on.
+export type CreateAppealCase = UpdateAppealCase & {
+  appealType: AppealCase['appealType']
 }
 
 export interface UpdateDefendant {
@@ -647,6 +1052,11 @@ export interface UpdateDefendant {
   requestedDefenderName?: string
   isDefenderChoiceConfirmed?: boolean
   caseFilesSharedWithDefender?: boolean
+  appealDefenderName?: string | null
+  appealDefenderNationalId?: string | null
+  appealDefenderEmail?: string | null
+  appealDefenderPhoneNumber?: string | null
+  isAppealDefenderConfirmed?: boolean | null
   isSentToPrisonAdmin?: boolean
   punishmentType?: PunishmentType
   isAlternativeService?: boolean
@@ -654,4 +1064,5 @@ export interface UpdateDefendant {
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   publicProsecutorIsRegisteredInPoliceSystem?: boolean | null
   isDrivingLicenseSuspended?: boolean | null
+  isClosedWithoutEnforcement?: boolean
 }

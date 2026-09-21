@@ -1,5 +1,7 @@
-import { FC, useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -32,27 +34,31 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Case,
   CaseAppealDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealDecisionPartyRole,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import AppealSections from '@island.is/judicial-system-web/src/routes/Court/components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '@island.is/judicial-system-web/src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro'
 import {
   formatDateForServer,
   useCase,
   useDebouncedInput,
   useOnceOn,
+  useSerializedSave,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   isCourtRecordStepValidIC,
   isNullOrUndefined,
-  Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-
-import AppealSections from '../../components/AppealSections/AppealSections'
-import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -62,9 +68,7 @@ const getSessionBookingsAutofill = (
 
   if (workingCase.defenderName) {
     autofillSessionBookings.push(
-      `${formatMessage(m.sections.sessionBookings.autofillDefender, {
-        defender: workingCase.defenderName,
-      })}\n\n`,
+      `${workingCase.defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
     )
   }
 
@@ -93,6 +97,8 @@ const getSessionBookingsAutofill = (
 const CourtRecord: FC = () => {
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
+  // Runs court end time saves one at a time and knows which value the server has
+  const saveCourtEndTime = useSerializedSave<string | null | undefined>()
   const {
     workingCase,
     setWorkingCase,
@@ -238,20 +244,44 @@ const CourtRecord: FC = () => {
     prosecutorAppealAnnouncement?: string
   }) => {
     const endOfSessionBookings: string[] = []
+    let appealDecisions = workingCase.appealDecisions
+    if (
+      !isNullOrUndefined(accusedAppealDecision) ||
+      !isNullOrUndefined(accusedAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.DEFENDANT,
+        {
+          ...(!isNullOrUndefined(accusedAppealDecision)
+            ? { decision: accusedAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(accusedAppealAnnouncement)
+            ? { announcement: accusedAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
+    if (
+      !isNullOrUndefined(prosecutorAppealDecision) ||
+      !isNullOrUndefined(prosecutorAppealAnnouncement)
+    ) {
+      appealDecisions = withCaseLevelAppealDecision(
+        appealDecisions,
+        AppealDecisionPartyRole.PROSECUTOR,
+        {
+          ...(!isNullOrUndefined(prosecutorAppealDecision)
+            ? { decision: prosecutorAppealDecision }
+            : {}),
+          ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+            ? { announcement: prosecutorAppealAnnouncement }
+            : {}),
+        },
+      )
+    }
     const updatedCase = {
       ...workingCase,
-      ...(!isNullOrUndefined(accusedAppealDecision)
-        ? { accusedAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(accusedAppealAnnouncement)
-        ? { accusedAppealAnnouncement }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealDecision)
-        ? { prosecutorAppealDecision }
-        : {}),
-      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
-        ? { prosecutorAppealAnnouncement }
-        : {}),
+      appealDecisions,
     }
     populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
 
@@ -287,9 +317,9 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
                 datepickerLabel={formatMessage(
@@ -450,16 +480,33 @@ const CourtRecord: FC = () => {
                 selectedDate={workingCase.courtEndTime}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          courtEndTime: formatDateForServer(date),
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
+                    const courtEndTime = formatDateForServer(date)
+
+                    // A failed save toasts, but the optimistic value would still
+                    // validate the step and let the judge continue with a court
+                    // end time the server never got. The save rolls the field
+                    // back to the value the server has, so the step stays invalid
+                    // until the time is actually persisted.
+                    saveCourtEndTime({
+                      // Per case: the page is reused when the judge moves to another case
+                      key: `courtEndTime:${workingCase.id}`,
+                      confirmed: workingCase.courtEndTime,
+                      value: courtEndTime,
+                      persist: () =>
+                        setAndSendCaseToServer(
+                          [{ courtEndTime, force: true }],
+                          workingCase,
+                          setWorkingCase,
+                        ),
+                      rollback: (confirmedCourtEndTime) =>
+                        setWorkingCase((prev) =>
+                          // A save that fails after the judge has moved on to another
+                          // case must not touch that case
+                          prev.id !== workingCase.id
+                            ? prev
+                            : { ...prev, courtEndTime: confirmedCourtEndTime },
+                        ),
+                    })
                   }
                 }}
                 blueBox={false}
@@ -479,16 +526,24 @@ const CourtRecord: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
-            )
+          actions={
+            hasMissingInfoInRulingStep
+              ? []
+              : [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+                      ),
+                    disabled: !stepIsValid,
+                    loading: isLoadingWorkingCase,
+                    testId: 'continueButton',
+                  },
+                ]
           }
-          nextIsDisabled={!stepIsValid}
-          hideNextButton={hasMissingInfoInRulingStep}
           infoBoxText={
             hasMissingInfoInRulingStep
               ? formatMessage(m.sections.nextButtonInfo.text, {

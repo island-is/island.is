@@ -6,6 +6,8 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document'
+import { RuntimeEnv } from '@island.is/next/utils'
+import { buildPublicRuntimeEnv } from '../environments/runtimeEnvironment'
 
 interface Props {
   lang: Locale
@@ -23,6 +25,7 @@ class MyDocument extends Document<Props> {
     return (
       <Html lang="is">
         <Head>
+          <RuntimeEnv env={buildPublicRuntimeEnv()} />
           <script
             defer
             data-domain="island.is/samradsgatt"

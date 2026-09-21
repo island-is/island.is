@@ -8,7 +8,8 @@ import { useSwipeable } from 'react-swipeable'
 
 type Props = {
   ariaLabel: string
-  disclosure: React.ReactElement
+  // Widened props type so the disclosure can be cloned with extra props below.
+  disclosure: React.ReactElement<any>
   initialVisibility?: boolean
   labelShowResult?: string
   labelClearAll?: string

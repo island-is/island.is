@@ -1,4 +1,12 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
+
+export const filesListHideTrailing = style({})
+
+// Avoid double line: last PdfButton border + Accordion Divider between items.
+// Only applied when another accordion item follows.
+globalStyle(`${filesListHideTrailing} > *:last-child`, {
+  boxShadow: 'none',
+})
 
 export const metadataRow = style({
   display: 'flex',

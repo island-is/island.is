@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'contentful-role-permissions',
   preset: './jest.preset.js',
   rootDir: '../../..',

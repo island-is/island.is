@@ -35,7 +35,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   loading,
   stashLabels,
   colorScheme = 'light',
-  size = 'small',
+  size = 'default',
 }) => {
   const { formatMessage } = useLocale()
 
@@ -50,7 +50,8 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   return (
     <Box
       className={cn(styles.filterActionButtons, {
-        [styles.hoverWhite]: colorScheme === 'light',
+        [styles.circleActionButtons]: colorScheme === 'light',
+        [styles.rowActionButtons]: colorScheme === 'negative',
       })}
       display="flex"
       height="full"

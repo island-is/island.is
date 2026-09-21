@@ -1,4 +1,3 @@
-import _uniqBy from 'lodash/uniqBy'
 import PDFDocument from 'pdfkit'
 
 import {
@@ -84,6 +83,44 @@ export const getFiledBy = (
   }
 
   return 'Lagt er fram:'
+}
+
+export interface FiledCourtDocumentSection {
+  mergedFromCaseId?: string
+  filedBy?: string
+  docs: CourtDocument[]
+}
+
+// A court session's documents are one sequence: the case's own, and the ones
+// copied from each case merged into it. The copies of a merged case stay
+// together, so walking the sequence gives each merged case's section whole -
+// written up under the court's account of why the cases were joined - and the
+// case's own documents under whoever laid them before the court.
+export const groupFiledDocuments = (
+  filedDocuments: CourtDocument[],
+  caseFiles: CaseFile[],
+): FiledCourtDocumentSection[] => {
+  const sections: FiledCourtDocumentSection[] = []
+
+  for (const document of filedDocuments) {
+    const mergedFromCaseId = document.mergedFromCaseId ?? undefined
+    const filedBy = mergedFromCaseId
+      ? undefined
+      : getFiledBy(document, caseFiles)
+    const section = sections[sections.length - 1]
+
+    if (
+      section &&
+      section.mergedFromCaseId === mergedFromCaseId &&
+      section.filedBy === filedBy
+    ) {
+      section.docs.push(document)
+    } else {
+      sections.push({ mergedFromCaseId, filedBy, docs: [document] })
+    }
+  }
+
+  return sections
 }
 
 const lineGap = 2
@@ -224,10 +261,8 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     addEmptyLines(doc)
-    addNormalText(doc, 'Mættir eru:', 'Times-Bold')
     addNormalText(
       doc,
-      // Must use || here as we want to display a default message if the file has no content
       courtSession.attendees?.trim() || 'Enginn er mættur í þinghaldið.',
       'Times-Roman',
     )
@@ -241,29 +276,30 @@ export const createIndictmentCourtRecordPdf = (
     }
 
     if (courtSession.filedDocuments && courtSession.filedDocuments.length > 0) {
-      const filedDocuments: {
-        filedBy: string
-        docs: CourtDocument[]
-      }[] = []
+      for (const { mergedFromCaseId, filedBy, docs } of groupFiledDocuments(
+        courtSession.filedDocuments,
+        caseFiles,
+      )) {
+        if (mergedFromCaseId) {
+          addEmptyLines(doc, 2)
+          addNormalText(
+            doc,
+            courtSession.courtSessionStrings?.find(
+              (courtSessionString) =>
+                courtSessionString.stringType ===
+                  CourtSessionStringType.ENTRIES &&
+                courtSessionString.mergedCaseId === mergedFromCaseId,
+            )?.value ?? 'Engar bókanir um sameinað mál voru skráðar.',
+          )
 
-      for (const d of courtSession.filedDocuments) {
-        const filedBy = getFiledBy(d, caseFiles)
-
-        if (
-          filedDocuments.length === 0 ||
-          filedDocuments[filedDocuments.length - 1].filedBy !== filedBy
-        ) {
-          filedDocuments.push({ filedBy, docs: [d] })
+          addEmptyLines(doc, 2)
+          addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
         } else {
-          filedDocuments[filedDocuments.length - 1].docs.push(d)
+          addEmptyLines(doc)
+          addNormalText(doc, filedBy ?? '', 'Times-Bold')
         }
-      }
 
-      for (const { filedBy, docs } of filedDocuments) {
-        addEmptyLines(doc)
-        addNormalText(doc, filedBy, 'Times-Bold')
         addNormalText(doc, 'Nr.', 'Times-Roman')
-
         addNumberedList(
           doc,
           docs.map((d) => d.name.normalize()),
@@ -274,48 +310,6 @@ export const createIndictmentCourtRecordPdf = (
       nrOfFiledDocuments =
         courtSession.filedDocuments[courtSession.filedDocuments.length - 1]
           .documentOrder
-    }
-
-    if (
-      courtSession.mergedFiledDocuments &&
-      courtSession.mergedFiledDocuments.length > 0
-    ) {
-      const uniqueCaseIds = _uniqBy(
-        courtSession.mergedFiledDocuments ?? [],
-        (c: CourtDocument) => c.caseId,
-      ).map((doc) => doc.caseId)
-
-      for (const caseId of uniqueCaseIds) {
-        addEmptyLines(doc, 2)
-        addNormalText(
-          doc,
-          courtSession.courtSessionStrings?.find(
-            (courtSessionString) =>
-              courtSessionString.stringType ===
-                CourtSessionStringType.ENTRIES &&
-              courtSessionString.mergedCaseId === caseId,
-          )?.value ?? 'Engar bókanir um sameinað mál voru skráðar.',
-        )
-
-        const mergedCaseFiledDocuments = courtSession.mergedFiledDocuments
-          .filter((document) => document.caseId === caseId)
-          .sort(
-            (a, b) =>
-              (a.mergedDocumentOrder ?? 0) - (b.mergedDocumentOrder ?? 0),
-          )
-        addEmptyLines(doc, 2)
-        addNormalText(doc, 'Lagt er fram:', 'Times-Bold')
-        addNormalText(doc, 'Nr.', 'Times-Roman')
-        addNumberedList(
-          doc,
-          mergedCaseFiledDocuments.map((d) => d.name.normalize()),
-          mergedCaseFiledDocuments[0].mergedDocumentOrder ?? 1,
-        )
-      }
-      nrOfFiledDocuments =
-        courtSession.mergedFiledDocuments[
-          courtSession.mergedFiledDocuments.length - 1
-        ].mergedDocumentOrder ?? nrOfFiledDocuments
     }
 
     addEmptyLines(doc, 2)

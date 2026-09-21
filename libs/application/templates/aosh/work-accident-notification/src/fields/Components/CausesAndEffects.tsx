@@ -173,7 +173,7 @@ export const CausesAndEffects: FC<
                 errors,
                 `${answerId.split('.')?.[0]}.${
                   mostSeriousAnswerId.split('.')?.[1]
-                }` || '',
+                }`,
               ) && (
                 <Box paddingTop={2}>
                   <ErrorMessage

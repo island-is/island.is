@@ -7,6 +7,7 @@ import { refetchNationalRegistrySection } from './refetchNationalRegistrySection
 import { accessAgreementSection } from './accessAgreementSection'
 import { assetDeclerationSection } from './assetDeclerationSection'
 import { assigneeOverviewSection } from './assigneeOverviewSection'
+import { incomeDeclarationSection } from './incomeDeclarationSection'
 
 export const AssigneeDraftForm = buildForm({
   id: 'AssigneeApproval',
@@ -20,6 +21,7 @@ export const AssigneeDraftForm = buildForm({
     personalInformationSection,
     accessAgreementSection,
     assetDeclerationSection,
+    incomeDeclarationSection,
     assigneeOverviewSection,
   ],
 })

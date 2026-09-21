@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'mile-car',
   preset: '../../../../../jest.preset.js',
   transform: {

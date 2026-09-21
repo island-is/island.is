@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-rental-day-rate',
   preset: './jest.preset.js',
   rootDir: '../../../..',

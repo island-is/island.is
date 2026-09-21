@@ -6,7 +6,12 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { ApplicationApi, PaymentApi, Configuration } from '../../gen/fetch'
+import {
+  ApplicationApi,
+  PaymentApi,
+  Configuration,
+  TaxApi,
+} from '../../gen/fetch'
 import { HousingBenefitsConfig } from './hms-housing-benefits.config'
 
 const createConfiguration = (
@@ -62,3 +67,14 @@ export const HmsHousingBenefitsApplicationApiProvider: Provider<ApplicationApi> 
       ),
     inject: [XRoadConfig.KEY, HousingBenefitsConfig.KEY, IdsClientConfig.KEY],
   }
+
+export const HmsHousingBenefitsTaxApiProvider: Provider<TaxApi> = {
+  provide: TaxApi,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof HousingBenefitsConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) => new TaxApi(createConfiguration(xroadConfig, config, idsClientConfig)),
+  inject: [XRoadConfig.KEY, HousingBenefitsConfig.KEY, IdsClientConfig.KEY],
+}

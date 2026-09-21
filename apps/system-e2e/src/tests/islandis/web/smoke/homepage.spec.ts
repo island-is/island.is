@@ -106,37 +106,23 @@ test.describe('Front page', () => {
     await expect(page).toHaveURL('/en')
   })
 
-  test('should toggle mega-menu @lang:is', async () => {
+  test('mobile nav should open and close @lang:is', async () => {
     const page = await context.newPage()
+    // Mobile nav renders below the lg breakpoint (992px); the default
+    // desktop viewport shows DesktopNav instead.
+    await page.setViewportSize({ width: 768, height: 900 })
     await page.goto('/')
-    await page
-      .locator('[data-testid="frontpage-burger-button"]:nth-child(2)')
-      .click()
-    await expect(
-      page.locator('[data-testid="mega-menu-link"] > a'),
-    ).toHaveCountGreaterThan(18)
-  })
+    const menuButton = page.getByRole('button', { name: 'Valmynd' })
+    const panel = page.getByRole('region', { name: 'Valmynd' })
 
-  test('burger menu should open and close', async () => {
-    // Arrange
-    const page = await context.newPage()
-    page.goto('/')
-    await page.getByRole('button', { name: 'Valmynd' }).click()
-
-    // Act
-    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
+    await menuButton.click()
+    await expect(panel).toBeVisible()
     await expect(
-      page.getByRole('paragraph').filter({ hasText: 'Þjónustuflokkar' }),
+      panel.getByRole('button', { name: 'Þjónustuflokkar' }),
     ).toBeVisible()
-    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
-    // Heading is "visible" behind menu
-    // await expect(page.getByTestId('home-heading')).not.toBeVisible()
-    await page
-      .getByRole('dialog', { name: 'Menu' })
-      .getByRole('button')
-      .getByTestId('icon-close')
-      .click()
+
+    await menuButton.click()
+    await expect(panel).toBeHidden()
     await expect(page.getByTestId('home-heading')).toBeVisible()
-    await expect(page.getByRole('dialog', { name: 'Menu' })).not.toBeVisible()
   })
 })

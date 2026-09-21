@@ -85,7 +85,7 @@ export default function FamilyScreen() {
   const router = useRouter()
   const authStore = useAuthStore()
   const scrollY = useRef(new Animated.Value(0)).current
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
   const familyRes = useNationalRegistryPersonQuery()
 
   const { biologicalChildren, spouse, childCustody } =

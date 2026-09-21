@@ -40,6 +40,7 @@ const ParentBIntro = ({ application, field, errors }: CRCFieldBaseProps) => {
       <Box marginTop={7}>
         <RadioController
           id={field.id as string}
+          defaultValue=""
           largeButtons
           backgroundColor="white"
           options={[

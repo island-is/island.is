@@ -38,6 +38,12 @@ import { InheritanceReportExternalData } from '../types'
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
 
+const isReviewEnabled = (context: ApplicationContext) => {
+  const externalData = context.application
+    .externalData as InheritanceReportExternalData
+  return externalData?.checkReviewFlag?.data?.reviewEnabled === true
+}
+
 const haveAllSignatoriesSigned = (context: ApplicationContext) => {
   const externalData = context.application
     .externalData as InheritanceReportExternalData
@@ -170,6 +176,12 @@ const InheritanceReportTemplate: ApplicationTemplate<
           // Submit before resolving the SUBMIT target so cases with no
           // required signatories skip the signing/status state entirely.
           onExit: submitApplicationAndFetchSignatories,
+          onEntry: defineTemplateApi({
+            action: ApiActions.checkReviewFlag,
+            shouldPersistToExternalData: true,
+            externalDataId: 'checkReviewFlag',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -209,6 +221,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
             {
               target: States.done,
               cond: haveAllSignatoriesSigned,
+            },
+            {
+              target: States.done,
+              cond: (context: ApplicationContext) => !isReviewEnabled(context),
             },
             { target: States.signing },
           ],

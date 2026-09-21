@@ -16,6 +16,7 @@ query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
       requiresMileageRegistration
       canRegisterMileage
       availableMileageRegistration
+      hasMilesOdometer
     }
     basicInfo {
       model
@@ -111,6 +112,7 @@ query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
       city
       startDate
       endDate
+      mainOperator
     }
     downloadServiceURL
     latestMileageRegistration

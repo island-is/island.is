@@ -57,8 +57,11 @@ export class ApplicationsXRoadService {
 
     const memberCode = this.getXroadMemberCode(xRoadClient)
     const formOwner = form.organizationNationalId
+    const canAccessApplication =
+      memberCode === formOwner ||
+      (memberCode === '5512201410' && formOwner === '6509142520')
 
-    if (memberCode !== formOwner) {
+    if (!canAccessApplication) {
       this.logger.warn(
         `X-Road client with member code ${memberCode} attempted to access application ${id} owned by ${formOwner}`,
       )
@@ -93,6 +96,16 @@ export class ApplicationsXRoadService {
       )
     }
 
+    this.logger.info('form system application fetched via xroad', {
+      applicationId: id,
+      formId: form.id,
+      formSlug: form.slug,
+      isTest: application.isTest,
+      organizationNationalId: form.organizationNationalId,
+      xRoadClient,
+      datadogEvent: 'form_system_application_fetched_xroad',
+    })
+
     return applicationJsonDto
   }
 
@@ -124,10 +137,13 @@ export class ApplicationsXRoadService {
 
     const memberCode = this.getXroadMemberCode(xRoadClient)
     const formOwner = form.organizationNationalId
+    const canAccessApplicationFile =
+      memberCode === formOwner ||
+      (memberCode === '5512201410' && formOwner === '6509142520')
 
-    if (memberCode !== formOwner) {
+    if (!canAccessApplicationFile) {
       this.logger.warn(
-        `X-Road client with member code ${memberCode} attempted to access application ${applicationId} owned by ${formOwner}`,
+        `X-Road client with member code ${memberCode} attempted to get file with id ${id} which belongs to application ${applicationId} owned by ${formOwner}`,
       )
       throw new UnauthorizedException(
         `This application-file is owned by a different organization.`,

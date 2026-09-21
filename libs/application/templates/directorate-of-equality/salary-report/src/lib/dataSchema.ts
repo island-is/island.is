@@ -1,0 +1,282 @@
+import { z } from 'zod'
+import * as kennitala from 'kennitala'
+import { messages } from './messages'
+import { EMAIL_REGEX } from '@island.is/application/core'
+import { Gender } from '../utils/types'
+import { PERIOD_ONE_MONTH, PERIOD_TWELVE_MONTHS } from '../utils/constants'
+import { isRemedyDateInWindow } from '../utils/dates'
+
+const generalInformation = z.object({
+  companyName: z.string().optional(),
+  nationalId: z.string().optional(),
+  address: z.string().optional(),
+  postalCode: z.string().optional(),
+  municipality: z.string().optional(),
+  numberOfEmployees: z.string().optional(),
+  isatClassification: z.string().optional(),
+})
+
+const chiefExecutive = z.object({
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z.string().refine((v) => EMAIL_REGEX.test(v), {
+    params: messages.errors.invalidEmail,
+  }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+
+  gender: z.nativeEnum(Gender),
+})
+
+const contactPerson = z.object({
+  name: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  jobTitle: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+  email: z.string().refine((v) => EMAIL_REGEX.test(v), {
+    params: messages.errors.invalidEmail,
+  }),
+  phone: z
+    .string()
+    .refine((v) => v && v.length > 0, { params: messages.errors.required }),
+})
+
+const period = z
+  .object({
+    period: z
+      .enum([PERIOD_TWELVE_MONTHS, PERIOD_ONE_MONTH])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    year: z.string().nullish(),
+    month: z.string().nullish(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.period !== PERIOD_ONE_MONTH) return
+    if (!val.year) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['year'],
+        params: messages.errors.required,
+      })
+    }
+    if (!val.month) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['month'],
+        params: messages.errors.required,
+      })
+    }
+  })
+
+// A TableRepeater row carries the table's own bookkeeping: a row the applicant
+// just added is `{ isUnsaved: true }` with no fields on it yet, and a deleted
+// one is only flagged `isRemoved` — the real splice happens in the table's
+// beforeSubmit callback, which runs after this schema. Both shapes have to
+// parse, so the row is all-optional here and the actual rules live in the
+// refinement below, which can skip the rows that aren't really there.
+const subsidiaryRow = z.object({
+  nationalIdWithName: z
+    .object({
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+    })
+    .optional(),
+  isRemoved: z.boolean().optional(),
+})
+
+const subsidiaries = z
+  .object({
+    includesSubsidiaries: z
+      .enum(['yes', 'no'])
+      .refine((v) => !!v, { params: messages.errors.required }),
+    list: z.array(subsidiaryRow).optional(),
+  })
+  .superRefine((val, ctx) => {
+    // The list is only part of the answer when the applicant said yes — the
+    // service discards it otherwise. Validating it anyway would block the
+    // screen on rows the table no longer renders.
+    if (val.includesSubsidiaries !== 'yes') return
+
+    const rows = val.list ?? []
+    if (rows.every((row) => row.isRemoved)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['list'],
+        params: messages.errors.required,
+      })
+      return
+    }
+
+    const seen = new Set<string>()
+    // Indices are those of the unfiltered array so the error paths line up
+    // with the rows react-hook-form is still rendering.
+    rows.forEach((row, i) => {
+      if (row.isRemoved) return
+      const { name, nationalId } = row.nationalIdWithName ?? {}
+
+      if (!name) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'name'],
+          params: messages.errors.required,
+        })
+      }
+
+      if (
+        !nationalId ||
+        !(kennitala.isValid(nationalId) && kennitala.isCompany(nationalId))
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'nationalId'],
+          params: messages.errors.invalidCompany,
+        })
+      } else if (seen.has(nationalId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['list', i, 'nationalIdWithName', 'nationalId'],
+          params: messages.errors.duplicateSubsidiary,
+        })
+      } else {
+        seen.add(nationalId)
+      }
+    })
+  })
+
+const outlierGroup = z.object({
+  name: z.string().optional(),
+  reason: z.string().optional(),
+  action: z.string().optional(),
+  remedyDate: z.string().optional(),
+  signatureName: z.string().optional(),
+  signatureRole: z.string().optional(),
+  employeeOrdinals: z.array(z.number()),
+})
+
+const salaryAnalysis = z
+  .object({
+    postponed: z.array(z.string()).optional(),
+    outlierGroups: z.array(outlierGroup).optional(),
+    // Scratch copy of outlierGroups, written by the per-group "Vista" button so
+    // a half-filled plan survives leaving the screen (see useOutlierPlanBuffer).
+    //
+    // All-optional, and deliberately untouched by the refinement below: it holds
+    // work in progress, while the completeness rules belong to `outlierGroups` —
+    // the value the submit actually validates. Writing the groups themselves
+    // incrementally is not possible, because every PUT re-runs that refinement
+    // over whatever it is handed, and a group still being filled in would fail
+    // it.
+    //
+    // Absent and empty mean different things, and the editor reads them that
+    // way: no key at all is a plan this screen has never persisted, so it seeds
+    // from the committed one (the DMR draft, or the submitted answers), while
+    // `[]` says the applicant removed every group. Collapsing the two would
+    // resurrect the last group anyone deleted.
+    outlierGroupsDraft: z.array(outlierGroup.partial()).optional(),
+    hasMinimumSetOutliers: z.boolean().optional(),
+    // Mirrored from the analysis result so the overview screen can read it —
+    // see the comment on BenchmarkVerdict.
+    benchmarkVerdict: z
+      .enum(['within', 'over', 'notComputable', 'unknown'])
+      .optional(),
+    adjustedGapPercent: z.number().optional(),
+    adjustedGapDirection: z.enum(['FEMALE', 'MALE', 'NONE']).optional(),
+    outlierPlanReviewed: z.boolean().optional(),
+  })
+  .superRefine((val, ctx) => {
+    // Explanations are only required when there's something to explain (a
+    // group with detected outliers) and the applicant hasn't postponed the
+    // improvement plan — the form hides these inputs in both other cases, so
+    // requiring them unconditionally would silently block submission.
+    if (val.postponed?.includes('yes')) return
+    val.outlierGroups?.forEach((group, i) => {
+      if (group.employeeOrdinals.length === 0) return
+      if (!group.reason) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'reason'],
+          params: messages.errors.required,
+        })
+      }
+      if (!group.action) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'action'],
+          params: messages.errors.required,
+        })
+      }
+      if (!group.remedyDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'remedyDate'],
+          params: messages.errors.required,
+        })
+        // The window is re-checked here, not just where the calendar is drawn:
+        // POSTPONED keeps a draft for 90 days, so a date that was valid when it
+        // was picked can be in the past by the time this runs.
+      } else if (!isRemedyDateInWindow(group.remedyDate, new Date())) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'remedyDate'],
+          params: messages.errors.remedyDateOutOfRange,
+        })
+      }
+      // No check for signatureName: the responsible party's name is optional.
+      // isOutlierGroupComplete omits it too — that rule gates the Continue
+      // button, so the two have to name the same fields.
+      if (!group.signatureRole) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['outlierGroups', i, 'signatureRole'],
+          params: messages.errors.required,
+        })
+      }
+    })
+  })
+  .optional()
+
+// criteria, subCriteria, employees, and roles live on the DMR draft report
+// (see utils/useDraftQuery.ts / useDraftSync.ts), never in applicationAnswers.
+// `progress` below is the one exception in spirit but not in kind: it holds no
+// DMR data, only a per-step "this reached the draft" marker used for navigation.
+export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((value) => value === true, {
+    params: messages.prerequisites.errors.approveExternalData,
+  }),
+  generalInformation: generalInformation.optional(),
+  chiefExecutive: chiefExecutive.optional(),
+  contactPerson: contactPerson.optional(),
+  period: period.optional(),
+  subsidiaries: subsidiaries.optional(),
+  salaryAnalysis: salaryAnalysis,
+  // Navigation-only signal (not mirrored DMR data): section visibility needs
+  // a synchronous update, but externalData writes don't reach the visibility
+  // reducer without a full refetch that would reset in-flight navigation.
+  hasPersonalCriteria: z.boolean().optional(),
+  // Navigation-only signals too (see ProgressPaths in utils/constants.ts): which
+  // report steps the applicant has completed, so a returning applicant resumes on
+  // the first step still to do instead of the Excel-import screen.
+  //
+  // Declared here because they have to be: an answer key absent from this schema
+  // is stripped when the answers are parsed, which would silently drop the
+  // markers on the way to the database.
+  //
+  // Only ever written `true`. The shell treats any value that is not `undefined`
+  // as answered, so a `false` marker would read as a completed step.
+  progress: z
+    .object({
+      dataEntry: z.literal(true),
+      criteria: z.literal(true),
+      subCriteria: z.literal(true),
+      employees: z.literal(true),
+      jobClassification: z.literal(true),
+      employeeClassification: z.literal(true),
+    })
+    .partial()
+    .optional(),
+})
+
+export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

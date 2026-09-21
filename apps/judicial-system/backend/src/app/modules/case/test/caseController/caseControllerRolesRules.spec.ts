@@ -2,7 +2,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -53,10 +52,6 @@ describe('CaseController - Transition rules', () => {
     districtCourtRegistrarTransitionRule,
     districtCourtAssistantTransitionRule,
   ])
-})
-
-describe('CaseController - Get all rules', () => {
-  verifyRolesRules(CaseController, 'getAll', [defenderRule])
 })
 
 describe('CaseController - Get by id rules', () => {

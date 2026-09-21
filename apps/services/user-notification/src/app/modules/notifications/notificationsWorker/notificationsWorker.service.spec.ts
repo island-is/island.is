@@ -474,7 +474,6 @@ describe('NotificationsWorkerService', () => {
   it('should not send email or push notification if recipient is deceased', async () => {
     await addToQueue(deceasedUser.nationalId)
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -1311,6 +1310,7 @@ describe('NotificationsWorkerService', () => {
       expect(smsService.sendSms).toHaveBeenCalledWith(
         userWithNoDelegations.mobilePhoneNumber,
         'Test SMS content',
+        { payer: undefined },
       )
     })
 
@@ -1337,6 +1337,7 @@ describe('NotificationsWorkerService', () => {
       expect(smsService.sendSms).toHaveBeenCalledWith(
         '+3546916391',
         'Test SMS content',
+        { payer: undefined },
       )
 
       const record = await notificationDeliveryModel.findOne({
@@ -1389,6 +1390,7 @@ describe('NotificationsWorkerService', () => {
       expect(smsService.sendSms).toHaveBeenCalledWith(
         '+3546916391',
         'Test SMS content',
+        { payer: undefined },
       )
 
       // Should NOT write a delivery record when the message has an error

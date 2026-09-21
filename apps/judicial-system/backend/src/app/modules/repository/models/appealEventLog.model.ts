@@ -9,7 +9,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { AppealEventType, UserRole } from '@island.is/judicial-system/types'
+import {
+  AppealEventType,
+  AppealOrigin,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
 import { Case } from './case.model'
@@ -145,6 +149,20 @@ export class AppealEventLog extends Model {
   @ApiProperty({ enum: AppealEventType })
   eventType!: AppealEventType
 
+  /**********
+   * Where an APPEALED event came from - the court record or a party filing
+   * directly. Optional because the other event types must leave it null - it
+   * means nothing for them. The appeal_event_log_appeal_origin_check constraint
+   * enforces exactly that: set on APPEALED, null on everything else.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AppealOrigin),
+  })
+  @ApiPropertyOptional({ enum: AppealOrigin })
+  appealOrigin?: AppealOrigin
+
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -157,9 +175,15 @@ export class AppealEventLog extends Model {
 
   /**********
    * Actor snapshot - the human who performed the event, captured at event
-   * time so the record survives prosecutor/defender reassignment. userRole is
-   * the actor's role; userId is the acting system user (null for defenders,
-   * who are not system users - national_id/user_name identify them instead).
+   * time so the record survives prosecutor/defender reassignment. userId is the
+   * acting system user (null for defenders, who are not system users -
+   * national_id/user_name identify them instead).
+   *
+   * userRole is the appellant's side, not necessarily the actor's role. For an
+   * out-of-court appeal the two coincide (the appellant performs it). For an
+   * in-court APPEALED event the party appeals but the court records it, so the
+   * actor snapshot is the confirming judge while userRole + defendantId /
+   * civilClaimantId identify who appealed.
    **********/
   @Column({
     type: DataType.ENUM,

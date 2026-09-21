@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsDate, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
 
 export class CreateBankTransferResponse {
   @IsString()
@@ -15,4 +15,13 @@ export class CreateBankTransferResponse {
   @IsDate()
   @ApiProperty()
   readonly expiresAt!: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({
+    description:
+      'True when the payer must complete onboarding before SCA can proceed. ' +
+      'The frontend should redirect to scaRedirectUrl in this case only.',
+  })
+  readonly onboardingRequired?: boolean
 }

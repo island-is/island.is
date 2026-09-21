@@ -66,6 +66,8 @@ const listTypePlaceholder = {
   },
 } as const
 
+const excludedOrganizations = ['65° ARTIC ehf.']
+
 export const List = ({
   item,
   dispatch,
@@ -104,6 +106,10 @@ export const List = ({
   const organizationsList = useMemo<FormSystemListItem[]>(
     () =>
       [...(organizationsData?.getOrganizations?.items ?? [])]
+        .filter(
+          (org: { title: string }) =>
+            !excludedOrganizations.includes(org.title),
+        )
         .sort((a: { title: string }, b: { title: string }) =>
           a.title.localeCompare(b.title, 'is'),
         )

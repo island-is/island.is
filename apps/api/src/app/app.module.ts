@@ -1,3 +1,7 @@
+// Loaded at runtime by @nestjs/apollo's Apollo driver via a dynamic require;
+// imported here so Nx keeps it in the generated production package.json.
+import '@as-integrations/express5'
+
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
@@ -59,6 +63,7 @@ import {
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
+import { DirectorateOfEqualityApplicationModule } from '@island.is/api/domains/directorate-of-equality-application'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
@@ -84,10 +89,6 @@ import { OpenDataModule } from '@island.is/api/domains/open-data'
 import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
-import {
-  WatsonAssistantChatConfig,
-  WatsonAssistantChatModule,
-} from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { QuestionnairesModule } from '@island.is/api/domains/questionnaires'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
@@ -316,6 +317,9 @@ const environment = getConfig
       baseApiUrl: environment.applicationSystem.baseApiUrl as string,
       formSystemBaseApiUrl: environment.formSystem.baseApiUrl as string,
     }),
+    DirectorateOfEqualityApplicationModule.register({
+      baseApiUrl: environment.applicationSystem.baseApiUrl as string,
+    }),
     LicenseServiceModule,
     DirectorateOfEqualityClientModule,
     DirectorateOfLabourModule,
@@ -358,7 +362,6 @@ const environment = getConfig
     LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
-    WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
     IcelandicMedicinesAgencyModule,
     AircraftRegistryModule,
@@ -507,7 +510,6 @@ const environment = getConfig
         SessionsApiClientConfig,
         PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
-        WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
         FinancialManagementAuthorityClientConfig,

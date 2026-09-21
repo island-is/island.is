@@ -15,8 +15,10 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
+  householdMembersOverviewTitle,
   mainFormAccessAgreementOverviewItems,
   mainFormAccessAgreementOverviewAttachments,
+  mainFormAccessAgreementOverviewTitle,
   incomeSectionOverviewItems,
   incomeNoTaxReturnOverviewItems,
   assetsDeclarationOverviewItems,
@@ -27,6 +29,7 @@ import {
   hasNonCustodyMinorsInHousehold,
   isTaxReturnFiled,
   isTaxReturnNotFiled,
+  hasHouseholdMembers,
 } from '../../utils/utils'
 
 export const overviewSection = buildSection({
@@ -61,14 +64,14 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'householdMembersOverview',
-          title: m.draftMessages.householdMembersSection.title,
+          title: householdMembersOverviewTitle,
           backId: 'householdMembersMultiField',
           items: householdMembersOverviewItems,
           attachments: householdMembersOverviewAttachments,
         }),
         buildOverviewField({
           id: 'mainFormAccessAgreementOverview',
-          title: m.draftMessages.accessAgreementSection.title,
+          title: mainFormAccessAgreementOverviewTitle,
           backId: 'accessAgreementMultiField',
           condition: (answers, externalData) => {
             if (!getValueViaPath<string>(answers, 'rentalAgreement.answer')) {
@@ -77,17 +80,11 @@ export const overviewSection = buildSection({
             if (!hasNonCustodyMinorsInHousehold(answers, externalData)) {
               return false
             }
-            const items = mainFormAccessAgreementOverviewItems(
-              answers,
-              externalData,
+            return (
+              mainFormAccessAgreementOverviewAttachments(answers, externalData)
+                .length > 0
             )
-            const attachments = mainFormAccessAgreementOverviewAttachments(
-              answers,
-              externalData,
-            )
-            return items.length > 0 || attachments.length > 0
           },
-          items: mainFormAccessAgreementOverviewItems,
           attachments: mainFormAccessAgreementOverviewAttachments,
         }),
         buildOverviewField({
@@ -130,10 +127,27 @@ export const overviewSection = buildSection({
           id: 'submit',
           title: m.draftMessages.overviewSection.submit,
           refetchApplicationAfterSubmit: true,
+          condition: hasHouseholdMembers,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
               name: m.draftMessages.overviewSection.submit,
+              type: 'primary',
+            },
+          ],
+        }),
+        /**
+         * If there are no household members, we show the applicant submit button.
+         */
+        buildSubmitField({
+          id: 'submit',
+          title: m.applicantSubmitMessages.submitButton,
+          refetchApplicationAfterSubmit: true,
+          condition: (answers) => !hasHouseholdMembers(answers),
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.applicantSubmitMessages.submitButton,
               type: 'primary',
             },
           ],

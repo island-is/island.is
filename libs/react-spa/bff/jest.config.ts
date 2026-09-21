@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'bff',
   preset: '../../../jest.preset.js',
   transform: {

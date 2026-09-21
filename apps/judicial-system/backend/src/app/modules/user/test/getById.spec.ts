@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingUserModule } from './createTestingUserModule'
 
-import { Institution, User } from '../../repository'
+import { User, UserRepositoryService } from '../../repository'
 
 interface Then {
   result: User
@@ -13,13 +13,14 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('UserController - Get by id', () => {
   const userId = uuid()
-  let mockUserModel: typeof User
+  let mockUserRepositoryService: UserRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { userModel, userController } = await createTestingUserModule()
+    const { userRepositoryService, userController } =
+      await createTestingUserModule()
 
-    mockUserModel = userModel
+    mockUserRepositoryService = userRepositoryService
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -38,16 +39,14 @@ describe('UserController - Get by id', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindByPk = mockUserModel.findByPk as jest.Mock
-      mockFindByPk.mockResolvedValueOnce(user)
+      const mockFindById = mockUserRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce(user)
 
       then = await givenWhenThen()
     })
 
     it('should return the user', () => {
-      expect(mockUserModel.findByPk).toHaveBeenCalledWith(userId, {
-        include: [{ model: Institution, as: 'institution' }],
-      })
+      expect(mockUserRepositoryService.findById).toHaveBeenCalledWith(userId)
       expect(then.result).toBe(user)
     })
   })

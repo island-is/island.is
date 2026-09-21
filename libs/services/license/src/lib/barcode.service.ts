@@ -4,7 +4,7 @@ import {
 } from '@island.is/clients/license-client'
 import { ConfigType } from '@nestjs/config'
 import { Inject, Injectable } from '@nestjs/common'
-import { Cache as CacheManager, Milliseconds } from 'cache-manager'
+import { Cache as CacheManager } from 'cache-manager'
 import { sign, VerifyOptions, verify } from 'jsonwebtoken'
 import { LICENSE_SERVICE_CACHE_MANAGER_PROVIDER } from './licenseCache.provider'
 import { LicenseConfig } from './license.config'
@@ -111,12 +111,16 @@ export class BarcodeService {
   }
 
   async getSessionCache(key: string): Promise<string | undefined> {
-    return this.cacheManager.get(`${BARCODE_ACTIVE_SESSION_KEY}:${key}`)
+    return (
+      (await this.cacheManager.get<string>(
+        `${BARCODE_ACTIVE_SESSION_KEY}:${key}`,
+      )) ?? undefined
+    )
   }
 
   async getCache<Type extends LicenseType>(
     key: string,
   ): Promise<BarcodeData<Type> | undefined> {
-    return this.cacheManager.get(key)
+    return (await this.cacheManager.get<BarcodeData<Type>>(key)) ?? undefined
   }
 }

@@ -85,18 +85,3 @@ export const NotifyApplicantOnAssigneeRejectApi = defineTemplateApi({
   triggerEvent: DefaultEvents.REJECT,
   throwOnError: true,
 })
-
-export const NotifyApplicantOnExtraDataRequestedApi = defineTemplateApi({
-  action: TemplateApiActions.notifyApplicantOnExtraDataRequested,
-  throwOnError: true,
-})
-
-export const NotifyApplicantOnApprovedByInstitutionApi = defineTemplateApi({
-  action: TemplateApiActions.notifyApplicantOnApprovedByInstitution,
-  throwOnError: true,
-})
-
-export const NotifyApplicantOnRejectedByInstitutionApi = defineTemplateApi({
-  action: TemplateApiActions.notifyApplicantOnRejectedByInstitution,
-  throwOnError: true,
-})

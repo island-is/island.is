@@ -1,8 +1,9 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import { mockJudgeQuery } from '../../utils/mocks'
-import { UserProvider } from '../UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
+
 import Logo from './Logo'
 
 describe('Logo', () => {

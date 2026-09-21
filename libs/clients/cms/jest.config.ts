@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-cms',
   preset: './jest.preset.js',
   rootDir: '../../..',

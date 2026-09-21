@@ -4,6 +4,9 @@ query GetHealthConversations(
   healthDirectorateHealthConversations(input: $input) {
     id
     title
+    organization {
+      ...HealthConversationOrganizationFragment
+    }
     lastSenderGroupName
     lastMessageSentAt
     isStarred

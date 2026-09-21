@@ -86,6 +86,9 @@ export class FieldSettings {
   hasDescription?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  isAddressRequired?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   isPhoneRequired?: boolean
 
   @Field(() => Boolean, { nullable: true })

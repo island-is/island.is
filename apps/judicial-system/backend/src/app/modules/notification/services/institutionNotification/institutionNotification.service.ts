@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
@@ -23,7 +22,7 @@ import { nowFactory } from '../../../../factories'
 import { InternalCaseService } from '../../../case'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
-import { Notification, type User } from '../../../repository'
+import { NotificationRepositoryService, type User } from '../../../repository'
 import { UserService } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -33,8 +32,7 @@ import { strings } from './institutionNotification.strings'
 @Injectable()
 export class InstitutionNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -46,7 +44,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
     private readonly userService: UserService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
       intlService,
       courtService,

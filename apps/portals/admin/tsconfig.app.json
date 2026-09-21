@@ -2,15 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
-    "types": [
-      "node",
-      "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts"
-    ]
+    "types": ["node"]
   },
   "files": [
     "../../../node_modules/@nx/react/typings/cssmodule.d.ts",
-    "../../../node_modules/@nx/react/typings/image.d.ts"
+    "../../../node_modules/@nx/react/typings/image.d.ts",
+    "../../../libs/shared/vite/asset-modules.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts",
@@ -21,7 +18,8 @@
     "**/*.test.js",
     "**/*.spec.jsx",
     "**/*.test.jsx",
-    "jest.config.ts"
+    "jest.config.ts",
+    "vite.config.ts"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

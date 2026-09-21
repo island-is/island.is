@@ -19,7 +19,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('nationalId is too short', () => {
@@ -38,7 +38,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('nationalId has non numeric value', () => {
@@ -57,7 +57,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('from year is too long', () => {
@@ -76,7 +76,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('to year is too long', () => {
@@ -95,7 +95,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('from month is too long', () => {
@@ -114,7 +114,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('to month is too long', () => {
@@ -133,7 +133,7 @@ describe('Direct tax payment request', () => {
             month: 711,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('from year is too short', () => {
@@ -152,7 +152,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
 
     test('to year is too short', () => {
@@ -171,7 +171,7 @@ describe('Direct tax payment request', () => {
             month: 7,
           },
         ),
-      ).toThrowError(PreconditionFailedException)
+      ).toThrow(PreconditionFailedException)
     })
   })
 })

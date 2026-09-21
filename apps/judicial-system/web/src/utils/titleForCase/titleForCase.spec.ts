@@ -1,10 +1,10 @@
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { createFormatMessage } from '../testHelpers.logic'
 import { titleForCase } from './titleForCase'
 
 describe('titleForCase', () => {

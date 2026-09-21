@@ -7,7 +7,11 @@ import {
   PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   CommentsInput,
   FormContentContainer,
@@ -20,7 +24,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const PoliceReport = () => {
@@ -48,7 +52,7 @@ export const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading
@@ -123,12 +127,20 @@ export const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() => {
-            handleNavigationTo(PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE)
-          }}
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () => {
+                handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
+                )
+              },
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

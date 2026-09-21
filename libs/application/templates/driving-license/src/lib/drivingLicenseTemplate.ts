@@ -118,6 +118,10 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseFeatureFlags.ALLOW_B_TEMP_REDESIGN
                     ],
+                  allowBFullRedesign:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_B_FULL_REDESIGN
+                    ],
                 })
               },
               write: 'all',

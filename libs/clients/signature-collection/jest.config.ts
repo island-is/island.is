@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-signature-collection',
   preset: '../../../jest.preset.js',
   globals: {},

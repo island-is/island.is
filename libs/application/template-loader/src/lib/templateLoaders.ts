@@ -27,6 +27,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: () =>
+    import(
+      '@island.is/application/templates/district-commissioners/driving-license'
+    ),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-assessment-approval'
@@ -100,6 +104,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-license-duplicate'
+    ),
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: () =>
+    import(
+      '@island.is/application/templates/district-commissioners/driving-license-additional'
     ),
   [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: () =>
     import(
@@ -293,6 +301,16 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/vmst/submit-documents'),
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: () =>
     import('@island.is/application/templates/vmst/confirm-travel'),
+  [ApplicationTypes.EQUALITY_REPORT]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-equality/equality-report'
+    ),
+  [ApplicationTypes.SALARY_REPORT]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-equality/salary-report'
+    ),
+  [ApplicationTypes.U2_CERTIFICATE]: () =>
+    import('@island.is/application/templates/vmst/u2-certificate'),
 }
 
 export default templates

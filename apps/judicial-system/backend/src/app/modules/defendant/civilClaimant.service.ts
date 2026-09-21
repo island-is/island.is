@@ -1,11 +1,10 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,7 +14,6 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  CaseState,
   CivilClaimantNotificationType,
   type User,
 } from '@island.is/judicial-system/types'
@@ -23,8 +21,10 @@ import {
 import { CourtService } from '../court'
 import {
   Case,
-  CaseDefendantPoliceCaseNumber,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CivilClaimant,
+  CivilClaimantRepositoryService,
 } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -32,10 +32,9 @@ import { DeliverResponse } from './models/deliver.response'
 @Injectable()
 export class CivilClaimantService {
   constructor(
-    @InjectModel(CivilClaimant)
-    private readonly civilClaimantModel: typeof CivilClaimant,
-    @InjectModel(CaseDefendantPoliceCaseNumber)
-    private readonly caseDefendantPoliceCaseNumberModel: typeof CaseDefendantPoliceCaseNumber,
+    private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
+    private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -44,10 +43,9 @@ export class CivilClaimantService {
     theCase: Case,
     transaction: Transaction,
   ): Promise<CivilClaimant> {
-    return this.civilClaimantModel.create(
-      { caseId: theCase.id },
-      { transaction },
-    )
+    return this.civilClaimantRepositoryService.create(theCase.id, {
+      transaction,
+    })
   }
 
   private addMessagesForUpdateCivilClaimantToQueue(
@@ -97,18 +95,12 @@ export class CivilClaimantService {
       return []
     }
 
-    const validLinks = await this.caseDefendantPoliceCaseNumberModel.findAll({
-      where: {
-        caseId,
-        policeCaseNumber: policeCaseNumbers,
-        defendantId: currentDefendantIds,
-      },
-    })
-
     const validDefendantIds = new Set(
-      validLinks
-        .map((link) => link.defendantId)
-        .filter((id): id is string => !!id),
+      await this.caseDefendantPoliceCaseNumberRepositoryService.findAssignedDefendantIds(
+        caseId,
+        policeCaseNumbers,
+        currentDefendantIds,
+      ),
     )
 
     return currentDefendantIds.filter((id) => validDefendantIds.has(id))
@@ -137,11 +129,12 @@ export class CivilClaimantService {
       }
     }
 
-    const [numberOfAffectedRows, civilClaimants] =
-      await this.civilClaimantModel.update(effectiveUpdate, {
-        where: { id: civilClaimant.id, caseId },
-        returning: true,
-      })
+    const { numberOfAffectedRows, civilClaimants } =
+      await this.civilClaimantRepositoryService.updateByIdAndCase(
+        civilClaimant.id,
+        caseId,
+        effectiveUpdate,
+      )
 
     if (numberOfAffectedRows > 1) {
       this.logger.error(
@@ -170,8 +163,8 @@ export class CivilClaimantService {
     civilClaimant: CivilClaimant,
     user: User,
   ): Promise<DeliverResponse> {
-    return this.courtService
-      .updateIndictmentCaseWithSpokespersonInfo(
+    try {
+      await this.courtService.updateIndictmentCaseWithSpokespersonInfo(
         user,
         theCase.id,
         theCase.court?.name,
@@ -179,26 +172,41 @@ export class CivilClaimantService {
         civilClaimant.nationalId,
         civilClaimant.name,
         civilClaimant.spokespersonNationalId,
+        civilClaimant.spokespersonName,
         civilClaimant.spokespersonIsLawyer,
       )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
-          { reason },
-        )
 
-        return { delivered: false }
-      })
+      return { delivered: true }
+    } catch (reason) {
+      this.logger.error(
+        `Failed to update civil claimant info for civil claimant ${civilClaimant.id} of indictment case ${theCase.id}`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
-  async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
-    const numberOfAffectedRows = await this.civilClaimantModel.destroy({
-      where: {
-        id: civilClaimantId,
+  // A civil claimant's files go with the claimant, so they are deleted first in
+  // the same transaction - the delete of the claimant would otherwise fail on
+  // the case file foreign key.
+  async delete(
+    caseId: string,
+    civilClaimantId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    await this.caseFileRepositoryService.deleteAllForCivilClaimant(
+      caseId,
+      civilClaimantId,
+      { transaction },
+    )
+
+    const numberOfAffectedRows =
+      await this.civilClaimantRepositoryService.deleteByIdAndCase(
+        civilClaimantId,
         caseId,
-      },
-    })
+        { transaction },
+      )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -215,31 +223,13 @@ export class CivilClaimantService {
   }
 
   async deleteAll(caseId: string, transaction: Transaction): Promise<void> {
-    await this.civilClaimantModel.destroy({
-      where: { caseId },
-      transaction,
-    })
-  }
+    await this.caseFileRepositoryService.deleteAllForCivilClaimantsOfCase(
+      caseId,
+      { transaction },
+    )
 
-  findLatestClaimantBySpokespersonNationalId(
-    nationalId: string,
-  ): Promise<CivilClaimant | null> {
-    return this.civilClaimantModel.findOne({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: { [Op.not]: CaseState.DELETED },
-            isArchived: false,
-          },
-        },
-      ],
-      where: {
-        hasSpokesperson: true,
-        spokespersonNationalId: nationalId,
-      },
-      order: [['created', 'DESC']],
+    await this.civilClaimantRepositoryService.deleteAllForCase(caseId, {
+      transaction,
     })
   }
 }

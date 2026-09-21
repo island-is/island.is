@@ -5,8 +5,14 @@ import {
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getLandlordOptionsForSelectedContract } from './rentalAgreementUtils'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+
+export const formatDate = (date?: string | null) =>
+  date ? format(parseISO(date), 'dd-MM-yyyy') : ''
 
 export const isHouseholdMemberUnder18 = (
   _application: Application,
@@ -323,8 +329,18 @@ type PersonalTaxReturnData = {
 
 const getPersonalTaxReturnData = (
   externalData?: ExternalData,
+  nationalId?: string,
 ): PersonalTaxReturnData | undefined => {
-  const result = externalData?.getPersonalTaxReturn
+  if (!externalData) return undefined
+  const result = nationalId
+    ? getValueViaPath<{ status: 'success'; data: PersonalTaxReturnData }>(
+        externalData,
+        `${nationalId}.assigneeTaxReturn`,
+      )
+    : getValueViaPath<{ status: 'success'; data: PersonalTaxReturnData }>(
+        externalData,
+        'getPersonalTaxReturn',
+      )
   if (!result || result.status !== 'success') return undefined
   return result.data as PersonalTaxReturnData | undefined
 }
@@ -338,6 +354,16 @@ export const isTaxReturnNotFiled = (
   externalData?: ExternalData,
 ): boolean => {
   const data = getPersonalTaxReturnData(externalData)
+  if (!data) return false
+  return data.handedInLastFiveYears === false
+}
+
+export const isAssigneeTaxReturnNotFiled = (
+  _answers: FormValue,
+  externalData?: ExternalData,
+  user?: BffUser | null,
+): boolean => {
+  const data = getPersonalTaxReturnData(externalData, user?.profile?.nationalId)
   if (!data) return false
   return data.handedInLastFiveYears === false
 }
@@ -363,3 +389,7 @@ export const mustFileTaxReturnBeforeApplying = (
   if (!data) return false
   return data.handedInLastFiveYears === true && data.handedInLastYear === false
 }
+
+export const hasHouseholdMembers = (answers: FormValue): boolean =>
+  (getValueViaPath<number>(answers, 'householdMembersTableRepeater.length') ??
+    0) > 0

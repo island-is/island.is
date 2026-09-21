@@ -84,6 +84,15 @@ export class TableColumn {
 
   @Field(() => Number, { nullable: true })
   maxLength?: number
+
+  @Field(() => Boolean, { nullable: true })
+  decimal?: boolean
+
+  @Field({ nullable: true })
+  min?: string
+
+  @Field({ nullable: true })
+  max?: string
 }
 
 @ObjectType('QuestionnaireAnswerOption')

@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, RecordObject } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 
 export const getSumFromAnswers = <T = unknown>(
   answers: Application['answers'],

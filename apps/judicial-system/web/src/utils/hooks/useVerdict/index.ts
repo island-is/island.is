@@ -1,13 +1,14 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback, useMemo } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   Case,
   CreateVerdictsInput,
   Defendant,
   UpdateVerdictInput,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateVerdictsMutation } from './createVerdicts.generated'
 import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'
@@ -43,7 +44,11 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [],
   )
 
-  const [updateVerdictMutation] = useUpdateVerdictMutation()
+  // Verdict updates can move the case between case tables, so active
+  // case table membership queries - the breadcrumbs - must be refetched.
+  const [updateVerdictMutation] = useUpdateVerdictMutation({
+    refetchQueries: ['CaseTableMembership'],
+  })
   const [createVerdictsMutation] = useCreateVerdictsMutation()
 
   const createVerdicts = async (verdictsToCreate: CreateVerdictsInput) => {
@@ -55,7 +60,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
       })
 
       return Boolean(data)
-    } catch (error) {
+    } catch {
       toast.error('Upp kom villa við að uppfæra mál')
       return false
     }
@@ -71,7 +76,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra dóm')
         return false
       }
@@ -92,8 +97,8 @@ const useVerdict = (currentVerdict?: Verdict) => {
 
   const skip =
     !currentVerdict ||
-    !currentVerdict?.externalPoliceDocumentId ||
-    Boolean(currentVerdict?.serviceStatus)
+    !currentVerdict.externalPoliceDocumentId ||
+    Boolean(currentVerdict.serviceStatus)
   const {
     data,
     loading: verdictLoading,
@@ -119,7 +124,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
           variables: { input: { caseId } },
         })
         return result.data?.deliverCaseVerdict?.queued ?? false
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við senda dóm í birtingu')
         return false
       }

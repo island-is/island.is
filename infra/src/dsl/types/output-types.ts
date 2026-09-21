@@ -3,6 +3,8 @@ import {
   ServiceDefinition,
   ServiceDefinitionForEnv,
   PodDisruptionBudget,
+  RolloutStrategy,
+  GracefulShutdown,
 } from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
 
@@ -101,6 +103,8 @@ export interface HelmService {
         matches: { pathPrefix?: string; pathExact?: string }[]
         rewritePrefix?: string
       }[]
+      // Opt this route out of the gateway-wide Cognito OIDC wall.
+      noAuth?: boolean
     }
   }
 
@@ -125,6 +129,17 @@ export interface HelmService {
   pvcs?: OutputPersistentVolumeClaim[]
 
   podDisruptionBudget?: PodDisruptionBudget
+
+  strategy?: RolloutStrategy
+  minReadySeconds?: number
+  terminationGracePeriodSeconds?: number
+  lifecycle?: {
+    preStop?: {
+      exec: {
+        command: string[]
+      }
+    }
+  }
 
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean

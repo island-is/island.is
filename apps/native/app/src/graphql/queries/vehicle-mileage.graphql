@@ -19,15 +19,27 @@ query GetVehicleMileage($input: GetVehicleMileageInput!) {
 }
 
 mutation PostVehicleMileage($input: PostVehicleMileageInput!) {
-  vehicleMileagePost(input: $input) {
-    ...VehicleMileageDetailFragment
+  vehicleMileagePostV2(input: $input) {
+    ... on VehicleMileageDetail {
+      ...VehicleMileageDetailFragment
+    }
+    ... on VehiclesMileageUpdateError {
+      code
+      message
+    }
   }
 }
 
 mutation UpdateVehicleMileage($input: PutVehicleMileageInput!) {
-  vehicleMileagePut(input: $input) {
-    permno
-    internalId
-    mileage
+  vehicleMileagePutV2(input: $input) {
+    ... on VehicleMileagePutModel {
+      permno
+      internalId
+      mileage
+    }
+    ... on VehiclesMileageUpdateError {
+      code
+      message
+    }
   }
 }

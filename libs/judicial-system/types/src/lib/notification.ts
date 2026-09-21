@@ -21,6 +21,9 @@ export enum TrackedNotificationType {
   HEADS_UP = 'HEADS_UP',
   INDICTMENT_COMPLETED_FOR_SOME = 'INDICTMENT_COMPLETED_FOR_SOME',
   INDICTMENT_DENIED = 'INDICTMENT_DENIED',
+  INDICTMENT_REVIEW_ACCEPTED = 'INDICTMENT_REVIEW_ACCEPTED',
+  INDICTMENT_REVIEW_DENIED = 'INDICTMENT_REVIEW_DENIED',
+  INDICTMENT_SENT_FOR_REVIEW = 'INDICTMENT_SENT_FOR_REVIEW',
   INDICTMENT_SENT_TO_PRISON_ADMIN = 'INDICTMENT_SENT_TO_PRISON_ADMIN',
   INDICTMENT_SPLIT_COMPLETED = 'INDICTMENT_SPLIT_COMPLETED',
   INDICTMENT_VERDICT_INFO = 'INDICTMENT_VERDICT_INFO',
@@ -41,15 +44,15 @@ export enum TrackedNotificationType {
 
 export enum RequestCaseNotificationType {
   ADVOCATE_ASSIGNED = TrackedNotificationType.ADVOCATE_ASSIGNED,
-  CASE_FILES_UPDATED = TrackedNotificationType.CASE_FILES_UPDATED,
+  CASE_FILES_UPDATED = TrackedNotificationType.CASE_FILES_UPDATED, // Líka notað fyrir ákærur
   COURT_DATE = TrackedNotificationType.COURT_DATE,
   DEFENDANTS_NOT_UPDATED_AT_COURT = TrackedNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   HEADS_UP = TrackedNotificationType.HEADS_UP,
   MODIFIED = TrackedNotificationType.MODIFIED,
-  READY_FOR_COURT = TrackedNotificationType.READY_FOR_COURT,
-  RECEIVED_BY_COURT = TrackedNotificationType.RECEIVED_BY_COURT,
-  REVOKED = TrackedNotificationType.REVOKED,
-  RULING = TrackedNotificationType.RULING,
+  READY_FOR_COURT = TrackedNotificationType.READY_FOR_COURT, // Líka notað fyrir ákærur
+  RECEIVED_BY_COURT = TrackedNotificationType.RECEIVED_BY_COURT, // Líka notað fyrir ákærur
+  REVOKED = TrackedNotificationType.REVOKED, // Líka notað fyrir ákærur
+  RULING = TrackedNotificationType.RULING, // Líka notað fyrir ákærur
 }
 
 export enum IndictmentCaseNotificationType {
@@ -59,6 +62,9 @@ export enum IndictmentCaseNotificationType {
   DISTRICT_COURT_REGISTRAR_ASSIGNED = TrackedNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
   DRIVING_LICENSE_SUSPENSION = TrackedNotificationType.DRIVING_LICENSE_SUSPENSION,
   INDICTMENT_DENIED = TrackedNotificationType.INDICTMENT_DENIED,
+  INDICTMENT_REVIEW_ACCEPTED = TrackedNotificationType.INDICTMENT_REVIEW_ACCEPTED,
+  INDICTMENT_REVIEW_DENIED = TrackedNotificationType.INDICTMENT_REVIEW_DENIED,
+  INDICTMENT_SENT_FOR_REVIEW = TrackedNotificationType.INDICTMENT_SENT_FOR_REVIEW,
   INDICTMENT_REOPENED = TrackedNotificationType.INDICTMENT_REOPENED,
   INDICTMENT_SPLIT_COMPLETED = TrackedNotificationType.INDICTMENT_SPLIT_COMPLETED,
   INDICTMENT_VERDICT_INFO = TrackedNotificationType.INDICTMENT_VERDICT_INFO,

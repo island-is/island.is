@@ -12,26 +12,49 @@ import {
   Box,
   SkeletonLoader,
   Tabs,
+  Tag,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { OverviewTable } from './OverviewTable'
-import { ApplicantOverview } from './ApplicantOverview'
+import {
+  OverviewTable,
+  RowTagRenderer,
+} from '../../../components/shared/OverviewTable'
+import { ApplicantOverview } from '../../../components/shared/ApplicantOverview'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActionButtons } from '../components/ActionButtons'
+import { useGetApplicantAvailableActionsQuery } from '../MyData/MyData.generated'
+import { getJobSearchConfirmationDateRange } from './jobSearchConfirmation'
 
 // Atvinnuleysi – Staðan þín
 const Status = () => {
   useNamespaces('sp.social-benefits-unemployment')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage, locale, lang } = useLocale()
   const { isMobile } = useIsMobile()
   const { data, loading, error } = useGetUnemploymentApplicationOverviewQuery({
     variables: { locale },
   })
+  const { data: actionsData, loading: actionsLoading } =
+    useGetApplicantAvailableActionsQuery()
 
   const overview = data?.vmstApplicationsUnemploymentApplicationOverview
-  const availableActions = overview?.availableActions
+  const availableActions = actionsData?.vmstApplicantAvailableActions
   const jobSearchConfirmationStatus = overview?.jobSearchConfirmationStatus
   const hasData = !!overview?.unemploymentApplicationId
+
+  const dateRangeLabel = formatMessage(um.jobSearchConfirmationNextDate, {
+    dateRange: getJobSearchConfirmationDateRange(lang),
+  }) as string
+
+  const getExtraRowTag = (
+    key: string | null | undefined,
+  ): RowTagRenderer | undefined =>
+    key === 'last-job-search-confirmation-date'
+      ? () => (
+          <Tag variant="blue" outlined disabled>
+            {dateRangeLabel}
+          </Tag>
+        )
+      : undefined
 
   if (!loading && error) {
     return (
@@ -77,10 +100,16 @@ const Status = () => {
       }}
       loading={loading}
     >
-      <ActionButtons
-        availableActions={availableActions ?? undefined}
-        loading={loading}
-      />
+      {actionsLoading ? (
+        <Box marginBottom={4}>
+          <SkeletonLoader height={32} width={200} />
+        </Box>
+      ) : (
+        <ActionButtons
+          availableActions={availableActions ?? undefined}
+          loading={actionsLoading}
+        />
+      )}
       {!loading && jobSearchConfirmationStatus?.canConfirm === true && (
         <Box marginBottom={4}>
           <ActionCard
@@ -135,6 +164,7 @@ const Status = () => {
                 applicationStatusName={overview?.applicationStatusName}
                 applicationStatus={overview?.applicationStatus}
                 dataRequested={overview?.dataRequested}
+                getExtraRowTag={getExtraRowTag}
               />
             ),
           },
@@ -143,7 +173,26 @@ const Status = () => {
             label: formatMessage(
               isMobile ? um.statusTabApplicantMobile : um.statusTabApplicant,
             ),
-            content: <ApplicantOverview />,
+            content: (
+              <ApplicantOverview
+                fields={[
+                  'passCode',
+                  'preferredJobs',
+                  'bankAccount',
+                  'union',
+                  'pensionFund',
+                  'usedPersonalTaxCredit',
+                  'numberOfChildren',
+                  'employmentHistory',
+                  'educationHistory',
+                  'drivingLicenses',
+                  'languageAbilities',
+                  'serviceArea',
+                  'currentAddressDifferent',
+                  'savedToEures',
+                ]}
+              />
+            ),
           },
         ]}
       />

@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'nest-core',
   preset: '../../../jest.preset.js',
   globals: {},

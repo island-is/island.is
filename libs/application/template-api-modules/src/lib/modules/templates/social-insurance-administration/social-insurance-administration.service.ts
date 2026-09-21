@@ -6,7 +6,11 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import { getApplicationExternalData as getMARPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import {
+  errorMessages as marpErrorMessages,
+  getApplicationExternalData as getMARPApplicationExternalData,
+  getIncompleteAnswerSections,
+} from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employment,
@@ -28,6 +32,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
@@ -505,6 +510,33 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       application.typeId ===
       ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
     ) {
+      // The application system does not validate answers against the full
+      // data schema when an application is submitted, so a SUBMIT event fired
+      // against a draft that was never filled in (e.g. a duplicate submit
+      // event from the prerequisites step) would send an empty application
+      // to Tryggingastofnun. Make sure the sections that every applicant
+      // must complete are present before anything is sent.
+      const incompleteSections = getIncompleteAnswerSections(
+        application.answers,
+      )
+
+      if (incompleteSections.length > 0) {
+        this.logger.warn(
+          `[medical-and-rehabilitation-payments] Stopped submission of incomplete application ${
+            application.id
+          }, missing or invalid answer sections: ${incompleteSections.join(
+            ', ',
+          )}`,
+        )
+        throw new TemplateApiError(
+          {
+            title: marpErrorMessages.applicationIncompleteTitle,
+            summary: marpErrorMessages.applicationIncompleteSummary,
+          },
+          400,
+        )
+      }
+
       const marpDTO =
         transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
 

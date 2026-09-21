@@ -22,6 +22,11 @@ export const assigneeDraftOverview = defineMessages({
     defaultMessage: 'Eignayfirlýsing',
     description: 'Assignee overview asset declaration title',
   },
+  incomeDeclarationTitle: {
+    id: 'hb.application:assigneeDraft.overview.incomeDeclarationTitle',
+    defaultMessage: 'Upplýsingar um tekjur',
+    description: 'Assignee overview income declaration title',
+  },
   ownsAssets: {
     id: 'hb.application:assigneeDraft.overview.ownsAssets',
     defaultMessage: 'Á eignir',
@@ -46,6 +51,11 @@ export const assigneeDraftOverview = defineMessages({
     id: 'hb.application:assigneeDraft.overview.addressMatchTitle',
     defaultMessage: 'Lögheimili',
     description: 'Assignee overview address match title',
+  },
+  incomeDeclarationDescription: {
+    id: 'hb.application:assigneeDraft.overview.incomeDeclarationDescription',
+    defaultMessage: 'Lýsing á tekjum',
+    description: 'Assignee overview income declaration description',
   },
   addressMatchStatus: {
     id: 'hb.application:assigneeDraft.overview.addressMatchStatus',
@@ -227,5 +237,32 @@ export const assigneeDraft = defineMessages({
     id: 'hb.application:assigneeDraft.validationAssetDeclerationTextFieldRequired',
     defaultMessage: 'Vinsamlegast fylltu út eignayfirlýsingu',
     description: 'Assignee draft asset declaration text field required',
+  },
+  incomeDeclarationTitle: {
+    id: 'hb.application:assigneeDraft.incomeDeclarationTitle',
+    defaultMessage: 'Upplýsingar um tekjur',
+    description: 'Assignee draft income declaration section title',
+  },
+  incomeDeclarationMultiFieldTitle: {
+    id: 'hb.application:assigneeDraft.incomeDeclarationMultiFieldTitle',
+    defaultMessage: 'Lýsing á tekjum',
+    description: 'Assignee draft income declaration multi field title',
+  },
+  incomeDeclarationDescription: {
+    id: 'hb.application:assigneeDraft.incomeDeclarationDescription',
+    defaultMessage:
+      'Skattframtali fyrir síðasta ár hefur ekki verið skilað. Til að halda áfram þarf að gefa upp upplýsingar um tekjur.',
+    description: 'Assignee draft income declaration description',
+  },
+  incomeDeclarationDescription2: {
+    id: 'hb.application:assigneeDraft.incomeDeclarationDescription2',
+    defaultMessage:
+      'Vinsamlegast lýstu þínum tekjum og aðstæðum. Þetta geta til dæmis verið launatekjur, verktakagreiðslur, erlendar tekjur, bætur eða aðrar tekjur.',
+    description: 'Assignee draft income declaration description 2',
+  },
+  incomeDeclarationTextFieldDescription: {
+    id: 'hb.application:assigneeDraft.incomeDeclarationTextFieldDescription',
+    defaultMessage: 'Vinsamlegast lýstu þínum tekjum og aðstæðum.',
+    description: 'Assignee draft income declaration text field description',
   },
 })

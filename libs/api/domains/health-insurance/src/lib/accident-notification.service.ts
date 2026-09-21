@@ -77,10 +77,22 @@ export class AccidentNotificationService {
       reportId: ihiDocumentID,
     })
 
-    if (!accidentStatus) return null
+    if (!accidentStatus || accidentStatus.success === false) {
+      this.logger.warn(
+        `Accident report status lookup did not succeed for id ${ihiDocumentID}`,
+      )
+      return null
+    }
+
+    const status = accidentStatus.status
+      ? mapStatus(accidentStatus.status)
+      : undefined
+
+    if (!status) return null
+
     return {
       numberIHI: accidentStatus.requestId,
-      status: accidentStatus.status ? mapStatus(accidentStatus.status) : '',
+      status,
       receivedAttachments: accidentStatus.attachments
         ?.map((x) => ({
           [mapAttachmentType(x.type)]: !!x.received,

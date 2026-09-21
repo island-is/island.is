@@ -6,7 +6,7 @@ import {
   PieChart,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
+  TooltipContentProps,
 } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
@@ -19,7 +19,7 @@ import {
 } from '../sharedChartComponents'
 import * as styles from './SimplePieChart.css'
 
-interface CustomTooltipProps extends TooltipProps<string, number> {
+type CustomTooltipProps = Partial<TooltipContentProps<string, number>> & {
   sum: number
 }
 
@@ -74,8 +74,8 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
     0,
   )
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={10} height={10}>
+    <ResponsiveContainer width="100%" height={280}>
+      <PieChart>
         {legendOn && <Legend iconType="circle" content={<RenderLegend />} />}
         <Pie
           dataKey={datakey}

@@ -19,8 +19,11 @@ import { Typography } from '../typography/typography'
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'
 
+export type AlertSize = 'default' | 'small'
+
 interface AlertProps {
   type: AlertType
+  size?: AlertSize
   title?: string
   message?: string
   style?: any
@@ -41,6 +44,7 @@ interface HostProps {
   borderColor: Colors
   hasBorder?: boolean
   hasBottomBorder?: boolean
+  size: AlertSize
 }
 
 type VariantStyle = {
@@ -66,7 +70,8 @@ const darkBackgroundColor = (color: string, colors: any) => {
 }
 
 const Host = styled.View<HostProps>`
-  padding: ${({ theme }) => theme.spacing[2]}px;
+  padding: ${({ theme, size }) =>
+    size === 'small' ? theme.spacing[1] : theme.spacing[2]}px;
 
   border-style: solid;
   border-color: ${dynamicColor((props) => ({
@@ -105,8 +110,9 @@ const Content = styled.View`
   flex: 1;
 `
 
-const Title = styled(Typography)`
-  margin-bottom: 4px;
+// Transient `$size` so it isn't forwarded to Typography's own `size` (fontSize).
+const Title = styled(Typography)<{ $size: AlertSize }>`
+  margin-bottom: ${({ $size }) => ($size === 'small' ? '2px' : '4px')};
 `
 
 const Close = styled(TouchableOpacity)`
@@ -148,6 +154,7 @@ export function Alert({
   title,
   message,
   type,
+  size = 'default',
   hideIcon = false,
   visible = true,
   onClose,
@@ -160,6 +167,8 @@ export function Alert({
   const theme = useTheme()
   const [hidden, setHidden] = useState<boolean>()
   const variant = variantStyles[type]
+  const isSmall = size === 'small'
+  const iconSize = isSmall ? 24 : 32
 
   useEffect(() => {
     if (typeof hidden !== 'undefined') {
@@ -184,6 +193,7 @@ export function Alert({
       borderColor={variant.borderColor}
       hasBorder={hasBorder}
       hasBottomBorder={hasBottomBorder}
+      size={size}
       {...rest}
     >
       <Container>
@@ -192,9 +202,9 @@ export function Alert({
             <Image
               source={variant.icon}
               style={{
-                width: 32,
-                height: 32,
-                marginRight: 16,
+                width: iconSize,
+                height: iconSize,
+                marginRight: isSmall ? 8 : 16,
               }}
             />
           </Icon>
@@ -202,7 +212,11 @@ export function Alert({
 
         {(message || title) && (
           <Content>
-            {title && <Title variant="heading5">{title}</Title>}
+            {title && (
+              <Title variant={isSmall ? 'eyebrow' : 'heading5'} $size={size}>
+                {title}
+              </Title>
+            )}
             {message && <Typography variant="body3">{message}</Typography>}
           </Content>
         )}

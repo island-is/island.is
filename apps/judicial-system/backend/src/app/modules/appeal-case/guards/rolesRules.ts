@@ -1,11 +1,19 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
-  isIndictmentCase,
+  AppealCaseType,
+  isProsecutionUser,
+  type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, Case, User } from '../../repository'
+import { AppealCase, Case } from '../../repository'
+import {
+  canWithdrawCaseLevelAppeal,
+  hasStandingVerdictAppeal,
+  isInCourtRulingOrderAppeal,
+  userHasActiveInCourtAppeal,
+} from '../appealCase.helpers'
 import { UpdateAppealCaseDto } from '../dto/updateAppealCase.dto'
 
 const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
@@ -104,39 +112,14 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   dtoFields: prosecutorFields,
 }
 
-// Determines whether the prosecution is the appellant of the appeal case being
-// transitioned. Considers the current appeal case so both case-level and
-// ruling-order appeals are handled.
-const prosecutionAppealedAppealCase = (request: {
-  case?: Case
-  appealCase?: AppealCase
-}): boolean => {
-  const theCase = request.case
-  const appealCase = request.appealCase
-
-  if (!theCase || !appealCase) {
-    return false
-  }
-
-  // Ruling-order appeals (indictment cases) record the appellant on the appeal
-  // case itself: a defence national id means the defence appealed, so the
-  // absence of one means the prosecution is the appellant.
-  if (appealCase.rulingFileId) {
-    return !appealCase.appealedByNationalId
-  }
-
-  // Case-level appeals: the prosecution appealed iff the postponed appeal date
-  // was set on the case.
-  return Boolean(theCase.prosecutorPostponedAppealDate)
-}
-
-// Determines whether the given defender is the appellant of the appeal case
-// being transitioned. Considers the current appeal case so both case-level and
-// ruling-order appeals are handled.
-const defenderAppealedAppealCase = (request: {
+// Determines whether the user (prosecution or defence) is an appellant of the
+// appeal case being transitioned, and so may withdraw it. Handles case-level and
+// ruling-order, in-court and out-of-court appeals.
+const userAppealedAppealCase = (request: {
   user?: { currentUser?: User }
   case?: Case
   appealCase?: AppealCase
+  body?: { defendantId?: string }
 }): boolean => {
   const user = request.user?.currentUser
   const theCase = request.case
@@ -146,26 +129,40 @@ const defenderAppealedAppealCase = (request: {
     return false
   }
 
-  // Ruling-order appeals are only available on indictment cases, so only the
-  // specific defender who appealed (recorded on the appeal case) can withdraw.
-  if (appealCase.rulingFileId) {
-    return appealCase.appealedByNationalId === user.nationalId
-  }
-
-  // Deny withdrawal if the defence did not appeal the case
-  if (!theCase.accusedPostponedAppealDate) {
-    return false
-  }
-
-  // For indictment cases, only the specific defender who appealed can withdraw
+  // A verdict appeal is per defendant on both sides, so the prosecution is an
+  // appellant of the requested defendant's appeal, not of the case: the
+  // prosecution reviewer withdraws the prosecution's appeal regarding one
+  // defendant, and only where one stands. The defence rules for verdict appeals
+  // go through the per-party branch of userIsAppellant below.
   if (
-    isIndictmentCase(theCase.type) &&
-    appealCase.appealedByNationalId !== user.nationalId
+    appealCase.appealType === AppealCaseType.VERDICT &&
+    isProsecutionUser(user)
   ) {
-    return false
+    const defendantId = request.body?.defendantId
+
+    return Boolean(
+      defendantId &&
+        hasStandingVerdictAppeal(appealCase, defendantId, 'PROSECUTION'),
+    )
   }
 
-  return true
+  // In-court ruling-order appeals are per party and withdrawn on the decision
+  // row, which is the live state; the event log only catches up on confirmation.
+  // So authorize from the decision: the user's party appealed in court and has
+  // not already withdrawn.
+  if (
+    appealCase.rulingFileId &&
+    isInCourtRulingOrderAppeal(theCase, appealCase.rulingFileId)
+  ) {
+    return userHasActiveInCourtAppeal(theCase, appealCase.rulingFileId, user)
+  }
+
+  // Out-of-court and case-level appeals: the appellant is read from the APPEALED
+  // event log, resolved to the current representative (survives a defender swap).
+  // For request cases the defence cannot withdraw a shared appeal the prosecution
+  // also made (prosecution precedence), so authorize through canWithdraw... rather
+  // than plain userIsAppellant.
+  return canWithdrawCaseLevelAppeal(theCase, appealCase, user)
 }
 
 // Prosecutor transition rules
@@ -174,14 +171,14 @@ export const prosecutorTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => prosecutionAppealedAppealCase(request),
+  canActivate: (request) => userAppealedAppealCase(request),
 }
 export const prosecutorRepresentativeTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => prosecutionAppealedAppealCase(request),
+  canActivate: (request) => userAppealedAppealCase(request),
 }
 
 export const defenderTransitionRule: RolesRule = {
@@ -189,5 +186,26 @@ export const defenderTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
-  canActivate: (request) => defenderAppealedAppealCase(request),
+  canActivate: (request) => userAppealedAppealCase(request),
+}
+
+// Public prosecution office rules. The office registers verdict appeals that
+// reach it outside the system - by letter or email - and may withdraw them
+// again. It has no part in ruling appeals, so both rules are limited to verdict
+// appeals: on creation by the requested appeal type, on withdrawal by the type
+// of the appeal case being withdrawn.
+export const publicProsecutorStaffCreateRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'appealType',
+  dtoFieldValues: [AppealCaseType.VERDICT],
+}
+
+export const publicProsecutorStaffTransitionRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
+  canActivate: (request: { appealCase?: AppealCase }) =>
+    request.appealCase?.appealType === AppealCaseType.VERDICT,
 }
