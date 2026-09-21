@@ -3,14 +3,16 @@
  * Plans a distributed (Nx Agents) CI run for a pull request.
  *
  * Decides the single Nx command the main job should run and how many agents to
- * start (MIN_AGENTS..MAX_AGENTS), based on the number of tasks in the run. All
- * targets go in one command so Nx computes the project graph once and schedules
- * every task over the same pool of agents.
+ * start, based on the tasks in the run. All targets go in one command so Nx
+ * computes the project graph once and schedules every task over the same agents.
  * Mirrors the label/env handling of `_nx-affected-targets.sh` and
  * `generate-chunks.sh` so both pipelines select the same projects.
  *
+ * There are two types of agents (see `assignment-rules.yaml`): `judicial` agents only
+ * run tasks of judicial projects, `shared` agents run everything else.
+ *
  * Usage: node scripts/ci/nx-agents/plan.mjs
- * Writes `agents`, `agent-count`, `nx-args`, `targets`, `has-test` and `has-e2e` to $GITHUB_OUTPUT.
+ * Writes `agents`, `agent-count`, `nx-args`, `targets` and `unicorn-projects` to $GITHUB_OUTPUT.
  */
 import { execFileSync } from 'child_process'
 import { appendFileSync, mkdtempSync, readFileSync } from 'fs'
@@ -20,13 +22,32 @@ import { join } from 'path'
 const env = process.env
 const isTrue = (/** @type {string | undefined} */ v) => v === 'true'
 
-const MIN_AGENTS = parseInt(env.MIN_AGENTS || '1')
-const MAX_AGENTS = parseInt(env.MAX_AGENTS || '10')
 // Weighted task units a single agent is expected to handle
 const AGENT_CAPACITY = parseInt(env.AGENT_CAPACITY || '60')
 const NX_PARALLEL = env.NX_PARALLEL || '3'
 
-// Rough relative cost of a task per target, used to size the agent pool
+/**
+ * @typedef {'shared' | 'judicial'} AgentType
+ * @type {Record<AgentType, { min: number, max: number, runner: string }>}
+ */
+const AGENT_TYPES = {
+  shared: {
+    min: parseInt(env.MIN_AGENTS || '1'),
+    max: parseInt(env.MAX_AGENTS || '10'),
+    runner: env.SHARED_RUNNER || 'arc-shared',
+  },
+  judicial: {
+    min: parseInt(env.MIN_JUDICIAL_AGENTS || '1'),
+    max: parseInt(env.MAX_JUDICIAL_AGENTS || '2'),
+    runner: env.JUDICIAL_RUNNER || 'arc-shared',
+  },
+}
+// Same projects as the `*judicial*` glob in `assignment-rules.yaml`
+const JUDICIAL_PATTERN = /judicial/
+
+// Rough relative cost of a task per target, used to size the agent pools.
+// Targets that are only in the run as a dependency (codegen, ...) weigh 1
+/** @type {Record<string, number>} */
 const TARGET_WEIGHTS = { lint: 1, typecheck: 2, test: 3, build: 4, e2e: 6 }
 // Targets without a `ci` configuration fall back to their default one, so this only
 // turns on `ci` and `codeCoverage` for the jest targets (see `targetDefaults` in nx.json).
@@ -43,6 +64,9 @@ const CI_DEBUG_PROJECTS = [
   'island-ui-storybook',
 ]
 
+const tmpFile = (/** @type {string} */ name) =>
+  join(mkdtempSync(join(tmpdir(), 'nx-agents-')), name)
+
 /**
  * @param {string[]} args
  * @returns {string}
@@ -57,7 +81,7 @@ const nx = (args) =>
 
 /** @returns {Record<string, string[]>} project name -> target names */
 const getProjectTargets = () => {
-  const file = join(mkdtempSync(join(tmpdir(), 'nx-agents-')), 'graph.json')
+  const file = tmpFile('graph.json')
   nx(['graph', `--file=${file}`])
   const { graph } = JSON.parse(readFileSync(file, 'utf-8'))
   return Object.fromEntries(
@@ -67,6 +91,32 @@ const getProjectTargets = () => {
     ]),
   )
 }
+
+/**
+ * Every task of the command, including the ones that are only in the run as a dependency
+ * of another task. A task needs an agent of the right type or the run never finishes,
+ * so the agent pools are sized from this and not from the list of selected projects.
+ *
+ * @param {string[]} nxArgs
+ * @returns {{ project: string, target: string }[]}
+ */
+const getTasks = (nxArgs) => {
+  if (nxArgs.length === 0) return []
+  const file = tmpFile('tasks.json')
+  nx([...nxArgs, `--graph=${file}`])
+  const { tasks } = JSON.parse(readFileSync(file, 'utf-8'))
+  return Object.values(tasks.tasks).map((task) => task.target)
+}
+
+/** @returns {string[]} projects that must have tests, see the `unicorn-tests` job */
+const getUnicornProjects = () =>
+  JSON.parse(
+    execFileSync(
+      'node',
+      ['scripts/ci/unicorn-utils.mjs', 'show-unicorns', '--json'],
+      { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
+    ),
+  )
 
 const isEverythingAffected = () => {
   const branch = env.BRANCH || env.GITHUB_HEAD_REF || ''
@@ -84,15 +134,16 @@ const isEverythingAffected = () => {
 }
 
 /**
+ * @param {AgentType} type
  * @param {number} units weighted task units
  * @returns {number}
  */
-const agentCount = (units) =>
+const agentCount = (type, units) =>
   units === 0
     ? 0
     : Math.min(
-        MAX_AGENTS,
-        Math.max(MIN_AGENTS, Math.ceil(units / AGENT_CAPACITY)),
+        AGENT_TYPES[type].max,
+        Math.max(AGENT_TYPES[type].min, Math.ceil(units / AGENT_CAPACITY)),
       )
 
 const main = () => {
@@ -122,20 +173,15 @@ const main = () => {
   const debug = isTrue(env.CI_DEBUG) && !isTrue(env.TEST_EVERYTHING)
   const debugProjects = CI_DEBUG_PROJECTS.filter((p) => p in projectTargets)
   const projects = debug ? debugProjects : selected
+  const withTarget = (/** @type {string} */ target) =>
+    projects.filter((p) => projectTargets[p]?.includes(target))
 
   const skipWork = isTrue(env.SKIP_TESTS) || isTrue(env.DEPLOY_FEATURE)
-  /** @type {Record<string, number>} */
-  const counts = {}
   const targets = [
     'lint',
     'typecheck',
     ...(skipWork ? [] : ['build', 'test', 'e2e']),
-  ].filter((target) => {
-    counts[target] = projects.filter((p) =>
-      projectTargets[p]?.includes(target),
-    ).length
-    return counts[target] > 0
-  })
+  ].filter((target) => withTarget(target).length > 0)
   const nxArgs =
     targets.length === 0
       ? []
@@ -148,21 +194,40 @@ const main = () => {
           `--parallel=${NX_PARALLEL}`,
         ]
 
-  const units = Object.entries(counts).reduce(
-    (sum, [target, count]) => sum + count * TARGET_WEIGHTS[target],
-    0,
+  /** @type {Record<AgentType, { counts: Record<string, number>, units: number }>} */
+  const load = {
+    shared: { counts: {}, units: 0 },
+    judicial: { counts: {}, units: 0 },
+  }
+  for (const { project, target } of getTasks(nxArgs)) {
+    const pool = load[JUDICIAL_PATTERN.test(project) ? 'judicial' : 'shared']
+    pool.counts[target] = (pool.counts[target] ?? 0) + 1
+    pool.units += TARGET_WEIGHTS[target] ?? 1
+  }
+
+  // The `agents` job is a matrix of these. An agent only sets up what its tasks need
+  const agents = /** @type {AgentType[]} */ (Object.keys(AGENT_TYPES)).flatMap(
+    (type) =>
+      Array.from({ length: agentCount(type, load[type].units) }, (_, i) => ({
+        agent: `${type}-${i + 1}`,
+        type,
+        runner: AGENT_TYPES[type].runner,
+        test: (load[type].counts.test ?? 0) > 0,
+        e2e: (load[type].counts.e2e ?? 0) > 0,
+      })),
   )
-  const agents = agentCount(units)
+  const unicornProjects = targets.includes('test')
+    ? getUnicornProjects().filter((p) => withTarget('test').includes(p))
+    : []
 
   const outputs = {
-    agents: JSON.stringify(Array.from({ length: agents }, (_, i) => i + 1)),
-    'agent-count': agents,
+    agents: JSON.stringify(agents),
+    'agent-count': agents.length,
     'nx-args': JSON.stringify(nxArgs),
     targets: targets.join(','),
-    'has-test': (counts.test ?? 0) > 0,
-    'has-e2e': (counts.e2e ?? 0) > 0,
+    'unicorn-projects': unicornProjects.join(','),
   }
-  console.log({ everything, debug, counts, units, ...outputs })
+  console.log({ everything, debug, load, ...outputs })
   if (env.GITHUB_OUTPUT) {
     appendFileSync(
       env.GITHUB_OUTPUT,
@@ -172,18 +237,31 @@ const main = () => {
     )
   }
   if (env.GITHUB_STEP_SUMMARY) {
+    const allTargets = [
+      ...new Set([
+        ...Object.keys(load.shared.counts),
+        ...Object.keys(load.judicial.counts),
+      ]),
+    ].sort()
+    const count = (/** @type {AgentType} */ type) =>
+      agents.filter((agent) => agent.type === type).length
     appendFileSync(
       env.GITHUB_STEP_SUMMARY,
       [
-        `### Nx Agents plan: ${agents} agent(s)`,
+        `### Nx Agents plan: ${count('shared')} shared and ${count(
+          'judicial',
+        )} judicial agent(s)`,
         '',
-        '| Target | Projects |',
-        '| --- | --- |',
-        ...Object.entries(counts).map(
-          ([target, count]) => `| ${target} | ${count} |`,
+        '| Target | Shared tasks | Judicial tasks |',
+        '| --- | --- | --- |',
+        ...allTargets.map(
+          (target) =>
+            `| ${target} | ${load.shared.counts[target] ?? 0} | ${
+              load.judicial.counts[target] ?? 0
+            } |`,
         ),
         '',
-        `Weighted task units: ${units} (${AGENT_CAPACITY} per agent, ${MIN_AGENTS}-${MAX_AGENTS} agents)`,
+        `Weighted task units: ${load.shared.units} shared, ${load.judicial.units} judicial (${AGENT_CAPACITY} per agent)`,
         '',
       ].join('\n'),
     )
