@@ -9,6 +9,7 @@ import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
 import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
@@ -40,57 +41,61 @@ export const ConfirmAccessModal = ({
     useCreateAuthDelegationsMutation()
   const [patchAuthDelegation, { loading: patchLoading }] =
     usePatchAuthDelegationMutation()
-  const mutationLoading = createLoading || patchLoading
+  const [submitting, setSubmitting] = useState(false)
+  const mutationLoading = submitting || createLoading || patchLoading
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (onConfirm) {
       onConfirm()
-    } else {
-      const invalidScopes = selectedScopes.filter(
-        (scope) => !scope.domain?.name || !scope.validTo,
-      )
+      return
+    }
 
-      if (invalidScopes.length > 0) {
-        toast.error(formatMessage(coreMessages.somethingWrong))
-        return
+    const invalidScopes = selectedScopes.filter(
+      (scope) => !scope.domain?.name || !scope.validTo,
+    )
+
+    if (invalidScopes.length > 0) {
+      toast.error(formatMessage(coreMessages.somethingWrong))
+      return
+    }
+
+    if (submitting) return
+    setSubmitting(true)
+
+    const scopes = selectedScopes.map((scope) => ({
+      name: scope.name,
+      validTo: scope.validTo as Date,
+      domainName: scope.domain!.name,
+    }))
+
+    const deleteScopesByDelegation = new Map<string, string[]>()
+    for (const scope of removedScopes ?? []) {
+      if (!scope.delegationId) continue
+      const names = deleteScopesByDelegation.get(scope.delegationId) ?? []
+      names.push(scope.name)
+      deleteScopesByDelegation.set(scope.delegationId, names)
+    }
+
+    try {
+      for (const [delegationId, names] of deleteScopesByDelegation) {
+        await patchAuthDelegation({
+          variables: { input: { delegationId, deleteScopes: names } },
+        })
       }
 
-      const scopes = selectedScopes.map((scope) => ({
-        name: scope.name,
-        validTo: scope.validTo as Date,
-        domainName: scope.domain!.name,
-      }))
-
-      const deleteScopesByDelegation = new Map<string, string[]>()
-      for (const scope of removedScopes ?? []) {
-        if (!scope.delegationId) continue
-        const names = deleteScopesByDelegation.get(scope.delegationId) ?? []
-        names.push(scope.name)
-        deleteScopesByDelegation.set(scope.delegationId, names)
-      }
-
-      Promise.all([
-        ...Array.from(deleteScopesByDelegation, ([delegationId, names]) =>
-          patchAuthDelegation({
-            variables: { input: { delegationId, deleteScopes: names } },
-          }),
-        ),
-        createAuthDelegations({
-          variables: {
-            input: {
-              toNationalIds: identities.map((identity) => identity.nationalId),
-              scopes,
-            },
+      await createAuthDelegations({
+        variables: {
+          input: {
+            toNationalIds: identities.map((identity) => identity.nationalId),
+            scopes,
           },
-        }),
-      ])
-        .then(() => {
-          navigate(DelegationPaths.DelegationsNew)
-        })
-        .catch(() => {
-          toast.error(formatMessage(m.confirmError))
-          navigate(DelegationPaths.DelegationsNew)
-        })
+        },
+      })
+    } catch {
+      toast.error(formatMessage(m.confirmError))
+    } finally {
+      setSubmitting(false)
+      navigate(DelegationPaths.DelegationsNew)
     }
   }
 
