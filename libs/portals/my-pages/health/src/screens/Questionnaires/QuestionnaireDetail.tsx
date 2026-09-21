@@ -229,7 +229,7 @@ const QuestionnaireDetail: FC = () => {
           <InfoLine
             loading={loading}
             key="questionnaire-sent"
-            label={formatMessage(messages.date)}
+            label={formatMessage(messages.questionnaireSentDate)}
             content={
               questionnaire?.baseInformation.sentDate
                 ? formatDate(questionnaire?.baseInformation.sentDate)

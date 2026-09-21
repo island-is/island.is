@@ -12,6 +12,7 @@ import {
   Stack,
   Tabs,
   Text,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -179,6 +180,7 @@ const Questionnaires: FC = () => {
   const renderQuestionnaireList = (
     visible: QuestionnairesBaseItem[],
     emptyState: ReactNode,
+    isFiltered: boolean,
   ) => {
     if (loading) {
       return <CardLoader />
@@ -188,10 +190,24 @@ const Questionnaires: FC = () => {
         <Problem type="internal_service_error" noBorder={false} error={error} />
       )
     }
-    if (visible.length === 0) {
-      return emptyState
-    }
-    return <Stack space={3}>{visible.map(renderQuestionnaireCard)}</Stack>
+    return (
+      <>
+        {/* Always mounted so screen readers announce result changes */}
+        <Box role="status">
+          <VisuallyHidden>
+            {isFiltered &&
+              formatMessage(messages.numberOfQuestionnairesFound, {
+                number: visible.length,
+              })}
+          </VisuallyHidden>
+        </Box>
+        {visible.length === 0 ? (
+          emptyState
+        ) : (
+          <Stack space={3}>{visible.map(renderQuestionnaireCard)}</Stack>
+        )}
+      </>
+    )
   }
 
   const notFoundEmptyState = (
@@ -283,6 +299,7 @@ const Questionnaires: FC = () => {
                         align="left"
                         reverse
                         filterInputFluid
+                        mobileWrap={false}
                         labelClearAll={formatMessage(m.clearAllFilters)}
                         labelClear={formatMessage(m.clearFilter)}
                         labelOpen={formatMessage(m.openFilter)}
@@ -321,7 +338,11 @@ const Questionnaires: FC = () => {
                         </Box>
                       </Filter>
                     </Box>
-                    {renderQuestionnaireList(activeVisible, activeEmptyState)}
+                    {renderQuestionnaireList(
+                      activeVisible,
+                      activeEmptyState,
+                      !!searchQuery || statusFilter.length > 0,
+                    )}
                   </Box>
                 ),
               },
@@ -335,7 +356,11 @@ const Questionnaires: FC = () => {
                         {searchInput}
                       </Box>
                     )}
-                    {renderQuestionnaireList(expiredVisible, expiredEmptyState)}
+                    {renderQuestionnaireList(
+                      expiredVisible,
+                      expiredEmptyState,
+                      !!searchQuery,
+                    )}
                   </Box>
                 ),
               },

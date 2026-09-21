@@ -1,3 +1,4 @@
+import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -20,6 +21,7 @@ import {
   useDeleteMedicineDelegationMutation,
   useGetMedicineDelegationsQuery,
 } from './MedicineDelegation.generated'
+import { permitTagSelector } from '../../utils/tagSelector'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const MedicineDelegationDetail = () => {
@@ -47,11 +49,16 @@ const MedicineDelegationDetail = () => {
   const [deleteMedicineDelegation, { loading: deleteLoading }] =
     useDeleteMedicineDelegationMutation({
       refetchQueries: ['GetMedicineDelegations'],
+      awaitRefetchQueries: true,
     })
 
   const filteredData = data?.healthDirectorateMedicineDelegations?.items?.find(
     (item) => item.nationalId === id,
   )
+
+  const canDelete =
+    filteredData?.status === HealthDirectoratePermitStatus.active ||
+    filteredData?.status === HealthDirectoratePermitStatus.awaitingApproval
 
   const onSubmit = () => {
     deleteMedicineDelegation({
@@ -107,9 +114,9 @@ const MedicineDelegationDetail = () => {
           loading={loading}
           label={messages.status}
           content={
-            filteredData?.isActive
-              ? formatMessage(messages.valid)
-              : formatMessage(messages.invalid)
+            filteredData?.status
+              ? permitTagSelector(filteredData.status, formatMessage).label
+              : ''
           }
         />
         <InfoLine
@@ -123,10 +130,10 @@ const MedicineDelegationDetail = () => {
               : ''
           }
           button={
-            filteredData?.isActive
+            canDelete
               ? {
                   type: 'action',
-                  label: messages.invalidatePermit,
+                  label: messages.deleteDelegation,
                   action: () => setModalVisible(true),
                   variant: 'text',
                   icon: 'trash',
