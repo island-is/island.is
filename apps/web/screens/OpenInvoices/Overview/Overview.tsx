@@ -695,8 +695,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     addMonths(requestedDateTo, -1)
 
   const dateFromInput = requestedDateFrom > today ? today : requestedDateFrom
-  const maxFutureDate = addDays(today, MAX_DATE_RANGE_DAYS)
-  const toDateClamp = maxFutureDate < today ? maxFutureDate : today
+  const maxRangeEnd = addDays(dateFromInput, MAX_DATE_RANGE_DAYS)
+  const toDateClamp = maxRangeEnd < today ? maxRangeEnd : today
 
   let dateToInput = requestedDateTo
   if (dateToInput < dateFromInput) {
