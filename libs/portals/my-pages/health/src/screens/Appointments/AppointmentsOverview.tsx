@@ -19,6 +19,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { isPastAppointment } from '../../utils/appointments'
 import {
   DEFAULT_APPOINTMENTS_STATUS,
   PAST_APPOINTMENTS_STATUS,
@@ -60,9 +61,12 @@ const AppointmentsOverview = () => {
 
   const upcomingAppointments =
     upcoming.data?.healthDirectorateAppointments?.data ?? []
-  const pastAppointments = [
-    ...(past.data?.healthDirectorateAppointments?.data ?? []),
-  ].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+  const pastAppointments = (
+    past.data?.healthDirectorateAppointments?.data ?? []
+  )
+    // The query includes BOOKED, which also matches upcoming appointments
+    .filter(isPastAppointment)
+    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 
   const renderAppointmentList = (
     appointments: HealthDirectorateAppointment[],

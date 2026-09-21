@@ -1,0 +1,195 @@
+name: Test pre-release images (no deploy)
+
+# Rehearsal of the image part of a pre-release, for testing that a release can
+# reuse pre-release images (scripts/ci/docker/reuse-release-images.mjs).
+#
+# Add the 'test-pre-release' label to a pull request to build all images, like a
+# pre-release does, and push them with test- tags for a made up version.
+# Nothing is deployed and helm-values is not touched. When it has finished, add
+# the 'test-release' label to run test-release.yml against those images.
+
+on:
+  pull_request:
+    types:
+      - labeled
+  workflow_dispatch:
+    inputs:
+      projects:
+        description: 'Comma separated projects to build images for, instead of all'
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  NODE_OPTIONS: '--max-old-space-size=4096'
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  NX_MAX_PARALLEL: '4'
+  NODE_IMAGE_VERSION: 20
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  YARN_ENABLE_HARDENED_MODE: '0'
+  TEST_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  TEST_BRANCH: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  setup:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.label.name == 'test-pre-release' }}
+    runs-on: arc-shared
+    timeout-minutes: 30
+    outputs:
+      VERSION: ${{ steps.setup.outputs.VERSION }}
+      PRE_RELEASE_TAG: ${{ steps.setup.outputs.PRE_RELEASE_TAG }}
+      BUILD_CHUNKS: ${{ steps.chunks.outputs.BUILD_CHUNKS }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TEST_SHA }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Make up a pre-release
+        id: setup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: pre-release
+          TEST_PROJECTS: ${{ inputs.projects }}
+        run: node scripts/ci/docker/test-release-setup.mjs
+
+      - name: Prepare docker build targets
+        id: chunks
+        env:
+          PROJECTS: ${{ steps.setup.outputs.PROJECTS }}
+          UNBUILT_PROJECT: ${{ steps.setup.outputs.UNBUILT_PROJECT }}
+        run: |
+          if [[ -n "$PROJECTS" ]]; then
+            # Nothing is affected between a commit and itself, which leaves us
+            # with chunks for ADDITIONAL_PROJECTS only
+            export ADDITIONAL_PROJECTS="$PROJECTS" BASE="$TEST_SHA" HEAD="$TEST_SHA"
+          else
+            # All images, like a real pre-release and the release of it
+            export NX_AFFECTED_ALL=true
+          fi
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          # test-release.yml must also see an image that it can not reuse
+          CHUNKS="$(echo "$CHUNKS" | jq -cM --arg unbuilt "$UNBUILT_PROJECT" 'map(select(.projects != $unbuilt))')"
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ "$CHUNKS" == "[]" ]]; then
+            echo "No docker projects found in '$PROJECTS'"
+            exit 1
+          fi
+          echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
+
+  docker-build:
+    needs:
+      - setup
+    runs-on: arc-shared
+    timeout-minutes: 45
+    env:
+      # Same as docker-build in merge-queue.yml, but tagged like a pre-release
+      AFFECTED_ALL: ''
+      DOCKER_TAG: ${{ needs.setup.outputs.PRE_RELEASE_TAG }}
+      GIT_BRANCH: pre-release/${{ needs.setup.outputs.VERSION }}
+      GIT_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      PUBLISH: true
+      DISABLE_CHUNKS: true
+      MAX_JOBS: 3
+      NX_PARALLEL: 1
+      S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(needs.setup.outputs.BUILD_CHUNKS) }}
+    steps:
+      - name: Gather apps
+        env:
+          CHUNK: ${{ matrix.chunk }}
+        run: |
+          {
+            echo "AFFECTED_PROJECTS=$(echo "$CHUNK" | jq -r '.projects')"
+            echo "DOCKER_TYPE=$(echo "$CHUNK" | jq -r '.docker_type')"
+            echo "APP_HOME=$(echo "$CHUNK" | jq -r '.home')"
+            echo "APP_DIST_HOME=$(echo "$CHUNK" | jq -r '.dist')"
+          } >> "$GITHUB_ENV"
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TEST_SHA }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Prepare Docker build arguments
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: |
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          echo "$NX_CLOUD_ACCESS_TOKEN" > nx_cloud_access_token.txt
+          echo "EXTRA_DOCKER_BUILD_ARGS=${build_args[*]} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
+
+      - name: Check if cached buildx image exists
+        run: |
+          if ! docker pull ${{ vars.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{ vars.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
+            docker push ${{ vars.AWS_ECR_REPO_BASE }}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Building Docker images
+        run: |
+          echo "Building '${AFFECTED_PROJECTS}' as '${DOCKER_TAG}'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+
+  summary:
+    needs:
+      - setup
+      - docker-build
+    runs-on: arc-shared
+    steps:
+      - name: Summary
+        env:
+          VERSION: ${{ needs.setup.outputs.VERSION }}
+          PRE_RELEASE_TAG: ${{ needs.setup.outputs.PRE_RELEASE_TAG }}
+        run: |
+          {
+            echo "### Test pre-release \`${VERSION}\`"
+            echo "Images were pushed as \`${PRE_RELEASE_TAG}\`. Nothing was deployed."
+            echo
+            echo "Add the \`test-release\` label to the pull request to test releasing them."
+          } >> "$GITHUB_STEP_SUMMARY"
