@@ -74,6 +74,7 @@ jobs:
       nx-args: ${{ steps.plan.outputs.nx-args }}
       targets: ${{ steps.plan.outputs.targets }}
       unicorn-projects: ${{ steps.plan.outputs.unicorn-projects }}
+      ci-config-hash: ${{ steps.plan.outputs.ci-config-hash }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -139,7 +140,8 @@ jobs:
       - plan
     if: ${{ needs.plan.outputs.agent-count != '0' }}
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
+    # A pull request that changes the CI configuration runs every task of every project
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -147,6 +149,9 @@ jobs:
         include: ${{ fromJson(needs.plan.outputs.agents) }}
     env:
       NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agent-${{ matrix.agent }}-setup
+      # An input of every task, set when the pull request changes the CI configuration.
+      # See `scripts/ci/ci-config-hash.mjs`
+      CI_CONFIG_HASH: ${{ needs.plan.outputs.ci-config-hash }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -206,7 +211,8 @@ jobs:
     needs:
       - plan
     runs-on: arc-shared
-    timeout-minutes: 60
+    # A pull request that changes the CI configuration runs every task of every project
+    timeout-minutes: 90
     permissions:
       contents: 'read'
       actions: 'read'
@@ -215,6 +221,8 @@ jobs:
       NX_HEAD: ${{ needs.plan.outputs.NX_HEAD }}
       NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.plan.outputs.agent-count }}
       NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-main-setup
+      # Has to be the same as on the agents
+      CI_CONFIG_HASH: ${{ needs.plan.outputs.ci-config-hash }}
     outputs:
       failed-checks: ${{ steps.run.outputs.failed-checks }}
       failed-tasks: ${{ steps.run.outputs.failed-tasks }}

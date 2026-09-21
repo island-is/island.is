@@ -80,6 +80,7 @@ jobs:
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      CI_CONFIG_HASH: ${{ steps.ci_config.outputs.CI_CONFIG_HASH }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
     steps:
@@ -224,6 +225,16 @@ jobs:
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
+      # An input of every Nx task, which the CI configuration itself is not. A pull request that
+      # changes it builds every image without Nx cache hits, and the results don't end up in the
+      # Nx cache of anything else. See `scripts/ci/ci-config-hash.mjs`
+      - name: Check if the CI configuration is changed
+        id: ci_config
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          set -euo pipefail
+          echo "CI_CONFIG_HASH=$(node scripts/ci/ci-config-hash.mjs "$BASE" "$HEAD")" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -296,6 +307,8 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
+      # Passed on to the Nx build in the Docker build, see `scripts/ci/_docker.sh`
+      CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
       PUBLISH: true
       DISABLE_CHUNKS: true
       MAX_JOBS: 3

@@ -11,13 +11,18 @@
  * There are two types of agents (see `assignment-rules.yaml`): `judicial` agents only
  * run tasks of judicial projects, `shared` agents run everything else.
  *
+ * A pull request that changes the CI configuration runs every task of every project, without
+ * cache hits, to test the change. See `../ci-config-hash.mjs`.
+ *
  * Usage: node scripts/ci/nx-agents/plan.mjs
- * Writes `agents`, `agent-count`, `nx-args`, `targets` and `unicorn-projects` to $GITHUB_OUTPUT.
+ * Writes `agents`, `agent-count`, `nx-args`, `targets`, `unicorn-projects` and `ci-config-hash`
+ * to $GITHUB_OUTPUT.
  */
 import { execFileSync } from 'child_process'
 import { appendFileSync, mkdtempSync, readFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
+import { ciConfigHash } from '../ci-config-hash.mjs'
 
 const env = process.env
 const isTrue = (/** @type {string | undefined} */ v) => v === 'true'
@@ -154,8 +159,13 @@ const agentCount = (type, units) =>
       )
 
 const main = () => {
+  // Has to be in the environment before Nx is asked for the tasks below, and the main job and
+  // the agents get it from the output so all of them agree on the hashes of the tasks
+  const configHash = ciConfigHash(env.NX_BASE ?? '', env.NX_HEAD ?? '')
+  env.CI_CONFIG_HASH = configHash
+
   const projectTargets = getProjectTargets()
-  const everything = isEverythingAffected()
+  const everything = isEverythingAffected() || configHash !== ''
   const exclude = (env.GITHUB_BASE_REF || '').startsWith('release/')
     ? ['--exclude=judicial-*']
     : []
@@ -233,6 +243,7 @@ const main = () => {
     'nx-args': JSON.stringify(nxArgs),
     targets: targets.join(','),
     'unicorn-projects': unicornProjects.join(','),
+    'ci-config-hash': configHash,
   }
   console.log({ everything, debug, load, ...outputs })
   if (env.GITHUB_OUTPUT) {
@@ -259,6 +270,12 @@ const main = () => {
           'judicial',
         )} judicial agent(s)`,
         '',
+        ...(configHash === ''
+          ? []
+          : [
+              `The CI configuration is changed (\`${configHash}\`): every task of every project runs, without cache hits.`,
+              '',
+            ]),
         '| Target | Shared tasks | Judicial tasks |',
         '| --- | --- | --- |',
         ...allTargets.map(
