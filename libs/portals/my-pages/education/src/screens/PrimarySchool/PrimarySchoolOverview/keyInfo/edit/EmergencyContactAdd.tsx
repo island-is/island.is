@@ -89,8 +89,9 @@ export const EmergencyContactAdd = () => {
             isLoading={relationOptionsLoading}
             options={relationOptions}
             value={
-              relationOptions.find((option) => option.value === relationTypeId) ??
-              null
+              relationOptions.find(
+                (option) => option.value === relationTypeId,
+              ) ?? null
             }
             onChange={(option) => setRelationTypeId(option?.value ?? undefined)}
           />

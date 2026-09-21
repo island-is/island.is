@@ -71,9 +71,7 @@ export class PrimarySchoolKeyInfoResolver {
   }
 
   @Query(() => [Allergy], { nullable: true })
-  async primarySchoolAllergies(
-    @CurrentUser() user: User,
-  ): Promise<Allergy[]> {
+  async primarySchoolAllergies(@CurrentUser() user: User): Promise<Allergy[]> {
     const allergies = await this.keyInfoService.getAllergies(user)
     return allergies.map(mapAllergy)
   }

@@ -110,7 +110,9 @@ export const HealthProfileSection = ({ profile, loading, error }: Props) => {
           )}
           <InfoLine
             label={kim.medicalDiagnoses}
-            content={formatMessage(profile?.medicalDiagnoses ? kim.yes : kim.no)}
+            content={formatMessage(
+              profile?.medicalDiagnoses ? kim.yes : kim.no,
+            )}
             paddingY={3}
           />
           <Divider />

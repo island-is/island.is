@@ -134,7 +134,9 @@ export const usePrimarySchoolKeyInfo = (
   const [updateHealthMutation, updateHealthState] =
     usePrimarySchoolUpdateHealthProfileMutation()
 
-  const mapAgent = (agent: PrimarySchoolAgentFieldsFragment): EmergencyContact => ({
+  const mapAgent = (
+    agent: PrimarySchoolAgentFieldsFragment,
+  ): EmergencyContact => ({
     id: agent.id,
     name: agent.person.name,
     nationalId: agent.person.nationalId,
@@ -265,9 +267,7 @@ export const usePrimarySchoolKeyInfo = (
       error: toMmsError(languageQuery.error),
     },
     healthProfile: {
-      data: healthProfileData
-        ? mapHealthProfile(healthProfileData)
-        : undefined,
+      data: healthProfileData ? mapHealthProfile(healthProfileData) : undefined,
       loading: healthQuery.loading,
       error: toMmsError(healthQuery.error),
     },
