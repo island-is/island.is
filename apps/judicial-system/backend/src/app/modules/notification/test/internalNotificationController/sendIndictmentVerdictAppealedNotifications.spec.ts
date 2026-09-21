@@ -83,9 +83,7 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
     beforeEach(async () => {
       const mockGetInstitutionContact =
         mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
-      mockGetInstitutionContact.mockResolvedValueOnce(
-        'saksoknari@saksoknari.is',
-      )
+      mockGetInstitutionContact.mockResolvedValue('saksoknari@saksoknari.is')
 
       then = await givenWhenThen(theCase)
     })
@@ -107,7 +105,7 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
           to: [
             { name: 'Ríkissaksóknari', address: 'saksoknari@saksoknari.is' },
           ],
-          subject: `Áfrýjun í mál ${courtCaseNumber}`,
+          subject: `Áfrýjun í máli ${courtCaseNumber}`,
           html: `Dómi héraðsdóms í máli ${courtCaseNumber} hefur verið áfrýjað. Sjá nánar á yfirliti málsins í Réttarvörslugátt.`,
         }),
       )
@@ -127,7 +125,7 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
     beforeEach(async () => {
       const mockGetInstitutionContact =
         mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
-      mockGetInstitutionContact.mockResolvedValueOnce(null)
+      mockGetInstitutionContact.mockResolvedValue(null)
 
       then = await givenWhenThen(theCase)
     })
