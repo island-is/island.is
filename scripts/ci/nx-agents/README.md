@@ -30,6 +30,24 @@ distributed run is done.
   finds them in the output of the Nx command).
 - What `autofix` pushed, if anything: the commit and the files changed by lint and format.
 
+## Changes to the CI configuration
+
+The CI configuration (`.github/workflows/`, `.github/actions/` and `scripts/ci/`) is not an
+input of any Nx task, so changing it does not invalidate the Nx cache or make every app
+affected on `main`.
+
+A pull request that changes it sets `CI_CONFIG_HASH` (`../ci-config-hash.mjs`), which is an input of
+every task (`sharedGlobals` in `nx.json`). `plan.mjs` then runs every task of every project, and with
+hashes of their own they are not cache hits. That tests the change for real, and keeps the results
+out of the cache of everything else in case the change breaks the environment the tasks run in.
+Pushing again without changing the CI configuration gives the same hash, and cache hits.
+
+The build and deploy pipeline does the same for feature deployments: every image is built, and
+the hash is passed to the Nx build in the Docker build (`CI_CONFIG_HASH` build arg).
+
+To rebuild everything everywhere, e.g. after changing the `Dockerfile`, change
+`.github/actions/force-build.mjs`.
+
 ## Agent types and count
 
 There are two types of agents, see `assignment-rules.yaml`:

@@ -189,17 +189,16 @@
         "runtime": "node --version"
       }
     ],
-    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
-    "CI": [
-      "{workspaceRoot}/.github/actions/",
-      "{workspaceRoot}/.github/workflows/",
-      "{workspaceRoot}/**/.dockerignore"
-    ],
+    "DevOps": ["Dockerfiles"],
     "Dockerfiles": [
       "{workspaceRoot}/**/Dockerfile",
-      "{workspaceRoot}/**/Dockerfile.*"
+      "{workspaceRoot}/**/Dockerfile.*",
+      "{workspaceRoot}/**/.dockerignore"
     ],
     "sharedGlobals": [
+      {
+        "env": "CI_CONFIG_HASH"
+      },
       "{workspaceRoot}/infra/src/dsl/**/*",
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
