@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import { useApolloClient } from '@apollo/client'
 
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -12,11 +12,11 @@ import {
   AsyncFilterItem,
   AsyncFilterPage,
 } from '../components/AsyncFilterSearchAccordion'
+import { m } from '../messages'
 import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
 } from '../Overview/Overview.graphql'
-import { m } from '../messages'
 import { formatPaymentTypeGroupTooltip } from '../utils'
 
 const MAX_LOOKUP_BATCH = 100
@@ -199,7 +199,7 @@ export const useInvoicePaymentTypeGroupFilter = (
         }
         rememberGroups(results.flatMap((result) => result.groups))
       })
-      .catch(() => {})
+      .catch(() => undefined)
 
     return () => {
       cancelled = true
