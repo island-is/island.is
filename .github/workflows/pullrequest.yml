@@ -284,7 +284,9 @@ jobs:
           NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
 
   # Not Nx tasks of the distributed run: this job pushes commits to the pull request, and
-  # it needs no other job so the fixes are pushed (which restarts the pipeline) early
+  # it needs no other job so the fixes are pushed (which restarts the pipeline) early.
+  # The fixes are pushed as `format` or `lintfix` commits. The bot does not push the same kind
+  # twice in a row, so a fix that does not stick can't keep the pipeline restarting
   autofix:
     name: Autofix (lint, format) and shellcheck
     runs-on: arc-shared
@@ -324,36 +326,58 @@ jobs:
         if: ${{ !cancelled() }}
         uses: ./.github/actions/setup-yarn
 
-      # What can't be fixed fails the `lint` tasks of the distributed run, so it doesn't have to fail this job
-      - name: Lint fix
-        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        continue-on-error: true
-        # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
-        # and causes unintended lint changes when using a different commit
-        run: |
-          status=0
-          yarn nx affected -t lint --base="$BASE" --fix || status=$?
-          git diff --name-only | sort > "$RUNNER_TEMP/autofix-lint.txt"
-          exit "$status"
-
-      # After the lint fixes, so they are formatted as well
+      # Format first and push right away: formatting takes seconds, and the push starts a new run of
+      # this workflow (which cancels this one), so that is best done before the agents have started.
+      # Linting can take many minutes when a lot of projects are affected
       - name: Format
         if: ${{ !cancelled() }}
         run: |
           yarn nx format:write --base="$BASE"
-          touch "$RUNNER_TEMP/autofix-lint.txt"
-          git diff --name-only | sort | comm -13 "$RUNNER_TEMP/autofix-lint.txt" - > "$RUNNER_TEMP/autofix-format.txt"
+          git diff --name-only | sort > "$RUNNER_TEMP/autofix-format.txt"
 
-      # A single commit and push: the push starts a new run of this workflow, which cancels this one
-      - name: Push fixes
-        id: push
+      - name: Push format fixes
+        id: push-format
         if: ${{ !cancelled() }}
         env:
           DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
           DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
           before=$(git rev-parse HEAD)
-          node scripts/ci/docker/git-check-dirty.mjs "." "autofix" "dirtybot"
+          node scripts/ci/docker/git-check-dirty.mjs "." "format" "dirtybot"
+          after=$(git rev-parse HEAD)
+          if [[ "$before" != "$after" ]]; then
+            echo "sha=$after" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Not after a push of format fixes, the run that push started does it.
+      # What can't be fixed fails the `lint` tasks of the distributed run, so it doesn't have to fail this job
+      - name: Lint fix
+        if: ${{ !cancelled() && steps.push-format.outputs.sha == '' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        continue-on-error: true
+        # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
+        # and causes unintended lint changes when using a different commit
+        run: |
+          # Format fixes that the bot did not push (it does not push the same kind twice in a row) are not lint fixes
+          git checkout -- .
+          status=0
+          yarn nx affected -t lint --base="$BASE" --fix || status=$?
+          # Format the fixes, or the next run pushes format fixes for them
+          files=$(git diff --name-only | paste -sd, -)
+          if [[ -n "$files" ]]; then
+            yarn nx format:write --files="$files"
+          fi
+          git diff --name-only | sort > "$RUNNER_TEMP/autofix-lint.txt"
+          exit "$status"
+
+      - name: Push lint fixes
+        id: push-lint
+        if: ${{ !cancelled() && steps.push-format.outputs.sha == '' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        env:
+          DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
+          DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
+        run: |
+          before=$(git rev-parse HEAD)
+          node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
           after=$(git rev-parse HEAD)
           if [[ "$before" != "$after" ]]; then
             echo "sha=$after" >> "$GITHUB_OUTPUT"
@@ -361,14 +385,14 @@ jobs:
 
       # `always()` since the run is most likely cancelled by now
       - name: Comment what was pushed
-        if: ${{ always() && steps.push.outputs.sha != '' }}
+        if: ${{ always() && (steps.push-format.outputs.sha != '' || steps.push-lint.outputs.sha != '') }}
         continue-on-error: true
         run: node scripts/ci/nx-agents/pr-comment.mjs autofix
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          AUTOFIX_SHA: ${{ steps.push.outputs.sha }}
+          AUTOFIX_SHA: ${{ steps.push-lint.outputs.sha || steps.push-format.outputs.sha }}
           AUTOFIX_LINT_FILES: ${{ runner.temp }}/autofix-lint.txt
           AUTOFIX_FORMAT_FILES: ${{ runner.temp }}/autofix-format.txt
 

@@ -17,7 +17,9 @@ runs:
     - name: Setup Node (temporary override)
       uses: actions/setup-node@v4
       with:
-        node-version: 22
+        # The exact version of package.json, which is also the one of the Docker images: the
+        # version is an input of the Nx hashes (`nodeVersion` in nx.json)
+        node-version-file: package.json
 
     - name: Corepack
       shell: bash

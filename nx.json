@@ -104,11 +104,11 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "inputs": ["production", "^production"]
     },
     "e2e": {
       "dependsOn": [],
-      "inputs": ["production", "^production", "DevOps"],
+      "inputs": ["production", "^production"],
       "outputs": [],
       "cache": true
     },
@@ -164,12 +164,12 @@
     "@nx/next:build": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "inputs": ["production", "^production"]
     },
     "@nx/webpack:webpack": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "inputs": ["production", "^production"]
     },
     "@nx/expo:build": {
       "cache": true,
@@ -189,7 +189,6 @@
         "runtime": "node --version"
       }
     ],
-    "DevOps": ["Dockerfiles"],
     "Dockerfiles": [
       "{workspaceRoot}/**/Dockerfile",
       "{workspaceRoot}/**/Dockerfile.*",
@@ -211,6 +210,8 @@
       "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/**/Dockerfile?(.*)",
+      "!{projectRoot}/**/*-compose.y?(a)ml",
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
@@ -238,6 +239,7 @@
   "useInferencePlugins": false,
   "defaultBase": "main",
   "plugins": [
+    "./tools/nx-plugins/docker-build.js",
     {
       "plugin": "@nx/playwright/plugin",
       "options": {

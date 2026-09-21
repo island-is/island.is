@@ -81,6 +81,11 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       CI_CONFIG_HASH: ${{ steps.ci_config.outputs.CI_CONFIG_HASH }}
+      USE_AGENTS: ${{ steps.docker_agents.outputs.use-agents }}
+      DOCKER_AGENTS: ${{ steps.docker_agents.outputs.agents }}
+      DOCKER_AGENT_COUNT: ${{ steps.docker_agents.outputs.agent-count }}
+      DOCKER_NX_ARGS: ${{ steps.docker_agents.outputs.nx-args }}
+      DOCKER_PROJECTS: ${{ steps.docker_agents.outputs.projects }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
     steps:
@@ -254,6 +259,17 @@ jobs:
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
+      # The images of a feature deployment are built by Nx Agents (the `docker-agents` and
+      # `docker-main` jobs), everything else by the `docker-build` matrix
+      - name: Plan the Nx Agents that build the images
+        id: docker_agents
+        if: ${{ needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false' && steps.build_map.outputs.BUILD_CHUNKS }}
+        env:
+          BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+        run: |
+          node scripts/ci/nx-agents/plan-docker.mjs
+          echo "use-agents=true" >> "$GITHUB_OUTPUT"
+
       - name: Check if cached buildx image exists
         id: cache-check
         run: |
@@ -296,7 +312,7 @@ jobs:
       - prepare
     runs-on: arc-shared
     timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.USE_AGENTS != 'true'
     permissions:
       actions: read
       contents: read
@@ -438,6 +454,153 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
+  # The images of a feature deployment as one distributed Nx Cloud CI run, like the checks of a
+  # pull request: every image is a `docker-build` task, see `scripts/ci/nx-agents/README.md`
+  docker-agents:
+    name: Nx agent ${{ matrix.agent }}
+    needs:
+      - pre-checks
+      - prepare
+    if: needs.prepare.outputs.USE_AGENTS == 'true' && needs.prepare.outputs.DOCKER_AGENT_COUNT != '0'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # agent (name), type (shared/judicial), runner
+        include: ${{ fromJson(needs.prepare.outputs.DOCKER_AGENTS) }}
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agent-${{ matrix.agent }}-setup
+      # The environment of the `docker-build` tasks, see `scripts/ci/nx-agents/docker-build.sh`
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
+      CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
+      PUBLISH: true
+      NX_PARALLEL: 1
+      S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for deploy-feature label
+        uses: ./.github/actions/check-label
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Prepare Docker build arguments
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: |
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          echo "EXTRA_DOCKER_BUILD_ARGS=${build_args[*]}" >> "${GITHUB_ENV}"
+          # The secret of the Docker builds, see `scripts/ci/_docker.sh`
+          echo "$NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT" > nx_cloud_access_token.txt
+
+      # Not `start-agent.sh`: that is about the environment of lint, test, build and e2e tasks
+      - name: Start Nx agent
+        run: npx nx-cloud start-agent
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+          NX_AGENT_NAME: ${{ matrix.agent }}
+          # The agent type in `scripts/ci/nx-agents/assignment-rules.yaml`
+          NX_AGENT_LAUNCH_TEMPLATE: ${{ matrix.type }}
+
+      # What the tasks wrote about the images they built, for the `deploy-feature` job
+      - name: Upload image data
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+        with:
+          name: docker-build-data-${{ matrix.agent }}
+          path: dist/docker-build-data/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  docker-main:
+    name: Nx main job
+    needs:
+      - prepare
+    if: needs.prepare.outputs.USE_AGENTS == 'true'
+    runs-on: arc-shared
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: read
+    env:
+      NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
+      NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT }}
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-main-setup
+      CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      # "Re-run failed jobs" does not re-run the agents that succeeded
+      - name: Check that the agents are part of this attempt
+        if: ${{ github.run_attempt > 1 && needs.prepare.outputs.DOCKER_AGENT_COUNT != '0' }}
+        run: ./scripts/ci/nx-agents/check-agents.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_AGENTS: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT }}
+
+      # Completion is explicit (see the last step), like in the pull request pipeline
+      - name: Start distributed CI run
+        if: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT != '0' }}
+        run: >-
+          npx nx-cloud start-ci-run
+          --distribute-on="manual"
+          --assignment-rules="scripts/ci/nx-agents/assignment-rules.yaml"
+          --stop-agents-after="docker-build"
+          --require-explicit-completion
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+
+      - name: Build the Docker images on the agents
+        run: |
+          mapfile -t args < <(jq -r '.[]' <<<"$DOCKER_NX_ARGS")
+          yarn nx "${args[@]}"
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+          DOCKER_NX_ARGS: ${{ needs.prepare.outputs.DOCKER_NX_ARGS }}
+
+      # Agents wait for work until the run is completed, also when this job fails or is cancelled
+      - name: Complete CI run
+        if: ${{ always() && needs.prepare.outputs.DOCKER_AGENT_COUNT != '0' }}
+        run: npx nx-cloud complete-ci-run
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+
   helm-docker-build:
     needs:
       - prepare
@@ -511,7 +674,8 @@ jobs:
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
-      && needs.docker-build.result == 'success' }}
+      && (needs.docker-build.result == 'success'
+      || (needs.docker-main.result == 'success' && needs.docker-agents.result == 'success')) }}
     permissions:
       id-token: write
       contents: write
@@ -519,6 +683,8 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
+      - docker-agents
+      - docker-main
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -542,10 +708,19 @@ jobs:
         continue-on-error: false
 
       - name: Get docker-build output
+        if: ${{ needs.prepare.outputs.USE_AGENTS != 'true' }}
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
         with:
           matrix-step-name: docker-build
+
+      - name: Get the image data of the Nx agents
+        if: ${{ needs.prepare.outputs.USE_AGENTS == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: docker-build-data-*
+          path: docker-build-data
+          merge-multiple: true
 
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
@@ -568,11 +743,21 @@ jobs:
           ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
 
       - name: Prepare artifact to be uploaded
+        if: ${{ needs.prepare.outputs.USE_AGENTS != 'true' }}
         working-directory: monorepo
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
         run: |
           node scripts/ci/docker/write-data.mjs
+
+      # Fails if an image is missing, the agents only upload what was built
+      - name: Prepare artifact to be uploaded (Nx agents)
+        if: ${{ needs.prepare.outputs.USE_AGENTS == 'true' }}
+        working-directory: monorepo
+        env:
+          PROJECTS: ${{ needs.prepare.outputs.DOCKER_PROJECTS }}
+        run: |
+          node scripts/ci/nx-agents/merge-docker-build-data.mjs "$GITHUB_WORKSPACE/docker-build-data" "$PROJECTS"
 
       - name: Get manifest data
         id: manifest
@@ -622,6 +807,8 @@ jobs:
     needs:
       - pre-checks
       - docker-build
+      - docker-agents
+      - docker-main
       - deploy-feature
     steps:
       - name: Announce success

@@ -33,8 +33,13 @@ NODE_OPTIONS="--max-old-space-size=4096"
 API_MOCKS=true
 EOF
 
-# Same as `_common.sh`, which the pull request builds used before Nx Agents
-echo 'NODE_OPTIONS="--max-old-space-size=8192"' >.env.build
+# Same as the build in a Docker build (`scripts/ci/Dockerfile`). The builds here and there have the
+# same hash, so an image can be made from what was built (and cached) here
+cat >.env.build <<EOF
+NODE_OPTIONS="--max-old-space-size=8192"
+NODE_ENV=production
+EOF
+cp .env.build .env.build-custom-server
 
 # What the linting and typecheck jobs had before Nx Agents
 echo 'NODE_OPTIONS="--max-old-space-size=4096"' | tee .env.lint >.env.typecheck

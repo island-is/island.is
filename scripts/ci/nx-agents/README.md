@@ -8,7 +8,7 @@ distributed Nx Cloud CI run, on our own runners (`--distribute-on="manual"`).
 | `plan`    | `plan.mjs`: resolves labels to one `nx affected`/`run-many` command and sizes the agent pools                                                |
 | `agents`  | `start-agent.sh`: a matrix of agents that execute whatever tasks Nx Cloud hands them                                                         |
 | `main`    | `run.sh`: the quick workspace checks, then the one Nx command for lint, typecheck, build, test and e2e                                       |
-| `autofix` | Shellcheck, then `lint --fix` and `format:write` which are pushed to the pull request as one commit. Needs no other job, so it reports early |
+| `autofix` | Shellcheck, then `format:write` and `lint --fix`. Fixes are pushed to the pull request, format first since it takes seconds and a push restarts the pipeline. Needs no other job, so it reports early |
 | `success` | Collects the result and comments it on the pull request. This is the required status check, and how `ci-io.ts` finds the last good run       |
 
 If the pipeline itself is broken, revert the change that broke it: a pull request
@@ -47,6 +47,30 @@ the hash is passed to the Nx build in the Docker build (`CI_CONFIG_HASH` build a
 
 To rebuild everything everywhere, e.g. after changing the `Dockerfile`, change
 `.github/actions/force-build.mjs`.
+
+## Docker images of feature deployments
+
+`.github/workflows/push.yml` builds the images of a feature deployment the same way: `prepare`
+plans (`plan-docker.mjs`), `docker-agents` are the agents and `docker-main` runs one
+`nx run-many -t docker-build`. Everything else in that workflow (pre-releases) still builds the
+images in a matrix.
+
+- `docker-build` is a target that `tools/nx-plugins/docker-build.js` infers for every project with
+  a `docker-*` marker target. It runs `docker-build.sh`, which calls the same `scripts/ci/90_*.sh`
+  as the matrix does.
+- The target is not cached, so an agent builds one image at a time. It keeps its Docker builder
+  between builds, so the layers the images share are built once per agent.
+- An image that is already in the registry is not built again. The tag is the same for every
+  attempt of a workflow run, so this is what makes re-running jobs cheap.
+- Each task writes what it built to `dist/docker-build-data/`, the agent uploads that as an
+  artifact and `deploy-feature` merges it (`merge-docker-build-data.mjs`).
+
+The build in a Docker build (`nx build` in `scripts/ci/Dockerfile`) is meant to have the same hash
+as the same build on an agent of the pull request pipeline, so it is a cache hit when the pull
+request was built first. For that the inputs of a build must be the same in both places: the
+node version (`setup-yarn` reads it from package.json), `force-build.mjs` (kept in the build
+context by `.dockerignore`), `CI_CONFIG_HASH` (a build arg) and no files that `.dockerignore`
+leaves out (see `production` in nx.json).
 
 ## Agent types and count
 

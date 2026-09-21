@@ -73,7 +73,9 @@ ARG CI_CONFIG_HASH=""
 ENV CI_CONFIG_HASH=${CI_CONFIG_HASH}
 
 # Build with Nx Cloud caching. If credentials are missing or invalid, build will run without caching
+# The first line is what the runtime inputs of the Nx hashes see in here, to compare with a runner
 RUN --mount=type=secret,id=nx_cloud_access_token \
+  echo "node $(node --version), force-build: $(node .github/actions/force-build.mjs 2>&1 | tail -1), CI_CONFIG_HASH: '${CI_CONFIG_HASH}'" && \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
 # ------------------------------------------------
