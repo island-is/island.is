@@ -1,0 +1,16 @@
+# Which agent type runs which tasks, see `--assignment-rules` of `nx-cloud start-ci-run`.
+# An agent gets its type from NX_AGENT_LAUNCH_TEMPLATE, `plan.mjs` decides how many of each start.
+#
+# Both rules only match on project, so for a judicial project the first one wins.
+# Keep JUDICIAL_PATTERN in `plan.mjs` in sync with the glob.
+assignment-rules:
+  - projects:
+      - '*judicial*'
+    run-on:
+      - agent: judicial
+
+  # Without this, every other task could also end up on the judicial agents
+  - projects:
+      - '*'
+    run-on:
+      - agent: shared
