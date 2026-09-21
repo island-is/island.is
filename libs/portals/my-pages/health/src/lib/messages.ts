@@ -1955,8 +1955,8 @@ export const messages = defineMessages({
   },
   healthConversationsNewIntro: {
     defaultMessage:
-      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í <bold>1700</bold> eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í <bold>112</bold>.',
-    id: 'sp.health:health-messages-new-intro',
+      'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma. Ef erindið er brýnt og þarfnast svars samdægurs, hringdu í **1700** eða hafðu samband við þitt meðferðarteymi. Í neyðartilvikum, hringdu í **112**.',
+    id: 'sp.health:health-messages-new-intro#markdown',
   },
   healthConversationsNewSelectService: {
     defaultMessage: 'Veldu þjónustu',
@@ -2082,8 +2082,8 @@ export const messages = defineMessages({
   },
   healthConversationsContactIntro: {
     defaultMessage:
-      'Heilsugæslan þín tekur ekki á móti skilaboðum á Ísland.is. Á vef heilsugæslunnar finnur þú upplýsingar um hvernig þú getur haft samband og nálgast þá þjónustu sem þú þarft. Ef erindið er brýnt, hringdu í <bold>1700</bold>. Í neyðartilvikum, hringdu í <bold>112</bold>.',
-    id: 'sp.health:health-messages-contact-intro',
+      'Heilsugæslan þín tekur ekki á móti skilaboðum á Ísland.is. Á vef heilsugæslunnar finnur þú upplýsingar um hvernig þú getur haft samband og nálgast þá þjónustu sem þú þarft. Ef erindið er brýnt, hringdu í **1700**. Í neyðartilvikum, hringdu í **112**.',
+    id: 'sp.health:health-messages-contact-intro#markdown',
   },
   healthConversationsContactWebChatTitle: {
     defaultMessage: 'Netspjall Heilsuveru',

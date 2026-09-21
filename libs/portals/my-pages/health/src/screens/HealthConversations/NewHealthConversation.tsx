@@ -48,8 +48,6 @@ import {
   useCreateHealthCertificateRequestMutation,
 } from './NewHealthConversation.generated'
 
-const bold = (str: React.ReactNode) => <strong>{str}</strong>
-
 const getRecipientKey = (recipient: {
   nodeId: string
   groupId: number
@@ -279,11 +277,9 @@ const NewHealthConversation = () => {
         <IntroWrapper
           title={messages.healthConversationsContactTitle}
           introComponent={
-            <Text>
-              {formatMessage(messages.healthConversationsContactIntro, {
-                bold,
-              })}
-            </Text>
+            <Markdown>
+              {formatMessage(messages.healthConversationsContactIntro)}
+            </Markdown>
           }
           desktopContentSpan="10/12"
         >
@@ -313,9 +309,9 @@ const NewHealthConversation = () => {
       <IntroWrapper
         title={messages.healthConversationsNewTitle}
         introComponent={
-          <Text>
-            {formatMessage(messages.healthConversationsNewIntro, { bold })}
-          </Text>
+          <Markdown>
+            {formatMessage(messages.healthConversationsNewIntro)}
+          </Markdown>
         }
         desktopContentSpan="10/12"
       >
