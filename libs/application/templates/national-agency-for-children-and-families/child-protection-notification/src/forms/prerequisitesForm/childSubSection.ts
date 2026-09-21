@@ -265,9 +265,8 @@ export const childSubSection = buildSubSection({
               event: DefaultEvents.SUBMIT,
               name: prerequisitesMessages.child.startNotification,
               type: 'primary',
-              // TODO: Setja aftur inn eftir Demó!
-              // condition: (answers) =>
-              //   !(isKnowsNationalId(answers) && isChildOver18(answers)),
+              condition: (answers) =>
+                !(isKnowsNationalId(answers) && isChildOver18(answers)),
             },
           ],
         }),
