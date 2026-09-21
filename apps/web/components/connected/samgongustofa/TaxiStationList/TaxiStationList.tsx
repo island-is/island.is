@@ -17,10 +17,7 @@ import {
   TaxiStation,
 } from '@island.is/web/graphql/schema'
 
-import {
-  getNormalizedSearchTerms,
-  getSortedAndFilteredList,
-} from '../../utils'
+import { getNormalizedSearchTerms, getSortedAndFilteredList } from '../../utils'
 import { GET_TAXI_STATIONS_QUERY } from './queries'
 import { translation as t } from './translation.strings'
 

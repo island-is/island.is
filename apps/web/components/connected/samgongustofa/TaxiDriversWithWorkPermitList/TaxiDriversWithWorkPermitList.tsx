@@ -17,10 +17,7 @@ import {
   TaxiDriver,
 } from '@island.is/web/graphql/schema'
 
-import {
-  getNormalizedSearchTerms,
-  getSortedAndFilteredList,
-} from '../../utils'
+import { getNormalizedSearchTerms, getSortedAndFilteredList } from '../../utils'
 import { GET_TAXI_DRIVERS_WITH_WORK_PERMIT_QUERY } from './queries'
 import { translation as t } from './translation.strings'
 

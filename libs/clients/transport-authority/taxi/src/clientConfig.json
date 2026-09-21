@@ -1,1 +1,128 @@
-{"openapi":"3.0.4","info":{"title":"Taxi - Api","contact":{"url":"https://samgongustofa.is"},"version":"v1.0.0"},"servers":[{"url":"/taxi"}],"paths":{"/v1/island_is/lists/drivers/with_work_permit":{"get":{"tags":["IslandIsEndpoints"],"operationId":"GetDriversWithWorkPermit","responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/DriverEntity"}}}}}}}},"/v1/island_is/lists/drivers/with_operating_licence":{"get":{"tags":["IslandIsEndpoints"],"operationId":"GetDriversWithOperatingLicence","responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/DriverEntity"}}}}}}}},"/v1/island_is/lists/stations/valid":{"get":{"tags":["IslandIsEndpoints"],"operationId":"GetValidStations","responses":{"200":{"description":"OK","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/StationEntity"}}}}}}}}},"components":{"schemas":{"DriverEntity":{"required":["id","name","persidno","address","organisationName","stationName","validFrom","validTo","emailAddress","organisationId","stationId"],"type":"object","properties":{"id":{"type":"integer","format":"int32"},"name":{"type":"string"},"persidno":{"type":"string"},"address":{"type":"string"},"organisationName":{"type":"string"},"stationName":{"type":"string"},"validFrom":{"type":"string","format":"date-time"},"validTo":{"type":"string","format":"date-time"},"emailAddress":{"type":"string"},"organisationId":{"type":"integer","format":"int32"},"stationId":{"type":"integer","format":"int32"},"callNumber":{"type":"string","nullable":true},"representativePersidno":{"type":"string","nullable":true},"representativeName":{"type":"string","nullable":true}}},"StationEntity":{"required":["id","name","persidno","emailAddress","licenceNumber","validFrom","validTo","driverCount"],"type":"object","properties":{"id":{"type":"integer","format":"int32"},"name":{"type":"string"},"persidno":{"type":"string"},"emailAddress":{"type":"string"},"licenceNumber":{"type":"string"},"validFrom":{"type":"string","format":"date-time"},"validTo":{"type":"string","format":"date-time"},"driverCount":{"type":"integer","format":"int32"}}}}},"tags":[{"name":"IslandIsEndpoints"}]}
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Taxi - Api",
+    "contact": { "url": "https://samgongustofa.is" },
+    "version": "v1.0.0"
+  },
+  "servers": [{ "url": "/taxi" }],
+  "paths": {
+    "/v1/island_is/lists/drivers/with_work_permit": {
+      "get": {
+        "tags": ["IslandIsEndpoints"],
+        "operationId": "GetDriversWithWorkPermit",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DriverEntity" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/island_is/lists/drivers/with_operating_licence": {
+      "get": {
+        "tags": ["IslandIsEndpoints"],
+        "operationId": "GetDriversWithOperatingLicence",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DriverEntity" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/island_is/lists/stations/valid": {
+      "get": {
+        "tags": ["IslandIsEndpoints"],
+        "operationId": "GetValidStations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/StationEntity" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DriverEntity": {
+        "required": [
+          "id",
+          "name",
+          "persidno",
+          "address",
+          "organisationName",
+          "stationName",
+          "validFrom",
+          "validTo",
+          "emailAddress",
+          "organisationId",
+          "stationId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "persidno": { "type": "string" },
+          "address": { "type": "string" },
+          "organisationName": { "type": "string" },
+          "stationName": { "type": "string" },
+          "validFrom": { "type": "string", "format": "date-time" },
+          "validTo": { "type": "string", "format": "date-time" },
+          "emailAddress": { "type": "string" },
+          "organisationId": { "type": "integer", "format": "int32" },
+          "stationId": { "type": "integer", "format": "int32" },
+          "callNumber": { "type": "string", "nullable": true },
+          "representativePersidno": { "type": "string", "nullable": true },
+          "representativeName": { "type": "string", "nullable": true }
+        }
+      },
+      "StationEntity": {
+        "required": [
+          "id",
+          "name",
+          "persidno",
+          "emailAddress",
+          "licenceNumber",
+          "validFrom",
+          "validTo",
+          "driverCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "persidno": { "type": "string" },
+          "emailAddress": { "type": "string" },
+          "licenceNumber": { "type": "string" },
+          "validFrom": { "type": "string", "format": "date-time" },
+          "validTo": { "type": "string", "format": "date-time" },
+          "driverCount": { "type": "integer", "format": "int32" }
+        }
+      }
+    }
+  },
+  "tags": [{ "name": "IslandIsEndpoints" }]
+}

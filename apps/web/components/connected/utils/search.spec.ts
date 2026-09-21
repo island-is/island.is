@@ -1,4 +1,4 @@
-import { getNormalizedSearchTerms,getSortedAndFilteredList } from './search'
+import { getNormalizedSearchTerms, getSortedAndFilteredList } from './search'
 
 describe('getNormalizedSearchTerms', () => {
   it('lowercases and splits on spaces', () => {
@@ -46,7 +46,11 @@ describe('getSortedAndFilteredList', () => {
   })
 
   it('searches across multiple keys', () => {
-    const result = getSortedAndFilteredList(list, ['hreyfill'], ['name', 'station'])
+    const result = getSortedAndFilteredList(
+      list,
+      ['hreyfill'],
+      ['name', 'station'],
+    )
     expect(result).toHaveLength(2)
     expect(result.map((r) => r.name)).toEqual(
       expect.arrayContaining(['Brynjólfur', 'Sigríður']),
@@ -73,7 +77,11 @@ describe('getSortedAndFilteredList', () => {
       { name: 'Hreyfill', driverCount: 42 },
       { name: 'BSR', driverCount: 5 },
     ]
-    const result = getSortedAndFilteredList(items, ['42'], ['name', 'driverCount'])
+    const result = getSortedAndFilteredList(
+      items,
+      ['42'],
+      ['name', 'driverCount'],
+    )
     expect(result).toEqual([{ name: 'Hreyfill', driverCount: 42 }])
   })
 
