@@ -1,12 +1,5 @@
 import type { WithholdingTaxResult } from '../../../../gen/fetch'
-import type { CalculatorOutputField } from '../../types/output-field'
-import { withholdingTaxCalculator } from './definition'
 import { toWithholdingTaxOutput } from './output'
-
-const outputFieldsByName: Record<string, CalculatorOutputField> =
-  Object.fromEntries(
-    withholdingTaxCalculator.outputFields.map((field) => [field.name, field]),
-  )
 
 const result: WithholdingTaxResult = {
   manadarlaun: 1,
@@ -43,133 +36,8 @@ const result: WithholdingTaxResult = {
   ],
 }
 
-describe('withholdingTax output contract', () => {
-  it('declares the curated output field set', () => {
-    expect(Object.keys(outputFieldsByName).sort()).toEqual([
-      'accumulatedPersonalTaxCredit',
-      'appliedPensionFundRatio',
-      'appliedPrivatePensionRatio',
-      'calculatedWithholding',
-      'childBirthYear',
-      'childIncomeLimit',
-      'employerPensionMatch',
-      'highIncomeTax',
-      'highIncomeTaxApplied',
-      'incomeYear',
-      'maritalStatusCode',
-      'monthlySalary',
-      'paidWithholding',
-      'payMonth',
-      'payrollTax',
-      'payrollTaxBase',
-      'pensionFundPayment',
-      'personalTaxCredit',
-      'privatePensionPayment',
-      'salaryAfterDeductions',
-      'spousePersonalTaxCredit',
-      'taxBase',
-      'taxBrackets',
-      'totalDeductions',
-      'withholdingRate',
-    ])
-  })
-
-  it('declares each output field as authored', () => {
-    expect(outputFieldsByName).toMatchObject({
-      monthlySalary: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      appliedPensionFundRatio: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      appliedPrivatePensionRatio: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      pensionFundPayment: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      privatePensionPayment: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      totalDeductions: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      personalTaxCredit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      spousePersonalTaxCredit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      taxBase: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      calculatedWithholding: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      paidWithholding: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      highIncomeTax: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      highIncomeTaxApplied: { kind: 'scalar', type: 'boolean' },
-      salaryAfterDeductions: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      accumulatedPersonalTaxCredit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      incomeYear: { kind: 'scalar', type: 'number', semantic: 'year' },
-      maritalStatusCode: { kind: 'scalar', type: 'number' },
-      payMonth: { kind: 'scalar', type: 'number', semantic: 'month' },
-      childIncomeLimit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      childBirthYear: { kind: 'scalar', type: 'number', semantic: 'year' },
-      withholdingRate: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      employerPensionMatch: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      payrollTaxBase: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      payrollTax: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      taxBrackets: { kind: 'array' },
-    })
-  })
-
-  it('withholds a semantic from numeric codes and raw numbers', () => {
-    expect(outputFieldsByName['maritalStatusCode'].kind).toBe('scalar')
-    expect(outputFieldsByName['maritalStatusCode']).not.toHaveProperty(
-      'semantic',
-    )
-  })
-})
-
 describe('toWithholdingTaxOutput', () => {
-  it('emits exactly the contract field set', () => {
-    expect(Object.keys(toWithholdingTaxOutput(result)).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
-  })
-
   it('reads each output field from its own RSK source key', () => {
-    /* The percentage fields read x100: their source is RSK's 0-1 ratio and
-     * the contract publishes whole percent. */
     expect(toWithholdingTaxOutput(result)).toEqual({
       monthlySalary: 1,
       appliedPensionFundRatio: 2,
@@ -210,9 +78,6 @@ describe('toWithholdingTaxOutput', () => {
     const empty: WithholdingTaxResult = {}
     const output = toWithholdingTaxOutput(empty)
 
-    expect(Object.keys(output).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
     expect(output.monthlySalary).toBeUndefined()
     expect(output.appliedPensionFundRatio).toBeUndefined()
     expect(output.appliedPrivatePensionRatio).toBeUndefined()

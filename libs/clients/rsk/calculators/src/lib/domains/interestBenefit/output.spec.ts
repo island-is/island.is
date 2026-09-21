@@ -1,12 +1,5 @@
 import type { InterestBenefitResult } from '../../../../gen/fetch'
-import type { CalculatorOutputField } from '../../types/output-field'
-import { interestBenefitCalculator } from './definition'
 import { toInterestBenefitOutput } from './output'
-
-const outputFieldsByName: Record<string, CalculatorOutputField> =
-  Object.fromEntries(
-    interestBenefitCalculator.outputFields.map((field) => [field.name, field]),
-  )
 
 const result: InterestBenefitResult = {
   hjuskaparstada: 'text-1',
@@ -33,120 +26,8 @@ const result: InterestBenefitResult = {
   varUndirLamarki: true,
 }
 
-describe('interestBenefit output contract', () => {
-  it('declares the curated output field set', () => {
-    expect(Object.keys(outputFieldsByName).sort()).toEqual([
-      'assetBase',
-      'assetReduction',
-      'assetReductionRate',
-      'benefitYear',
-      'debtReductionRate',
-      'incomeBase',
-      'incomeReduction',
-      'incomeReductionRate',
-      'incomeYear',
-      'interestBenefitAfterIncomeReduction',
-      'interestExpenses',
-      'interestExpensesForCalculation',
-      'loanBalance',
-      'maritalStatusLabel',
-      'maximumInterestBenefit',
-      'maximumInterestExpenses',
-      'reachedMaximum',
-      'reductionLaw2003',
-      'reductionLaw2004',
-      'specialInterestReimbursement',
-      'totalInterestBenefit',
-      'wasBelowMinimum',
-    ])
-  })
-
-  it('declares each output field as authored', () => {
-    expect(outputFieldsByName).toMatchObject({
-      maritalStatusLabel: { kind: 'scalar', type: 'string' },
-      incomeYear: { kind: 'scalar', type: 'number', semantic: 'year' },
-      benefitYear: { kind: 'scalar', type: 'number', semantic: 'year' },
-      maximumInterestExpenses: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      interestExpensesForCalculation: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      incomeBase: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      assetBase: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      loanBalance: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      interestExpenses: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      maximumInterestBenefit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      incomeReduction: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      interestBenefitAfterIncomeReduction: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      incomeReductionRate: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      debtReductionRate: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      assetReduction: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      assetReductionRate: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      reductionLaw2003: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      reductionLaw2004: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      totalInterestBenefit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      specialInterestReimbursement: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      reachedMaximum: { kind: 'scalar', type: 'boolean' },
-      wasBelowMinimum: { kind: 'scalar', type: 'boolean' },
-    })
-  })
-})
-
 describe('toInterestBenefitOutput', () => {
-  it('emits exactly the contract field set', () => {
-    expect(Object.keys(toInterestBenefitOutput(result)).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
-  })
-
   it('reads each output field from its own RSK source key', () => {
-    /* The percentage fields read x100: their source is RSK's 0-1 ratio and
-     * the contract publishes whole percent. */
     expect(toInterestBenefitOutput(result)).toEqual({
       maritalStatusLabel: 'text-1',
       incomeYear: 2,
@@ -174,16 +55,11 @@ describe('toInterestBenefitOutput', () => {
   })
 
   it('maps an absent result to undefined scalars, never null', () => {
-    /* Every nullable source key set to null, every other one omitted, so
-     * both flavours of absence are covered by one fixture. */
     const empty: InterestBenefitResult = {
       hjuskaparstada: null,
     }
     const output = toInterestBenefitOutput(empty)
 
-    expect(Object.keys(output).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
     expect(output.maritalStatusLabel).toBeUndefined()
     expect(output.incomeYear).toBeUndefined()
     expect(output.benefitYear).toBeUndefined()

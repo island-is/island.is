@@ -12,17 +12,13 @@ export const MARITAL_STATUSES = [
 ] as const
 export type MaritalStatus = (typeof MARITAL_STATUSES)[number]
 
-/* The mandatory pension contribution is all-or-nothing at 4%; the private
- * one is offered in whole points up to 4. */
 export const PENSION_FUND_RATIOS = ['0%', '4%'] as const
 export type PensionFundRatio = (typeof PENSION_FUND_RATIOS)[number]
 
 export const PRIVATE_PENSION_RATIOS = ['0%', '1%', '2%', '3%', '4%'] as const
 export type PrivatePensionRatio = (typeof PRIVATE_PENSION_RATIOS)[number]
 
-/* The employer's match is negotiated per collective agreement, so the set is
- * neither round nor contiguous — 11% is genuinely absent between 10.5 and
- * 11.5. */
+// Deliberately excludes 11%; these rates are negotiated.
 export const EMPLOYER_PENSION_MATCH_RATIOS = [
   '0%',
   '8%',
@@ -39,9 +35,6 @@ export type EmployerPensionMatchRatio =
 const toOptions = (values: readonly string[]) =>
   values.map((value) => ({ value }))
 
-/* Every field is optional, matching RSK: `GetWithholdingTaxData.query` is
- * itself optional and so is every member of it. A bare call returns RSK's own
- * defaults. Which fields a form treats as mandatory is a downstream concern. */
 const withholdingTaxInputFields = [
   {
     name: 'paymentFrequency',

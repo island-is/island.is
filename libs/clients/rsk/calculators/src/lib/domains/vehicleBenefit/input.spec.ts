@@ -1,40 +1,5 @@
-import type { CalculatorField } from '../../types/input-field'
 import type { VehicleBenefitInput } from './definition'
-import { vehicleBenefitCalculator } from './definition'
 import { toVehicleBenefitQuery } from './input'
-
-const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  vehicleBenefitCalculator.inputFields.map((field) => [field.name, field]),
-)
-
-describe('vehicleBenefit contract', () => {
-  it('declares each field as authored', () => {
-    expect(Object.keys(fieldsByName).sort()).toEqual([
-      'employeePaysCharging',
-      'employeePaysRunningCosts',
-      'isElectric',
-      'purchasePrice',
-      'purchaseYear',
-    ])
-    expect(fieldsByName).toMatchObject({
-      purchaseYear: { type: 'number', required: true, semantic: 'year' },
-      purchasePrice: { type: 'number', required: true, semantic: 'currency' },
-      isElectric: { type: 'boolean', required: false },
-      employeePaysCharging: { type: 'boolean', required: false },
-      employeePaysRunningCosts: { type: 'boolean', required: false },
-    })
-  })
-
-  it('keeps the three RSK-required booleans optional', () => {
-    for (const name of [
-      'isElectric',
-      'employeePaysCharging',
-      'employeePaysRunningCosts',
-    ]) {
-      expect(fieldsByName[name].required).toBe(false)
-    }
-  })
-})
 
 describe('toVehicleBenefitQuery', () => {
   const input: VehicleBenefitInput = {

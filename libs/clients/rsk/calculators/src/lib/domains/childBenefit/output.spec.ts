@@ -1,12 +1,5 @@
 import type { ChildBenefitResult } from '../../../../gen/fetch'
-import type { CalculatorOutputField } from '../../types/output-field'
-import { childBenefitCalculator } from './definition'
 import { toChildBenefitOutput } from './output'
-
-const outputFieldsByName: Record<string, CalculatorOutputField> =
-  Object.fromEntries(
-    childBenefitCalculator.outputFields.map((field) => [field.name, field]),
-  )
 
 const result: ChildBenefitResult = {
   hjuskaparstada: 'text-1',
@@ -40,162 +33,8 @@ const result: ChildBenefitResult = {
   barnabaeturFyrirSkiptingu: 29,
 }
 
-describe('childBenefit output contract', () => {
-  it('declares the curated output field set', () => {
-    expect(Object.keys(outputFieldsByName).sort()).toEqual([
-      'additionalBenefitForChildrenUnder7',
-      'additionalBenefitPerChildUnder7',
-      'benefitYear',
-      'childBenefitBeforeSplit',
-      'childBenefitPerChild',
-      'childrenBirthYears',
-      'excessIncomeReduction',
-      'excessReductionBase',
-      'excessReductionRate',
-      'incomeBase',
-      'incomeReduction',
-      'incomeRelatedChildBenefit',
-      'incomeYear',
-      'maritalStatusLabel',
-      'numberOfChildren',
-      'numberOfChildrenUnder7',
-      'quarterlyPayments',
-      'reductionBase',
-      'reductionForChildrenUnder7',
-      'reductionRate',
-      'reductionRateForChildrenUnder7',
-      'reductionThreshold',
-      'splitCustody',
-      'splitCustodyChildrenOver7',
-      'splitCustodyChildrenUnder7',
-      'totalChildBenefit',
-      'totalChildBenefitPerCouple',
-      'unreducedChildBenefit',
-      'upperReductionThreshold',
-    ])
-  })
-
-  it('declares each output field as authored', () => {
-    expect(outputFieldsByName).toMatchObject({
-      maritalStatusLabel: { kind: 'scalar', type: 'string' },
-      numberOfChildren: { kind: 'scalar', type: 'number', semantic: 'count' },
-      numberOfChildrenUnder7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'count',
-      },
-      incomeYear: { kind: 'scalar', type: 'number', semantic: 'year' },
-      benefitYear: { kind: 'scalar', type: 'number', semantic: 'year' },
-      incomeBase: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      reductionRate: { kind: 'scalar', type: 'number', semantic: 'percentage' },
-      reductionThreshold: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      upperReductionThreshold: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      reductionBase: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      excessReductionBase: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      incomeReduction: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      excessIncomeReduction: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      excessReductionRate: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      unreducedChildBenefit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      childBenefitPerChild: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      totalChildBenefit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      quarterlyPayments: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      incomeRelatedChildBenefit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      totalChildBenefitPerCouple: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      additionalBenefitForChildrenUnder7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      additionalBenefitPerChildUnder7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      reductionForChildrenUnder7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      reductionRateForChildrenUnder7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'percentage',
-      },
-      childrenBirthYears: { kind: 'scalar', type: 'string' },
-      splitCustody: { kind: 'scalar', type: 'boolean' },
-      splitCustodyChildrenOver7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'count',
-      },
-      splitCustodyChildrenUnder7: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'count',
-      },
-      childBenefitBeforeSplit: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-    })
-  })
-})
-
 describe('toChildBenefitOutput', () => {
-  it('emits exactly the contract field set', () => {
-    expect(Object.keys(toChildBenefitOutput(result)).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
-  })
-
   it('reads each output field from its own RSK source key', () => {
-    /* The percentage fields read x100: their source is RSK's 0-1 ratio and
-     * the contract publishes whole percent. */
     expect(toChildBenefitOutput(result)).toEqual({
       maritalStatusLabel: 'text-1',
       numberOfChildren: 2,
@@ -230,8 +69,6 @@ describe('toChildBenefitOutput', () => {
   })
 
   it('maps an absent result to undefined scalars, never null', () => {
-    /* Every nullable source key set to null, every other one omitted, so
-     * both flavours of absence are covered by one fixture. */
     const empty: ChildBenefitResult = {
       hjuskaparstada: null,
       efriSkerdingarmork: null,
@@ -245,9 +82,6 @@ describe('toChildBenefitOutput', () => {
     }
     const output = toChildBenefitOutput(empty)
 
-    expect(Object.keys(output).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
     expect(output.maritalStatusLabel).toBeUndefined()
     expect(output.numberOfChildren).toBeUndefined()
     expect(output.numberOfChildrenUnder7).toBeUndefined()

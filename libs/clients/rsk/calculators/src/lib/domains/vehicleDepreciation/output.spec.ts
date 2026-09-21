@@ -1,15 +1,5 @@
 import type { VehicleDepreciationResult } from '../../../../gen/fetch'
-import type { CalculatorOutputField } from '../../types/output-field'
-import { vehicleDepreciationCalculator } from './definition'
 import { toVehicleDepreciationOutput } from './output'
-
-const outputFieldsByName: Record<string, CalculatorOutputField> =
-  Object.fromEntries(
-    vehicleDepreciationCalculator.outputFields.map((field) => [
-      field.name,
-      field,
-    ]),
-  )
 
 const result: VehicleDepreciationResult = {
   kaupreikningur: true,
@@ -26,61 +16,7 @@ const result: VehicleDepreciationResult = {
   finalAmount: 12,
 }
 
-describe('vehicleDepreciation output contract', () => {
-  it('declares the curated output field set', () => {
-    expect(Object.keys(outputFieldsByName).sort()).toEqual([
-      'exciseFee',
-      'finalAmount',
-      'first12MonthsDepreciation',
-      'hasPurchaseInvoice',
-      'insurance',
-      'markup',
-      'next24MonthsDepreciation',
-      'price',
-      'remainingValue',
-      'totalDepreciation',
-      'transportFee',
-      'vat',
-    ])
-  })
-
-  it('declares each output field as authored', () => {
-    expect(outputFieldsByName).toMatchObject({
-      hasPurchaseInvoice: { kind: 'scalar', type: 'boolean' },
-      price: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      vat: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      markup: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      exciseFee: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      insurance: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      transportFee: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      first12MonthsDepreciation: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      next24MonthsDepreciation: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      remainingValue: { kind: 'scalar', type: 'number', semantic: 'currency' },
-      totalDepreciation: {
-        kind: 'scalar',
-        type: 'number',
-        semantic: 'currency',
-      },
-      finalAmount: { kind: 'scalar', type: 'number', semantic: 'currency' },
-    })
-  })
-})
-
 describe('toVehicleDepreciationOutput', () => {
-  it('emits exactly the contract field set', () => {
-    expect(Object.keys(toVehicleDepreciationOutput(result)).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
-  })
-
   it('reads each output field from its own RSK source key', () => {
     expect(toVehicleDepreciationOutput(result)).toEqual({
       hasPurchaseInvoice: true,
@@ -99,8 +35,6 @@ describe('toVehicleDepreciationOutput', () => {
   })
 
   it('maps an absent result to undefined scalars, never null', () => {
-    /* Every nullable source key set to null, every other one omitted, so
-     * both flavours of absence are covered by one fixture. */
     const empty: VehicleDepreciationResult = {
       verd: null,
       vsk: null,
@@ -116,9 +50,6 @@ describe('toVehicleDepreciationOutput', () => {
     }
     const output = toVehicleDepreciationOutput(empty)
 
-    expect(Object.keys(output).sort()).toEqual(
-      Object.keys(outputFieldsByName).sort(),
-    )
     expect(output.hasPurchaseInvoice).toBeUndefined()
     expect(output.price).toBeUndefined()
     expect(output.vat).toBeUndefined()

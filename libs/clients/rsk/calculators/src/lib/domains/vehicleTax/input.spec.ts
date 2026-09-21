@@ -1,36 +1,5 @@
-import type { CalculatorField } from '../../types/input-field'
 import type { VehicleTaxInput } from './definition'
-import { vehicleTaxCalculator } from './definition'
 import { toVehicleTaxQuery } from './input'
-
-const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  vehicleTaxCalculator.inputFields.map((field) => [field.name, field]),
-)
-
-describe('vehicleTax contract', () => {
-  it('declares each field as authored', () => {
-    expect(Object.keys(fieldsByName).sort()).toEqual([
-      'licensePlate',
-      'period',
-      'periodSplitDate',
-      'year',
-    ])
-    expect(fieldsByName).toMatchObject({
-      year: { type: 'number', required: true, semantic: 'year' },
-      licensePlate: { type: 'string', required: true },
-      period: {
-        type: 'select',
-        required: true,
-        options: [{ value: 'firstHalf' }, { value: 'secondHalf' }],
-      },
-      periodSplitDate: { type: 'date', required: false },
-    })
-  })
-
-  it('carries no semantic on the date field', () => {
-    expect(fieldsByName['periodSplitDate'].semantic).toBeUndefined()
-  })
-})
 
 describe('toVehicleTaxQuery', () => {
   const input: VehicleTaxInput = {

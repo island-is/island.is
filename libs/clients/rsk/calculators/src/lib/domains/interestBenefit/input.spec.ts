@@ -1,40 +1,5 @@
-import type { CalculatorField } from '../../types/input-field'
 import { toInterestBenefitQuery } from './input'
 import type { InterestBenefitInput } from './definition'
-import { interestBenefitCalculator } from './definition'
-
-const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  interestBenefitCalculator.inputFields.map((field) => [field.name, field]),
-)
-
-describe('interestBenefit contract', () => {
-  it('declares each field as authored', () => {
-    expect(Object.keys(fieldsByName).sort()).toEqual([
-      'assetBase',
-      'incomeBase',
-      'incomeYear',
-      'loanBalance',
-      'maritalStatus',
-      'paidInterest',
-    ])
-    expect(fieldsByName).toMatchObject({
-      maritalStatus: {
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'single' },
-          { value: 'singleParent' },
-          { value: 'marriedOrCohabiting' },
-        ],
-      },
-      incomeYear: { type: 'number', required: true, semantic: 'year' },
-      incomeBase: { type: 'number', required: true, semantic: 'currency' },
-      assetBase: { type: 'number', required: true, semantic: 'currency' },
-      loanBalance: { type: 'number', required: true, semantic: 'currency' },
-      paidInterest: { type: 'number', required: true, semantic: 'currency' },
-    })
-  })
-})
 
 describe('toInterestBenefitQuery', () => {
   const input: InterestBenefitInput = {

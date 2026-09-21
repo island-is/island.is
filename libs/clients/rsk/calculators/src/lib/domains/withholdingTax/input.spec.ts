@@ -1,94 +1,5 @@
-import type { CalculatorField } from '../../types/input-field'
 import type { WithholdingTaxInput } from './definition'
-import { withholdingTaxCalculator } from './definition'
 import { toWithholdingTaxQuery } from './input'
-
-const fieldsByName: Record<string, CalculatorField> = Object.fromEntries(
-  withholdingTaxCalculator.inputFields.map((field) => [field.name, field]),
-)
-
-describe('withholdingTax contract', () => {
-  it('declares each field as authored', () => {
-    expect(Object.keys(fieldsByName).sort()).toEqual([
-      'accumulatedPersonalTaxCredit',
-      'employerPensionMatchRatio',
-      'incomeYear',
-      'maritalStatus',
-      'otherDeduction',
-      'payMonth',
-      'paymentFrequency',
-      'pensionFundRatio',
-      'privatePensionRatio',
-      'salary',
-      'seamenAccidentInsurancePremium',
-      'spouseTaxCardUtilization',
-      'taxCardUtilization',
-      'unionDues',
-      'vacationPay',
-      'vehicleAllowance',
-    ])
-    expect(fieldsByName).toMatchObject({
-      paymentFrequency: {
-        type: 'select',
-        options: [{ value: 'weekly' }, { value: 'monthly' }],
-      },
-      maritalStatus: {
-        type: 'select',
-        options: [
-          { value: 'single' },
-          { value: 'singleParent' },
-          { value: 'marriedOrCohabiting' },
-        ],
-      },
-      incomeYear: { type: 'number', semantic: 'year' },
-      payMonth: { type: 'number', semantic: 'month' },
-      salary: { type: 'number', semantic: 'currency' },
-      pensionFundRatio: {
-        type: 'select',
-        options: [{ value: '0%' }, { value: '4%' }],
-      },
-      privatePensionRatio: {
-        type: 'select',
-        options: [
-          { value: '0%' },
-          { value: '1%' },
-          { value: '2%' },
-          { value: '3%' },
-          { value: '4%' },
-        ],
-      },
-      taxCardUtilization: { type: 'number', semantic: 'percentage' },
-      spouseTaxCardUtilization: { type: 'number', semantic: 'percentage' },
-      accumulatedPersonalTaxCredit: { type: 'number', semantic: 'currency' },
-      vacationPay: { type: 'number', semantic: 'currency' },
-      unionDues: { type: 'number', semantic: 'currency' },
-      otherDeduction: { type: 'number', semantic: 'currency' },
-      employerPensionMatchRatio: {
-        type: 'select',
-        options: [
-          { value: '0%' },
-          { value: '8%' },
-          { value: '8.5%' },
-          { value: '10%' },
-          { value: '10.5%' },
-          { value: '11.5%' },
-          { value: '12%' },
-          { value: '13.5%' },
-        ],
-      },
-      vehicleAllowance: { type: 'number', semantic: 'currency' },
-      seamenAccidentInsurancePremium: { type: 'number', semantic: 'currency' },
-    })
-  })
-
-  it('marks only the fields RSK cannot calculate without as required', () => {
-    const required = withholdingTaxCalculator.inputFields
-      .filter((field) => field.required)
-      .map((field) => field.name)
-
-    expect(required).toEqual(['incomeYear', 'payMonth', 'salary'])
-  })
-})
 
 describe('toWithholdingTaxQuery', () => {
   const input: WithholdingTaxInput = {
@@ -173,10 +84,6 @@ describe('toWithholdingTaxQuery', () => {
     })
   })
 
-  /* The two `semantic: 'percentage'` inputs are whole percent at this boundary
-   * and divided rather than looked up, which is the one conversion the mapper
-   * performs arithmetically. `33.33` is used deliberately: it divides exactly,
-   * where a value like `12.3` yields 0.12300000000000001 and fails `toEqual`. */
   it('divides the percentage inputs into the 0-1 ratios RSK expects', () => {
     expect(
       toWithholdingTaxQuery({

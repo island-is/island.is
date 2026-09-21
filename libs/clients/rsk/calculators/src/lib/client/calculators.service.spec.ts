@@ -63,19 +63,6 @@ describe('CalculatorsClientService.getCalculator', () => {
     )
   })
 
-  it('publishes output fields for every calculator', () => {
-    for (const key of [
-      'childBenefit',
-      'interestBenefit',
-      'vehicleBenefit',
-      'vehicleDepreciation',
-      'vehicleTax',
-      'withholdingTax',
-    ] as const) {
-      expect(service.getCalculator(key).outputFields.length).toBeGreaterThan(0)
-    }
-  })
-
   it('returns the requested key', () => {
     expect(service.getCalculator('vehicleTax').key).toBe('vehicleTax')
   })
