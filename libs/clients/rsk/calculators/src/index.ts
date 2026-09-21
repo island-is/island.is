@@ -1,21 +1,21 @@
-export { CalculatorsClientModule } from './lib/calculators.module'
-export { CalculatorsClientConfig } from './lib/calculators.config'
-export { CalculatorsClientService } from './lib/calculators.service'
+export { CalculatorsClientModule } from './lib/client/calculators.module'
+export { CalculatorsClientConfig } from './lib/client/calculators.config'
+export { CalculatorsClientService } from './lib/client/calculators.service'
 export type {
-  CalculatorContract,
   CalculatorField,
   CalculatorFieldDependency,
   CalculatorFieldOption,
-  CalculatorFieldSemantic,
   CalculatorFieldType,
-} from './lib/contracts/field'
+} from './lib/types/input-field'
+export type { CalculatorContract } from './lib/types/calculator'
+export type { CalculatorFieldSemantic } from './lib/types/semantic'
 export type {
   CalculatorArrayOutputField,
   CalculatorOutputField,
   CalculatorOutputScalarType,
   CalculatorScalarOutputField,
-} from './lib/contracts/output'
-export type { CalculatorKey } from './lib/contracts/registry'
+} from './lib/types/output-field'
+export type { CalculatorKey } from './lib/catalog/registry'
 export type {
   ChildBenefitInput,
   ChildBenefitOutput,

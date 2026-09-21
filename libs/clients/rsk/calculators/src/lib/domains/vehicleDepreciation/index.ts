@@ -1,7 +1,7 @@
-export { vehicleDepreciationCalculator } from './contract'
+export { vehicleDepreciationCalculator } from './definition'
 export type {
   VehicleDepreciationInput,
   VehicleDepreciationOutput,
-} from './contract'
-export { toVehicleDepreciationQuery } from './vehicleDepreciation'
-export { toVehicleDepreciationOutput } from './vehicleDepreciationOutput'
+} from './definition'
+export { toVehicleDepreciationQuery } from './input'
+export { toVehicleDepreciationOutput } from './output'

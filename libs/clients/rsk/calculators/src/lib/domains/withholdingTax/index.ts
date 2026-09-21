@@ -5,7 +5,7 @@ export {
   PENSION_FUND_RATIOS,
   PRIVATE_PENSION_RATIOS,
   withholdingTaxCalculator,
-} from './contract'
+} from './definition'
 export type {
   EmployerPensionMatchRatio,
   MaritalStatus,
@@ -15,6 +15,6 @@ export type {
   WithholdingTaxBracketOutput,
   WithholdingTaxInput,
   WithholdingTaxOutput,
-} from './contract'
-export { toWithholdingTaxQuery } from './withholdingTax'
-export { toWithholdingTaxOutput } from './withholdingTaxOutput'
+} from './definition'
+export { toWithholdingTaxQuery } from './input'
+export { toWithholdingTaxOutput } from './output'

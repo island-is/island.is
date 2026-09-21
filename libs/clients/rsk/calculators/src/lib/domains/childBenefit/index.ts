@@ -1,4 +1,4 @@
-export { childBenefitCalculator } from './contract'
-export type { ChildBenefitInput, ChildBenefitOutput } from './contract'
-export { toChildBenefitQuery } from './childBenefit'
-export { toChildBenefitOutput } from './childBenefitOutput'
+export { childBenefitCalculator } from './definition'
+export type { ChildBenefitInput, ChildBenefitOutput } from './definition'
+export { toChildBenefitQuery } from './input'
+export { toChildBenefitOutput } from './output'
