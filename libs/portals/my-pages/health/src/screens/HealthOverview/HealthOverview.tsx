@@ -96,26 +96,12 @@ export const HealthOverview = () => {
     false,
   )
 
-  // Each section mirrors the scopes its resolver requires, so a delegation
-  // that only carries some of them still renders the rest of the page
   const userInfo = useUserInfo()
-  const hasScope = (...scopes: Array<ApiScope>) =>
-    scopes.some((scope) => !!userInfo?.scopes?.includes(scope))
-
-  const hasInsuranceAccess = hasScope(ApiScope.healthRightsStatus)
-  const hasPaymentsAccess = hasScope(ApiScope.healthPayments)
-  const hasMedicineAccess = hasScope(ApiScope.healthMedicines)
-  const hasHealthCenterAccess = hasScope(ApiScope.healthHealthcare)
-  const hasDentistsAccess = hasScope(
-    ApiScope.healthDentists,
-    ApiScope.healthHealthcare,
+  const hasAppointmentsAccess = !!userInfo?.scopes?.includes(
+    ApiScope.healthAppointments,
   )
-  const hasBasicHealthAccess = hasScope(ApiScope.health)
-  const hasAppointmentsAccess = hasScope(ApiScope.healthAppointments)
 
-  const { data, error, loading } = useGetInsuranceOverviewQuery({
-    skip: !hasInsuranceAccess,
-  })
+  const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
     data: healthCenterData,
     loading: healthCenterLoading,
@@ -127,7 +113,6 @@ export const HealthOverview = () => {
         dateTo: DEFAULT_DATE_TO,
       },
     },
-    skip: !hasHealthCenterAccess,
   })
 
   const {
@@ -141,7 +126,6 @@ export const HealthOverview = () => {
         dateTo: DEFAULT_DATE_TO,
       },
     },
-    skip: !hasDentistsAccess,
   })
 
   const {
@@ -152,26 +136,25 @@ export const HealthOverview = () => {
     variables: {
       locale: locale,
     },
-    skip: !hasBasicHealthAccess,
   })
 
   const {
     data: paymentOverviewData,
     loading: paymentOverviewLoading,
     error: paymentOverviewError,
-  } = useGetPaymentsOverviewQuery({ skip: !hasPaymentsAccess })
+  } = useGetPaymentsOverviewQuery()
 
   const {
     data: medicinePaymentOverviewData,
     loading: medicinePaymentOverviewLoading,
     error: medicinePaymentOverviewError,
-  } = useGetMedicinePaymentOverviewQuery({ skip: !hasMedicineAccess })
+  } = useGetMedicinePaymentOverviewQuery()
 
   const {
     data: bloodTypeData,
     loading: bloodTypeLoading,
     error: bloodTypeError,
-  } = useGetBloodTypeOverviewQuery({ skip: !hasBasicHealthAccess })
+  } = useGetBloodTypeOverviewQuery()
 
   const {
     data: appointmentsData,
@@ -323,8 +306,8 @@ export const HealthOverview = () => {
           error: !!healthCenterError,
         }}
         dentists={{
-          data:
-            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
+          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
+            ?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
         }}
