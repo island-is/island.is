@@ -24,7 +24,7 @@ export const SingleAssessment = ({ assessmentId, name, studentId }: Props) => {
   return (
     <Accordion dividerOnTop={false} dividerOnBottom={false} space={3}>
       <AccordionItem startExpanded id={assessmentId} label={name}>
-        <AssessmentTable results={results} />
+        <AssessmentTable results={results} course={name} />
       </AccordionItem>
     </Accordion>
   )
