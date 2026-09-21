@@ -4,15 +4,15 @@ import { m } from '../../lib/messages'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
-import { useDelegationForm } from '../../context'
+import { ScopeSelection, useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
+import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { AuthApiScope } from '@island.is/api/schema'
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -26,7 +26,7 @@ export const ConfirmAccessModal = ({
   onConfirm?: () => void
   isVisible: boolean
   loading?: boolean
-  removedScopes?: AuthApiScope[]
+  removedScopes?: ScopeSelection[]
   isEdit?: boolean
 }) => {
   const { width } = useWindowSize()
@@ -36,8 +36,11 @@ export const ConfirmAccessModal = ({
 
   const { identities, selectedScopes } = useDelegationForm()
 
-  const [createAuthDelegations, { loading: mutationLoading }] =
+  const [createAuthDelegations, { loading: createLoading }] =
     useCreateAuthDelegationsMutation()
+  const [patchAuthDelegation, { loading: patchLoading }] =
+    usePatchAuthDelegationMutation()
+  const mutationLoading = createLoading || patchLoading
 
   const handleConfirm = () => {
     if (onConfirm) {
@@ -58,14 +61,29 @@ export const ConfirmAccessModal = ({
         domainName: scope.domain!.name,
       }))
 
-      createAuthDelegations({
-        variables: {
-          input: {
-            toNationalIds: identities.map((identity) => identity.nationalId),
-            scopes,
+      const deleteScopesByDelegation = new Map<string, string[]>()
+      for (const scope of removedScopes ?? []) {
+        if (!scope.delegationId) continue
+        const names = deleteScopesByDelegation.get(scope.delegationId) ?? []
+        names.push(scope.name)
+        deleteScopesByDelegation.set(scope.delegationId, names)
+      }
+
+      Promise.all([
+        ...Array.from(deleteScopesByDelegation, ([delegationId, names]) =>
+          patchAuthDelegation({
+            variables: { input: { delegationId, deleteScopes: names } },
+          }),
+        ),
+        createAuthDelegations({
+          variables: {
+            input: {
+              toNationalIds: identities.map((identity) => identity.nationalId),
+              scopes,
+            },
           },
-        },
-      })
+        }),
+      ])
         .then(() => {
           navigate(DelegationPaths.DelegationsNew)
         })

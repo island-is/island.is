@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { AuthDomain } from '@island.is/api/schema'
 import { Box, SkeletonLoader, toast } from '@island.is/island-ui/core'
@@ -7,7 +7,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   useGetServicePortalPageQuery,
-  useQueryParam,
 } from '@island.is/portals/core'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -41,7 +40,9 @@ const EditAccess = () => {
     identities,
     setIdentities,
   } = useDelegationForm()
-  const nationalIdParam = useQueryParam('nationalId')
+  const { state: locationState } = useLocation()
+  const nationalIdParam = (locationState as { nationalId?: string } | null)
+    ?.nationalId
 
   const navigate = useNavigate()
   const [isConfirmModalVisible, setIsConfirmModalVisible] =
@@ -58,6 +59,13 @@ const EditAccess = () => {
   useEffect(() => {
     return () => clearForm()
   }, [clearForm])
+
+  // the recipient is only known via router state, so a direct visit has nothing to edit
+  useEffect(() => {
+    if (!nationalIdParam && !identities.length) {
+      navigate(DelegationPaths.DelegationsNew, { replace: true })
+    }
+  }, [nationalIdParam, identities.length, navigate])
 
   const needsFetch = !hasHydratedRef.current && !!nationalIdParam
 
