@@ -1,6 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import {
   IsBoolean,
+  IsEmpty,
   IsEnum,
   IsInt,
   IsOptional,
@@ -8,6 +9,7 @@ import {
   Max,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator'
 import { HealthConversationStatusFilterEnum } from '../models/enums'
 
@@ -45,7 +47,8 @@ export class HealthDirectoratePaginatedHealthConversationsInput {
   after?: string
 
   @Field({ nullable: true, description: 'Not combinable with after.' })
-  @IsString()
+  @ValidateIf((input) => input.after != null && input.after !== '')
+  @IsEmpty({ message: 'before cannot be combined with after' })
   @IsOptional()
   before?: string
 }
