@@ -48,6 +48,15 @@ env:
 
 jobs:
   pre-checks:
+    # A pull request is only built and deployed with the `deploy-feature` label (same rules as the
+    # `should-run` step of `pre-checks.yml`). Checking it here, and not only in that job, means
+    # that every other pull request is skipped without starting a runner
+    if: >-
+      ${{
+        github.event_name != 'pull_request' ||
+        (github.event.action == 'labeled' && github.event.label.name == 'deploy-feature') ||
+        (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'deploy-feature'))
+      }}
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
 
@@ -596,7 +605,7 @@ jobs:
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
     runs-on: arc-shared
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.pre-checks.result != 'skipped' }}
     needs:
       - pre-checks
       - docker-build
