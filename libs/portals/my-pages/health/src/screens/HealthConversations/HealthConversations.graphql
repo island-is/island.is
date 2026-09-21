@@ -7,7 +7,7 @@ query GetHealthConversations(
     organization {
       ...HealthConversationOrganizationFragment
     }
-    lastSenderGroupName
+    groupName
     lastMessageSentAt
     isStarred
     isArchived
