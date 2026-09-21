@@ -34,7 +34,7 @@ export const InteractiveTableFormFieldExpandedRow: FC<Props> = ({
     <Box marginRight={2} marginBottom={3}>
       {hasTable && (
         <Box className={styles.expandedTable}>
-          <T.Table>
+          <T.Table box={{ overflow: 'visible' }}>
             <T.Head>
               <T.Row>
                 {table.header.map((cell, cellIndex) => (
