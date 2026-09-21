@@ -1,4 +1,4 @@
-import { getSortedAndFilteredList, getNormalizedSearchTerms } from './search'
+import { getNormalizedSearchTerms,getSortedAndFilteredList } from './search'
 
 describe('getNormalizedSearchTerms', () => {
   it('lowercases and splits on spaces', () => {
