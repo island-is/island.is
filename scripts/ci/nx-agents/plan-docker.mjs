@@ -55,6 +55,8 @@ const outputs = {
           'run-many',
           '--targets=docker-build',
           `--projects=${projects.join(',')}`,
+          // For the builds the images depend on, an agent builds one image at a time regardless
+          `--parallel=${env.NX_PARALLEL || '3'}`,
         ],
   ),
   projects: projects.join(','),

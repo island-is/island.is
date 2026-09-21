@@ -526,10 +526,12 @@ jobs:
           # The secret of the Docker builds, see `scripts/ci/_docker.sh`
           echo "$NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT" > nx_cloud_access_token.txt
 
-      # Not `start-agent.sh`: that is about the environment of lint, test, build and e2e tasks
+      # The agents run the builds the images depend on as well, `start-agent.sh` sets up their environment
       - name: Start Nx agent
-        run: npx nx-cloud start-agent
+        run: ./scripts/ci/nx-agents/start-agent.sh
         env:
+          # No `.env` file in every project: no tests here, and they would be in the Docker build context
+          DD_SERVICE_ENV_FILES: 'false'
           NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
           NX_AGENT_NAME: ${{ matrix.agent }}
           # The agent type in `scripts/ci/nx-agents/assignment-rules.yaml`

@@ -34,7 +34,12 @@ exports.createNodesV2 = [
               targets: {
                 'docker-build': {
                   executor: 'nx:run-commands',
-                  // Pushes an image, nothing to cache. The build in the Docker build is the cached part
+                  // The Docker build does `nx build` for the project as well, which has the same hash
+                  // as this one (see `scripts/ci/nx-agents/README.md`), so in there it is a cache hit.
+                  // Building first means the builds are distributed and run in parallel like any
+                  // other task, while the images are built one at a time on an agent
+                  dependsOn: ['build'],
+                  // Pushes an image, nothing to cache
                   cache: false,
                   // Not for a hash, but to make the project affected when a Dockerfile changes
                   inputs: ['production', '^production', 'Dockerfiles'],

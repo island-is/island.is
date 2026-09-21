@@ -29,6 +29,7 @@
 
 # Outputs
 **/out/
+/dist/
 
 # Docker-stuff
 **/Dockerfile
