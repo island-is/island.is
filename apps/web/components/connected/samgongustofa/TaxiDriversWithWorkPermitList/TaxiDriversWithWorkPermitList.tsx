@@ -20,7 +20,7 @@ import {
 import {
   getNormalizedSearchTerms,
   getSortedAndFilteredList,
-} from '../../syslumenn/utils'
+} from '../../utils'
 import { GET_TAXI_DRIVERS_WITH_WORK_PERMIT_QUERY } from './queries'
 import { translation as t } from './translation.strings'
 
