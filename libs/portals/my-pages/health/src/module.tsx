@@ -195,6 +195,7 @@ export const healthModule: PortalModule = {
         ApiScope.healthHealthcare,
         ApiScope.healthDentists,
         ApiScope.healthRightsStatus,
+        ApiScope.healthAppointments,
       ].some((scope) => userInfo.scopes.includes(scope)),
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
@@ -206,7 +207,9 @@ export const healthModule: PortalModule = {
     {
       name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
-      enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
+      enabled:
+        userInfo.scopes.includes(ApiScope.healthRightsStatus) ||
+        userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <HealthOverview />,
     },
     {

@@ -36,6 +36,8 @@ export interface DataState<T> {
   data?: T | null
   loading?: boolean
   error?: boolean
+  /** The user is missing the delegation scope this data requires */
+  noAccess?: boolean
 }
 
 export interface DelegationState {
@@ -52,8 +54,8 @@ export type DrugRowDrug = {
   totalPaidIndividual?: number | null
 }
 
-export type RightsPortalCalculatorSelectedDrug =
-  RightsPortalCalculatorRequestInput & DrugRowDrug
+export type RightsPortalCalculatorSelectedDrug = RightsPortalCalculatorRequestInput &
+  DrugRowDrug
 
 export type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 

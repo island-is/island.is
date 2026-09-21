@@ -16,6 +16,8 @@ import {
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
 import { healthOverviewQuickLinkClick } from '@island.is/plausible'
+import { ApiScope } from '@island.is/auth/scopes'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocation } from 'react-router-dom'
 import { z } from 'zod'
 import subYears from 'date-fns/subYears'
@@ -94,7 +96,26 @@ export const HealthOverview = () => {
     false,
   )
 
-  const { data, error, loading } = useGetInsuranceOverviewQuery()
+  // Each section mirrors the scopes its resolver requires, so a delegation
+  // that only carries some of them still renders the rest of the page
+  const userInfo = useUserInfo()
+  const hasScope = (...scopes: Array<ApiScope>) =>
+    scopes.some((scope) => !!userInfo?.scopes?.includes(scope))
+
+  const hasInsuranceAccess = hasScope(ApiScope.healthRightsStatus)
+  const hasPaymentsAccess = hasScope(ApiScope.healthPayments)
+  const hasMedicineAccess = hasScope(ApiScope.healthMedicines)
+  const hasHealthCenterAccess = hasScope(ApiScope.healthHealthcare)
+  const hasDentistsAccess = hasScope(
+    ApiScope.healthDentists,
+    ApiScope.healthHealthcare,
+  )
+  const hasBasicHealthAccess = hasScope(ApiScope.health)
+  const hasAppointmentsAccess = hasScope(ApiScope.healthAppointments)
+
+  const { data, error, loading } = useGetInsuranceOverviewQuery({
+    skip: !hasInsuranceAccess,
+  })
   const {
     data: healthCenterData,
     loading: healthCenterLoading,
@@ -106,6 +127,7 @@ export const HealthOverview = () => {
         dateTo: DEFAULT_DATE_TO,
       },
     },
+    skip: !hasHealthCenterAccess,
   })
 
   const {
@@ -119,6 +141,7 @@ export const HealthOverview = () => {
         dateTo: DEFAULT_DATE_TO,
       },
     },
+    skip: !hasDentistsAccess,
   })
 
   const {
@@ -129,25 +152,26 @@ export const HealthOverview = () => {
     variables: {
       locale: locale,
     },
+    skip: !hasBasicHealthAccess,
   })
 
   const {
     data: paymentOverviewData,
     loading: paymentOverviewLoading,
     error: paymentOverviewError,
-  } = useGetPaymentsOverviewQuery()
+  } = useGetPaymentsOverviewQuery({ skip: !hasPaymentsAccess })
 
   const {
     data: medicinePaymentOverviewData,
     loading: medicinePaymentOverviewLoading,
     error: medicinePaymentOverviewError,
-  } = useGetMedicinePaymentOverviewQuery()
+  } = useGetMedicinePaymentOverviewQuery({ skip: !hasMedicineAccess })
 
   const {
     data: bloodTypeData,
     loading: bloodTypeLoading,
     error: bloodTypeError,
-  } = useGetBloodTypeOverviewQuery()
+  } = useGetBloodTypeOverviewQuery({ skip: !hasBasicHealthAccess })
 
   const {
     data: appointmentsData,
@@ -157,7 +181,7 @@ export const HealthOverview = () => {
     variables: {
       status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
     },
-    skip: !showAppointments,
+    skip: !showAppointments || !hasAppointmentsAccess,
   })
 
   const currentMedicinePeriod =
@@ -267,6 +291,7 @@ export const HealthOverview = () => {
             data: { data: firstTwoAppointments },
             loading: appointmentsLoading,
             error: !!appointmentsError,
+            noAccess: !hasAppointmentsAccess,
           }}
           showLinkButton
         />
@@ -279,16 +304,19 @@ export const HealthOverview = () => {
           data: paymentOverviewData?.rightsPortalCopaymentStatus,
           loading: paymentOverviewLoading,
           error: !!paymentOverviewError,
+          noAccess: !hasPaymentsAccess,
         }}
         medicine={{
           data: currentMedicinePeriod,
           loading: medicinePaymentOverviewLoading,
           error: !!medicinePaymentOverviewError,
+          noAccess: !hasMedicineAccess,
         }}
         insurance={{
           data: data?.rightsPortalInsuranceOverview,
           loading: loading,
           error: !!error,
+          noAccess: !hasInsuranceAccess,
         }}
       />
       {/* Displaying basic information like healthcenter, dentist etc, */}
@@ -297,22 +325,26 @@ export const HealthOverview = () => {
           data: healthCenterData?.rightsPortalHealthCenterRegistrationHistory,
           loading: healthCenterLoading,
           error: !!healthCenterError,
+          noAccess: !hasHealthCenterAccess,
         }}
         dentists={{
-          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
-            ?.name,
+          data:
+            dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name,
           loading: dentistsLoading,
           error: !!dentistsError,
+          noAccess: !hasDentistsAccess,
         }}
         donor={{
           data: donorStatusData?.healthDirectorateOrganDonation.donor,
           loading: donorStatusLoading,
           error: !!donorStatusError,
+          noAccess: !hasBasicHealthAccess,
         }}
         blood={{
           data: bloodTypeData?.rightsPortalBloodType,
           loading: bloodTypeLoading,
           error: !!bloodTypeError,
+          noAccess: !hasBasicHealthAccess,
         }}
       />
     </>

@@ -8,6 +8,7 @@ import {
   STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
+  m,
 } from '@island.is/portals/my-pages/core'
 import {
   healthAppointmentsHeilsuveraClick,
@@ -16,6 +17,8 @@ import {
 import { useLocation } from 'react-router-dom'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { ApiScope } from '@island.is/auth/scopes'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -35,6 +38,13 @@ const AppointmentsOverview = () => {
   useHealthPlausibleSwap()
 
   const [pastTabVisited, setPastTabVisited] = useState(false)
+
+  // Past appointments are only available to the person themselves — a
+  // delegation carries healthAppointments but never the full health scope
+  const userInfo = useUserInfo()
+  const hasPastAppointmentsAccess = !!userInfo?.scopes?.includes(
+    ApiScope.health,
+  )
 
   const { value: showSendMessageButton } = useFeatureFlag(
     Features.isServicePortalHealthMessagesPageEnabled,
@@ -56,11 +66,14 @@ const AppointmentsOverview = () => {
       from: new Date('2026-01-01'),
       status: PAST_APPOINTMENTS_STATUS,
     },
-    skip: !pastTabVisited,
+    skip: !pastTabVisited || !hasPastAppointmentsAccess,
   })
 
-  const upcomingAppointments =
+  const upcomingAppointments = (
     upcoming.data?.healthDirectorateAppointments?.data ?? []
+  )
+    // BOOKED also matches appointments whose date has already passed
+    .filter((appointment) => !isPastAppointment(appointment))
   const pastAppointments = (
     past.data?.healthDirectorateAppointments?.data ?? []
   )
@@ -185,14 +198,26 @@ const AppointmentsOverview = () => {
             label: formatMessage(messages.pastAppointmentsTab),
             content: (
               <Box paddingTop={3}>
-                <Text marginBottom={3}>
-                  {formatMessage(messages.pastAppointmentsNote)}
-                </Text>
-                {renderAppointmentList(
-                  pastAppointments,
-                  past,
-                  formatMessage(messages.noPastAppointmentsText),
-                  true,
+                {hasPastAppointmentsAccess ? (
+                  <>
+                    <Text marginBottom={3}>
+                      {formatMessage(messages.pastAppointmentsNote)}
+                    </Text>
+                    {renderAppointmentList(
+                      pastAppointments,
+                      past,
+                      formatMessage(messages.noPastAppointmentsText),
+                      true,
+                    )}
+                  </>
+                ) : (
+                  <Problem
+                    type="no_data"
+                    noBorder={false}
+                    title={formatMessage(m.accessNeeded)}
+                    message={formatMessage(m.accessDeniedText)}
+                    imgSrc="./assets/images/jobsGrid.svg"
+                  />
                 )}
               </Box>
             ),
