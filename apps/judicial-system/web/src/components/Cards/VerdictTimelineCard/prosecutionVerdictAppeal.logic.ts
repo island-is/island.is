@@ -63,28 +63,6 @@ export const getProsecutionVerdictAppealDate = (
 }
 
 /**
- * The defendants whose prosecution verdict appeal currently stands - the ones
- * there is actually an appeal to withdraw for.
- *
- * A review decision of APPEAL does not imply one: a decision recorded before
- * verdict appeals were switched on has no appeal case and no event behind it,
- * and the backend refuses to withdraw an appeal that was never filed.
- */
-export const standingProsecutionAppealDefendantIds = (
-  verdictAppealCase: Pick<AppealCase, 'appealEventLogs'> | null | undefined,
-): string[] => {
-  const defendantIds = new Set(
-    (verdictAppealCase?.appealEventLogs ?? [])
-      .map((eventLog) => eventLog.defendantId)
-      .filter((defendantId): defendantId is string => Boolean(defendantId)),
-  )
-
-  return Array.from(defendantIds).filter((defendantId) =>
-    getProsecutionVerdictAppealDate(verdictAppealCase, defendantId),
-  )
-}
-
-/**
  * The bullet every card shows once the prosecution has appealed a defendant's
  * verdict - the reviewer's own overview, the public prosecution office's and the
  * defence's - so the three tell the same story in the same words.

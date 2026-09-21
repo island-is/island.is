@@ -6,6 +6,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { Modal } from '@island.is/judicial-system-web/src/components'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   getReviewDecisionLabel,
@@ -96,25 +97,29 @@ export const ReviewDecisionModal: FC<Props> = (props) => {
         isLate ? 'Áfrýjun eftir að fresti lauk' : fm(strings.reviewModalTitle)
       }
       text={
-        <>
+        <div className={stack({ gap: 2 })}>
           {isLate && (
-            <Text marginBottom={2}>
+            <Text>
               {`Áfrýjunarfrestur rann út ${formatDate(
                 indictmentAppealDeadline,
               )}.`}
             </Text>
           )}
-          <Text marginBottom={2}>Viltu staðfesta eftirfarandi ákvörðun:</Text>
-          {changedDefendants.map((defendant) => (
-            <Text key={defendant.id}>
-              <strong>{`${defendant.name}: `}</strong>
-              {getReviewDecisionLabel(
-                defendant.indictmentReviewDecision,
-                isFine,
-              )}
-            </Text>
-          ))}
-        </>
+          <Text>Viltu staðfesta eftirfarandi ákvörðun:</Text>
+          {/* The decisions are one list, so they sit together rather than
+          spaced apart the way the paragraphs above them are. */}
+          <div>
+            {changedDefendants.map((defendant) => (
+              <Text key={defendant.id}>
+                <strong>{`${defendant.name}: `}</strong>
+                {getReviewDecisionLabel(
+                  defendant.indictmentReviewDecision,
+                  isFine,
+                )}
+              </Text>
+            ))}
+          </div>
+        </div>
       }
       buttons={[
         {
