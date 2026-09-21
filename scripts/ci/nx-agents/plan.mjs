@@ -222,16 +222,22 @@ const main = () => {
     pool.units += TARGET_WEIGHTS[target] ?? 1
   }
 
+  // With the `deploy-feature` label the agents belong to the build and deploy pipeline, which runs at
+  // the same time. What is left here (lint and typecheck) runs on the main job, like the jobs
+  // that were not skipped for the label before Nx Agents
+  const useAgents = !isTrue(env.DEPLOY_FEATURE)
+
   // The `agents` job is a matrix of these. An agent only sets up what its tasks need
-  const agents = /** @type {AgentType[]} */ (Object.keys(AGENT_TYPES)).flatMap(
-    (type) =>
-      Array.from({ length: agentCount(type, load[type].units) }, (_, i) => ({
-        agent: `${type}-${i + 1}`,
-        type,
-        runner: AGENT_TYPES[type].runner,
-        test: (load[type].counts.test ?? 0) > 0,
-        e2e: (load[type].counts.e2e ?? 0) > 0,
-      })),
+  const agents = /** @type {AgentType[]} */ (
+    useAgents ? Object.keys(AGENT_TYPES) : []
+  ).flatMap((type) =>
+    Array.from({ length: agentCount(type, load[type].units) }, (_, i) => ({
+      agent: `${type}-${i + 1}`,
+      type,
+      runner: AGENT_TYPES[type].runner,
+      test: (load[type].counts.test ?? 0) > 0,
+      e2e: (load[type].counts.e2e ?? 0) > 0,
+    })),
   )
   const unicornProjects = targets.includes('test')
     ? getUnicornProjects().filter((p) => withTarget('test').includes(p))
