@@ -81,6 +81,11 @@ export const translation = defineMessages({
     defaultMessage: 'Vöruleit',
     description: 'Label for the product search input',
   },
+  clearProductSearchInputLabel: {
+    id: 'web.customsCalculator:clearProductSearchInputLabel',
+    defaultMessage: 'Hreinsa leit',
+    description: 'Aria label for the product search input clear button',
+  },
   priceWithShippingDescription: {
     id: 'web.customsCalculator:priceWithShippingDescription',
     defaultMessage: 'Verð vöru komin til Íslands',

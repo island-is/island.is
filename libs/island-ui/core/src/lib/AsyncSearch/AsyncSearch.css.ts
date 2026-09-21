@@ -160,3 +160,31 @@ export const white = style({
     },
   },
 })
+
+export const clear = style({
+  position: 'absolute',
+  display: 'flex',
+  alignItems: 'center',
+  background: 'none',
+  border: 0,
+  padding: 0,
+  lineHeight: 0,
+  cursor: 'pointer',
+  top: '50%',
+  transform: 'translateY(-50%)',
+})
+
+// Sits to the left of the search icon, clearing its focusable border box
+export const clearSizes = styleVariants({
+  medium: {
+    right: 45,
+    ...themeUtils.responsiveStyle({
+      md: {
+        right: 50,
+      },
+    }),
+  },
+  large: {
+    right: 76,
+  },
+})
