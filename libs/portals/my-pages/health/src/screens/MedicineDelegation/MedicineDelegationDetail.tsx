@@ -102,7 +102,7 @@ const MedicineDelegationDetail = () => {
       desktopContentSpan="10/12"
     >
       {!loading && !error && !filteredData && <Problem type="no_data" />}
-      <InfoLineStack label={m.info} space={1}>
+      <InfoLineStack label={m.info} space={[0, 0, 1]}>
         <InfoLine
           label={messages.nameHuman}
           content={filteredData?.name ?? ''}
