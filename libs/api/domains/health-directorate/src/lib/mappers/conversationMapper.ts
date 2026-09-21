@@ -249,8 +249,9 @@ export const getClosesAt = (
     isAllDayWindow(todaysWindow)
   )
     return undefined
+  const open = parseTime(todaysWindow.windowOpen)
   const close = parseTime(todaysWindow.windowClose)
-  if (!close) return undefined
+  if (!open || !close) return undefined
 
   const closesAt = new Date(
     Date.UTC(
@@ -262,8 +263,14 @@ export const getClosesAt = (
       close.seconds,
     ),
   )
-  // Open with a close time already passed today: the window runs past midnight.
-  if (closesAt <= now) closesAt.setUTCDate(closesAt.getUTCDate() + 1)
+  // Only a window that runs past midnight can close tomorrow. Otherwise a
+  // close time already passed means our clock is ahead of Hekla's, and the
+  // window is closing right now.
+  const toSeconds = (t: { hours: number; minutes: number; seconds: number }) =>
+    t.hours * 3600 + t.minutes * 60 + t.seconds
+  const runsPastMidnight = toSeconds(close) <= toSeconds(open)
+  if (runsPastMidnight && closesAt <= now)
+    closesAt.setUTCDate(closesAt.getUTCDate() + 1)
   return closesAt
 }
 

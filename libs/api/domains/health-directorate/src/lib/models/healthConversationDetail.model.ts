@@ -29,6 +29,20 @@ export class HealthDirectorateHealthConversationDetail extends HealthDirectorate
   })
   replyAvailability!: HealthConversationReplyAvailabilityEnum
 
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Replies are not bound by the messaging window. Use replyAvailability instead.',
+  })
+  messagingWindowOpen?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Replies are not bound by the messaging window. Use replyAvailability instead.',
+  })
+  messagingWindowClose?: string
+
   @Field(() => Int, {
     nullable: true,
     description:
