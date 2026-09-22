@@ -195,6 +195,7 @@ api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
     SESSIONS_API_URL: 'http://services-sessions.services-sessions.svc.cluster.local'
+    SKATTUR_TOLLUR_ALMENNT_AKVORDUNARSTADIR_BASE_URL: ''
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'

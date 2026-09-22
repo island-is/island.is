@@ -124,6 +124,14 @@ export const serviceSetup = (services: {
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
         prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
+      // Temporary: the Akvordunarstadir endpoint is not live in the Skatturinn
+      // production gateway yet, so production reads it from the test gateway.
+      // Remove this once the production endpoint is ready.
+      SKATTUR_TOLLUR_ALMENNT_AKVORDUNARSTADIR_BASE_URL: {
+        dev: '',
+        staging: '',
+        prod: 'https://skatt-test.hysing.is/gateway/tollur-almennt/v1',
+      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',

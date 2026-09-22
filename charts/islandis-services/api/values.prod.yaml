@@ -85,6 +85,7 @@ env:
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
   SESSIONS_API_URL: 'http://services-sessions.services-sessions.svc.cluster.local'
+  SKATTUR_TOLLUR_ALMENNT_AKVORDUNARSTADIR_BASE_URL: 'https://skatt-test.hysing.is/gateway/tollur-almennt/v1'
   SYSLUMENN_TIMEOUT: '40000'
   TELL_US_A_STORY_EMAIL: 'sogur@island.is'
   UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'

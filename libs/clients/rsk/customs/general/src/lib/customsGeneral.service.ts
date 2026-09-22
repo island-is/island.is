@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   tollgengiGet1,
   abendiGet2,
@@ -55,11 +56,14 @@ import type {
 } from '../../gen/fetch'
 import type { Client } from '../../gen/fetch/client'
 import { CUSTOMS_GENERAL_CLIENT } from './customsGeneral.apiConfig'
+import { CustomsGeneralClientConfig } from './customsGeneral.config'
 
 @Injectable()
 export class CustomsGeneralClientService {
   constructor(
     @Inject(CUSTOMS_GENERAL_CLIENT) private readonly client: Client,
+    @Inject(CustomsGeneralClientConfig.KEY)
+    private readonly config: ConfigType<typeof CustomsGeneralClientConfig>,
   ) {}
 
   /** Tollgengi - exchange rates from a reference date and system */
@@ -184,6 +188,13 @@ export class CustomsGeneralClientService {
 
   /** Akvordunarstadir - determination locations by country code (query params) */
   getAkvordunarstadir(query: AkvordunarstadirGet25Data['query']) {
-    return akvordunarstadirGet25({ query, client: this.client })
+    const { assessmentLocationsBaseUrl } = this.config
+    return akvordunarstadirGet25({
+      query,
+      client: this.client,
+      ...(assessmentLocationsBaseUrl
+        ? { baseUrl: assessmentLocationsBaseUrl }
+        : {}),
+    })
   }
 }
