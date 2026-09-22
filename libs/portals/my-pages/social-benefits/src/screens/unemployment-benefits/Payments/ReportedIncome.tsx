@@ -1,20 +1,14 @@
 import { useLocale } from '@island.is/localization'
-import { amountFormat, formatDate } from '@island.is/portals/my-pages/core'
+import { amountFormat } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { ReportedIncomeRow, ReportedIncomeTable } from './ReportedIncomeTable'
 import { useGetVmstApplicantIncomesQuery } from './ReportedIncome.generated'
 
 const DASH = '-'
+const LONG_DATE_FORMAT = 'd. MMMM yyyy'
 
 const formatAmount = (value?: number | null) =>
   value != null ? amountFormat(value) : DASH
-
-const formatPeriod = (from?: string | null, to?: string | null) => {
-  const fromLabel = from ? formatDate(from) : ''
-  const toLabel = to ? formatDate(to) : ''
-  if (fromLabel && toLabel) return `${fromLabel} – ${toLabel}`
-  return fromLabel || toLabel || DASH
-}
 
 const formatPayer = (name?: string | null, ssn?: string | null) => {
   if (name && ssn) return `${name}, kt. ${ssn}`
@@ -22,8 +16,17 @@ const formatPayer = (name?: string | null, ssn?: string | null) => {
 }
 
 export const ReportedIncome = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
   const { data, loading } = useGetVmstApplicantIncomesQuery()
+
+  const formatLongDate = (value?: string | null) => {
+    if (!value) return DASH
+    try {
+      return formatDateFns(value, LONG_DATE_FORMAT)
+    } catch {
+      return DASH
+    }
+  }
 
   const incomes = data?.vmstApplicantIncomes
   const rows: ReportedIncomeRow[] = [
@@ -31,7 +34,7 @@ export const ReportedIncome = () => {
       id: item.id ?? `irregular-${index}`,
       type: formatMessage(um.reportedIncomeTypeIrregular),
       payer: formatPayer(item.employerName, item.employerSSN),
-      date: formatPeriod(item.periodFrom, item.periodTo),
+      date: formatLongDate(item.periodFrom),
       amount: formatAmount(item.estimatedIncome),
       sortDate: item.periodFrom,
     })),
@@ -39,7 +42,7 @@ export const ReportedIncome = () => {
       id: item.id ?? `partTime-${index}`,
       type: formatMessage(um.reportedIncomeTypePartTime),
       payer: formatPayer(item.employerName, item.employerSSN),
-      date: formatPeriod(item.periodFrom, item.periodTo),
+      date: formatLongDate(item.periodFrom),
       amount: formatAmount(item.estimatedIncome),
       sortDate: item.periodFrom,
     })),
@@ -47,7 +50,7 @@ export const ReportedIncome = () => {
       id: item.id ?? `pension-${index}`,
       type: formatMessage(um.reportedIncomeTypePension),
       payer: DASH,
-      date: formatPeriod(item.periodFrom, item.periodTo),
+      date: formatLongDate(item.periodFrom),
       amount: formatAmount(item.estimatedIncome),
       sortDate: item.periodFrom,
     })),
@@ -55,7 +58,7 @@ export const ReportedIncome = () => {
       id: item.id ?? `capital-${index}`,
       type: formatMessage(um.reportedIncomeTypeCapital),
       payer: DASH,
-      date: formatPeriod(item.periodFrom, item.periodTo),
+      date: formatLongDate(item.periodFrom),
       amount: formatAmount(item.estimatedIncome),
       sortDate: item.periodFrom,
     })),
@@ -63,7 +66,7 @@ export const ReportedIncome = () => {
       id: item.id ?? `tr-${index}`,
       type: formatMessage(um.reportedIncomeTypeTR),
       payer: formatMessage(um.reportedIncomeTRPayer),
-      date: formatPeriod(item.periodFrom, item.periodTo),
+      date: formatLongDate(item.periodFrom),
       amount: formatAmount(item.estimatedIncome),
       sortDate: item.periodFrom,
     })),
@@ -71,7 +74,7 @@ export const ReportedIncome = () => {
       id: item.id ?? `contractor-${index}`,
       type: formatMessage(um.reportedIncomeTypeContractor),
       payer: DASH,
-      date: formatPeriod(item.startDate, item.endDate),
+      date: formatLongDate(item.startDate),
       amount: DASH,
       sortDate: item.startDate,
     })),
