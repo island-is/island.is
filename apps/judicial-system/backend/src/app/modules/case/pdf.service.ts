@@ -43,7 +43,6 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   Case,
-  caseInclude,
   CaseRepositoryService,
   Defendant,
   EventLog,
@@ -293,10 +292,10 @@ export class PdfService {
     }
 
     const parentCase = theCase.splitCaseId
-      ? await this.caseRepositoryService.findById(theCase.splitCaseId, {
-          include: caseInclude,
-          transaction,
-        })
+      ? await this.caseRepositoryService.findSplitSourceById(
+          theCase.splitCaseId,
+          { transaction },
+        )
       : theCase
 
     if (!parentCase) {

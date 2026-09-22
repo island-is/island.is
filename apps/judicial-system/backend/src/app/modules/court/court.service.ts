@@ -34,11 +34,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
-import {
-  CaseRepositoryService,
-  RobotLogRepositoryService,
-  User as UserModel,
-} from '../repository'
+import { CaseRepositoryService, RobotLogRepositoryService } from '../repository'
 import { courtModuleConfig } from './court.config'
 
 export enum CourtDocumentFolder {
@@ -141,12 +137,7 @@ export class CourtService {
     fileName: string,
   ): Promise<void> {
     const theCase = await this.caseRepositoryService
-      .findById(caseId, {
-        include: [
-          { model: UserModel, as: 'judge' },
-          { model: UserModel, as: 'registrar' },
-        ],
-      })
+      .findByIdWithJudgeAndRegistrar(caseId)
       .catch((reason) => {
         this.logger.error(
           `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
