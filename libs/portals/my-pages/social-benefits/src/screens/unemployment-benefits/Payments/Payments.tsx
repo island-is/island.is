@@ -1,11 +1,9 @@
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
-import { Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ActionButtons } from '../components/ActionButtons'
 import { useGetApplicantAvailableActionsQuery } from '../MyData/MyData.generated'
-import { PaymentsFromUnemploymentFund } from './tabs/PaymentsFromUnemploymentFund'
-import { ReportedIncome } from './tabs/ReportedIncome'
+import { ReportedIncome } from './ReportedIncome'
 
 // Atvinnuleysi – Greiðslur
 const Payments = () => {
@@ -28,28 +26,14 @@ const Payments = () => {
       loading={actionsLoading}
     >
       <ActionButtons
-        availableActions={availableActions}
+        availableActions={{
+          canContact: availableActions?.canContact,
+          canReportWork: availableActions?.canReportWork,
+          canUnregister: availableActions?.canUnregister,
+        }}
         loading={actionsLoading}
       />
-
-      <Tabs
-        label={formatMessage(um.paymentsTitle)}
-        contentBackground="white"
-        onlyRenderSelectedTab
-        selected="payments"
-        tabs={[
-          {
-            id: 'payments',
-            label: formatMessage(um.paymentsTabPayments),
-            content: <PaymentsFromUnemploymentFund />,
-          },
-          {
-            id: 'reportedIncome',
-            label: formatMessage(um.paymentsTabReportedIncome),
-            content: <ReportedIncome />,
-          },
-        ]}
-      />
+      <ReportedIncome />
     </IntroWrapper>
   )
 }

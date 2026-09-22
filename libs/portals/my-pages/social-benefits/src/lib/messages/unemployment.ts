@@ -50,7 +50,7 @@ export const unemploymentBenefitsMessages = defineMessages({
     defaultMessage: 'https://island.is/umsoknir/tilkynna-utanlandsferd',
   },
   statusUnsubscribe: {
-    id: 'sp.social-benefits-unemployment:statusUnsubscribe',
+    id: 'sp.social-benefits-unemployment:statusUnsubscribeFromBenefits',
     defaultMessage: 'Afskrá af bótum',
   },
   statusUnsubscribeUrl: {
@@ -152,7 +152,7 @@ export const unemploymentBenefitsMessages = defineMessages({
   paymentsIntro: {
     id: 'sp.social-benefits-unemployment:paymentsIntro',
     defaultMessage:
-      'Hér er yfirlit yfir þínar greiðslur frá Atvinnuleysissjóði',
+      'Hér fyrir neðan er yfirlit yfir þær tekjur sem þú hefur skráð meðfram atvinnuleysisbótum.',
   },
   paymentsTabPayments: {
     id: 'sp.social-benefits-unemployment:paymentsTabPayments',
@@ -161,5 +161,49 @@ export const unemploymentBenefitsMessages = defineMessages({
   paymentsTabReportedIncome: {
     id: 'sp.social-benefits-unemployment:paymentsTabReportedIncome',
     defaultMessage: 'Tilkynntar tekjur',
+  },
+  reportedIncomeTypeHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeHeader',
+    defaultMessage: 'Tegund greiðslu',
+  },
+  reportedIncomePayerHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomePayerHeader',
+    defaultMessage: 'Greiðandi',
+  },
+  reportedIncomeDateHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeDateHeader',
+    defaultMessage: 'Dagsetning',
+  },
+  reportedIncomeAmountHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeAmountHeader',
+    defaultMessage: 'Upphæð',
+  },
+  reportedIncomeTypeIrregular: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeIrregular',
+    defaultMessage: 'Tilfallandi tekjur',
+  },
+  reportedIncomeTypePartTime: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypePartTime',
+    defaultMessage: 'Hlutastarf',
+  },
+  reportedIncomeTypePension: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypePension',
+    defaultMessage: 'Lífeyrir',
+  },
+  reportedIncomeTypeCapital: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeCapital',
+    defaultMessage: 'Fjármagnstekjur',
+  },
+  reportedIncomeTypeTR: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeTR',
+    defaultMessage: 'Greiðslur frá TR',
+  },
+  reportedIncomeTypeContractor: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeContractor',
+    defaultMessage: 'Verktakastarf',
+  },
+  reportedIncomeTRPayer: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTRPayer',
+    defaultMessage: 'Tryggingastofnun',
   },
 })

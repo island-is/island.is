@@ -1,4 +1,4 @@
-import { Box, DropdownMenu } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { VmstApplicationsAvailableActions } from '@island.is/portals/my-pages/graphql'
@@ -16,30 +16,13 @@ export const ActionButtons = ({
   const { formatMessage } = useLocale()
   useNamespaces('sp.social-benefits-unemployment')
   const showContactButton = availableActions?.canContact === true
-  const dropdownActions = [
-    {
-      title: formatMessage(um.statusSubmitDocuments),
-      href: formatMessage(um.statusSubmitDocumentsUrl),
-      visible: availableActions?.canSubmitDocuments === true,
-    },
-    {
-      title: formatMessage(um.statusReportIncome),
-      href: formatMessage(um.statusReportIncomeUrl),
-      visible: availableActions?.canReportWork === true,
-    },
-    {
-      title: formatMessage(um.statusReportTravel),
-      href: formatMessage(um.statusReportTravelUrl),
-      visible: availableActions?.canReportTravel === true,
-    },
-    {
-      title: formatMessage(um.statusUnsubscribe),
-      href: formatMessage(um.statusUnsubscribeUrl),
-      visible: availableActions?.canUnregister === true,
-    },
-  ].filter((b) => b.visible)
+  const showSubmitDocumentsButton =
+    availableActions?.canSubmitDocuments === true
+  const showReportIncomeButton = availableActions?.canReportWork === true
+  const showReportTravelButton = availableActions?.canReportTravel === true
+  const showUnsubscribeButton = availableActions?.canUnregister === true
 
-  if (loading || (!showContactButton && dropdownActions.length === 0)) {
+  if (loading) {
     return null
   }
 
@@ -49,16 +32,45 @@ export const ActionButtons = ({
         <LinkButton
           to={formatMessage(um.statusContactUsUrl)}
           text={formatMessage(um.statusContactUs)}
+          icon="open"
           variant="utility"
           size="small"
         />
       )}
-      {dropdownActions.length > 0 && (
-        <DropdownMenu
-          icon="ellipsisVertical"
-          menuLabel={formatMessage(um.statusMoreActions)}
-          title={formatMessage(um.statusMoreActions)}
-          items={dropdownActions}
+      {showSubmitDocumentsButton && (
+        <LinkButton
+          to={formatMessage(um.statusSubmitDocumentsUrl)}
+          text={formatMessage(um.statusSubmitDocuments)}
+          icon="documents"
+          variant="utility"
+          size="small"
+        />
+      )}
+      {showReportIncomeButton && (
+        <LinkButton
+          to={formatMessage(um.statusReportIncomeUrl)}
+          text={formatMessage(um.statusReportIncome)}
+          icon="wallet"
+          variant="utility"
+          size="small"
+        />
+      )}
+      {showReportTravelButton && (
+        <LinkButton
+          to={formatMessage(um.statusReportTravelUrl)}
+          text={formatMessage(um.statusReportTravel)}
+          icon="airplane"
+          variant="utility"
+          size="small"
+        />
+      )}
+      {showUnsubscribeButton && (
+        <LinkButton
+          to={formatMessage(um.statusUnsubscribeUrl)}
+          text={formatMessage(um.statusUnsubscribe)}
+          icon="logOut"
+          variant="utility"
+          size="small"
         />
       )}
     </Box>

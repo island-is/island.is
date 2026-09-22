@@ -7,6 +7,7 @@ import {
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
+  GaldurExternalDomainModelsIncomeIncomesDTO,
 } from '@island.is/clients/vmst-unemployment'
 import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
@@ -20,6 +21,7 @@ import {
   VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
   VmstApplicationsU2ValidationResponse,
+  VmstApplicantIncomes,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 import { maskString } from '@island.is/shared/utils'
@@ -202,6 +204,34 @@ export class VMSTApplicationsService {
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsAvailableActions> {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
+  }
+
+  async getApplicantIncomes(auth: User): Promise<VmstApplicantIncomes> {
+    try {
+      const { applicantId } = await this.resolveApplicant(auth)
+      const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
+        await this.vmstUnemploymentService.getApplicantIncomes(applicantId)
+      return {
+        irregularJobs: dto.irregularJobs ?? [],
+        partTimeJobs: dto.partTimeJobs ?? [],
+        pensionPayments: dto.pensionPayments ?? [],
+        capitalIncomePayments: dto.capitalIncomePayments ?? [],
+        trPayments: dto.trPayments ?? [],
+        contractorJobs: dto.contractorJobs ?? [],
+      }
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        return {
+          irregularJobs: [],
+          partTimeJobs: [],
+          pensionPayments: [],
+          capitalIncomePayments: [],
+          trPayments: [],
+          contractorJobs: [],
+        }
+      }
+      throw e
+    }
   }
 
   async getApplicantAttachments(

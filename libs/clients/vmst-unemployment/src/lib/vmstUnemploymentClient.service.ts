@@ -46,6 +46,8 @@ import {
   GaldurExternalDomainModelsSupportDataNationalityDTO,
   GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
   GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
+  IncomeApi,
+  GaldurExternalDomainModelsIncomeIncomesDTO,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -70,6 +72,7 @@ type VmstApis =
   | SupportDataApi
   | U2CertificateApi
   | JobSearchConfirmationApi
+  | IncomeApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -434,6 +437,20 @@ export class VmstUnemploymentClientService {
     return await api.applicantGetActions({
       id: applicantId,
     })
+  }
+
+  /* 
+    Returns all incomes for a user.
+  */
+  async getApplicantIncomes(
+    applicantId: string,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesDTO> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.incomeGet({ applicantId })
   }
 
   async getApplicantAttachments(
