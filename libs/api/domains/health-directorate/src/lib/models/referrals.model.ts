@@ -43,6 +43,12 @@ export class Referral {
   diagnoses?: string
 
   @Field({ nullable: true })
+  fromInstitute?: string
+
+  @Field({ nullable: true })
+  toInstitute?: string
+
+  @Field({ nullable: true })
   fromContactInfo?: ReferralContact
 
   @Field({ nullable: true })

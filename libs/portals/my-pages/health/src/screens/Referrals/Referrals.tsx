@@ -78,6 +78,7 @@ const Referrals: React.FC = () => {
         {referrals?.map((referral) => (
           <ActionCard
             key={referral.id}
+            eyebrow={referral.fromInstitute ?? undefined}
             heading={referral?.serviceName ?? ''}
             headingVariant="h4"
             text={[

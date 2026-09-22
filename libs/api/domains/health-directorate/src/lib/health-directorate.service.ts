@@ -319,6 +319,8 @@ export class HealthDirectorateService {
           status: mapReferralStatusValueToStatus(item.statusValue),
           reason: item.reasonForReferral,
           diagnoses: item.diagnoses?.join(', '),
+          fromInstitute: item.fromInstitute,
+          toInstitute: item.toInstitute,
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,
         }

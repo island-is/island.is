@@ -4,6 +4,7 @@ fragment Referral on HealthDirectorateReferral {
   validUntilDate
   stateDisplay
   status
+  fromInstitute
 }
 
 query GetReferrals($locale: String) {
