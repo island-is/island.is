@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { amountFormat } from '@island.is/portals/my-pages/core'
+import { amountFormat, formatNationalId } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { ReportedIncomeRow, ReportedIncomeTable } from './ReportedIncomeTable'
 import { useGetVmstApplicantIncomesQuery } from './ReportedIncome.generated'
@@ -11,8 +11,8 @@ const formatAmount = (value?: number | null) =>
   value != null ? amountFormat(value) : DASH
 
 const formatPayer = (name?: string | null, ssn?: string | null) => {
-  if (name && ssn) return `${name}, kt. ${ssn}`
-  return name || ssn || DASH
+  if (name && ssn) return `${name}, kt. ${formatNationalId(ssn)}`
+  return name || (ssn ? formatNationalId(ssn) : DASH)
 }
 
 export const ReportedIncome = () => {
