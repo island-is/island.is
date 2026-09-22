@@ -410,7 +410,22 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
         { indictment_reviewer_id: user.id },
         {
           indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
-          [Op.and]: [buildHasAppealedVerdictCondition()],
+          [Op.and]: [
+            buildHasAppealedVerdictCondition(),
+            // Heightened security narrows the appeal route the same way it
+            // narrows every other prosecution route - an appeal is not a way
+            // around it. Scoped to this branch on purpose: the reviewer branch
+            // above has never carried the restriction, and adding it there
+            // would take a heightened case away from the very prosecutor it was
+            // assigned to.
+            {
+              [Op.or]: [
+                { is_heightened_security_level: { [Op.not]: true } },
+                { creating_prosecutor_id: user.id },
+                { prosecutor_id: user.id },
+              ],
+            },
+          ],
         },
       ],
     },

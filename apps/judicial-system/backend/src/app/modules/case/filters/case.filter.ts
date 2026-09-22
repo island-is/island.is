@@ -151,14 +151,20 @@ const hasAppealedVerdict = (theCase: Case): boolean =>
 // Read only. Everything they may change still goes through
 // canProsecutionUserAccessCase.
 //
-// Note that this route does not repeat that function's heightened security
-// check. Nothing is exposed by it today - the flag is a plain column on every
-// case, but only the request case prosecutor UI ever sets it, and this branch
-// is indictment-only - and the case table's access options are silent about it
-// too, so list and guard stay in step. An indictment that could carry the flag
-// would need both taught about it.
-const canPublicProsecutionUserAccessAppealedCase = (theCase: Case): boolean =>
-  canPublicProsecutionUserAccessCase(theCase) && hasAppealedVerdict(theCase)
+// Heightened security narrows this route as it narrows every other prosecution
+// route: an appeal is not a way around it. The flag is a plain column on every
+// case and the update DTO accepts it whatever the case type, so an indictment
+// can carry it - relying on which screen happens to offer it today would be
+// relying on the UI to enforce authorization.
+const canPublicProsecutionUserAccessAppealedCase = (
+  theCase: Case,
+  user: User,
+): boolean =>
+  canPublicProsecutionUserAccessCase(theCase) &&
+  hasAppealedVerdict(theCase) &&
+  (!theCase.isHeightenedSecurityLevel ||
+    user.id === theCase.creatingProsecutorId ||
+    user.id === theCase.prosecutorId)
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
@@ -541,7 +547,7 @@ export const canUserAccessCase = (
     return (
       !forUpdate &&
       isPublicProsecutionUser(user) &&
-      canPublicProsecutionUserAccessAppealedCase(theCase)
+      canPublicProsecutionUserAccessAppealedCase(theCase, user)
     )
   }
 

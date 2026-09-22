@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import type { ModelCtor } from 'sequelize-typescript'
 import { Model, Sequelize } from 'sequelize-typescript'
 
@@ -12,6 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
+import { publicProsecutionIndictmentsAccessWhereOptions } from './whereOptions/access'
 import {
   getAllIncludes,
   getAttributes,
@@ -217,6 +219,46 @@ describe('public prosecution appealed case list', () => {
     const rulingClause = `"Case"."indictment_ruling_decision" = 'RULING'`
 
     expect(occurrences(sql, rulingClause)).toBe(2)
+  })
+
+  // Heightened security narrows the appeal route, but only that route. Hoisting
+  // the restriction to a term of its own would also gate the reviewer route,
+  // taking a heightened case away from the very prosecutor it was assigned to -
+  // which is why this asserts the shape of the predicate and not just that the
+  // clause is present somewhere in it.
+  it('applies heightened security to the appeal route and leaves the reviewer route alone', async () => {
+    // The where options are typed for Sequelize, not for reading back, so the
+    // symbol keys need a loose view to inspect.
+    const access = publicProsecutionIndictmentsAccessWhereOptions(
+      publicProsecutionUser,
+    ) as unknown as Record<symbol, unknown[]>
+    const terms = access[Op.and]
+
+    // The predicate is the event log condition and the two routes, and nothing
+    // else. A third term here is the restriction hoisted out of the appeal
+    // route, where it would gate both routes instead of one.
+    expect(terms).toHaveLength(2)
+
+    const routes = (
+      terms.find(
+        (term) => typeof term === 'object' && term !== null && Op.or in term,
+      ) as Record<symbol, unknown[]> | undefined
+    )?.[Op.or]
+
+    // Being the reviewer is the whole of that route - no further condition.
+    expect(routes?.[0]).toEqual({
+      indictment_reviewer_id: publicProsecutionUser.id,
+    })
+
+    const appealed = await sqlForTable(
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
+      publicProsecutionUser,
+    )
+
+    expect(appealed).toContain('"is_heightened_security_level"')
+    expect(appealed).toContain(
+      `"creating_prosecutor_id" = '${publicProsecutionUser.id}'`,
+    )
   })
 
   // One row per case, unlike the office's list of the same name.

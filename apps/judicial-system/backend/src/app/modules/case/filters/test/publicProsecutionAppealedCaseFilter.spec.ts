@@ -139,6 +139,29 @@ describe('public prosecution user - appealed verdicts', () => {
     )
   })
 
+  // An appeal is not a way around heightened security. The flag is a plain
+  // column and the update DTO accepts it whatever the case type, so an
+  // indictment can carry it - the rule cannot rest on which screen offers it.
+  describe('the appealed case is at a heightened security level', () => {
+    verifyNoAccess(
+      anotherOfficeCase(
+        { verdicts: [{ appealDate: new Date() }] },
+        { isHeightenedSecurityLevel: true },
+      ),
+      user,
+    )
+  })
+
+  describe('a heightened security case this user is the prosecutor on', () => {
+    verifyReadAccess(
+      anotherOfficeCase(
+        { verdicts: [{ appealDate: new Date() }] },
+        { isHeightenedSecurityLevel: true, prosecutorId: user.id },
+      ),
+      user,
+    )
+  })
+
   // The widening reaches PROSECUTOR at this office and no other role there.
   // isPublicProsecutionUser is the only thing saying so, and nothing else in
   // the branch would notice if that changed.
