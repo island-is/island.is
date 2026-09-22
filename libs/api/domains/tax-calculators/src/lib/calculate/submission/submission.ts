@@ -1,5 +1,3 @@
-import { isMatch } from 'date-fns'
-
 import type {
   CalculatorField,
   CalculatorFieldSemantic,
@@ -46,11 +44,23 @@ const toSubmittedValue = (value: InputValue): SubmittedValue | undefined => {
   return undefined
 }
 
-/* isMatch validates calendar values but accepts an unpadded month or day. */
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
-const isCalendarDate = (value: string): boolean =>
-  DATE_PATTERN.test(value) && isMatch(value, 'yyyy-MM-dd')
+const isCalendarDate = (value: string): boolean => {
+  if (!DATE_PATTERN.test(value)) {
+    return false
+  }
+
+  const [year, month, day] = value.split('-').map(Number)
+
+  if (month < 1 || month > 12) {
+    return false
+  }
+
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate()
+
+  return day >= 1 && day <= daysInMonth
+}
 
 const describeKind = (value: SubmittedValue): string =>
   typeof value === 'number'
