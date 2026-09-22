@@ -37,8 +37,7 @@ export class ExecuteActionDto {
   @IsNumber()
   @ApiPropertyOptional({
     description:
-      'Deprecated. The backend now tracks page index in the database.',
-    deprecated: true,
+      'The page index the client believes is current. Rejects writes on mismatch for idempotency.',
   })
   readonly lastKnownPageIndex?: number
 
