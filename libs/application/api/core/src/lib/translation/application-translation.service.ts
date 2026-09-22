@@ -6,7 +6,6 @@ import type { Transaction } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import { Locale } from '@island.is/shared/types'
-import type { ApplicationNamespaceTranslations } from '@island.is/islandis-translations'
 import { logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
 import { Features } from '@island.is/feature-flags'
@@ -51,6 +50,11 @@ export interface PublishHistoryItem {
   id: string
   namespace: string
   publishedAt: Date
+}
+
+interface ApplicationNamespaceTranslations {
+  is: Record<string, string>
+  en: Record<string, string>
 }
 
 const getTranslationActors = (user: User) => {

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 
 import { CmsModule } from '@island.is/cms'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { CmsTranslationsService } from './cms-translations.service'
 import { CmsTranslationsResolver } from './cms-translations.resolver'
 import { CmsTranslationCacheModule } from './cms-translations.cache'
+import { CmsTranslationCacheService } from './cms-translation-cache.service'
 import { CmsTranslationConfig } from './cms-translations.config'
 import { ConfigModule } from '@nestjs/config'
 import { IntlService } from './intl.service'
@@ -14,14 +14,18 @@ import { IntlService } from './intl.service'
   controllers: [],
   imports: [
     CmsModule,
-    FeatureFlagModule,
     CmsTranslationCacheModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [CmsTranslationConfig],
     }),
   ],
-  providers: [CmsTranslationsResolver, CmsTranslationsService, IntlService],
-  exports: [CmsTranslationsService, IntlService],
+  providers: [
+    CmsTranslationsResolver,
+    CmsTranslationsService,
+    CmsTranslationCacheService,
+    IntlService,
+  ],
+  exports: [CmsTranslationsService, CmsTranslationCacheService, IntlService],
 })
 export class CmsTranslationsModule {}

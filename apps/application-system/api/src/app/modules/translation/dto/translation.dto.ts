@@ -66,10 +66,3 @@ export class BulkUpdateTranslationsDto {
   @Type(() => TranslationItemDto)
   translations!: TranslationItemDto[]
 }
-
-export class PublishTranslationsDto {
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  note?: string
-}

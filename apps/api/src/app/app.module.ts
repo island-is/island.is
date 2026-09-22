@@ -177,10 +177,6 @@ import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
-import {
-  ApplicationTranslationHttpConfig,
-  ApplicationTranslationHttpModule,
-} from '@island.is/islandis-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
@@ -352,7 +348,6 @@ const environment = getConfig
       documentProviderAdmins: environment.documentProviderService
         .documentProviderAdmins as string,
     }),
-    ApplicationTranslationHttpModule,
     CmsTranslationsModule,
     TerminusModule,
     HealthInsuranceModule,
@@ -563,7 +558,6 @@ const environment = getConfig
         CourseChargesConfig,
         ApplicationTranslationConfig,
         GoogleTranslateConfig,
-        ApplicationTranslationHttpConfig,
         RecyclingFundClientConfig,
         CustomsGeneralClientConfig,
       ],

@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/islandis-translations'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ApplicationTranslation } from './application-translation.model'
@@ -9,7 +8,6 @@ import { ApplicationTranslationLog } from './application-translation-log.model'
 import { ApplicationTranslationPublish } from './application-translation-publish.model'
 import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
 import { ApplicationTranslationService } from './application-translation.service'
-import { ApplicationTranslationProviderImpl } from './application-translation.provider'
 import { ContentfulTranslationModule } from './contentful/contentful-translation.module'
 
 @Global()
@@ -24,13 +22,7 @@ import { ContentfulTranslationModule } from './contentful/contentful-translation
     ContentfulTranslationModule,
     FeatureFlagModule,
   ],
-  providers: [
-    ApplicationTranslationService,
-    {
-      provide: APPLICATION_TRANSLATION_PROVIDER,
-      useClass: ApplicationTranslationProviderImpl,
-    },
-  ],
-  exports: [ApplicationTranslationService, APPLICATION_TRANSLATION_PROVIDER],
+  providers: [ApplicationTranslationService],
+  exports: [ApplicationTranslationService],
 })
 export class ApplicationTranslationRuntimeModule {}

@@ -52,8 +52,6 @@ export enum Features {
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
-  // Read application template strings from the translation workspace DB instead of Contentful
-  applicationTranslationsFromWorkspace = 'isApplicationTranslationsFromWorkspaceEnabled',
   // Kill switch: when enabled, the translation workspace stops writing to Contentful (reads unaffected)
   applicationTranslationWorkspaceReadOnly = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
 

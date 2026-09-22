@@ -25,19 +25,18 @@ import {
   SharedNamespaceIntrospectionService,
   TemplateIntrospectionService,
   TranslationAccessService,
+  type ContentfulTranslationRow,
+  type PublishHistoryItem,
 } from '@island.is/application/api/core'
 import {
   getAllowedTranslationNamespaces,
   getAllowedTranslationTypeIds,
 } from '@island.is/application/utils'
-import { ApplicationTranslationCacheService } from '@island.is/islandis-translations'
+import { CmsTranslationCacheService } from '@island.is/cms-translations'
 import { ApplicationTypes } from '@island.is/application/types'
 import type { Locale } from '@island.is/shared/types'
-import {
-  UpdateTranslationDto,
-  BulkUpdateTranslationsDto,
-  PublishTranslationsDto,
-} from './dto/translation.dto'
+import { Audit } from '@island.is/nest/audit'
+import { UpdateTranslationDto, BulkUpdateTranslationsDto } from './dto/translation.dto'
 
 const TRANSLATION_SCOPES = [
   AdminPortalScope.applicationSystemAdmin,
@@ -47,6 +46,7 @@ const TRANSLATION_SCOPES = [
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('translations')
 @ApiBearerAuth()
+@Audit({ namespace: '@island.is/applications/translations' })
 @Controller('admin/translations')
 export class TranslationController {
   constructor(
@@ -54,7 +54,7 @@ export class TranslationController {
     private readonly introspectionService: TemplateIntrospectionService,
     private readonly sharedNamespaceIntrospectionService: SharedNamespaceIntrospectionService,
     private readonly translationAccessService: TranslationAccessService,
-    private readonly translationCacheService: ApplicationTranslationCacheService,
+    private readonly translationCacheService: CmsTranslationCacheService,
   ) {}
 
   @Scopes(...TRANSLATION_SCOPES)
@@ -160,6 +160,10 @@ export class TranslationController {
   }
 
   @Scopes(...TRANSLATION_SCOPES)
+  @Audit<ContentfulTranslationRow[]>({
+    action: 'save',
+    resources: (rows) => [...new Set(rows.map((row) => row.namespace))],
+  })
   @Post('bulk')
   async bulkUpdateTranslations(
     @Body() body: BulkUpdateTranslationsDto,
@@ -225,10 +229,13 @@ export class TranslationController {
   }
 
   @Scopes(...TRANSLATION_SCOPES)
+  @Audit<PublishHistoryItem>({
+    action: 'publish',
+    resources: (result) => result.namespace,
+  })
   @Post(':namespace/publish')
   async publishTranslations(
     @Param('namespace') namespace: string,
-    @Body() body: PublishTranslationsDto,
     @CurrentUser() user: User,
   ) {
     this.translationAccessService.assertNamespaceWriteAccess(user, namespace)
@@ -236,7 +243,6 @@ export class TranslationController {
     const publish = await this.translationService.publishTranslations(
       namespace,
       user,
-      body.note,
     )
 
     await this.translationCacheService.invalidate(namespace)
@@ -245,6 +251,10 @@ export class TranslationController {
   }
 
   @Scopes(...TRANSLATION_SCOPES)
+  @Audit<PublishHistoryItem>({
+    action: 'rollback',
+    resources: (result) => result.namespace,
+  })
   @Post(':namespace/rollback/:publishId')
   async rollbackTranslations(
     @Param('namespace') namespace: string,
