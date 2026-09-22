@@ -952,6 +952,9 @@
       "@island.is/clients/regulations-admin": [
         "libs/clients/regulations-admin/src/index.ts"
       ],
+      "@island.is/clients/rsk/calculators": [
+        "libs/clients/rsk/calculators/src/index.ts"
+      ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
