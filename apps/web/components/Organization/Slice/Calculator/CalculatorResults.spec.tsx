@@ -59,7 +59,12 @@ const renderResults = (
     <CalculatorResults
       config={{
         inputSections: [],
-        outputTotal: { uid: 'hero', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+        outputTotal: {
+          uid: 'hero',
+          kind: 'value',
+          key: 'total',
+          label: { is: 'Samtals' },
+        },
         outputSections,
       }}
       contract={contract}
@@ -76,8 +81,18 @@ describe('CalculatorResults', () => {
           key: 'result',
           title: { is: 'Niðurstaða' },
           fields: [
-            { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
-            { uid: 'o2', kind: 'value', key: 'rate', label: { is: 'Hlutfall' } },
+            {
+              uid: 'o1',
+              kind: 'value',
+              key: 'total',
+              label: { is: 'Samtals' },
+            },
+            {
+              uid: 'o2',
+              kind: 'value',
+              key: 'rate',
+              label: { is: 'Hlutfall' },
+            },
           ],
         },
       ],
@@ -188,7 +203,12 @@ describe('CalculatorResults', () => {
           title: { is: 'Niðurstaða' },
           fields: [
             /* Labelled, but keyed to a field the calculator no longer carries. */
-            { uid: 'o1', kind: 'value', key: 'renamedAway', label: { is: 'Horfið' } },
+            {
+              uid: 'o1',
+              kind: 'value',
+              key: 'renamedAway',
+              label: { is: 'Horfið' },
+            },
             /* In the contract and returned, but never labelled. */
             { uid: 'o2', kind: 'value', key: 'total' },
           ],
@@ -213,8 +233,18 @@ describe('CalculatorResults', () => {
           key: 'result',
           title: { is: 'Niðurstaða' },
           fields: [
-            { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
-            { uid: 'o2', kind: 'value', key: 'rate', label: { is: 'Hlutfall' } },
+            {
+              uid: 'o1',
+              kind: 'value',
+              key: 'total',
+              label: { is: 'Samtals' },
+            },
+            {
+              uid: 'o2',
+              kind: 'value',
+              key: 'rate',
+              label: { is: 'Hlutfall' },
+            },
           ],
         },
       ],
@@ -255,13 +285,23 @@ describe('CalculatorResults', () => {
         {
           key: 'result',
           fields: [
-            { uid: 'o1', kind: 'value', key: 'total', label: { is: 'Samtals' } },
+            {
+              uid: 'o1',
+              kind: 'value',
+              key: 'total',
+              label: { is: 'Samtals' },
+            },
             {
               uid: 'oc1',
               kind: 'content',
               content: { is: 'Skýring á milli.' },
             },
-            { uid: 'o2', kind: 'value', key: 'rate', label: { is: 'Hlutfall' } },
+            {
+              uid: 'o2',
+              kind: 'value',
+              key: 'rate',
+              label: { is: 'Hlutfall' },
+            },
           ],
         },
       ],
@@ -280,8 +320,12 @@ describe('CalculatorResults', () => {
     )
 
     const text = container.textContent ?? ''
-    expect(text.indexOf('Samtals')).toBeLessThan(text.indexOf('Skýring á milli.'))
-    expect(text.indexOf('Skýring á milli.')).toBeLessThan(text.indexOf('Hlutfall'))
+    expect(text.indexOf('Samtals')).toBeLessThan(
+      text.indexOf('Skýring á milli.'),
+    )
+    expect(text.indexOf('Skýring á milli.')).toBeLessThan(
+      text.indexOf('Hlutfall'),
+    )
   })
 
   it('omits a content row with no text for the active locale', () => {

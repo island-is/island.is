@@ -1,7 +1,7 @@
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorLocalizedText } from '@island.is/tax-calculators'
 
-export const CALCULATOR_MESSAGES = {
+export const CALCULATOR_MESSAGES: Record<string, CalculatorLocalizedText> = {
   submit: { is: 'Reikna', en: 'Calculate' },
   loadError: {
     is: 'Ekki tókst að sækja reiknivélina',
@@ -18,7 +18,7 @@ export const CALCULATOR_MESSAGES = {
   invalidValue: { is: 'Ógilt gildi', en: 'Invalid value' },
   yes: { is: 'Já', en: 'Yes' },
   no: { is: 'Nei', en: 'No' },
-} satisfies Record<string, CalculatorLocalizedText>
+}
 
 export interface CalculatorLabelledRow {
   key: string

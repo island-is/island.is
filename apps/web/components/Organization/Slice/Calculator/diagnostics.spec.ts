@@ -21,7 +21,12 @@ const label = (is: string) => ({ is })
 
 const config = (patch: Partial<CalculatorConfig> = {}): CalculatorConfig => ({
   inputSections: [],
-  outputTotal: { uid: 'hero', kind: 'value', key: 'total', label: label('Samtals') },
+  outputTotal: {
+    uid: 'hero',
+    kind: 'value',
+    key: 'total',
+    label: label('Samtals'),
+  },
   outputSections: [],
   ...patch,
 })
@@ -207,7 +212,10 @@ describe('collectOutputConfigIssues', () => {
       collectOutputConfigIssues(
         config({
           outputSections: [
-            { key: 'result', fields: [{ uid: 'o1', kind: 'value', key: 'total' }] },
+            {
+              key: 'result',
+              fields: [{ uid: 'o1', kind: 'value', key: 'total' }],
+            },
           ],
         }),
         outputContract(),

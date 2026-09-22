@@ -158,9 +158,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     return (
       <AlertMessage
         type="error"
-        title={
-          localized(CALCULATOR_MESSAGES.loadError, activeLocale) ?? ''
-        }
+        title={localized(CALCULATOR_MESSAGES.loadError, activeLocale) ?? ''}
       />
     )
   }
@@ -196,9 +194,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const fieldErrors = new Map<string, string>()
   const alerts: string[] = failed
-    ? [
-        localized(CALCULATOR_MESSAGES.calculationError, activeLocale) ?? '',
-      ]
+    ? [localized(CALCULATOR_MESSAGES.calculationError, activeLocale) ?? '']
     : []
 
   for (const returned of shown?.errors ?? []) {
@@ -259,8 +255,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
               <AlertMessage
                 type="info"
                 title={
-                  localized(CALCULATOR_MESSAGES.emptyResult, activeLocale) ??
-                  ''
+                  localized(CALCULATOR_MESSAGES.emptyResult, activeLocale) ?? ''
                 }
               />
             )}

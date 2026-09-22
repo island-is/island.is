@@ -15,8 +15,10 @@ import type {
  * These aliases exist so the normalizers below are the only code that ever
  * touches the raw union. They are read off the generated operation, so widening
  * the query still widens what the normalizer sees. */
-export type RawInputField = GetTaxCalculatorQuery['taxCalculator']['inputFields'][number]
-export type RawOutputField = GetTaxCalculatorQuery['taxCalculator']['outputFields'][number]
+export type RawInputField =
+  GetTaxCalculatorQuery['taxCalculator']['inputFields'][number]
+export type RawOutputField =
+  GetTaxCalculatorQuery['taxCalculator']['outputFields'][number]
 type RawOutputItemField = Extract<
   RawOutputField,
   { __typename: 'TaxCalculatorArrayOutputField' }

@@ -410,9 +410,10 @@ describe('Calculator', () => {
         ...calculationResult.taxCalculatorCalculate,
         calculation: {
           ...calculationResult.taxCalculatorCalculate.calculation,
-          values: calculationResult.taxCalculatorCalculate.calculation.values.filter(
-            (value) => value.key === 'netTotal',
-          ),
+          values:
+            calculationResult.taxCalculatorCalculate.calculation.values.filter(
+              (value) => value.key === 'netTotal',
+            ),
         },
       },
     }

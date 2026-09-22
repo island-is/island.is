@@ -64,9 +64,7 @@ export const collectOutputConfigIssues = (
         !itemKeys.has(itemKey) &&
         !seenItemFieldKeys.has(`${field.key}.${itemKey}`),
     )
-    stale.forEach((itemKey) =>
-      seenItemFieldKeys.add(`${field.key}.${itemKey}`),
-    )
+    stale.forEach((itemKey) => seenItemFieldKeys.add(`${field.key}.${itemKey}`))
 
     if (stale.length > 0) {
       staleItemFieldKeys.push({ fieldKey: field.key, itemKeys: stale })
