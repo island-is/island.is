@@ -13,11 +13,11 @@ import type { InputFieldValue } from './models/inputFieldValue.model'
 import type {
   NumberInputField,
   SelectInputField,
-} from './models/inputField.model'
+} from './models/inputField'
 import type {
   ArrayOutputField,
   NumberOutputField,
-} from './models/outputField.model'
+} from './models/outputField'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
 /* Instantiated directly because getCalculator reads a registry. */

@@ -7,7 +7,7 @@ import {
 import type {
   ArrayOutputField,
   NumberOutputField,
-} from '../../models/outputField.model'
+} from '../../models/outputField'
 import { toOutputField, toOutputScalarField } from './outputField'
 
 describe('toOutputField', () => {

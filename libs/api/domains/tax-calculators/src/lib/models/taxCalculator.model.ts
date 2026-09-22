@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { TaxCalculatorType } from '@island.is/tax-calculators'
 
-import { InputField } from './inputField.model'
-import { OutputField } from './outputField.model'
+import { InputField } from './inputField'
+import { OutputField } from './outputField'
 
 @ObjectType()
 export class TaxCalculator {

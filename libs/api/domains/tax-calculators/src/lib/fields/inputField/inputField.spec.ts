@@ -7,7 +7,7 @@ import {
 import type {
   NumberInputField,
   SelectInputField,
-} from '../../models/inputField.model'
+} from '../../models/inputField'
 import { toDependencyValue, toInputField } from './inputField'
 
 describe('toInputField', () => {

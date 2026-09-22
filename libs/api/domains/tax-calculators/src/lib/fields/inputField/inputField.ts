@@ -18,7 +18,7 @@ import type {
   NumberInputField,
   SelectInputField,
   StringInputField,
-} from '../../models/inputField.model'
+} from '../../models/inputField'
 import { InputFieldDependency } from '../../models/inputFieldDependency.model'
 import { NumberInputDependencyValue } from '../../models/numberInputDependencyValue.model'
 import { StringInputDependencyValue } from '../../models/stringInputDependencyValue.model'
