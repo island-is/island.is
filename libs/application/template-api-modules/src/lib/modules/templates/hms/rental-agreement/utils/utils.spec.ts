@@ -1,4 +1,34 @@
-import { fetchFinancialIndexationForMonths, listOfLastMonths } from './utils'
+import {
+  fetchFinancialIndexationForMonths,
+  listOfLastMonths,
+  numberOfIndexMonthsToFetch,
+} from './utils'
+
+describe('numberOfIndexMonthsToFetch', () => {
+  it.each([
+    '2023-01-15T09:00:00.000Z',
+    '2026-09-22T09:00:00.000Z',
+    '2030-06-15T09:00:00.000Z',
+    '2040-12-01T09:00:00.000Z',
+  ])('reaches back to 2023M01 regardless of the current date (%s)', (iso) => {
+    const currentDate = new Date(iso)
+    const months = listOfLastMonths(
+      numberOfIndexMonthsToFetch(currentDate),
+      currentDate,
+    )
+    expect(months).toContain('2023M01')
+  })
+
+  it('grows over time instead of staying fixed', () => {
+    const monthsNeededNow = numberOfIndexMonthsToFetch(
+      new Date('2026-09-22T09:00:00.000Z'),
+    )
+    const monthsNeededOneYearLater = numberOfIndexMonthsToFetch(
+      new Date('2027-09-22T09:00:00.000Z'),
+    )
+    expect(monthsNeededOneYearLater).toBeGreaterThan(monthsNeededNow)
+  })
+})
 
 describe('listOfLastMonths', () => {
   it('starts two months ahead so newly published future indexes are included', () => {
