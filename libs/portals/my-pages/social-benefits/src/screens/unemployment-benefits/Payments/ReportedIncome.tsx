@@ -1,5 +1,8 @@
 import { useLocale } from '@island.is/localization'
-import { amountFormat, formatNationalId } from '@island.is/portals/my-pages/core'
+import {
+  amountFormat,
+  formatNationalId,
+} from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { ReportedIncomeRow, ReportedIncomeTable } from './ReportedIncomeTable'
 import { useGetVmstApplicantIncomesQuery } from './ReportedIncome.generated'
