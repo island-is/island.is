@@ -264,8 +264,12 @@ describe('StatisticsController - Export case event data', () => {
   })
 
   describe('period without a to date', () => {
-    // After the period's usual end, but in the past
-    const laterCase = makeCase(CaseType.CUSTODY, afterPeriod)
+    // Created after the period's usual end, but in the past - with a court
+    // session scheduled for tomorrow, which is after now
+    const laterCase = {
+      ...makeCase(CaseType.CUSTODY, afterPeriod),
+      courtStartDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    } as Case
 
     beforeEach(async () => {
       mockCaseRepositoryService.findRequestCasesForEventExport.mockResolvedValueOnce(
@@ -276,7 +280,7 @@ describe('StatisticsController - Export case event data', () => {
     })
 
     it('should end the period now', () => {
-      expect(rowsOf(uploadedCsv()).map(([id]) => id)).toEqual([laterCase.id])
+      expect(rowsOf(uploadedCsv())).toEqual([[laterCase.id, 'Krafa stofnuð']])
     })
   })
 
