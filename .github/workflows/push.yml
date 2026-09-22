@@ -596,9 +596,6 @@ jobs:
       NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT }}
       NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-main-setup
       CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
-    outputs:
-      # success/failure: the feature is deployed when its images are built, whatever the checks say
-      images: ${{ steps.run.outputs.images }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -635,7 +632,8 @@ jobs:
           TARGETS: ${{ needs.prepare.outputs.AGENT_TARGETS }}
 
       # Two Nx commands at the same time, on the same agents: the checks of the pull request
-      # pipeline (which does not run with the `deploy-feature` label) and the images
+      # pipeline (which does not run with the `deploy-feature` label) and the images.
+      # The feature is only deployed when both succeed
       - name: Run the checks and build the Docker images on the agents
         id: run
         run: ./scripts/ci/nx-agents/run.sh
@@ -726,7 +724,7 @@ jobs:
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
-      && (needs.docker-build.result == 'success' || needs.docker-main.outputs.images == 'success') }}
+      && (needs.docker-build.result == 'success' || needs.docker-main.result == 'success') }}
     permissions:
       id-token: write
       contents: write

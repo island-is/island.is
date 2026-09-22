@@ -37,6 +37,16 @@ for (const line of output.split('\n')) {
   }
 }
 
+// In case the output has neither: jest says which project a failed test file is of,
+// ` FAIL   services-user-notification  apps/services/user-notification/src/...spec.ts`
+for (const match of output.matchAll(
+  /^\s*FAIL\s+([\w@.-]+)\s+\S+\.(?:spec|test)\.[jt]sx?/gm,
+)) {
+  if (![...failed].some((task) => task.startsWith(`${match[1]}:test`))) {
+    failed.add(`${match[1]}:test`)
+  }
+}
+
 // The table cuts long task ids short (`judicial-system-digital-mailbox-api:b…`).
 // The output of a failed task starts with `> nx run <task id>`, which has all of it
 const taskIds = [

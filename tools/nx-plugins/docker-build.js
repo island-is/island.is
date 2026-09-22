@@ -41,8 +41,10 @@ exports.createNodesV2 = [
                   dependsOn: ['build'],
                   // Pushes an image, nothing to cache
                   cache: false,
-                  // Not for a hash, but to make the project affected when a Dockerfile changes
-                  inputs: ['production', '^production', 'Dockerfiles'],
+                  // Everything an image is made from. The hash is not for the Nx cache: it makes the
+                  // project affected when e.g. the Dockerfile changes, and an image is only built
+                  // when there is none for the hash in the registry (`docker-build.sh`)
+                  inputs: ['production', '^production', 'DockerBuild'],
                   options: {
                     command: './scripts/ci/nx-agents/docker-build.sh',
                     env: {
