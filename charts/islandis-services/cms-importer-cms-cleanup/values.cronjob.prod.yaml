@@ -27,7 +27,7 @@ enabled: true
 env:
   DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   LOG_LEVEL: 'info'
-  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces: []
 grantNamespacesEnabled: false
@@ -61,11 +61,11 @@ replicaCount:
   min: 3
 resources:
   limits:
-    cpu: '200m'
-    memory: '256Mi'
+    cpu: '400m'
+    memory: '4096Mi'
   requests:
     cpu: '100m'
-    memory: '128Mi'
+    memory: '1024Mi'
 schedule: '0 0 * * 0'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

@@ -136,6 +136,8 @@ export class CustomsGeneralService {
       code: item.Kodi,
       name: item.Heiti,
       description: item.Lysing,
+      validFrom: item.DagsFra,
+      validTo: item.DagsTil,
       legalArticle: item.LagaGrein,
       system: item.Kerfi,
     }))

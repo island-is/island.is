@@ -33,6 +33,11 @@ export class ApplicationJsonFieldSettingsDto {
   @IsOptional()
   @IsString()
   applicantType?: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  assetType?: string
 }
 
 export class ApplicationJsonFieldDto {

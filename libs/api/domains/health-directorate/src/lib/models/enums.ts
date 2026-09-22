@@ -179,6 +179,38 @@ export enum HealthConversationReplyBlockedReasonEnum {
 }
 registerEnumType(HealthConversationReplyBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationReplyBlockedReason',
+  valuesMap: {
+    OUTSIDE_MESSAGING_WINDOW: {
+      deprecationReason:
+        'No longer sent. Replies are not bound by the messaging window.',
+    },
+    AWAITING_STAFF_REPLY: {
+      deprecationReason: 'No longer sent. See AWAITING_ACKNOWLEDGEMENT.',
+    },
+  },
+})
+
+export enum HealthConversationReplyAvailabilityEnum {
+  CAN_REPLY = 'canReply',
+  WAITING = 'waiting',
+  EXPIRED = 'expired',
+  NEVER = 'never',
+}
+registerEnumType(HealthConversationReplyAvailabilityEnum, {
+  name: 'HealthDirectorateHealthConversationReplyAvailability',
+  description:
+    'What the patient can do with a thread, reduced from patientCanReply and replyBlockedReason.',
+  valuesMap: {
+    WAITING: {
+      description:
+        'Blocked for now and unblocks without the patient doing anything.',
+    },
+    EXPIRED: {
+      description:
+        'The reply window of patientReplyWindowDays has passed. Permanent for this thread.',
+    },
+    NEVER: { description: 'This thread never accepts a patient reply.' },
+  },
 })
 
 export enum HealthConversationSegmentTypeEnum {
@@ -197,6 +229,27 @@ export enum HealthConversationRecipientBlockedReasonEnum {
 }
 registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
+})
+
+export enum HealthConversationRecipientAvailabilityEnum {
+  OPEN = 'open',
+  CLOSED = 'closed',
+  NEVER = 'never',
+}
+registerEnumType(HealthConversationRecipientAvailabilityEnum, {
+  name: 'HealthDirectorateHealthConversationRecipientAvailability',
+  description:
+    'Whether the patient can start a conversation, reduced from canCreateConversation and conversationBlockedReason.',
+  valuesMap: {
+    CLOSED: {
+      description:
+        'Outside the messaging window. nextOpensAt says when it reopens.',
+    },
+    NEVER: {
+      description:
+        'The patient can not start a conversation with this recipient at any time.',
+    },
+  },
 })
 
 export enum HealthConversationDayTypeEnum {

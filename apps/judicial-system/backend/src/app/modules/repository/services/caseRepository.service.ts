@@ -3,6 +3,7 @@ import {
   FindAndCountOptions,
   FindAttributeOptions,
   FindOptions,
+  literal,
   Op,
   Transaction,
   UpdateOptions,
@@ -18,10 +19,36 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CaseState, isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseIndictmentRulingDecision,
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  completedIndictmentCaseStates,
+  DateType,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import { caseInclude, UpdateCase } from '../types/caseRepository.types'
+import { DateLog } from '../models/dateLog.model'
+import { Defendant } from '../models/defendant.model'
+import { Institution } from '../models/institution.model'
+import {
+  archivableCaseInclude,
+  archivableCaseOrder,
+  archivableCaseWhere,
+  caseInclude,
+  caseStatisticsInclude,
+  defendantIndictmentCaseInclude,
+  defendantIndictmentCaseListInclude,
+  getLimitedAccessCaseInclude,
+  indictmentCaseEventExportInclude,
+  indictmentReviewCaseInclude,
+  limitedAccessCaseAttributes,
+  requestCaseEventExportInclude,
+  UpdateCase,
+  verdictAppealDeadlineCaseInclude,
+} from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
 interface FindByIdOptions {
@@ -74,6 +101,14 @@ interface CreateCaseOptions {
 
 interface UpdateCaseOptions {
   transaction: Transaction
+}
+
+// The period the statistics are asked for, and the institution they are asked
+// about - an institution matches a case it either prosecutes or presides over.
+export type CaseStatisticsFilter = {
+  from?: Date
+  to?: Date
+  institutionId?: string
 }
 
 @Injectable()
@@ -219,6 +254,497 @@ export class CaseRepositoryService {
     return originalAncestorId
   }
 
+  // The next case that has outlived its retention window, with the whole graph
+  // the archive is built from. The caller writes the archive and clears the
+  // encrypted properties in the same transaction, so this read joins the
+  // transaction too.
+  async findNextCaseToArchive(transaction: Transaction): Promise<Case | null> {
+    try {
+      this.logger.debug('Finding the next case to archive')
+
+      const result = await this.caseModel.findOne({
+        where: archivableCaseWhere,
+        include: archivableCaseInclude,
+        order: archivableCaseOrder,
+        transaction,
+      })
+
+      this.logger.debug(`Case to archive ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error('Error finding the next case to archive:', { error })
+
+      throw error
+    }
+  }
+
+  // Every ruled indictment case that came from LOKE, with each defendant's
+  // verdicts and the events already filed for them - the caller decides per
+  // defendant whether the verdict appeal deadline has passed. Only LOKE cases
+  // have a police case to report the outcome back to.
+  async findIndictmentCasesForVerdictAppealDeadlineCheck(): Promise<Case[]> {
+    try {
+      this.logger.debug(
+        'Finding indictment cases for the verdict appeal deadline check',
+      )
+
+      const results = await this.caseModel.findAll({
+        where: {
+          state: completedIndictmentCaseStates,
+          type: CaseType.INDICTMENT,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+          origin: CaseOrigin.LOKE,
+        },
+        include: verdictAppealDeadlineCaseInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases for the verdict appeal deadline check`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding indictment cases for the verdict appeal deadline check:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The received cases with a hearing arranged on a given day, earliest
+  // hearing first. The day is bounded here rather than by the caller, on a
+  // copy of the date - setHours mutates the Date it is called on.
+  async findCasesWithHearingArrangementsOnDate(date: Date): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding cases with hearing arrangements on a date')
+
+      const startOfDay = new Date(date)
+      startOfDay.setHours(0, 0, 0, 0)
+      const endOfDay = new Date(date)
+      endOfDay.setHours(23, 59, 59, 999)
+
+      const results = await this.caseModel.findAll({
+        where: { state: { [Op.eq]: CaseState.RECEIVED } },
+        include: [
+          {
+            model: DateLog,
+            as: 'dateLogs',
+            where: {
+              dateType: [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE],
+              date: {
+                [Op.gte]: startOfDay,
+                [Op.lte]: endOfDay,
+              },
+            },
+            required: true,
+          },
+        ],
+        order: [[{ model: DateLog, as: 'dateLogs' }, 'date', 'ASC']],
+      })
+
+      this.logger.debug(
+        `Found ${results.length} cases with hearing arrangements on the date`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding cases with hearing arrangements on a date:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The indictment cases a defendant has been summoned to, newest arraignment
+  // first, reduced to what the digital mailbox lists them by. National ids are
+  // stored without a separator, so one is stripped off the argument - it
+  // reaches this repository from a raw request parameter.
+  async findDefendantIndictmentCases(
+    defendantNationalId: string,
+  ): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding indictment cases for a defendant')
+
+      // Police case numbers are not among the attributes read here, so they
+      // are deliberately left unresolved
+      const results = await this.caseModel.findAll({
+        where: {
+          type: CaseType.INDICTMENT,
+          // Cases in deleted or otherwise inaccessible states stay hidden
+          state: [
+            CaseState.RECEIVED,
+            CaseState.WAITING_FOR_CANCELLATION,
+            ...completedIndictmentCaseStates,
+          ],
+          '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
+        },
+        include: defendantIndictmentCaseListInclude,
+        order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
+        attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases for the defendant`,
+      )
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding indictment cases for a defendant:', {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  // One live indictment case as the digital mailbox shows it to a defendant.
+  // The case only carries the defendant matching the national id - the join
+  // condition selects them, so the other defendants are not read at all.
+  async findIndictmentCaseByIdAndDefendantNationalId(
+    caseId: string,
+    defendantNationalId: string,
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding indictment case ${caseId} for a defendant`)
+
+      // Police case numbers are not among the attributes read here, so they
+      // are deliberately left unresolved
+      const result = await this.caseModel.findOne({
+        where: {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+          // The national id reaches this repository from a raw request
+          // parameter, and is stored without a separator
+          '$defendants.national_id$': defendantNationalId.replace(/-/g, ''),
+        },
+        include: defendantIndictmentCaseInclude,
+        attributes: [
+          'courtCaseNumber',
+          'id',
+          'state',
+          'indictmentRulingDecision',
+          'rulingDate',
+          'ruling',
+        ],
+      })
+
+      this.logger.debug(
+        `Indictment case ${caseId} ${result ? 'found' : 'not found'}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding indictment case ${caseId}:`, { error })
+
+      throw error
+    }
+  }
+
+  // The indictment cases assigned to one reviewer whose ruling landed inside a
+  // period, with the defendants no one has decided on yet. The caller derives
+  // the period from the appeal deadline it is chasing.
+  async findIndictmentCasesAwaitingReviewByRulingDate(
+    indictmentReviewerId: string,
+    fromRulingDate: Date,
+    toRulingDate: Date,
+  ): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding indictment cases awaiting review')
+
+      const results = await this.caseModel.findAll({
+        where: {
+          indictmentReviewerId,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+          rulingDate: { [Op.gte]: fromRulingDate, [Op.lte]: toRulingDate },
+        },
+        include: indictmentReviewCaseInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases awaiting review`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding indictment cases awaiting review:', {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  /**
+   * The case aggregate by id, with the full case graph - the read every route
+   * decides against. Archived cases are never served here; deleted ones are
+   * hidden too, unless the caller asks for them, which the routes that still
+   * have to answer for a case after it was deleted do.
+   *
+   * findLiveByIdForUpdate is this read with the case row locked first.
+   */
+  async findLiveById(
+    id: string,
+    options?: { allowDeleted?: boolean; transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding live case ${id}`)
+
+      const result = await this.caseModel.findOne({
+        include: caseInclude,
+        where: this.liveCaseWhere(id, options?.allowDeleted),
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding live case ${id}:`, { error })
+
+      throw error
+    }
+  }
+
+  // The case row on its own, with none of its associations read - what
+  // MinimalCase describes. The routes that only decide against the case's own
+  // columns take this read rather than the whole graph.
+  async findLiveMinimalById(id: string): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding minimal case ${id}`)
+
+      const result = await this.caseModel.findOne({
+        where: this.liveCaseWhere(id),
+      })
+
+      this.logger.debug(`Minimal case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result])
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding minimal case ${id}:`, { error })
+
+      throw error
+    }
+  }
+
+  /**
+   * One case as a limited access user is served it: the columns and the graph
+   * that path is restricted to. A defence user only sees the parties they act
+   * for on the cases linked to this one, so their national id narrows those
+   * joins - the caller decides who counts as a defence user, this decides what
+   * such a user gets to read.
+   */
+  async findLimitedAccessById(
+    id: string,
+    options?: { defenceUserNationalId?: string; transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding limited access case ${id}`)
+
+      const result = await this.caseModel.findOne({
+        attributes: limitedAccessCaseAttributes,
+        include: getLimitedAccessCaseInclude(options?.defenceUserNationalId),
+        where: this.liveCaseWhere(id),
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(
+        `Limited access case ${id} ${result ? 'found' : 'not found'}`,
+      )
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding limited access case ${id}:`, { error })
+
+      throw error
+    }
+  }
+
+  /**
+   * The received indictment cases, in any court, that share at least one
+   * defendant with this one - the cases a user is shown as connected to it.
+   * Only the matching defendants are read, so the caller can say which
+   * defendant each connection is about.
+   */
+  async findConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    const defendantMatch = this.defendantMatch(theCase)
+
+    if (!defendantMatch) {
+      return []
+    }
+
+    try {
+      this.logger.debug(`Finding cases connected to case ${theCase.id}`)
+
+      // Police case numbers are not among the attributes read here, so they
+      // are deliberately left unresolved
+      const results = await this.caseModel.findAll({
+        include: [
+          { model: Institution, as: 'court', attributes: ['id', 'name'] },
+          {
+            model: Defendant,
+            as: 'defendants',
+            required: true,
+            attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+            where: defendantMatch,
+          },
+        ],
+        attributes: ['id', 'courtCaseNumber'],
+        where: {
+          [Op.and]: {
+            isArchived: false,
+            type: CaseType.INDICTMENT,
+            state: [CaseState.RECEIVED],
+            id: { [Op.ne]: theCase.id },
+          },
+        },
+      })
+
+      this.logger.debug(
+        `Found ${results.length} cases connected to case ${theCase.id}`,
+      )
+
+      return results
+    } catch (error) {
+      this.logger.error(`Error finding cases connected to ${theCase.id}:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  /**
+   * The received indictment cases in the same court whose defendants cover
+   * every defendant of this one - the cases it may be merged into. Matching
+   * one defendant is not enough, so the join is grouped per case and counted
+   * against the number of defendants this case has.
+   */
+  async findCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    const defendantMatch = this.defendantMatch(theCase)
+
+    if (!defendantMatch) {
+      return []
+    }
+
+    try {
+      this.logger.debug(`Finding merge candidates for case ${theCase.id}`)
+
+      // Police case numbers are not among the attributes read here, so they
+      // are deliberately left unresolved
+      const results = await this.caseModel.findAll({
+        include: [
+          {
+            model: Defendant,
+            as: 'defendants',
+            required: true,
+            // The defendants only decide which cases match, they are not read
+            attributes: [],
+            where: defendantMatch,
+          },
+        ],
+        attributes: ['id', 'courtCaseNumber'],
+        where: {
+          [Op.and]: {
+            isArchived: false,
+            id: { [Op.ne]: theCase.id },
+            type: CaseType.INDICTMENT,
+            state: CaseState.RECEIVED,
+            courtId: theCase.courtId,
+          },
+        },
+        group: ['Case.id'],
+        having: literal(
+          `COUNT(DISTINCT "defendants"."id") = ${theCase.defendants?.length}`,
+        ),
+      })
+
+      this.logger.debug(
+        `Found ${results.length} merge candidates for case ${theCase.id}`,
+      )
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        `Error finding merge candidates for case ${theCase.id}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // A live case is neither archived nor - unless the caller says otherwise -
+  // deleted. Every read that serves a case to a route starts from this.
+  private liveCaseWhere(id: string, allowDeleted = false): WhereOptions {
+    return {
+      id,
+      ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
+      isArchived: false,
+    }
+  }
+
+  /**
+   * Matches a case's defendants against the defendants of another case: by
+   * national id, and by name as well for a defendant registered without one,
+   * whose national id is a placeholder shared with every other such defendant.
+   * Returns nothing when there is no one to match, so the caller does not run
+   * a query that would match every case.
+   */
+  private defendantMatch(theCase: Case): WhereOptions | undefined {
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return undefined
+    }
+
+    return {
+      [Op.or]: theCase.defendants.map((defendant) =>
+        defendant.noNationalId
+          ? { nationalId: defendant.nationalId, name: defendant.name }
+          : { nationalId: defendant.nationalId },
+      ),
+    }
+  }
+
   async findOne(options?: FindOneOptions): Promise<Case | null> {
     try {
       this.logger.debug('Finding case with conditions:', {
@@ -285,19 +811,17 @@ export class CaseRepositoryService {
     id: string,
     transaction: Transaction,
   ): Promise<Case | null> {
-    const where = {
+    const locked = await this.lockByIdForUpdate(
       id,
-      state: { [Op.not]: CaseState.DELETED },
-      isArchived: false,
-    }
-
-    const locked = await this.lockByIdForUpdate(id, transaction, where)
+      transaction,
+      this.liveCaseWhere(id),
+    )
 
     if (!locked) {
       return null
     }
 
-    return this.findOne({ include: caseInclude, where, transaction })
+    return this.findLiveById(id, { transaction })
   }
 
   /**
@@ -332,6 +856,124 @@ export class CaseRepositoryService {
       return true
     } catch (error) {
       this.logger.error(`Error locking case ${id} for update:`, { error })
+
+      throw error
+    }
+  }
+
+  private caseStatisticsWhere(filter: CaseStatisticsFilter): WhereOptions {
+    return {
+      // Cases that never left the prosecutor's desk are not part of any count
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      ...(filter.from || filter.to
+        ? {
+            created: {
+              ...(filter.from ? { [Op.gte]: filter.from } : {}),
+              ...(filter.to ? { [Op.lte]: filter.to } : {}),
+            },
+          }
+        : {}),
+      ...(filter.institutionId
+        ? {
+            [Op.or]: [
+              { courtId: filter.institutionId },
+              { prosecutorsOfficeId: filter.institutionId },
+            ],
+          }
+        : {}),
+    }
+  }
+
+  // Every case that counts towards the statistics for a period, with the event
+  // that confirmed its indictment - what the caller needs to count cases and
+  // measure how long a ruling took.
+  async findCasesForStatistics(filter: CaseStatisticsFilter): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding cases for statistics')
+
+      const results = await this.caseModel.findAll({
+        where: this.caseStatisticsWhere(filter),
+        include: caseStatisticsInclude,
+      })
+
+      this.logger.debug(`Found ${results.length} cases for statistics`)
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding cases for statistics:', { error })
+
+      throw error
+    }
+  }
+
+  // Every request case, oldest first, with the graph the event export derives
+  // its rows from. The export is not bounded by a period here - it filters the
+  // events it derives, not the cases it derives them from.
+  async findRequestCasesForEventExport(): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding request cases for the event export')
+
+      const results = await this.caseModel.findAll({
+        where: { type: { [Op.not]: [CaseType.INDICTMENT] } },
+        order: [['created', 'ASC']],
+        include: requestCaseEventExportInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} request cases for the event export`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error('Error finding request cases for the event export:', {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  // Every indictment case, oldest first, with the graph the event export
+  // derives its rows from - see findRequestCasesForEventExport on the period.
+  async findIndictmentCasesForEventExport(): Promise<Case[]> {
+    try {
+      this.logger.debug('Finding indictment cases for the event export')
+
+      const results = await this.caseModel.findAll({
+        where: { type: CaseType.INDICTMENT },
+        order: [['created', 'ASC']],
+        include: indictmentCaseEventExportInclude,
+      })
+
+      this.logger.debug(
+        `Found ${results.length} indictment cases for the event export`,
+      )
+
+      if (results.length > 0) {
+        await this.resolvePoliceCaseNumbersForCaseGraph(results)
+      }
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding indictment cases for the event export:',
+        { error },
+      )
 
       throw error
     }
