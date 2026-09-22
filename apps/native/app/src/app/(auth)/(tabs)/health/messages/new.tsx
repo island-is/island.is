@@ -356,14 +356,18 @@ export default function HealthMessageComposeScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{
           padding: theme.spacing[2],
-          paddingBottom: theme.spacing[4],
+          // Android: adjustResize is set on MainActivity, but this sheet is
+          // its own window, so the keyboard overlays it instead of resizing
+          // it. Pad by the keyboard height to give the Send button somewhere
+          // to scroll clear to.
+          paddingBottom:
+            theme.spacing[4] + (Platform.OS === 'android' ? keyboardHeight : 0),
           rowGap: theme.spacing[2],
           // Let the full-screen "blocked" message fill the sheet.
           ...(isSoleBlocked && { flexGrow: 1 }),
         }}
         keyboardShouldPersistTaps="handled"
-        // iOS: inset for the keyboard so the Send button clears it (Android
-        // uses adjustResize).
+        // iOS: inset for the keyboard so the Send button clears it.
         automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
         {!isSoleBlocked && (

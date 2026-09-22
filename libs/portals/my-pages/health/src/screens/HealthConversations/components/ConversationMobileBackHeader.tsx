@@ -5,6 +5,7 @@ import {
   GridRow,
   Hidden,
 } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import ConversationBackButton from './ConversationBackButton'
 import * as styles from '../HealthConversations.css'
 
@@ -21,7 +22,7 @@ export const ConversationMobileBackHeader = ({ onClick }: Props) => (
     <GridContainer>
       <GridRow>
         <GridColumn span="12/12">
-          <Box className={styles.backButton} marginBottom={4}>
+          <Box className={cn(styles.backButton, styles.mobileBackHeader)}>
             <ConversationBackButton onClick={onClick} />
           </Box>
         </GridColumn>
