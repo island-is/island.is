@@ -16,6 +16,8 @@ import {
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
 import { healthOverviewQuickLinkClick } from '@island.is/plausible'
+import { ApiScope } from '@island.is/auth/scopes'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useLocation } from 'react-router-dom'
 import { z } from 'zod'
 import subYears from 'date-fns/subYears'
@@ -94,6 +96,11 @@ export const HealthOverview = () => {
     false,
   )
 
+  const userInfo = useUserInfo()
+  const hasAppointmentsAccess = !!userInfo?.scopes?.includes(
+    ApiScope.healthAppointments,
+  )
+
   const { data, error, loading } = useGetInsuranceOverviewQuery()
   const {
     data: healthCenterData,
@@ -157,7 +164,7 @@ export const HealthOverview = () => {
     variables: {
       status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
     },
-    skip: !showAppointments,
+    skip: !showAppointments || !hasAppointmentsAccess,
   })
 
   const currentMedicinePeriod =
@@ -261,7 +268,7 @@ export const HealthOverview = () => {
         </GridRow>
       )}
       {/* Appointments */}
-      {showAppointments && (
+      {showAppointments && hasAppointmentsAccess && (
         <Appointments
           data={{
             data: { data: firstTwoAppointments },

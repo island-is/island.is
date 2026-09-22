@@ -9,6 +9,7 @@ import {
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidy } from './models/farmerLandSubsidy.model'
 import { FarmerLandSubsidyFilterOptions } from './models/farmerLandSubsidyFilterOptions.model'
+import { FarmerLandSubsidySummary } from './models/farmerLandSubsidySummary.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandBeneficiaryPayment } from './models/landBeneficiaryPayment.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
@@ -82,6 +83,17 @@ export const mapToFilterOptions = (
         ? [{ id: pc.paymentCategoryId, name: pc.paymentCategoryName }]
         : [],
     ),
+  }
+}
+
+export const mapToSubsidySummary = (
+  summary: PaginatedPayments['summary'],
+): FarmerLandSubsidySummary | undefined => {
+  if (!summary) return undefined
+  return {
+    grossAmount: summary.grossAmount ?? undefined,
+    netPaid: summary.netPaid ?? undefined,
+    offset: summary.offset ?? undefined,
   }
 }
 

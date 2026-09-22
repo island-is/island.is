@@ -67,6 +67,7 @@ export const modelMap: {
   prosecutor: ModelDef<typeof User>
   registrar: ModelDef<typeof User>
   appealCase: ModelDef<typeof AppealCase>
+  verdictAppealCase: ModelDef<typeof AppealCase>
   rulingOrderAppealCases: ModelDef<typeof AppealCase>
   civilClaimants: ModelDef<typeof CivilClaimant>
 } = {
@@ -83,6 +84,7 @@ export const modelMap: {
   prosecutor: { model: User, separate: false },
   registrar: { model: User, separate: false },
   appealCase: { model: AppealCase, separate: false },
+  verdictAppealCase: { model: AppealCase, separate: false },
   rulingOrderAppealCases: { model: AppealCase, separate: false },
   civilClaimants: { model: CivilClaimant, separate: true },
 }

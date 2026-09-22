@@ -5,13 +5,17 @@ import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueB
 import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards/ContextMenuCard/ContextMenuCard'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  AppealCase,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getDefenderVerdictTimelineItems } from './DefenderVerdictTimelineCard.logic'
 import VerdictTimelineBody from './VerdictTimelineBody'
 
 interface Props {
   defendant: Defendant
+  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
   // The actions this user may take on the verdict, if any. With none the card
   // is plain; a defender who does not represent this defendant should not be
   // shown a menu they cannot use.
@@ -25,7 +29,7 @@ interface Props {
  * is decided by getDefenderVerdictTimelineItems.
  */
 const DefenderVerdictTimelineCard: FC<Props> = (props) => {
-  const { defendant, contextMenuItems } = props
+  const { defendant, verdictAppealCase, contextMenuItems } = props
   const { verdict } = defendant
   const { formatMessage } = useIntl()
 
@@ -36,7 +40,12 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
   const body = (
     <VerdictTimelineBody
       eyebrow={defendant.name ?? ''}
-      items={getDefenderVerdictTimelineItems(verdict, formatMessage)}
+      items={getDefenderVerdictTimelineItems({
+        defendantId: defendant.id,
+        verdict,
+        verdictAppealCase,
+        formatMessage,
+      })}
     />
   )
 

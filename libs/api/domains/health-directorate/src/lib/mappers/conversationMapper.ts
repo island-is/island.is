@@ -7,19 +7,25 @@ import {
   ConversationReplyBlockedReason,
   ConversationStatusFilter,
   MessageType,
+  MessagingDayType,
   MessagingRecipientDto,
+  OpeningHoursWindowDto,
   RecipientCreateBlockedReason,
   VideoConversationDto,
 } from '@island.is/clients/health-directorate'
 import {
+  HealthConversationDayTypeEnum,
   HealthConversationDirectionEnum,
+  HealthConversationRecipientAvailabilityEnum,
   HealthConversationRecipientBlockedReasonEnum,
+  HealthConversationReplyAvailabilityEnum,
   HealthConversationReplyBlockedReasonEnum,
   HealthConversationSegmentTypeEnum,
   HealthConversationStatusFilterEnum,
 } from '../models/enums'
 import { m } from '../messages'
 import { HealthDirectorateHealthConversationMessageContent } from '../models/healthConversationMessageContent.model'
+import { HealthDirectorateHealthConversationOpeningWindow } from '../models/healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateHealthConversationSegment } from '../models/healthConversationSegment.model'
 import { HealthDirectorateHealthConversationType } from '../models/healthConversationType.model'
@@ -120,12 +126,12 @@ export const toConversationReplyBlockedReasonEnum = (
       return HealthConversationReplyBlockedReasonEnum.NO_REPLY_GROUP
     case ConversationReplyBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationReplyBlockedReasonEnum.MESSAGING_NOT_ALLOWED
-    case ConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW:
-      return HealthConversationReplyBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
+    case ConversationReplyBlockedReason.PATIENT_REPLY_NOT_ALLOWED:
+      return HealthConversationReplyBlockedReasonEnum.PATIENT_REPLY_NOT_ALLOWED
     case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
       return HealthConversationReplyBlockedReasonEnum.REPLY_WINDOW_EXPIRED
-    case ConversationReplyBlockedReason.AWAITING_STAFF_REPLY:
-      return HealthConversationReplyBlockedReasonEnum.AWAITING_STAFF_REPLY
+    case ConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT:
+      return HealthConversationReplyBlockedReasonEnum.AWAITING_ACKNOWLEDGEMENT
     default:
       return undefined
   }
@@ -137,6 +143,8 @@ export const toConversationRecipientBlockedReasonEnum = (
   switch (reason) {
     case RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED:
       return HealthConversationRecipientBlockedReasonEnum.MESSAGING_NOT_ALLOWED
+    case RecipientCreateBlockedReason.PATIENT_INITIATED_NOT_ALLOWED:
+      return HealthConversationRecipientBlockedReasonEnum.PATIENT_INITIATED_NOT_ALLOWED
     case RecipientCreateBlockedReason.OUTSIDE_MESSAGING_WINDOW:
       return HealthConversationRecipientBlockedReasonEnum.OUTSIDE_MESSAGING_WINDOW
     case RecipientCreateBlockedReason.NO_ALLOWED_TYPES:
@@ -144,6 +152,126 @@ export const toConversationRecipientBlockedReasonEnum = (
     default:
       return undefined
   }
+}
+
+const toConversationDayTypeEnum = (
+  dayType: MessagingDayType,
+): HealthConversationDayTypeEnum => {
+  switch (dayType) {
+    case MessagingDayType.WEEKEND:
+      return HealthConversationDayTypeEnum.WEEKEND
+    case MessagingDayType.HOLIDAY:
+      return HealthConversationDayTypeEnum.HOLIDAY
+    default:
+      return HealthConversationDayTypeEnum.WEEKDAY
+  }
+}
+
+export const toReplyAvailability = (c: {
+  patientCanReply: boolean
+  replyBlockedReason?: ConversationReplyBlockedReason
+}): HealthConversationReplyAvailabilityEnum => {
+  if (c.patientCanReply)
+    return HealthConversationReplyAvailabilityEnum.CAN_REPLY
+  switch (c.replyBlockedReason) {
+    case ConversationReplyBlockedReason.AWAITING_ACKNOWLEDGEMENT:
+      return HealthConversationReplyAvailabilityEnum.WAITING
+    case ConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED:
+      return HealthConversationReplyAvailabilityEnum.EXPIRED
+    default:
+      return HealthConversationReplyAvailabilityEnum.NEVER
+  }
+}
+
+export const toRecipientAvailability = (r: {
+  canCreateConversation: boolean
+  conversationBlockedReason?: RecipientCreateBlockedReason
+}): HealthConversationRecipientAvailabilityEnum => {
+  if (r.canCreateConversation)
+    return HealthConversationRecipientAvailabilityEnum.OPEN
+  return r.conversationBlockedReason ===
+    RecipientCreateBlockedReason.OUTSIDE_MESSAGING_WINDOW
+    ? HealthConversationRecipientAvailabilityEnum.CLOSED
+    : HealthConversationRecipientAvailabilityEnum.NEVER
+}
+
+const parseTime = (
+  time: string,
+): { hours: number; minutes: number; seconds: number } | undefined => {
+  const match = /^(\d{1,2}):(\d{2})(?::(\d{2}))?/.exec(time)
+  return match
+    ? {
+        hours: Number(match[1]),
+        minutes: Number(match[2]),
+        seconds: Number(match[3] ?? 0),
+      }
+    : undefined
+}
+
+// Hekla writes an all-day window as 00:00:00-23:59:59.
+const isAllDayWindow = (window: OpeningHoursWindowDto): boolean =>
+  window.windowOpen.startsWith('00:00') &&
+  window.windowClose.startsWith('23:59')
+
+export const mapOpeningWindow = (
+  window?: OpeningHoursWindowDto,
+): HealthDirectorateHealthConversationOpeningWindow | undefined =>
+  window
+    ? {
+        windowOpen: window.windowOpen,
+        windowClose: window.windowClose,
+        isAllDay: isAllDayWindow(window),
+      }
+    : undefined
+
+export const getTodaysWindow = (r: {
+  dayType: MessagingDayType
+  openingHours: MessagingRecipientDto['openingHours']
+}): OpeningHoursWindowDto | undefined => {
+  switch (r.dayType) {
+    case MessagingDayType.HOLIDAY:
+      return r.openingHours.holiday
+    case MessagingDayType.WEEKEND:
+      return r.openingHours.weekend
+    default:
+      return r.openingHours.weekday
+  }
+}
+
+export const getClosesAt = (
+  availability: HealthConversationRecipientAvailabilityEnum,
+  todaysWindow: OpeningHoursWindowDto | undefined,
+  now: Date,
+): Date | undefined => {
+  if (
+    availability !== HealthConversationRecipientAvailabilityEnum.OPEN ||
+    !todaysWindow ||
+    isAllDayWindow(todaysWindow)
+  )
+    return undefined
+  const open = parseTime(todaysWindow.windowOpen)
+  const close = parseTime(todaysWindow.windowClose)
+  if (!open || !close) return undefined
+
+  const closesAt = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      close.hours,
+      close.minutes,
+      close.seconds,
+    ),
+  )
+  // Only a window that runs past midnight can close tomorrow. Otherwise a
+  // close time already passed means our clock is ahead of Hekla's, and the
+  // window is closing right now.
+  const toSeconds = (t: { hours: number; minutes: number; seconds: number }) =>
+    t.hours * 3600 + t.minutes * 60 + t.seconds
+  const runsPastMidnight = toSeconds(close) <= toSeconds(open)
+  if (runsPastMidnight && closesAt <= now)
+    closesAt.setUTCDate(closesAt.getUTCDate() + 1)
+  return closesAt
 }
 
 /* 
@@ -191,39 +319,65 @@ const TYPE_INSTRUCTIONS: Record<string, MessageDescriptor> = {
   MEDICATION_INQUIRY: m.instructionsMedication,
   CERTIFICATE: m.instructionsCertificate,
   REFERRAL_REQUEST: m.instructionsReferral,
+  GENERAL_INQUIRY: m.instructionsGeneralInquiry,
 }
 
 export const mapMessagingRecipient = (
   r: MessagingRecipientDto,
   formatMessage: FormatMessage,
-): HealthDirectorateHealthConversationRecipient => ({
-  nodeId: r.nodeId,
-  groupId: r.groupId,
-  treatmentId: r.treatmentId,
-  name: r.name,
-  allowsMessaging: r.allowsMessaging,
-  messagingWindowOpen: r.messagingWindowOpen,
-  messagingWindowClose: r.messagingWindowClose,
-  isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
-  patientReplyWindowDays: r.patientReplyWindowDays,
-  allowedMessageTypes: r.allowedConversationTypes.map(
-    (t): HealthDirectorateHealthConversationType => {
-      const instructions = TYPE_INSTRUCTIONS[t.patientInitiatedTypeCode]
-      return {
-        patientInitiatedTypeCode: t.patientInitiatedTypeCode,
-        title: t.title,
-        description: t.description,
-        instructions: instructions ? formatMessage(instructions) : undefined,
-        isCertificate: t.isCertificate,
-      }
+  now: Date = new Date(),
+): HealthDirectorateHealthConversationRecipient => {
+  const availability = toRecipientAvailability(r)
+  const todaysWindow = getTodaysWindow(r)
+  return {
+    availability,
+    todaysWindow: mapOpeningWindow(todaysWindow),
+    closesAt: getClosesAt(availability, todaysWindow, now),
+    nodeId: r.nodeId,
+    groupId: r.groupId,
+    treatmentId: r.treatmentId,
+    name: r.name,
+    allowsMessaging:
+      r.canCreateConversation ||
+      r.conversationBlockedReason !==
+        RecipientCreateBlockedReason.MESSAGING_NOT_ALLOWED,
+    messagingWindowOpen: r.messagingWindowOpen,
+    messagingWindowClose: r.messagingWindowClose,
+    isCurrentlyWithinWindow: r.isCurrentlyWithinWindow,
+    isClosedToday: r.isClosedToday,
+    dayType: toConversationDayTypeEnum(r.dayType),
+    nextOpensAt: r.nextOpensAt
+      ? {
+          date: new Date(r.nextOpensAt.date),
+          windowOpen: r.nextOpensAt.windowOpen,
+          windowClose: r.nextOpensAt.windowClose,
+        }
+      : undefined,
+    openingHours: {
+      weekday: mapOpeningWindow(r.openingHours.weekday),
+      weekend: mapOpeningWindow(r.openingHours.weekend),
+      holiday: mapOpeningWindow(r.openingHours.holiday),
     },
-  ),
-  canCreateConversation: r.canCreateConversation,
-  conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
-    r.conversationBlockedReason,
-  ),
-  canRequestCertificate: r.canRequestCertificate,
-  certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
-    r.certificateBlockedReason,
-  ),
-})
+    patientReplyWindowDays: r.patientReplyWindowDays,
+    allowedMessageTypes: r.allowedConversationTypes.map(
+      (t): HealthDirectorateHealthConversationType => {
+        const instructions = TYPE_INSTRUCTIONS[t.patientInitiatedTypeCode]
+        return {
+          patientInitiatedTypeCode: t.patientInitiatedTypeCode,
+          title: t.title,
+          description: t.description,
+          instructions: instructions ? formatMessage(instructions) : undefined,
+          isCertificate: t.isCertificate,
+        }
+      },
+    ),
+    canCreateConversation: r.canCreateConversation,
+    conversationBlockedReason: toConversationRecipientBlockedReasonEnum(
+      r.conversationBlockedReason,
+    ),
+    canRequestCertificate: r.canRequestCertificate,
+    certificateBlockedReason: toConversationRecipientBlockedReasonEnum(
+      r.certificateBlockedReason,
+    ),
+  }
+}

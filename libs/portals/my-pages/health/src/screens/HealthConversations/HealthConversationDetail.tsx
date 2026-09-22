@@ -26,6 +26,7 @@ import ConversationMessageBody from './components/ConversationMessageBody'
 import ConversationReplyForm from './components/ConversationReplyForm'
 import MobileActionFooter from './components/MobileActionFooter'
 import ReplyBlockedAlert from './components/ReplyBlockedAlert'
+import { HealthDirectorateHealthConversationReplyAvailability as ReplyAvailability } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -99,6 +100,24 @@ const HealthConversationDetail = () => {
       variables: { id },
     },
   )
+
+  // Abandoning a certificate payment (closed tab, back button, dropped
+  // connection) triggers no redirect back to us, so payment state is
+  // refreshed whenever the patient returns to the page.
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') refetch()
+    }
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) refetch()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    window.addEventListener('pageshow', onPageShow)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      window.removeEventListener('pageshow', onPageShow)
+    }
+  }, [refetch])
 
   const handleCertificatePaid = () => {
     toast.success(
@@ -220,6 +239,8 @@ const HealthConversationDetail = () => {
     ? item.organization?.name ?? latestStaffMessage.senderGroupName ?? undefined
     : undefined
 
+  const canReply = item.replyAvailability === ReplyAvailability.CAN_REPLY
+
   const handleBack = () => {
     /* On mobile, replying takes over the screen, so back should return to the
     the thread first. On desktop the reply form is just appended below
@@ -256,11 +277,7 @@ const HealthConversationDetail = () => {
                 <MessageActions
                   bookmarked={item.isStarred}
                   archived={item.isArchived}
-                  onReply={
-                    !replyOpen && item.patientCanReply !== false
-                      ? openReply
-                      : undefined
-                  }
+                  onReply={!replyOpen && canReply ? openReply : undefined}
                   onFav={() => {
                     if (item.isStarred) {
                       unstarMessage({ variables: { input: { id } } })
@@ -301,6 +318,10 @@ const HealthConversationDetail = () => {
                   const senderName = isPatient
                     ? userInfo.profile.name ?? ''
                     : item.organization?.name ?? msg.senderGroupName ?? ''
+                  const extraAttachments = msg.certificateId
+                    ? msg.attachments.slice(1)
+                    : msg.attachments
+                  const attachmentsLocked = msg.requiresPayment && !msg.paid
 
                   return (
                     <Box key={msg.id}>
@@ -371,40 +392,45 @@ const HealthConversationDetail = () => {
                           certificateId={msg.certificateId}
                           requiresPayment={msg.requiresPayment}
                           paid={msg.paid}
-                          pendingPaymentId={msg.pendingPaymentId}
+                          amountIsk={msg.amountIsk}
+                          pendingPaymentStartedAt={msg.pendingPaymentStartedAt}
                           isReturningFromPayment={
                             !!msg.certificateId &&
                             msg.certificateId === certificatePaymentReturnId
                           }
+                          fileName={msg.attachments[0]?.fileName}
+                          downloadServiceURL={
+                            msg.attachments[0]?.downloadServiceURL
+                          }
                           onPaid={handleCertificatePaid}
+                          onRefresh={refetch}
                         />
                       )}
 
                       {/* Attachments */}
-                      {msg.attachments.length > 0 &&
-                        !(msg.requiresPayment && !msg.paid) && (
-                          <Box
-                            display="flex"
-                            flexWrap="wrap"
-                            columnGap={2}
-                            rowGap={1}
-                            marginBottom={3}
-                          >
-                            {msg.attachments.map((file) => (
-                              <Button
-                                key={file.id}
-                                variant="utility"
-                                icon="document"
-                                iconType="outline"
-                                onClick={() =>
-                                  formSubmit(file.downloadServiceURL)
-                                }
-                              >
-                                {file.fileName}
-                              </Button>
-                            ))}
-                          </Box>
-                        )}
+                      {extraAttachments.length > 0 && !attachmentsLocked && (
+                        <Box
+                          display="flex"
+                          flexWrap="wrap"
+                          columnGap={2}
+                          rowGap={1}
+                          marginBottom={3}
+                        >
+                          {extraAttachments.map((file) => (
+                            <Button
+                              key={file.id}
+                              variant="utility"
+                              icon="document"
+                              iconType="outline"
+                              onClick={() =>
+                                formSubmit(file.downloadServiceURL)
+                              }
+                            >
+                              {file.fileName}
+                            </Button>
+                          ))}
+                        </Box>
+                      )}
                     </Box>
                   )
                 })}
@@ -435,9 +461,9 @@ const HealthConversationDetail = () => {
                   loading={replySending}
                   fluid={isPhoneWidth}
                 />
-              ) : item.patientCanReply === false ? (
+              ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
                 <ReplyBlockedAlert
-                  reason={item.replyBlockedReason}
+                  availability={item.replyAvailability}
                   replyWindowDays={item.patientReplyWindowDays}
                 />
               ) : (

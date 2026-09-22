@@ -41,6 +41,15 @@ export const messages = {
       defaultMessage:
         'Engin samþykkt jafnréttisáætlun fannst hjá Jafnréttisstofu. Ekki er hægt að senda inn launagreiningu fyrr en jafnréttisáætlun fyrirtækisins hefur verið samþykkt.',
     },
+    // The submit-side twin of notAllowed.renewalWindowDescription, without the
+    // date: a TemplateApiError summary is rendered through formatMessage with no
+    // values argument (see handleServerError), so an interpolated date would
+    // reach the applicant as a literal placeholder.
+    renewalWindowNotOpen: {
+      id: 'doe.sr.application:errors.renewalWindowNotOpen',
+      defaultMessage:
+        'Ekki er komið að skilum á launagreiningu hjá fyrirtækinu. Hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag.',
+    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -105,6 +114,24 @@ export const messages = {
       id: 'doe.sr.application:notAllowed.notCompanyDescription',
       defaultMessage:
         'Vinsamlegast skráðu þig inn í umboði fyrirtækis til að senda inn launagreiningu.',
+    },
+    // The other half of DMR's eligibility answer: the company holds an approved
+    // jafnréttisáætlun, it is simply too early in the three-year cycle.
+    renewalWindowTitle: {
+      id: 'doe.sr.application:notAllowed.renewalWindowTitle',
+      defaultMessage: 'Ekki er komið að skilum á launagreiningu',
+    },
+    renewalWindowDescription: {
+      id: 'doe.sr.application:notAllowed.renewalWindowDescription',
+      defaultMessage:
+        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Fyrirtækið getur sent inn launagreiningu frá og með {earliestSubmissionDate}.',
+    },
+    // `earliestSubmissionDate` is null until DMR has a due date to anchor the
+    // window on, so the same refusal has to stand without one.
+    renewalWindowDescriptionNoDate: {
+      id: 'doe.sr.application:notAllowed.renewalWindowDescriptionNoDate',
+      defaultMessage:
+        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Ekki er komið að næstu skilum hjá fyrirtækinu.',
     },
   }),
 
@@ -1002,6 +1029,10 @@ export const messages = {
         id: 'doe.sr.application:report.jobClassification.subCriterionInfo',
         defaultMessage: '{description} {weight}% = {max} stig',
       },
+      selectedStepDescription: {
+        id: 'doe.sr.application:report.jobClassification.selectedStepDescription',
+        defaultMessage: '{order}. þrep: {description}',
+      },
       noRolesMessage: {
         id: 'doe.sr.application:report.jobClassification.noRolesMessage',
         defaultMessage:
@@ -1456,6 +1487,23 @@ export const messages = {
         id: 'doe.sr.application:salaryAnalysis.payDispersion.genderNeutral',
         defaultMessage: 'Kynsegin',
       },
+      // Read only by screen readers, from the table's <caption>. It has to say
+      // that a third activation exists, because the order it returns to is the
+      // one `listRule` describes — the most extreme in each direction — and
+      // nothing on screen would otherwise tell a reader who sorted away from it
+      // that it can be had back.
+      tableCaption: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.tableCaption',
+        defaultMessage:
+          'Ábendingar um launadreifingu. Hægt er að raða eftir dálkum: fyrsti smellur raðar í hækkandi röð, annar í lækkandi og þriðji skilar upprunalegri röð.',
+      },
+      // On the sort button itself, so the control announces what activating it
+      // does rather than just reading out the column name. The state it is
+      // currently in is carried by aria-sort on the cell around it.
+      sortColumnLabel: {
+        id: 'doe.sr.application:salaryAnalysis.payDispersion.sortColumnLabel',
+        defaultMessage: 'Raða eftir {column}',
+      },
     }),
     outlierGroup: defineMessages({
       ordinalColumn: {
@@ -1678,6 +1726,23 @@ export const messages = {
       removeGroupButton: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupButton',
         defaultMessage: 'Fjarlægja hóp',
+      },
+      saveGroupButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.saveGroupButton',
+        defaultMessage: 'Vista',
+      },
+      groupSavedButton: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.groupSavedButton',
+        defaultMessage: 'Vistað',
+      },
+      saveGroupError: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.saveGroupError',
+        defaultMessage: 'Ekki tókst að vista hópinn. Reyndu aftur.',
+      },
+      removeGroupError: {
+        id: 'doe.sr.application:salaryAnalysis.outlierGroup.removeGroupError',
+        defaultMessage:
+          'Ekki tókst að uppfæra vistuðu gögnin. Hópurinn getur birst aftur næst þegar þú opnar þennan skjá.',
       },
       unassignedWarning: {
         id: 'doe.sr.application:salaryAnalysis.outlierGroup.unassignedWarning',
