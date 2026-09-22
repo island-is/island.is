@@ -27,7 +27,8 @@ interface Then {
 
 type GivenWhenThen = (query: CaseDataExportDto) => Promise<Then>
 
-// Noon UTC keeps the yyyy-MM-dd in the file name the same in any time zone
+// The file name's yyyy-MM-dd is formatted in local time; noon UTC keeps it
+// the same in any zone from UTC-11 to UTC+11
 const fromDate = new Date('2026-03-01T12:00:00.000Z')
 const toDate = new Date('2026-03-31T12:00:00.000Z')
 const beforePeriod = new Date('2026-02-15T12:00:00.000Z')
@@ -243,43 +244,67 @@ describe('StatisticsController - Export case event data', () => {
   })
 
   describe('period without a from date', () => {
-    const firstCase = makeCase(CaseType.CUSTODY, beforePeriod)
-    const laterCase = makeCase(CaseType.CUSTODY, inPeriod)
+    const firstRow = makeCase(CaseType.CUSTODY, inPeriod)
+    const earlierCreated = makeCase(CaseType.CUSTODY, beforePeriod)
 
     beforeEach(async () => {
-      // The export read orders by creation, so the first case is the earliest
+      // The export read orders by creation, so the first row is normally the
+      // earliest case. Returning them out of order shows that the lower bound
+      // is taken from the first row rather than left open.
       mockCaseRepositoryService.findRequestCasesForEventExport.mockResolvedValueOnce(
-        [firstCase, laterCase],
+        [firstRow, earlierCreated],
       )
 
       await givenWhenThen({ type: DataGroups.REQUESTS, period: { toDate } })
     })
 
-    it('should start the period at the first case', () => {
-      expect(rowsOf(uploadedCsv()).map(([id]) => id)).toEqual([
-        firstCase.id,
-        laterCase.id,
-      ])
+    it('should start the period at the first case returned', () => {
+      expect(rowsOf(uploadedCsv()).map(([id]) => id)).toEqual([firstRow.id])
+    })
+  })
+
+  describe('period without a to date', () => {
+    // After the period's usual end, but in the past
+    const laterCase = makeCase(CaseType.CUSTODY, afterPeriod)
+
+    beforeEach(async () => {
+      mockCaseRepositoryService.findRequestCasesForEventExport.mockResolvedValueOnce(
+        [laterCase],
+      )
+
+      await givenWhenThen({ type: DataGroups.REQUESTS, period: { fromDate } })
+    })
+
+    it('should end the period now', () => {
+      expect(rowsOf(uploadedCsv()).map(([id]) => id)).toEqual([laterCase.id])
     })
   })
 
   // Pins current behaviour: with no period the cases are still read, but no
   // event is derived, and a header-only csv is uploaded and signed.
-  describe('no period given', () => {
+  describe.each([
+    [
+      DataGroups.REQUESTS,
+      () => mockCaseRepositoryService.findRequestCasesForEventExport,
+      CaseType.CUSTODY,
+    ],
+    [
+      DataGroups.INDICTMENTS,
+      () => mockCaseRepositoryService.findIndictmentCasesForEventExport,
+      CaseType.INDICTMENT,
+    ],
+  ])('no period given for %s', (type, exportRead, caseType) => {
     let then: Then
 
     beforeEach(async () => {
-      mockCaseRepositoryService.findRequestCasesForEventExport.mockResolvedValueOnce(
-        [makeCase(CaseType.CUSTODY, inPeriod)],
-      )
+      exportRead().mockResolvedValueOnce([makeCase(caseType, inPeriod)])
 
-      then = await givenWhenThen({ type: DataGroups.REQUESTS })
+      then = await givenWhenThen({ type })
     })
 
-    it('should upload a csv with no rows', () => {
-      expect(
-        mockCaseRepositoryService.findRequestCasesForEventExport,
-      ).toHaveBeenCalled()
+    it('should upload a csv with a header and no rows', () => {
+      expect(exportRead()).toHaveBeenCalled()
+      expect(uploadedCsv()).toMatch(/^Mál,Atburður,/)
       expect(rowsOf(uploadedCsv())).toEqual([])
       expect(then.result).toEqual({ url })
     })
