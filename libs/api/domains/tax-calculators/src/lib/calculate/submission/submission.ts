@@ -1,4 +1,4 @@
-import { isValid, parse } from 'date-fns'
+import { isMatch } from 'date-fns'
 
 import type {
   CalculatorField,
@@ -46,12 +46,11 @@ const toSubmittedValue = (value: InputValue): SubmittedValue | undefined => {
   return undefined
 }
 
+/* isMatch validates calendar values but accepts an unpadded month or day. */
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
-/* The pattern alone would accept 2026-02-31, and parsing alone would accept
- * 2026-2-3. Both have to hold. */
 const isCalendarDate = (value: string): boolean =>
-  DATE_PATTERN.test(value) && isValid(parse(value, 'yyyy-MM-dd', new Date()))
+  DATE_PATTERN.test(value) && isMatch(value, 'yyyy-MM-dd')
 
 const describeKind = (value: SubmittedValue): string =>
   typeof value === 'number'
