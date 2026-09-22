@@ -122,8 +122,6 @@ const FINANCIAL_INDEXATION_URL =
   'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
 const FINANCIAL_INDEXATION_FETCH_TIMEOUT = 10000
 
-// Sized dynamically so the fetch always reaches EARLIEST_RENTAL_PERIOD_START_DATE,
-// rather than a fixed count that drifts out of range as time passes
 export const numberOfIndexMonthsToFetch = (currentDate = new Date()) => {
   const monthsSinceEarliestStartDate = differenceInCalendarMonths(
     currentDate,
