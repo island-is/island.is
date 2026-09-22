@@ -7,10 +7,12 @@ import {
   CustomsGeneralExchangeRatesQuery,
   CustomsGeneralExchangeRatesQueryVariables,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import { GET_CUSTOMS_GENERAL_EXCHANGE_RATES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { CurrencyFlag } from './CurrencyFlag'
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { formatNumber } from './customsGeneralUtils'
 import { m } from './translation.strings'
 
 interface ExchangeRateRow {
@@ -22,6 +24,7 @@ interface ExchangeRateRow {
 
 const CustomsGeneralExchangeRates = () => {
   const { formatMessage } = useIntl()
+  const { activeLocale } = useI18n()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
   const columns: SortableTableColumn<ExchangeRateRow>[] = [
@@ -33,7 +36,14 @@ const CustomsGeneralExchangeRates = () => {
     },
     { key: 'code', label: formatMessage(m.columnCode) },
     { key: 'name', label: formatMessage(m.columnName) },
-    { key: 'rate', label: formatMessage(m.exchangeRateRate) },
+    {
+      key: 'rate',
+      label: formatMessage(m.exchangeRateRate),
+      render: (value) =>
+        formatNumber(value as string, activeLocale, {
+          maximumFractionDigits: 6,
+        }),
+    },
   ]
 
   const { data, loading, error } = useQuery<
