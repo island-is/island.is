@@ -159,17 +159,14 @@ describe('CaseRepositoryService - case reads', () => {
     })
 
     it('should read the whole case graph in the callers transaction', () => {
+      // No state filter, unlike findLiveById: the split case is the one being
+      // documented, so its source has to stay readable after it has itself
+      // been deleted or archived.
       expect(findByPkArgs()).toEqual([
         caseId,
         { include: caseInclude, transaction },
       ])
       expect(result).toBe(theCase)
-    })
-
-    it('should serve the source case whatever state it is in', () => {
-      // The split case is the one being documented - its source has to stay
-      // readable after it has itself been deleted or archived.
-      expect(findByPkArgs()[1].where).toBeUndefined()
     })
 
     it('should resolve the police case numbers in the same transaction', () => {
@@ -196,13 +193,17 @@ describe('CaseRepositoryService - case reads', () => {
   })
 
   describe('findByIdWithJudgeAndRegistrar', () => {
+    const transaction = {} as never
     let result: Case | null
 
     beforeEach(async () => {
-      result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(caseId)
+      result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
+        caseId,
+        { transaction },
+      )
     })
 
-    it('should read the case with both of its court users', () => {
+    it('should read the case with both of its court users and nothing else', () => {
       expect(findByPkArgs()).toEqual([
         caseId,
         {
@@ -210,16 +211,34 @@ describe('CaseRepositoryService - case reads', () => {
             { model: User, as: 'judge' },
             { model: User, as: 'registrar' },
           ],
-          transaction: undefined,
+          transaction,
         },
       ])
       expect(result).toBe(theCase)
     })
 
-    it('should read no other part of the case graph', () => {
-      expect(
-        findByPkArgs()[1].include.map((node: { as: string }) => node.as),
-      ).toEqual(['judge', 'registrar'])
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
+          caseId,
+        )
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
     })
   })
 

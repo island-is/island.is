@@ -50,10 +50,6 @@ import {
 } from '../types/caseRepository.types'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from './caseDefendantPoliceCaseNumber.repository.service'
 
-interface FindByIdOptions {
-  transaction?: Transaction
-}
-
 interface FindAllOptions {
   where?: FindOptions['where']
   transaction?: Transaction
@@ -132,7 +128,10 @@ export class CaseRepositoryService {
     )
   }
 
-  async findById(id: string, options?: FindByIdOptions): Promise<Case | null> {
+  async findById(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
     try {
       this.logger.debug(`Finding case by ID ${id}`)
 
