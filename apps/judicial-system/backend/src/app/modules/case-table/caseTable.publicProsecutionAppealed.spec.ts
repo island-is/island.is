@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
-import { publicProsecutionIndictmentsAccessWhereOptions } from './whereOptions/access'
+import { heightenedSecurityAccessWhereOptions } from './whereOptions/access'
 import {
   getAllIncludes,
   getAttributes,
@@ -218,51 +218,32 @@ describe('public prosecution appealed case list', () => {
     expect(occurrences(sql, rulingClause)).toBe(2)
   })
 
-  // Heightened security narrows the appeal route, but only that route. Hoisting
-  // the restriction to a term of its own would also gate the reviewer route,
-  // taking a heightened case away from the very prosecutor it was assigned to -
-  // which is why this asserts the shape of the predicate and not just that the
-  // clause is present somewhere in it.
-  it('applies heightened security to the appeal route and leaves the reviewer route alone', async () => {
-    // The where options are typed for Sequelize, not for reading back, so the
-    // symbol keys need a loose view to inspect.
-    const access = publicProsecutionIndictmentsAccessWhereOptions(
-      publicProsecutionUser,
-    ) as unknown as Record<symbol, unknown[]>
-    const terms = access[Op.and]
-
-    // The predicate is the event log condition and the two routes, and nothing
-    // else. A third term here is the restriction hoisted out of the appeal
-    // route, where it would gate both routes instead of one.
-    expect(terms).toHaveLength(2)
-
-    const routes = (
-      terms.find(
-        (term) => typeof term === 'object' && term !== null && Op.or in term,
-      ) as Record<symbol, unknown[]> | undefined
-    )?.[Op.or]
-
-    // Being the reviewer is the whole of that route - no further condition.
-    expect(routes?.[0]).toEqual({
-      indictment_reviewer_id: publicProsecutionUser.id,
-    })
-
+  // Heightened security reaches the list through the access options rather
+  // than being stated on the list itself, which is only sound because both
+  // routes in imply it: the appeal route ANDs the predicate, and being the
+  // reviewer is one of its exemptions. Take either half away and a case the
+  // guard refuses starts appearing as a row.
+  it('narrows the appeal route by heightened security', async () => {
     const appealed = await sqlForTable(
       CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
       publicProsecutionUser,
     )
-    const inReview = await sqlForTable(
-      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW,
-      publicProsecutionUser,
-    )
-    const heightenedClause = '"is_heightened_security_level" IS NOT true'
 
-    // The list states the rule itself on top of the access options, because a
-    // heightened case can satisfy those through the reviewer route - which
-    // carries no such restriction - and would then be listed although
-    // canUserAccessCase refuses to open it. Twice here, once there.
-    expect(occurrences(appealed, heightenedClause)).toBe(2)
-    expect(occurrences(inReview, heightenedClause)).toBe(1)
+    expect(
+      occurrences(appealed, '"is_heightened_security_level" IS NOT true'),
+    ).toBe(1)
+  })
+
+  // The exemption that lets the list drop the restriction of its own. It
+  // mirrors canProsecutionUserAccessCase, which lets the reviewer through the
+  // same check - a case assigned to someone for review must not then be
+  // refused to them.
+  it('exempts the reviewer, as the case guard does', () => {
+    expect(
+      heightenedSecurityAccessWhereOptions(publicProsecutionUser)[Op.or],
+    ).toContainEqual({
+      indictment_reviewer_id: publicProsecutionUser.id,
+    })
   })
 
   // One row per case, unlike the office's list of the same name.

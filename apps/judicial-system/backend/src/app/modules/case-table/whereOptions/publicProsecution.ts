@@ -6,10 +6,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions } from '../caseTable.types'
-import {
-  heightenedSecurityAccessWhereOptions,
-  publicProsecutionIndictmentsAccessWhereOptions,
-} from './access'
+import { publicProsecutionIndictmentsAccessWhereOptions } from './access'
 import {
   buildHasAppealedVerdictCondition,
   buildHasDefendantWithNullReviewDecisionCondition,
@@ -54,6 +51,10 @@ export const publicProsecutionIndictmentsReviewedWhereOptions = (
 // only has to pick them out again - a case they reviewed themselves belongs
 // here too once it is appealed.
 //
+// Heightened security needs no mention here. Both routes into the access
+// options imply it: the appeal route ANDs it, and being the reviewer is one of
+// the exemptions, so a case that is reachable at all already satisfies it.
+//
 // One row per case, so no displayCases - unlike the office's list of the same
 // name, which gives each defendant a row of their own.
 export const publicProsecutionIndictmentsAppealedWhereOptions = (
@@ -64,12 +65,6 @@ export const publicProsecutionIndictmentsAppealedWhereOptions = (
       publicProsecutionIndictmentsAccessWhereOptions(user),
       { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
       buildHasAppealedVerdictCondition(),
-      // Restated here because the access options are a union: a heightened case
-      // can satisfy them through the reviewer route, which carries no such
-      // restriction, and would then be listed although canUserAccessCase
-      // refuses to open it. A row nobody can open is the failure this list was
-      // built to avoid.
-      heightenedSecurityAccessWhereOptions(user),
     ],
   },
 })
