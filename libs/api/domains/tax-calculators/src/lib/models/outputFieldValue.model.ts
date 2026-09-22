@@ -4,7 +4,8 @@ import { TaxCalculatorOutputFieldType } from './enums'
 import { OutputFieldValueRow } from './outputFieldValueRow.model'
 
 @ObjectType('TaxCalculatorOutputFieldValue', {
-  description: 'Calculated output value. Set exactly one payload matching `type`.',
+  description:
+    'Calculated output value. Set exactly one payload matching `type`.',
 })
 export class OutputFieldValue {
   @Field()
@@ -18,7 +19,8 @@ export class OutputFieldValue {
 
   @Field({
     nullable: true,
-    description: 'Value for a `STRING` or `DATE` output; dates use `yyyy-MM-dd`.',
+    description:
+      'Value for a `STRING` or `DATE` output; dates use `yyyy-MM-dd`.',
   })
   stringValue?: string
 

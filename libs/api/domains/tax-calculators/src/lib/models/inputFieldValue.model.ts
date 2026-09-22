@@ -11,7 +11,8 @@ export class InputFieldValue {
   key!: string
 
   @Field(() => InputValue, {
-    description: 'Submitted value for this field. An empty string is treated as absent.',
+    description:
+      'Submitted value for this field. An empty string is treated as absent.',
   })
   @ValidateNested()
   @Type(() => InputValue)

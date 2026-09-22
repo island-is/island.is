@@ -12,7 +12,8 @@ export class CalculateInput {
   type!: TaxCalculatorType
 
   @Field(() => [InputFieldValue], {
-    description: 'Submitted values keyed by input-field key. Order is insignificant.',
+    description:
+      'Submitted values keyed by input-field key. Order is insignificant.',
   })
   @IsArray()
   @ValidateNested({ each: true })

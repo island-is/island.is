@@ -12,7 +12,8 @@ const CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE = calculatorKeys({
   [TaxCalculatorType.VEHICLE_BENEFIT]: 'vehicleBenefit',
 } as const)
 
-export type ReachableCalculatorKey = typeof CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE[TaxCalculatorType]
+export type ReachableCalculatorKey =
+  typeof CALCULATOR_KEY_BY_TAX_CALCULATOR_TYPE[TaxCalculatorType]
 
 export const toCalculatorKey = (
   type: TaxCalculatorType,

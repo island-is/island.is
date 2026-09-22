@@ -30,15 +30,13 @@ const sampleValue = (field: CalculatorField): SubmittedValue => {
   }
 }
 
-const BUILDERS: Record<
-  TaxCalculatorType,
-  (values: SubmittedValues) => object
-> = {
-  [TaxCalculatorType.CHILD_BENEFIT]: toChildBenefitInput,
-  [TaxCalculatorType.VEHICLE_TAX]: toVehicleTaxInput,
-  [TaxCalculatorType.VEHICLE_BENEFIT]: toVehicleBenefitInput,
-  [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES]: toWithholdingTaxInput,
-}
+const BUILDERS: Record<TaxCalculatorType, (values: SubmittedValues) => object> =
+  {
+    [TaxCalculatorType.CHILD_BENEFIT]: toChildBenefitInput,
+    [TaxCalculatorType.VEHICLE_TAX]: toVehicleTaxInput,
+    [TaxCalculatorType.VEHICLE_BENEFIT]: toVehicleBenefitInput,
+    [TaxCalculatorType.WITHHOLDING_TAX_ON_WAGES]: toWithholdingTaxInput,
+  }
 
 /* Contract-driven coverage catches keys that would otherwise silently drop values. */
 describe('input builders against the calculator contract', () => {

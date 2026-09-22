@@ -373,9 +373,7 @@ describe('calculatorConfigSchema', () => {
   describe('outputTotal', () => {
     it('rejects a config with no total', () => {
       const { outputTotal: _omitted, ...withoutTotal } = config()
-      expect(
-        calculatorConfigSchema.safeParse(withoutTotal).success,
-      ).toBe(false)
+      expect(calculatorConfigSchema.safeParse(withoutTotal).success).toBe(false)
     })
 
     it('rejects a total with no label -- the label is the result heading', () => {
@@ -508,7 +506,6 @@ describe('calculatorConfigSchema', () => {
       )
       expect(result.success).toBe(true)
     })
-
   })
 
   describe('localized text', () => {
@@ -668,7 +665,11 @@ describe('collectOutputItemFieldKeys', () => {
 
   it('returns an empty list for a field with no itemFields', () => {
     expect(
-      collectOutputItemFieldKeys({ uid: 'o1', kind: 'value' as const, key: 'total' }),
+      collectOutputItemFieldKeys({
+        uid: 'o1',
+        kind: 'value' as const,
+        key: 'total',
+      }),
     ).toEqual([])
   })
 })

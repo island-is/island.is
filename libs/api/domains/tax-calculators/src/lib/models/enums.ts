@@ -107,13 +107,16 @@ registerEnumType(TaxCalculatorCalculationErrorCode, {
   description: 'Reason a calculation produced no result.',
   valuesMap: {
     INVALID_VALUE: {
-      description: 'Submitted value violates its field contract. Includes the field key.',
+      description:
+        'Submitted value violates its field contract. Includes the field key.',
     },
     MISSING_REQUIRED_VALUE: {
-      description: 'Required applicable field was not submitted. Includes the field key.',
+      description:
+        'Required applicable field was not submitted. Includes the field key.',
     },
     INAPPLICABLE_VALUE: {
-      description: 'Submitted field’s dependency is unmet. Includes the field key.',
+      description:
+        'Submitted field’s dependency is unmet. Includes the field key.',
     },
     UNKNOWN_FIELD: {
       description: 'Submitted key is not an input field. Includes that key.',

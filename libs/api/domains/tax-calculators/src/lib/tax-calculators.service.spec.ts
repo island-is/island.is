@@ -10,14 +10,8 @@ import {
   TaxCalculatorOutputFieldType,
 } from './models/enums'
 import type { InputFieldValue } from './models/inputFieldValue.model'
-import type {
-  NumberInputField,
-  SelectInputField,
-} from './models/inputField'
-import type {
-  ArrayOutputField,
-  NumberOutputField,
-} from './models/outputField'
+import type { NumberInputField, SelectInputField } from './models/inputField'
+import type { ArrayOutputField, NumberOutputField } from './models/outputField'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
 /* Instantiated directly because getCalculator reads a registry. */
