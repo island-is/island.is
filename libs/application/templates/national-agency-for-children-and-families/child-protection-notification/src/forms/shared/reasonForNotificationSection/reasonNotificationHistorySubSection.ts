@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -56,17 +55,16 @@ export const reasonNotificationHistorySubSection = buildSubSection({
           space: 4,
           options: getYesNoOptions(),
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: 'reasonNotificationHistory.biggestConcern',
           title: reasonForNotificationMessages.notificationHistory.explanation,
-          marginTop: 4,
+          space: 4,
           options: ({ externalData }) => {
             const { guardianNotAwareReasons } =
               getApplicationExternalData(externalData)
             return guardianNotAwareReasons.map((reason) => ({
               label: reason.label ?? '',
               value: reason.value ?? '',
-              excludeOthers: true,
             }))
           },
           condition: (answers) => {

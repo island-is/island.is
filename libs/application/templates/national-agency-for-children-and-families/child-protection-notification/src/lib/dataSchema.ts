@@ -420,10 +420,10 @@ const reasonNotificationHistorySchema = z
     hasReportedBefore: z.enum([YES, NO]),
     hasDiscussedWithParents: z.enum([YES, NO]),
     areParentsInformed: z.enum([YES, NO]),
-    biggestConcern: z.array(z.string()).optional(),
+    biggestConcern: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.areParentsInformed === NO && !data.biggestConcern?.length) {
+    if (data.areParentsInformed === NO && !data.biggestConcern) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['biggestConcern'],

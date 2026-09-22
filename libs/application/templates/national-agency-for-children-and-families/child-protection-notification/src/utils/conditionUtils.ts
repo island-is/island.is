@@ -96,9 +96,7 @@ export const showAbuseSuspicionWarning = (answers: FormValue) => {
 
   return (
     areParentsInformed === NO &&
-    !!notificationHistoryBiggestConcern?.includes(
-      GUARDIAN_NOT_AWARE_ABUSE_SUSPICION,
-    )
+    notificationHistoryBiggestConcern === GUARDIAN_NOT_AWARE_ABUSE_SUSPICION
   )
 }
 
