@@ -380,6 +380,18 @@ export const defenceCasesAccessWhereOptions = (user: User) => ({
 
 // Public prosecution access
 
+// A case at a heightened security level is reserved for the prosecutor who
+// created it or is assigned to it - the same rule canProsecutionUserAccessCase
+// applies. Shared so the appealed list and the appeal branch of the access
+// options cannot drift apart from each other.
+export const heightenedSecurityAccessWhereOptions = (user: User) => ({
+  [Op.or]: [
+    { is_heightened_security_level: { [Op.not]: true } },
+    { creating_prosecutor_id: user.id },
+    { prosecutor_id: user.id },
+  ],
+})
+
 // A prosecutor at the public prosecution office reaches an indictment two ways:
 // the cases they were given to review, and every appealed verdict, whoever
 // reviewed it. The second is why the appealed case list exists at all - an
@@ -414,17 +426,10 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
             buildHasAppealedVerdictCondition(),
             // Heightened security narrows the appeal route the same way it
             // narrows every other prosecution route - an appeal is not a way
-            // around it. Scoped to this branch on purpose: the reviewer branch
-            // above has never carried the restriction, and adding it there
-            // would take a heightened case away from the very prosecutor it was
-            // assigned to.
-            {
-              [Op.or]: [
-                { is_heightened_security_level: { [Op.not]: true } },
-                { creating_prosecutor_id: user.id },
-                { prosecutor_id: user.id },
-              ],
-            },
+            // around it. Scoped to this branch rather than hoisted to a term of
+            // its own, because the reviewer branch above has never carried the
+            // restriction and this is not the change that should give it one.
+            heightenedSecurityAccessWhereOptions(user),
           ],
         },
       ],

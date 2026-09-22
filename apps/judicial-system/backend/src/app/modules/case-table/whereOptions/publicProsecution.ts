@@ -6,7 +6,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions } from '../caseTable.types'
-import { publicProsecutionIndictmentsAccessWhereOptions } from './access'
+import {
+  heightenedSecurityAccessWhereOptions,
+  publicProsecutionIndictmentsAccessWhereOptions,
+} from './access'
 import {
   buildHasAppealedVerdictCondition,
   buildHasDefendantWithNullReviewDecisionCondition,
@@ -61,6 +64,12 @@ export const publicProsecutionIndictmentsAppealedWhereOptions = (
       publicProsecutionIndictmentsAccessWhereOptions(user),
       { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
       buildHasAppealedVerdictCondition(),
+      // Restated here because the access options are a union: a heightened case
+      // can satisfy them through the reviewer route, which carries no such
+      // restriction, and would then be listed although canUserAccessCase
+      // refuses to open it. A row nobody can open is the failure this list was
+      // built to avoid.
+      heightenedSecurityAccessWhereOptions(user),
     ],
   },
 })

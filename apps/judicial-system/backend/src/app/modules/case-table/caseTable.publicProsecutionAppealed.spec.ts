@@ -254,11 +254,18 @@ describe('public prosecution appealed case list', () => {
       CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
       publicProsecutionUser,
     )
-
-    expect(appealed).toContain('"is_heightened_security_level"')
-    expect(appealed).toContain(
-      `"creating_prosecutor_id" = '${publicProsecutionUser.id}'`,
+    const inReview = await sqlForTable(
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW,
+      publicProsecutionUser,
     )
+    const heightenedClause = '"is_heightened_security_level" IS NOT true'
+
+    // The list states the rule itself on top of the access options, because a
+    // heightened case can satisfy those through the reviewer route - which
+    // carries no such restriction - and would then be listed although
+    // canUserAccessCase refuses to open it. Twice here, once there.
+    expect(occurrences(appealed, heightenedClause)).toBe(2)
+    expect(occurrences(inReview, heightenedClause)).toBe(1)
   })
 
   // One row per case, unlike the office's list of the same name.
