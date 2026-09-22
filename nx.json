@@ -194,6 +194,22 @@
       "{workspaceRoot}/**/Dockerfile.*",
       "{workspaceRoot}/**/.dockerignore"
     ],
+    "DockerBuild": [
+      "Dockerfiles",
+      "{workspaceRoot}/scripts/ci/_docker.sh",
+      "{workspaceRoot}/scripts/ci/_common.sh",
+      "{workspaceRoot}/scripts/ci/09_load-buildkit-driver.sh",
+      "{workspaceRoot}/scripts/ci/90_docker-*.sh",
+      "{workspaceRoot}/scripts/ci/nx-agents/docker-build.sh",
+      "{workspaceRoot}/scripts/dockerfile-assets/**/*",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/yarn.lock",
+      "{workspaceRoot}/.yarnrc.yml",
+      "{workspaceRoot}/.yarn/patches/**/*",
+      {
+        "env": "NODE_IMAGE_VERSION"
+      }
+    ],
     "sharedGlobals": [
       {
         "env": "CI_CONFIG_HASH"

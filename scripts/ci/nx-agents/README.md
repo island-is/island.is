@@ -59,9 +59,9 @@ With the `deploy-feature` label the pull request pipeline only has its `autofix`
 - `docker-build` for the images, which depends on `build`
 
 They are two commands because they need two configurations: `ci` for the tests, and `production`
-for the builds (see below). It also means the feature is deployed when its images are built,
-whatever the checks say, like before Nx Agents. Everything else in that workflow (pre-releases)
-still builds the images in a matrix.
+for the builds (see below). The feature is only deployed when both succeed, and when one of them
+fails the other one is stopped. Everything else in that workflow (pre-releases) still builds the
+images in a matrix.
 
 - `docker-build` is a target that `tools/nx-plugins/docker-build.js` infers for every project with
   a `docker-*` marker target. It runs `docker-build.sh`, which calls the same `scripts/ci/90_*.sh`
