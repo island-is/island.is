@@ -104,9 +104,6 @@ export const childSubSection = buildSubSection({
             {
               value: YES,
               label: childMessages.nationalIdLookup.usePronounAndPreferredName,
-              tooltip:
-                childMessages.nationalIdLookup
-                  .usePronounAndPreferredNameTooltip,
             },
           ],
         }),

@@ -9,6 +9,7 @@ import { reasonForNotificationMessages } from '../../../lib/messages'
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
+  getHasReportedBeforeTitle,
   getYesNoOptions,
 } from '../../../utils/childProtectionNotificationUtils'
 import { Roles } from '../../../utils/constants'
@@ -30,8 +31,7 @@ export const reasonNotificationHistorySubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'reasonNotificationHistory.hasReportedBefore',
-          title:
-            reasonForNotificationMessages.notificationHistory.hasReportedBefore,
+          title: ({ answers }) => getHasReportedBeforeTitle(answers),
           required: true,
           width: 'half',
           options: getYesNoOptions(),

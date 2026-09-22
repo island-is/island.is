@@ -9,18 +9,19 @@ export const childSafetyMessages = defineMessages({
   description: {
     id: 'cpn.application:childSafety.description',
     defaultMessage:
-      'Tilkynning til barnaverndar felur ekki sjálfkrafa í sér að opnað verði barnaverndarmál. Barnavernd tekur samt allar tilkynningar alvarlega, tekur þær til skoðunar, bregst við og virkjar viðeigandi fagaðila eða úrræði til stuðnings foreldri og barni eftir því sem við á. Við biðjum þig hér að veita okkur upplýsingar sem hjálpa okkur að ákvarða viðeigandi viðbrögð í framhaldi af þessari tilkynningu.',
+      'Smelltu á þá tölu sem lýsir best þínu mati. \n\n0 merkir að líf barns eða öryggi þess er í hættu og 10 merkir að barnið virðist öruggt núna. \n\nFaglegt mat á öryggi barns er ávallt hlutverk barnaverndarstarfsmanns.',
     description: 'Child safety section description',
   },
   sliderQuestion: {
     id: 'cpn.application:childSafety.sliderQuestion',
-    defaultMessage: 'Hversu öruggt telur þú barnið vera núna?',
+    defaultMessage:
+      'Hversu öruggt eða óöruggt telur þjónustuveitandi barnið vera núna?',
     description: 'Child safety slider question',
   },
   sliderQuestionUnborn: {
     id: 'cpn.application:childSafety.sliderQuestionUnborn',
     defaultMessage:
-      'Hversu öruggt telur þú verðandi foreldri og ófætt barn vera núna?',
+      'Hversu öruggt eða óöruggt telur þjónustuveitandi ófædda barnið vera núna?',
     description: 'Child safety slider question for unborn child',
   },
   warningText: {

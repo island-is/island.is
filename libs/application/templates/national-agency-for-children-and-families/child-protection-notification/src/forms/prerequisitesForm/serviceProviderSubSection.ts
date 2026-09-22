@@ -64,7 +64,8 @@ export const serviceProviderSubSection = buildSubSection({
         }),
 
         buildTitleField({
-          title: prerequisitesMessages.serviceProvider.subSectionTitle,
+          title:
+            prerequisitesMessages.serviceProvider.serviceProviderInformation,
           titleVariant: 'h4',
           marginTop: 4,
           marginBottom: 0,
@@ -143,7 +144,6 @@ export const serviceProviderSubSection = buildSubSection({
         buildTextField({
           id: 'serviceProvider.contactPersonWorkEmail',
           title: prerequisitesMessages.serviceProvider.workEmail,
-          tooltip: prerequisitesMessages.serviceProvider.workEmailTooltip,
           width: 'half',
           variant: 'email',
         }),

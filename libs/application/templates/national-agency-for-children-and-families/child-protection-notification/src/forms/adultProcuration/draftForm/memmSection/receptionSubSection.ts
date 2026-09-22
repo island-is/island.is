@@ -16,12 +16,10 @@ export const receptionSubSection = buildSubSection({
     buildMultiField({
       id: 'memm.reception',
       title: memmMessages.shared.pageTitle,
-      description: memmMessages.shared.pageDescription,
       children: [
         buildDescriptionField({
           id: 'memm.reception.heading',
           title: memmMessages.reception.subSectionTitle,
-          description: memmMessages.reception.description,
           titleVariant: 'h3',
           space: 0,
         }),
