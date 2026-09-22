@@ -31,13 +31,7 @@ PGPASSWORD="$DB_PASSWORD" pg_dump \
 echo "Uploading to S3..."
 aws s3 cp "$DUMP_FILE" "s3://${DUMP_BUCKET}/${DATABASE}-latest.sql.gz" --region "$DUMP_REGION"
 
-# Verify upload succeeded
-if [ $? -eq 0 ]; then
-    echo "Upload successful"
-else
-    echo "Upload failed!" >&2
-    exit 1
-fi
+echo "Upload successful"
 
 # Cleanup
 rm -f "$DUMP_FILE"
