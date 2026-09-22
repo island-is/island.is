@@ -23,7 +23,11 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
-import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
+import {
+  QueueService,
+  getClientServiceToken,
+  getQueueServiceToken,
+} from '@island.is/message-queue'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
 
@@ -40,7 +44,7 @@ import {
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { InternalCreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
-import { wait } from './helpers'
+import { QueueTracker } from './helpers'
 import {
   MockDelegationsService,
   MockFeatureFlagService,
@@ -106,6 +110,7 @@ describe('NotificationsWorkerService', () => {
   let notificationDispatch: NotificationDispatchService
   let emailService: EmailService
   let queue: QueueService
+  const queues = new QueueTracker()
   let notificationModel: typeof Notification
   let actorNotificationModel: typeof ActorNotification
   let notificationsService: NotificationsService
@@ -144,6 +149,14 @@ describe('NotificationsWorkerService', () => {
     notificationDispatch = app.get(NotificationDispatchService)
     emailService = app.get(EmailService)
     queue = app.get(getQueueServiceToken('notifications'))
+    for (const name of [
+      'notifications',
+      'notifications-email',
+      'notifications-sms',
+      'notifications-push',
+    ]) {
+      queues.track(app.get(getClientServiceToken(name)))
+    }
     notificationModel = app.get(getModelToken(Notification))
     actorNotificationModel = app.get(getModelToken(ActorNotification))
     notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
@@ -172,6 +185,7 @@ describe('NotificationsWorkerService', () => {
     })
 
     jest.clearAllMocks()
+    queues.reset()
 
     jest
       .spyOn(emailService, 'sendEmail')
@@ -228,8 +242,7 @@ describe('NotificationsWorkerService', () => {
       args: [{ key: 'organization', value: 'Test Crew' }],
     })
 
-    // give the worker some time to process the message
-    await wait(2)
+    await queues.waitForProcessing()
   }
 
   it('should send email and push notification to recipient and to delegation holders', async () => {
@@ -438,8 +451,7 @@ describe('NotificationsWorkerService', () => {
 
     // reset time to inside working hour
     jest.advanceTimersByTime(workingHoursDelta)
-    // give worker some time to process message
-    await wait(2)
+    await queues.waitForProcessing()
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(2)
@@ -558,8 +570,7 @@ describe('NotificationsWorkerService', () => {
         // No rootMessageId - this triggers the specific actor targeting flow
       })
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created for the original recipient (onBehalfOf.nationalId)
       const userNotifications = await notificationModel.findAll({
@@ -632,8 +643,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created in DB
       const userNotifications = await notificationModel.findAll({
@@ -707,8 +717,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was still created
       const userNotifications = await notificationModel.findAll({
@@ -761,8 +770,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created with the valid scope
       const userNotifications = await notificationModel.findAll({
@@ -806,8 +814,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created with the default scope
       const userNotifications = await notificationModel.findAll({
@@ -950,8 +957,7 @@ describe('NotificationsWorkerService', () => {
         args: [{ key: 'organization', value: 'Test Crew' }],
       })
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created
       const userNotifications = await notificationModel.findAll({
@@ -1051,8 +1057,7 @@ describe('NotificationsWorkerService', () => {
         },
       })
 
-      // Wait for actor notification to be processed
-      await wait(4)
+      await queues.waitForProcessing()
 
       // Verify user notification exists (the root one, created separately)
       const userNotifications = await notificationModel.findAll({
@@ -1145,7 +1150,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childUnder16.nationalId)
-      await wait(3)
+      await queues.waitForProcessing()
 
       const actorMessages = getActorMessages(queueAddSpy)
 
@@ -1171,7 +1176,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childOver16.nationalId)
-      await wait(3)
+      await queues.waitForProcessing()
 
       const actorMessages = getActorMessages(queueAddSpy)
 
@@ -1196,7 +1201,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childUnder16.nationalId)
-      await wait(3)
+      await queues.waitForProcessing()
 
       const actorMessages = getActorMessages(queueAddSpy)
 
@@ -1217,7 +1222,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childUnder16.nationalId)
-      await wait(5)
+      await queues.waitForProcessing()
 
       const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
         (call) => call[0],
@@ -1262,7 +1267,7 @@ describe('NotificationsWorkerService', () => {
         formattedTemplate: getMockHnippTemplate({}),
       } as EmailQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       const record = await notificationDeliveryModel.findOne({
         where: {
@@ -1295,7 +1300,7 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       const record = await notificationDeliveryModel.findOne({
         where: {
@@ -1332,7 +1337,7 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       expect(smsService.sendSms).toHaveBeenCalledWith(
         '+3546916391',
@@ -1384,7 +1389,7 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       // sendSms should have been called with the normalized number
       expect(smsService.sendSms).toHaveBeenCalledWith(
@@ -1425,7 +1430,7 @@ describe('NotificationsWorkerService', () => {
         },
       } as PushQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -1460,7 +1465,7 @@ describe('NotificationsWorkerService', () => {
         formattedTemplate: getMockHnippTemplate({}),
       } as EmailQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       // The email was still sent despite the DB failure
       expect(emailService.sendEmail).toHaveBeenCalled()
