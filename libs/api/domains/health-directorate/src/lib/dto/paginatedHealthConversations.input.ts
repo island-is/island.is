@@ -34,7 +34,11 @@ export class HealthDirectoratePaginatedHealthConversationsInput {
   @IsOptional()
   search?: string
 
-  @Field(() => Int, { nullable: true, description: '1-100, defaults to 20.' })
+  @Field(() => Int, {
+    nullable: true,
+    defaultValue: 20,
+    description: '1-100.',
+  })
   @IsInt()
   @Min(1)
   @Max(100)
