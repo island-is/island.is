@@ -28,33 +28,38 @@ export const InlineRadio: FC<InlineRadioProps> = ({
   disabled = false,
   required = false,
   labelledBy,
-}) => (
-  <Box>
-    <Box
-      display="flex"
-      flexDirection="row"
-      flexWrap="wrap"
-      columnGap={4}
-      rowGap={2}
-      role="radiogroup"
-      aria-required={required}
-      aria-invalid={error !== undefined}
-      aria-labelledby={labelledBy}
-    >
-      {options.map((option) => (
-        <RadioButton
-          key={option.value}
-          id={`${id}-${option.value}`}
-          name={id}
-          label={option.label}
-          value={option.value}
-          checked={value === option.value}
-          onChange={(event) => onChange(event.target.value)}
-          disabled={disabled || option.disabled}
-          hasError={!!error}
-        />
-      ))}
+}) => {
+  const errorId = error ? `${id}-error` : undefined
+
+  return (
+    <Box>
+      <Box
+        display="flex"
+        flexDirection="row"
+        flexWrap="wrap"
+        columnGap={4}
+        rowGap={2}
+        role="radiogroup"
+        aria-required={required}
+        aria-invalid={error !== undefined}
+        aria-describedby={errorId}
+        aria-labelledby={labelledBy}
+      >
+        {options.map((option) => (
+          <RadioButton
+            key={option.value}
+            id={`${id}-${option.value}`}
+            name={id}
+            label={option.label}
+            value={option.value}
+            checked={value === option.value}
+            onChange={(event) => onChange(event.target.value)}
+            disabled={disabled || option.disabled}
+            hasError={!!error}
+          />
+        ))}
+      </Box>
+      {error && <InputError id={errorId} errorMessage={error} />}
     </Box>
-    {error && <InputError errorMessage={error} />}
-  </Box>
-)
+  )
+}

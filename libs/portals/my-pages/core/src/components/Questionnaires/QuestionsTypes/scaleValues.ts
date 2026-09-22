@@ -28,6 +28,8 @@ export const getScaleKeyIndex = (
   return undefined
 }
 
+const toScaleValue = (value: number) => Number(value.toFixed(6)).toString()
+
 /** Ranges wider than MAX_VALUES are sampled down, the end point always kept */
 export const getScaleValues = (
   min: string | number,
@@ -42,11 +44,18 @@ export const getScaleValues = (
   }
 
   const increment = typeof step === 'number' && step > 0 ? step : 1
+  // Multiplied out rather than accumulated, which drifts on decimal steps
+  const stepCount = Math.floor((maxNum - minNum) / increment + 1e-9)
   const values: string[] = []
 
-  for (let i = minNum; i <= maxNum; i += increment) {
-    values.push(i.toString())
-    if (i + increment > maxNum) break
+  for (let i = 0; i <= stepCount; i++) {
+    values.push(toScaleValue(minNum + i * increment))
+  }
+
+  // A step that does not divide the range would otherwise stop short of it
+  const maxValue = toScaleValue(maxNum)
+  if (values[values.length - 1] !== maxValue) {
+    values.push(maxValue)
   }
 
   if (values.length <= MAX_VALUES) {

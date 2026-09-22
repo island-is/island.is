@@ -77,12 +77,18 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
     document.getElementById(`${id}-${nextValue}`)?.focus()
   }
 
-  // A short last row is narrowed in proportion to the ticks it holds, so the
-  // spacing matches the rows above it and every row starts at the left edge
-  const rowStyle = (ticksInRow: number): CSSProperties | undefined =>
-    isSplit && ticksInRow > 1 && columns > 1
-      ? { width: `${((ticksInRow - 1) / (columns - 1)) * 100}%` }
-      : undefined
+  // A short last row is narrowed to its share of the gaps plus the width its
+  // own ticks take up, so tick spacing matches the rows above it and every row
+  // still starts at the left edge
+  const rowStyle = (ticksInRow: number): CSSProperties | undefined => {
+    if (!isSplit || ticksInRow < 2 || columns < 2) {
+      return undefined
+    }
+    const share = (ticksInRow - 1) / (columns - 1)
+    return {
+      width: `calc(${share * 100}% + ${(1 - share) * styles.tickWidth}px)`,
+    }
+  }
 
   if (values.length === 0) {
     return null

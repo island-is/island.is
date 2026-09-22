@@ -5,6 +5,10 @@ const tickSize = 8
 const tickBorder = 2
 const tickSelectedSize = 21
 const tickSelectedBorder = 7
+
+// Each tick occupies this much regardless of state - a short row has to add it
+// back when it works out its share of the full width
+export const tickWidth = tickSelectedSize
 const trackThickness = 2
 
 const horizontalTickArea = 32
