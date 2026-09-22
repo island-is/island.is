@@ -9,6 +9,7 @@ import { ApplicationTranslationPublish } from './application-translation-publish
 import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
 import { ApplicationTranslationService } from './application-translation.service'
 import { ApplicationTranslationProviderImpl } from './application-translation.provider'
+import { ContentfulTranslationModule } from './contentful/contentful-translation.module'
 
 @Global()
 @Module({
@@ -19,6 +20,7 @@ import { ApplicationTranslationProviderImpl } from './application-translation.pr
       ApplicationTranslationPublish,
       ApplicationTranslationPublishSnapshot,
     ]),
+    ContentfulTranslationModule,
   ],
   providers: [
     ApplicationTranslationService,

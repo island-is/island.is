@@ -34,6 +34,26 @@ export const isTranslationAccessForbiddenError = (
   return networkError?.statusCode === 403
 }
 
+const NAMESPACE_NOT_EXTRACTED_MARKER = 'has not been extracted to Contentful'
+
+/** No dedicated error code from the backend for this case -- match on the exception's message text instead. */
+export const isNamespaceNotExtractedError = (
+  error: ApolloError | Error,
+): boolean => {
+  if (!(error instanceof ApolloError)) {
+    return false
+  }
+
+  const problem = findProblemInApolloError(error, [ProblemType.HTTP_BAD_REQUEST])
+  if (problem?.detail?.includes(NAMESPACE_NOT_EXTRACTED_MARKER)) {
+    return true
+  }
+
+  return error.graphQLErrors.some((graphQlError) =>
+    graphQlError.message.includes(NAMESPACE_NOT_EXTRACTED_MARKER),
+  )
+}
+
 export const shortenForToast = (text: string): string => {
   const firstLine = text.trim().split(/\r?\n/)[0] ?? ''
   if (firstLine.length <= TOAST_ERROR_MAX_LENGTH) {

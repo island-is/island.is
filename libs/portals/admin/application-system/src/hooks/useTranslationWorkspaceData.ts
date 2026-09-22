@@ -10,6 +10,7 @@ import {
   buildPersistedByKey,
   hasDraftChangesInRows,
 } from '../utils/translationWorkspaceEditing'
+import { isNamespaceNotExtractedError } from '../utils/translationWorkspaceErrors'
 import { useTemplateCustomFields } from './useTemplateCustomFields'
 
 export const useTranslationWorkspaceData = (typeId: string | undefined) => {
@@ -51,6 +52,10 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     skip: !typeId || !introspection,
   })
 
+  const translationsNotExtracted = Boolean(
+    translationsError && isNamespaceNotExtractedError(translationsError),
+  )
+
   const translationRows = translationsData?.applicationTranslations
 
   const persistedByKey = useMemo(
@@ -67,7 +72,10 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     loading ||
     customFieldsLoading ||
     Boolean(introspection && translationsLoading)
-  const loadError = error ?? translationsError ?? customFieldsError
+  const loadError =
+    error ??
+    (translationsNotExtracted ? undefined : translationsError) ??
+    customFieldsError
 
   return {
     introspection,
@@ -78,6 +86,7 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     hasDraftChanges,
     isLoading,
     loadError,
+    translationsNotExtracted,
     refetchTranslations,
   }
 }

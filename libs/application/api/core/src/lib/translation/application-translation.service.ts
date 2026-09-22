@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import { Op, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -7,10 +7,27 @@ import type { User } from '@island.is/auth-nest-tools'
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import { Locale } from '@island.is/shared/types'
 import type { ApplicationNamespaceTranslations } from '@island.is/islandis-translations'
+import { logger } from '@island.is/logging'
+import type { EntryProps, PlainClientAPI } from 'contentful-management'
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
 import { ApplicationTranslationPublish } from './application-translation-publish.model'
 import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
+import {
+  CONTENTFUL_MANAGEMENT_CLIENT,
+  CONTENTFUL_NAMESPACE_CONTENT_TYPE,
+} from './contentful/contentful-translation.constants'
+import {
+  ContentfulTranslationRow,
+  DEFAULT_LOCALE,
+  ENGLISH_LOCALE,
+  NamespaceEntryFields,
+} from './contentful/contentful-translation.types'
+import {
+  TranslationContentfulEntryMismatchException,
+  TranslationContentfulMigrationGuardException,
+  TranslationNamespaceNotExtractedException,
+} from './translation-contentful.exceptions'
 
 export interface TranslationStatus {
   namespace: string
@@ -36,13 +53,13 @@ export interface PublishHistoryItem {
   note?: string
 }
 
-/** Matches audit module: nationalId is the subject; actor is the delegating user when present. */
 const getTranslationActors = (user: User) => {
   const subjectNationalId = user.nationalId
   const actorNationalId = user.actor?.nationalId ?? user.nationalId
   return { subjectNationalId, actorNationalId }
 }
 
+/** English falls back to Icelandic when unset, matching Contentful's own `||` fallback semantics. */
 const publishedEnglishValue = (
   valueEn?: string | null,
   valueIs?: string | null,
@@ -78,13 +95,11 @@ export class ApplicationTranslationService {
     private readonly snapshotModel: typeof ApplicationTranslationPublishSnapshot,
     @InjectConnection()
     private readonly sequelize: Sequelize,
+    @Inject(CONTENTFUL_MANAGEMENT_CLIENT)
+    private readonly managementClient: PlainClientAPI,
   ) {}
 
-  /**
-   * Runtime read path -- returns published values only.
-   * Draft columns are intentionally excluded.
-   * Empty English falls back to Icelandic (Contentful `||` semantics).
-   */
+  /** Draft columns are intentionally excluded -- this feeds live applications, so only published values may surface here. */
   async getTranslationsForAllLocales(
     namespace: string,
   ): Promise<ApplicationNamespaceTranslations> {
@@ -115,25 +130,163 @@ export class ApplicationTranslationService {
     return translations[locale]
   }
 
-  /**
-   * Admin read path -- returns all columns including draft values.
-   */
+  private async resolveNamespaceEntry(
+    namespace: string,
+  ): Promise<EntryProps<NamespaceEntryFields> | null> {
+    try {
+      return await this.managementClient.entry.get<NamespaceEntryFields>({
+        entryId: namespace,
+      })
+    } catch (error) {
+      if ((error as { name?: string })?.name !== 'NotFound') {
+        throw error
+      }
+    }
+
+    const matches =
+      await this.managementClient.entry.getMany<NamespaceEntryFields>({
+        query: {
+          content_type: CONTENTFUL_NAMESPACE_CONTENT_TYPE,
+          'fields.namespace': namespace,
+          limit: 2,
+        },
+      })
+
+    if (matches.items.length === 0) {
+      return null
+    }
+
+    if (matches.items.length > 1) {
+      logger.error(
+        `Multiple Contentful namespace entries match fields.namespace="${namespace}"`,
+      )
+      throw new Error(
+        `Multiple Contentful namespace entries match fields.namespace="${namespace}"`,
+      )
+    }
+
+    logger.warn(
+      `Namespace "${namespace}" resolved via fields.namespace fallback search (sys.id: ${matches.items[0].sys.id}) -- this should not normally happen`,
+    )
+
+    return matches.items[0]
+  }
+
+  private assertNamespaceEntry(
+    entry: EntryProps<NamespaceEntryFields>,
+    namespace: string,
+  ): void {
+    const actualNamespace = entry.fields.namespace?.[DEFAULT_LOCALE]
+    if (
+      entry.sys.contentType.sys.id !== CONTENTFUL_NAMESPACE_CONTENT_TYPE ||
+      actualNamespace !== namespace
+    ) {
+      logger.error(
+        `Contentful entry mismatch: expected namespace "${namespace}", got sys.id="${entry.sys.id}", contentType="${entry.sys.contentType.sys.id}", fields.namespace="${actualNamespace}"`,
+      )
+      throw new TranslationContentfulEntryMismatchException(namespace)
+    }
+  }
+
+  private async getPublishedNamespaceFields(
+    namespace: string,
+    draftEntry: EntryProps<NamespaceEntryFields>,
+  ): Promise<NamespaceEntryFields | null> {
+    if (draftEntry.sys.publishedVersion === undefined) {
+      return null
+    }
+
+    const snapshots =
+      await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
+        { entryId: namespace, query: { limit: 5 } },
+      )
+
+    const latestPublish = snapshots.items.find(
+      (item) => item.sys.snapshotType === 'publish',
+    )
+
+    return latestPublish?.snapshot.fields ?? null
+  }
+
+  private buildTranslationRows(
+    namespace: string,
+    draftFields: NamespaceEntryFields,
+    publishedFields: NamespaceEntryFields | null,
+    entrySys: { createdAt: string; updatedAt: string },
+  ): ContentfulTranslationRow[] {
+    const draftIs = draftFields.strings?.[DEFAULT_LOCALE] ?? {}
+    const draftEn = draftFields.strings?.[ENGLISH_LOCALE] ?? {}
+    const draftDefaults = draftFields.defaults?.[DEFAULT_LOCALE] ?? {}
+    const publishedIs = publishedFields?.strings?.[DEFAULT_LOCALE] ?? {}
+    const publishedEn = publishedFields?.strings?.[ENGLISH_LOCALE] ?? {}
+
+    const keys = new Set([...Object.keys(draftIs), ...Object.keys(publishedIs)])
+
+    const created = new Date(entrySys.createdAt)
+    const modified = new Date(entrySys.updatedAt)
+
+    return Array.from(keys)
+      .sort()
+      .map((messageKey) => {
+        const valueIs = publishedIs[messageKey] ?? ''
+        const valueEn = publishedEn[messageKey]
+        const rawDraftIs = draftIs[messageKey]
+        const rawDraftEn = draftEn[messageKey]
+
+        const draftValueIs =
+          rawDraftIs !== undefined && rawDraftIs !== valueIs ? rawDraftIs : null
+        const draftValueEn =
+          rawDraftEn !== undefined && rawDraftEn !== (valueEn ?? '')
+            ? rawDraftEn
+            : null
+
+        return {
+          id: `${namespace}:${messageKey}`,
+          namespace,
+          messageKey,
+          valueIs,
+          valueEn,
+          defaultMessage: draftDefaults[messageKey]?.defaultMessage,
+          isReviewed: false,
+          translatedBy: undefined,
+          reviewedBy: undefined,
+          draftValueIs,
+          draftValueEn,
+          created,
+          modified,
+        }
+      })
+  }
+
   async getTranslationsByNamespace(
     namespace: string,
-  ): Promise<ApplicationTranslation[]> {
-    return this.translationModel.findAll({
-      where: { namespace },
-      order: [['messageKey', 'ASC']],
-    })
+  ): Promise<ContentfulTranslationRow[]> {
+    const draftEntry = await this.resolveNamespaceEntry(namespace)
+
+    if (!draftEntry) {
+      throw new TranslationNamespaceNotExtractedException(namespace)
+    }
+
+    const publishedFields = await this.getPublishedNamespaceFields(
+      namespace,
+      draftEntry,
+    )
+
+    return this.buildTranslationRows(
+      namespace,
+      draftEntry.fields,
+      publishedFields,
+      {
+        createdAt: draftEntry.sys.createdAt as string,
+        updatedAt: draftEntry.sys.updatedAt as string,
+      },
+    )
   }
 
   async getTranslationById(id: string): Promise<ApplicationTranslation | null> {
     return this.translationModel.findByPk(id)
   }
 
-  /**
-   * Saves to **draft** columns. Published values are untouched.
-   */
   async upsertTranslation(
     input: UpsertTranslationInput,
     user: User,
@@ -213,22 +366,88 @@ export class ApplicationTranslationService {
     }
   }
 
+  private async mergeTranslationsIntoEntry(
+    namespace: string,
+    inputs: UpsertTranslationInput[],
+  ): Promise<void> {
+    const entry = await this.resolveNamespaceEntry(namespace)
+
+    if (!entry) {
+      throw new TranslationNamespaceNotExtractedException(namespace)
+    }
+
+    this.assertNamespaceEntry(entry, namespace)
+
+    const stringsIs = { ...(entry.fields.strings?.[DEFAULT_LOCALE] ?? {}) }
+    const stringsEn = { ...(entry.fields.strings?.[ENGLISH_LOCALE] ?? {}) }
+    let changed = false
+
+    for (const input of inputs) {
+      if (
+        input.valueIs !== undefined &&
+        stringsIs[input.messageKey] !== input.valueIs
+      ) {
+        stringsIs[input.messageKey] = input.valueIs
+        changed = true
+      }
+      if (
+        input.valueEn !== undefined &&
+        stringsEn[input.messageKey] !== input.valueEn
+      ) {
+        stringsEn[input.messageKey] = input.valueEn
+        changed = true
+      }
+    }
+
+    if (!changed) {
+      return
+    }
+
+    await this.managementClient.entry.update<NamespaceEntryFields>(
+      { entryId: namespace },
+      {
+        ...entry,
+        fields: {
+          ...entry.fields,
+          strings: {
+            ...entry.fields.strings,
+            [DEFAULT_LOCALE]: stringsIs,
+            [ENGLISH_LOCALE]: stringsEn,
+          },
+        },
+      },
+    )
+  }
+
   async bulkUpsertTranslations(
     translations: UpsertTranslationInput[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     user: User,
-  ): Promise<ApplicationTranslation[]> {
+  ): Promise<ContentfulTranslationRow[]> {
     for (const input of translations) {
       assertMessageKeyBelongsToNamespace(input.namespace, input.messageKey)
     }
 
-    return this.sequelize.transaction(async (transaction) => {
-      const results: ApplicationTranslation[] = []
-      for (const input of translations) {
-        const result = await this.upsertTranslation(input, user, transaction)
-        results.push(result)
-      }
-      return results
-    })
+    const inputsByNamespace = new Map<string, UpsertTranslationInput[]>()
+    for (const input of translations) {
+      const group = inputsByNamespace.get(input.namespace) ?? []
+      group.push(input)
+      inputsByNamespace.set(input.namespace, group)
+    }
+
+    const rows: ContentfulTranslationRow[] = []
+
+    for (const [namespace, inputs] of inputsByNamespace) {
+      await this.mergeTranslationsIntoEntry(namespace, inputs)
+
+      const namespaceRows = await this.getTranslationsByNamespace(namespace)
+      const requestedKeys = new Set(inputs.map((i) => i.messageKey))
+      rows.push(
+        ...namespaceRows.filter((row) => requestedKeys.has(row.messageKey)),
+      )
+    }
+
+    return rows
   }
 
   async markAsReviewed(
@@ -257,238 +476,32 @@ export class ApplicationTranslationService {
   }
 
   /**
-   * Publish: copy draft values into published columns, snapshot the newly
-   * published state (so history rows restore *this* version), then clear drafts.
-   *
-   * NOTE: Publish records created before this fix snapshot the *pre-publish*
-   * state (values before overwriting). Rolling back to those older records will
-   * restore the pre-publish values, not the values that were published at that
-   * time. New publish records snapshot the correct post-publish state.
+   * Disabled: autosave now writes drafts directly to Contentful, so this
+   * Postgres-backed implementation would publish stale data that no longer
+   * matches the draft.
    */
   async publishTranslations(
-    namespace: string,
-    user: User,
-    note?: string,
+    _namespace: string,
+    _user: User,
+    _note?: string,
   ): Promise<ApplicationTranslationPublish> {
-    const { subjectNationalId, actorNationalId } = getTranslationActors(user)
-
-    return this.sequelize.transaction(async (transaction) => {
-      const rows = await this.translationModel.findAll({
-        where: { namespace },
-        transaction,
-        lock: transaction.LOCK.UPDATE,
-      })
-
-      const publish = await this.publishModel.create(
-        {
-          namespace,
-          publishedBy: subjectNationalId,
-          actorNationalId: user.actor?.nationalId,
-          note,
-        },
-        { transaction },
-      )
-
-      for (const row of rows) {
-        const hasDrafts = row.draftValueIs != null || row.draftValueEn != null
-        if (!hasDrafts) {
-          continue
-        }
-
-        const oldValueIs = row.valueIs
-        const updates: Partial<ApplicationTranslation> = {
-          draftValueIs: null,
-          draftValueEn: null,
-        }
-
-        if (row.draftValueIs != null) {
-          updates.valueIs = row.draftValueIs
-        }
-        if (row.draftValueEn != null) {
-          updates.valueEn = row.draftValueEn
-        }
-
-        await row.update(updates, { transaction })
-
-        await this.logModel.create(
-          {
-            translationId: row.id,
-            oldValue: oldValueIs,
-            newValue: row.valueIs,
-            changedBy: actorNationalId,
-            action: 'publish',
-          },
-          { transaction },
-        )
-      }
-
-      const snapshotRows = rows.map((r) => ({
-        publishId: publish.id,
-        messageKey: r.messageKey,
-        valueIs: r.valueIs,
-        valueEn: r.valueEn,
-      }))
-      if (snapshotRows.length > 0) {
-        await this.snapshotModel.bulkCreate(snapshotRows, { transaction })
-      }
-
-      return publish
-    })
+    throw new TranslationContentfulMigrationGuardException(
+      'publishTranslations',
+    )
   }
 
-  async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
-    const publishes = await this.publishModel.findAll({
-      where: { namespace },
-      order: [['publishedAt', 'DESC']],
-    })
-
-    return publishes.map((p) => ({
-      id: p.id,
-      namespace: p.namespace,
-      publishedBy: p.publishedBy,
-      actorNationalId: p.actorNationalId,
-      publishedAt: p.publishedAt,
-      note: p.note,
-    }))
+  /** Disabled -- see publishTranslations. */
+  async getPublishHistory(_namespace: string): Promise<PublishHistoryItem[]> {
+    throw new TranslationContentfulMigrationGuardException('getPublishHistory')
   }
 
-  /**
-   * Rollback: restore published values from a snapshot, clear drafts,
-   * and blank keys that did not exist in that version.
-   */
+  /** Disabled -- see publishTranslations. */
   async rollbackToPublish(
-    publishId: string,
-    namespace: string,
-    user: User,
+    _publishId: string,
+    _namespace: string,
+    _user: User,
   ): Promise<ApplicationTranslationPublish | null> {
-    const { subjectNationalId, actorNationalId } = getTranslationActors(user)
-
-    return this.sequelize.transaction(async (transaction) => {
-      const publish = await this.publishModel.findByPk(publishId, {
-        include: [ApplicationTranslationPublishSnapshot],
-        transaction,
-      })
-
-      if (!publish || publish.namespace !== namespace) {
-        return null
-      }
-
-      const snapshots = publish.snapshots ?? []
-      const snapshotByKey = new Map(snapshots.map((s) => [s.messageKey, s]))
-
-      const currentRows = await this.translationModel.findAll({
-        where: { namespace },
-        transaction,
-        lock: transaction.LOCK.UPDATE,
-      })
-
-      const rollbackPublish = await this.publishModel.create(
-        {
-          namespace,
-          publishedBy: subjectNationalId,
-          actorNationalId: user.actor?.nationalId,
-          note: `Rollback to version from ${publish.publishedAt.toISOString()}`,
-        },
-        { transaction },
-      )
-
-      const preRollbackSnapshots = currentRows.map((r) => ({
-        publishId: rollbackPublish.id,
-        messageKey: r.messageKey,
-        valueIs: r.valueIs,
-        valueEn: r.valueEn,
-      }))
-      if (preRollbackSnapshots.length > 0) {
-        await this.snapshotModel.bulkCreate(preRollbackSnapshots, {
-          transaction,
-        })
-      }
-
-      const currentByKey = new Map(
-        currentRows.map((row) => [row.messageKey, row]),
-      )
-
-      for (const snapshot of snapshots) {
-        const row = currentByKey.get(snapshot.messageKey)
-        if (row) {
-          const oldValueIs = row.valueIs
-
-          await row.update(
-            {
-              valueIs: snapshot.valueIs,
-              valueEn: snapshot.valueEn,
-              draftValueIs: null,
-              draftValueEn: null,
-            },
-            { transaction },
-          )
-
-          await this.logModel.create(
-            {
-              translationId: row.id,
-              oldValue: oldValueIs,
-              newValue: snapshot.valueIs,
-              changedBy: actorNationalId,
-              action: 'rollback',
-            },
-            { transaction },
-          )
-        } else {
-          const created = await this.translationModel.create(
-            {
-              namespace,
-              messageKey: snapshot.messageKey,
-              valueIs: snapshot.valueIs,
-              valueEn: snapshot.valueEn,
-              draftValueIs: null,
-              draftValueEn: null,
-              isReviewed: false,
-            },
-            { transaction },
-          )
-
-          await this.logModel.create(
-            {
-              translationId: created.id,
-              newValue: snapshot.valueIs,
-              changedBy: actorNationalId,
-              action: 'rollback',
-            },
-            { transaction },
-          )
-        }
-      }
-
-      for (const row of currentRows) {
-        if (snapshotByKey.has(row.messageKey)) {
-          continue
-        }
-
-        const oldValueIs = row.valueIs
-        await row.update(
-          {
-            valueIs: '',
-            valueEn: null,
-            draftValueIs: null,
-            draftValueEn: null,
-          },
-          { transaction },
-        )
-
-        await this.logModel.create(
-          {
-            translationId: row.id,
-            oldValue: oldValueIs,
-            newValue: '',
-            changedBy: actorNationalId,
-            action: 'rollback',
-          },
-          { transaction },
-        )
-      }
-
-      return rollbackPublish
-    })
+    throw new TranslationContentfulMigrationGuardException('rollbackToPublish')
   }
 
   async getTranslationStatus(namespace: string): Promise<TranslationStatus> {
