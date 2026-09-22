@@ -3,7 +3,7 @@ import { useIsMobile } from '@island.is/portals/core'
 import cn from 'classnames'
 import { CSSProperties, FC, Fragment, KeyboardEvent, useMemo } from 'react'
 import * as styles from './Scales.css'
-import { getScaleValues } from './scaleValues'
+import { getScaleKeyIndex, getScaleValues } from './scaleValues'
 
 const MAX_TICKS_PER_ROW = 6
 
@@ -59,22 +59,22 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
 
   const errorId = error ? `${id}-error` : undefined
 
-  const focusValue = (nextValue: string) => {
-    onChange(nextValue)
-    document.getElementById(`${id}-${nextValue}`)?.focus()
-  }
-
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (disabled || values.length === 0) {
       return
     }
-    if (event.key === 'Home') {
-      event.preventDefault()
-      focusValue(values[0])
-    } else if (event.key === 'End') {
-      event.preventDefault()
-      focusValue(values[values.length - 1])
+    const nextIndex = getScaleKeyIndex(
+      event.key,
+      value ? values.indexOf(value) : -1,
+      values.length,
+    )
+    if (nextIndex === undefined) {
+      return
     }
+    event.preventDefault()
+    const nextValue = values[nextIndex]
+    onChange(nextValue)
+    document.getElementById(`${id}-${nextValue}`)?.focus()
   }
 
   // Split rows run the track from the first cell's center to the last filled

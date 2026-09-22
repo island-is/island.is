@@ -2,7 +2,7 @@ import { Box, InputError, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { FC, Fragment, KeyboardEvent, useMemo } from 'react'
 import * as styles from './Scales.css'
-import { getScaleValues } from './scaleValues'
+import { getScaleKeyIndex, getScaleValues } from './scaleValues'
 
 export interface VerticalScaleProps {
   id: string
@@ -38,22 +38,22 @@ export const VerticalScale: FC<VerticalScaleProps> = ({
 
   const errorId = error ? `${id}-error` : undefined
 
-  const focusValue = (nextValue: string) => {
-    onChange(nextValue)
-    document.getElementById(`${id}-${nextValue}`)?.focus()
-  }
-
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (disabled || values.length === 0) {
       return
     }
-    if (event.key === 'Home') {
-      event.preventDefault()
-      focusValue(values[0])
-    } else if (event.key === 'End') {
-      event.preventDefault()
-      focusValue(values[values.length - 1])
+    const nextIndex = getScaleKeyIndex(
+      event.key,
+      value ? values.indexOf(value) : -1,
+      values.length,
+    )
+    if (nextIndex === undefined) {
+      return
     }
+    event.preventDefault()
+    const nextValue = values[nextIndex]
+    onChange(nextValue)
+    document.getElementById(`${id}-${nextValue}`)?.focus()
   }
 
   if (values.length === 0) {

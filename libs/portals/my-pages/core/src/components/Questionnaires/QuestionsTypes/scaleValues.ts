@@ -1,5 +1,33 @@
 const MAX_VALUES = 20
 
+const DECREASE_KEYS = ['ArrowLeft', 'ArrowDown']
+const INCREASE_KEYS = ['ArrowRight', 'ArrowUp']
+
+/**
+ * Index a key press moves to, or undefined for keys that do not move. Both
+ * orientations override native radio navigation, which ties the direction to
+ * DOM order and so inverts one axis on each of them
+ */
+export const getScaleKeyIndex = (
+  key: string,
+  currentIndex: number,
+  length: number,
+): number | undefined => {
+  if (key === 'Home') {
+    return 0
+  }
+  if (key === 'End') {
+    return length - 1
+  }
+  if (INCREASE_KEYS.includes(key)) {
+    return Math.min(length - 1, currentIndex + 1)
+  }
+  if (DECREASE_KEYS.includes(key)) {
+    return Math.max(0, currentIndex - 1)
+  }
+  return undefined
+}
+
 /** Ranges wider than MAX_VALUES are sampled down, the end point always kept */
 export const getScaleValues = (
   min: string | number,
