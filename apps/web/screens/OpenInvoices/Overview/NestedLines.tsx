@@ -7,6 +7,7 @@ import {
   IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
   QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupArgs,
 } from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { m } from '../messages'
@@ -32,7 +33,8 @@ export const NestedLines = ({
   ministries,
   total,
 }: Props) => {
-  const { formatDate, formatMessage } = useIntl()
+  const { formatMessage } = useIntl()
+  const { format } = useDateUtils()
 
   const { data, error, loading } = useQuery<
     {
@@ -87,11 +89,7 @@ export const NestedLines = ({
           <Box marginBottom={2} display="flex">
             <Box marginRight={2}>
               <Text variant="small" fontWeight="semiBold">
-                {formatDate(new Date(payment.date), {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {format(new Date(payment.date), 'do MMMM yyyy')}
               </Text>
             </Box>
             <Text variant="small">
