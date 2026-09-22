@@ -78,7 +78,7 @@ export const VerticalScale: FC<VerticalScaleProps> = ({
           border="standard"
           borderColor="blue200"
           borderRadius="lg"
-          paddingY={3}
+          paddingY={1}
           paddingX={4}
         >
           <Box

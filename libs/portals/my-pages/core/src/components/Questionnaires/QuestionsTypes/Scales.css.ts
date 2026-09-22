@@ -146,7 +146,7 @@ export const verticalTrack = style({
 
 // Border + box padding + half a row, less half a line of label text: lines the
 // end labels up with the center of the first and last tick
-const verticalEndLabelOffset = 1 + theme.spacing[3] + verticalRowHeight / 2 - 10
+const verticalEndLabelOffset = 1 + theme.spacing[1] + verticalRowHeight / 2 - 10
 
 export const verticalEndLabels = style({
   display: 'flex',
