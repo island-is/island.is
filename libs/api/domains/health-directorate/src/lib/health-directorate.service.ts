@@ -60,6 +60,7 @@ import {
   mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
+  toReplyAvailability,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
@@ -68,6 +69,7 @@ import {
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
 import {
+  formatStrength,
   mapDelegationStatus,
   mapDispensationItem,
   mapPrescriptionCategory,
@@ -77,7 +79,9 @@ import {
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
 import { AppointmentDetail } from './models/appointmentDetail.model'
+import { CancelAppointmentResponse } from './models/cancelAppointmentResponse.model'
 import {
+  AppointmentCancelOutcomeEnum,
   HealthConversationStatusFilterEnum,
   PermitStatusEnum,
 } from './models/enums'
@@ -179,6 +183,11 @@ export class HealthDirectorateService {
       }) ?? []
 
     return limitations
+  }
+
+  /* Pregnancy */
+  async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    return this.healthApi.hasActivePregnancy(auth)
   }
 
   async updateDonorStatus(
@@ -352,7 +361,7 @@ export class HealthDirectorateService {
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           url: item.product.url,
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
@@ -384,7 +393,7 @@ export class HealthDirectorateService {
                 count: item.dispensations.length,
                 itemId: dispensedItem.productId,
                 name: dispensedItem.productName,
-                strength: dispensedItem.productStrength,
+                strength: formatStrength(dispensedItem.productStrength),
                 amount: dispensedItem.dispensedAmountDisplay,
               }
             })
@@ -461,7 +470,7 @@ export class HealthDirectorateService {
         return {
           id: item.product.id,
           name: item.product.name,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
@@ -757,11 +766,34 @@ export class HealthDirectorateService {
     }
   }
 
+  public async requestAppointmentCancellation(
+    auth: Auth,
+    input: HealthDirectorateAppointmentInput,
+  ): Promise<CancelAppointmentResponse> {
+    const result = await this.healthApi.cancelAppointment(auth, input.id)
+
+    switch (result) {
+      case 'CANCELLED':
+        return { outcome: AppointmentCancelOutcomeEnum.CANCELLED }
+      case 'REFUSED':
+        return { outcome: AppointmentCancelOutcomeEnum.REFUSED }
+      case 'BLOCKED':
+        return { outcome: AppointmentCancelOutcomeEnum.BLOCKED }
+      case 'UNCONFIRMED':
+        return { outcome: AppointmentCancelOutcomeEnum.UNCONFIRMED }
+    }
+  }
+
+  /*
+   * Legacy path for the deployed native app's Boolean mutation: it treats
+   * false and a thrown error the same, so refusals and timeouts map to false.
+   */
   public async cancelAppointment(
     auth: Auth,
     input: HealthDirectorateAppointmentInput,
   ): Promise<boolean> {
-    return this.healthApi.cancelAppointment(auth, input.id)
+    const result = await this.healthApi.cancelAppointment(auth, input.id)
+    return result === 'CANCELLED'
   }
 
   /* Health Conversations */
@@ -812,6 +844,7 @@ export class HealthDirectorateService {
       paid: m.paid,
       amountIsk: m.amountIsk,
       pendingPaymentId: m.pendingPaymentId,
+      pendingPaymentStartedAt: m.pendingPaymentStartedAt,
     }
   }
 
@@ -824,7 +857,8 @@ export class HealthDirectorateService {
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -833,6 +867,7 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      replyAvailability: toReplyAvailability(c),
       messagingWindowOpen: c.messagingWindowOpen ?? undefined,
       messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
@@ -889,7 +924,8 @@ export class HealthDirectorateService {
       title: c.title,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,

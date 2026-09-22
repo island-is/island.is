@@ -4,7 +4,6 @@ import { JobFactor, SalaryComponentKey, SubCriterion } from './types'
 export type Events = {
   type:
     | DefaultEvents.SUBMIT
-    | DefaultEvents.ABORT
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
     | DefaultEvents.EDIT
@@ -38,6 +37,7 @@ export enum ApiActions {
   getDoeCompany = 'getDoeCompany',
   getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
+  getSalaryReportEligibility = 'getSalaryReportEligibility',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
   createSalaryDraft = 'createSalaryDraft',

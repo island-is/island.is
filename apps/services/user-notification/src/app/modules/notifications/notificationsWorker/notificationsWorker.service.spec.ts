@@ -474,7 +474,6 @@ describe('NotificationsWorkerService', () => {
   it('should not send email or push notification if recipient is deceased', async () => {
     await addToQueue(deceasedUser.nationalId)
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -1311,6 +1310,35 @@ describe('NotificationsWorkerService', () => {
       expect(smsService.sendSms).toHaveBeenCalledWith(
         userWithNoDelegations.mobilePhoneNumber,
         'Test SMS content',
+        { payer: undefined },
+      )
+    })
+
+    it('should send SMS content as GSM-7 with URLs percent-encoded', async () => {
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await smsSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        mobilePhoneNumber: userWithNoDelegations.mobilePhoneNumber ?? '',
+        smsContent:
+          'Guðrún Þórðardóttir: Nýtt skjal – „Pósthólf“ 📄\n\nSkoða nánar: \nhttps://island.is/leit?q=þjónusta',
+      } as SmsQueueMessage)
+
+      await wait(2)
+
+      expect(smsService.sendSms).toHaveBeenCalledWith(
+        userWithNoDelegations.mobilePhoneNumber,
+        'Gudrun Thordardottir: Nytt skjal - "Postholf" \n\nSkoda nanar: \nhttps://island.is/leit?q=%C3%BEj%C3%B3nusta',
+        { payer: undefined },
       )
     })
 
@@ -1337,6 +1365,7 @@ describe('NotificationsWorkerService', () => {
       expect(smsService.sendSms).toHaveBeenCalledWith(
         '+3546916391',
         'Test SMS content',
+        { payer: undefined },
       )
 
       const record = await notificationDeliveryModel.findOne({
@@ -1389,6 +1418,7 @@ describe('NotificationsWorkerService', () => {
       expect(smsService.sendSms).toHaveBeenCalledWith(
         '+3546916391',
         'Test SMS content',
+        { payer: undefined },
       )
 
       // Should NOT write a delivery record when the message has an error

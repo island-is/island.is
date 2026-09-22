@@ -8,10 +8,7 @@ import { Roles } from './constants'
 import { getApplicationCardRentalSummary } from './applicationCardSummary'
 import { getAssigneeApproverDisplayName } from './assigneeUtils'
 import { actionCardMessages as ac } from '../lib/messages/actionCardMessages'
-import {
-  coreHistoryMessages,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 
 const rentalMessageValues = (application: Application) => {
   const s = getApplicationCardRentalSummary(application)
@@ -186,85 +183,11 @@ export const housingBenefitsActionCards = {
   inReview: {
     title: ac.applicationTitle,
     description: ac.inReviewDescription,
-    pendingAction: (
-      application: Application,
-      role: ApplicationRole,
-    ): PendingAction => {
-      const values = rentalMessageValues(application)
-      if (role === Roles.INSTITUTION) {
-        return {
-          displayStatus: 'warning',
-          title: ac.pendingTitleInReviewInstitution,
-          content: {
-            ...ac.pendingContentInReviewInstitution,
-            values,
-          },
-        }
-      }
-      return {
-        displayStatus: 'info',
-        title: ac.pendingTitleInReviewApplicant,
-        content: {
-          ...ac.pendingContentInReviewApplicant,
-          values,
-        },
-      }
-    },
-    historyLogs: [
-      {
-        onEvent: DefaultEvents.APPROVE,
-        logMessage: coreHistoryMessages.applicationApproved,
-      },
-      {
-        onEvent: DefaultEvents.EDIT,
-        logMessage: ac.historyInReviewRequestedExtraData,
-      },
-    ],
-  },
-  extraData: {
-    title: ac.cardTitleExtraData,
     pendingAction: (application: Application): PendingAction => ({
-      displayStatus: 'warning',
-      title: ac.pendingTitleExtraData,
+      displayStatus: 'info',
+      title: ac.pendingTitleInReviewApplicant,
       content: {
-        ...ac.pendingContentExtraData,
-        values: rentalMessageValues(application),
-      },
-    }),
-    historyLogs: [
-      {
-        onEvent: DefaultEvents.SUBMIT,
-        logMessage: (application: Application) => {
-          const applicantName = getValueViaPath<string>(
-            application.externalData,
-            'nationalRegistry.data.fullName',
-          )
-          return {
-            ...ac.historyExtraDataSubmitted,
-            values: { applicantName: applicantName ?? '' },
-          }
-        },
-      },
-    ],
-  },
-  approved: {
-    title: ac.applicationTitle,
-    pendingAction: (application: Application): PendingAction => ({
-      displayStatus: 'success',
-      title: ac.pendingTitleApproved,
-      content: {
-        ...ac.pendingContentApproved,
-        values: rentalMessageValues(application),
-      },
-    }),
-  },
-  rejected: {
-    title: ac.applicationTitle,
-    pendingAction: (application: Application): PendingAction => ({
-      displayStatus: 'error',
-      title: ac.pendingTitleRejected,
-      content: {
-        ...ac.pendingContentRejected,
+        ...ac.pendingContentInReviewApplicant,
         values: rentalMessageValues(application),
       },
     }),

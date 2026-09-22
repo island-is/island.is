@@ -29,6 +29,7 @@ import {
   ListDraftRolesApi,
   ListDraftRolesWithStepsApi,
   SalaryAnalysisApi,
+  SalaryReportEligibilityApi,
   SubCriterionCatalogApi,
   SubmitReportCommentApi,
   SubmitSalaryReportApi,
@@ -36,8 +37,8 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { mapUserToRole } from '../utils/mapUserToRole'
 import {
-  hasActiveEqualityReport,
   hasPostponedOutlierPlan,
+  isSalaryReportEligible,
 } from '../utils/eligibility'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -116,6 +117,7 @@ const template: ApplicationTemplate<
                 DoeCompanyApi,
                 SubCriterionCatalogApi,
                 ActiveEqualityReportApi,
+                SalaryReportEligibilityApi,
                 BlankExcelTemplateApi,
               ],
               delete: true,
@@ -139,7 +141,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: States.DRAFT,
-              cond: hasActiveEqualityReport,
+              cond: isSalaryReportEligible,
             },
             {
               target: States.NOT_ALLOWED,
@@ -159,10 +161,12 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              // Same dead-end form as the PREREQUISITES fall-through above, and
-              // it reads nothing either — this applicant is authorized, just
-              // ineligible.
-              read: { answers: [], externalData: [] },
+              // Same dead-end form as the PREREQUISITES fall-through above,
+              // and it reads no answers either — this applicant is authorized,
+              // just ineligible. The one thing it does read is why: the form
+              // names the renewal window and the date it opens, which it cannot
+              // do from `application.applicant` alone.
+              read: { answers: [], externalData: ['salaryReportEligibility'] },
               write: { answers: [] },
               delete: false,
             },

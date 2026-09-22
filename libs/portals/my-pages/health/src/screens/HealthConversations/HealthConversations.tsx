@@ -130,7 +130,7 @@ const HealthConversations = () => {
     return healthConversations.filter((message) => {
       return (
         message.title?.toLowerCase().includes(query) ||
-        (message.organization?.name ?? message.lastSenderGroupName)
+        (message.groupName || message.organization?.name)
           ?.toLowerCase()
           .includes(query)
       )
@@ -301,7 +301,7 @@ const HealthConversations = () => {
                     <Box minWidth={0}>
                       <Box display="flex" alignItems="center" columnGap={1}>
                         <Text variant="medium">
-                          {item.organization?.name ?? item.lastSenderGroupName}
+                          {item.groupName || item.organization?.name}
                         </Text>
                         {item.hasAttachment && (
                           <Icon

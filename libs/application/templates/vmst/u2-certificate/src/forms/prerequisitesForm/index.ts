@@ -31,7 +31,11 @@ export const Prerequisites = buildForm({
           checkboxLabel: m.general.checkbox,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryV3UserApi,
+              provider: NationalRegistryV3UserApi.configure({
+                params: {
+                  citizenshipWithinEES: true,
+                },
+              }),
               title: m.dataProviders.myPagesTitle,
               subTitle: m.dataProviders.myPagesSubtitle,
             }),

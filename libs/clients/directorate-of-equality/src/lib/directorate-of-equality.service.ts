@@ -19,6 +19,7 @@ import {
   getApplicationReportOutliers,
   importApplicationReportDraftWorkbook,
   getApplicationReportComments,
+  getApplicationSalaryReportEligibility,
   getApplicationSubCriterionCatalog,
   importApplicationSalaryReportWorkbook,
   listApplicationDraftCriteria,
@@ -58,6 +59,7 @@ import type {
   PresignUploadResponseDto,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
+  SalaryReportEligibilityDto,
   SubmitApplicationReportCommentDto,
   SubmitDraftDto,
   SubmitSalaryReportDto,
@@ -99,6 +101,25 @@ export class DirectorateOfEqualityClientService {
       user,
       () => getApplicationActiveEqualityReport(),
       'Failed to get active equality report',
+    )
+  }
+
+  /**
+   * Whether the company may file a salary report right now, and why not when
+   * it may not.
+   *
+   * Subsumes getActiveEqualityReport as a *gate* — DMR checks the equality
+   * obligation first and answers MISSING_EQUALITY_REPORT before it looks at the
+   * renewal window — but not as a data source: the screens that show the
+   * approved plan still need the report summary itself.
+   */
+  async getSalaryReportEligibility(
+    user: User,
+  ): Promise<SalaryReportEligibilityDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationSalaryReportEligibility(),
+      'Failed to get salary report eligibility',
     )
   }
 
