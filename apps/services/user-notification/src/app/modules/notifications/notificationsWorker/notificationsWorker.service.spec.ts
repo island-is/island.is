@@ -182,6 +182,17 @@ class QueueTracker {
   }
 }
 
+/** Waits until `condition` is true */
+const waitFor = async (condition: () => boolean, timeoutMs = 20_000) => {
+  const start = Date.now()
+  while (!condition()) {
+    if (Date.now() - start > timeoutMs) {
+      throw new Error(`Condition not met within ${timeoutMs} ms`)
+    }
+    await wait(0.05)
+  }
+}
+
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
   let sequelize: Sequelize
@@ -315,14 +326,15 @@ describe('NotificationsWorkerService', () => {
     await truncate(sequelize)
   })
 
-  const addToQueue = async (recipient: string, urgent?: boolean) => {
-    await queue.add({
-      recipient,
-      templateId: mockTemplateId,
-      urgent,
-      args: [{ key: 'organization', value: 'Test Crew' }],
-    })
+  const notificationMessage = (recipient: string, urgent?: boolean) => ({
+    recipient,
+    templateId: mockTemplateId,
+    urgent,
+    args: [{ key: 'organization', value: 'Test Crew' }],
+  })
 
+  const addToQueue = async (recipient: string, urgent?: boolean) => {
+    await queue.add(notificationMessage(recipient, urgent))
     await queues.waitForProcessing()
   }
 
@@ -525,7 +537,10 @@ describe('NotificationsWorkerService', () => {
     // First message will be handled since the receiveMessages call is waiting (wait time is max 20s and returns when a message is ready)
     // This ensures that the next message is added after time is set outside working hours
     await addToQueue(userWithNoDelegations.nationalId)
-    await addToQueue(userWithNoDelegations.nationalId)
+    // The worker sleeps until the morning after this one, so it is not processed until the
+    // (fake) time is inside working hours again: only wait for it after that
+    await queue.add(notificationMessage(userWithNoDelegations.nationalId))
+    await wait(1)
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
@@ -1966,7 +1981,12 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await queues.waitForProcessing()
+      // The handler throws, so the worker does not delete the message: it is delivered again
+      // later, and is never "processed". Wait for the attempt instead
+      await waitFor(
+        () => (smsService.sendSms as jest.Mock).mock.calls.length > 0,
+      )
+      queues.reset()
 
       // sendSms should have been called with the normalized number
       expect(smsService.sendSms).toHaveBeenCalledWith(
