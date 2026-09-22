@@ -7,15 +7,9 @@ import { CalculationError } from './calculationError.model'
  * or not at all, so there is no partial result to report alongside errors. */
 @ObjectType('TaxCalculatorCalculateResponse')
 export class CalculateResponse {
-  @Field(() => Calculation, {
-    nullable: true,
-    description: 'The result. Null whenever `errors` is non-empty.',
-  })
+  @Field(() => Calculation, { nullable: true })
   calculation?: Calculation
 
-  @Field(() => [CalculationError], {
-    description:
-      'Empty when the calculation succeeded. Otherwise every reason it did not run -- validation reports all failing fields at once rather than the first.',
-  })
+  @Field(() => [CalculationError])
   errors!: CalculationError[]
 }

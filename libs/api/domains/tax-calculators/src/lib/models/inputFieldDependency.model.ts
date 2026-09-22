@@ -8,14 +8,12 @@ import {
 @ObjectType('TaxCalculatorInputFieldDependency')
 export class InputFieldDependency {
   @Field({
-    description:
-      "The `key` of the sibling field this one is conditional on. Not this field's own key.",
+    description: 'Key of the field this condition depends on.',
   })
   fieldKey!: string
 
   @Field(() => InputDependencyValue, {
-    description:
-      'The value `fieldKey` must hold for this field to apply. When it does not, the field is neither shown nor submitted.',
+    description: 'Value `fieldKey` must equal for this field to apply.',
   })
   equals!: InputDependencyValueUnion
 }

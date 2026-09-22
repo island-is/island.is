@@ -5,12 +5,12 @@ import type {
   CalculatorFieldType,
 } from '@island.is/clients/rsk/calculators'
 
-import { BooleanInputDependencyValue } from '../models/booleanInputDependencyValue.model'
+import { BooleanInputDependencyValue } from '../../models/booleanInputDependencyValue.model'
 import {
   TaxCalculatorInputFieldSemantic,
   TaxCalculatorInputFieldType,
-} from '../models/enums'
-import type { InputDependencyValueUnion } from '../models/inputDependencyValue.model'
+} from '../../models/enums'
+import type { InputDependencyValueUnion } from '../../models/inputDependencyValue.model'
 import type {
   BooleanInputField,
   DateInputField,
@@ -18,15 +18,13 @@ import type {
   NumberInputField,
   SelectInputField,
   StringInputField,
-} from '../models/inputField.model'
-import { InputFieldDependency } from '../models/inputFieldDependency.model'
-import { NumberInputDependencyValue } from '../models/numberInputDependencyValue.model'
-import { StringInputDependencyValue } from '../models/stringInputDependencyValue.model'
+} from '../../models/inputField.model'
+import { InputFieldDependency } from '../../models/inputFieldDependency.model'
+import { NumberInputDependencyValue } from '../../models/numberInputDependencyValue.model'
+import { StringInputDependencyValue } from '../../models/stringInputDependencyValue.model'
+import { NUMERIC_SEMANTIC_RANGE } from '../../shared/numericSemanticRange'
 
-/* Both Records are keyed on the client's own literal unions, so a type or
- * semantic added to @island.is/clients/rsk/calculators fails to compile here
- * -- this is the module that notices a client contract change, not the
- * interface's resolveType, which only ever sees the domain enum. */
+/* Exhaustive records make added source types fail at compile time. */
 const INPUT_FIELD_TYPE_BY_CLIENT_TYPE: Record<
   CalculatorFieldType,
   TaxCalculatorInputFieldType
@@ -87,12 +85,15 @@ export const toInputField = (field: CalculatorField): InputField => {
 
   switch (field.type) {
     case 'number': {
+      const range = field.semantic && NUMERIC_SEMANTIC_RANGE[field.semantic]
       const inputField: NumberInputField = {
         ...shared,
         type: INPUT_FIELD_TYPE_BY_CLIENT_TYPE[field.type],
         semantic: field.semantic
           ? SEMANTIC_BY_CLIENT_SEMANTIC[field.semantic]
           : undefined,
+        min: range ? range.min : undefined,
+        max: range ? range.max : undefined,
       }
       return inputField
     }

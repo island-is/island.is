@@ -3,23 +3,19 @@ import type {
   CalculatorScalarOutputField,
 } from '@island.is/clients/rsk/calculators'
 
-import { TaxCalculatorOutputFieldType } from '../models/enums'
-import type { OutputFieldValue } from '../models/outputFieldValue.model'
-import type { OutputFieldValueRow } from '../models/outputFieldValueRow.model'
-import type { OutputScalarValue } from '../models/outputScalarValue.model'
-import { OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE } from './outputField'
+import { TaxCalculatorOutputFieldType } from '../../models/enums'
+import type { OutputFieldValue } from '../../models/outputFieldValue.model'
+import type { OutputFieldValueRow } from '../../models/outputFieldValueRow.model'
+import type { OutputScalarValue } from '../../models/outputScalarValue.model'
+import { OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE } from '../../fields/outputField/outputField'
 
-/* Driven by the contract, not the result: anything RSK sends that the contract
- * does not declare is ignored rather than published unannounced. Entries rather
- * than index access, since the client interfaces declare no index signature. */
+/* Omit values not declared by the output contract. */
 const entriesOf = (value: unknown): Map<string, unknown> =>
   typeof value === 'object' && value !== null
     ? new Map(Object.entries(value))
     : new Map()
 
-/* Each branch builds one literal with one payload key, so a value carrying two
- * is not constructible. Client drift reads as a missing value, not a wrong
- * one. */
+/* Each branch produces exactly one payload. */
 const toScalarPayload = (
   field: CalculatorScalarOutputField,
   raw: unknown,
@@ -32,9 +28,7 @@ const toScalarPayload = (
         ? { type, numberValue: raw }
         : undefined
     case 'string':
-    /* Unreached today. Whoever adds the first date output must check what
-     * arrives: the client generates with `{ dates: true }`, so a Date reaches
-     * here and this check would silently omit it. */
+    /* Date outputs require Date handling when introduced. */
     case 'date':
       return typeof raw === 'string' ? { type, stringValue: raw } : undefined
     case 'boolean':
@@ -75,8 +69,7 @@ export const toOutputValues = (
     const raw = resultValues.get(field.name)
 
     if (field.kind === 'array') {
-      /* An empty array is a result and is published as `[]`; a missing one is
-       * a missing value and is omitted, like any absent scalar. */
+      /* Empty arrays publish as `[]`; absent values are omitted. */
       if (Array.isArray(raw)) {
         values.push({
           key: field.name,

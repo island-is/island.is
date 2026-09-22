@@ -3,11 +3,11 @@ import type { CalculatorOutputScalarType } from '@island.is/clients/rsk/calculat
 import {
   TaxCalculatorOutputFieldSemantic,
   TaxCalculatorOutputFieldType,
-} from '../models/enums'
+} from '../../models/enums'
 import type {
   ArrayOutputField,
   NumberOutputField,
-} from '../models/outputField.model'
+} from '../../models/outputField.model'
 import { toOutputField, toOutputScalarField } from './outputField'
 
 describe('toOutputField', () => {
@@ -91,8 +91,6 @@ describe('toOutputField', () => {
     ])
   })
 
-  /* An array output carries no `semantic` of its own -- the semantic belongs to
-   * the individual item fields, which is what distinguishes a row's columns. */
   it('puts no semantic on the array field itself', () => {
     const field = toOutputField({
       name: 'taxBrackets',
@@ -104,10 +102,7 @@ describe('toOutputField', () => {
   })
 })
 
-/* Guards the client-contract-change tripwire: the Record in this module is
- * keyed on the client's own literal union, so a new CalculatorOutputScalarType
- * stops compiling there. This pins that every current member is handled at
- * runtime too. */
+/* Ensures every scalar output type is handled at runtime. */
 describe('client output type coverage', () => {
   it('handles every client scalar output type', () => {
     const types: CalculatorOutputScalarType[] = [

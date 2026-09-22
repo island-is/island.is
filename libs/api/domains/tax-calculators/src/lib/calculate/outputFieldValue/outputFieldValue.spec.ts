@@ -1,7 +1,7 @@
 import type { CalculatorOutputField } from '@island.is/clients/rsk/calculators'
 
-import { TaxCalculatorOutputFieldType } from '../models/enums'
-import { toOutputValues } from './outputValue'
+import { TaxCalculatorOutputFieldType } from '../../models/enums'
+import { toOutputValues } from './outputFieldValue'
 
 const fields: readonly CalculatorOutputField[] = [
   { name: 'total', kind: 'scalar', type: 'number', semantic: 'currency' },
@@ -56,7 +56,7 @@ describe('toOutputValues', () => {
     ])
   })
 
-  /* Client drift should read as a missing value, not a coerced one. */
+  /* Contract mismatches are omitted, never coerced. */
   it('omits a value whose runtime kind contradicts the contract', () => {
     expect(toOutputValues(fields, { total: '1234' })).toEqual([])
   })
@@ -92,7 +92,6 @@ describe('toOutputValues', () => {
       ])
     })
 
-    /* An empty array is a result; a missing one is a missing value. */
     it('publishes an empty array as an empty list', () => {
       expect(toOutputValues(fields, { brackets: [] })).toEqual([
         { key: 'brackets', type: ARRAY, arrayValue: [] },

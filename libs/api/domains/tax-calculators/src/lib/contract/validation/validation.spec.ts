@@ -5,10 +5,9 @@ import type {
   CalculatorOutputField,
 } from '@island.is/clients/rsk/calculators'
 
-import { assertPublishableContract } from './contract'
+import { assertPublishableContract } from './validation'
 
-/* Output fields default to a minimal valid set so an input-focused case is not
- * tripped by the separate "publishes no output fields" invariant. */
+/* Minimal output contract for input-focused cases. */
 const VALID_OUTPUT_FIELDS: CalculatorOutputField[] = [
   { name: 'total', kind: 'scalar', type: 'number', semantic: 'currency' },
 ]
@@ -26,7 +25,6 @@ const contractOf = (
 const assertFields = (fields: CalculatorField[]) => () =>
   assertPublishableContract('childBenefit', contractOf(fields))
 
-/* Input fields default to a minimal valid set for the same reason, reversed. */
 const VALID_INPUT_FIELDS: CalculatorField[] = [
   { name: 'year', type: 'number', required: true, semantic: 'year' },
 ]
@@ -268,8 +266,6 @@ describe('assertPublishableContract', () => {
     ).not.toThrow()
   })
 
-  /* A cycle needs either self-reference or a conditional target, so the two
-   * guards above cover every one of them. */
   it('rejects a dependency cycle longer than one hop', () => {
     expect(
       assertFields([

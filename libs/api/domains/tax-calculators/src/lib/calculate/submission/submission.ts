@@ -5,27 +5,23 @@ import type {
   CalculatorFieldSemantic,
 } from '@island.is/clients/rsk/calculators'
 
-import { TaxCalculatorCalculationErrorCode } from '../models/enums'
-import type { CalculationError } from '../models/calculationError.model'
-import type { InputFieldValue } from '../models/inputFieldValue.model'
-import type { InputValue } from '../models/inputValue.model'
+import { TaxCalculatorCalculationErrorCode } from '../../models/enums'
+import type { CalculationError } from '../../models/calculationError.model'
+import type { InputFieldValue } from '../../models/inputFieldValue.model'
+import type { InputValue } from '../../models/inputValue.model'
+import { NUMERIC_SEMANTIC_RANGE } from '../../shared/numericSemanticRange'
 
 export type SubmittedValue = string | number | boolean
 export type SubmittedValues = Record<string, SubmittedValue>
 
 export interface CalculationInputValidation {
-  /* Only applicable fields that carry a value, ready to hand to a client input
-   * builder. Meaningless unless `errors` is empty. */
+  /* Applicable submitted values. Valid only when `errors` is empty. */
   values: SubmittedValues
   errors: CalculationError[]
 }
 
-/* Validation runs against the client contract rather than the mapped domain
- * models. The two carry the same data -- `CalculatorField.name` is the public
- * `key`, one to one -- but the client's is a flat interface, so `semantic` and
- * `options` are reachable without narrowing an interface hierarchy the
- * published models only discriminate through __typename. The contract is
- * asserted publishable before this runs, so every dependency target exists. */
+/* Validation uses the source contract, which retains semantic and option data
+ * without narrowing a GraphQL union. The contract is already publishable. */
 
 const INTEGER_SEMANTICS: readonly CalculatorFieldSemantic[] = [
   'year',
@@ -33,9 +29,7 @@ const INTEGER_SEMANTICS: readonly CalculatorFieldSemantic[] = [
   'count',
 ]
 
-/* Deliberately strict: only the empty string is absent, not whitespace. A
- * value the consumer took the trouble to send is reported as invalid rather
- * than silently dropped, and a blank control is expected to omit its row. */
+/* Only the empty string is absent; other strings are validated. */
 const toSubmittedValue = (value: InputValue): SubmittedValue | undefined => {
   if (typeof value.numberValue === 'number') {
     return value.numberValue
@@ -80,10 +74,7 @@ const describeProblem = (
         return 'expects a finite number'
       }
 
-      /* The one place a semantic affects behaviour rather than presentation.
-       * An integrality rule is not the range assertion the semantic enum
-       * disclaims -- `numberOfChildren: 2.5` is malformed, not out of range --
-       * and the alternative is letting RSK decide what a fractional child is. */
+      /* Year, month, and count values are integers. */
       if (
         field.semantic &&
         INTEGER_SEMANTICS.includes(field.semantic) &&
@@ -92,10 +83,22 @@ const describeProblem = (
         return `expects a whole number, since it carries the ${field.semantic} semantic`
       }
 
-      /* Zero stays valid: two children and none under seven is an ordinary
-       * childBenefit submission. */
-      if (field.semantic === 'count' && value < 0) {
-        return 'expects a count of zero or more'
+      const range = field.semantic && NUMERIC_SEMANTIC_RANGE[field.semantic]
+
+      if (range) {
+        const { min, max } = range
+
+        if (
+          min !== undefined &&
+          max !== undefined &&
+          (value < min || value > max)
+        ) {
+          return `expects a ${field.semantic} between ${min} and ${max}`
+        }
+
+        if (max === undefined && min !== undefined && value < min) {
+          return `expects a ${field.semantic} of ${min} or more`
+        }
       }
 
       return undefined
@@ -147,8 +150,7 @@ export const validateCalculationInput = (
 
   for (const row of submitted) {
     if (seen.has(row.key)) {
-      /* Reported once per key however many times it repeats -- a consumer
-       * fixes the duplicate, not each recurrence. */
+      /* Report each duplicate key once. */
       if (!duplicated.has(row.key)) {
         duplicated.add(row.key)
         errors.push({
@@ -184,8 +186,7 @@ export const validateCalculationInput = (
   const isApplicable = (field: CalculatorField): boolean =>
     !field.dependsOn || values[field.dependsOn.field] === field.dependsOn.equals
 
-  /* Iterating the contract rather than the submission keeps error order
-   * deterministic regardless of how the consumer ordered its values. */
+  /* Iterating contract fields preserves deterministic error order. */
   for (const field of inputFields) {
     const value = values[field.name]
     const applicable = isApplicable(field)

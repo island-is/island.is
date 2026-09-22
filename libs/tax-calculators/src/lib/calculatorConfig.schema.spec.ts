@@ -145,8 +145,7 @@ describe('calculatorConfigSchema', () => {
       expect(result.success).toBe(false)
     })
 
-    /* The input/output asymmetry: one output value is legitimately placed
-     * twice, once prominently and once inside a breakdown. */
+    /* An output value may legitimately appear twice; input keys may not. */
     it('accepts a repeated output field key across sections', () => {
       const result = calculatorConfigSchema.safeParse(
         config({
@@ -278,8 +277,7 @@ describe('calculatorConfigSchema', () => {
       expect(result.success).toBe(true)
     })
 
-    // The failure this guards against is silent: on the web side an unresolved
-    // gate reads as "off", so the section renders unconditionally.
+    /* An unresolved gate silently reads as "off" on the web side. */
     it('rejects a gate pointing at a toggle no section declares', () => {
       const result = calculatorConfigSchema.safeParse(
         config({ inputSections: [section({ gate: { toggle: 'ghost' } })] }),
@@ -295,8 +293,7 @@ describe('calculatorConfigSchema', () => {
       }
     })
 
-    /* The toggle resolves, but the switch that would reveal the section is
-     * rendered by the section it is hiding, so it can never be turned on. */
+    /* The switch that would reveal this section is rendered by the section it hides. */
     it('rejects a gate pointing at a toggle its own section declares', () => {
       const result = calculatorConfigSchema.safeParse(
         config({

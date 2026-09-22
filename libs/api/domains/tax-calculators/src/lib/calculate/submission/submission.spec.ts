@@ -1,11 +1,9 @@
 import type { CalculatorField } from '@island.is/clients/rsk/calculators'
 
-import { TaxCalculatorCalculationErrorCode } from '../models/enums'
-import type { InputFieldValue } from '../models/inputFieldValue.model'
-import { validateCalculationInput } from './calculationInput'
+import { TaxCalculatorCalculationErrorCode } from '../../models/enums'
+import type { InputFieldValue } from '../../models/inputFieldValue.model'
+import { validateCalculationInput } from './submission'
 
-/* A plain annotation rather than `as const satisfies`: nothing here reads the
- * literal types back, and the repo's Prettier cannot parse `satisfies`. */
 const fields: readonly CalculatorField[] = [
   { name: 'amount', type: 'number', required: true, semantic: 'currency' },
   { name: 'year', type: 'number', required: false, semantic: 'year' },
@@ -25,6 +23,8 @@ const fields: readonly CalculatorField[] = [
     semantic: 'count',
     dependsOn: { field: 'splitCustody', equals: true },
   },
+  { name: 'taxRate', type: 'number', required: false, semantic: 'percentage' },
+  { name: 'billingMonth', type: 'number', required: false, semantic: 'month' },
 ]
 
 const number = (key: string, numberValue: number): InputFieldValue => ({
@@ -118,7 +118,6 @@ describe('validateCalculationInput', () => {
       ).toEqual([])
     })
 
-    /* A pattern alone would accept this, which is why parsing runs too. */
     it('rejects a date that does not exist', () => {
       expect(
         codes([number('amount', 1), string('startedAt', '2026-02-31')]),
@@ -172,6 +171,30 @@ describe('validateCalculationInput', () => {
 
     it('leaves a negative value alone where no count semantic applies', () => {
       expect(validate([number('amount', -500)]).errors).toEqual([])
+    })
+
+    it.each([-1, 101])('rejects a percentage outside 0-100 (%d)', (value) => {
+      expect(codes([number('amount', 1), number('taxRate', value)])).toEqual([
+        [INVALID_VALUE, 'taxRate'],
+      ])
+    })
+
+    it.each([0, 100])('accepts a percentage boundary (%d)', (value) => {
+      expect(
+        validate([number('amount', 1), number('taxRate', value)]).errors,
+      ).toEqual([])
+    })
+
+    it.each([0, 13])('rejects a month outside 1-12 (%d)', (value) => {
+      expect(
+        codes([number('amount', 1), number('billingMonth', value)]),
+      ).toEqual([[INVALID_VALUE, 'billingMonth']])
+    })
+
+    it.each([1, 12])('accepts a month boundary (%d)', (value) => {
+      expect(
+        validate([number('amount', 1), number('billingMonth', value)]).errors,
+      ).toEqual([])
     })
 
     it('preserves zero rather than reading it as absent', () => {

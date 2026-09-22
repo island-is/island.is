@@ -10,7 +10,7 @@ export type ScalarOutputFieldType = Exclude<
   TaxCalculatorOutputFieldType.ARRAY
 >
 
-// Keep these co-located for the same module-load-order reason as inputField.model.ts.
+// Co-located implementors avoid circular module initialization.
 const resolveOutputField = (value: OutputField) => {
   switch (value.type) {
     case TaxCalculatorOutputFieldType.NUMBER:
@@ -30,26 +30,17 @@ const resolveOutputField = (value: OutputField) => {
   }
 }
 
-@InterfaceType('TaxCalculatorOutputField', {
-  description:
-    'One value a calculator returns. Carries no display text or layout.',
-  resolveType: resolveOutputField,
-})
+@InterfaceType('TaxCalculatorOutputField', { resolveType: resolveOutputField })
 export abstract class OutputField {
-  @Field({
-    description: 'Stable identifier for the output.',
-  })
+  @Field()
   key!: string
 
-  @Field(() => TaxCalculatorOutputFieldType, {
-    description: 'What kind of value this output carries.',
-  })
+  @Field(() => TaxCalculatorOutputFieldType)
   type!: TaxCalculatorOutputFieldType
 }
 
 @InterfaceType('TaxCalculatorOutputScalarField', {
-  description:
-    'An output field carrying a single value rather than a repeating group.',
+  description: 'An output field with a single value.',
   implements: () => OutputField,
   resolveType: resolveOutputField,
 })
@@ -59,10 +50,7 @@ export abstract class OutputScalarField extends OutputField {}
   implements: () => OutputScalarField,
 })
 export class NumberOutputField extends OutputScalarField {
-  @Field(() => TaxCalculatorOutputFieldSemantic, {
-    nullable: true,
-    description: 'What this number means, and how to format it.',
-  })
+  @Field(() => TaxCalculatorOutputFieldSemantic, { nullable: true })
   semantic?: TaxCalculatorOutputFieldSemantic
 }
 
@@ -86,7 +74,7 @@ export class DateOutputField extends OutputScalarField {}
 })
 export class ArrayOutputField extends OutputField {
   @Field(() => [OutputScalarField], {
-    description: 'The scalar fields present on each item in this array.',
+    description: 'Fields in each array row.',
   })
   itemFields!: OutputScalarField[]
 }

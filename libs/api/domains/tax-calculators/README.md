@@ -29,9 +29,13 @@ interface TaxCalculatorInputField {
 
 `TaxCalculatorInputField` is implemented by
 `TaxCalculator{Number,String,Boolean,Date,Select}InputField`. Only the number
-field exposes `semantic`, and only the select field exposes
+field exposes `semantic`, `min` and `max`, and only the select field exposes
 `options: [TaxCalculatorInputFieldOption!]!` -- the interface exists so those
-two live where they are meaningful instead of being nullable everywhere.
+live where they are meaningful instead of being nullable everywhere. `min`/`max`
+are set only for a semantic that bounds the value (`percentage`, `month`,
+`count`); absent otherwise. They come from the same table the domain validates
+submissions against (`shared/numericSemanticRange.ts`), so the published bound
+can never drift from the enforced one.
 
 ### Output fields
 
@@ -107,9 +111,9 @@ runtime.
 
 The non-null root query and throw-on-invalid-metadata decisions together mean
 one bad contract entry nulls the whole response rather than one field. That is
-the intended trade: `validation/contract.ts` enumerates what must hold before
-anything is published -- for input and output fields alike -- and a violation
-should never reach a deploy.
+the intended trade: `contract/validation/validation.ts` enumerates what must
+hold before anything is published -- for input and output fields alike -- and
+a violation should never reach a deploy.
 
 Note that "only number fields carry `semantic`" is a runtime invariant on both
 sides by necessity: the client permits `semantic` on any scalar type, so
@@ -150,10 +154,10 @@ calculator's fields.
 ## What lives elsewhere
 
 - `TaxCalculatorType` is declared in `libs/tax-calculators` (plain TS, shared
-  with `apps/web` and `apps/contentful-apps`) and registered with GraphQL by
-  `libs/cms/src/lib/models/calculator.model.ts`, following
-  `CustomPageUniqueIdentifier` -- **not** by this module. This module must never
-  call `registerEnumType` for it; registering twice throws.
+  with `apps/web` and `apps/contentful-apps`) and registered with GraphQL here,
+  in `models/enums.ts` -- this is the only GraphQL schema that exposes it, so
+  it must be the only place `registerEnumType` is called for it; registering
+  twice throws.
 - **No display text.** Labels, placeholders, section titles, ordering,
   conditional visibility and spans are all editor-authored per placement
   through the `calculator` content type's `configJson`. See
@@ -237,15 +241,21 @@ not reach the response.
 
 ### Public value conventions
 
-Percentages are whole percent (`37`, not `0.37`) in both directions, and month
-inputs are `1-12`. The domain passes both through unchanged; the client's
+Percentages are whole percent (`37`, not `0.37`) in both directions. The
+domain passes both percentages and months through unchanged; the client's
 mappers own the conversion to and from RSK's own encoding, along with every
 other RSK-specific detail. Dates are `yyyy-MM-dd` on both sides.
 
-Number fields carrying the `year`, `month` or `count` semantic must be whole
-numbers. That is the one place a semantic affects behaviour rather than
-presentation, and it is an integrality rule rather than the range assertion the
-semantic enum disclaims.
+A submitted `percentage` must be `0-100`, a `month` must be `1-12`, and a
+`count` must be `0` or more. These are declarations this contract makes, not
+observations of what RSK itself sends or accepts -- they live in
+`shared/numericSemanticRange.ts`, which both the input validation
+(`calculate/submission/submission.ts`) and the published `min`/`max` on
+`TaxCalculatorNumberInputField` read from, so the two can never disagree.
+
+Number fields carrying the `year`, `month` or `count` semantic must also be
+whole numbers -- the one place a semantic affects behaviour rather than
+presentation.
 
 ### Applicability is narrower here than on the web
 

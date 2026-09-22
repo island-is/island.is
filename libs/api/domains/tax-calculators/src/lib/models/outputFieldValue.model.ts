@@ -4,45 +4,30 @@ import { TaxCalculatorOutputFieldType } from './enums'
 import { OutputFieldValueRow } from './outputFieldValueRow.model'
 
 @ObjectType('TaxCalculatorOutputFieldValue', {
-  description:
-    'One value the calculation produced. Exactly one of the payload fields is set, chosen by `type`.',
+  description: 'Calculated output value. Set exactly one payload matching `type`.',
 })
 export class OutputFieldValue {
-  @Field({
-    description:
-      'The `key` of the output field this value belongs to, exactly as the metadata query publishes it.',
-  })
+  @Field()
   key!: string
 
-  @Field(() => TaxCalculatorOutputFieldType, {
-    description:
-      'Which payload field is set: `NUMBER` sets `numberValue`, `BOOLEAN` sets `booleanValue`, `STRING` and `DATE` both set `stringValue`, and `ARRAY` sets `arrayValue`.',
-  })
+  @Field(() => TaxCalculatorOutputFieldType)
   type!: TaxCalculatorOutputFieldType
 
-  @Field(() => Float, {
-    nullable: true,
-    description: 'Set when `type` is `NUMBER`.',
-  })
+  @Field(() => Float, { nullable: true })
   numberValue?: number
 
   @Field({
     nullable: true,
-    description:
-      'Set when `type` is `STRING` or `DATE`. Dates are `yyyy-MM-dd`.',
+    description: 'Value for a `STRING` or `DATE` output; dates use `yyyy-MM-dd`.',
   })
   stringValue?: string
 
-  @Field({
-    nullable: true,
-    description: 'Set when `type` is `BOOLEAN`.',
-  })
+  @Field({ nullable: true })
   booleanValue?: boolean
 
   @Field(() => [OutputFieldValueRow], {
     nullable: true,
-    description:
-      'Set when `type` is `ARRAY`. An empty list means RSK returned no rows, which is a result rather than a missing value -- a field RSK returned nothing at all for is omitted from `values` entirely, as any absent scalar is.',
+    description: 'Rows for an `ARRAY` output. An empty list is a valid result.',
   })
   arrayValue?: OutputFieldValueRow[]
 }

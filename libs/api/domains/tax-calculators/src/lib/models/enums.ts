@@ -1,8 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql'
 
-/* Values mirror the literals in @island.is/clients/rsk/calculators'
- * CalculatorFieldType, so mapping across the boundary stays a plain Record
- * lookup rather than a translation table. */
+import { TaxCalculatorType } from '@island.is/tax-calculators'
+
+registerEnumType(TaxCalculatorType, { name: 'TaxCalculatorType' })
+
+/* Values mirror source field-type literals for direct mapping. */
 export enum TaxCalculatorInputFieldType {
   NUMBER = 'number',
   STRING = 'string',
@@ -13,28 +15,18 @@ export enum TaxCalculatorInputFieldType {
 
 registerEnumType(TaxCalculatorInputFieldType, {
   name: 'TaxCalculatorInputFieldType',
-  description: 'Which kind of control a calculator input field expects.',
   valuesMap: {
-    NUMBER: {
-      description:
-        'A numeric input. See `semantic` on the number field for what the number means.',
-    },
-    STRING: { description: 'Free text.' },
-    BOOLEAN: { description: 'A yes/no toggle.' },
     DATE: {
-      description:
-        'A calendar date. Its value is a `yyyy-MM-dd` string, not a timestamp.',
+      description: 'Calendar date encoded as `yyyy-MM-dd`.',
     },
     SELECT: {
-      description:
-        "One of a fixed set of values, listed in the field's `options`.",
+      description: 'One of the field’s `options` values.',
     },
   },
 })
 
-/* Mirrors CalculatorFieldSemantic in the client. Purely presentational: RSK
- * types every one of these as a plain number, so a semantic says how to format
- * and label an input, never what range it may take. */
+/* Numeric semantics identify value meaning; selected semantics also define
+ * validated ranges. */
 export enum TaxCalculatorInputFieldSemantic {
   CURRENCY = 'currency',
   PERCENTAGE = 'percentage',
@@ -45,20 +37,15 @@ export enum TaxCalculatorInputFieldSemantic {
 
 registerEnumType(TaxCalculatorInputFieldSemantic, {
   name: 'TaxCalculatorInputFieldSemantic',
-  description:
-    "What a number input field's value means, and how it should be formatted. Presentational only -- it asserts no range.",
+  description: 'Meaning of a numeric input value.',
   valuesMap: {
-    CURRENCY: { description: 'A whole amount in ISK.' },
+    CURRENCY: { description: 'Whole ISK amount.' },
     PERCENTAGE: {
-      description:
-        'A whole percent, for example `37` rather than `0.37`. Conversion to the ratio RSK expects happens below this boundary.',
+      description: 'Whole percent, for example `37`.',
     },
     YEAR: { description: 'A calendar year.' },
-    MONTH: {
-      description:
-        'A month number. RSK does not document whether it counts from 0 or from 1, so no range is asserted.',
-    },
-    COUNT: { description: 'A non-negative whole count of something.' },
+    MONTH: { description: 'Month number.' },
+    COUNT: { description: 'Non-negative whole-number count.' },
   },
 })
 
@@ -72,19 +59,12 @@ export enum TaxCalculatorOutputFieldType {
 
 registerEnumType(TaxCalculatorOutputFieldType, {
   name: 'TaxCalculatorOutputFieldType',
-  description: 'What kind of value a calculator output field carries.',
   valuesMap: {
-    NUMBER: {
-      description: 'A numeric result.',
-    },
-    STRING: { description: 'A text result.' },
-    BOOLEAN: { description: 'A yes/no result.' },
     DATE: {
-      description:
-        'A calendar date. Its value is a `yyyy-MM-dd` string, not a timestamp.',
+      description: 'Calendar date encoded as `yyyy-MM-dd`.',
     },
     ARRAY: {
-      description: 'A repeating group rather than a single value.',
+      description: 'Sequence of rows.',
     },
   },
 })
@@ -99,26 +79,19 @@ export enum TaxCalculatorOutputFieldSemantic {
 
 registerEnumType(TaxCalculatorOutputFieldSemantic, {
   name: 'TaxCalculatorOutputFieldSemantic',
-  description:
-    "What a number output field's value means, and how it should be formatted. Presentational only -- it asserts no range.",
+  description: 'Meaning of a numeric output value.',
   valuesMap: {
-    CURRENCY: { description: 'A whole amount in ISK.' },
+    CURRENCY: { description: 'Whole ISK amount.' },
     PERCENTAGE: {
-      description:
-        'A whole percent, for example `37` rather than `0.37` -- the same scale as the input semantic. Conversion from the ratio RSK returns happens below this boundary.',
+      description: 'Whole percent, for example `37`.',
     },
     YEAR: { description: 'A calendar year.' },
-    MONTH: {
-      description:
-        'A month number. RSK does not document whether it counts from 0 or from 1, so no range is asserted.',
-    },
-    COUNT: { description: 'A non-negative whole count of something.' },
+    MONTH: { description: 'Month number.' },
+    COUNT: { description: 'Non-negative whole-number count.' },
   },
 })
 
-/* Unlike the enums above, this one mirrors no client literal union. GraphQL
- * only ever sees the member names; the values exist to keep the TypeScript
- * side readable. */
+/* GraphQL exposes member names; string values keep TypeScript code readable. */
 export enum TaxCalculatorCalculationErrorCode {
   INVALID_VALUE = 'invalidValue',
   MISSING_REQUIRED_VALUE = 'missingRequiredValue',
@@ -131,36 +104,28 @@ export enum TaxCalculatorCalculationErrorCode {
 
 registerEnumType(TaxCalculatorCalculationErrorCode, {
   name: 'TaxCalculatorCalculationErrorCode',
-  description:
-    'Why a calculation did not produce a result. This is the contract -- switch on it rather than parsing the accompanying `message`.',
+  description: 'Reason a calculation produced no result.',
   valuesMap: {
     INVALID_VALUE: {
-      description:
-        "A submitted value does not satisfy its field's contract: the wrong kind, a value outside a select field's options, a malformed date, or a fraction where a whole number is required. Carries the field `key`.",
+      description: 'Submitted value violates its field contract. Includes the field key.',
     },
     MISSING_REQUIRED_VALUE: {
-      description:
-        'A field RSK requires was not submitted, and its dependency -- if it has one -- is met. Carries the field `key`.',
+      description: 'Required applicable field was not submitted. Includes the field key.',
     },
     INAPPLICABLE_VALUE: {
-      description:
-        'A value was submitted for a field whose `dependsOn` condition the other submitted values do not meet. Carries the field `key`.',
+      description: 'Submitted field’s dependency is unmet. Includes the field key.',
     },
     UNKNOWN_FIELD: {
-      description:
-        "A submitted key is not in this calculator's input contract. Carries the submitted `key`.",
+      description: 'Submitted key is not an input field. Includes that key.',
     },
     DUPLICATE_FIELD: {
-      description:
-        'The same key was submitted more than once. Carries that `key`.',
+      description: 'Key was submitted more than once. Includes that key.',
     },
     CALCULATION_FAILED: {
-      description:
-        'RSK rejected the calculation or could not be reached. Calculation-level, so it carries no `key`. The underlying failure is logged server-side and deliberately not surfaced here.',
+      description: 'Calculation was rejected or unavailable.',
     },
     EMPTY_RESULT: {
-      description:
-        'RSK answered successfully but returned no result body. Calculation-level, so it carries no `key`.',
+      description: 'Calculator returned no result body.',
     },
   },
 })

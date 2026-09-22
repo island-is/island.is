@@ -2,16 +2,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { OutputScalarValue } from './outputScalarValue.model'
 
-/* A named wrapper rather than a bare nested list, which GraphQL would allow:
- * it reads better in a query document and leaves somewhere to hang future
- * per-row fields. */
+/* Wrapper preserves each array row as a distinct value. */
 @ObjectType('TaxCalculatorOutputFieldValueRow', {
-  description: 'One row of an array output field.',
+  description: 'Row in an array output.',
 })
 export class OutputFieldValueRow {
   @Field(() => [OutputScalarValue], {
     description:
-      'The values in this row, keyed by item field. A row omits keys RSK returned no value for, so rows are not guaranteed to be the same length.',
+      'Values in this row, keyed by item-field key. Values without a result are omitted.',
   })
   values!: OutputScalarValue[]
 }

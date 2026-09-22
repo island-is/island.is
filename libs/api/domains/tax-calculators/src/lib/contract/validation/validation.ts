@@ -6,13 +6,8 @@ import type {
   CalculatorScalarOutputField,
 } from '@island.is/clients/rsk/calculators'
 
-/* A bare Error, surfacing to a consumer as an unqualified
- * INTERNAL_SERVER_ERROR, is deliberate. Every one of these is a bug in
- * authored client contract data -- not an upstream API condition a consumer
- * could act on, and not something a public page can do anything useful with.
- * The domain tests are what keep it from reaching production; throwing here
- * rather than degrading means a violation cannot be published as a quietly
- * wrong contract. */
+/* Contract-definition violation. Throwing prevents a malformed contract from
+ * being published. */
 const fail = (calculatorKey: CalculatorKey, message: string): never => {
   throw new Error(
     `Unpublishable tax calculator contract for ${calculatorKey}: ${message}`,
@@ -45,8 +40,7 @@ const assertFieldShape = (
     )
   }
 
-  /* Only number input fields publish `semantic`, so a semantic anywhere else
-   * would be dropped silently by the mapper and hide a client drift. */
+  /* Only number fields carry semantic metadata. */
   if (field.semantic && field.type !== 'number') {
     fail(
       calculatorKey,
@@ -79,9 +73,8 @@ const assertDependency = (
     return
   }
 
-  /* Applicability downstream is evaluated one level deep. Rejecting a chain
-   * here is what makes that complete rather than merely sufficient for the
-   * contracts RSK publishes today. */
+  /* Applicability downstream is evaluated one level deep; rejecting a chain
+   * here is what makes that complete, not merely sufficient. */
   if (target.dependsOn) {
     fail(
       calculatorKey,

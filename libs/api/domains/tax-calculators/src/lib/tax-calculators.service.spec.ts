@@ -20,11 +20,7 @@ import type {
 } from './models/outputField.model'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
-/* Instantiated directly rather than through Test.createTestingModule: building
- * a GraphQL schema here would fail on TaxCalculatorType, whose registerEnumType
- * call lives in libs/cms and never runs in this project's test context.
- * CalculatorsClientService needs no constructor arguments -- getCalculator is a
- * registry lookup, not a network call. */
+/* Instantiated directly because getCalculator reads a registry. */
 const client = new CalculatorsClientService()
 const service = new TaxCalculatorsService(client, logger)
 
@@ -42,8 +38,7 @@ const findOutputField = (type: TaxCalculatorType, key: string) =>
 
 describe('TaxCalculatorsService', () => {
   describe('calculator identity mapping', () => {
-    /* Guards the one hand-maintained cross-vocabulary lookup in the module:
-     * a wrong entry compiles fine and returns another calculator's fields. */
+    /* A wrong identity-map entry compiles but returns another calculator's fields. */
     it.each(Object.values(TaxCalculatorType))(
       'publishes a non-empty input contract for %s',
       (type) => {
@@ -134,11 +129,7 @@ describe('TaxCalculatorsService', () => {
     })
   })
 
-  /* The semantics have no counterpart in RSK's OpenAPI spec -- it types every
-   * one of these as a plain number -- so nothing upstream would catch a field
-   * being mis-annotated. This table is what does. It pins the semantics the
-   * client publishes today; it deliberately does not assert that every number
-   * field must carry one, since `semantic` is optional in the contract. */
+  /* The source schema types these as plain numbers; this pins assigned semantics. */
   describe('number field semantics', () => {
     const { CURRENCY, PERCENTAGE, YEAR, MONTH, COUNT } =
       TaxCalculatorInputFieldSemantic
@@ -167,8 +158,7 @@ describe('TaxCalculatorsService', () => {
     })
   })
 
-  /* The pension rates are picked from sets RSK's spec does not declare, so
-   * nothing but this test fails if the transcribed sets drift. */
+  /* The source schema omits these sets; this test catches drift. */
   describe('pension rate option sets', () => {
     it.each([
       ['pensionFundRatio', ['0%', '4%']],
@@ -242,8 +232,7 @@ describe('TaxCalculatorsService output contract', () => {
       ).toBe(TaxCalculatorOutputFieldType.STRING)
     })
 
-    /* A number without a semantic is the common case, and must stay absent
-     * rather than defaulting to something formattable. */
+    /* A missing semantic must remain absent. */
     it('leaves vehicleWeight a number with no semantic', () => {
       const field = findOutputField(
         TaxCalculatorType.VEHICLE_TAX,
@@ -270,8 +259,7 @@ describe('TaxCalculatorsService output contract', () => {
     })
   })
 
-  /* The client exposes `kind` to discriminate scalar from array; the public
-   * contract uses __typename and `type` instead, so `kind` must not leak. */
+  /* `kind` is an internal discriminator and must not enter the domain contract. */
   it('leaks no client kind onto any output field', () => {
     Object.values(TaxCalculatorType).forEach((type) => {
       outputFieldsFor(type).forEach((field) => {
@@ -297,8 +285,7 @@ describe('TaxCalculatorsService calculate', () => {
   })
 
   describe('dispatch', () => {
-    /* A wrong entry in the identity map compiles fine and would quietly run
-     * another calculator, so each reachable type is pinned to its method. */
+    /* A wrong entry compiles and runs another calculator. */
     it('routes child benefit to getChildBenefit', async () => {
       const call = jest
         .spyOn(client, 'getChildBenefit')
@@ -354,7 +341,7 @@ describe('TaxCalculatorsService calculate', () => {
       )
     })
 
-    /* The one name that differs between the two vocabularies. */
+    /* The sole calculator type/key naming exception. */
     it('routes withholdingTaxOnWages to getWithholdingTax', async () => {
       const call = jest
         .spyOn(client, 'getWithholdingTax')
@@ -441,7 +428,7 @@ describe('TaxCalculatorsService calculate', () => {
       expect(logged).toHaveBeenCalled()
     })
 
-    /* An unauthenticated consumer must not learn what went wrong upstream. */
+    /* Upstream error detail must not enter the response. */
     it('leaks no upstream detail into the message', async () => {
       jest
         .spyOn(client, 'getVehicleTax')
@@ -457,8 +444,7 @@ describe('TaxCalculatorsService calculate', () => {
     })
   })
 
-  /* Every client method returns `data && toXOutput(data)`, so an empty body
-   * reaches the domain as undefined rather than as a throw. */
+  /* An empty upstream body maps to undefined, not a throw. */
   it('reports an empty result from RSK', async () => {
     jest.spyOn(client, 'getVehicleTax').mockResolvedValue(undefined)
 

@@ -8,7 +8,7 @@ import type {
 import {
   TaxCalculatorOutputFieldSemantic,
   TaxCalculatorOutputFieldType,
-} from '../models/enums'
+} from '../../models/enums'
 import type {
   ArrayOutputField,
   BooleanOutputField,
@@ -18,7 +18,7 @@ import type {
   OutputScalarField,
   ScalarOutputFieldType,
   StringOutputField,
-} from '../models/outputField.model'
+} from '../../models/outputField.model'
 
 export const OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE: Record<
   CalculatorOutputScalarType,

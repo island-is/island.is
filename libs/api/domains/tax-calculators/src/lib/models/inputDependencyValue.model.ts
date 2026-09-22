@@ -14,8 +14,7 @@ export type InputDependencyValueUnion =
  * other unions in this repo cannot tell them apart here. */
 export const InputDependencyValue = createUnionType({
   name: 'TaxCalculatorInputDependencyValue',
-  description:
-    'The value a dependency compares against. Read `__typename` to learn which scalar it carries.',
+  description: 'Value compared by an input dependency.',
   types: () =>
     [
       BooleanInputDependencyValue,

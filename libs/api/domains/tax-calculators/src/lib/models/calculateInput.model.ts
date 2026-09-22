@@ -8,16 +8,11 @@ import { InputFieldValue } from './inputFieldValue.model'
 
 @InputType('TaxCalculatorCalculateInput')
 export class CalculateInput {
-  /* Registered with GraphQL by libs/cms/src/lib/models/calculator.model.ts --
-   * this module must never call registerEnumType for it. */
-  @Field(() => TaxCalculatorType, {
-    description: 'Which calculator to run.',
-  })
+  @Field(() => TaxCalculatorType)
   type!: TaxCalculatorType
 
   @Field(() => [InputFieldValue], {
-    description:
-      'The submitted values, keyed by input field. Order carries no meaning. Fields whose `dependsOn` condition these values do not meet must not be submitted, and may be empty when the calculator requires nothing.',
+    description: 'Submitted values keyed by input-field key. Order is insignificant.',
   })
   @IsArray()
   @ValidateNested({ each: true })

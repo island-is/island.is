@@ -3,11 +3,11 @@ import type { CalculatorField } from '@island.is/clients/rsk/calculators'
 import {
   TaxCalculatorInputFieldSemantic,
   TaxCalculatorInputFieldType,
-} from '../models/enums'
+} from '../../models/enums'
 import type {
   NumberInputField,
   SelectInputField,
-} from '../models/inputField.model'
+} from '../../models/inputField.model'
 import { toDependencyValue, toInputField } from './inputField'
 
 describe('toInputField', () => {
@@ -43,6 +43,26 @@ describe('toInputField', () => {
     expect(field.semantic).toBe(TaxCalculatorInputFieldSemantic.CURRENCY)
   })
 
+  it.each([
+    ['currency', undefined, undefined],
+    ['percentage', 0, 100],
+    ['month', 1, 12],
+    ['count', 0, undefined],
+  ] as const)(
+    "exposes the %s semantic's bounds as min/max",
+    (semantic, min, max) => {
+      const field = toInputField({
+        name: 'field',
+        type: 'number',
+        required: true,
+        semantic,
+      }) as NumberInputField
+
+      expect(field.min).toBe(min)
+      expect(field.max).toBe(max)
+    },
+  )
+
   it('structures select options and leaves other types without any', () => {
     const select = toInputField({
       name: 'period',
@@ -75,9 +95,6 @@ describe('toInputField', () => {
   })
 })
 
-/* Only the boolean branch is reachable from real client data -- every
- * dependsOn across the six calculators is `equals: true` -- so the string and
- * number members of the union can only be covered here. */
 describe('toDependencyValue', () => {
   it.each([
     [true, { value: true }],
@@ -88,9 +105,7 @@ describe('toDependencyValue', () => {
   })
 })
 
-/* Guards the client-contract-change tripwire: this Record is keyed on the
- * client's own literal union, so a new CalculatorFieldType stops compiling
- * here. The test pins that every current member is handled at runtime too. */
+/* Ensures every input field type is handled at runtime. */
 describe('client type coverage', () => {
   it('handles every client field type', () => {
     const types: CalculatorField['type'][] = [

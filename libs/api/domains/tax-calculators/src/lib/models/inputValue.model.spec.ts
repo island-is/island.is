@@ -11,17 +11,10 @@ import { graphql, printSchema } from 'graphql'
 
 import { InputValue } from './inputValue.model'
 
-/* Built from this one input type rather than from the module's real resolver:
- * a full schema cannot be constructed in this project's test context, since
- * TaxCalculatorType's registerEnumType call lives in libs/cms and never runs
- * here. InputValue references nothing outside itself, so it can be probed
- * alone -- and it is the one model whose correctness is a schema fact rather
- * than a TypeScript one. */
+/* Probed standalone -- InputValue references nothing outside itself. */
 @Resolver()
 class ProbeResolver {
-  /* Nullable because the factory builds a schema without instantiating this
-   * resolver: the field has no implementation to run, and only variable
-   * coercion -- which happens before any field is resolved -- is under test. */
+  /* Nullable: the factory never instantiates this resolver, only coerces variables. */
   @Query(() => Boolean, { nullable: true })
   probe(@Args('value') value: InputValue): boolean {
     return value !== undefined
@@ -68,9 +61,6 @@ describe('TaxCalculatorInputValue', () => {
   it.each([
     ['two members', { numberValue: 1, stringValue: 'x' }],
     ['no members', {}],
-    /* What a cleared form control produces, and why a consumer must omit the
-     * whole row instead. This surfaces as a top-level GraphQL error, not as an
-     * entry in the response `errors` array. */
     ['an explicit null', { stringValue: null }],
   ])(
     'rejects %s during coercion, before any resolver runs',
