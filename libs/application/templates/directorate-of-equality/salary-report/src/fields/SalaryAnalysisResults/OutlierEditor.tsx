@@ -10,6 +10,7 @@ import {
   InteractiveTable,
   Text,
 } from '@island.is/island-ui/core'
+import type { OnChangeFn, SortingState } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
@@ -22,6 +23,7 @@ import {
   savedOutlierGroupIndex,
 } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer, PayStatus } from '../../utils/outlierGroups'
+import { sortOutliers } from '../../utils/outlierSorting'
 import { TablePagination } from '../TablePagination'
 import { OUTLIER_COLUMNS, OutlierTableProvider } from './outlierColumns'
 import { OutlierGroupCard } from './OutlierGroupCard'
@@ -93,6 +95,10 @@ export const OutlierEditor: FC<Props> = ({
 
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [page, setPage] = useState(1)
+  // Empty is the order the analysis listed them in. Held here rather than inside
+  // InteractiveTable because the ordering has to be applied before the page is
+  // sliced off — see sortedOutliers.
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const [savingIndex, setSavingIndex] = useState<number>()
   const [removingIndex, setRemovingIndex] = useState<number>()
@@ -143,9 +149,19 @@ export const OutlierEditor: FC<Props> = ({
     return outliers.filter((o) => !assignedOrdinals.has(o.employeeOrdinal))
   }, [memberOrdinalsByIndex, outliers])
 
+  // Sorted here rather than by InteractiveTable, and sorted BEFORE the slice
+  // below. The table only ever receives one page, so its own sorting reordered
+  // the ten rows on screen and left the rest of the list alone — page 2 sorted
+  // separately from page 1. `manualSorting` on the table is the other half of
+  // this; see the props it is passed.
+  const sortedOutliers = useMemo(
+    () => sortOutliers(unassignedOutliers, sorting),
+    [unassignedOutliers, sorting],
+  )
+
   const totalPages = Math.max(
     1,
-    Math.ceil(unassignedOutliers.length / OUTLIERS_PAGE_SIZE),
+    Math.ceil(sortedOutliers.length / OUTLIERS_PAGE_SIZE),
   )
   const currentPage = Math.min(page, totalPages)
   // Memoised because InteractiveTable keys an effect on the `data` prop: a new
@@ -153,11 +169,22 @@ export const OutlierEditor: FC<Props> = ({
   // costing a second render pass per interaction.
   const pageRows = useMemo(
     () =>
-      unassignedOutliers.slice(
+      sortedOutliers.slice(
         (currentPage - 1) * OUTLIERS_PAGE_SIZE,
         currentPage * OUTLIERS_PAGE_SIZE,
       ),
-    [unassignedOutliers, currentPage],
+    [sortedOutliers, currentPage],
+  )
+
+  // Back to the first page whenever the order changes: the rows the reader was
+  // looking at are not the rows that will be under them afterwards. TanStack
+  // hands an updater rather than a value, which is exactly what setState takes.
+  const handleSortingChange = useCallback<OnChangeFn<SortingState>>(
+    (updater) => {
+      setSorting(updater)
+      setPage(1)
+    },
+    [],
   )
 
   const toggleSelect = useCallback(
@@ -364,6 +391,13 @@ export const OutlierEditor: FC<Props> = ({
             <InteractiveTable
               columns={OUTLIER_COLUMNS}
               data={pageRows}
+              // The table renders the sort controls and reports the clicks, but
+              // does not do the sorting: `data` is one page, so ordering it here
+              // would only ever order that page. sortOutliers orders the whole
+              // unassigned list upstream of the slice.
+              manualSorting
+              sorting={sorting}
+              onSortingChange={handleSortingChange}
               mobileTitleKey="employee"
               // Longhand on purpose: T.Data/T.HeadData spread this object
               // over their own paddingTop/paddingBottom ('p5' = 18px) and

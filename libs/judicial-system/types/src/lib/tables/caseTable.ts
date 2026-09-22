@@ -2,6 +2,8 @@ import { InstitutionUser } from '../user'
 import {
   courtOfAppealsCasesCompleted,
   courtOfAppealsCasesInProgress,
+  courtOfAppealsVerdictAppealsCompleted,
+  courtOfAppealsVerdictAppealsInProgress,
 } from './caseTables/courtOfAppeals'
 import {
   defenceIndictmentsAppealed,
@@ -77,6 +79,10 @@ export const getCaseTableType = (
 export const caseTables: Record<CaseTableType, CaseTable> = {
   COURT_OF_APPEALS_CASES_IN_PROGRESS: courtOfAppealsCasesInProgress,
   COURT_OF_APPEALS_CASES_COMPLETED: courtOfAppealsCasesCompleted,
+  COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS:
+    courtOfAppealsVerdictAppealsInProgress,
+  COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED:
+    courtOfAppealsVerdictAppealsCompleted,
   DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS: districtCourtRequestCasesInProgress,
   DISTRICT_COURT_REQUEST_CASES_APPEALED: districtCourtRequestCasesAppealed,
   DISTRICT_COURT_REQUEST_CASES_COMPLETED: districtCourtRequestCasesCompleted,

@@ -60,6 +60,7 @@ import {
   mapMessagingRecipient,
   toConversationDirectionEnum,
   toConversationReplyBlockedReasonEnum,
+  toReplyAvailability,
   toConversationStatusFilter,
 } from './mappers/conversationMapper'
 import {
@@ -68,6 +69,7 @@ import {
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
 import {
+  formatStrength,
   mapDelegationStatus,
   mapDispensationItem,
   mapPrescriptionCategory,
@@ -181,6 +183,11 @@ export class HealthDirectorateService {
       }) ?? []
 
     return limitations
+  }
+
+  /* Pregnancy */
+  async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    return this.healthApi.hasActivePregnancy(auth)
   }
 
   async updateDonorStatus(
@@ -354,7 +361,7 @@ export class HealthDirectorateService {
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           url: item.product.url,
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
@@ -386,7 +393,7 @@ export class HealthDirectorateService {
                 count: item.dispensations.length,
                 itemId: dispensedItem.productId,
                 name: dispensedItem.productName,
-                strength: dispensedItem.productStrength,
+                strength: formatStrength(dispensedItem.productStrength),
                 amount: dispensedItem.dispensedAmountDisplay,
               }
             })
@@ -463,7 +470,7 @@ export class HealthDirectorateService {
         return {
           id: item.product.id,
           name: item.product.name,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
@@ -850,7 +857,8 @@ export class HealthDirectorateService {
       startDate: c.conversationStartDate,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -859,6 +867,7 @@ export class HealthDirectorateService {
       replyBlockedReason: toConversationReplyBlockedReasonEnum(
         c.replyBlockedReason,
       ),
+      replyAvailability: toReplyAvailability(c),
       messagingWindowOpen: c.messagingWindowOpen ?? undefined,
       messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
@@ -915,7 +924,8 @@ export class HealthDirectorateService {
       title: c.title,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
-      lastSenderGroupName: c.lastSenderGroupName,
+      lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
+      groupName: c.groupName ?? c.lastSenderGroupName,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,

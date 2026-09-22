@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-type DepType = string | number
+type DepType = string | number | boolean
 
 export const useScrollTopOnUpdate = (deps: DepType[]) => {
   useEffect(() => {
