@@ -73,6 +73,7 @@ export {
   NextOpeningDto,
   OpeningHoursWindowDto,
   AllowedInteraction,
+  PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
   TreatmentBaseDto,
