@@ -4,6 +4,7 @@ export interface InvoicePaymentTypeGroupDto {
   name: string
   codes: string[]
   codeCount?: number
+  l3CategoryName?: string
 }
 
 export const mapInvoicePaymentTypeGroupDto = (
@@ -17,5 +18,6 @@ export const mapInvoicePaymentTypeGroupDto = (
     name: group.name,
     codes: group.codes ?? [],
     codeCount: group.codeCount ?? undefined,
+    l3CategoryName: group.l3CategoryName ?? undefined,
   }
 }

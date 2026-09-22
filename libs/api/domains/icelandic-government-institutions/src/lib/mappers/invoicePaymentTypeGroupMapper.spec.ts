@@ -53,4 +53,19 @@ describe('mapInvoicePaymentTypeGroup', () => {
 
     expect(result.codeCount).toBeUndefined()
   })
+
+  it('passes l3CategoryName through when present', () => {
+    const result = mapInvoicePaymentTypeGroup({
+      ...baseData,
+      l3CategoryName: 'Ferðir',
+    })
+
+    expect(result.l3CategoryName).toBe('Ferðir')
+  })
+
+  it('defaults l3CategoryName to undefined when absent', () => {
+    const result = mapInvoicePaymentTypeGroup(baseData)
+
+    expect(result.l3CategoryName).toBeUndefined()
+  })
 })

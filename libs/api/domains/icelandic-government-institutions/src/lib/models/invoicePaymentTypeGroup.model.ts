@@ -20,4 +20,10 @@ export class InvoicePaymentTypeGroup {
       'Authoritative number of underlying payment type codes in this group, as reported by the source system. May exceed the length of `codes`.',
   })
   codeCount?: number
+
+  @Field({
+    nullable: true,
+    description: 'The level 3 category name for this group.',
+  })
+  l3CategoryName?: string
 }

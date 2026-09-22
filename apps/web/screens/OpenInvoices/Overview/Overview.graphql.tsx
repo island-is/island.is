@@ -87,37 +87,6 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS = gql`
   }
 `
 
-export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES = gql`
-  query IcelandicGovernmentInstitutionsInvoicePaymentTypes(
-    $search: String
-    $after: String
-    $lookup: [String!]
-    $limit: Int
-    $sortDirection: IcelandicGovernmentInstitutionsSortDirection
-  ) {
-    icelandicGovernmentInstitutionsInvoicePaymentTypes(
-      input: {
-        search: $search
-        after: $after
-        lookup: $lookup
-        limit: $limit
-        sortDirection: $sortDirection
-      }
-    ) {
-      data {
-        id
-        name
-      }
-      totalCount
-      pageInfo {
-        __typename
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-`
-
 export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS = gql`
   query IcelandicGovernmentInstitutionsInvoicePaymentTypeGroups(
     $search: String
@@ -139,6 +108,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS =
         id
         name
         codes
+        l3CategoryName
       }
       totalCount
       pageInfo {

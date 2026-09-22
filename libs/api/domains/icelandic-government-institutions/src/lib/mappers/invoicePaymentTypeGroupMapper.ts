@@ -13,6 +13,7 @@ export const mapInvoicePaymentTypeGroup = (
   name: data.name,
   codes: data.codes,
   codeCount: data.codeCount ?? undefined,
+  l3CategoryName: data.l3CategoryName ?? undefined,
 })
 
 export const mapInvoicePaymentTypeGroups = (

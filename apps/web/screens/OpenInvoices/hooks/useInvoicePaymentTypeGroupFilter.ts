@@ -13,10 +13,7 @@ import {
   AsyncFilterPage,
 } from '../components/AsyncFilterSearchAccordion'
 import { m } from '../messages'
-import {
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
-} from '../Overview/Overview.graphql'
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS } from '../Overview/Overview.graphql'
 import { formatPaymentTypeGroupTooltip } from '../utils'
 
 const MAX_LOOKUP_BATCH = 100
@@ -68,63 +65,6 @@ export const useInvoicePaymentTypeGroupFilter = (
     })
   }, [])
 
-  // Caught here, not in `fetchPage` — the accordion empties the list on a
-  // rejected fetch, so a failed name lookup would blank the whole filter.
-  const withTooltips = useCallback(
-    async (groups: Array<KnownGroup>): Promise<Array<KnownGroup>> => {
-      const representatives = groups
-        .map((group) => group.codes[0])
-        .filter(isDefined)
-
-      if (representatives.length === 0) {
-        return groups
-      }
-
-      try {
-        const namesByCode: Record<string, string> = {}
-
-        for (const batch of chunk(representatives, MAX_LOOKUP_BATCH)) {
-          const { data } = await apolloClient.query<Query, GroupQueryVariables>(
-            {
-              query:
-                GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPES,
-              variables: { lookup: batch, limit: batch.length },
-            },
-          )
-
-          data?.icelandicGovernmentInstitutionsInvoicePaymentTypes?.data.forEach(
-            (paymentType) => {
-              namesByCode[paymentType.id] = paymentType.name
-            },
-          )
-        }
-
-        const and = formatMessage(m.search.listConjunction)
-
-        return groups.map((group) => {
-          const name = namesByCode[group.codes[0]]
-
-          return name
-            ? {
-                ...group,
-                item: {
-                  ...group.item,
-                  tooltip: formatPaymentTypeGroupTooltip(
-                    group.codes,
-                    name,
-                    and,
-                  ),
-                },
-              }
-            : group
-        })
-      } catch {
-        return groups
-      }
-    },
-    [apolloClient, formatMessage],
-  )
-
   const fetchGroups = useCallback(
     async (variables: GroupQueryVariables) => {
       const { data } = await apolloClient.query<Query, GroupQueryVariables>({
@@ -136,16 +76,28 @@ export const useInvoicePaymentTypeGroupFilter = (
       const result =
         data?.icelandicGovernmentInstitutionsInvoicePaymentTypeGroups
 
+      const and = formatMessage(m.search.listConjunction)
+
       const groups: Array<KnownGroup> = (result?.data ?? [])
         .filter((group) => group.codes.length > 0)
         .map((group) => ({
-          item: { value: group.id, label: group.name },
+          item: {
+            value: group.id,
+            label: group.name,
+            tooltip: group.l3CategoryName
+              ? formatPaymentTypeGroupTooltip(
+                  group.codes,
+                  group.l3CategoryName,
+                  and,
+                )
+              : undefined,
+          },
           codes: group.codes,
         }))
 
-      return { groups: await withTooltips(groups), pageInfo: result?.pageInfo }
+      return { groups, pageInfo: result?.pageInfo }
     },
-    [apolloClient, withTooltips],
+    [apolloClient, formatMessage],
   )
 
   const fetchPage = useCallback(
