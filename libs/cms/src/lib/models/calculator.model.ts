@@ -9,8 +9,6 @@ import { logger } from '@island.is/logging'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator, ICalculatorFields } from '../generated/contentfulTypes'
 
-// Named 'calculator', not 'rskCalculator' -- a hedge in case the unrelated
-// ECOI/WHODAS calculators are ever routed through the same mechanism.
 registerEnumType(TaxCalculatorType, {
   name: 'TaxCalculatorType',
   description: 'The tax calculator to use.',
@@ -24,11 +22,8 @@ export class Calculator {
   @Field(() => TaxCalculatorType, { nullable: true })
   calculatorType?: TaxCalculatorType
 
-  // `graphqlTypeJson` (the `JSON` scalar), not `GraphQLJSONObject` -- both
-  // Calculator and ConnectedComponent are members of the `Slice` union and
-  // both expose a `configJson` field; GraphQL's overlapping-fields-can-be-
-  // merged validation rejects two differently-scoped scalars sharing a field
-  // name across union members, so this must match ConnectedComponent's type.
+  // Uses the shared JSON scalar because Slice members expose configJson under
+  // the same response key.
   @Field(() => graphqlTypeJson, { nullable: true })
   configJson?: CalculatorConfig
 }
@@ -47,10 +42,6 @@ export const mapCalculator = ({
   sys,
   fields,
 }: ICalculator): SystemMetadata<Calculator> => {
-  /* Degrade, don't throw: throwing is swallowed by `safelyMapSliceUnion`, which
-   * drops the slice entirely so nothing can tell "no calculator" from "a broken
-   * one". Caught rather than `safeParse`d because search-indexer compiles this
-   * library with `strict: false`, where zod's discriminant does not narrow. */
   let configJson: CalculatorConfig | undefined
 
   try {

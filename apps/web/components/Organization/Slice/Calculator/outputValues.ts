@@ -15,8 +15,6 @@ export type OutputValues = Map<string, OutputValue>
 export const toOutputValues = (calculation: Calculation): OutputValues =>
   new Map(calculation.values.map((value) => [value.key, value]))
 
-/* Rows omit keys RSK returned nothing for, so they are not guaranteed to share
- * a shape -- hence lookup by key, not position. */
 export const itemValue = (
   row: OutputRow,
   key: string,

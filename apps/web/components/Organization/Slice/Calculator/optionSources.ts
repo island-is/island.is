@@ -1,13 +1,8 @@
 import type { Locale } from '@island.is/shared/types'
 
-/* Year and month fields carry no `options` of their own: the client's `year()`
- * and `month()` markers are deliberately unbounded, because RSK's spec asserts
- * no range. The lists below are transcribed from RSK's own withholding form and
- * applied to every calculator, so the floor is a guess for the others. */
+/* Matches the first year offered by RSK's withholding calculator. */
 const EARLIEST_INCOME_YEAR = 2004
 
-/* Exported rather than duplicated: `format.ts` needs the same mapping to render
- * numbers and dates in the locale the page is already using. */
 export const LOCALE_TAG: Record<Locale, string> = {
   is: 'is-IS',
   en: 'en-GB',
@@ -29,8 +24,6 @@ export const yearOptions = (): CalculatorOption[] => {
   return years
 }
 
-/* Values are 1-based. RSK documents neither convention, so this is unverified
- * and only matters once a calculation is actually submitted. */
 export const monthOptions = (locale: Locale): CalculatorOption[] => {
   const format = new Intl.DateTimeFormat(LOCALE_TAG[locale], { month: 'long' })
 

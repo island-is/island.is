@@ -20,14 +20,9 @@ import { localized } from './text'
 interface Props {
   field: CalculatorInputSectionField
   contractField: InputContractField
-  /* Resolved by the section, which drops the field outright when the editor
-   * authored no label -- so this component never has to represent that case. */
   label: string
   locale: Locale
   disabled: boolean
-  /* A domain validation error keyed to this field. Not react-hook-form's own
-   * error state: this is an answer from RSK, not a validation result, so it is
-   * passed in rather than read off the form. */
   error?: string
 }
 
@@ -77,16 +72,12 @@ export const CalculatorField = ({
   const select = { ...common, placeholder }
   const input = { ...common, control, placeholder }
 
-  /* Two stages: the field's `type` picks the control, and `semantic` -- which
-   * only number fields carry -- refines it. Extracted from the return so the
-   * `never` guard closing the switch survives. */
   const renderControl = () => {
     switch (type) {
       case TaxCalculatorInputFieldType.Select:
         return (
           <SelectController
             {...select}
-            /* Raw identifiers -- `configJson` has nowhere to author option text. */
             options={(contractField.options ?? []).map((option) => ({
               label: option,
               value: option,
@@ -95,8 +86,6 @@ export const CalculatorField = ({
         )
 
       case TaxCalculatorInputFieldType.Boolean:
-        /* Not a CheckboxController: that one holds a string[], which no boolean
-         * `dependsOn` could ever match. */
         return (
           <Controller
             control={control}
@@ -137,9 +126,7 @@ export const CalculatorField = ({
             return <InputController {...input} type="number" currency />
 
           case TaxCalculatorInputFieldSemantic.Percentage:
-            /* Whole percent by contract, in both directions. The client's
-             * mappers convert to and from RSK's 0-1 ratio; nothing above them
-             * scales. */
+            /* Percentage values use whole percents. */
             return (
               <InputController
                 {...input}
@@ -150,10 +137,7 @@ export const CalculatorField = ({
               />
             )
 
-          /* The domain rejects a fractional or negative count outright, so the
-           * control does not offer one. `decimalScale` rather than `step`:
-           * `type="number"` routes through NumberFormat, which ignores `step`
-           * and enforces `min` through `isAllowed`. */
+          /* NumberFormat enforces whole, non-negative count values. */
           case TaxCalculatorInputFieldSemantic.Count:
             return (
               <InputController
@@ -164,8 +148,6 @@ export const CalculatorField = ({
               />
             )
 
-          /* A number with no semantic is the commonest field of all, so the
-           * fallback is spelled out rather than left to fall through. */
           default:
             return <InputController {...input} type="number" />
         }

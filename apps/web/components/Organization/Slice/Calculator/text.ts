@@ -1,8 +1,6 @@
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorLocalizedText } from '@island.is/tax-calculators'
 
-/* Not react-intl: no slice on an organization page sits inside an
- * `IntlProvider`. */
 export const CHROME_TEXT = {
   submit: { is: 'Reikna', en: 'Calculate' },
   loadError: {

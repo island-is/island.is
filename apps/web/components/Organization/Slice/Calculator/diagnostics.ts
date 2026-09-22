@@ -13,17 +13,8 @@ import {
 import type { CalculatorLabelledRow } from './text'
 import { localized } from './text'
 
-/* Everything the slice warns about lives here, and every caller reaches it from
- * a `useEffect` -- never from a render body, which React StrictMode runs twice
- * in development, doubling every warning.
- *
- * Raw field keys are printed freely: the no-raw-keys rule is about what the
- * public sees, and none of this reaches production. */
-
 const isDevelopment = () => process.env.NODE_ENV !== 'production'
 
-/* Input rows the editor keyed but never labelled. Public rendering omits them;
- * this diagnostic is the thing that says so out loud during development. */
 export const collectUnlabelledKeys = (
   config: CalculatorConfig,
   locale: Locale,
@@ -42,8 +33,6 @@ export const collectUnlabelledKeys = (
   ]
 }
 
-/* Fields RSK rejects the calculation without, that the editor placed nowhere.
- * The calculator is unusable until one of the two sides changes. */
 export const collectUnplacedRequiredKeys = (
   config: CalculatorConfig,
   contract: InputFieldContract,
@@ -55,9 +44,6 @@ export const collectUnplacedRequiredKeys = (
     .map((field) => field.key)
 }
 
-/* The mirror image: keys the editor placed that the calculator no longer
- * carries. Rendering omits them silently, so without this a renamed backend
- * field looks exactly like a row nobody filled in. */
 export const collectStaleInputKeys = (
   config: CalculatorConfig,
   contract: InputFieldContract,

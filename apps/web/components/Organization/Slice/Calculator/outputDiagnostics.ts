@@ -8,10 +8,7 @@ import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 import type { OutputFieldContract } from './contract'
 import type { CalculatorLabelledRow } from './text'
 
-/* Pure: no React, no console. The output half of the config is joined to the
- * metadata here so the join is testable on its own, and so the components that
- * will eventually render output values can reuse it unchanged. Warnings are
- * formatted and emitted by `diagnostics.ts` -- this file only finds them. */
+/* Collects CMS and output-contract mismatches. */
 export interface OutputConfigIssues {
   /** Configured output keys the calculator's metadata no longer carries. */
   staleFieldKeys: string[]
@@ -29,10 +26,7 @@ export const collectOutputConfigIssues = (
   const staleItemFieldKeys: { fieldKey: string; itemKeys: string[] }[] = []
   const itemFieldsOnScalarKeys: string[] = []
 
-  /* Deliberately deduped -- `collectOutputFieldKeys` is not used here because
-   * the per-field walk below needs each row's own `itemFields`, and a key
-   * legally repeats across sections. Every check asks only "is this stale",
-   * which is a property of the key, not of the row. */
+  /* Deduplicates issues while retaining row-specific item fields. */
   const seenFieldKeys = new Set<string>()
   const seenItemFieldKeys = new Set<string>()
 
@@ -82,9 +76,7 @@ export const collectOutputConfigIssues = (
   return { staleFieldKeys, staleItemFieldKeys, itemFieldsOnScalarKeys }
 }
 
-/* The output half's contribution to the unlabelled-field check. Emitting no
- * warning of its own is the point: `collectUnlabelledKeys` is the single owner
- * of that warning, so an unlabelled output row is reported once, not twice. */
+/* Supplies output rows to the shared label diagnostic. */
 export const collectOutputLabelledRows = (
   config: CalculatorConfig,
 ): CalculatorLabelledRow[] => [

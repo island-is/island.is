@@ -22,10 +22,6 @@ interface Props {
   locale: Locale
 }
 
-/* Every omission a result row can suffer, resolved before rendering so that a
- * section left with nothing to show can be dropped whole rather than leaving a
- * heading standing over an empty box. Each is silent here on purpose -- the
- * unlabelled and stale warnings are emitted once from the diagnostics effect. */
 export type VisibleRow =
   | { kind: 'content'; field: CalculatorOutputContentField; markdown: string }
   | {
@@ -52,19 +48,12 @@ const visibleRows = (
     const contractField = contract.get(field.key)
     if (!contractField) return []
 
-    /* A raw key must never reach the public page. */
     const label = localized(field.label, locale)
     if (!label) return []
 
-    /* A key RSK returned nothing for is absent from `values` entirely. */
     const value = values.get(field.key)
     if (!value) return []
 
-    /* An array field renders its own emptiness; a scalar that formatted to
-     * nothing has no row to render at all. Branched on the contract rather than
-     * on whether the response happens to carry `arrayValue`, because that is
-     * what `CalculatorOutputField` branches on -- reading the two differently
-     * is how a row survives here and then renders nothing. */
     if (
       contractField.type !== TaxCalculatorOutputFieldType.Array &&
       formatOutputValue(value, contractField.semantic, locale) === undefined
@@ -75,10 +64,6 @@ const visibleRows = (
     return [{ kind: 'value', field, contractField, label, value }]
   })
 
-/* Exported because the caller has to know whether there is anything to show
- * before it renders a heading and a box around this component -- a result area
- * standing empty is the same defect as a section heading over no rows, one
- * level up. */
 export const collectVisibleSections = (
   config: CalculatorConfig,
   contract: OutputFieldContract,
@@ -93,8 +78,6 @@ export const collectVisibleSections = (
     return [{ section, rows }]
   })
 
-/* Renders the calculation through `config.outputSections`: the CMS owns order,
- * labels, grouping and prose, and the response only supplies values. */
 export const CalculatorResults = ({
   config,
   contract,
@@ -129,9 +112,6 @@ export const CalculatorResults = ({
           </Stack>
         )
 
-        /* The config schema requires a title on an accordion section, so the
-         * fallback below is unreachable -- but `localized` returns
-         * `string | undefined` and `label` is a required string. */
         if (section.variant === 'accordion') {
           return (
             <AccordionCard

@@ -14,9 +14,6 @@ interface Props {
   locale: Locale
 }
 
-/* Exported because the caller has to know whether the hero survives before it
- * renders the box around it, the same way it asks `collectVisibleSections`
- * about the sections below. */
 export const resolveTotal = (
   config: CalculatorConfig,
   contract: OutputFieldContract,
