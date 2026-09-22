@@ -8,9 +8,7 @@
   "paths": {
     "/ping": {
       "get": {
-        "tags": [
-          "Diagnostic"
-        ],
+        "tags": ["Diagnostic"],
         "operationId": "Diagnostic_Ping",
         "responses": {
           "200": {
@@ -28,9 +26,7 @@
     },
     "/status": {
       "get": {
-        "tags": [
-          "Diagnostic"
-        ],
+        "tags": ["Diagnostic"],
         "operationId": "Diagnostic_Status",
         "responses": {
           "200": {
@@ -48,9 +44,7 @@
     },
     "/api/applicants/{applicantId}/incomes": {
       "get": {
-        "tags": [
-          "Income"
-        ],
+        "tags": ["Income"],
         "summary": "Get all income and uncompensated period information for an applicant.",
         "operationId": "Income_Get",
         "parameters": [
@@ -104,9 +98,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Income"
-        ],
+        "tags": ["Income"],
         "summary": "Add income and uncompensated period information for an applicant.",
         "operationId": "Income_Post",
         "parameters": [
@@ -154,9 +146,7 @@
     },
     "/api/applicants/{applicantId}/incomes/validate": {
       "post": {
-        "tags": [
-          "Income"
-        ],
+        "tags": ["Income"],
         "summary": "Validate income and uncompensated period information for an applicant without saving anything.",
         "operationId": "Income_Validate",
         "parameters": [
@@ -204,9 +194,7 @@
     },
     "/api/incomes/types": {
       "get": {
-        "tags": [
-          "IncomeSupportData"
-        ],
+        "tags": ["IncomeSupportData"],
         "summary": "Get income types",
         "operationId": "IncomeSupportData_GetIncomeTypes",
         "parameters": [
@@ -259,9 +247,7 @@
     },
     "/OpenApi": {
       "get": {
-        "tags": [
-          "OpenApi"
-        ],
+        "tags": ["OpenApi"],
         "operationId": "OpenApi_Get",
         "responses": {
           "200": {
@@ -280,9 +266,7 @@
     },
     "/api/pensionFunds": {
       "get": {
-        "tags": [
-          "PensionFunds"
-        ],
+        "tags": ["PensionFunds"],
         "summary": "Get pension funds",
         "operationId": "PensionFunds_GetPensionFunds",
         "responses": {
@@ -309,9 +293,7 @@
     },
     "/api/ActivationGrant": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "summary": "Creates a new activation grant application",
         "operationId": "ActivationGrant_CreateActivationGrant",
         "requestBody": {
@@ -348,9 +330,7 @@
     },
     "/api/ActivationGrant/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "summary": "Returns an empty application with profile data filled, and all support data",
         "operationId": "ActivationGrant_GetEmptyActivationGrantWithProfile",
         "parameters": [
@@ -385,9 +365,7 @@
     },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_CanApply",
         "parameters": [
           {
@@ -421,9 +399,7 @@
     },
     "/api/ActivationGrant/validate": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_ValidateApplication",
         "requestBody": {
           "x-name": "command",
@@ -458,9 +434,7 @@
     },
     "/api/ActivationGrant/validatebankinformation": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_ValidateBankInformation",
         "requestBody": {
           "x-name": "command",
@@ -495,9 +469,7 @@
     },
     "/api/ActivationGrant/validateincomepage": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_ValidateIncomePage",
         "requestBody": {
           "x-name": "incomeForm",
@@ -532,9 +504,7 @@
     },
     "/api/ActivationGrant/withdraw": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "summary": "Withdraws the latest activation grant for the given applicant",
         "operationId": "ActivationGrant_WithdrawApplication",
         "requestBody": {
@@ -604,9 +574,7 @@
     },
     "/api/applicants/resolve": {
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Takes in SSN and returns ApplicantId",
         "operationId": "Applicant_Resolve",
         "requestBody": {
@@ -652,9 +620,7 @@
     },
     "/api/applicants/{id}/actions": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir aðgerðir sem umsækjandi getur framkvæmt",
         "operationId": "Applicant_GetActions",
         "parameters": [
@@ -700,9 +666,7 @@
     },
     "/api/applicants/profile/supportData": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir stoðgögn fyrir umsækjanda upplýsingar",
         "operationId": "Applicant_GetApplicantInfoSupportData",
         "responses": {
@@ -729,9 +693,7 @@
     },
     "/api/applicants/{id}/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Takes in ApplicantId and returns readonly overview of the applicant.",
         "operationId": "Applicant_Overview",
         "parameters": [
@@ -789,9 +751,7 @@
     },
     "/api/applicants/{id}/profile": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir upplýsingar umsækjanda sem notaðar eru til að uppfæra applicant profile",
         "operationId": "Applicant_GetApplicantInfo",
         "parameters": [
@@ -840,9 +800,7 @@
     },
     "/api/applicants/{id}/profile/eligibility": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Athugar hvort umsækjandi sé með gilda umsókn um atvinnuleysisbætur eða virknistyrk og megi því breyta prófíl sínum.",
         "operationId": "Applicant_GetProfileEligibility",
         "parameters": [
@@ -882,9 +840,7 @@
     },
     "/api/applicants/{applicantId}/profile": {
       "patch": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Uppfæra upplýsingar einstaklings",
         "operationId": "Applicant_UpdateApplicant",
         "parameters": [
@@ -945,9 +901,7 @@
     },
     "/api/applicants/{id}/jobSearchConfirmations/eligibility": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að stofna staðfestingu atvinnuleitar.",
         "operationId": "Applicant_GetJobSearchConfirmationEligibility",
         "parameters": [
@@ -987,9 +941,7 @@
     },
     "/api/applicants/{id}/jobSearchConfirmations": {
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Stofna staðfestingu atvinnuleit",
         "operationId": "Applicant_CreateJobSearchConfirmations",
         "parameters": [
@@ -1082,9 +1034,7 @@
     },
     "/api/applicants/{id}/foreignTravel/eligibility": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að skrá dvöl erlendis.",
         "operationId": "Applicant_GetForeignTravelEligibility",
         "parameters": [
@@ -1121,9 +1071,7 @@
     },
     "/api/applicants/{id}/attachments/eligibility": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Athugar hvort umsækjandi uppfylli skilyrði til að stofna fylgiskjöl.",
         "operationId": "Applicant_GetCreateAttachmentEligibility",
         "parameters": [
@@ -1163,9 +1111,7 @@
     },
     "/api/applicants/{id}/foreignTravel": {
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Stofnar bótalaustímabil fyrir umsækjanda vegna dvalar erlendis.",
         "operationId": "Applicant_CreateForeignTravel",
         "parameters": [
@@ -1228,9 +1174,7 @@
     },
     "/api/applicants/{id}/applications/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Returns an overview of active or recently active applications for an applicant.",
         "operationId": "Applicant_ApplicationsOverview",
         "parameters": [
@@ -1278,9 +1222,7 @@
     },
     "/api/applicants/{id}/unemploymentapplications/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir upplýsingar umsóknar fyrir yfirlitssíðu á mínar síður island.is",
         "operationId": "Applicant_GetLatestUnemploymentApplicationOverview",
         "parameters": [
@@ -1328,9 +1270,7 @@
     },
     "/api/applicants/{id}/activationgrantapplications/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir upplýsingar virknistyrksumsóknar fyrir yfirlitssíðu á mínar síður island.is",
         "operationId": "Applicant_GetLatestActivationGrantApplicationOverview",
         "parameters": [
@@ -1378,9 +1318,7 @@
     },
     "/api/applicants/{id}/withdraw/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið nýjustu virku umsókn sína til baka og hvaða umsókn það á við um.\nBótaumsókn er skoðuð fyrst, síðan virknistyrksumsókn.",
         "operationId": "Applicant_GetWithdrawOverview",
         "parameters": [
@@ -1420,9 +1358,7 @@
     },
     "/api/applicants/{applicantId}/attachments": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir viðhengi umsækjanda",
         "operationId": "Applicant_GetApplicantAttachments",
         "parameters": [
@@ -1460,9 +1396,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Skrá umbeðið fylgiskjal",
         "operationId": "Applicant_CreateApplicantRequestedAttachment",
         "parameters": [
@@ -1517,9 +1451,7 @@
     },
     "/api/applicants/{applicantId}/attachments/requests": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir tegundir viðhengja sem umsækjanda vantar",
         "operationId": "Applicant_GetApplicantRequestedAttachments",
         "parameters": [
@@ -1562,9 +1494,7 @@
     },
     "/api/applicants/{id}/external/rvk": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Gets applicant info for Reykjavikurborg",
         "operationId": "Applicant_GetApplicantInfoForRVK",
         "parameters": [
@@ -1600,9 +1530,7 @@
     },
     "/api/applicants/{id}/external/sjukratryggingar": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Gets applicant info for Sjukratryggingar islands",
         "operationId": "Applicant_GetApplicantInfoForSI",
         "parameters": [
@@ -1638,9 +1566,7 @@
     },
     "/api/applicants/{id}/external/sjukratryggingar/status": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Nær í stöðu umsækjanda hjá VMST - er til virk umsókn í mánuði, er til umsókn í vinnslu, dags. umsóknar",
         "operationId": "Applicant_GetApplicantStatusForSI",
         "parameters": [
@@ -1684,9 +1610,7 @@
     },
     "/api/applicants/{applicantId}/withdraw": {
       "post": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Afskráir virkar umsóknir umsækjanda, bæði atvinnuleysisumsókn og virknistyrksumsókn ef þær eru til staðar.",
         "operationId": "Applicant_WithdrawLatestApplication",
         "parameters": [
@@ -1767,9 +1691,7 @@
     },
     "/api/applicants/{id}/unemploymentapplications/withdraw/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið atvinnuleysisumsókn til baka og hvaða umsókn það á við um.",
         "operationId": "Applicant_GetUnemploymentApplicationsWithdrawOverview",
         "parameters": [
@@ -1810,9 +1732,7 @@
     },
     "/api/applicants/{id}/activationgrantapplications/withdraw/overview": {
       "get": {
-        "tags": [
-          "Applicant"
-        ],
+        "tags": ["Applicant"],
         "summary": "Sækir upplýsingar um hvort umsækjandi geti dregið virknistyrksumsókn til baka og hvaða umsókn það á við um.",
         "operationId": "Applicant_GetActivationGrantsWithdrawOverview",
         "parameters": [
@@ -1853,9 +1773,7 @@
     },
     "/api/applications/overview": {
       "post": {
-        "tags": [
-          "Application"
-        ],
+        "tags": ["Application"],
         "summary": "Returns overview of applications that should be shown for an applicant.",
         "operationId": "Application_Overview",
         "requestBody": {
@@ -1892,9 +1810,7 @@
     },
     "/api/Attachment": {
       "post": {
-        "tags": [
-          "Attachment"
-        ],
+        "tags": ["Attachment"],
         "summary": "Creates an attachment",
         "operationId": "Attachment_CreateAttachment",
         "requestBody": {
@@ -1930,9 +1846,7 @@
     },
     "/api/Attachment/{id}": {
       "get": {
-        "tags": [
-          "Attachment"
-        ],
+        "tags": ["Attachment"],
         "operationId": "Attachment_GetAttachment",
         "parameters": [
           {
@@ -1976,9 +1890,7 @@
     },
     "/api/Attachment/attachmenttypes": {
       "get": {
-        "tags": [
-          "Attachment"
-        ],
+        "tags": ["Attachment"],
         "summary": "Get all attachment types",
         "operationId": "Attachment_AttachmentTypes",
         "parameters": [
@@ -2013,9 +1925,7 @@
     },
     "/api/Auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Method for login in and receiving an token for authoriaztion",
         "operationId": "Auth_Login",
         "requestBody": {
@@ -2047,9 +1957,7 @@
     },
     "/api/jobadvertisements": {
       "get": {
-        "tags": [
-          "JobAdvertisement"
-        ],
+        "tags": ["JobAdvertisement"],
         "summary": "Gets a list of job advertisements",
         "operationId": "JobAdvertisement_GetAllJobAdvertisements",
         "parameters": [
@@ -2097,9 +2005,7 @@
     },
     "/api/jobSearchConfirmations/questionaire": {
       "get": {
-        "tags": [
-          "JobSearchConfirmation"
-        ],
+        "tags": ["JobSearchConfirmation"],
         "summary": "Sækir uppbyggingu spurningalista (skimun) sem fylgir staðfestingu atvinnuleitar.",
         "operationId": "JobSearchConfirmation_GetQuestionaireSchema",
         "responses": {
@@ -2126,9 +2032,7 @@
     },
     "/api/SupportData/delistingReasons": {
       "get": {
-        "tags": [
-          "SupportData"
-        ],
+        "tags": ["SupportData"],
         "summary": "Get delisting reasons (only those that are visible for applicant)",
         "operationId": "SupportData_GetDelistingReasons",
         "responses": {
@@ -2155,9 +2059,7 @@
     },
     "/api/SupportData/nationalities": {
       "get": {
-        "tags": [
-          "SupportData"
-        ],
+        "tags": ["SupportData"],
         "summary": "Get countries (only those that are visible for applicant)",
         "operationId": "SupportData_GetAllNationalities",
         "parameters": [
@@ -2194,9 +2096,7 @@
     },
     "/api/SupportData/workShiftPeriods": {
       "get": {
-        "tags": [
-          "SupportData"
-        ],
+        "tags": ["SupportData"],
         "summary": "Get work shift periods",
         "operationId": "SupportData_GetAllWorkShiftPeriods",
         "responses": {
@@ -2223,9 +2123,7 @@
     },
     "/api/applicants/{applicantId}/u2Certificates/eligibility": {
       "get": {
-        "tags": [
-          "U2Certificate"
-        ],
+        "tags": ["U2Certificate"],
         "summary": "Check if an applicant is eligible to create a U2 certificate",
         "operationId": "U2Certificate_CanCreateU2Certificate",
         "parameters": [
@@ -2264,9 +2162,7 @@
     },
     "/api/applicants/{applicantId}/u2Certificates": {
       "post": {
-        "tags": [
-          "U2Certificate"
-        ],
+        "tags": ["U2Certificate"],
         "summary": "Create U2 certificate for applicant",
         "operationId": "U2Certificate_CreateU2Certificate",
         "parameters": [
@@ -2324,9 +2220,7 @@
     },
     "/api/applicants/{applicantId}/u2Certificates/validate": {
       "post": {
-        "tags": [
-          "U2Certificate"
-        ],
+        "tags": ["U2Certificate"],
         "summary": "Validate U2 certificate for applicant",
         "operationId": "U2Certificate_ValidateU2Certificate",
         "parameters": [
@@ -2377,9 +2271,7 @@
     },
     "/api/applicants/{applicantId}/u2Certificates/withdraw": {
       "post": {
-        "tags": [
-          "U2Certificate"
-        ],
+        "tags": ["U2Certificate"],
         "summary": "Withdraw U2 certificate for applicant",
         "operationId": "U2Certificate_WithdrawU2Certificate",
         "parameters": [
@@ -2418,9 +2310,7 @@
     },
     "/api/UnemploymentApplication": {
       "post": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "summary": "Creates a new unemployment application",
         "operationId": "UnemploymentApplication_CreateUnemploymentApplication",
         "requestBody": {
@@ -2457,9 +2347,7 @@
     },
     "/api/UnemploymentApplication/overview/{ssn}": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "summary": "Sækir upplýsingar umsóknar fyrir yfirlitssíðu á mínar síður island.is",
         "operationId": "UnemploymentApplication_GetLatestUnemploymentApplicationOverview",
         "parameters": [
@@ -2504,9 +2392,7 @@
     },
     "/api/UnemploymentApplication/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "summary": "Returns an empty application with profile data filled, and all support data",
         "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplicationWithProfile",
         "parameters": [
@@ -2541,9 +2427,7 @@
     },
     "/api/UnemploymentApplication/validatepaymentpage": {
       "post": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "summary": "Validates Payment Page",
         "operationId": "UnemploymentApplication_ValidatePaymentPage",
         "requestBody": {
@@ -2579,9 +2463,7 @@
     },
     "/api/UnemploymentApplication/validateunpaidvacation": {
       "post": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "summary": "Validates Unpaid Vacation Page",
         "operationId": "UnemploymentApplication_ValidatePaymentPage2",
         "requestBody": {
@@ -2617,9 +2499,7 @@
     },
     "/api/UnemploymentApplication/withdraw": {
       "post": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "summary": "Withdraws the latest unemployment application for the given applicant",
         "operationId": "UnemploymentApplication_WithdrawApplication",
         "requestBody": {
@@ -4277,12 +4157,7 @@
           "JobAdvertisement",
           "DontKnow"
         ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ]
+        "enum": [0, 1, 2, 3]
       },
       "Galdur_Domain_Models_Settings_AttachmentStatus_AttachmentStatusDTO": {
         "allOf": [
@@ -4529,18 +4404,8 @@
       "Galdur_Domain_Enumerations_EWSApplicantCurrentStatus": {
         "type": "integer",
         "description": "",
-        "x-enumNames": [
-          "HasNoJob",
-          "HasJob",
-          "IsInSchool",
-          "Other"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ]
+        "x-enumNames": ["HasNoJob", "HasJob", "IsInSchool", "Other"],
+        "enum": [0, 1, 2, 3]
       },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_OtherInformationDTO": {
         "type": "object",
@@ -5277,14 +5142,8 @@
       "Galdur_Domain_Enumerations_PensionType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": [
-          "PensionFund",
-          "PrivatePensionFund"
-        ],
-        "enum": [
-          0,
-          1
-        ]
+        "x-enumNames": ["PensionFund", "PrivatePensionFund"],
+        "enum": [0, 1]
       },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Union": {
         "type": "object",
@@ -6235,16 +6094,7 @@
           "Suðurland",
           "Suðurnes"
         ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
-        ]
+        "enum": [0, 1, 2, 3, 4, 5, 6, 7]
       },
       "Galdur_Domain_Enumerations_PostcodeDistrict": {
         "type": "integer",
@@ -6258,15 +6108,7 @@
           "Hafnarfjörður",
           "Mosfellsbær"
         ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ]
+        "enum": [0, 1, 2, 3, 4, 5, 6]
       },
       "Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO": {
         "allOf": [
