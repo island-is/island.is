@@ -13,8 +13,9 @@ import { ProgressBar } from '../ProgressBar/ProgressBar'
 import { Multiple } from '../Questionnaires/QuestionsTypes/Multiple'
 import { Radio } from '../Questionnaires/QuestionsTypes/Radio'
 import { TextInput } from '../Questionnaires/QuestionsTypes/TextInput'
-import { Thermometer } from '../Questionnaires/QuestionsTypes/Thermometer'
-import { Scale } from '@island.is/island-ui/core'
+import { HorizontalScale } from './QuestionsTypes/HorizontalScale'
+import { VerticalScale } from './QuestionsTypes/VerticalScale'
+import { InlineRadio } from './QuestionsTypes/InlineRadio'
 import { Table } from './QuestionsTypes/Table'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -36,6 +37,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const isMobile = useIsMobile()
+  const labelId = `${question.id}-label`
 
   const handleValueChange = (
     value: string | string[] | number,
@@ -153,6 +155,23 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
       case QuestionnaireAnswerOptionType.radio: {
         const options = question.answerOptions.options
         if (!options) return null
+        if (options.length <= 2) {
+          return (
+            <InlineRadio
+              id={question.id}
+              options={options.map((option) => ({
+                value: option.value ?? '',
+                label: option.label ?? '',
+              }))}
+              value={answer?.answers?.[0]?.value ?? ''}
+              onChange={(value: string) => handleValueChange(value, {})}
+              disabled={disabled}
+              error={error}
+              required={question.required ?? false}
+              labelledBy={labelId}
+            />
+          )
+        }
         return (
           <Radio
             id={question.id}
@@ -195,7 +214,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         const answerOptions = question.answerOptions
 
         return (
-          <Scale
+          <HorizontalScale
             id={question.id}
             min={answerOptions.min ?? '0'}
             max={answerOptions.max ?? '10'}
@@ -203,9 +222,10 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
+            required={question.required ?? false}
             minLabel={answerOptions.minLabel ?? undefined}
             maxLabel={answerOptions.maxLabel ?? undefined}
-            showLabels={!!(answerOptions.minLabel || answerOptions.maxLabel)}
+            labelledBy={labelId}
           />
         )
       }
@@ -213,7 +233,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
       case QuestionnaireAnswerOptionType.thermometer: {
         const answerOptions = question.answerOptions
         return (
-          <Thermometer
+          <VerticalScale
             id={question.id}
             min={answerOptions.min ?? '0'}
             max={answerOptions.max ?? '10'}
@@ -221,8 +241,10 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            minLabel={answerOptions.minLabel ?? 'Min'}
-            maxLabel={answerOptions.maxLabel ?? 'Max'}
+            required={question.required ?? false}
+            minLabel={answerOptions.minLabel ?? undefined}
+            maxLabel={answerOptions.maxLabel ?? undefined}
+            labelledBy={labelId}
           />
         )
       }
@@ -335,7 +357,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
 
   return (
     <Box marginBottom={4}>
-      <Text variant="h5" marginBottom={question.sublabel ? 1 : 3}>
+      <Text id={labelId} variant="h5" marginBottom={question.sublabel ? 1 : 3}>
         {HtmlParser(
           question.htmlLabel && question.htmlLabel.length > 0
             ? question.htmlLabel
