@@ -1,7 +1,7 @@
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorLocalizedText } from '@island.is/tax-calculators'
 
-export const CHROME_TEXT = {
+export const CALCULATOR_MESSAGES = {
   submit: { is: 'Reikna', en: 'Calculate' },
   loadError: {
     is: 'Ekki tókst að sækja reiknivélina',

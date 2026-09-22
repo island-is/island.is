@@ -42,7 +42,7 @@ import {
 } from './diagnostics'
 import { toOutputValues } from './outputValues'
 import { toInputFieldValues } from './serialize'
-import { CHROME_TEXT, localized } from './text'
+import { CALCULATOR_MESSAGES, localized } from './text'
 
 interface CalculatorProps {
   slice: CalculatorSlice
@@ -64,11 +64,11 @@ const errorText = (code: TaxCalculatorCalculationErrorCode) => {
     case TaxCalculatorCalculationErrorCode.InapplicableValue:
     case TaxCalculatorCalculationErrorCode.UnknownField:
     case TaxCalculatorCalculationErrorCode.DuplicateField:
-      return CHROME_TEXT.invalidValue
+      return CALCULATOR_MESSAGES.invalidValue
     case TaxCalculatorCalculationErrorCode.CalculationFailed:
-      return CHROME_TEXT.calculationError
+      return CALCULATOR_MESSAGES.calculationError
     case TaxCalculatorCalculationErrorCode.EmptyResult:
-      return CHROME_TEXT.emptyResult
+      return CALCULATOR_MESSAGES.emptyResult
     default: {
       const unhandled: never = code
       return unhandled
@@ -158,7 +158,9 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     return (
       <AlertMessage
         type="error"
-        title={localized(CHROME_TEXT.loadError, activeLocale) ?? ''}
+        title={
+          localized(CALCULATOR_MESSAGES.loadError, activeLocale) ?? ''
+        }
       />
     )
   }
@@ -194,7 +196,9 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const fieldErrors = new Map<string, string>()
   const alerts: string[] = failed
-    ? [localized(CHROME_TEXT.calculationError, activeLocale) ?? '']
+    ? [
+        localized(CALCULATOR_MESSAGES.calculationError, activeLocale) ?? '',
+      ]
     : []
 
   for (const returned of shown?.errors ?? []) {
@@ -243,7 +247,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
                 loading={calculating}
                 disabled={!canSubmit(applicable, values)}
               >
-                {localized(CHROME_TEXT.submit, activeLocale)}
+                {localized(CALCULATOR_MESSAGES.submit, activeLocale)}
               </Button>
             </Box>
 
@@ -254,7 +258,10 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
             {shown && shown.errors.length === 0 && !hasResults && (
               <AlertMessage
                 type="info"
-                title={localized(CHROME_TEXT.emptyResult, activeLocale) ?? ''}
+                title={
+                  localized(CALCULATOR_MESSAGES.emptyResult, activeLocale) ??
+                  ''
+                }
               />
             )}
 

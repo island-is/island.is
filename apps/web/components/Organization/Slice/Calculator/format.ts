@@ -6,7 +6,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { LOCALE_TAG } from './optionSources'
-import { CHROME_TEXT, localized } from './text'
+import { CALCULATOR_MESSAGES, localized } from './text'
 
 export interface FormattableValue {
   type: TaxCalculatorOutputFieldType
@@ -30,7 +30,9 @@ export const formatOutputValue = (
       return value.booleanValue === null || value.booleanValue === undefined
         ? undefined
         : localized(
-            value.booleanValue ? CHROME_TEXT.yes : CHROME_TEXT.no,
+            value.booleanValue
+              ? CALCULATOR_MESSAGES.yes
+              : CALCULATOR_MESSAGES.no,
             locale,
           )
 
