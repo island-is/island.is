@@ -14,6 +14,7 @@ import {
   isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isRequestCase,
   isRestrictionCase,
   RequestSharedWhen,
@@ -117,6 +118,47 @@ export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
     ),
   )
 }
+
+// A verdict on this case has been appealed - the same rule the appealed case
+// list is built from, in TypeScript. Keep it in step with
+// buildHasAppealedVerdictCondition in the case table's where options: a list
+// that shows a case the guard then refuses is worse than no list at all.
+//
+// Rulings only, because a fine is appealed by ruling appeal rather than
+// verdict appeal. On the defence side only the latest verdict counts, and the
+// verdicts come newest first from the case include graph; a review decision to
+// appeal stands whatever verdicts follow it.
+//
+// Closing a defendant without enforcement does not withdraw their appeal, so it
+// does not take the case away here either - see
+// buildHasAppealedVerdictCondition.
+const hasAppealedVerdict = (theCase: Case): boolean =>
+  Boolean(
+    theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING &&
+      theCase.defendants?.some(
+        (defendant) =>
+          defendant.indictmentReviewDecision ===
+            IndictmentCaseReviewDecision.APPEAL ||
+          Boolean(defendant.verdicts?.[0]?.appealDate),
+      ),
+  )
+
+// Prosecutors at the public prosecution office read every appealed verdict,
+// not only the cases they reviewed themselves. An appeal can land with a
+// prosecutor who had nothing to do with the review, and without this they
+// would have to ask a colleague to print the files for them.
+//
+// Read only. Everything they may change still goes through
+// canProsecutionUserAccessCase.
+//
+// Note that this route does not repeat that function's heightened security
+// check. Nothing is exposed by it today - the flag is a plain column on every
+// case, but only the request case prosecutor UI ever sets it, and this branch
+// is indictment-only - and the case table's access options are silent about it
+// too, so list and guard stay in step. An indictment that could carry the flag
+// would need both taught about it.
+const canPublicProsecutionUserAccessAppealedCase = (theCase: Case): boolean =>
+  canPublicProsecutionUserAccessCase(theCase) && hasAppealedVerdict(theCase)
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
@@ -490,7 +532,17 @@ export const canUserAccessCase = (
   forUpdate: boolean,
 ): boolean => {
   if (isProsecutionUser(user)) {
-    return canProsecutionUserAccessCase(theCase, user, forUpdate)
+    if (canProsecutionUserAccessCase(theCase, user, forUpdate)) {
+      return true
+    }
+
+    // Falls through rather than replacing the check above - a public
+    // prosecution user keeps everything the ordinary rule already gave them.
+    return (
+      !forUpdate &&
+      isPublicProsecutionUser(user) &&
+      canPublicProsecutionUserAccessAppealedCase(theCase)
+    )
   }
 
   if (isDistrictCourtUser(user)) {

@@ -21,6 +21,7 @@ import {
 
 import {
   buildEventLogExistsCondition,
+  buildHasAppealedVerdictCondition,
   buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
@@ -379,6 +380,18 @@ export const defenceCasesAccessWhereOptions = (user: User) => ({
 
 // Public prosecution access
 
+// A prosecutor at the public prosecution office reaches an indictment two ways:
+// the cases they were given to review, and every appealed verdict, whoever
+// reviewed it. The second is why the appealed case list exists at all - an
+// appeal can land with a prosecutor who had nothing to do with the review.
+//
+// Being reachable is all this says. Which of these cases belongs in which list
+// is the table where options' business, and the two review lists narrow it back
+// to this user's own cases.
+//
+// Rulings only on the appeal side: a fine is appealed by ruling appeal rather
+// than verdict appeal, and a review decision of APPEAL against one means
+// exactly that.
 export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
   is_archived: false,
   type: indictmentCases,
@@ -392,8 +405,16 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
       true,
     ),
+    {
+      [Op.or]: [
+        { indictment_reviewer_id: user.id },
+        {
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          [Op.and]: [buildHasAppealedVerdictCondition()],
+        },
+      ],
+    },
   ],
-  indictment_reviewer_id: user.id,
 })
 
 export const publicProsecutionCasesAccessWhereOptions = (user: User) => ({
