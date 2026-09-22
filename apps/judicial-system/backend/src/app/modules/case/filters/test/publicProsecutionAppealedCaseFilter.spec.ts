@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../repository'
-import { verifyNoAccess, verifyReadAccess } from './verify'
+import { verifyFullAccess, verifyNoAccess, verifyReadAccess } from './verify'
 
 // A prosecutor at the public prosecutor's office reads every appealed verdict,
 // including the cases they never reviewed. Everything here is about that one
@@ -157,6 +157,21 @@ describe('public prosecution user - appealed verdicts', () => {
       anotherOfficeCase(
         { verdicts: [{ appealDate: new Date() }] },
         { isHeightenedSecurityLevel: true, prosecutorId: user.id },
+      ),
+      user,
+    )
+  })
+
+  // Being made the reviewer is a grant of access to that one case, and it
+  // survives heightened security - the office check lets the reviewer through
+  // for exactly that reason, so the security check must not take it back. This
+  // is full access rather than read only because it is the ordinary prosecution
+  // rule granting it, not the appeal fallback.
+  describe('a heightened security case this user is the reviewer of', () => {
+    verifyFullAccess(
+      anotherOfficeCase(
+        { verdicts: [{ appealDate: new Date() }] },
+        { isHeightenedSecurityLevel: true, indictmentReviewerId: user.id },
       ),
       user,
     )

@@ -389,6 +389,10 @@ export const heightenedSecurityAccessWhereOptions = (user: User) => ({
     { is_heightened_security_level: { [Op.not]: true } },
     { creating_prosecutor_id: user.id },
     { prosecutor_id: user.id },
+    // The reviewer keeps the case the assignment gave them - the same exemption
+    // canProsecutionUserAccessCase makes, so a list cannot hide a case the
+    // guard would open.
+    { indictment_reviewer_id: user.id },
   ],
 })
 

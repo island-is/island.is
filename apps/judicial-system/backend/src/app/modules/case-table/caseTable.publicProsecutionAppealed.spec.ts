@@ -122,9 +122,15 @@ describe('public prosecution appealed case list', () => {
     )
   }
 
-  const reviewerClause = `"Case"."indictment_reviewer_id" = '${publicProsecutionUser.id}'`
   const occurrences = (sql: string, needle: string) =>
     sql.split(needle).length - 1
+  // The terms a list ANDs on top of the access options - its own membership
+  // rules, as opposed to what made the case reachable in the first place.
+  const membershipTerms = (tableType: CaseTableType) => {
+    const { where } = caseTableWhereOptions[tableType](publicProsecutionUser)
+
+    return (where as unknown as Record<symbol, unknown[]>)[Op.and]
+  }
   // The raw literals carry their own indentation, so collapse whitespace
   // before matching across a clause boundary.
   const flat = (sql: string) => sql.replace(/\s+/g, ' ')
@@ -132,33 +138,24 @@ describe('public prosecution appealed case list', () => {
   // The reviewer restriction is the whole reason the list exists: a prosecutor
   // handed an appeal they did not review could not otherwise see the case.
   //
-  // Both lists mention the reviewer once, as one branch of the access options'
-  // OR - being the reviewer is one of the two ways a case is reachable at all.
-  // What separates them is what each list then requires: the review list asks
-  // for the reviewer a second time, as its own membership rule, and the
-  // appealed list must not.
-  it('does not require this user to be the reviewer, unlike the review lists', async () => {
-    const appealed = await sqlForTable(
-      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
-      publicProsecutionUser,
-    )
-    const inReview = await sqlForTable(
-      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW,
-      publicProsecutionUser,
-    )
+  // The reviewer is named in several places once the heightened-security
+  // exemption is counted, so this asks the question structurally instead:
+  // which lists *require* being the reviewer as a membership rule of their
+  // own. Both review lists do; the appealed list must not.
+  it('does not require this user to be the reviewer, unlike the review lists', () => {
+    const reviewerTerm = { indictment_reviewer_id: publicProsecutionUser.id }
 
-    const reviewed = await sqlForTable(
-      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED,
-      publicProsecutionUser,
-    )
-
-    expect(appealed).toContain(`${reviewerClause} OR`)
-    expect(occurrences(appealed, reviewerClause)).toBe(1)
-    // Both review lists, not just the first: each has to restate the reviewer
-    // itself, and a regression in either one leaks another prosecutor's
-    // appealed case into this user's review work.
-    expect(occurrences(inReview, reviewerClause)).toBe(2)
-    expect(occurrences(reviewed, reviewerClause)).toBe(2)
+    expect(
+      membershipTerms(CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW),
+    ).toContainEqual(reviewerTerm)
+    // Both review lists, not just the first: a regression in either one leaks
+    // another prosecutor's appealed case into this user's review work.
+    expect(
+      membershipTerms(CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED),
+    ).toContainEqual(reviewerTerm)
+    expect(
+      membershipTerms(CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED),
+    ).not.toContainEqual(reviewerTerm)
   })
 
   // A case the user did review is still theirs to see once it is appealed - the

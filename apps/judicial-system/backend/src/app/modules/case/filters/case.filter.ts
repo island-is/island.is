@@ -74,10 +74,18 @@ const canProsecutionUserAccessCase = (
   }
 
   // Check heightened security level access
+  //
+  // Being made the reviewer of a case is itself a grant of access to that one
+  // case - it is why the office check above lets the reviewer through - so it
+  // survives this restriction too. Without that, a reviewer is handed a case
+  // and then refused it, and every list built on the reviewer route shows a row
+  // that will not open. Request cases have no reviewer, so nothing changes
+  // where heightened security actually applies.
   if (
     theCase.isHeightenedSecurityLevel &&
     user.id !== theCase.creatingProsecutorId &&
-    user.id !== theCase.prosecutorId
+    user.id !== theCase.prosecutorId &&
+    user.id !== theCase.indictmentReviewerId
   ) {
     return false
   }
