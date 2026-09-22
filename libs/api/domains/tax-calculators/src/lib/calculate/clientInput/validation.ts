@@ -1,17 +1,5 @@
 import type { SubmittedValues } from '../submission/submission'
-
-/* Throws protect conversion assumptions after validation. */
-const missing = (key: string): never => {
-  throw new Error(
-    `Validated tax calculator input is missing required field "${key}"`,
-  )
-}
-
-const mistyped = (key: string, expected: string): never => {
-  throw new Error(
-    `Validated tax calculator input has a non-${expected} value for "${key}"`,
-  )
-}
+import { missing, mistyped } from './errors'
 
 export const numberAt = (
   values: SubmittedValues,
