@@ -531,15 +531,6 @@ export class TranslationPublishGql {
   @Field()
   namespace!: string
 
-  @Field(() => String, { nullable: true })
-  publishedBy?: string | null
-
-  @Field(() => String, { nullable: true })
-  actorNationalId?: string | null
-
   @Field()
   publishedAt!: string
-
-  @Field(() => String, { nullable: true })
-  note?: string | null
 }

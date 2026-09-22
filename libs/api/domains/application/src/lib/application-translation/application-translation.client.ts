@@ -253,14 +253,12 @@ export class ApplicationTranslationClient {
   publishTranslations(
     user: User,
     namespace: string,
-    note?: string,
   ): Promise<TranslationPublishGql> {
     return this.request<TranslationPublishGql>(
       user,
       this.namespacePath(namespace, '/publish'),
       {
         method: 'POST',
-        body: JSON.stringify({ note }),
       },
     )
   }

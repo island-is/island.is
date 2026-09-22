@@ -284,10 +284,7 @@ mutation publishApplicationTranslations($input: PublishTranslationsInput!) {
   publishApplicationTranslations(input: $input) {
     id
     namespace
-    publishedBy
-    actorNationalId
     publishedAt
-    note
   }
 }
 
@@ -295,10 +292,7 @@ query getApplicationTranslationPublishHistory($namespace: String!) {
   applicationTranslationPublishHistory(namespace: $namespace) {
     id
     namespace
-    publishedBy
-    actorNationalId
     publishedAt
-    note
   }
 }
 
@@ -306,9 +300,6 @@ mutation rollbackApplicationTranslations($input: RollbackTranslationsInput!) {
   rollbackApplicationTranslations(input: $input) {
     id
     namespace
-    publishedBy
-    actorNationalId
     publishedAt
-    note
   }
 }

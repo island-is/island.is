@@ -84,11 +84,6 @@ export class PublishTranslationsInput {
   @IsString()
   @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
   namespace!: string
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  note?: string
 }
 
 @InputType()

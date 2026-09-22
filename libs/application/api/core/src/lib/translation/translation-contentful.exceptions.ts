@@ -1,4 +1,7 @@
-import { BadRequestException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 
 export class TranslationNamespaceNotExtractedException extends BadRequestException {
   constructor(namespace: string) {
@@ -8,16 +11,9 @@ export class TranslationNamespaceNotExtractedException extends BadRequestExcepti
   }
 }
 
-/**
- * Postgres-backed publish/rollback/history no longer reflect what autosave
- * writes to Contentful, so these operations are guarded off instead of
- * silently operating on stale data.
- */
-export class TranslationContentfulMigrationGuardException extends BadRequestException {
-  constructor(operation: string) {
-    super(
-      `${operation} is not yet available for Contentful-backed namespaces`,
-    )
+export class TranslationWorkspaceReadOnlyException extends ServiceUnavailableException {
+  constructor() {
+    super('Translation workspace writes are temporarily disabled')
   }
 }
 

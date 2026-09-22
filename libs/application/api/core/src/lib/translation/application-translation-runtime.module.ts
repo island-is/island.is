@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { APPLICATION_TRANSLATION_PROVIDER } from '@island.is/islandis-translations'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
@@ -21,6 +22,7 @@ import { ContentfulTranslationModule } from './contentful/contentful-translation
       ApplicationTranslationPublishSnapshot,
     ]),
     ContentfulTranslationModule,
+    FeatureFlagModule,
   ],
   providers: [
     ApplicationTranslationService,

@@ -128,11 +128,7 @@ export class ApplicationTranslationResolver {
     @CurrentUser() user: User,
     @Args('input') input: PublishTranslationsInput,
   ): Promise<TranslationPublishGql> {
-    return this.translationClient.publishTranslations(
-      user,
-      input.namespace,
-      input.note ?? undefined,
-    )
+    return this.translationClient.publishTranslations(user, input.namespace)
   }
 
   @Query(() => [TranslationPublishGql], { nullable: true })

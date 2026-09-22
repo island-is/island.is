@@ -1,6 +1,4 @@
-import { gql, useApolloClient } from '@apollo/client'
-import { format as formatNationalId } from 'kennitala'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   Box,
   Button,
@@ -16,15 +14,6 @@ import {
   useGetApplicationTranslationPublishHistoryQuery,
   useRollbackApplicationTranslationsMutation,
 } from '../../queries/translations.generated'
-
-const IDENTITY_QUERY = gql`
-  query AdminApplicationSystemIdentity($input: IdentityInput!) {
-    identity(input: $input) {
-      nationalId
-      name
-    }
-  }
-`
 
 interface TranslationPublishHistoryProps {
   namespace: string
@@ -52,14 +41,6 @@ export const TranslationPublishHistory = ({
 
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
-  const client = useApolloClient()
-
-  const [nameByNationalId, setNameByNationalId] = useState<
-    Record<string, string>
-  >({})
-
-  const requestedIdsRef = useRef<Set<string>>(new Set())
-
   const handleRollback = useCallback(
     async (publishId: string) => {
       try {
@@ -79,78 +60,6 @@ export const TranslationPublishHistory = ({
   )
 
   const history = data?.applicationTranslationPublishHistory ?? []
-
-  const idsToResolve = useMemo(() => {
-    const ids = new Set<string>()
-    for (const h of history) {
-      if (h.publishedBy) ids.add(h.publishedBy)
-      if (h.actorNationalId) ids.add(h.actorNationalId)
-    }
-    return Array.from(ids)
-  }, [history])
-
-  useEffect(() => {
-    if (!isOpen) return
-    if (idsToResolve.length === 0) return
-
-    const normalize = (id: string) => id.replace(/\W/g, '')
-
-    const unresolved = idsToResolve
-      .map(normalize)
-      .filter((id) => id.length === 10 && !requestedIdsRef.current.has(id))
-
-    if (unresolved.length === 0) return
-
-    for (const nationalId of unresolved) {
-      requestedIdsRef.current.add(nationalId)
-
-      client
-        .query<{
-          identity?: {
-            name?: string | null
-            nationalId?: string | null
-          } | null
-        }>({
-          query: IDENTITY_QUERY,
-          variables: { input: { nationalId } },
-          fetchPolicy: 'network-only',
-        })
-        .then((res) => {
-          const returnedNationalId =
-            res.data?.identity?.nationalId?.replace(/\W/g, '') ?? nationalId
-          const displayName = res.data?.identity?.name?.trim()
-          if (!displayName) return
-
-          setNameByNationalId((prev) => {
-            if (prev[returnedNationalId]) return prev
-            return { ...prev, [returnedNationalId]: displayName }
-          })
-        })
-        .catch((err) => {
-          console.warn(
-            `[TranslationPublishHistory] Failed to resolve identity for ${nationalId}:`,
-            err,
-          )
-        })
-    }
-  }, [client, idsToResolve, isOpen])
-
-  const renderPersonLine = useCallback(
-    (label: string, nationalIdRaw: string) => {
-      const normalized = nationalIdRaw.replace(/\W/g, '')
-      const formatted =
-        normalized.length === 10 ? formatNationalId(normalized) : nationalIdRaw
-      const name =
-        normalized.length === 10 ? nameByNationalId[normalized] : undefined
-
-      return (
-        <Text variant="small" color="dark300">
-          {name ? `${label}: ${name} (${formatted})` : `${label}: ${formatted}`}
-        </Text>
-      )
-    },
-    [nameByNationalId],
-  )
 
   return (
     <Drawer
@@ -200,21 +109,6 @@ export const TranslationPublishHistory = ({
                   <Text variant="small" fontWeight="semiBold">
                     {dateStr}
                   </Text>
-                  {pub.publishedBy &&
-                    renderPersonLine(
-                      formatMessage(m.nationalId),
-                      pub.publishedBy,
-                    )}
-                  {pub.actorNationalId &&
-                    renderPersonLine(
-                      formatMessage(m.procurer),
-                      pub.actorNationalId,
-                    )}
-                  {pub.note && (
-                    <Text variant="small" color="dark400">
-                      {pub.note}
-                    </Text>
-                  )}
                 </Stack>
                 <Box>
                   {isCurrent ? (

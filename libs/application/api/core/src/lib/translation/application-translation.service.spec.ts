@@ -4,12 +4,11 @@ import { Test } from '@nestjs/testing'
 import { Sequelize } from 'sequelize-typescript'
 import { UniqueConstraintError } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApplicationTranslationService } from './application-translation.service'
 import { ApplicationTranslation } from './application-translation.model'
 import { ApplicationTranslationLog } from './application-translation-log.model'
-import { ApplicationTranslationPublish } from './application-translation-publish.model'
-import { ApplicationTranslationPublishSnapshot } from './application-translation-publish-snapshot.model'
 import { CONTENTFUL_MANAGEMENT_CLIENT } from './contentful/contentful-translation.constants'
 import {
   DEFAULT_LOCALE,
@@ -18,8 +17,8 @@ import {
 } from './contentful/contentful-translation.types'
 import {
   TranslationContentfulEntryMismatchException,
-  TranslationContentfulMigrationGuardException,
   TranslationNamespaceNotExtractedException,
+  TranslationWorkspaceReadOnlyException,
 } from './translation-contentful.exceptions'
 
 const mockTransaction = { LOCK: { UPDATE: 'UPDATE' } }
@@ -56,14 +55,14 @@ describe('ApplicationTranslationService', () => {
   let createTranslationSpy: jest.Mock
   let findAllTranslationsSpy: jest.Mock
   let createLogSpy: jest.Mock
-  let createPublishSpy: jest.Mock
-  let findByPkPublishSpy: jest.Mock
-  let bulkCreateSnapshotSpy: jest.Mock
   let sequelizeTransactionSpy: jest.Mock
   let managementEntryGetSpy: jest.Mock
   let managementEntryGetManySpy: jest.Mock
   let managementEntryUpdateSpy: jest.Mock
+  let managementEntryPublishSpy: jest.Mock
   let managementSnapshotGetManyForEntrySpy: jest.Mock
+  let managementSnapshotGetForEntrySpy: jest.Mock
+  let featureFlagGetValueSpy: jest.Mock
 
   const user: User = {
     nationalId: '0101302989',
@@ -82,9 +81,6 @@ describe('ApplicationTranslationService', () => {
     createTranslationSpy = jest.fn()
     findAllTranslationsSpy = jest.fn()
     createLogSpy = jest.fn()
-    createPublishSpy = jest.fn()
-    findByPkPublishSpy = jest.fn()
-    bulkCreateSnapshotSpy = jest.fn()
     sequelizeTransactionSpy = jest.fn(
       async (callback: (t: typeof mockTransaction) => unknown) =>
         callback(mockTransaction),
@@ -92,9 +88,12 @@ describe('ApplicationTranslationService', () => {
     managementEntryGetSpy = jest.fn()
     managementEntryGetManySpy = jest.fn()
     managementEntryUpdateSpy = jest.fn()
+    managementEntryPublishSpy = jest.fn()
     managementSnapshotGetManyForEntrySpy = jest
       .fn()
       .mockResolvedValue({ items: [] })
+    managementSnapshotGetForEntrySpy = jest.fn()
+    featureFlagGetValueSpy = jest.fn().mockResolvedValue(false)
 
     const module = await Test.createTestingModule({
       providers: [
@@ -113,18 +112,6 @@ describe('ApplicationTranslationService', () => {
           useValue: { create: createLogSpy },
         },
         {
-          provide: getModelToken(ApplicationTranslationPublish),
-          useValue: {
-            create: createPublishSpy,
-            findAll: jest.fn(),
-            findByPk: findByPkPublishSpy,
-          },
-        },
-        {
-          provide: getModelToken(ApplicationTranslationPublishSnapshot),
-          useValue: { bulkCreate: bulkCreateSnapshotSpy },
-        },
-        {
           provide: Sequelize,
           useValue: {
             transaction: sequelizeTransactionSpy,
@@ -140,11 +127,17 @@ describe('ApplicationTranslationService', () => {
               get: managementEntryGetSpy,
               getMany: managementEntryGetManySpy,
               update: managementEntryUpdateSpy,
+              publish: managementEntryPublishSpy,
             },
             snapshot: {
               getManyForEntry: managementSnapshotGetManyForEntrySpy,
+              getForEntry: managementSnapshotGetForEntrySpy,
             },
           },
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: { getValue: featureFlagGetValueSpy },
         },
       ],
     }).compile()
@@ -430,6 +423,27 @@ describe('ApplicationTranslationService', () => {
   })
 
   describe('bulkUpsertTranslations', () => {
+    beforeEach(() => {
+      jest.useFakeTimers()
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('throws TranslationWorkspaceReadOnlyException without writing when writes are disabled', async () => {
+      featureFlagGetValueSpy.mockResolvedValue(true)
+
+      await expect(
+        service.bulkUpsertTranslations(
+          [{ namespace: 'test.ns', messageKey: 'test.ns:key.one', valueIs: 'x' }],
+          user,
+        ),
+      ).rejects.toBeInstanceOf(TranslationWorkspaceReadOnlyException)
+
+      expect(managementEntryGetSpy).not.toHaveBeenCalled()
+    })
+
     it('returns a non-empty array even when the merge is a no-op', async () => {
       managementEntryGetSpy.mockResolvedValue(
         buildEntry({
@@ -441,7 +455,7 @@ describe('ApplicationTranslationService', () => {
         }),
       )
 
-      const rows = await service.bulkUpsertTranslations(
+      const resultPromise = service.bulkUpsertTranslations(
         [
           {
             namespace: 'test.ns',
@@ -451,6 +465,8 @@ describe('ApplicationTranslationService', () => {
         ],
         user,
       )
+      await jest.advanceTimersByTimeAsync(3000)
+      const rows = await resultPromise
 
       expect(managementEntryUpdateSpy).not.toHaveBeenCalled()
       expect(rows).toHaveLength(1)
@@ -484,7 +500,7 @@ describe('ApplicationTranslationService', () => {
         .mockResolvedValueOnce(postMergeEntry)
       managementEntryUpdateSpy.mockResolvedValue(postMergeEntry)
 
-      const rows = await service.bulkUpsertTranslations(
+      const resultPromise = service.bulkUpsertTranslations(
         [
           {
             namespace: 'test.ns',
@@ -494,6 +510,8 @@ describe('ApplicationTranslationService', () => {
         ],
         user,
       )
+      await jest.advanceTimersByTimeAsync(3000)
+      const rows = await resultPromise
 
       expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
         { entryId: 'test.ns' },
@@ -516,6 +534,51 @@ describe('ApplicationTranslationService', () => {
       ])
     })
 
+    it('coalesces two calls for the same namespace within the window into one write', async () => {
+      managementEntryGetSpy.mockResolvedValue(
+        buildEntry({
+          namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+          strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+        }),
+      )
+      managementEntryUpdateSpy.mockResolvedValue(
+        buildEntry({
+          namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+          strings: {
+            [DEFAULT_LOCALE]: { 'test.ns:key.one': 'A', 'test.ns:key.two': 'B' },
+            [ENGLISH_LOCALE]: {},
+          },
+        }),
+      )
+
+      const first = service.bulkUpsertTranslations(
+        [{ namespace: 'test.ns', messageKey: 'test.ns:key.one', valueIs: 'A' }],
+        user,
+      )
+      const second = service.bulkUpsertTranslations(
+        [{ namespace: 'test.ns', messageKey: 'test.ns:key.two', valueIs: 'B' }],
+        user,
+      )
+
+      await jest.advanceTimersByTimeAsync(3000)
+      await Promise.all([first, second])
+
+      expect(managementEntryUpdateSpy).toHaveBeenCalledTimes(1)
+      expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
+        { entryId: 'test.ns' },
+        expect.objectContaining({
+          fields: expect.objectContaining({
+            strings: expect.objectContaining({
+              [DEFAULT_LOCALE]: {
+                'test.ns:key.one': 'A',
+                'test.ns:key.two': 'B',
+              },
+            }),
+          }),
+        }),
+      )
+    })
+
     it('throws TranslationContentfulEntryMismatchException when the resolved entry does not match the namespace', async () => {
       managementEntryGetSpy.mockResolvedValue(
         buildEntry({
@@ -524,50 +587,231 @@ describe('ApplicationTranslationService', () => {
         }),
       )
 
-      await expect(
-        service.bulkUpsertTranslations(
-          [
-            {
-              namespace: 'test.ns',
-              messageKey: 'test.ns:key.one',
-              valueIs: 'x',
-            },
-          ],
-          user,
-        ),
-      ).rejects.toBeInstanceOf(TranslationContentfulEntryMismatchException)
+      const resultPromise = service.bulkUpsertTranslations(
+        [
+          {
+            namespace: 'test.ns',
+            messageKey: 'test.ns:key.one',
+            valueIs: 'x',
+          },
+        ],
+        user,
+      )
+      const expectation = expect(resultPromise).rejects.toBeInstanceOf(
+        TranslationContentfulEntryMismatchException,
+      )
+      await jest.advanceTimersByTimeAsync(3000)
+      await expectation
 
       expect(managementEntryUpdateSpy).not.toHaveBeenCalled()
     })
   })
 
   describe('publishTranslations', () => {
-    it('is disabled and does not touch Postgres', async () => {
+    it('throws TranslationWorkspaceReadOnlyException without publishing when writes are disabled', async () => {
+      featureFlagGetValueSpy.mockResolvedValue(true)
+
       await expect(
         service.publishTranslations('test.ns', user),
-      ).rejects.toBeInstanceOf(TranslationContentfulMigrationGuardException)
+      ).rejects.toBeInstanceOf(TranslationWorkspaceReadOnlyException)
 
-      expect(sequelizeTransactionSpy).not.toHaveBeenCalled()
-      expect(createPublishSpy).not.toHaveBeenCalled()
+      expect(managementEntryGetSpy).not.toHaveBeenCalled()
+    })
+
+    it('throws TranslationNamespaceNotExtractedException when the entry does not exist', async () => {
+      managementEntryGetSpy.mockRejectedValue({ name: 'NotFound' })
+      managementEntryGetManySpy.mockResolvedValue({ items: [] })
+
+      await expect(
+        service.publishTranslations('missing.ns', user),
+      ).rejects.toBeInstanceOf(TranslationNamespaceNotExtractedException)
+    })
+
+    it('publishes the current entry and derives the result from its sys', async () => {
+      const entry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+      })
+      managementEntryGetSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy.mockResolvedValue(
+        buildEntry(entry.fields, {
+          publishedVersion: 4,
+          updatedAt: '2026-02-01T10:00:00.000Z',
+        }),
+      )
+
+      const result = await service.publishTranslations('test.ns', user)
+
+      expect(managementEntryPublishSpy).toHaveBeenCalledWith(
+        { entryId: 'test.ns' },
+        entry,
+      )
+      expect(result).toEqual({
+        id: 'test.ns:4',
+        namespace: 'test.ns',
+        publishedAt: expect.any(Date),
+      })
+    })
+
+    it('retries on VersionMismatch by re-reading and re-publishing', async () => {
+      const entry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+      })
+      managementEntryGetSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy
+        .mockRejectedValueOnce(
+          Object.assign(new Error('conflict'), { name: 'VersionMismatch' }),
+        )
+        .mockResolvedValueOnce(buildEntry(entry.fields, { publishedVersion: 1 }))
+
+      const result = await service.publishTranslations('test.ns', user)
+
+      expect(managementEntryGetSpy).toHaveBeenCalledTimes(2)
+      expect(managementEntryPublishSpy).toHaveBeenCalledTimes(2)
+      expect(result.id).toBe('test.ns:1')
     })
   })
 
   describe('getPublishHistory', () => {
-    it('is disabled', async () => {
-      await expect(
-        service.getPublishHistory('test.ns'),
-      ).rejects.toBeInstanceOf(TranslationContentfulMigrationGuardException)
+    it('returns publish-type snapshots, newest first, requesting select: sys', async () => {
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+        items: [
+          {
+            sys: {
+              id: 'snap-old',
+              snapshotType: 'publish',
+              createdAt: '2026-01-01T00:00:00.000Z',
+            },
+          },
+          {
+            sys: {
+              id: 'snap-new',
+              snapshotType: 'publish',
+              createdAt: '2026-02-01T00:00:00.000Z',
+            },
+          },
+          {
+            sys: {
+              id: 'snap-other',
+              snapshotType: 'archive',
+              createdAt: '2026-01-15T00:00:00.000Z',
+            },
+          },
+        ],
+      })
+
+      const history = await service.getPublishHistory('test.ns')
+
+      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
+        entryId: 'test.ns',
+        query: { select: 'sys', limit: 100, skip: 0 },
+      })
+      expect(history.map((h) => h.id)).toEqual(['snap-new', 'snap-old'])
+    })
+
+    it('pages through multiple snapshot pages until a short page is seen', async () => {
+      const page = (id: string) => ({
+        sys: { id, snapshotType: 'publish', createdAt: '2026-01-01T00:00:00.000Z' },
+      })
+      managementSnapshotGetManyForEntrySpy
+        .mockResolvedValueOnce({
+          items: Array.from({ length: 100 }, (_, i) => page(`snap-${i}`)),
+        })
+        .mockResolvedValueOnce({ items: [page('snap-last')] })
+
+      const history = await service.getPublishHistory('test.ns')
+
+      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledTimes(2)
+      expect(managementSnapshotGetManyForEntrySpy).toHaveBeenNthCalledWith(2, {
+        entryId: 'test.ns',
+        query: { select: 'sys', limit: 100, skip: 100 },
+      })
+      expect(history).toHaveLength(101)
     })
   })
 
   describe('rollbackToPublish', () => {
-    it('is disabled and does not touch Postgres', async () => {
-      await expect(
-        service.rollbackToPublish('publish-id', 'test.ns', user),
-      ).rejects.toBeInstanceOf(TranslationContentfulMigrationGuardException)
+    it('returns null when the target snapshot does not exist', async () => {
+      managementSnapshotGetForEntrySpy.mockRejectedValue({ name: 'NotFound' })
 
-      expect(sequelizeTransactionSpy).not.toHaveBeenCalled()
-      expect(findByPkPublishSpy).not.toHaveBeenCalled()
+      await expect(
+        service.rollbackToPublish('missing-snap', 'test.ns', user),
+      ).resolves.toBeNull()
+
+      expect(managementEntryGetSpy).not.toHaveBeenCalled()
+    })
+
+    it('throws TranslationWorkspaceReadOnlyException without reading the entry when writes are disabled', async () => {
+      featureFlagGetValueSpy.mockResolvedValue(true)
+
+      await expect(
+        service.rollbackToPublish('snap-id', 'test.ns', user),
+      ).rejects.toBeInstanceOf(TranslationWorkspaceReadOnlyException)
+
+      expect(managementSnapshotGetForEntrySpy).not.toHaveBeenCalled()
+    })
+
+    it('restores target values and blanks keys absent from the target, without removing them', async () => {
+      managementSnapshotGetForEntrySpy.mockResolvedValue({
+        snapshot: {
+          fields: {
+            strings: {
+              [DEFAULT_LOCALE]: { 'test.ns:key.one': 'Old value' },
+              [ENGLISH_LOCALE]: { 'test.ns:key.one': 'Old value en' },
+            },
+          },
+        },
+      })
+      const currentEntry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: {
+          [DEFAULT_LOCALE]: {
+            'test.ns:key.one': 'New value',
+            'test.ns:key.two': 'Added after the snapshot',
+          },
+          [ENGLISH_LOCALE]: {},
+        },
+      })
+      managementEntryGetSpy.mockResolvedValue(currentEntry)
+      const updatedEntry = buildEntry(currentEntry.fields)
+      managementEntryUpdateSpy.mockResolvedValue(updatedEntry)
+      managementEntryPublishSpy.mockResolvedValue(
+        buildEntry(currentEntry.fields, { publishedVersion: 7 }),
+      )
+
+      const result = await service.rollbackToPublish(
+        'snap-id',
+        'test.ns',
+        user,
+      )
+
+      expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
+        { entryId: 'test.ns' },
+        expect.objectContaining({
+          fields: expect.objectContaining({
+            strings: {
+              [DEFAULT_LOCALE]: {
+                'test.ns:key.one': 'Old value',
+                'test.ns:key.two': '',
+              },
+              [ENGLISH_LOCALE]: {
+                'test.ns:key.one': 'Old value en',
+                'test.ns:key.two': '',
+              },
+            },
+          }),
+        }),
+      )
+      expect(managementEntryPublishSpy).toHaveBeenCalledWith(
+        { entryId: 'test.ns' },
+        updatedEntry,
+      )
+      expect(result).toEqual({
+        id: 'test.ns:7',
+        namespace: 'test.ns',
+        publishedAt: expect.any(Date),
+      })
     })
   })
 })
