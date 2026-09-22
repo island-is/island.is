@@ -17,9 +17,6 @@ export interface ContentfulTranslationRow {
   valueIs: string
   valueEn?: string
   defaultMessage?: string
-  isReviewed: boolean
-  translatedBy?: string
-  reviewedBy?: string
   draftValueIs?: string | null
   draftValueEn?: string | null
   created: Date

@@ -88,17 +88,21 @@ describe('ApplicationTranslationClient', () => {
     })
   })
 
-  describe('reviewTranslation', () => {
-    it('encodes the translation id so path traversal cannot leave /admin/translations', async () => {
-      await client.reviewTranslation(user, '../../../public/translations/foo')
+  describe('rollbackTranslations', () => {
+    it('encodes the publish id so path traversal cannot leave /admin/translations', async () => {
+      await client.rollbackTranslations(
+        user,
+        'test.ns',
+        '../../../public/translations/foo',
+      )
 
       expect(fetchMock).toHaveBeenCalledTimes(1)
       const requestedUrl = fetchMock.mock.calls[0][0] as string
       expect(requestedUrl).toBe(
-        'http://localhost:3333/admin/translations/..%2F..%2F..%2Fpublic%2Ftranslations%2Ffoo/review',
+        'http://localhost:3333/admin/translations/test%2Ens/rollback/..%2F..%2F..%2Fpublic%2Ftranslations%2Ffoo',
       )
       expect(new URL(requestedUrl).pathname).toBe(
-        '/admin/translations/..%2F..%2F..%2Fpublic%2Ftranslations%2Ffoo/review',
+        '/admin/translations/test%2Ens/rollback/..%2F..%2F..%2Fpublic%2Ftranslations%2Ffoo',
       )
     })
   })

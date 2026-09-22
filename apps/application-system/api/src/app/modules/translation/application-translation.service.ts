@@ -1,43 +1,24 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
-import { Op, UniqueConstraintError } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
-import type { Transaction } from 'sequelize'
 import type { User } from '@island.is/auth-nest-tools'
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
-import { Locale } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import type { EntryProps, PlainClientAPI } from 'contentful-management'
-import { ApplicationTranslation } from './application-translation.model'
-import { ApplicationTranslationLog } from './application-translation-log.model'
 import {
   CONTENTFUL_MANAGEMENT_CLIENT,
   CONTENTFUL_NAMESPACE_CONTENT_TYPE,
-} from './contentful/contentful-translation.constants'
-import {
   ContentfulTranslationRow,
   DEFAULT_LOCALE,
   ENGLISH_LOCALE,
   NamespaceEntryFields,
-} from './contentful/contentful-translation.types'
-import {
   TranslationContentfulEntryMismatchException,
   TranslationNamespaceNotExtractedException,
   TranslationWorkspaceReadOnlyException,
-} from './translation-contentful.exceptions'
+} from '@island.is/application/api/core'
 
 const WRITE_COALESCE_MS = 3000
-
-export interface TranslationStatus {
-  namespace: string
-  total: number
-  translatedEn: number
-  untranslatedEn: number
-  reviewed: number
-}
 
 export interface UpsertTranslationInput {
   namespace: string
@@ -52,31 +33,6 @@ export interface PublishHistoryItem {
   publishedAt: Date
 }
 
-interface ApplicationNamespaceTranslations {
-  is: Record<string, string>
-  en: Record<string, string>
-}
-
-const getTranslationActors = (user: User) => {
-  const subjectNationalId = user.nationalId
-  const actorNationalId = user.actor?.nationalId ?? user.nationalId
-  return { subjectNationalId, actorNationalId }
-}
-
-/** English falls back to Icelandic when unset, matching Contentful's own `||` fallback semantics. */
-const publishedEnglishValue = (
-  valueEn?: string | null,
-  valueIs?: string | null,
-): string | undefined => {
-  if (valueEn != null && valueEn !== '') {
-    return valueEn
-  }
-  if (valueIs != null && valueIs !== '') {
-    return valueIs
-  }
-  return undefined
-}
-
 export const assertMessageKeyBelongsToNamespace = (
   namespace: string,
   messageKey: string,
@@ -89,12 +45,6 @@ export const assertMessageKeyBelongsToNamespace = (
 @Injectable()
 export class ApplicationTranslationService {
   constructor(
-    @InjectModel(ApplicationTranslation)
-    private readonly translationModel: typeof ApplicationTranslation,
-    @InjectModel(ApplicationTranslationLog)
-    private readonly logModel: typeof ApplicationTranslationLog,
-    @InjectConnection()
-    private readonly sequelize: Sequelize,
     @Inject(CONTENTFUL_MANAGEMENT_CLIENT)
     private readonly managementClient: PlainClientAPI,
     @Inject(FeatureFlagService)
@@ -117,13 +67,14 @@ export class ApplicationTranslationService {
     }
   }
 
-  private withConflictRetry = <T>(fn: () => Promise<T>): Promise<T> =>
-    retry(fn, {
+  private withConflictRetry<T>(fn: () => Promise<T>): Promise<T> {
+    return retry(fn, {
       maxRetries: 5,
       shouldRetryOnError: (e) => e.name === 'VersionMismatch',
       logPrefix: 'ApplicationTranslationService Contentful write',
       logger,
     })
+  }
 
   /** Buffers autosave deltas per namespace so concurrent edits cost one Contentful write, not several. */
   private coalescedMerge(
@@ -153,37 +104,6 @@ export class ApplicationTranslationService {
 
     this.pendingWrites.set(namespace, bucket)
     return bucket.flush
-  }
-
-  /** Draft columns are intentionally excluded -- this feeds live applications, so only published values may surface here. */
-  async getTranslationsForAllLocales(
-    namespace: string,
-  ): Promise<ApplicationNamespaceTranslations> {
-    const translations = await this.translationModel.findAll({
-      where: { namespace },
-      attributes: ['messageKey', 'valueIs', 'valueEn'],
-    })
-
-    const is: Record<string, string> = {}
-    const en: Record<string, string> = {}
-    for (const t of translations) {
-      if (t.valueIs != null && t.valueIs !== '') {
-        is[t.messageKey] = t.valueIs
-      }
-      const enValue = publishedEnglishValue(t.valueEn, t.valueIs)
-      if (enValue) {
-        en[t.messageKey] = enValue
-      }
-    }
-    return { is, en }
-  }
-
-  async getTranslationsForNamespace(
-    namespace: string,
-    locale: Locale,
-  ): Promise<Record<string, string>> {
-    const translations = await this.getTranslationsForAllLocales(namespace)
-    return translations[locale]
   }
 
   private async resolveNamespaceEntry(
@@ -303,9 +223,6 @@ export class ApplicationTranslationService {
           valueIs,
           valueEn,
           defaultMessage: draftDefaults[messageKey]?.defaultMessage,
-          isReviewed: false,
-          translatedBy: undefined,
-          reviewedBy: undefined,
           draftValueIs,
           draftValueEn,
           created,
@@ -337,89 +254,6 @@ export class ApplicationTranslationService {
         updatedAt: draftEntry.sys.updatedAt as string,
       },
     )
-  }
-
-  async getTranslationById(id: string): Promise<ApplicationTranslation | null> {
-    return this.translationModel.findByPk(id)
-  }
-
-  async upsertTranslation(
-    input: UpsertTranslationInput,
-    user: User,
-    transaction?: Transaction,
-  ): Promise<ApplicationTranslation> {
-    assertMessageKeyBelongsToNamespace(input.namespace, input.messageKey)
-
-    const existing = await this.translationModel.findOne({
-      where: {
-        namespace: input.namespace,
-        messageKey: input.messageKey,
-      },
-      ...(transaction ? { transaction } : {}),
-    })
-
-    if (existing) {
-      return this.applyDraftUpdate(existing, input, user, transaction)
-    }
-
-    const { actorNationalId } = getTranslationActors(user)
-
-    try {
-      const created = transaction
-        ? await this.translationModel.create(
-            {
-              namespace: input.namespace,
-              messageKey: input.messageKey,
-              valueIs: '',
-              draftValueIs: input.valueIs,
-              draftValueEn: input.valueEn,
-              translatedBy: actorNationalId,
-              isReviewed: false,
-            },
-            { transaction },
-          )
-        : await this.translationModel.create({
-            namespace: input.namespace,
-            messageKey: input.messageKey,
-            valueIs: '',
-            draftValueIs: input.valueIs,
-            draftValueEn: input.valueEn,
-            translatedBy: actorNationalId,
-            isReviewed: false,
-          })
-
-      const logPayload = {
-        translationId: created.id,
-        newValue: input.valueIs ?? input.valueEn,
-        changedBy: actorNationalId,
-        action: 'create' as const,
-      }
-      if (transaction) {
-        await this.logModel.create(logPayload, { transaction })
-      } else {
-        await this.logModel.create(logPayload)
-      }
-
-      return created
-    } catch (error) {
-      if (!(error instanceof UniqueConstraintError)) {
-        throw error
-      }
-
-      const raced = await this.translationModel.findOne({
-        where: {
-          namespace: input.namespace,
-          messageKey: input.messageKey,
-        },
-        ...(transaction ? { transaction } : {}),
-      })
-
-      if (!raced) {
-        throw error
-      }
-
-      return this.applyDraftUpdate(raced, input, user, transaction)
-    }
   }
 
   private async mergeTranslationsIntoEntry(
@@ -507,39 +341,34 @@ export class ApplicationTranslationService {
     return rows
   }
 
-  async markAsReviewed(
-    id: string,
-    user: User,
-  ): Promise<ApplicationTranslation | null> {
-    const { actorNationalId } = getTranslationActors(user)
+  /**
+   * `select: 'sys'` keeps the response small -- a full snapshot embeds the
+   * whole entry, and we only need the newest publish-type one right after
+   * publishing. Shares its id/publishedAt derivation with `getPublishHistory`
+   * so both agree on what identifies and dates a publish.
+   */
+  private async getLatestPublishSnapshot(
+    namespace: string,
+  ): Promise<PublishHistoryItem> {
+    const snapshots =
+      await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
+        { entryId: namespace, query: { select: 'sys', limit: 5 } },
+      )
 
-    const translation = await this.translationModel.findByPk(id)
-    if (!translation) {
-      return null
+    const latest = snapshots.items.find(
+      (item) => item.sys.snapshotType === 'publish',
+    )
+
+    if (!latest) {
+      throw new Error(
+        `No publish snapshot found for namespace "${namespace}" immediately after publishing`,
+      )
     }
 
-    await translation.update({
-      isReviewed: true,
-      reviewedBy: actorNationalId,
-    })
-
-    await this.logModel.create({
-      translationId: translation.id,
-      changedBy: actorNationalId,
-      action: 'review',
-    })
-
-    return translation
-  }
-
-  private toPublishHistoryItem(
-    namespace: string,
-    sys: { publishedVersion?: number; publishedAt?: string },
-  ): PublishHistoryItem {
     return {
-      id: `${namespace}:${sys.publishedVersion ?? 0}`,
+      id: latest.sys.id,
       namespace,
-      publishedAt: sys.publishedAt ? new Date(sys.publishedAt) : new Date(),
+      publishedAt: new Date(latest.sys.createdAt),
     }
   }
 
@@ -549,7 +378,7 @@ export class ApplicationTranslationService {
   ): Promise<PublishHistoryItem> {
     await this.assertWritesEnabled(user)
 
-    const published = await this.withConflictRetry(async () => {
+    await this.withConflictRetry(async () => {
       const entry = await this.resolveNamespaceEntry(namespace)
       if (!entry) {
         throw new TranslationNamespaceNotExtractedException(namespace)
@@ -562,7 +391,7 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.toPublishHistoryItem(namespace, published.sys)
+    return this.getLatestPublishSnapshot(namespace)
   }
 
   /**
@@ -625,7 +454,7 @@ export class ApplicationTranslationService {
       throw error
     }
 
-    const published = await this.withConflictRetry(async () => {
+    await this.withConflictRetry(async () => {
       const entry = await this.resolveNamespaceEntry(namespace)
       if (!entry) {
         throw new TranslationNamespaceNotExtractedException(namespace)
@@ -675,136 +504,6 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.toPublishHistoryItem(namespace, published.sys)
-  }
-
-  async getTranslationStatus(namespace: string): Promise<TranslationStatus> {
-    const translations = await this.translationModel.findAll({
-      where: { namespace },
-      attributes: ['valueEn', 'isReviewed'],
-    })
-
-    const total = translations.length
-    const translatedEn = translations.filter(
-      (t) => t.valueEn != null && t.valueEn !== '',
-    ).length
-    const reviewed = translations.filter((t) => t.isReviewed).length
-
-    return {
-      namespace,
-      total,
-      translatedEn,
-      untranslatedEn: total - translatedEn,
-      reviewed,
-    }
-  }
-
-  async getAllNamespacesWithStatus(
-    namespaces?: string[],
-  ): Promise<TranslationStatus[]> {
-    if (namespaces && namespaces.length === 0) {
-      return []
-    }
-
-    const rows = await this.translationModel.findAll({
-      attributes: [
-        'namespace',
-        [this.sequelize.fn('COUNT', this.sequelize.col('id')), 'total'],
-        [
-          this.sequelize.literal(
-            `COUNT(CASE WHEN value_en IS NOT NULL AND value_en <> '' THEN 1 END)`,
-          ),
-          'translatedEn',
-        ],
-        [
-          this.sequelize.literal(
-            `SUM(CASE WHEN is_reviewed THEN 1 ELSE 0 END)`,
-          ),
-          'reviewed',
-        ],
-      ],
-      ...(namespaces ? { where: { namespace: { [Op.in]: namespaces } } } : {}),
-      group: ['namespace'],
-      raw: true,
-    })
-
-    return (
-      rows as unknown as Array<{
-        namespace: string
-        total: string | number
-        translatedEn: string | number
-        reviewed: string | number
-      }>
-    ).map((row) => {
-      const total = Number(row.total)
-      const translatedEn = Number(row.translatedEn)
-      const reviewed = Number(row.reviewed)
-      return {
-        namespace: row.namespace,
-        total,
-        translatedEn,
-        untranslatedEn: total - translatedEn,
-        reviewed,
-      }
-    })
-  }
-
-  private async applyDraftUpdate(
-    existing: ApplicationTranslation,
-    input: UpsertTranslationInput,
-    user: User,
-    transaction?: Transaction,
-  ): Promise<ApplicationTranslation> {
-    const { actorNationalId } = getTranslationActors(user)
-    const updates: Partial<ApplicationTranslation> = {}
-    let logOldValue: string | undefined
-    let logNewValue: string | undefined
-
-    if (
-      input.valueIs !== undefined &&
-      input.valueIs !== existing.draftValueIs
-    ) {
-      logOldValue = existing.draftValueIs ?? existing.valueIs
-      logNewValue = input.valueIs
-      updates.draftValueIs = input.valueIs
-    }
-
-    if (
-      input.valueEn !== undefined &&
-      input.valueEn !== existing.draftValueEn
-    ) {
-      logOldValue = existing.draftValueEn ?? existing.valueEn ?? undefined
-      logNewValue = input.valueEn
-      updates.draftValueEn = input.valueEn
-    }
-
-    if (Object.keys(updates).length > 0) {
-      updates.translatedBy = actorNationalId
-      updates.isReviewed = false
-      if (transaction) {
-        await existing.update(updates, { transaction })
-        await this.logModel.create(
-          {
-            translationId: existing.id,
-            oldValue: logOldValue,
-            newValue: logNewValue,
-            changedBy: actorNationalId,
-            action: 'draft',
-          },
-          { transaction },
-        )
-      } else {
-        await existing.update(updates)
-        await this.logModel.create({
-          translationId: existing.id,
-          oldValue: logOldValue,
-          newValue: logNewValue,
-          changedBy: actorNationalId,
-          action: 'draft',
-        })
-      }
-    }
-
-    return existing
+    return this.getLatestPublishSnapshot(namespace)
   }
 }

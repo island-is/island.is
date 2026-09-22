@@ -165,9 +165,6 @@ query getApplicationTranslations($namespace: String!) {
     draftValueIs
     draftValueEn
     defaultMessage
-    isReviewed
-    translatedBy
-    reviewedBy
     created
     modified
   }
@@ -270,7 +267,6 @@ mutation bulkUpdateApplicationTranslations(
     messageKey
     valueIs
     valueEn
-    isReviewed
   }
 }
 

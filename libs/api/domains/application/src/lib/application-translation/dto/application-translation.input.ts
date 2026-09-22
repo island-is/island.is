@@ -16,34 +16,9 @@ import {
   MaxTotalChars,
 } from '../google-translate.limits'
 
-/** Must match application_translation.namespace STRING(255). */
 const TRANSLATION_NAMESPACE_MAX_LENGTH = 255
-/** Must match application_translation.message_key STRING(512). */
 const TRANSLATION_MESSAGE_KEY_MAX_LENGTH = 512
 const TRANSLATION_BULK_MAX_ITEMS = 500
-
-@InputType()
-export class UpdateApplicationTranslationInput {
-  @Field()
-  @IsString()
-  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
-  namespace!: string
-
-  @Field()
-  @IsString()
-  @MaxLength(TRANSLATION_MESSAGE_KEY_MAX_LENGTH)
-  messageKey!: string
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  valueIs?: string
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  valueEn?: string
-}
 
 @InputType()
 export class TranslationItemInput {

@@ -13,13 +13,10 @@ import {
   type EnhancedFetchAPI,
   type EnhancedRequestInit,
 } from '@island.is/clients/middlewares'
-import type { Locale } from '@island.is/shared/types'
-
 import { ApplicationTranslationConfig } from './application-translation.config'
 import { APPLICATION_TRANSLATION_FETCH } from './application-translation.fetch'
 import type {
   ApplicationTranslationGql,
-  ApplicationTranslationStatus,
   TemplateIntrospectionGql,
   TranslationPublishGql,
 } from './application-translation.model'
@@ -104,20 +101,6 @@ export class ApplicationTranslationClient {
     return `/${this.encodeNamespace(namespace)}${suffix}`
   }
 
-  getPublicTranslationsForNamespace(
-    namespace: string,
-    locale: Locale,
-  ): Promise<Record<string, string>> {
-    const base = this.config.baseApiUrl.replace(/\/$/, '')
-    const url = `${base}/public/translations/${this.encodeNamespace(
-      namespace,
-    )}?locale=${encodeURIComponent(locale)}`
-
-    return this.fetch(url)
-      .then((response) => response.json() as Promise<Record<string, string>>)
-      .catch((error) => this.handleError(error))
-  }
-
   getTranslationsByNamespace(
     user: User,
     namespace: string,
@@ -126,37 +109,6 @@ export class ApplicationTranslationClient {
       user,
       this.namespacePath(namespace, '/all'),
     )
-  }
-
-  getTranslationStatus(
-    user: User,
-    namespace: string,
-  ): Promise<ApplicationTranslationStatus> {
-    return this.request<ApplicationTranslationStatus>(
-      user,
-      this.namespacePath(namespace, '/status'),
-    )
-  }
-
-  getAllNamespacesWithStatus(
-    user: User,
-  ): Promise<ApplicationTranslationStatus[]> {
-    return this.request<ApplicationTranslationStatus[]>(user, '')
-  }
-
-  updateTranslation(
-    user: User,
-    input: {
-      namespace: string
-      messageKey: string
-      valueIs?: string
-      valueEn?: string
-    },
-  ): Promise<ApplicationTranslationGql> {
-    return this.request<ApplicationTranslationGql>(user, '', {
-      method: 'PUT',
-      body: JSON.stringify(input),
-    })
   }
 
   bulkUpdateTranslations(
@@ -172,19 +124,6 @@ export class ApplicationTranslationClient {
       method: 'POST',
       body: JSON.stringify({ translations }),
     })
-  }
-
-  reviewTranslation(
-    user: User,
-    id: string,
-  ): Promise<ApplicationTranslationGql> {
-    return this.request<ApplicationTranslationGql>(
-      user,
-      `/${encodeURIComponent(id)}/review`,
-      {
-        method: 'POST',
-      },
-    )
   }
 
   listTemplates(user: User): Promise<

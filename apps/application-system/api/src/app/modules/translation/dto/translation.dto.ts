@@ -14,28 +14,6 @@ import {
   TRANSLATION_BULK_MAX_ITEMS,
 } from '@island.is/application/utils'
 
-export class UpdateTranslationDto {
-  @ApiProperty()
-  @IsString()
-  @MaxLength(TRANSLATION_NAMESPACE_MAX_LENGTH)
-  namespace!: string
-
-  @ApiProperty()
-  @IsString()
-  @MaxLength(TRANSLATION_MESSAGE_KEY_MAX_LENGTH)
-  messageKey!: string
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  valueIs?: string
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  valueEn?: string
-}
-
 export class TranslationItemDto {
   @ApiProperty()
   @IsString()

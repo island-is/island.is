@@ -12,7 +12,6 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import {
   ApplicationTranslationGql,
-  ApplicationTranslationStatus,
   GoogleTranslateResultGql,
   SharedNamespaceIntrospectionGql,
   SharedTranslationNamespaceListItemGql,
@@ -23,7 +22,6 @@ import {
 import { ApplicationTranslationClient } from './application-translation.client'
 import { GoogleTranslateService } from './google-translate.service'
 import {
-  UpdateApplicationTranslationInput,
   BulkUpdateApplicationTranslationsInput,
   GoogleTranslateStringsInput,
   PublishTranslationsInput,
@@ -52,37 +50,6 @@ export class ApplicationTranslationResolver {
     return this.translationClient.getTranslationsByNamespace(user, namespace)
   }
 
-  @Query(() => ApplicationTranslationStatus, { nullable: true })
-  @Scopes(...TRANSLATION_SCOPES)
-  async applicationTranslationStatus(
-    @CurrentUser() user: User,
-    @Args('namespace') namespace: string,
-  ): Promise<ApplicationTranslationStatus> {
-    return this.translationClient.getTranslationStatus(user, namespace)
-  }
-
-  @Query(() => [ApplicationTranslationStatus], { nullable: true })
-  @Scopes(...TRANSLATION_SCOPES)
-  async applicationTranslationAllStatus(
-    @CurrentUser() user: User,
-  ): Promise<ApplicationTranslationStatus[]> {
-    return this.translationClient.getAllNamespacesWithStatus(user)
-  }
-
-  @Mutation(() => ApplicationTranslationGql)
-  @Scopes(...TRANSLATION_SCOPES)
-  async updateApplicationTranslation(
-    @CurrentUser() user: User,
-    @Args('input') input: UpdateApplicationTranslationInput,
-  ): Promise<ApplicationTranslationGql> {
-    return this.translationClient.updateTranslation(user, {
-      namespace: input.namespace,
-      messageKey: input.messageKey,
-      valueIs: input.valueIs ?? undefined,
-      valueEn: input.valueEn ?? undefined,
-    })
-  }
-
   @Mutation(() => [ApplicationTranslationGql])
   @Scopes(...TRANSLATION_SCOPES)
   async bulkUpdateApplicationTranslations(
@@ -98,15 +65,6 @@ export class ApplicationTranslationResolver {
         valueEn: t.valueEn ?? undefined,
       })),
     )
-  }
-
-  @Mutation(() => ApplicationTranslationGql)
-  @Scopes(...TRANSLATION_SCOPES)
-  async reviewApplicationTranslation(
-    @CurrentUser() user: User,
-    @Args('id') id: string,
-  ): Promise<ApplicationTranslationGql> {
-    return this.translationClient.reviewTranslation(user, id)
   }
 
   @Mutation(() => GoogleTranslateResultGql)

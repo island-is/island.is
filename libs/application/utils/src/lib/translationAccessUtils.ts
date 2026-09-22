@@ -5,9 +5,7 @@ import { getTypeIdsForInstitution } from './institutionUtils'
 
 export const CORE_TRANSLATION_NAMESPACE = 'application.system'
 
-/** Matches `application_translation.namespace` STRING(255). */
 export const TRANSLATION_NAMESPACE_MAX_LENGTH = 255
-/** Matches `application_translation.message_key` STRING(512). */
 export const TRANSLATION_MESSAGE_KEY_MAX_LENGTH = 512
 export const TRANSLATION_BULK_MAX_ITEMS = 500
 
@@ -92,22 +90,6 @@ export const isTranslationNamespaceAllowed = (
 
   const owningTypeIds = getTypeIdsForNamespace(namespace)
   return owningTypeIds.some((typeId) => allowed.includes(typeId))
-}
-
-/**
- * Returns null when the user has global translation access (all namespaces).
- * Otherwise returns configured namespaces the user's institution may read.
- */
-export const getAllowedTranslationNamespaces = (
-  user: TranslationAccessContext,
-): string[] | null => {
-  if (hasGlobalTranslationAccess(user)) {
-    return null
-  }
-
-  return getAllConfiguredTranslationNamespaces().filter((namespace) =>
-    isTranslationNamespaceAllowed(user, namespace),
-  )
 }
 
 const getAllConfiguredTranslationNamespaces = (): string[] => {

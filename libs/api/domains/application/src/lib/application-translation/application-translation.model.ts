@@ -28,37 +28,10 @@ export class ApplicationTranslationGql {
   draftValueEn?: string | null
 
   @Field()
-  isReviewed!: boolean
-
-  @Field(() => String, { nullable: true })
-  translatedBy?: string | null
-
-  @Field(() => String, { nullable: true })
-  reviewedBy?: string | null
-
-  @Field()
   created!: string
 
   @Field()
   modified!: string
-}
-
-@ObjectType()
-export class ApplicationTranslationStatus {
-  @Field()
-  namespace!: string
-
-  @Field(() => Int)
-  total!: number
-
-  @Field(() => Int)
-  translatedEn!: number
-
-  @Field(() => Int)
-  untranslatedEn!: number
-
-  @Field(() => Int)
-  reviewed!: number
 }
 
 @ObjectType()

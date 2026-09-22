@@ -6,7 +6,6 @@ import {
   NotFoundException,
   Param,
   Post,
-  Put,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -21,22 +20,20 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
-  ApplicationTranslationService,
   SharedNamespaceIntrospectionService,
   TemplateIntrospectionService,
   TranslationAccessService,
   type ContentfulTranslationRow,
-  type PublishHistoryItem,
 } from '@island.is/application/api/core'
-import {
-  getAllowedTranslationNamespaces,
-  getAllowedTranslationTypeIds,
-} from '@island.is/application/utils'
+import { getAllowedTranslationTypeIds } from '@island.is/application/utils'
 import { CmsTranslationCacheService } from '@island.is/cms-translations'
 import { ApplicationTypes } from '@island.is/application/types'
-import type { Locale } from '@island.is/shared/types'
 import { Audit } from '@island.is/nest/audit'
-import { UpdateTranslationDto, BulkUpdateTranslationsDto } from './dto/translation.dto'
+import { BulkUpdateTranslationsDto } from './dto/translation.dto'
+import {
+  ApplicationTranslationService,
+  type PublishHistoryItem,
+} from './application-translation.service'
 
 const TRANSLATION_SCOPES = [
   AdminPortalScope.applicationSystemAdmin,
@@ -122,44 +119,6 @@ export class TranslationController {
   }
 
   @Scopes(...TRANSLATION_SCOPES)
-  @Get()
-  async getAllNamespacesWithStatus(@CurrentUser() user: User) {
-    const allowedNamespaces = getAllowedTranslationNamespaces(user)
-    const statuses = await this.translationService.getAllNamespacesWithStatus(
-      allowedNamespaces ?? undefined,
-    )
-
-    if (allowedNamespaces === null) {
-      return statuses
-    }
-
-    const allowedSet = new Set(allowedNamespaces)
-    return statuses.filter((status) => allowedSet.has(status.namespace))
-  }
-
-  @Scopes(...TRANSLATION_SCOPES)
-  @Put()
-  async updateTranslation(
-    @Body() body: UpdateTranslationDto,
-    @CurrentUser() user: User,
-  ) {
-    this.translationAccessService.assertNamespaceWriteAccess(
-      user,
-      body.namespace,
-    )
-
-    return this.translationService.upsertTranslation(
-      {
-        namespace: body.namespace,
-        messageKey: body.messageKey,
-        valueIs: body.valueIs,
-        valueEn: body.valueEn,
-      },
-      user,
-    )
-  }
-
-  @Scopes(...TRANSLATION_SCOPES)
   @Audit<ContentfulTranslationRow[]>({
     action: 'save',
     resources: (rows) => [...new Set(rows.map((row) => row.namespace))],
@@ -183,22 +142,6 @@ export class TranslationController {
   }
 
   @Scopes(...TRANSLATION_SCOPES)
-  @Post(':id/review')
-  async reviewTranslation(@Param('id') id: string, @CurrentUser() user: User) {
-    const translation = await this.translationService.getTranslationById(id)
-    if (!translation) {
-      throw new NotFoundException('Translation not found')
-    }
-
-    this.translationAccessService.assertNamespaceWriteAccess(
-      user,
-      translation.namespace,
-    )
-
-    return this.translationService.markAsReviewed(id, user)
-  }
-
-  @Scopes(...TRANSLATION_SCOPES)
   @Get(':namespace/all')
   async getAllTranslations(
     @CurrentUser() user: User,
@@ -206,16 +149,6 @@ export class TranslationController {
   ) {
     this.translationAccessService.assertNamespaceAccess(user, namespace)
     return this.translationService.getTranslationsByNamespace(namespace)
-  }
-
-  @Scopes(...TRANSLATION_SCOPES)
-  @Get(':namespace/status')
-  async getTranslationStatus(
-    @CurrentUser() user: User,
-    @Param('namespace') namespace: string,
-  ) {
-    this.translationAccessService.assertNamespaceAccess(user, namespace)
-    return this.translationService.getTranslationStatus(namespace)
   }
 
   @Scopes(...TRANSLATION_SCOPES)
@@ -276,19 +209,5 @@ export class TranslationController {
     await this.translationCacheService.invalidate(namespace)
 
     return rollback
-  }
-
-  @Scopes(...TRANSLATION_SCOPES)
-  @Get(':namespace')
-  async getTranslations(
-    @CurrentUser() user: User,
-    @Param('namespace') namespace: string,
-    @Query('locale') locale: Locale = 'is',
-  ) {
-    this.translationAccessService.assertNamespaceAccess(user, namespace)
-    return this.translationService.getTranslationsForNamespace(
-      namespace,
-      locale,
-    )
   }
 }
