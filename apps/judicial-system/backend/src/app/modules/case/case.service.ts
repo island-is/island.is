@@ -51,6 +51,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   IndictmentDecision,
@@ -2391,9 +2392,13 @@ export class CaseService {
         caseUpdate.defendantWaivesRightToCounsel !== undefined
 
       if (defenderFieldChanged) {
-        // Contact fields only. R-cases do not use defenderChoice /
-        // isDefenderChoiceConfirmed (indictment confirmation workflow).
-        // Waive stays on case.defendantWaivesRightToCounsel for now.
+        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
+        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
+        const waives =
+          caseUpdate.defendantWaivesRightToCounsel !== undefined
+            ? caseUpdate.defendantWaivesRightToCounsel
+            : theCase.defendantWaivesRightToCounsel
+
         await this.defendantService.syncDefenderToAllDefendants(
           theCase.id,
           {
@@ -2413,6 +2418,7 @@ export class CaseService {
               caseUpdate.defenderPhoneNumber !== undefined
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
+            defenderChoice: waives ? DefenderChoice.WAIVE : null,
           },
           transaction,
         )
@@ -2874,6 +2880,7 @@ export class CaseService {
       'defenderNationalId',
       'defenderEmail',
       'defenderPhoneNumber',
+      'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
       'translator',
@@ -2933,6 +2940,9 @@ export class CaseService {
             defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderChoice: theCase.defendantWaivesRightToCounsel
+              ? DefenderChoice.WAIVE
+              : null,
           },
           transaction,
         )

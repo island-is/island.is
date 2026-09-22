@@ -571,7 +571,6 @@ export class DefendantService {
       defenderEmail?: string | null
       defenderPhoneNumber?: string | null
       defenderChoice?: DefenderChoice | null
-      isDefenderChoiceConfirmed?: boolean | null
     },
     transaction: Transaction,
   ): Promise<void> {
@@ -591,10 +590,6 @@ export class DefendantService {
     }
     if (defenderFields.defenderChoice !== undefined) {
       update.defenderChoice = defenderFields.defenderChoice
-    }
-    if (defenderFields.isDefenderChoiceConfirmed !== undefined) {
-      update.isDefenderChoiceConfirmed =
-        defenderFields.isDefenderChoiceConfirmed
     }
 
     if (Object.keys(update).length === 0) {

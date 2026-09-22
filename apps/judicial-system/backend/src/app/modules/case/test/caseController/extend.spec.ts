@@ -7,6 +7,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  DefenderChoice,
   Gender,
   User as TUser,
 } from '@island.is/judicial-system/types'
@@ -190,6 +191,7 @@ describe('CaseController - Extend', () => {
           defenderNationalId,
           defenderEmail,
           defenderPhoneNumber,
+          defenderChoice: null,
         },
         transaction,
       )
@@ -228,6 +230,53 @@ describe('CaseController - Extend', () => {
           defenderNationalId: undefined,
           defenderEmail: undefined,
           defenderPhoneNumber: undefined,
+          defenderChoice: null,
+        },
+        transaction,
+      )
+    })
+  })
+
+  describe('syncs WAIVE when extending a case with waived counsel', () => {
+    const userId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: uuid() },
+    } as TUser
+    const caseId = uuid()
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      defendantWaivesRightToCounsel: true,
+      defendants: [{ nationalId: '0000000000', name: 'Defendant' }],
+    } as Case
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should sync with defenderChoice WAIVE and copy waive onto the new case', () => {
+      expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          defendantWaivesRightToCounsel: true,
+        }),
+        { transaction },
+      )
+      expect(
+        mockDefendantService.syncDefenderToAllDefendants,
+      ).toHaveBeenCalledWith(
+        extendedCaseId,
+        {
+          defenderName: undefined,
+          defenderNationalId: undefined,
+          defenderEmail: undefined,
+          defenderPhoneNumber: undefined,
+          defenderChoice: DefenderChoice.WAIVE,
         },
         transaction,
       )

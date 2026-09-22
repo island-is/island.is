@@ -22,6 +22,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -1871,6 +1872,7 @@ describe('CaseController - Update', () => {
             defenderNationalId,
             defenderEmail,
             defenderPhoneNumber,
+            defenderChoice: null,
           },
           transaction,
         )
@@ -1894,20 +1896,21 @@ describe('CaseController - Update', () => {
             defenderNationalId: '0000000000',
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
+            defenderChoice: null,
           },
           transaction,
         )
       })
     })
 
-    describe('syncs contact fields when defendantWaivesRightToCounsel changes', () => {
+    describe('sets WAIVE when defendantWaivesRightToCounsel is true', () => {
       beforeEach(async () => {
         await givenWhenThen(caseId, user, requestCase, {
           defendantWaivesRightToCounsel: true,
         } as UpdateCaseDto)
       })
 
-      it('should sync contact fields without setting defenderChoice', () => {
+      it('should sync contact fields with defenderChoice WAIVE', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1917,6 +1920,7 @@ describe('CaseController - Update', () => {
             defenderNationalId: '0000000000',
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
+            defenderChoice: DefenderChoice.WAIVE,
           },
           transaction,
         )

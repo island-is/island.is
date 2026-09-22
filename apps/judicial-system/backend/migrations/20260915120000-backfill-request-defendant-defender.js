@@ -9,9 +9,10 @@
 // has correct data for existing cases — including cleaned/encrypted cases
 // whose contact fields may already be empty.
 //
-// R-cases do not use the indictment confirmation workflow, so defender_choice
-// and is_defender_choice_confirmed are left untouched. Waive stays on
-// case.defendant_waives_right_to_counsel until that is migrated separately.
+// Waive is mapped to defendant.defender_choice = 'WAIVE' when
+// case.defendant_waives_right_to_counsel is true; otherwise defender_choice
+// is set to NULL. R-cases do not use CHOOSE or is_defender_choice_confirmed
+// (indictment confirmation workflow).
 //
 // Scope: all non-indictment, non-DELETED cases. Copy regardless of whether
 // the case currently has a defender or waive flag set.
@@ -24,7 +25,11 @@ module.exports = {
          SET defender_name = c.defender_name,
              defender_national_id = c.defender_national_id,
              defender_email = c.defender_email,
-             defender_phone_number = c.defender_phone_number
+             defender_phone_number = c.defender_phone_number,
+             defender_choice = CASE
+               WHEN c.defendant_waives_right_to_counsel = true THEN 'WAIVE'
+               ELSE NULL
+             END
          FROM "case" c
          WHERE d.case_id = c.id
            AND c.type <> 'INDICTMENT'
