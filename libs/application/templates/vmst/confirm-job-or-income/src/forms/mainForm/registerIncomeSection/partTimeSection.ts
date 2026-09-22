@@ -7,7 +7,8 @@ import {
   getValueViaPath,
   buildTitleField,
 } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
+import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
@@ -16,24 +17,18 @@ import {
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
-
-type PartTimeJobExternalData = {
-  employerSSN?: string
-  employerName?: string
-  periodFrom?: string
-  periodTo?: string
-  ratio?: number
-  estimatedIncome?: number
-}
+import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { IncomeValidationRow } from '../../../utils/validateIncomes'
 
 const getPartTimeDefaults = (application: Application) => {
   const jobs =
-    getValueViaPath<PartTimeJobExternalData[]>(
+    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
       application.externalData,
       'income.data.partTimeJobs',
     ) ?? []
 
   return jobs.map((job) => ({
+    validationId: job.id,
     company: {
       nationalId: job.employerSSN ?? '',
       name: job.employerName?.trim() ?? '',
@@ -44,6 +39,32 @@ const getPartTimeDefaults = (application: Application) => {
     estimatedIncome:
       job.estimatedIncome != null ? String(job.estimatedIncome) : '',
   }))
+}
+
+const partTimeValidationProps: IncomeValidationFieldProps = {
+  fieldId: 'registerPartTime',
+  incomeTypeKey: 'partTimeJobs',
+  persistedPath: 'income.data.partTimeJobs',
+  callbackId: 'PartTimeValidation',
+  messages: {
+    fallbackErrorMessage: 'partTimeValidationErrorMessage',
+  },
+  rowToInput: (row: IncomeValidationRow) => {
+    const nationalId =
+      typeof row.company === 'object' && row.company !== null
+        ? (row.company as { nationalId?: string }).nationalId
+        : undefined
+    return {
+      validationId: String(row.validationId ?? ''),
+      employerSSN: nationalId ? nationalId.replace(/-/g, '') : undefined,
+      periodFrom: String(row.jobStart ?? ''),
+      periodTo: String(row.jobEnd ?? '') || undefined,
+      ratio: row.workPercentage ? Number(row.workPercentage) : undefined,
+      estimatedIncome: row.estimatedIncome
+        ? Number(row.estimatedIncome)
+        : undefined,
+    }
+  },
 }
 
 export const partTimeSection = buildSubSection({
@@ -75,7 +96,6 @@ export const partTimeSection = buildSubSection({
               values: { month },
             }
           },
-          // titleVariant: '',
           defaultValue: getPartTimeDefaults,
           fields: {
             company: {
@@ -124,9 +144,15 @@ export const partTimeSection = buildSubSection({
               min: 0,
             },
             // Correlates each row with the 3rd party validation response.
+            // Reuse the row's existing id if it already has one; otherwise this
+            // function re-runs on every render and generating a fresh uuid each
+            // time causes an infinite update loop.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: () => uuid(),
+              defaultValue: (
+                _application: Application,
+                activeField?: Record<string, string>,
+              ) => activeField?.validationId ?? uuid(),
             },
           },
           table: {
@@ -167,31 +193,14 @@ export const partTimeSection = buildSubSection({
           marginTop: 6,
           condition: hasPartTimeOverlap,
         }),
-        buildCustomField({
-          id: 'partTimeValidation',
-          doesNotRequireAnswer: true,
-          component: 'PartTimeValidation',
-        }),
-        buildAlertMessageField({
-          id: 'partTimeValidationErrorAlert',
-          title: (application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'partTimeValidationErrorTitle',
-            ) ?? '',
-          message: (application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'partTimeValidationErrorMessage',
-            ) ?? '',
-          alertType: 'error',
-          marginTop: 6,
-          condition: (answers: FormValue) =>
-            !!getValueViaPath<string>(
-              answers,
-              'partTimeValidationErrorMessage',
-            ),
-        }),
+        buildCustomField(
+          {
+            id: 'partTimeValidation',
+            doesNotRequireAnswer: true,
+            component: 'IncomeValidation',
+          },
+          partTimeValidationProps,
+        ),
       ],
     }),
   ],

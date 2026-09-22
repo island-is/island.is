@@ -5,18 +5,10 @@ import { VmstUnemploymentClientService } from '@island.is/clients/vmst-unemploym
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { errorMessages } from '@island.is/application/templates/vmst/confirm-job-or-income'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { getValueViaPath } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { IncomeType } from './confirm-job-or-income.types'
-import {
-  buildIrregularJobRequest,
-  buildPartTimeJobRequest,
-  buildContractorJobRequest,
-  buildCapitalIncomePaymentRequest,
-  buildTRPaymentRequest,
-  buildPensionPaymentRequest,
-} from './confirm-job-or-income.utils'
+import format from 'date-fns/format'
+import { buildCreateIncomesRequest } from './confirm-job-or-income.utils'
 
 @Injectable()
 export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
@@ -129,8 +121,13 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
     }
 
     try {
+      const now = new Date()
       return await this.vmstUnemploymentClientService.getIncome({
         applicantId,
+        dateFrom: format(
+          new Date(now.getFullYear(), now.getMonth(), 1),
+          'yyyy-MM-dd',
+        ),
       })
     } catch (e) {
       this.logger.error(
@@ -176,99 +173,23 @@ export class ConfirmJobOrIncomeService extends BaseTemplateApiService {
       )
     }
 
-    const { answers } = application
-    const typeOfIncome = getValueViaPath<string>(answers, 'typeOfIncome')
-
-    const fieldIdMap: Record<string, string> = {
-      [IncomeType.CASUAL_WORK]: 'registerCasualWork',
-      [IncomeType.PART_TIME]: 'registerPartTime',
-      [IncomeType.CONTRACT_WORK]: 'registerContractWork',
-      [IncomeType.CAPITAL_INCOME]: 'registerCapitalIncome',
-      [IncomeType.SOCIAL_INSURANCE]: 'registerSocialInsurance',
-      [IncomeType.PENSION]: 'registerPension',
-    }
-
-    const fieldId = typeOfIncome ? fieldIdMap[typeOfIncome] : undefined
-    const entries = getValueViaPath<
-      Array<
-        Record<string, string> & {
-          company?: { nationalId: string; name: string }
-        }
-      >
-    >(answers, fieldId ?? '')
-
-    if (!entries || entries.length === 0) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.cannotApplyErrorTitle,
-          summary: errorMessages.submitError,
-        },
-        400,
-      )
-    }
-
+    const request = buildCreateIncomesRequest(
+      application.answers,
+      application.externalData,
+    )
     try {
-      // switch (typeOfIncome) {
-      //   case IncomeType.CASUAL_WORK: {
-      //     for (const entry of entries) {
-      //       await this.vmstUnemploymentClientService.createIrregularJob(
-      //         buildIrregularJobRequest(entry, applicantId),
-      //       )
-      //     }
-      //     break
-      //   }
-      //   case IncomeType.PART_TIME: {
-      //     for (const entry of entries) {
-      //       await this.vmstUnemploymentClientService.createPartTimeJob(
-      //         buildPartTimeJobRequest(entry, applicantId),
-      //       )
-      //     }
-      //     break
-      //   }
-      //   case IncomeType.CONTRACT_WORK: {
-      //     for (const entry of entries) {
-      //       await this.vmstUnemploymentClientService.createContractorJob(
-      //         buildContractorJobRequest(entry, applicantId),
-      //       )
-      //     }
-      //     break
-      //   }
-      //   case IncomeType.CAPITAL_INCOME: {
-      //     for (const entry of entries) {
-      //       await this.vmstUnemploymentClientService.createCapitalIncomePayment(
-      //         buildCapitalIncomePaymentRequest(entry, applicantId),
-      //       )
-      //     }
-      //     break
-      //   }
-      //   case IncomeType.SOCIAL_INSURANCE: {
-      //     for (const entry of entries) {
-      //       await this.vmstUnemploymentClientService.createTRPayment(
-      //         buildTRPaymentRequest(entry, applicantId),
-      //       )
-      //     }
-      //     break
-      //   }
-      //   case IncomeType.PENSION: {
-      //     for (const entry of entries) {
-      //       await this.vmstUnemploymentClientService.createPensionPayment(
-      //         buildPensionPaymentRequest(entry, applicantId),
-      //       )
-      //     }
-      //     break
-      //   }
-      //   default:
-      //     throw new TemplateApiError(
-      //       {
-      //         title: errorMessages.cannotApplyErrorTitle,
-      //         summary: errorMessages.cannotApplyErrorSummary,
-      //       },
-      //       400,
-      //     )
-      // }
+      const response = await this.vmstUnemploymentClientService.createIncome({
+        applicantId,
+        galdurExternalDomainRequestsIncomeCreateIncomesRequest: request,
+      })
+
+      if (!response.success) {
+        throw new Error('VMST rejected the income submission')
+      }
     } catch (e) {
       this.logger.error(
         '[VMST-Confirm-Job-Or-Income] - Error submitting job or income information',
+        e,
       )
       throw new TemplateApiError(
         {

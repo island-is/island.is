@@ -1,9 +1,13 @@
 import {
+  buildCustomField,
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO } from '@island.is/clients/vmst-unemployment'
+import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isCapitalIncome } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
@@ -16,6 +20,45 @@ import {
   formatIsDateLong,
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
+import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { IncomeValidationRow } from '../../../utils/validateIncomes'
+
+const getCapitalIncomeDefaults = (application: Application) => {
+  const payments =
+    getValueViaPath<GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO[]>(
+      application.externalData,
+      'income.data.capitalIncomePayments',
+    ) ?? []
+
+  return payments.map((payment) => ({
+    validationId: payment.id,
+    paymentType: payment.incomeTypeId ?? '',
+    amountPerMonth:
+      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
+    dateFrom: payment.periodFrom ?? '',
+    dateTo: payment.periodTo ?? '',
+  }))
+}
+
+const capitalIncomeValidationProps: IncomeValidationFieldProps = {
+  fieldId: 'registerCapitalIncome',
+  incomeTypeKey: 'capitalIncomePayments',
+  persistedPath: 'income.data.capitalIncomePayments',
+  callbackId: 'CapitalIncomeValidation',
+  messages: {
+    fallbackErrorMessage: 'capitalIncomeValidationErrorMessage',
+  },
+  rowToInput: (row: IncomeValidationRow) => {
+    const isOneTime = row.paymentFrequency === PaymentFrequency.ONE_TIME
+    return {
+      validationId: String(row.validationId ?? ''),
+      incomeTypeId: String(row.paymentType ?? ''),
+      estimatedIncome: Number(row.amountPerMonth ?? 0),
+      periodFrom: String(row.dateFrom ?? ''),
+      periodTo: isOneTime ? String(row.dateTo ?? '') : null,
+    }
+  },
+}
 
 export const capitalIncomeSection = buildSubSection({
   id: 'capitalIncomeSection',
@@ -30,8 +73,8 @@ export const capitalIncomeSection = buildSubSection({
         buildTableRepeaterField({
           id: 'registerCapitalIncome',
           addItemButtonText: m.application.addLine,
-          initActiveFieldIfEmpty: true,
           hideTableHeaderIfEmpty: true,
+          defaultValue: getCapitalIncomeDefaults,
           fields: {
             paymentType: {
               component: 'select',
@@ -104,6 +147,16 @@ export const capitalIncomeSection = buildSubSection({
                 return getCurrentMonthStartDate()
               },
             },
+            // Correlates each row with the 3rd party validation response.
+            // Reuses an existing id (persisted or previously minted) so this
+            // function stays idempotent across renders.
+            validationId: {
+              component: 'hiddenInput',
+              defaultValue: (
+                _application: Application,
+                activeField?: Record<string, string>,
+              ) => activeField?.validationId ?? uuid(),
+            },
           },
           table: {
             header: [
@@ -130,6 +183,14 @@ export const capitalIncomeSection = buildSubSection({
             },
           },
         }),
+        buildCustomField(
+          {
+            id: 'capitalIncomeValidation',
+            doesNotRequireAnswer: true,
+            component: 'IncomeValidation',
+          },
+          capitalIncomeValidationProps,
+        ),
       ],
     }),
   ],

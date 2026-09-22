@@ -1,10 +1,14 @@
 import {
+  buildAlertMessageField,
+  buildCustomField,
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  buildAlertMessageField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { GaldurExternalDomainModelsIncomeIrregularJobDTO } from '@island.is/clients/vmst-unemployment'
+import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
 import {
@@ -12,11 +16,61 @@ import {
   getCurrentMonthStartDate,
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { IncomeValidationRow } from '../../../utils/validateIncomes'
 
 type WorkshiftPeriod = {
   id?: string
   name?: string
   english?: string | null
+}
+
+const getCasualWorkDefaults = (application: Application) => {
+  const jobs =
+    getValueViaPath<GaldurExternalDomainModelsIncomeIrregularJobDTO[]>(
+      application.externalData,
+      'income.data.irregularJobs',
+    ) ?? []
+
+  return jobs.map((job) => ({
+    validationId: job.id,
+    company: {
+      nationalId: job.employerSSN ?? '',
+      name: job.employerName?.trim() ?? '',
+    },
+    dateFrom: job.periodFrom ?? '',
+    dateTo: job.periodTo ?? '',
+    estimatedIncome:
+      job.estimatedIncome != null ? String(job.estimatedIncome) : '',
+    workshiftPeriod: job.workShiftPeriodIds?.[0] ?? '',
+  }))
+}
+
+const casualWorkValidationProps: IncomeValidationFieldProps = {
+  fieldId: 'registerCasualWork',
+  incomeTypeKey: 'irregularJobs',
+  persistedPath: 'income.data.irregularJobs',
+  callbackId: 'CasualWorkValidation',
+  messages: {
+    fallbackErrorMessage: 'casualWorkValidationErrorMessage',
+  },
+  rowToInput: (row: IncomeValidationRow) => {
+    const nationalId =
+      typeof row.company === 'object' && row.company !== null
+        ? (row.company as { nationalId?: string }).nationalId
+        : undefined
+    return {
+      validationId: String(row.validationId ?? ''),
+      employerSSN: nationalId ? nationalId.replace(/-/g, '') : undefined,
+      periodFrom: String(row.dateFrom ?? ''),
+      periodTo: String(row.dateTo ?? '') || undefined,
+      estimatedIncome: Number(row.estimatedIncome ?? 0),
+      workShiftPeriodIds:
+        typeof row.workshiftPeriod === 'string' && row.workshiftPeriod
+          ? [row.workshiftPeriod]
+          : undefined,
+    }
+  },
 }
 
 export const casualWorkSection = buildSubSection({
@@ -32,7 +86,6 @@ export const casualWorkSection = buildSubSection({
         buildTableRepeaterField({
           id: 'registerCasualWork',
           addItemButtonText: m.application.addLine,
-          initActiveFieldIfEmpty: true,
           hideTableHeaderIfEmpty: true,
           title: () => {
             const month = new Date().toLocaleDateString('is-IS', {
@@ -43,6 +96,7 @@ export const casualWorkSection = buildSubSection({
               values: { month },
             }
           },
+          defaultValue: getCasualWorkDefaults,
           fields: {
             company: {
               component: 'nationalIdWithName',
@@ -105,6 +159,16 @@ export const casualWorkSection = buildSubSection({
               required: true,
               min: 0,
             },
+            // Correlates each row with the 3rd party validation response.
+            // Reuses an existing id (persisted or previously minted) so this
+            // function stays idempotent across renders.
+            validationId: {
+              component: 'hiddenInput',
+              defaultValue: (
+                _application: Application,
+                activeField?: Record<string, string>,
+              ) => activeField?.validationId ?? uuid(),
+            },
           },
           table: {
             header: [
@@ -153,6 +217,14 @@ export const casualWorkSection = buildSubSection({
           marginTop: 6,
           condition: hasCasualWorkOverlap,
         }),
+        buildCustomField(
+          {
+            id: 'casualWorkValidation',
+            doesNotRequireAnswer: true,
+            component: 'IncomeValidation',
+          },
+          casualWorkValidationProps,
+        ),
       ],
     }),
   ],

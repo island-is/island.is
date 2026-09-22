@@ -395,6 +395,11 @@ export const application = defineMessages({
   // Overview
   overviewSectionTitle: {
     id: 'vmst.cjoi.application:overviewSectionTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Title for the overview section',
+  },
+  overviewTitle: {
+    id: 'vmst.cjoi.application:overviewTitle',
     defaultMessage: 'Yfirlit tilkynningar',
     description: 'Title for the overview section',
   },
@@ -564,17 +569,65 @@ export const errorMessages = defineMessages({
     description:
       'Alert message body shown when part time entries have overlapping periods for the same company',
   },
-  partTimeValidationErrorTitle: {
-    id: 'vmst.cjoi.application:errorMessages.partTimeValidationErrorTitle',
-    defaultMessage: 'Ekki tókst að staðfesta skráningu',
-    description:
-      'Fallback title shown when the 3rd party part time validation request fails (e.g. network error)',
-  },
   partTimeValidationErrorMessage: {
     id: 'vmst.cjoi.application:errorMessages.partTimeValidationErrorMessage',
     defaultMessage:
       'Ekki tókst að staðfesta skráningu hlutastarfa. Vinsamlegast reyndu aftur.',
     description:
       'Fallback message shown when the 3rd party part time validation request fails (e.g. network error)',
+  },
+  socialInsuranceValidationErrorMessage: {
+    id: 'vmst.cjoi.application:errorMessages.socialInsuranceValidationErrorMessage',
+    defaultMessage:
+      'Ekki tókst að staðfesta skráningu almannatrygginga. Vinsamlegast reyndu aftur.',
+    description:
+      'Fallback message shown when the 3rd party social insurance validation request fails (e.g. network error)',
+  },
+  casualWorkValidationErrorMessage: {
+    id: 'vmst.cjoi.application:errorMessages.casualWorkValidationErrorMessage',
+    defaultMessage:
+      'Ekki tókst að staðfesta skráningu tilfallandi vinnu. Vinsamlegast reyndu aftur.',
+    description:
+      'Fallback message shown when the 3rd party casual work validation request fails (e.g. network error)',
+  },
+  contractWorkValidationErrorMessage: {
+    id: 'vmst.cjoi.application:errorMessages.contractWorkValidationErrorMessage',
+    defaultMessage:
+      'Ekki tókst að staðfesta skráningu verktakavinnu. Vinsamlegast reyndu aftur.',
+    description:
+      'Fallback message shown when the 3rd party contract work validation request fails (e.g. network error)',
+  },
+  capitalIncomeValidationErrorMessage: {
+    id: 'vmst.cjoi.application:errorMessages.capitalIncomeValidationErrorMessage',
+    defaultMessage:
+      'Ekki tókst að staðfesta skráningu fjármagnstekna. Vinsamlegast reyndu aftur.',
+    description:
+      'Fallback message shown when the 3rd party capital income validation request fails (e.g. network error)',
+  },
+  pensionValidationErrorMessage: {
+    id: 'vmst.cjoi.application:errorMessages.pensionValidationErrorMessage',
+    defaultMessage:
+      'Ekki tókst að staðfesta skráningu lífeyris. Vinsamlegast reyndu aftur.',
+    description:
+      'Fallback message shown when the 3rd party pension validation request fails (e.g. network error)',
+  },
+  incomeValidationErrorTitle: {
+    id: 'vmst.cjoi.application:errorMessages.incomeValidationErrorTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skráningu',
+    description:
+      'Fallback title shown when the 3rd party income validation request fails (e.g. network error)',
+  },
+  incomeValidationErrorsHeading: {
+    id: 'vmst.cjoi.application:errorMessages.incomeValidationErrorsHeading',
+    defaultMessage: 'Vinsamlegast leiðréttu eftirfarandi:',
+    description:
+      'Title shown above the list of row-level errors returned by the 3rd party income validation',
+  },
+  incomeValidationErrorLine: {
+    id: 'vmst.cjoi.application:errorMessages.incomeValidationErrorLine',
+    defaultMessage:
+      '{count, plural, one {Lína {lines}} other {Línur {lines}}}: {reason}',
+    description:
+      'One grouped income error line; {lines} is a comma separated 1-based row number list, {reason} the error text',
   },
 })

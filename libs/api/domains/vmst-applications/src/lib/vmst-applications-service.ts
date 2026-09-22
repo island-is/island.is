@@ -7,11 +7,12 @@ import {
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
+  GaldurExternalDomainModelsIncomeIncomesResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
-import { PartTimeJobValidationInput } from './dto/partTimeJobValidation.input'
+import { IncomeValidationInput } from './dto/incomeValidation.input'
 import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
@@ -20,7 +21,7 @@ import {
   VmstApplicationsApplicantAttachment,
   VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
-  PartTimeJobValidationResult,
+  IncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
@@ -116,34 +117,135 @@ export class VMSTApplicationsService {
     return { ...response, isValid: response.isValid ?? false }
   }
 
-  async validatePartTimeJobs(
+  // Generic income validation entrypoint; accepts any subset of the five income
+  // arrays served by the same Galdur endpoint. Service branches per item on
+  // `deleted` to emit either a delete marker or a create-shape payload.
+  async validateIncomes(
     auth: User,
-    input: PartTimeJobValidationInput[],
-  ): Promise<PartTimeJobValidationResult> {
-    const response = await this.vmstUnemploymentService.validatIncome({
-      applicantId: auth.nationalId,
+    input: IncomeValidationInput,
+  ): Promise<IncomeValidationResult> {
+    const { applicantId } = await this.resolveApplicant(auth)
+    const request = {
+      applicantId,
       galdurExternalDomainRequestsIncomeCreateIncomesRequest: {
-        partTimeJobs: input.map((job) => ({
-          employerSSN: job.employerSSN,
-          periodFrom: new Date(job.periodFrom),
-          periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
-          ratio: job.ratio,
-          estimatedIncome: job.estimatedIncome,
-        })),
+        irregularJobs: input.irregularJobs?.map((job) =>
+          job.deleted
+            ? { id: job.id, deleted: true }
+            : {
+                referenceId: job.validationId,
+                employerSSN: job.employerSSN,
+                periodFrom: job.periodFrom
+                  ? new Date(job.periodFrom)
+                  : undefined,
+                periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+                estimatedIncome: job.estimatedIncome,
+                workShiftPeriodIds: job.workShiftPeriodIds,
+              },
+        ),
+        contractorJobs: input.contractorJobs?.map((job) =>
+          job.deleted
+            ? { id: job.id, deleted: true }
+            : {
+                referenceId: job.validationId,
+                periodFrom: job.periodFrom
+                  ? new Date(job.periodFrom)
+                  : undefined,
+                periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+              },
+        ),
+        capitalIncomePayments: input.capitalIncomePayments?.map((payment) =>
+          payment.deleted
+            ? { id: payment.id, deleted: true }
+            : {
+                referenceId: payment.validationId,
+                incomeTypeId: payment.incomeTypeId,
+                estimatedIncome: payment.estimatedIncome,
+                periodFrom: payment.periodFrom
+                  ? new Date(payment.periodFrom)
+                  : undefined,
+                periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+              },
+        ),
+        trPayments: input.trPayments?.map((payment) =>
+          payment.deleted
+            ? { id: payment.id, deleted: true }
+            : {
+                referenceId: payment.validationId,
+                incomeTypeId: payment.incomeTypeId,
+                estimatedIncome: payment.estimatedIncome,
+                periodFrom: payment.periodFrom
+                  ? new Date(payment.periodFrom)
+                  : undefined,
+                periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+              },
+        ),
+        pensionPayments: input.pensionPayments?.map((payment) =>
+          payment.deleted
+            ? { id: payment.id, deleted: true }
+            : {
+                referenceId: payment.validationId,
+                incomeTypeId: payment.incomeTypeId,
+                pensionFundId: payment.pensionFundId,
+                estimatedIncome: payment.estimatedIncome,
+                periodFrom: payment.periodFrom
+                  ? new Date(payment.periodFrom)
+                  : undefined,
+                periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+              },
+        ),
+        partTimeJobs: input.partTimeJobs?.map((job) =>
+          job.deleted
+            ? { id: job.id, deleted: true, employerSSN: job.employerSSN }
+            : {
+                referenceId: job.validationId,
+                employerSSN: job.employerSSN,
+                periodFrom: job.periodFrom
+                  ? new Date(job.periodFrom)
+                  : undefined,
+                periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+                ratio: job.ratio,
+                estimatedIncome: job.estimatedIncome,
+              },
+        ),
       },
-    })
+    }
 
-    // TODO: the client's request/response types don't carry validationId yet,
-    // so per-row correlation isn't possible until VMST adds it to the contract.
-    // Until then, treat every row as invalid when the overall response fails.
-    const isValid = response.success ?? false
-    return {
-      isValid,
-      title: isValid ? null : response.reason,
-      message: isValid ? null : response.reasonEN,
-      invalidValidationIds: isValid ? [] : input.map((job) => job.validationId),
+    try {
+      const response = await this.vmstUnemploymentService.validatIncome(request)
+      return this.buildIncomeValidationResult(response)
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 400 && e.body) {
+        return this.buildIncomeValidationResult(
+          e.body as GaldurExternalDomainModelsIncomeIncomesResponse,
+        )
+      }
+      throw e
     }
   }
+
+  private buildIncomeValidationResult(
+    response: GaldurExternalDomainModelsIncomeIncomesResponse,
+  ): IncomeValidationResult {
+    const isValid = response.success ?? false
+    const errors = (response.errors ?? []).flatMap((error) =>
+      error.referenceId
+        ? [
+            {
+              validationId: error.referenceId,
+              reason: error.reason,
+              reasonEN: error.reasonEN,
+            },
+          ]
+        : [],
+    )
+
+    return {
+      isValid,
+      invalidValidationIds: errors.map((error) => error.validationId),
+      errors,
+    }
+  }
+
   async validateU2(
     auth: User,
     input: VmstApplicationsU2ValidationInput,

@@ -1,85 +1,232 @@
-type Entry = Record<string, string> & {
-  company?: { nationalId: string; name: string }
+import { ExternalData, FormValue } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
+import {
+  GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO,
+  GaldurExternalDomainModelsIncomeContractorJobDTO,
+  GaldurExternalDomainModelsIncomeIrregularJobDTO,
+  GaldurExternalDomainModelsIncomePartTimeJobDTO,
+  GaldurExternalDomainModelsIncomePensionPaymentDTO,
+  GaldurExternalDomainModelsIncomeTRPaymentDTO,
+  GaldurExternalDomainRequestsIncomeCreateCapitalIncomePaymentRequest,
+  GaldurExternalDomainRequestsIncomeCreateContractorJobRequest,
+  GaldurExternalDomainRequestsIncomeCreateIncomesRequest,
+  GaldurExternalDomainRequestsIncomeCreateIrregularJobRequest,
+  GaldurExternalDomainRequestsIncomeCreatePartTimeJobRequest,
+  GaldurExternalDomainRequestsIncomeCreatePensionPaymentRequest,
+  GaldurExternalDomainRequestsIncomeCreateTRPaymentRequest,
+} from '@island.is/clients/vmst-unemployment'
+import { reconcile } from '@island.is/application/templates/vmst/confirm-job-or-income'
+import { IncomeType } from './confirm-job-or-income.types'
+
+type Entry = Record<string, unknown> & {
+  company?: { nationalId?: string }
+  isRemoved?: boolean
 }
 
-export const buildIrregularJobRequest = (
-  entry: Entry,
-  applicantId: string,
-) => ({
-  applicantId,
-  galdurExternalDomainRequestsIncomeCreateIrregularJobRequest: {
-    employerSSN: entry.company?.nationalId?.replace(/-/g, ''),
-    periodFrom: entry.dateFrom ? new Date(entry.dateFrom) : undefined,
-    periodTo: entry.dateTo ? new Date(entry.dateTo) : undefined,
-    estimatedIncome: entry.estimatedIncome
-      ? Number(entry.estimatedIncome)
+const getEntries = (answers: FormValue, fieldId: string): Entry[] =>
+  (getValueViaPath<Entry[]>(answers, fieldId, []) ?? []).filter(
+    (entry) => !entry.isRemoved,
+  )
+
+const getPersisted = <T>(externalData: ExternalData, path: string): T[] =>
+  getValueViaPath<T[]>(externalData, path, []) ?? []
+
+const toDate = (value: unknown): Date | undefined =>
+  typeof value === 'string' && value ? new Date(value) : undefined
+
+const toNumber = (value: unknown): number | undefined =>
+  typeof value === 'string' && value ? Number(value) : undefined
+
+const getNationalId = (entry: Entry): string | undefined =>
+  entry.company?.nationalId?.replace(/-/g, '')
+
+const getPeriodTo = (entry: Entry): Date | null | undefined =>
+  entry.paymentFrequency === 'oneTime' ? toDate(entry.dateTo) : null
+
+const buildIrregularJob = (entry: Entry) => ({
+  employerSSN: getNationalId(entry),
+  periodFrom: toDate(entry.dateFrom),
+  periodTo: toDate(entry.dateTo),
+  estimatedIncome: toNumber(entry.estimatedIncome),
+  workShiftPeriodIds:
+    typeof entry.workshiftPeriod === 'string'
+      ? [entry.workshiftPeriod]
       : undefined,
-  },
 })
 
-export const buildPartTimeJobRequest = (entry: Entry, applicantId: string) => ({
-  applicantId,
-  galdurExternalDomainRequestsIncomeCreatePartTimeJobRequest: {
-    employerSSN: entry.company?.nationalId?.replace(/-/g, ''),
-    periodFrom: entry.jobStart ? new Date(entry.jobStart) : undefined,
-    periodTo: entry.jobEnd ? new Date(entry.jobEnd) : undefined,
-    ratio: entry.workPercentage ? Number(entry.workPercentage) : undefined,
-    estimatedIncome: entry.estimatedIncome
-      ? Number(entry.estimatedIncome)
-      : undefined,
-  },
+const buildIrregularJobs = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreateIrregularJobRequest[] =>
+  reconcile(
+    getEntries(answers, 'registerCasualWork'),
+    getPersisted<GaldurExternalDomainModelsIncomeIrregularJobDTO>(
+      externalData,
+      'income.data.irregularJobs',
+    ),
+    buildIrregularJob,
+  )
+
+const buildPartTimeJob = (entry: Entry) => ({
+  employerSSN: getNationalId(entry),
+  periodFrom: toDate(entry.jobStart),
+  periodTo: toDate(entry.jobEnd),
+  ratio: toNumber(entry.workPercentage),
+  estimatedIncome: toNumber(entry.estimatedIncome),
 })
 
-export const buildContractorJobRequest = (
-  entry: Entry,
-  applicantId: string,
-) => ({
-  applicantId,
-  galdurExternalDomainRequestsIncomeCreateContractorJobRequest: {
-    periodFrom: entry.contractJobStart
-      ? new Date(entry.contractJobStart)
-      : undefined,
-    periodTo: entry.workEnds ? new Date(entry.workEnds) : undefined,
-  },
+const buildPartTimeJobs = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreatePartTimeJobRequest[] => {
+  const entries = getEntries(answers, 'registerPartTime')
+  const persistedJobs =
+    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
+      externalData,
+      'income.data.partTimeJobs',
+      [],
+    ) ?? []
+  const persistedIds = new Set(
+    persistedJobs.flatMap((job) => (job.id ? [job.id] : [])),
+  )
+  const retainedIds = new Set(
+    entries.flatMap((entry) => {
+      const validationId = entry.validationId
+      return typeof validationId === 'string' && persistedIds.has(validationId)
+        ? [validationId]
+        : []
+    }),
+  )
+
+  const newJobs = entries
+    .filter((entry) => {
+      const validationId = entry.validationId
+      return !(
+        typeof validationId === 'string' && persistedIds.has(validationId)
+      )
+    })
+    .map(buildPartTimeJob)
+
+  const deletedJobs = persistedJobs.flatMap((job) =>
+    job.id && !retainedIds.has(job.id)
+      ? [{ id: job.id, deleted: true, employerSSN: job.employerSSN }]
+      : [],
+  )
+
+  return [...newJobs, ...deletedJobs]
+}
+
+const buildContractorJob = (entry: Entry) => ({
+  periodFrom: toDate(entry.contractJobStart),
+  periodTo: toDate(entry.workEnds),
 })
 
-export const buildCapitalIncomePaymentRequest = (
-  entry: Entry,
-  applicantId: string,
-) => ({
-  applicantId,
-  galdurExternalDomainRequestsIncomeCreateCapitalIncomePaymentRequest: {
-    incomeTypeId: entry.paymentType,
-    estimatedIncome: entry.amountPerMonth
-      ? Number(entry.amountPerMonth)
-      : undefined,
-    periodFrom: entry.periodFrom ? new Date(entry.periodFrom) : undefined,
-    periodTo: entry.paymentFrequency === 'oneTime' ? null : undefined,
-  },
+const buildContractorJobs = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreateContractorJobRequest[] =>
+  reconcile(
+    getEntries(answers, 'registerContractWork'),
+    getPersisted<GaldurExternalDomainModelsIncomeContractorJobDTO>(
+      externalData,
+      'income.data.contractorJobs',
+    ),
+    buildContractorJob,
+  )
+
+const buildCapitalIncomePayment = (entry: Entry) => ({
+  incomeTypeId:
+    typeof entry.paymentType === 'string' ? entry.paymentType : undefined,
+  estimatedIncome: toNumber(entry.amountPerMonth),
+  periodFrom: toDate(entry.dateFrom),
+  periodTo: getPeriodTo(entry),
 })
 
-export const buildTRPaymentRequest = (entry: Entry, applicantId: string) => ({
-  applicantId,
-  galdurExternalDomainRequestsIncomeCreateTRPaymentRequest: {
-    typeId: entry.socialPaymentType,
-    estimatedIncome: entry.amountPerMonth
-      ? Number(entry.amountPerMonth)
+const buildCapitalIncomePayments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreateCapitalIncomePaymentRequest[] =>
+  reconcile(
+    getEntries(answers, 'registerCapitalIncome'),
+    getPersisted<GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO>(
+      externalData,
+      'income.data.capitalIncomePayments',
+    ),
+    buildCapitalIncomePayment,
+  )
+
+const buildTRPayment = (entry: Entry) => ({
+  incomeTypeId:
+    typeof entry.socialPaymentType === 'string'
+      ? entry.socialPaymentType
       : undefined,
-    periodFrom: entry.periodFrom ? new Date(entry.periodFrom) : undefined,
-    periodTo: entry.paymentFrequency === 'oneTime' ? null : undefined,
-  },
+  estimatedIncome: toNumber(entry.amountPerMonth),
+  periodFrom: toDate(entry.dateFrom),
+  periodTo: getPeriodTo(entry),
 })
 
-export const buildPensionPaymentRequest = (
-  entry: Entry,
-  applicantId: string,
-) => ({
-  applicantId,
-  galdurExternalDomainRequestsIncomeCreatePensionPaymentRequest: {
-    typeId: entry.pensionType,
-    pensionFundId: entry.pensionFund,
-    estimatedIncome: entry.amountPerMonth
-      ? Number(entry.amountPerMonth)
-      : undefined,
-  },
+const buildTRPayments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreateTRPaymentRequest[] =>
+  reconcile(
+    getEntries(answers, 'registerSocialInsurance'),
+    getPersisted<GaldurExternalDomainModelsIncomeTRPaymentDTO>(
+      externalData,
+      'income.data.trPayments',
+    ),
+    buildTRPayment,
+  )
+
+const buildPensionPayment = (entry: Entry) => ({
+  incomeTypeId:
+    typeof entry.pensionType === 'string' ? entry.pensionType : undefined,
+  pensionFundId:
+    typeof entry.pensionFund === 'string' ? entry.pensionFund : undefined,
+  estimatedIncome: toNumber(entry.amountPerMonth),
+  periodFrom: toDate(entry.dateFrom),
+  periodTo: getPeriodTo(entry),
 })
+
+const buildPensionPayments = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreatePensionPaymentRequest[] =>
+  reconcile(
+    getEntries(answers, 'registerPension'),
+    getPersisted<GaldurExternalDomainModelsIncomePensionPaymentDTO>(
+      externalData,
+      'income.data.pensionPayments',
+    ),
+    buildPensionPayment,
+  )
+
+export const buildCreateIncomesRequest = (
+  answers: FormValue,
+  externalData: ExternalData,
+): GaldurExternalDomainRequestsIncomeCreateIncomesRequest => {
+  const selectedIncomeTypes = new Set(
+    getValueViaPath<IncomeType[]>(answers, 'typeOfIncome', []) ?? [],
+  )
+
+  return {
+    irregularJobs: selectedIncomeTypes.has(IncomeType.CASUAL_WORK)
+      ? buildIrregularJobs(answers, externalData)
+      : undefined,
+    partTimeJobs: selectedIncomeTypes.has(IncomeType.PART_TIME)
+      ? buildPartTimeJobs(answers, externalData)
+      : undefined,
+    contractorJobs: selectedIncomeTypes.has(IncomeType.CONTRACT_WORK)
+      ? buildContractorJobs(answers, externalData)
+      : undefined,
+    capitalIncomePayments: selectedIncomeTypes.has(IncomeType.CAPITAL_INCOME)
+      ? buildCapitalIncomePayments(answers, externalData)
+      : undefined,
+    trPayments: selectedIncomeTypes.has(IncomeType.SOCIAL_INSURANCE)
+      ? buildTRPayments(answers, externalData)
+      : undefined,
+    pensionPayments: selectedIncomeTypes.has(IncomeType.PENSION)
+      ? buildPensionPayments(answers, externalData)
+      : undefined,
+  }
+}

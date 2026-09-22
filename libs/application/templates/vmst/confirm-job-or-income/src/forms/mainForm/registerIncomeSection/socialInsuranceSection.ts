@@ -1,9 +1,13 @@
 import {
+  buildCustomField,
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { GaldurExternalDomainModelsIncomeTRPaymentDTO } from '@island.is/clients/vmst-unemployment'
+import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isSocialInsurance } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
@@ -16,6 +20,46 @@ import {
   formatIsDateLong,
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
+import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { IncomeValidationRow } from '../../../utils/validateIncomes'
+
+const getSocialInsuranceDefaults = (application: Application) => {
+  const payments =
+    getValueViaPath<GaldurExternalDomainModelsIncomeTRPaymentDTO[]>(
+      application.externalData,
+      'income.data.trPayments',
+    ) ?? []
+
+  return payments.map((payment) => ({
+    validationId: payment.id,
+    socialPaymentType: payment.incomeTypeId ?? '',
+    amountPerMonth:
+      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
+    dateFrom: payment.periodFrom ?? '',
+    dateTo: payment.periodTo ?? '',
+    paymentFrequency: 'monthly', // Used to bypass dataschema validation for defaultValues
+  }))
+}
+
+const socialInsuranceValidationProps: IncomeValidationFieldProps = {
+  fieldId: 'registerSocialInsurance',
+  incomeTypeKey: 'trPayments',
+  persistedPath: 'income.data.trPayments',
+  callbackId: 'SocialInsuranceValidation',
+  messages: {
+    fallbackErrorMessage: 'socialInsuranceValidationErrorMessage',
+  },
+  rowToInput: (row: IncomeValidationRow) => {
+    const isOneTime = row.paymentFrequency === PaymentFrequency.ONE_TIME
+    return {
+      validationId: String(row.validationId ?? ''),
+      incomeTypeId: String(row.socialPaymentType ?? ''),
+      estimatedIncome: Number(row.amountPerMonth ?? 0),
+      periodFrom: String(row.dateFrom ?? ''),
+      periodTo: isOneTime ? String(row.dateTo ?? '') : null,
+    }
+  },
+}
 
 export const socialInsuranceSection = buildSubSection({
   id: 'socialInsuranceSection',
@@ -30,8 +74,8 @@ export const socialInsuranceSection = buildSubSection({
         buildTableRepeaterField({
           id: 'registerSocialInsurance',
           addItemButtonText: m.application.addLine,
-          initActiveFieldIfEmpty: true,
           hideTableHeaderIfEmpty: true,
+          defaultValue: getSocialInsuranceDefaults,
           fields: {
             socialPaymentType: {
               component: 'select',
@@ -104,6 +148,16 @@ export const socialInsuranceSection = buildSubSection({
                 return getCurrentMonthStartDate()
               },
             },
+            // Correlates each row with the 3rd party validation response.
+            // Reuses an existing id if already present (persisted row or previously validated)
+            // so this function stays idempotent across renders.
+            validationId: {
+              component: 'hiddenInput',
+              defaultValue: (
+                _application: Application,
+                activeField?: Record<string, string>,
+              ) => activeField?.validationId ?? uuid(),
+            },
           },
           table: {
             header: [
@@ -130,6 +184,14 @@ export const socialInsuranceSection = buildSubSection({
             },
           },
         }),
+        buildCustomField(
+          {
+            id: 'socialInsuranceValidation',
+            doesNotRequireAnswer: true,
+            component: 'IncomeValidation',
+          },
+          socialInsuranceValidationProps,
+        ),
       ],
     }),
   ],

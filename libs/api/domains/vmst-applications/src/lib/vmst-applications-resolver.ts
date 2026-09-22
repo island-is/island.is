@@ -17,11 +17,11 @@ import {
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
-  PartTimeJobValidationResult,
+  IncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
-import { PartTimeJobValidationInput } from './dto/partTimeJobValidation.input'
+import { IncomeValidationInput } from './dto/incomeValidation.input'
 import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
@@ -77,16 +77,16 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
   }
 
-  @Query(() => PartTimeJobValidationResult, {
-    name: 'vmstApplicationsValidatePartTimeJobs',
+  @Query(() => IncomeValidationResult, {
+    name: 'vmstApplicationsValidateIncomes',
   })
   @Audit()
-  async validatePartTimeJobs(
+  async validateIncomes(
     @CurrentUser() auth: User,
-    @Args('input', { type: () => [PartTimeJobValidationInput] })
-    input: PartTimeJobValidationInput[],
+    @Args('input', { type: () => IncomeValidationInput })
+    input: IncomeValidationInput,
   ) {
-    return this.vmstApplicationsService.validatePartTimeJobs(auth, input)
+    return this.vmstApplicationsService.validateIncomes(auth, input)
   }
   @Query(() => VmstApplicationsU2ValidationResponse, {
     name: 'vmstApplicationsU2Validation',

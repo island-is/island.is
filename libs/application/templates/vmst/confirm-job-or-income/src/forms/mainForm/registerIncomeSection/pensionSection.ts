@@ -1,9 +1,13 @@
 import {
+  buildCustomField,
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { GaldurExternalDomainModelsIncomePensionPaymentDTO } from '@island.is/clients/vmst-unemployment'
+import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isPension } from '../../../utils/conditions'
 import { PaymentFrequency } from '../../../utils/constants'
@@ -16,6 +20,48 @@ import {
   formatIsDateLong,
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
+import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { IncomeValidationRow } from '../../../utils/validateIncomes'
+
+const getPensionDefaults = (application: Application) => {
+  const payments =
+    getValueViaPath<GaldurExternalDomainModelsIncomePensionPaymentDTO[]>(
+      application.externalData,
+      'income.data.pensionPayments',
+    ) ?? []
+
+  return payments.map((payment) => ({
+    validationId: payment.id,
+    pensionType: payment.incomeTypeId ?? '',
+    pensionFund: payment.pensionFundId ?? '',
+    amountPerMonth:
+      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
+    dateFrom: payment.periodFrom ?? '',
+    dateTo: payment.periodTo ?? '',
+    paymentFrequency: 'monthly', // TODO COMMENT
+  }))
+}
+
+const pensionValidationProps: IncomeValidationFieldProps = {
+  fieldId: 'registerPension',
+  incomeTypeKey: 'pensionPayments',
+  persistedPath: 'income.data.pensionPayments',
+  callbackId: 'PensionValidation',
+  messages: {
+    fallbackErrorMessage: 'pensionValidationErrorMessage',
+  },
+  rowToInput: (row: IncomeValidationRow) => {
+    const isOneTime = row.paymentFrequency === PaymentFrequency.ONE_TIME
+    return {
+      validationId: String(row.validationId ?? ''),
+      incomeTypeId: String(row.pensionType ?? ''),
+      pensionFundId: row.pensionFund ? String(row.pensionFund) : undefined,
+      estimatedIncome: Number(row.amountPerMonth ?? 0),
+      periodFrom: String(row.dateFrom ?? ''),
+      periodTo: isOneTime ? String(row.dateTo ?? '') : null,
+    }
+  },
+}
 
 export const pensionSection = buildSubSection({
   id: 'pensionSection',
@@ -30,8 +76,8 @@ export const pensionSection = buildSubSection({
         buildTableRepeaterField({
           id: 'registerPension',
           addItemButtonText: m.application.addLine,
-          initActiveFieldIfEmpty: true,
           hideTableHeaderIfEmpty: true,
+          defaultValue: getPensionDefaults,
           fields: {
             pensionType: {
               component: 'select',
@@ -122,6 +168,16 @@ export const pensionSection = buildSubSection({
               required: true,
               min: 0,
             },
+            // Correlates each row with the 3rd party validation response.
+            // Reuses an existing id (persisted or previously minted) so this
+            // function stays idempotent across renders.
+            validationId: {
+              component: 'hiddenInput',
+              defaultValue: (
+                _application: Application,
+                activeField?: Record<string, string>,
+              ) => activeField?.validationId ?? uuid(),
+            },
           },
           table: {
             header: [
@@ -165,6 +221,14 @@ export const pensionSection = buildSubSection({
             },
           },
         }),
+        buildCustomField(
+          {
+            id: 'pensionValidation',
+            doesNotRequireAnswer: true,
+            component: 'IncomeValidation',
+          },
+          pensionValidationProps,
+        ),
       ],
     }),
   ],

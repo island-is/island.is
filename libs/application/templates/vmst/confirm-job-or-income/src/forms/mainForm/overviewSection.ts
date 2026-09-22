@@ -29,7 +29,7 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overviewMultiField',
-      title: m.application.overviewSectionTitle,
+      title: m.application.overviewTitle,
       description: m.application.overviewSectionDescription,
       children: [
         buildOverviewField({

@@ -1,1 +1,1 @@
-export { PartTimeValidation } from './PartTimeValidation'
+export { IncomeValidation } from './IncomeValidation'

@@ -10,6 +10,9 @@ const casualWorkEntrySchema = z.object({
   dateFrom: z.string().min(1),
   dateTo: z.string().min(1),
   estimatedIncome: z.string().min(1),
+  // Correlates this row with the 3rd party income validation response.
+  validationId: z.string().optional(),
+  disabled: z.enum(['true', 'false']).optional(),
 })
 
 const casualWorkArraySchema = z
@@ -58,7 +61,7 @@ const partTimeEntrySchema = z.object({
   jobEnd: z.string().optional(),
   workPercentage: z.string().min(1),
   estimatedIncome: z.string().min(1),
-  // Used to correlate this row with the 3rd party validation response.
+  // Used to correlate this row with the VMST validation response.
   validationId: z.string().optional(),
   disabled: z.enum(['true', 'false']).optional(),
 })
@@ -98,15 +101,23 @@ const partTimeArraySchema = z
 const contractWorkEntrySchema = z.object({
   contractJobStart: z.string().min(1),
   workEnds: z.string().min(1),
+  // Correlates this row with the VMST income validation response.
+  validationId: z.string().optional(),
+  disabled: z.enum(['true', 'false']).optional(),
 })
 
 const capitalIncomeEntrySchema = z
   .object({
     paymentType: z.string().min(1),
     amountPerMonth: z.string().min(1),
-    paymentFrequency: z.nativeEnum(PaymentFrequency),
+    // Optional so seeded persisted rows (never re-submitted) skip schema; the
+    // row-level `required: true` on the radio field enforces user selection.
+    paymentFrequency: z.nativeEnum(PaymentFrequency).optional(),
     dateFrom: z.string().min(1),
     dateTo: z.string().optional(),
+    // Correlates this row with the VMST income validation response.
+    validationId: z.string().optional(),
+    disabled: z.enum(['true', 'false']).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.paymentFrequency === PaymentFrequency.ONE_TIME && !data.dateTo) {
@@ -122,9 +133,14 @@ const socialInsuranceEntrySchema = z
   .object({
     socialPaymentType: z.string().min(1),
     amountPerMonth: z.string().min(1),
-    paymentFrequency: z.nativeEnum(PaymentFrequency),
+    // Optional so seeded persisted rows (never re-submitted) skip schema; the
+    // row-level `required: true` on the radio field enforces user selection.
+    paymentFrequency: z.nativeEnum(PaymentFrequency).optional(),
     dateFrom: z.string().min(1),
     dateTo: z.string().optional(),
+    // Correlates this row with the 3rd party income validation response.
+    validationId: z.string().optional(),
+    disabled: z.enum(['true', 'false']).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.paymentFrequency === PaymentFrequency.ONE_TIME && !data.dateTo) {
@@ -141,9 +157,14 @@ const pensionEntrySchema = z
     pensionFund: z.string().min(1),
     pensionType: z.string().min(1),
     amountPerMonth: z.string().min(1),
-    paymentFrequency: z.nativeEnum(PaymentFrequency),
+    // Optional so seeded persisted rows (never re-submitted) skip schema; the
+    // row-level `required: true` on the radio field enforces user selection.
+    paymentFrequency: z.nativeEnum(PaymentFrequency).optional(),
     dateFrom: z.string().min(1),
     dateTo: z.string().optional(),
+    // Correlates this row with the 3rd party income validation response.
+    validationId: z.string().optional(),
+    disabled: z.enum(['true', 'false']).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.paymentFrequency === PaymentFrequency.ONE_TIME && !data.dateTo) {
@@ -173,8 +194,6 @@ export const dataSchema = z.object({
   registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
   registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
   registerPension: z.array(pensionEntrySchema).optional(),
-  partTimeValidationErrorTitle: z.string().optional(),
-  partTimeValidationErrorMessage: z.string().optional(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
