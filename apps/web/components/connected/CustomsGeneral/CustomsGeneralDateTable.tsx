@@ -9,6 +9,7 @@ import {
   LoadingDots,
   Stack,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
 import { SortableTable, SortableTableColumn } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -72,10 +73,10 @@ export const CustomsGeneralDateTable = <T extends Record<string, any>>({
         {Boolean(system) && (
           <Inline alignY="center" space={1}>
             <Tag active={system === 'I'} onClick={() => onSystemChange?.('I')}>
-              {activeLocale === 'is' ? 'Innflutningur' : 'Import'}
+              {formatMessage(m.systemImport)}
             </Tag>
             <Tag active={system === 'U'} onClick={() => onSystemChange?.('U')}>
-              {activeLocale === 'is' ? 'Útflutningur' : 'Export'}
+              {formatMessage(m.systemExport)}
             </Tag>
           </Inline>
         )}
@@ -89,6 +90,10 @@ export const CustomsGeneralDateTable = <T extends Record<string, any>>({
       ) : loading ? (
         <Box display="flex" justifyContent="center">
           <LoadingDots />
+        </Box>
+      ) : data.length === 0 ? (
+        <Box display="flex" marginTop={4} justifyContent="center">
+          <Text variant="h3">{formatMessage(m.noResults)}</Text>
         </Box>
       ) : (
         <SortableTable columns={columns} data={data} onRowClick={onRowClick} />
