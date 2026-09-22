@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 const tickSize = 8
 const tickBorder = 2
@@ -8,6 +8,8 @@ const tickSelectedBorder = 7
 const trackThickness = 2
 
 const horizontalTickArea = 32
+// Widens the tap area on split rows without touching the layout
+const tapAreaBleed = 16
 const verticalRowHeight = 48
 // Sized for the selected tick so choosing a value never shifts the layout
 const verticalTickColumn = tickSelectedSize
@@ -84,20 +86,23 @@ export const horizontalRow = style({
   alignItems: 'flex-start',
 })
 
-export const horizontalRowSplit = style({
-  display: 'grid',
-})
+export const horizontalRowSplit = style({})
 
 export const horizontalTick = style({
   flexDirection: 'column',
   justifyContent: 'center',
   // Sized for the selected tick so choosing a value never re-spaces the row
   width: tickSelectedSize,
-  selectors: {
-    [`${horizontalRowSplit} &`]: {
-      width: '100%',
-    },
-  },
+})
+
+// Split rows keep the small tick but take the tap area out into the gaps
+globalStyle(`${horizontalRowSplit} ${horizontalTick}::after`, {
+  content: '""',
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: -tapAreaBleed,
+  right: -tapAreaBleed,
 })
 
 export const horizontalBubbleArea = style({

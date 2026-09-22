@@ -77,14 +77,11 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
     document.getElementById(`${id}-${nextValue}`)?.focus()
   }
 
-  // Split rows run the track from the first cell's center to the last filled
-  // one's, keeping ticks aligned between rows
-  const trackStyle = (ticksInRow: number): CSSProperties | undefined =>
-    isSplit
-      ? {
-          left: `${100 / (2 * columns)}%`,
-          right: `${((columns - ticksInRow + 0.5) / columns) * 100}%`,
-        }
+  // A short last row is narrowed in proportion to the ticks it holds, so the
+  // spacing matches the rows above it and every row starts at the left edge
+  const rowStyle = (ticksInRow: number): CSSProperties | undefined =>
+    isSplit && ticksInRow > 1 && columns > 1
+      ? { width: `${((ticksInRow - 1) / (columns - 1)) * 100}%` }
       : undefined
 
   if (values.length === 0) {
@@ -108,17 +105,10 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
             className={cn(styles.horizontalRow, {
               [styles.horizontalRowSplit]: isSplit,
             })}
-            style={
-              isSplit
-                ? { gridTemplateColumns: `repeat(${columns}, 1fr)` }
-                : undefined
-            }
+            style={rowStyle(row.length)}
           >
             {row.length > 1 && (
-              <span
-                className={cn(styles.track, styles.horizontalTrack)}
-                style={trackStyle(row.length)}
-              />
+              <span className={cn(styles.track, styles.horizontalTrack)} />
             )}
             {row.map((scaleValue) => {
               const selected = value === scaleValue
