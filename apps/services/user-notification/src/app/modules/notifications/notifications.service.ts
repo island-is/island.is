@@ -40,7 +40,7 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
 import { Op } from 'sequelize'
 
 /**
@@ -372,9 +372,15 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: {
         recipient: nationalId,
-        scope: {
-          [Op.in]: scopes || [DocumentsScope.main],
-        },
+        // Callers with @island.is/internal see all their own notifications,
+        // regardless of scope (recipient still restricts to their own).
+        ...(scopes.includes(ApiScope.internal)
+          ? {}
+          : {
+              scope: {
+                [Op.in]: scopes || [DocumentsScope.main],
+              },
+            }),
       },
     })
 

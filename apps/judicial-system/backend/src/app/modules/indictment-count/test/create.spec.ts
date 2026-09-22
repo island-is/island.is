@@ -3,7 +3,10 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { IndictmentCount } from '../../repository'
+import {
+  IndictmentCount,
+  IndictmentCountRepositoryService,
+} from '../../repository'
 
 interface Then {
   result: IndictmentCount
@@ -13,15 +16,18 @@ interface Then {
 type GivenWhenThen = (caseId: string) => Promise<Then>
 
 describe('IndictmentCountController - Create', () => {
-  let mockIndictmentCountModel: typeof IndictmentCount
+  let mockIndictmentCountRepositoryService: IndictmentCountRepositoryService
   let givenWhenThen: GivenWhenThen
   let transaction: Transaction
 
   beforeEach(async () => {
-    const { indictmentCountModel, indictmentCountController, sequelize } =
-      await createTestingIndictmentCountModule()
+    const {
+      indictmentCountRepositoryService,
+      indictmentCountController,
+      sequelize,
+    } = await createTestingIndictmentCountModule()
 
-    mockIndictmentCountModel = indictmentCountModel
+    mockIndictmentCountRepositoryService = indictmentCountRepositoryService
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
     mockTransaction.mockImplementationOnce(
@@ -41,34 +47,57 @@ describe('IndictmentCountController - Create', () => {
     }
   })
 
-  describe('indictment count created', () => {
+  describe('first indictment count created', () => {
     const caseId = uuid()
     const createdIndictmentCount = { id: uuid() }
     let then: Then
 
     beforeEach(async () => {
-      const mockMax = mockIndictmentCountModel.max as jest.Mock
-      mockMax.mockResolvedValueOnce(-1)
+      const mockGetMaxDisplayOrderForCase =
+        mockIndictmentCountRepositoryService.getMaxDisplayOrderForCase as jest.Mock
+      mockGetMaxDisplayOrderForCase.mockResolvedValueOnce(null)
 
-      const mockCreate = mockIndictmentCountModel.create as jest.Mock
+      const mockCreate =
+        mockIndictmentCountRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdIndictmentCount)
 
       then = await givenWhenThen(caseId)
     })
 
-    it('should create an indictment count', () => {
-      expect(mockIndictmentCountModel.max).toHaveBeenCalledWith(
-        'displayOrder',
-        {
-          where: { caseId },
-          transaction,
-        },
+    it('should create an indictment count at display order 0', () => {
+      expect(
+        mockIndictmentCountRepositoryService.getMaxDisplayOrderForCase,
+      ).toHaveBeenCalledWith(caseId, { transaction })
+      expect(mockIndictmentCountRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
+        { displayOrder: 0 },
+        { transaction },
       )
-      expect(mockIndictmentCountModel.create).toHaveBeenCalledWith(
-        {
-          caseId,
-          displayOrder: 0,
-        },
+      expect(then.result).toBe(createdIndictmentCount)
+    })
+  })
+
+  describe('further indictment count created', () => {
+    const caseId = uuid()
+    const createdIndictmentCount = { id: uuid() }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockGetMaxDisplayOrderForCase =
+        mockIndictmentCountRepositoryService.getMaxDisplayOrderForCase as jest.Mock
+      mockGetMaxDisplayOrderForCase.mockResolvedValueOnce(2)
+
+      const mockCreate =
+        mockIndictmentCountRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdIndictmentCount)
+
+      then = await givenWhenThen(caseId)
+    })
+
+    it('should create an indictment count after the last one', () => {
+      expect(mockIndictmentCountRepositoryService.create).toHaveBeenCalledWith(
+        caseId,
+        { displayOrder: 3 },
         { transaction },
       )
       expect(then.result).toBe(createdIndictmentCount)
@@ -80,7 +109,8 @@ describe('IndictmentCountController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockIndictmentCountModel.create as jest.Mock
+      const mockCreate =
+        mockIndictmentCountRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId)

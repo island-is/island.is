@@ -25,6 +25,7 @@ import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 import { GenericFormInput } from './dto/genericForm.input'
+import { injectFormFieldValuesIntoEmailSubject } from './utils/emailSubject'
 import { environment } from './environments/environment'
 import { CommunicationsConfig } from './communications.config'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
@@ -216,8 +217,19 @@ export class CommunicationsService {
 
     let subject = `Island.is form: ${form.title}`
 
-    if (form.emailSubject?.trim()) {
-      subject = form.emailSubject.trim()
+    const emailSubjectTemplate = form.emailSubject?.trim()
+
+    if (emailSubjectTemplate) {
+      const emailSubject = injectFormFieldValuesIntoEmailSubject(
+        emailSubjectTemplate,
+        form,
+        input.fieldValues,
+      )
+
+      // The subject can end up empty if it only consists of form fields that the user left blank
+      if (emailSubject) {
+        subject = emailSubject
+      }
     }
 
     const emailOptions = {

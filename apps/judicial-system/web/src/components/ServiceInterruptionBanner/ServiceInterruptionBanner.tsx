@@ -7,8 +7,7 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-
-import { UserContext } from '../UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 const ServiceInterruptionBanner = () => {
   const { formatMessage } = useIntl()

@@ -51,6 +51,9 @@ interface Props {
   }
 }
 
+// Enough to act on without turning the inline error into a wall of plates
+const MAX_LISTED_ERROR_ROWS = 10
+
 export const UploadCarCategoryFile = ({
   application,
   field,
@@ -190,19 +193,28 @@ export const UploadCarCategoryFile = ({
         return null
       }
 
-      // We have errors, show single error or generic message
+      // We have errors, name the offending rows either way
       const errorMessages = parsed.errors as CarCategoryError[]
+      // A blank plate cell is itself a "car not found" error, so fall back to
+      // the row number rather than rendering a bare dash
+      const describeErrorRow = (error: CarCategoryError) =>
+        error.carNr?.trim() ||
+        formatMessage(m.multiUpload.rowLabel, { row: error.row })
+
       if (errorMessages.length === 1) {
         setUploadErrorMessage(
-          `${errorMessages[0].carNr} - ${formatMessage(
+          `${describeErrorRow(errorMessages[0])} - ${formatMessage(
             errorMessages[0].message,
           )}`,
         )
       } else {
+        const listed = errorMessages.slice(0, MAX_LISTED_ERROR_ROWS)
         setUploadErrorMessage(
           `${errorMessages.length} ${formatMessage(
             m.multiUpload.errorMessageToUser,
-          )}`,
+          )} (${listed.map(describeErrorRow).join(', ')}${
+            errorMessages.length > listed.length ? '…' : ''
+          })`,
         )
       }
 
@@ -210,9 +222,11 @@ export const UploadCarCategoryFile = ({
       const errorExcel = await createErrorExcel(
         await file.arrayBuffer(),
         type,
+        // Keyed by row: two rows can share a plate, or have none at all, and
+        // only the row the error came from should be marked
         new Map(
           (parsed.errors as CarCategoryError[]).map((error) => [
-            error.carNr,
+            error.row,
             formatMessage(error.message),
           ]),
         ),

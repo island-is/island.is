@@ -1,22 +1,21 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
-import { CourtDocument } from '@island.is/judicial-system/types'
+import type { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
 import {
   BaseSelect,
   IconButton,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import MultipleValueList from '@island.is/judicial-system-web/src/components/MultipleValueList/MultipleValueList'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import * as styles from './CourtDocuments.css'
 
 interface Props {

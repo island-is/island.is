@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import type { StepMeta } from './utils'
+import type { StepMeta } from '../../utils/types'
 
 type Props = {
   fieldName: string
@@ -61,6 +61,17 @@ export const StepAssignmentItem: FC<Props> = ({
           {subTitle}
         </Text>
         {info && <Text variant="small">{info}</Text>}
+        {/* Definition of the step currently picked in the select, so the
+            applicant can read what they are assigning without going back to
+            the sub-criteria screen. */}
+        {step?.description && (
+          <Text variant="small" marginTop={1}>
+            {formatMessage(m.selectedStepDescription, {
+              order: stepOrder,
+              description: step.description,
+            })}
+          </Text>
+        )}
       </Box>
       <Box style={{ minWidth: 160 }}>
         <SelectController

@@ -164,9 +164,13 @@ export const transformApplicationToOldAgePensionDTO = (
       }),
     }),
     uploads,
-    ...(incomePlanHasOnlyZeroIncome(incomePlan) && {
-      awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
-    }),
+    // incomePlanHasOnlyZeroIncome is vacuously true for an empty plan, so also
+    // require rows: when the applicant asked for a single yearly payment the
+    // income plan screens are skipped and no declaration was ever made.
+    ...(incomePlan.length > 0 &&
+      incomePlanHasOnlyZeroIncome(incomePlan) && {
+        awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
+      }),
   }
 
   return oldAgePensionDTO

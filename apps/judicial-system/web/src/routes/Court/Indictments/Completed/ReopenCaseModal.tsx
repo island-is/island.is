@@ -1,4 +1,5 @@
-import { FC, useState } from 'react'
+import type { FC } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -9,11 +10,13 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { Modal } from '@island.is/judicial-system-web/src/components'
+import type {
+  Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
-  Case,
   CaseIndictmentRulingDecision,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'

@@ -58,6 +58,11 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   submissionServiceUrl?: string
 
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  zendeskBrandId?: string
+
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
@@ -96,6 +101,11 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional()
   isInaccessible?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  validateEligibility?: boolean
 
   @IsBoolean()
   @IsOptional()

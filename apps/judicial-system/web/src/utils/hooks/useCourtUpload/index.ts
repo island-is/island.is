@@ -1,19 +1,14 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
-import { ApolloError } from '@apollo/client'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import {
+import type {
   Case,
   CaseFile,
-  CaseFileState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
+import { resolveCourtUploadError } from './useCourtUpload.logic'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -136,18 +131,7 @@ export const useCourtUpload = (
             )
           }
         } catch (error) {
-          const { errorCode, detail } = {
-            errorCode:
-              error instanceof ApolloError &&
-              (error as ApolloError).graphQLErrors[0].extensions?.code,
-            detail:
-              (error instanceof ApolloError &&
-                (
-                  (error as ApolloError).graphQLErrors[0].extensions
-                    ?.problem as { detail: string }
-                )?.detail) ||
-              '',
-          }
+          const { errorCode, detail } = resolveCourtUploadError(error)
 
           if (errorCode === 'https://httpstatuses.org/404') {
             if (detail?.startsWith('Case Not Found')) {

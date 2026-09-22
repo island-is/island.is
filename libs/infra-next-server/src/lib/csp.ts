@@ -105,7 +105,6 @@ export const buildContentSecurityPolicy = (
       'https://*.boost.ai',
       'https://cdnjs.cloudflare.com',
       'https://*.livechatinc.com',
-      'https://*.assistant.watson.appdomain.cloud',
       'https://*.zopim.com',
       'https://*.statuspage.io',
       'https://*.valitor.com',
@@ -143,7 +142,6 @@ export const buildContentSecurityPolicy = (
     ],
     'frame-src': [
       'blob:',
-      'https://*.assistant.watson.appdomain.cloud',
       'https://*.devland.is',
       'https://*.island.is',
       'https://*.dropandsign.is',
@@ -173,7 +171,6 @@ export const buildContentSecurityPolicy = (
     'connect-src': [
       "'self'",
       'https://*.sveitarfelog.net',
-      'https://*.assistant.watson.appdomain.cloud',
       'https://assets.ctfassets.net',
       'https://*.sentry.io',
       'https://*.island.is',
@@ -220,7 +217,6 @@ export const buildContentSecurityPolicy = (
       'data:',
       'https://fonts.gstatic.com',
       'https://cdn.livechatinc.com',
-      'https://web-chat.global.assistant.watson.appdomain.cloud',
       'https://applepay.cdn-apple.com',
     ],
   }

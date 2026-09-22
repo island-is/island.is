@@ -20,6 +20,9 @@ const indictmentAppealDeadline: CaseTableColumn = { title: 'Frestur' }
 const subpoenaServiceState: CaseTableColumn = { title: 'Birtingarstaða' }
 const indictmentReviewer: CaseTableColumn = { title: 'Saksóknari' }
 const sentToPrisonAdminDate: CaseTableColumn = { title: 'Sent til fullnustu' }
+const closedWithoutEnforcementDate: CaseTableColumn = {
+  title: 'Lokið án fullnustu',
+}
 const indictmentReviewDecision: CaseTableColumn = {
   title: 'Ákvörðun saksóknara',
 }
@@ -35,6 +38,16 @@ const indictmentRulingDecisionWithoutAppealState: CaseTableColumn = {
 const created: CaseTableColumn = { title: 'Stofnað' }
 const prosecutor: CaseTableColumn = { title: 'Ákærandi' }
 const prosecutorInitials: CaseTableColumn = { title: 'Ákærandi' }
+// The verdict appeal columns read the case's verdict appeal, not its ruling
+// appeal, so they cannot share the appealCase-backed columns above even where
+// the title is the same.
+const verdictAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
+const districtCourtRulingDate: CaseTableColumn = { title: 'Dómur héraðsdóms' }
+const verdictAppealAppellant: CaseTableColumn = { title: 'Áfrýjað af' }
+const verdictAppealState: CaseTableColumn = { title: 'Staða' }
+const verdictAppealHead: CaseTableColumn = { title: 'Dómsformaður' }
+const verdictAppealCompletedDate: CaseTableColumn = { title: 'Máli lokið' }
+const verdictAppealResult: CaseTableColumn = { title: 'Niðurstaða' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -55,6 +68,7 @@ export const caseTableColumns = {
   subpoenaServiceState,
   indictmentReviewer,
   sentToPrisonAdminDate,
+  closedWithoutEnforcementDate,
   indictmentReviewDecision,
   caseSentToCourtDate,
   arraignmentDate,
@@ -65,6 +79,13 @@ export const caseTableColumns = {
   created,
   prosecutor,
   prosecutorInitials,
+  verdictAppealCaseNumber,
+  districtCourtRulingDate,
+  verdictAppealAppellant,
+  verdictAppealState,
+  verdictAppealHead,
+  verdictAppealCompletedDate,
+  verdictAppealResult,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns

@@ -1,11 +1,5 @@
-import {
-  FC,
-  ForwardedRef,
-  forwardRef,
-  useCallback,
-  useContext,
-  useRef,
-} from 'react'
+import type { FC, ForwardedRef } from 'react'
+import { forwardRef, useCallback, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -37,13 +31,16 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type {
+  CivilClaimant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
   CaseTransition,
-  CivilClaimant,
   DefendantPlea,
-  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SelectCourt } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import { isCivilClaimantDefendantSelectionValid } from '@island.is/judicial-system-web/src/utils/civilClaimantUtils'
 import {
   useCase,
@@ -56,12 +53,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { SelectCourt } from '../../components'
 import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+type UpdateDefendant = Omit<UpdateDefendantInput, 'caseId'>
 
 interface CivilClaimantAccordionLabelProps {
   label: string
@@ -288,10 +284,14 @@ const Processing: FC = () => {
       return
     }
 
+    // The claimant's civil claim files are deleted with the claimant
     setWorkingCase((prev) => ({
       ...prev,
       civilClaimants: prev.civilClaimants?.filter(
         (civilClaimant) => civilClaimant.id !== civilClaimantId,
+      ),
+      caseFiles: prev.caseFiles?.filter(
+        (caseFile) => caseFile.civilClaimantId !== civilClaimantId,
       ),
     }))
   }
@@ -305,10 +305,14 @@ const Processing: FC = () => {
       return
     }
 
+    // Turning civil claims off deletes every claimant along with their files
     setWorkingCase((prev) => ({
       ...prev,
       hasCivilClaims,
       civilClaimants: res.civilClaimants,
+      caseFiles: hasCivilClaims
+        ? prev.caseFiles
+        : prev.caseFiles?.filter((caseFile) => !caseFile.civilClaimantId),
     }))
 
     if (hasCivilClaims) {
@@ -459,7 +463,7 @@ const Processing: FC = () => {
           </BlueBox>
         </Box>
         {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <CivilClaimantAccordionItem

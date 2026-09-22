@@ -7,6 +7,10 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import * as m from '../../../lib/messages'
 import { getSignedAssigneeOverviewItems } from '../../../utils/assigneeUtil'
+import {
+  signedAssigneesAccessAgreementOverviewAttachments,
+  signedAssigneesAccessAgreementOverviewTitle,
+} from '../../../utils/getOverviewItems'
 import { hasAllAssigneesRejectedInAnswers } from '../../../utils/assigneeRejectionUtils'
 
 export const assigneeOverviewSection = buildSection({
@@ -24,6 +28,12 @@ export const assigneeOverviewSection = buildSection({
           id: 'submitAssigneeInfoOverview',
           title: m.draftMessages.householdMembersSection.title,
           items: getSignedAssigneeOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'submitAssigneeAccessAgreementOverview',
+          title: signedAssigneesAccessAgreementOverviewTitle,
+          attachments: signedAssigneesAccessAgreementOverviewAttachments,
+          hideIfEmpty: true,
         }),
         buildSubmitField({
           id: 'applicantSubmitFormSubmit',

@@ -12,6 +12,7 @@ import { FileService } from '../../../file'
 import { PoliceService } from '../../../police'
 import { Case, Defendant, Verdict } from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
+import { InternalVerdictController } from '../../internalVerdict.controller'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -19,7 +20,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = () => Promise<Then>
+type GivenWhenThen = (caseToDeliver?: Case) => Promise<Then>
 
 describe('InternalVerdictController - Deliver verdict to national commissioners office', () => {
   const caseId = uuid()
@@ -52,34 +53,31 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
   let mockPoliceService: PoliceService
   let mockFileService: FileService
   let mockEventService: EventService
+  let internalVerdictController: InternalVerdictController
 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      internalVerdictController,
-      policeService,
-      fileService,
-      eventService,
-    } = await createTestingVerdictModule()
+    const testingModule = await createTestingVerdictModule()
 
-    mockPoliceService = policeService
-    mockEventService = eventService
+    mockPoliceService = testingModule.policeService
+    mockEventService = testingModule.eventService
+    internalVerdictController = testingModule.internalVerdictController
     const mockCreateDocument = mockPoliceService.createDocument as jest.Mock
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
-    mockFileService = fileService
+    mockFileService = testingModule.fileService
     const mockGetCaseFileFromS3 = mockFileService.getCaseFileFromS3 as jest.Mock
     mockGetCaseFileFromS3.mockResolvedValue(buffer)
 
-    givenWhenThen = async (): Promise<Then> => {
+    givenWhenThen = async (caseToDeliver = theCase): Promise<Then> => {
       const then = {} as Then
 
       await internalVerdictController
         .deliverVerdictToNationalCommissionersOffice(
-          caseId,
+          caseToDeliver.id,
           defendantId,
-          theCase,
+          caseToDeliver,
           defendant,
           verdict,
           dto,
@@ -121,6 +119,32 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
           { code: 'VERDICT_COURT_CASE_NUMBER', value: courtCaseNumber },
         ],
       })
+    })
+  })
+
+  describe('verdict delivered for a split case', () => {
+    const originalCaseId = uuid()
+    const createDocumentResponse = { externalPoliceDocumentId: uuid() }
+    const splitCase = {
+      ...theCase,
+      splitCaseId: originalCaseId,
+    } as Case
+
+    beforeEach(async () => {
+      const mockCreateDocument = mockPoliceService.createDocument as jest.Mock
+      mockCreateDocument.mockResolvedValue(createDocumentResponse)
+
+      await givenWhenThen(splitCase)
+    })
+
+    it('should send the original ancestor case id as RVG_CASE_ID', () => {
+      expect(mockPoliceService.createDocument).toHaveBeenCalledWith(
+        expect.objectContaining({
+          caseSupplements: expect.arrayContaining([
+            { code: 'RVG_CASE_ID', value: originalCaseId },
+          ]),
+        }),
+      )
     })
   })
 

@@ -1,10 +1,10 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './EditableCaseFile.css'
 

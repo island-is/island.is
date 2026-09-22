@@ -98,6 +98,13 @@ export class Form extends Model<Form> {
   submissionServiceUrl!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  zendeskBrandId!: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
@@ -157,6 +164,13 @@ export class Form extends Model<Form> {
     defaultValue: false,
   })
   isInaccessible!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  validateEligibility!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

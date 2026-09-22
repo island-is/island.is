@@ -20,7 +20,6 @@ import {
   Form,
   HeadWithSocialSharing,
   Sticky,
-  WatsonChatPanel,
 } from '@island.is/web/components'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
@@ -44,8 +43,6 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { webRichText } from '@island.is/web/utils/richText'
-
-import { watsonConfig } from './config'
 
 interface AnchorPageProps {
   anchorPage: GetAnchorPageQuery['getAnchorPage']
@@ -223,10 +220,6 @@ export const AnchorPage: Screen<AnchorPageProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {watsonConfig[locale] && ( // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        <WatsonChatPanel {...watsonConfig[locale]} />
-      )}
     </Box>
   )
 }

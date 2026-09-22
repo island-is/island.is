@@ -1,19 +1,19 @@
 import { useCallback, useContext, useState } from 'react'
 
-import { Box, toast } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtCaseNumberInput } from '@island.is/judicial-system-web/src/routes/Court/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { CourtCaseNumberInput } from '../../Court/components'
 
 export const useCancelCase = (
   onComplete: (caseId: string) => void,

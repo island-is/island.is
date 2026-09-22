@@ -51,6 +51,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     <Box
       className={cn(styles.filterActionButtons, {
         [styles.circleActionButtons]: colorScheme === 'light',
+        [styles.rowActionButtons]: colorScheme === 'negative',
       })}
       display="flex"
       height="full"

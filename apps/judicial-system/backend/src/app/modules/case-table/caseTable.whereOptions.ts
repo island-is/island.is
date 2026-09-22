@@ -28,6 +28,8 @@ import {
 import {
   courtOfAppealsCasesCompletedWhereOptions,
   courtOfAppealsCasesInProgressWhereOptions,
+  courtOfAppealsVerdictAppealsCompletedWhereOptions,
+  courtOfAppealsVerdictAppealsInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
   defenceIndictmentsAppealedWhereOptions,
@@ -77,6 +79,7 @@ import {
   publicProsecutionOfficeIndictmentsAcquittedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
+  publicProsecutionOfficeIndictmentsClosedWithoutEnforcementWhereOptions,
   publicProsecutionOfficeIndictmentsInReviewWhereOptions,
   publicProsecutionOfficeIndictmentsNewWhereOptions,
   publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
@@ -133,6 +136,10 @@ export const caseTableWhereOptions: Record<
     courtOfAppealsCasesInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED]:
     courtOfAppealsCasesCompletedWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS]:
+    courtOfAppealsVerdictAppealsInProgressWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED]:
+    courtOfAppealsVerdictAppealsCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
@@ -179,6 +186,8 @@ export const caseTableWhereOptions: Record<
     publicProsecutionOfficeIndictmentsAcquittedWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL]:
     publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_CLOSED_WITHOUT_ENFORCEMENT]:
+    publicProsecutionOfficeIndictmentsClosedWithoutEnforcementWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]:
     prosecutionRequestCasesInProgressWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]:

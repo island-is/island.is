@@ -24,6 +24,7 @@ command:
 enabled: true
 env:
   BACKEND_URL: 'http://web-judicial-system-backend'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'

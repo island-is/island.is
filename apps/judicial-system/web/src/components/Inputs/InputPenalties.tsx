@@ -1,9 +1,8 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Input } from '@island.is/island-ui/core'
+import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
 import { useDebouncedInput } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import SectionHeading from '../SectionHeading/SectionHeading'
 
 const InputPenalties: FC = () => {
   const penaltiesInput = useDebouncedInput('penalties', [])

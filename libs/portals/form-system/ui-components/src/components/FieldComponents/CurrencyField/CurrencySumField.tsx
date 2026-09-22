@@ -24,7 +24,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
   const { currentScreen } = state || {}
   const { formatMessage, lang } = useLocale()
   const label = item?.name?.[lang]
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   // Calculates the sum of all ISK_NUMBERBOX fields that are before the current ISK_SUMBOX field, and after the previous ISK_SUMBOX field (if any)
   const sum = useMemo(() => {
@@ -34,7 +34,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
       (field) => field?.id === item.id,
     )
 
-    if (currentSumFieldIndex === -1) return 0
+    if (currentSumFieldIndex === -1) return ''
 
     let previousSumFieldIndex = -1
 
@@ -50,7 +50,9 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
       currentSumFieldIndex,
     )
 
-    return fieldsToSum.reduce((total, field) => {
+    let hasValue = false
+
+    const total = fieldsToSum.reduce((total, field) => {
       if (field?.fieldType !== FieldTypesEnum.ISK_NUMBERBOX) return total
 
       const valueCount = field.values?.length ?? 0
@@ -65,17 +67,23 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
         const numericValue = parseInt(String(value).replace(/\./g, ''), 10)
 
         if (!Number.isNaN(numericValue)) {
+          hasValue = true
           fieldTotal += numericValue
         }
       }
 
       return total + fieldTotal
     }, 0)
+
+    return hasValue ? total : ''
   }, [currentScreen?.data?.fields, item.id])
 
-  const formattedSum = sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  const formattedSum =
+    sum === '' ? '' : sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
   useEffect(() => {
+    setValue(item.id, formattedSum)
+
     if (dispatch) {
       dispatch({
         type: 'SET_CURRENCY',
@@ -85,7 +93,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
         },
       })
     }
-  }, [dispatch, formattedSum, item.id])
+  }, [dispatch, formattedSum, item.id, setValue])
 
   return (
     <Row marginTop={2}>
@@ -94,7 +102,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
           key={item.id}
           name={item.id}
           control={control}
-          defaultValue={getValue(item, 'iskNumber') ?? ''}
+          defaultValue=""
           rules={{
             required: {
               value: item?.isRequired ?? false,

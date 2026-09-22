@@ -24,6 +24,12 @@ fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
   direction
   messageSentAt
   senderGroupName
+  certificateId
+  requiresPayment
+  paid
+  amountIsk
+  pendingPaymentId
+  pendingPaymentStartedAt
   content {
     __typename
     ...HealthConversationTextContent
@@ -45,7 +51,8 @@ query GetHealthConversationDetail($id: ID!) {
     status
     isStarred
     isArchived
-    patientCanReply
+    replyAvailability
+    patientReplyWindowDays
     isRead
     organization {
       ...HealthConversationOrganizationFragment
@@ -94,5 +101,27 @@ mutation ReplyToHealthConversation(
     messages {
       ...HealthConversationMessage
     }
+  }
+}
+
+query GetHealthCertificate($id: ID!) {
+  healthDirectorateCertificate(id: $id) {
+    id
+    requiresPayment
+    paid
+    amountIsk
+  }
+}
+
+mutation CreateHealthCertificatePaymentIntent(
+  $input: HealthDirectorateCreateCertificatePaymentIntentInput!
+  $locale: LocaleEnum
+) {
+  healthDirectorateCreateCertificatePaymentIntent(
+    input: $input
+    locale: $locale
+  ) {
+    paymentId
+    paymentPageUrl
   }
 }

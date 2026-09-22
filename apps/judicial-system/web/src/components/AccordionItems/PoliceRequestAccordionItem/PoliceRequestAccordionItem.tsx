@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
@@ -12,18 +12,18 @@ import {
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   core,
-  laws,
   requestCourtDate,
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-import {
+import AccordionListItem from '@island.is/judicial-system-web/src/components/AccordionListItem/AccordionListItem'
+import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
 
 interface Props {
@@ -116,7 +116,9 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 (legalProvision: CaseLegalProvisions, index) => {
                   return (
                     <div key={index}>
-                      <Text>{formatMessage(laws[legalProvision].title)}</Text>
+                      <Text>
+                        {getLegalProvisionTitle(formatMessage, legalProvision)}
+                      </Text>
                     </div>
                   )
                 },

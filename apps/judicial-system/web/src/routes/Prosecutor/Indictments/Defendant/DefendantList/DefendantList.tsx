@@ -3,24 +3,25 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
+import type {
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DefendantInfo } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { getIndictmentIntroductionAutofill } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/Indictment/Indictment'
 import {
   useCase,
   useDefendants,
   useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import { DefendantInfo } from '../../../components'
-import { getIndictmentIntroductionAutofill } from '../../Indictment/Indictment'
 import { strings } from './DefendantList.strings'
 
 const isLokeCaseWithId = (

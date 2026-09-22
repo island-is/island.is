@@ -17,7 +17,7 @@ import {
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg?url'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
 import CompareLists from '../../shared-components/compareLists'

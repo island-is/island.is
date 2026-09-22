@@ -62,16 +62,13 @@ import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_ORGANIZATION_LOGOS_QUERY } from '../screens/queries/Organization'
 import { Screen, ScreenContext } from '../types'
-import {
-  extractOrganizationSlugFromPathname,
-  pathIsProjectPage,
-} from '../utils/organization'
+import { getHeaderNavigationPropsFromUrl } from '../utils/organization'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-expect-error make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -117,7 +114,7 @@ export interface LayoutProps {
     en: string
   }
   footerVersion?: 'default' | 'organization'
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
   // @ts-expect-error make web strict
   respOrigin
   headerNavData?: HeaderNavData | null
@@ -136,7 +133,7 @@ if (typeof window !== 'undefined') {
     })
   }
 }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-expect-error make web strict
 const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
@@ -197,7 +194,6 @@ const Layout: Screen<LayoutProps> = ({
 
   useEffect(() => {
     setAlertBanners(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error make web strict
       [
         {
@@ -255,22 +251,12 @@ const Layout: Screen<LayoutProps> = ({
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
-  const organizationSearchFilter =
-    organizationSearchFilterOverride ??
-    extractOrganizationSlugFromPathname(router.asPath, activeLocale)
-
-  // Institution sites (stofnanavefir) and project pages (/verkefni) get the
-  // simplified header: logo, search, My Pages and language toggle stay, but
-  // the burger menu and navigation links are hidden. `organizationSearchFilter`
-  // is truthy whenever we're within a specific organization's site, and the
-  // project routes all resolve to a `project*` link type. Individual screens
-  // can also force the simplified header from their `withMainLayout` config via
-  // `showHeaderNavigation: false` — an opt-out kill switch that hides the nav
-  // but can never force it onto an org/project page.
+  // Route-derived defaults come from getProps so the server markup and first
+  // hydrated render agree. Explicit search filters and `false` remain one-way
+  // overrides that can hide navigation on additional pages.
+  const organizationSearchFilter = organizationSearchFilterOverride ?? ''
   const showHeaderNavigation =
-    showHeaderNavigationOverride !== false &&
-    !organizationSearchFilter &&
-    !pathIsProjectPage(router.asPath)
+    showHeaderNavigationOverride !== false && !organizationSearchFilter
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -357,50 +343,37 @@ const Layout: Screen<LayoutProps> = ({
         />
         {alertBanners.map((banner) => (
           <AlertBanner
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             key={banner.bannerId}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             title={banner.title}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             description={banner.description}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             link={{
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error make web strict
               ...(!!banner.link &&
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
                 !!banner.linkTitle && {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-expect-error make web strict
                   href: linkResolver(banner.link.type as LinkType, [
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error make web strict
                     banner.link.slug,
                   ]).href,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
                   // @ts-expect-error make web strict
                   title: banner.linkTitle,
                 }),
             }}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error make web strict
               if (banner.dismissedForDays !== 0) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
                 Cookies.set(banner.bannerId, 'hide', {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-expect-error make web strict
                   expires: banner.dismissedForDays,
                 })
@@ -417,7 +390,6 @@ const Layout: Screen<LayoutProps> = ({
         >
           {showHeader && (
             <ColorSchemeContext.Provider
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error make web strict
               value={{ colorScheme: headerColorScheme }}
             >
@@ -547,13 +519,17 @@ const Layout: Screen<LayoutProps> = ({
     </GlobalContextProvider>
   )
 }
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
 // @ts-expect-error make web strict
 Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
+  const headerNavigationProps = getHeaderNavigationPropsFromUrl(
+    req?.url,
+    lang as Locale,
+  )
   const [
     categories,
     alertBanner,
@@ -592,7 +568,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => {
         // map data here to reduce data processing in component
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-expect-error make web strict
         return JSON.parse(res.data.getNamespace.fields)
       }),
@@ -664,13 +640,12 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
   // @ts-expect-error make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus[key] = mapLinks(menu as Menu)
       }
@@ -680,31 +655,26 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     switch (menu.id) {
       // Footer lower
       case '5c2EheJw1r0QQGb2VDOJHU':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '5Hh1PJAmyy9T9PaQd4qMVv':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '3w5wgyaJo2ZLp74bdm0A0B':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper info
       case 'NtmV8H8sIEiXe6xdEKXsV':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '12W37tLOmkxKDfUrw0X0h7':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
@@ -734,6 +704,7 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
     namespace,
     respOrigin,
     headerNavData,
+    ...headerNavigationProps,
   }
 }
 
@@ -810,17 +781,26 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const languageToggleHrefOverride =
       layoutComponentProps?.languageToggleHrefOverride
 
+    const mergedLayoutProps = {
+      ...layoutProps,
+      ...layoutConfig,
+      ...themeConfig,
+      organizationAlertBannerContent,
+      articleAlertBannerContent,
+      customAlertBannerContent,
+      languageToggleQueryParams,
+      customTopLoginButtonItem,
+      languageToggleHrefOverride,
+    }
+
+    // Route restrictions are authoritative. Page config may hide navigation
+    // elsewhere, but it cannot re-enable it on organization or project pages.
     return {
       layoutProps: {
-        ...layoutProps,
-        ...layoutConfig,
-        ...themeConfig,
-        organizationAlertBannerContent,
-        articleAlertBannerContent,
-        customAlertBannerContent,
-        languageToggleQueryParams,
-        customTopLoginButtonItem,
-        languageToggleHrefOverride,
+        ...mergedLayoutProps,
+        showHeaderNavigation:
+          layoutProps.showHeaderNavigation !== false &&
+          mergedLayoutProps.showHeaderNavigation !== false,
       },
       componentProps,
     }

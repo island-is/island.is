@@ -264,6 +264,34 @@ jobs:
       - name: Linting
         run: yarn nx affected --target=lint
 
+  typecheck:
+    needs:
+      - prepare
+    permissions:
+      contents: 'read'
+    runs-on: arc-shared
+    timeout-minutes: 35
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch NX_BASE commit
+        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      # The vite builds do not type check (unlike the webpack builds they
+      # replaced), so projects with a typecheck target are checked here.
+      - name: Type checking
+        run: yarn nx affected --target=typecheck
+
   build:
     needs:
       - prepare
@@ -297,6 +325,7 @@ jobs:
       - linting-workspace
       - tests
       - linting
+      - typecheck
       - run-shellcheck
       - formatting
       - e2e

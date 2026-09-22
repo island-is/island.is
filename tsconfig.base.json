@@ -66,6 +66,9 @@
       "@island.is/api/domains/customs-general": [
         "libs/api/domains/customs-general/src/index.ts"
       ],
+      "@island.is/api/domains/directorate-of-equality-application": [
+        "libs/api/domains/directorate-of-equality-application/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -289,9 +292,6 @@
       "@island.is/api/domains/vmst-applications": [
         "libs/api/domains/vmst-applications/src/index.ts"
       ],
-      "@island.is/api/domains/watson-assistant-chat": [
-        "libs/api/domains/watson-assistant-chat/src/index.ts"
-      ],
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
@@ -410,6 +410,12 @@
       ],
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
+      ],
+      "@island.is/application/templates/district-commissioners/driving-license": [
+        "libs/application/templates/district-commissioners/driving-license/src/index.ts"
+      ],
+      "@island.is/application/templates/district-commissioners/driving-license-additional": [
+        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -698,6 +704,9 @@
       ],
       "@island.is/application/templates/vmst/submit-documents": [
         "libs/application/templates/vmst/submit-documents/src/index.ts"
+      ],
+      "@island.is/application/templates/vmst/u2-certificate": [
+        "libs/application/templates/vmst/u2-certificate/src/index.ts"
       ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"

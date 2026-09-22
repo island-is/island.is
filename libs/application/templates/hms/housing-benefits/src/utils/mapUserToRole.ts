@@ -1,8 +1,4 @@
-import {
-  Application,
-  ApplicationRole,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { Application, ApplicationRole } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { Roles } from './constants'
@@ -49,16 +45,6 @@ export const mapUserToRole = (
   const normalizedNationalId = kennitala.isValid(nationalId)
     ? kennitala.sanitize(nationalId)
     : nationalId
-
-  if (
-    normalizedNationalId ===
-      kennitala.sanitize(
-        InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
-      ) ||
-    normalizedNationalId === kennitala.sanitize('0101304929') // Gervimaður Bretland, only for testing
-  ) {
-    return Roles.INSTITUTION
-  }
 
   if (
     nationalId === application.applicant ||

@@ -173,4 +173,96 @@ describe('PoliceController - Update Police Case', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('update police case fails with an empty response body', () => {
+    let mockLogger: { error: jest.Mock }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 413,
+        text: jest.fn().mockResolvedValueOnce(''),
+      })
+
+      const { policeService, logger } = await createTestingPoliceModule()
+      mockLogger = logger
+
+      then = await policeService
+        .updatePoliceCase(
+          user,
+          caseId,
+          caseType,
+          caseState,
+          policeCaseNumber,
+          courtCaseNumber,
+          defendantNationalId,
+          validToDate,
+          caseConclusion,
+          courtDocuments,
+        )
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should log the HTTP status and a non-empty error summary', () => {
+      expect(then.result).toBe(false)
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        `Failed to update police case ${caseId}`,
+        expect.objectContaining({
+          caseId,
+          statusCode: '413',
+          errorSummary: expect.stringContaining('413'),
+        }),
+      )
+    })
+  })
+
+  describe('update police case fails with a response body', () => {
+    const responseBody = '{"type":"Server.ClientProxy.IOError"}'
+    let mockLogger: { error: jest.Mock }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as unknown as jest.Mock
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        text: jest.fn().mockResolvedValueOnce(responseBody),
+      })
+
+      const { policeService, logger } = await createTestingPoliceModule()
+      mockLogger = logger
+
+      then = await policeService
+        .updatePoliceCase(
+          user,
+          caseId,
+          caseType,
+          caseState,
+          policeCaseNumber,
+          courtCaseNumber,
+          defendantNationalId,
+          validToDate,
+          caseConclusion,
+          courtDocuments,
+        )
+        .then((result) => ({ result } as Then))
+        .catch((error) => ({ error } as Then))
+    })
+
+    it('should log the HTTP status and the response body', () => {
+      expect(then.result).toBe(false)
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        `Failed to update police case ${caseId}`,
+        expect.objectContaining({
+          statusCode: '500',
+          errorSummary: responseBody,
+        }),
+      )
+    })
+  })
 })

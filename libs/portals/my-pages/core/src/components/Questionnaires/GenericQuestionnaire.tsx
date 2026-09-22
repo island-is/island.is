@@ -22,6 +22,7 @@ import {
   QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
+import { useScrollTopOnUpdate } from '../../hooks/useScrollTopOnUpdate/useScrollTopOnUpdate'
 import { m } from '../../lib/messages'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { QuestionnaireFooter } from './Footer'
@@ -55,6 +56,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   )
 
   const [showReview, setShowReview] = useState(false)
+  useScrollTopOnUpdate([showReview])
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   // Helper function to calculate formula
@@ -244,6 +246,15 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
       }
     } else {
       setErrors(allErrors)
+
+      // Bring the first invalid question into view - it is often
+      // scrolled out of sight when the user clicks continue
+      const firstErrorId = visibleQuestions.find((q) => allErrors[q.id])?.id
+      if (firstErrorId) {
+        document
+          .getElementById(`question-${firstErrorId}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
     }
   }
 
@@ -258,8 +269,17 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
               <QuestionnaireHeader
                 title={questionnaire.baseInformation.title}
                 img={img}
-                buttonGroup={
-                  questionnaire.baseInformation.organization ===
+                buttonGroup={[
+                  <Button
+                    variant="utility"
+                    icon="print"
+                    iconType="outline"
+                    key="print-button"
+                    onClick={() => window.print()}
+                  >
+                    {formatMessage(m.print)}
+                  </Button>,
+                  ...(questionnaire.baseInformation.organization ===
                   QuestionnaireQuestionnairesOrganizationEnum.EL
                     ? [
                         <Button
@@ -272,8 +292,8 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                           {formatMessage(m.saveAsDraft)}
                         </Button>,
                       ]
-                    : undefined
-                }
+                    : []),
+                ]}
               />
               {/* Questions */}
               <Box style={{ minHeight: '400px' }} marginY={[2, 2, 2, 6]}>
@@ -312,16 +332,22 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                         <Stack space={4}>
                           {section.questions?.map(
                             (question: QuestionnaireQuestion) => (
-                              <QuestionRenderer
+                              <Box
                                 key={question.id}
-                                question={question}
-                                answer={answers[question.id]}
-                                onAnswerChange={handleAnswerChange}
-                                error={errors[question.id]}
-                                disabled={
-                                  question.answerOptions.formula ? true : false
-                                }
-                              />
+                                id={`question-${question.id}`}
+                              >
+                                <QuestionRenderer
+                                  question={question}
+                                  answer={answers[question.id]}
+                                  onAnswerChange={handleAnswerChange}
+                                  error={errors[question.id]}
+                                  disabled={
+                                    question.answerOptions.formula
+                                      ? true
+                                      : false
+                                  }
+                                />
+                              </Box>
                             ),
                           )}
                         </Stack>

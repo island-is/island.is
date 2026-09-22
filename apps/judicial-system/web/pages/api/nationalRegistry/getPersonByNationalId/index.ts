@@ -1,8 +1,8 @@
 import faker from 'faker'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
-
+import type { NationalRegistryResponsePerson } from '../../../../src/types'
+import { shouldMockNationalRegistry } from '../../../../src/utils/nationalRegistryMock'
 import { fakePerson } from '../constants'
 
 const getPersonByNationalId = async (
@@ -42,12 +42,9 @@ export default async function handler(
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
 
-  // Each api call costs actual money. This allows us to develop and test
-  // without actually making a real api call.
-  const people: NationalRegistryResponsePerson =
-    process.env.NODE_ENV === 'production'
-      ? await getPersonByNationalId(nationalId)
-      : { items: [createFakePerson()] }
+  const people: NationalRegistryResponsePerson = shouldMockNationalRegistry()
+    ? { items: [createFakePerson()] }
+    : await getPersonByNationalId(nationalId)
 
   res.status(200).json(people)
 }

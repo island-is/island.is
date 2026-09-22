@@ -1,8 +1,8 @@
 import { formatAppeal } from '@island.is/judicial-system/formatters'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
-  Case,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {

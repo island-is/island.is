@@ -14,7 +14,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,6 +24,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -50,6 +51,7 @@ import {
   DateLog,
   Defendant,
   IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -72,7 +74,8 @@ export enum PoliceDocumentType {
   RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
   RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
   RVFK = 'RVFK', // Fyrirkall í S-málum
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
+  RVBD = 'RVBD', // Birtingarvottorð fyrirkalls í S-málum
+  BRTNG_RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -266,8 +269,8 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(IndictmentSubtype)
-    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
+    private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -341,11 +344,14 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
+    const errorSummary = (
+      reason instanceof Error ? reason.message : String(reason)
+    ).slice(0, 2000)
+
     this.logger.error(logMessage, {
       ...info,
       error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+      errorSummary,
     })
   }
 
@@ -495,6 +501,10 @@ export class PoliceService {
     caseId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ) {
     const startTime = nowFactory()
     const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
@@ -504,17 +514,6 @@ export class PoliceService {
 
       if (!res.ok) {
         const detail = await res.text()
-        this.logger.error(
-          `Police digital case files request returned error for case ${caseId}`,
-          {
-            caseId,
-            source,
-            status: res.status,
-            detail: detail.slice(0, 2000),
-          },
-        )
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is often returned.
         throw new NotFoundException({
           message: `Police digital case files for case ${caseId} do not exist`,
           detail,
@@ -526,6 +525,22 @@ export class PoliceService {
 
       return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
+      this.logPoliceFailureAndNotify(
+        'Failed to get police digital case files',
+        `Failed to get police digital case files for case ${caseId}`,
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
+          startTime,
+          endTime: nowFactory(),
+          source,
+        },
+        reason,
+      )
+
       if (reason instanceof NotFoundException) {
         throw reason
       }
@@ -537,20 +552,6 @@ export class PoliceService {
           detail: reason.message,
         })
       }
-
-      this.logPoliceFailureAndNotify(
-        'Failed to get police digital case files',
-        `Failed to get police digital case files for case ${caseId}`,
-        {
-          caseId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-          source,
-        },
-        reason,
-      )
 
       throw new BadGatewayException({
         ...(reason instanceof Error ? reason : {}),
@@ -567,6 +568,10 @@ export class PoliceService {
     policeDigitalFileId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     const startTime = nowFactory()
     const query = new URLSearchParams({
@@ -610,14 +615,36 @@ export class PoliceService {
         detail: reason,
       })
     } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
-
-      if (
+      const is425 =
         reason instanceof HttpException &&
         reason.getStatus() === httpStatusTooEarly
-      ) {
+
+      this.logPoliceFailureAndNotify(
+        'Failed to get token URL for digital case file',
+        is425
+          ? `Police digital case file ${policeDigitalFileId} is not published yet`
+          : `Failed to get token URL for digital case file ${policeDigitalFileId}`,
+        {
+          rvgCaseId,
+          rafraennGagnId: policeDigitalFileId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
+          startTime,
+          endTime: nowFactory(),
+          source,
+          ...(is425
+            ? {
+                status: String(httpStatusTooEarly),
+                errorType: 'PoliceDigitalFileNotPublished',
+              }
+            : {}),
+        },
+        reason,
+      )
+
+      if (reason instanceof NotFoundException || is425) {
         throw reason
       }
 
@@ -628,21 +655,6 @@ export class PoliceService {
           detail: reason.message,
         })
       }
-
-      this.logPoliceFailureAndNotify(
-        'Failed to get token URL for digital case file',
-        `Failed to get token URL for digital case file ${policeDigitalFileId}`,
-        {
-          rvgCaseId,
-          rafraennGagnId: policeDigitalFileId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-          source,
-        },
-        reason,
-      )
 
       throw new BadGatewayException({
         ...reason,
@@ -684,11 +696,16 @@ export class PoliceService {
   async getAllPoliceSystemDigitalCaseFiles(
     caseId: string,
     user: User,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<PoliceSystemDigitalCaseFile[]> {
     const caseFiles = await this.getDigitalCaseFiles(
       caseId,
       user,
       'getAllPoliceSystemDigitalCaseFiles',
+      caseNumbers,
     )
 
     const files: PoliceSystemDigitalCaseFile[] = []
@@ -740,7 +757,7 @@ export class PoliceService {
         nationalId: defendant.accusedNationalId,
         name: defendant.accusedName ?? undefined,
         gender: defendant.accusedGender ?? undefined,
-        address: defendant.accusedAddress ?? undefined,
+        address: normalizePersonAddress(defendant.accusedAddress ?? undefined),
         dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))
@@ -799,7 +816,10 @@ export class PoliceService {
       this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
-        const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
+        const subtype = await this.getSubtypeByArticle(
+          unit.artalNrGreinLidur,
+          unit.nanar,
+        )
         const key = Object.keys(IndictmentCaseSubtypes).find(
           (k) =>
             IndictmentCaseSubtypes[k as keyof typeof IndictmentCaseSubtypes] ===
@@ -1205,6 +1225,16 @@ export class PoliceService {
       courtDocuments,
     }
 
+    const failureInfo = {
+      caseId,
+      actor: user.name,
+      institution: user.institution?.name,
+      caseType: String(caseType),
+      caseState: String(caseState),
+      policeCaseNumber,
+      courtCaseNumber,
+    }
+
     return this.fetchPoliceCaseApi(url, {
       method: 'PUT',
       headers: {
@@ -1221,9 +1251,20 @@ export class PoliceService {
           return true
         }
 
-        const response = await res.text()
+        const responseBody = await res.text()
+        const message =
+          responseBody.trim() !== ''
+            ? responseBody
+            : `Police case update failed with empty response body (HTTP ${res.status})`
 
-        throw response
+        this.logPoliceFailureAndNotify(
+          'Failed to update police case',
+          `Failed to update police case ${caseId}`,
+          { ...failureInfo, statusCode: String(res.status) },
+          new Error(message),
+        )
+
+        return false
       })
       .catch((reason) => {
         if (reason instanceof ServiceUnavailableException) {
@@ -1235,15 +1276,7 @@ export class PoliceService {
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
           `Failed to update police case ${caseId}`,
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            caseType: String(caseType),
-            caseState: String(caseState),
-            policeCaseNumber,
-            courtCaseNumber,
-          },
+          failureInfo,
           reason,
         )
 
@@ -1532,9 +1565,11 @@ export class PoliceService {
 
   getSubtypeByArticle(
     article?: string | null,
+    details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeModel.findOne({
-      where: { article },
-    })
+    return this.indictmentSubtypeRepositoryService.findByArticle(
+      article,
+      details,
+    )
   }
 }

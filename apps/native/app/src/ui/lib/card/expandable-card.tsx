@@ -69,6 +69,10 @@ const Message = styled(Typography)`
   margin-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
+const Footer = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const Expanded = styled.View`
   background-color: ${dynamicColor('background')};
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.large};
@@ -83,6 +87,8 @@ interface CardProps {
   icon?: ImageSourcePropType
   value?: React.ReactNode
   topRightValue?: React.ReactNode
+  /** Always-visible content rendered below the message, in both states. */
+  footer?: React.ReactNode
   children?: React.ReactNode
   open?: boolean
   onPress?: () => void
@@ -116,6 +122,7 @@ export const ExpandableCard = ({
   topRightValue,
   message,
   value,
+  footer,
   children,
   open,
   onPress,
@@ -205,6 +212,7 @@ export const ExpandableCard = ({
             </IconMessage>
             <Typography variant="heading5">{value}</Typography>
           </Row>
+          {footer && <Footer>{footer}</Footer>}
         </Container>
       </Card>
       {open && <Expanded>{children}</Expanded>}

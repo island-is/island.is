@@ -4,6 +4,7 @@ import {
   QuestionnaireQuestion,
 } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+import * as styles from './QuestionsTypes/QuestionTypes.css'
 import { FC } from 'react'
 import HtmlParser from 'react-html-parser'
 import { useIsMobile } from '@island.is/portals/core'
@@ -138,7 +139,11 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             onChange={(value: string) => handleValueChange(value)}
             disabled={disabled}
             error={error}
-            type={question.answerOptions.decimal ? 'decimal' : 'number'}
+            type={
+              // Only restrict to whole numbers when the backend explicitly
+              // disallows decimals; a missing flag (e.g. LSH) stays permissive
+              question.answerOptions.decimal === false ? 'number' : 'decimal'
+            }
             min={question.answerOptions.min ?? undefined}
             max={question.answerOptions.max ?? undefined}
           />
@@ -344,6 +349,12 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             ' - ' +
             question.answerOptions.max +
             ' '}
+        {question.required && (
+          <span aria-hidden="true" className={styles.isRequiredStar}>
+            {' '}
+            *
+          </span>
+        )}
       </Text>
       {question.sublabel && (
         <Text variant="medium" color="dark400" marginBottom={3}>

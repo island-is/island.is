@@ -1,30 +1,46 @@
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Input, RadioButton } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Input,
+  RadioButton,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  AppealCaseState,
   AppealDecisionPartyRole,
-  Case,
   CaseAppealDecision,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import useCaseAppealDecision from '@island.is/judicial-system-web/src/utils/hooks/useCaseAppealDecision'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import useSerializedSave from '@island.is/judicial-system-web/src/utils/hooks/useSerializedSave'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   caseLevelAppealDecision,
+  caseLevelAppealDecisionRow,
+  revertCaseLevelAppealDecision,
   withCaseLevelAppealDecision,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
+
+type AppealDecisionRow = NonNullable<Case['appealDecisions']>[number]
+
+interface AppealDecisionPatch {
+  decision?: CaseAppealDecision
+  announcement?: string
+}
 
 interface Props {
   workingCase: Case
@@ -53,6 +69,8 @@ const AppealSections: FC<Props> = ({
     useState<CaseAppealDecision>()
   const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
     useState<CaseAppealDecision>()
+  // Runs each party's saves one at a time and knows which row the server has
+  const saveAppealDecision = useSerializedSave<AppealDecisionRow | undefined>()
 
   const accusedAppealDecision = caseLevelAppealDecision(
     workingCase.appealDecisions,
@@ -70,101 +88,182 @@ const AppealSections: FC<Props> = ({
     AppealDecisionPartyRole.PROSECUTOR,
   )
 
-  // The in-court decisions describe what happened at the ruling. Once an appeal
-  // no longer depends on them they must not be edited: a party that filed its own
-  // appeal did not get it from the court record and correcting the record cannot
-  // take it away, and an appeal that has left the district court is already part
-  // of the record Landsréttur received. Mirrors the backend guard in
-  // case.service.upsertCaseAppealDecision, which rejects the same cases.
-  const { appealCase } = workingCase
-  const disabled = Boolean(
-    appealCase &&
-      (appealCase.appealedOutOfCourt ||
-        appealCase.appealState !== AppealCaseState.APPEALED),
-  )
+  // The in-court decisions describe what happened at the ruling, so they may
+  // only be edited while the court record still governs the appeal they produced
+  // (see appealCorrectionLock). case.service.upsertCaseAppealDecision rejects the
+  // same cases server-side - this only keeps the UI from offering them. The lock
+  // reason is kept so the section can say which of the two applies.
+  const lock = appealCorrectionLock(workingCase.appealCase)
+  const disabled = Boolean(lock)
 
-  const handleChange = (update: {
+  // Puts a party's case-level row back to the one the server holds, so the
+  // working case only claims a decision the server has. The court record step
+  // is validated against the working case, and a decision that never reached
+  // the server (network down, backend error) would otherwise let the judge
+  // continue and complete the case with an incomplete court record - the
+  // backend rejects that completion, but the judge should see the problem
+  // here, where it can be fixed.
+  const revertAppealDecision = (
+    caseId: string,
+    partyRole: AppealDecisionPartyRole,
+    confirmedRow: AppealDecisionRow | undefined,
+  ) => {
+    setWorkingCase((prev) =>
+      // The page is reused across cases, so a save that fails after the judge
+      // has moved on to another case must not touch that case
+      prev.id !== caseId
+        ? prev
+        : {
+            ...prev,
+            appealDecisions: revertCaseLevelAppealDecision(
+              prev.appealDecisions,
+              confirmedRow ? [confirmedRow] : [],
+              partyRole,
+            ),
+          },
+    )
+
+    // Let the radio fall back to whatever the working case now holds
+    if (partyRole === AppealDecisionPartyRole.DEFENDANT) {
+      setCheckedAccusedRadio(undefined)
+    } else {
+      setCheckedProsecutorRadio(undefined)
+    }
+  }
+
+  // Persists one party's row. The mutation toasts its own error and resolves
+  // to undefined on failure. Resolves to whether the save succeeded and is
+  // still the party's latest - a superseded save must drive nothing, since the
+  // newer one owns the row now.
+  const persistAppealDecision = (
+    partyRole: AppealDecisionPartyRole,
+    patch: AppealDecisionPatch,
+  ) =>
+    saveAppealDecision({
+      // Per case as well as per party: the component outlives a case change
+      key: `${workingCase.id}:${partyRole}`,
+      // Read before the optimistic update below is applied
+      confirmed: caseLevelAppealDecisionRow(
+        workingCase.appealDecisions,
+        partyRole,
+      ),
+      value: caseLevelAppealDecisionRow(
+        withCaseLevelAppealDecision(
+          workingCase.appealDecisions,
+          partyRole,
+          patch,
+        ),
+        partyRole,
+      ),
+      persist: async () =>
+        Boolean(
+          await updateCaseAppealDecision({
+            caseId: workingCase.id,
+            partyRole,
+            decision: patch.decision,
+            announcement: patch.announcement,
+          }),
+        ),
+      rollback: (confirmedRow) =>
+        revertAppealDecision(workingCase.id, partyRole, confirmedRow),
+    })
+
+  const toPatch = (
+    decision?: CaseAppealDecision,
+    announcement?: string,
+  ): AppealDecisionPatch | undefined =>
+    decision !== undefined || announcement !== undefined
+      ? {
+          ...(decision !== undefined ? { decision } : {}),
+          ...(announcement !== undefined ? { announcement } : {}),
+        }
+      : undefined
+
+  const handleChange = async (update: {
     accusedAppealDecision?: CaseAppealDecision
     accusedAppealAnnouncement?: string
     prosecutorAppealDecision?: CaseAppealDecision
     prosecutorAppealAnnouncement?: string
   }) => {
+    const accusedPatch = toPatch(
+      update.accusedAppealDecision,
+      update.accusedAppealAnnouncement,
+    )
+    const prosecutorPatch = toPatch(
+      update.prosecutorAppealDecision,
+      update.prosecutorAppealAnnouncement,
+    )
+
     // Optimistically update the case-level appeal_decision rows the UI reads;
     // the mutation persists them server-side.
     setWorkingCase((prev) => {
       let appealDecisions = prev.appealDecisions
-      if (
-        update.accusedAppealDecision !== undefined ||
-        update.accusedAppealAnnouncement !== undefined
-      ) {
+
+      if (accusedPatch) {
         appealDecisions = withCaseLevelAppealDecision(
           appealDecisions,
           AppealDecisionPartyRole.DEFENDANT,
-          {
-            ...(update.accusedAppealDecision !== undefined
-              ? { decision: update.accusedAppealDecision }
-              : {}),
-            ...(update.accusedAppealAnnouncement !== undefined
-              ? { announcement: update.accusedAppealAnnouncement }
-              : {}),
-          },
+          accusedPatch,
         )
       }
-      if (
-        update.prosecutorAppealDecision !== undefined ||
-        update.prosecutorAppealAnnouncement !== undefined
-      ) {
+
+      if (prosecutorPatch) {
         appealDecisions = withCaseLevelAppealDecision(
           appealDecisions,
           AppealDecisionPartyRole.PROSECUTOR,
-          {
-            ...(update.prosecutorAppealDecision !== undefined
-              ? { decision: update.prosecutorAppealDecision }
-              : {}),
-            ...(update.prosecutorAppealAnnouncement !== undefined
-              ? { announcement: update.prosecutorAppealAnnouncement }
-              : {}),
-          },
+          prosecutorPatch,
         )
       }
+
       return { ...prev, appealDecisions }
     })
 
-    if (
-      update.accusedAppealDecision !== undefined ||
-      update.accusedAppealAnnouncement !== undefined
-    ) {
-      updateCaseAppealDecision({
-        caseId: workingCase.id,
-        partyRole: AppealDecisionPartyRole.DEFENDANT,
-        decision: update.accusedAppealDecision,
-        announcement: update.accusedAppealAnnouncement,
-      })
+    let saved = true
+
+    if (accusedPatch) {
+      saved =
+        (await persistAppealDecision(
+          AppealDecisionPartyRole.DEFENDANT,
+          accusedPatch,
+        )) && saved
     }
 
-    if (
-      update.prosecutorAppealDecision !== undefined ||
-      update.prosecutorAppealAnnouncement !== undefined
-    ) {
-      updateCaseAppealDecision({
-        caseId: workingCase.id,
-        partyRole: AppealDecisionPartyRole.PROSECUTOR,
-        decision: update.prosecutorAppealDecision,
-        announcement: update.prosecutorAppealAnnouncement,
-      })
+    if (prosecutorPatch) {
+      saved =
+        (await persistAppealDecision(
+          AppealDecisionPartyRole.PROSECUTOR,
+          prosecutorPatch,
+        )) && saved
     }
 
-    if (onChange) {
+    // The parents derive and persist the end-of-session text from the
+    // decision, so only tell them once the decision itself is on the server -
+    // otherwise a failed save would leave text describing a decision that was
+    // rolled back.
+    if (saved && onChange) {
       onChange(update)
     }
   }
+
   return (
     <>
       <SectionHeading
         title={formatMessage(m.titleV2)}
         description={formatMessage(m.disclaimerV2)}
       />
-      <div className={grid({ gap: 3 })}>
+      {lock && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="info"
+            message={
+              lock === 'OUT_OF_COURT'
+                ? 'Úrskurðurinn hefur verið kærður utan þinghalds og því er ekki hægt að breyta ákvörðun um kæru.'
+                : 'Kæra úrskurðarins er komin til Landsréttar og því er ekki hægt að breyta ákvörðun um kæru.'
+            }
+          />
+        </Box>
+      )}
+      <div className={stack({ gap: 3 })}>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
             <SectionHeading

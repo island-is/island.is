@@ -236,6 +236,57 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         },
       )
 
+      it('POST /v1/me/delegations/batch creates delegations across domains in one call', async () => {
+        const toNationalId = createNationalId('person')
+        const delegations = accessible.map((domain) => ({
+          toNationalId,
+          domainName: domain.name,
+          scopes: domain.scopes.map(({ name }) => ({
+            name,
+            validTo: startOfDay(addYears(new Date(), 1)),
+          })),
+        }))
+
+        const res = await server
+          .post('/v1/me/delegations/batch')
+          .send({ delegations })
+
+        expect(res.status).toEqual(201)
+        expect(res.body).toHaveLength(accessible.length)
+        expect(
+          (res.body as Array<{ domainName: string }>)
+            .map((delegation) => delegation.domainName)
+            .sort(),
+        ).toEqual(accessible.map((domain) => domain.name).sort())
+      })
+
+      it('POST /v1/me/delegations/batch rolls back earlier delegations when a later item fails', async () => {
+        const toNationalId = createNationalId('person')
+        const [domain] = accessible
+        const scopes = domain.scopes.map(({ name }) => ({
+          name,
+          validTo: startOfDay(addYears(new Date(), 1)),
+        }))
+
+        const res = await server.post('/v1/me/delegations/batch').send({
+          delegations: [
+            { toNationalId, domainName: domain.name, scopes },
+            {
+              toNationalId: testCase.user.nationalId,
+              domainName: domain.name,
+              scopes,
+            },
+          ],
+        })
+
+        expect(res.status).toEqual(400)
+        expect(
+          await Delegation.count({
+            where: { fromNationalId: testCase.user.nationalId, toNationalId },
+          }),
+        ).toEqual(0)
+      })
+
       it.each(accessible)(
         'POST /v1/me/delegations returns 400 when recipient is deceased',
         async (domain) => {
@@ -345,6 +396,59 @@ describe.each(Object.keys(accessOutgoingTestCases))(
           }
         },
       )
+
+      const multiScopeAccessible = accessible.filter((domain) => {
+        const grantable =
+          testCase.domains
+            .find((d) => d.name === domain.name)
+            ?.apiScopes?.filter((s) => s.allowExplicitDelegationGrant).length ??
+          0
+        return domain.scopes.length > 0 && grantable >= 2
+      })
+
+      if (multiScopeAccessible.length > 0) {
+        it.each(multiScopeAccessible)(
+          'PATCH /v1/me/delegations/:id deletes a single scope and keeps the rest in $name',
+          async (domain) => {
+            // Arrange
+            const delegationScopeModel = app.get<typeof DelegationScope>(
+              getModelToken(DelegationScope),
+            )
+            const delegation = delegations.find(
+              (delegation) => delegation.domainName === domain.name,
+            )
+            assert(delegation)
+            const before = await delegationScopeModel.findAll({
+              where: { delegationId: delegation.id },
+            })
+            expect(before.length).toBeGreaterThanOrEqual(2)
+            const accessibleNames = domain.scopes.map((s) => s.name)
+            const target = before.find((s) =>
+              accessibleNames.includes(s.scopeName),
+            )
+            assert(target)
+            const keep = before
+              .filter((s) => s.scopeName !== target.scopeName)
+              .map((s) => s.scopeName)
+
+            // Act
+            const res = await server
+              .patch(`/v1/me/delegations/${delegation.id}`)
+              .send({ deleteScopes: [target.scopeName] })
+
+            // Assert
+            expect(res.status).toEqual(200)
+            const after = await delegationScopeModel.findAll({
+              where: { delegationId: delegation.id },
+            })
+            expect(after.map((s) => s.scopeName).sort()).toEqual(keep.sort())
+            const returned = (res.body.scopes as { scopeName: string }[]).map(
+              (s) => s.scopeName,
+            )
+            expect(returned).not.toContain(target.scopeName)
+          },
+        )
+      }
 
       it.each(accessible)(
         'DELETE /v1/me/delegations/:id works and removes scopes you have access to in $name',

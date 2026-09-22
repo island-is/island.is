@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,12 +15,14 @@ import {
   MessageService,
 } from '@island.is/judicial-system/message'
 
+import { AppealCaseService } from '../../appeal-case/appealCase.service'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
-  CaseDefendantPoliceCaseNumber,
-  CivilClaimant,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
+  CivilClaimantRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../../repository'
@@ -40,7 +41,11 @@ jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
 jest.mock('../../event-log/eventLog.service')
+jest.mock('../../appeal-case/appealCase.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -60,7 +65,9 @@ export const createTestingDefendantModule = async () => {
       CaseService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
+      AppealCaseService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -71,20 +78,19 @@ export const createTestingDefendantModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
-        provide: getModelToken(CivilClaimant),
+        provide: CivilClaimantRepositoryService,
         useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
           create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
+          updateByIdAndCase: jest.fn(),
+          deleteByIdAndCase: jest.fn(),
+          deleteAllForCase: jest.fn(),
         },
       },
       {
-        provide: getModelToken(CaseDefendantPoliceCaseNumber),
+        provide: CaseFileRepositoryService,
         useValue: {
-          findAll: jest.fn(),
+          deleteAllForCivilClaimant: jest.fn(),
+          deleteAllForCivilClaimantsOfCase: jest.fn(),
         },
       },
       DefendantService,
@@ -98,6 +104,9 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
+  const appealCaseService =
+    defendantModule.get<AppealCaseService>(AppealCaseService)
+
   const sequelize = defendantModule.get<Sequelize>(Sequelize)
 
   const defendantRepositoryService =
@@ -106,6 +115,11 @@ export const createTestingDefendantModule = async () => {
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
       DefendantEventLogRepositoryService,
+    )
+
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    defendantModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
     )
 
   const defendantService =
@@ -124,9 +138,13 @@ export const createTestingDefendantModule = async () => {
       LimitedAccessDefendantController,
     )
 
-  const civilClaimantModel = await defendantModule.resolve<
-    typeof CivilClaimant
-  >(getModelToken(CivilClaimant))
+  const civilClaimantRepositoryService =
+    defendantModule.get<CivilClaimantRepositoryService>(
+      CivilClaimantRepositoryService,
+    )
+
+  const caseFileRepositoryService =
+    defendantModule.get<CaseFileRepositoryService>(CaseFileRepositoryService)
 
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
@@ -153,9 +171,11 @@ export const createTestingDefendantModule = async () => {
     messageService,
     userService,
     courtService,
+    appealCaseService,
     sequelize,
     defendantRepositoryService,
     defendantEventLogRepositoryService,
+    caseDefendantPoliceCaseNumberRepositoryService,
     defendantService,
     defendantController,
     internalDefendantController,
@@ -163,6 +183,7 @@ export const createTestingDefendantModule = async () => {
     limitedAccessDefendantController,
     civilClaimantService,
     civilClaimantController,
-    civilClaimantModel,
+    civilClaimantRepositoryService,
+    caseFileRepositoryService,
   }
 }

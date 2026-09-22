@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import type { Transaction, WhereOptions } from 'sequelize'
+import type { Transaction } from 'sequelize'
 
 import {
   BadGatewayException,
@@ -9,32 +9,26 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
-import { LawyerRegistry } from '../repository'
+import {
+  LawyerRegistry,
+  LawyerRegistryData,
+  LawyerRegistryRepositoryService,
+} from '../repository'
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
-
-type Lawyer = {
-  name: string
-  nationalId: string
-  email: string
-  phoneNumber: string
-  practice: string
-  isLitigator: boolean
-}
+import { testLawyers } from './testLawyers'
 
 @Injectable()
 export class LawyerRegistryService {
   constructor(
     @Inject(lawyerRegistryConfig.KEY)
     private readonly config: ConfigType<typeof lawyerRegistryConfig>,
-    @InjectModel(LawyerRegistry)
-    private readonly lawyerRegistryModel: typeof LawyerRegistry,
+    private readonly lawyerRegistryRepositoryService: LawyerRegistryRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -76,10 +70,7 @@ export class LawyerRegistryService {
     return lawyers
   }
 
-  private async populateLawyerRegistry(
-    lawyers: Lawyer[],
-    transaction: Transaction,
-  ) {
+  private async validateLawyers(lawyers: LawyerRegistryData[]) {
     for (const lawyer of lawyers) {
       const lawyerInstance = plainToClass(LawyerRegistry, lawyer)
       const errors = await validate(lawyerInstance)
@@ -92,8 +83,6 @@ export class LawyerRegistryService {
         )
       }
     }
-
-    return this.lawyerRegistryModel.bulkCreate(lawyers, { transaction })
   }
 
   async populate(transaction: Transaction) {
@@ -101,7 +90,7 @@ export class LawyerRegistryService {
     const litigators = await this.getLawyerRegistry(LawyerType.LITIGATORS)
     const litigatorNationalIds = new Set(litigators.map((l) => l.SSN))
 
-    const formattedLawyers: Lawyer[] = lawyers.map((lawyer) => ({
+    const formattedLawyers: LawyerRegistryData[] = lawyers.map((lawyer) => ({
       name: lawyer.Name,
       nationalId: lawyer.SSN,
       email: lawyer.Email,
@@ -110,19 +99,26 @@ export class LawyerRegistryService {
       isLitigator: litigatorNationalIds.has(lawyer.SSN),
     }))
 
-    await this.lawyerRegistryModel.destroy({ where: {}, transaction })
-    await this.populateLawyerRegistry(formattedLawyers, transaction)
+    // Test environments keep the e2e lawyers across replacements, otherwise
+    // the nightly reset would lock the e2e defender out.
+    const lawyersToStore = this.config.includeTestLawyers
+      ? [...formattedLawyers, ...testLawyers]
+      : formattedLawyers
+
+    await this.validateLawyers(lawyersToStore)
+
+    await this.lawyerRegistryRepositoryService.replaceAll(lawyersToStore, {
+      transaction,
+    })
 
     return lawyers
   }
 
   async getAll(lawyerType: LawyerType) {
-    const whereOptions: WhereOptions | undefined =
-      lawyerType === LawyerType.LITIGATORS ? { isLitigator: true } : undefined
-
-    const lawyers = await this.lawyerRegistryModel.findAll({
-      where: whereOptions,
-    })
+    const lawyers =
+      lawyerType === LawyerType.LITIGATORS
+        ? await this.lawyerRegistryRepositoryService.findAllLitigators()
+        : await this.lawyerRegistryRepositoryService.findAll()
 
     if (!lawyers || lawyers.length === 0) {
       this.logger.error('No lawyers found in the lawyer registry')
@@ -134,9 +130,9 @@ export class LawyerRegistryService {
   }
 
   async getByNationalId(nationalId: string) {
-    const lawyer = await this.lawyerRegistryModel.findOne({
-      where: { nationalId },
-    })
+    const lawyer = await this.lawyerRegistryRepositoryService.findByNationalId(
+      nationalId,
+    )
 
     if (!lawyer) {
       throw new NotFoundException()

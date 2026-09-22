@@ -16,6 +16,8 @@ const allowedCaseFileCategories = [
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
   CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+  CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
 ]
 
 @Injectable()

@@ -1,7 +1,9 @@
-import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Option, Select, Text } from '@island.is/island-ui/core'
+import type { Option } from '@island.is/island-ui/core'
+import { Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -9,10 +11,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import {
-  Case,
-  CaseIndictmentRulingDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Overview.strings'
 

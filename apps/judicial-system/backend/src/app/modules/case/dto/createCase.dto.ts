@@ -9,11 +9,13 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   MaxLength,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
@@ -46,7 +48,7 @@ export class CreateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @MaxLength(255, { each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
 

@@ -19,6 +19,9 @@ export const buildPublicRuntimeEnv = () => ({
   apiUrl: apiPath,
   graphqlEndpoint: graphqlPath,
   supportEmail: process.env.SUPPORT_EMAIL ?? 'ben10@omnitrix.is',
+  ddLogsClientToken: process.env.DD_LOGS_CLIENT_TOKEN,
+  environment: process.env.ENVIRONMENT,
+  appVersion: process.env.APP_VERSION,
 })
 
 /**

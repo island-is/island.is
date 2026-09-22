@@ -82,7 +82,10 @@ export class CmsTranslationsService {
       await this.cacheManager.set(
         namespace,
         messages,
-        this.config.memCacheExpiryMilliseconds + 120000 * Math.random(), // Add a random delay to avoid cache stampede
+        // Random jitter avoids a cache stampede; rounded because Redis
+        // rejects fractional PX values ("value is not an integer").
+        this.config.memCacheExpiryMilliseconds +
+          Math.round(120000 * Math.random()),
       )
 
       return messages

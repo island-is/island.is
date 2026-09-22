@@ -1,12 +1,14 @@
 import { v4 as uuid } from 'uuid'
 
-import {
+import type {
   Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseDecision,
   CaseState,
   CaseType,
   InstitutionType,
-  User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'

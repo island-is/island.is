@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -12,7 +12,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
@@ -36,6 +35,8 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
+  AppealCaseType,
+  appealCorrectionLock,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -79,6 +80,7 @@ import {
 } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -91,20 +93,17 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
-  caseInclude,
   CaseRepositoryService,
-  CaseString,
+  CaseStringRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSessionRepositoryService,
   DateLog,
+  DateLogRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   EventLog,
-  Institution,
   UpdateCase,
 } from '../repository'
-import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
 import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -112,6 +111,7 @@ import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
+import { CaseCloningService } from './caseCloning.service'
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -126,6 +126,7 @@ type CaseStringKeys = keyof Pick<
   | 'civilDemands'
   | 'penalties'
   | 'reopenReason'
+  | 'indictmentReviewReturnedExplanation'
 >
 
 const caseStringTypes: Record<CaseStringKeys, StringType> = {
@@ -134,6 +135,8 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
   reopenReason: StringType.REOPEN_REASON,
+  indictmentReviewReturnedExplanation:
+    StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
 }
 
 // Files parties upload for an appeal - removed when the appeal case they belong
@@ -155,15 +158,13 @@ const APPEAL_PARTY_FILE_CATEGORIES = [
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
+    private readonly caseStringRepositoryService: CaseStringRepositoryService,
+    private readonly dateLogRepositoryService: DateLogRepositoryService,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
-    private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
@@ -175,12 +176,14 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
-    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
+    @Inject(forwardRef(() => CourtSessionService))
+    private readonly courtSessionService: CourtSessionService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -969,10 +972,10 @@ export class CaseService {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
   }
 
-  private async addMessagesForRevokedIndictmentCaseToQueue(
+  private addMessagesForRevokedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
-  ): Promise<void> {
+  ): void {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
 
     if (theCase.courtCaseNumber) {
@@ -984,23 +987,17 @@ export class CaseService {
       })
     }
 
-    // TODO: Use subpoenas already included in theCase.defendants
-    // - no need to call the subpoena service
-    // - we should also include split case subpoenas, which were created before the split
-    // -    or, the alternatively those subpoenas should be revoked on split
-    const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
-      theCase.id,
-    )
-
-    if (subpoenasToRevoke?.length > 0) {
-      addMessagesToQueue(
-        ...subpoenasToRevoke.map((subpoena) => ({
+    // TODO: Also include split case subpoenas created before the split,
+    // or revoke those subpoenas when the case is split.
+    for (const defendant of theCase.defendants ?? []) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        addMessagesToQueue({
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
           user,
           caseId: theCase.id,
-          elementId: [subpoena.defendantId, subpoena.id],
-        })),
-      )
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
     }
   }
 
@@ -1013,6 +1010,46 @@ export class CaseService {
       user,
       caseId: theCase.id,
       body: { type: IndictmentCaseNotificationType.INDICTMENT_DENIED },
+    })
+  }
+
+  private addMessagesForReviewRequestedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_SENT_FOR_REVIEW,
+      },
+    })
+  }
+
+  private addMessagesForReviewDeniedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: { type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_DENIED },
+    })
+  }
+
+  private addMessagesForReviewAcceptedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_REVIEW_ACCEPTED,
+      },
     })
   }
 
@@ -1050,6 +1087,16 @@ export class CaseService {
             caseId: theCase.id,
             elementId: [defendant.id, subpoena.id],
           })
+          // After arraignment so defender choice on the certificate is correct.
+          // Only LOKE cases have a police case to update.
+          if (theCase.origin === CaseOrigin.LOKE) {
+            addMessagesToQueue({
+              type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+              user,
+              caseId: theCase.id,
+              elementId: [defendant.id, subpoena.id],
+            })
+          }
         }
       }
     }
@@ -1091,6 +1138,31 @@ export class CaseService {
         } else {
           this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_REVIEW &&
+        theCase.state === CaseState.DRAFT &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewRequestedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment
+      ) {
+        this.addMessagesForReviewAcceptedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.WAITING_FOR_REVIEW &&
+        isIndictment &&
+        user.id === theCase.indictmentApproverId
+      ) {
+        this.addMessagesForReviewDeniedIndictmentCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
         this.addMessagesForSubmittedIndictmentCaseToQueue(updatedCase, user)
       } else if (
@@ -1251,13 +1323,8 @@ export class CaseService {
     allowDeleted = false,
     transaction?: Transaction,
   ): Promise<Case> {
-    const theCase = await this.caseRepositoryService.findOne({
-      include: caseInclude,
-      where: {
-        id: caseId,
-        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
-        isArchived: false,
-      },
+    const theCase = await this.caseRepositoryService.findLiveById(caseId, {
+      allowDeleted,
       transaction,
     })
 
@@ -1268,14 +1335,29 @@ export class CaseService {
     return theCase
   }
 
+  /**
+   * Reads a live case with its row locked for the rest of the transaction. Used
+   * by `CaseExistsForUpdateGuard` so that a mutating route decides its
+   * mutation against a case row no one else can change until it commits.
+   */
+  async findByIdForUpdate(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<Case> {
+    const theCase = await this.caseRepositoryService.findLiveByIdForUpdate(
+      caseId,
+      transaction,
+    )
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
+  }
+
   async findMinimalById(id: string): Promise<MinimalCase> {
-    const minimalCase = await this.caseRepositoryService.findOne({
-      where: {
-        id,
-        isArchived: false,
-        state: { [Op.not]: CaseState.DELETED },
-      },
-    })
+    const minimalCase = await this.caseRepositoryService.findLiveMinimalById(id)
 
     if (!minimalCase) {
       throw new NotFoundException(`Case ${id} not found`)
@@ -1284,81 +1366,12 @@ export class CaseService {
     return minimalCase
   }
 
-  async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
-
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        { model: Institution, as: 'court', attributes: ['id', 'name'] },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: ['id', 'noNationalId', 'nationalId', 'name'],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          type: CaseType.INDICTMENT,
-          state: [CaseState.RECEIVED],
-          id: { [Op.ne]: theCase.id },
-        },
-      },
-    })
+  getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findConnectedIndictmentCases(theCase)
   }
 
-  async getCandidateMergeCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
-
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    const expectedCount = theCase.defendants.length
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: [],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          id: { [Op.ne]: theCase.id },
-          type: CaseType.INDICTMENT,
-          state: CaseState.RECEIVED,
-          courtId: theCase.courtId,
-        },
-      },
-      // Ensure all defendants matched by grouping and counting
-      group: ['Case.id'],
-      having: literal(`COUNT(DISTINCT "defendants"."id") = ${expectedCount}`),
-    })
+  getCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findCandidateMergeCases(theCase)
   }
 
   async create(
@@ -1402,32 +1415,39 @@ export class CaseService {
       if (updateDateLog !== undefined) {
         const dateType = dateLogTypes[dateKey]
 
-        const dateLog = await this.dateLogModel.findOne({
-          where: { caseId: theCase.id, dateType },
-          transaction,
-        })
+        const dateLog = await this.dateLogRepositoryService.findByCaseAndType(
+          theCase.id,
+          dateType,
+          { transaction },
+        )
 
         if (dateLog) {
           if (updateDateLog === null) {
-            await this.dateLogModel.destroy({
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            await this.dateLogRepositoryService.deleteByCaseAndType(
+              theCase.id,
+              dateType,
+              { transaction },
+            )
           } else {
-            await this.dateLogModel.update(updateDateLog, {
-              where: { caseId: theCase.id, dateType },
-              transaction,
-            })
+            await this.dateLogRepositoryService.updateByCaseAndType(
+              theCase.id,
+              dateType,
+              updateDateLog,
+              { transaction },
+            )
           }
         } else if (updateDateLog !== null) {
-          await this.dateLogModel.create(
-            {
-              caseId: theCase.id,
-              dateType,
-              ...updateDateLog,
-            },
+          await this.dateLogRepositoryService.createForCase(
+            theCase.id,
+            dateType,
+            updateDateLog,
             { transaction },
           )
+        }
+
+        // A real arraignment date always wins over a skipped summons
+        if (dateKey === 'arraignmentDate' && updateDateLog?.date) {
+          update.isArraignmentSummonsSkipped = false
         }
 
         delete update[dateKey]
@@ -1449,21 +1469,17 @@ export class CaseService {
         const stringType = caseStringTypes[caseStringKey]
 
         if (updateCaseString === null) {
-          await this.caseStringModel.destroy({
-            where: { caseId: theCase.id, stringType },
-            transaction,
-          })
+          await this.caseStringRepositoryService.deleteByCaseAndType(
+            theCase.id,
+            stringType,
+            { transaction },
+          )
         } else {
-          await this.caseStringModel.upsert(
-            {
-              caseId: theCase.id,
-              stringType,
-              value: updateCaseString,
-            },
-            {
-              conflictFields: ['case_id', 'string_type'],
-              transaction,
-            },
+          await this.caseStringRepositoryService.upsertByCaseAndType(
+            theCase.id,
+            stringType,
+            updateCaseString,
+            { transaction },
           )
         }
 
@@ -1514,13 +1530,18 @@ export class CaseService {
         },
       )
 
-      if (hasOutOfCourtAppeal(appealedEvents)) {
+      const lock = appealCorrectionLock({
+        appealState: existingAppealCase.appealState,
+        appealedOutOfCourt: hasOutOfCourtAppeal(appealedEvents),
+      })
+
+      if (lock === 'OUT_OF_COURT') {
         throw new BadRequestException(
           'This case has been appealed out of court, so the appeal decisions can no longer be changed',
         )
       }
 
-      if (existingAppealCase.appealState !== AppealCaseState.APPEALED) {
+      if (lock === 'PROGRESSED') {
         throw new BadRequestException(
           'The appeal of this case has progressed past the district court, so the appeal decisions can no longer be changed',
         )
@@ -1986,7 +2007,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          created,
+          created ? { created } : undefined,
         )
       }),
     )
@@ -2086,6 +2107,8 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
+    const isReopeningCase = update.reopenReason !== undefined
+
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2094,7 +2117,7 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    if (update.reopenReason !== undefined) {
+    if (isReopeningCase) {
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
@@ -2108,6 +2131,7 @@ export class CaseService {
             defendant.id,
             {
               isSentToPrisonAdmin: false,
+              isClosedWithoutEnforcement: false,
               indictmentReviewDecision: null,
               publicProsecutorIsRegisteredInPoliceSystem: null,
               isDrivingLicenseSuspended: null,
@@ -2189,6 +2213,7 @@ export class CaseService {
         const appealCase = await this.appealCaseRepositoryService.create(
           theCase.id,
           {
+            appealType: AppealCaseType.RULING,
             appealState: AppealCaseState.APPEALED,
             // An in-court appeal happened when the case completed
             appealDate: caseUpdate.rulingDate ?? theCase.rulingDate,
@@ -2382,10 +2407,10 @@ export class CaseService {
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]
           .isConfirmed
       ) {
-        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
+        await this.courtSessionService.addMergedCaseToLatestCourtSession(
           parentCase.id,
           theCase.id,
-          { transaction },
+          transaction,
         )
       }
     }
@@ -2437,6 +2462,10 @@ export class CaseService {
         from: theCase.court?.name,
         to: updatedCase?.court?.name,
       })
+    }
+
+    if (isReopeningCase) {
+      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
     }
 
     if (returnUpdatedCase) {
@@ -2764,25 +2793,13 @@ export class CaseService {
     return extendedCase
   }
 
-  async duplicateIndictmentCase(
-    theCase: Case,
-    user: TUser,
-    transaction: Transaction,
-  ): Promise<Case> {
-    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
-      transaction,
-      prosecutorId: user.id,
-      prosecutorsOfficeId: user.institution?.id,
-    })
-  }
-
   async splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    const splitCase = await this.caseRepositoryService.split(
-      theCase.id,
+    const splitCase = await this.caseCloningService.split(
+      theCase,
       defendant.id,
       { transaction },
     )

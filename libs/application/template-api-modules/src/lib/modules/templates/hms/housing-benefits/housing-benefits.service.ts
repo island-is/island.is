@@ -16,9 +16,15 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
-import { HmsHousingBenefitsClientService } from '@island.is/clients/hms-housing-benefits'
+import {
+  HmsHousingBenefitsClientService,
+  HousingBenefitsApplicationReturnModel,
+} from '@island.is/clients/hms-housing-benefits'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  getApplicationLink,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { format as formatKennitala } from 'kennitala'
 import { getConfigValue } from '../../../shared/shared.utils'
 import { ContractStatus } from './types'
@@ -28,7 +34,6 @@ import {
   doesDomicileAddressMatchContractProperty,
   filterContractsForHousingBenefits,
   getApplicantName,
-  getApplicationLink,
   getPreviouslyNotifiedIds,
   getRejectReason,
   getRequestedExtraDataFiles,
@@ -42,7 +47,8 @@ import {
   applyMockAssigneeNationalRegistryAddress,
   getAssigneePersonalTaxMockMode,
   getPersonalTaxMockMode,
-  PersonalTaxMockMode,
+  isPersonalTaxMockEnabled,
+  resolveMockPersonalTaxReturn,
   shouldOverlayMockAssigneeNationalRegistryAddress,
   useMockRentalAgreements,
 } from './utils/mock'
@@ -53,6 +59,8 @@ import {
   getAssigneeApproverDisplayName,
   getAssigneeNationalIds,
 } from '@island.is/application/templates/hms/housing-benefits'
+import { FetchError } from '@island.is/clients/middlewares'
+import { toHousingBenefitsSubmissionTemplateApiError } from './utils'
 
 @Injectable()
 export class HousingBenefitsService extends BaseTemplateApiService {
@@ -405,49 +413,32 @@ export class HousingBenefitsService extends BaseTemplateApiService {
   }
 
   /**
-   * Whether a tax return was filed for the given year.
-   *
-   * TODO: Replace the mock resolution with the real Tax (Skatturinn) endpoint, which takes
-   * (nationalId, year) and returns a boolean. The mock modes map as follows:
-   *  - 'sample' / 'none': filed for every year
-   *  - 'empty': never filed
-   *  - 'fiveYears': not filed for last year, filed for any earlier year
+   * Whether a tax return was filed for the given year via the real HMS tax API.
+   * Mock modes never reach this method — see {@link resolveMockPersonalTaxReturn}.
    */
   private async checkTaxReturnFiledForYear(
     auth: Auth,
-    taxMockMode: PersonalTaxMockMode,
     year: number,
-    lastYear: number,
   ): Promise<boolean> {
-    switch (taxMockMode) {
-      case 'empty':
-        return false
-      case 'fiveYears':
-        return year < lastYear
-      default:
-        if (auth.nationalId === undefined || auth.nationalId === null) {
-          throw new TemplateApiError('National ID is not set', 500)
-        }
-        return await this.hmsHousingBenefitsClientService.hasTaxReturnForYear(
-          auth,
-          auth.nationalId,
-          year,
-        )
+    if (auth.nationalId === undefined || auth.nationalId === null) {
+      throw new TemplateApiError('National ID is not set', 500)
     }
+    return await this.hmsHousingBenefitsClientService.hasTaxReturnForYear(
+      auth,
+      auth.nationalId,
+      year,
+    )
   }
 
-  async getPersonalTaxReturn({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  /**
+   * Real tax-status lookup used only when mock mode is `none`.
+   * Returns last-year + last-five-years filing flags for the prerequisites UI.
+   */
+  private async fetchPersonalTaxReturnFromApi(auth: Auth) {
     const lastYear = new Date().getFullYear() - 1
-
-    const taxMockMode = getPersonalTaxMockMode(application)
 
     const handedInLastYear = await this.checkTaxReturnFiledForYear(
       auth,
-      taxMockMode,
-      lastYear,
       lastYear,
     )
 
@@ -459,10 +450,8 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
 
     let handedInLastFiveYears = false
-    for (let year = lastYear - 1; year >= lastYear - 5; year--) {
-      if (
-        await this.checkTaxReturnFiledForYear(auth, taxMockMode, year, lastYear)
-      ) {
+    for (let year = lastYear - 1; year > lastYear - 5; year--) {
+      if (await this.checkTaxReturnFiledForYear(auth, year)) {
         handedInLastFiveYears = true
         break
       }
@@ -478,44 +467,61 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * Applicant tax dataprovider.
+   *
+   * When `devMockSettings` (or legacy mock) selects a tax mock variant, returns
+   * a successful mock payload immediately so HMS outages / 500s cannot fail the
+   * provider or leave the UI without tax status. Otherwise calls the real API.
+   */
+  async getPersonalTaxReturn({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const taxMockMode = getPersonalTaxMockMode(application)
+
+    if (isPersonalTaxMockEnabled(taxMockMode)) {
+      this.logger.debug(`Using mock personal tax return (${taxMockMode})`)
+      return resolveMockPersonalTaxReturn(taxMockMode)
+    }
+
+    try {
+      return await this.fetchPersonalTaxReturnFromApi(auth)
+    } catch (error) {
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
+      this.logger.error('Failed to fetch personal tax return', error)
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    }
+  }
+
+  /**
+   * Assignee tax dataprovider — same mock short-circuit as
+   * {@link getPersonalTaxReturn}, keyed off assignee-prefixed mock answers.
+   */
   async getAssigneePersonalTaxReturn({
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const lastYear = new Date().getFullYear() - 1
-
     const taxMockMode = getAssigneePersonalTaxMockMode(
       application,
       auth.nationalId,
     )
 
-    const handedInLastYear = await this.checkTaxReturnFiledForYear(
-      auth,
-      taxMockMode,
-      lastYear,
-      lastYear,
-    )
-
-    if (handedInLastYear) {
-      return {
-        handedInLastYear: true,
-        handedInLastFiveYears: true,
-      }
+    if (isPersonalTaxMockEnabled(taxMockMode)) {
+      this.logger.debug(`Using mock assignee tax return (${taxMockMode})`)
+      return resolveMockPersonalTaxReturn(taxMockMode)
     }
 
-    let handedInLastFiveYears = false
-    for (let year = lastYear - 1; year >= lastYear - 5; year--) {
-      if (
-        await this.checkTaxReturnFiledForYear(auth, taxMockMode, year, lastYear)
-      ) {
-        handedInLastFiveYears = true
-        break
+    try {
+      return await this.fetchPersonalTaxReturnFromApi(auth)
+    } catch (error) {
+      if (error instanceof TemplateApiError) {
+        throw error
       }
-    }
-
-    return {
-      handedInLastYear: false,
-      handedInLastFiveYears,
+      this.logger.error('Failed to fetch assignee tax return', error)
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }
   }
 
@@ -723,6 +729,14 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       }
 
       this.logger.error('Failed to submit housing benefits application:', e)
+
+      if (e instanceof FetchError && e.body) {
+        throw toHousingBenefitsSubmissionTemplateApiError(
+          e.body as HousingBenefitsApplicationReturnModel,
+          e.status,
+        )
+      }
+
       throw new TemplateApiError(
         {
           title: 'Villa kom upp',

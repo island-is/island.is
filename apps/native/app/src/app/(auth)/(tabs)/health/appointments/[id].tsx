@@ -1,18 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   ImageSourcePropType,
   Linking,
   SafeAreaView,
   ScrollView,
   View,
 } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
+import { toast, ToastHost } from '@/components/toast'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import styled, { useTheme } from 'styled-components/native'
 import calendarIcon from '@/assets/icons/calendar.png'
+import calendarCancelIcon from '@/assets/icons/calendar-cancel.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLink from '@/assets/icons/external-link.png'
 import infoIcon from '@/assets/icons/info-bubble-outline.png'
@@ -22,8 +25,12 @@ import videoCameraIcon from '@/assets/icons/video-camera.png'
 import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
+  HealthDirectorateAppointmentAssigneeType,
+  HealthDirectorateAppointmentCancelOutcome,
   HealthDirectorateAppointmentLinkType,
   HealthDirectorateAppointmentModality,
+  HealthDirectorateAppointmentStatus,
+  useCancelAppointmentMutation,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
 import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
@@ -59,14 +66,36 @@ const LocationItem = styled.View`
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
+const InlineLink = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.smallGutter}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${({ theme }) => theme.color.blue400};
+`
+
+const MoreInfoRow = styled.View`
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
+`
+
 const EyebrowContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const ProblemContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const CancelSection = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const StickyFooter = styled.View`
@@ -75,10 +104,40 @@ const StickyFooter = styled.View`
   background-color: ${({ theme }) => theme.color.white};
 `
 
+type VideoCallPhase = 'before' | 'active' | 'expired'
+
+// A missing/unparseable timestamp yields undefined, treated downstream as
+// "not time-gated" so the link stays usable rather than blocking the call.
+const toTimeMs = (value?: string | null): number | undefined => {
+  if (!value) {
+    return undefined
+  }
+  const ms = new Date(value).getTime()
+  return Number.isNaN(ms) ? undefined : ms
+}
+
+const getVideoCallPhase = (
+  activatesAtMs?: number,
+  expiresAtMs?: number,
+): VideoCallPhase => {
+  if (activatesAtMs === undefined || expiresAtMs === undefined) {
+    return 'active'
+  }
+  const now = Date.now()
+  if (now >= expiresAtMs) {
+    return 'expired'
+  }
+  if (now >= activatesAtMs) {
+    return 'active'
+  }
+  return 'before'
+}
+
 export default function AppointmentDetailScreen() {
   const { id: appointmentId } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
   const theme = useTheme()
+  const router = useRouter()
 
   const appointmentFromCache =
     useFragment_experimental<HealthDirectorateAppointment>({
@@ -91,10 +150,18 @@ export default function AppointmentDetailScreen() {
       returnPartialData: true,
     })
 
-  const { data, loading, error, networkStatus } = useGetAppointmentDetailQuery({
-    variables: { id: appointmentId ?? '' },
-    skip: !appointmentId,
-  })
+  const { data, loading, error, networkStatus, refetch } =
+    useGetAppointmentDetailQuery({
+      variables: { id: appointmentId ?? '' },
+      skip: !appointmentId,
+    })
+
+  const [cancelAppointment, { loading: cancelling }] =
+    useCancelAppointmentMutation({
+      // Not awaited: a failed list refetch would reject the mutation and
+      // hide the outcome below.
+      refetchQueries: ['getAppointments'],
+    })
 
   const appointment =
     data?.healthDirectorateAppointment ?? appointmentFromCache?.data
@@ -123,68 +190,105 @@ export default function AppointmentDetailScreen() {
     void openExternalUrl(mapsLink)
   }, [mapsLink, openExternalUrl])
 
+  const renderSeeMore = (
+    url: string,
+    alignSelf: 'center' | 'flex-start' = 'center',
+  ) => (
+    <InlineLink style={{ alignSelf }} onPress={() => void openExternalUrl(url)}>
+      <Typography variant="eyebrow" color={theme.color.blue400}>
+        {intl.formatMessage({ id: 'health.appointments.seeMore' })}
+      </Typography>
+      <Icon
+        source={externalLink as ImageSourcePropType}
+        width={16}
+        height={16}
+      />
+    </InlineLink>
+  )
+
   const locationLinks = appointment?.location?.locationLinks
   const locationLink =
     locationLinks?.find((l) => l.type === 'WEBSITE')?.url ??
     locationLinks?.[0]?.url
 
+  // assignees and the finer location fields only exist on the detail type,
+  // not the cached list fragment, so read them off the query result directly.
+  const detail = data?.healthDirectorateAppointment
+
+  const findLink = (type: HealthDirectorateAppointmentLinkType) =>
+    detail?.links?.find((l) => l.type === type)?.url
+  const preparationLink = findLink(
+    HealthDirectorateAppointmentLinkType.Preparation,
+  )
+  const patientInstructionsLink = findLink(
+    HealthDirectorateAppointmentLinkType.PatientInstructions,
+  )
+  const organizationInfoLink = findLink(
+    HealthDirectorateAppointmentLinkType.OrganizationInfo,
+  )
+
+  const assigneeTypeLabel = (
+    type: HealthDirectorateAppointmentAssigneeType,
+  ) => {
+    switch (type) {
+      case HealthDirectorateAppointmentAssigneeType.Role:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeRole',
+        })
+      case HealthDirectorateAppointmentAssigneeType.Room:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeRoom',
+        })
+      case HealthDirectorateAppointmentAssigneeType.Equipment:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeEquipment',
+        })
+      case HealthDirectorateAppointmentAssigneeType.Service:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeService',
+        })
+      case HealthDirectorateAppointmentAssigneeType.Team:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeTeam',
+        })
+      default:
+        return intl.formatMessage({
+          id: 'health.appointments.assigneeTypeOther',
+        })
+    }
+  }
+
   const isVideo =
     appointment?.modality === HealthDirectorateAppointmentModality.Video
 
-  const videoCallLink = data?.healthDirectorateAppointment?.links?.find(
+  const videoCall = detail?.links?.find(
     (l) => l.type === HealthDirectorateAppointmentLinkType.VideoCall,
-  )?.url
+  )
+  const videoCallLink = videoCall?.url
 
-  type VideoCallPhase = 'before' | 'active' | 'expired'
-  const [videoCallPhase, setVideoCallPhase] = useState<VideoCallPhase>('before')
+  // Activation window (link becomes usable / expires) comes from the server.
+  const activatesAtMs = toTimeMs(videoCall?.activatesAt)
+  const expiresAtMs = toTimeMs(videoCall?.expiresAt)
 
+  const [, rerender] = useReducer((c) => c + 1, 0)
+  const videoCallPhase = getVideoCallPhase(activatesAtMs, expiresAtMs)
+
+  // Arm a timer for the next phase boundary. No dep array: it re-arms each
+  // render, so a capped long wait chains itself and a sleep-delayed timer
+  // self-corrects instead of getting stuck.
   useEffect(() => {
-    if (!appointment?.date) {
-      setVideoCallPhase('before')
+    if (
+      videoCallPhase === 'expired' ||
+      activatesAtMs === undefined ||
+      expiresAtMs === undefined
+    ) {
       return
     }
-    const appointmentMs = new Date(appointment.date).getTime()
-    const activateAtMs = appointmentMs - 5 * 60 * 1000
-    // 1 hour after the appointment start time, we stop showing anything related to the link
-    const deactivateAtMs = appointmentMs + 60 * 60 * 1000
-    const now = Date.now()
-
-    if (now >= deactivateAtMs) {
-      setVideoCallPhase('expired')
-      return
-    }
-
-    if (now >= activateAtMs) {
-      setVideoCallPhase('active')
-      const deactivateTimeout = setTimeout(
-        () => setVideoCallPhase('expired'),
-        deactivateAtMs - now,
-      )
-      return () => clearTimeout(deactivateTimeout)
-    }
-
-    setVideoCallPhase('before')
-
-    // setTimeout in JS overflows past ~24.8 days (2^31 - 1 ms) and fires
-    // immediately. For appointments further out, skip scheduling — the user
-    // will revisit closer to the date and the next mount will set it up.
-    const MAX_TIMEOUT_MS = 2 ** 31 - 1
-    if (activateAtMs - now > MAX_TIMEOUT_MS) {
-      return
-    }
-
-    const activateTimeout = setTimeout(() => {
-      setVideoCallPhase('active')
-    }, activateAtMs - now)
-    const deactivateTimeout = setTimeout(
-      () => setVideoCallPhase('expired'),
-      deactivateAtMs - now,
-    )
-    return () => {
-      clearTimeout(activateTimeout)
-      clearTimeout(deactivateTimeout)
-    }
-  }, [appointment?.date])
+    const boundary = videoCallPhase === 'before' ? activatesAtMs : expiresAtMs
+    const delay = Math.min(boundary - Date.now(), 60 * 60 * 1000)
+    const timeout = setTimeout(rerender, Math.max(delay, 1000))
+    return () => clearTimeout(timeout)
+  })
 
   const isVideoCallActive = videoCallPhase === 'active'
   const isVideoCallExpired = videoCallPhase === 'expired'
@@ -207,12 +311,97 @@ export default function AppointmentDetailScreen() {
     time,
   } = formatAppointmentDate(intl, appointment?.date)
 
+  // Whether cancelling is offered at all, and until when, is the server's
+  // call - never inferred from the appointment date on the client.
+  const canCancel = detail?.canCancel === true
+  const isBooked =
+    appointment?.status === HealthDirectorateAppointmentStatus.Booked
+  const cancelDeadline = formatAppointmentDate(intl, detail?.canCancelBefore)
+
+  const showCancelError = useCallback(
+    (messageId: string) => {
+      toast.error(
+        intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
+        {
+          message: intl.formatMessage({ id: messageId }),
+        },
+      )
+    },
+    [intl],
+  )
+
+  const confirmCancel = useCallback(() => {
+    if (!appointmentId) {
+      return
+    }
+    cancelAppointment({ variables: { id: appointmentId } })
+      .then((res) => {
+        switch (
+          res.data?.healthDirectorateRequestAppointmentCancellation.outcome
+        ) {
+          case HealthDirectorateAppointmentCancelOutcome.Cancelled:
+            router.back()
+            // Rendered by the root ToastHost, the sheet having gone.
+            toast.success(
+              intl.formatMessage({
+                id: 'health.appointments.cancelSuccessTitle',
+              }),
+            )
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Refused:
+          case HealthDirectorateAppointmentCancelOutcome.Blocked:
+            // Refetch so the detail says whether the button is still offered.
+            void refetch()
+            showCancelError('health.appointments.cancelContactProvider')
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Unconfirmed:
+            // Sent but unanswered, so the button doubles as the retry.
+            showCancelError('health.appointments.cancelUnconfirmed')
+            break
+          default:
+            showCancelError('health.appointments.cancelErrorMessage')
+        }
+      })
+      .catch(() => showCancelError('health.appointments.cancelErrorMessage'))
+  }, [appointmentId, cancelAppointment, intl, refetch, router, showCancelError])
+
+  const handleCancelPress = useCallback(() => {
+    RNAlert.alert(
+      intl.formatMessage({ id: 'health.appointments.cancelPromptTitle' }),
+      intl.formatMessage({ id: 'health.appointments.cancelPromptMessage' }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptConfirm',
+          }),
+          style: 'destructive',
+          // Marks this the preferred action, which iOS gives the prominent
+          // (filled) treatment in its alert.
+          isPreferred: true,
+          onPress: confirmCancel,
+        },
+      ],
+    )
+  }, [confirmCancel, intl])
+
   const hasMoreInfo =
     !!appointment &&
     ((appointment.practitioners?.length ?? 0) > 0 ||
+      (detail?.assignees?.length ?? 0) > 0 ||
       !!appointment.instruction ||
-      !!appointment.location?.openingHoursText ||
+      !!preparationLink ||
+      !!detail?.location?.department ||
+      !!detail?.location?.wing ||
+      !!detail?.location?.floor ||
+      !!detail?.location?.room ||
       !!appointment.location?.phoneNumber ||
+      !!appointment.location?.openingHoursText ||
       !!appointment.location?.organization)
 
   return (
@@ -224,18 +413,18 @@ export default function AppointmentDetailScreen() {
       />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 64 }}
+        contentContainerStyle={{ paddingBottom: 240 }}
         contentInsetAdjustmentBehavior="automatic"
       >
         {error && !appointment && (
           <ProblemContainer>
             <Problem
               type="error"
+              error={error}
               title={intl.formatMessage({ id: 'problem.error.title' })}
               message={intl.formatMessage({
                 id: 'health.appointments.errorMessage',
               })}
-              tag={error.message}
             />
           </ProblemContainer>
         )}
@@ -398,6 +587,44 @@ export default function AppointmentDetailScreen() {
               </IconList>
             </Header>
 
+            {isBooked && canCancel && (
+              <CancelSection>
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.appointments.cancelAppointment',
+                  })}
+                  icon={calendarCancelIcon as ImageSourcePropType}
+                  isUtilityButton
+                  isOutlined
+                  loading={cancelling}
+                  disabled={cancelling}
+                  onPress={handleCancelPress}
+                  style={{ alignSelf: 'flex-start' }}
+                />
+                {detail?.canCancelBefore && (
+                  <Typography variant="body3">
+                    {intl.formatMessage(
+                      { id: 'health.appointments.cancelDeadline' },
+                      { date: cancelDeadline.date, time: cancelDeadline.time },
+                    )}
+                  </Typography>
+                )}
+              </CancelSection>
+            )}
+
+            {isBooked && !!detail && !canCancel && (
+              <CancelSection>
+                <Alert
+                  type="info"
+                  size="small"
+                  hasBorder
+                  message={intl.formatMessage({
+                    id: 'health.appointments.cancelNotPossible',
+                  })}
+                />
+              </CancelSection>
+            )}
+
             {hasMoreInfo && (
               <EyebrowContainer>
                 <Typography variant="eyebrow" color={theme.color.purple400}>
@@ -419,6 +646,15 @@ export default function AppointmentDetailScreen() {
               </InputRow>
             )}
 
+            {detail?.assignees?.map((assignee, index) => (
+              <InputRow key={`assignee-${index}`}>
+                <Input
+                  label={assigneeTypeLabel(assignee.type)}
+                  value={assignee.name}
+                />
+              </InputRow>
+            ))}
+
             {appointment.instruction && (
               <InputRow>
                 <Input
@@ -426,6 +662,61 @@ export default function AppointmentDetailScreen() {
                     id: 'health.appointments.instructions',
                   })}
                   value={appointment.instruction}
+                  rightElement={
+                    patientInstructionsLink
+                      ? renderSeeMore(patientInstructionsLink)
+                      : undefined
+                  }
+                />
+              </InputRow>
+            )}
+
+            {preparationLink && (
+              <MoreInfoRow>
+                <Typography variant="body3">
+                  {intl.formatMessage({
+                    id: 'health.appointments.preparation',
+                  })}
+                </Typography>
+                {renderSeeMore(preparationLink, 'flex-start')}
+              </MoreInfoRow>
+            )}
+
+            {[
+              {
+                id: 'health.appointments.locationDepartment',
+                value: detail?.location?.department,
+              },
+              {
+                id: 'health.appointments.locationWing',
+                value: detail?.location?.wing,
+              },
+              {
+                id: 'health.appointments.locationFloor',
+                value: detail?.location?.floor,
+              },
+              {
+                id: 'health.appointments.locationRoom',
+                value: detail?.location?.room,
+              },
+            ]
+              .filter((line) => !!line.value)
+              .map((line) => (
+                <InputRow key={line.id}>
+                  <Input
+                    label={intl.formatMessage({ id: line.id })}
+                    value={line.value}
+                  />
+                </InputRow>
+              ))}
+
+            {appointment.location?.phoneNumber && (
+              <InputRow>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.appointments.phoneNumber',
+                  })}
+                  value={appointment.location.phoneNumber}
                 />
               </InputRow>
             )}
@@ -441,17 +732,6 @@ export default function AppointmentDetailScreen() {
               </InputRow>
             )}
 
-            {appointment.location?.phoneNumber && (
-              <InputRow>
-                <Input
-                  label={intl.formatMessage({
-                    id: 'health.appointments.phoneNumber',
-                  })}
-                  value={appointment.location.phoneNumber}
-                />
-              </InputRow>
-            )}
-
             {appointment.location?.organization && (
               <InputRow>
                 <Input
@@ -459,6 +739,11 @@ export default function AppointmentDetailScreen() {
                     id: 'health.appointments.organization',
                   })}
                   value={appointment.location.organization}
+                  rightElement={
+                    organizationInfoLink
+                      ? renderSeeMore(organizationInfoLink)
+                      : undefined
+                  }
                 />
               </InputRow>
             )}
@@ -486,6 +771,9 @@ export default function AppointmentDetailScreen() {
           <SafeAreaView />
         </StickyFooter>
       )}
+
+      {/* A formSheet renders above the root host, so toasts need one here. */}
+      <ToastHost ignoreTabBar />
     </View>
   )
 }

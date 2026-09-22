@@ -5,9 +5,11 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
+import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsUnemploymentApplicationOverview,
+  VmstApplicationsActivationGrantApplicationOverview,
   VmstApplicationsOverview,
   VmstApplicationsApplicantOverview,
   VmstApplicationsApplicantRequestedAttachment,
@@ -15,6 +17,7 @@ import {
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
+  VmstApplicationsU2ValidationResponse,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import type { Locale } from '@island.is/shared/types'
@@ -72,6 +75,20 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
   }
 
+  @Query(() => VmstApplicationsU2ValidationResponse, {
+    name: 'vmstApplicationsU2Validation',
+  })
+  @Audit()
+  async validateU2(
+    @CurrentUser() auth: User,
+    @Args('input', {
+      type: () => VmstApplicationsU2ValidationInput,
+    })
+    input: VmstApplicationsU2ValidationInput,
+  ) {
+    return this.vmstApplicationsService.validateU2(auth, input)
+  }
+
   @Query(() => VmstApplicationsUnemploymentApplicationOverview, {
     name: 'vmstApplicationsUnemploymentApplicationOverview',
   })
@@ -82,6 +99,21 @@ export class VMSTApplicationsResolver {
     locale?: Locale,
   ): Promise<VmstApplicationsUnemploymentApplicationOverview | undefined> {
     return this.vmstApplicationsService.getApplicationOverview(auth, locale)
+  }
+
+  @Query(() => VmstApplicationsActivationGrantApplicationOverview, {
+    name: 'vmstApplicationsActivationGrantApplicationOverview',
+  })
+  @Audit()
+  async getActivationGrantApplicationOverview(
+    @CurrentUser() auth: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale?: Locale,
+  ): Promise<VmstApplicationsActivationGrantApplicationOverview | undefined> {
+    return this.vmstApplicationsService.getActivationGrantApplicationOverview(
+      auth,
+      locale,
+    )
   }
 
   @Query(() => VmstApplicationsOverview, {

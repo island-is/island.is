@@ -25,6 +25,16 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOverview,
     },
     {
+      name: messages.pregnancy,
+      path: HealthPaths.HealthPregnancy,
+      children: [
+        {
+          name: messages.myPregnancy,
+          path: HealthPaths.HealthPregnancyOverview,
+        },
+      ],
+    },
+    {
       name: messages.myMedicine,
       path: HealthPaths.HealthMedicine,
       children: [
@@ -100,13 +110,18 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: messages.appointments,
       searchHide: false,
-      breadcrumbHide: true,
       path: HealthPaths.HealthAppointments,
       searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
       children: [
         {
           name: messages.appointmentDetail,
           path: HealthPaths.HealthAppointmentDetail,
+          navHide: true,
+          breadcrumbHide: true,
+        },
+        {
+          name: messages.bookAppointmentTitle,
+          path: HealthPaths.HealthBookAppointment,
           navHide: true,
           breadcrumbHide: true,
         },
@@ -122,12 +137,14 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthConversationsDetail,
           navHide: true,
           breadcrumbHide: true,
+          mobileTakeover: true,
         },
         {
           name: messages.healthConversationsNewTitle,
           path: HealthPaths.HealthConversationsNew,
           navHide: true,
           breadcrumbHide: true,
+          mobileTakeover: true,
         },
       ],
     },
@@ -247,6 +264,11 @@ export const healthNavigation: PortalNavigationItem = {
           description: m.aidsAndNutritionIntro,
           path: HealthPaths.HealthAidsAndNutrition,
         },
+        {
+          name: messages.movementPrescriptionsTitle,
+          description: messages.movementPrescriptionsIntro,
+          path: HealthPaths.HealthMovementPrescriptions,
+        },
       ],
     },
     {
@@ -282,6 +304,11 @@ export const healthNavigation: PortalNavigationItem = {
               navHide: true,
             },
           ],
+        },
+        {
+          name: messages.oldPregnanciesTitle,
+          description: messages.oldPregnanciesIntro,
+          path: HealthPaths.HealthOldPregnancies,
         },
         {
           name: messages.patientDataPermit,

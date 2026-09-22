@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -133,9 +133,9 @@ const MedicinePrescriptions = () => {
       title={formatMessage(messages.medicinePrescriptions)}
       intro={formatMessage(messages.medicinePrescriptionIntroText)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
+        slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(
-          messages.landlaeknirMedicinePrescriptionsTooltip,
+          messages.stafraenHeilsaMedicinePrescriptionsTooltip,
         ),
       }}
     >
@@ -156,9 +156,9 @@ const MedicinePrescriptions = () => {
             filterInput={
               <Input
                 placeholder={formatMessage(m.searchPlaceholder)}
+                aria-label={formatMessage(m.searchLabel)}
                 name="rafraen-skjol-input"
                 size="xs"
-                label={formatMessage(m.searchLabel)}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 backgroundColor="blue"
                 icon={{ name: 'search' }}

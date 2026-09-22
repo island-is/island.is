@@ -1,4 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -9,9 +10,11 @@ import {
   PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  type InstitutionUser,
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -27,14 +30,15 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type {
   Case,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseFileCategory,
   TrackedNotificationType,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
@@ -50,6 +54,13 @@ import {
 
 import { SelectCaseFileRepresentative } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
+
+// Mirrors the CASE_FILES_UPDATED entries in notification rolesRules.
+// District court users (and prosecutor representatives) reuse this screen for
+// uploads but are not allowed to send that notification type — calling it
+// produces a swallowed 403 in Datadog.
+const canSendCaseFilesUpdatedNotification = (user?: InstitutionUser): boolean =>
+  isProsecutorUser(user) || isDefenceUser(user)
 
 const getUserProps = (user: User | undefined, workingCase: Case) => {
   const getCaseInfoNode = (workingCase: Case) => (
@@ -187,7 +198,10 @@ const AddFiles: FC = () => {
       updateUploadFile,
     )
 
-    if (uploadResult !== 'NONE_SUCCEEDED') {
+    if (
+      uploadResult !== 'NONE_SUCCEEDED' &&
+      canSendCaseFilesUpdatedNotification(user)
+    ) {
       // Some files were added successfully so we send a notification
       await sendNotification(
         workingCase.id,
@@ -205,6 +219,7 @@ const AddFiles: FC = () => {
     sendNotification,
     updateUploadFile,
     uploadFiles,
+    user,
     workingCase.id,
     router,
     previousRoute,
@@ -245,7 +260,6 @@ const AddFiles: FC = () => {
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
-          isBottomComponent={!hasFileRepresentativeSelection}
         />
         {hasFileRepresentativeSelection && (
           <SelectCaseFileRepresentative

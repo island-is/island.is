@@ -10,6 +10,7 @@ import { User } from '@island.is/judicial-system/types'
 import { createTestingCourtModule } from './createTestingCourtModule'
 
 import { randomEnum } from '../../../test'
+import { CaseRepositoryService } from '../../repository'
 import { CourtDocumentFolder } from '../court.service'
 
 interface Then {
@@ -43,16 +44,22 @@ describe('CourtService - Create document', () => {
   const courtEmail = 'court@omnitrix.is'
   let mockCourtClientService: CourtClientService
   let mockEmailService: EmailService
+  let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"${courtId}": "${courtEmail}"}`
 
-    const { courtClientService, emailService, courtService } =
-      await createTestingCourtModule()
+    const {
+      courtClientService,
+      emailService,
+      courtService,
+      caseRepositoryService,
+    } = await createTestingCourtModule()
 
     mockEmailService = emailService
     mockCourtClientService = courtClientService
+    mockCaseRepositoryService = caseRepositoryService
     const mockUploadStream = mockCourtClientService.uploadStream as jest.Mock
     mockUploadStream.mockResolvedValue(streamId)
     const mockCreateDocument =
@@ -209,6 +216,93 @@ describe('CourtService - Create document', () => {
     })
 
     it('should notify the court with a masked file name', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: '', address: courtEmail }],
+          subject: `Ekki tókst að hlaða upp skjali í Auði í máli ${courtCaseNumber}`,
+          text: 'Ekki tókst að hlaða upp skjali t******e.pdf í Auði vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í Auði.',
+        }),
+      )
+    })
+
+    it('should throw a payload too large exception', () => {
+      expect(then.error).toBeInstanceOf(PayloadTooLargeException)
+    })
+  })
+
+  describe('file is too large and judge and registrar are assigned', () => {
+    const largeFileName = 'testFile.pdf'
+    const judge = { name: 'Judge One', email: 'judge@omnitrix.is' }
+    const registrar = { name: 'Registrar One', email: 'registrar@omnitrix.is' }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindById = mockCaseRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({ judge, registrar })
+
+      const mockUploadStream = mockCourtClientService.uploadStream as jest.Mock
+      mockUploadStream.mockRejectedValueOnce(new PayloadTooLargeException())
+
+      then = await givenWhenThen(
+        caseId,
+        courtId,
+        courtCaseNumber,
+        caseFolder,
+        subject,
+        largeFileName,
+        fileType,
+        content,
+      )
+    })
+
+    it('should notify the court, judge and registrar', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(3)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: '', address: courtEmail }],
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge.name, address: judge.email }],
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: registrar.name, address: registrar.email }],
+        }),
+      )
+    })
+
+    it('should throw a payload too large exception', () => {
+      expect(then.error).toBeInstanceOf(PayloadTooLargeException)
+    })
+  })
+
+  describe('file is too large and case lookup fails', () => {
+    const largeFileName = 'testFile.pdf'
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindById = mockCaseRepositoryService.findById as jest.Mock
+      mockFindById.mockRejectedValueOnce(new Error('Case lookup failed'))
+
+      const mockUploadStream = mockCourtClientService.uploadStream as jest.Mock
+      mockUploadStream.mockRejectedValueOnce(new PayloadTooLargeException())
+
+      then = await givenWhenThen(
+        caseId,
+        courtId,
+        courtCaseNumber,
+        caseFolder,
+        subject,
+        largeFileName,
+        fileType,
+        content,
+      )
+    })
+
+    it('should still notify the court with a masked file name', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: '', address: courtEmail }],

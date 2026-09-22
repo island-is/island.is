@@ -462,6 +462,59 @@
           }
         }
       }
+    },
+    "/api/RentalDays/{EntityId}/periods/{Period}": {
+      "get": {
+        "tags": ["RentalDays"],
+        "parameters": [
+          {
+            "name": "EntityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^\\d{4}-\\d{2}$",
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Api-Version",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDaysPeriodRegistration"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDaysPeriodRegistration"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RentalDaysPeriodRegistration"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -627,7 +680,7 @@
         "additionalProperties": false
       },
       "InsertRentalDaysModel": {
-        "required": ["dayRateEntryId", "numberOfDays", "permno"],
+        "required": ["numberOfDays", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -640,7 +693,8 @@
           },
           "dayRateEntryId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -727,6 +781,43 @@
           "timabil": {
             "type": "string",
             "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalDaysPeriodEntry": {
+        "required": ["availableDays", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalDaysPeriodRegistration": {
+        "required": ["entries", "month", "year"],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RentalDaysPeriodEntry"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

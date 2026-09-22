@@ -20,6 +20,30 @@ export enum VerdictAppealDecision {
   POSTPONE = 'POSTPONE', // Taka áfrýjunarfrest
 }
 
+// A defendant can appeal a verdict once they have been made aware of it -
+// either it was served on them, or they were present when it was delivered.
+// Default judgements are reopened rather than appealed.
+export const canDefendantAppealVerdict = (
+  verdict?: {
+    isDefaultJudgement?: boolean | null
+    serviceRequirement?: ServiceRequirement | null
+    serviceDate?: unknown
+  } | null,
+): boolean => {
+  if (!verdict || verdict.isDefaultJudgement) {
+    return false
+  }
+
+  if (verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE) {
+    return true
+  }
+
+  return (
+    verdict.serviceRequirement === ServiceRequirement.REQUIRED &&
+    Boolean(verdict.serviceDate)
+  )
+}
+
 export enum InformationForDefendant {
   INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES = 'INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES',
   INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS = 'INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS',

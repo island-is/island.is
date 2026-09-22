@@ -23,6 +23,7 @@ env:
   BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
   BASEPATH: '/consultation-portal'
   CODE_OWNER: 'Advania'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   ENVIRONMENT: 'dev'
   IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'
