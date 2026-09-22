@@ -1,3 +1,7 @@
+import {
+  BadRequestException,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
@@ -6,9 +10,6 @@ import {
   DEFAULT_LOCALE,
   ENGLISH_LOCALE,
   type NamespaceEntryFields,
-  TranslationContentfulEntryMismatchException,
-  TranslationNamespaceNotExtractedException,
-  TranslationWorkspaceReadOnlyException,
 } from '@island.is/application/api/core'
 
 import { ApplicationTranslationService } from './application-translation.service'
@@ -105,13 +106,13 @@ describe('ApplicationTranslationService', () => {
   })
 
   describe('getTranslationsByNamespace', () => {
-    it('throws TranslationNamespaceNotExtractedException when the CMA entry does not exist at all', async () => {
+    it('throws a BadRequestException when the CMA entry does not exist at all', async () => {
       managementEntryGetSpy.mockRejectedValue({ name: 'NotFound' })
       managementEntryGetManySpy.mockResolvedValue({ items: [] })
 
       await expect(
         service.getTranslationsByNamespace('missing.ns'),
-      ).rejects.toBeInstanceOf(TranslationNamespaceNotExtractedException)
+      ).rejects.toBeInstanceOf(BadRequestException)
     })
 
     it('treats an unpublished namespace as empty published values, not an error', async () => {
@@ -172,6 +173,27 @@ describe('ApplicationTranslationService', () => {
       ])
     })
 
+    it('includes a key that only has an English value', async () => {
+      managementEntryGetSpy.mockResolvedValue(
+        buildEntry({
+          namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+          strings: {
+            [DEFAULT_LOCALE]: {},
+            [ENGLISH_LOCALE]: { 'test.ns:key.en-only': 'English only' },
+          },
+        }),
+      )
+
+      const rows = await service.getTranslationsByNamespace('test.ns')
+
+      expect(rows).toEqual([
+        expect.objectContaining({
+          messageKey: 'test.ns:key.en-only',
+          draftValueEn: 'English only',
+        }),
+      ])
+    })
+
     it('resolves via the fields.namespace fallback when the direct lookup 404s', async () => {
       managementEntryGetSpy.mockRejectedValue({ name: 'NotFound' })
       managementEntryGetManySpy.mockResolvedValue({
@@ -217,7 +239,7 @@ describe('ApplicationTranslationService', () => {
       jest.useRealTimers()
     })
 
-    it('throws TranslationWorkspaceReadOnlyException without writing when writes are disabled', async () => {
+    it('throws a ServiceUnavailableException without writing when writes are disabled', async () => {
       featureFlagGetValueSpy.mockResolvedValue(true)
 
       await expect(
@@ -225,7 +247,7 @@ describe('ApplicationTranslationService', () => {
           [{ namespace: 'test.ns', messageKey: 'test.ns:key.one', valueIs: 'x' }],
           user,
         ),
-      ).rejects.toBeInstanceOf(TranslationWorkspaceReadOnlyException)
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
 
       expect(managementEntryGetSpy).not.toHaveBeenCalled()
     })
@@ -365,7 +387,7 @@ describe('ApplicationTranslationService', () => {
       )
     })
 
-    it('throws TranslationContentfulEntryMismatchException when the resolved entry does not match the namespace', async () => {
+    it('throws a BadRequestException naming the namespace when the resolved entry does not match it', async () => {
       managementEntryGetSpy.mockResolvedValue(
         buildEntry({
           namespace: { [DEFAULT_LOCALE]: 'wrong.ns' },
@@ -383,34 +405,91 @@ describe('ApplicationTranslationService', () => {
         ],
         user,
       )
-      const expectation = expect(resultPromise).rejects.toBeInstanceOf(
-        TranslationContentfulEntryMismatchException,
+      const expectation = expect(resultPromise).rejects.toThrow(
+        /Failed to save translations for namespace\(s\): test\.ns/,
       )
       await jest.advanceTimersByTimeAsync(3000)
       await expectation
 
       expect(managementEntryUpdateSpy).not.toHaveBeenCalled()
     })
+
+    it('still attempts and saves the other namespaces when one namespace fails', async () => {
+      managementEntryGetSpy.mockImplementation(({ entryId }) =>
+        Promise.resolve(
+          entryId === 'bad.ns'
+            ? buildEntry(
+                {
+                  namespace: { [DEFAULT_LOCALE]: 'wrong.ns' },
+                  strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+                },
+                { id: 'bad.ns' },
+              )
+            : buildEntry(
+                {
+                  namespace: { [DEFAULT_LOCALE]: 'good.ns' },
+                  strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+                },
+                { id: 'good.ns' },
+              ),
+        ),
+      )
+      managementEntryUpdateSpy.mockResolvedValue(
+        buildEntry(
+          {
+            namespace: { [DEFAULT_LOCALE]: 'good.ns' },
+            strings: {
+              [DEFAULT_LOCALE]: { 'good.ns:key.one': 'x' },
+              [ENGLISH_LOCALE]: {},
+            },
+          },
+          { id: 'good.ns' },
+        ),
+      )
+
+      const resultPromise = service.bulkUpsertTranslations(
+        [
+          { namespace: 'bad.ns', messageKey: 'bad.ns:key.one', valueIs: 'x' },
+          {
+            namespace: 'good.ns',
+            messageKey: 'good.ns:key.one',
+            valueIs: 'x',
+          },
+        ],
+        user,
+      )
+      const expectation = expect(resultPromise).rejects.toBeInstanceOf(
+        BadRequestException,
+      )
+      await jest.advanceTimersByTimeAsync(3000)
+      await jest.advanceTimersByTimeAsync(3000)
+      await expectation
+
+      expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
+        { entryId: 'good.ns' },
+        expect.anything(),
+      )
+    })
   })
 
   describe('publishTranslations', () => {
-    it('throws TranslationWorkspaceReadOnlyException without publishing when writes are disabled', async () => {
+    it('throws a ServiceUnavailableException without publishing when writes are disabled', async () => {
       featureFlagGetValueSpy.mockResolvedValue(true)
 
       await expect(
         service.publishTranslations('test.ns', user),
-      ).rejects.toBeInstanceOf(TranslationWorkspaceReadOnlyException)
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
 
       expect(managementEntryGetSpy).not.toHaveBeenCalled()
     })
 
-    it('throws TranslationNamespaceNotExtractedException when the entry does not exist', async () => {
+    it('throws a BadRequestException when the entry does not exist', async () => {
       managementEntryGetSpy.mockRejectedValue({ name: 'NotFound' })
       managementEntryGetManySpy.mockResolvedValue({ items: [] })
 
       await expect(
         service.publishTranslations('missing.ns', user),
-      ).rejects.toBeInstanceOf(TranslationNamespaceNotExtractedException)
+      ).rejects.toBeInstanceOf(BadRequestException)
     })
 
     it('publishes the current entry and derives the result from the newest publish snapshot', async () => {
@@ -463,6 +542,28 @@ describe('ApplicationTranslationService', () => {
       expect(managementEntryGetSpy).toHaveBeenCalledTimes(2)
       expect(managementEntryPublishSpy).toHaveBeenCalledTimes(2)
       expect(result.id).toBe('snap-1')
+    })
+
+    it('picks the newest publish snapshot even when Contentful returns them out of order', async () => {
+      const entry = buildEntry({
+        namespace: { [DEFAULT_LOCALE]: 'test.ns' },
+        strings: { [DEFAULT_LOCALE]: {}, [ENGLISH_LOCALE]: {} },
+      })
+      managementEntryGetSpy.mockResolvedValue(entry)
+      managementEntryPublishSpy.mockResolvedValue(
+        buildEntry(entry.fields, { publishedVersion: 4 }),
+      )
+      managementSnapshotGetManyForEntrySpy.mockResolvedValue({
+        items: [
+          buildLatestPublishSnapshotItem('snap-older', '2026-01-01T00:00:00.000Z'),
+          buildLatestPublishSnapshotItem('snap-newest', '2026-03-01T00:00:00.000Z'),
+          buildLatestPublishSnapshotItem('snap-middle', '2026-02-01T00:00:00.000Z'),
+        ],
+      })
+
+      const result = await service.publishTranslations('test.ns', user)
+
+      expect(result.id).toBe('snap-newest')
     })
 
     it('throws when no publish snapshot can be found immediately after publishing', async () => {
@@ -549,12 +650,12 @@ describe('ApplicationTranslationService', () => {
       expect(managementEntryGetSpy).not.toHaveBeenCalled()
     })
 
-    it('throws TranslationWorkspaceReadOnlyException without reading the entry when writes are disabled', async () => {
+    it('throws a ServiceUnavailableException without reading the entry when writes are disabled', async () => {
       featureFlagGetValueSpy.mockResolvedValue(true)
 
       await expect(
         service.rollbackToPublish('snap-id', 'test.ns', user),
-      ).rejects.toBeInstanceOf(TranslationWorkspaceReadOnlyException)
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
 
       expect(managementSnapshotGetForEntrySpy).not.toHaveBeenCalled()
     })

@@ -52,7 +52,6 @@ export enum Features {
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
-  // Kill switch: when enabled, the translation workspace stops writing to Contentful (reads unaffected)
   applicationTranslationWorkspaceReadOnly = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
 
   // Service portal modules

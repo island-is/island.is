@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
 import { logger } from '@island.is/logging'
@@ -13,9 +18,6 @@ import {
   DEFAULT_LOCALE,
   ENGLISH_LOCALE,
   NamespaceEntryFields,
-  TranslationContentfulEntryMismatchException,
-  TranslationNamespaceNotExtractedException,
-  TranslationWorkspaceReadOnlyException,
 } from '@island.is/application/api/core'
 
 const WRITE_COALESCE_MS = 3000
@@ -63,7 +65,9 @@ export class ApplicationTranslationService {
       user,
     )
     if (readOnly) {
-      throw new TranslationWorkspaceReadOnlyException()
+      throw new ServiceUnavailableException(
+        'Translation workspace writes are temporarily disabled',
+      )
     }
   }
 
@@ -76,7 +80,6 @@ export class ApplicationTranslationService {
     })
   }
 
-  /** Buffers autosave deltas per namespace so concurrent edits cost one Contentful write, not several. */
   private coalescedMerge(
     namespace: string,
     inputs: UpsertTranslationInput[],
@@ -136,7 +139,7 @@ export class ApplicationTranslationService {
       logger.error(
         `Multiple Contentful namespace entries match fields.namespace="${namespace}"`,
       )
-      throw new Error(
+      throw new BadRequestException(
         `Multiple Contentful namespace entries match fields.namespace="${namespace}"`,
       )
     }
@@ -160,8 +163,38 @@ export class ApplicationTranslationService {
       logger.error(
         `Contentful entry mismatch: expected namespace "${namespace}", got sys.id="${entry.sys.id}", contentType="${entry.sys.contentType.sys.id}", fields.namespace="${actualNamespace}"`,
       )
-      throw new TranslationContentfulEntryMismatchException(namespace)
+      throw new BadRequestException(
+        `Resolved Contentful entry does not match namespace ${namespace}`,
+      )
     }
+  }
+
+  private async getVerifiedNamespaceEntry(
+    namespace: string,
+  ): Promise<EntryProps<NamespaceEntryFields>> {
+    const entry = await this.resolveNamespaceEntry(namespace)
+
+    if (!entry) {
+      throw new BadRequestException(
+        `Namespace "${namespace}" has not been extracted to Contentful yet; run "yarn nx run <project>:extract-strings"`,
+      )
+    }
+
+    this.assertNamespaceEntry(entry, namespace)
+
+    return entry
+  }
+
+  private static pickLatestPublishSnapshot<
+    T extends { sys: { snapshotType?: string; createdAt: string } },
+  >(items: T[]): T | undefined {
+    return items
+      .filter((item) => item.sys.snapshotType === 'publish')
+      .sort(
+        (a, b) =>
+          new Date(b.sys.createdAt).getTime() -
+          new Date(a.sys.createdAt).getTime(),
+      )[0]
   }
 
   private async getPublishedNamespaceFields(
@@ -177,8 +210,8 @@ export class ApplicationTranslationService {
         { entryId: namespace, query: { limit: 5 } },
       )
 
-    const latestPublish = snapshots.items.find(
-      (item) => item.sys.snapshotType === 'publish',
+    const latestPublish = ApplicationTranslationService.pickLatestPublishSnapshot(
+      snapshots.items,
     )
 
     return latestPublish?.snapshot.fields ?? null
@@ -196,7 +229,12 @@ export class ApplicationTranslationService {
     const publishedIs = publishedFields?.strings?.[DEFAULT_LOCALE] ?? {}
     const publishedEn = publishedFields?.strings?.[ENGLISH_LOCALE] ?? {}
 
-    const keys = new Set([...Object.keys(draftIs), ...Object.keys(publishedIs)])
+    const keys = new Set([
+      ...Object.keys(draftIs),
+      ...Object.keys(draftEn),
+      ...Object.keys(publishedIs),
+      ...Object.keys(publishedEn),
+    ])
 
     const created = new Date(entrySys.createdAt)
     const modified = new Date(entrySys.updatedAt)
@@ -234,11 +272,7 @@ export class ApplicationTranslationService {
   async getTranslationsByNamespace(
     namespace: string,
   ): Promise<ContentfulTranslationRow[]> {
-    const draftEntry = await this.resolveNamespaceEntry(namespace)
-
-    if (!draftEntry) {
-      throw new TranslationNamespaceNotExtractedException(namespace)
-    }
+    const draftEntry = await this.getVerifiedNamespaceEntry(namespace)
 
     const publishedFields = await this.getPublishedNamespaceFields(
       namespace,
@@ -260,13 +294,7 @@ export class ApplicationTranslationService {
     namespace: string,
     inputs: UpsertTranslationInput[],
   ): Promise<void> {
-    const entry = await this.resolveNamespaceEntry(namespace)
-
-    if (!entry) {
-      throw new TranslationNamespaceNotExtractedException(namespace)
-    }
-
-    this.assertNamespaceEntry(entry, namespace)
+    const entry = await this.getVerifiedNamespaceEntry(namespace)
 
     const stringsIs = { ...(entry.fields.strings?.[DEFAULT_LOCALE] ?? {}) }
     const stringsEn = { ...(entry.fields.strings?.[ENGLISH_LOCALE] ?? {}) }
@@ -327,26 +355,35 @@ export class ApplicationTranslationService {
     }
 
     const rows: ContentfulTranslationRow[] = []
+    const failedNamespaces: string[] = []
 
     for (const [namespace, inputs] of inputsByNamespace) {
-      await this.coalescedMerge(namespace, inputs)
+      try {
+        await this.coalescedMerge(namespace, inputs)
 
-      const namespaceRows = await this.getTranslationsByNamespace(namespace)
-      const requestedKeys = new Set(inputs.map((i) => i.messageKey))
-      rows.push(
-        ...namespaceRows.filter((row) => requestedKeys.has(row.messageKey)),
+        const namespaceRows = await this.getTranslationsByNamespace(namespace)
+        const requestedKeys = new Set(inputs.map((i) => i.messageKey))
+        rows.push(
+          ...namespaceRows.filter((row) => requestedKeys.has(row.messageKey)),
+        )
+      } catch (error) {
+        logger.error(
+          `Failed to save translations for namespace "${namespace}"`,
+          error as Error,
+        )
+        failedNamespaces.push(namespace)
+      }
+    }
+
+    if (failedNamespaces.length > 0) {
+      throw new BadRequestException(
+        `Failed to save translations for namespace(s): ${failedNamespaces.join(', ')}`,
       )
     }
 
     return rows
   }
 
-  /**
-   * `select: 'sys'` keeps the response small -- a full snapshot embeds the
-   * whole entry, and we only need the newest publish-type one right after
-   * publishing. Shares its id/publishedAt derivation with `getPublishHistory`
-   * so both agree on what identifies and dates a publish.
-   */
   private async getLatestPublishSnapshot(
     namespace: string,
   ): Promise<PublishHistoryItem> {
@@ -355,12 +392,12 @@ export class ApplicationTranslationService {
         { entryId: namespace, query: { select: 'sys', limit: 5 } },
       )
 
-    const latest = snapshots.items.find(
-      (item) => item.sys.snapshotType === 'publish',
+    const latest = ApplicationTranslationService.pickLatestPublishSnapshot(
+      snapshots.items,
     )
 
     if (!latest) {
-      throw new Error(
+      throw new BadRequestException(
         `No publish snapshot found for namespace "${namespace}" immediately after publishing`,
       )
     }
@@ -379,11 +416,7 @@ export class ApplicationTranslationService {
     await this.assertWritesEnabled(user)
 
     await this.withConflictRetry(async () => {
-      const entry = await this.resolveNamespaceEntry(namespace)
-      if (!entry) {
-        throw new TranslationNamespaceNotExtractedException(namespace)
-      }
-      this.assertNamespaceEntry(entry, namespace)
+      const entry = await this.getVerifiedNamespaceEntry(namespace)
 
       return this.managementClient.entry.publish<NamespaceEntryFields>(
         { entryId: namespace },
@@ -394,11 +427,6 @@ export class ApplicationTranslationService {
     return this.getLatestPublishSnapshot(namespace)
   }
 
-  /**
-   * `select: 'sys'` is mandatory -- without it this endpoint 400s past a
-   * 7 MB response cap, since every snapshot embeds the whole entry. No
-   * `total` is returned, so pages are walked until a short page is seen.
-   */
   async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
     const items: PublishHistoryItem[] = []
     const limit = 100
@@ -429,11 +457,6 @@ export class ApplicationTranslationService {
     return items.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
   }
 
-  /**
-   * Keys present in the current entry but absent from the target snapshot
-   * are blanked to `''`, never removed -- `extract-strings` iterates every
-   * current key for every locale, and a missing key breaks it.
-   */
   async rollbackToPublish(
     snapshotId: string,
     namespace: string,
@@ -455,11 +478,7 @@ export class ApplicationTranslationService {
     }
 
     await this.withConflictRetry(async () => {
-      const entry = await this.resolveNamespaceEntry(namespace)
-      if (!entry) {
-        throw new TranslationNamespaceNotExtractedException(namespace)
-      }
-      this.assertNamespaceEntry(entry, namespace)
+      const entry = await this.getVerifiedNamespaceEntry(namespace)
 
       const targetIs =
         targetSnapshot.snapshot.fields.strings?.[DEFAULT_LOCALE] ?? {}

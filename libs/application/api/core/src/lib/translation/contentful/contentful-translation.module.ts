@@ -30,9 +30,6 @@ import {
       inject: [ContentfulTranslationConfig.KEY],
     },
   ],
-  // Deliberately narrow: only application-system-api's TranslationModule imports
-  // this module, and it does not re-export this token further. A write-capable
-  // Contentful client must stay reachable only from ApplicationTranslationService.
   exports: [CONTENTFUL_MANAGEMENT_CLIENT],
 })
 export class ContentfulTranslationModule {}
