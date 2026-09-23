@@ -81,7 +81,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       <Box className={styles.fullWidthInner} marginX={'auto'}>
         {!isDashboard && !isDocuments && !isSearch && (
           <>
-            <Box paddingBottom={[3, 4]} paddingTop={[4, 4, 0]}>
+            <Box paddingBottom={[0, 0, 4]} paddingTop={[3, 3, 0]}>
               <GridContainer className={styles.wrap} position="none">
                 <GridRow>
                   <GridColumn span="12/12">
@@ -100,7 +100,8 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                 </GridRow>
               </GridContainer>
             </Box>
-            <Box>
+            {/* Clears the breadcrumbs' negative margin, matching the gap on other pages */}
+            <Box marginTop={[2, 2, 0]}>
               <GridContainer position="none">
                 <GridRow>
                   <GridColumn span="12/12">
