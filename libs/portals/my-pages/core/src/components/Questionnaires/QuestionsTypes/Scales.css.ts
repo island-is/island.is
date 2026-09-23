@@ -68,6 +68,11 @@ export const bubbleSelected = style({
   },
 })
 
+// Ticks the fill has already run past
+export const bubblePassed = style({
+  borderColor: theme.color.blue400,
+})
+
 export const bubbleError = style({
   borderColor: theme.color.red600,
   selectors: {

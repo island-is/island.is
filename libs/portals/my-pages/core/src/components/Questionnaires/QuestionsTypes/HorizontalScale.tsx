@@ -142,8 +142,9 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
                   style={fill}
                 />
               )}
-              {row.map((scaleValue) => {
+              {row.map((scaleValue, tickIndex) => {
                 const selected = value === scaleValue
+                const passed = selectedIndex > rowIndex * columns + tickIndex
                 return (
                   <Fragment key={scaleValue}>
                     <input
@@ -164,6 +165,7 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
                         <span
                           className={cn(styles.bubble, {
                             [styles.bubbleSelected]: selected,
+                            [styles.bubblePassed]: passed,
                             [styles.bubbleError]: !!error && !selected,
                           })}
                         />

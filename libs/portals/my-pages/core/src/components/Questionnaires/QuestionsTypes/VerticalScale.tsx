@@ -102,6 +102,7 @@ export const VerticalScale: FC<VerticalScaleProps> = ({
               )}
               {descendingValues.map((scaleValue) => {
                 const selected = value === scaleValue
+                const passed = selectedIndex > values.indexOf(scaleValue)
                 return (
                   <Fragment key={scaleValue}>
                     <input
@@ -122,6 +123,7 @@ export const VerticalScale: FC<VerticalScaleProps> = ({
                         <span
                           className={cn(styles.bubble, {
                             [styles.bubbleSelected]: selected,
+                            [styles.bubblePassed]: passed,
                             [styles.bubbleError]: !!error && !selected,
                           })}
                         />
