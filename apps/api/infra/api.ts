@@ -316,21 +316,10 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
-      ELFUR_CLIENT_ID: {
-        dev: '@fjs.is/stafraent-island-api-elfur',
-        staging: '@fjs.is/stafraent-island-api-elfur',
-        prod: '@fjs.is/stafraent-island-api-elfur',
-      },
-      ELFUR_BASE_PATH: {
-        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
-        staging:
-          'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
-        prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
-      },
-      ELFUR_BASE_IDS_URL: {
-        dev: 'https://identity-server.staging01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
+      RSK_CALCULATORS_BASE_URL: {
+        dev: 'https://reiknivelarapi.rsk.is',
+        staging: 'https://reiknivelarapi.rsk.is',
+        prod: 'https://reiknivelarapi.rsk.is',
       },
       LYFJASTOFNUN_PHARMACIES_BASE_URL: {
         dev: 'https://api.serlyfjaskra.is',

@@ -75,7 +75,7 @@ const createSmsContent = ({
   template: HnippTemplate
   isEnglish: boolean
 }): string => {
-  const linkText = isEnglish ? 'View details' : 'Skoda nanar'
+  const linkText = isEnglish ? 'View details' : 'Skoða nánar'
   const namePrefix = onBehalfOf
     ? getOnBehalfOfLabel(onBehalfOf, onBehalfOfNationalId, isEnglish)
     : fullName

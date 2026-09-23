@@ -283,6 +283,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           )}
           colored={true}
           inputValue={inputState.searchInput}
+          clearAriaLabel={formatMessage(
+            translationStrings.clearProductSearchInputLabel,
+          )}
+          onClear={() => {
+            setInputState({ ...inputState, searchInput: '' })
+            setSelectedBottomLevelCategory(null)
+            setSelectedCategory({ current: null, breadcrumbs: [] })
+          }}
           onInputValueChange={(value) => {
             setInputState({ ...inputState, searchInput: value })
             if (!value) {

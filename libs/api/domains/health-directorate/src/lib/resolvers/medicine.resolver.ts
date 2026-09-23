@@ -44,7 +44,7 @@ export class MedicineResolver {
     name: 'healthDirectoratePrescriptions',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthPrescription)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptions(
     @Args('locale', { type: () => String, nullable: true })
@@ -59,7 +59,7 @@ export class MedicineResolver {
     name: 'healthDirectoratePrescriptionDocuments',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthPrescription)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptionDocuments(
     @Args('input') input: MedicinePrescriptionDocumentsInput,
@@ -74,7 +74,7 @@ export class MedicineResolver {
     name: 'healthDirectoratePrescriptionRenewalTargets',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthPrescription)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getPrescriptionRenewalTargets(
     @Args('prescriptionId', { type: () => String }) prescriptionId: string,
@@ -89,7 +89,7 @@ export class MedicineResolver {
     name: 'healthDirectoratePrescriptionRenewal',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthPrescription)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   postPrescriptionRenewal(
     @Args('input') input: HealthDirectorateRenewalInput,
@@ -103,7 +103,7 @@ export class MedicineResolver {
     name: 'healthDirectorateMedicineHistory',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthDispensations)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getMedicineHistory(
     @Args('locale', { type: () => String, nullable: true })
@@ -118,7 +118,7 @@ export class MedicineResolver {
     name: 'healthDirectorateMedicineDispensationsATC',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthDispensations)
   @FeatureFlag(Features.servicePortalHealthMedicineLandlaeknirPageEnabled)
   getMedicineHistoryForATC(
     @Args('locale', { type: () => String, nullable: true })

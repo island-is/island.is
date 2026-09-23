@@ -58,7 +58,7 @@ const Bloodtype: React.FC = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
-        <InfoLineStack space={1}>
+        <InfoLineStack space={[0, 0, 1]}>
           <InfoLine
             label={formatMessage(messages.bloodtype)}
             content={bloodType?.type}
