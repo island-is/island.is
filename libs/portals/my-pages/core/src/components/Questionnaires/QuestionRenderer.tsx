@@ -36,7 +36,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
   error,
 }) => {
   const { formatMessage } = useLocale()
-  const isMobile = useIsMobile()
+  const { isMobile } = useIsMobile()
   const labelId = `${question.id}-label`
 
   const handleClear = () =>
