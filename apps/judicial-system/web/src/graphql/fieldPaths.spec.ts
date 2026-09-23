@@ -88,10 +88,17 @@ const collectFieldPaths = (
   for (const selection of selectionSet.selections) {
     switch (selection.kind) {
       case Kind.FIELD: {
-        const path = `${prefix}${selection.alias?.value ?? selection.name.value}`
+        const path = `${prefix}${
+          selection.alias?.value ?? selection.name.value
+        }`
 
         if (selection.selectionSet) {
-          collectFieldPaths(selection.selectionSet, `${path}.`, paths, spreading)
+          collectFieldPaths(
+            selection.selectionSet,
+            `${path}.`,
+            paths,
+            spreading,
+          )
         } else {
           paths.add(path)
         }
