@@ -11,9 +11,9 @@ import { DeleteIcon } from '@contentful/f36-icons'
 import type { CalculatorInputSectionField } from '@island.is/tax-calculators'
 
 import type { InputFieldContract } from '../contract'
-import * as styles from './CalculatorEditor.css'
 import { controlForField, isSameText, placeholderFor } from './inputFieldControl'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   field: CalculatorInputSectionField

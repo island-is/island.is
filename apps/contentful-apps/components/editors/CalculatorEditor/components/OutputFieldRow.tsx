@@ -15,10 +15,10 @@ import type { CalculatorOutputValueField } from '@island.is/tax-calculators'
 import { TaxCalculatorOutputFieldType } from '../../../../graphql/schema'
 import type { OutputFieldContract } from '../contract'
 import type { OutputSectionActions } from '../types'
-import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
-import { SortableRow } from './SortableRow'
 import { OutputItemFieldRow } from './OutputItemFieldRow'
+import { SortableRow } from './SortableRow'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   field: CalculatorOutputValueField

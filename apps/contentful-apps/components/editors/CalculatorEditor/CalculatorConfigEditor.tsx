@@ -28,7 +28,6 @@ import type {
   GetTaxCalculatorFieldsForContentfulAppQueryVariables,
 } from '../../../graphql/schema'
 import { InputSection } from './components/InputSection'
-import { hidden } from './components/CalculatorEditor.css'
 import { OutputSection } from './components/OutputSection'
 import { OutputTotalEditor } from './components/OutputTotalEditor'
 import { useCalculatorConfig } from './hooks/useCalculatorConfig'
@@ -39,8 +38,9 @@ import {
   toInputContractField,
   toOutputContractField,
 } from './contract'
-import { GET_TAX_CALCULATOR_FIELDS } from './queries'
 import { hasMetadataValidationError } from './metadataValidation'
+import { GET_TAX_CALCULATOR_FIELDS } from './queries'
+import { hidden } from './components/CalculatorEditor.css'
 
 export const CalculatorConfigEditor = () => {
   const sdk = useSDK<FieldExtensionSDK>()

@@ -8,8 +8,8 @@ import {
 import type { CalculatorOutputTotal } from '@island.is/tax-calculators'
 
 import type { OutputFieldContract } from '../contract'
-import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   total: CalculatorOutputTotal

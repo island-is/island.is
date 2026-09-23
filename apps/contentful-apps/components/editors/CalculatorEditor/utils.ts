@@ -6,8 +6,9 @@ import type {
   CalculatorOutputSection,
   CalculatorOutputTotal,
 } from '@island.is/tax-calculators'
-import { OUTPUT_TOTAL_SECTION_KEY } from './issueIdentity'
+
 import type { IdentityMap } from './issueIdentity'
+import { OUTPUT_TOTAL_SECTION_KEY } from './issueIdentity'
 
 export { OUTPUT_TOTAL_SECTION_KEY }
 

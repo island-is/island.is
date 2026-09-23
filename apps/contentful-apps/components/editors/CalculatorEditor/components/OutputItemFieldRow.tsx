@@ -10,8 +10,8 @@ import { DeleteIcon } from '@contentful/f36-icons'
 import type { CalculatorOutputItemField } from '@island.is/tax-calculators'
 
 import type { OutputContractItemField } from '../contract'
-import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   item: CalculatorOutputItemField

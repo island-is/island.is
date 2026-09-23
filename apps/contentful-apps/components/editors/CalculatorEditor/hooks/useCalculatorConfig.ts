@@ -18,7 +18,6 @@ import {
   collectInputSectionToggles,
 } from '@island.is/tax-calculators'
 
-import { DEBOUNCE_TIME } from './constants'
 import type { OutputContractItemField } from '../contract'
 import { resolveIssuePath, type RowIdentity } from '../issueIdentity'
 import type {
@@ -31,6 +30,7 @@ import {
   filterConfigForPersistence,
   generateKey,
 } from '../utils'
+import { DEBOUNCE_TIME } from './constants'
 
 const moveWithin = <T>(items: T[], from: number, to: number): T[] => {
   const next = items.slice()

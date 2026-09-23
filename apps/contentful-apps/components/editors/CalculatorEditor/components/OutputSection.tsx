@@ -1,3 +1,4 @@
+import { DialogsAPI } from '@contentful/app-sdk'
 import {
   Button,
   Checkbox,
@@ -6,18 +7,17 @@ import {
   Subheading,
 } from '@contentful/f36-components'
 import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
-import { DialogsAPI } from '@contentful/app-sdk'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 import type { CalculatorOutputSection as OutputSectionModel } from '@island.is/tax-calculators'
 
 import type { OutputFieldContract } from '../contract'
 import type { OutputSectionActions } from '../types'
-import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { OutputContentRow } from './OutputContentRow'
 import { OutputFieldRow } from './OutputFieldRow'
 import { EmptyDropZone, SortableRow } from './SortableRow'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   section: OutputSectionModel

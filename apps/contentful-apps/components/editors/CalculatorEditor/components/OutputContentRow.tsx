@@ -1,7 +1,7 @@
+import type { Node } from 'slate'
+import { DialogsAPI } from '@contentful/app-sdk'
 import { FormControl, IconButton, Stack } from '@contentful/f36-components'
 import { DeleteIcon } from '@contentful/f36-icons'
-import { DialogsAPI } from '@contentful/app-sdk'
-import type { Node } from 'slate'
 
 import type {
   CalculatorLocalizedMarkdown,

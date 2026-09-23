@@ -14,11 +14,11 @@ import type {
 
 import type { InputFieldContract } from '../contract'
 import type { InputSectionActions } from '../types'
-import * as styles from './CalculatorEditor.css'
 import { InputFieldRow } from './InputFieldRow'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { SectionToggleControl } from './SectionToggleControl'
 import { EmptyDropZone, SortableRow } from './SortableRow'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   section: CalculatorInputSection

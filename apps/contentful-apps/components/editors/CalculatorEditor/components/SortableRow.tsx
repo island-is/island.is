@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
+import { DragHandle, Stack, Text } from '@contentful/f36-components'
 import { useDroppable } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { DragHandle, Stack, Text } from '@contentful/f36-components'
+
 import * as styles from './CalculatorEditor.css'
 
 /* Uses Forma 36's accessible drag handle. */
