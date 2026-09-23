@@ -10,7 +10,12 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { type Ticket, ZendeskService } from '@island.is/clients/zendesk'
+import chunk from 'lodash/chunk'
+import {
+  type CustomObjectJobItem,
+  type SubmitTicketInput,
+  ZendeskService,
+} from '@island.is/clients/zendesk'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
@@ -21,9 +26,30 @@ import {
   COURSE_LIST_PAGE_SLUG_MAP,
   GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
   GET_COURSE_BY_ID_QUERY,
+  MAX_PARTICIPANTS_PER_APPLICATION,
   ZENDESK_CUSTOM_OBJECT_KEYS,
+  ZENDESK_PARTICIPANT_TICKET_TAG,
   ZENDESK_TICKET_IDS,
 } from './constants'
+
+const TICKET_LOOKUP_CONCURRENCY = 10
+
+type CourseInstance = {
+  id: string
+  displayedTitle?: string | null
+  startDate: string
+  startDateTimeDuration?: { startTime?: string; endTime?: string }
+  description?: string | null
+  location?: string | null
+  chargeItemCode?: string | null
+}
+
+type RegisteredParticipant = {
+  participant: ApplicationAnswers['participantList'][number]
+  isApplicant: boolean
+  record: CustomObjectJobItem
+  ticketId?: number
+}
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
@@ -86,6 +112,8 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
+      this.validateParticipantList(participantList)
+
       const {
         name,
         email,
@@ -107,7 +135,20 @@ export class CoursesService extends BaseTemplateApiService {
 
       const courseUrl = this.getCourseUrl(course.id, course.courseListPageId)
 
-      const message = await this.formatApplicationMessage(
+      // The participant records are the source of truth for registrations, so
+      // they are written first and all or nothing. Tickets are only created
+      // once the registration is in place and are never rolled back.
+      const participants = await this.writeParticipants(
+        application.id,
+        course,
+        courseInstance,
+        participantList,
+        courseUrl,
+        { nationalId, healthcenter },
+        auth.authorization,
+      )
+
+      const registrantMessage = await this.formatApplicationMessage(
         application,
         participantList,
         course.title,
@@ -122,56 +163,14 @@ export class CoursesService extends BaseTemplateApiService {
         jobTitle,
       )
 
-      const ticket = await this.zendeskService.createTicket({
-        message,
-        subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
-        requester: {
-          name,
-          email,
-        },
-        brandId: ZENDESK_TICKET_IDS.brandId,
-        ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
-        tags: [this.coursesConfig.zendeskEnvTag, courseInstance.id],
-        customFields: [
-          {
-            id: ZENDESK_TICKET_IDS.customFields.courseTitle,
-            value: course.title,
-          },
-          {
-            id: ZENDESK_TICKET_IDS.customFields.applicantName,
-            value: name,
-          },
-          {
-            id: ZENDESK_TICKET_IDS.customFields.startDate,
-            value: this.formatCourseInstanceDate(courseInstance),
-          },
-          {
-            id: ZENDESK_TICKET_IDS.customFields.location,
-            value: courseInstance.location ?? '',
-          },
-          {
-            id: ZENDESK_TICKET_IDS.customFields.courseUrl,
-            value: courseUrl ?? '',
-          },
-        ],
-      })
-
-      try {
-        await this.submitCustomObjects(
-          course,
-          courseInstance,
-          participantList,
-          ticket?.id,
-          courseUrl,
-          { nationalId, healthcenter },
-          auth.authorization,
-        )
-      } catch (error) {
-        this.logger.error(
-          'Failed to submit HH courses application to Zendesk custom objects',
-          { applicationId: application.id, error: error.message },
-        )
-      }
+      await this.ensureTickets(
+        application.id,
+        course,
+        courseInstance,
+        courseUrl,
+        participants,
+        { name, email, message: registrantMessage },
+      )
 
       return { success: true }
     } catch (error) {
@@ -272,27 +271,42 @@ export class CoursesService extends BaseTemplateApiService {
     }
   }
 
+  /**
+   * Participant records in Zendesk are the source of truth for who is
+   * registered, participants are added and removed there by staff.
+   */
   private async getZendeskParticipantNationalIds(
     courseInstanceId: string,
   ): Promise<Set<string>> {
-    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
-    const backwardsCompatibleQuery = `type:ticket subject:"${subject}"`
-    const newQuery = `type:ticket tags:"${this.coursesConfig.zendeskEnvTag} ${courseInstanceId}"`
-    const tickets: Ticket[] = []
-    try {
-      const [backwardsCompatibleTickets, newTickets] = await Promise.all([
-        this.zendeskService.searchTickets(backwardsCompatibleQuery),
-        this.zendeskService.searchTickets(newQuery),
-      ])
+    const { externalIdPrefix } = this.getZendeskEnvPrefixes()
 
-      const ticketMap = new Map<string, Ticket>()
-      for (const ticket of backwardsCompatibleTickets)
-        ticketMap.set(ticket.id, ticket)
-      for (const ticket of newTickets) ticketMap.set(ticket.id, ticket)
-      for (const ticket of ticketMap.values()) tickets.push(ticket)
+    try {
+      const [instanceRecord] =
+        await this.zendeskService.listCustomObjectRecordsByExternalIds(
+          ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
+          [`${externalIdPrefix}${courseInstanceId}`],
+        )
+
+      if (!instanceRecord) return new Set()
+
+      const participants = await this.zendeskService.searchCustomObjectRecords(
+        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+        {
+          'custom_object_fields.course_instance': { $eq: instanceRecord.id },
+        },
+      )
+
+      const nationalIds = new Set<string>()
+      for (const participant of participants) {
+        const nationalId = participant.custom_object_fields?.kennitala
+        if (typeof nationalId === 'string' && nationalId)
+          nationalIds.add(nationalId)
+      }
+
+      return nationalIds
     } catch (error) {
       this.logger.warn(
-        'Failed to search Zendesk tickets for participant availability check',
+        'Failed to look up Zendesk participants for participant availability check',
         { error: error.message },
       )
       throw new TemplateApiError(
@@ -303,17 +317,6 @@ export class CoursesService extends BaseTemplateApiService {
         500,
       )
     }
-
-    const nationalIds = new Set<string>()
-    for (const ticket of tickets) {
-      if (!ticket.description) continue
-      const matches = ticket.description.matchAll(
-        /Kennitala þátttakanda \d+: (\d{10})/g,
-      )
-      for (const match of matches) nationalIds.add(match[1])
-    }
-
-    return nationalIds
   }
 
   private async getPaymentStateParticipantNationalIds(
@@ -482,23 +485,43 @@ export class CoursesService extends BaseTemplateApiService {
     return `https://island.is/s/hh/${slug}/${courseId}`
   }
 
-  private async submitCustomObjects(
-    course: { id: string; title: string },
-    courseInstance: {
-      id: string
-      displayedTitle?: string | null
-      startDate: string
-      startDateTimeDuration?: { startTime?: string; endTime?: string }
-      description?: string | null
-      location?: string | null
-      chargeItemCode?: string | null
-    },
+  private validateParticipantList(
     participantList: ApplicationAnswers['participantList'],
-    ticketId: string | number | undefined,
+  ) {
+    const nationalIds = participantList.map(
+      (p) => p.nationalIdWithName.nationalId,
+    )
+
+    if (
+      participantList.length === 0 ||
+      participantList.length > MAX_PARTICIPANTS_PER_APPLICATION ||
+      new Set(nationalIds).size !== nationalIds.length
+    ) {
+      throw new TemplateApiError(
+        {
+          title: 'Ógildur þátttakendalisti',
+          summary: 'Ógildur þátttakendalisti',
+        },
+        400,
+      )
+    }
+  }
+
+  /**
+   * Writes every participant of the application as a custom object record.
+   * Zendesk has no atomic multi record write, so if anything goes wrong the
+   * records that were written are deleted again before throwing. The external
+   * ids are deterministic per application, so retrying is always safe.
+   */
+  private async writeParticipants(
+    applicationId: string,
+    course: { id: string; title: string },
+    courseInstance: CourseInstance,
+    participantList: ApplicationAnswers['participantList'],
     courseUrl: string | null,
     applicant: { nationalId: string; healthcenter?: string },
     authorization: string,
-  ): Promise<void> {
+  ): Promise<RegisteredParticipant[]> {
     let priceAmount: number | undefined
     try {
       const chargeItemsResponse = await this.sharedTemplateApiService
@@ -549,27 +572,25 @@ export class CoursesService extends BaseTemplateApiService {
       },
     )
 
-    if (participantList.length === 0) return
-
-    const numericTicketId = this.toZendeskNumber(ticketId)
     const registrationTime = format(new Date(), 'dd.MM.yyyy HH:mm')
 
-    await this.zendeskService.runCustomObjectJob(
-      ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-      'create_or_update_by_external_id',
-      participantList.map((p) => {
-        const participantPhone = p.nationalIdWithName.phone?.trim()
-        const participantWorkplace = p.workplace?.trim()
-        const participantTitle = p.jobTitle?.trim()
-        // Healthcenter is only collected for the applicant
-        const participantClinic =
-          p.nationalIdWithName.nationalId === applicant.nationalId
-            ? applicant.healthcenter?.trim()
-            : undefined
+    const participants: RegisteredParticipant[] = participantList.map((p) => {
+      const participantPhone = p.nationalIdWithName.phone?.trim()
+      const participantWorkplace = p.workplace?.trim()
+      const participantTitle = p.jobTitle?.trim()
+      const isApplicant =
+        p.nationalIdWithName.nationalId === applicant.nationalId
+      // Healthcenter is only collected for the applicant
+      const participantClinic = isApplicant
+        ? applicant.healthcenter?.trim()
+        : undefined
 
-        return {
+      return {
+        participant: p,
+        isApplicant,
+        record: {
           name: p.nationalIdWithName.name,
-          external_id: `${instanceExternalId}-${p.nationalIdWithName.nationalId}`,
+          external_id: `${externalIdPrefix}${applicationId}-${p.nationalIdWithName.nationalId}`,
           custom_object_fields: {
             kennitala: p.nationalIdWithName.nationalId,
             email: p.nationalIdWithName.email,
@@ -580,14 +601,236 @@ export class CoursesService extends BaseTemplateApiService {
             ...(participantTitle && { participant_title: participantTitle }),
             ...(participantClinic && { participant_clinic: participantClinic }),
             registration_time: registrationTime,
+            registration_id: applicationId,
             course_instance: instanceRecord.id,
-            ...(numericTicketId !== undefined && {
-              ticket_id: numericTicketId,
-            }),
           },
+        },
+      }
+    })
+
+    const externalIds = participants.map((p) => p.record.external_id)
+
+    try {
+      await this.zendeskService.upsertCustomObjectRecordsByExternalId(
+        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+        participants.map((p) => p.record),
+      )
+
+      const writtenRecords =
+        await this.zendeskService.listCustomObjectRecordsByExternalIds(
+          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+          externalIds,
+        )
+      const writtenRecordsByExternalId = new Map(
+        writtenRecords.map((record) => [record.external_id, record]),
+      )
+
+      for (const participant of participants) {
+        const writtenRecord = writtenRecordsByExternalId.get(
+          participant.record.external_id,
+        )
+        if (!writtenRecord) {
+          throw new Error(
+            `Participant record ${participant.record.external_id} is missing after the upsert job`,
+          )
         }
-      }),
+        participant.ticketId = this.toZendeskNumber(
+          writtenRecord.custom_object_fields?.ticket_id as string | undefined,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        'Failed to write HH courses participants to Zendesk, rolling back',
+        { applicationId, error: error.message },
+      )
+
+      try {
+        await this.zendeskService.deleteCustomObjectRecordsByExternalId(
+          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+          externalIds,
+        )
+      } catch (rollbackError) {
+        // A retry of the submission upserts the full list again, so the
+        // registration ends up complete either way
+        this.logger.error(
+          'Failed to roll back HH courses participants in Zendesk',
+          { applicationId, externalIds, error: rollbackError.message },
+        )
+      }
+
+      throw error
+    }
+
+    return participants
+  }
+
+  /**
+   * Creates a ticket for the registrant with the full participant list and a
+   * ticket for every other participant. Tickets are looked up by external id
+   * first so a retry never creates duplicates, and each participant record is
+   * linked to its ticket afterwards.
+   */
+  private async ensureTickets(
+    applicationId: string,
+    course: { id: string; title: string },
+    courseInstance: CourseInstance,
+    courseUrl: string | null,
+    participants: RegisteredParticipant[],
+    registrant: { name: string; email: string; message: string },
+  ): Promise<void> {
+    const { externalIdPrefix } = this.getZendeskEnvPrefixes()
+    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`
+    const tags = [this.coursesConfig.zendeskEnvTag, courseInstance.id]
+
+    const tickets: Array<{
+      input: SubmitTicketInput & { externalId: string }
+      participants: RegisteredParticipant[]
+      ticketId?: number
+    }> = [
+      {
+        // The registrant does not get a separate participant ticket
+        input: {
+          externalId: `${externalIdPrefix}${applicationId}-registrant`,
+          message: registrant.message,
+          subject,
+          requester: { name: registrant.name, email: registrant.email },
+          brandId: ZENDESK_TICKET_IDS.brandId,
+          ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
+          tags,
+          customFields: this.getTicketCustomFields(
+            course,
+            courseInstance,
+            courseUrl,
+            registrant.name,
+          ),
+        },
+        participants: participants.filter((p) => p.isApplicant),
+      },
+      ...participants
+        .filter((p) => !p.isApplicant)
+        .map((p) => ({
+          input: {
+            externalId: p.record.external_id,
+            message: this.formatParticipantMessage(
+              p.participant,
+              course.title,
+              courseUrl,
+              courseInstance,
+              registrant,
+            ),
+            subject,
+            requester: {
+              name: p.participant.nationalIdWithName.name,
+              email: p.participant.nationalIdWithName.email,
+            },
+            brandId: ZENDESK_TICKET_IDS.brandId,
+            ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
+            tags: [...tags, ZENDESK_PARTICIPANT_TICKET_TAG],
+            customFields: this.getTicketCustomFields(
+              course,
+              courseInstance,
+              courseUrl,
+              p.participant.nationalIdWithName.name,
+            ),
+          },
+          participants: [p],
+        })),
+    ]
+
+    // Tickets already linked from a previous attempt do not need a lookup
+    for (const ticket of tickets) {
+      ticket.ticketId = ticket.participants.find((p) => p.ticketId)?.ticketId
+    }
+
+    for (const batch of chunk(
+      tickets.filter((ticket) => !ticket.ticketId),
+      TICKET_LOOKUP_CONCURRENCY,
+    )) {
+      await Promise.all(
+        batch.map(async (ticket) => {
+          const existingTicket =
+            await this.zendeskService.getTicketByExternalId(
+              ticket.input.externalId,
+            )
+          ticket.ticketId = this.toZendeskNumber(existingTicket?.id)
+        }),
+      )
+    }
+
+    const missingTickets = tickets.filter((ticket) => !ticket.ticketId)
+    if (missingTickets.length > 0) {
+      const createdTicketIds = await this.zendeskService.createManyTickets(
+        missingTickets.map((ticket) => ticket.input),
+      )
+      missingTickets.forEach((ticket, index) => {
+        ticket.ticketId = createdTicketIds[index]
+      })
+    }
+
+    const participantsToLink = tickets.flatMap((ticket) =>
+      ticket.participants
+        .filter((p) => ticket.ticketId && p.ticketId !== ticket.ticketId)
+        .map((p) => ({ participant: p, ticketId: ticket.ticketId as number })),
     )
+
+    for (const batch of chunk(participantsToLink, TICKET_LOOKUP_CONCURRENCY)) {
+      await Promise.all(
+        batch.map(async ({ participant, ticketId }) => {
+          await this.zendeskService.upsertCustomObjectRecord(
+            ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+            {
+              ...participant.record,
+              custom_object_fields: {
+                ...participant.record.custom_object_fields,
+                ticket_id: ticketId,
+              },
+            },
+          )
+          participant.ticketId = ticketId
+        }),
+      )
+    }
+
+    const failedTickets = tickets.filter((ticket) => !ticket.ticketId)
+    if (failedTickets.length > 0) {
+      throw new Error(
+        `Failed to create ${
+          failedTickets.length
+        } Zendesk ticket(s): ${failedTickets
+          .map((ticket) => ticket.input.externalId)
+          .join(', ')}`,
+      )
+    }
+  }
+
+  private getTicketCustomFields(
+    course: { title: string },
+    courseInstance: CourseInstance,
+    courseUrl: string | null,
+    name: string,
+  ) {
+    return [
+      {
+        id: ZENDESK_TICKET_IDS.customFields.courseTitle,
+        value: course.title,
+      },
+      {
+        id: ZENDESK_TICKET_IDS.customFields.applicantName,
+        value: name,
+      },
+      {
+        id: ZENDESK_TICKET_IDS.customFields.startDate,
+        value: this.formatCourseInstanceDate(courseInstance),
+      },
+      {
+        id: ZENDESK_TICKET_IDS.customFields.location,
+        value: courseInstance.location ?? '',
+      },
+      {
+        id: ZENDESK_TICKET_IDS.customFields.courseUrl,
+        value: courseUrl ?? '',
+      },
+    ]
   }
 
   /**
@@ -656,17 +899,7 @@ export class CoursesService extends BaseTemplateApiService {
       }
     }>(application.answers, 'payment.companyPayment')
 
-    let message = ''
-    message += `Námskeið: ${courseTitle}\n`
-    if (courseUrl) message += `Slóð námskeiðs: ${courseUrl}\n`
-    const startDateTimeDuration =
-      this.formatCourseInstanceTimeRange(courseInstance)
-
-    message += `Upphafsdagsetning námskeiðs: ${format(
-      new Date(courseInstance.startDate.split('T')[0]),
-      'dd.MM.yyyy',
-    )} ${startDateTimeDuration}\n`
-    message += `Staðsetning námskeiðs: ${courseInstance.location ?? ''}\n`
+    let message = this.formatCourseInfo(courseTitle, courseUrl, courseInstance)
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
@@ -704,6 +937,49 @@ export class CoursesService extends BaseTemplateApiService {
           participant.jobTitle
         }\n`
     })
+
+    return message
+  }
+
+  private formatParticipantMessage(
+    participant: ApplicationAnswers['participantList'][number],
+    courseTitle: string,
+    courseUrl: string | null,
+    courseInstance: CourseInstance,
+    registrant: { name: string; email: string },
+  ): string {
+    const p = participant.nationalIdWithName
+
+    let message = this.formatCourseInfo(courseTitle, courseUrl, courseInstance)
+    message += `Nafn þátttakanda: ${p.name}\n`
+    message += `Kennitala þátttakanda: ${p.nationalId}\n`
+    message += `Netfang þátttakanda: ${p.email}\n`
+    message += `Símanúmer þátttakanda: ${p.phone}\n`
+    if (participant.workplace)
+      message += `Vinnustaður þátttakanda: ${participant.workplace}\n`
+    if (participant.jobTitle)
+      message += `Starfsheiti þátttakanda: ${participant.jobTitle}\n`
+    message += `Skráð af: ${registrant.name} (${registrant.email})\n`
+
+    return message
+  }
+
+  private formatCourseInfo(
+    courseTitle: string,
+    courseUrl: string | null,
+    courseInstance: CourseInstance,
+  ): string {
+    let message = ''
+    message += `Námskeið: ${courseTitle}\n`
+    if (courseUrl) message += `Slóð námskeiðs: ${courseUrl}\n`
+    const startDateTimeDuration =
+      this.formatCourseInstanceTimeRange(courseInstance)
+
+    message += `Upphafsdagsetning námskeiðs: ${format(
+      new Date(courseInstance.startDate.split('T')[0]),
+      'dd.MM.yyyy',
+    )} ${startDateTimeDuration}\n`
+    message += `Staðsetning námskeiðs: ${courseInstance.location ?? ''}\n`
 
     return message
   }

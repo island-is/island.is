@@ -45,6 +45,13 @@ export const ZENDESK_CUSTOM_OBJECT_KEYS = {
   courseParticipant: 'hh_course_participant',
 } as const
 
+// Participants and their tickets are each written in a single Zendesk bulk
+// job, which is limited to 100 items
+export const MAX_PARTICIPANTS_PER_APPLICATION = 92
+
+// Tells participant tickets apart from the registrant ticket
+export const ZENDESK_PARTICIPANT_TICKET_TAG = 'hh_course_participant_ticket'
+
 export const ZENDESK_TICKET_IDS = {
   brandId: 46016159517467,
   ticketFormId: 46207982902171,
