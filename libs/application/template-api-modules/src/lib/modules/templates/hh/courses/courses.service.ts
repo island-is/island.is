@@ -522,16 +522,20 @@ export class CoursesService extends BaseTemplateApiService {
       )
     }
 
+    const { externalIdPrefix, namePrefix } = this.getZendeskEnvPrefixes()
+    const courseExternalId = `${externalIdPrefix}${course.id}`
+    const instanceExternalId = `${externalIdPrefix}${courseInstance.id}`
+
     const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.course,
-      { name: course.title, external_id: course.id },
+      { name: `${namePrefix}${course.title}`, external_id: courseExternalId },
     )
 
     const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
       {
-        name: courseInstance.displayedTitle ?? course.title,
-        external_id: courseInstance.id,
+        name: `${namePrefix}${courseInstance.displayedTitle ?? course.title}`,
+        external_id: instanceExternalId,
         custom_object_fields: {
           course_start_date: courseInstance.startDate.split('T')[0],
           course_start_time: this.formatCourseInstanceTimeRange(courseInstance),
@@ -565,7 +569,7 @@ export class CoursesService extends BaseTemplateApiService {
 
         return {
           name: p.nationalIdWithName.name,
-          external_id: `${courseInstance.id}-${p.nationalIdWithName.nationalId}`,
+          external_id: `${instanceExternalId}-${p.nationalIdWithName.nationalId}`,
           custom_object_fields: {
             kennitala: p.nationalIdWithName.nationalId,
             email: p.nationalIdWithName.email,
@@ -584,6 +588,28 @@ export class CoursesService extends BaseTemplateApiService {
         }
       }),
     )
+  }
+
+  /**
+   * All environments share the same Zendesk instance, so custom object records
+   * created outside of prod are prefixed to keep them apart.
+   * Records without a prefix are prod records.
+   */
+  private getZendeskEnvPrefixes(): {
+    externalIdPrefix: string
+    namePrefix: string
+  } {
+    // hh_env_dev -> dev
+    const env = this.coursesConfig.zendeskEnvTag.replace(/^hh_env_/, '')
+
+    if (env === 'prod') {
+      return { externalIdPrefix: '', namePrefix: '' }
+    }
+
+    return {
+      externalIdPrefix: `${env}-`,
+      namePrefix: `[${env.toUpperCase()}] `,
+    }
   }
 
   private toZendeskNumber(
