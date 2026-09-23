@@ -29,7 +29,10 @@ import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { ApolloCache } from '@apollo/client'
-import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
+import {
+  HealthDirectorateHealthConversation,
+  HealthDirectorateHealthConversationStatusFilter,
+} from '@island.is/api/schema'
 import {
   GetHealthConversationsDocument,
   GetHealthConversationsQuery,
@@ -46,7 +49,9 @@ const DEFAULT_PAGE_SIZE = 20
 const updateConversation = (
   cache: ApolloCache<unknown>,
   id: string,
-  fields: Partial<Pick<Conversation, 'isStarred' | 'isArchived'>>,
+  fields: Partial<
+    Pick<HealthDirectorateHealthConversation, 'isStarred' | 'isArchived'>
+  >,
 ) => {
   cache.modify({
     id: cache.identify({
@@ -91,10 +96,6 @@ const defaultFilterValues = {
   starred: false,
   archived: false,
 }
-
-type Conversation = NonNullable<
-  GetHealthConversationsQuery['healthDirectoratePaginatedHealthConversations']
->['data'][number]
 
 type FilterValues = {
   searchQuery: string
