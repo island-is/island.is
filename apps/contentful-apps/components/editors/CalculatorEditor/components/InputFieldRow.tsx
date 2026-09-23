@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import {
   FormControl,
   IconButton,
@@ -48,6 +50,11 @@ export const InputFieldRow = ({
   const isStaleKey = isMissingFromContract && !isLoading
   const isDraft = !field.key
   const hasError = isStaleKey || isDuplicate || Boolean(issues?.length)
+
+  const [spanDraft, setSpanDraft] = useState(String(field.span))
+  useEffect(() => {
+    setSpanDraft(String(field.span))
+  }, [field.span])
 
   return (
     <Stack
@@ -127,13 +134,16 @@ export const InputFieldRow = ({
           <TextInput
             type="number"
             inputMode="numeric"
-            value={String(field.span)}
+            value={spanDraft}
             isDisabled={isDisabled}
             onChange={(ev) => {
-              const span = Number(ev.target.value)
-              if (!Number.isFinite(span)) return
+              const raw = ev.target.value
+              setSpanDraft(raw)
+              const span = Number(raw)
+              if (raw === '' || !Number.isFinite(span)) return
               onChange({ span: Math.min(12, Math.max(1, Math.round(span))) })
             }}
+            onBlur={() => setSpanDraft(String(field.span))}
           />
         </FormControl>
         <IconButton
