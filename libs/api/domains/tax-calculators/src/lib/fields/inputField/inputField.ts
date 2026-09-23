@@ -24,6 +24,7 @@ import { NumberInputDependencyValue } from '../../models/numberInputDependencyVa
 import { StringInputDependencyValue } from '../../models/stringInputDependencyValue.model'
 import { NUMERIC_SEMANTIC_RANGE } from '../../shared/numericSemanticRange'
 
+/* Exhaustive records make added source types fail at compile time. */
 const INPUT_FIELD_TYPE_BY_CLIENT_TYPE: Record<
   CalculatorFieldType,
   TaxCalculatorInputFieldType
@@ -72,6 +73,9 @@ export const toDependency = (
   equals: toDependencyValue(dependsOn.equals),
 })
 
+/* Plain objects rather than `new`-ed instances: both resolveType functions in
+ * this module are data-driven (the interface switches on `type`, the union on
+ * `typeof value.value`), so nothing needs an instanceof check. */
 export const toInputField = (field: CalculatorField): InputField => {
   const shared = {
     key: field.name,

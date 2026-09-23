@@ -136,7 +136,8 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const snapshot = useMemo(() => JSON.stringify(payload), [payload])
 
-  /* Prevents retrying cached responses without IDs. */
+  /* `network-only`: the response carries no `id`, so the default policy would
+   * normalize it under ROOT_QUERY and replay an errored response on retry. */
   const [calculate, { loading: calculating }] = useLazyQuery<
     GetTaxCalculatorCalculationQuery,
     GetTaxCalculatorCalculationQueryVariables

@@ -4,6 +4,7 @@ import { TaxCalculatorType } from '@island.is/tax-calculators'
 
 registerEnumType(TaxCalculatorType, { name: 'TaxCalculatorType' })
 
+/* Values mirror source field-type literals for direct mapping. */
 export enum TaxCalculatorInputFieldType {
   NUMBER = 'number',
   STRING = 'string',
@@ -24,6 +25,8 @@ registerEnumType(TaxCalculatorInputFieldType, {
   },
 })
 
+/* Numeric semantics identify value meaning; selected semantics also define
+ * validated ranges. */
 export enum TaxCalculatorInputFieldSemantic {
   CURRENCY = 'currency',
   PERCENTAGE = 'percentage',
@@ -88,6 +91,7 @@ registerEnumType(TaxCalculatorOutputFieldSemantic, {
   },
 })
 
+/* GraphQL exposes member names; string values keep TypeScript code readable. */
 export enum TaxCalculatorCalculationErrorCode {
   INVALID_VALUE = 'invalidValue',
   MISSING_REQUIRED_VALUE = 'missingRequiredValue',

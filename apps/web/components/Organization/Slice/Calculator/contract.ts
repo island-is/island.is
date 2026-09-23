@@ -6,7 +6,15 @@ import type {
   TaxCalculatorOutputFieldType,
 } from '@island.is/web/graphql/schema'
 
-/* Isolates codegen's interface unions in the normalizers below. */
+/* `inputFields`, `outputFields` and `itemFields` are interface-typed, so codegen
+ * emits a UNION of per-`__typename` shapes -- and `type` is the same
+ * non-literal enum on every member, so it cannot discriminate. Only
+ * `__typename` can. Reading `semantic`, `options` or `itemFields` straight off
+ * these unions is a compile error on every member that lacks them.
+ *
+ * These aliases exist so the normalizers below are the only code that ever
+ * touches the raw union. They are read off the generated operation, so widening
+ * the query still widens what the normalizer sees. */
 export type RawInputField =
   GetTaxCalculatorQuery['taxCalculator']['inputFields'][number]
 export type RawOutputField =
@@ -16,7 +24,8 @@ type RawOutputItemField = Extract<
   { __typename: 'TaxCalculatorArrayOutputField' }
 >['itemFields'][number]
 
-/* Flattens GraphQL fields for rendering. */
+/* Flat view models. `options` collapses `{ value }[]` to `string[]`, and
+ * `dependsOn.equals` collapses the aliased scalar union to one value. */
 export interface InputContractField {
   key: string
   type: TaxCalculatorInputFieldType
@@ -42,11 +51,16 @@ export interface OutputContractField {
   itemFields?: OutputContractItemField[]
 }
 
-/* Supports metadata lookups and stale-key detection. */
+/* Keyed by field key. A map rather than the array the query returns, because
+ * every row looks up the one field its `key` points at -- and needs to know
+ * when that lookup misses, which is how a key the backend no longer returns
+ * gets flagged instead of silently rendering nothing. */
 export type InputFieldContract = Map<string, InputContractField>
 export type OutputFieldContract = Map<string, OutputContractField>
 
-/* Normalizes nullable operation fields to undefined. */
+/* A nullable schema field selected in an operation is generated as
+ * `X | null | undefined`. Collapse null to undefined here so `'semantic' in
+ * field` style checks are not misleading downstream. */
 const orUndefined = <T>(value: T | null | undefined): T | undefined =>
   value ?? undefined
 
@@ -68,7 +82,10 @@ const normalizeDependency = (dependsOn: RawInputField['dependsOn']) => {
   }
 }
 
-/* Exhaustively normalizes GraphQL input variants. */
+/* The ONLY place that switches on an input `__typename`, closed with a `never`
+ * guard -- the same pattern the domain's own `resolveType` uses. A sixth field
+ * type added to the API fails to compile here, rather than silently falling
+ * through unmatched `__typename` checks spread across the render tree. */
 export const toInputContractField = (
   field: RawInputField,
 ): InputContractField => {

@@ -26,7 +26,8 @@ interface Props {
   error?: string
 }
 
-/* Maps config spans to GridColumn fractions. */
+/* `span` is a number 1-12 in the config, but GridColumn takes the fraction as a
+ * string literal, so the two are bridged by position rather than interpolation. */
 const TWELFTHS = [
   '1/12',
   '2/12',
@@ -66,6 +67,8 @@ export const CalculatorField = ({
     error,
   }
 
+  /* `DatePickerController` takes no `control` prop -- it reads `useFormContext`
+   * itself -- so the two spreads are deliberately different. */
   const select = { ...common, placeholder }
   const input = { ...common, control, placeholder }
 
@@ -123,6 +126,7 @@ export const CalculatorField = ({
             return <InputController {...input} type="number" currency />
 
           case TaxCalculatorInputFieldSemantic.Percentage:
+            /* Percentage values use whole percents. */
             return (
               <InputController
                 {...input}
@@ -134,6 +138,7 @@ export const CalculatorField = ({
               />
             )
 
+          /* NumberFormat enforces whole, non-negative count values. */
           case TaxCalculatorInputFieldSemantic.Count:
             return (
               <InputController

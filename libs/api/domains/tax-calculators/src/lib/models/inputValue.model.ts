@@ -1,6 +1,8 @@
 import { Field, Float, InputType } from '@nestjs/graphql'
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
+/* GraphQL one-of members must be nullable and have no default. Exclusivity
+ * comes from the directive, not nullability. */
 @InputType('TaxCalculatorInputValue', {
   isOneOf: true,
   description:

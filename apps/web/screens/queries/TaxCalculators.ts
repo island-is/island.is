@@ -1,6 +1,9 @@
 import gql from 'graphql-tag'
 
-/* Selects concrete interface fields and aliases conflicting scalar values. */
+/* `inputFields`, `outputFields` and `itemFields` are interface-typed, so every
+ * concrete shape is asked for by name. The `equals` aliases are required:
+ * three members selecting `value` at different scalar types collide under
+ * GraphQL's overlapping-fields validation. */
 export const GET_TAX_CALCULATOR = gql`
   query GetTaxCalculator($type: TaxCalculatorType!) {
     taxCalculator(type: $type) {
@@ -56,7 +59,8 @@ export const GET_TAX_CALCULATOR = gql`
   }
 `
 
-/* Selects upstream messages for diagnostic logging. */
+/* `message` is developer-facing English, selected for logging and never
+ * rendered -- `code` is what the renderer switches on. */
 export const GET_TAX_CALCULATOR_CALCULATION = gql`
   query GetTaxCalculatorCalculation($input: TaxCalculatorCalculateInput!) {
     taxCalculatorCalculate(input: $input) {

@@ -22,6 +22,8 @@ describe('formatOutputValue', () => {
     ).toBe('1.234.567 kr.')
   })
 
+  /* Whole percent by contract: the client's mappers convert to and from RSK's
+   * 0-1 ratio, so nothing here scales. */
   it('appends the sign to a whole percent without scaling it', () => {
     expect(
       formatOutputValue(
@@ -32,6 +34,7 @@ describe('formatOutputValue', () => {
     ).toBe('31,45%')
   })
 
+  /* Grouped, `2024` would read `2.024`. */
   it('leaves a year and a month ungrouped', () => {
     expect(
       formatOutputValue(
@@ -73,6 +76,8 @@ describe('formatOutputValue', () => {
     ).toBe('hali')
   })
 
+  /* Handed to `new Date(...)` the contract's `yyyy-MM-dd` would be read as UTC
+   * midnight and shift the day backwards for any viewer west of Greenwich. */
   it('renders a date without shifting the day', () => {
     const formatted = formatOutputValue(
       { type: TaxCalculatorOutputFieldType.Date, stringValue: '2026-03-14' },
@@ -84,6 +89,7 @@ describe('formatOutputValue', () => {
     expect(formatted).toContain('2026')
   })
 
+  /* A row RSK returned nothing for must be omitted, not rendered blank. */
   it('returns undefined when the payload the type points at is absent', () => {
     expect(
       formatOutputValue(

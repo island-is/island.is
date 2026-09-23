@@ -9,11 +9,13 @@ import type { OutputFieldValueRow } from '../../models/outputFieldValueRow.model
 import type { OutputScalarValue } from '../../models/outputScalarValue.model'
 import { OUTPUT_FIELD_TYPE_BY_CLIENT_TYPE } from '../../fields/outputField/outputField'
 
+/* Omit values not declared by the output contract. */
 const entriesOf = (value: unknown): Map<string, unknown> =>
   typeof value === 'object' && value !== null
     ? new Map(Object.entries(value))
     : new Map()
 
+/* Each branch produces exactly one payload. */
 const toScalarPayload = (
   field: CalculatorScalarOutputField,
   raw: unknown,
@@ -66,6 +68,7 @@ export const toOutputValues = (
     const raw = resultValues.get(field.name)
 
     if (field.kind === 'array') {
+      /* Empty arrays publish as `[]`; absent values are omitted. */
       if (Array.isArray(raw)) {
         values.push({
           key: field.name,
