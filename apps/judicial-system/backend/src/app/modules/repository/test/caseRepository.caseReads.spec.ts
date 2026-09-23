@@ -7,6 +7,7 @@ import { createTestingRepositoryModule } from './createTestingRepositoryModule'
 
 import { Case } from '../models/case.model'
 import { Defendant } from '../models/defendant.model'
+import { User } from '../models/user.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 import {
@@ -25,12 +26,17 @@ describe('CaseRepositoryService - case reads', () => {
   const theCase = { id: caseId } as Case
 
   let caseRepositoryService: CaseRepositoryService
-  let mockCaseModel: { findOne: jest.Mock; findAll: jest.Mock }
+  let mockCaseModel: {
+    findOne: jest.Mock
+    findAll: jest.Mock
+    findByPk: jest.Mock
+  }
   let mockResolvePoliceCaseNumbersForCases: jest.Mock
 
   // The options the one read was made with
   const findAllOptions = () => mockCaseModel.findAll.mock.calls[0][0]
   const findOneOptions = () => mockCaseModel.findOne.mock.calls[0][0]
+  const findByPkArgs = () => mockCaseModel.findByPk.mock.calls[0]
 
   beforeEach(async () => {
     const {
@@ -43,6 +49,7 @@ describe('CaseRepositoryService - case reads', () => {
     mockCaseModel = caseModel as unknown as {
       findOne: jest.Mock
       findAll: jest.Mock
+      findByPk: jest.Mock
     }
     mockResolvePoliceCaseNumbersForCases = (
       caseDefendantPoliceCaseNumberRepositoryService as jest.Mocked<CaseDefendantPoliceCaseNumberRepositoryService>
@@ -50,6 +57,7 @@ describe('CaseRepositoryService - case reads', () => {
 
     mockCaseModel.findAll.mockResolvedValue(cases)
     mockCaseModel.findOne.mockResolvedValue(theCase)
+    mockCaseModel.findByPk.mockResolvedValue(theCase)
   })
 
   describe('findLiveById', () => {
@@ -137,6 +145,100 @@ describe('CaseRepositoryService - case reads', () => {
         [theCase],
         { transaction: undefined },
       )
+    })
+  })
+
+  describe('findSplitSourceById', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findSplitSourceById(caseId, {
+        transaction,
+      })
+    })
+
+    it('should read the whole case graph in the callers transaction', () => {
+      // No state filter, unlike findLiveById: the split case is the one being
+      // documented, so its source has to stay readable after it has itself
+      // been deleted or archived.
+      expect(findByPkArgs()).toEqual([
+        caseId,
+        { include: caseInclude, transaction },
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no source case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findSplitSourceById(caseId)
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('findByIdWithJudgeAndRegistrar', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
+        caseId,
+        { transaction },
+      )
+    })
+
+    it('should read the case with both of its court users and nothing else', () => {
+      expect(findByPkArgs()).toEqual([
+        caseId,
+        {
+          include: [
+            { model: User, as: 'judge' },
+            { model: User, as: 'registrar' },
+          ],
+          transaction,
+        },
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
+          caseId,
+        )
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
     })
   })
 
