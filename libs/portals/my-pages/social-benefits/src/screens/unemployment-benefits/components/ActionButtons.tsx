@@ -26,6 +26,16 @@ export const ActionButtons = ({
     return null
   }
 
+  if (
+    !showContactButton &&
+    !showSubmitDocumentsButton &&
+    !showReportIncomeButton &&
+    !showReportTravelButton &&
+    !showUnsubscribeButton
+  ) {
+    return null
+  }
+
   return (
     <Box display="flex" columnGap={2} alignItems="center" marginBottom={4}>
       {showContactButton && (
