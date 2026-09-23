@@ -1,5 +1,5 @@
-import { format as formatKennitala } from 'kennitala'
 import { IntlShape } from 'react-intl'
+import { format as formatKennitala } from 'kennitala'
 
 import {
   IcelandicGovernmentInstitutionsDebtor,
