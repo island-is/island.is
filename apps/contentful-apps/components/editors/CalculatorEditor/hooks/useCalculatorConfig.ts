@@ -455,7 +455,10 @@ export const useCalculatorConfig = (
       if (fromSection === toSection) {
         return current.map((section, i) =>
           i === fromSection
-            ? { ...section, fields: moveWithin(section.fields, fromIndex, toIndex) }
+            ? {
+                ...section,
+                fields: moveWithin(section.fields, fromIndex, toIndex),
+              }
             : section,
         )
       }
@@ -463,7 +466,11 @@ export const useCalculatorConfig = (
         let fields = section.fields
         if (i === fromSection) fields = fields.filter((_, j) => j !== fromIndex)
         if (i === toSection) {
-          fields = [...fields.slice(0, toIndex), moved, ...fields.slice(toIndex)]
+          fields = [
+            ...fields.slice(0, toIndex),
+            moved,
+            ...fields.slice(toIndex),
+          ]
         }
         return fields === section.fields ? section : { ...section, fields }
       })
@@ -481,7 +488,10 @@ export const useCalculatorConfig = (
       if (fromSection === toSection) {
         return current.map((section, i) =>
           i === fromSection
-            ? { ...section, fields: moveWithin(section.fields, fromIndex, toIndex) }
+            ? {
+                ...section,
+                fields: moveWithin(section.fields, fromIndex, toIndex),
+              }
             : section,
         )
       }
@@ -489,7 +499,11 @@ export const useCalculatorConfig = (
         let fields = section.fields
         if (i === fromSection) fields = fields.filter((_, j) => j !== fromIndex)
         if (i === toSection) {
-          fields = [...fields.slice(0, toIndex), moved, ...fields.slice(toIndex)]
+          fields = [
+            ...fields.slice(0, toIndex),
+            moved,
+            ...fields.slice(toIndex),
+          ]
         }
         return fields === section.fields ? section : { ...section, fields }
       })
