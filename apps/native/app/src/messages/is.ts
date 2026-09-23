@@ -947,11 +947,17 @@ export const is = {
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'health.messages.compose.termsAccept':
     'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
-  'health.messages.compose.availabilityWindow':
-    '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}.',
-  'health.messages.compose.availabilityInfo':
-    'Venjulega er svarað innan 3 virkra daga. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
   'health.messages.compose.closedTitle': 'Lokað fyrir ný skilaboð núna',
+  'health.messages.compose.closedNowText':
+    'Ekki er hægt að senda ný skilaboð eins og er.',
+  'health.messages.compose.closedNextOpensText':
+    'Næst er hægt að senda skilaboð {hasTime, select, false {} other {frá kl. {time} }}{when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
+  'health.messages.compose.openingHoursTitle': 'Móttökutími skilaboða:',
+  'health.messages.compose.openingHoursWeekdays': 'Virkir dagar',
+  'health.messages.compose.openingHoursWeekends': 'Helgar',
+  'health.messages.compose.openingHoursHolidays': 'Lögbundnir frídagar',
+  'health.messages.compose.openingHoursClosed': 'Lokað',
+  'health.messages.compose.openingHoursAllDay': 'Allan sólarhringinn',
   'health.messages.compose.notAllowedTitle': 'Ekki hægt að senda skilaboð',
   'health.messages.compose.notAllowedText':
     'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
@@ -961,11 +967,14 @@ export const is = {
     '{name} býður ekki upp á skilaboðaþjónustu í gegnum Ísland.is',
   'health.messages.compose.closingSoonTitle':
     'Athugið: það lokar bráðlega fyrir skilaboð',
+  'health.messages.compose.closingSoonText':
+    'Sendu skilaboðin þín áður en lokað er kl. {closeTime}.',
   'health.messages.compose.send': 'Senda skilaboð',
   'health.messages.compose.sendError':
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
-  'health.messages.compose.noRecipient':
-    'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.compose.noRecipient': 'Ekki hægt að senda skilaboð',
+  'health.messages.compose.noRecipientText':
+    'Engin heilsugæsla sem skráð er á þig býður upp á skilaboðaþjónustu í gegnum Ísland.is.',
   'health.messages.compose.certificateTitle':
     'Ekki hægt að sækja um vottorð í gegnum appið',
   'health.messages.compose.certificateText':
