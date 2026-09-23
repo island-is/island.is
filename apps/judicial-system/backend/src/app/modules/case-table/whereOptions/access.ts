@@ -433,7 +433,7 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
             // around it. Scoped to this branch rather than hoisted to a term of
             // its own, because the reviewer branch above has never carried the
             // restriction and this is not the change that should give it one.
-            // So far, highened security has not been applied to indictment
+            // So far, heightened security has not been applied to indictment
             // cases, but this condition future proofs access to appealed
             // verdicts in case it is.
             heightenedSecurityAccessWhereOptions(user),
