@@ -88,10 +88,20 @@ const collectFieldPaths = (
   for (const selection of selectionSet.selections) {
     switch (selection.kind) {
       case Kind.FIELD: {
-        const path = `${prefix}${selection.alias?.value ?? selection.name.value}`
+        // An alias only renames the response key; the field still resolves
+        // by name. Record both so repointing an alias at another field shows
+        // up in the snapshot.
+        const name = selection.name.value
+        const alias = selection.alias?.value
+        const path = `${prefix}${alias ? `${alias}: ${name}` : name}`
 
         if (selection.selectionSet) {
-          collectFieldPaths(selection.selectionSet, `${path}.`, paths, spreading)
+          collectFieldPaths(
+            selection.selectionSet,
+            `${path}.`,
+            paths,
+            spreading,
+          )
         } else {
           paths.add(path)
         }
