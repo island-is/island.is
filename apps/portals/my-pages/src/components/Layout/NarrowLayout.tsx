@@ -76,8 +76,9 @@ export const NarrowLayout = ({
   const isMobileTakeover = isPhoneWidth && isTakeoverRoute
 
   // headerHeight is the measured height of the fixed header, so the sticky
-  // menu clears whatever it contains (e.g. the delegation banner)
-  const stickyHeight = headerVisible ? headerHeight - 1 : -1 // -1 to hide the shadow
+  // menu clears whatever it contains (e.g. the delegation banner). No overlap:
+  // the header sits above the menu and would cover its top border.
+  const stickyHeight = headerVisible ? headerHeight : 0
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
@@ -168,53 +169,60 @@ export const NarrowLayout = ({
   /* Takeover routes render without the layout chrome at phone widths:
   no breadcrumbs, mobile sub-nav or footer — the screen is expected to
   provide its own back navigation. */
+  const showMobileNav =
+    !isMobileTakeover && isMobile && !!subNavItems && subNavItems.length > 0
+
+  // Rendered outside SidebarLayout so it spans the full width, free of the grid gutter
   return (
-    <SidebarLayout isSticky={true} sidebarContent={sidebar} offsetTop={height}>
-      <Box
-        as="main"
-        paddingBottom={9}
-        component="main"
-        style={{ marginTop: height }}
+    <>
+      {showMobileNav && (
+        <Box
+          width="full"
+          className={styles.mobileNav}
+          style={{ top: stickyHeight, marginTop: height }}
+        >
+          <Navigation
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <ReactLink to={item?.href}>{link}</ReactLink>
+              ) : (
+                link
+              )
+            }}
+            asSpan
+            baseId="service-portal-mobile-navigation"
+            title={
+              activeParent?.name
+                ? formatMessage(activeParent?.name)
+                : formatMessage(m.tableOfContents)
+            }
+            items={subNavItems}
+            titleIcon={activeParent?.icon}
+            singleAccordion
+            isMenuDialog={true}
+          />
+        </Box>
+      )}
+      <SidebarLayout
+        isSticky={true}
+        sidebarContent={sidebar}
+        offsetTop={height}
       >
-        {!isMobileTakeover && <ContentBreadcrumbs />}
-        {!isMobileTakeover &&
-          isMobile &&
-          subNavItems &&
-          subNavItems.length > 0 && (
-            <Box
-              paddingBottom={3}
-              width="full"
-              className={styles.mobileNav}
-              style={{ top: stickyHeight }}
-            >
-              <Navigation
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <ReactLink to={item?.href}>{link}</ReactLink>
-                  ) : (
-                    link
-                  )
-                }}
-                asSpan
-                baseId="service-portal-mobile-navigation"
-                title={
-                  activeParent?.name
-                    ? formatMessage(activeParent?.name)
-                    : formatMessage(m.tableOfContents)
-                }
-                items={subNavItems}
-                titleIcon={activeParent?.icon}
-                singleAccordion
-                isMenuDialog={true}
-              />
-            </Box>
+        <Box
+          as="main"
+          paddingBottom={9}
+          component="main"
+          // The mobile nav above already clears the banners
+          style={{ marginTop: showMobileNav ? 0 : height }}
+        >
+          {!isMobileTakeover && <ContentBreadcrumbs />}
+          <ModuleAlertBannerSection />
+          {children}
+          {!isMobileTakeover && sidebarFooter && (
+            <Hidden above="sm">{sidebarFooter}</Hidden>
           )}
-        <ModuleAlertBannerSection />
-        {children}
-        {!isMobileTakeover && sidebarFooter && (
-          <Hidden above="sm">{sidebarFooter}</Hidden>
-        )}
-      </Box>
-    </SidebarLayout>
+        </Box>
+      </SidebarLayout>
+    </>
   )
 }
