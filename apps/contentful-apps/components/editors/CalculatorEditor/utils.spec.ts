@@ -3,8 +3,8 @@ import { calculatorConfigSchema } from '@island.is/tax-calculators'
 import {
   filterConfigForPersistence,
   OUTPUT_TOTAL_SECTION_KEY,
-  resolveIssuePath,
 } from './utils'
+import { resolveIssuePath } from './issueIdentity'
 
 const outputTotal = (extra = {}) => ({
   uid: 'hero',

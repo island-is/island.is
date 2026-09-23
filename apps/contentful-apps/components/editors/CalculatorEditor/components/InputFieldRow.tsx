@@ -8,16 +8,11 @@ import {
 } from '@contentful/f36-components'
 import { DeleteIcon } from '@contentful/f36-icons'
 
-import type {
-  CalculatorInputSectionField,
-  CalculatorLocalizedText,
-} from '@island.is/tax-calculators'
+import type { CalculatorInputSectionField } from '@island.is/tax-calculators'
 
-import {
-  TaxCalculatorInputFieldSemantic,
-  TaxCalculatorInputFieldType,
-} from '../../../../graphql/schema'
-import { InputContractField, InputFieldContract } from '../types'
+import type { InputFieldContract } from '../contract'
+import * as styles from './CalculatorEditor.css'
+import { controlForField, isSameText, placeholderFor } from './inputFieldControl'
 import { LocalizedTextFields } from './LocalizedTextFields'
 
 interface Props {
@@ -31,63 +26,6 @@ interface Props {
   onChange: (patch: Partial<CalculatorInputSectionField>) => void
   onRemove: () => void
 }
-
-type Control =
-  | { kind: 'choice' }
-  | { kind: 'text'; unit?: CalculatorLocalizedText }
-
-/* Semantic controls override type defaults. */
-const CONTROL_BY_TYPE: Record<TaxCalculatorInputFieldType, Control> = {
-  [TaxCalculatorInputFieldType.Boolean]: { kind: 'choice' },
-  [TaxCalculatorInputFieldType.Select]: { kind: 'choice' },
-  [TaxCalculatorInputFieldType.Date]: {
-    kind: 'text',
-    unit: { is: 'dagsetning', en: 'date' },
-  },
-  [TaxCalculatorInputFieldType.Number]: { kind: 'text' },
-  [TaxCalculatorInputFieldType.String]: { kind: 'text' },
-}
-
-const CONTROL_BY_SEMANTIC: Partial<
-  Record<TaxCalculatorInputFieldSemantic, Control>
-> = {
-  [TaxCalculatorInputFieldSemantic.Currency]: {
-    kind: 'text',
-    unit: { is: 'krónur', en: 'ISK' },
-  },
-  [TaxCalculatorInputFieldSemantic.Percentage]: {
-    kind: 'text',
-    unit: { is: '%', en: '%' },
-  },
-  [TaxCalculatorInputFieldSemantic.Count]: {
-    kind: 'text',
-    unit: { is: 'fjöldi', en: 'count' },
-  },
-  [TaxCalculatorInputFieldSemantic.Year]: { kind: 'choice' },
-  [TaxCalculatorInputFieldSemantic.Month]: { kind: 'choice' },
-}
-
-const controlForField = (field: InputContractField | undefined) => {
-  if (!field) return undefined
-  const bySemantic = field.semantic
-    ? CONTROL_BY_SEMANTIC[field.semantic]
-    : undefined
-  return bySemantic ?? CONTROL_BY_TYPE[field.type]
-}
-
-const controlFor = (key: string, contract: InputFieldContract) =>
-  controlForField(contract.get(key))
-
-const placeholderFor = (key: string, contract: InputFieldContract) => {
-  const control = controlFor(key, contract)
-  const unit = control?.kind === 'text' ? control.unit : undefined
-  return unit ? { ...unit } : undefined
-}
-
-const isSameText = (
-  a: CalculatorLocalizedText | undefined,
-  b: CalculatorLocalizedText | undefined,
-) => a?.is === b?.is && a?.en === b?.en
 
 export const InputFieldRow = ({
   field,
@@ -112,18 +50,14 @@ export const InputFieldRow = ({
       flexDirection="column"
       alignItems="stretch"
       spacing="spacingXs"
-      style={{
-        border: '1px solid #e5e8eb',
-        borderRadius: 4,
-        padding: 8,
-      }}
+      className={styles.fieldRow}
     >
       <Stack flexDirection="row" alignItems="flex-end" spacing="spacingXs">
         <FormControl
           isRequired
           isInvalid={hasError}
           marginBottom="none"
-          style={{ flex: 1 }}
+          className={styles.grow}
         >
           <FormControl.Label>Field</FormControl.Label>
           <Select
@@ -134,7 +68,7 @@ export const InputFieldRow = ({
               const patch: Partial<CalculatorInputSectionField> = { key }
               /* Refreshes untouched placeholders from the selected field. */
               if (
-                controlFor(key, contract)?.kind === 'choice' ||
+                controlForField(contract.get(key))?.kind === 'choice' ||
                 isSameText(
                   field.placeholder,
                   field.key ? placeholderFor(field.key, contract) : undefined,
@@ -184,7 +118,7 @@ export const InputFieldRow = ({
             </FormControl.ValidationMessage>
           ))}
         </FormControl>
-        <FormControl marginBottom="none" style={{ width: 96 }}>
+        <FormControl marginBottom="none" className={styles.spanControl}>
           <FormControl.Label>Span</FormControl.Label>
           <TextInput
             type="number"
@@ -236,7 +170,7 @@ export const InputFieldRow = ({
             onChange={(next) => onChange({ label: next })}
             clearWhenEmpty
           />
-          {controlFor(field.key, contract)?.kind === 'text' && (
+          {controlForField(contract.get(field.key))?.kind === 'text' && (
             <LocalizedTextFields
               label="Field placeholder"
               value={field.placeholder}

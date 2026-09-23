@@ -6,6 +6,10 @@ import type {
   CalculatorOutputSection,
   CalculatorOutputTotal,
 } from '@island.is/tax-calculators'
+import { OUTPUT_TOTAL_SECTION_KEY } from './issueIdentity'
+import type { IdentityMap } from './issueIdentity'
+
+export { OUTPUT_TOTAL_SECTION_KEY }
 
 // Creates persisted identifiers.
 export const generateKey = () => crypto.randomUUID()
@@ -21,19 +25,6 @@ export const createEmptyConfig = (): CalculatorConfig => ({
   outputTotal: emptyOutputTotal(),
   outputSections: [],
 })
-
-/* Maps filtered Zod paths to unfiltered editor rows. */
-export interface RowIdentity {
-  tab: 'input' | 'output'
-  sectionKey: string
-  fieldUid?: string
-  itemUid?: string
-}
-
-/* Reserves an issue key for the output total. */
-export const OUTPUT_TOTAL_SECTION_KEY = 'outputTotal'
-
-export type IdentityMap = Map<string, RowIdentity>
 
 export interface FilteredConfig {
   payload: CalculatorConfig
@@ -193,16 +184,4 @@ export const filterConfigForPersistence = (
     },
     identity,
   }
-}
-
-/* Resolves nested issues to their owning row. */
-export const resolveIssuePath = (
-  path: (string | number)[],
-  identity: IdentityMap,
-): RowIdentity | undefined => {
-  for (let length = path.length; length > 0; length -= 1) {
-    const found = identity.get(path.slice(0, length).join('.'))
-    if (found) return found
-  }
-  return undefined
 }

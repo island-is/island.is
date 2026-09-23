@@ -27,18 +27,20 @@ import type {
   GetTaxCalculatorFieldsForContentfulAppQuery,
   GetTaxCalculatorFieldsForContentfulAppQueryVariables,
 } from '../../../graphql/schema'
-import { TaxCalculatorOutputFieldType } from '../../../graphql/schema'
 import { InputSection } from './components/InputSection'
+import { hidden } from './components/CalculatorEditor.css'
 import { OutputSection } from './components/OutputSection'
 import { OutputTotalEditor } from './components/OutputTotalEditor'
 import { useCalculatorConfig } from './hooks/useCalculatorConfig'
-import { GET_TAX_CALCULATOR_FIELDS, toApiCalculatorType } from './constants'
+import { toApiCalculatorType } from './calculatorType'
 import {
   InputFieldContract,
   OutputFieldContract,
   toInputContractField,
   toOutputContractField,
-} from './types'
+} from './contract'
+import { GET_TAX_CALCULATOR_FIELDS } from './queries'
+import { hasMetadataValidationError } from './metadataValidation'
 
 export const CalculatorConfigEditor = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -106,47 +108,11 @@ export const CalculatorConfigEditor = () => {
     Boolean(calculatorTypeValue) &&
     (!apiCalculatorType || !data || loading || Boolean(error))
 
-  /* Validates the config currently being persisted. */
   const validateMetadata = useCallback(
     (config: CalculatorConfig) => {
       if (metadataUnverified) return true
       if (!metadataChecked) return false
-
-      const inputSections = config.inputSections ?? []
-      const outputSections = config.outputSections ?? []
-
-      const placedInputKeys = new Set(
-        inputSections.flatMap((section) =>
-          section.fields.map((field) => field.key).filter(Boolean),
-        ),
-      )
-
-      const missingRequired = [...inputContract.values()].some(
-        (field) => field.required && !placedInputKeys.has(field.key),
-      )
-      if (missingRequired) return true
-
-      const staleInput = inputSections.some((section) =>
-        section.fields.some(
-          (field) => field.key && !inputContract.has(field.key),
-        ),
-      )
-      if (staleInput) return true
-
-      return outputSections.some((section) =>
-        section.fields.some((field) => {
-          if (field.kind !== 'value' || !field.key) return false
-          const meta = outputContract.get(field.key)
-          if (!meta) return true
-          const items = field.itemFields ?? []
-          if (items.length === 0) return false
-          if (meta.type !== TaxCalculatorOutputFieldType.Array) return true
-          const allowed = new Set(
-            (meta.itemFields ?? []).map((item) => item.key),
-          )
-          return items.some((item) => item.key && !allowed.has(item.key))
-        }),
-      )
+      return hasMetadataValidationError(config, inputContract, outputContract)
     },
     [metadataUnverified, metadataChecked, inputContract, outputContract],
   )
@@ -346,7 +312,7 @@ export const CalculatorConfigEditor = () => {
         <Tabs.Panel
           id="input"
           forceMount
-          style={{ display: activeTab === 'input' ? undefined : 'none' }}
+          className={activeTab === 'input' ? undefined : hidden}
         >
           <DndContext
             sensors={sensors}
@@ -388,7 +354,7 @@ export const CalculatorConfigEditor = () => {
         <Tabs.Panel
           id="output"
           forceMount
-          style={{ display: activeTab === 'output' ? undefined : 'none' }}
+          className={activeTab === 'output' ? undefined : hidden}
         >
           <DndContext
             sensors={sensors}

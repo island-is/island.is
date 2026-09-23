@@ -12,7 +12,9 @@ import type {
   CalculatorSectionToggle,
 } from '@island.is/tax-calculators'
 
-import { InputFieldContract, InputSectionActions } from '../types'
+import type { InputFieldContract } from '../contract'
+import type { InputSectionActions } from '../types'
+import * as styles from './CalculatorEditor.css'
 import { InputFieldRow } from './InputFieldRow'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { SectionToggleControl } from './SectionToggleControl'
@@ -47,14 +49,10 @@ export const InputSection = ({
     flexDirection="column"
     alignItems="stretch"
     spacing="spacingS"
-    style={{
-      border: '1px solid #d3dce0',
-      borderRadius: 6,
-      padding: 16,
-    }}
+    className={styles.section}
   >
     <Stack flexDirection="row" alignItems="center" spacing="spacingXs">
-      <Subheading marginBottom="none" style={{ flex: 1 }}>
+      <Subheading marginBottom="none" className={styles.grow}>
         Section {position}
       </Subheading>
       <IconButton

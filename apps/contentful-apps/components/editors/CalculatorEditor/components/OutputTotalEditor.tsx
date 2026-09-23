@@ -7,7 +7,8 @@ import {
 
 import type { CalculatorOutputTotal } from '@island.is/tax-calculators'
 
-import { OutputFieldContract } from '../types'
+import type { OutputFieldContract } from '../contract'
+import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
 
 interface Props {
@@ -37,7 +38,7 @@ export const OutputTotalEditor = ({
       flexDirection="column"
       alignItems="stretch"
       spacing="spacingS"
-      style={{ border: '1px solid #d3dce0', borderRadius: 6, padding: 16 }}
+      className={styles.section}
     >
       <Subheading marginBottom="none">Result total</Subheading>
 

@@ -9,7 +9,8 @@ import { DeleteIcon } from '@contentful/f36-icons'
 
 import type { CalculatorOutputItemField } from '@island.is/tax-calculators'
 
-import { OutputContractItemField } from '../types'
+import type { OutputContractItemField } from '../contract'
+import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
 
 interface Props {
@@ -45,7 +46,7 @@ export const OutputItemFieldRow = ({
           isRequired
           isInvalid={hasError}
           marginBottom="none"
-          style={{ flex: 1 }}
+          className={styles.grow}
         >
           <FormControl.Label>Item field</FormControl.Label>
           <Select

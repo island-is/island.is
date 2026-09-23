@@ -11,6 +11,7 @@ import type {
 import { MarkdownEditor } from '../../../translation-namespace/components/MarkdownEditor'
 import { unifyAndDeserialize } from '../../../translation-namespace/utils/deserialize'
 import { serializeAndFormat } from '../../../translation-namespace/utils/serialize'
+import * as styles from './CalculatorEditor.css'
 
 interface Props {
   field: CalculatorOutputContentField
@@ -47,14 +48,14 @@ export const OutputContentRow = ({
       flexDirection="column"
       alignItems="stretch"
       spacing="spacingXs"
-      style={{ border: '1px solid #e5e8eb', borderRadius: 4, padding: 8 }}
+      className={styles.fieldRow}
     >
       <Stack flexDirection="row" alignItems="center" spacing="spacingXs">
         <FormControl
           isRequired
           isInvalid={Boolean(issues?.length)}
           marginBottom="none"
-          style={{ flex: 1 }}
+          className={styles.grow}
         >
           <FormControl.Label>Content</FormControl.Label>
         </FormControl>

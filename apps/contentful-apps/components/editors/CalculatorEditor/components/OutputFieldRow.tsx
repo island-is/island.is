@@ -13,7 +13,9 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import type { CalculatorOutputValueField } from '@island.is/tax-calculators'
 
 import { TaxCalculatorOutputFieldType } from '../../../../graphql/schema'
-import { OutputFieldContract, OutputSectionActions } from '../types'
+import type { OutputFieldContract } from '../contract'
+import type { OutputSectionActions } from '../types'
+import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { SortableRow } from './SortableRow'
 import { OutputItemFieldRow } from './OutputItemFieldRow'
@@ -55,18 +57,14 @@ export const OutputFieldRow = ({
       flexDirection="column"
       alignItems="stretch"
       spacing="spacingXs"
-      style={{
-        border: '1px solid #e5e8eb',
-        borderRadius: 4,
-        padding: 8,
-      }}
+      className={styles.fieldRow}
     >
       <Stack flexDirection="row" alignItems="flex-end" spacing="spacingXs">
         <FormControl
           isRequired
           isInvalid={hasError}
           marginBottom="none"
-          style={{ flex: 1 }}
+          className={styles.grow}
         >
           <FormControl.Label>Output field</FormControl.Label>
           <Select
@@ -155,7 +153,7 @@ export const OutputFieldRow = ({
           flexDirection="column"
           alignItems="stretch"
           spacing="spacingXs"
-          style={{ paddingLeft: 16, borderLeft: '2px solid #e5e8eb' }}
+          className={styles.itemFields}
         >
           <SortableContext
             items={itemFields.map((item) => item.uid)}

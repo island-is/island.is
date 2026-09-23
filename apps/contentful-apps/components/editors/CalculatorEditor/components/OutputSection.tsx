@@ -11,7 +11,9 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 import type { CalculatorOutputSection as OutputSectionModel } from '@island.is/tax-calculators'
 
-import { OutputFieldContract, OutputSectionActions } from '../types'
+import type { OutputFieldContract } from '../contract'
+import type { OutputSectionActions } from '../types'
+import * as styles from './CalculatorEditor.css'
 import { LocalizedTextFields } from './LocalizedTextFields'
 import { OutputContentRow } from './OutputContentRow'
 import { OutputFieldRow } from './OutputFieldRow'
@@ -46,10 +48,10 @@ export const OutputSection = ({
       flexDirection="column"
       alignItems="stretch"
       spacing="spacingS"
-      style={{ border: '1px solid #d3dce0', borderRadius: 6, padding: 16 }}
+      className={styles.section}
     >
       <Stack flexDirection="row" alignItems="center" spacing="spacingXs">
-        <Subheading marginBottom="none" style={{ flex: 1 }}>
+        <Subheading marginBottom="none" className={styles.grow}>
           Output section {position}
         </Subheading>
         <IconButton

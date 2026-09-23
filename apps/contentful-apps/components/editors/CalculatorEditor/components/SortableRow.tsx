@@ -3,6 +3,7 @@ import { useDroppable } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { DragHandle, Stack, Text } from '@contentful/f36-components'
+import * as styles from './CalculatorEditor.css'
 
 /* Uses Forma 36's accessible drag handle. */
 export const SortableRow = ({
@@ -47,7 +48,7 @@ export const SortableRow = ({
           {...listeners}
         />
       )}
-      <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+      <div className={styles.sortableContent}>{children}</div>
     </Stack>
   )
 }
@@ -59,12 +60,7 @@ export const EmptyDropZone = ({ id, label }: { id: string; label: string }) => {
   return (
     <div
       ref={setNodeRef}
-      style={{
-        border: `1px ${isOver ? 'solid' : 'dashed'} #d3dce0`,
-        borderRadius: 4,
-        padding: 12,
-        textAlign: 'center',
-      }}
+      className={`${styles.emptyDropZone[isOver ? 'active' : 'idle']} ${styles.emptyDropZoneContent}`}
     >
       <Text fontColor="gray500" fontSize="fontSizeS">
         {label}
