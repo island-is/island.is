@@ -19,10 +19,6 @@ export type RawInputField =
   GetTaxCalculatorQuery['taxCalculator']['inputFields'][number]
 export type RawOutputField =
   GetTaxCalculatorQuery['taxCalculator']['outputFields'][number]
-type RawOutputItemField = Extract<
-  RawOutputField,
-  { __typename: 'TaxCalculatorArrayOutputField' }
->['itemFields'][number]
 
 /* Flat view models. `options` collapses `{ value }[]` to `string[]`, and
  * `dependsOn.equals` collapses the aliased scalar union to one value. */
@@ -112,25 +108,6 @@ export const toInputContractField = (
   }
 }
 
-const toOutputContractItemField = (
-  field: RawOutputItemField,
-): OutputContractItemField => {
-  const base = { key: field.key, type: field.type }
-
-  switch (field.__typename) {
-    case 'TaxCalculatorNumberOutputField':
-      return { ...base, semantic: orUndefined(field.semantic) }
-    case 'TaxCalculatorStringOutputField':
-    case 'TaxCalculatorBooleanOutputField':
-    case 'TaxCalculatorDateOutputField':
-      return base
-    default: {
-      const unhandled: never = field
-      return unhandled
-    }
-  }
-}
-
 export const toOutputContractField = (
   field: RawOutputField,
 ): OutputContractField => {
@@ -142,7 +119,25 @@ export const toOutputContractField = (
     case 'TaxCalculatorArrayOutputField':
       return {
         ...base,
-        itemFields: field.itemFields.map(toOutputContractItemField),
+        itemFields: field.itemFields.map((itemField) => {
+          const itemBase = { key: itemField.key, type: itemField.type }
+
+          switch (itemField.__typename) {
+            case 'TaxCalculatorNumberOutputField':
+              return {
+                ...itemBase,
+                semantic: orUndefined(itemField.semantic),
+              }
+            case 'TaxCalculatorStringOutputField':
+            case 'TaxCalculatorBooleanOutputField':
+            case 'TaxCalculatorDateOutputField':
+              return itemBase
+            default: {
+              const unhandled: never = itemField
+              return unhandled
+            }
+          }
+        }),
       }
     case 'TaxCalculatorStringOutputField':
     case 'TaxCalculatorBooleanOutputField':

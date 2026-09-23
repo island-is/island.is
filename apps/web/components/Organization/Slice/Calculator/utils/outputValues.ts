@@ -1,18 +1,19 @@
-import type { GetTaxCalculatorCalculationQuery } from '@island.is/web/graphql/schema'
+import type {
+  TaxCalculatorCalculation,
+  TaxCalculatorOutputFieldValue,
+  TaxCalculatorOutputFieldValueRow,
+  TaxCalculatorOutputScalarValue,
+} from '@island.is/web/graphql/schema'
 
-type Calculation = NonNullable<
-  NonNullable<
-    GetTaxCalculatorCalculationQuery['taxCalculatorCalculate']
-  >['calculation']
->
-
-export type OutputValue = Calculation['values'][number]
-export type OutputRow = NonNullable<OutputValue['arrayValue']>[number]
-export type OutputScalarValue = OutputRow['values'][number]
+export type OutputValue = TaxCalculatorOutputFieldValue
+export type OutputRow = TaxCalculatorOutputFieldValueRow
+export type OutputScalarValue = TaxCalculatorOutputScalarValue
 
 export type OutputValues = Map<string, OutputValue>
 
-export const toOutputValues = (calculation: Calculation): OutputValues =>
+export const toOutputValues = (
+  calculation: TaxCalculatorCalculation,
+): OutputValues =>
   new Map(calculation.values.map((value) => [value.key, value]))
 
 export const itemValue = (

@@ -6,10 +6,12 @@ import {
   AlertMessage,
   Box,
   Button,
+  Divider,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 import type { CalculatorConfig } from '@island.is/tax-calculators'
 import {
   calculatorConfigSchema,
@@ -30,11 +32,15 @@ import {
   GET_TAX_CALCULATOR_CALCULATION,
 } from '@island.is/web/screens/queries/TaxCalculators'
 
-import { toInputFieldContract, toOutputFieldContract } from '../contract'
+import {
+  toInputFieldContract,
+  toOutputFieldContract,
+  type OutputFieldContract,
+} from '../contract'
 import {
   canSubmit,
   collectApplicableFields,
-  isInPlay,
+  isUsedForCalculation,
 } from '../utils/applicability'
 import {
   collectUnplacedRequiredKeys,
@@ -42,12 +48,12 @@ import {
   reportConfigParseIssues,
   reportContractDiagnostics,
 } from '../utils/diagnostics'
-import { toOutputValues } from '../utils/outputValues'
+import { formatOutputValue } from '../utils/format'
+import { toOutputValues, type OutputValues } from '../utils/outputValues'
 import { toInputFieldValues } from '../utils/serialize'
 import { CALCULATOR_MESSAGES, localized } from '../utils/text'
 import { CalculatorResults, collectVisibleSections } from './CalculatorResults'
 import { CalculatorSection } from './CalculatorSection'
-import { CalculatorTotal, resolveTotal } from './CalculatorTotal'
 
 interface CalculatorProps {
   slice: CalculatorSlice
@@ -56,6 +62,13 @@ interface CalculatorProps {
 interface FormProps {
   calculatorType: TaxCalculatorType
   config: CalculatorConfig
+}
+
+interface PrimaryResultProps {
+  config: CalculatorConfig
+  contract: OutputFieldContract
+  values: OutputValues
+  locale: Locale
 }
 
 type CalculationResponse = NonNullable<
@@ -81,6 +94,56 @@ const errorText = (code: TaxCalculatorCalculationErrorCode) => {
   }
 }
 
+const resolvePrimaryResult = (
+  config: CalculatorConfig,
+  contract: OutputFieldContract,
+  values: OutputValues,
+  locale: Locale,
+) => {
+  const { outputTotal } = config
+
+  const contractField = contract.get(outputTotal.key)
+  if (!contractField) return undefined
+
+  const label = localized(outputTotal.label, locale)
+  if (!label) return undefined
+
+  const value = values.get(outputTotal.key)
+  if (!value) return undefined
+
+  const formatted = formatOutputValue(value, contractField.semantic, locale)
+  if (formatted === undefined) return undefined
+
+  return { label, formatted }
+}
+
+const CalculatorPrimaryResult = ({
+  config,
+  contract,
+  values,
+  locale,
+}: PrimaryResultProps) => {
+  const primaryResult = resolvePrimaryResult(config, contract, values, locale)
+
+  if (!primaryResult) return null
+
+  return (
+    <Stack space={2}>
+      <Box>
+        <Stack space={1}>
+          <Text variant="h5" as="h2">
+            {primaryResult.label}
+          </Text>
+          <Text variant="h1" as="p">
+            {primaryResult.formatted}
+          </Text>
+        </Stack>
+      </Box>
+      <Divider />
+    </Stack>
+  )
+}
+
 const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const { activeLocale } = useI18n()
   const methods = useForm({ shouldUnregister: true })
@@ -93,7 +156,8 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const [submitted, setSubmitted] = useState<string>()
   const [response, setResponse] = useState<CalculationResponse>()
-  const [transportFailed, setTransportFailed] = useState(false)
+  const [calculationRequestFailed, setCalculationRequestFailed] =
+    useState(false)
 
   const { data, loading, error } = useQuery<
     GetTaxCalculatorQuery,
@@ -176,7 +240,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const onSubmit = async () => {
     setSubmitted(snapshot)
     setResponse(undefined)
-    setTransportFailed(false)
+    setCalculationRequestFailed(false)
 
     try {
       const result = await calculate({
@@ -184,7 +248,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
       })
 
       if (result.error || !result.data?.taxCalculatorCalculate) {
-        setTransportFailed(true)
+        setCalculationRequestFailed(true)
         return
       }
 
@@ -194,13 +258,13 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
       )
       setResponse(result.data.taxCalculatorCalculate)
     } catch {
-      setTransportFailed(true)
+      setCalculationRequestFailed(true)
     }
   }
 
   const isCurrent = submitted === snapshot
   const shown = isCurrent ? response : undefined
-  const failed = isCurrent && transportFailed
+  const failed = isCurrent && calculationRequestFailed
 
   const fieldErrors = new Map<string, string>()
   const alerts: string[] = failed
@@ -211,7 +275,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     const text = localized(errorText(returned.code), activeLocale) ?? ''
     const entry = returned.key ? applicable.get(returned.key) : undefined
 
-    if (returned.key && entry && isInPlay(entry)) {
+    if (returned.key && entry && isUsedForCalculation(entry)) {
       fieldErrors.set(returned.key, text)
     } else if (!alerts.includes(text)) {
       alerts.push(text)
@@ -224,8 +288,12 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const hasResults =
     outputValues !== undefined &&
-    (resolveTotal(config, outputContract, outputValues, activeLocale) !==
-      undefined ||
+    (resolvePrimaryResult(
+      config,
+      outputContract,
+      outputValues,
+      activeLocale,
+    ) !== undefined ||
       collectVisibleSections(config, outputContract, outputValues, activeLocale)
         .length > 0)
 
@@ -275,7 +343,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
             {hasResults && outputValues && (
               <Box background="white" borderRadius="large" padding={[3, 3, 4]}>
                 <Stack space={3}>
-                  <CalculatorTotal
+                  <CalculatorPrimaryResult
                     config={config}
                     contract={outputContract}
                     values={outputValues}

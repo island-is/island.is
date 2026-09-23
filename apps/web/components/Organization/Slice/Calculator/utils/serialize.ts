@@ -5,7 +5,7 @@ import type {
 import { TaxCalculatorInputFieldType } from '@island.is/web/graphql/schema'
 
 import type { ApplicableFields, FormValues } from './applicability'
-import { isInPlay } from './applicability'
+import { isUsedForCalculation } from './applicability'
 import { toTypedValue } from './values'
 
 /* `TaxCalculatorInputValue` is a `@oneOf` input, emitted as a union whose other
@@ -43,9 +43,9 @@ export const toInputFieldValues = (
   const rows: TaxCalculatorInputFieldValue[] = []
 
   for (const [key, entry] of applicable) {
-    /* A `disableOnly` field renders but is not in play, and react-hook-form
-     * still holds its value, so it must be excluded explicitly. */
-    if (!isInPlay(entry)) continue
+    /* A `disableOnly` field renders but does not participate in the
+     * calculation, and react-hook-form still holds its value. */
+    if (!isUsedForCalculation(entry)) continue
 
     const { contractField } = entry
     const typed = toTypedValue(values[key], contractField.type)
