@@ -26,6 +26,7 @@ import {
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetConversationsV2V2,
   meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
@@ -35,6 +36,7 @@ import {
   meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePregnancyControllerHasActivePregnancyV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -75,7 +77,9 @@ import {
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
@@ -335,6 +339,15 @@ export class HealthDirectorateHealthService {
     }
 
     return donationExceptions
+  }
+
+  /* Pregnancy */
+  public async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerHasActivePregnancyV1()),
+    )
+
+    return result?.hasActivePregnancy ?? null
   }
 
   public async getQuestionnaires(
@@ -675,6 +688,17 @@ export class HealthDirectorateHealthService {
           query: { status, starred },
         }),
       ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getPaginatedConversations(
+    auth: Auth,
+    query?: MeConversationControllerGetConversationsV2V2Data['query'],
+  ): Promise<PaginatedConversationsDto | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(meConversationControllerGetConversationsV2V2({ query })),
     )
 
     return conversations ?? null

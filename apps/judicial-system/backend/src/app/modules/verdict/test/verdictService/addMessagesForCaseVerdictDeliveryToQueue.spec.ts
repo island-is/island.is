@@ -82,6 +82,9 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
         serviceRequirement: ServiceRequirement.REQUIRED,
         serviceInformationForDefendant: [],
         isDefaultJudgement: false,
+        appealDate: undefined,
+        defendantHasRequestedAppeal: undefined,
+        isAcquittedByPublicProsecutionOffice: undefined,
       },
       { transaction },
     )
@@ -120,5 +123,47 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
     expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
     expect(mockVerdictRepositoryService.create).not.toHaveBeenCalled()
     expect(mockAddMessagesToQueue).toHaveBeenCalled()
+  })
+
+  // Everything that asks what became of a judgment reads the defendant's latest
+  // verdict - the appealed case lists and the read access that goes with them,
+  // "Áfrýjunarleyfi", "Sýknudómar". A replacement that dropped these would
+  // therefore read as if nothing had been recorded, silently, while the appeal,
+  // the leave request and the acquittal all still stand.
+  it('carries the office record of the judgment onto the replacement verdict', async () => {
+    const appealDate = new Date('2026-02-03')
+    const existingVerdict = {
+      id: existingVerdictId,
+      created: new Date('2026-01-01'),
+      externalPoliceDocumentId: uuid(),
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceInformationForDefendant: [],
+      isDefaultJudgement: false,
+      appealDate,
+      defendantHasRequestedAppeal: true,
+      isAcquittedByPublicProsecutionOffice: true,
+    } as Verdict
+
+    const theCase = {
+      id: caseId,
+      defendants: [
+        { id: defendantId, verdicts: [existingVerdict] } as Defendant,
+      ],
+    } as Case
+
+    await verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+      theCase,
+      user,
+      transaction,
+    )
+
+    expect(mockVerdictRepositoryService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        appealDate,
+        defendantHasRequestedAppeal: true,
+        isAcquittedByPublicProsecutionOffice: true,
+      }),
+      { transaction },
+    )
   })
 })

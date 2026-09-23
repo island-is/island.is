@@ -1,8 +1,13 @@
 import { createIntl } from 'react-intl'
 
-import type { Verdict } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  AppealCase,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealEventType,
   ServiceRequirement,
+  UserRole,
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -29,8 +34,16 @@ describe('hasVerdictServiceDecision', () => {
 describe('getDefenderVerdictTimelineItems', () => {
   const { formatMessage } = createIntl({ locale: 'is', messages: {} })
 
-  const items = (verdict: Partial<Verdict>) =>
-    getDefenderVerdictTimelineItems(verdict as Verdict, formatMessage)
+  const items = (
+    verdict: Partial<Verdict>,
+    verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null,
+  ) =>
+    getDefenderVerdictTimelineItems({
+      defendantId: 'defendant_id',
+      verdict: verdict as Verdict,
+      verdictAppealCase,
+      formatMessage,
+    })
 
   describe('service', () => {
     it('should report the service date of a verdict that has been served', () => {
@@ -116,6 +129,46 @@ describe('getDefenderVerdictTimelineItems', () => {
 
     it('should say nothing about an appeal when no stance was recorded', () => {
       expect(items(served)).toEqual([{ text: 'Dómur birtur 01.06.2026' }])
+    })
+  })
+
+  // The defence is told about the prosecution's appeal too - it is the one
+  // thing on the card the defendant has no part in.
+  describe('the prosecution appeal', () => {
+    const served: Partial<Verdict> = {
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceDate: '2026-06-01T13:31:00.000Z',
+    }
+
+    const prosecutionAppealed = {
+      appealEventLogs: [
+        {
+          id: 'event_id',
+          created: '2026-06-10T09:00:00.000Z',
+          eventType: AppealEventType.APPEALED,
+          defendantId: 'defendant_id',
+          userRole: UserRole.PROSECUTOR,
+        },
+      ],
+    }
+
+    it('should add the appeal alongside the stance the defendant took', () => {
+      expect(
+        items(
+          { ...served, appealDecision: VerdictAppealDecision.ACCEPT },
+          prosecutionAppealed,
+        ),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Dómfelldi unir' },
+        { text: 'Ákæruvaldið áfrýjaði 10.06.2026' },
+      ])
+    })
+
+    it('should say nothing when the prosecution has not appealed', () => {
+      expect(items(served, { appealEventLogs: [] })).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+      ])
     })
   })
 })

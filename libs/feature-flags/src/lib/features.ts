@@ -93,6 +93,7 @@ export enum Features {
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
   isServicePortalHealthMessagesPageEnabled = 'isServicePortalHealthMessagesPageEnabled',
   isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
+  isServicePortalHealthPregnancyPageEnabled = 'isServicePortalHealthPregnancyPageEnabled',
   isServicePortalHealthTreatmentsPageEnabled = 'isServicePortalHealthTreatmentsPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
