@@ -6,8 +6,8 @@ import type {
   CalculatorOutputSection,
   CalculatorOutputValueField,
 } from '@island.is/tax-calculators'
-import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 import { MarkdownText } from '@island.is/web/components'
+import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
 import { CalculatorOutputField } from './CalculatorOutputField'
 import type { OutputContractField, OutputFieldContract } from './contract'

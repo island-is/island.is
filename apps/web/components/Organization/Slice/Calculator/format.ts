@@ -1,5 +1,5 @@
-import { formatCurrency } from '@island.is/shared/utils'
 import type { Locale } from '@island.is/shared/types'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   TaxCalculatorOutputFieldSemantic,
   TaxCalculatorOutputFieldType,
