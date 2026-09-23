@@ -152,7 +152,7 @@ describe('collectApplicableFields', () => {
 
   /* A `disableOnly` section stays mounted and visible, so react-hook-form still
    * holds its values -- the entry has to render while staying out of play. */
-  it('keeps a shut disableOnly section renderable but not in play', () => {
+  it('keeps a shut disableOnly section renderable but excluded from calculation', () => {
     const applicable = collectApplicableFields(
       config([
         {
@@ -236,7 +236,7 @@ describe('canSubmit', () => {
 
   /* A required field inside a shut `disableOnly` section is not submitted, so
    * it cannot be what blocks submission either. */
-  it('ignores a required field that is rendered but not in play', () => {
+  it('ignores a required field that is rendered but excluded from calculation', () => {
     const applicable = collectApplicableFields(
       config([
         {

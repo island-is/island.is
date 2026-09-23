@@ -6,23 +6,10 @@ import type {
   TaxCalculatorOutputFieldType,
 } from '@island.is/web/graphql/schema'
 
-/* `inputFields`, `outputFields` and `itemFields` are interface-typed, so codegen
- * emits a UNION of per-`__typename` shapes -- and `type` is the same
- * non-literal enum on every member, so it cannot discriminate. Only
- * `__typename` can. Reading `semantic`, `options` or `itemFields` straight off
- * these unions is a compile error on every member that lacks them.
- *
- * These aliases exist so the normalizers below are the only code that ever
- * touches the raw union. They are read off the generated operation, so widening
- * the query still widens what the normalizer sees. */
-export type RawInputField =
+type RawInputField =
   GetTaxCalculatorQuery['taxCalculator']['inputFields'][number]
-export type RawOutputField =
+type RawOutputField =
   GetTaxCalculatorQuery['taxCalculator']['outputFields'][number]
-type RawOutputItemField = Extract<
-  RawOutputField,
-  { __typename: 'TaxCalculatorArrayOutputField' }
->['itemFields'][number]
 
 /* Flat view models. `options` collapses `{ value }[]` to `string[]`, and
  * `dependsOn.equals` collapses the aliased scalar union to one value. */
@@ -58,12 +45,6 @@ export interface OutputContractField {
 export type InputFieldContract = Map<string, InputContractField>
 export type OutputFieldContract = Map<string, OutputContractField>
 
-/* A nullable schema field selected in an operation is generated as
- * `X | null | undefined`. Collapse null to undefined here so `'semantic' in
- * field` style checks are not misleading downstream. */
-const orUndefined = <T>(value: T | null | undefined): T | undefined =>
-  value ?? undefined
-
 const normalizeDependency = (dependsOn: RawInputField['dependsOn']) => {
   if (!dependsOn) return undefined
 
@@ -82,10 +63,6 @@ const normalizeDependency = (dependsOn: RawInputField['dependsOn']) => {
   }
 }
 
-/* The ONLY place that switches on an input `__typename`, closed with a `never`
- * guard -- the same pattern the domain's own `resolveType` uses. A sixth field
- * type added to the API fails to compile here, rather than silently falling
- * through unmatched `__typename` checks spread across the render tree. */
 export const toInputContractField = (
   field: RawInputField,
 ): InputContractField => {
@@ -98,31 +75,12 @@ export const toInputContractField = (
 
   switch (field.__typename) {
     case 'TaxCalculatorNumberInputField':
-      return { ...base, semantic: orUndefined(field.semantic) }
+      return { ...base, semantic: field.semantic ?? undefined }
     case 'TaxCalculatorSelectInputField':
       return { ...base, options: field.options.map((option) => option.value) }
     case 'TaxCalculatorStringInputField':
     case 'TaxCalculatorBooleanInputField':
     case 'TaxCalculatorDateInputField':
-      return base
-    default: {
-      const unhandled: never = field
-      return unhandled
-    }
-  }
-}
-
-const toOutputContractItemField = (
-  field: RawOutputItemField,
-): OutputContractItemField => {
-  const base = { key: field.key, type: field.type }
-
-  switch (field.__typename) {
-    case 'TaxCalculatorNumberOutputField':
-      return { ...base, semantic: orUndefined(field.semantic) }
-    case 'TaxCalculatorStringOutputField':
-    case 'TaxCalculatorBooleanOutputField':
-    case 'TaxCalculatorDateOutputField':
       return base
     default: {
       const unhandled: never = field
@@ -138,11 +96,29 @@ export const toOutputContractField = (
 
   switch (field.__typename) {
     case 'TaxCalculatorNumberOutputField':
-      return { ...base, semantic: orUndefined(field.semantic) }
+      return { ...base, semantic: field.semantic ?? undefined }
     case 'TaxCalculatorArrayOutputField':
       return {
         ...base,
-        itemFields: field.itemFields.map(toOutputContractItemField),
+        itemFields: field.itemFields.map((itemField) => {
+          const itemBase = { key: itemField.key, type: itemField.type }
+
+          switch (itemField.__typename) {
+            case 'TaxCalculatorNumberOutputField':
+              return {
+                ...itemBase,
+                semantic: itemField.semantic ?? undefined,
+              }
+            case 'TaxCalculatorStringOutputField':
+            case 'TaxCalculatorBooleanOutputField':
+            case 'TaxCalculatorDateOutputField':
+              return itemBase
+            default: {
+              const unhandled: never = itemField
+              return unhandled
+            }
+          }
+        }),
       }
     case 'TaxCalculatorStringOutputField':
     case 'TaxCalculatorBooleanOutputField':

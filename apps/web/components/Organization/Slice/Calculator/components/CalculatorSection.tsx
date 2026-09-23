@@ -29,8 +29,8 @@ export const CalculatorSection = ({
   errors,
   onToggle,
 }: Props) => {
-  const isGateOpen = section.gate ? toggles[section.gate.toggle] : true
-  if (!isGateOpen && !section.gate?.disableOnly) return null
+  const isGatingToggleOn = section.gate ? toggles[section.gate.toggle] : true
+  if (!isGatingToggleOn && !section.gate?.disableOnly) return null
 
   const isOwnToggleOn = section.toggle ? toggles[section.toggle.key] : true
 

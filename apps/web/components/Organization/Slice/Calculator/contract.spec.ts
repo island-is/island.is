@@ -5,15 +5,15 @@ import {
   TaxCalculatorOutputFieldType,
 } from '@island.is/web/graphql/schema'
 
-/* Imported rather than re-derived: a spec with its own copy of these aliases
- * could keep compiling after the normalizer's view of the query changed. */
-import type { RawInputField, RawOutputField } from './contract'
 import {
   toInputContractField,
   toInputFieldContract,
   toOutputContractField,
   toOutputFieldContract,
 } from './contract'
+
+type RawInputField = Parameters<typeof toInputContractField>[0]
+type RawOutputField = Parameters<typeof toOutputContractField>[0]
 
 describe('toInputContractField', () => {
   it('collapses a null semantic to undefined rather than carrying it through', () => {
