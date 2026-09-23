@@ -4,9 +4,7 @@ import { TaxCalculatorType } from '@island.is/tax-calculators'
 
 import { TaxCalculatorType as ApiTaxCalculatorType } from '../../../graphql/schema'
 
-/* The `equals` members are ALIASED because GraphQL forbids one response name
- * resolving to incompatible scalar types -- `value` is `Boolean!`, `String!`
- * and `Float!` across the three members. */
+/* Aliases avoid GraphQL scalar-name collisions. */
 export const GET_TAX_CALCULATOR_FIELDS = gql`
   query GetTaxCalculatorFieldsForContentfulApp($type: TaxCalculatorType!) {
     taxCalculator(type: $type) {
@@ -61,9 +59,7 @@ export const GET_TAX_CALCULATOR_FIELDS = gql`
   }
 `
 
-/* Contentful stores the shared enum's value (`withholdingTaxOnWages`); the
- * GraphQL variable needs the schema enum's (`WithholdingTaxOnWages`). Keyed on
- * the shared enum so a fifth calculator fails to compile here. */
+/* Maps Contentful values to GraphQL enum values. */
 const API_TYPE_BY_CONTENTFUL_VALUE: Record<
   TaxCalculatorType,
   ApiTaxCalculatorType

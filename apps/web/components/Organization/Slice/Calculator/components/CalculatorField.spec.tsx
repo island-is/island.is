@@ -9,11 +9,6 @@ import {
 import type { InputContractField } from '../contract'
 import { CalculatorField } from './CalculatorField'
 
-/* What is under test is the two-stage resolution table -- which control a
- * `type`/`semantic` pair picks, and with which props -- not how island-ui
- * renders that control. Asserting on the real DOM cannot tell the two number
- * controls apart: `InputController type="number"` routes through `NumberFormat`,
- * which leaves the rendered input's `type` undefined, exactly like a text one. */
 jest.mock('@island.is/shared/form-fields', () => ({
   InputController: (props: Record<string, unknown>) => (
     <div
@@ -83,8 +78,6 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-currency')).toBe('false')
   })
 
-  /* The domain rejects a fractional or negative count with INVALID_VALUE, so
-   * the control is constrained rather than left to fail server-side. */
   it('renders a count as a whole non-negative number', () => {
     const { container } = renderField(
       numberField(TaxCalculatorInputFieldSemantic.Count),
@@ -126,7 +119,6 @@ describe('CalculatorField control resolution', () => {
     const element = control(container)
 
     expect(element?.getAttribute('data-control')).toBe('select')
-    /* Relative to the current year -- `yearOptions` counts back from it. */
     expect(element?.getAttribute('data-first-option')).toBe(
       String(new Date().getFullYear()),
     )
@@ -188,8 +180,6 @@ describe('CalculatorField control resolution', () => {
     expect(screen.getByRole('checkbox')).toBeTruthy()
   })
 
-  /* Domain validation answers are not react-hook-form validation results, so
-   * they arrive as a prop and every control has to surface them itself. */
   it('forwards a domain error to an input control', () => {
     const { container } = renderField(numberField(), 'Ógilt gildi')
 
@@ -205,8 +195,6 @@ describe('CalculatorField control resolution', () => {
     expect(control(container)?.getAttribute('data-error')).toBe('Ógilt gildi')
   })
 
-  /* `Checkbox` takes `hasError`/`errorMessage` rather than an `error` prop, so
-   * the boolean branch is the one that could silently swallow an error. */
   it('surfaces a domain error on a checkbox', () => {
     renderField(
       {

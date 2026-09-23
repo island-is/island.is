@@ -29,8 +29,6 @@ describe('toOutputValues', () => {
     expect(lookup.get('months')?.arrayValue?.length).toBe(1)
   })
 
-  /* A key RSK returned nothing for is absent from `values` entirely, which is
-   * how a configured row gets omitted rather than rendered blank. */
   it('has no entry for a key the calculation did not return', () => {
     const lookup = toOutputValues({ type: 'childBenefit' as never, values })
 
@@ -39,8 +37,6 @@ describe('toOutputValues', () => {
 })
 
 describe('itemValue', () => {
-  /* Rows omit keys RSK returned no value for, so they are not guaranteed to be
-   * the same shape -- looking up by position would read the wrong column. */
   it('finds an item by key in a row that skipped an earlier one', () => {
     const row: OutputRow = { values: [scalar('amount', 100)] }
 

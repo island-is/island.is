@@ -48,8 +48,6 @@ describe('toInputFieldValues', () => {
     ])
   })
 
-  /* `year` and `month` are number-typed in metadata but rendered as selects, so
-   * form state holds a string where the payload needs a number. */
   it('coerces a number-typed field that a select filled with a string', () => {
     const rows = toInputFieldValues(
       applicable(entry('incomeYear', TaxCalculatorInputFieldType.Number)),
@@ -59,8 +57,6 @@ describe('toInputFieldValues', () => {
     expect(rows).toEqual([{ key: 'incomeYear', value: { numberValue: 2024 } }])
   })
 
-  /* `DatePickerController` already emits `yyyy-MM-dd`, so no conversion happens
-   * anywhere in the web layer. */
   it('submits a date unchanged', () => {
     const rows = toInputFieldValues(
       applicable(entry('startDate', TaxCalculatorInputFieldType.Date)),
@@ -87,10 +83,6 @@ describe('toInputFieldValues', () => {
     ])
   })
 
-  /* `Number('')` is `0`, so coercing before the emptiness check would submit
-   * every untouched numeric field as a zero -- which for `withholdingTax`,
-   * whose absent values fall back to RSK's own defaults, silently corrupts the
-   * calculation rather than failing it. */
   it('omits an untouched numeric field rather than submitting a zero', () => {
     const rows = toInputFieldValues(
       applicable(entry('salary', TaxCalculatorInputFieldType.Number)),
@@ -112,8 +104,6 @@ describe('toInputFieldValues', () => {
     expect(rows).toEqual([])
   })
 
-  /* The section stays mounted, so react-hook-form still holds the value: it has
-   * to be excluded explicitly rather than by unmounting. */
   it('does not submit a rendered but disabled field', () => {
     const rows = toInputFieldValues(
       applicable(

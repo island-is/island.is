@@ -119,13 +119,7 @@ export const reportContractDiagnostics = ({
   )
 }
 
-/* `message` is developer-facing English, deliberately never rendered -- it is
- * neither localized nor stable, and `code` is the contract the renderer
- * switches on. This is the one place it is read, so that a calculation RSK
- * refused says something specific in a development console.
- *
- * Called from the submit handler rather than from an effect: it fires once per
- * response, which StrictMode does not repeat. */
+/* Logs unstable upstream messages once per response. */
 export const reportCalculationErrors = (
   calculatorType: TaxCalculatorType,
   errors: readonly { code: string; key?: string | null; message: string }[],

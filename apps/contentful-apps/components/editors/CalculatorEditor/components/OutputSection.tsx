@@ -38,9 +38,7 @@ export const OutputSection = ({
   dialogs,
   actions,
 }: Props) => {
-  /* The schema rejects an accordion without a title, so the control is blocked
-   * rather than allowed to invalidate the document. The filter drops the
-   * variant too, for the author who ticks this and then clears the title. */
+  /* Accordion output requires a title. */
   const canBeAccordion = Boolean(section.title?.is?.trim())
 
   return (

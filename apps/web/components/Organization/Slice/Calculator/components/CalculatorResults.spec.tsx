@@ -164,8 +164,6 @@ describe('CalculatorResults', () => {
     expect(screen.getByText('5.000 kr.')).toBeTruthy()
   })
 
-  /* An empty list is a result, not a missing value: RSK ran the calculation and
-   * it produced no rows. */
   it('renders an array field with no rows as its label alone', () => {
     renderResults(
       [
@@ -202,14 +200,12 @@ describe('CalculatorResults', () => {
           key: 'result',
           title: { is: 'Niðurstaða' },
           fields: [
-            /* Labelled, but keyed to a field the calculator no longer carries. */
             {
               uid: 'o1',
               kind: 'value',
               key: 'renamedAway',
               label: { is: 'Horfið' },
             },
-            /* In the contract and returned, but never labelled. */
             { uid: 'o2', kind: 'value', key: 'total' },
           ],
         },
@@ -225,7 +221,6 @@ describe('CalculatorResults', () => {
     expect(screen.queryByText('Horfið')).toBeNull()
   })
 
-  /* A key RSK returned nothing for is absent from the response entirely. */
   it('omits a row the calculation returned no value for', () => {
     renderResults(
       [

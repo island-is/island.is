@@ -70,8 +70,7 @@ export const OutputContentRow = ({
         <FormControl key={locale.id} marginBottom="none">
           <FormControl.Label>{locale.label}</FormControl.Label>
           <MarkdownEditor
-            /* Uncontrolled: it seeds state once and ignores the prop after
-             * mount, so the key must pin it to this row and locale. */
+            /* Remounts the uncontrolled editor for each row and locale. */
             key={`${field.uid}-${locale.id}`}
             value={unifyAndDeserialize(field.content?.[locale.id])}
             dialogs={dialogs}
@@ -81,8 +80,7 @@ export const OutputContentRow = ({
               const serialized = serializeAndFormat(
                 value as Parameters<typeof serializeAndFormat>[0],
               )
-              /* `<Slate onChange>` fires on SELECTION changes too, so without
-               * this a click into the editor would dirty a clean entry. */
+              /* Ignores Slate selection changes. */
               if (serialized === (field.content?.[locale.id] ?? '')) return
               setLocale(locale.id, serialized)
             }}

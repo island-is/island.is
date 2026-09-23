@@ -44,8 +44,7 @@ export const OutputFieldRow = ({
 
   const isArray = contractField?.type === TaxCalculatorOutputFieldType.Array
   const itemFields = field.itemFields ?? []
-  /* Preserved only while the key itself is stale, so an author can see and
-   * repair the value. A changed key clears them in the action instead. */
+  /* Retains stale item fields until their key changes. */
   const hasStrandedItems = !isArray && itemFields.length > 0 && !isLoading
   const hasError = isStaleKey || hasStrandedItems || Boolean(issues?.length)
   const available = contractField?.itemFields ?? []
@@ -85,8 +84,6 @@ export const OutputFieldRow = ({
                   : field.key}
               </Select.Option>
             )}
-            {/* Unlike inputs, used output keys are NOT removed: the shared
-             * schema permits the same output to appear in several places. */}
             {[...contract.values()].map((candidate) => (
               <Select.Option key={candidate.key} value={candidate.key}>
                 {candidate.semantic

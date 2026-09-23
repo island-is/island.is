@@ -32,16 +32,11 @@ interface Props {
   onRemove: () => void
 }
 
-/* `choice` is a dropdown or a switch: nowhere to put grey text. */
 type Control =
   | { kind: 'choice' }
   | { kind: 'text'; unit?: CalculatorLocalizedText }
 
-/* Resolved on `type` FIRST, then `semantic` as an override layer. The old map
- * keyed one flat enum; the metadata now splits it in two, and a semantic-only
- * lookup would silently lose the cases that are types rather than semantics --
- * BOOLEAN and SELECT are choice-like, DATE is text with a hint, and neither
- * carries a semantic at all. */
+/* Semantic controls override type defaults. */
 const CONTROL_BY_TYPE: Record<TaxCalculatorInputFieldType, Control> = {
   [TaxCalculatorInputFieldType.Boolean]: { kind: 'choice' },
   [TaxCalculatorInputFieldType.Select]: { kind: 'choice' },
@@ -49,9 +44,6 @@ const CONTROL_BY_TYPE: Record<TaxCalculatorInputFieldType, Control> = {
     kind: 'text',
     unit: { is: 'dagsetning', en: 'date' },
   },
-  // Plain number and free text: text controls with no unit hint. Stated rather
-  // than left to fall through, or the most common field type would render no
-  // placeholder editor at all.
   [TaxCalculatorInputFieldType.Number]: { kind: 'text' },
   [TaxCalculatorInputFieldType.String]: { kind: 'text' },
 }
@@ -109,8 +101,7 @@ export const InputFieldRow = ({
   onRemove,
 }: Props) => {
   const contractField = field.key ? contract.get(field.key) : undefined
-  /* A stored key needs an option of its own or the Select renders blank, but
-   * it is only knowably stale once the contract has loaded. */
+  /* Retains stale keys until the contract loads. */
   const isMissingFromContract = Boolean(field.key) && !contractField
   const isStaleKey = isMissingFromContract && !isLoading
   const isDraft = !field.key
@@ -141,9 +132,7 @@ export const InputFieldRow = ({
             onChange={(ev) => {
               const key = ev.target.value
               const patch: Partial<CalculatorInputSectionField> = { key }
-              /* Refreshed only while untouched, so editor wording survives a
-               * re-pick -- but dropped outright for a control that cannot
-               * show it, rather than persisted where nothing reads it. */
+              /* Refreshes untouched placeholders from the selected field. */
               if (
                 controlFor(key, contract)?.kind === 'choice' ||
                 isSameText(
@@ -166,9 +155,6 @@ export const InputFieldRow = ({
                   : field.key}
               </Select.Option>
             )}
-            {/* A star, not "required": FormControl already renders its own
-             * `(required)` above, meaning something else. Keys already placed
-             * elsewhere are dropped, except this row's own. */}
             {[...contract.values()]
               .filter(
                 (available) =>

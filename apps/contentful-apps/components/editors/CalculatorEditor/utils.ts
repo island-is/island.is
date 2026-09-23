@@ -7,9 +7,7 @@ import type {
   CalculatorOutputTotal,
 } from '@island.is/tax-calculators'
 
-// Persisted: a section's `key` and a field's `uid` are written into the
-// entry and referenced by other sections, so this needs real uniqueness,
-// not just per-render distinctness.
+// Creates persisted identifiers.
 export const generateKey = () => crypto.randomUUID()
 
 export const emptyOutputTotal = (): CalculatorOutputTotal => ({
@@ -24,11 +22,7 @@ export const createEmptyConfig = (): CalculatorConfig => ({
   outputSections: [],
 })
 
-/* Which on-screen row a zod issue path belongs to. Zod paths are POSITIONAL and
- * index the FILTERED payload, while the UI renders the unfiltered draft state,
- * so a draft row earlier in the same list shifts every later index. Resolving
- * by position alone lands the error on the wrong control -- silently, and only
- * when a draft happens to precede an error. */
+/* Maps filtered Zod paths to unfiltered editor rows. */
 export interface RowIdentity {
   tab: 'input' | 'output'
   sectionKey: string
@@ -36,8 +30,7 @@ export interface RowIdentity {
   itemUid?: string
 }
 
-/* The total has no section of its own, so it borrows the section slot: nothing
- * else can claim this key, and the editor renders it above the section list. */
+/* Reserves an issue key for the output total. */
 export const OUTPUT_TOTAL_SECTION_KEY = 'outputTotal'
 
 export type IdentityMap = Map<string, RowIdentity>
@@ -49,10 +42,7 @@ export interface FilteredConfig {
 
 const hasText = (value: string | undefined) => Boolean(value?.trim())
 
-/* A localized value is persistable only once Icelandic is filled in: the shared
- * schema puts `min(1)` on `is`, so `{ is: '', en: 'x' }` -- what typing English
- * first produces -- would invalidate the whole document rather than just its
- * own row. */
+/* Icelandic text is required for persisted localized values. */
 const filterText = (
   value: CalculatorLocalizedText | undefined,
 ): CalculatorLocalizedText | undefined => {
@@ -62,8 +52,7 @@ const filterText = (
     : { is: value!.is }
 }
 
-/* `serializeAndFormat` can return whitespace for an empty document, so emptiness
- * is tested after trimming rather than against `''`. */
+/* Treats whitespace-only rich text as empty. */
 const filterMarkdown = (
   value: CalculatorLocalizedMarkdown | undefined,
 ): CalculatorLocalizedMarkdown | undefined => {
@@ -77,11 +66,7 @@ const filterInputSections = (
   sections: CalculatorInputSection[],
   identity: IdentityMap,
 ) => {
-  /* A toggle is persisted only once it carries a label -- `sectionToggleSchema`
-   * requires one, so an unlabelled toggle cannot be rescued by omitting a
-   * sub-field the way an optional localized value can. A gate pointing at a
-   * toggle that did not survive is dropped too, or the schema's cross-section
-   * refinement fires with "no input section declares it". */
+  /* Drops unlabelled toggles and their gates. */
   const persistedToggleKeys = new Set(
     sections
       .filter((section) => hasText(section.toggle?.label?.is))
@@ -176,19 +161,14 @@ const filterOutputSections = (
     return {
       ...section,
       title,
-      /* An accordion without a persistable title is rejected by the schema, so
-       * the variant is dropped rather than allowed to invalidate the document.
-       * The checkbox is disabled in that state too; this covers the author who
-       * ticks it and then clears the title. */
+      /* Drops accordions without titles. */
       variant:
         section.variant === 'accordion' && !title ? undefined : section.variant,
       fields,
     }
   })
 
-/* Removes only incomplete draft rows and unpersistable localized values. This is
- * a PASSTHROUGH, not a whitelist: a schema-valid key it knows nothing about
- * survives untouched. */
+/* Removes incomplete drafts while preserving unknown valid fields. */
 export const filterConfigForPersistence = (
   config: CalculatorConfig,
 ): FilteredConfig => {
@@ -204,9 +184,7 @@ export const filterConfigForPersistence = (
   return {
     payload: {
       inputSections: filterInputSections(config.inputSections ?? [], identity),
-      /* Deliberately unfiltered: an incomplete total is an error the author has
-       * to resolve, not a draft row to drop -- dropping it would make the
-       * required field silently pass. */
+      /* Keeps incomplete totals invalid. */
       outputTotal: { ...outputTotal, label: filterText(outputTotal.label)! },
       outputSections: filterOutputSections(
         config.outputSections ?? [],
@@ -217,8 +195,7 @@ export const filterConfigForPersistence = (
   }
 }
 
-/* Longest matching prefix, so an issue on a nested property (`...fields.2.key`)
- * resolves to the row that owns it rather than missing entirely. */
+/* Resolves nested issues to their owning row. */
 export const resolveIssuePath = (
   path: (string | number)[],
   identity: IdentityMap,

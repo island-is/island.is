@@ -50,8 +50,7 @@ const emptyOutputSection = (): CalculatorOutputSection => ({
   fields: [],
 })
 
-/* Item fields exist only on value rows, so every item action maps through this
- * rather than narrowing at each call site. */
+/* Narrows output rows that support item fields. */
 const atValueField = (
   fields: CalculatorOutputSectionField[],
   fieldIndex: number,
@@ -68,17 +67,12 @@ export const useCalculatorConfig = (
     validateMetadata,
     isDisabled,
   }: {
-    /* A function, not a boolean, so the verdict is computed from the config
-     * being persisted inside the debounce that owns `setInvalid`. Taking a
-     * value would mean computing it from state this hook returns. */
+    /* Validates the debounced config. */
     validateMetadata: (config: CalculatorConfig) => boolean
     isDisabled: boolean
   },
 ) => {
-  /* `uid` and `key` are backfilled on load: the editor has no way to type one
-   * in, so an entry missing them would fail safeParse forever and never save.
-   * Old `{ sections: [...] }` values are not migrated -- opening such an entry
-   * overwrites it, which is accepted because dev entries are disposable. */
+  /* Backfills identifiers required by the editor schema. */
   const [config, setConfig] = useState<CalculatorConfig>(() => {
     const stored = sdk.field.getValue()
     if (!stored) return createEmptyConfig()
@@ -99,8 +93,6 @@ export const useCalculatorConfig = (
             fields: (section.fields ?? []).map(withUid),
           }))
         : [],
-      /* Opens with an empty total rather than throwing; invalid until
-       * authored. */
       outputTotal: stored.outputTotal
         ? { ...withUid(stored.outputTotal) }
         : emptyOutputTotal(),
@@ -110,7 +102,6 @@ export const useCalculatorConfig = (
             fields: (section.fields ?? []).map(
               (field: CalculatorOutputSectionField) => ({
                 ...withUid(field),
-                /* Rows predating the union carry no `kind`; all were values. */
                 kind: field.kind ?? 'value',
                 ...(field.kind !== 'content'
                   ? { itemFields: field.itemFields?.map(withUid) }
@@ -122,9 +113,7 @@ export const useCalculatorConfig = (
     }
   })
 
-  /* Captured at mount: the auto-create effect keys on `calculatorTypeValue`,
-   * which can change later, by which point the debounce has already written a
-   * value and a live `getValue()` would report it present. */
+  /* Prevents auto-creation after a later type change. */
   const hadStoredValueAtMount = useRef(Boolean(sdk.field.getValue()))
 
   const [saveError, setSaveError] = useState(false)
@@ -135,9 +124,7 @@ export const useCalculatorConfig = (
   const inputSections = config.inputSections ?? []
   const outputSections = config.outputSections ?? []
 
-  /* Checked against the UNFILTERED state: the schema sees only the filtered
-   * payload, so two on-screen rows sharing a key would raise nothing until the
-   * second was complete. */
+  /* Detects duplicate keys before draft rows are filtered. */
   const duplicateUids = useMemo(() => {
     const seen = new Map<string, string>()
     const duplicates = new Set<string>()
@@ -160,14 +147,12 @@ export const useCalculatorConfig = (
     () => {
       const { payload, identity } = filterConfigForPersistence(config)
       const result = calculatorConfigSchema.safeParse(payload)
-      /* This app sets `strict: false`, which defeats zod's narrowing on
-       * `success` -- reach for `error` directly. */
+      /* Contentful's non-strict TypeScript config does not narrow Zod results. */
       const schemaInvalid = 'error' in result
       const metadataMismatch = validateMetadata(config)
       setMetadataInvalid(metadataMismatch)
 
-      /* Single owner: `setInvalid` is last-one-wins, so every input to
-       * publish-blocking is combined here and it is called nowhere else. */
+      /* Combines all publish-blocking conditions. */
       sdk.field.setInvalid(
         schemaInvalid || metadataMismatch || duplicateUids.size > 0,
       )
@@ -196,30 +181,23 @@ export const useCalculatorConfig = (
       setRowIssues(new Map())
       setTopLevelIssues([])
 
-      /* A read-only field must not be written to, or the auto-create effect
-       * fires `setValue`, fails, and shows a save error for nothing. */
+      /* Avoids writes to read-only fields. */
       if (isDisabled) return
 
-      /* The debounce fires on mount too, and the filtered payload routinely
-       * differs from what is stored, so without this guard merely opening an
-       * entry marks it changed. */
+      /* Avoids saving unchanged normalized values. */
       if (JSON.stringify(sdk.field.getValue()) === JSON.stringify(result.data))
         return
 
-      /* Unhandled, a failed `setValue` promise looks like a successful save. */
+      /* Surfaces failed saves. */
       sdk.field.setValue(result.data).catch(() => {
         sdk.notifier.error('Could not save the calculator configuration.')
       })
     },
     DEBOUNCE_TIME,
-    /* `validateMetadata` and `duplicateUids` change independently of `config`,
-     * so `[config]` alone goes stale. Safe to widen only because of the
-     * equality guard above. */
+    /* Revalidates metadata and duplicate identifiers. */
     [config, validateMetadata, duplicateUids, isDisabled],
   )
 
-  // Give the editor something to start from, rather than requiring an extra
-  // "Add section" click on every new entry.
   useEffect(() => {
     if (!calculatorTypeValue || isDisabled) return
     if (hadStoredValueAtMount.current) return
@@ -274,7 +252,6 @@ export const useCalculatorConfig = (
       ),
     )
 
-  // A section never gates itself -- its own toggle already controls it.
   const otherToggles = (index: number): CalculatorSectionToggle[] =>
     collectInputSectionToggles(config).filter(
       (toggle) => toggle.key !== inputSections[index]?.toggle?.key,
@@ -338,8 +315,7 @@ export const useCalculatorConfig = (
             ? {
                 ...section,
                 toggle: {
-                  // `key` is what other sections reference, so it has to
-                  // survive relabelling.
+                  // Section gates reference keys, not labels.
                   key: section.toggle?.key ?? generateKey(),
                   label: label ?? { is: '' },
                 },
@@ -347,8 +323,6 @@ export const useCalculatorConfig = (
             : section,
         ),
       ),
-    /* No `?? ''` fallback: `sectionGateSchema` requires min(1), and a gate
-     * always has a toggle by the time this control renders. */
     toggleGateDisableOnly: () =>
       mapInput((current) =>
         current.map((section, i) =>
@@ -390,8 +364,7 @@ export const useCalculatorConfig = (
         fields.map((field, i) => {
           if (i !== fieldIndex) return field
           const next = { ...field, ...patch }
-          /* A changed key makes item fields meaningless, so clear them rather
-           * than leave them looking valid against the wrong array. */
+          /* Item fields belong to the selected array. */
           if (
             next.kind === 'value' &&
             field.kind === 'value' &&
@@ -468,8 +441,7 @@ export const useCalculatorConfig = (
       ),
   }
 
-  /* Fields move between sections, which `arrayMove` cannot express -- both
-   * halves in one state update so they cannot tear. */
+  /* Moves fields between sections atomically. */
   const moveInputField = (
     fromSection: number,
     fromIndex: number,

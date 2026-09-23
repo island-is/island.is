@@ -63,9 +63,6 @@ export const OutputItemFieldRow = ({
                   : item.key}
               </Select.Option>
             )}
-            {/* Each item key may appear once per array, so keys already used
-             * are dropped -- except this row's own, which must stay selectable
-             * or the Select renders blank. */}
             {available
               .filter(
                 (candidate) =>

@@ -3,9 +3,7 @@ import { FormControl, Stack, TextInput } from '@contentful/f36-components'
 
 import type { CalculatorLocalizedText } from '@island.is/tax-calculators'
 
-// Kept at module scope: a component redefined inside a parent's render body is
-// remounted by React on every parent re-render, which drops input focus on
-// every keystroke.
+// Module scope preserves focus across parent renders.
 export const LocalizedTextFields = ({
   label,
   value,
@@ -16,13 +14,11 @@ export const LocalizedTextFields = ({
   label: string
   value?: CalculatorLocalizedText
   onChange: (next: CalculatorLocalizedText | undefined) => void
-  /* Drops the whole pair once both languages are blank, so an unset optional
-   * text stays absent rather than persisting as `{ is: '' }`. */
+  /* Omits blank optional localized values. */
   clearWhenEmpty?: boolean
   isDisabled?: boolean
 }) => {
-  /* One label cannot be associated with two inputs by `htmlFor` alone, so each
-   * input carries its own `aria-label` or both announce unlabelled. */
+  /* Labels each localized input separately. */
   const isId = useId()
   const is = value?.is ?? ''
   const en = value?.en ?? ''

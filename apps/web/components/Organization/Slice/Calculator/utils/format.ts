@@ -83,8 +83,7 @@ const formatPlainNumber = (value: number, locale: Locale): string =>
     maximumFractionDigits: 2,
   }).format(value)
 
-/* Split rather than handed to `new Date(...)`, which reads `yyyy-MM-dd` as UTC
- * midnight and shifts the day back west of Greenwich. */
+/* Parses date-only values in local time. */
 const formatDate = (value: string, locale: Locale): string => {
   const [year, month, day] = value.split('-').map(Number)
   if (!year || !month || !day) return value

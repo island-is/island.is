@@ -9,13 +9,11 @@ import { CalculateResponse } from './models/calculateResponse.model'
 import { TaxCalculator } from './models/taxCalculator.model'
 import { TaxCalculatorsService } from './tax-calculators.service'
 
-/* Public unauthenticated queries; no identity or scope guards. */
 @CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver(() => TaxCalculator)
 export class TaxCalculatorsResolver {
   constructor(private readonly taxCalculatorsService: TaxCalculatorsService) {}
 
-  /* Static registry lookup; no external call. */
   @Query(() => TaxCalculator, {
     name: 'taxCalculator',
     description: 'Returns a calculator’s input and output contract.',
@@ -27,7 +25,6 @@ export class TaxCalculatorsResolver {
     return this.taxCalculatorsService.getCalculator(type)
   }
 
-  /* Nullable because calculation calls an external service. */
   @Query(() => CalculateResponse, {
     name: 'taxCalculatorCalculate',
     nullable: true,

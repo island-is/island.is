@@ -96,8 +96,6 @@ describe('collectApplicableFields', () => {
     expect(applicable).toEqual(['isMarried'])
   })
 
-  /* The target is a `number` field rendered as a select, so form state holds
-   * `'2024'` where `equals` holds `2024`. Compared raw the two never match. */
   it('matches a number dependency against the string its select holds', () => {
     const applicable = keys(
       config([
@@ -150,8 +148,6 @@ describe('collectApplicableFields', () => {
     ])
   })
 
-  /* A `disableOnly` section stays mounted and visible, so react-hook-form still
-   * holds its values -- the entry has to render while staying out of play. */
   it('keeps a shut disableOnly section renderable but not in play', () => {
     const applicable = collectApplicableFields(
       config([
@@ -205,9 +201,6 @@ describe('canSubmit', () => {
     expect(canSubmit(applicable, { salary: '' })).toBe(false)
   })
 
-  /* `Number('-')` is NaN, and NumberFormat hands back the raw numeric string
-   * mid-typing. Treated as present, the field would pass the gate and then be
-   * dropped by the serializer -- enabled on screen, absent from the request. */
   it('is false while a required number holds an unparseable string', () => {
     const applicable = collectApplicableFields(required, fields, {}, {}, 'is')
 
@@ -220,8 +213,6 @@ describe('canSubmit', () => {
     expect(canSubmit(applicable, { salary: '0' })).toBe(true)
   })
 
-  /* `withholdingTax` declares no required fields at all: RSK supplies its own
-   * defaults, so the gate is a no-op and submit is live immediately. */
   it('is true for a calculator whose every field is optional', () => {
     const optional = collectApplicableFields(
       required,
@@ -234,8 +225,6 @@ describe('canSubmit', () => {
     expect(canSubmit(optional, {})).toBe(true)
   })
 
-  /* A required field inside a shut `disableOnly` section is not submitted, so
-   * it cannot be what blocks submission either. */
   it('ignores a required field that is rendered but not in play', () => {
     const applicable = collectApplicableFields(
       config([

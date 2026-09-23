@@ -40,9 +40,6 @@ import {
   toOutputContractField,
 } from './types'
 
-// Every entry of the `calculator` content type IS a calculator, so unlike
-// ConnectedComponent's shared configJson field, no sibling `type` gate or
-// plain-JSON fallback is needed.
 export const CalculatorConfigEditor = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [calculatorTypeValue, setCalculatorTypeValue] = useState<string>(
@@ -52,8 +49,7 @@ export const CalculatorConfigEditor = () => {
   const [isDisabled, setIsDisabled] = useState(false)
   const [schemaErrors, setSchemaErrors] = useState<ValidationError[]>([])
 
-  /* Not `{ absoluteElements: true }`: the SDK documents an infinite resize loop
-   * for that option with transformed children, i.e. a drag preview. */
+  /* Transformed drag previews loop with absoluteElements enabled. */
   useEffect(() => {
     sdk.window.startAutoResizer()
     return () => sdk.window.stopAutoResizer()
@@ -67,8 +63,7 @@ export const CalculatorConfigEditor = () => {
     [sdk.entry.fields.type],
   )
 
-  /* Both `on*Changed` callbacks fire immediately with the current value, so no
-   * separate read is needed. Both return an unsubscribe. */
+  /* Contentful change subscriptions provide the initial value. */
   useEffect(() => sdk.field.onIsDisabledChanged(setIsDisabled), [sdk.field])
   useEffect(
     () => sdk.field.onSchemaErrorsChanged(setSchemaErrors),
@@ -109,20 +104,15 @@ export const CalculatorConfigEditor = () => {
 
   const metadataChecked = Boolean(data) && !loading && !error
 
-  /* "We could not check" blocks publish exactly like "we found a problem" --
-   * including an unknown calculator type, where the query is skipped and
-   * nothing is ever verified. Saving is unaffected. */
+  /* Unverified metadata blocks publishing but not saving. */
   const metadataUnverified =
     Boolean(calculatorTypeValue) &&
     (!apiCalculatorType || !data || loading || Boolean(error))
 
-  /* Computed over whichever config is being persisted, so the hook can call it
-   * inside the debounce that owns `setInvalid`. */
+  /* Validates the config currently being persisted. */
   const validateMetadata = useCallback(
     (config: CalculatorConfig) => {
       if (metadataUnverified) return true
-      /* Reached only when no calculator type is selected; the entry's own
-       * required-field validation covers that. */
       if (!metadataChecked) return false
 
       const inputSections = config.inputSections ?? []
@@ -171,8 +161,7 @@ export const CalculatorConfigEditor = () => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    /* Without this, reordering is mouse-only, and drag is the only reordering
-     * affordance this editor offers. */
+    /* Enables keyboard reordering. */
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -232,7 +221,7 @@ export const CalculatorConfigEditor = () => {
   const onOutputDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return
 
-    /* Item fields reorder within their own array only, never across fields. */
+    /* Item fields reorder only within their parent array. */
     for (let s = 0; s < state.outputSections.length; s += 1) {
       const fields = state.outputSections[s].fields
       for (let f = 0; f < fields.length; f += 1) {
@@ -305,9 +294,6 @@ export const CalculatorConfigEditor = () => {
         </Note>
       )}
 
-      {/* A successful response can still carry empty lists. Without this the
-       * editor faces a dropdown holding nothing but its own placeholder, and no
-       * way to tell that apart from a query still in flight. */}
       {metadataChecked && inputContract.size === 0 && (
         <Note variant="warning">
           This calculator returned no input fields, so there is nothing to place
@@ -337,8 +323,6 @@ export const CalculatorConfigEditor = () => {
         </Note>
       )}
 
-      {/* Only the CONFIRMED-mismatch case: the unverified cases have their own
-        * notes above, and `metadataInvalid` is true for those too. */}
       {metadataChecked && state.metadataInvalid && (
         <Note variant="warning">
           Some fields do not match this calculator. Your work is saved, but
@@ -356,11 +340,7 @@ export const CalculatorConfigEditor = () => {
           </Tabs.Tab>
         </Tabs.List>
 
-        {/* `forceMount`: Forma 36's panel is Radix `Tabs.Content`, which
-         * unmounts the inactive panel by default -- that would reset every
-         * uncontrolled markdown editor's undo history and remount the DnD
-         * context on each tab switch. Forced panels need explicit inactive
-         * hiding, otherwise both panels render visibly. */}
+        {/* Preserves markdown undo history across tab switches. */}
         <Tabs.Panel
           id="input"
           forceMount

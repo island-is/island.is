@@ -8,9 +8,7 @@ import type { ApplicableFields, FormValues } from './applicability'
 import { isInPlay } from './applicability'
 import { toTypedValue } from './values'
 
-/* `TaxCalculatorInputValue` is a `@oneOf` input, emitted as a union whose other
- * members are `?: never`, so each branch returns a complete member rather than
- * building one by assignment. */
+/* Builds complete GraphQL one-of members. */
 const toInputValue = (
   value: string | number | boolean,
   type: TaxCalculatorInputFieldType,
@@ -33,9 +31,7 @@ const toInputValue = (
   }
 }
 
-/* Dispatches on metadata `type`, never on which control rendered the field --
- * `year` and `month` are `number`-typed yet rendered as selects. `0` and
- * `false` survive because absence is decided in `toTypedValue` first. */
+/* Serializes values by metadata type. */
 export const toInputFieldValues = (
   applicable: ApplicableFields,
   values: FormValues,
@@ -43,8 +39,7 @@ export const toInputFieldValues = (
   const rows: TaxCalculatorInputFieldValue[] = []
 
   for (const [key, entry] of applicable) {
-    /* A `disableOnly` field renders but is not in play, and react-hook-form
-     * still holds its value, so it must be excluded explicitly. */
+    /* Excludes disabled fields retained by react-hook-form. */
     if (!isInPlay(entry)) continue
 
     const { contractField } = entry

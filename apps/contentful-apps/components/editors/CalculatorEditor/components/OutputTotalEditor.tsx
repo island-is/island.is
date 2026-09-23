@@ -14,8 +14,6 @@ interface Props {
   onChange: (patch: Partial<CalculatorOutputTotal>) => void
 }
 
-/* The result's primary figure and the heading above it. Both are required: the
- * label is the only title the output half has on the page. */
 export const OutputTotalEditor = ({
   total,
   contract,
