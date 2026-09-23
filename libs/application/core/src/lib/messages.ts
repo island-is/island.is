@@ -325,6 +325,12 @@ export const coreMessages = defineMessages({
       '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan tveggja virkra daga mun umsóknin verða felld niður.',
     description: 'Description for payment pending invoice',
   },
+  interactiveTableSelectAll: {
+    id: 'application.system:core.interactiveTable.selectAll',
+    defaultMessage: 'Velja allar línur',
+    description:
+      'Accessible label for the checkbox that selects every row of an interactive table',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
