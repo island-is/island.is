@@ -31,7 +31,11 @@ import {
 } from '@island.is/web/screens/queries/TaxCalculators'
 
 import { toInputFieldContract, toOutputFieldContract } from '../contract'
-import { canSubmit, collectApplicableFields, isInPlay } from '../utils/applicability'
+import {
+  canSubmit,
+  collectApplicableFields,
+  isInPlay,
+} from '../utils/applicability'
 import {
   collectUnplacedRequiredKeys,
   reportCalculationErrors,
