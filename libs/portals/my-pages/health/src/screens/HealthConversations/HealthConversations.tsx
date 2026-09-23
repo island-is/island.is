@@ -28,10 +28,12 @@ import ConversationAvatar from './components/ConversationAvatar'
 import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { ApolloCache, Reference } from '@apollo/client'
+import { ApolloCache } from '@apollo/client'
 import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
 import {
+  GetHealthConversationsDocument,
   GetHealthConversationsQuery,
+  GetHealthConversationsQueryVariables,
   useGetHealthConversationsQuery,
   useStarHealthConversationMutation,
   useUnstarHealthConversationMutation,
@@ -39,7 +41,7 @@ import {
   useUnarchiveHealthConversationMutation,
 } from './HealthConversations.generated'
 
-const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_PAGE_SIZE = 20
 
 const updateConversation = (
   cache: ApolloCache<unknown>,
@@ -57,28 +59,31 @@ const updateConversation = (
   })
 }
 
-// Drops the row from every cached variant of the list query (all filter
-// combinations, including the overview box) and adjusts the total.
-const removeConversationFromLists = (
+// Drops the row from the list currently on screen and adjusts its total.
+// Other cached filter variants (other tabs, the overview box) are left
+// untouched; they are replaced by page one from the network when shown.
+const removeConversationFromList = (
   cache: ApolloCache<unknown>,
   id: string,
+  variables: GetHealthConversationsQueryVariables,
 ) => {
-  cache.modify({
-    fields: {
-      healthDirectoratePaginatedHealthConversations: (
-        existing: ConversationPage,
-        { readField },
-      ) => {
-        const data = existing.data.filter((ref) => readField('id', ref) !== id)
-        if (data.length === existing.data.length) return existing
-        return {
-          ...existing,
+  cache.updateQuery(
+    { query: GetHealthConversationsDocument, variables },
+    (existing: GetHealthConversationsQuery | null) => {
+      const page = existing?.healthDirectoratePaginatedHealthConversations
+      if (!page) return existing
+      const data = page.data.filter((item) => item.id !== id)
+      if (data.length === page.data.length) return existing
+      return {
+        ...existing,
+        healthDirectoratePaginatedHealthConversations: {
+          ...page,
           data,
-          totalCount: existing.totalCount - 1,
-        }
-      },
+          totalCount: page.totalCount - 1,
+        },
+      }
     },
-  })
+  )
 }
 
 const defaultFilterValues = {
@@ -90,11 +95,6 @@ const defaultFilterValues = {
 type Conversation = NonNullable<
   GetHealthConversationsQuery['healthDirectoratePaginatedHealthConversations']
 >['data'][number]
-
-type ConversationPage = {
-  data: readonly Reference[]
-  totalCount: number
-}
 
 type FilterValues = {
   searchQuery: string
@@ -125,9 +125,14 @@ const HealthConversations = () => {
     }
   }, [filterValues])
 
+  const listVariables = useMemo(
+    () => ({ input: { ...filterInput, limit: DEFAULT_PAGE_SIZE } }),
+    [filterInput],
+  )
+
   const { data, loading, error, fetchMore } = useGetHealthConversationsQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { input: { ...filterInput, limit: DEFAULT_PAGE_SIZE } },
+    variables: listVariables,
   })
 
   const conversationsPage = data?.healthDirectoratePaginatedHealthConversations
@@ -140,25 +145,12 @@ const HealthConversations = () => {
     const cursor = conversationsPage?.pageInfo.endCursor
     if (loadingMore || !cursor) return
     setLoadingMore(true)
+    // The field's cache policy appends the page to the current list
     fetchMore({
-      variables: {
-        input: { ...filterInput, limit: DEFAULT_PAGE_SIZE, after: cursor },
-      },
-      updateQuery: (prevResult, { fetchMoreResult }) => {
-        const prev = prevResult?.healthDirectoratePaginatedHealthConversations
-        const next =
-          fetchMoreResult?.healthDirectoratePaginatedHealthConversations
-        if (!prev || !next) return prevResult
-
-        return {
-          ...fetchMoreResult,
-          healthDirectoratePaginatedHealthConversations: {
-            ...next,
-            data: [...prev.data, ...next.data],
-          },
-        }
-      },
-    }).finally(() => setLoadingMore(false))
+      variables: { input: { ...listVariables.input, after: cursor } },
+    })
+      .catch(() => toast.error(formatMessage(m.errorTitle)))
+      .finally(() => setLoadingMore(false))
   }
 
   const debouncedSetSearchQuery = useMemo(
@@ -206,8 +198,9 @@ const HealthConversations = () => {
       variables: { input: { id } },
       update: (cache) => {
         updateConversation(cache, id, { isStarred: !isStarred })
+        // Only the starred-filtered view stops matching when unstarring.
         if (isStarred && filterValues.starred) {
-          removeConversationFromLists(cache, id)
+          removeConversationFromList(cache, id, listVariables)
         }
       },
     })
@@ -219,7 +212,12 @@ const HealthConversations = () => {
       variables: { input: { id } },
       update: (cache) => {
         updateConversation(cache, id, { isArchived: !isArchived })
-        removeConversationFromLists(cache, id)
+        // The current view stops matching only when the toggle moves the
+        // item across the boundary this view filters on: unarchiving out
+        // of the archived view, or archiving out of the default view.
+        if (isArchived === filterValues.archived) {
+          removeConversationFromList(cache, id, listVariables)
+        }
       },
     })
   }
@@ -267,6 +265,8 @@ const HealthConversations = () => {
                   messages.healthConversationsSearchPlaceholder,
                 )}
                 value={searchInput}
+                // Matches the API's limit on `search`
+                maxLength={100}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 icon={{ type: 'outline', name: 'search' }}
                 size="xs"
