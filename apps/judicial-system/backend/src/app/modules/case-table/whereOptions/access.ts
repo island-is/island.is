@@ -380,11 +380,15 @@ export const defenceCasesAccessWhereOptions = (user: User) => ({
 
 // Public prosecution access
 
-// A case at a heightened security level is reserved for the prosecutor who
-// created it or is assigned to it - the same rule canProsecutionUserAccessCase
-// applies. Shared so the appealed list and the appeal branch of the access
-// options cannot drift apart from each other.
-export const heightenedSecurityAccessWhereOptions = (user: User) => ({
+// The cases heightened security does not hide from this user: the ones not at a
+// heightened level at all, and the ones it reserves them - as creator, as
+// assigned prosecutor, or as reviewer. The same rule
+// canProsecutionUserAccessCase applies, named from the side it selects rather
+// than the side it restricts, because it matches what a user may see.
+//
+// Shared so the appeal branch of the access options and the case guard cannot
+// drift apart from each other.
+export const notHiddenByHeightenedSecurityWhereOptions = (user: User) => ({
   [Op.or]: [
     { is_heightened_security_level: { [Op.not]: true } },
     { creating_prosecutor_id: user.id },
@@ -436,7 +440,7 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
             // So far, heightened security has not been applied to indictment
             // cases, but this condition future proofs access to appealed
             // verdicts in case it is.
-            heightenedSecurityAccessWhereOptions(user),
+            notHiddenByHeightenedSecurityWhereOptions(user),
           ],
         },
       ],

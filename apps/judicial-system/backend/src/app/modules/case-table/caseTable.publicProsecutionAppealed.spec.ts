@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
-import { heightenedSecurityAccessWhereOptions } from './whereOptions/access'
+import { notHiddenByHeightenedSecurityWhereOptions } from './whereOptions/access'
 import {
   getAllIncludes,
   getAttributes,
@@ -240,7 +240,7 @@ describe('public prosecution appealed case list', () => {
   // refused to them.
   it('exempts the reviewer, as the case guard does', () => {
     expect(
-      heightenedSecurityAccessWhereOptions(publicProsecutionUser)[Op.or],
+      notHiddenByHeightenedSecurityWhereOptions(publicProsecutionUser)[Op.or],
     ).toContainEqual({
       indictment_reviewer_id: publicProsecutionUser.id,
     })
