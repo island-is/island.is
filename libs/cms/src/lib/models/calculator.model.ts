@@ -20,7 +20,7 @@ export class Calculator {
   @Field(() => ID)
   id!: string
 
-  @Field(() => TaxCalculatorType, { nullable: true })
+  @CacheField(() => TaxCalculatorType, { nullable: true })
   calculatorType?: TaxCalculatorType
 
   // Uses the shared JSON scalar because Slice members expose configJson under
