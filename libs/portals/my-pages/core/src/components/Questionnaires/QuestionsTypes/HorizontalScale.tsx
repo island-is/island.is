@@ -1,7 +1,7 @@
 import { Box, Button, InputError, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import cn from 'classnames'
-import { CSSProperties, FC, Fragment, KeyboardEvent, useMemo } from 'react'
+import { CSSProperties, Fragment, KeyboardEvent, useMemo } from 'react'
 import { m } from '../../../lib/messages'
 import * as styles from './Scales.css'
 import { getScaleKeyIndex, getScaleValues } from './scaleValues'
@@ -22,7 +22,7 @@ export interface HorizontalScaleProps {
   labelledBy?: string
 }
 
-export const HorizontalScale: FC<HorizontalScaleProps> = ({
+export const HorizontalScale = ({
   id,
   min,
   max,
@@ -36,7 +36,7 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
   maxLabel,
   step = 1,
   labelledBy,
-}) => {
+}: HorizontalScaleProps) => {
   const { formatMessage } = useLocale()
   const values = useMemo(() => getScaleValues(min, max, step), [min, max, step])
   const selectedIndex = value ? values.indexOf(value) : -1

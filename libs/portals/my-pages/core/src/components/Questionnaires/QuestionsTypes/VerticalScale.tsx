@@ -1,7 +1,7 @@
 import { Box, Button, InputError, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import cn from 'classnames'
-import { FC, Fragment, KeyboardEvent, useMemo } from 'react'
+import { Fragment, KeyboardEvent, useMemo } from 'react'
 import { m } from '../../../lib/messages'
 import * as styles from './Scales.css'
 import { getScaleKeyIndex, getScaleValues } from './scaleValues'
@@ -22,7 +22,7 @@ export interface VerticalScaleProps {
   labelledBy?: string
 }
 
-export const VerticalScale: FC<VerticalScaleProps> = ({
+export const VerticalScale = ({
   id,
   min,
   max,
@@ -36,7 +36,7 @@ export const VerticalScale: FC<VerticalScaleProps> = ({
   maxLabel,
   step = 1,
   labelledBy,
-}) => {
+}: VerticalScaleProps) => {
   const { formatMessage } = useLocale()
   const values = useMemo(() => getScaleValues(min, max, step), [min, max, step])
   const descendingValues = useMemo(() => [...values].reverse(), [values])

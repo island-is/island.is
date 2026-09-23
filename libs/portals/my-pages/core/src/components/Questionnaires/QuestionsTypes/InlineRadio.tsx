@@ -1,5 +1,4 @@
 import { Box, InputError, RadioButton } from '@island.is/island-ui/core'
-import { FC } from 'react'
 
 export interface InlineRadioOption {
   label: string
@@ -18,7 +17,7 @@ export interface InlineRadioProps {
   labelledBy?: string
 }
 
-export const InlineRadio: FC<InlineRadioProps> = ({
+export const InlineRadio = ({
   id,
   options,
   value,
@@ -27,7 +26,7 @@ export const InlineRadio: FC<InlineRadioProps> = ({
   disabled = false,
   required = false,
   labelledBy,
-}) => {
+}: InlineRadioProps) => {
   const errorId = error ? `${id}-error` : undefined
 
   return (
