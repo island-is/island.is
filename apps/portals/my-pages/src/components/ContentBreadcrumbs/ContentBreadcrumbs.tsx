@@ -130,8 +130,8 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       flexDirection="row"
       justifyContent="spaceBetween"
       alignItems="center"
-      paddingBottom={[2, 3]}
-      paddingTop={[4, 4, 0]}
+      paddingBottom={[0, 0, 3]}
+      paddingTop={[3, 3, 0]}
     >
       <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
