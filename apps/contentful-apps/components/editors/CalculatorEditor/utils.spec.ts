@@ -171,9 +171,9 @@ describe('resolveIssuePath', () => {
       outputSections: [],
     } as never)
 
-    expect(resolveIssuePath(['inputSections', 0, 'fields', 0], identity)).toEqual(
-      { tab: 'input', sectionKey: 's1', fieldUid: 'real' },
-    )
+    expect(
+      resolveIssuePath(['inputSections', 0, 'fields', 0], identity),
+    ).toEqual({ tab: 'input', sectionKey: 's1', fieldUid: 'real' })
   })
 
   it('resolves a nested property path to its owning row', () => {

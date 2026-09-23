@@ -65,10 +65,7 @@ export const CalculatorConfigEditor = () => {
 
   /* Contentful change subscriptions provide the initial value. */
   useEffect(() => sdk.field.onIsDisabledChanged(setIsDisabled), [sdk.field])
-  useEffect(
-    () => sdk.field.onSchemaErrorsChanged(setSchemaErrors),
-    [sdk.field],
-  )
+  useEffect(() => sdk.field.onSchemaErrorsChanged(setSchemaErrors), [sdk.field])
 
   const apiCalculatorType = toApiCalculatorType(calculatorTypeValue)
 
@@ -253,7 +250,12 @@ export const CalculatorConfigEditor = () => {
 
     const target = findOutput(String(over.id))
     if (!target) return
-    state.moveOutputField(from.section, from.index, target.section, target.index)
+    state.moveOutputField(
+      from.section,
+      from.index,
+      target.section,
+      target.index,
+    )
   }
 
   if (!calculatorTypeValue) {

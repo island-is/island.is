@@ -56,7 +56,7 @@ export type InputFieldContract = Map<string, InputContractField>
 export type OutputFieldContract = Map<string, OutputContractField>
 
 /* Normalizes nullable operation fields to undefined. */
-const orUndefined = <T,>(value: T | null | undefined): T | undefined =>
+const orUndefined = <T>(value: T | null | undefined): T | undefined =>
   value ?? undefined
 
 const normalizeDependency = (dependsOn: RawInputField['dependsOn']) => {
@@ -132,7 +132,10 @@ export const toOutputContractField = (
     case 'TaxCalculatorNumberOutputField':
       return { ...base, semantic: orUndefined(field.semantic) }
     case 'TaxCalculatorArrayOutputField':
-      return { ...base, itemFields: field.itemFields.map(toOutputContractItemField) }
+      return {
+        ...base,
+        itemFields: field.itemFields.map(toOutputContractItemField),
+      }
     case 'TaxCalculatorStringOutputField':
     case 'TaxCalculatorBooleanOutputField':
     case 'TaxCalculatorDateOutputField':
@@ -171,7 +174,10 @@ export interface OutputSectionActions {
   ) => void
   removeField: (fieldIndex: number) => void
   addItemField: (fieldIndex: number) => void
-  addAllItemFields: (fieldIndex: number, keys: OutputContractItemField[]) => void
+  addAllItemFields: (
+    fieldIndex: number,
+    keys: OutputContractItemField[],
+  ) => void
   updateItemField: (
     fieldIndex: number,
     itemIndex: number,

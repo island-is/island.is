@@ -58,9 +58,7 @@ export const OutputItemFieldRow = ({
             </Select.Option>
             {isMissing && (
               <Select.Option value={item.key}>
-                {isStaleKey
-                  ? `${item.key} — not in this array`
-                  : item.key}
+                {isStaleKey ? `${item.key} — not in this array` : item.key}
               </Select.Option>
             )}
             {available

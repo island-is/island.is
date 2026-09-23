@@ -168,8 +168,8 @@ export const InputFieldRow = ({
           </Select>
           {isStaleKey && (
             <FormControl.ValidationMessage>
-              This calculator no longer offers &quot;{field.key}&quot;. The value
-              is kept, but nothing will render for it.
+              This calculator no longer offers &quot;{field.key}&quot;. The
+              value is kept, but nothing will render for it.
             </FormControl.ValidationMessage>
           )}
           {isDuplicate && (

@@ -33,7 +33,7 @@ import {
   RowIdentity,
 } from '../utils'
 
-const moveWithin = <T,>(items: T[], from: number, to: number): T[] => {
+const moveWithin = <T>(items: T[], from: number, to: number): T[] => {
   const next = items.slice()
   const [moved] = next.splice(from, 1)
   next.splice(to, 0, moved)
@@ -417,7 +417,9 @@ export const useCalculatorConfig = (
       mapOutputFields(index, (fields) =>
         atValueField(fields, fieldIndex, (field) => ({
           ...field,
-          itemFields: (field.itemFields ?? []).filter((_, j) => j !== itemIndex),
+          itemFields: (field.itemFields ?? []).filter(
+            (_, j) => j !== itemIndex,
+          ),
         })),
       ),
   })
@@ -496,7 +498,8 @@ export const useCalculatorConfig = (
     rowIssues,
     topLevelIssues,
     duplicateUids,
-    addInputSection: () => mapInput((current) => current.concat(emptyInputSection())),
+    addInputSection: () =>
+      mapInput((current) => current.concat(emptyInputSection())),
     addOutputSection: () =>
       mapOutput((current) => current.concat(emptyOutputSection())),
     outputTotal: config.outputTotal ?? emptyOutputTotal(),
@@ -504,7 +507,10 @@ export const useCalculatorConfig = (
       update: (patch: Partial<CalculatorOutputTotal>) =>
         setConfig((prev) => ({
           ...prev,
-          outputTotal: { ...(prev.outputTotal ?? emptyOutputTotal()), ...patch },
+          outputTotal: {
+            ...(prev.outputTotal ?? emptyOutputTotal()),
+            ...patch,
+          },
         })),
     },
     otherToggles,

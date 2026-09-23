@@ -92,7 +92,9 @@ export const OutputSection = ({
             <SortableRow
               key={field.uid}
               id={field.uid}
-              label={`Reorder output field ${fieldIndex + 1} in section ${position}`}
+              label={`Reorder output field ${
+                fieldIndex + 1
+              } in section ${position}`}
               isDisabled={isDisabled}
             >
               {field.kind === 'content' ? (

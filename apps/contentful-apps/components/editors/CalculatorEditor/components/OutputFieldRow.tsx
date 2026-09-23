@@ -72,7 +72,9 @@ export const OutputFieldRow = ({
           <Select
             value={field.key}
             isDisabled={isLoading || isDisabled}
-            onChange={(ev) => actions.updateField(fieldIndex, { key: ev.target.value })}
+            onChange={(ev) =>
+              actions.updateField(fieldIndex, { key: ev.target.value })
+            }
           >
             <Select.Option value="" isDisabled>
               {isLoading ? 'Loading fields…' : 'Select an output field'}
@@ -129,7 +131,9 @@ export const OutputFieldRow = ({
             label="Field label"
             value={field.label}
             isDisabled={isDisabled}
-            onChange={(next) => actions.updateField(fieldIndex, { label: next })}
+            onChange={(next) =>
+              actions.updateField(fieldIndex, { label: next })
+            }
             clearWhenEmpty
           />
           <Checkbox
@@ -174,7 +178,9 @@ export const OutputFieldRow = ({
                   onChange={(patch) =>
                     actions.updateItemField(fieldIndex, itemIndex, patch)
                   }
-                  onRemove={() => actions.removeItemField(fieldIndex, itemIndex)}
+                  onRemove={() =>
+                    actions.removeItemField(fieldIndex, itemIndex)
+                  }
                 />
               </SortableRow>
             ))}

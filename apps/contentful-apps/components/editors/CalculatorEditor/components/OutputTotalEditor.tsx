@@ -1,4 +1,9 @@
-import { FormControl, Select, Stack, Subheading } from '@contentful/f36-components'
+import {
+  FormControl,
+  Select,
+  Stack,
+  Subheading,
+} from '@contentful/f36-components'
 
 import type { CalculatorOutputTotal } from '@island.is/tax-calculators'
 
