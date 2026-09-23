@@ -16,6 +16,9 @@ export interface OutputConfigIssues {
   staleItemFieldKeys: { fieldKey: string; itemKeys: string[] }[]
   /** Fields configured with an `itemFields` block that are not arrays. */
   itemFieldsOnScalarKeys: string[]
+  /** `outputTotal` configured against an array-typed contract field, which
+   * cannot resolve to a displayable total. */
+  arrayValuedTotal: boolean
 }
 
 export const collectOutputConfigIssues = (
@@ -36,6 +39,10 @@ export const collectOutputConfigIssues = (
       section.fields.filter(isOutputValueField),
     ),
   ]
+
+  const totalContractField = contract.get(config.outputTotal.key)
+  const arrayValuedTotal =
+    totalContractField?.type === TaxCalculatorOutputFieldType.Array
 
   for (const field of valueRows) {
     const contractField = contract.get(field.key)
@@ -71,7 +78,12 @@ export const collectOutputConfigIssues = (
     }
   }
 
-  return { staleFieldKeys, staleItemFieldKeys, itemFieldsOnScalarKeys }
+  return {
+    staleFieldKeys,
+    staleItemFieldKeys,
+    itemFieldsOnScalarKeys,
+    arrayValuedTotal,
+  }
 }
 
 /* Supplies output rows to the shared label diagnostic. */

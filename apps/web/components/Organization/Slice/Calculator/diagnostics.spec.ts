@@ -204,6 +204,7 @@ describe('collectOutputConfigIssues', () => {
       staleItemFieldKeys: [
         { fieldKey: 'breakdown', itemKeys: ['removedItem'] },
       ],
+      arrayValuedTotal: false,
     })
   })
 
@@ -224,6 +225,23 @@ describe('collectOutputConfigIssues', () => {
       staleFieldKeys: [],
       itemFieldsOnScalarKeys: [],
       staleItemFieldKeys: [],
+      arrayValuedTotal: false,
+    })
+  })
+
+  it('flags an outputTotal configured against an array-typed contract field', () => {
+    const issues = collectOutputConfigIssues(
+      config({
+        outputTotal: { uid: 'hero', key: 'breakdown', label: label('Total') },
+      }),
+      outputContract(),
+    )
+
+    expect(issues).toEqual({
+      staleFieldKeys: [],
+      itemFieldsOnScalarKeys: [],
+      staleItemFieldKeys: [],
+      arrayValuedTotal: true,
     })
   })
 })

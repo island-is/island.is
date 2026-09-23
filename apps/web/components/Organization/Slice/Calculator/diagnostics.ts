@@ -110,6 +110,10 @@ export const reportContractDiagnostics = ({
     'output fields carry an itemFields block but are not arrays',
     output.itemFieldsOnScalarKeys,
   )
+  warn(
+    'outputTotal is array-typed and will never resolve to a displayable total',
+    output.arrayValuedTotal ? [config.outputTotal.key] : [],
+  )
   output.staleItemFieldKeys.forEach(({ fieldKey, itemKeys }) =>
     warn(`configured item fields of "${fieldKey}" are absent`, itemKeys),
   )

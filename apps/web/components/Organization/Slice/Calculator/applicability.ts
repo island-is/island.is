@@ -26,9 +26,12 @@ export const isDependencyMet = (
   contractField: InputContractField,
   contract: InputFieldContract,
   values: FormValues,
+  inPlayKeys: ReadonlySet<string>,
 ): boolean => {
   const { dependsOn } = contractField
   if (!dependsOn) return true
+
+  if (!inPlayKeys.has(dependsOn.fieldKey)) return false
 
   const targetType = contract.get(dependsOn.fieldKey)?.type
   if (!targetType) return false
@@ -60,6 +63,15 @@ export const collectApplicableFields = (
 ): ApplicableFields => {
   const applicable: ApplicableFields = new Map()
 
+  const inPlayKeys = new Set<string>()
+  for (const section of config.inputSections) {
+    const state = sectionState(section, toggles)
+    if (!state || state.disabled) continue
+    for (const field of section.fields) {
+      inPlayKeys.add(field.key)
+    }
+  }
+
   for (const section of config.inputSections) {
     const state = sectionState(section, toggles)
     if (!state) continue
@@ -71,7 +83,7 @@ export const collectApplicableFields = (
       const label = localized(field.label, locale)
       if (!label) continue
 
-      if (!isDependencyMet(contractField, contract, values)) continue
+      if (!isDependencyMet(contractField, contract, values, inPlayKeys)) continue
 
       applicable.set(field.key, {
         field,
@@ -89,11 +101,12 @@ export const canSubmit = (
   applicable: ApplicableFields,
   values: FormValues,
 ): boolean =>
-  [...applicable.values()]
-    .filter(isInPlay)
-    .every(
-      ({ contractField }) =>
-        !contractField.required ||
-        toTypedValue(values[contractField.key], contractField.type) !==
-          undefined,
-    )
+  [...applicable.values()].filter(isInPlay).every(({ contractField }) => {
+    const raw = values[contractField.key]
+    const typed = toTypedValue(raw, contractField.type)
+
+    if (contractField.required) return typed !== undefined
+
+    const isEmpty = raw === '' || raw === null || raw === undefined
+    return isEmpty || typed !== undefined
+  })

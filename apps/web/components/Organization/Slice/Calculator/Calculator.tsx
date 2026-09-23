@@ -36,6 +36,7 @@ import { CalculatorSection } from './CalculatorSection'
 import { CalculatorTotal, resolveTotal } from './CalculatorTotal'
 import { toInputFieldContract, toOutputFieldContract } from './contract'
 import {
+  collectUnplacedRequiredKeys,
   reportCalculationErrors,
   reportConfigParseIssues,
   reportContractDiagnostics,
@@ -122,6 +123,11 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const payload = useMemo(
     () => toInputFieldValues(applicable, values),
     [applicable, values],
+  )
+
+  const hasUnplacedRequiredFields = useMemo(
+    () => collectUnplacedRequiredKeys(config, inputContract).length > 0,
+    [config, inputContract],
   )
 
   const snapshot = useMemo(() => JSON.stringify(payload), [payload])
@@ -241,7 +247,9 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
               <Button
                 type="submit"
                 loading={calculating}
-                disabled={!canSubmit(applicable, values)}
+                disabled={
+                  hasUnplacedRequiredFields || !canSubmit(applicable, values)
+                }
               >
                 {localized(CALCULATOR_MESSAGES.submit, activeLocale)}
               </Button>
