@@ -15,6 +15,7 @@ import {
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
+import { generateMockPreviewData } from './lib/translationWorkspacePreview/mockAnswersFromSchema'
 import { FC } from 'react'
 
 type UIFields = Record<
@@ -141,7 +142,12 @@ export const getApplicationTranslationWorkspacePreview = async (
   if (templateLib.getTranslationWorkspacePreviewApplication) {
     return await templateLib.getTranslationWorkspacePreviewApplication()
   }
-  return {}
+  const template = templateLib.default as ApplicationTemplate<
+    ApplicationContext,
+    ApplicationStateSchema<EventObject>,
+    EventObject
+  >
+  return generateMockPreviewData(template.dataSchema)
 }
 
 /**

@@ -18,6 +18,7 @@ import {
   countTranslationsForState,
   getRoleFormAccordionLabel,
 } from '../../utils/translationWorkspaceNavigation'
+import { PREVIEW_EXCLUDED_FIELD_TYPES } from '../../utils/translationWorkspaceFieldConstants'
 import type { TranslationCount } from '../../utils/translationWorkspaceNavigation'
 import * as styles from './TranslationWorkspaceStatesNav.css'
 
@@ -362,6 +363,15 @@ export const TranslationWorkspaceStatesNav = ({
                                 }
 
                                 if (subSections.length === 0) {
+                                  const hasPreviewableScreens = screens.some(
+                                    (screen) =>
+                                      !PREVIEW_EXCLUDED_FIELD_TYPES.has(
+                                        screen.type,
+                                      ),
+                                  )
+                                  if (!hasPreviewableScreens) {
+                                    return null
+                                  }
                                   const nav = buildSectionNavigationScreen(
                                     section.id,
                                     section.title,
@@ -419,7 +429,14 @@ export const TranslationWorkspaceStatesNav = ({
                                     {subSections.map((sub) => {
                                       const subScreens =
                                         sub.screens as ScreenIntrospection[]
-                                      if (subScreens.length === 0) {
+                                      const hasPreviewableSubScreens =
+                                        subScreens.some(
+                                          (screen) =>
+                                            !PREVIEW_EXCLUDED_FIELD_TYPES.has(
+                                              screen.type,
+                                            ),
+                                        )
+                                      if (!hasPreviewableSubScreens) {
                                         return null
                                       }
                                       const nav =
@@ -445,27 +462,34 @@ export const TranslationWorkspaceStatesNav = ({
                                         `${roleKey}:sub:${sub.id}`,
                                       )
                                     })}
-                                    {screens.map((screen) => {
-                                      const nav =
-                                        buildSectionLeafNavigationScreen(
-                                          section.id,
-                                          screen,
-                                        )
-                                      return navRow(
-                                        nav,
-                                        screen.id,
-                                        {
-                                          stateKey: state.stateKey,
-                                          stateName: state.stateName,
-                                          roleId: role.roleId,
-                                          sectionId: section.id,
-                                          sectionTitle: section.title,
-                                          leafSourceScreenId: screen.id,
-                                        },
-                                        undefined,
-                                        `${roleKey}:leaf:${screen.id}`,
+                                    {screens
+                                      .filter(
+                                        (screen) =>
+                                          !PREVIEW_EXCLUDED_FIELD_TYPES.has(
+                                            screen.type,
+                                          ),
                                       )
-                                    })}
+                                      .map((screen) => {
+                                        const nav =
+                                          buildSectionLeafNavigationScreen(
+                                            section.id,
+                                            screen,
+                                          )
+                                        return navRow(
+                                          nav,
+                                          screen.id,
+                                          {
+                                            stateKey: state.stateKey,
+                                            stateName: state.stateName,
+                                            roleId: role.roleId,
+                                            sectionId: section.id,
+                                            sectionTitle: section.title,
+                                            leafSourceScreenId: screen.id,
+                                          },
+                                          undefined,
+                                          `${roleKey}:leaf:${screen.id}`,
+                                        )
+                                      })}
                                   </Box>
                                 )
                               },

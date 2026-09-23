@@ -34,6 +34,15 @@ export const client = new ApolloClient({
       ScreenIntrospectionGql: {
         keyFields: false,
       },
+      SubSectionIntrospectionGql: {
+        keyFields: false,
+      },
+      SectionIntrospectionGql: {
+        keyFields: false,
+      },
+      FormIntrospectionGql: {
+        keyFields: false,
+      },
       UserProfile: {
         keyFields: ['nationalId'],
       },

@@ -253,6 +253,15 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationStatesNavDrawerAriaLabel',
     defaultMessage: 'Yfirlit yfir stöður og skjái',
   },
+  translationWorkspaceEmptyPreviewTitle: {
+    id: 'admin-portal.application-system:translationWorkspaceEmptyPreviewTitle',
+    defaultMessage: 'Ekkert til að forskoða',
+  },
+  translationWorkspaceEmptyPreviewMessage: {
+    id: 'admin-portal.application-system:translationWorkspaceEmptyPreviewMessage',
+    defaultMessage:
+      'Þessi hluti umsóknarinnar inniheldur engin svæði sem hægt er að forskoða.',
+  },
   translationWorkspacePanelOpen: {
     id: 'admin-portal.application-system:translationWorkspacePanelOpen',
     defaultMessage: 'Opna þýðingaborð',

@@ -119,7 +119,7 @@ export const flattenNavEntries = (
         }>
 
         if (subSections.length === 0) {
-          if (screens.length > 0) {
+          if (excludeHiddenScreens(screens).length > 0) {
             entries.push({
               nav: buildSectionNavigationScreen(
                 section.id,
@@ -141,7 +141,7 @@ export const flattenNavEntries = (
 
         for (const sub of subSections) {
           const subScreens = sub.screens as ScreenIntrospection[]
-          if (subScreens.length === 0) continue
+          if (excludeHiddenScreens(subScreens).length === 0) continue
           entries.push({
             nav: buildSubSectionNavigationScreen(
               sub.id,
@@ -162,6 +162,7 @@ export const flattenNavEntries = (
         }
 
         for (const screen of screens) {
+          if (PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type)) continue
           entries.push({
             nav: buildSectionLeafNavigationScreen(section.id, screen),
             location: {

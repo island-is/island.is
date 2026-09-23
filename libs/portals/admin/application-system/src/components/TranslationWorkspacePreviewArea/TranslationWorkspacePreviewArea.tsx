@@ -1,6 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 import type { Application } from '@island.is/application/types'
 import {
+  AlertMessage,
   Box,
   Text,
   Button,
@@ -9,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { coreMessages } from '@island.is/application/core'
 import type { FormatMessage } from '@island.is/localization'
+import { m } from '../../lib/messages'
 import type {
   MessageDescriptor,
   PreviewFormatMessage,
@@ -178,23 +180,7 @@ export const TranslationWorkspacePreviewArea = ({
     [customFields],
   )
 
-  if (previewScreens.length === 0) {
-    return (
-      <div className={styles.previewAreaBottomMargin}>
-        <Box
-          paddingTop={[3, 6, 10]}
-          borderRadius="large"
-          background="white"
-          padding={[3, 5, 8]}
-        >
-          <Text color="dark300">
-            Select a section from the states panel to preview.
-          </Text>
-        </Box>
-      </div>
-    )
-  }
-
+  const isEmpty = previewScreens.length === 0
   const footerSubmitActions = footerSubmitScreen?.submitActions ?? []
   const showTemplateFooterButtons = footerSubmitActions.length > 0
 
@@ -225,112 +211,124 @@ export const TranslationWorkspacePreviewArea = ({
           background="white"
           className={styles.previewShell}
         >
-          <Box
-            display="flex"
-            flexDirection="column"
-            justifyContent="spaceBetween"
-            height="full"
-          >
-            <Box paddingX={[3, 5, 8]}>
-              <Text variant="h2" as="h2" marginBottom={1}>
-                {previewScreens[0]
-                  ? resolveTranslatableStaticText(
-                      previewScreens[0].title,
-                      previewScreens[0].messageDescriptors,
-                      resolvePreviewString,
-                    )
-                  : ''}
-              </Text>
-              <TranslationWorkspacePreviewShell
-                activeLocale={activeLocale}
-                previewScreens={previewScreens}
-                previewFieldValues={previewFieldValues}
-                resolvePreviewString={resolvePreviewString}
-                extraMessageDescriptors={extraMessageDescriptors}
-              >
-                {previewScreens.map((screen) => (
-                  <TranslationWorkspaceFieldPreview
-                    key={screen.id}
-                    screen={screen}
-                    resolvePreviewString={resolvePreviewString}
-                    formatMessage={formatMessage as PreviewFormatMessage}
-                    showValidationErrors={showValidationErrors}
-                    validationDescriptorsByPath={validationDescriptorsByPath}
-                    focusedFieldId={focusedFieldId}
-                    fieldErrorOverrides={fieldErrorOverrides}
-                    previewFieldValues={previewFieldValues}
-                    previewFields={mergedPreviewFields}
-                    previewApplication={previewApplication}
-                  />
-                ))}
-              </TranslationWorkspacePreviewShell>
-            </Box>
-
-            <Box
-              marginTop={7}
-              className={styles.previewFooter}
-              paddingX={[3, 5, 8]}
-              paddingTop={[1, 4]}
-              display="flex"
-              flexDirection="rowReverse"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              <Box display="inlineFlex" padding={2} paddingRight="none">
-                {showTemplateFooterButtons ? (
-                  footerSubmitActions.map((action, idx) => {
-                    const cfg =
-                      SUBMIT_PREVIEW_BUTTON_MAP[action.buttonType] ??
-                      SUBMIT_PREVIEW_BUTTON_MAP['primary']
-                    const label = resolveSubmitActionLabel(
-                      action,
-                      resolvePreviewString,
-                    )
-                    const isRejectAction = REJECT_BUTTON_TYPES.has(
-                      action.buttonType,
-                    )
-                    return (
-                      <Box
-                        key={`${action.event}-${idx}`}
-                        marginLeft={idx === 0 ? 0 : 2}
-                      >
-                        <SubmitPreviewButton
-                          config={cfg}
-                          onClick={isRejectAction ? undefined : onNextScreen}
-                          disabled={!isRejectAction && !hasNextScreen}
-                        >
-                          {label || formatMessage(coreMessages.buttonSubmit)}
-                        </SubmitPreviewButton>
-                      </Box>
-                    )
-                  })
-                ) : (
-                  <Button
-                    icon="arrowForward"
-                    type="button"
-                    disabled={!hasNextScreen}
-                    onClick={onNextScreen}
-                  >
-                    {formatMessage(coreMessages.buttonNext)}
-                  </Button>
+          {isEmpty ? (
+            <Box padding={[3, 5, 8]}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.translationWorkspaceEmptyPreviewTitle)}
+                message={formatMessage(
+                  m.translationWorkspaceEmptyPreviewMessage,
                 )}
-              </Box>
-              <Box
-                display={['none', 'inlineFlex']}
-                padding={2}
-                paddingLeft="none"
-              >
-                <Button
-                  variant="ghost"
-                  type="button"
-                  disabled={!hasPreviousScreen}
-                  onClick={onPreviousScreen}
+              />
+            </Box>
+          ) : (
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="spaceBetween"
+              height="full"
+            >
+              <Box paddingX={[3, 5, 8]}>
+                <Text variant="h2" as="h2" marginBottom={1}>
+                  {previewScreens[0]
+                    ? resolveTranslatableStaticText(
+                        previewScreens[0].title,
+                        previewScreens[0].messageDescriptors,
+                        resolvePreviewString,
+                      )
+                    : ''}
+                </Text>
+                <TranslationWorkspacePreviewShell
+                  activeLocale={activeLocale}
+                  previewScreens={previewScreens}
+                  previewFieldValues={previewFieldValues}
+                  resolvePreviewString={resolvePreviewString}
+                  extraMessageDescriptors={extraMessageDescriptors}
                 >
-                  {formatMessage(coreMessages.buttonBack)}
-                </Button>
+                  {previewScreens.map((screen) => (
+                    <TranslationWorkspaceFieldPreview
+                      key={screen.id}
+                      screen={screen}
+                      resolvePreviewString={resolvePreviewString}
+                      formatMessage={formatMessage as PreviewFormatMessage}
+                      showValidationErrors={showValidationErrors}
+                      validationDescriptorsByPath={validationDescriptorsByPath}
+                      focusedFieldId={focusedFieldId}
+                      fieldErrorOverrides={fieldErrorOverrides}
+                      previewFieldValues={previewFieldValues}
+                      previewFields={mergedPreviewFields}
+                      previewApplication={previewApplication}
+                    />
+                  ))}
+                </TranslationWorkspacePreviewShell>
+              </Box>
+
+              <Box
+                marginTop={7}
+                className={styles.previewFooter}
+                paddingX={[3, 5, 8]}
+                paddingTop={[1, 4]}
+                display="flex"
+                flexDirection="rowReverse"
+                alignItems="center"
+                justifyContent="spaceBetween"
+              >
+                <Box display="inlineFlex" padding={2} paddingRight="none">
+                  {showTemplateFooterButtons ? (
+                    footerSubmitActions.map((action, idx) => {
+                      const cfg =
+                        SUBMIT_PREVIEW_BUTTON_MAP[action.buttonType] ??
+                        SUBMIT_PREVIEW_BUTTON_MAP['primary']
+                      const label = resolveSubmitActionLabel(
+                        action,
+                        resolvePreviewString,
+                      )
+                      const isRejectAction = REJECT_BUTTON_TYPES.has(
+                        action.buttonType,
+                      )
+                      return (
+                        <Box
+                          key={`${action.event}-${idx}`}
+                          marginLeft={idx === 0 ? 0 : 2}
+                        >
+                          <SubmitPreviewButton
+                            config={cfg}
+                            onClick={isRejectAction ? undefined : onNextScreen}
+                            disabled={!isRejectAction && !hasNextScreen}
+                          >
+                            {label || formatMessage(coreMessages.buttonSubmit)}
+                          </SubmitPreviewButton>
+                        </Box>
+                      )
+                    })
+                  ) : (
+                    <Button
+                      icon="arrowForward"
+                      type="button"
+                      disabled={!hasNextScreen}
+                      onClick={onNextScreen}
+                    >
+                      {formatMessage(coreMessages.buttonNext)}
+                    </Button>
+                  )}
+                </Box>
+                <Box
+                  display={['none', 'inlineFlex']}
+                  padding={2}
+                  paddingLeft="none"
+                >
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    disabled={!hasPreviousScreen}
+                    onClick={onPreviousScreen}
+                  >
+                    {formatMessage(coreMessages.buttonBack)}
+                  </Button>
+                </Box>
               </Box>
             </Box>
-          </Box>
+          )}
         </Box>
       </div>
 
