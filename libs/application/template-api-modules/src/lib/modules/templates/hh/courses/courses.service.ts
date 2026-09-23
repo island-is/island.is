@@ -610,6 +610,20 @@ export class CoursesService extends BaseTemplateApiService {
 
     const externalIds = participants.map((p) => p.record.external_id)
 
+    // Records from an earlier attempt may already be linked to tickets, so
+    // only the records this attempt creates are rolled back on failure
+    const preexistingRecords =
+      await this.zendeskService.listCustomObjectRecordsByExternalIds(
+        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+        externalIds,
+      )
+    const preexistingExternalIds = new Set(
+      preexistingRecords.map((record) => record.external_id),
+    )
+    const createdExternalIds = externalIds.filter(
+      (externalId) => !preexistingExternalIds.has(externalId),
+    )
+
     try {
       await this.zendeskService.upsertCustomObjectRecordsByExternalId(
         ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
@@ -644,18 +658,24 @@ export class CoursesService extends BaseTemplateApiService {
         { applicationId, error: error.message },
       )
 
-      try {
-        await this.zendeskService.deleteCustomObjectRecordsByExternalId(
-          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-          externalIds,
-        )
-      } catch (rollbackError) {
-        // A retry of the submission upserts the full list again, so the
-        // registration ends up complete either way
-        this.logger.error(
-          'Failed to roll back HH courses participants in Zendesk',
-          { applicationId, externalIds, error: rollbackError.message },
-        )
+      if (createdExternalIds.length > 0) {
+        try {
+          await this.zendeskService.deleteCustomObjectRecordsByExternalId(
+            ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+            createdExternalIds,
+          )
+        } catch (rollbackError) {
+          // A retry of the submission upserts the full list again, so the
+          // registration ends up complete either way
+          this.logger.error(
+            'Failed to roll back HH courses participants in Zendesk',
+            {
+              applicationId,
+              externalIds: createdExternalIds,
+              error: rollbackError.message,
+            },
+          )
+        }
       }
 
       throw error

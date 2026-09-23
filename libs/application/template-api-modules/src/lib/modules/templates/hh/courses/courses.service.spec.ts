@@ -191,6 +191,7 @@ describe('CoursesService', () => {
     })
 
     it('rolls back every participant and creates no tickets when the bulk job fails', async () => {
+      zendesk.listCustomObjectRecordsByExternalIds.mockResolvedValueOnce([])
       zendesk.upsertCustomObjectRecordsByExternalId.mockRejectedValue(
         new Error('1 Zendesk custom object job item(s) failed'),
       )
@@ -208,11 +209,50 @@ describe('CoursesService', () => {
       expect(zendesk.createManyTickets).not.toHaveBeenCalled()
     })
 
-    it('rolls back when a participant is missing after the bulk job', async () => {
-      zendesk.listCustomObjectRecordsByExternalIds.mockImplementation(
-        async (_key, externalIds) =>
-          externalIds.slice(1).map((id) => ({ id, name: id, external_id: id })),
+    it('only rolls back participants created by the failed attempt', async () => {
+      // The applicant's record was written by an earlier attempt
+      zendesk.listCustomObjectRecordsByExternalIds.mockResolvedValueOnce([
+        {
+          id: externalId(APPLICANT_NATIONAL_ID),
+          name: externalId(APPLICANT_NATIONAL_ID),
+          external_id: externalId(APPLICANT_NATIONAL_ID),
+        },
+      ])
+      zendesk.upsertCustomObjectRecordsByExternalId.mockRejectedValue(
+        new Error('job failed'),
       )
+
+      await expect(service.submitApplication(createProps())).rejects.toThrow(
+        TemplateApiError,
+      )
+
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).toHaveBeenCalledWith(ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant, [
+        externalId(OTHER_NATIONAL_ID),
+      ])
+    })
+
+    it('rolls back nothing when every participant existed before the attempt', async () => {
+      zendesk.upsertCustomObjectRecordsByExternalId.mockRejectedValue(
+        new Error('job failed'),
+      )
+
+      await expect(service.submitApplication(createProps())).rejects.toThrow(
+        TemplateApiError,
+      )
+
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('rolls back when a participant is missing after the bulk job', async () => {
+      zendesk.listCustomObjectRecordsByExternalIds
+        .mockImplementation(async (_key, externalIds) =>
+          externalIds.slice(1).map((id) => ({ id, name: id, external_id: id })),
+        )
+        .mockResolvedValueOnce([])
 
       await expect(service.submitApplication(createProps())).rejects.toThrow(
         TemplateApiError,
@@ -223,6 +263,7 @@ describe('CoursesService', () => {
     })
 
     it('still fails the submission when the rollback fails', async () => {
+      zendesk.listCustomObjectRecordsByExternalIds.mockResolvedValueOnce([])
       zendesk.upsertCustomObjectRecordsByExternalId.mockRejectedValue(
         new Error('job failed'),
       )
