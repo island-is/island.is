@@ -25,7 +25,10 @@ export const yearOptions = (): CalculatorOption[] => {
 }
 
 export const monthOptions = (locale: Locale): CalculatorOption[] => {
-  const format = new Intl.DateTimeFormat(LOCALE_TAG[locale], { month: 'long' })
+  const format = new Intl.DateTimeFormat(LOCALE_TAG[locale], {
+    month: 'long',
+    timeZone: 'UTC',
+  })
 
   return Array.from({ length: 12 }, (_, index) => ({
     label: format.format(new Date(Date.UTC(2024, index, 1))),

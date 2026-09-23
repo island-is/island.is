@@ -22,7 +22,16 @@ const contract = (...fields: InputContractField[]): InputFieldContract =>
 
 const config = (
   sections: CalculatorConfig['inputSections'],
-): CalculatorConfig => ({ inputSections: sections, outputSections: [] })
+): CalculatorConfig => ({
+  inputSections: sections,
+  outputTotal: {
+    uid: 'hero',
+    kind: 'value',
+    key: 'total',
+    label: { is: 'Samtals' },
+  },
+  outputSections: [],
+})
 
 const keys = (
   ...args: Parameters<typeof collectApplicableFields>

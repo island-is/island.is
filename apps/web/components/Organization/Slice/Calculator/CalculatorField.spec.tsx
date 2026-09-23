@@ -24,6 +24,7 @@ jest.mock('@island.is/shared/form-fields', () => ({
       data-min={String(props.min ?? '')}
       data-max={String(props.max ?? '')}
       data-decimal-scale={String(props.decimalScale ?? '')}
+      data-allow-negative={String(props.allowNegative ?? '')}
       data-error={String(props.error ?? '')}
     />
   ),
@@ -95,6 +96,7 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-suffix')).toBe('')
     expect(element?.getAttribute('data-min')).toBe('0')
     expect(element?.getAttribute('data-decimal-scale')).toBe('0')
+    expect(element?.getAttribute('data-allow-negative')).toBe('false')
   })
 
   it('renders currency with the currency flag rather than a suffix', () => {
@@ -114,6 +116,7 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-suffix')).toBe('%')
     expect(element?.getAttribute('data-min')).toBe('0')
     expect(element?.getAttribute('data-max')).toBe('100')
+    expect(element?.getAttribute('data-allow-negative')).toBe('false')
   })
 
   it('renders a year as a select of years, newest first, not a free number', () => {

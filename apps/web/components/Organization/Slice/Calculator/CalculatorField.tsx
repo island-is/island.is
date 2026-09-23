@@ -134,6 +134,7 @@ export const CalculatorField = ({
                 suffix="%"
                 min={0}
                 max={100}
+                allowNegative={false}
               />
             )
 
@@ -145,6 +146,7 @@ export const CalculatorField = ({
                 type="number"
                 min={0}
                 decimalScale={0}
+                allowNegative={false}
               />
             )
 

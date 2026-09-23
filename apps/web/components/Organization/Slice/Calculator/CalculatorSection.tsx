@@ -42,7 +42,7 @@ export const CalculatorSection = ({
     return entry ? [entry] : []
   })
 
-  if (section.fields.length > 0 && fields.length === 0 && isOwnToggleOn) {
+  if (section.fields.length > 0 && fields.length === 0 && !section.toggle) {
     return null
   }
 
