@@ -163,6 +163,7 @@ export class CoursesService extends BaseTemplateApiService {
           participantList,
           ticket?.id,
           courseUrl,
+          { nationalId, healthcenter },
           auth.authorization,
         )
       } catch (error) {
@@ -495,6 +496,7 @@ export class CoursesService extends BaseTemplateApiService {
     participantList: ApplicationAnswers['participantList'],
     ticketId: string | number | undefined,
     courseUrl: string | null,
+    applicant: { nationalId: string; healthcenter?: string },
     authorization: string,
   ): Promise<void> {
     let priceAmount: number | undefined
@@ -546,12 +548,20 @@ export class CoursesService extends BaseTemplateApiService {
     if (participantList.length === 0) return
 
     const numericTicketId = this.toZendeskNumber(ticketId)
+    const registrationTime = format(new Date(), 'dd.MM.yyyy HH:mm')
 
     await this.zendeskService.runCustomObjectJob(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
       'create_or_update_by_external_id',
       participantList.map((p) => {
         const participantPhone = p.nationalIdWithName.phone?.trim()
+        const participantWorkplace = p.workplace?.trim()
+        const participantTitle = p.jobTitle?.trim()
+        // Healthcenter is only collected for the applicant
+        const participantClinic =
+          p.nationalIdWithName.nationalId === applicant.nationalId
+            ? applicant.healthcenter?.trim()
+            : undefined
 
         return {
           name: p.nationalIdWithName.name,
@@ -560,6 +570,12 @@ export class CoursesService extends BaseTemplateApiService {
             kennitala: p.nationalIdWithName.nationalId,
             email: p.nationalIdWithName.email,
             ...(participantPhone && { participant_phone: participantPhone }),
+            ...(participantWorkplace && {
+              participant_workplace: participantWorkplace,
+            }),
+            ...(participantTitle && { participant_title: participantTitle }),
+            ...(participantClinic && { participant_clinic: participantClinic }),
+            registration_time: registrationTime,
             course_instance: instanceRecord.id,
             ...(numericTicketId !== undefined && {
               ticket_id: numericTicketId,
