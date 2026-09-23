@@ -12,7 +12,7 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
-import { IncomeValidationInput } from './dto/incomeValidation.input'
+import { VmstApplicationsIncomeValidationInput } from './dto/incomeValidation.input'
 import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
@@ -21,7 +21,7 @@ import {
   VmstApplicationsApplicantAttachment,
   VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
-  IncomeValidationResult,
+  VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
@@ -122,8 +122,8 @@ export class VMSTApplicationsService {
   // `deleted` to emit either a delete marker or a create-shape payload.
   async validateIncomes(
     auth: User,
-    input: IncomeValidationInput,
-  ): Promise<IncomeValidationResult> {
+    input: VmstApplicationsIncomeValidationInput,
+  ): Promise<VmstApplicationsIncomeValidationResult> {
     const { applicantId } = await this.resolveApplicant(auth)
     const request = {
       applicantId,
@@ -225,7 +225,7 @@ export class VMSTApplicationsService {
 
   private buildIncomeValidationResult(
     response: GaldurExternalDomainModelsIncomeIncomesResponse,
-  ): IncomeValidationResult {
+  ): VmstApplicationsIncomeValidationResult {
     const isValid = response.success ?? false
     const errors = (response.errors ?? []).flatMap((error) =>
       error.referenceId

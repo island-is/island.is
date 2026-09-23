@@ -13,15 +13,15 @@ import { useFormContext } from 'react-hook-form'
 import { uuid } from 'uuidv4'
 import {
   IncomeValidationAlert,
-  IncomeValidationInput,
+  VmstApplicationsIncomeValidationInput,
   IncomeValidationMessages,
   IncomeValidationRow,
   validateIncomes,
 } from '../../utils/validateIncomes'
 import { BuildDelete, splitEntries } from '../../utils/reconcile'
 
-// Which array in IncomeValidationInput the mapped rows should be placed under.
-type IncomeTypeKey = keyof IncomeValidationInput
+// Which array in VmstApplicationsIncomeValidationInput the mapped rows should be placed under.
+type IncomeTypeKey = keyof VmstApplicationsIncomeValidationInput
 
 type PersistedRecord = Record<string, unknown> & { id?: string }
 
@@ -32,7 +32,7 @@ export type IncomeValidationFieldProps = {
   persistedPath: string
   rowToInput: (
     row: IncomeValidationRow,
-  ) => NonNullable<IncomeValidationInput[IncomeTypeKey]>[number]
+  ) => NonNullable<VmstApplicationsIncomeValidationInput[IncomeTypeKey]>[number]
   messages: IncomeValidationMessages
   callbackId: string
   // Optional per-type delete marker builder; Galdur requires employerSSN for
@@ -112,7 +112,7 @@ export const IncomeValidation: FC<
             return [true, null]
           }
 
-          const input: IncomeValidationInput = {
+          const input: VmstApplicationsIncomeValidationInput = {
             [incomeTypeKey]: [...creates.map(rowToInput), ...deletes],
           }
 

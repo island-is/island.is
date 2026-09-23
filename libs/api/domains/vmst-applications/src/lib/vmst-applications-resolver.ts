@@ -17,11 +17,11 @@ import {
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
-  IncomeValidationResult,
+  VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
-import { IncomeValidationInput } from './dto/incomeValidation.input'
+import { VmstApplicationsIncomeValidationInput } from './dto/incomeValidation.input'
 import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
@@ -77,14 +77,14 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
   }
 
-  @Query(() => IncomeValidationResult, {
+  @Query(() => VmstApplicationsIncomeValidationResult, {
     name: 'vmstApplicationsValidateIncomes',
   })
   @Audit()
   async validateIncomes(
     @CurrentUser() auth: User,
-    @Args('input', { type: () => IncomeValidationInput })
-    input: IncomeValidationInput,
+    @Args('input', { type: () => VmstApplicationsIncomeValidationInput })
+    input: VmstApplicationsIncomeValidationInput,
   ) {
     return this.vmstApplicationsService.validateIncomes(auth, input)
   }

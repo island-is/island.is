@@ -12,8 +12,8 @@ import { Type } from 'class-transformer'
 // Fields other than id/deleted are optional so a delete marker ({ id, deleted:
 // true }) is valid on the same array as create rows. The service branches on
 // `deleted` when mapping to Galdur.
-@InputType('TRPaymentValidationInput')
-export class TRPaymentValidationInput {
+@InputType('VmstApplicationsTRPaymentValidationInput')
+export class VmstApplicationsTRPaymentValidationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -50,8 +50,8 @@ export class TRPaymentValidationInput {
   periodTo?: string | null
 }
 
-@InputType('IrregularJobValidationInput')
-export class IrregularJobValidationInput {
+@InputType('VmstApplicationsIrregularJobValidationInput')
+export class VmstApplicationsIrregularJobValidationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -94,8 +94,8 @@ export class IrregularJobValidationInput {
   workShiftPeriodIds?: string[]
 }
 
-@InputType('ContractorJobValidationInput')
-export class ContractorJobValidationInput {
+@InputType('VmstApplicationsContractorJobValidationInput')
+export class VmstApplicationsContractorJobValidationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -122,8 +122,8 @@ export class ContractorJobValidationInput {
   periodTo?: string
 }
 
-@InputType('CapitalIncomePaymentValidationInput')
-export class CapitalIncomePaymentValidationInput {
+@InputType('VmstApplicationsCapitalIncomePaymentValidationInput')
+export class VmstApplicationsCapitalIncomePaymentValidationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -160,8 +160,8 @@ export class CapitalIncomePaymentValidationInput {
   periodTo?: string | null
 }
 
-@InputType('PensionPaymentValidationInput')
-export class PensionPaymentValidationInput {
+@InputType('VmstApplicationsPensionPaymentValidationInput')
+export class VmstApplicationsPensionPaymentValidationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -203,8 +203,8 @@ export class PensionPaymentValidationInput {
   periodTo?: string | null
 }
 
-@InputType('PartTimeJobValidationInput')
-export class PartTimeJobValidationInput {
+@InputType('VmstApplicationsPartTimeJobValidationInput')
+export class VmstApplicationsPartTimeJobValidationInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -248,47 +248,57 @@ export class PartTimeJobValidationInput {
 
 // Discriminated by which array is populated; the service branches per-type when
 // mapping to the underlying Galdur validate/create request.
-@InputType('IncomeValidationInput')
-export class IncomeValidationInput {
-  @Field(() => [IrregularJobValidationInput], { nullable: true })
+@InputType('VmstApplicationsIncomeValidationInput')
+export class VmstApplicationsIncomeValidationInput {
+  @Field(() => [VmstApplicationsIrregularJobValidationInput], {
+    nullable: true,
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => IrregularJobValidationInput)
-  irregularJobs?: IrregularJobValidationInput[]
+  @Type(() => VmstApplicationsIrregularJobValidationInput)
+  irregularJobs?: VmstApplicationsIrregularJobValidationInput[]
 
-  @Field(() => [ContractorJobValidationInput], { nullable: true })
+  @Field(() => [VmstApplicationsContractorJobValidationInput], {
+    nullable: true,
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ContractorJobValidationInput)
-  contractorJobs?: ContractorJobValidationInput[]
+  @Type(() => VmstApplicationsContractorJobValidationInput)
+  contractorJobs?: VmstApplicationsContractorJobValidationInput[]
 
-  @Field(() => [CapitalIncomePaymentValidationInput], { nullable: true })
+  @Field(() => [VmstApplicationsCapitalIncomePaymentValidationInput], {
+    nullable: true,
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CapitalIncomePaymentValidationInput)
-  capitalIncomePayments?: CapitalIncomePaymentValidationInput[]
+  @Type(() => VmstApplicationsCapitalIncomePaymentValidationInput)
+  capitalIncomePayments?: VmstApplicationsCapitalIncomePaymentValidationInput[]
 
-  @Field(() => [TRPaymentValidationInput], { nullable: true })
+  @Field(() => [VmstApplicationsTRPaymentValidationInput], { nullable: true })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => TRPaymentValidationInput)
-  trPayments?: TRPaymentValidationInput[]
+  @Type(() => VmstApplicationsTRPaymentValidationInput)
+  trPayments?: VmstApplicationsTRPaymentValidationInput[]
 
-  @Field(() => [PensionPaymentValidationInput], { nullable: true })
+  @Field(() => [VmstApplicationsPensionPaymentValidationInput], {
+    nullable: true,
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => PensionPaymentValidationInput)
-  pensionPayments?: PensionPaymentValidationInput[]
+  @Type(() => VmstApplicationsPensionPaymentValidationInput)
+  pensionPayments?: VmstApplicationsPensionPaymentValidationInput[]
 
-  @Field(() => [PartTimeJobValidationInput], { nullable: true })
+  @Field(() => [VmstApplicationsPartTimeJobValidationInput], {
+    nullable: true,
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => PartTimeJobValidationInput)
-  partTimeJobs?: PartTimeJobValidationInput[]
+  @Type(() => VmstApplicationsPartTimeJobValidationInput)
+  partTimeJobs?: VmstApplicationsPartTimeJobValidationInput[]
 }

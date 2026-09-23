@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('IncomeValidationRowError')
-export class IncomeValidationRowError {
+@ObjectType('VmstApplicationsIncomeValidationRowError')
+export class VmstApplicationsIncomeValidationRowError {
   @Field(() => String)
   validationId!: string
 
@@ -12,8 +12,8 @@ export class IncomeValidationRowError {
   reasonEN?: string | null
 }
 
-@ObjectType('IncomeValidationResult')
-export class IncomeValidationResult {
+@ObjectType('VmstApplicationsIncomeValidationResult')
+export class VmstApplicationsIncomeValidationResult {
   @Field(() => Boolean)
   isValid!: boolean
 
@@ -21,6 +21,6 @@ export class IncomeValidationResult {
   invalidValidationIds?: string[] | null
 
   // per-row errors correlated back to the request via validationId/referenceId
-  @Field(() => [IncomeValidationRowError], { nullable: true })
-  errors?: IncomeValidationRowError[] | null
+  @Field(() => [VmstApplicationsIncomeValidationRowError], { nullable: true })
+  errors?: VmstApplicationsIncomeValidationRowError[] | null
 }

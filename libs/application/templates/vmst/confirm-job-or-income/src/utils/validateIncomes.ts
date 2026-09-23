@@ -10,20 +10,29 @@ export type IncomeValidationRow = {
 } & Record<string, unknown>
 
 // Payload shape supported by the generic vmstApplicationsValidateIncomes query;
-// mirrors the BE IncomeValidationInput. Each array carries a mix of create rows
-// and delete markers ({ id, deleted: true }); the BE service branches on `deleted`.
-export type IncomeValidationInput = {
-  irregularJobs?: Array<IrregularJobValidationInput | ReconcileDelete>
-  contractorJobs?: Array<ContractorJobValidationInput | ReconcileDelete>
-  capitalIncomePayments?: Array<
-    CapitalIncomePaymentValidationInput | ReconcileDelete
+// mirrors the BE VmstApplicationsIncomeValidationInput. Each array carries a mix
+// of create rows and delete markers ({ id, deleted: true }); the BE service
+// branches on `deleted`.
+export type VmstApplicationsIncomeValidationInput = {
+  irregularJobs?: Array<
+    VmstApplicationsIrregularJobValidationInput | ReconcileDelete
   >
-  trPayments?: Array<TRPaymentValidationInput | ReconcileDelete>
-  pensionPayments?: Array<PensionPaymentValidationInput | ReconcileDelete>
-  partTimeJobs?: Array<PartTimeJobValidationInput | ReconcileDelete>
+  contractorJobs?: Array<
+    VmstApplicationsContractorJobValidationInput | ReconcileDelete
+  >
+  capitalIncomePayments?: Array<
+    VmstApplicationsCapitalIncomePaymentValidationInput | ReconcileDelete
+  >
+  trPayments?: Array<VmstApplicationsTRPaymentValidationInput | ReconcileDelete>
+  pensionPayments?: Array<
+    VmstApplicationsPensionPaymentValidationInput | ReconcileDelete
+  >
+  partTimeJobs?: Array<
+    VmstApplicationsPartTimeJobValidationInput | ReconcileDelete
+  >
 }
 
-export type IrregularJobValidationInput = {
+export type VmstApplicationsIrregularJobValidationInput = {
   validationId: string
   employerSSN?: string
   periodFrom: string
@@ -32,13 +41,13 @@ export type IrregularJobValidationInput = {
   workShiftPeriodIds?: string[]
 }
 
-export type ContractorJobValidationInput = {
+export type VmstApplicationsContractorJobValidationInput = {
   validationId: string
   periodFrom: string
   periodTo?: string
 }
 
-export type CapitalIncomePaymentValidationInput = {
+export type VmstApplicationsCapitalIncomePaymentValidationInput = {
   validationId: string
   incomeTypeId: string
   estimatedIncome: number
@@ -46,7 +55,7 @@ export type CapitalIncomePaymentValidationInput = {
   periodTo?: string | null
 }
 
-export type TRPaymentValidationInput = {
+export type VmstApplicationsTRPaymentValidationInput = {
   validationId: string
   incomeTypeId: string
   estimatedIncome: number
@@ -54,7 +63,7 @@ export type TRPaymentValidationInput = {
   periodTo?: string | null
 }
 
-export type PensionPaymentValidationInput = {
+export type VmstApplicationsPensionPaymentValidationInput = {
   validationId: string
   incomeTypeId: string
   pensionFundId?: string
@@ -63,7 +72,7 @@ export type PensionPaymentValidationInput = {
   periodTo?: string | null
 }
 
-export type PartTimeJobValidationInput = {
+export type VmstApplicationsPartTimeJobValidationInput = {
   validationId: string
   employerSSN?: string
   periodFrom: string
@@ -72,7 +81,7 @@ export type PartTimeJobValidationInput = {
   estimatedIncome?: number
 }
 
-type IncomeValidationResult = {
+type VmstApplicationsIncomeValidationResult = {
   isValid: boolean
   invalidValidationIds?: string[] | null
   errors?: Array<{
@@ -108,7 +117,7 @@ export const validateIncomes = async <TRow extends IncomeValidationRow>(args: {
   apolloClient: ApolloClient<object>
   fieldId: string
   rawRows: TRow[]
-  input: IncomeValidationInput
+  input: VmstApplicationsIncomeValidationInput
   formatMessage: FormatMessage
   locale: Locale
   messages: IncomeValidationMessages
@@ -131,8 +140,10 @@ export const validateIncomes = async <TRow extends IncomeValidationRow>(args: {
 
   try {
     const { data } = await apolloClient.query<
-      { vmstApplicationsValidateIncomes: IncomeValidationResult },
-      { input: IncomeValidationInput }
+      {
+        vmstApplicationsValidateIncomes: VmstApplicationsIncomeValidationResult
+      },
+      { input: VmstApplicationsIncomeValidationInput }
     >({
       query: VALIDATE_INCOMES_QUERY,
       variables: { input },
