@@ -11,16 +11,19 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
+import { useLoaderData } from 'react-router'
+import { PrimarySchoolStudentLoaderData } from '../PrimarySchoolStudent/PrimarySchoolStudent.loader'
 
 interface Props {
   results: EducationPrimarySchoolAssessmentResult[]
   loading?: boolean
+  course: string
 }
 
 const columnHelper =
   createColumnHelper<EducationPrimarySchoolAssessmentResult>()
 
-export const AssessmentTable = ({ results, loading }: Props) => {
+export const AssessmentTable = ({ results, loading, course }: Props) => {
   const [activePdf, setActivePdf] = useState<{
     url: string
     title: string
@@ -28,6 +31,8 @@ export const AssessmentTable = ({ results, loading }: Props) => {
   const { formatMessage } = useLocale()
   const featureFlagClient = useFeatureFlagClient()
   const [pdfViewerEnabled, setPdfViewerEnabled] = useState(false)
+  const loaderData = useLoaderData() as PrimarySchoolStudentLoaderData
+  const studentName = loaderData?.studentName
   useEffect(() => {
     featureFlagClient
       .getValue(Features.isServicePortalPrimarySchoolPdfViewerEnabled, false)
@@ -79,13 +84,15 @@ export const AssessmentTable = ({ results, loading }: Props) => {
 
           const { schoolYear, grade, period } = row.original
           const parts = [
+            course,
+            studentName,
             schoolYear,
             grade?.level != null
               ? formatMessage(psm.gradeLevelFormatted, { grade: grade.level })
               : null,
             period?.startDateString,
           ].filter(Boolean)
-          const title = parts.join(' - ')
+          const title = `${parts.join(' - ')}.pdf`
 
           return (
             <Button

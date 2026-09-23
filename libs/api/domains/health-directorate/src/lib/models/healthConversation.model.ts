@@ -18,8 +18,11 @@ export class HealthDirectorateHealthConversation {
   @Field(() => GraphQLISODateTime, { nullable: true })
   lastMessageSentAt?: Date
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, deprecationReason: 'Use groupName instead.' })
   lastSenderGroupName?: string
+
+  @Field({ nullable: true })
+  groupName?: string
 
   @Field(() => HealthDirectorateConversationOrganization, { nullable: true })
   organization?: HealthDirectorateConversationOrganization
