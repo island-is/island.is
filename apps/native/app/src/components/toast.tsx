@@ -1,12 +1,21 @@
 // Global toast: a zustand-backed store + a presentational <Toast /> rendered by
 // <ToastHost />. Fire from anywhere with `toast.success/error/warning/info(...)`.
 //
-// Mount one <ToastHost /> at the app root (app/_layout.tsx). Native modal screens
-// (presentation: 'formSheet' / 'modal') sit above the root's React tree, so they
-// need their OWN <ToastHost /> inside the modal — otherwise toasts fire but
-// render behind the modal where they're invisible. See settings.tsx and the
-// reply screen for examples.
-import React, { useEffect } from 'react'
+// Mount one <ToastHost fallback /> at the app root (app/_layout.tsx). Native
+// modal screens (presentation: 'formSheet' / 'modal') sit above the root's
+// React tree, so they need their OWN <ToastHost /> inside the modal —
+// otherwise toasts fire but render behind the modal where they're invisible.
+// See settings.tsx and the reply screen for examples.
+//
+// A modal that fires toasts MUST mount its own host: only one host renders,
+// so the root's fallback will not cover for a missing one.
+//
+// Only one host ever renders: the last-mounted modal host, or the root's
+// fallback host when no modal host is mounted. Without that claim both would
+// render the same toast — invisibly on iOS (the root's copy hides behind the
+// sheet), but visibly on Android, where a 'modal' screen shares the root's
+// window and the absolutely positioned toast draws on top of it.
+import React, { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import { Image, Platform, View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
@@ -68,13 +77,16 @@ const Host = styled(Animated.View)<{
   backgroundColor: string
   borderColor: string
   bottomOffset: number
+  lifted: boolean
 }>`
   min-height: 52px;
   position: absolute;
   z-index: 9999;
   elevation: 6;
-  bottom: ${({ theme, bottomOffset }) =>
-    (bottomOffset > 0 ? theme.spacing[2] : theme.spacing[3]) + bottomOffset}px;
+  bottom: ${({ theme, bottomOffset, lifted }) =>
+    (bottomOffset > 0 ? theme.spacing[2] : theme.spacing[3]) +
+    bottomOffset +
+    (lifted ? theme.spacing[1] : 0)}px;
   right: ${({ theme }) => theme.spacing[2]}px;
   border: 1px solid ${({ borderColor }) => borderColor};
   background-color: ${({ backgroundColor }) => backgroundColor};
@@ -100,6 +112,7 @@ export const Toast = ({
   title,
   message,
   bottomOffset = 0,
+  lifted = false,
 }: {
   visible: boolean
   duration?: number
@@ -108,6 +121,8 @@ export const Toast = ({
   title?: string
   message?: string
   bottomOffset?: number
+  // Nudges the toast one spacing unit higher — set on modal screens.
+  lifted?: boolean
 }) => {
   const theme = useTheme()
   const toastVariant = toastSchemes[variant]
@@ -134,6 +149,7 @@ export const Toast = ({
       borderColor={theme.color[toastVariant.borderColor]}
       backgroundColor={theme.color[toastVariant.backgroundColor]}
       bottomOffset={bottomOffset}
+      lifted={lifted}
     >
       <Content>
         <Image
@@ -176,10 +192,13 @@ type ShowOptions = {
 
 type ToastStore = {
   current: ActiveToast | null
+  // Mounted modal hosts, in mount order. See the note at the top of the file.
+  hosts: number[]
 }
 
 export const toastStore = create<ToastStore>(() => ({
   current: null,
+  hosts: [],
 }))
 
 export const useToastStore = <U,>(selector: (state: ToastStore) => U) =>
@@ -218,21 +237,51 @@ export const toast = {
   info: variantShortcut('info'),
 }
 
+let nextHostId = 1
+
+// Registers this host and reports whether it is the one that should render.
+const useToastHostClaim = (fallback: boolean) => {
+  const [hostId] = useState(() => nextHostId++)
+
+  useEffect(() => {
+    if (fallback) {
+      return
+    }
+    toastStore.setState((state) => ({ hosts: [...state.hosts, hostId] }))
+
+    return () => {
+      toastStore.setState((state) => ({
+        hosts: state.hosts.filter((id) => id !== hostId),
+      }))
+    }
+  }, [fallback, hostId])
+
+  return useToastStore((state) =>
+    fallback
+      ? state.hosts.length === 0
+      : state.hosts[state.hosts.length - 1] === hostId,
+  )
+}
+
 export const ToastHost = ({
   // Extra space below the toast, e.g. to clear a bottom action button.
   bottomOffset: extraBottomOffset = 0,
   // Set on modals over the tabs (tab-route path but no visible tab bar).
   ignoreTabBar = false,
+  // Set on the app-root host, which renders only while no modal host is up.
+  fallback = false,
 }: {
   bottomOffset?: number
   ignoreTabBar?: boolean
+  fallback?: boolean
 } = {}) => {
+  const isActiveHost = useToastHostClaim(fallback)
   const current = useToastStore((state) => state.current)
   const insets = useSafeAreaInsets()
   const pathname = usePathname()
   const keyboardHeight = useKeyboardHeight()
 
-  if (!current) {
+  if (!current || !isActiveHost) {
     return null
   }
 
@@ -261,6 +310,7 @@ export const ToastHost = ({
       message={current.message}
       duration={current.duration}
       bottomOffset={bottomOffset}
+      lifted={!fallback}
       onHide={() => hide(current.id)}
     />
   )

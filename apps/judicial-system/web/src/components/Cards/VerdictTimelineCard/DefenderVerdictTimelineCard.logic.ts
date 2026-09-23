@@ -5,9 +5,13 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import type { Verdict } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  AppealCase,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
@@ -21,16 +25,25 @@ export const hasVerdictServiceDecision = (
   verdict?: Pick<Verdict, 'serviceRequirement'> | null,
 ): boolean => Boolean(verdict?.serviceRequirement)
 
+interface DefenderVerdictTimeline {
+  defendantId: string
+  verdict: Verdict
+  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  formatMessage: IntlShape['formatMessage']
+}
+
 /**
  * The bullets a defence user sees about the service and appeal of one verdict.
  * Deliberately leaves out the appeal deadline, which defence users already get
  * from InfoCardClosedIndictment, and everything about enforcement, which is
  * internal to the prosecution.
  */
-export const getDefenderVerdictTimelineItems = (
-  verdict: Verdict,
-  formatMessage: IntlShape['formatMessage'],
-): VerdictTimelineItem[] => {
+export const getDefenderVerdictTimelineItems = ({
+  defendantId,
+  verdict,
+  verdictAppealCase,
+  formatMessage,
+}: DefenderVerdictTimeline): VerdictTimelineItem[] => {
   const items: VerdictTimelineItem[] = []
 
   // Once a verdict that had to be served has been served, the service date says
@@ -70,6 +83,17 @@ export const getDefenderVerdictTimelineItems = (
     if (appealDecisionLabel) {
       items.push({ text: appealDecisionLabel })
     }
+  }
+
+  // The prosecution may appeal a verdict regardless of what the defendant did,
+  // so its appeal is its own bullet rather than one that replaces another.
+  const prosecutionAppealItem = getProsecutionVerdictAppealItem(
+    verdictAppealCase,
+    defendantId,
+  )
+
+  if (prosecutionAppealItem) {
+    items.push(prosecutionAppealItem)
   }
 
   return items

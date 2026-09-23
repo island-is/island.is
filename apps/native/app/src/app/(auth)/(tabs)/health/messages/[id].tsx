@@ -374,7 +374,13 @@ export default function HealthMessageDetailScreen() {
       // The certificate attached to this message needs paying before it can be
       // accessed. The app can't take the payment natively, so — matching the
       // compose flow's certificate notice — we point the user to My Pages.
-      const isUnpaidCertificate = !!item.requiresPayment && !item.paid
+      // No certificateId means there is nothing to pay for yet, so offer no
+      // pay affordance — as my-pages' CertificateAction does.
+      const isUnpaidCertificate =
+        !!item.certificateId && !!item.requiresPayment && !item.paid
+      // The download service refuses attachments with 402 while the certificate
+      // is unpaid, so withhold them all, like my-pages.
+      const attachmentsLocked = !!item.requiresPayment && !item.paid
       const certificatePaymentMessage =
         item.amountIsk != null
           ? intl.formatMessage(
@@ -435,17 +441,19 @@ export default function HealthMessageDetailScreen() {
           }
           date={dateTime}
           hasTopBorder={index !== 0}
-          attachments={item.attachments.map((attachment) => ({
-            id: attachment.id,
-            label: attachment.fileName,
-            loading: downloadingAttachmentId === attachment.id,
-            onPress: () =>
-              handleAttachmentPress({
-                id: attachment.id,
-                fileName: attachment.fileName,
-                url: attachment.downloadServiceURL,
-              }),
-          }))}
+          attachments={(attachmentsLocked ? [] : item.attachments).map(
+            (attachment) => ({
+              id: attachment.id,
+              label: attachment.fileName,
+              loading: downloadingAttachmentId === attachment.id,
+              onPress: () =>
+                handleAttachmentPress({
+                  id: attachment.id,
+                  fileName: attachment.fileName,
+                  url: attachment.downloadServiceURL,
+                }),
+            }),
+          )}
         />
       )
     },

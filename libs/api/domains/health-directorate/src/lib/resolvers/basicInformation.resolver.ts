@@ -58,7 +58,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -83,7 +83,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
     @Args('locale', { type: () => String, nullable: true })
@@ -98,7 +98,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  @Scopes(ApiScope.healthVaccinations, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -112,7 +112,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
@@ -127,7 +127,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateWaitlist',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlist(
     @Args('locale', { type: () => String, nullable: true })
@@ -143,7 +143,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferrals(
     @Args('locale', { type: () => String, nullable: true })
@@ -158,7 +158,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateReferral',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferral(
     @Args('locale', { type: () => String, nullable: true })
@@ -176,7 +176,7 @@ export class BasicInformationResolver {
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async getAppointments(
     @Args() input: HealthDirectorateAppointmentsInput,
     @CurrentUser() user: User,
@@ -190,7 +190,7 @@ export class BasicInformationResolver {
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async getAppointment(
     @Args() input: HealthDirectorateAppointmentInput,
     @CurrentUser() user: User,
@@ -205,7 +205,7 @@ export class BasicInformationResolver {
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async cancelAppointment(
     @Args() input: HealthDirectorateAppointmentInput,
     @CurrentUser() user: User,
@@ -218,7 +218,7 @@ export class BasicInformationResolver {
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async requestAppointmentCancellation(
     @Args() input: HealthDirectorateAppointmentInput,
     @CurrentUser() user: User,
