@@ -185,16 +185,27 @@ export class ApplicationTranslationService {
     return entry
   }
 
-  private static pickLatestPublishSnapshot<
-    T extends { sys: { snapshotType?: string; createdAt: string } },
-  >(items: T[]): T | undefined {
-    return items
+  private static findPublishSnapshot<
+    T extends {
+      sys: { snapshotType?: string; createdAt: string }
+      snapshot: { sys: { version: number } }
+    },
+  >(items: T[], expectedVersion?: number): T | undefined {
+    const publishSnapshots = items
       .filter((item) => item.sys.snapshotType === 'publish')
       .sort(
         (a, b) =>
           new Date(b.sys.createdAt).getTime() -
           new Date(a.sys.createdAt).getTime(),
-      )[0]
+      )
+
+    if (expectedVersion === undefined) {
+      return publishSnapshots[0]
+    }
+
+    return publishSnapshots.find(
+      (item) => item.snapshot.sys.version === expectedVersion,
+    )
   }
 
   private async getPublishedNamespaceFields(
@@ -210,7 +221,7 @@ export class ApplicationTranslationService {
         { entryId: namespace, query: { limit: 5 } },
       )
 
-    const latestPublish = ApplicationTranslationService.pickLatestPublishSnapshot(
+    const latestPublish = ApplicationTranslationService.findPublishSnapshot(
       snapshots.items,
     )
 
@@ -386,15 +397,39 @@ export class ApplicationTranslationService {
 
   private async getLatestPublishSnapshot(
     namespace: string,
+    expectedVersion?: number,
   ): Promise<PublishHistoryItem> {
-    const snapshots =
-      await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
-        { entryId: namespace, query: { select: 'sys', limit: 5 } },
-      )
+    const findSnapshot = async () => {
+      const snapshots =
+        await this.managementClient.snapshot.getManyForEntry<NamespaceEntryFields>(
+          { entryId: namespace, query: { limit: 5 } },
+        )
 
-    const latest = ApplicationTranslationService.pickLatestPublishSnapshot(
-      snapshots.items,
-    )
+      return ApplicationTranslationService.findPublishSnapshot(
+        snapshots.items,
+        expectedVersion,
+      )
+    }
+
+    let latest = await findSnapshot()
+
+    if (!latest && expectedVersion !== undefined) {
+      latest = await retry(
+        async () => {
+          const match = await findSnapshot()
+          if (!match) {
+            throw new Error('CONTENTFUL_PUBLISH_SNAPSHOT_PENDING')
+          }
+          return match
+        },
+        {
+          maxRetries: 8,
+          retryDelayMs: 750,
+          shouldRetryOnError: (e) =>
+            e.message === 'CONTENTFUL_PUBLISH_SNAPSHOT_PENDING',
+        },
+      ).catch(() => undefined)
+    }
 
     if (!latest) {
       throw new BadRequestException(
@@ -415,7 +450,7 @@ export class ApplicationTranslationService {
   ): Promise<PublishHistoryItem> {
     await this.assertWritesEnabled(user)
 
-    await this.withConflictRetry(async () => {
+    const publishedEntry = await this.withConflictRetry(async () => {
       const entry = await this.getVerifiedNamespaceEntry(namespace)
 
       return this.managementClient.entry.publish<NamespaceEntryFields>(
@@ -424,7 +459,7 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.getLatestPublishSnapshot(namespace)
+    return this.getLatestPublishSnapshot(namespace, publishedEntry.sys.version)
   }
 
   async getPublishHistory(namespace: string): Promise<PublishHistoryItem[]> {
@@ -477,7 +512,7 @@ export class ApplicationTranslationService {
       throw error
     }
 
-    await this.withConflictRetry(async () => {
+    const publishedEntry = await this.withConflictRetry(async () => {
       const entry = await this.getVerifiedNamespaceEntry(namespace)
 
       const targetIs =
@@ -523,6 +558,6 @@ export class ApplicationTranslationService {
       )
     })
 
-    return this.getLatestPublishSnapshot(namespace)
+    return this.getLatestPublishSnapshot(namespace, publishedEntry.sys.version)
   }
 }

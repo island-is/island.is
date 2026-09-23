@@ -34,6 +34,7 @@ export const TranslationPublishHistory = ({
     useGetApplicationTranslationPublishHistoryQuery({
       variables: { namespace },
       skip: !isOpen || !namespace,
+      fetchPolicy: 'network-only',
     })
 
   const [rollback, { loading: rollingBack }] =
