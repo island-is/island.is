@@ -15,7 +15,13 @@ import { ApplicationService as ApplicationApiService } from '@island.is/applicat
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import type { ApplicationAnswers } from './types'
+import type {
+  ApplicantInfo,
+  ApplicationAnswers,
+  CourseData,
+  CourseInstanceData,
+  Payer,
+} from './types'
 import { HHCoursesConfig } from './courses.config'
 import {
   COURSE_LIST_PAGE_SLUG_MAP,
@@ -86,15 +92,8 @@ export class CoursesService extends BaseTemplateApiService {
           'participantList',
         ) ?? []
 
-      const {
-        name,
-        email,
-        phone,
-        healthcenter,
-        nationalId,
-        workplace,
-        jobTitle,
-      } = await this.extractApplicantInfo(application)
+      const { name, email, phone, nationalId, ...rest } =
+        await this.extractApplicantInfo(application)
 
       if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
@@ -105,6 +104,14 @@ export class CoursesService extends BaseTemplateApiService {
           400,
         )
 
+      const applicant: ApplicantInfo = {
+        ...rest,
+        name,
+        email,
+        phone,
+        nationalId,
+      }
+
       const courseUrl = this.getCourseUrl(course.id, course.courseListPageId)
 
       const message = await this.formatApplicationMessage(
@@ -113,13 +120,7 @@ export class CoursesService extends BaseTemplateApiService {
         course.title,
         courseUrl,
         courseInstance,
-        nationalId,
-        name,
-        email,
-        phone,
-        healthcenter,
-        workplace,
-        jobTitle,
+        applicant,
       )
 
       const ticket = await this.zendeskService.createTicket({
@@ -157,14 +158,16 @@ export class CoursesService extends BaseTemplateApiService {
       })
 
       try {
-        await this.submitCustomObjects(
+        await this.submitCustomObjects({
+          application,
           course,
           courseInstance,
           participantList,
-          ticket?.id,
+          applicant,
+          ticketId: ticket?.id,
           courseUrl,
-          auth.authorization,
-        )
+          authorization: auth.authorization,
+        })
       } catch (error) {
         this.logger.error(
           'Failed to submit HH courses application to Zendesk custom objects',
@@ -383,23 +386,7 @@ export class CoursesService extends BaseTemplateApiService {
     const response = await this.sharedTemplateApiService
       .makeGraphqlQuery<{
         getCourseById: {
-          course: {
-            id: string
-            title: string
-            courseListPageId?: string | null
-            instances: {
-              id: string
-              startDate: string
-              startDateTimeDuration?: {
-                startTime?: string
-                endTime?: string
-              }
-              maxRegistrations?: number
-              chargeItemCode?: string | null
-              location?: string | null
-              description?: string | null
-            }[]
-          }
+          course: CourseData
         }
       }>(authorization, GET_COURSE_BY_ID_QUERY, {
         input: {
@@ -481,48 +468,48 @@ export class CoursesService extends BaseTemplateApiService {
     return `https://island.is/s/hh/${slug}/${courseId}`
   }
 
-  private async submitCustomObjects(
-    course: { id: string; title: string },
-    courseInstance: {
-      id: string
-      displayedTitle?: string | null
-      startDate: string
-      startDateTimeDuration?: { startTime?: string; endTime?: string }
-      description?: string | null
-      location?: string | null
-      chargeItemCode?: string | null
-    },
-    participantList: ApplicationAnswers['participantList'],
-    ticketId: string | number | undefined,
-    courseUrl: string | null,
-    authorization: string,
-  ): Promise<void> {
-    let priceAmount: number | undefined
-    try {
-      const chargeItemsResponse = await this.sharedTemplateApiService
-        .makeGraphqlQuery<{
-          getChargeItemCodesByCourseId: {
-            items: Array<{ code: string; priceAmount: number }>
-          }
-        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
-          input: { courseId: course.id },
-        })
-        .then((r) => r.json())
+  private async submitCustomObjects({
+    application,
+    course,
+    courseInstance,
+    participantList,
+    applicant,
+    ticketId,
+    courseUrl,
+    authorization,
+  }: {
+    application: ApplicationWithAttachments
+    course: CourseData
+    courseInstance: CourseInstanceData
+    participantList: ApplicationAnswers['participantList']
+    applicant: ApplicantInfo
+    ticketId: string | number | undefined
+    courseUrl: string | null
+    authorization: string
+  }): Promise<void> {
+    const priceAmount = await this.getCoursePriceAmount(
+      course.id,
+      courseInstance.chargeItemCode,
+      authorization,
+    )
 
-      priceAmount =
-        chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
-          (item) => item.code === courseInstance.chargeItemCode,
-        )?.priceAmount
-    } catch (error) {
-      this.logger.error(
-        'Failed to fetch charge item codes for course, proceeding without price',
-        { error, courseId: course.id },
-      )
-    }
+    const numericTicketId = this.toZendeskNumber(ticketId)
 
     const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.course,
-      { name: course.title, external_id: course.id },
+      {
+        name: course.title,
+        external_id: course.id,
+        custom_object_fields: {
+          course_url: courseUrl ?? '',
+          course_slug: course.slug ?? '',
+          course_intro: course.intro ?? '',
+          course_categories: (course.categories ?? [])
+            .map((category) => category.title)
+            .join(', '),
+          course_organization: course.organizationTitle ?? '',
+        },
+      },
     )
 
     const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
@@ -537,30 +524,71 @@ export class CoursesService extends BaseTemplateApiService {
           ...(priceAmount !== undefined && { course_price: priceAmount }),
           course_location: courseInstance.location ?? '',
           course_url: courseUrl ?? '',
+          course_charge_item_code: courseInstance.chargeItemCode ?? '',
+          ...(courseInstance.maxRegistrations != null && {
+            course_max_registrations: courseInstance.maxRegistrations,
+          }),
           course_id: courseRecord.id,
           course: courseRecord.id,
         },
       },
     )
 
-    if (participantList.length === 0) return
+    const payer = this.resolvePayer(application, courseInstance, applicant)
 
-    const numericTicketId = this.toZendeskNumber(ticketId)
+    const registrationRecord =
+      await this.zendeskService.upsertCustomObjectRecord(
+        ZENDESK_CUSTOM_OBJECT_KEYS.courseRegistration,
+        {
+          name: `${applicant.name} - ${
+            courseInstance.displayedTitle ?? course.title
+          }`,
+          external_id: application.id,
+          custom_object_fields: {
+            application_id: application.id,
+            applicant_name: applicant.name,
+            applicant_kennitala: applicant.nationalId,
+            applicant_email: applicant.email,
+            applicant_phone: applicant.phone,
+            applicant_healthcenter: applicant.healthcenter ?? '',
+            applicant_workplace: applicant.workplace ?? '',
+            applicant_job_title: applicant.jobTitle ?? '',
+            participant_count: participantList.length,
+            course_instance: instanceRecord.id,
+            course_instance_external_id: courseInstance.id,
+            ...(payer && {
+              payer_name: payer.name,
+              payer_kennitala: payer.nationalId,
+              paid_as_individual: payer.isIndividual,
+            }),
+            ...(numericTicketId !== undefined && {
+              ticket_id: numericTicketId,
+            }),
+          },
+        },
+      )
+
+    if (participantList.length === 0) return
 
     await this.zendeskService.runCustomObjectJob(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
       'create_or_update_by_external_id',
-      participantList.map((p) => {
-        const participantPhone = p.nationalIdWithName.phone?.trim()
+      participantList.map((participant) => {
+        const p = participant.nationalIdWithName
+        const participantPhone = p.phone?.trim()
 
         return {
-          name: p.nationalIdWithName.name,
-          external_id: `${courseInstance.id}-${p.nationalIdWithName.nationalId}`,
+          name: p.name,
+          external_id: `${courseInstance.id}-${p.nationalId}`,
           custom_object_fields: {
-            kennitala: p.nationalIdWithName.nationalId,
-            email: p.nationalIdWithName.email,
+            kennitala: p.nationalId,
+            email: p.email,
             ...(participantPhone && { participant_phone: participantPhone }),
+            ...(participant.workplace && { workplace: participant.workplace }),
+            ...(participant.jobTitle && { job_title: participant.jobTitle }),
             course_instance: instanceRecord.id,
+            course_instance_external_id: courseInstance.id,
+            registration: registrationRecord.id,
             ...(numericTicketId !== undefined && {
               ticket_id: numericTicketId,
             }),
@@ -568,6 +596,79 @@ export class CoursesService extends BaseTemplateApiService {
         }
       }),
     )
+  }
+
+  /**
+   * Price of the charge item the course instance is registered against, taken
+   * from the performing organisation's FJS catalog. Missing prices are not
+   * fatal: the record is written without the field.
+   */
+  private async getCoursePriceAmount(
+    courseId: string,
+    chargeItemCode: string | null | undefined,
+    authorization: string,
+  ): Promise<number | undefined> {
+    if (!chargeItemCode) return undefined
+
+    try {
+      const chargeItemsResponse = await this.sharedTemplateApiService
+        .makeGraphqlQuery<{
+          getChargeItemCodesByCourseId: {
+            items: Array<{ code: string; priceAmount: number }>
+          }
+        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
+          input: { courseId },
+        })
+        .then((r) => r.json())
+
+      const items =
+        chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items ?? []
+
+      return items.find((item) => item.code === chargeItemCode)?.priceAmount
+    } catch (error) {
+      this.logger.error(
+        'Failed to fetch charge item codes for course, proceeding without price',
+        { error, courseId },
+      )
+      return undefined
+    }
+  }
+
+  /**
+   * Who is paying for the registration. Courses without a charge item code are
+   * free, so they have no payer at all.
+   */
+  private resolvePayer(
+    application: ApplicationWithAttachments,
+    courseInstance: CourseInstanceData,
+    applicant: ApplicantInfo,
+  ): Payer | null {
+    if (!courseInstance.chargeItemCode) return null
+
+    const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
+      application.answers,
+      'payment.userIsPayingAsIndividual',
+      YesOrNoEnum.YES,
+    )
+
+    if (userIsPayingAsIndividual === YesOrNoEnum.YES) {
+      return {
+        name: applicant.name,
+        nationalId: application.applicant,
+        isIndividual: true,
+      }
+    }
+
+    const companyPayment = getValueViaPath<ApplicationAnswers['payment']>(
+      application.answers,
+      'payment',
+    )?.companyPayment
+
+    return {
+      name: companyPayment?.nationalIdWithName?.name ?? '',
+      nationalId: companyPayment?.nationalIdWithName?.nationalId ?? '',
+      isIndividual: false,
+    }
   }
 
   private toZendeskNumber(
@@ -583,36 +684,19 @@ export class CoursesService extends BaseTemplateApiService {
     participantList: ApplicationAnswers['participantList'],
     courseTitle: string,
     courseUrl: string | null,
-    courseInstance: {
-      id: string
-      startDate: string
-      startDateTimeDuration?: {
-        startTime?: string
-        endTime?: string
-      }
-      location?: string | null
-      chargeItemCode?: string | null
-    },
-    nationalId: string,
-    name: string,
-    email: string,
-    phone: string,
-    healthcenter?: string,
-    workplace?: string,
-    jobTitle?: string,
+    courseInstance: CourseInstanceData,
+    applicant: ApplicantInfo,
   ): Promise<string> {
-    const courseHasChargeItemCode = Boolean(courseInstance.chargeItemCode)
-    const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
-      application.answers,
-      'payment.userIsPayingAsIndividual',
-      YesOrNoEnum.YES,
-    )
-    const companyPayment = getValueViaPath<{
-      nationalIdWithName: {
-        name: string
-        nationalId: string
-      }
-    }>(application.answers, 'payment.companyPayment')
+    const {
+      nationalId,
+      name,
+      email,
+      phone,
+      healthcenter,
+      workplace,
+      jobTitle,
+    } = applicant
+    const payer = this.resolvePayer(application, courseInstance, applicant)
 
     let message = ''
     message += `Námskeið: ${courseTitle}\n`
@@ -634,17 +718,11 @@ export class CoursesService extends BaseTemplateApiService {
     if (workplace) message += `Vinnustaður umsækjanda: ${workplace}\n`
     if (jobTitle) message += `Starfsheiti umsækjanda: ${jobTitle}\n`
 
-    if (courseHasChargeItemCode) {
-      const payer =
-        userIsPayingAsIndividual === YesOrNoEnum.YES
-          ? {
-              name: 'Umsækjandi (einstaklingsgreiðsla)',
-              nationalId: application.applicant,
-            }
-          : companyPayment?.nationalIdWithName
-
-      message += `Greiðandi: ${payer?.name ?? ''}\n`
-      message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+    if (payer) {
+      message += `Greiðandi: ${
+        payer.isIndividual ? 'Umsækjandi (einstaklingsgreiðsla)' : payer.name
+      }\n`
+      message += `Kennitala greiðanda: ${payer.nationalId}\n`
     }
 
     participantList.forEach((participant, index) => {
@@ -666,14 +744,7 @@ export class CoursesService extends BaseTemplateApiService {
     return message
   }
 
-  private formatCourseInstanceDate(courseInstance: {
-    startDate: string
-    displayedTitle?: string | null
-    startDateTimeDuration?: {
-      startTime?: string
-      endTime?: string
-    }
-  }): string {
+  private formatCourseInstanceDate(courseInstance: CourseInstanceData): string {
     const ymd = courseInstance.startDate.split('T')[0] ?? ''
     const dateOnly = parseISO(ymd)
     const formattedDate = format(dateOnly, 'd. MMMM yyyy', {
@@ -691,12 +762,9 @@ export class CoursesService extends BaseTemplateApiService {
       .join(' ')
   }
 
-  private formatCourseInstanceTimeRange(courseInstance: {
-    startDateTimeDuration?: {
-      startTime?: string
-      endTime?: string
-    }
-  }): string {
+  private formatCourseInstanceTimeRange(
+    courseInstance: Pick<CourseInstanceData, 'startDateTimeDuration'>,
+  ): string {
     const { startTime, endTime } = courseInstance.startDateTimeDuration ?? {}
 
     if (!startTime) return ''

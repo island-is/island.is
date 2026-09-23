@@ -4,7 +4,13 @@ export const GET_COURSE_BY_ID_QUERY = `
       course {
         id
         title
+        slug
+        intro
+        organizationTitle
         courseListPageId
+        categories {
+          title
+        }
         instances {
           id
           startDate
@@ -42,6 +48,7 @@ export const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
 export const ZENDESK_CUSTOM_OBJECT_KEYS = {
   course: 'hh_course',
   courseInstance: 'hh_course_instance',
+  courseRegistration: 'hh_course_registration',
   courseParticipant: 'hh_course_participant',
 } as const
 
