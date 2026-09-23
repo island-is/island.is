@@ -71,15 +71,28 @@ const SUBMIT_PREVIEW_BUTTON_MAP: Record<string, SubmitPreviewButtonConfig> = {
   },
 }
 
+const REJECT_BUTTON_TYPES = new Set(['reject', 'rejectGhost'])
+
 const SubmitPreviewButton = ({
   config: { variant, colorScheme, icon },
+  onClick,
+  disabled,
   children,
 }: {
   config: SubmitPreviewButtonConfig
+  onClick?: () => void
+  disabled?: boolean
   children: ReactNode
 }) =>
   variant === 'ghost' ? (
-    <Button type="button" variant="ghost" colorScheme={colorScheme} icon={icon}>
+    <Button
+      type="button"
+      variant="ghost"
+      colorScheme={colorScheme}
+      icon={icon}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </Button>
   ) : (
@@ -88,6 +101,8 @@ const SubmitPreviewButton = ({
       variant="primary"
       colorScheme={colorScheme}
       icon={icon}
+      onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </Button>
@@ -124,6 +139,10 @@ export interface TranslationWorkspacePreviewAreaProps {
   footerSubmitScreen?: ScreenIntrospection
   /** Full template catalog so custom-field `formatMessage` ids resolve in preview intl. */
   extraMessageDescriptors?: MessageDescriptor[]
+  hasPreviousScreen?: boolean
+  hasNextScreen?: boolean
+  onPreviousScreen?: () => void
+  onNextScreen?: () => void
 }
 
 export const TranslationWorkspacePreviewArea = ({
@@ -149,6 +168,10 @@ export const TranslationWorkspacePreviewArea = ({
   activeLocale,
   footerSubmitScreen,
   extraMessageDescriptors,
+  hasPreviousScreen,
+  hasNextScreen,
+  onPreviousScreen,
+  onNextScreen,
 }: TranslationWorkspacePreviewAreaProps) => {
   const mergedPreviewFields = useMemo(
     () => mergePreviewFieldRegistry(customFields),
@@ -263,19 +286,31 @@ export const TranslationWorkspacePreviewArea = ({
                       action,
                       resolvePreviewString,
                     )
+                    const isRejectAction = REJECT_BUTTON_TYPES.has(
+                      action.buttonType,
+                    )
                     return (
                       <Box
                         key={`${action.event}-${idx}`}
                         marginLeft={idx === 0 ? 0 : 2}
                       >
-                        <SubmitPreviewButton config={cfg}>
+                        <SubmitPreviewButton
+                          config={cfg}
+                          onClick={isRejectAction ? undefined : onNextScreen}
+                          disabled={!isRejectAction && !hasNextScreen}
+                        >
                           {label || formatMessage(coreMessages.buttonSubmit)}
                         </SubmitPreviewButton>
                       </Box>
                     )
                   })
                 ) : (
-                  <Button icon="arrowForward" type="button">
+                  <Button
+                    icon="arrowForward"
+                    type="button"
+                    disabled={!hasNextScreen}
+                    onClick={onNextScreen}
+                  >
                     {formatMessage(coreMessages.buttonNext)}
                   </Button>
                 )}
@@ -285,7 +320,12 @@ export const TranslationWorkspacePreviewArea = ({
                 padding={2}
                 paddingLeft="none"
               >
-                <Button variant="ghost" type="button">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  disabled={!hasPreviousScreen}
+                  onClick={onPreviousScreen}
+                >
                   {formatMessage(coreMessages.buttonBack)}
                 </Button>
               </Box>

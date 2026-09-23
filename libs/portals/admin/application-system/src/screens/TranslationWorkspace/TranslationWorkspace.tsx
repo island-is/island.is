@@ -64,6 +64,10 @@ export const TranslationWorkspace = () => {
     closeNavDrawer,
     handleSidebarNavClick,
     handleNavDrawerVisibilityChange,
+    hasPreviousScreen,
+    hasNextScreen,
+    goToPreviousScreen,
+    goToNextScreen,
   } = useTranslationWorkspaceNavigation({
     introspection,
     typeId,
@@ -240,6 +244,10 @@ export const TranslationWorkspace = () => {
             activeLocale={activeLocale}
             footerSubmitScreen={footerSubmitScreen}
             extraMessageDescriptors={previewCatalogDescriptors}
+            hasPreviousScreen={hasPreviousScreen}
+            hasNextScreen={hasNextScreen}
+            onPreviousScreen={goToPreviousScreen}
+            onNextScreen={goToNextScreen}
           />
         }
         navPanel={navPanel}

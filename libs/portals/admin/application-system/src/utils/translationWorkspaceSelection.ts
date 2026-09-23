@@ -9,6 +9,7 @@ import type {
 } from '../types/translationWorkspace'
 import { PREVIEW_EXCLUDED_FIELD_TYPES } from './translationWorkspaceFieldConstants'
 import {
+  buildSectionLeafNavigationScreen,
   buildSectionNavigationScreen,
   buildSubSectionNavigationScreen,
 } from './translationWorkspaceNavigation'
@@ -95,30 +96,35 @@ export const groupValidationDescriptorsByPath = (
   return map
 }
 
-export const findInitialSidebarSelection = (
+export interface WorkspaceNavEntry {
+  nav: ScreenIntrospection
+  location: SidebarNavLocation
+}
+
+export const flattenNavEntries = (
   introspection: Pick<WorkspaceTemplateIntrospection, 'states'>,
-): { nav: ScreenIntrospection; location: SidebarNavLocation } | null => {
+): WorkspaceNavEntry[] => {
+  const entries: WorkspaceNavEntry[] = []
+
   for (const state of introspection.states as TemplateStateNav[]) {
     for (const role of state.roles) {
       if (!role.form) continue
       for (const section of role.form.sections) {
-        const subs = section.subSections as Array<{
+        const screens = section.screens as ScreenIntrospection[]
+        const subSections = section.subSections as Array<{
           id: string
           title?: string | null
           titleMessageDescriptor?: MessageDescriptor | null
           screens: ScreenIntrospection[]
         }>
-        if (subs.length > 0) {
-          const firstSub = subs.find(
-            (item) => (item.screens as ScreenIntrospection[]).length > 0,
-          )
-          if (firstSub) {
-            const screens = firstSub.screens as ScreenIntrospection[]
-            return {
-              nav: buildSubSectionNavigationScreen(
-                firstSub.id,
-                firstSub.title,
-                firstSub.titleMessageDescriptor,
+
+        if (subSections.length === 0) {
+          if (screens.length > 0) {
+            entries.push({
+              nav: buildSectionNavigationScreen(
+                section.id,
+                section.title,
+                section.titleMessageDescriptor,
                 screens,
               ),
               location: {
@@ -127,20 +133,21 @@ export const findInitialSidebarSelection = (
                 roleId: role.roleId,
                 sectionId: section.id,
                 sectionTitle: section.title,
-                subsectionId: firstSub.id,
-                subsectionTitle: firstSub.title,
               },
-            }
+            })
           }
+          continue
         }
-        const screens = section.screens as ScreenIntrospection[]
-        if (screens.length > 0) {
-          return {
-            nav: buildSectionNavigationScreen(
-              section.id,
-              section.title,
-              section.titleMessageDescriptor,
-              screens,
+
+        for (const sub of subSections) {
+          const subScreens = sub.screens as ScreenIntrospection[]
+          if (subScreens.length === 0) continue
+          entries.push({
+            nav: buildSubSectionNavigationScreen(
+              sub.id,
+              sub.title,
+              sub.titleMessageDescriptor,
+              subScreens,
             ),
             location: {
               stateKey: state.stateKey,
@@ -148,11 +155,32 @@ export const findInitialSidebarSelection = (
               roleId: role.roleId,
               sectionId: section.id,
               sectionTitle: section.title,
+              subsectionId: sub.id,
+              subsectionTitle: sub.title,
             },
-          }
+          })
+        }
+
+        for (const screen of screens) {
+          entries.push({
+            nav: buildSectionLeafNavigationScreen(section.id, screen),
+            location: {
+              stateKey: state.stateKey,
+              stateName: state.stateName,
+              roleId: role.roleId,
+              sectionId: section.id,
+              sectionTitle: section.title,
+              leafSourceScreenId: screen.id,
+            },
+          })
         }
       }
     }
   }
-  return null
+
+  return entries
 }
+
+export const findInitialSidebarSelection = (
+  introspection: Pick<WorkspaceTemplateIntrospection, 'states'>,
+): WorkspaceNavEntry | null => flattenNavEntries(introspection)[0] ?? null

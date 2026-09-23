@@ -1,10 +1,24 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type {
   ScreenIntrospection,
   SidebarNavLocation,
   WorkspaceTemplateIntrospection,
 } from '../types/translationWorkspace'
-import { findInitialSidebarSelection } from '../utils/translationWorkspaceSelection'
+import {
+  findInitialSidebarSelection,
+  flattenNavEntries,
+} from '../utils/translationWorkspaceSelection'
+
+const sameLocation = (
+  a: SidebarNavLocation | null,
+  b: SidebarNavLocation,
+): boolean =>
+  !!a &&
+  a.stateKey === b.stateKey &&
+  a.roleId === b.roleId &&
+  a.sectionId === b.sectionId &&
+  (a.subsectionId ?? null) === (b.subsectionId ?? null) &&
+  (a.leafSourceScreenId ?? null) === (b.leafSourceScreenId ?? null)
 
 type UseTranslationWorkspaceNavigationArgs = {
   introspection: WorkspaceTemplateIntrospection | null
@@ -61,6 +75,34 @@ export const useTranslationWorkspaceNavigation = ({
     }
   }, [introspection, selectedScreen, handleSidebarNavClick])
 
+  const navEntries = useMemo(
+    () => (introspection ? flattenNavEntries(introspection) : []),
+    [introspection],
+  )
+
+  const currentEntryIndex = useMemo(() => {
+    if (!selectedLocation) return -1
+    return navEntries.findIndex((entry) =>
+      sameLocation(selectedLocation, entry.location),
+    )
+  }, [navEntries, selectedLocation])
+
+  const hasPreviousScreen = currentEntryIndex > 0
+  const hasNextScreen =
+    currentEntryIndex >= 0 && currentEntryIndex < navEntries.length - 1
+
+  const goToPreviousScreen = () => {
+    if (!hasPreviousScreen) return
+    const entry = navEntries[currentEntryIndex - 1]
+    handleSidebarNavClick(entry.nav, entry.location)
+  }
+
+  const goToNextScreen = () => {
+    if (!hasNextScreen) return
+    const entry = navEntries[currentEntryIndex + 1]
+    handleSidebarNavClick(entry.nav, entry.location)
+  }
+
   return {
     selectedScreen,
     selectedLocation,
@@ -69,5 +111,9 @@ export const useTranslationWorkspaceNavigation = ({
     closeNavDrawer,
     handleSidebarNavClick,
     handleNavDrawerVisibilityChange,
+    hasPreviousScreen,
+    hasNextScreen,
+    goToPreviousScreen,
+    goToNextScreen,
   }
 }
