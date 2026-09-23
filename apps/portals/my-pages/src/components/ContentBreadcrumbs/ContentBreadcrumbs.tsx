@@ -23,6 +23,7 @@ interface ContentBreadcrumb {
   name: string | MessageDescriptor
   path?: string
   hidden?: boolean
+  hideParent?: boolean
 }
 
 /**
@@ -40,6 +41,8 @@ const parseNavItemName = (
 
   return navItem.name
 }
+
+const trimTrailingSlash = (path: string) => path.replace(/\/+$/, '')
 
 /**
  * Will explore all paths of the navigation tree
@@ -84,6 +87,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       currentBreadcrumbs.push({
         name: parseNavItemName(navItem, activeAncestor),
         hidden: navItem.breadcrumbHide ?? false,
+        hideParent: navItem.breadcrumbHideParent ?? false,
         path: activeAncestor ? activeAncestor.pathname : navItem.path,
       })
 
@@ -107,6 +111,19 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   findBreadcrumbsPath(navigation, [])
   const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null
+
+  // Never link to the page the user is on — the heading already names it.
+  // Compared by path since a parent and its default child can share one.
+  const currentPath = trimTrailingSlash(location.pathname)
+  // A landing page can also drop its parent, which only leads back here
+  const parentIndex = items[items.length - 1].hideParent ? items.length - 2 : -1
+  const crumbs = items.filter(
+    (item, index) =>
+      index === 0 ||
+      (index !== parentIndex &&
+        (!item.path || trimTrailingSlash(item.path) !== currentPath)),
+  )
+
   return (
     <Box
       display="flex"
@@ -118,7 +135,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
     >
       <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
-          {items.map((item, index) =>
+          {crumbs.map((item, index) =>
             // The root is breadcrumbHide'd for desktop, but mobile always
             // leads with a back link to the overview
             isMobile && index === 0 ? (
