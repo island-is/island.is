@@ -5,9 +5,9 @@ import {
   GridRow,
   GridColumn,
   BreadcrumbsDeprecated as Breadcrumbs,
-  Button,
 } from '@island.is/island-ui/core'
 import {
+  GoBack,
   m,
   ModuleAlertBannerSection,
   SearchPaths,
@@ -20,7 +20,7 @@ import {
   IntroHeader,
   ServicePortalPaths,
 } from '@island.is/portals/my-pages/core'
-import { Link, matchPath, useNavigate } from 'react-router-dom'
+import { Link, matchPath } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import cn from 'classnames'
@@ -50,7 +50,6 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   isFinance,
   isSearch,
 }) => {
-  const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
@@ -87,18 +86,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                 <GridRow>
                   <GridColumn span="12/12">
                     <Breadcrumbs color="blue400" separatorColor="blue400">
-                      <Box display="inline" className={styles.btn}>
-                        <Button
-                          preTextIcon="arrowBack"
-                          preTextIconType="filled"
-                          size="small"
-                          type="button"
-                          variant="text"
-                          onClick={() => navigate('/')}
-                        >
-                          {formatMessage(m.goBackToDashboard)}
-                        </Button>
-                      </Box>
+                      <GoBack noUnderline display="inline" marginBottom={0} />
                       {activeParent?.path && activeParent?.name && (
                         <Link to={activeParent.path}>
                           {formatMessage(activeParent.name)}

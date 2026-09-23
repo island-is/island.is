@@ -119,16 +119,16 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
           {items.map((item, index) =>
-            isDefined(item.path) && !item.hidden ? (
-              isMobile && index === 0 ? (
-                <GoBack noUnderline={true} display="inline" key="goback" />
-              ) : (
-                <Link className={styles.link} key={index} to={item.path}>
-                  {index === 0
-                    ? formatMessage(m.overview)
-                    : formatMessage(item.name)}
-                </Link>
-              )
+            // The root is breadcrumbHide'd for desktop, but mobile always
+            // leads with a back link to the overview
+            isMobile && index === 0 ? (
+              <GoBack noUnderline={true} display="inline" key="goback" />
+            ) : isDefined(item.path) && !item.hidden ? (
+              <Link className={styles.link} key={index} to={item.path}>
+                {index === 0
+                  ? formatMessage(m.overview)
+                  : formatMessage(item.name)}
+              </Link>
             ) : null,
           )}
         </Breadcrumbs>
