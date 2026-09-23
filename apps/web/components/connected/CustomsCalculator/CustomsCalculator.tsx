@@ -61,7 +61,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
   const currencyOptions = useMemo<StringOption[]>(() => {
     return (
-      slice.configJson?.currencyOptions ?? [
+      slice.json?.currencyOptions ?? [
         // Most commonly used currencies first, the rest alphabetically
         { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
         { label: 'EUR', value: 'EUR', description: 'Evra' },
@@ -83,7 +83,7 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
       ]
     )
-  }, [slice.configJson?.currencyOptions])
+  }, [slice.json?.currencyOptions])
 
   const [inputState, setInputState] = useState({
     searchInput: '',
