@@ -970,7 +970,7 @@ export class CaseRepositoryService {
   }
 
   /**
-   * The one generic read left in this repository (decision F1-d/F2). It exists
+   * The one generic read left in this repository. It exists
    * for caseTable.service.ts, whose role-based whereOptions are composed from
    * ten rule files, and it must gain no other caller: every other read here is
    * named for what it reads, and a new filter gets a new intent method rather
