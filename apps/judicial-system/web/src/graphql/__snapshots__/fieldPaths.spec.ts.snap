@@ -1888,6 +1888,7 @@ Array [
   "transitionCase.appealCase.appealReceivedByCourtDate",
   "transitionCase.appealCase.appealState",
   "transitionCase.appealCase.statementDeadline",
+  "transitionCase.rulingDate",
   "transitionCase.state",
 ]
 `;
