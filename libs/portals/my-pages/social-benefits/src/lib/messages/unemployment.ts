@@ -172,7 +172,11 @@ export const unemploymentBenefitsMessages = defineMessages({
   },
   reportedIncomeDateHeader: {
     id: 'sp.social-benefits-unemployment:reportedIncomeDateHeader',
-    defaultMessage: 'Dagsetning',
+    defaultMessage: 'Dagsetning frá',
+  },
+  reportedIncomeDateToHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeDateToHeader',
+    defaultMessage: 'Dagsetning til',
   },
   reportedIncomeAmountHeader: {
     id: 'sp.social-benefits-unemployment:reportedIncomeAmountHeader',

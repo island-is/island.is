@@ -5,6 +5,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { ellipsis } from '@island.is/portals/my-pages/core'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 
 export interface ReportedIncomeRow {
@@ -12,6 +13,7 @@ export interface ReportedIncomeRow {
   type: string
   payer: string
   date: string
+  dateTo: string
   amount: string
   // Raw ISO string used for sorting; not rendered.
   sortDate?: string | null
@@ -23,6 +25,7 @@ interface Props {
 }
 
 const SKELETON_ROW_COUNT = 3
+const PAYER_MAX_LENGTH = 30
 
 export const ReportedIncomeTable = ({ rows, loading }: Props) => {
   const { formatMessage } = useLocale()
@@ -31,6 +34,7 @@ export const ReportedIncomeTable = ({ rows, loading }: Props) => {
     formatMessage(um.reportedIncomeTypeHeader),
     formatMessage(um.reportedIncomePayerHeader),
     formatMessage(um.reportedIncomeDateHeader),
+    formatMessage(um.reportedIncomeDateToHeader),
     formatMessage(um.reportedIncomeAmountHeader),
   ]
 
@@ -66,14 +70,19 @@ export const ReportedIncomeTable = ({ rows, loading }: Props) => {
                       {row.type}
                     </Text>
                   </T.Data>
-                  <T.Data>
+                  <T.Data title={row.payer}>
                     <Text variant="medium" as="span">
-                      {row.payer}
+                      {ellipsis(row.payer, PAYER_MAX_LENGTH)}
                     </Text>
                   </T.Data>
                   <T.Data>
                     <Text variant="medium" as="span">
                       {row.date}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="medium" as="span">
+                      {row.dateTo}
                     </Text>
                   </T.Data>
                   <T.Data>
