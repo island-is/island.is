@@ -67,10 +67,11 @@ export class TaxCalculatorsService {
         validation.values,
       )
     } catch (error) {
-      /* Log upstream details without including them in the response. */
+      /* Log upstream failure without including raw error details, which may
+       * echo submitted input values, in the response or the log payload. */
       this.logger.error('RSK tax calculation failed', {
         calculator: type,
-        error,
+        ...(error instanceof Error ? { error: error.message } : {}),
       })
 
       return failed(
