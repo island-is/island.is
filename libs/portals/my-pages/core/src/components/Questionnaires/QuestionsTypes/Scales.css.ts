@@ -3,8 +3,8 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 const tickSize = 8
 const tickBorder = 2
-const tickSelectedSize = 21
-const tickSelectedBorder = 7
+const tickSelectedSize = 24
+const tickSelectedBorder = 8
 
 // Each tick occupies this much regardless of state - a short row has to add it
 // back when it works out its share of the full width
@@ -14,7 +14,7 @@ const trackThickness = 2
 const horizontalTickArea = 32
 // Widens the tap area on split rows without touching the layout
 const tapAreaBleed = 16
-const verticalRowHeight = 48
+export const verticalRowHeight = 48
 // Sized for the selected tick so choosing a value never shifts the layout
 const verticalTickColumn = tickSelectedSize
 
@@ -83,6 +83,13 @@ export const track = style({
   borderRadius: theme.border.radius.lg,
 })
 
+// Runs from the low end of the scale up to the selected tick
+export const trackFill = style({
+  position: 'absolute',
+  backgroundColor: theme.color.blue400,
+  borderRadius: theme.border.radius.lg,
+})
+
 export const horizontalRow = style({
   position: 'relative',
   display: 'flex',
@@ -128,6 +135,12 @@ export const horizontalTrack = style({
   right: tickSelectedSize / 2,
 })
 
+export const horizontalTrackFill = style({
+  height: trackThickness,
+  top: horizontalTickArea / 2 - trackThickness / 2,
+  left: tickSelectedSize / 2,
+})
+
 export const verticalMeter = style({
   position: 'relative',
   display: 'flex',
@@ -150,6 +163,12 @@ export const verticalTrack = style({
   width: trackThickness,
   left: verticalTickColumn / 2 - trackThickness / 2,
   top: verticalRowHeight / 2,
+  bottom: verticalRowHeight / 2,
+})
+
+export const verticalTrackFill = style({
+  width: trackThickness,
+  left: verticalTickColumn / 2 - trackThickness / 2,
   bottom: verticalRowHeight / 2,
 })
 

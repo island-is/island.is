@@ -170,9 +170,14 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   const handleAnswerChange = useCallback(
     (answer: QuestionAnswer) => {
       setAnswers((prev) => {
-        const newAnswers = {
-          ...prev,
-          [answer.questionId]: answer,
+        const newAnswers = { ...prev }
+
+        // An answer with no values is a cleared question, which has to leave
+        // the map entirely so it is not submitted as an empty entry
+        if (answer.answers.length === 0) {
+          delete newAnswers[answer.questionId]
+        } else {
+          newAnswers[answer.questionId] = answer
         }
 
         // Calculate any formulas that depend on changed values

@@ -39,6 +39,14 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
   const isMobile = useIsMobile()
   const labelId = `${question.id}-label`
 
+  const handleClear = () =>
+    onAnswerChange({
+      questionId: question.id,
+      question: question.label,
+      answers: [],
+      type: question.answerOptions.type,
+    })
+
   const handleValueChange = (
     value: string | string[] | number,
     _extraAnswers?: { [key: string]: QuestionAnswer },
@@ -216,6 +224,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <HorizontalScale
             id={question.id}
+            onClear={handleClear}
             min={answerOptions.min ?? '0'}
             max={answerOptions.max ?? '10'}
             value={answer?.answers?.[0]?.value ?? undefined}
@@ -235,6 +244,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <VerticalScale
             id={question.id}
+            onClear={handleClear}
             min={answerOptions.min ?? '0'}
             max={answerOptions.max ?? '10'}
             value={answer?.answers?.[0]?.value ?? null}

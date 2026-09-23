@@ -1,7 +1,9 @@
-import { Box, InputError, Text } from '@island.is/island-ui/core'
+import { Box, Button, InputError, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useIsMobile } from '@island.is/portals/core'
 import cn from 'classnames'
 import { CSSProperties, FC, Fragment, KeyboardEvent, useMemo } from 'react'
+import { m } from '../../../lib/messages'
 import * as styles from './Scales.css'
 import { getScaleKeyIndex, getScaleValues } from './scaleValues'
 
@@ -13,6 +15,7 @@ export interface HorizontalScaleProps {
   max: string | number
   value?: string | null
   onChange: (value: string) => void
+  onClear?: () => void
   error?: string
   disabled?: boolean
   required?: boolean
@@ -28,6 +31,7 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
   max,
   value,
   onChange,
+  onClear,
   error,
   disabled = false,
   required = false,
@@ -36,8 +40,10 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
   step = 1,
   labelledBy,
 }) => {
+  const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const values = useMemo(() => getScaleValues(min, max, step), [min, max, step])
+  const selectedIndex = value ? values.indexOf(value) : -1
 
   const columns = isMobile
     ? Math.min(values.length, MAX_TICKS_PER_ROW)
@@ -63,11 +69,7 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
     if (disabled || values.length === 0) {
       return
     }
-    const nextIndex = getScaleKeyIndex(
-      event.key,
-      value ? values.indexOf(value) : -1,
-      values.length,
-    )
+    const nextIndex = getScaleKeyIndex(event.key, selectedIndex, values.length)
     if (nextIndex === undefined) {
       return
     }
@@ -90,6 +92,22 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
     }
   }
 
+  // The fill stops at the selected tick, so rows before it are filled whole and
+  // rows after it not at all
+  const fillStyle = (
+    rowStart: number,
+    ticksInRow: number,
+  ): CSSProperties | undefined => {
+    const reached = selectedIndex - rowStart
+    if (selectedIndex < 0 || reached <= 0 || ticksInRow < 2) {
+      return undefined
+    }
+    const share = Math.min(reached / (ticksInRow - 1), 1)
+    return {
+      width: `calc(${share * 100}% - ${share * styles.tickWidth}px)`,
+    }
+  }
+
   if (values.length === 0) {
     return null
   }
@@ -104,57 +122,66 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
         aria-labelledby={labelledBy}
         onKeyDown={handleKeyDown}
       >
-        {rows.map((row, rowIndex) => (
-          <Box
-            key={`${id}-row-${rowIndex}`}
-            marginTop={rowIndex === 0 ? 0 : 3}
-            className={cn(styles.horizontalRow, {
-              [styles.horizontalRowSplit]: isSplit,
-            })}
-            style={rowStyle(row.length)}
-          >
-            {row.length > 1 && (
-              <span className={cn(styles.track, styles.horizontalTrack)} />
-            )}
-            {row.map((scaleValue) => {
-              const selected = value === scaleValue
-              return (
-                <Fragment key={scaleValue}>
-                  <input
-                    id={`${id}-${scaleValue}`}
-                    className={cn('visually-hidden', styles.input)}
-                    type="radio"
-                    name={id}
-                    value={scaleValue}
-                    checked={selected}
-                    disabled={disabled}
-                    onChange={(event) => onChange(event.target.value)}
-                  />
-                  <label
-                    htmlFor={`${id}-${scaleValue}`}
-                    className={cn(styles.tick, styles.horizontalTick)}
-                  >
-                    <span className={styles.horizontalBubbleArea}>
-                      <span
-                        className={cn(styles.bubble, {
-                          [styles.bubbleSelected]: selected,
-                          [styles.bubbleError]: !!error && !selected,
-                        })}
-                      />
-                    </span>
-                    <Text
-                      variant="small"
-                      fontWeight="regular"
-                      className={styles.horizontalTickText}
+        {rows.map((row, rowIndex) => {
+          const fill = fillStyle(rowIndex * columns, row.length)
+          return (
+            <Box
+              key={`${id}-row-${rowIndex}`}
+              marginTop={rowIndex === 0 ? 0 : 3}
+              className={cn(styles.horizontalRow, {
+                [styles.horizontalRowSplit]: isSplit,
+              })}
+              style={rowStyle(row.length)}
+            >
+              {row.length > 1 && (
+                <span className={cn(styles.track, styles.horizontalTrack)} />
+              )}
+              {fill && (
+                <span
+                  className={cn(styles.trackFill, styles.horizontalTrackFill)}
+                  style={fill}
+                />
+              )}
+              {row.map((scaleValue) => {
+                const selected = value === scaleValue
+                return (
+                  <Fragment key={scaleValue}>
+                    <input
+                      id={`${id}-${scaleValue}`}
+                      className={cn('visually-hidden', styles.input)}
+                      type="radio"
+                      name={id}
+                      value={scaleValue}
+                      checked={selected}
+                      disabled={disabled}
+                      onChange={(event) => onChange(event.target.value)}
+                    />
+                    <label
+                      htmlFor={`${id}-${scaleValue}`}
+                      className={cn(styles.tick, styles.horizontalTick)}
                     >
-                      {scaleValue}
-                    </Text>
-                  </label>
-                </Fragment>
-              )
-            })}
-          </Box>
-        ))}
+                      <span className={styles.horizontalBubbleArea}>
+                        <span
+                          className={cn(styles.bubble, {
+                            [styles.bubbleSelected]: selected,
+                            [styles.bubbleError]: !!error && !selected,
+                          })}
+                        />
+                      </span>
+                      <Text
+                        variant="small"
+                        fontWeight="regular"
+                        className={styles.horizontalTickText}
+                      >
+                        {scaleValue}
+                      </Text>
+                    </label>
+                  </Fragment>
+                )
+              })}
+            </Box>
+          )
+        })}
       </Box>
 
       {(minLabel || maxLabel) && (
@@ -165,6 +192,20 @@ export const HorizontalScale: FC<HorizontalScaleProps> = ({
           <Text variant="small" color="blue400" fontWeight="semiBold">
             {maxLabel}
           </Text>
+        </Box>
+      )}
+
+      {onClear && selectedIndex >= 0 && !disabled && (
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Button
+            variant="text"
+            size="small"
+            icon="reload"
+            onClick={onClear}
+            type="button"
+          >
+            {formatMessage(m.clearAnswer)}
+          </Button>
         </Box>
       )}
 
