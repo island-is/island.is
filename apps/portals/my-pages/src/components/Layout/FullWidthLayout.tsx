@@ -87,11 +87,14 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                   <GridColumn span="12/12">
                     <Breadcrumbs color="blue400" separatorColor="blue400">
                       <GoBack noUnderline display="inline" marginBottom={0} />
-                      {activeParent?.path && activeParent?.name && (
-                        <Link to={activeParent.path}>
-                          {formatMessage(activeParent.name)}
-                        </Link>
-                      )}
+                      {activeParent?.path &&
+                        activeParent?.name &&
+                        // Never link to the page the user is on
+                        activeParent.path !== pathname && (
+                          <Link to={activeParent.path}>
+                            {formatMessage(activeParent.name)}
+                          </Link>
+                        )}
                     </Breadcrumbs>
                   </GridColumn>
                 </GridRow>
