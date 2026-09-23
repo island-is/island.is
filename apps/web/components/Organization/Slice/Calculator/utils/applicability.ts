@@ -5,7 +5,7 @@ import type {
   CalculatorInputSectionField,
 } from '@island.is/tax-calculators'
 
-import type { InputContractField, InputFieldContract } from './contract'
+import type { InputContractField, InputFieldContract } from '../contract'
 import { localized } from './text'
 import { toTypedValue } from './values'
 

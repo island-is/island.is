@@ -3,10 +3,10 @@ import type { Locale } from '@island.is/shared/types'
 import type { CalculatorOutputValueField } from '@island.is/tax-calculators'
 import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
-import type { OutputContractField } from './contract'
-import { formatOutputValue } from './format'
-import { itemValue, type OutputValue } from './outputValues'
-import { localized } from './text'
+import type { OutputContractField } from '../contract'
+import { formatOutputValue } from '../utils/format'
+import { itemValue, type OutputValue } from '../utils/outputValues'
+import { localized } from '../utils/text'
 
 interface Props {
   field: CalculatorOutputValueField

@@ -6,8 +6,8 @@ import {
   TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
 
-import type { InputFieldContract, OutputFieldContract } from './contract'
-import { toInputFieldContract, toOutputFieldContract } from './contract'
+import type { InputFieldContract, OutputFieldContract } from '../contract'
+import { toInputFieldContract, toOutputFieldContract } from '../contract'
 import {
   collectStaleInputKeys,
   collectUnlabelledKeys,

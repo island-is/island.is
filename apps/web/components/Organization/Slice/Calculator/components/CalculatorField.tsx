@@ -13,9 +13,9 @@ import {
   TaxCalculatorInputFieldType,
 } from '@island.is/web/graphql/schema'
 
-import type { InputContractField } from './contract'
-import { monthOptions, yearOptions } from './optionSources'
-import { localized } from './text'
+import type { InputContractField } from '../contract'
+import { monthOptions, yearOptions } from '../utils/optionSources'
+import { localized } from '../utils/text'
 
 interface Props {
   field: CalculatorInputSectionField

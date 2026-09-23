@@ -5,7 +5,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import { canSubmit, collectApplicableFields } from './applicability'
-import type { InputContractField, InputFieldContract } from './contract'
+import type { InputContractField, InputFieldContract } from '../contract'
 
 const field = (
   key: string,

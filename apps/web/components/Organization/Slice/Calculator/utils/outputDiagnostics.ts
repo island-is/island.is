@@ -5,7 +5,7 @@ import {
 } from '@island.is/tax-calculators'
 import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
-import type { OutputFieldContract } from './contract'
+import type { OutputFieldContract } from '../contract'
 import type { CalculatorLabelledRow } from './text'
 
 /* Collects CMS and output-contract mismatches. */

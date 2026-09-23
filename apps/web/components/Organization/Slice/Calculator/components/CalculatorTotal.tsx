@@ -2,10 +2,10 @@ import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorConfig } from '@island.is/tax-calculators'
 
-import type { OutputFieldContract } from './contract'
-import { formatOutputValue } from './format'
-import type { OutputValues } from './outputValues'
-import { localized } from './text'
+import type { OutputFieldContract } from '../contract'
+import { formatOutputValue } from '../utils/format'
+import type { OutputValues } from '../utils/outputValues'
+import { localized } from '../utils/text'
 
 interface Props {
   config: CalculatorConfig

@@ -30,20 +30,20 @@ import {
   GET_TAX_CALCULATOR_CALCULATION,
 } from '@island.is/web/screens/queries/TaxCalculators'
 
-import { canSubmit, collectApplicableFields, isInPlay } from './applicability'
+import { canSubmit, collectApplicableFields, isInPlay } from '../utils/applicability'
 import { CalculatorResults, collectVisibleSections } from './CalculatorResults'
 import { CalculatorSection } from './CalculatorSection'
 import { CalculatorTotal, resolveTotal } from './CalculatorTotal'
-import { toInputFieldContract, toOutputFieldContract } from './contract'
+import { toInputFieldContract, toOutputFieldContract } from '../contract'
 import {
   collectUnplacedRequiredKeys,
   reportCalculationErrors,
   reportConfigParseIssues,
   reportContractDiagnostics,
-} from './diagnostics'
-import { toOutputValues } from './outputValues'
-import { toInputFieldValues } from './serialize'
-import { CALCULATOR_MESSAGES, localized } from './text'
+} from '../utils/diagnostics'
+import { toOutputValues } from '../utils/outputValues'
+import { toInputFieldValues } from '../utils/serialize'
+import { CALCULATOR_MESSAGES, localized } from '../utils/text'
 
 interface CalculatorProps {
   slice: CalculatorSlice

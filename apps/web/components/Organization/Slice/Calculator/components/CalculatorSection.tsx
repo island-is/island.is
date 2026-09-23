@@ -8,9 +8,9 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorInputSection } from '@island.is/tax-calculators'
 
-import type { ApplicableFields } from './applicability'
+import type { ApplicableFields } from '../utils/applicability'
 import { CalculatorField } from './CalculatorField'
-import { localized } from './text'
+import { localized } from '../utils/text'
 
 interface Props {
   section: CalculatorInputSection

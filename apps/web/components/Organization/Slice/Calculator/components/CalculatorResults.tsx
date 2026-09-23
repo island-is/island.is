@@ -10,10 +10,10 @@ import { MarkdownText } from '@island.is/web/components'
 import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
 import { CalculatorOutputField } from './CalculatorOutputField'
-import type { OutputContractField, OutputFieldContract } from './contract'
-import { formatOutputValue } from './format'
-import type { OutputValue, OutputValues } from './outputValues'
-import { localized } from './text'
+import type { OutputContractField, OutputFieldContract } from '../contract'
+import { formatOutputValue } from '../utils/format'
+import type { OutputValue, OutputValues } from '../utils/outputValues'
+import { localized } from '../utils/text'
 
 interface Props {
   config: CalculatorConfig
