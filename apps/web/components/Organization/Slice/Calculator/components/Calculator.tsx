@@ -33,9 +33,9 @@ import {
 } from '@island.is/web/screens/queries/TaxCalculators'
 
 import {
+  type OutputFieldContract,
   toInputFieldContract,
   toOutputFieldContract,
-  type OutputFieldContract,
 } from '../contract'
 import {
   canSubmit,
@@ -49,7 +49,7 @@ import {
   reportContractDiagnostics,
 } from '../utils/diagnostics'
 import { formatOutputValue } from '../utils/format'
-import { toOutputValues, type OutputValues } from '../utils/outputValues'
+import { type OutputValues,toOutputValues } from '../utils/outputValues'
 import { toInputFieldValues } from '../utils/serialize'
 import { CALCULATOR_MESSAGES, localized } from '../utils/text'
 import { CalculatorResults, collectVisibleSections } from './CalculatorResults'
