@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
@@ -211,13 +211,34 @@ export class VMSTApplicationsService {
       const { applicantId } = await this.resolveApplicant(auth)
       const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
         await this.vmstUnemploymentService.getApplicantIncomes(applicantId)
+
+      const incomeCollectionKeys = [
+        'irregularJobs',
+        'partTimeJobs',
+        'pensionPayments',
+        'capitalIncomePayments',
+        'trPayments',
+        'contractorJobs',
+      ] as const
+
+      const invalidKeys = incomeCollectionKeys.filter(
+        (key) => !Array.isArray(dto[key]),
+      )
+      if (invalidKeys.length > 0) {
+        throw new BadGatewayException(
+          `VMST applicant incomes response has invalid shape for: ${invalidKeys.join(
+            ', ',
+          )}`,
+        )
+      }
+
       return {
-        irregularJobs: dto.irregularJobs ?? [],
-        partTimeJobs: dto.partTimeJobs ?? [],
-        pensionPayments: dto.pensionPayments ?? [],
-        capitalIncomePayments: dto.capitalIncomePayments ?? [],
-        trPayments: dto.trPayments ?? [],
-        contractorJobs: dto.contractorJobs ?? [],
+        irregularJobs: dto.irregularJobs,
+        partTimeJobs: dto.partTimeJobs,
+        pensionPayments: dto.pensionPayments,
+        capitalIncomePayments: dto.capitalIncomePayments,
+        trPayments: dto.trPayments,
+        contractorJobs: dto.contractorJobs,
       }
     } catch (e) {
       if (e instanceof FetchError && e.status === 404) {
