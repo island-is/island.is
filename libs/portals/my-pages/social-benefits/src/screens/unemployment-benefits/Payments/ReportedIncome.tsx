@@ -3,6 +3,7 @@ import {
   amountFormat,
   formatNationalId,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { ReportedIncomeRow, ReportedIncomeTable } from './ReportedIncomeTable'
 import { useGetVmstApplicantIncomesQuery } from './ReportedIncome.generated'
@@ -20,7 +21,7 @@ const formatPayer = (name?: string | null, ssn?: string | null) => {
 
 export const ReportedIncome = () => {
   const { formatMessage, formatDateFns } = useLocale()
-  const { data, loading } = useGetVmstApplicantIncomesQuery()
+  const { data, loading, error } = useGetVmstApplicantIncomesQuery()
 
   const formatLongDate = (value?: string | null) => {
     if (!value) return DASH
@@ -29,6 +30,10 @@ export const ReportedIncome = () => {
     } catch {
       return DASH
     }
+  }
+
+  if (!loading && error) {
+    return <Problem error={error} noBorder={false} />
   }
 
   const incomes = data?.vmstApplicantIncomes
