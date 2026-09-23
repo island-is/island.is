@@ -24,14 +24,14 @@ const childBenefitInputFields = defineInputFields([
   {
     name: 'splitCustodyChildrenOver7',
     type: 'number',
-    required: true,
+    required: false,
     semantic: 'count',
     dependsOn: { field: 'splitCustody', equals: true },
   },
   {
     name: 'splitCustodyChildrenUnder7',
     type: 'number',
-    required: true,
+    required: false,
     semantic: 'count',
     dependsOn: { field: 'splitCustody', equals: true },
   },
