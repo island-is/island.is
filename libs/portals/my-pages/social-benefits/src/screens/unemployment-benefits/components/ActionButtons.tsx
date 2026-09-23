@@ -37,7 +37,14 @@ export const ActionButtons = ({
   }
 
   return (
-    <Box display="flex" columnGap={2} alignItems="center" marginBottom={4}>
+    <Box
+      display="flex"
+      flexWrap="wrap"
+      columnGap={2}
+      rowGap={2}
+      alignItems="center"
+      marginBottom={4}
+    >
       {showContactButton && (
         <LinkButton
           to={formatMessage(um.statusContactUsUrl)}
