@@ -622,6 +622,8 @@ const rewriteDevEnv = (
     return rewrite(value)
   }
 
+
+  //trigger
   if (typeof value === 'object' && value !== null && 'dev' in value) {
     if (typeof value.dev === 'string') {
       return rewrite(value.dev)
