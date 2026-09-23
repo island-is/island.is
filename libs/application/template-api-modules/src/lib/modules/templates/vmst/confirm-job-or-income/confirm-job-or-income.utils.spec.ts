@@ -203,6 +203,27 @@ describe('buildCreateIncomesRequest', () => {
     ).toEqual([{ id: persistedId, deleted: true }])
   })
 
+  it('carries employerSSN through part-time delete markers when the persisted job has one', () => {
+    const persistedId = 'persisted-job-id'
+    const answers: FormValue = {
+      typeOfIncome: [IncomeType.PART_TIME],
+      registerPartTime: [{ validationId: persistedId, isRemoved: true }],
+    }
+    const externalData: ExternalData = {
+      income: {
+        status: 'success',
+        date: new Date(),
+        data: {
+          partTimeJobs: [{ id: persistedId, employerSSN: '5005101370' }],
+        },
+      },
+    }
+
+    expect(
+      buildCreateIncomesRequest(answers, externalData).partTimeJobs,
+    ).toEqual([{ id: persistedId, deleted: true, employerSSN: '5005101370' }])
+  })
+
   it('does not reconcile persisted part-time jobs when part-time is not selected', () => {
     const externalData: ExternalData = {
       income: {
@@ -284,6 +305,27 @@ describe('buildCreateIncomesRequest', () => {
       expect(
         buildCreateIncomesRequest(answers, externalData).irregularJobs,
       ).toEqual([{ id: persistedId, deleted: true }])
+    })
+
+    it('carries employerSSN through irregular delete markers when the persisted job has one', () => {
+      const persistedId = 'persisted-irregular-id'
+      const answers: FormValue = {
+        typeOfIncome: [IncomeType.CASUAL_WORK],
+        registerCasualWork: [{ validationId: persistedId, isRemoved: true }],
+      }
+      const externalData: ExternalData = {
+        income: {
+          status: 'success',
+          date: new Date(),
+          data: {
+            irregularJobs: [{ id: persistedId, employerSSN: '0101302399' }],
+          },
+        },
+      }
+
+      expect(
+        buildCreateIncomesRequest(answers, externalData).irregularJobs,
+      ).toEqual([{ id: persistedId, deleted: true, employerSSN: '0101302399' }])
     })
 
     it('does not reconcile persisted irregular jobs when casual work is not selected', () => {

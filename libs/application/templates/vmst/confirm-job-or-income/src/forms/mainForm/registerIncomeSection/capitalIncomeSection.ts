@@ -21,7 +21,11 @@ import {
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { IncomeValidationRow } from '../../../utils/validateIncomes'
+import {
+  periodToByFrequency,
+  toRequiredNumber,
+  toRequiredString,
+} from '../../../utils/rowCoercions'
 
 const getCapitalIncomeDefaults = (application: Application) => {
   const payments =
@@ -48,16 +52,13 @@ const capitalIncomeValidationProps: IncomeValidationFieldProps = {
   messages: {
     fallbackErrorMessage: 'capitalIncomeValidationErrorMessage',
   },
-  rowToInput: (row: IncomeValidationRow) => {
-    const isOneTime = row.paymentFrequency === PaymentFrequency.ONE_TIME
-    return {
-      validationId: String(row.validationId ?? ''),
-      incomeTypeId: String(row.paymentType ?? ''),
-      estimatedIncome: Number(row.amountPerMonth ?? 0),
-      periodFrom: String(row.dateFrom ?? ''),
-      periodTo: isOneTime ? String(row.dateTo ?? '') : null,
-    }
-  },
+  rowToInput: (row) => ({
+    validationId: toRequiredString(row.validationId),
+    incomeTypeId: toRequiredString(row.paymentType),
+    estimatedIncome: toRequiredNumber(row.amountPerMonth),
+    periodFrom: toRequiredString(row.dateFrom),
+    periodTo: periodToByFrequency(row),
+  }),
 }
 
 export const capitalIncomeSection = buildSubSection({

@@ -16,7 +16,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { getHistoryLogMessage } from '../utils/getHistoryLogMessage'
 import {
   CanReportWorkApi,
   PensionFundsApi,
@@ -90,7 +89,7 @@ const ConfirmJobOrIncomeTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                logMessage: getHistoryLogMessage,
+                logMessage: applicationMessages.historyLogSubmitted,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],

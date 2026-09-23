@@ -21,7 +21,12 @@ import {
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { IncomeValidationRow } from '../../../utils/validateIncomes'
+import {
+  periodToByFrequency,
+  toOptionalString,
+  toRequiredNumber,
+  toRequiredString,
+} from '../../../utils/rowCoercions'
 
 const getPensionDefaults = (application: Application) => {
   const payments =
@@ -38,7 +43,6 @@ const getPensionDefaults = (application: Application) => {
       payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
     dateFrom: payment.periodFrom ?? '',
     dateTo: payment.periodTo ?? '',
-    paymentFrequency: 'monthly', // TODO COMMENT
   }))
 }
 
@@ -50,17 +54,14 @@ const pensionValidationProps: IncomeValidationFieldProps = {
   messages: {
     fallbackErrorMessage: 'pensionValidationErrorMessage',
   },
-  rowToInput: (row: IncomeValidationRow) => {
-    const isOneTime = row.paymentFrequency === PaymentFrequency.ONE_TIME
-    return {
-      validationId: String(row.validationId ?? ''),
-      incomeTypeId: String(row.pensionType ?? ''),
-      pensionFundId: row.pensionFund ? String(row.pensionFund) : undefined,
-      estimatedIncome: Number(row.amountPerMonth ?? 0),
-      periodFrom: String(row.dateFrom ?? ''),
-      periodTo: isOneTime ? String(row.dateTo ?? '') : null,
-    }
-  },
+  rowToInput: (row) => ({
+    validationId: toRequiredString(row.validationId),
+    incomeTypeId: toRequiredString(row.pensionType),
+    pensionFundId: toOptionalString(row.pensionFund),
+    estimatedIncome: toRequiredNumber(row.amountPerMonth),
+    periodFrom: toRequiredString(row.dateFrom),
+    periodTo: periodToByFrequency(row),
+  }),
 }
 
 export const pensionSection = buildSubSection({

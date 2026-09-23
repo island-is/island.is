@@ -5,6 +5,8 @@ export { errorMessages } from './lib/messages'
 export {
   reconcile,
   splitEntries,
+  buildEmployerSSNDelete,
+  type BuildDelete,
   type ReconcileDelete,
   type ReconcileEntry,
 } from './utils/reconcile'

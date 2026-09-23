@@ -82,7 +82,7 @@ type IncomeValidationResult = {
   }> | null
 }
 
-export type PathAndValue = { path: string; value: string }
+type PathAndValue = { path: string; value: string }
 
 // Per-section i18n key for the network-error fallback body; the title, errors
 // heading, and per-row error line format are shared across every income type.
@@ -90,13 +90,24 @@ export type IncomeValidationMessages = {
   fallbackErrorMessage: keyof typeof errorMessages
 }
 
+// Structured alert content so the caller can render a real bullet list for the
+// grouped row-level errors and a plain message for the network-error fallback.
+export type IncomeValidationAlert =
+  | { kind: 'lines'; title: string; lines: string[] }
+  | { kind: 'message'; title: string; message: string }
+
 // Runs the shared income validation query and returns the row-level updates
-// (disabled flags) plus the section-level alert strings the component renders
+// (disabled flags) plus the section-level alert content the component renders
 // locally.
+//
+// Disabled paths are indexed against `rawRows` (the full answers array,
+// including `isRemoved` items) so they land on the correct positions inside
+// react-hook-form. Line numbers in the grouped error lines reference the
+// user-visible subset only.
 export const validateIncomes = async <TRow extends IncomeValidationRow>(args: {
   apolloClient: ApolloClient<object>
   fieldId: string
-  rows: TRow[]
+  rawRows: TRow[]
   input: IncomeValidationInput
   formatMessage: FormatMessage
   locale: Locale
@@ -104,18 +115,19 @@ export const validateIncomes = async <TRow extends IncomeValidationRow>(args: {
 }): Promise<{
   isValid: boolean
   pathItems: PathAndValue[]
-  alertTitle: string
-  alertMessage: string
+  alert: IncomeValidationAlert | null
 }> => {
   const {
     apolloClient,
     fieldId,
-    rows,
+    rawRows,
     input,
     formatMessage,
     locale,
     messages,
   } = args
+
+  const visibleRows = rawRows.filter((row) => !row.isRemoved)
 
   try {
     const { data } = await apolloClient.query<
@@ -130,14 +142,22 @@ export const validateIncomes = async <TRow extends IncomeValidationRow>(args: {
     const result = data.vmstApplicationsValidateIncomes
     const invalidIds = new Set(result?.invalidValidationIds ?? [])
 
-    const pathItems: PathAndValue[] = rows.map((row, index) => ({
-      path: `${fieldId}[${index}].disabled`,
-      value:
-        row.validationId && invalidIds.has(row.validationId) ? 'true' : 'false',
-    }))
+    const pathItems: PathAndValue[] = rawRows.flatMap((row, index) =>
+      row.isRemoved
+        ? []
+        : [
+            {
+              path: `${fieldId}[${index}].disabled`,
+              value:
+                row.validationId && invalidIds.has(row.validationId)
+                  ? 'true'
+                  : 'false',
+            },
+          ],
+    )
 
     const lineByValidationId = new Map(
-      rows.map((row, index) => [row.validationId, index + 1]),
+      visibleRows.map((row, index) => [row.validationId, index + 1]),
     )
     const linesByReason = new Map<string, number[]>()
     for (const error of result?.errors ?? []) {
@@ -150,35 +170,40 @@ export const validateIncomes = async <TRow extends IncomeValidationRow>(args: {
       linesByReason.set(reason, lines)
     }
 
-    const errorList = Array.from(linesByReason.entries())
+    const errorLines = Array.from(linesByReason.entries())
       .sort(([, a], [, b]) => Math.min(...a) - Math.min(...b))
       .map(([reason, lines]) => {
         const sortedLines = [...lines].sort((a, b) => a - b)
-        return `- ${formatMessage(errorMessages.incomeValidationErrorLine, {
+        return formatMessage(errorMessages.incomeValidationErrorLine, {
           count: sortedLines.length,
           lines: sortedLines.join(', '),
           reason,
-        })}`
+        })
       })
-      .join('\n')
 
     const isValid = result?.isValid ?? false
 
     return {
       isValid,
       pathItems,
-      alertTitle:
-        isValid || !errorList
-          ? ''
-          : formatMessage(errorMessages.incomeValidationErrorsHeading),
-      alertMessage: isValid ? '' : errorList,
+      alert:
+        isValid || !errorLines.length
+          ? null
+          : {
+              kind: 'lines',
+              title: formatMessage(errorMessages.incomeValidationErrorsHeading),
+              lines: errorLines,
+            },
     }
   } catch {
     return {
       isValid: false,
       pathItems: [],
-      alertTitle: formatMessage(errorMessages.incomeValidationErrorTitle),
-      alertMessage: formatMessage(errorMessages[messages.fallbackErrorMessage]),
+      alert: {
+        kind: 'message',
+        title: formatMessage(errorMessages.incomeValidationErrorTitle),
+        message: formatMessage(errorMessages[messages.fallbackErrorMessage]),
+      },
     }
   }
 }

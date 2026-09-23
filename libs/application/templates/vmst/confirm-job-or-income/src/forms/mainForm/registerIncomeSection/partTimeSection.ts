@@ -18,7 +18,13 @@ import {
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { IncomeValidationRow } from '../../../utils/validateIncomes'
+import { buildEmployerSSNDelete } from '../../../utils/reconcile'
+import {
+  getCompanyNationalId,
+  toOptionalNumber,
+  toOptionalString,
+  toRequiredString,
+} from '../../../utils/rowCoercions'
 
 const getPartTimeDefaults = (application: Application) => {
   const jobs =
@@ -49,22 +55,15 @@ const partTimeValidationProps: IncomeValidationFieldProps = {
   messages: {
     fallbackErrorMessage: 'partTimeValidationErrorMessage',
   },
-  rowToInput: (row: IncomeValidationRow) => {
-    const nationalId =
-      typeof row.company === 'object' && row.company !== null
-        ? (row.company as { nationalId?: string }).nationalId
-        : undefined
-    return {
-      validationId: String(row.validationId ?? ''),
-      employerSSN: nationalId ? nationalId.replace(/-/g, '') : undefined,
-      periodFrom: String(row.jobStart ?? ''),
-      periodTo: String(row.jobEnd ?? '') || undefined,
-      ratio: row.workPercentage ? Number(row.workPercentage) : undefined,
-      estimatedIncome: row.estimatedIncome
-        ? Number(row.estimatedIncome)
-        : undefined,
-    }
-  },
+  buildDelete: buildEmployerSSNDelete,
+  rowToInput: (row) => ({
+    validationId: toRequiredString(row.validationId),
+    employerSSN: getCompanyNationalId(row),
+    periodFrom: toRequiredString(row.jobStart),
+    periodTo: toOptionalString(row.jobEnd),
+    ratio: toOptionalNumber(row.workPercentage),
+    estimatedIncome: toOptionalNumber(row.estimatedIncome),
+  }),
 }
 
 export const partTimeSection = buildSubSection({

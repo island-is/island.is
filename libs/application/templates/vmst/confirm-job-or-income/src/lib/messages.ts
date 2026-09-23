@@ -281,12 +281,12 @@ export const application = defineMessages({
   },
   tableHeaderDateFrom: {
     id: 'vmst.cjoi.application:tableHeaderDateFrom',
-    defaultMessage: 'Dagsetning frá',
+    defaultMessage: 'Dag. frá',
     description: 'Table header for date from',
   },
   tableHeaderDateTo: {
     id: 'vmst.cjoi.application:tableHeaderDateTo',
-    defaultMessage: 'Dagsetning til',
+    defaultMessage: 'Dags. til',
     description: 'Table header for date to',
   },
   tableHeaderWorkshiftPeriod: {
@@ -500,12 +500,6 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:historyLogSubmitted',
     defaultMessage: 'Tilkynning móttekin',
     description: 'History log message when application is submitted',
-  },
-  historyLogReceivedForPeriod: {
-    id: 'vmst.cjoi.application:historyLogReceivedForPeriod',
-    defaultMessage: 'Tilkynning móttekin fyrir tímabil: {dateFrom} - {dateTo}',
-    description:
-      'History log message with period dates when application is submitted',
   },
   /* Completed form */
   completedFormMultiFieldTitle: {

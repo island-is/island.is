@@ -130,7 +130,7 @@ export class VMSTApplicationsService {
       galdurExternalDomainRequestsIncomeCreateIncomesRequest: {
         irregularJobs: input.irregularJobs?.map((job) =>
           job.deleted
-            ? { id: job.id, deleted: true }
+            ? { id: job.id, deleted: true, employerSSN: job.employerSSN }
             : {
                 referenceId: job.validationId,
                 employerSSN: job.employerSSN,

@@ -1,8 +1,38 @@
 export type ReconcileEntry = Record<string, unknown> & { isRemoved?: boolean }
 
-export type ReconcileDelete = { id: string; deleted: true }
+// Delete marker always carries `id` + `deleted: true`; some Galdur endpoints
+// also require a couple of persisted fields (e.g. employerSSN on partTime /
+// irregular jobs) so we allow extras.
+export type ReconcileDelete = {
+  id: string
+  deleted: true
+  [key: string]: unknown
+}
 
 type PersistedRecord = { id?: string }
+
+export type BuildDelete<TPersisted extends PersistedRecord> = (
+  persisted: TPersisted,
+) => ReconcileDelete
+
+const defaultBuildDelete = <TPersisted extends PersistedRecord>(
+  persisted: TPersisted,
+): ReconcileDelete => ({
+  id: persisted.id ?? '',
+  deleted: true,
+})
+
+// Convenience: emit a delete marker that carries `employerSSN` alongside the
+// id, matching the Galdur invariant for partTime and irregular jobs.
+export const buildEmployerSSNDelete = <
+  T extends PersistedRecord & { employerSSN?: string },
+>(
+  persisted: T,
+): ReconcileDelete => ({
+  id: persisted.id ?? '',
+  deleted: true,
+  employerSSN: persisted.employerSSN,
+})
 
 const filterActive = (entries: ReconcileEntry[]): ReconcileEntry[] =>
   entries.filter((entry) => !entry.isRemoved)
@@ -26,6 +56,7 @@ export const splitEntries = <
   entries: TEntry[],
   persistedRecords: TPersisted[],
   idKey = 'validationId',
+  buildDelete: BuildDelete<TPersisted> = defaultBuildDelete,
 ): { creates: TEntry[]; deletes: ReconcileDelete[] } => {
   const activeEntries = filterActive(entries) as TEntry[]
 
@@ -45,9 +76,7 @@ export const splitEntries = <
   })
 
   const deletes = persistedRecords.flatMap<ReconcileDelete>((record) =>
-    record.id && !retainedIds.has(record.id)
-      ? [{ id: record.id, deleted: true }]
-      : [],
+    record.id && !retainedIds.has(record.id) ? [buildDelete(record)] : [],
   )
 
   return { creates, deletes }
@@ -64,7 +93,13 @@ export const reconcile = <
   persistedRecords: TPersisted[],
   buildCreate: (entry: TEntry) => TCreate,
   idKey = 'validationId',
+  buildDelete?: BuildDelete<TPersisted>,
 ): Array<TCreate | ReconcileDelete> => {
-  const { creates, deletes } = splitEntries(entries, persistedRecords, idKey)
+  const { creates, deletes } = splitEntries(
+    entries,
+    persistedRecords,
+    idKey,
+    buildDelete,
+  )
   return [...creates.map(buildCreate), ...deletes]
 }

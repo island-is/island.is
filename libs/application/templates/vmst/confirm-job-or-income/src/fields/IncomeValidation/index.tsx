@@ -2,20 +2,28 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { useApolloClient } from '@apollo/client/react'
 import { useLocale } from '@island.is/localization'
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+} from '@island.is/island-ui/core'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { uuid } from 'uuidv4'
 import {
+  IncomeValidationAlert,
   IncomeValidationInput,
   IncomeValidationMessages,
   IncomeValidationRow,
   validateIncomes,
 } from '../../utils/validateIncomes'
-import { splitEntries } from '../../utils/reconcile'
+import { BuildDelete, splitEntries } from '../../utils/reconcile'
 
 // Which array in IncomeValidationInput the mapped rows should be placed under.
 type IncomeTypeKey = keyof IncomeValidationInput
+
+type PersistedRecord = Record<string, unknown> & { id?: string }
 
 export type IncomeValidationFieldProps = {
   fieldId: string
@@ -27,6 +35,9 @@ export type IncomeValidationFieldProps = {
   ) => NonNullable<IncomeValidationInput[IncomeTypeKey]>[number]
   messages: IncomeValidationMessages
   callbackId: string
+  // Optional per-type delete marker builder; Galdur requires employerSSN for
+  // partTime / irregular deletes, other types pass a bare { id, deleted: true }.
+  buildDelete?: BuildDelete<PersistedRecord>
 }
 
 // Injected via buildCustomField's second argument; intersected with FieldBaseProps
@@ -35,9 +46,7 @@ type IncomeValidationComponentProps = FieldBaseProps & {
   field: { props: IncomeValidationFieldProps }
 }
 
-type PersistedRecord = { id?: string }
-
-type AlertState = { title: string; message: string } | null
+type AlertState = IncomeValidationAlert | null
 
 export const IncomeValidation: FC<
   React.PropsWithChildren<IncomeValidationComponentProps>
@@ -58,6 +67,7 @@ export const IncomeValidation: FC<
     rowToInput,
     messages,
     callbackId,
+    buildDelete,
   } = field.props
 
   useEffect(() => {
@@ -94,6 +104,7 @@ export const IncomeValidation: FC<
             rowsWithValidationIds,
             persisted,
             'validationId',
+            buildDelete,
           )
 
           if (!creates.length && !deletes.length) {
@@ -105,27 +116,18 @@ export const IncomeValidation: FC<
             [incomeTypeKey]: [...creates.map(rowToInput), ...deletes],
           }
 
-          const visibleRowsWithIds = rowsWithValidationIds.filter(
-            (row) => !row.isRemoved,
-          )
-
-          const { pathItems, isValid, alertTitle, alertMessage } =
-            await validateIncomes({
-              apolloClient,
-              fieldId,
-              rows: visibleRowsWithIds,
-              input,
-              formatMessage,
-              locale: lang,
-              messages,
-            })
+          const { pathItems, isValid, alert } = await validateIncomes({
+            apolloClient,
+            fieldId,
+            rawRows: rowsWithValidationIds,
+            input,
+            formatMessage,
+            locale: lang,
+            messages,
+          })
 
           pathItems.forEach(({ path, value }) => setValue(path, value))
-          setAlert(
-            alertTitle || alertMessage
-              ? { title: alertTitle, message: alertMessage }
-              : null,
-          )
+          setAlert(alert)
 
           return isValid ? [true, null] : [false, '']
         })()
@@ -138,9 +140,13 @@ export const IncomeValidation: FC<
       },
       { allowMultiple: true, customCallbackId: callbackId },
     )
+    // rowToInput/messages/buildDelete are section-scoped const references, so
+    // their identity is stable and the effect re-runs only when the actual
+    // configuration changes (never in practice while the section is mounted).
   }, [
     apolloClient,
     application.externalData,
+    buildDelete,
     callbackId,
     fieldId,
     formatMessage,
@@ -161,7 +167,19 @@ export const IncomeValidation: FC<
       <AlertMessage
         type="warning"
         title={alert.title}
-        message={alert.message}
+        message={
+          alert.kind === 'lines' ? (
+            <Box marginTop={1}>
+              <BulletList space={1}>
+                {alert.lines.map((line, index) => (
+                  <Bullet key={index}>{line}</Bullet>
+                ))}
+              </BulletList>
+            </Box>
+          ) : (
+            alert.message
+          )
+        }
       />
     </Box>
   )

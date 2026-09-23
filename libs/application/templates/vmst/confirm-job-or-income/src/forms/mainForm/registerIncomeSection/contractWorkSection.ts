@@ -17,7 +17,7 @@ import {
 } from '../../../utils/date'
 import { formatIsDateLong } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { IncomeValidationRow } from '../../../utils/validateIncomes'
+import { toOptionalString, toRequiredString } from '../../../utils/rowCoercions'
 
 const getContractWorkDefaults = (application: Application) => {
   const jobs =
@@ -41,10 +41,10 @@ const contractWorkValidationProps: IncomeValidationFieldProps = {
   messages: {
     fallbackErrorMessage: 'contractWorkValidationErrorMessage',
   },
-  rowToInput: (row: IncomeValidationRow) => ({
-    validationId: String(row.validationId ?? ''),
-    periodFrom: String(row.contractJobStart ?? ''),
-    periodTo: String(row.workEnds ?? '') || undefined,
+  rowToInput: (row) => ({
+    validationId: toRequiredString(row.validationId),
+    periodFrom: toRequiredString(row.contractJobStart),
+    periodTo: toOptionalString(row.workEnds),
   }),
 }
 

@@ -15,7 +15,10 @@ import {
   GaldurExternalDomainRequestsIncomeCreatePensionPaymentRequest,
   GaldurExternalDomainRequestsIncomeCreateTRPaymentRequest,
 } from '@island.is/clients/vmst-unemployment'
-import { reconcile } from '@island.is/application/templates/vmst/confirm-job-or-income'
+import {
+  buildEmployerSSNDelete,
+  reconcile,
+} from '@island.is/application/templates/vmst/confirm-job-or-income'
 import { IncomeType } from './confirm-job-or-income.types'
 
 type Entry = Record<string, unknown> & {
@@ -65,6 +68,8 @@ const buildIrregularJobs = (
       'income.data.irregularJobs',
     ),
     buildIrregularJob,
+    'validationId',
+    buildEmployerSSNDelete,
   )
 
 const buildPartTimeJob = (entry: Entry) => ({
@@ -78,43 +83,17 @@ const buildPartTimeJob = (entry: Entry) => ({
 const buildPartTimeJobs = (
   answers: FormValue,
   externalData: ExternalData,
-): GaldurExternalDomainRequestsIncomeCreatePartTimeJobRequest[] => {
-  const entries = getEntries(answers, 'registerPartTime')
-  const persistedJobs =
-    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
+): GaldurExternalDomainRequestsIncomeCreatePartTimeJobRequest[] =>
+  reconcile(
+    getEntries(answers, 'registerPartTime'),
+    getPersisted<GaldurExternalDomainModelsIncomePartTimeJobDTO>(
       externalData,
       'income.data.partTimeJobs',
-      [],
-    ) ?? []
-  const persistedIds = new Set(
-    persistedJobs.flatMap((job) => (job.id ? [job.id] : [])),
+    ),
+    buildPartTimeJob,
+    'validationId',
+    buildEmployerSSNDelete,
   )
-  const retainedIds = new Set(
-    entries.flatMap((entry) => {
-      const validationId = entry.validationId
-      return typeof validationId === 'string' && persistedIds.has(validationId)
-        ? [validationId]
-        : []
-    }),
-  )
-
-  const newJobs = entries
-    .filter((entry) => {
-      const validationId = entry.validationId
-      return !(
-        typeof validationId === 'string' && persistedIds.has(validationId)
-      )
-    })
-    .map(buildPartTimeJob)
-
-  const deletedJobs = persistedJobs.flatMap((job) =>
-    job.id && !retainedIds.has(job.id)
-      ? [{ id: job.id, deleted: true, employerSSN: job.employerSSN }]
-      : [],
-  )
-
-  return [...newJobs, ...deletedJobs]
-}
 
 const buildContractorJob = (entry: Entry) => ({
   periodFrom: toDate(entry.contractJobStart),

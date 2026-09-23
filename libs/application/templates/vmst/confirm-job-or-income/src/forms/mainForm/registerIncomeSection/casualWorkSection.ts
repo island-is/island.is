@@ -17,7 +17,13 @@ import {
 } from '../../../utils/date'
 import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { IncomeValidationRow } from '../../../utils/validateIncomes'
+import { buildEmployerSSNDelete } from '../../../utils/reconcile'
+import {
+  getCompanyNationalId,
+  toOptionalString,
+  toRequiredNumber,
+  toRequiredString,
+} from '../../../utils/rowCoercions'
 
 type WorkshiftPeriod = {
   id?: string
@@ -54,23 +60,18 @@ const casualWorkValidationProps: IncomeValidationFieldProps = {
   messages: {
     fallbackErrorMessage: 'casualWorkValidationErrorMessage',
   },
-  rowToInput: (row: IncomeValidationRow) => {
-    const nationalId =
-      typeof row.company === 'object' && row.company !== null
-        ? (row.company as { nationalId?: string }).nationalId
-        : undefined
-    return {
-      validationId: String(row.validationId ?? ''),
-      employerSSN: nationalId ? nationalId.replace(/-/g, '') : undefined,
-      periodFrom: String(row.dateFrom ?? ''),
-      periodTo: String(row.dateTo ?? '') || undefined,
-      estimatedIncome: Number(row.estimatedIncome ?? 0),
-      workShiftPeriodIds:
-        typeof row.workshiftPeriod === 'string' && row.workshiftPeriod
-          ? [row.workshiftPeriod]
-          : undefined,
-    }
-  },
+  buildDelete: buildEmployerSSNDelete,
+  rowToInput: (row) => ({
+    validationId: toRequiredString(row.validationId),
+    employerSSN: getCompanyNationalId(row),
+    periodFrom: toRequiredString(row.dateFrom),
+    periodTo: toOptionalString(row.dateTo),
+    estimatedIncome: toRequiredNumber(row.estimatedIncome),
+    workShiftPeriodIds:
+      typeof row.workshiftPeriod === 'string' && row.workshiftPeriod
+        ? [row.workshiftPeriod]
+        : undefined,
+  }),
 }
 
 export const casualWorkSection = buildSubSection({
