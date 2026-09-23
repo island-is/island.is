@@ -49,7 +49,7 @@ import {
   reportContractDiagnostics,
 } from '../utils/diagnostics'
 import { formatOutputValue } from '../utils/format'
-import { type OutputValues,toOutputValues } from '../utils/outputValues'
+import { type OutputValues, toOutputValues } from '../utils/outputValues'
 import { toInputFieldValues } from '../utils/serialize'
 import { CALCULATOR_MESSAGES, localized } from '../utils/text'
 import { CalculatorResults, collectVisibleSections } from './CalculatorResults'
