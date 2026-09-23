@@ -24,7 +24,9 @@ export const hasMetadataValidationError = (
 
   if (
     (config.inputSections ?? []).some((section) =>
-      section.fields.some((field) => field.key && !inputContract.has(field.key)),
+      section.fields.some(
+        (field) => field.key && !inputContract.has(field.key),
+      ),
     )
   ) {
     return true

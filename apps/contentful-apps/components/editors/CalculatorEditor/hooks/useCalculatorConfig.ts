@@ -20,10 +20,7 @@ import {
 
 import type { OutputContractItemField } from '../contract'
 import { resolveIssuePath, type RowIdentity } from '../issueIdentity'
-import type {
-  InputSectionActions,
-  OutputSectionActions,
-} from '../types'
+import type { InputSectionActions, OutputSectionActions } from '../types'
 import {
   createEmptyConfig,
   emptyOutputTotal,

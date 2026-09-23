@@ -1,10 +1,7 @@
 import { calculatorConfigSchema } from '@island.is/tax-calculators'
 
 import { resolveIssuePath } from './issueIdentity'
-import {
-  filterConfigForPersistence,
-  OUTPUT_TOTAL_SECTION_KEY,
-} from './utils'
+import { filterConfigForPersistence, OUTPUT_TOTAL_SECTION_KEY } from './utils'
 
 const outputTotal = (extra = {}) => ({
   uid: 'hero',

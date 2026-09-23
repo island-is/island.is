@@ -40,7 +40,7 @@ export interface OutputContractField {
 export type InputFieldContract = Map<string, InputContractField>
 export type OutputFieldContract = Map<string, OutputContractField>
 
-const orUndefined = <T,>(value: T | null | undefined): T | undefined =>
+const orUndefined = <T>(value: T | null | undefined): T | undefined =>
   value ?? undefined
 
 const normalizeDependency = (dependsOn: RawInputField['dependsOn']) => {

@@ -61,7 +61,9 @@ export const EmptyDropZone = ({ id, label }: { id: string; label: string }) => {
   return (
     <div
       ref={setNodeRef}
-      className={`${styles.emptyDropZone[isOver ? 'active' : 'idle']} ${styles.emptyDropZoneContent}`}
+      className={`${styles.emptyDropZone[isOver ? 'active' : 'idle']} ${
+        styles.emptyDropZoneContent
+      }`}
     >
       <Text fontColor="gray500" fontSize="fontSizeS">
         {label}
