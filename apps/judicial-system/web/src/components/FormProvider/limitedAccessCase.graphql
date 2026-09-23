@@ -49,6 +49,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
     }
     caseFiles {
@@ -69,6 +70,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defendantId
       civilClaimantId
       rulingFileId
+      isPronouncedOrally
       hasBeenAppealed
       canBeAppealed
       appealDeadline
@@ -93,6 +95,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -166,8 +173,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isCustodyIsolation
     isolationToDate
     conclusion
-    accusedPostponedAppealDate
-    prosecutorPostponedAppealDate
     rulingDate
     rulingSignatureDate
     reopenReason
@@ -203,8 +208,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseModifiedExplanation
     rulingModifiedHistory
     caseResentExplanation
-    accusedAppealDecision
-    prosecutorAppealDecision
     isAppealDeadlineExpired
     canBeAppealed
     canDefenderAppeal
@@ -213,7 +216,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealCase {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
       appealedDate
       statementDeadline
@@ -250,12 +254,31 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingDecision
       appealConclusion
       appealRulingModifiedHistory
+      rulingFileId
+    }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
     }
     rulingOrderAppealCases {
       id
       appealState
-      appealedByNationalId
+      appealedByDefendantId
+      appealedByCivilClaimantId
       appealedByRole
+      appealedInCourt
       appealedDate
       statementDeadline
       isStatementDeadlineExpired
@@ -297,6 +320,16 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealIsolationToDate
       rulingFileId
     }
+    appealDecisions {
+      id
+      rulingFileId
+      partyRole
+      defendantId
+      civilClaimantId
+      decision
+      announcement
+      withdrawnDate
+    }
     notifications {
       id
       created
@@ -330,6 +363,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     mergeCase {
       id
       courtCaseNumber
+      type
+      defendants {
+        id
+        defenderNationalId
+        isDefenderChoiceConfirmed
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
+      }
     }
     indictmentCounts {
       id
@@ -365,24 +410,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
+        mergedFromCaseId
         name
         caseFileId
         generatedPdfUri
         submittedBy
-      }
-      mergedFiledDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedCourtSessionId
-        mergedDocumentOrder
-        name
-        caseFileId
-        generatedPdfUri
       }
       courtSessionStrings {
         id
@@ -402,33 +434,15 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       withCourtSessions
       defendants {
         id
-        noNationalId
-        nationalId
-        name
-        gender
-        address
-        citizenship
-        defenderName
         defenderNationalId
-        defenderEmail
-        defenderPhoneNumber
-        defenderChoice
-        defendantPlea
-        requestedDefenderChoice
-        requestedDefenderNationalId
-        requestedDefenderName
         isDefenderChoiceConfirmed
-        caseFilesSharedWithDefender
-        verdictAppealDeadline
-        isVerdictAppealDeadlineExpired
-        subpoenaType
         isSentToPrisonAdmin
-        isRegisteredInPrisonSystem
+        policeCaseNumbers
+        indictmentCancelledOrDismissedState {
+          type
+          time
+        }
         sentToPrisonAdminDate
-        openedByPrisonAdminDate
-        punishmentType
-        isAlternativeService
-        alternativeServiceDescription
         subpoenas {
           id
           created
@@ -441,6 +455,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           defendantId
           policeSubpoenaId
         }
+      }
+      civilClaimants {
+        id
+        hasSpokesperson
+        spokespersonNationalId
+        isSpokespersonConfirmed
       }
       courtSessions {
         id
@@ -456,24 +476,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
+          mergedFromCaseId
           name
           caseFileId
           generatedPdfUri
           submittedBy
-        }
-        mergedFiledDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedCourtSessionId
-          mergedDocumentOrder
-          name
-          caseFileId
-          generatedPdfUri
         }
         courtSessionStrings {
           id
@@ -500,6 +507,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         rulingFileId
+        isPronouncedOrally
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -518,8 +526,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       rulingOrderAppealCases {
         id
         appealState
-        appealedByNationalId
+        appealedByDefendantId
+        appealedByCivilClaimantId
         appealedByRole
+        appealedInCourt
         appealedDate
         statementDeadline
         isStatementDeadlineExpired

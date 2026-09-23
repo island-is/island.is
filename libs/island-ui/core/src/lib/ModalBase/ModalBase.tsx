@@ -6,9 +6,9 @@ import React, {
   useLayoutEffect,
   ReactElement,
   useEffect,
+  useRef,
 } from 'react'
 import cn from 'classnames'
-import { useUpdateEffect } from 'react-use'
 import {
   useDialogState,
   Dialog as BaseDialog,
@@ -151,21 +151,28 @@ export const ModalBase: FC<ModalBaseProps> = ({
     }
   }, [isVisible])
 
-  useUpdateEffect(() => {
-    onVisibilityChange && onVisibilityChange(modal.visible)
-  }, [modal.visible])
+  const prevVisible = useRef(modal.visible)
+  useEffect(() => {
+    if (prevVisible.current !== modal.visible) {
+      prevVisible.current = modal.visible
+      onVisibilityChange && onVisibilityChange(modal.visible)
+    }
+  }, [modal.visible, onVisibilityChange])
 
   const renderModal = !removeOnClose || (removeOnClose && modal.visible)
 
   return (
     <>
       {disclosure && (
-        <DialogDisclosure {...modal} {...disclosure.props}>
-          {(disclosureProps: DisclosureProps) =>
-            renderDisclosure(
-              React.cloneElement(disclosure, disclosureProps),
-              disclosureProps,
-            )
+        // reakit's types don't model this disclosure render-prop pattern; the
+        // `as any` casts keep it compiling. Remove when this migrates to ariakit.
+        <DialogDisclosure {...modal} {...(disclosure.props as any)}>
+          {
+            ((disclosureProps: DisclosureProps) =>
+              renderDisclosure(
+                React.cloneElement(disclosure, disclosureProps),
+                disclosureProps,
+              )) as any
           }
         </DialogDisclosure>
       )}

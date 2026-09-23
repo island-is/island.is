@@ -10,6 +10,7 @@ query GetQuestionnaires($locale: String!) {
       lastSubmissionId
       organization
       department
+      senderGroupName
     }
   }
 }
@@ -27,7 +28,9 @@ query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
       lastSubmitted
       organization
       department
+      senderGroupName
     }
+    sender
     expirationDate
     canSubmit
     submissions {

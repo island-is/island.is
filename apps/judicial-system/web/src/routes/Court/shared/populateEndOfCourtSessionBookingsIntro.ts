@@ -1,9 +1,14 @@
 import { formatAppeal } from '@island.is/judicial-system/formatters'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
+  AppealDecisionPartyRole,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  caseLevelAppealAnnouncement,
+  caseLevelAppealDecision,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 export const populateEndOfCourtSessionBookingsIntro = (
   workingCase: Case,
@@ -39,17 +44,23 @@ export const populateEndOfCourtSessionBookingsIntro = (
   }
 
   // prosecutor appeal decision
+  const prosecutorAppealAnnouncement =
+    caseLevelAppealAnnouncement(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.PROSECUTOR,
+    ) ?? ''
   let prosecutorAppeal = formatAppeal(
-    workingCase.prosecutorAppealDecision,
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.PROSECUTOR,
+    ),
     'Sækjandi',
   )
 
   if (prosecutorAppeal) {
-    prosecutorAppeal = `${prosecutorAppeal} ${
-      workingCase.prosecutorAppealAnnouncement ?? ''
-    }`
+    prosecutorAppeal = `${prosecutorAppeal} ${prosecutorAppealAnnouncement}`
   } else {
-    prosecutorAppeal = workingCase.prosecutorAppealAnnouncement ?? ''
+    prosecutorAppeal = prosecutorAppealAnnouncement
   }
   if (prosecutorAppeal) {
     endOfSessionBookings.push(prosecutorAppeal, '\n\n')
@@ -59,17 +70,23 @@ export const populateEndOfCourtSessionBookingsIntro = (
   const hasMultipleDefendants =
     (workingCase.defendants && workingCase.defendants.length > 1) || false
 
+  const accusedAppealAnnouncement =
+    caseLevelAppealAnnouncement(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ) ?? ''
   let accusedAppeal = formatAppeal(
-    workingCase.accusedAppealDecision,
+    caseLevelAppealDecision(
+      workingCase.appealDecisions,
+      AppealDecisionPartyRole.DEFENDANT,
+    ),
     hasMultipleDefendants ? 'Varnaraðilar' : 'Varnaraðili',
   )
 
   if (accusedAppeal) {
-    accusedAppeal = `${accusedAppeal} ${
-      workingCase.accusedAppealAnnouncement ?? ''
-    }`
+    accusedAppeal = `${accusedAppeal} ${accusedAppealAnnouncement}`
   } else {
-    accusedAppeal = workingCase.accusedAppealAnnouncement ?? ''
+    accusedAppeal = accusedAppealAnnouncement
   }
   if (accusedAppeal) {
     endOfSessionBookings.push(accusedAppeal, '\n\n')

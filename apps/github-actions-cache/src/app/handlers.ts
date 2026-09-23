@@ -1,4 +1,11 @@
 import * as express from 'express'
+import {
+  CompleteMultipartUploadCommand,
+  CreateMultipartUploadCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+} from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import {
@@ -37,7 +44,9 @@ export const reserveCache = async (
     // Invalidate reservation after 300 seconds
     await cache.expire(cacheId, 300)
     logger.debug(`Creating multipartupload for ${cacheId}`)
-    const { UploadId } = await s3.createMultipartUpload(objectParams).promise()
+    const { UploadId } = await s3.send(
+      new CreateMultipartUploadCommand(objectParams),
+    )
     if (!UploadId) {
       throw new Error('No upload id received from createMultipartUpload')
     }
@@ -54,7 +63,7 @@ export const uploadChunk = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { cacheId } = req.params
+  const cacheId = req.params.cacheId as string
   logger.debug(`Uploading chunk for ${cacheId}`)
   const uploadId = await cache.getKey(cacheId, 'uploadId')
   if (!uploadId) {
@@ -100,7 +109,7 @@ export const commitCache = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const { cacheId } = req.params
+  const cacheId = req.params.cacheId as string
   logger.debug(`Finalizing cache upload for ${cacheId}`)
   const uploadInfo = await cache.getMap(cacheId)
   const uploadId = uploadInfo.uploadId
@@ -121,14 +130,14 @@ export const commitCache = async (
     Parts: uploadMap.map((item) => JSON.parse(item)),
   }
   logger.debug(`Completing multipartupload with map`, MultipartUpload)
-  await s3
-    .completeMultipartUpload({
+  await s3.send(
+    new CompleteMultipartUploadCommand({
       Bucket: bucket,
       Key: cacheId,
       MultipartUpload,
       UploadId: uploadId,
-    })
-    .promise()
+    }),
+  )
   cache.expire(cacheId, 1)
   res.sendStatus(200)
 }
@@ -150,15 +159,16 @@ export const retrieveCache = async (
     Key: cacheId,
   }
   try {
-    const h = await s3.headObject(objectParams).promise()
+    await s3.send(new HeadObjectCommand(objectParams))
   } catch (e) {
     return error(res, `Cache entry ${cacheId} not found!`, 404)
   }
   try {
-    const signedUrl = await s3.getSignedUrlPromise('getObject', {
-      ...objectParams,
-      Expires: 60,
-    })
+    const signedUrl = await getSignedUrl(
+      s3,
+      new GetObjectCommand(objectParams),
+      { expiresIn: 60 },
+    )
     logger.info(`Signed url: ${signedUrl}`)
     res.send({ archiveLocation: signedUrl, cacheKey: keys as string })
   } catch (e) {

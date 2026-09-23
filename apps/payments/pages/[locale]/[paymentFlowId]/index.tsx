@@ -253,6 +253,7 @@ function PaymentPage({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: {
+      cardholderName: '',
       card: '',
       cardExpiry: '',
       cardCVC: '',
@@ -381,13 +382,16 @@ function PaymentPage({
   )
 
   const paymentStatus = paymentFlow?.paymentStatus
-  const rawScaRedirectUrl =
-    liveBankTransfer?.scaRedirectUrl ?? paymentFlow?.bankTransferScaRedirectUrl
+  // Once a poll has reported, it replaces the SSR snapshot
+  const rawScaRedirectUrl = liveBankTransfer
+    ? liveBankTransfer.scaRedirectUrl
+    : paymentFlow?.bankTransferScaRedirectUrl
   const bankTransferScaRedirectUrl = isHttpsUrl(rawScaRedirectUrl)
     ? rawScaRedirectUrl ?? undefined
     : undefined
-  const bankTransferPendingStatus =
-    liveBankTransfer?.pendingStatus ?? paymentFlow?.bankTransferPendingStatus
+  const bankTransferPendingStatus = liveBankTransfer
+    ? liveBankTransfer.pendingStatus
+    : paymentFlow?.bankTransferPendingStatus
 
   const isPaid = paymentStatus === PaymentsGetFlowPaymentStatus.paid
   const isInvoicePending =

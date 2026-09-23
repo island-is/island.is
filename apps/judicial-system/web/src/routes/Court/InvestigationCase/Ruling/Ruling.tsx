@@ -37,7 +37,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icRuling as m } from './Ruling.strings'
@@ -126,7 +126,7 @@ const Ruling = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -335,14 +335,19 @@ const Ruling = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
-            )
-          }
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

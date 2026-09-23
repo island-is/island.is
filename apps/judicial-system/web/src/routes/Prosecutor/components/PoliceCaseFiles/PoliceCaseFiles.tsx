@@ -1,17 +1,18 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
+import type { Item } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
-  Item,
   SelectableList,
 } from '@island.is/judicial-system-web/src/components'
+import type { PoliceCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
   CaseType,
-  PoliceCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './PoliceCaseFiles.strings'

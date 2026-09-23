@@ -7,7 +7,11 @@ import {
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CommentsInput,
@@ -24,7 +28,7 @@ import {
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const PoliceReport = () => {
@@ -78,7 +82,7 @@ const PoliceReport = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icReportForm.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <BlueBox>
             <Text whiteSpace="preLine">{workingCase.demands}</Text>
@@ -126,7 +130,7 @@ const PoliceReport = () => {
             />
           </Box>
           <Box component="section">
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <Checkbox
                 name="request-prosecutor-only-session"
                 label={formatMessage(
@@ -171,13 +175,20 @@ const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

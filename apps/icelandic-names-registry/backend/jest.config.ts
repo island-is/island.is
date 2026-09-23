@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'icelandic-names-registry-backend',
   preset: './jest.preset.js',
   rootDir: '../../..',

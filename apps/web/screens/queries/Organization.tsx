@@ -31,6 +31,24 @@ export const GET_ORGANIZATIONS_QUERY = gql`
   }
 `
 
+// Lightweight organizations query used by the header nav to attach a logo
+// to each organizationPage menu link. Only `slug` + `logo.url` are needed —
+// deliberately kept narrow so the result (serialized into every page's
+// getProps payload via main.tsx) stays well under Next.js's 128 kB warning
+// threshold.
+export const GET_ORGANIZATION_LOGOS_QUERY = gql`
+  query GetOrganizationLogos($input: GetOrganizationsInput!) {
+    getOrganizations(input: $input) {
+      items {
+        slug
+        logo {
+          url
+        }
+      }
+    }
+  }
+`
+
 export const GET_ORGANIZATION_BY_TITLE_QUERY = gql`
   query GetOrganizationByTitle($input: GetOrganizationByTitleInput!) {
     getOrganizationByTitle(input: $input) {
@@ -206,6 +224,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         slug
         email
         phone
+        link
+        description
         trackingDomain
         canPagesBeFoundInSearchResults
         publishedMaterialSearchFilterGenericTags {

@@ -1,8 +1,13 @@
 import { getValueViaPath, NO } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import * as kennitala from 'kennitala'
+import { getAssigneeNationalIds } from './assigneeUtils'
 
-const normalizeNationalId = (id: string): string =>
+export const normalizeNationalId = (id: string): string =>
   kennitala.isValid(id) ? kennitala.sanitize(id) : id
 
 const normalizeNationalIdList = (ids: string[]): string[] =>
@@ -47,3 +52,26 @@ export const hasRejectedAssigneesInAnswers = (answers: FormValue): boolean =>
 
 export const hasRejectedAssignees = (application: Application): boolean =>
   getRejectedAssigneeNationalIds(application).length > 0
+
+export const hasAllAssigneesRejectedInAnswers = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  const application = { answers, externalData } as Application
+  const applicantId = normalizeNationalId(
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId') ??
+      application.applicant,
+  )
+
+  const assigneeIds = getAssigneeNationalIds(application)
+    .map(normalizeNationalId)
+    .filter((id) => id !== applicantId)
+
+  if (assigneeIds.length === 0) return false
+
+  const signed = (getValueViaPath<string[]>(answers, 'signedAssignees') ?? [])
+    .map(normalizeNationalId)
+    .filter((id) => id !== applicantId)
+
+  return signed.length === 0
+}

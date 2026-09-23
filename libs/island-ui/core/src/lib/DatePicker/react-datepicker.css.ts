@@ -872,3 +872,17 @@ globalStyle(
     borderRadius: '0.3rem',
   },
 )
+
+// react-datepicker 9 renders a visually-hidden span with the full day name
+// for screen readers next to each abbreviated day header.
+globalStyle(`${root} .react-datepicker__sr-only`, {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clipPath: 'inset(50%)',
+  whiteSpace: 'nowrap',
+  border: 0,
+})

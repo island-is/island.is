@@ -1,10 +1,4 @@
-import {
-  Outlet,
-  useNavigate,
-  useLocation,
-  matchPath,
-  useMatches,
-} from 'react-router-dom'
+import { Outlet, useNavigate, useLocation, useMatches } from 'react-router-dom'
 
 import { Stack } from '@island.is/island-ui/core'
 import { replaceParams } from '@island.is/react-spa/shared'
@@ -12,6 +6,7 @@ import { BackButton } from '@island.is/portals/admin/core'
 
 import { IDSAdminRouteHandle } from '../module'
 import { IDSAdminPaths } from '../lib/paths'
+import { decodeRouterPath } from '../utils/decodeRouterPath'
 import { DelegationProvidersProvider } from '../context/DelegationProviders/DelegationProvidersContext'
 
 const IDSAdmin = () => {
@@ -30,19 +25,18 @@ const IDSAdmin = () => {
       return
     }
 
+    // match.pathname is decoded (react-router 6.14+) while location.pathname
+    // keeps the raw encoding, so decode it the same way before comparing.
+    const strip = (pathname: string) => pathname.replace(/\/+$/, '')
+
     const backRouteMatch = matches.find(
       (match) =>
         Boolean((match.handle as IDSAdminRouteHandle)?.backPath) &&
-        matchPath(
-          {
-            path: location.pathname,
-            end: true,
-          },
-          match.pathname,
-        ),
+        strip(decodeRouterPath(location.pathname)) === strip(match.pathname),
     )
 
-    const backPath = (backRouteMatch?.handle as IDSAdminRouteHandle).backPath
+    const backPath = (backRouteMatch?.handle as IDSAdminRouteHandle | undefined)
+      ?.backPath
 
     if (backRouteMatch && backPath) {
       const backRoutePath = replaceParams({

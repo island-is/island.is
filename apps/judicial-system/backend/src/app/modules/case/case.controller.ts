@@ -34,6 +34,7 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
+  RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import {
   capitalize,
@@ -45,6 +46,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
+  CaseTransition,
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
@@ -63,7 +65,6 @@ import {
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
-  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
@@ -71,21 +72,24 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction, registerAfterCommit } from '../../middleware'
 import {
   CivilClaimantService,
   CurrentDefendant,
   DefendantExistsGuard,
 } from '../defendant'
 import { EventService } from '../event'
-import { Case, Defendant } from '../repository'
+import { AppealDecision, Case, Defendant } from '../repository'
 import { UpdateCase } from '../repository'
 import { UserService } from '../user'
+import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from './guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTransitionGuard } from './guards/caseTransition.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
@@ -109,11 +113,11 @@ import {
   CaseInterceptor,
   CasesInterceptor,
 } from './interceptors/case.interceptor'
-import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { CaseCloningService } from './caseCloning.service'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -122,6 +126,7 @@ import { PdfService } from './pdf.service'
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+    private readonly caseCloningService: CaseCloningService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
@@ -146,6 +151,74 @@ export class CaseController {
     if (institutionId && assignedUser.institutionId !== institutionId) {
       throw new ForbiddenException(
         `User ${assignedUserId} belongs to the wrong institution`,
+      )
+    }
+  }
+
+  private async validateIndictmentApprover(
+    approverId: string,
+    theCase: Case,
+    user: User,
+  ) {
+    const approver = await this.userService.findById(approverId)
+
+    if (!approver.active) {
+      throw new ForbiddenException(
+        `User ${approverId} is not an active prosecutor`,
+      )
+    }
+
+    if (approver.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(
+        `User ${approverId} does not have an acceptable role ${UserRole.PROSECUTOR}`,
+      )
+    }
+
+    if (approver.institutionId !== theCase.prosecutorsOfficeId) {
+      throw new ForbiddenException(
+        `User ${approverId} belongs to the wrong institution`,
+      )
+    }
+
+    if (approver.id === user.id) {
+      throw new ForbiddenException(
+        'Cannot assign yourself as indictment approver',
+      )
+    }
+
+    if (theCase.prosecutorId && approver.id === theCase.prosecutorId) {
+      throw new ForbiddenException(
+        'Cannot assign the case prosecutor as indictment approver',
+      )
+    }
+  }
+
+  private assertIndictmentWaitingForReviewUpdateAllowed(
+    theCase: Case,
+    update: UpdateCase,
+    user: User,
+  ) {
+    if (
+      !isIndictmentCase(theCase.type) ||
+      theCase.state !== CaseState.WAITING_FOR_REVIEW
+    ) {
+      return
+    }
+
+    const updatedFields = Object.keys(update).filter(
+      (key) => update[key as keyof UpdateCase] !== undefined,
+    )
+    const allowedFields =
+      user.id === theCase.indictmentApproverId
+        ? ['indictmentReviewReturnedExplanation']
+        : []
+    const disallowedFields = updatedFields.filter(
+      (field) => !allowedFields.includes(field),
+    )
+
+    if (disallowedFields.length > 0) {
+      throw new ForbiddenException(
+        'Cannot update an indictment case while it is waiting for review',
       )
     }
   }
@@ -195,6 +268,8 @@ export class CaseController {
     try {
       const update: UpdateCase = updateDto
 
+      this.assertIndictmentWaitingForReviewUpdateAllowed(theCase, update, user)
+
       // Make sure valid users are assigned to the case's roles
       if (update.prosecutorId) {
         await this.validateAssignedUser(
@@ -220,6 +295,14 @@ export class CaseController {
             UserRole.DISTRICT_COURT_ASSISTANT,
           ],
           theCase.courtId,
+        )
+      }
+
+      if (update.indictmentApproverId) {
+        await this.validateIndictmentApprover(
+          update.indictmentApproverId,
+          theCase,
+          user,
         )
       }
 
@@ -305,7 +388,54 @@ export class CaseController {
     }
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, CaseTransitionGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Patch('case/:caseId/appealDecision')
+  @ApiOkResponse({
+    type: AppealDecision,
+    description: 'Creates or updates a case-level party appeal decision',
+  })
+  upsertCaseAppealDecision(
+    @Param('caseId') caseId: string,
+    @Body() appealDecision: CaseAppealDecisionDto,
+    @CurrentCase() theCase: Case,
+  ): Promise<AppealDecision> {
+    this.logger.debug(`Upserting case-level appeal decision for case ${caseId}`)
+
+    return this.sequelize.transaction((transaction) =>
+      this.caseService.upsertCaseAppealDecision(
+        theCase,
+        appealDecision,
+        transaction,
+      ),
+    )
+  }
+
+  // CaseExistsForUpdateGuard has to come before RolesGuard, even though it is
+  // the guard that takes the write lock: prosecutorTransitionRule reads
+  // request.case and denies outright when it is missing, so RolesGuard cannot
+  // decide this route before the case has been read. Reordering those two
+  // rejects every prosecutor transition with a 403 - and no controller test
+  // catches it, because guards do not run in them.
+  //
+  // RouteRolesGuard is what keeps that from exposing the lock to everyone. It
+  // reads the same roles rules below, but decides on the user's role alone, so
+  // it needs no case and runs first: a caller in a role this route has no rule
+  // for is rejected before the locking read. What remains is a caller in a
+  // listed role transitioning a case they cannot write - CaseWriteGuard needs
+  // the case, so they still reach the read. That is a much smaller population
+  // than "any authenticated user".
+  @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseTransitionGuard,
+  )
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -327,37 +457,46 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
+    if (
+      transition.transition === CaseTransition.ASK_FOR_REVIEW &&
+      theCase.indictmentApproverId
+    ) {
+      await this.validateIndictmentApprover(
+        theCase.indictmentApproverId,
+        theCase,
+        user,
+      )
+    }
+
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the
+    // transition is decided against a row no one else can change.
     const update = transitionCase(transition.transition, theCase, user)
 
-    const updatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.update(
-        theCase,
-        update,
-        user,
-        transaction,
-        update.state !== CaseState.DELETED,
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const updatedCase = await this.caseService.update(
+      theCase,
+      update,
+      user,
+      transaction,
+      update.state !== CaseState.DELETED,
+    )
+
+    // The event asserts that the transition happened, so it waits for the
+    // commit - which TransactionCommitInterceptor does after this handler has
+    // returned. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
+    registerAfterCommit(() =>
+      this.eventService.postEvent(
+        transition.transition,
+        updatedCase ?? theCase,
       ),
     )
 
-    // No need to wait
-    this.eventService.postEvent(transition.transition, updatedCase ?? theCase)
-
     return updatedCase ?? theCase
-  }
-
-  @UseGuards(RolesGuard)
-  @RolesRules(defenderRule)
-  @UseInterceptors(CaseListInterceptor)
-  @Get('cases')
-  @ApiOkResponse({
-    type: Case,
-    isArray: true,
-    description: 'Gets all existing cases',
-  })
-  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
-    return this.caseService.getAll(user)
   }
 
   @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -1038,7 +1177,12 @@ export class CaseController {
     }
 
     const duplicatedCase = await this.sequelize.transaction((transaction) =>
-      this.caseService.duplicateIndictmentCase(theCase, user, transaction),
+      this.caseCloningService.duplicateIndictmentToDraft(theCase, {
+        transaction,
+        // The current prosecutor owns the new draft case
+        prosecutorId: user.id,
+        prosecutorsOfficeId: user.institution?.id,
+      }),
     )
 
     this.eventService.postEvent('DUPLICATE', duplicatedCase)
@@ -1046,9 +1190,21 @@ export class CaseController {
     return duplicatedCase
   }
 
+  // RolesGuard runs first here, ahead of the guard that takes the write lock.
+  // It can, because this route's three rules are bare user roles with no
+  // canActivate: none of them reads request.case, so the role decision needs
+  // nothing from the database and a caller this route has no rule for is
+  // turned away before any case row is locked. That is what RouteRolesGuard
+  // does for the transition route, whose rules do read the case - it would be
+  // a second reader of the same metadata here, deciding the same thing.
+  // splitRolesRules.spec.ts pins the assumption, so a rule that starts reading
+  // the case cannot silently reopen the exposure.
+  //
+  // CaseExistsForUpdateGuard reads the case under FOR UPDATE, and the three
+  // guards after it all decide from request.case, so they see the locked row.
   @UseGuards(
     RolesGuard,
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     DefendantExistsGuard,
@@ -1073,18 +1229,25 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Splitting defendant ${defendantId} from case ${caseId}`)
 
+    // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the count
+    // is decided against a row no one else can change. Without the lock two
+    // concurrent splits of a two-defendant case both count two, both proceed,
+    // and the case is left with no defendants at all.
     if (!theCase.defendants || theCase.defendants.length < 2) {
       throw new BadRequestException(
         'Cannot split defendant from case with less than two defendants',
       )
     }
 
-    return this.sequelize.transaction((transaction) =>
-      this.caseService.splitDefendantFromCase(
-        theCase,
-        theDefendant,
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.caseService.splitDefendantFromCase(
+      theCase,
+      theDefendant,
+      transaction,
     )
   }
 

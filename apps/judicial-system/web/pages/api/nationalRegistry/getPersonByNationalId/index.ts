@@ -1,7 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import faker from 'faker'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponsePerson } from '@island.is/judicial-system-web/src/types'
-
+import type { NationalRegistryResponsePerson } from '../../../../src/types'
+import { shouldMockNationalRegistry } from '../../../../src/utils/nationalRegistryMock'
 import { fakePerson } from '../constants'
 
 const getPersonByNationalId = async (
@@ -19,18 +20,31 @@ const getPersonByNationalId = async (
   return await response.json()
 }
 
+const createFakePerson = () => {
+  const street = faker.address.streetAddress()
+  const town = faker.address.city()
+
+  return {
+    ...fakePerson,
+    name: faker.name.findName(),
+    permanent_address: {
+      ...fakePerson.permanent_address,
+      street: { nominative: street, dative: street },
+      postal_code: faker.datatype.number({ min: 101, max: 902 }),
+      town: { nominative: town, dative: town },
+    },
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
 
-  // Each api call costs actual money. This allows us to develop and test
-  // without actually making a real api call.
-  const people: NationalRegistryResponsePerson =
-    process.env.NODE_ENV === 'production'
-      ? await getPersonByNationalId(nationalId)
-      : { items: [fakePerson] }
+  const people: NationalRegistryResponsePerson = shouldMockNationalRegistry()
+    ? { items: [createFakePerson()] }
+    : await getPersonByNationalId(nationalId)
 
   res.status(200).json(people)
 }

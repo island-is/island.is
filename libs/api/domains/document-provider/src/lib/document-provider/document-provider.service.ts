@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { logger } from '@island.is/logging'
 
 import {
@@ -19,9 +19,13 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 const handleError = (error: any) => {
   logger.error(JSON.stringify(error))
   if (error.response?.data) {
-    throw new ApolloError(error.response.data, error.status)
+    throw new GraphQLError(error.response.data, {
+      extensions: { code: error.status },
+    })
   } else {
-    throw new ApolloError('Failed to resolve request', error.status)
+    throw new GraphQLError('Failed to resolve request', {
+      extensions: { code: error.status },
+    })
   }
 }
 
@@ -136,7 +140,7 @@ export class DocumentProviderService {
     const organisation = await this.getOrganisation(nationalId, authorization)
 
     if (!organisation) {
-      throw new ApolloError('Could not find organisation.')
+      throw new GraphQLError('Could not find organisation.')
     }
 
     // Create provider for organisation
@@ -152,7 +156,7 @@ export class DocumentProviderService {
     ).providerControllerCreateProvider(dto)
 
     if (!provider) {
-      throw new ApolloError('Could not create provider.')
+      throw new GraphQLError('Could not create provider.')
     }
 
     return credentials
@@ -194,7 +198,7 @@ export class DocumentProviderService {
     ).providerControllerUpdateProvider(dto)
 
     if (!updatedProvider) {
-      throw new ApolloError('Could not update provider.')
+      throw new GraphQLError('Could not update provider.')
     }
 
     return audienceAndScope
@@ -213,9 +217,9 @@ export class DocumentProviderService {
     })
 
     if (!isLastModifier) {
-      throw new ApolloError(
+      throw new GraphQLError(
         'Forbidden. User is not last modifier of organisation.',
-        '403',
+        { extensions: { code: '403' } },
       )
     }
   }

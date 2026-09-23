@@ -29,6 +29,9 @@ import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientsPayload } from './dto/clients.payload'
 import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 import { PatchClientResponse } from './models/patch-client-response.model'
+import { GrantableClient } from './models/grantable-client.model'
+
+const GRANTABLE_CLIENTS_FETCH_LIMIT = 10000
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -76,6 +79,30 @@ export class ClientsService extends MultiEnvironmentService {
       totalCount: clients.length,
       pageInfo: { hasNextPage: false },
     }
+  }
+
+  async getGrantableClients(
+    user: User,
+    environment: Environment,
+  ): Promise<GrantableClient[]> {
+    const clients = await this.makeRequest(user, environment, (api) =>
+      api.clientsControllerFindAllRaw(),
+    )
+
+    let capped = clients ?? []
+    if (capped.length > GRANTABLE_CLIENTS_FETCH_LIMIT) {
+      this.logger.warn(
+        `getGrantableClients truncated response from ${capped.length} to ${GRANTABLE_CLIENTS_FETCH_LIMIT} clients in environment ${environment}`,
+      )
+      capped = capped.slice(0, GRANTABLE_CLIENTS_FETCH_LIMIT)
+    }
+
+    return capped.map((client) => ({
+      clientId: client.clientId,
+      tenantId: client.tenantId,
+      clientType: client.clientType as GrantableClient['clientType'],
+      displayName: client.displayName,
+    }))
   }
 
   async getClientById(

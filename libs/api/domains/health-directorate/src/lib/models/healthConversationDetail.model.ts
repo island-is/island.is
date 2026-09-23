@@ -1,5 +1,8 @@
-import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
-import { HealthConversationReplyBlockedReasonEnum } from './enums'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import {
+  HealthConversationReplyAvailabilityEnum,
+  HealthConversationReplyBlockedReasonEnum,
+} from './enums'
 import { HealthDirectorateHealthConversation } from './healthConversation.model'
 import { HealthDirectorateHealthConversationEntry } from './healthConversationEntry.model'
 
@@ -20,6 +23,32 @@ export class HealthDirectorateHealthConversationDetail extends HealthDirectorate
       'Why replying is blocked. Only set when patientCanReply is false.',
   })
   replyBlockedReason?: HealthConversationReplyBlockedReasonEnum
+
+  @Field(() => HealthConversationReplyAvailabilityEnum, {
+    description: 'The one field to branch the reply UI on.',
+  })
+  replyAvailability!: HealthConversationReplyAvailabilityEnum
+
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Replies are not bound by the messaging window. Use replyAvailability instead.',
+  })
+  messagingWindowOpen?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Replies are not bound by the messaging window. Use replyAvailability instead.',
+  })
+  messagingWindowClose?: string
+
+  @Field(() => Int, {
+    nullable: true,
+    description:
+      'How long the thread accepts replies, in 24-hour periods from the newest staff message.',
+  })
+  patientReplyWindowDays?: number
 
   @Field(() => [HealthDirectorateHealthConversationEntry])
   messages!: HealthDirectorateHealthConversationEntry[]

@@ -1,6 +1,11 @@
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -11,16 +16,20 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseType,
+  AppealCaseState,
+  AppealCaseTransition,
+  CaseIndictmentRulingDecision,
   DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
+  IndictmentCaseReviewDecision,
   isIndictmentCase,
   isPrisonAdminUser,
   RequestCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
+import { hasStandingVerdictAppeal } from '../appeal-case/appealCase.helpers'
+import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
   Case,
@@ -41,6 +50,8 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly courtService: CourtService,
+    @Inject(forwardRef(() => AppealCaseService))
+    private readonly appealCaseService: AppealCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -266,6 +277,7 @@ export class DefendantService {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      verdictId?: string
       user?: User
     },
     transaction: Transaction,
@@ -277,6 +289,7 @@ export class DefendantService {
         event.defendantId,
         event.user,
         transaction,
+        ...(event.verdictId ? [{ verdictId: event.verdictId }] : []),
       )
 
       return
@@ -311,12 +324,83 @@ export class DefendantService {
     }
   }
 
+  /**
+   * Files or withdraws the prosecution's verdict appeal for this defendant,
+   * from the review decision that is being saved and in the same transaction.
+   *
+   * For the public prosecution the reviewer's decision *is* the appeal, so the
+   * two must not be able to drift apart: deciding to appeal files one, taking
+   * the decision back withdraws it, and either the pair lands or neither does.
+   *
+   * Only ever reached when the API asked for it - it reads the
+   * INDICTMENT_APPEAL feature, the backend does not.
+   */
+  private async handleVerdictAppealUpdates(
+    theCase: Case,
+    defendant: Defendant,
+    update: UpdateDefendantDto,
+    user: User,
+    transaction: Transaction,
+  ) {
+    const decision = update.indictmentReviewDecision
+
+    // Only a decision that actually changed is an act of review, and only a
+    // ruling is appealed this way - a fine is appealed as a ruling order.
+    if (
+      decision === undefined ||
+      decision === defendant.indictmentReviewDecision ||
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+    ) {
+      return
+    }
+
+    if (decision === IndictmentCaseReviewDecision.APPEAL) {
+      await this.appealCaseService.create(
+        theCase,
+        user,
+        undefined,
+        transaction,
+        {
+          defendantId: defendant.id,
+        },
+      )
+
+      return
+    }
+
+    // Changed away from an appeal. A decision recorded as APPEAL before verdict
+    // appeals were switched on has no appeal case and no event behind it -
+    // there is nothing to withdraw, and asking to withdraw it would be refused.
+    if (
+      defendant.indictmentReviewDecision !==
+        IndictmentCaseReviewDecision.APPEAL ||
+      !theCase.verdictAppealCase ||
+      !hasStandingVerdictAppeal(
+        theCase.verdictAppealCase,
+        defendant.id,
+        'PROSECUTION',
+      )
+    ) {
+      return
+    }
+
+    await this.appealCaseService.transition(
+      theCase,
+      theCase.verdictAppealCase,
+      AppealCaseTransition.WITHDRAW_APPEAL,
+      user,
+      transaction,
+      defendant.id,
+    )
+  }
+
   private async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
+    registerVerdictAppeal?: boolean,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
@@ -336,6 +420,21 @@ export class DefendantService {
       )
     }
 
+    if (
+      update.isClosedWithoutEnforcement &&
+      !defendant.isClosedWithoutEnforcement
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
+          user,
+        },
+        transaction,
+      )
+    }
+
     this.addMessagesForIndictmentCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -350,6 +449,16 @@ export class DefendantService {
       user,
       transaction,
     )
+
+    if (registerVerdictAppeal) {
+      await this.handleVerdictAppealUpdates(
+        theCase,
+        defendant,
+        update,
+        user,
+        transaction,
+      )
+    }
 
     if (
       update.punishmentType !== undefined &&
@@ -379,10 +488,37 @@ export class DefendantService {
   async update(
     theCase: Case,
     defendant: Defendant,
-    update: UpdateDefendantDto,
+    updateWithIntent: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // The intent to file or withdraw the prosecution's verdict appeal rides
+    // along with the decision but is not a defendant field, so it never reaches
+    // the database update.
+    const { registerVerdictAppeal, ...updateFields } = updateWithIntent
+    let update: UpdateDefendantDto = updateFields
+    // Closing without enforcement is only valid for indictment defendants and
+    // is irreversible through this endpoint - reopening a case resets the flag
+    // in the case reopen workflow.
+    if (update.isClosedWithoutEnforcement !== undefined) {
+      if (
+        !isIndictmentCase(theCase.type) ||
+        update.isClosedWithoutEnforcement !== true
+      ) {
+        throw new BadRequestException(
+          'Closed without enforcement can only be set for indictment case defendants',
+        )
+      }
+
+      // Enforcement is mutually exclusive with closing without enforcement -
+      // a defendant sent to prison admin must be withdrawn first.
+      if (defendant.isSentToPrisonAdmin || update.isSentToPrisonAdmin) {
+        throw new BadRequestException(
+          'Closed without enforcement cannot be set for a defendant sent to prison admin',
+        )
+      }
+    }
+
     if (
       update.defenderNationalId === null &&
       !(
@@ -395,6 +531,22 @@ export class DefendantService {
       update = rest
     }
 
+    // The reviewer's decision on an indictment verdict is the prosecution's
+    // appeal or its absence. Once the court of appeals has received the verdict
+    // appeal the decision is made; the web creates and withdraws the appeal
+    // from the decision, and this keeps the two from drifting apart.
+    if (
+      update.indictmentReviewDecision !== undefined &&
+      update.indictmentReviewDecision !== defendant.indictmentReviewDecision &&
+      theCase.verdictAppealCase &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.APPEALED &&
+      theCase.verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN
+    ) {
+      throw new BadRequestException(
+        'The review decision cannot change once the court of appeals has received the verdict appeal',
+      )
+    }
+
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
         theCase,
@@ -402,6 +554,7 @@ export class DefendantService {
         update,
         user,
         transaction,
+        registerVerdictAppeal,
       )
     } else {
       return this.updateRequestCaseDefendant(
@@ -516,41 +669,9 @@ export class DefendantService {
       return false
     }
 
-    const defendantsInCustody = await this.defendantRepositoryService.findAll({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: CaseState.ACCEPTED,
-            type: CaseType.CUSTODY,
-            valid_to_date: { [Op.gte]: literal('current_date') },
-          },
-        },
-      ],
-      where: { nationalId: defendants[0].nationalId },
-    })
-
-    return defendantsInCustody.some((d) => d.case)
-  }
-
-  findLatestDefendantByDefenderNationalId(
-    nationalId: string,
-  ): Promise<Defendant | null> {
-    return this.defendantRepositoryService.findOne({
-      include: [
-        {
-          model: Case,
-          as: 'case',
-          where: {
-            state: { [Op.not]: CaseState.DELETED },
-            isArchived: false,
-          },
-        },
-      ],
-      where: { defenderNationalId: nationalId },
-      order: [['created', 'DESC']],
-    })
+    return this.defendantRepositoryService.existsInActiveCustody(
+      defendants[0].nationalId,
+    )
   }
 
   async deliverDefendantToCourt(

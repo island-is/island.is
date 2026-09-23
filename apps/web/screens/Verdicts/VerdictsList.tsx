@@ -1389,23 +1389,22 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       />
                       {formatMessage(m.listPage.downloadGuideUrl).trim()
                         .length > 0 && (
-                        <Button
-                          size="small"
-                          variant="text"
-                          icon="download"
-                          iconType="outline"
-                          colorScheme="light"
-                          onClick={() => {
-                            const fileUrl = formatMessage(
-                              m.listPage.downloadGuideUrl,
-                            )
-                            const link = document.createElement('a')
-                            link.href = fileUrl
-                            link.click()
-                          }}
+                        <LinkV2
+                          href={formatMessage(m.listPage.downloadGuideUrl)}
+                          pureChildren={true}
+                          newTab={true}
                         >
-                          {formatMessage(m.listPage.downloadGuide)}
-                        </Button>
+                          <Button
+                            size="small"
+                            variant="text"
+                            icon="open"
+                            iconType="outline"
+                            colorScheme="light"
+                            unfocusable={true}
+                          >
+                            {formatMessage(m.listPage.downloadGuide)}
+                          </Button>
+                        </LinkV2>
                       )}
                     </Inline>
                     {Boolean(description?.trim()) && (

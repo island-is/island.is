@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,

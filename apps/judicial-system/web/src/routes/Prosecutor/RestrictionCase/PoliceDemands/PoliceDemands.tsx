@@ -1,5 +1,7 @@
 import { useCallback, useContext } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
@@ -10,6 +12,7 @@ import {
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
+  core,
   rcDemands,
   rcReportForm,
   titles,
@@ -27,32 +30,38 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseCustodyRestrictions,
+import type {
   CaseDecision,
-  CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseCustodyRestrictions,
+  CaseLegalProvisions,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   setCheckboxAndSendToServer,
+  setParentCheckboxAndSendToServer,
   toggleInArray,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDateForServer,
-  UpdateCase,
   useCase,
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   legalProvisions,
+  legalProvisions115Sub,
+  legalProvisions115SubIds,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
   restrictionsCheckboxes,
   travelBanRestrictionsCheckboxes,
 } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export interface DemandsAutofillProps {
@@ -185,7 +194,7 @@ export const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(rcDemands.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading
@@ -206,7 +215,7 @@ export const PoliceDemands = () => {
                 ) : undefined
               }
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={formatMessage(
@@ -324,7 +333,7 @@ export const PoliceDemands = () => {
               title={formatMessage(rcDemands.sections.legalBasis.heading)}
               required
             />
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <CheckboxList
                 blueBox={false}
                 checkboxes={
@@ -335,15 +344,58 @@ export const PoliceDemands = () => {
                 }
                 selected={workingCase.legalProvisions}
                 onChange={(id) =>
-                  setCheckboxAndSendToServer(
-                    'legalProvisions',
-                    id,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  id === CaseLegalProvisions._115_1
+                    ? setParentCheckboxAndSendToServer(
+                        'legalProvisions',
+                        id,
+                        legalProvisions115SubIds,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    : setCheckboxAndSendToServer(
+                        'legalProvisions',
+                        id,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
                 }
               />
+              <AnimatePresence>
+                {(workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+                  workingCase.legalProvisions?.includes(
+                    CaseLegalProvisions._115_1,
+                  ) && (
+                    <motion.div
+                      key="legalProvisions115"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <Text variant="eyebrow" color="blue400" marginBottom={2}>
+                        Liðir 115. gr. útlendingalaga
+                      </Text>
+                      <CheckboxList
+                        blueBox={false}
+                        dataTestId="checkbox-115"
+                        stagger
+                        checkboxes={legalProvisions115Sub}
+                        selected={workingCase.legalProvisions}
+                        onChange={(id) =>
+                          setCheckboxAndSendToServer(
+                            'legalProvisions',
+                            id,
+                            workingCase,
+                            setWorkingCase,
+                            updateCase,
+                          )
+                        }
+                      />
+                    </motion.div>
+                  )}
+              </AnimatePresence>
               <Input
                 data-testid="legalBasis"
                 name="legalBasis"
@@ -408,7 +460,7 @@ export const PoliceDemands = () => {
                   },
                 )}
               />
-              <BlueBox className={grid({ gap: 2 })}>
+              <BlueBox className={stack({ gap: 2 })}>
                 <CheckboxList
                   blueBox={false}
                   checkboxes={travelBanRestrictionsCheckboxes}
@@ -447,12 +499,19 @@ export const PoliceDemands = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE)
-          }
-          nextIsDisabled={!stepIsValid}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

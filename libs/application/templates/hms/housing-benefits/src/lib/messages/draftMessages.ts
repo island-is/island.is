@@ -71,9 +71,10 @@ export const draftMessages = {
       description: 'Exemption alert title',
     },
     description: {
-      id: 'hb.application:draft.exemptionSection.description',
+      id: 'hb.application:draft.exemptionSection.alertMessageDescription#markdown',
       defaultMessage:
-        'Skráð lögheimili er ekki það sama og skráð heimilisfang á völdum leigusamning.',
+        'Ef þú átt eftir að færa lögheimili í leiguhúsnæði þá er hægt að gera það rafrænt hjá [Þjóðskrá](https://island.is/flytja-logheimili). Athugið að það getur tekið allt að tvo virka daga fyrir nýtt heimilisfang að uppfærast.',
+      description: 'Exemption alertmessage description',
     },
     description2: {
       id: 'hb.application:draft.exemptionSection.description2#markdown',
@@ -703,6 +704,20 @@ export const draftMessages = {
       id: 'hb.application:draft.overviewSection.householdMembers',
       defaultMessage: 'Heimilismenn',
       description: 'Household members',
+    },
+    householdMembersTitle: {
+      id: 'hb.application:draft.overviewSection.householdMembersTitle',
+      defaultMessage:
+        '{count, plural, one {Heimilismaður} other {Heimilismenn}}',
+      description:
+        'Overview card title for household members. {count} is the number of people listed.',
+    },
+    accessAgreementTitle: {
+      id: 'hb.application:draft.overviewSection.accessAgreementTitle',
+      defaultMessage:
+        '{count, plural, one {Umgengnissamningur} other {Umgengnissamningar}}',
+      description:
+        'Overview card title for access agreements. {count} is the number of agreements listed.',
     },
     paymentRecipient: {
       id: 'hb.application:draft.overviewSection.paymentRecipient',

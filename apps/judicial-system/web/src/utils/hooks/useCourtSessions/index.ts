@@ -1,16 +1,19 @@
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
-import {
+import type {
   CreateCourtSessionInput,
   DeleteCourtSessionInput,
+  PronounceRulingOrallyInput,
   UpdateCourtSessionAppealDecisionInput,
   UpdateCourtSessionInput,
   UpdateCourtSessionStringInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCourtSessionMutation } from './createCourtSession.generated'
 import { useDeleteCourtSessionMutation } from './deleteCourtSession.generated'
+import { usePronounceRulingOrallyMutation } from './pronounceRulingOrally.generated'
 import { useUpdateCourtSessionMutation } from './updateCourtSession.generated'
 import { useUpdateCourtSessionAppealDecisionMutation } from './updateCourtSessionAppealDecision.generated'
 import { useUpdateCourtSessionStringMutation } from './updateCourtSessionString.generated'
@@ -23,6 +26,7 @@ const useCourtSessions = () => {
     useUpdateCourtSessionStringMutation()
   const [updateCourtSessionAppealDecisionMutation] =
     useUpdateCourtSessionAppealDecisionMutation()
+  const [pronounceRulingOrallyMutation] = usePronounceRulingOrallyMutation()
 
   const createCourtSession = useCallback(
     async (createCourtSessionInput: CreateCourtSessionInput) => {
@@ -41,7 +45,7 @@ const useCourtSessions = () => {
           id: data.createCourtSession.id,
           created: data.createCourtSession.created,
         }
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að bæta við þinghaldi')
 
         return
@@ -55,12 +59,12 @@ const useCourtSessions = () => {
       try {
         const { data } = await updateCourtSessionMutation({
           variables: {
-            input: updateCourtSession,
+            input: normalizeBlankStrings(updateCourtSession),
           },
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra þinghald')
 
         return false
@@ -74,12 +78,12 @@ const useCourtSessions = () => {
       try {
         const { data } = await updateCourtSessionStringMutation({
           variables: {
-            input: updateCourtSessionString,
+            input: normalizeBlankStrings(updateCourtSessionString),
           },
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra þinghald')
 
         return false
@@ -100,13 +104,39 @@ const useCourtSessions = () => {
         })
 
         return data?.updateCourtSessionAppealDecision
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra ákvörðun um kæru')
 
         return undefined
       }
     },
     [updateCourtSessionAppealDecisionMutation],
+  )
+
+  // The ruling pronounced in the session is delivered orally: the backend
+  // creates the ruling with no document behind it and links the session to it,
+  // so the session comes back already pointing at the new ruling.
+  const pronounceRulingOrally = useCallback(
+    async (pronounceRulingOrally: PronounceRulingOrallyInput) => {
+      try {
+        const { data } = await pronounceRulingOrallyMutation({
+          variables: {
+            input: pronounceRulingOrally,
+          },
+        })
+
+        if (!data?.pronounceRulingOrally) {
+          throw new Error()
+        }
+
+        return data.pronounceRulingOrally
+      } catch {
+        toast.error('Upp kom villa við að kveða upp úrskurð')
+
+        return undefined
+      }
+    },
+    [pronounceRulingOrallyMutation],
   )
 
   const deleteCourtSession = useCallback(
@@ -119,7 +149,7 @@ const useCourtSessions = () => {
         })
 
         return Boolean(data?.deleteCourtSession?.deleted)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða þinghaldi')
 
         return false
@@ -133,6 +163,7 @@ const useCourtSessions = () => {
     updateCourtSession,
     updateCourtSessionString,
     updateCourtSessionAppealDecision,
+    pronounceRulingOrally,
     deleteCourtSession,
   }
 }

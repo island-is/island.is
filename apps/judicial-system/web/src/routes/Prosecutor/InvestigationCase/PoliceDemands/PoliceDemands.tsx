@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import type { MessageDescriptor } from 'react-intl'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -29,7 +30,7 @@ import {
   useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const formatInstitutionName = (name?: string | null) => {
@@ -190,7 +191,7 @@ const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <Box component="section">
             <SectionHeading
@@ -261,15 +262,20 @@ const PoliceDemands = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
-            handleNavigationTo(
-              PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid}
-          nextIsLoading={isLoadingWorkingCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
+                ),
+              disabled: !stepIsValid,
+              loading: isLoadingWorkingCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
     </PageLayout>

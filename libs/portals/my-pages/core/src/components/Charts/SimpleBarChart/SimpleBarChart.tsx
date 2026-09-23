@@ -69,10 +69,8 @@ export const SimpleBarChart = ({
         >
           <Box width="full" height="full">
             <YAxisLabel label={yAxis.label} />
-            <ResponsiveContainer width="100%" height="90%">
+            <ResponsiveContainer width="100%" height={380}>
               <BarChart
-                width={20}
-                height={150}
                 data={data}
                 margin={{
                   top: 30,

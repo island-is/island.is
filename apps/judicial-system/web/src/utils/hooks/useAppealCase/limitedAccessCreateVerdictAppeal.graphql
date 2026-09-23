@@ -1,0 +1,7 @@
+mutation LimitedAccessCreateVerdictAppeal($input: CreateAppealCaseInput!) {
+  limitedAccessCreateAppealCase(input: $input) {
+    id
+    appealState
+    appealType
+  }
+}

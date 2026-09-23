@@ -43,11 +43,11 @@ export class Organization extends Model<Organization> {
   zendeskInstance?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
-    defaultValue: '',
+    defaultValue: [],
   })
-  zendeskBrandId?: string
+  delegations!: string[]
 
   @HasMany(() => Form)
   forms?: Form[]

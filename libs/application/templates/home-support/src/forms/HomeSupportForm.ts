@@ -30,7 +30,7 @@ import {
 import * as m from '../lib/messages'
 import { mapIndividualToActionCard } from '../utils'
 import { HomeSupport } from '../lib/dataSchema'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 
 export const HomeSupportForm: Form = buildForm({
   id: 'HomeSupportDraft',

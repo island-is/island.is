@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'clients-transport-authority-vehicle-plate-renewal',
   preset: '../../../../jest.preset.js',
   globals: {},

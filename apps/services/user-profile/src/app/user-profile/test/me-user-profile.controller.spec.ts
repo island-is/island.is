@@ -7,6 +7,8 @@ import { v4 as uuid } from 'uuid'
 
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
+import { Features } from '@island.is/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
   createCurrentUser,
   createNationalId,
@@ -639,7 +641,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
 
       // Check if confirmSms is called once, so we know it was not skipped with audkenniSimNumber
-      expect(confirmSmsSpy).toBeCalledTimes(1)
+      expect(confirmSmsSpy).toHaveBeenCalledTimes(1)
     })
 
     it('PATCH /v2/me should return 200 with changed mobile data in response and skip verification when when phone number matches audkenniSimNumber', async () => {
@@ -669,7 +671,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumberVerified).toBe(true)
       expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
 
-      expect(confirmSmsSpy).toBeCalledTimes(0)
+      expect(confirmSmsSpy).toHaveBeenCalledTimes(0)
     })
 
     it('PATCH /v2/me should return 200 with changed email data in response', async () => {
@@ -1010,6 +1012,36 @@ describe('MeUserProfileController', () => {
       expect(userProfile.emailNotifications).toBe(false)
       expect(userProfile?.emails?.[0].email).toBe(newEmail)
       expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.VERIFIED)
+    })
+
+    it('PATCH /v2/me should return 200 and update onlyActionablePriorityNotifications', async () => {
+      // Arrange
+      jest
+        .spyOn(app.get(FeatureFlagService), 'getValue')
+        .mockImplementation((feature) =>
+          Promise.resolve(
+            feature === Features.isOnlyActionablePriorityNotificationsEnabled,
+          ),
+        )
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        onlyActionablePriorityNotifications: true,
+      })
+
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        onlyActionablePriorityNotifications: true,
+      })
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.onlyActionablePriorityNotifications).toBe(true)
     })
   })
 

@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { Auth, withAuthContext } from '@island.is/auth-nest-tools'
-import { data, dataOr404Null } from '@island.is/clients/middlewares'
+import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  CancelAppointmentConflictReason,
   DispensationHistoryDto,
   DispensationHistoryItemDto,
   OrganDonorDto,
@@ -15,13 +16,18 @@ import {
   UpdateOrganDonorDto,
   WaitingListEntryDto,
   donationExceptionControllerGetOrgansV1,
+  meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
   meAppointmentControllerGetPatientAppointmentsV2V2,
   meAppointmentControllerGetPatientAppointmentByIdV1,
+  meCertificateControllerCreateCertificateRequestV1,
+  meCertificateControllerCreatePaymentIntentV1,
+  meCertificateControllerGetCertificateV1,
   meConversationControllerArchiveConversationV1,
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetConversationsV2V2,
   meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
@@ -31,6 +37,7 @@ import {
   meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePregnancyControllerHasActivePregnancyV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -44,6 +51,9 @@ import {
   mePrescriptionDispensationControllerGetDispensationsForAtcCodeV1,
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
+  meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentV1,
+  meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
   questionnaireControllerGetAllQuestionnairesV1,
   questionnaireControllerGetQuestionnaireDetailV1,
@@ -54,18 +64,26 @@ import {
 import {
   AppointmentBaseDto,
   AppointmentDetailDto,
+  CertificateDto,
+  CertificateRequestDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
   ConversationStatusFilter,
+  CreateCertificatePaymentIntentDto,
+  CreateCertificateRequestDto,
   CreateConversationRequestDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
   PaginatedAppointmentsDto,
+  PaginatedConversationsDto,
+  PaymentIntentDto,
+  PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -74,8 +92,18 @@ import {
   RenewalTargetDto,
   SubmitQuestionnaireDto,
   SubmitQuestionnaireResponseDto,
+  TreatmentBaseDto,
+  TreatmentDetailDto,
+  TreatmentDocumentDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
+
+import { CancelAppointmentResult } from './dtos/cancelAppointmentResult.dto'
+import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
+
+export type AttachmentDownloadResult =
+  | { status: 200; data: ArrayBuffer; contentType: string }
+  | { status: 402; resourceType: string; resourceId?: string }
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -313,6 +341,15 @@ export class HealthDirectorateHealthService {
     }
 
     return donationExceptions
+  }
+
+  /* Pregnancy */
+  public async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerHasActivePregnancyV1()),
+    )
+
+    return result?.hasActivePregnancy ?? null
   }
 
   public async getQuestionnaires(
@@ -604,6 +641,69 @@ export class HealthDirectorateHealthService {
     return appointment ?? null
   }
 
+  public async cancelAppointment(
+    auth: Auth,
+    id: string,
+  ): Promise<CancelAppointmentResult> {
+    try {
+      await withAuthContext(auth, () =>
+        data(
+          meAppointmentControllerCancelAppointmentV1({
+            path: { id },
+          }),
+        ),
+      )
+
+      return 'CANCELLED'
+    } catch (e) {
+      if (e instanceof FetchError) {
+        const mapped = this.mapCancelAppointmentAnswer(e)
+        if (mapped) {
+          return mapped
+        }
+      }
+      throw e
+    }
+  }
+
+  /*
+   * Refusals and timeouts arrive as problem documents with content type
+   * application/json, so FetchError.problem is never set and the parsed
+   * document is on FetchError.body (logErrorResponseBody is enabled).
+   */
+  private mapCancelAppointmentAnswer(
+    e: FetchError,
+  ): CancelAppointmentResult | undefined {
+    const body = e.body as { errorCode?: string } | undefined
+    if (!body || typeof body !== 'object') {
+      return undefined
+    }
+
+    if (e.status === 409) {
+      if (
+        body.errorCode === CancelAppointmentConflictReason.CANCELLATION_REFUSED
+      ) {
+        return 'REFUSED'
+      }
+
+      const blockedReasons: string[] = [
+        CancelAppointmentConflictReason.NOT_CANCELLABLE,
+        CancelAppointmentConflictReason.CANCELLATION_DEADLINE_PASSED,
+        CancelAppointmentConflictReason.UNSUPPORTED_CANCEL_METHOD,
+        CancelAppointmentConflictReason.INVALID_STATUS,
+      ]
+      if (body.errorCode && blockedReasons.includes(body.errorCode)) {
+        return 'BLOCKED'
+      }
+    }
+
+    if (e.status === 504 && body.errorCode === 'ACK_NOT_CONFIRMED') {
+      return 'UNCONFIRMED'
+    }
+
+    return undefined
+  }
+
   /* Conversations (Health Messages) */
 
   public async getConversations(
@@ -617,6 +717,17 @@ export class HealthDirectorateHealthService {
           query: { status, starred },
         }),
       ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getPaginatedConversations(
+    auth: Auth,
+    query?: MeConversationControllerGetConversationsV2V2Data['query'],
+  ): Promise<PaginatedConversationsDto | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(meConversationControllerGetConversationsV2V2({ query })),
     )
 
     return conversations ?? null
@@ -704,19 +815,38 @@ export class HealthDirectorateHealthService {
     conversationId: string,
     messageId: string,
     attachmentId: number,
-  ): Promise<{ data: ArrayBuffer; contentType: string } | null> {
-    const result = await withAuthContext(auth, () =>
-      meConversationControllerGetMessageAttachmentV1({
-        path: { id: conversationId, messageId, attachmentId },
-        parseAs: 'arrayBuffer',
-      }),
-    )
-    if (!result.data) return null
-    return {
-      data: result.data as ArrayBuffer,
-      contentType:
-        result.response.headers.get('content-type') ??
-        'application/octet-stream',
+  ): Promise<AttachmentDownloadResult | null> {
+    try {
+      const result = await withAuthContext(auth, () =>
+        meConversationControllerGetMessageAttachmentV1({
+          path: { id: conversationId, messageId, attachmentId },
+          parseAs: 'arrayBuffer',
+        }),
+      )
+      if (!result.data) return null
+      return {
+        status: 200,
+        data: result.data as ArrayBuffer,
+        contentType:
+          result.response.headers.get('content-type') ??
+          'application/octet-stream',
+      }
+    } catch (error) {
+      if (error instanceof FetchError && error.status === 404) {
+        return null
+      }
+
+      if (error instanceof FetchError && error.status === 402) {
+        const body = (error.problem ??
+          error.body ??
+          {}) as PaymentRequiredProblemResponse
+        return {
+          status: 402,
+          resourceType: body.resourceType ?? 'CERTIFICATE',
+          resourceId: body.resourceId,
+        }
+      }
+      throw error
     }
   }
 
@@ -733,5 +863,97 @@ export class HealthDirectorateHealthService {
     )
 
     return recipients ?? null
+  }
+
+  /* Certificates */
+
+  public async createCertificateRequest(
+    auth: Auth,
+    input: CreateCertificateRequestBody,
+  ): Promise<CertificateRequestDto | null> {
+    const request = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreateCertificateRequestV1({
+          // See CreateCertificateRequestBody for why this cast is safe.
+          body: input as unknown as CreateCertificateRequestDto,
+        }),
+      ),
+    )
+
+    return request ?? null
+  }
+
+  public async getCertificate(
+    auth: Auth,
+    id: string,
+  ): Promise<CertificateDto | null> {
+    const certificate = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meCertificateControllerGetCertificateV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return certificate ?? null
+  }
+
+  public async createCertificatePaymentIntent(
+    auth: Auth,
+    id: string,
+    input: CreateCertificatePaymentIntentDto,
+    locale?: Locale,
+  ): Promise<PaymentIntentDto | null> {
+    const intent = await withAuthContext(auth, () =>
+      data(
+        meCertificateControllerCreatePaymentIntentV1({
+          path: { id },
+          body: input,
+          query: { locale },
+        }),
+      ),
+    )
+
+    return intent ?? null
+  }
+
+  /* Treatments */
+
+  public async getTreatments(auth: Auth): Promise<TreatmentBaseDto[] | null> {
+    const treatments = await withAuthContext(auth, () =>
+      data(meTreatmentControllerGetTreatmentsV1()),
+    )
+
+    return treatments ?? null
+  }
+
+  public async getTreatment(
+    auth: Auth,
+    id: string,
+  ): Promise<TreatmentDetailDto | null> {
+    const treatment = await withAuthContext(auth, () =>
+      dataOr404Null(
+        meTreatmentControllerGetTreatmentV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return treatment ?? null
+  }
+
+  public async getTreatmentDocuments(
+    auth: Auth,
+    id: string,
+  ): Promise<TreatmentDocumentDto[] | null> {
+    const documents = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentDocumentsV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return documents ?? null
   }
 }

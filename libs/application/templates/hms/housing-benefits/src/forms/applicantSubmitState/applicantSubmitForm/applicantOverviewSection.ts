@@ -26,6 +26,7 @@ import {
 import { shouldShowApplicantSubmitAccessAgreementSection } from '../../../utils/assigneeUtils'
 import { doesAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
 import { isTaxReturnFiled, isTaxReturnNotFiled } from '../../../utils/utils'
+import { hasAllAssigneesRejectedInAnswers } from '../../../utils/assigneeRejectionUtils'
 
 export const applicantOverviewSection = buildSection({
   id: 'applicantSubmitOverviewSection',
@@ -111,6 +112,7 @@ export const applicantOverviewSection = buildSection({
         buildRadioField({
           id: 'submitAddAssigneeRadio',
           title: 'Bæta við heimilismanni',
+          defaultValue: NO,
           options: [
             { label: m.miscMessages.yes, value: YES },
             { label: m.miscMessages.no, value: NO },
@@ -127,6 +129,21 @@ export const applicantOverviewSection = buildSection({
             {
               event: DefaultEvents.EDIT,
               name: 'Bæta við heimilismanni',
+              type: 'primary',
+            },
+          ],
+        }),
+        buildSubmitField({
+          condition: (answers, externalData) =>
+            hasAllAssigneesRejectedInAnswers(answers, externalData),
+          id: 'applicantSubmitFormSubmitFromOverview',
+          title: m.applicantSubmitMessages.submitButton,
+          placement: 'footer',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.applicantSubmitMessages.submitButton,
               type: 'primary',
             },
           ],

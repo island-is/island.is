@@ -17,7 +17,7 @@ import {
   ISubArticle,
   IProjectPage,
 } from '../generated/contentfulTypes'
-import { ApolloError } from 'apollo-server-express'
+import { GraphQLError } from 'graphql'
 import { mapNews, News } from '../models/news.model'
 import {
   ArticleCategory,
@@ -88,7 +88,7 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
       return mapProjectPage(page as IProjectPage)
     }
     default: {
-      throw new ApolloError(`Can not map to page union: ${contentType}`)
+      throw new GraphQLError(`Can not map to page union: ${contentType}`)
     }
   }
 }

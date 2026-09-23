@@ -14,6 +14,7 @@ import {
   isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isRequestCase,
   isRestrictionCase,
   RequestSharedWhen,
@@ -47,6 +48,7 @@ const canProsecutionUserAccessCase = (
     ![
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_REVIEW,
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,
@@ -72,10 +74,18 @@ const canProsecutionUserAccessCase = (
   }
 
   // Check heightened security level access
+  //
+  // Being made the reviewer of a case is itself a grant of access to that one
+  // case - it is why the office check above lets the reviewer through - so it
+  // survives this restriction too. Without that, a reviewer is handed a case
+  // and then refused it, and every list built on the reviewer route shows a row
+  // that will not open. Request cases have no reviewer, so nothing changes
+  // where heightened security actually applies.
   if (
     theCase.isHeightenedSecurityLevel &&
     user.id !== theCase.creatingProsecutorId &&
-    user.id !== theCase.prosecutorId
+    user.id !== theCase.prosecutorId &&
+    user.id !== theCase.indictmentReviewerId
   ) {
     return false
   }
@@ -116,6 +126,53 @@ export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
     ),
   )
 }
+
+// A verdict on this case has been appealed - the same rule the appealed case
+// list is built from, in TypeScript. Keep it in step with
+// buildHasAppealedVerdictCondition in the case table's where options: a list
+// that shows a case the guard then refuses is worse than no list at all.
+//
+// Rulings only, because a fine is appealed by ruling appeal rather than
+// verdict appeal. On the defence side only the latest verdict counts, and the
+// verdicts come newest first from the case include graph; a review decision to
+// appeal stands whatever verdicts follow it.
+//
+// Closing a defendant without enforcement does not withdraw their appeal, so it
+// does not take the case away here either - see
+// buildHasAppealedVerdictCondition.
+const hasAppealedVerdict = (theCase: Case): boolean =>
+  Boolean(
+    theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING &&
+      theCase.defendants?.some(
+        (defendant) =>
+          defendant.indictmentReviewDecision ===
+            IndictmentCaseReviewDecision.APPEAL ||
+          Boolean(defendant.verdicts?.[0]?.appealDate),
+      ),
+  )
+
+// Prosecutors at the public prosecution office read every appealed verdict,
+// not only the cases they reviewed themselves. An appeal can land with a
+// prosecutor who had nothing to do with the review, and without this they
+// would have to ask a colleague to print the files for them.
+//
+// Read only. Everything they may change still goes through
+// canProsecutionUserAccessCase.
+//
+// Heightened security narrows this route as it narrows every other prosecution
+// route: an appeal is not a way around it. The flag is a plain column on every
+// case and the update DTO accepts it whatever the case type, so an indictment
+// can carry it - relying on which screen happens to offer it today would be
+// relying on the UI to enforce authorization.
+const canPublicProsecutionUserAccessAppealedCase = (
+  theCase: Case,
+  user: User,
+): boolean =>
+  canPublicProsecutionUserAccessCase(theCase) &&
+  hasAppealedVerdict(theCase) &&
+  (!theCase.isHeightenedSecurityLevel ||
+    user.id === theCase.creatingProsecutorId ||
+    user.id === theCase.prosecutorId)
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
@@ -436,9 +493,11 @@ const canDefenceUserAccessIndictmentCase = (
     return false
   }
 
-  // Check received case access
+  // Check received case access - defence users get access once an arraignment
+  // has been scheduled, or once the court has decided not to summon to one
   const canDefenderAccessReceivedCase = Boolean(
-    DateLog.arraignmentDate(theCase.dateLogs),
+    DateLog.arraignmentDate(theCase.dateLogs) ||
+      theCase.isArraignmentSummonsSkipped,
   )
 
   if (theCase.state === CaseState.RECEIVED && !canDefenderAccessReceivedCase) {
@@ -487,7 +546,17 @@ export const canUserAccessCase = (
   forUpdate: boolean,
 ): boolean => {
   if (isProsecutionUser(user)) {
-    return canProsecutionUserAccessCase(theCase, user, forUpdate)
+    if (canProsecutionUserAccessCase(theCase, user, forUpdate)) {
+      return true
+    }
+
+    // Falls through rather than replacing the check above - a public
+    // prosecution user keeps everything the ordinary rule already gave them.
+    return (
+      !forUpdate &&
+      isPublicProsecutionUser(user) &&
+      canPublicProsecutionUserAccessAppealedCase(theCase, user)
+    )
   }
 
   if (isDistrictCourtUser(user)) {

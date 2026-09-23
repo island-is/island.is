@@ -171,18 +171,118 @@ export enum HealthConversationReplyBlockedReasonEnum {
   REPLIES_DISABLED = 'repliesDisabled',
   NO_REPLY_GROUP = 'noReplyGroup',
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  PATIENT_REPLY_NOT_ALLOWED = 'patientReplyNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
   REPLY_WINDOW_EXPIRED = 'replyWindowExpired',
+  AWAITING_STAFF_REPLY = 'awaitingStaffReply',
+  AWAITING_ACKNOWLEDGEMENT = 'awaitingAcknowledgement',
 }
 registerEnumType(HealthConversationReplyBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationReplyBlockedReason',
+  valuesMap: {
+    OUTSIDE_MESSAGING_WINDOW: {
+      deprecationReason:
+        'No longer sent. Replies are not bound by the messaging window.',
+    },
+    AWAITING_STAFF_REPLY: {
+      deprecationReason: 'No longer sent. See AWAITING_ACKNOWLEDGEMENT.',
+    },
+  },
+})
+
+export enum HealthConversationReplyAvailabilityEnum {
+  CAN_REPLY = 'canReply',
+  WAITING = 'waiting',
+  EXPIRED = 'expired',
+  NEVER = 'never',
+}
+registerEnumType(HealthConversationReplyAvailabilityEnum, {
+  name: 'HealthDirectorateHealthConversationReplyAvailability',
+  description:
+    'What the patient can do with a thread, reduced from patientCanReply and replyBlockedReason.',
+  valuesMap: {
+    WAITING: {
+      description:
+        'Blocked for now and unblocks without the patient doing anything.',
+    },
+    EXPIRED: {
+      description:
+        'The reply window of patientReplyWindowDays has passed. Permanent for this thread.',
+    },
+    NEVER: { description: 'This thread never accepts a patient reply.' },
+  },
+})
+
+export enum HealthConversationSegmentTypeEnum {
+  TEXT = 'text',
+  LINK = 'link',
+}
+registerEnumType(HealthConversationSegmentTypeEnum, {
+  name: 'HealthDirectorateHealthConversationSegmentType',
 })
 
 export enum HealthConversationRecipientBlockedReasonEnum {
   MESSAGING_NOT_ALLOWED = 'messagingNotAllowed',
+  PATIENT_INITIATED_NOT_ALLOWED = 'patientInitiatedNotAllowed',
   OUTSIDE_MESSAGING_WINDOW = 'outsideMessagingWindow',
   NO_ALLOWED_TYPES = 'noAllowedTypes',
 }
 registerEnumType(HealthConversationRecipientBlockedReasonEnum, {
   name: 'HealthDirectorateHealthConversationRecipientBlockedReason',
+})
+
+export enum HealthConversationRecipientAvailabilityEnum {
+  OPEN = 'open',
+  CLOSED = 'closed',
+  NEVER = 'never',
+}
+registerEnumType(HealthConversationRecipientAvailabilityEnum, {
+  name: 'HealthDirectorateHealthConversationRecipientAvailability',
+  description:
+    'Whether the patient can start a conversation, reduced from canCreateConversation and conversationBlockedReason.',
+  valuesMap: {
+    CLOSED: {
+      description:
+        'Outside the messaging window. nextOpensAt says when it reopens.',
+    },
+    NEVER: {
+      description:
+        'The patient can not start a conversation with this recipient at any time.',
+    },
+  },
+})
+
+export enum HealthConversationDayTypeEnum {
+  WEEKDAY = 'weekday',
+  WEEKEND = 'weekend',
+  HOLIDAY = 'holiday',
+}
+registerEnumType(HealthConversationDayTypeEnum, {
+  name: 'HealthDirectorateHealthConversationDayType',
+})
+
+export enum CertificateTypeEnum {
+  WORK = 'work',
+  SCHOOL = 'school',
+}
+registerEnumType(CertificateTypeEnum, {
+  name: 'HealthDirectorateCertificateType',
+})
+
+export enum AppointmentCancelBlockedReasonEnum {
+  DeadlinePassed = 'deadlinePassed',
+  NotAllowed = 'notAllowed',
+}
+registerEnumType(AppointmentCancelBlockedReasonEnum, {
+  name: 'HealthDirectorateAppointmentCancelBlockedReason',
+})
+
+export enum AppointmentCancelOutcomeEnum {
+  CANCELLED = 'cancelled',
+  REFUSED = 'refused',
+  BLOCKED = 'blocked',
+  UNCONFIRMED = 'unconfirmed',
+}
+registerEnumType(AppointmentCancelOutcomeEnum, {
+  name: 'HealthDirectorateAppointmentCancelOutcome',
 })

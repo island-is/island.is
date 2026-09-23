@@ -7,8 +7,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   assigneePersonalInfoOverviewItems,
   assigneeAssetDeclarationOverviewItems,
-  assigneeUmgengnissamningurOverviewItems,
   assigneeAddressMatchOverviewItems,
+  assigneeIncomeDeclarationOverviewItems,
 } from './getOverviewItems'
 import {
   format as formatKennitala,
@@ -44,7 +44,7 @@ export const getSignedAssigneeOverviewItems = (
       externalData,
       nationalId,
     )
-    const umgengnissamningurItems = assigneeUmgengnissamningurOverviewItems(
+    const incomeItems = assigneeIncomeDeclarationOverviewItems(
       answers,
       externalData,
       nationalId,
@@ -64,7 +64,7 @@ export const getSignedAssigneeOverviewItems = (
       },
       ...filteredPersonalItems,
       ...assetItems,
-      ...umgengnissamningurItems,
+      ...incomeItems,
       ...addressItems,
     )
   })

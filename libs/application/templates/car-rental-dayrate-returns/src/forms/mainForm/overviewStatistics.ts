@@ -25,13 +25,9 @@ export const overviewStatistics = buildSection({
               ) ?? []
 
             const safeRates = Array.isArray(rates) ? rates : []
-            const carsOnDayRateLastMonth = safeRates.length
 
             return [
-              [
-                m.overview.carsThatRequireAnswers,
-                carsOnDayRateLastMonth.toString(),
-              ],
+              [m.overview.carsThatRequireAnswers, safeRates.length.toString()],
             ]
           },
         }),

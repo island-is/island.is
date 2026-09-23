@@ -9,14 +9,17 @@ import {
   FieldTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
+import { AssetTypes } from '@island.is/form-system/enums'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   Instance,
   mapToCustomFields,
+  normalizeZendeskInstance,
 } from '../../../utils/zendeskPartiesCustomFieldIds'
 import { FileService } from '../file/file.service'
 
@@ -53,30 +56,41 @@ export class ZendeskService {
     storedInstance?: string,
     storedBrandId?: string,
   ): Promise<boolean> {
-    const contactEmail = 'stafraentisland@gmail.com'
-    const username = `${contactEmail}/token`
-
+    let contactEmail = 'stafraentisland@gmail.com'
     let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
-    let apiKey = this.SANDBOX_API_KEY
 
     if (applicationDto.isTest === false && environment.production === true) {
       zendeskInstance = storedInstance || this.PROD_INSTANCE
-      apiKey = this.PROD_API_KEY
       zendeskBrandId = storedBrandId
     }
 
-    if (zendeskInstance === 'heilsa') {
-      apiKey = this.HEILSA_API_KEY
-    } else if (zendeskInstance === 'haskoliislands') {
-      apiKey = this.HASKOLI_ISLANDS_API_KEY
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
+
+    if (!supportedZendeskInstance) {
+      throw new Error('Unsupported Zendesk tenant')
     }
 
-    if (!zendeskInstance || !apiKey) {
+    let apiKey = this.SANDBOX_API_KEY
+
+    if (applicationDto.isTest === false && environment.production === true) {
+      apiKey = this.PROD_API_KEY
+    }
+
+    if (supportedZendeskInstance === 'heilsa') {
+      apiKey = this.HEILSA_API_KEY
+      contactEmail = 'admin@stafraentisland.is'
+    } else if (supportedZendeskInstance === 'haskoliislands') {
+      apiKey = this.HASKOLI_ISLANDS_API_KEY
+      contactEmail = 'admin@stafraentisland.is'
+    }
+
+    if (!apiKey) {
       throw new Error('Zendesk tenant id or API key not configured')
     }
 
-    const zendeskUrl = `https://${zendeskInstance}.zendesk.com`
+    const zendeskUrl = `https://${supportedZendeskInstance}.zendesk.com`
+    const username = `${contactEmail}/token`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     const { name, email } = this.getNameAndEmail(applicationDto)
@@ -85,7 +99,7 @@ export class ZendeskService {
 
     const customFields = this.getCustomFields(
       applicationDto,
-      zendeskInstance as Instance,
+      supportedZendeskInstance,
     )
     const subject = applicationDto.formName?.is ?? 'No subject'
     const isInternal = applicationDto.zendeskInternal === true
@@ -115,7 +129,7 @@ export class ZendeskService {
       missingFilenames,
     )
 
-    return await this.createTicket(
+    const success = await this.createTicket(
       applicationId,
       subject,
       body,
@@ -128,6 +142,23 @@ export class ZendeskService {
       isInternal,
       zendeskBrandId,
     )
+
+    if (success) {
+      this.logger.info('form system application sent to zendesk', {
+        applicationId,
+        formId: applicationDto.formId,
+        formSlug: applicationDto.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: applicationDto.isTest,
+        zendeskInstance: supportedZendeskInstance,
+        zendeskBrandId,
+        attachmentCount: attachmentTokens.length,
+        missingAttachmentCount: missingFilenames.length,
+        datadogEvent: 'form_system_application_sent_zendesk',
+      })
+    }
+
+    return success
   }
 
   private async createTicket(
@@ -178,7 +209,19 @@ export class ZendeskService {
       if (!response.ok) {
         this.logger.error(
           `Failed to create ticket for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
+          {
+            applicationId,
+            zendeskHost: serviceUrl.host,
+            zendeskPath: serviceUrl.pathname,
+            zendeskBrandId,
+            hasBrandId: brandId !== undefined,
+            isInternal,
+            uploadTokenCount: uploadTokens.length,
+            customFieldCount: customFields.length,
+            status: response.status,
+            statusText: response.statusText,
+            datadogEvent: 'form_system_zendesk_error',
+          },
         )
         return false
       }
@@ -188,7 +231,18 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while creating ticket for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          zendeskHost: serviceUrl.host,
+          zendeskPath: serviceUrl.pathname,
+          zendeskBrandId,
+          hasBrandId: brandId !== undefined,
+          isInternal,
+          uploadTokenCount: uploadTokens.length,
+          customFieldCount: customFields.length,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return false
     }
@@ -238,7 +292,13 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while attaching S3 file ${s3Key} for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          s3Key,
+          zendeskHost: new URL(url).host,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return undefined
     }
@@ -270,7 +330,17 @@ export class ZendeskService {
       if (!response.ok) {
         this.logger.error(
           `Failed to upload attachment ${filename} for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
+          {
+            applicationId,
+            filename,
+            contentType,
+            contentLength: data.byteLength,
+            zendeskHost: serviceUrl.host,
+            zendeskPath: serviceUrl.pathname,
+            status: response.status,
+            statusText: response.statusText,
+            datadogEvent: 'form_system_zendesk_error',
+          },
         )
         return undefined
       }
@@ -280,7 +350,16 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while uploading attachment ${filename} for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          filename,
+          contentType,
+          contentLength: data.byteLength,
+          zendeskHost: serviceUrl.host,
+          zendeskPath: serviceUrl.pathname,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return undefined
     }
@@ -348,6 +427,45 @@ export class ZendeskService {
     const h = (level: 3 | 4 | 5 | 6, inner: string, style = '') =>
       `<h${level} style="${style}">${inner}</h${level}>`
 
+    const getScreenName = (sectionType: string, screen: ScreenDto) => {
+      if (sectionType !== SectionTypes.PARTIES) return screen.name.is
+
+      const applicantField = screen.fields?.find(
+        (field) =>
+          field.fieldType === FieldTypesEnum.APPLICANT &&
+          field.isHidden !== true,
+      )
+
+      if (!applicantField) return screen.name.is
+
+      const isLoggedInApplicant = applicantField.values?.some((value) => {
+        const json = value?.json
+        return (
+          json &&
+          typeof json === 'object' &&
+          (json as Record<string, unknown>).isLoggedInUser === true
+        )
+      })
+
+      if (isLoggedInApplicant) return 'Rafræn skilríki einstaklings'
+
+      if (
+        applicantField.fieldSettings?.applicantType ===
+        ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
+      ) {
+        return 'Með prókúru fyrir'
+      }
+
+      if (
+        applicantField.fieldSettings?.applicantType ===
+        ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN
+      ) {
+        return 'Með forsjá yfir'
+      }
+
+      return 'Í umboði fyrir'
+    }
+
     const formatDateIs = (d?: Date) => d?.toLocaleString('is-IS') ?? ''
 
     const parts: string[] = []
@@ -356,15 +474,13 @@ export class ZendeskService {
 
     // Header
     parts.push(
+      p0(`<strong>${applicationDto.slug ?? ''}</strong>`),
       p0(
-        `<strong>Innsend:</strong> ${formatDateIs(applicationDto.submittedAt)}`,
+        `<strong>Móttekin:</strong> ${formatDateIs(
+          applicationDto.submittedAt,
+        )}`,
       ),
       p0(`<strong>Númer:</strong> ${applicationDto.id ?? ''}`),
-      p0(
-        `<strong>Kennitala stofnunar:</strong> ${
-          applicationDto.organizationNationalId ?? ''
-        }`,
-      ),
       '<br />',
     )
 
@@ -372,21 +488,38 @@ export class ZendeskService {
       for (const section of sections) {
         if (section.isHidden) continue
 
-        parts.push(h(3, section.name.is))
+        if (section.sectionType !== SectionTypes.PARTIES) {
+          parts.push(h(3, section.name.is))
+        }
 
         for (const screen of section.screens ?? []) {
           if (screen.isHidden) continue
 
-          parts.push(h(4, screen.name.is, indent(10)))
+          const screenName = getScreenName(section.sectionType, screen)
+          if (screenName) {
+            parts.push(
+              h(
+                4,
+                screenName,
+                section.sectionType === SectionTypes.PARTIES ? '' : indent(10),
+              ),
+            )
+          }
 
           for (const field of screen.fields ?? []) {
             if (field.isHidden) continue
             if (field.fieldType === FieldTypesEnum.MESSAGE) continue
 
-            const requiredMark = field.isRequired ? '*' : ''
-            parts.push(
-              h(5, `${field.name.is}${requiredMark}`, `margin:0;${indent(20)}`),
-            )
+            if (section.sectionType !== SectionTypes.PARTIES) {
+              const requiredMark = field.isRequired ? '*' : ''
+              parts.push(
+                h(
+                  5,
+                  `${field.name.is}${requiredMark}`,
+                  `margin:0;${indent(20)}`,
+                ),
+              )
+            }
 
             const values = field.values ?? []
             const isMulti = values.length > 1
@@ -429,7 +562,23 @@ export class ZendeskService {
                 continue
               }
 
-              const entries = Object.entries(json)
+              const assetAttributeKeys =
+                field.fieldType === FieldTypesEnum.ASSETS
+                  ? field.fieldSettings?.assetType === AssetTypes.VEHICLE
+                    ? ['color', 'model', 'registrationNumber']
+                    : field.fieldSettings?.assetType === AssetTypes.REAL_ESTATE
+                    ? [
+                        'address',
+                        'postalCode',
+                        'municipality',
+                        'propertyNumber',
+                      ]
+                    : undefined
+                  : undefined
+              const entries = Object.entries(json).filter(
+                ([key]) =>
+                  !assetAttributeKeys || assetAttributeKeys.includes(key),
+              )
               const isMultiAttribute = entries.length > 1
 
               // If multi and json is empty -> just write the itemNo (bold)
@@ -448,7 +597,10 @@ export class ZendeskService {
                   field.fieldType === FieldTypesEnum.APPLICANT &&
                   (key === 'delegationType' ||
                     key === 'isLoggedInUser' ||
-                    key === 'applicantType')
+                    key === 'applicantType' ||
+                    ((key === 'address' || key === 'postalCode') &&
+                      field.fieldSettings?.isAddressRequired !== true) ||
+                    key === 'municipality')
                 ) {
                   continue
                 } else if (
@@ -460,6 +612,14 @@ export class ZendeskService {
                 }
 
                 const val = this.formatValue(raw, field.fieldType)
+                if (
+                  (field.fieldType === FieldTypesEnum.APPLICANT ||
+                    isMultiAttribute) &&
+                  val.trim().length === 0
+                ) {
+                  continue
+                }
+
                 const valHtml = this.escapeHtml(val).replace(
                   /\r\n|\n|\r/g,
                   '<br />',
@@ -485,6 +645,10 @@ export class ZendeskService {
                     : ''
                   parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
                 }
+              }
+
+              if (field.fieldType === FieldTypesEnum.APPLICANT) {
+                parts.push('<br />')
               }
             }
           }

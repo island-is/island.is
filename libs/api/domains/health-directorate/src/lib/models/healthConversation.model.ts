@@ -1,4 +1,5 @@
 import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import { HealthDirectorateConversationOrganization } from './healthConversationOrganization.model'
 
 @ObjectType()
 export class HealthDirectorateHealthConversation {
@@ -17,8 +18,14 @@ export class HealthDirectorateHealthConversation {
   @Field(() => GraphQLISODateTime, { nullable: true })
   lastMessageSentAt?: Date
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, deprecationReason: 'Use groupName instead.' })
   lastSenderGroupName?: string
+
+  @Field({ nullable: true })
+  groupName?: string
+
+  @Field(() => HealthDirectorateConversationOrganization, { nullable: true })
+  organization?: HealthDirectorateConversationOrganization
 
   @Field()
   hasAttachment!: boolean

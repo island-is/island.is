@@ -5,6 +5,7 @@ import {
   Icon,
   ModalBase,
   Text,
+  usePreventBodyScroll,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
@@ -35,6 +36,13 @@ const Sidemenu = ({
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+
+  /*
+   * The mobile drawer is `position: fixed`, but without this the page
+   * underneath remains scrollable, so scrolling past the drawer's own
+   * content reveals the real page behind it.
+   */
+  usePreventBodyScroll(isMobile && sideMenuOpen)
 
   const onClose = () => {
     setSideMenuOpen(false)

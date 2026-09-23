@@ -21,15 +21,19 @@ export const LatestGenericListItems = ({
 
   // Only allow organization subpage links as is
   let seeMoreLinkHref = ''
-  if (
-    slice.seeMorePage?.__typename === 'OrganizationSubpage' &&
-    slice.seeMorePage.organizationPage?.slug &&
-    slice.seeMorePage.slug
-  ) {
-    seeMoreLinkHref = linkResolver('organizationsubpage', [
-      slice.seeMorePage.organizationPage.slug,
-      slice.seeMorePage.slug,
-    ]).href
+  if (slice.seeMorePage?.__typename === 'OrganizationSubpage') {
+    // The url is [organizationPageSlug, subpageSlug] or, in case the subpage
+    // belongs to a parent subpage, [organizationPageSlug, parentSubpageSlug, subpageSlug]
+    const url = slice.seeMorePage.url ?? []
+    const linkType =
+      url.length === 3
+        ? 'organizationparentsubpagechild'
+        : url.length === 2
+        ? 'organizationsubpage'
+        : null
+    if (linkType && url.every(Boolean)) {
+      seeMoreLinkHref = linkResolver(linkType, url).href
+    }
   }
 
   const itemsAreClickable =

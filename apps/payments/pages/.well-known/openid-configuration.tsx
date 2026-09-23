@@ -1,9 +1,9 @@
 import { GetServerSideProps } from 'next'
-import getConfig from 'next/config'
+
+import { getServerRuntimeEnv } from '../../environments/runtimeEnvironment'
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const { serverRuntimeConfig } = getConfig()
-  const baseUrl = serverRuntimeConfig.appExternalUrl
+  const { appExternalUrl: baseUrl } = getServerRuntimeEnv()
 
   res.setHeader('Content-Type', 'application/json')
 

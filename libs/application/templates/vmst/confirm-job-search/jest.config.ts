@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'confirm-job-search',
   preset: '../../../../../jest.preset.js',
   transform: {

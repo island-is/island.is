@@ -30,6 +30,7 @@ env:
   DB_NAME: 'services_university_gateway'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'services_university_gateway'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'

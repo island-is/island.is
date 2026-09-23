@@ -7,9 +7,6 @@ export type { RadioProps, RadioOption } from './QuestionsTypes/Radio'
 export { Multiple } from './QuestionsTypes/Multiple'
 export type { MultipleProps, MultipleOption } from './QuestionsTypes/Multiple'
 
-export { Scale } from './QuestionsTypes/Scale'
-export type { ScaleProps } from './QuestionsTypes/Scale'
-
 export { Thermometer } from './QuestionsTypes/Thermometer'
 export type { ThermometerProps } from './QuestionsTypes/Thermometer'
 

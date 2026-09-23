@@ -11,8 +11,10 @@ import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   CourtSessionRulingType,
   UserRole,
@@ -174,6 +176,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
+          appealType: AppealCaseType.RULING,
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
           appealDate: endDate,
@@ -244,17 +247,21 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     })
   })
 
-  describe('converges APPEALED events with the standing appellants (Mirror)', () => {
+  describe('converges APPEALED events with the parties that appealed', () => {
+    // Both appealed in court, so both events may be corrected away. An
+    // out-of-court event is covered separately below.
     const prosecutorEvent = {
       id: 'event-prosecutor',
       appealCaseId,
       eventType: AppealEventType.APPEALED,
+      appealOrigin: AppealOrigin.IN_COURT,
       userRole: UserRole.PROSECUTOR,
     } as unknown as AppealEventLog
     const defendantEvent = {
       id: 'event-defendant',
       appealCaseId,
       eventType: AppealEventType.APPEALED,
+      appealOrigin: AppealOrigin.IN_COURT,
       userRole: UserRole.DEFENDER,
       defendantId,
     } as unknown as AppealEventLog
@@ -295,9 +302,10 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       ).toHaveBeenCalledWith([], { transaction })
     })
 
-    it('removes the event of a party that no longer appeals', async () => {
-      // Prosecutor still appeals; the defendant's appeal was corrected to ACCEPT,
-      // but a stale event remains.
+    it('removes the event of a party corrected away from APPEAL', async () => {
+      // Prosecutor still appeals; the defendant's decision was corrected to
+      // ACCEPT (an erroneous entry), so its event - recording an appeal that did
+      // not happen - is removed.
       decisions[0].decision = CaseAppealDecision.APPEAL
       decisions[1].decision = CaseAppealDecision.ACCEPT
       withExistingEvents([prosecutorEvent, defendantEvent])
@@ -310,12 +318,13 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       ).toHaveBeenCalledWith(['event-defendant'], { transaction })
     })
 
-    it('removes every appellant event when the last standing appeal is withdrawn', async () => {
-      const withdrawnDate = new Date('2026-03-04T09:00:00Z')
+    it("keeps a withdrawn party's event (the party did appeal)", async () => {
+      // Prosecutor still appeals; the defendant appealed then withdrew. The
+      // withdrawal is a new decision, not a correction, so the APPEALED event is
+      // kept.
       decisions[0].decision = CaseAppealDecision.APPEAL
-      decisions[0].withdrawnDate = withdrawnDate
       decisions[1].decision = CaseAppealDecision.APPEAL
-      decisions[1].withdrawnDate = withdrawnDate
+      decisions[1].withdrawnDate = new Date('2026-03-04T09:00:00Z')
       withExistingEvents([prosecutorEvent, defendantEvent])
 
       await givenWhenThen(caseWithAppeal)
@@ -323,10 +332,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
       expect(
         mockAppealEventLogRepositoryService.deleteByIds,
-      ).toHaveBeenCalledWith(
-        expect.arrayContaining(['event-prosecutor', 'event-defendant']),
-        { transaction },
-      )
+      ).toHaveBeenCalledWith([], { transaction })
     })
   })
 

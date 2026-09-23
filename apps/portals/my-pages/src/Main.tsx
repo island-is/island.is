@@ -1,4 +1,5 @@
 import '@island.is/api/mocks'
+import './styles.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 

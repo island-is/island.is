@@ -2,21 +2,26 @@ import { literal, Op } from 'sequelize'
 
 import {
   AppealCaseState,
+  AppealCaseType,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
+  DateType,
   EventType,
   indictmentCases,
   investigationCases,
+  RequestSharedWhen,
+  RequestSharedWithDefender,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
 
 import {
   buildEventLogExistsCondition,
+  buildHasAppealedVerdictCondition,
   buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
@@ -71,6 +76,24 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
         AND ac."ruling_file_id" IS NOT NULL
         AND ac."appeal_state" = 'WITHDRAWN'
         AND ac."appeal_received_by_court_date" IS NOT NULL
+    )`),
+    // An appealed verdict reaches the court earlier than an appealed ruling
+    // does. The clauses above all wait for receipt; a verdict appeal is filed
+    // and then waits for the court to pick it up, so the court has to see it
+    // from the moment it is filed or it could never receive it at all (owner,
+    // 2026-09-17). Every state of one is therefore the court's to see, so this
+    // asks only that the appeal exists.
+    //
+    // A correlated EXISTS rather than the `$verdictAppealCase.appeal_state$`
+    // alias these options use for the ruling appeal: this predicate is shared
+    // by every court of appeals list, and the ruling appeal lists have no
+    // reason to join the verdict appeal. Referring to an alias a caller has not
+    // joined still compiles - Sequelize emits the reference and Postgres then
+    // rejects the query for a missing FROM-clause entry.
+    literal(`EXISTS (
+      SELECT 1 FROM "appeal_case" ac
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."appeal_type" = '${AppealCaseType.VERDICT}'
     )`),
   ],
 }
@@ -212,6 +235,7 @@ export const prosecutionIndictmentsAccessWhereOptions = (user: User) => ({
   type: indictmentCases,
   state: [
     CaseState.DRAFT,
+    CaseState.WAITING_FOR_REVIEW,
     CaseState.WAITING_FOR_CONFIRMATION,
     CaseState.SUBMITTED,
     CaseState.RECEIVED,
@@ -231,8 +255,163 @@ export const prosecutorCasesAccessWhereOptions = (user: User) => ({
 export const prosecutorRepresentativeCasesAccessWhereOptions = (user: User) =>
   prosecutionIndictmentsAccessWhereOptions(user)
 
+// Defence access
+
+// The defence queries embed the user's national id in raw SQL literals, so
+// reduce it to digits only to rule out SQL injection. National ids are stored
+// dash-free in the database, so this also normalizes the comparison value.
+const sanitizeNationalId = (nationalId?: string): string =>
+  nationalId?.replace(/\D/g, '') ?? ''
+
+export const defenceRequestCasesAccessWhereOptions = (user: User) => {
+  const userNationalId = sanitizeNationalId(user.nationalId)
+
+  return {
+    is_archived: false,
+    type: [...restrictionCases, ...investigationCases],
+    [Op.or]: [
+      {
+        // defender assigned to the case
+        defender_national_id: userNationalId,
+        [Op.or]: [
+          {
+            state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+            request_shared_with_defender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+          {
+            state: CaseState.RECEIVED,
+            id: {
+              [Op.in]: literal(`
+                (SELECT case_id
+                  FROM date_log
+                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+              `),
+            },
+          },
+          { state: completedRequestCaseStates },
+        ],
+      },
+      {
+        // victim lawyer should get access when sent to court
+        state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM victim
+              WHERE lawyer_national_id = '${userNationalId}'
+              AND lawyer_access_to_request = '${RequestSharedWhen.READY_FOR_COURT}')
+          `),
+        },
+      },
+      {
+        // victim lawyer should get access when court date is scheduled or when case is concluded
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM victim
+              WHERE lawyer_national_id = '${userNationalId}'
+              AND lawyer_access_to_request != '${RequestSharedWhen.OBLIGATED}')
+          `),
+        },
+        [Op.or]: [
+          {
+            state: CaseState.RECEIVED,
+            id: {
+              [Op.in]: literal(`
+                (SELECT case_id
+                  FROM date_log
+                  WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+              `),
+            },
+          },
+          { state: completedRequestCaseStates },
+        ],
+      },
+    ],
+  }
+}
+
+export const defenceIndictmentsAccessWhereOptions = (user: User) => {
+  const userNationalId = sanitizeNationalId(user.nationalId)
+
+  return {
+    is_archived: false,
+    type: indictmentCases,
+    state: [
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+      ...completedIndictmentCaseStates,
+    ],
+    [Op.or]: [
+      {
+        // confirmed defender of a defendant
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE defender_national_id = '${userNationalId}'
+                AND is_defender_choice_confirmed = true)
+          `),
+        },
+      },
+      {
+        // confirmed spokesperson of a civil claimant
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM civil_claimant
+              WHERE has_spokesperson = true
+                AND spokesperson_national_id = '${userNationalId}'
+                AND is_spokesperson_confirmed = true)
+          `),
+        },
+      },
+    ],
+  }
+}
+
+export const defenceCasesAccessWhereOptions = (user: User) => ({
+  [Op.or]: [
+    defenceRequestCasesAccessWhereOptions(user),
+    defenceIndictmentsAccessWhereOptions(user),
+  ],
+})
+
 // Public prosecution access
 
+// The cases heightened security does not hide from this user: the ones not at a
+// heightened level at all, and the ones it reserves them - as creator, as
+// assigned prosecutor, or as reviewer. The same rule
+// canProsecutionUserAccessCase applies, named from the side it selects rather
+// than the side it restricts, because it matches what a user may see.
+//
+// Shared so the appeal branch of the access options and the case guard cannot
+// drift apart from each other.
+export const notHiddenByHeightenedSecurityWhereOptions = (user: User) => ({
+  [Op.or]: [
+    { is_heightened_security_level: { [Op.not]: true } },
+    { creating_prosecutor_id: user.id },
+    { prosecutor_id: user.id },
+    // The reviewer keeps the case the assignment gave them - the same exemption
+    // canProsecutionUserAccessCase makes, so a list cannot hide a case the
+    // guard would open.
+    { indictment_reviewer_id: user.id },
+  ],
+})
+
+// A prosecutor at the public prosecution office reaches an indictment two ways:
+// the cases they were given to review, and every appealed verdict, whoever
+// reviewed it. The second is why the appealed case list exists at all - an
+// appeal can land with a prosecutor who had nothing to do with the review.
+//
+// Being reachable is all this says. Which of these cases belongs in which list
+// is the table where options' business, and the two review lists narrow it back
+// to this user's own cases.
+//
+// Rulings only on the appeal side: a fine is appealed by ruling appeal rather
+// than verdict appeal, and a review decision of APPEAL against one means
+// exactly that.
 export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
   is_archived: false,
   type: indictmentCases,
@@ -246,8 +425,27 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
       true,
     ),
+    {
+      [Op.or]: [
+        { indictment_reviewer_id: user.id },
+        {
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          [Op.and]: [
+            buildHasAppealedVerdictCondition(),
+            // Heightened security narrows the appeal route the same way it
+            // narrows every other prosecution route - an appeal is not a way
+            // around it. Scoped to this branch rather than hoisted to a term of
+            // its own, because the reviewer branch above has never carried the
+            // restriction and this is not the change that should give it one.
+            // So far, heightened security has not been applied to indictment
+            // cases, but this condition future proofs access to appealed
+            // verdicts in case it is.
+            notHiddenByHeightenedSecurityWhereOptions(user),
+          ],
+        },
+      ],
+    },
   ],
-  indictment_reviewer_id: user.id,
 })
 
 export const publicProsecutionCasesAccessWhereOptions = (user: User) => ({

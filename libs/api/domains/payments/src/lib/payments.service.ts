@@ -18,6 +18,7 @@ import {
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
+import { PayerRequestInfo } from './payments.utils'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
@@ -102,9 +103,23 @@ export class PaymentsService {
     })
   }
 
-  verifyCard(verifyCardInput: VerifyCardInput): Promise<VerifyCardResponse> {
+  verifyCard(
+    verifyCardInput: VerifyCardInput,
+    payerRequestInfo: PayerRequestInfo,
+  ): Promise<VerifyCardResponse> {
+    const { browserInfo, ...cardInput } = verifyCardInput
+
     return this.paymentsApi.cardPaymentControllerVerify({
-      verifyCardInput,
+      verifyCardInput: {
+        ...cardInput,
+        // ip, userAgent and acceptHeader describe the payer's request as
+        // observed by this API and are derived server-side, never trusted
+        // from client input.
+        browserInfo: browserInfo && {
+          ...browserInfo,
+          ...payerRequestInfo,
+        },
+      },
     })
   }
 
@@ -148,8 +163,13 @@ export class PaymentsService {
   async chargeCard(
     chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
+    // ChargeCardInput inherits the verification-only 3DS fields from
+    // VerifyCardInput in the GraphQL schema; the payments service charge
+    // endpoint does not accept them.
+    const { cardholderName, browserInfo, ...restInput } = chargeCardInput
+
     const response = await this.paymentsApi.cardPaymentControllerCharge({
-      chargeCardInput,
+      chargeCardInput: restInput,
     })
 
     const { isSuccess, responseCode } = response

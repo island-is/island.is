@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
+import isObject from 'lodash/isObject'
 import {
   CREATE_APPLICATION,
   APPLICATION_CARDS,
@@ -31,10 +32,13 @@ import {
 } from '@island.is/shared/problem'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
+  Application,
   ApplicationCard,
   ApplicationContext,
   ApplicationStateSchema,
+  ApplicationStatus,
   ApplicationTemplate,
+  ApplicationTypes,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import { Organization } from '@island.is/shared/types'
@@ -42,6 +46,20 @@ import { Organization } from '@island.is/shared/types'
 type UseParams = {
   slug: string
 }
+
+const mockApplicationFromTypeId = (typeId: ApplicationTypes): Application => ({
+  id: '',
+  state: '',
+  applicant: '',
+  assignees: [],
+  applicantActors: [],
+  typeId,
+  modified: new Date(),
+  created: new Date(),
+  answers: {},
+  externalData: {},
+  status: ApplicationStatus.IN_PROGRESS,
+})
 
 export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { slug } = useParams() as UseParams
@@ -203,6 +221,23 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
       : template.allowMultipleApplicationsInDraft ||
         numberOfApplicationsInDraft < 1
 
+  const getTemplateName = () => {
+    if (typeof template.name === 'function') {
+      const returnValue = template.name(mockApplicationFromTypeId(type))
+      if (
+        isObject(returnValue) &&
+        'value' in returnValue &&
+        'name' in returnValue
+      ) {
+        return formatMessage(returnValue.name, {
+          value: returnValue.value,
+        })
+      }
+      return formatMessage(returnValue)
+    }
+    return formatMessage(template.name)
+  }
+
   return (
     <Page>
       <GridContainer>
@@ -218,7 +253,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
               <Text variant="h1">
                 {template.applicationText
                   ? formatMessage(template.applicationText)
-                  : formatMessage(coreMessages.applications)}
+                  : getTemplateName()}
               </Text>
               {shouldRenderNewApplicationButton ? (
                 <Box marginTop={[2, 0]}>

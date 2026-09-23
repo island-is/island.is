@@ -63,9 +63,7 @@ export class CaseTableService {
     }
 
     const tableGroups = getCaseTableGroups(user)
-    const tableTypes = tableGroups.flatMap((g) =>
-      g.tables.map((t) => t.type).filter((t) => t !== CaseTableType.STATISTICS),
-    )
+    const tableTypes = tableGroups.flatMap((g) => g.tables.map((t) => t.type))
 
     const whereOptionsByType = tableTypes.map((type) => ({
       type,

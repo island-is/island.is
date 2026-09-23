@@ -12,7 +12,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
@@ -68,7 +68,7 @@ const ProsecutorSectionHeightenedSecurity = () => {
   return (
     <Box component="section">
       <ProsecutorSectionHeading />
-      <BlueBox className={grid({ gap: 2 })}>
+      <BlueBox className={stack({ gap: 2 })}>
         <ProsecutorSelection onChange={handleProsecutorChange} />
         <Checkbox
           name="isHeightenedSecurityLevel"
@@ -99,21 +99,24 @@ const ProsecutorSectionHeightenedSecurity = () => {
         <Modal
           title={formatMessage(strings.accessModalTitle)}
           text={formatMessage(strings.accessModalText)}
-          primaryButton={{
-            text: formatMessage(strings.accessModalPrimaryButtonText),
-            onClick: async () => {
-              if (substituteProsecutorId) {
-                await setProsecutor(substituteProsecutorId)
-                router.push(getStandardUserDashboardRoute(user))
-              }
+          buttons={[
+            {
+              text: formatMessage(strings.accessModalSecondaryButtonText),
+              onClick: () => {
+                setIsProsecutorAccessModalVisible(false)
+              },
+              variant: 'ghost',
             },
-          }}
-          secondaryButton={{
-            text: formatMessage(strings.accessModalSecondaryButtonText),
-            onClick: () => {
-              setIsProsecutorAccessModalVisible(false)
+            {
+              text: formatMessage(strings.accessModalPrimaryButtonText),
+              onClick: async () => {
+                if (substituteProsecutorId) {
+                  await setProsecutor(substituteProsecutorId)
+                  router.push(getStandardUserDashboardRoute(user))
+                }
+              },
             },
-          }}
+          ]}
         />
       )}
     </Box>

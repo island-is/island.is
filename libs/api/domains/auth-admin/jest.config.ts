@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-auth-admin',
   preset: '../../../../jest.preset.js',
   globals: {},

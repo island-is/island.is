@@ -28,7 +28,6 @@ interface Props {
   onInstitutionChange: (institution: ApplicationFilters['institution']) => void
   onFilterClear: (categoryId?: string) => void
   filters: ApplicationFilters
-  applications: string[]
   organizations: Organization[]
   numberOfDocuments?: number
   isSuperAdmin?: boolean
@@ -48,15 +47,17 @@ export const Filters = ({
   isSuperAdmin = false,
   useAdvancedSearch = false,
 }: Props) => {
-  const [typeId, setTypeId] = useState<string | undefined>(undefined)
-  const [nationalId, setNationalId] = useState('')
-  const [searchStr, setSearchStr] = useState('')
+  const [typeId, setTypeId] = useState<string | undefined>(
+    () => filters.typeIdValue,
+  )
+  const [nationalId, setNationalId] = useState(() => filters.nationalId ?? '')
+  const [searchStr, setSearchStr] = useState(() => filters.searchStr ?? '')
   const { formatMessage, locale: lang } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
-  const [isTablet, setIsTablet] = useState(false)
+  const [isSmallDesktop, setIsSmallDesktop] = useState(false)
   const { width } = useWindowSize()
   const [chosenInstitutionNationalId, setChosenInstitutionNationalId] =
-    useState<string | undefined>(undefined)
+    useState<string | undefined>(() => filters.institution || undefined)
 
   const {
     data: institutionApplicationTypesData,
@@ -112,21 +113,23 @@ export const Filters = ({
       setIsMobile(false)
     }
 
-    if (width < theme.breakpoints.lg) {
-      setIsTablet(true)
+    // The national id search and the two date pickers only fit side by side
+    // on wide desktops. Below the xl breakpoint the date pickers wrap onto
+    // their own line and the search input expands to full width.
+    if (width < theme.breakpoints.xl) {
+      setIsSmallDesktop(true)
     } else {
-      setIsTablet(false)
+      setIsSmallDesktop(false)
     }
   }, [width])
 
+  // Keep local input state in sync with the filters prop so back/forward
+  // navigation and shared links populate the inputs correctly.
   useEffect(() => {
-    if (!filters.typeIdValue) setTypeId(undefined)
-    if (!filters.institution) {
-      setChosenInstitutionNationalId(undefined)
-    }
-
-    if (!filters.nationalId) setNationalId('')
-    if (!filters.searchStr) setSearchStr('')
+    setTypeId(filters.typeIdValue || undefined)
+    setChosenInstitutionNationalId(filters.institution || undefined)
+    setNationalId(filters.nationalId ?? '')
+    setSearchStr(filters.searchStr ?? '')
   }, [filters])
 
   const institutionTypeIds = useMemo(() => {
@@ -251,11 +254,11 @@ export const Filters = ({
             </Box>
             <Box
               display="flex"
-              flexDirection={['column', 'column', 'column', 'row']}
+              flexDirection={isSmallDesktop ? 'column' : 'row'}
             >
               <Box
-                width={isTablet ? 'full' : 'half'}
-                paddingBottom={isTablet ? 3 : 0}
+                width={isSmallDesktop ? 'full' : 'half'}
+                paddingBottom={isSmallDesktop ? 3 : 0}
               >
                 {useAdvancedSearch ? (
                   <FilterInput
@@ -285,8 +288,8 @@ export const Filters = ({
               </Box>
               <Box
                 display="flex"
-                width={isTablet ? 'full' : 'half'}
-                paddingLeft={isTablet ? 0 : 3}
+                width={isSmallDesktop ? 'full' : 'half'}
+                paddingLeft={isSmallDesktop ? 0 : 3}
               >
                 <Box width="half">
                   <DatePicker

@@ -18,7 +18,6 @@ import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
-  laws,
   rcOverview as m,
   restrictionsV2,
   titles,
@@ -45,8 +44,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -56,8 +55,9 @@ import {
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const Overview = () => {
@@ -179,7 +179,7 @@ export const Overview = () => {
             caseType: workingCase.type,
           })}
         </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
@@ -244,7 +244,10 @@ export const Overview = () => {
                       return (
                         <div key={index}>
                           <Text>
-                            {formatMessage(laws[legalProvision].title)}
+                            {getLegalProvisionTitle(
+                              formatMessage,
+                              legalProvision,
+                            )}
                           </Text>
                         </div>
                       )
@@ -338,26 +341,28 @@ export const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={workingCase.state === CaseState.NEW}
-          nextButtonText={
-            workingCase.state === CaseState.NEW ||
-            workingCase.state === CaseState.DRAFT
-              ? 'Senda kröfu á héraðsdóm'
-              : 'Endursenda kröfu á héraðsdóm'
-          }
-          nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED &&
-            (isTransitioningCase || isSendingNotification)
-          }
-          onNextButtonClick={
-            workingCase.state === CaseState.RECEIVED
-              ? () => {
-                  setModal('caseResubmitModal')
-                }
-              : handleNextButtonClick
-          }
+          actions={[
+            {
+              text:
+                workingCase.state === CaseState.NEW ||
+                workingCase.state === CaseState.DRAFT
+                  ? 'Senda kröfu á héraðsdóm'
+                  : 'Endursenda kröfu á héraðsdóm',
+              icon: 'arrowForward',
+              onClick:
+                workingCase.state === CaseState.RECEIVED
+                  ? () => {
+                      setModal('caseResubmitModal')
+                    }
+                  : handleNextButtonClick,
+              disabled: workingCase.state === CaseState.NEW,
+              loading:
+                workingCase.state !== CaseState.RECEIVED &&
+                (isTransitioningCase || isSendingNotification),
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       <AnimatePresence>
@@ -378,10 +383,13 @@ export const Overview = () => {
             })}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
-            secondaryButton={{
-              text: formatMessage(core.closeModal),
-              onClick: () => router.push(getStandardUserDashboardRoute(user)),
-            }}
+            buttons={[
+              {
+                text: formatMessage(core.closeModal),
+                onClick: () => router.push(getStandardUserDashboardRoute(user)),
+                variant: 'ghost',
+              },
+            ]}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)

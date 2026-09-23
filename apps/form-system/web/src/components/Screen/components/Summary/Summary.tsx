@@ -113,7 +113,7 @@ export const Summary = ({ state }: Props) => {
   return (
     <Box marginTop={2}>
       <Text fontWeight="light" as="p">
-        {formatMessage(m.reviewApplication)}
+        {formatMessage(m.reviewApplication2)}
       </Text>
 
       {sections?.map((section, sectionIndex) =>

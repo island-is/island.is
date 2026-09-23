@@ -83,6 +83,36 @@ Once MMS finishes their processing of an application they send a REVIEW_COMPLETE
 
 If MMS considers an application invalid for whatever reason (usually the applicant obviously applied for the wrong school/track) they can dismiss the application. Once an application has been dismissed it is no longer considered active and the applicant can create a new application from scratch.
 
+## Lifecycle & Notifications
+
+- **Pre-requisites**: pruned after 1 day and not listed to the applicant —
+  this state only exists while pre-requisite data is being fetched.
+- **Draft**: pruned automatically 7 days after the application is started,
+  with no notification — an application still in draft state doesn't confirm
+  intent to apply, so it isn't worth reminding the applicant about.
+- **Submitted, Edit, In Review, In Review (from edit), Completed, Dismissed**:
+  all pruned 90 days after the applicant's selected schools' registration
+  period closes (the latest closing date among the schools/tracks picked).
+- **Edit**: two reminder notifications are scheduled whenever the state is
+  entered (including re-entry, e.g. after MMS withdraws review) — one a week
+  before registration closes, one two days before. Each is only scheduled if
+  that date is still in the future, so editing an application close to (or
+  after) the registration deadline doesn't trigger an already-late reminder
+  firing immediately. Each reminder links back to the application and states
+  the registration close date.
+
+Registration end dates come from two different sources:
+- `answers.selection[].firstProgram/secondProgram.registrationEndDate` — per
+  selected school/track, only populated once the applicant has made their
+  selection (Draft onward).
+- `externalData.applicationPeriodInfo.data.registrationEndDateGeneral` /
+  `registrationEndDateFreshman` — period-level dates for general vs freshman
+  applicants, available from Pre-requisites onward (before any school is
+  selected).
+
+Pruning and the Edit-state reminders both use the first source — the
+applicant's own selected schools — not the period-level dates.
+
 ## External Services
 
 ### MMS 

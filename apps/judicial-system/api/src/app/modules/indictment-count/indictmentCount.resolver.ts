@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -29,6 +29,7 @@ export class IndictmentCountResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
   ) {}
 
   @Mutation(() => IndictmentCount, { nullable: true })
@@ -36,8 +37,6 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => CreateIndictmentCountInput })
     input: CreateIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount> {
     const { caseId, ...createIndictmentCount } = input
 
@@ -46,7 +45,7 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_INDICTMENT_COUNT,
-      backendService.createIndictmentCount(caseId, createIndictmentCount),
+      this.backendService.createIndictmentCount(caseId, createIndictmentCount),
       (theIndictmentCount) => theIndictmentCount.id,
     )
   }
@@ -56,8 +55,6 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => UpdateIndictmentCountInput })
     input: UpdateIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount> {
     const { caseId, indictmentCountId, ...updateIndictmentCount } = input
 
@@ -68,7 +65,7 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendService.updateIndictmentCount(
+      this.backendService.updateIndictmentCount(
         caseId,
         indictmentCountId,
         updateIndictmentCount,
@@ -82,15 +79,13 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => ReorderIndictmentCountsInput })
     input: ReorderIndictmentCountsInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<IndictmentCount[]> {
     const { caseId, counts } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendService.reorderIndictmentCounts(caseId, { counts }),
+      this.backendService.reorderIndictmentCounts(caseId, { counts }),
       (theIndictmentCounts) => theIndictmentCounts.map(({ id }) => id),
     )
   }
@@ -100,8 +95,6 @@ export class IndictmentCountResolver {
     @Args('input', { type: () => DeleteIndictmentCountInput })
     input: DeleteIndictmentCountInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<DeleteResponse> {
     const { caseId, indictmentCountId } = input
 
@@ -112,7 +105,7 @@ export class IndictmentCountResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_INDICTMENT_COUNT,
-      backendService.deleteIndictmentCount(caseId, indictmentCountId),
+      this.backendService.deleteIndictmentCount(caseId, indictmentCountId),
       indictmentCountId,
     )
   }

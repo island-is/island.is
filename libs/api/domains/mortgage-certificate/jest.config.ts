@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'api-domains-mortgage-certificate',
   preset: './jest.preset.js',
   rootDir: '../../../..',

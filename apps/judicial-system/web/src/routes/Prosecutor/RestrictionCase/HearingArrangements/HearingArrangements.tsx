@@ -2,12 +2,13 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, toast } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  core,
   errors,
   rcRequestedHearingArrangements,
   titles,
@@ -28,21 +29,22 @@ import {
   CaseTransition,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  ProsecutorSectionHeightenedSecurity,
+  RequestCourtDate,
+  SelectCourt,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import {
-  ProsecutorSectionHeightenedSecurity,
-  RequestCourtDate,
-  SelectCourt,
-} from '../../components'
 import ArrestDate from './ArrestDate'
 
 export const HearingArrangements = () => {
@@ -116,7 +118,7 @@ export const HearingArrangements = () => {
         <PageTitle>
           {formatMessage(rcRequestedHearingArrangements.heading)}
         </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
           <Box component="section">
@@ -175,15 +177,20 @@ export const HearingArrangements = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          nextButtonIcon="arrowForward"
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () =>
-            await handleNavigationTo(
-              PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
-            )
-          }
-          nextIsDisabled={!stepIsValid || isTransitioningCase}
-          nextIsLoading={isTransitioningCase}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: async () =>
+                await handleNavigationTo(
+                  PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+                ),
+              disabled: !stepIsValid || isTransitioningCase,
+              loading: isTransitioningCase,
+              testId: 'continueButton',
+            },
+          ]}
         />
       </FormContentContainer>
       {navigateTo !== undefined && (
@@ -192,24 +199,27 @@ export const HearingArrangements = () => {
           text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
             caseType: workingCase.type,
           })}
-          primaryButton={{
-            text: 'Senda tilkynningu',
-            onClick: async () => {
-              const notificationSent = await sendNotification(
-                workingCase.id,
-                TrackedNotificationType.HEADS_UP,
-              )
-
-              if (notificationSent) {
-                router.push(`${navigateTo}/${workingCase.id}`)
-              }
+          buttons={[
+            {
+              text: 'Halda áfram með kröfu',
+              onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
+              variant: 'ghost',
             },
-            isLoading: isSendingNotification,
-          }}
-          secondaryButton={{
-            text: 'Halda áfram með kröfu',
-            onClick: () => router.push(`${navigateTo}/${workingCase.id}`),
-          }}
+            {
+              text: 'Senda tilkynningu',
+              onClick: async () => {
+                const notificationSent = await sendNotification(
+                  workingCase.id,
+                  TrackedNotificationType.HEADS_UP,
+                )
+
+                if (notificationSent) {
+                  router.push(`${navigateTo}/${workingCase.id}`)
+                }
+              },
+              isLoading: isSendingNotification,
+            },
+          ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
             sendNotificationError

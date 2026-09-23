@@ -1,14 +1,123 @@
 import {
   AppealDecisionPartyRole,
   AppealEventType,
+  AppealOrigin,
   CaseAppealDecision,
   isDefenceUser,
   isProsecutionUser,
+  isRequestCase,
+  prosecutionRoles,
   type User,
   UserRole,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, AppealDecision, AppealEventLog, Case } from '../repository'
+import {
+  AppealCase,
+  AppealDecision,
+  AppealEventLog,
+  Case,
+  CaseFile,
+  CivilClaimant,
+  Defendant,
+} from '../repository'
+
+// The appeal case a case file belongs to: the ruling-order appeal the file
+// carries in its rulingFileId, the verdict appeal for an appeal declaration and what
+// is filed with it, or the case-level ruling appeal for everything else.
+//
+// The appeal declaration needs its own arm because it is case level too - the verdict appeal
+// and the ruling appeal are told apart by appeal type, not by a ruling file.
+export const findAppealCaseOfCaseFile = (
+  theCase: Case,
+  file: Pick<CaseFile, 'rulingFileId' | 'category'>,
+): AppealCase | undefined => {
+  if (file.rulingFileId) {
+    return theCase.rulingOrderAppealCases?.find(
+      (appealCase) => appealCase.rulingFileId === file.rulingFileId,
+    )
+  }
+
+  if (
+    file.category &&
+    verdictAppealDeclarationFileCategories.includes(file.category)
+  ) {
+    return theCase.verdictAppealCase
+  }
+
+  return theCase.appealCase
+}
+
+// A verdict appeal has two sides. The defence side is a defendant appealing -
+// through their defender in the system, or registered by the public
+// prosecution office on a letter; the prosecution side is the public
+// prosecution reviewer appealing the verdict regarding that defendant. Both are
+// per defendant, and they are independent: either or both may stand.
+export type VerdictAppellantSide = 'DEFENCE' | 'PROSECUTION'
+
+export interface VerdictAppellant {
+  defendantId: string
+  side: VerdictAppellantSide
+}
+
+export const verdictAppellantSide = (
+  userRole: UserRole,
+): VerdictAppellantSide =>
+  prosecutionRoles.includes(userRole) ? 'PROSECUTION' : 'DEFENCE'
+
+// The appellants of a verdict appeal that currently stand, read from the appeal
+// event log: for each (defendant, side) the latest APPEALED / APPEAL_WITHDRAWN
+// event decides, so a party that withdrew and appealed again while the deadline
+// ran still counts. Events without a defendant are not verdict appeal events.
+export const standingVerdictAppellants = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): VerdictAppellant[] => {
+  const latestByAppellant = new Map<string, AppealEventLog>()
+
+  for (const eventLog of appealCase.appealEventLogs ?? []) {
+    if (
+      !eventLog.defendantId ||
+      (eventLog.eventType !== AppealEventType.APPEALED &&
+        eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN)
+    ) {
+      continue
+    }
+
+    const key = `${eventLog.defendantId}:${verdictAppellantSide(
+      eventLog.userRole,
+    )}`
+    const latest = latestByAppellant.get(key)
+
+    if (!latest || eventLog.created > latest.created) {
+      latestByAppellant.set(key, eventLog)
+    }
+  }
+
+  return Array.from(latestByAppellant.values())
+    .filter((eventLog) => eventLog.eventType === AppealEventType.APPEALED)
+    .map((eventLog) => ({
+      defendantId: eventLog.defendantId as string,
+      side: verdictAppellantSide(eventLog.userRole),
+    }))
+}
+
+export const hasStandingVerdictAppeal = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  defendantId: string,
+  side: VerdictAppellantSide,
+): boolean =>
+  standingVerdictAppellants(appealCase).some(
+    (appellant) =>
+      appellant.defendantId === defendantId && appellant.side === side,
+  )
+
+// The defendants whose own (defence-side) verdict appeal stands.
+export const standingVerdictAppellantIds = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): string[] =>
+  standingVerdictAppellants(appealCase)
+    .filter((appellant) => appellant.side === 'DEFENCE')
+    .map((appellant) => appellant.defendantId)
 
 // Resolves the appeal decision (Ákvörðun um kæru) recorded in court for the
 // party the user acts for - the prosecution, or the specific defendant / civil
@@ -62,6 +171,59 @@ export const findUserRulingOrderAppealDecision = (
   )
 }
 
+// Every in-court appeal decision for this ruling that belongs to a party the
+// user currently, and confirmedly, acts for: the prosecution's decision, or -
+// for a defence user - the decision of every defendant / civil claimant they are
+// the confirmed representative of. Unlike findUserRulingOrderAppealDecision
+// (which resolves a single party) this covers a lawyer with several clients, so
+// withdrawal can act on all of them at once, mirroring how an appeal is made for
+// all represented parties.
+export const userRulingOrderAppealDecisions = (
+  theCase: Case,
+  rulingFileId: string,
+  user: User,
+): AppealDecision[] => {
+  const decisions = (theCase.appealDecisions ?? []).filter(
+    (decision) => decision.rulingFileId === rulingFileId,
+  )
+
+  if (isProsecutionUser(user)) {
+    return decisions.filter(
+      (decision) => decision.partyRole === AppealDecisionPartyRole.PROSECUTOR,
+    )
+  }
+
+  if (!isDefenceUser(user)) {
+    return []
+  }
+
+  return decisions.filter((decision) => {
+    if (
+      decision.partyRole === AppealDecisionPartyRole.DEFENDANT &&
+      decision.defendantId
+    ) {
+      return Defendant.isConfirmedDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants?.filter((d) => d.id === decision.defendantId),
+      )
+    }
+
+    if (
+      decision.partyRole === AppealDecisionPartyRole.CIVIL_CLAIMANT &&
+      decision.civilClaimantId
+    ) {
+      return CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+        user.nationalId,
+        theCase.civilClaimants?.filter(
+          (c) => c.id === decision.civilClaimantId,
+        ),
+      )
+    }
+
+    return false
+  })
+}
+
 // True when the ruling order was appealed in court - i.e. some party recorded a
 // decision = APPEAL for it. Distinguishes in-court appeals (withdrawn per party)
 // from out-of-court ones (a single appellant on the appeal case).
@@ -77,23 +239,20 @@ export const isInCourtRulingOrderAppeal = (
     ),
   )
 
-// True when the user's party appealed this ruling order in court and has not yet
-// withdrawn - i.e. the user may withdraw it.
+// True when any party the user acts for appealed this ruling order in court and
+// has not yet withdrawn - i.e. the user may withdraw it. Resolves across every
+// represented party, so a lawyer with several clients may withdraw as long as at
+// least one of them still has a standing in-court appeal.
 export const userHasActiveInCourtAppeal = (
   theCase: Case,
   rulingFileId: string,
   user: User,
-): boolean => {
-  const decision = findUserRulingOrderAppealDecision(
-    theCase,
-    rulingFileId,
-    user,
+): boolean =>
+  userRulingOrderAppealDecisions(theCase, rulingFileId, user).some(
+    (decision) =>
+      decision.decision === CaseAppealDecision.APPEAL &&
+      !decision.withdrawnDate,
   )
-
-  return (
-    decision?.decision === CaseAppealDecision.APPEAL && !decision.withdrawnDate
-  )
-}
 
 // The party that appealed a ruling in court, as recorded on the APPEALED event:
 // the appellant's side (userRole) plus, for the defence, the specific party. The
@@ -149,6 +308,10 @@ export const buildInCourtAppealedEvent = (params: {
     caseId: theCase.id,
     appealCaseId: appealCase.id,
     eventType: AppealEventType.APPEALED,
+    // Recorded, not derived: correction reconciliation may discard an in-court
+    // appeal whose decision was corrected away, but must never discard an
+    // out-of-court one, and the decision rows alone cannot tell them apart.
+    appealOrigin: AppealOrigin.IN_COURT,
     userRole: appellant.appellantRole,
     defendantId: appellant.defendantId,
     civilClaimantId: appellant.civilClaimantId,
@@ -158,4 +321,192 @@ export const buildInCourtAppealedEvent = (params: {
     userTitle: actor.title,
     institutionName: actor.institution?.name,
   }
+}
+
+// An APPEALED event for an appeal the party filed itself, outside the court
+// record. Such an appellant has no decision = APPEAL row - they appealed because
+// they postponed in court - so it must never be inferred from the decision rows
+// that they did not appeal.
+//
+// Deliberately "not provably in court" rather than "is out of court". The
+// appeal_event_log_appeal_origin_check constraint guarantees every APPEALED row
+// has an origin, so in practice the two are the same test. The bias is kept
+// because the failure modes are not symmetric: mistaking an out-of-court appeal
+// for an in-court one lets reconciliation delete a real appeal and the filings
+// made for it, while the reverse only leaves a stale appeal case behind for
+// someone to clear up.
+export const isOutOfCourtAppealEvent = (event: AppealEventLog): boolean =>
+  event.eventType === AppealEventType.APPEALED &&
+  event.appealOrigin !== AppealOrigin.IN_COURT
+
+// Whether any party appealed outside the court record. Correcting the court
+// record cannot remove such an appeal, so the appeal case must survive
+// reconciliation even when no in-court appeal remains.
+export const hasOutOfCourtAppeal = (events: AppealEventLog[]): boolean =>
+  events.some(isOutOfCourtAppealEvent)
+
+// Whether the user is an appellant of this appeal case, read from the APPEALED
+// event log rather than the frozen appealed_by_national_id. Authorization keys
+// on the *current* representative, so an appeal survives a defender swap:
+//   - prosecution: a prosecution-side APPEALED event exists;
+//   - indictment defence: the user is the current confirmed defender /
+//     spokesperson of a party (defendant / civil claimant) that has an APPEALED
+//     event;
+//   - request-case defence is collective (no party on the event), so it resolves
+//     to the case's *current* registered defender.
+// This does not cover in-court ruling-order appeals - their live per-party
+// withdrawal state is on the decision row (see userHasActiveInCourtAppeal), which
+// the event log only catches up to on session confirmation.
+export const userIsAppellant = (
+  theCase: Pick<
+    Case,
+    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+  >,
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  user: User,
+): boolean => {
+  const appealedEvents = (appealCase.appealEventLogs ?? []).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+
+  if (appealedEvents.length === 0) {
+    return false
+  }
+
+  if (isProsecutionUser(user)) {
+    return appealedEvents.some((eventLog) =>
+      prosecutionRoles.includes(eventLog.userRole),
+    )
+  }
+
+  if (!isDefenceUser(user)) {
+    return false
+  }
+
+  const defenceAppealed = appealedEvents.some(
+    (eventLog) => !prosecutionRoles.includes(eventLog.userRole),
+  )
+
+  if (isRequestCase(theCase.type)) {
+    // Collective defence: no party on the event, so authorize the case's current
+    // registered defender.
+    return (
+      defenceAppealed &&
+      Boolean(theCase.defenderNationalId) &&
+      theCase.defenderNationalId === user.nationalId
+    )
+  }
+
+  // Indictment defence: the user must be the current confirmed representative of
+  // a party (defendant / civil claimant) that appealed. Resolving live against
+  // the case follows defender / spokesperson reassignment. A prosecution
+  // event names a defendant too - the one whose verdict the prosecution
+  // appealed - and that does not make the defendant's defender an appellant.
+  return appealedEvents.some((eventLog) => {
+    if (prosecutionRoles.includes(eventLog.userRole)) {
+      return false
+    }
+
+    if (eventLog.defendantId) {
+      return Boolean(
+        Defendant.isConfirmedDefenderOfDefendant(
+          user.nationalId,
+          theCase.defendants?.filter((d) => d.id === eventLog.defendantId),
+        ),
+      )
+    }
+
+    if (eventLog.civilClaimantId) {
+      return Boolean(
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+          user.nationalId,
+          theCase.civilClaimants?.filter(
+            (c) => c.id === eventLog.civilClaimantId,
+          ),
+        ),
+      )
+    }
+
+    return false
+  })
+}
+
+// The national ids of the *current* representatives (defender / spokesperson) of
+// the defence parties that appealed, taken from the APPEALED event log. Used to
+// exclude the appellant from appeal notifications - the same "don't notify who
+// just appealed" rule as before, but resolved to the current representative
+// rather than a frozen national id, and covering every appellant when several
+// parties appealed in court.
+export const appellantRepresentativeNationalIds = (
+  theCase: Case,
+  appealCase: AppealCase,
+): Set<string> => {
+  const nationalIds = new Set<string>()
+
+  for (const eventLog of appealCase.appealEventLogs ?? []) {
+    // A prosecution verdict appeal names the defendant whose verdict it
+    // appeals; that defendant's defender is the one to notify, not an appellant.
+    if (
+      eventLog.eventType !== AppealEventType.APPEALED ||
+      prosecutionRoles.includes(eventLog.userRole)
+    ) {
+      continue
+    }
+
+    if (eventLog.defendantId) {
+      const defendant = theCase.defendants?.find(
+        (d) => d.id === eventLog.defendantId,
+      )
+      if (defendant?.defenderNationalId) {
+        nationalIds.add(defendant.defenderNationalId)
+      }
+    }
+
+    if (eventLog.civilClaimantId) {
+      const civilClaimant = theCase.civilClaimants?.find(
+        (c) => c.id === eventLog.civilClaimantId,
+      )
+      if (civilClaimant?.spokespersonNationalId) {
+        nationalIds.add(civilClaimant.spokespersonNationalId)
+      }
+    }
+  }
+
+  return nationalIds
+}
+
+// Whether the user may withdraw a case-level appeal (request case or dismissed
+// indictment). Being an appellant (userIsAppellant) is necessary but not
+// sufficient for the defence on a request case: a request case has a single
+// collective appeal, and the prosecution's appeal takes precedence, so the
+// defence cannot withdraw a shared appeal the prosecution also made - only the
+// prosecution can. This precedence is specific to withdrawal (the defence is
+// still a full appellant for everything else, e.g. file access), so it lives
+// here rather than in userIsAppellant, and is used by both the withdrawal guard
+// and the case tables' cancel-appeal action so they stay in sync.
+export const canWithdrawCaseLevelAppeal = (
+  theCase: Pick<
+    Case,
+    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+  >,
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  user: User,
+): boolean => {
+  if (!userIsAppellant(theCase, appealCase, user)) {
+    return false
+  }
+
+  if (isRequestCase(theCase.type) && isDefenceUser(user)) {
+    const prosecutionAppealed = (appealCase.appealEventLogs ?? []).some(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.APPEALED &&
+        prosecutionRoles.includes(eventLog.userRole),
+    )
+
+    if (prosecutionAppealed) {
+      return false
+    }
+  }
+
+  return true
 }

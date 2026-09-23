@@ -1,4 +1,4 @@
-import { Allow, IsOptional } from 'class-validator'
+import { Allow } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
@@ -13,9 +13,4 @@ export class SendNotificationInput {
   @Allow()
   @Field(() => TrackedNotificationType)
   readonly type!: TrackedNotificationType
-
-  @Allow()
-  @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly eventOnly?: boolean
 }

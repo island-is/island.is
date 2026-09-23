@@ -30,10 +30,13 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 import { type User } from '@island.is/judicial-system/types'
 
 import {
+  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
   prisonSystemStaffRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
 import {
@@ -193,6 +196,9 @@ export class VerdictController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    defenderRule,
   )
   @Get('defendant/:defendantId/verdict')
   @ApiOkResponse({
@@ -217,7 +223,7 @@ export class VerdictController {
       currentVerdict.serviceStatus &&
       currentVerdict.serviceStatus !== verdict.serviceStatus
     ) {
-      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
         Staða: getVerdictServiceStatusText(currentVerdict.serviceStatus),
       })
     }

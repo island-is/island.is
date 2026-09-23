@@ -35,6 +35,7 @@ export const FieldSettingsFragment = gql`
     applicantType
     assetType
     hasDescription
+    isAddressRequired
     isPhoneRequired
     isEmailRequired
     fetchEmailFromMyPages

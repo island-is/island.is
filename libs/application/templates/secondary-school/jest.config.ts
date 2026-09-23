@@ -1,5 +1,4 @@
-/* eslint-disable */
-export default {
+module.exports = {
   displayName: 'application-templates-secondary-school',
   preset: '../../../../jest.preset.js',
   transform: {

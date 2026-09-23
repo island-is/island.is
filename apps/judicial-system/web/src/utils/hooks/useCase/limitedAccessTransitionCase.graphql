@@ -1,9 +1,0 @@
-mutation LimitedAccessTransitionCase($input: TransitionCaseInput!) {
-  limitedAccessTransitionCase(input: $input) {
-    state
-    appealCase {
-      appealState
-      appealReceivedByCourtDate
-    }
-  }
-}

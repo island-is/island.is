@@ -15,6 +15,7 @@ import {
   useGetVerificationStatusLazyQuery,
 } from '../graphql/queries.graphql.generated'
 import { findProblemInApolloError } from '@island.is/shared/problem'
+import { getBrowserInfo } from '../utils/browserInfo'
 import { PaymentError } from '../utils/error/error'
 import { ApolloError } from '@apollo/client'
 
@@ -26,6 +27,7 @@ interface UseCardPaymentProps {
 }
 
 interface CardPaymentData {
+  cardholderName: string
   number: string
   expiryMonth: number
   expiryYear: number
@@ -180,6 +182,10 @@ export const useCardPayment = ({
           expiryMonth: cardData.expiryMonth,
           expiryYear: cardData.expiryYear,
           paymentFlowId: paymentFlow.id,
+          // 3-D Secure authentication data: who the cardholder is and the
+          // browser environment the authentication happens in.
+          cardholderName: cardData.cardholderName,
+          browserInfo: getBrowserInfo(),
         })
 
         if (!verifyCardResponse.isSuccess) {

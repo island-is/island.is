@@ -26,11 +26,18 @@ export const OrderVehicleLicensePlateSchema = z.object({
     .refine(({ frontPlateSize, rearPlateSize }) => {
       return frontPlateSize.length !== 0 || rearPlateSize.length !== 0
     }),
-  plateDelivery: z.object({
-    deliveryMethodIsDeliveryStation: z.enum([YES, NO]),
-    deliveryStationTypeCode: z.string().optional(),
-    includeRushFee: z.array(z.enum([YES])).optional(),
-  }),
+  plateDelivery: z
+    .object({
+      deliveryMethodIsDeliveryStation: z.enum([YES, NO]),
+      deliveryStationTypeCode: z.string().nullish(),
+      includeRushFee: z.array(z.enum([YES])).optional(),
+    })
+    .refine(
+      ({ deliveryMethodIsDeliveryStation, deliveryStationTypeCode }) =>
+        deliveryMethodIsDeliveryStation !== YES ||
+        !!deliveryStationTypeCode?.trim(),
+      { path: ['deliveryStationTypeCode'] },
+    ),
 })
 
 export type OrderVehicleLicensePlate = z.TypeOf<

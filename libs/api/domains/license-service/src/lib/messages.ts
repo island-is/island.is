@@ -21,6 +21,10 @@ export const m = defineMessages({
     id: 'api.license-service:firearm-license',
     defaultMessage: 'Skotvopnaleyfi',
   },
+  renewFirearmLicenseLink: {
+    id: 'api.license-service:renew-firearm-license-link',
+    defaultMessage: 'https://island.is/endurnyja-skotvopnaleyfi',
+  },
   huntingCard: {
     id: 'api.license-service:hunting-card',
     defaultMessage: 'Almennt veiðikort',
@@ -64,6 +68,22 @@ export const m = defineMessages({
   validTo: {
     id: 'api.license-service:valid-to',
     defaultMessage: 'Gildir til',
+  },
+  penaltyPoints: {
+    id: 'api.license-service:penalty-points',
+    defaultMessage: 'Punktar',
+  },
+  activeDeprivationTag: {
+    id: 'api.license-service:active-deprivation-tag',
+    defaultMessage: 'Svipting í gildi',
+  },
+  viewPenaltyPoints: {
+    id: 'api.license-service:view-penalty-points',
+    defaultMessage: 'Skoða punktastöðu',
+  },
+  viewDeprivationDetails: {
+    id: 'api.license-service:view-deprivation-details',
+    defaultMessage: 'Nánar um sviptingu',
   },
   extraCodes: {
     id: 'api.license-service:extra-codes',

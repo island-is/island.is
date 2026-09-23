@@ -65,9 +65,16 @@ export const mapFeaturedGenericListItems = ({
     fields.organizationPage?.fields?.slug &&
     fields.organizationSubpage?.fields?.slug
   ) {
+    // Subpages that belong to a parent subpage are served on
+    // /[organizationPage]/[parentSubpage]/[subpage]
+    const parentSubpageSlug =
+      fields.organizationSubpage.fields.organizationParentSubpage?.fields?.slug
+
     baseUrl = `/${getOrganizationPageUrlPrefix(sys.locale)}/${
       fields.organizationPage.fields.slug
-    }/${fields.organizationSubpage.fields.slug}`
+    }${parentSubpageSlug ? `/${parentSubpageSlug}` : ''}/${
+      fields.organizationSubpage.fields.slug
+    }`
     if (fields.genericList?.sys.id) {
       const tagGroupObject = Object.fromEntries(tagGroupsMap)
       if (Object.keys(tagGroupObject).length > 0)

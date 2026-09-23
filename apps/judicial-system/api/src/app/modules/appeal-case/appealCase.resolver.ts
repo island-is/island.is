@@ -1,5 +1,5 @@
-import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,9 +12,14 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { type User } from '@island.is/judicial-system/types'
+import {
+  AppealCaseType,
+  Feature,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { AppealCase } from './dto/appealCase.response'
 import { CreateAppealCaseInput } from './dto/createAppealCase.input'
 import { CreateAppealEventLogInput } from './dto/createAppealEventLog.input'
@@ -28,24 +33,37 @@ export class AppealCaseResolver {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
+
+  // The flag hides the verdict appeal actions in the web; closing the write
+  // paths here too means a hidden feature cannot be reached by calling the API
+  // directly. Mirrors the limited-access resolver.
+  private assertVerdictAppealsAvailable() {
+    if (this.featureService.isHidden(Feature.INDICTMENT_APPEAL)) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
+  }
 
   @Mutation(() => AppealCase, { nullable: true })
   createAppealCase(
     @Args('input', { type: () => CreateAppealCaseInput })
     input: CreateAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, ...body } = input
+
+    if (body.appealType === AppealCaseType.VERDICT) {
+      this.assertVerdictAppealsAvailable()
+    }
 
     this.logger.debug(`Creating appeal case for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_CASE,
-      backendService.createAppealCase(caseId, body),
+      this.backendService.createAppealCase(caseId, body),
       caseId,
     )
   }
@@ -55,8 +73,6 @@ export class AppealCaseResolver {
     @Args('input', { type: () => UpdateAppealCaseInput })
     input: UpdateAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...updateAppealCase } = input
 
@@ -65,7 +81,11 @@ export class AppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_APPEAL_CASE,
-      backendService.updateAppealCase(caseId, appealCaseId, updateAppealCase),
+      this.backendService.updateAppealCase(
+        caseId,
+        appealCaseId,
+        updateAppealCase,
+      ),
       caseId,
     )
   }
@@ -74,8 +94,6 @@ export class AppealCaseResolver {
   createAppealEventLog(
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, eventType } = input
 
@@ -83,7 +101,11 @@ export class AppealCaseResolver {
       `Creating appeal event log ${eventType} on appeal case ${appealCaseId} of case ${caseId}`,
     )
 
-    return backendService.createAppealEventLog(caseId, appealCaseId, eventType)
+    return this.backendService.createAppealEventLog(
+      caseId,
+      appealCaseId,
+      eventType,
+    )
   }
 
   @Mutation(() => AppealCase, { nullable: true })
@@ -91,10 +113,13 @@ export class AppealCaseResolver {
     @Args('input', { type: () => TransitionAppealCaseInput })
     input: TransitionAppealCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, ...transitionAppealCase } = input
+
+    // Only a verdict appeal is transitioned for one defendant.
+    if (transitionAppealCase.defendantId) {
+      this.assertVerdictAppealsAvailable()
+    }
 
     this.logger.debug(
       `Transitioning appeal case ${appealCaseId} of case ${caseId}`,
@@ -103,7 +128,7 @@ export class AppealCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_APPEAL_CASE,
-      backendService.transitionAppealCase(
+      this.backendService.transitionAppealCase(
         caseId,
         appealCaseId,
         transitionAppealCase,

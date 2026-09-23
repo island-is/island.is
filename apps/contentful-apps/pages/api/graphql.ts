@@ -1,13 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import getConfig from 'next/config'
 
-const graphqlPath = '/api/graphql'
-const { serverRuntimeConfig = {} } = getConfig() ?? {}
-const defaultGraphqlEndpoint = `${
-  process.env.API_URL ?? 'http://localhost:4444'
-}${graphqlPath}`
-const graphqlEndpoint =
-  serverRuntimeConfig.graphqlEndpoint ?? defaultGraphqlEndpoint
+import { getServerRuntimeEnv } from '../../environments/runtimeEnvironment'
+
+const { graphqlEndpoint } = getServerRuntimeEnv()
 
 const shouldForwardBody = (method?: string) =>
   method !== 'GET' && method !== 'HEAD'

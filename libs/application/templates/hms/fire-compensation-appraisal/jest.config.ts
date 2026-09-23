@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'fire-compensation-appraisal',
   preset: '../../../../../jest.preset.js',
   transform: {

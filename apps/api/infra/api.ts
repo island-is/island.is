@@ -316,6 +316,11 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      RSK_CALCULATORS_BASE_URL: {
+        dev: 'https://reiknivelarapi.rsk.is',
+        staging: 'https://reiknivelarapi.rsk.is',
+        prod: 'https://reiknivelarapi.rsk.is',
+      },
       LYFJASTOFNUN_PHARMACIES_BASE_URL: {
         dev: 'https://api.serlyfjaskra.is',
         staging: 'https://api.serlyfjaskra.is',
@@ -358,6 +363,8 @@ export const serviceSetup = (services: {
         prod: 'hh_env_prod',
       },
       MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
+      // Outbound socket cap for enhancedFetch clients; raise to reduce queueing.
+      FETCH_MAX_SOCKETS: { dev: '50', staging: '50', prod: '50' },
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -626,6 +633,39 @@ export const serviceSetup = (services: {
       max: 50,
       min: 3,
       cpuAverageUtilization: 70,
+      bypassReplicaClamp: true, // TEMPORARY: SH load-test window, use prod envelope in dev
+    })
+    .strategy({
+      // prod: zero-downtime. dev/staging: downtime is fine, roll faster.
+      dev: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      staging: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      prod: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: 0 },
+      },
+    })
+    .gracefulShutdown({
+      // Full drain in prod (long XRoad/GraphQL calls); relaxed elsewhere.
+      // minReadySeconds kept at 0 for now — knob to tune if needed.
+      dev: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      staging: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      prod: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
     })
     .grantNamespaces(
       'nginx-ingress-external',

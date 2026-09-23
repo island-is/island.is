@@ -4,8 +4,10 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import {
   AppealCase,
+  AppealEventLog,
   Case,
   CaseFile,
+  CivilClaimant,
   DateLog,
   Defendant,
   DefendantEventLog,
@@ -65,7 +67,9 @@ export const modelMap: {
   prosecutor: ModelDef<typeof User>
   registrar: ModelDef<typeof User>
   appealCase: ModelDef<typeof AppealCase>
+  verdictAppealCase: ModelDef<typeof AppealCase>
   rulingOrderAppealCases: ModelDef<typeof AppealCase>
+  civilClaimants: ModelDef<typeof CivilClaimant>
 } = {
   dateLogs: { model: DateLog, separate: true, order: [['created', 'DESC']] },
   defendants: {
@@ -80,17 +84,21 @@ export const modelMap: {
   prosecutor: { model: User, separate: false },
   registrar: { model: User, separate: false },
   appealCase: { model: AppealCase, separate: false },
+  verdictAppealCase: { model: AppealCase, separate: false },
   rulingOrderAppealCases: { model: AppealCase, separate: false },
+  civilClaimants: { model: CivilClaimant, separate: true },
 }
 
 export const subModelMap: {
   appealJudge1: ModelDef<typeof User>
+  appealEventLogs: ModelDef<typeof AppealEventLog>
   eventLogs: ModelDef<typeof DefendantEventLog>
   rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
   verdicts: ModelDef<typeof Verdict>
 } = {
   appealJudge1: { model: User, separate: false },
+  appealEventLogs: { model: AppealEventLog, separate: true },
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },

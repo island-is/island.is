@@ -1,96 +1,326 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { gql } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Button, Stack, Table as T } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Stack,
+  Table as T,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
-import type { ParsedEmployeeDto } from '@island.is/clients/directorate-of-equality'
+import { FC, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
-import { type Employee } from '../../utils/types'
+import {
+  ApiActions,
+  DRAFT_EMPLOYEES_PAGE_SIZE,
+  draftActionId,
+  SyncMethodEnum,
+} from '../../utils/constants'
+import {
+  type Employee,
+  type ReportEmployeeDto,
+  type ReportEmployeeRoleDto,
+  type Role,
+} from '../../utils/types'
+import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftEmployeesQuery } from '../../utils/useDraftEmployeesQuery'
+import { useDraftSync } from '../../utils/useDraftSync'
+import { useProgressMarker } from '../../utils/useProgressMarker'
+import {
+  DraftErrorState,
+  DraftLoadingState,
+} from '../../components/DraftScreenState'
+import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { EmployeeRow } from './EmployeeRow'
-import { AddEmployeeForm } from './AddEmployeeForm'
-import { deriveIdentifierPrefix } from './utils'
+import { EmployeeForm } from './EmployeeForm'
+import { TablePagination } from '../TablePagination'
+import {
+  componentsFromFormValues,
+  findOrCreateRoleId,
+  paidHoursFromFormValue,
+  type EmployeeFormValues,
+} from './utils'
 
-const FIELD_NAME = 'employees'
+const DRAFT_EMPLOYEES_QUERY = gql`
+  query DirectorateOfEqualityDraftEmployees(
+    $input: DirectorateOfEqualityDraftEmployeesInput!
+  ) {
+    directorateOfEqualityDraftEmployees(input: $input) {
+      employees {
+        id
+        ordinal
+        field
+        department
+        startDate
+        paidHours
+        baseSalary
+        additionalFixedOvertime
+        additionalFixedCarAllowance
+        additionalFixedOther
+        bonusOccasionalOvertime
+        bonusOccasionalCarAllowance
+        bonusOther
+        additionalSalary
+        bonusSalary
+        gender
+        reportEmployeeRoleId
+        reportId
+        score
+      }
+      paging {
+        page
+        totalPages
+        totalItems
+        nextPage
+        previousPage
+        pageSize
+        hasNextPage
+        hasPreviousPage
+      }
+    }
+  }
+`
+
+const toEmployee = (e: ReportEmployeeDto): Employee => ({
+  id: e.id,
+  ordinal: e.ordinal,
+  roleId: e.reportEmployeeRoleId,
+  gender: e.gender,
+  field: e.field,
+  department: e.department,
+  startDate: e.startDate,
+  paidHours: e.paidHours,
+  baseSalary: e.baseSalary,
+  additionalFixedOvertime: e.additionalFixedOvertime,
+  additionalFixedCarAllowance: e.additionalFixedCarAllowance,
+  additionalFixedOther: e.additionalFixedOther,
+  bonusOccasionalOvertime: e.bonusOccasionalOvertime,
+  bonusOccasionalCarAllowance: e.bonusOccasionalCarAllowance,
+  bonusOther: e.bonusOther,
+  outlierGroupId: null,
+})
 
 export const EmployeesEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  answerQuestions,
 }) => {
   const { formatMessage } = useLocale()
-  const { control, getValues } = useFormContext()
   const m = messages.report.employees
 
+  const [page, setPage] = useState(1)
+  const {
+    employees: employeeDtos,
+    paging,
+    loading: employeesLoading,
+    hasError: employeesHasError,
+    refetch: refetchEmployees,
+  } = useDraftEmployeesQuery<ReportEmployeeDto>(
+    DRAFT_EMPLOYEES_QUERY,
+    'directorateOfEqualityDraftEmployees',
+    application,
+    page,
+    DRAFT_EMPLOYEES_PAGE_SIZE,
+  )
+  const {
+    content: rolesContent,
+    loading: rolesLoading,
+    hasError: rolesHasError,
+    refetch: refetchRoles,
+  } = useDraftQuery<{ roles: ReportEmployeeRoleDto[] }>(
+    application,
+    draftActionId(ApiActions.listDraftRoles),
+    'draftRoles',
+  )
+  const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
+  // The marker says nothing more after the first employee lands, so write it
+  // once per mount rather than on every row a company adds.
+  const employeesMarkedRef = useRef(false)
+
   const [isAdding, setIsAdding] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | undefined>()
 
-  const { fields, append, remove, replace } = useFieldArray({
-    control,
-    name: FIELD_NAME,
-  })
+  const loading = employeesLoading || rolesLoading
+  const hasError = employeesHasError || rolesHasError
 
-  // Seed with explicit priority: live form value > external data > empty.
-  // The live react-hook-form value (seeded from application.answers) wins so
-  // edits survive remounts; only fall back to the parsed Excel data when no
-  // answer exists yet. Reading getValues first also makes this idempotent
-  // under StrictMode's double-invoked effects.
-  useEffect(() => {
-    const current = getValues(FIELD_NAME) as Employee[] | undefined
-    if (current && current.length > 0) return
+  const roles: Role[] = (rolesContent?.roles ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    stepIds: [],
+  }))
+  const roleTitleById: Record<string, string> = Object.fromEntries(
+    roles.map((r) => [r.id, r.title]),
+  )
 
-    const externalEmployees = (getValueViaPath<ParsedEmployeeDto[]>(
-      application.externalData,
-      'parsedSalaryReport.data.employees',
-      [],
-    ) ?? []) as Employee[]
-
-    if (externalEmployees.length > 0) {
-      replace(externalEmployees)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const handleAdd = (employee: Employee) => {
-    append(employee)
-    setIsAdding(false)
+  if (loading) {
+    return <DraftLoadingState />
   }
 
-  const employees = fields as unknown as Employee[]
+  if (hasError) {
+    return (
+      <DraftErrorState
+        onRetry={() => {
+          refetchEmployees().catch(() => undefined)
+          refetchRoles().catch(() => undefined)
+        }}
+      />
+    )
+  }
 
-  const nextOrdinal =
-    employees.reduce((max, e) => Math.max(max, e.ordinal ?? 0), 0) + 1
+  const employees = employeeDtos.map(toEmployee)
 
-  const identifierPrefix = deriveIdentifierPrefix(employees)
+  // A new role title resolves to a client-minted id; sync it alongside the
+  // employee command so it exists before the employee references it.
+  const buildRoleCommand = (roleTitle: string) => {
+    const { id: roleId, isNew } = findOrCreateRoleId(roleTitle, roles)
+    return {
+      roleId,
+      roleCommand: isNew
+        ? {
+            method: SyncMethodEnum.CREATE,
+            id: roleId,
+            data: { title: roleTitle },
+          }
+        : undefined,
+    }
+  }
+
+  const employeeData = (values: EmployeeFormValues, roleId: string) => ({
+    reportEmployeeRoleId: roleId,
+    gender: values.gender,
+    field: values.field || null,
+    department: values.department || null,
+    startDate: values.startDate,
+    paidHours: paidHoursFromFormValue(values.paidHours),
+    baseSalary: Number(values.baseSalary) || 0,
+    ...componentsFromFormValues(values),
+  })
+
+  const runSync = async (batch: Parameters<typeof sync>[0]) => {
+    setActionError(undefined)
+    try {
+      await sync(batch)
+      if (batch.roles?.length) await refetchRoles({ silent: true })
+      await refetchEmployees()
+      // This screen has no setBeforeSubmitCallback — every change goes straight
+      // to the draft, row by row — so the marker is written here rather than on
+      // the way out. Only for a batch that puts an employee on the draft: a
+      // REMOVE that empties the list must not claim the step is done.
+      if (
+        !employeesMarkedRef.current &&
+        batch.employees?.some(
+          (command) => command.method !== SyncMethodEnum.REMOVE,
+        )
+      ) {
+        // Latched only on a confirmed write, so a marker lost to a failed
+        // mutation is retried by the next successful sync instead of being
+        // skipped for the rest of the mount.
+        employeesMarkedRef.current = await markProgress({ employees: true })
+      }
+      return true
+    } catch {
+      setActionError(formatMessage(messages.errors.draftSyncFailed))
+      return false
+    }
+  }
+
+  const handleAdd = async (values: EmployeeFormValues) => {
+    const { roleId, roleCommand } = buildRoleCommand(values.roleTitle)
+    const ok = await runSync({
+      roles: roleCommand ? [roleCommand] : undefined,
+      employees: [
+        {
+          method: SyncMethodEnum.CREATE,
+          id: crypto.randomUUID(),
+          data: employeeData(values, roleId),
+        },
+      ],
+    })
+    if (ok) setIsAdding(false)
+  }
+
+  const handleSave = async (employee: Employee, values: EmployeeFormValues) => {
+    const { roleId, roleCommand } = buildRoleCommand(values.roleTitle)
+    const ok = await runSync({
+      roles: roleCommand ? [roleCommand] : undefined,
+      employees: [
+        {
+          method: SyncMethodEnum.UPDATE,
+          id: employee.id,
+          data: employeeData(values, roleId),
+        },
+      ],
+    })
+    if (ok) setEditingId(null)
+  }
+
+  const handleRemove = (employee: Employee) =>
+    runSync({
+      employees: [{ method: SyncMethodEnum.REMOVE, id: employee.id }],
+    })
 
   return (
     <Box>
       <Stack space={4}>
+        {actionError && (
+          <AlertMessage
+            type="error"
+            title={formatMessage(messages.errors.alertTitle)}
+            message={actionError}
+          />
+        )}
         <T.Table>
           <T.Head>
             <T.Row>
               <T.HeadData></T.HeadData>
-              <T.HeadData>{formatMessage(m.nameColumn)}</T.HeadData>
+              <T.HeadData>
+                <EmployeeOrdinalHeader />
+              </T.HeadData>
               <T.HeadData>{formatMessage(m.roleColumn)}</T.HeadData>
               <T.HeadData>{formatMessage(m.genderColumn)}</T.HeadData>
               <T.HeadData></T.HeadData>
             </T.Row>
           </T.Head>
           <T.Body>
-            {(fields as unknown as (Employee & { id: string })[]).map(
-              (field, index) => (
+            {employees.map((employee) =>
+              editingId === employee.id ? (
+                <T.Row key={employee.id}>
+                  <T.Data colSpan={5} style={{ padding: 0 }}>
+                    <EmployeeForm
+                      employee={employee}
+                      roleTitleById={roleTitleById}
+                      onSubmit={(values) => handleSave(employee, values)}
+                      onCancel={() => setEditingId(null)}
+                    />
+                  </T.Data>
+                </T.Row>
+              ) : (
                 <EmployeeRow
-                  key={field.id}
-                  employee={field}
-                  onRemove={() => remove(index)}
+                  key={employee.id}
+                  employee={employee}
+                  roleTitleById={roleTitleById}
+                  onRemove={() => handleRemove(employee)}
+                  onEdit={() => setEditingId(employee.id)}
                 />
               ),
             )}
           </T.Body>
         </T.Table>
 
+        <TablePagination
+          page={paging?.page ?? page}
+          totalPages={paging?.totalPages ?? 1}
+          onPageChange={(newPage) => {
+            setEditingId(null)
+            setPage(newPage)
+          }}
+        />
+
         {isAdding ? (
-          <AddEmployeeForm
-            nextOrdinal={nextOrdinal}
-            identifierPrefix={identifierPrefix}
-            onAdd={handleAdd}
+          <EmployeeForm
+            roleTitleById={roleTitleById}
+            onSubmit={handleAdd}
             onCancel={() => setIsAdding(false)}
           />
         ) : (

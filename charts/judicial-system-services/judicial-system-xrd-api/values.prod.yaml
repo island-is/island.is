@@ -23,6 +23,7 @@ env:
   AUDIT_TRAIL_REGION: 'eu-west-1'
   AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
   BACKEND_URL: 'http://web-judicial-system-backend'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'

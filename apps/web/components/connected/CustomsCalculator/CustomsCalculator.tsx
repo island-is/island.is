@@ -243,6 +243,19 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
                   if (bottomLevelCategory)
                     setSelectedBottomLevelCategory(bottomLevelCategory)
                   else setSelectedBottomLevelCategory(null)
+
+                  const topLevel =
+                    productCategoriesResponse.data
+                      ?.customsCalculatorProductCategories?.topLevel ?? []
+                  const path =
+                    findCategoryPath(
+                      topLevel as CategoryNode[],
+                      bottomLevelCategory?.id ?? '',
+                    ) ?? []
+                  setSelectedCategory({
+                    current: path.length > 0 ? path[path.length - 1] : null,
+                    breadcrumbs: path.slice(0, -1),
+                  })
                 }}
               >
                 {shortcut.label}
@@ -270,6 +283,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           )}
           colored={true}
           inputValue={inputState.searchInput}
+          clearAriaLabel={formatMessage(
+            translationStrings.clearProductSearchInputLabel,
+          )}
+          onClear={() => {
+            setInputState({ ...inputState, searchInput: '' })
+            setSelectedBottomLevelCategory(null)
+            setSelectedCategory({ current: null, breadcrumbs: [] })
+          }}
           onInputValueChange={(value) => {
             setInputState({ ...inputState, searchInput: value })
             if (!value) {

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'de-register-unemployment-benefits',
   preset: '../../../../../jest.preset.js',
   transform: {

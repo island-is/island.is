@@ -1042,6 +1042,7 @@ export const slices = gql`
         id
         title
         slug
+        url
         organizationPage {
           slug
         }
