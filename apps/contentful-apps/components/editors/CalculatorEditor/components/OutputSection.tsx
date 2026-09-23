@@ -72,7 +72,9 @@ export const OutputSection = ({
 
       <Checkbox
         isChecked={section.variant === 'accordion'}
-        isDisabled={isDisabled || !canBeAccordion}
+        isDisabled={
+          isDisabled || (!canBeAccordion && section.variant !== 'accordion')
+        }
         helpText={
           canBeAccordion ? undefined : 'Add a section title to use an accordion'
         }

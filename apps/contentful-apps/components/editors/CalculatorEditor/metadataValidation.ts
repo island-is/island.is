@@ -32,6 +32,10 @@ export const hasMetadataValidationError = (
     return true
   }
 
+  if (config.outputTotal.key && !outputContract.has(config.outputTotal.key)) {
+    return true
+  }
+
   return (config.outputSections ?? []).some((section) =>
     section.fields.some((field) => {
       if (field.kind !== 'value' || !field.key) return false

@@ -131,8 +131,8 @@ export const InputFieldRow = ({
             isDisabled={isDisabled}
             onChange={(ev) => {
               const span = Number(ev.target.value)
-              if (Number.isNaN(span)) return
-              onChange({ span: Math.min(12, Math.max(1, span)) })
+              if (!Number.isFinite(span)) return
+              onChange({ span: Math.min(12, Math.max(1, Math.round(span))) })
             }}
           />
         </FormControl>

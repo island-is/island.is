@@ -102,6 +102,7 @@ export const CalculatorConfigEditor = () => {
   )
 
   const metadataChecked = Boolean(data) && !loading && !error
+  const metadataPending = !metadataChecked
 
   /* Unverified metadata blocks publishing but not saving. */
   const metadataUnverified =
@@ -332,7 +333,7 @@ export const CalculatorConfigEditor = () => {
                   position={sectionIndex + 1}
                   contract={inputContract}
                   usedKeys={usedInputKeys}
-                  isLoading={loading}
+                  isLoading={metadataPending}
                   isDisabled={isDisabled}
                   rowIssues={state.rowIssues}
                   duplicateUids={state.duplicateUids}
@@ -370,7 +371,7 @@ export const CalculatorConfigEditor = () => {
               <OutputTotalEditor
                 total={state.outputTotal}
                 contract={outputContract}
-                isLoading={loading}
+                isLoading={metadataPending}
                 isDisabled={isDisabled}
                 issues={state.rowIssues.get(state.outputTotal.uid)}
                 onChange={state.outputTotalActions.update}
@@ -382,7 +383,7 @@ export const CalculatorConfigEditor = () => {
                   section={section}
                   position={sectionIndex + 1}
                   contract={outputContract}
-                  isLoading={loading}
+                  isLoading={metadataPending}
                   isDisabled={isDisabled}
                   rowIssues={state.rowIssues}
                   dialogs={sdk.dialogs}

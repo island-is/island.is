@@ -202,6 +202,8 @@ export const useCalculatorConfig = (
       (prev.inputSections ?? []).length === 0 &&
       (prev.outputSections ?? []).length === 0
         ? {
+            ...prev,
+            outputTotal: prev.outputTotal ?? emptyOutputTotal(),
             inputSections: [emptyInputSection()],
             outputSections: [emptyOutputSection()],
           }
@@ -450,15 +452,18 @@ export const useCalculatorConfig = (
     mapInput((current) => {
       const moved = current[fromSection]?.fields[fromIndex]
       if (!moved) return current
+      if (fromSection === toSection) {
+        return current.map((section, i) =>
+          i === fromSection
+            ? { ...section, fields: moveWithin(section.fields, fromIndex, toIndex) }
+            : section,
+        )
+      }
       return current.map((section, i) => {
         let fields = section.fields
         if (i === fromSection) fields = fields.filter((_, j) => j !== fromIndex)
         if (i === toSection) {
-          const at =
-            fromSection === toSection && fromIndex < toIndex
-              ? toIndex - 1
-              : toIndex
-          fields = [...fields.slice(0, at), moved, ...fields.slice(at)]
+          fields = [...fields.slice(0, toIndex), moved, ...fields.slice(toIndex)]
         }
         return fields === section.fields ? section : { ...section, fields }
       })
@@ -473,15 +478,18 @@ export const useCalculatorConfig = (
     mapOutput((current) => {
       const moved = current[fromSection]?.fields[fromIndex]
       if (!moved) return current
+      if (fromSection === toSection) {
+        return current.map((section, i) =>
+          i === fromSection
+            ? { ...section, fields: moveWithin(section.fields, fromIndex, toIndex) }
+            : section,
+        )
+      }
       return current.map((section, i) => {
         let fields = section.fields
         if (i === fromSection) fields = fields.filter((_, j) => j !== fromIndex)
         if (i === toSection) {
-          const at =
-            fromSection === toSection && fromIndex < toIndex
-              ? toIndex - 1
-              : toIndex
-          fields = [...fields.slice(0, at), moved, ...fields.slice(at)]
+          fields = [...fields.slice(0, toIndex), moved, ...fields.slice(toIndex)]
         }
         return fields === section.fields ? section : { ...section, fields }
       })
