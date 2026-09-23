@@ -130,10 +130,8 @@ export const numberOfIndexMonthsToFetch = (currentDate = new Date()) => {
   return monthsSinceEarliestStartDate + FUTURE_LOOKAHEAD_MONTHS + 1
 }
 
-export const listOfLastMonths = (
-  numberOfMonths: number,
-  currentDate = new Date(),
-) => {
+export const listOfLastMonths = (currentDate = new Date()) => {
+  const numberOfMonths = numberOfIndexMonthsToFetch(currentDate)
   const months: string[] = []
   const firstMonth = new Date(
     currentDate.getFullYear(),

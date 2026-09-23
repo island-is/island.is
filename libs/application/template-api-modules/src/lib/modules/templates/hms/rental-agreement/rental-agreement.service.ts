@@ -13,7 +13,6 @@ import { mapDraftToContractDraftRequest } from './utils/mapDraftToContractDraftR
 import {
   fetchFinancialIndexationForMonths,
   listOfLastMonths,
-  numberOfIndexMonthsToFetch,
   FinancialIndexationEntry,
   errorMapper,
 } from './utils/utils'
@@ -29,9 +28,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
-    const currentDate = new Date()
-    const numberOfMonths = numberOfIndexMonthsToFetch(currentDate)
-    const months = listOfLastMonths(numberOfMonths, currentDate)
+    const months = listOfLastMonths()
 
     return await fetchFinancialIndexationForMonths(months)
   }
