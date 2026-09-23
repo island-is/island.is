@@ -6,8 +6,8 @@ import {
   TaxCalculatorInputFieldType,
 } from '@island.is/web/graphql/schema'
 
-import { CalculatorField } from './CalculatorField'
 import type { InputContractField } from '../contract'
+import { CalculatorField } from './CalculatorField'
 
 /* What is under test is the two-stage resolution table -- which control a
  * `type`/`semantic` pair picks, and with which props -- not how island-ui

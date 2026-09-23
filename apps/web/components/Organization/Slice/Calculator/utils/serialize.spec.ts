@@ -1,7 +1,7 @@
 import { TaxCalculatorInputFieldType } from '@island.is/web/graphql/schema'
 
-import type { ApplicableField, ApplicableFields } from './applicability'
 import type { InputContractField } from '../contract'
+import type { ApplicableField, ApplicableFields } from './applicability'
 import { toInputFieldValues } from './serialize'
 
 const entry = (

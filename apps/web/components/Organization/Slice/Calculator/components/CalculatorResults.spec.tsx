@@ -6,9 +6,9 @@ import {
   TaxCalculatorOutputFieldType,
 } from '@island.is/web/graphql/schema'
 
-import { CalculatorResults } from './CalculatorResults'
 import type { OutputFieldContract } from '../contract'
 import type { OutputValue } from '../utils/outputValues'
+import { CalculatorResults } from './CalculatorResults'
 
 const contract: OutputFieldContract = new Map([
   [
