@@ -61,5 +61,9 @@ export const ZENDESK_TICKET_IDS = {
     startDate: 46207912615963,
     location: 48052528916763,
     courseUrl: 47332926605979,
+    // Filled from the ticket text by a Zendesk trigger on registrant tickets,
+    // participant tickets set them directly
+    phone: 47044944928283,
+    email: 48009536643995,
   },
 } as const

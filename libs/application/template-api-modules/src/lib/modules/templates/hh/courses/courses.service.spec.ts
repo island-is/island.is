@@ -11,6 +11,7 @@ import type { HHCoursesConfig } from './courses.config'
 import {
   ZENDESK_CUSTOM_OBJECT_KEYS,
   ZENDESK_PARTICIPANT_TICKET_TAG,
+  ZENDESK_TICKET_IDS,
 } from './constants'
 
 const APPLICANT_NATIONAL_ID = '0101302989'
@@ -145,6 +146,18 @@ describe('CoursesService', () => {
         `${OTHER_NATIONAL_ID}@example.com`,
       )
       expect(tickets[1].tags).toContain(ZENDESK_PARTICIPANT_TICKET_TAG)
+      expect(tickets[1].customFields).toEqual(
+        expect.arrayContaining([
+          {
+            id: ZENDESK_TICKET_IDS.customFields.phone,
+            value: '5555555',
+          },
+          {
+            id: ZENDESK_TICKET_IDS.customFields.email,
+            value: `${OTHER_NATIONAL_ID}@example.com`,
+          },
+        ]),
+      )
       expect(tickets[1].message).toContain('Skráð af: Umsækjandi')
 
       // Each participant record is linked to its ticket

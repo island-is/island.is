@@ -726,12 +726,22 @@ export class CoursesService extends BaseTemplateApiService {
             brandId: ZENDESK_TICKET_IDS.brandId,
             ticketFormId: ZENDESK_TICKET_IDS.ticketFormId,
             tags: [...tags, ZENDESK_PARTICIPANT_TICKET_TAG],
-            customFields: this.getTicketCustomFields(
-              course,
-              courseInstance,
-              courseUrl,
-              p.participant.nationalIdWithName.name,
-            ),
+            customFields: [
+              ...this.getTicketCustomFields(
+                course,
+                courseInstance,
+                courseUrl,
+                p.participant.nationalIdWithName.name,
+              ),
+              {
+                id: ZENDESK_TICKET_IDS.customFields.phone,
+                value: p.participant.nationalIdWithName.phone,
+              },
+              {
+                id: ZENDESK_TICKET_IDS.customFields.email,
+                value: p.participant.nationalIdWithName.email,
+              },
+            ],
           },
           participants: [p],
         })),
