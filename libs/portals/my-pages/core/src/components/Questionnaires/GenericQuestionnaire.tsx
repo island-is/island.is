@@ -172,8 +172,6 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
       setAnswers((prev) => {
         const newAnswers = { ...prev }
 
-        // An answer with no values is a cleared question, which has to leave
-        // the map entirely so it is not submitted as an empty entry
         if (answer.answers.length === 0) {
           delete newAnswers[answer.questionId]
         } else {

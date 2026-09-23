@@ -18,7 +18,6 @@ export interface InlineRadioProps {
   labelledBy?: string
 }
 
-/** Two-option question laid out in a row - more options use `Radio` instead */
 export const InlineRadio: FC<InlineRadioProps> = ({
   id,
   options,

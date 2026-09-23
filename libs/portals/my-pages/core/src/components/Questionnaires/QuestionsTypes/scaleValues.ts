@@ -30,7 +30,6 @@ export const getScaleKeyIndex = (
 
 const toScaleValue = (value: number) => Number(value.toFixed(6)).toString()
 
-/** Ranges wider than MAX_VALUES are sampled down, the end point always kept */
 export const getScaleValues = (
   min: string | number,
   max: string | number,
@@ -52,7 +51,6 @@ export const getScaleValues = (
     values.push(toScaleValue(minNum + i * increment))
   }
 
-  // A step that does not divide the range would otherwise stop short of it
   const maxValue = toScaleValue(maxNum)
   if (values[values.length - 1] !== maxValue) {
     values.push(maxValue)
