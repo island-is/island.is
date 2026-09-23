@@ -29,8 +29,9 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
-    const numberOfMonths = numberOfIndexMonthsToFetch()
-    const months = listOfLastMonths(numberOfMonths)
+    const currentDate = new Date()
+    const numberOfMonths = numberOfIndexMonthsToFetch(currentDate)
+    const months = listOfLastMonths(numberOfMonths, currentDate)
 
     return await fetchFinancialIndexationForMonths(months)
   }
