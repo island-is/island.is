@@ -170,9 +170,12 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
   const handleAnswerChange = useCallback(
     (answer: QuestionAnswer) => {
       setAnswers((prev) => {
-        const newAnswers = {
-          ...prev,
-          [answer.questionId]: answer,
+        const newAnswers = { ...prev }
+
+        if (answer.answers.length === 0) {
+          delete newAnswers[answer.questionId]
+        } else {
+          newAnswers[answer.questionId] = answer
         }
 
         // Calculate any formulas that depend on changed values
