@@ -19,8 +19,6 @@ export const lock = style({
   bottom: 0,
 })
 
-export const btn = style({})
-
 export const mobileNav = style({
   position: 'sticky',
   top: 0,
@@ -111,10 +109,6 @@ export const fullWidthMinHeight = style({
       minHeight: `calc(100dvh - ${theme.headerHeight.large}px)`,
     },
   },
-})
-
-globalStyle(`${btn} > span`, {
-  boxShadow: 'none',
 })
 
 export const fullWidthSplit = style({
