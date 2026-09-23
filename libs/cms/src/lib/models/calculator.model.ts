@@ -6,6 +6,7 @@ import {
 } from '@island.is/tax-calculators'
 import type { CalculatorConfig } from '@island.is/tax-calculators'
 import { logger } from '@island.is/logging'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ICalculator, ICalculatorFields } from '../generated/contentfulTypes'
 
@@ -24,7 +25,7 @@ export class Calculator {
 
   // Uses the shared JSON scalar because Slice members expose configJson under
   // the same response key.
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @CacheField(() => graphqlTypeJson, { nullable: true })
   configJson?: CalculatorConfig
 }
 
