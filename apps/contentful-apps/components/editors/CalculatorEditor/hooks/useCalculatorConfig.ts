@@ -27,7 +27,8 @@ import {
   filterConfigForPersistence,
   generateKey,
 } from '../utils'
-import { DEBOUNCE_TIME } from './constants'
+
+const DEBOUNCE_TIME = 150
 
 const moveWithin = <T>(items: T[], from: number, to: number): T[] => {
   const next = items.slice()
