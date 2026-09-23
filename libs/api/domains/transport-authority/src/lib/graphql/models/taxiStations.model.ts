@@ -9,21 +9,6 @@ export class TaxiStation {
   @Field()
   name!: string
 
-  @Field()
-  persidno!: string
-
-  @Field()
-  emailAddress!: string
-
-  @Field()
-  licenceNumber!: string
-
-  @Field(() => Date)
-  validFrom!: Date
-
-  @Field(() => Date)
-  validTo!: Date
-
   @Field(() => Int)
   driverCount!: number
 }
