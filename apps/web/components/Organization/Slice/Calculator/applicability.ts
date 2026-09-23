@@ -83,7 +83,8 @@ export const collectApplicableFields = (
       const label = localized(field.label, locale)
       if (!label) continue
 
-      if (!isDependencyMet(contractField, contract, values, inPlayKeys)) continue
+      if (!isDependencyMet(contractField, contract, values, inPlayKeys))
+        continue
 
       applicable.set(field.key, {
         field,
