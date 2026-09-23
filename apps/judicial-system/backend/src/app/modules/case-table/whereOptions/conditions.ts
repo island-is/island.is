@@ -105,7 +105,7 @@ export const buildHasDefendantWithNullReviewDecisionCondition = (
 // prosecution office's lists. Closing does not touch the appeal - it writes a
 // defendant event and nothing else - so an appeal can be standing at the court
 // of appeals against a judgment the office has decided not to enforce, and the
-// prosecutor arguing it must not lose the case (owner, 2026-09-22).
+// prosecutor arguing it must not lose the case.
 //
 // Correlated to "Case".id rather than expressed as a where on a defendants
 // include, because setInclude merges only attributes: an include-level where
