@@ -1,3 +1,6 @@
+import { format as formatKennitala } from 'kennitala'
+import { IntlShape } from 'react-intl'
+
 import {
   IcelandicGovernmentInstitutionsDebtor,
   IcelandicGovernmentInstitutionsDebtors,
@@ -10,6 +13,8 @@ import {
   IcelandicGovernmentInstitutionsSupplier,
   IcelandicGovernmentInstitutionsSuppliers,
 } from '@island.is/web/graphql/schema'
+
+import { m } from '../messages'
 
 /**
  * Per-filter `extractResult`/`mapItem` pairs for `useAsyncFilterSource` —
@@ -33,9 +38,13 @@ export const extractSuppliers = (data: {
 
 export const mapSupplier = (
   supplier: IcelandicGovernmentInstitutionsSupplier,
+  formatMessage: IntlShape['formatMessage'],
 ) => ({
   value: supplier.id,
   label: supplier.name,
+  tooltip: formatMessage(m.overview.supplierIdTooltip, {
+    kennitala: formatKennitala(supplier.id),
+  }),
 })
 
 export const extractDebtors = (data: {

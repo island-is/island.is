@@ -6,8 +6,11 @@ export class Invoice {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  number!: string
+  @Field({ nullable: true })
+  number?: string
+
+  @Field({ nullable: true })
+  numberRedacted?: boolean
 
   @Field(() => Float)
   totalAmount!: number

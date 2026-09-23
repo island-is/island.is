@@ -92,12 +92,14 @@ export const NestedLines = ({
                 {format(new Date(payment.date), 'do MMMM yyyy')}
               </Text>
             </Box>
-            <Text variant="small">
-              {formatMessage(m.totals.invoiceHeading, {
-                number: payment.invoice.number,
-                linked: String(!isFullyPaid),
-              })}
-            </Text>
+            {payment.invoice.numberRedacted !== true && (
+              <Text variant="small">
+                {formatMessage(m.totals.invoiceHeading, {
+                  number: payment.invoice.number,
+                  linked: String(!isFullyPaid),
+                })}
+              </Text>
+            )}
           </Box>
           <T.Table>
             <T.Body>

@@ -5,7 +5,8 @@ import { mapInvoiceItem } from './invoiceItemMapper'
 export const mapInvoice = (invoice: InvoiceDto): Invoice => {
   return {
     id: invoice.id,
-    number: invoice.number,
+    number: invoice.number ?? undefined,
+    numberRedacted: invoice.numberRedacted,
     totalAmount: invoice.totalAmount,
     itemizations: invoice.itemization.map(mapInvoiceItem),
   }

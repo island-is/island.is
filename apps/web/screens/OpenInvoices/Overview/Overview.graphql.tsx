@@ -145,6 +145,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP = gql`
         invoice {
           id
           number
+          numberRedacted
           totalAmount
           itemizations {
             id

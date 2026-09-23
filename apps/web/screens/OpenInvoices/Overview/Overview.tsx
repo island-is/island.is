@@ -202,11 +202,17 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       ministries,
     )
 
+  const mapSupplierWithTooltip = useCallback(
+    (supplier: Parameters<typeof mapSupplier>[0]) =>
+      mapSupplier(supplier, formatMessage),
+    [formatMessage],
+  )
+
   const { fetchPage: fetchSuppliersPage, selectedItems: suppliersItems } =
     useAsyncFilterSource(
       GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
       extractSuppliers,
-      mapSupplier,
+      mapSupplierWithTooltip,
       suppliers,
     )
 

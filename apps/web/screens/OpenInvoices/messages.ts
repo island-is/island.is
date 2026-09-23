@@ -30,6 +30,10 @@ export const m = {
       id: 'web.openinvoices:overview.supplier',
       defaultMessage: 'Seljandi',
     },
+    supplierIdTooltip: {
+      id: 'web.openinvoices:overview.supplierIdTooltip',
+      defaultMessage: 'Kennitala: {kennitala}',
+    },
     customer: {
       id: 'web.openinvoices:overview.customer',
       defaultMessage: 'Kaupandi',
