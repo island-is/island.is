@@ -26,6 +26,7 @@ import {
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetConversationsV2V2,
   meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
@@ -76,7 +77,9 @@ import {
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
@@ -685,6 +688,17 @@ export class HealthDirectorateHealthService {
           query: { status, starred },
         }),
       ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getPaginatedConversations(
+    auth: Auth,
+    query?: MeConversationControllerGetConversationsV2V2Data['query'],
+  ): Promise<PaginatedConversationsDto | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(meConversationControllerGetConversationsV2V2({ query })),
     )
 
     return conversations ?? null

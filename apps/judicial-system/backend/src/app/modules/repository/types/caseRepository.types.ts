@@ -1420,10 +1420,12 @@ export const getLimitedAccessCaseInclude = (
     {
       model: Case,
       as: 'splitCase',
+      attributes: limitedAccessCaseAttributes,
     },
     {
       model: Case,
       as: 'splitCases',
+      attributes: limitedAccessCaseAttributes,
       include: [
         {
           model: Defendant,

@@ -1,29 +1,30 @@
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
-  QuestionnaireQuestionnairesStatusEnum,
-  QuestionnairesBaseItem,
   QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
+  QuestionnairesBaseItem,
 } from '@island.is/api/schema'
 import {
+  ActionCard,
   Box,
   Checkbox,
   Filter,
   Input,
   Stack,
+  Tabs,
   Text,
-  ActionCard,
-  ToggleSwitchButton,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, ReactNode, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -32,30 +33,17 @@ import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
-const defaultFilterValues = {
-  searchQuery: '',
-  status: [],
-  treatment: [],
-}
-
-type FilterValues = {
-  searchQuery: string
-  status: QuestionnaireQuestionnairesStatusEnum[]
-  treatment: string[]
-}
-
 const Questionnaires: FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   useHealthPlausibleSwap()
   const navigate = useNavigate()
-  const [filterValues, setFilterValues] =
-    useState<FilterValues>(defaultFilterValues)
+
   const [inputValue, setInputValue] = useState('')
-  const [filteredData, setFilteredData] = useState<
-    QuestionnairesBaseItem[] | null
-  >(null)
-  const [showExpired, setShowExpired] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<QuestionnairesStatusEnum[]>(
+    [],
+  )
 
   const { data, loading, error } = useGetQuestionnairesQuery({
     variables: {
@@ -64,7 +52,9 @@ const Questionnaires: FC = () => {
     fetchPolicy: 'network-only',
   })
 
-  const dataLength = data?.questionnairesList?.questionnaires?.length ?? 0
+  const questionnaires = data?.questionnairesList?.questionnaires ?? []
+  const dataIsEmpty =
+    data?.questionnairesList === null || questionnaires.length === 0
 
   const statusFilterOptions = [
     {
@@ -80,26 +70,22 @@ const Questionnaires: FC = () => {
     {
       name: 'draft',
       label: formatMessage(messages.draftQuestionnaire),
-      status: QuestionnaireQuestionnairesStatusEnum.draft,
+      status: QuestionnairesStatusEnum.draft,
     },
   ]
 
-  const toggleStatus = (status: QuestionnaireQuestionnairesStatusEnum) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      status: prev.status.includes(status)
-        ? prev.status.filter((s) => s !== status)
-        : [...prev.status, status],
-    }))
+  const toggleStatus = (status: QuestionnairesStatusEnum) => {
+    setStatusFilter((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status],
+    )
   }
 
   const debouncedSetSearchQuery = useMemo(
     () =>
       debounce((value: string) => {
-        setFilterValues((prev) => ({
-          ...prev,
-          searchQuery: value,
-        }))
+        setSearchQuery(value)
       }, debounceTime.search),
     [],
   )
@@ -109,65 +95,167 @@ const Questionnaires: FC = () => {
     debouncedSetSearchQuery(value)
   }
 
-  useEffect(() => {
-    setFilteredData(
-      data?.questionnairesList?.questionnaires?.filter((item) => {
-        // Search filter
-        const searchLower = filterValues.searchQuery.toLowerCase()
-        const matchesSearch =
-          !searchLower ||
-          item.senderGroupName?.toLowerCase().includes(searchLower) ||
-          item.organization?.toLowerCase().includes(searchLower) ||
-          item.title?.toLowerCase().includes(searchLower)
-
-        // Status filter
-        const matchesStatus =
-          filterValues.status.length === 0 ||
-          (item.status && filterValues.status.includes(item.status))
-
-        // Expired filter
-        const matchesExpired =
-          showExpired || item.status !== QuestionnairesStatusEnum.expired
-
-        return matchesSearch && matchesStatus && matchesExpired
-      }) ?? null,
+  const matchesSearch = (item: QuestionnairesBaseItem) => {
+    const searchLower = searchQuery.toLowerCase()
+    return (
+      !searchLower ||
+      item.senderGroupName?.toLowerCase().includes(searchLower) ||
+      item.organization?.toLowerCase().includes(searchLower) ||
+      item.title?.toLowerCase().includes(searchLower)
     )
-  }, [filterValues, data, showExpired])
+  }
 
-  const dataIsEmpty =
-    data?.questionnairesList === null ||
-    data?.questionnairesList?.questionnaires?.length === 0
+  const matchesStatus = (item: QuestionnairesBaseItem) =>
+    statusFilter.length === 0 ||
+    (!!item.status && statusFilter.includes(item.status))
 
-  const filterIsEmpty =
-    filterValues.searchQuery.length === 0 && filterValues.status.length === 0
+  const activeAll = questionnaires.filter(
+    (item) => item.status !== QuestionnairesStatusEnum.expired,
+  )
+  const activeVisible = activeAll.filter(matchesSearch).filter(matchesStatus)
 
-  const noActive = filteredData?.every(
+  const expiredAll = questionnaires.filter(
     (item) => item.status === QuestionnairesStatusEnum.expired,
   )
+  const expiredVisible = expiredAll.filter(matchesSearch)
 
-  // If no data and no filters = typical empty screen
-  const displayTypicalEmptyState =
-    !loading && !error && dataIsEmpty && filterIsEmpty && !showExpired
+  const searchInput = (
+    <Input
+      placeholder={formatMessage(m.searchPlaceholder)}
+      aria-label={formatMessage(m.searchLabel)}
+      name="questionnaires-search-input"
+      size="xs"
+      value={inputValue}
+      onChange={(e) => handleSearchChange(e.target.value)}
+      backgroundColor="blue"
+      icon={{ name: 'search' }}
+    />
+  )
 
-  // If filters applied and no data = empty screen with filters
-  const displayFilteredEmptyState =
-    !loading &&
-    !error &&
-    !dataIsEmpty &&
-    filteredData?.length === 0 &&
-    !filterIsEmpty
+  const renderQuestionnaireCard = (questionnaire: QuestionnairesBaseItem) => {
+    const status = questionnaire.status
+    const isAnswered = status === QuestionnairesStatusEnum.answered
+    const isDraft = status === QuestionnairesStatusEnum.draft
+    const isExpired = status === QuestionnairesStatusEnum.expired
+    return (
+      <ActionCard
+        key={questionnaire.id}
+        heading={questionnaire.title}
+        headingVariant="h4"
+        subText={questionnaire.description ?? ''}
+        eyebrow={
+          questionnaire.senderGroupName ??
+          (questionnaire.organization ===
+          QuestionnaireQuestionnairesOrganizationEnum.EL
+            ? formatMessage(messages.healthDirectorate)
+            : formatMessage(messages.landspitali))
+        }
+        eyebrowColor="purple400"
+        text={formatDate(questionnaire.sentDate)}
+        tag={{
+          label: isAnswered
+            ? formatMessage(messages.answeredQuestionnaire)
+            : isExpired
+            ? formatMessage(messages.expiredQuestionnaire)
+            : isDraft
+            ? formatMessage(messages.draftQuestionnaire)
+            : formatMessage(messages.unAnsweredQuestionnaire),
+          variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
+        }}
+        cta={{
+          label: formatMessage(messages.questionnaireSeeMore),
+          variant: 'text',
+          icon: 'arrowForward',
+          onClick: () =>
+            navigate(
+              HealthPaths.HealthQuestionnairesDetail.replace(
+                ':org',
+                questionnaire.organization?.toLocaleLowerCase() ?? '',
+              ).replace(':id', questionnaire.id),
+            ),
+        }}
+      />
+    )
+  }
 
-  // If filters applied and showExpired = true => empty screens with no active questionnaires
-  const displayNoActiveEmptyState =
-    !loading &&
-    !error &&
-    !dataIsEmpty &&
-    !showExpired &&
-    noActive &&
-    filterIsEmpty
+  const renderQuestionnaireList = (
+    visible: QuestionnairesBaseItem[],
+    emptyState: ReactNode,
+    isFiltered: boolean,
+  ) => {
+    if (loading) {
+      return <CardLoader />
+    }
+    if (error) {
+      return (
+        <Problem type="internal_service_error" noBorder={false} error={error} />
+      )
+    }
+    return (
+      <>
+        {/* Always mounted so screen readers announce result changes */}
+        <Box role="status">
+          <VisuallyHidden>
+            {isFiltered &&
+              formatMessage(messages.numberOfQuestionnairesFound, {
+                number: visible.length,
+              })}
+          </VisuallyHidden>
+        </Box>
+        {visible.length === 0 ? (
+          emptyState
+        ) : (
+          <Stack space={3}>{visible.map(renderQuestionnaireCard)}</Stack>
+        )}
+      </>
+    )
+  }
+
+  const notFoundEmptyState = (
+    <Problem
+      type="no_data"
+      noBorder={false}
+      title={formatMessage(messages.questionnairesNotFound)}
+      message={formatMessage(messages.questionnaireNotFoundWithFilters)}
+      imgAlt=""
+      imgSrc="./assets/images/empty_flower.svg"
+    />
+  )
+
+  const activeEmptyState =
+    activeAll.length === 0 ? (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(messages.noData)}
+        message={formatMessage(messages.noActiveQuestionnairesRegistered)}
+        imgSrc="./assets/images/empty_flower.svg"
+        imgAlt=""
+      />
+    ) : (
+      notFoundEmptyState
+    )
+
+  const expiredEmptyState =
+    expiredAll.length === 0 ? (
+      <Problem
+        type="no_data"
+        noBorder={false}
+        title={formatMessage(messages.noData)}
+        message={formatMessage(messages.noExpiredQuestionnairesRegistered)}
+        imgSrc="./assets/images/empty_flower.svg"
+        imgAlt=""
+      />
+    ) : (
+      notFoundEmptyState
+    )
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={formatMessage(messages.questionnaires)}
       intro={formatMessage(messages.questionnairesIntro)}
       loading={loading}
@@ -182,62 +270,7 @@ const Questionnaires: FC = () => {
           />
         </Box>
       )}
-      {}
-      {!loading && !error && (
-        <Filter
-          variant="popover"
-          align="left"
-          reverse
-          labelClearAll={formatMessage(m.clearAllFilters)}
-          labelClear={formatMessage(m.clearFilter)}
-          labelOpen={formatMessage(m.openFilter)}
-          filterCount={filterValues.status.length}
-          onFilterClear={() => {
-            debouncedSetSearchQuery.cancel()
-            setInputValue('')
-            setFilterValues(defaultFilterValues)
-          }}
-          filterInput={
-            <Input
-              placeholder={formatMessage(m.searchPlaceholder)}
-              aria-label={formatMessage(m.searchLabel)}
-              name="rafraen-skjol-input"
-              size="xs"
-              value={inputValue}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              backgroundColor="blue"
-              icon={{ name: 'search' }}
-            />
-          }
-        >
-          <Box paddingX={4} paddingY={2}>
-            <Text
-              variant="default"
-              as="p"
-              fontWeight="semiBold"
-              paddingBottom={2}
-            >
-              {formatMessage(m.status)}
-            </Text>
-
-            <Stack space={2}>
-              {statusFilterOptions.map(({ name, label, status }) => (
-                <Checkbox
-                  key={name}
-                  name={name}
-                  label={label}
-                  value={name}
-                  checked={filterValues.status.includes(status)}
-                  onChange={() => {
-                    toggleStatus(status)
-                  }}
-                />
-              ))}
-            </Stack>
-          </Box>
-        </Filter>
-      )}
-      {displayTypicalEmptyState && (
+      {!loading && !error && dataIsEmpty && (
         <Box marginTop={3}>
           <Problem
             type="no_data"
@@ -251,112 +284,95 @@ const Questionnaires: FC = () => {
           />
         </Box>
       )}
-      <Box marginTop={5}>
-        {loading && <CardLoader />}
-        {!loading && !error && dataLength > 0 && (
-          <Box
-            justifyContent="spaceBetween"
-            alignItems="center"
-            display="flex"
-            marginBottom={2}
-            className={styles.toggleBox}
-          >
-            <Box role="status">
-              <Text variant="medium">
-                {formatMessage(
-                  filterIsEmpty
-                    ? messages.numberOfQuestionnaires
-                    : messages.numberOfQuestionnairesFound,
-                  {
-                    number: filteredData?.length ?? 0,
-                  },
-                )}
-              </Text>
-            </Box>
-            <ToggleSwitchButton
-              className={styles.toggleButton}
-              label={formatMessage(messages.showExpiredQuestionnaires)}
-              onChange={() => setShowExpired(!showExpired)}
-              checked={showExpired}
-            />
-          </Box>
-        )}
-        {displayNoActiveEmptyState && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(messages.noData)}
-            message={formatMessage(messages.noActiveQuestionnairesRegistered)}
-            imgSrc="./assets/images/empty_flower.svg"
-            imgAlt=""
+      {!loading && !error && !dataIsEmpty && (
+        <Box marginTop={[4, 4, 4, 3]}>
+          <Tabs
+            label={formatMessage(messages.questionnaires)}
+            selected="active"
+            size="xs"
+            contentBackground="transparent"
+            onlyRenderSelectedTab
+            tabs={[
+              {
+                id: 'active',
+                label: formatMessage(messages.valid),
+                content: (
+                  <Box paddingTop={3}>
+                    <Box marginBottom={3}>
+                      <Filter
+                        variant="popover"
+                        align="left"
+                        reverse
+                        filterInputFluid
+                        mobileWrap={false}
+                        labelClearAll={formatMessage(m.clearAllFilters)}
+                        labelClear={formatMessage(m.clearFilter)}
+                        labelOpen={formatMessage(m.openFilter)}
+                        filterCount={statusFilter.length}
+                        onFilterClear={() => {
+                          debouncedSetSearchQuery.cancel()
+                          setInputValue('')
+                          setSearchQuery('')
+                          setStatusFilter([])
+                        }}
+                        filterInput={searchInput}
+                      >
+                        <Box paddingX={4} paddingY={2}>
+                          <Text
+                            variant="default"
+                            as="p"
+                            fontWeight="semiBold"
+                            paddingBottom={2}
+                          >
+                            {formatMessage(m.status)}
+                          </Text>
+                          <Stack space={2}>
+                            {statusFilterOptions.map(
+                              ({ name, label, status }) => (
+                                <Checkbox
+                                  key={name}
+                                  name={name}
+                                  label={label}
+                                  value={name}
+                                  checked={statusFilter.includes(status)}
+                                  onChange={() => toggleStatus(status)}
+                                />
+                              ),
+                            )}
+                          </Stack>
+                        </Box>
+                      </Filter>
+                    </Box>
+                    {renderQuestionnaireList(
+                      activeVisible,
+                      activeEmptyState,
+                      !!searchQuery || statusFilter.length > 0,
+                    )}
+                  </Box>
+                ),
+              },
+              {
+                id: 'expired',
+                label: formatMessage(messages.expiredQuestionnaires),
+                content: (
+                  <Box paddingTop={3}>
+                    {expiredAll.length > 0 && (
+                      <Box marginBottom={3} className={styles.searchInput}>
+                        {searchInput}
+                      </Box>
+                    )}
+                    {renderQuestionnaireList(
+                      expiredVisible,
+                      expiredEmptyState,
+                      !!searchQuery,
+                    )}
+                  </Box>
+                ),
+              },
+            ]}
           />
-        )}
-        <Stack space={3}>
-          {filteredData?.map((questionnaire) => {
-            const status = questionnaire.status
-            const isAnswered = status === QuestionnairesStatusEnum.answered
-            const isDraft = status === QuestionnairesStatusEnum.draft
-            const isExpired = status === QuestionnairesStatusEnum.expired
-            return (
-              <ActionCard
-                key={questionnaire.id}
-                heading={questionnaire.title}
-                headingVariant="h4"
-                subText={questionnaire.description ?? ''}
-                eyebrow={
-                  questionnaire.senderGroupName ??
-                  (questionnaire.organization ===
-                  QuestionnaireQuestionnairesOrganizationEnum.EL
-                    ? formatMessage(messages.healthDirectorate)
-                    : formatMessage(messages.landspitali))
-                }
-                eyebrowColor="purple400"
-                text={formatDate(questionnaire.sentDate)}
-                tag={{
-                  label: isAnswered
-                    ? formatMessage(messages.answeredQuestionnaire)
-                    : isExpired
-                    ? formatMessage(messages.expiredQuestionnaire)
-                    : isDraft
-                    ? formatMessage(messages.draftQuestionnaire)
-                    : formatMessage(messages.unAnsweredQuestionnaire),
-                  variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
-                }}
-                cta={{
-                  label: formatMessage(messages.questionnaireSeeMore),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  onClick: () =>
-                    navigate(
-                      HealthPaths.HealthQuestionnairesDetail.replace(
-                        ':org',
-                        questionnaire.organization?.toLocaleLowerCase() ?? '',
-                      ).replace(':id', questionnaire.id),
-                    ),
-                }}
-              />
-            )
-          })}
-        </Stack>
-      </Box>
-      {!loading &&
-        Object.entries(filterValues).some(([key, value]) =>
-          key !== 'treatment' && Array.isArray(value)
-            ? value.length > 0
-            : value.length > 0,
-        ) &&
-        displayFilteredEmptyState && (
-          <Box marginTop={3}>
-            <Problem
-              type="no_data"
-              noBorder={false}
-              title={formatMessage(messages.questionnairesNotFound)}
-              message={formatMessage(messages.questionnaireNotFoundWithFilters)}
-              imgAlt=""
-              imgSrc="./assets/images/empty_flower.svg"
-            />
-          </Box>
-        )}
+        </Box>
+      )}
     </IntroWrapper>
   )
 }

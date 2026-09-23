@@ -216,6 +216,35 @@ describe('CaseRepositoryService - case reads', () => {
         ).toBeUndefined()
       })
 
+      // The attribute allowlist is the only thing keeping a defence user off
+      // the rest of the case columns - the case interceptor serves whatever
+      // the read returns, unredacted.
+      it('should restrict every linked case to the limited access columns', () => {
+        const include = findOneOptions().include
+        const attributesOf = (as: string) => included(include, as)?.attributes
+
+        expect(attributesOf('parentCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('childCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('mergeCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('mergedCases')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('splitCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('splitCases')).toEqual(limitedAccessCaseAttributes)
+      })
+
+      it('should not read the prosecutor only text of the split cases', () => {
+        const include = findOneOptions().include
+
+        const splitCase = included(include, 'splitCase')?.attributes
+        const splitCases = included(include, 'splitCases')?.attributes
+
+        expect(splitCase).toBeDefined()
+        expect(splitCase).not.toContain('comments')
+        expect(splitCase).not.toContain('caseFilesComments')
+        expect(splitCases).toBeDefined()
+        expect(splitCases).not.toContain('comments')
+        expect(splitCases).not.toContain('caseFilesComments')
+      })
+
       it('should not narrow the parties on the linked cases', () => {
         const include = findOneOptions().include
 

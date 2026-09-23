@@ -38,8 +38,10 @@ import { HealthDirectorateService } from '../health-directorate.service'
 import { HealthDirectorateCreateConversationInput } from '../dto/createHealthConversation.input'
 import { HealthDirectorateConversationIdInput } from '../dto/healthConversationId.input'
 import { HealthDirectorateHealthConversationsFilterInput } from '../dto/healthConversationsFilter.input'
+import { HealthDirectoratePaginatedHealthConversationsInput } from '../dto/paginatedHealthConversations.input'
 import { HealthDirectorateReplyToConversationInput } from '../dto/replyToHealthConversation.input'
 import { HealthDirectorateHealthConversation } from '../models/healthConversation.model'
+import { HealthDirectoratePaginatedHealthConversations } from '../models/paginatedHealthConversations.model'
 import { HealthDirectorateHealthConversationDetail } from '../models/healthConversationDetail.model'
 import { HealthDirectorateHealthConversationRecipient } from '../models/healthConversationRecipient.model'
 import { HealthDirectorateConversationOrganization } from '../models/healthConversationOrganization.model'
@@ -54,6 +56,7 @@ export class HealthConversationsResolver {
   @Query(() => [HealthDirectorateHealthConversation], {
     name: 'healthDirectorateHealthConversations',
     nullable: true,
+    deprecationReason: 'Use healthDirectoratePaginatedHealthConversations.',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
@@ -67,6 +70,24 @@ export class HealthConversationsResolver {
     @CurrentUser() user: User,
   ): Promise<HealthDirectorateHealthConversation[] | null> {
     return this.api.getHealthConversations(user, input?.status, input?.starred)
+  }
+
+  @Query(() => HealthDirectoratePaginatedHealthConversations, {
+    name: 'healthDirectoratePaginatedHealthConversations',
+    nullable: true,
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.isServicePortalHealthMessagesPageEnabled)
+  getPaginatedHealthConversations(
+    @Args('input', {
+      type: () => HealthDirectoratePaginatedHealthConversationsInput,
+      nullable: true,
+    })
+    input: HealthDirectoratePaginatedHealthConversationsInput | undefined,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectoratePaginatedHealthConversations | null> {
+    return this.api.getPaginatedHealthConversations(user, input)
   }
 
   @Query(() => HealthDirectorateHealthConversationDetail, {

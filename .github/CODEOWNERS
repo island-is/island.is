@@ -314,6 +314,7 @@ codemagic.yaml                                                                  
 /libs/clients/rsk/company-registry                                                                                           @island-is/origo
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/origo
 /libs/clients/rsk/customs                                                                                                    @island-is/stefna
+/libs/clients/rsk/calculators/                                                                                               @island-is/hugsmidjan
 
 /libs/api/domains/company-registry                                                                                           @island-is/origo
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/origo

@@ -117,7 +117,7 @@ const AppointmentDetail = () => {
         />
       )}
       {!error && appointment && (
-        <Stack space={5}>
+        <Stack space={[3, 3, 5]}>
           <Box>
             <Box
               border="standard"
@@ -130,7 +130,7 @@ const AppointmentDetail = () => {
                 justifyContent="spaceBetween"
                 alignItems="center"
               >
-                <Stack space={3}>
+                <Stack space={[2, 2, 3]}>
                   <Box display="flex" alignItems="center" columnGap={2}>
                     <Text
                       variant="h4"

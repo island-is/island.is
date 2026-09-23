@@ -195,6 +195,7 @@ export const healthModule: PortalModule = {
         ApiScope.healthHealthcare,
         ApiScope.healthDentists,
         ApiScope.healthRightsStatus,
+        ApiScope.healthAppointments,
       ].some((scope) => userInfo.scopes.includes(scope)),
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
@@ -206,7 +207,9 @@ export const healthModule: PortalModule = {
     {
       name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
-      enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
+      enabled:
+        userInfo.scopes.includes(ApiScope.healthRightsStatus) ||
+        userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <HealthOverview />,
     },
     {
@@ -364,14 +367,14 @@ export const healthModule: PortalModule = {
       name: hm.medicinePrescriptions,
       path: HealthPaths.HealthMedicinePrescription,
       key: MEDICINE_LANDLAEKNIR_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      enabled: userInfo.scopes.includes(ApiScope.healthPrescription),
       element: <MedicinePrescriptions />,
     },
     {
       name: hm.medicinePrescriptionHistory,
       path: HealthPaths.HealthMedicinePrescriptionHistory,
       key: MEDICINE_LANDLAEKNIR_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      enabled: userInfo.scopes.includes(ApiScope.healthDispensations),
       element: <MedicinePrescriptionHistory />,
     },
     {
@@ -452,28 +455,28 @@ export const healthModule: PortalModule = {
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonation,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: <OrganDonation />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationOld,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: <OrganDonationRegistration />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistrationOld,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: (
         <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
@@ -482,7 +485,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.vaccinations,
       path: HealthPaths.HealthVaccinations,
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Vaccinations />,
     },
     {
@@ -516,28 +519,28 @@ export const healthModule: PortalModule = {
       name: hm.referrals,
       path: HealthPaths.HealthReferrals,
       key: 'Referrals',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <Referrals />,
     },
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferralsDetail,
       key: 'Referrals',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <ReferralsDetail />,
     },
     {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlists,
       key: 'HealthWaitlists',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <Waitlist />,
     },
     {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlistsDetail,
       key: 'HealthWaitlists',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <WaitlistDetail />,
     },
     {
@@ -654,27 +657,21 @@ export const healthModule: PortalModule = {
       name: hm.appointments,
       path: HealthPaths.HealthAppointments,
       key: 'HealthAppointments',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <Appointments />,
     },
     {
       name: hm.appointmentDetail,
       path: HealthPaths.HealthAppointmentDetail,
       key: 'HealthAppointments',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <AppointmentDetail />,
     },
     {
       name: hm.bookAppointmentTitle,
       path: HealthPaths.HealthBookAppointment,
       key: 'HealthAppointments',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <BookAppointment />,
     },
     {
