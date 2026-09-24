@@ -22,10 +22,6 @@ export const delegationSubjectId = 'delegation-subject-id'
 
 interface MockUserProfileDto extends UserProfileDto {
   name: string
-  // TODO: not yet part of the generated UserProfileDto client - lands with the
-  // in-flight userProfile PR. notificationsWorker.service.ts should read this
-  // instead of its hardcoded `onlyActionablePriorityNotification = false`.
-  onlyActionableNotifications?: boolean
 }
 
 export const userWithDelegations: MockUserProfileDto = {
@@ -121,7 +117,7 @@ export const userWhoDeclinesInformationalNotifications: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
-  onlyActionableNotifications: true,
+  onlyActionablePriorityNotifications: true,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
