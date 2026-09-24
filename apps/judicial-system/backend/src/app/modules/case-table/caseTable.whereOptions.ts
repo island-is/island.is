@@ -72,6 +72,7 @@ import {
   prosecutionRequestCasesInProgressWhereOptions,
 } from './whereOptions/prosecution'
 import {
+  publicProsecutionIndictmentsAppealedWhereOptions,
   publicProsecutionIndictmentsInReviewWhereOptions,
   publicProsecutionIndictmentsReviewedWhereOptions,
 } from './whereOptions/publicProsecution'
@@ -200,6 +201,8 @@ export const caseTableWhereOptions: Record<
     publicProsecutionIndictmentsInReviewWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]:
     publicProsecutionIndictmentsReviewedWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]:
+    publicProsecutionIndictmentsAppealedWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT]:
     prosecutionIndictmentsInDraftWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION]:

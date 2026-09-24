@@ -21,6 +21,7 @@ import {
 
 import {
   buildEventLogExistsCondition,
+  buildHasAppealedVerdictCondition,
   buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
@@ -379,6 +380,38 @@ export const defenceCasesAccessWhereOptions = (user: User) => ({
 
 // Public prosecution access
 
+// The cases heightened security does not hide from this user: the ones not at a
+// heightened level at all, and the ones it reserves them - as creator, as
+// assigned prosecutor, or as reviewer. The same rule
+// canProsecutionUserAccessCase applies, named from the side it selects rather
+// than the side it restricts, because it matches what a user may see.
+//
+// Shared so the appeal branch of the access options and the case guard cannot
+// drift apart from each other.
+export const notHiddenByHeightenedSecurityWhereOptions = (user: User) => ({
+  [Op.or]: [
+    { is_heightened_security_level: { [Op.not]: true } },
+    { creating_prosecutor_id: user.id },
+    { prosecutor_id: user.id },
+    // The reviewer keeps the case the assignment gave them - the same exemption
+    // canProsecutionUserAccessCase makes, so a list cannot hide a case the
+    // guard would open.
+    { indictment_reviewer_id: user.id },
+  ],
+})
+
+// A prosecutor at the public prosecution office reaches an indictment two ways:
+// the cases they were given to review, and every appealed verdict, whoever
+// reviewed it. The second is why the appealed case list exists at all - an
+// appeal can land with a prosecutor who had nothing to do with the review.
+//
+// Being reachable is all this says. Which of these cases belongs in which list
+// is the table where options' business, and the two review lists narrow it back
+// to this user's own cases.
+//
+// Rulings only on the appeal side: a fine is appealed by ruling appeal rather
+// than verdict appeal, and a review decision of APPEAL against one means
+// exactly that.
 export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
   is_archived: false,
   type: indictmentCases,
@@ -392,8 +425,27 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
       true,
     ),
+    {
+      [Op.or]: [
+        { indictment_reviewer_id: user.id },
+        {
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          [Op.and]: [
+            buildHasAppealedVerdictCondition(),
+            // Heightened security narrows the appeal route the same way it
+            // narrows every other prosecution route - an appeal is not a way
+            // around it. Scoped to this branch rather than hoisted to a term of
+            // its own, because the reviewer branch above has never carried the
+            // restriction and this is not the change that should give it one.
+            // So far, heightened security has not been applied to indictment
+            // cases, but this condition future proofs access to appealed
+            // verdicts in case it is.
+            notHiddenByHeightenedSecurityWhereOptions(user),
+          ],
+        },
+      ],
+    },
   ],
-  indictment_reviewer_id: user.id,
 })
 
 export const publicProsecutionCasesAccessWhereOptions = (user: User) => ({

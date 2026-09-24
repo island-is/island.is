@@ -877,6 +877,10 @@ export type TableRepeaterField = BaseField & {
     >
   }
   initActiveFieldIfEmpty?: boolean
+  /**
+   * If true, hides the table header when there are no visible rows.
+   */
+  hideTableHeaderIfEmpty?: boolean
 }
 
 export type FieldsRepeaterField = BaseField & {
