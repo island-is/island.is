@@ -212,15 +212,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     parseAsArrayOf(parseAsString),
   )
 
-  const {
-    fetchPage: fetchMinistriesPage,
-    selectedItems: ministriesItems,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
-    extractMinistries,
-    mapMinistry,
-    ministries,
-  )
+  const { fetchPage: fetchMinistriesPage, selectedItems: ministriesItems } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+      extractMinistries,
+      mapMinistry,
+      ministries,
+    )
 
   const mapSupplierWithTooltip = useCallback(
     (supplier: Parameters<typeof mapSupplier>[0]) =>
@@ -228,25 +226,21 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     [formatMessage],
   )
 
-  const {
-    fetchPage: fetchSuppliersPage,
-    selectedItems: suppliersItems,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
-    extractSuppliers,
-    mapSupplierWithTooltip,
-    suppliers,
-  )
+  const { fetchPage: fetchSuppliersPage, selectedItems: suppliersItems } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+      extractSuppliers,
+      mapSupplierWithTooltip,
+      suppliers,
+    )
 
-  const {
-    fetchPage: fetchDebtorsPage,
-    selectedItems: debtorsItems,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
-    extractDebtors,
-    mapDebtor,
-    debtors,
-  )
+  const { fetchPage: fetchDebtorsPage, selectedItems: debtorsItems } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+      extractDebtors,
+      mapDebtor,
+      debtors,
+    )
 
   const {
     fetchPage: fetchInvoicePaymentTypeGroupsPage,

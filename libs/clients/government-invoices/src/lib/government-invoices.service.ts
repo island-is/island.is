@@ -67,24 +67,23 @@ export class GovernmentInvoicesClientService {
   public async getOpenInvoicePaymentsGroup(
     requestParams: InvoiceRequestDto,
   ): Promise<InvoicePaymentsGroupDto | null> {
-    const {
-      data,
-    } = await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
-      path: {
-        supplierLegalId: requestParams.supplierLegalId,
-        erpLegalEntityId: requestParams.erpLegalEntityId,
-      },
-      query: {
-        dateFrom: requestParams.dateFrom
-          ? format(requestParams.dateFrom, 'yyyy-MM-dd')
-          : undefined,
-        dateTo: requestParams.dateTo
-          ? format(requestParams.dateTo, 'yyyy-MM-dd')
-          : undefined,
-        paymentTypeIds: requestParams.paymentTypeIds,
-        ministries: requestParams.ministries,
-      },
-    })
+    const { data } =
+      await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
+        path: {
+          supplierLegalId: requestParams.supplierLegalId,
+          erpLegalEntityId: requestParams.erpLegalEntityId,
+        },
+        query: {
+          dateFrom: requestParams.dateFrom
+            ? format(requestParams.dateFrom, 'yyyy-MM-dd')
+            : undefined,
+          dateTo: requestParams.dateTo
+            ? format(requestParams.dateTo, 'yyyy-MM-dd')
+            : undefined,
+          paymentTypeIds: requestParams.paymentTypeIds,
+          ministries: requestParams.ministries,
+        },
+      })
 
     if (!data) {
       return null

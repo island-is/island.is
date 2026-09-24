@@ -68,7 +68,8 @@ export const useInvoicePaymentTypeGroupFilter = (
   const fetchGroups = useCallback(
     async (variables: GroupQueryVariables) => {
       const { data } = await apolloClient.query<Query, GroupQueryVariables>({
-        query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
+        query:
+          GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
         variables,
       })
 

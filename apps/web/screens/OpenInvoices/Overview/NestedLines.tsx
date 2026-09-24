@@ -151,9 +151,7 @@ export const NestedLines = ({
                       className: styles.noBorder,
                     }}
                   >
-                    <Text variant="small">
-                      {formatCurrency(invoiceTotal)}
-                    </Text>
+                    <Text variant="small">{formatCurrency(invoiceTotal)}</Text>
                   </T.Data>
                 </T.Row>
               )}
