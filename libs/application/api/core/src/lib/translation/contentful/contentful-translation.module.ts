@@ -11,6 +11,7 @@ import {
 } from './contentful-translation.constants'
 
 @Module({
+  imports: [ContentfulTranslationConfig.registerOptional()],
   providers: [
     {
       provide: CONTENTFUL_MANAGEMENT_CLIENT,
@@ -18,12 +19,18 @@ import {
         config: ConfigType<typeof ContentfulTranslationConfig>,
       ): PlainClientAPI =>
         createManagementClient(
-          { accessToken: config.managementAccessToken },
+          {
+            accessToken: config.isConfigured
+              ? config.managementAccessToken
+              : '',
+          },
           {
             type: 'plain',
             defaults: {
               spaceId: CONTENTFUL_TRANSLATION_SPACE_ID,
-              environmentId: config.environmentId,
+              environmentId: config.isConfigured
+                ? config.environmentId
+                : 'master',
             },
           },
         ),
