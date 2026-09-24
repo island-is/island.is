@@ -302,7 +302,7 @@ const environment = getConfig
     ApiDomainsCustomsCalculatorModule,
     FormSystemModule,
     CmsModule,
-    IcelandicGovernmentInstitutionsModule.register({ useMocks: false }),
+    IcelandicGovernmentInstitutionsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
     EducationModule.register({
