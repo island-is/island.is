@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useApolloClient } from '@apollo/client'
 import chunk from 'lodash/chunk'
+import { useApolloClient } from '@apollo/client'
 
 import { isDefined } from '@island.is/shared/utils'
 import {
