@@ -45,23 +45,6 @@ const caseSchemaTypeImport = {
 // only shrinks: move a file to WorkingCase, then remove it here. New files are
 // not added.
 const caseSchemaTypeAllowlist = [
-  'src/routes/Court/Indictments/Completed/ReopenCaseModal.tsx',
-  'src/routes/Court/Indictments/Conclusion/SelectCandidateMergeCase.tsx',
-  'src/routes/Court/Indictments/CourtRecord/CourtSessionAppealDecisions.spec.tsx',
-  'src/routes/Court/Indictments/CourtRecord/CourtSessionAppealDecisions.tsx',
-  'src/routes/Court/Indictments/CourtRecord/CourtSessionRuling.spec.tsx',
-  'src/routes/Court/Indictments/Overview/Overview.spec.tsx',
-  'src/routes/Court/Indictments/Subpoena/Subpoena.tsx',
-  'src/routes/Court/InvestigationCase/CourtRecord/CourtRecord.tsx',
-  'src/routes/Court/RestrictionCase/CourtRecord/helpers/endOfSessionBookings.ts',
-  'src/routes/Court/RestrictionCase/Ruling/Ruling.logic.spec.ts',
-  'src/routes/Court/RestrictionCase/Ruling/Ruling.logic.ts',
-  'src/routes/Court/components/AppealSections/AppealSections.spec.tsx',
-  'src/routes/Court/components/AppealSections/AppealSections.tsx',
-  'src/routes/Court/components/AppealSections/useDebouncedAppealAnnouncement.spec.tsx',
-  'src/routes/Court/components/DraftConclusionModal/DraftConclusionModal.tsx',
-  'src/routes/Court/components/SubpoenaType/SubpoenaType.tsx',
-  'src/routes/Court/shared/populateEndOfCourtSessionBookingsIntro.ts',
   'src/routes/CourtOfAppeal/Ruling/Ruling.spec.tsx',
   'src/routes/Defender/IndictmentCase/Appeal/VerdictAppeal.spec.tsx',
   'src/routes/Defender/IndictmentCase/IndictmentOverview.spec.tsx',
