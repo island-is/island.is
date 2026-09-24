@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid'
 import { BadRequestException } from '@nestjs/common'
 
 import {
-  AppealCaseState,
   CaseFileCategory,
   CourtSessionRulingType,
   User,
@@ -14,7 +13,6 @@ import { createTestingCourtSessionModule } from '../createTestingCourtSessionMod
 
 import { FileService } from '../../../file'
 import {
-  AppealCase,
   AppealCaseRepositoryService,
   Case,
   CaseFile,
@@ -391,22 +389,15 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     })
 
     it('should keep a ruling an appeal still keys on', async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [
-          {
-            id: uuid(),
-            rulingFileId: pronouncedOrally.id,
-            appealState: AppealCaseState.APPEALED,
-          } as AppealCase,
-        ],
-      )
+      ;(mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock).mockResolvedValue(true)
 
       await swapAwayFrom(caseStillPronouncing())
 
-      expect(mockAppealCaseRepositoryService.findAll).toHaveBeenCalledWith({
-        where: { caseId, rulingFileId: pronouncedOrally.id },
-        transaction,
-      })
+      expect(mockAppealCaseRepositoryService.existsForRulingFile).toHaveBeenCalledWith(
+        caseId,
+        pronouncedOrally.id,
+        { transaction },
+      )
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
   })

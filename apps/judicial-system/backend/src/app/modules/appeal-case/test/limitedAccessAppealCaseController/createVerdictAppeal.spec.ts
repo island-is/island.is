@@ -136,9 +136,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-      [],
-    )
+    ;(mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock).mockResolvedValue(null)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -183,8 +181,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         caseId,
         transaction,
       )
-      expect(mockAppealCaseRepositoryService.findAll).toHaveBeenCalledWith({
-        where: { caseId, appealType: AppealCaseType.VERDICT },
+      expect(mockAppealCaseRepositoryService.findVerdictAppealByCaseId).toHaveBeenCalledWith(caseId, {
         transaction,
       })
     })
@@ -250,9 +247,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
+      ;(mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock).mockResolvedValue(existingAppealCase)
       // Another defendant is the standing appellant, not this one.
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
@@ -319,9 +314,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [withdrawnAppealCase],
-      )
+      ;(mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock).mockResolvedValue(withdrawnAppealCase)
       ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue(
         reactivatedAppealCase,
       )
@@ -386,9 +379,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
+      ;(mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock).mockResolvedValue(existingAppealCase)
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
       ).mockResolvedValue([

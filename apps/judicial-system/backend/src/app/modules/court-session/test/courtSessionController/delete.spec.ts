@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common'
 
 import {
-  AppealCaseState,
   CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
@@ -15,7 +14,6 @@ import { createTestingCourtSessionModule } from '../createTestingCourtSessionMod
 
 import { FileService } from '../../../file'
 import {
-  AppealCase,
   AppealCaseRepositoryService,
   Case,
   CaseFile,
@@ -275,15 +273,7 @@ describe('CourtSessionController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [
-          {
-            id: uuid(),
-            rulingFileId: appealedRuling.id,
-            appealState: AppealCaseState.APPEALED,
-          } as AppealCase,
-        ],
-      )
+      ;(mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock).mockResolvedValue(true)
 
       then = await deleteSessionPronouncing(appealedRuling)
     })

@@ -1,4 +1,4 @@
-import { FindOptions, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   Inject,
@@ -9,20 +9,15 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { AppealCaseType } from '@island.is/judicial-system/types'
+
 import { AppealCase } from '../models/appealCase.model'
 import {
   CreateAppealCase,
   UpdateAppealCase,
 } from '../types/caseRepository.types'
 
-interface FindByIdOptions {
-  transaction?: Transaction
-  include?: FindOptions['include']
-}
-
-interface FindAllOptions {
-  where?: FindOptions['where']
-  order?: FindOptions['order']
+interface AppealCaseTransactionOptions {
   transaction?: Transaction
 }
 
@@ -48,22 +43,15 @@ export class AppealCaseRepositoryService {
 
   async findById(
     id: string,
-    options?: FindByIdOptions,
+    options?: AppealCaseTransactionOptions,
   ): Promise<AppealCase | null> {
     try {
       this.logger.debug(`Finding appeal case ${id}`)
 
-      const findOptions: FindOptions = { where: { id } }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        findOptions.include = options.include
-      }
-
-      const result = await this.appealCaseModel.findOne(findOptions)
+      const result = await this.appealCaseModel.findOne({
+        where: { id },
+        transaction: options?.transaction,
+      })
 
       this.logger.debug(`Appeal case ${id} ${result ? 'found' : 'not found'}`)
 
@@ -75,31 +63,58 @@ export class AppealCaseRepositoryService {
     }
   }
 
-  async findAll(options?: FindAllOptions): Promise<AppealCase[]> {
+  // A case has at most one verdict appeal - every defendant who appeals joins
+  // it - and the unique index on (case_id, ruling_file_id) holds that, since a
+  // verdict appeal has no ruling file.
+  async findVerdictAppealByCaseId(
+    caseId: string,
+    options?: AppealCaseTransactionOptions,
+  ): Promise<AppealCase | null> {
     try {
-      this.logger.debug('Finding appeal cases')
+      this.logger.debug(`Finding the verdict appeal of case ${caseId}`)
 
-      const findOptions: FindOptions = {}
+      const result = await this.appealCaseModel.findOne({
+        where: { caseId, appealType: AppealCaseType.VERDICT },
+        transaction: options?.transaction,
+      })
 
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      const result = await this.appealCaseModel.findAll(findOptions)
-
-      this.logger.debug(`Found ${result.length} appeal cases`)
+      this.logger.debug(
+        `Verdict appeal of case ${caseId} ${result ? 'found' : 'not found'}`,
+      )
 
       return result
     } catch (error) {
-      this.logger.error('Error finding appeal cases:', { error })
+      this.logger.error(`Error finding the verdict appeal of case ${caseId}:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  // Whether a ruling order of a case has been appealed, read from the caller's
+  // transaction - a ruling an appeal keys on must stay in the court record.
+  async existsForRulingFile(
+    caseId: string,
+    rulingFileId: string,
+    options?: AppealCaseTransactionOptions,
+  ): Promise<boolean> {
+    try {
+      this.logger.debug(
+        `Checking for an appeal of ruling ${rulingFileId} of case ${caseId}`,
+      )
+
+      const result = await this.appealCaseModel.findOne({
+        where: { caseId, rulingFileId },
+        transaction: options?.transaction,
+      })
+
+      return Boolean(result)
+    } catch (error) {
+      this.logger.error(
+        `Error checking for an appeal of ruling ${rulingFileId} of case ${caseId}:`,
+        { error },
+      )
 
       throw error
     }
