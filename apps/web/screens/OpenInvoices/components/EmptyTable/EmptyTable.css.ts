@@ -1,15 +1,10 @@
 import { style } from '@vanilla-extract/css'
 
-import { spacing, theme } from '@island.is/island-ui/theme'
-
-// Matches T.Data's default paddingLeft/paddingRight (spacing token 3),
-// bled via a negative margin so the dividers reach the cell's true edges.
-const CELL_PADDING = spacing[3]
+import { theme } from '@island.is/island-ui/theme'
 
 export const emptyTable = style({
   display: 'flex',
   alignItems: 'center',
-  marginInline: -CELL_PADDING,
   paddingBlock: 66,
 })
 

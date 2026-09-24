@@ -29,13 +29,13 @@ describe('mapInvoiceDto', () => {
     expect(result?.number).toBe('191552084')
   })
 
-  it('falls back to 0 when invoiceTotalBaseAmountISK is null', () => {
+  it('returns null when invoiceTotalBaseAmountISK is null', () => {
     const result = mapInvoiceDto({
       ...baseData,
       invoiceTotalBaseAmountISK: null,
     })
 
-    expect(result?.totalAmount).toBe(0)
+    expect(result?.totalAmount).toBeNull()
   })
 
   it('returns null when erpInvoiceId is missing', () => {
@@ -50,9 +50,9 @@ describe('mapInvoiceDto', () => {
     expect(result).toBeNull()
   })
 
-  it('returns null when invoiceCurrencyCode is missing', () => {
+  it('maps an invoice when invoiceCurrencyCode is missing', () => {
     const result = mapInvoiceDto({ ...baseData, invoiceCurrencyCode: null })
 
-    expect(result).toBeNull()
+    expect(result?.id).toBe('22136687')
   })
 })

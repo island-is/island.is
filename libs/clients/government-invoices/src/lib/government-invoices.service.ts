@@ -100,11 +100,7 @@ export class GovernmentInvoicesClientService {
       query: requestParams,
     })
 
-    if (
-      !data?.pageInfo ||
-      data.pageInfo.hasNextPage === undefined ||
-      data.totalCount == null
-    ) {
+    if (!data?.pageInfo || data.totalCount == null) {
       return null
     }
 
@@ -125,11 +121,7 @@ export class GovernmentInvoicesClientService {
       query: requestParams,
     })
 
-    if (
-      !data?.pageInfo ||
-      data.pageInfo.hasNextPage === undefined ||
-      data.totalCount == null
-    ) {
+    if (!data?.pageInfo || data.totalCount == null) {
       return null
     }
 
@@ -150,11 +142,7 @@ export class GovernmentInvoicesClientService {
       query: requestParams,
     })
 
-    if (
-      !data?.pageInfo ||
-      data.pageInfo.hasNextPage === undefined ||
-      data.totalCount == null
-    ) {
+    if (!data?.pageInfo || data.totalCount == null) {
       return null
     }
 
@@ -175,11 +163,7 @@ export class GovernmentInvoicesClientService {
       query: requestParams,
     })
 
-    if (
-      !data?.pageInfo ||
-      data.pageInfo.hasNextPage === undefined ||
-      data.totalCount == null
-    ) {
+    if (!data?.pageInfo || data.totalCount == null) {
       return null
     }
 
@@ -202,11 +186,7 @@ export class GovernmentInvoicesClientService {
       query: requestParams,
     })
 
-    if (
-      !data?.pageInfo ||
-      data.pageInfo.hasNextPage === undefined ||
-      data.totalCount == null
-    ) {
+    if (!data?.pageInfo || data.totalCount == null) {
       return null
     }
 

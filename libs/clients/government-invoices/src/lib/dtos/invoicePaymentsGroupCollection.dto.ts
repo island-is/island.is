@@ -18,17 +18,13 @@ export interface InvoicePaymentsGroupCollectionDto {
 export const mapInvoicePaymentsGroupCollectionDto = (
   data: OpenInvoicesGroupCollectionResponseDto,
 ): InvoicePaymentsGroupCollectionDto | null => {
-  if (
-    data.totalCount == null ||
-    data.totalPaymentsSum == null ||
-    data.totalPaymentsCount == null
-  ) {
+  if (data.totalCount == null) {
     return null
   }
   return {
     totalCount: data.totalCount,
-    totalPaymentsCount: data.totalPaymentsCount,
-    totalPaymentsSum: data.totalPaymentsSum,
+    totalPaymentsCount: data.totalPaymentsCount ?? 0,
+    totalPaymentsSum: data.totalPaymentsSum ?? 0,
     invoiceGroups: (data.invoiceGroups ?? [])
       .map(mapInvoicePaymentsGroupDto)
       .filter(isDefined),

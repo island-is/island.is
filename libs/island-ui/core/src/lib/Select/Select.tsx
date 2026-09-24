@@ -54,7 +54,6 @@ export const Select = <
   isClearable,
   dataTestId,
   filterConfig,
-  filterOption,
   isLoading = false,
   hideSelectedOptions,
   onMenuOpen,
@@ -174,7 +173,7 @@ export const Select = <
         size={size}
         required={required}
         formatGroupLabel={formatGroupLabel}
-        filterOption={filterOption ?? createFilter(filterConfig)}
+        filterOption={createFilter(filterConfig)}
         hideSelectedOptions={hideSelectedOptions}
         components={{
           Control,

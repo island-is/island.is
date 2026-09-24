@@ -71,7 +71,6 @@ type BaseInteractiveTableProps<TData extends object> = {
   srCaption?: string
   sortHint?: string
   meta?: TableMeta<TData>
-  colorScheme?: 'default' | 'negative'
   cellBox?: {
     header?: Omit<UseBoxStylesProps, 'component'>
     body?: Omit<UseBoxStylesProps, 'component'>
@@ -100,7 +99,6 @@ export const InteractiveTable = <TData extends object>({
   srCaption = 'Table with sortable columns.',
   sortHint = 'Activate to sort.',
   meta,
-  colorScheme = 'default',
   cellBox,
 }: InteractiveTableProps<TData>) => {
   const resolvedExpanderLabel = expanderLabel ?? ''
@@ -307,7 +305,7 @@ export const InteractiveTable = <TData extends object>({
                 <Fragment key={row.id}>
                   <T.Row>
                     {row
-                      .getAllCells()
+                      .getVisibleCells()
                       .filter(
                         (cell) =>
                           cell.column.columnDef.meta?.visibility !== 'mobile',
@@ -443,8 +441,14 @@ export const InteractiveTable = <TData extends object>({
                             }
                           }}
                         >
-                          {(isExpanded || isCollapsing) &&
-                            renderExpandedRow(row)}
+                          {(isExpanded || isCollapsing) && (
+                            <>
+                              <div className={styles.line} />
+                              <Box marginLeft={3} marginBottom={3}>
+                                {renderExpandedRow(row)}
+                              </Box>
+                            </>
+                          )}
                         </AnimateHeight>
                       </T.Data>
                     </tr>
@@ -511,10 +515,10 @@ export const InteractiveTable = <TData extends object>({
           )}
           {table.getRowModel().rows.map((row, rowIndex) => {
             const titleCell = row
-              .getAllCells()
+              .getVisibleCells()
               .find((c) => c.column.id === mobileTitleKey)
             const dataCells = row
-              .getAllCells()
+              .getVisibleCells()
               .filter(
                 (c) =>
                   c.column.id !== mobileTitleKey && c.column.id !== 'expander',
@@ -525,18 +529,8 @@ export const InteractiveTable = <TData extends object>({
             return (
               <Box
                 key={row.id}
-                background={
-                  isExpanded || isCollapsing
-                    ? colorScheme === 'negative'
-                      ? 'white'
-                      : 'blue100'
-                    : colorScheme === 'negative'
-                    ? 'blue100'
-                    : undefined
-                }
-                className={cn(styles.mobileRow, {
-                  [styles.container]: isExpanded || isCollapsing,
-                })}
+                background={isExpanded || isCollapsing ? 'blue100' : undefined}
+                className={styles.mobileRow}
                 position="relative"
                 paddingTop={rowIndex > 0 ? 5 : 3}
                 paddingBottom={3}

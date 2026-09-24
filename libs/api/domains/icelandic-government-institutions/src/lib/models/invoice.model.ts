@@ -12,8 +12,8 @@ export class Invoice {
   @Field({ nullable: true })
   numberRedacted?: boolean
 
-  @Field(() => Float)
-  totalAmount!: number
+  @Field(() => Float, { nullable: true })
+  totalAmount?: number | null
 
   @Field(() => [InvoiceItem], { nullable: true })
   itemizations?: InvoiceItem[]

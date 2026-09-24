@@ -14,7 +14,7 @@ export const mapPaymentDto = (
   if (
     data.erpInvoicePaymentId == null ||
     !data.paymentAccountingDate ||
-    !data.paymentCurrencyCode
+    data.paymentAmountISK == null
   ) {
     return null
   }
@@ -28,7 +28,7 @@ export const mapPaymentDto = (
   return {
     id: String(data.erpInvoicePaymentId),
     date: new Date(data.paymentAccountingDate),
-    amount: data.paymentAmountISK ?? 0,
+    amount: data.paymentAmountISK,
     invoice,
   }
 }

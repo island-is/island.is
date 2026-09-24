@@ -4,14 +4,17 @@ import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import {
   parseAsArrayOf,
+  parseAsInteger,
   parseAsIsoDateTime,
   parseAsString,
+  parseAsStringLiteral,
   useQueryState,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
   Box,
+  OnChangeFn,
   Pagination,
   SortingState,
   Stack,
@@ -64,8 +67,18 @@ import * as styles from './Overview.css'
 
 const PAGE_SIZE = 12
 
+/** Shared by the client URL state and the SSR fetch in `getProps` — the two must not drift. */
+const SORT_IDS = ['supplier', 'customer', 'totalPaymentsSum'] as const
+const SORT_DIRECTIONS = ['asc', 'desc'] as const
+
+type SortId = typeof SORT_IDS[number]
+type SortDirection = typeof SORT_DIRECTIONS[number]
+
+const DEFAULT_SORT_ID: SortId = 'totalPaymentsSum'
+const DEFAULT_SORT_DIRECTION: SortDirection = 'desc'
+
 const SORT_FIELD_MAP: Record<
-  string,
+  SortId,
   IcelandicGovernmentInstitutionsOpenInvoiceSortField
 > = {
   supplier: IcelandicGovernmentInstitutionsOpenInvoiceSortField.SupplierName,
@@ -73,14 +86,19 @@ const SORT_FIELD_MAP: Record<
   totalPaymentsSum: IcelandicGovernmentInstitutionsOpenInvoiceSortField.Amount,
 }
 
-/** Shared by the client sorting state and the SSR fetch in `getProps` — the two must not drift. */
-const DEFAULT_SORTING: SortingState = [{ id: 'totalPaymentsSum', desc: true }]
+const toSortDirection = (direction: SortDirection) =>
+  direction === 'desc'
+    ? IcelandicGovernmentInstitutionsSortDirection.Descending
+    : IcelandicGovernmentInstitutionsSortDirection.Ascending
 
-const DEFAULT_SORT_BY = SORT_FIELD_MAP[DEFAULT_SORTING[0].id]
+const isSortId = (id: string): id is SortId =>
+  SORT_IDS.some((sortId) => sortId === id)
 
-const DEFAULT_SORT_DIRECTION = DEFAULT_SORTING[0].desc
-  ? IcelandicGovernmentInstitutionsSortDirection.Descending
-  : IcelandicGovernmentInstitutionsSortDirection.Ascending
+const pageParser = parseAsInteger.withDefault(1)
+const sortIdParser = parseAsStringLiteral(SORT_IDS).withDefault(DEFAULT_SORT_ID)
+const sortDirectionParser = parseAsStringLiteral(SORT_DIRECTIONS).withDefault(
+  DEFAULT_SORT_DIRECTION,
+)
 
 const toDebtorIds = (debtors?: string[] | null) =>
   debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
@@ -146,7 +164,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     return { dateTo, dateFrom: addMonths(dateTo, -1) }
   }, [today])
 
-  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [currentPage, setCurrentPageParam] = useQueryState('page', pageParser)
+  const setCurrentPage = useCallback(
+    (page: number) => setCurrentPageParam(page > 1 ? page : null),
+    [setCurrentPageParam],
+  )
 
   const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>(() => ({
     ...initialAppliedFilters,
@@ -235,13 +257,31 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const totalHits = totalCount
 
-  const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING)
-  const sortBy = sorting[0] ? SORT_FIELD_MAP[sorting[0].id] : undefined
-  const sortDirection = sorting[0]
-    ? sorting[0].desc
-      ? IcelandicGovernmentInstitutionsSortDirection.Descending
-      : IcelandicGovernmentInstitutionsSortDirection.Ascending
-    : undefined
+  const [sortId, setSortId] = useQueryState('sort', sortIdParser)
+  const [sortDirectionParam, setSortDirectionParam] = useQueryState(
+    'dir',
+    sortDirectionParser,
+  )
+  const sorting: SortingState = useMemo(
+    () => [{ id: sortId, desc: sortDirectionParam === 'desc' }],
+    [sortId, sortDirectionParam],
+  )
+  const sortBy = SORT_FIELD_MAP[sortId]
+  const sortDirection = toSortDirection(sortDirectionParam)
+
+  const onSortingChange: OnChangeFn<SortingState> = (updater) => {
+    const [next] = typeof updater === 'function' ? updater(sorting) : updater
+    const nextId = next && isSortId(next.id) ? next.id : DEFAULT_SORT_ID
+    const nextDirection = next
+      ? next.desc
+        ? 'desc'
+        : 'asc'
+      : DEFAULT_SORT_DIRECTION
+    setSortId(nextId === DEFAULT_SORT_ID ? null : nextId)
+    setSortDirectionParam(
+      nextDirection === DEFAULT_SORT_DIRECTION ? null : nextDirection,
+    )
+  }
 
   const buildInput = useCallback(
     (filters: AppliedFilters, page: number) => ({
@@ -266,7 +306,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         variables: { input: buildInput(appliedFilters, page) },
       })
     },
-    [appliedFilters, buildInput, getInvoiceGroups],
+    [appliedFilters, buildInput, getInvoiceGroups, setCurrentPage],
   )
 
   const applyFilters = useCallback(() => {
@@ -285,6 +325,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }, [
     buildInput,
     getInvoiceGroups,
+    setCurrentPage,
     debtors,
     suppliers,
     ministries,
@@ -332,11 +373,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
     return totalPaymentsSum != null
       ? formatMessage(m.search.resultsFound, {
-          records: formatNumber(totalPayments),
+          records: totalPayments,
+          recordsFormatted: formatNumber(totalPayments),
           sum: formatCurrency(totalPaymentsSum),
         })
       : formatMessage(m.search.resultsFoundNoSum, {
-          records: formatNumber(totalPayments),
+          records: totalPayments,
+          recordsFormatted: formatNumber(totalPayments),
         })
   }, [
     formatMessage,
@@ -481,7 +524,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           loading={invoiceGroupsLoading}
           error={invoiceGroupsError}
           sorting={sorting}
-          onSortingChange={setSorting}
+          onSortingChange={onSortingChange}
         />
       </Box>
 
@@ -731,6 +774,10 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     )
   }
 
+  const pageInput = Math.max(1, pageParser.parseServerSide(query?.['page']))
+  const sortIdInput = sortIdParser.parseServerSide(query?.['sort'])
+  const sortDirectionInput = sortDirectionParser.parseServerSide(query?.['dir'])
+
   const {
     data: { icelandicGovernmentInstitutionsInvoicePaymentsGroups },
   } = await apolloClient.query<
@@ -746,13 +793,26 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
         suppliers: suppliersInput,
         ministries: ministriesInput,
         paymentTypeIds: invoicePaymentTypesInput,
-        sortBy: DEFAULT_SORT_BY,
-        sortDirection: DEFAULT_SORT_DIRECTION,
+        sortBy: SORT_FIELD_MAP[sortIdInput],
+        sortDirection: toSortDirection(sortDirectionInput),
         limit: PAGE_SIZE,
-        page: 1,
+        page: pageInput,
       },
     },
   })
+
+  const lastPage = Math.max(
+    1,
+    Math.ceil(
+      (icelandicGovernmentInstitutionsInvoicePaymentsGroups?.totalCount ?? 0) /
+        PAGE_SIZE,
+    ),
+  )
+  if (pageInput > lastPage) {
+    throw new CustomNextRedirect(
+      buildUrl(['page'], lastPage > 1 ? { page: String(lastPage) } : {}),
+    )
+  }
 
   return {
     locale: locale as Locale,

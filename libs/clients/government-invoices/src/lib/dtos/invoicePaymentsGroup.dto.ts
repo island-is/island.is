@@ -18,7 +18,6 @@ export const mapInvoicePaymentsGroupDto = (
   if (
     !invoiceGroup.debtor ||
     !invoiceGroup.supplier ||
-    invoiceGroup.totalPaymentCount == null ||
     invoiceGroup.totalPaymentsSum == null
   ) {
     return null
@@ -38,7 +37,7 @@ export const mapInvoicePaymentsGroupDto = (
     supplier: supplierDto,
     debtor: debtorDto,
     totalPaymentsSum: invoiceGroup.totalPaymentsSum,
-    totalPaymentsCount: invoiceGroup.totalPaymentCount,
+    totalPaymentsCount: invoiceGroup.totalPaymentCount ?? 0,
     payments: paymentsDto,
   }
 }

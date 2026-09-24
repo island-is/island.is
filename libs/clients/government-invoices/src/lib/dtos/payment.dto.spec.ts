@@ -32,8 +32,14 @@ describe('mapPaymentDto', () => {
     expect(result?.id).toBe('0')
   })
 
-  it('falls back to 0 when paymentAmountISK is null', () => {
+  it('returns null when paymentAmountISK is null', () => {
     const result = mapPaymentDto({ ...baseData, paymentAmountISK: null })
+
+    expect(result).toBeNull()
+  })
+
+  it('maps successfully when paymentAmountISK is 0', () => {
+    const result = mapPaymentDto({ ...baseData, paymentAmountISK: 0 })
 
     expect(result?.amount).toBe(0)
   })
@@ -56,10 +62,15 @@ describe('mapPaymentDto', () => {
     expect(result).toBeNull()
   })
 
-  it('returns null when paymentCurrencyCode is missing', () => {
-    const result = mapPaymentDto({ ...baseData, paymentCurrencyCode: null })
+  it('maps a payment when both currency codes are missing', () => {
+    const result = mapPaymentDto({
+      ...baseData,
+      paymentCurrencyCode: null,
+      invoiceCurrencyCode: null,
+    })
 
-    expect(result).toBeNull()
+    expect(result?.id).toBe('18708645')
+    expect(result?.invoice.id).toBe('22136687')
   })
 
   it('returns null when the nested invoice fails to map (cascading drop)', () => {

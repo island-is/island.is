@@ -183,11 +183,12 @@ export const m = {
     resultsFound: {
       id: 'web.openinvoices:search.resultsFound#markdown',
       defaultMessage:
-        '**{records}** greiðslur fundust fyrir valið tímabil, samtals **{sum}**',
+        '**{recordsFormatted}** greiðslur fundust fyrir valið tímabil, samtals **{sum}**',
     },
     resultsFoundNoSum: {
       id: 'web.openinvoices:search.resultsFoundNoSum#markdown',
-      defaultMessage: '**{records}** greiðslur fundust fyrir valið tímabil',
+      defaultMessage:
+        '**{recordsFormatted}** greiðslur fundust fyrir valið tímabil',
     },
     recordsFoundShort: {
       id: 'web.openinvoices:search.recordsFoundShort#markdown',

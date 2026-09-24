@@ -36,16 +36,3 @@ export const sortButton = style({
 export const sortButtonRight = style({
   textAlign: 'right',
 })
-
-export const container = style({
-  '::before': {
-    content: '',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    zIndex: -1,
-    left: `-${theme.spacing[2]}px`,
-    right: `-${theme.spacing[2]}px`,
-    background: theme.color.blue100,
-  },
-})

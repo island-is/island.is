@@ -9,7 +9,7 @@ export interface InvoiceDto {
   id: string
   number: string | null
   numberRedacted: boolean
-  totalAmount: number
+  totalAmount: number | null
   itemization: Array<InvoiceItemization>
 }
 
@@ -18,7 +18,6 @@ export const mapInvoiceDto = (
 ): InvoiceDto | null => {
   if (
     data.erpInvoiceId == null ||
-    !data.invoiceCurrencyCode ||
     (!data.invoiceNum && !data.invoiceNumRedacted)
   ) {
     return null
@@ -28,7 +27,7 @@ export const mapInvoiceDto = (
     id: String(data.erpInvoiceId),
     number: data.invoiceNum ?? null,
     numberRedacted: data.invoiceNumRedacted ?? false,
-    totalAmount: data.invoiceTotalBaseAmountISK ?? 0,
+    totalAmount: data.invoiceTotalBaseAmountISK ?? null,
     itemization: (data.glLines ?? [])
       .map((line, index) =>
         mapInvoiceGroupInvoiceItemization(

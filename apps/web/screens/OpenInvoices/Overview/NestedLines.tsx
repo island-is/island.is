@@ -72,7 +72,9 @@ export const NestedLines = ({
     }
 
     return payments.map((payment) => {
-      const isFullyPaid = payment.amount === payment.invoice.totalAmount
+      const invoiceTotal = payment.invoice.totalAmount
+      const isFullyPaid =
+        invoiceTotal == null || payment.amount === invoiceTotal
       const itemizationsCount = payment.invoice.itemizations?.length ?? 0
       const invoiceAmountBackground =
         itemizationsCount % 2 === 0 ? 'white' : undefined
@@ -150,7 +152,7 @@ export const NestedLines = ({
                     }}
                   >
                     <Text variant="small">
-                      {formatCurrency(payment.invoice.totalAmount)}
+                      {formatCurrency(invoiceTotal)}
                     </Text>
                   </T.Data>
                 </T.Row>
