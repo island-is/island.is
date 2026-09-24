@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { findSelectedLawyer } from './InputAdvocate.logic'
 import {
   emailLabelStrings,
   nameLabelStrings,
@@ -59,8 +60,8 @@ const InputAdvocate: FC<Props> = ({
   // The name of the advocate.
   name: lawyerName,
 
-  // The national id of the advocate. Identifies the selected lawyer in the
-  // registry - emails are neither unique nor always present there.
+  // The national id of the advocate. Used to find the selected lawyer in the
+  // registry so the option can be highlighted.
   nationalId: lawyerNationalId,
 
   // The email of the advocate.
@@ -98,11 +99,20 @@ const InputAdvocate: FC<Props> = ({
       return []
     }
 
+    // Options are keyed on the registry row id. Emails are neither unique nor
+    // always present, and the registry can list one national id twice, e.g.
+    // under an old and a new name, and each entry must stay selectable.
     return lawyers?.map((l) => ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-      value: l.nationalId,
+      value: l.id,
     }))
   }, [lawyers])
+
+  const selectedLawyer = findSelectedLawyer(
+    lawyers,
+    lawyerNationalId,
+    lawyerName,
+  )
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
@@ -114,9 +124,7 @@ const InputAdvocate: FC<Props> = ({
       if (selectedOption) {
         const { label, value } = selectedOption
 
-        const lawyer = lawyers?.find(
-          (l: Lawyer) => l.nationalId === (value as string),
-        )
+        const lawyer = lawyers?.find((l: Lawyer) => l.id === (value as string))
 
         name = lawyer ? lawyer.name : label
         nationalId = lawyer ? lawyer.nationalId : null
@@ -199,7 +207,7 @@ const InputAdvocate: FC<Props> = ({
         placeholder={formatMessage(placeholderStrings.namePlaceholder)}
         value={
           lawyerName
-            ? { label: lawyerName, value: lawyerNationalId ?? '' }
+            ? { label: lawyerName, value: selectedLawyer?.id ?? '' }
             : null
         }
         onChange={handleAdvocateChange}

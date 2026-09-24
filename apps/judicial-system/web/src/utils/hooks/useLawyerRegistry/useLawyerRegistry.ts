@@ -6,7 +6,9 @@ import { useGetLawyers } from '@island.is/judicial-system-web/src/utils/hooks/us
 
 export const Database = {
   lawyerTable: 'lawyers',
-  version: 5,
+  // Bump when the object store changes shape. Version 6 keys the store on the
+  // registry row id instead of the national id.
+  version: 6,
 }
 
 type LawyerWithCreated = Lawyer & { created: Date }
@@ -25,9 +27,15 @@ export const useLawyerRegistry = (shouldFetchLawyers: boolean) => {
 
       request.onupgradeneeded = () => {
         const db = request.result
+
+        // The store is rebuilt from scratch on upgrade; it is only a cache.
+        if (db.objectStoreNames.contains(Database.lawyerTable)) {
+          db.deleteObjectStore(Database.lawyerTable)
+        }
+
         const objectStore = db.createObjectStore(Database.lawyerTable, {
           autoIncrement: false,
-          keyPath: 'nationalId',
+          keyPath: 'id',
         })
 
         objectStore.createIndex('name', 'name', { unique: false })
@@ -55,8 +63,6 @@ export const useLawyerRegistry = (shouldFetchLawyers: boolean) => {
       store.clear()
       setAllLawyers(lawyers)
 
-      // The registry can list the same national id twice (e.g. after a name
-      // change), and a failed add would abort the whole refresh transaction.
       lawyers.forEach((lawyer) => store.put({ ...lawyer, created: now }))
     },
     [openDB],

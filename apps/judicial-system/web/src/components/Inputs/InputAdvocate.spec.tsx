@@ -6,9 +6,11 @@ import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/te
 
 import InputAdvocate from './InputAdvocate'
 
-// LMFÍ does not list an email for every lawyer, and two entries can share one,
-// so the picker must identify lawyers by national id and never by email.
+// LMFÍ does not list an email for every lawyer, two entries can share one, and
+// the same national id can appear twice (e.g. under an old and a new name), so
+// the picker identifies entries by their registry row id.
 const arni: Lawyer = {
+  id: 'row-arni',
   name: 'Árni Harðarson',
   practice: '',
   email: '',
@@ -18,6 +20,7 @@ const arni: Lawyer = {
 }
 
 const thorgeir: Lawyer = {
+  id: 'row-thorgeir',
   name: 'Þorgeir Þorgeirsson',
   practice: 'Lagaskjól - lögmannsstofa',
   email: '',
@@ -26,7 +29,10 @@ const thorgeir: Lawyer = {
   isLitigator: false,
 }
 
+// The same person listed under an old and a new name: same national id, same
+// email, same phone number.
 const jonsdottir: Lawyer = {
+  id: 'row-jonsdottir',
   name: 'Þórunn Pálína Jónsdóttir',
   practice: 'Stofa A',
   email: 'shared@dummy.dd',
@@ -36,11 +42,12 @@ const jonsdottir: Lawyer = {
 }
 
 const sigurborgardottir: Lawyer = {
+  id: 'row-sigurborgardottir',
   name: 'Þórunn Pálína Sigurborgardóttir',
   practice: 'Stofa B',
   email: 'shared@dummy.dd',
-  phoneNr: '0000004',
-  nationalId: '0000000004',
+  phoneNr: '0000003',
+  nationalId: '0000000003',
   isLitigator: true,
 }
 
@@ -97,17 +104,29 @@ describe('InputAdvocate', () => {
     )
   })
 
-  it('tells apart two lawyers who share an email', () => {
+  it('selects either entry of a lawyer listed twice under one national id', () => {
     const onAdvocateChange = jest.fn()
-    renderPicker(onAdvocateChange)
+    const { unmount } = renderPicker(onAdvocateChange)
 
     pickLawyer(sigurborgardottir)
 
-    expect(onAdvocateChange).toHaveBeenCalledWith(
+    expect(onAdvocateChange).toHaveBeenLastCalledWith(
       sigurborgardottir.name,
       sigurborgardottir.nationalId,
       sigurborgardottir.email,
       sigurborgardottir.phoneNr,
+    )
+
+    unmount()
+    renderPicker(onAdvocateChange)
+
+    pickLawyer(jonsdottir)
+
+    expect(onAdvocateChange).toHaveBeenLastCalledWith(
+      jonsdottir.name,
+      jonsdottir.nationalId,
+      jonsdottir.email,
+      jonsdottir.phoneNr,
     )
   })
 
@@ -115,6 +134,22 @@ describe('InputAdvocate', () => {
     renderPicker(jest.fn(), thorgeir)
 
     expect(screen.getByText(thorgeir.name)).toBeInTheDocument()
+  })
+
+  it('highlights the entry whose name matches when a national id is listed twice', () => {
+    renderPicker(jest.fn(), sigurborgardottir)
+
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' })
+
+    const option = screen
+      .getByText(`${sigurborgardottir.name} (${sigurborgardottir.practice})`)
+      .closest('[role="option"]')
+    const otherOption = screen
+      .getByText(`${jonsdottir.name} (${jonsdottir.practice})`)
+      .closest('[role="option"]')
+
+    expect(option).toHaveAttribute('aria-selected', 'true')
+    expect(otherOption).toHaveAttribute('aria-selected', 'false')
   })
 
   it('clears the advocate when the selection is cleared', () => {
