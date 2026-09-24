@@ -50,7 +50,7 @@ export const unemploymentBenefitsMessages = defineMessages({
     defaultMessage: 'https://island.is/umsoknir/tilkynna-utanlandsferd',
   },
   statusUnsubscribe: {
-    id: 'sp.social-benefits-unemployment:statusUnsubscribeFromBenefits',
+    id: 'sp.social-benefits-unemployment:statusUnsubscribe',
     defaultMessage: 'Afskrá af bótum',
   },
   statusUnsubscribeUrl: {
