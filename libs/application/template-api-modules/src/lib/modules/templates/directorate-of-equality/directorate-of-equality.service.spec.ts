@@ -136,8 +136,10 @@ describe('DirectorateOfEqualityService', () => {
     it('lets the delete through when the submitted report is already decided', async () => {
       deleteDraft.mockRejectedValue(await apiError(404))
       withdrawReport.mockRejectedValue(await apiError(400))
+      getReport.mockResolvedValue({ status: 'DENIED' })
 
       await expect(run()).resolves.toBeUndefined()
+      expect(getReport).toHaveBeenCalledWith(expect.anything(), application.id)
     })
 
     it('refuses the delete when the fallback withdraw fails', async () => {
