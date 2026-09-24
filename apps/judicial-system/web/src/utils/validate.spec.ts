@@ -1,6 +1,6 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
-  Case,
   CourtSessionResponse,
   DateLog,
   Defendant,
@@ -29,10 +29,10 @@ const POLICE_CASE_NUMBER = '012-3456-7890'
 
 const createWorkingCase = (
   indictmentSubtypes: Record<string, IndictmentSubtype[]>,
-): Case =>
+): WorkingCase =>
   ({
     indictmentSubtypes,
-  } as Case)
+  } as WorkingCase)
 
 describe('isIndictmentCountComplete', () => {
   test('returns true for a complete non-traffic count', () => {
@@ -499,7 +499,7 @@ describe('areAppealDecisionsComplete', () => {
   const baseCase = {
     defendants: [{ id: 'd1' }],
     civilClaimants: [{ id: 'c1' }],
-  } as Case
+  } as WorkingCase
 
   it('is true when every party has a decision', () => {
     const workingCase = {
@@ -515,7 +515,7 @@ describe('areAppealDecisionsComplete', () => {
           civilClaimantId: 'c1',
         }),
       ],
-    } as Case
+    } as WorkingCase
 
     expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(true)
   })
@@ -530,7 +530,7 @@ describe('areAppealDecisionsComplete', () => {
           civilClaimantId: 'c1',
         }),
       ],
-    } as Case
+    } as WorkingCase
 
     expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
   })
@@ -549,7 +549,7 @@ describe('areAppealDecisionsComplete', () => {
           civilClaimantId: 'c1',
         }),
       ],
-    } as Case
+    } as WorkingCase
 
     expect(areAppealDecisionsComplete(courtSession, workingCase)).toBe(false)
   })
@@ -582,7 +582,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [subpoenaDefendant],
       arraignmentDate,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(true)
   })
@@ -591,7 +591,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [subpoenaDefendant],
       arraignmentDate: { location: 'Dómsalur 1' } as DateLog,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -600,7 +600,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [subpoenaDefendant],
       arraignmentDate: { date: '2026-09-01T10:00:00.000Z' } as DateLog,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -609,7 +609,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [alternativeServiceDefendant],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(true)
   })
@@ -618,7 +618,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [alternativeServiceDefendant, subpoenaDefendant],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -627,7 +627,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [alternativeServiceDefendant],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(
       isSubpoenaStepValid(
@@ -643,7 +643,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [{ id: 'defendant-1', isAlternativeService: true }],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -652,7 +652,7 @@ describe('isSubpoenaStepValid', () => {
     const workingCase = {
       defendants: [],
       isArraignmentSummonsSkipped: true,
-    } as Case
+    } as WorkingCase
 
     expect(isSubpoenaStepValid(workingCase)).toBe(false)
   })
@@ -670,19 +670,23 @@ describe('isCourtOfAppealRulingStepValid', () => {
   })
 
   it('is true when the case level appeal has its own appeal ruling', () => {
-    const workingCase = { caseFiles: [appealRulingFile(null)] } as Case
+    const workingCase = { caseFiles: [appealRulingFile(null)] } as WorkingCase
 
     expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(true)
   })
 
   it('is false when the only appeal ruling belongs to a ruling order appeal', () => {
-    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+    const workingCase = {
+      caseFiles: [appealRulingFile('ruling-1')],
+    } as WorkingCase
 
     expect(isCourtOfAppealRulingStepValid(workingCase, appealCase)).toBe(false)
   })
 
   it('is true when the ruling order appeal has its own appeal ruling', () => {
-    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+    const workingCase = {
+      caseFiles: [appealRulingFile('ruling-1')],
+    } as WorkingCase
 
     expect(
       isCourtOfAppealRulingStepValid(workingCase, {
@@ -693,7 +697,9 @@ describe('isCourtOfAppealRulingStepValid', () => {
   })
 
   it('is false when the appeal ruling belongs to another ruling order appeal', () => {
-    const workingCase = { caseFiles: [appealRulingFile('ruling-1')] } as Case
+    const workingCase = {
+      caseFiles: [appealRulingFile('ruling-1')],
+    } as WorkingCase
 
     expect(
       isCourtOfAppealRulingStepValid(workingCase, {
@@ -704,7 +710,7 @@ describe('isCourtOfAppealRulingStepValid', () => {
   })
 
   it('does not require an appeal ruling when the appeal was discontinued', () => {
-    const workingCase = { caseFiles: [] } as unknown as Case
+    const workingCase = { caseFiles: [] } as unknown as WorkingCase
 
     expect(
       isCourtOfAppealRulingStepValid(workingCase, {

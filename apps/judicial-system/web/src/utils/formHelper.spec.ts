@@ -6,7 +6,7 @@ import {
   PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import { faker } from '@island.is/shared/mocking'
 
@@ -177,7 +177,7 @@ describe('findLastValidStep', () => {
         PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
         PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE,
       ],
-      { policeCaseNumbers: ['test'] } as Case,
+      { policeCaseNumbers: ['test'] } as WorkingCase,
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE)
@@ -190,7 +190,7 @@ describe('findLastValidStep', () => {
         DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
         DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
       ],
-      { policeCaseNumbers: ['test'] } as Case,
+      { policeCaseNumbers: ['test'] } as WorkingCase,
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE)
@@ -203,7 +203,7 @@ describe('findLastValidStep', () => {
         PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
         PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE,
       ],
-      { policeCaseNumbers: ['test'] } as Case,
+      { policeCaseNumbers: ['test'] } as WorkingCase,
     )
 
     expect(lastValidStep).toEqual(PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE)
@@ -225,7 +225,7 @@ describe('setParentCheckboxAndSendToServer', () => {
     const theCase = {
       id,
       legalProvisions: [CaseLegalProvisions._95_1_A],
-    } as Case
+    } as WorkingCase
 
     // Act
     setParentCheckboxAndSendToServer(
@@ -259,7 +259,7 @@ describe('setParentCheckboxAndSendToServer', () => {
         CaseLegalProvisions._115_1_A,
         CaseLegalProvisions._115_1_C,
       ],
-    } as Case
+    } as WorkingCase
 
     // Act
     setParentCheckboxAndSendToServer(
@@ -281,7 +281,7 @@ describe('setParentCheckboxAndSendToServer', () => {
     // Arrange
     const setWorkingCase = jest.fn()
     const updateCase = jest.fn()
-    const theCase = { id: '', legalProvisions: [] } as unknown as Case
+    const theCase = { id: '', legalProvisions: [] } as unknown as WorkingCase
 
     // Act
     setParentCheckboxAndSendToServer(
@@ -306,7 +306,7 @@ describe('validateAndSendToServer', () => {
     const fieldToUpdate = 'courtCaseNumber'
     const value = '1234/1234'
     const id = faker.datatype.uuid()
-    const theCase = { id } as Case
+    const theCase = { id } as WorkingCase
     const update = {
       courtCaseNumber: value,
     }
@@ -330,7 +330,7 @@ describe('validateAndSendToServer', () => {
     const fieldToUpdate = 'courtCaseNumber'
     const value = '12341234'
     const id = faker.datatype.uuid()
-    const theCase = { id } as Case
+    const theCase = { id } as WorkingCase
 
     // Act
     validateAndSendToServer(
@@ -349,7 +349,7 @@ describe('validateAndSendToServer', () => {
     // Arrange
     const spy = jest.fn()
     const setErrorMessage = jest.fn()
-    const theCase = { id: faker.datatype.uuid() } as Case
+    const theCase = { id: faker.datatype.uuid() } as WorkingCase
 
     // Act
     validateAndSendToServer(
@@ -370,7 +370,7 @@ describe('validateAndSendToServer', () => {
     // Arrange
     const spy = jest.fn()
     const id = faker.datatype.uuid()
-    const theCase = { id } as Case
+    const theCase = { id } as WorkingCase
 
     // Act
     validateAndSendToServer('comments', '   ', [], theCase, spy)

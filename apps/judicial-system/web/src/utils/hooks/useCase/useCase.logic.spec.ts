@@ -1,4 +1,4 @@
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 
 import type { UpdateCase } from './useCase.logic'
 import { formatUpdates, update } from './useCase.logic'
@@ -7,7 +7,7 @@ describe('useCase', () => {
   describe('update', () => {
     test('should not update field that is already defined', () => {
       const newCase = { ruling: 'ruling2' } as UpdateCase
-      const workingCase = { ruling: 'ruling1' } as Case
+      const workingCase = { ruling: 'ruling1' } as WorkingCase
 
       const res = update(newCase, workingCase)
       expect(res.ruling).toBe(undefined)
@@ -15,7 +15,7 @@ describe('useCase', () => {
 
     test('should update field that is undefined on the workingCase', () => {
       const newCase = { ruling: 'ruling2' } as UpdateCase
-      const workingCase = { ruling: undefined } as Case
+      const workingCase = { ruling: undefined } as WorkingCase
 
       const res = update(newCase, workingCase)
       expect(res.ruling).toBe('ruling2')
@@ -23,7 +23,7 @@ describe('useCase', () => {
 
     test('should not update field when update is undefined', () => {
       const newCase = { ruling: undefined } as UpdateCase
-      const workingCase = { ruling: '' } as Case
+      const workingCase = { ruling: '' } as WorkingCase
 
       const res = update(newCase, workingCase)
       expect(res.ruling).toBe(undefined)
@@ -31,7 +31,7 @@ describe('useCase', () => {
 
     test('should not update fields when update is empty', () => {
       const newCase = {} as UpdateCase
-      const workingCase = { ruling: 'some ruling' } as Case
+      const workingCase = { ruling: 'some ruling' } as WorkingCase
 
       const res = update(newCase, workingCase)
       expect(res.ruling).toBe(undefined)
@@ -40,7 +40,7 @@ describe('useCase', () => {
 
   describe('auto', () => {
     test('should not autofill when field has value in working case and force is not set', () => {
-      const workingCase = { ruling: 'ruling1' } as Case
+      const workingCase = { ruling: 'ruling1' } as WorkingCase
 
       const res = formatUpdates([{ ruling: 'ruling2' }], workingCase)
 
@@ -48,7 +48,7 @@ describe('useCase', () => {
     })
 
     test('should overwrite value in workingCase if force is set', () => {
-      const workingCase = { ruling: 'ruling1' } as Case
+      const workingCase = { ruling: 'ruling1' } as WorkingCase
 
       const res = formatUpdates(
         [{ ruling: 'ruling2', force: true }],
@@ -62,7 +62,7 @@ describe('useCase', () => {
       const workingCase = {
         ruling: 'ruling1',
         description: 'description1',
-      } as Case
+      } as WorkingCase
 
       const res = formatUpdates(
         [{ ruling: 'ruling2', force: true }, { description: 'description2' }],
@@ -78,7 +78,7 @@ describe('useCase', () => {
         registrar: {
           id: 'testId',
         },
-      } as Case
+      } as WorkingCase
 
       const res = formatUpdates([{ registrarId: null }], workingCase)
 
@@ -90,7 +90,7 @@ describe('useCase', () => {
         registrar: {
           id: 'testId',
         },
-      } as Case
+      } as WorkingCase
 
       const res = formatUpdates(
         [{ registrarId: null, force: true }],
