@@ -40,21 +40,6 @@ const caseSchemaTypeImport = {
     "Type the case as WorkingCase from '@island.is/judicial-system-web/src/components' instead. Case is the full schema type, so it lets code read fields the case query never fetches.",
 }
 
-// Files that still type the case as the schema `Case`. In each of them a field
-// the case query never fetches can be read without a compile error, so this list
-// only shrinks: move a file to WorkingCase, then remove it here. New files are
-// not added.
-const caseSchemaTypeAllowlist = [
-  'src/routes/CourtOfAppeal/Ruling/Ruling.spec.tsx',
-  'src/routes/Defender/IndictmentCase/Appeal/VerdictAppeal.spec.tsx',
-  'src/routes/Defender/IndictmentCase/IndictmentOverview.spec.tsx',
-  'src/routes/Defender/IndictmentCase/verdictAppealActions.logic.spec.ts',
-  'src/routes/Defender/IndictmentCase/verdictAppealActions.logic.ts',
-  'src/routes/PublicProsecutor/Indictments/Overview/IndictmentReviewerSelector.tsx',
-  'src/routes/PublicProsecutor/Indictments/Overview/Overview.spec.tsx',
-  'src/routes/PublicProsecutor/Indictments/RegisterVerdictAppeal/RegisterVerdictAppeal.spec.tsx',
-]
-
 export default [
   ...baseConfig,
   ...nx.configs['flat/react'],
@@ -141,14 +126,6 @@ export default [
     files: ['**/*.spec.ts', '**/*.spec.tsx'],
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
-    },
-  },
-  {
-    // Not yet moved to WorkingCase; see caseSchemaTypeAllowlist. nx runs eslint
-    // from the workspace root, so the entries must not be cwd-relative.
-    files: caseSchemaTypeAllowlist.map((file) => '**/' + file),
-    rules: {
-      'no-restricted-imports': ['error', { paths: restrictedImportPaths }],
     },
   },
   {
