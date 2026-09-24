@@ -114,7 +114,19 @@ export class ApplicationsXRoadService {
       `Fetching file with id ${id} for X-Road client ${xRoadClient}`,
     )
 
-    const applicationId = id.split('/')[0]
+    let decodedId: string
+
+    try {
+      decodedId = decodeURIComponent(id)
+    } catch (error) {
+      if (error instanceof URIError) {
+        throw new BadRequestException('Invalid application file identifier')
+      }
+
+      throw error
+    }
+
+    const applicationId = decodedId.split('/')[0]
     const application = await this.applicationModel.findByPk(applicationId)
 
     if (!application) {
@@ -150,16 +162,16 @@ export class ApplicationsXRoadService {
       )
     }
 
-    const fileContent = await this.fileService.getFile(id)
+    const fileContent = await this.fileService.getFile(decodedId)
     if (fileContent == null) {
       throw new NotFoundException(`File with id ${id} not found`)
     }
 
     const file = new FileResponseDto()
-    file.id = id
+    file.id = decodedId
     file.file = fileContent
-    file.filename = this.displayNameFromS3Key(id)
-    file.fileType = this.fileTypeFromS3Key(id)
+    file.filename = this.displayNameFromS3Key(decodedId)
+    file.fileType = this.fileTypeFromS3Key(decodedId)
     file.size = Buffer.byteLength(fileContent, 'base64')
     return file
   }

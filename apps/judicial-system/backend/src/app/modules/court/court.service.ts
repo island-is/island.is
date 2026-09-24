@@ -35,9 +35,9 @@ import {
 
 import { EventService } from '../event'
 import {
+  Case,
   CaseRepositoryService,
   RobotLogRepositoryService,
-  User as UserModel,
 } from '../repository'
 import { courtModuleConfig } from './court.config'
 
@@ -140,21 +140,20 @@ export class CourtService {
     courtCaseNumber: string,
     fileName: string,
   ): Promise<void> {
-    const theCase = await this.caseRepositoryService
-      .findById(caseId, {
-        include: [
-          { model: UserModel, as: 'judge' },
-          { model: UserModel, as: 'registrar' },
-        ],
-      })
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
-          { reason },
-        )
+    let theCase: Case | null = null
 
-        return null
-      })
+    try {
+      theCase = await this.caseRepositoryService.findByIdWithJudgeAndRegistrar(
+        caseId,
+      )
+    } catch (reason) {
+      // The court is still worth notifying even when the judge and the
+      // registrar cannot be looked up.
+      this.logger.error(
+        `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
+        { reason },
+      )
+    }
 
     const recipients: { name: string; address: string }[] = []
 

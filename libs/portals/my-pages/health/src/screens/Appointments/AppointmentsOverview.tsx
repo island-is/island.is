@@ -8,6 +8,7 @@ import {
   STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
+  m,
 } from '@island.is/portals/my-pages/core'
 import {
   healthAppointmentsHeilsuveraClick,
@@ -16,9 +17,12 @@ import {
 import { useLocation } from 'react-router-dom'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { ApiScope } from '@island.is/auth/scopes'
 import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { isPastAppointment } from '../../utils/appointments'
 import {
   DEFAULT_APPOINTMENTS_STATUS,
   PAST_APPOINTMENTS_STATUS,
@@ -34,6 +38,14 @@ const AppointmentsOverview = () => {
   useHealthPlausibleSwap()
 
   const [pastTabVisited, setPastTabVisited] = useState(false)
+
+  // Past appointments are only available for yourself and for parents of
+  // children under 16 — those are the cases that carry the full health scope,
+  // whereas other delegations only get healthAppointments
+  const userInfo = useUserInfo()
+  const hasPastAppointmentsAccess = !!userInfo?.scopes?.includes(
+    ApiScope.health,
+  )
 
   const { value: showSendMessageButton } = useFeatureFlag(
     Features.isServicePortalHealthMessagesPageEnabled,
@@ -55,14 +67,17 @@ const AppointmentsOverview = () => {
       from: new Date('2026-01-01'),
       status: PAST_APPOINTMENTS_STATUS,
     },
-    skip: !pastTabVisited,
+    skip: !pastTabVisited || !hasPastAppointmentsAccess,
   })
 
   const upcomingAppointments =
     upcoming.data?.healthDirectorateAppointments?.data ?? []
-  const pastAppointments = [
-    ...(past.data?.healthDirectorateAppointments?.data ?? []),
-  ].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+  const pastAppointments = (
+    past.data?.healthDirectorateAppointments?.data ?? []
+  )
+    // The query includes BOOKED, which also matches upcoming appointments
+    .filter(isPastAppointment)
+    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 
   const renderAppointmentList = (
     appointments: HealthDirectorateAppointment[],
@@ -181,14 +196,26 @@ const AppointmentsOverview = () => {
             label: formatMessage(messages.pastAppointmentsTab),
             content: (
               <Box paddingTop={3}>
-                <Text marginBottom={3}>
-                  {formatMessage(messages.pastAppointmentsNote)}
-                </Text>
-                {renderAppointmentList(
-                  pastAppointments,
-                  past,
-                  formatMessage(messages.noPastAppointmentsText),
-                  true,
+                {hasPastAppointmentsAccess ? (
+                  <>
+                    <Text marginBottom={3}>
+                      {formatMessage(messages.pastAppointmentsNote)}
+                    </Text>
+                    {renderAppointmentList(
+                      pastAppointments,
+                      past,
+                      formatMessage(messages.noPastAppointmentsText),
+                      true,
+                    )}
+                  </>
+                ) : (
+                  <Problem
+                    type="no_data"
+                    noBorder={false}
+                    title={formatMessage(m.accessNeeded)}
+                    message={formatMessage(m.accessDeniedText)}
+                    imgSrc="./assets/images/jobsGrid.svg"
+                  />
                 )}
               </Box>
             ),

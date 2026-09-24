@@ -36,11 +36,22 @@ import {
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
+  IncomeApi,
+  IncomeSupportDataApi,
+  GaldurExternalDomainModelsIncomeIncomeTypeDTO,
+  PensionFundsApi,
+  GaldurExternalDomainModelsPensionFundPensionFundItemDTO,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
   JobSearchConfirmationApi,
   GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
   GaldurExternalDomainRequestsHasValidApplicationResponse,
+  IncomePostRequest,
+  IncomeGetRequest,
+  GaldurExternalDomainModelsIncomeIncomesDTO,
+  GaldurExternalDomainModelsIncomeIncomesResponse,
+  IncomeValidateRequest,
+  GaldurDomainModelsSettingsWorkShiftPeriodsWorkShiftPeriodDTO,
   U2CertificateApi,
   GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   GaldurExternalDomainModelsSupportDataNationalityDTO,
@@ -70,6 +81,9 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | IncomeApi
+  | IncomeSupportDataApi
+  | PensionFundsApi
   | U2CertificateApi
   | JobSearchConfirmationApi
   | IncomeApi
@@ -596,6 +610,38 @@ export class VmstUnemploymentClientService {
     return await api.applicantUpdateApplicant(requestParameters)
   }
 
+  async createIncome(
+    requestParameters: IncomePostRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesResponse> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomePost(requestParameters)
+  }
+
+  async getIncomeTypes(options?: {
+    onlyTrTypes?: boolean
+    onlyPensionTypes?: boolean
+    onlyCapitalTypes?: boolean
+  }): Promise<Array<GaldurExternalDomainModelsIncomeIncomeTypeDTO>> {
+    const api = await this.createApiClient(
+      IncomeSupportDataApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeSupportDataGetIncomeTypes(options ?? {})
+  }
+
+  async getPensionFunds(): Promise<
+    Array<GaldurExternalDomainModelsPensionFundPensionFundItemDTO>
+  > {
+    const api = await this.createApiClient(
+      PensionFundsApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.pensionFundsGetPensionFunds()
+  }
+
   async createApplicantRequestedAttachments(
     requestParameters: ApplicantCreateApplicantRequestedAttachmentRequest,
   ): Promise<GaldurDomainModelsBaseViewModel> {
@@ -729,6 +775,35 @@ export class VmstUnemploymentClientService {
     return await api.jobSearchConfirmationGetQuestionaireSchema()
   }
 
+  async getIncome(
+    requestParameters: IncomeGetRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesDTO> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeGet(requestParameters)
+  }
+
+  async validatIncome(
+    requestParameters: IncomeValidateRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesResponse> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeValidate(requestParameters)
+  }
+
+  async getWorkshiftPeriods(): Promise<
+    Array<GaldurDomainModelsSettingsWorkShiftPeriodsWorkShiftPeriodDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.supportDataGetAllWorkShiftPeriods()
+  }
   async revokeU2Application(
     auth: User,
   ): Promise<GaldurDomainModelsBaseViewModel> {
