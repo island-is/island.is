@@ -214,6 +214,30 @@ export class AdminScopeService {
       )
   }
 
+  async findAllPublicByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
+    const apiScopes = await this.apiScope.findAll({
+      where: {
+        domainName: tenantId,
+        enabled: true,
+      },
+      attributes: ['name', 'displayName', 'description'],
+    })
+
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
+
+    return apiScopes
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((apiScope) =>
+        this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+          apiScope,
+          translations,
+        ),
+      )
+  }
+
   /**
    * Finds a scope by name and tenantId
    */
