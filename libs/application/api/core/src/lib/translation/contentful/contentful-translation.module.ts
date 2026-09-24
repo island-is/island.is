@@ -10,11 +10,7 @@ import {
   CONTENTFUL_TRANSLATION_SPACE_ID,
 } from './contentful-translation.constants'
 
-// TODO: Keep this unconfigured while in development to avoid accidental writes to Contentful
-const NOT_CONFIGURED_ACCESS_TOKEN = 'not-configured'
-
 @Module({
-  imports: [ContentfulTranslationConfig.registerOptional()],
   providers: [
     {
       provide: CONTENTFUL_MANAGEMENT_CLIENT,
@@ -22,18 +18,12 @@ const NOT_CONFIGURED_ACCESS_TOKEN = 'not-configured'
         config: ConfigType<typeof ContentfulTranslationConfig>,
       ): PlainClientAPI =>
         createManagementClient(
-          {
-            accessToken: config.isConfigured
-              ? config.managementAccessToken
-              : NOT_CONFIGURED_ACCESS_TOKEN,
-          },
+          { accessToken: config.managementAccessToken },
           {
             type: 'plain',
             defaults: {
               spaceId: CONTENTFUL_TRANSLATION_SPACE_ID,
-              environmentId: config.isConfigured
-                ? config.environmentId
-                : 'master',
+              environmentId: config.environmentId,
             },
           },
         ),
