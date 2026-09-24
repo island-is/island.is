@@ -21,10 +21,6 @@ import {
   useGetQuestionnaireWithQuestionsQuery,
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
-import {
-  getMockQuestionnaireWithQuestions,
-  isMockQuestionnaire,
-} from './mockQuestionnaire'
 
 const AnswerQuestionnaire: FC = () => {
   useNamespaces('sp.health')
@@ -43,12 +39,7 @@ const AnswerQuestionnaire: FC = () => {
       ? QuestionnaireQuestionnairesOrganizationEnum.LSH
       : QuestionnaireQuestionnairesOrganizationEnum.EL
 
-  const isMock = isMockQuestionnaire(id)
-  const {
-    data: queryData,
-    loading,
-    error,
-  } = useGetQuestionnaireWithQuestionsQuery({
+  const { data, loading, error } = useGetQuestionnaireWithQuestionsQuery({
     variables: {
       input: {
         id: id ?? '',
@@ -58,11 +49,8 @@ const AnswerQuestionnaire: FC = () => {
       locale: lang,
     },
     fetchPolicy: 'network-only',
-    skip: !id || isMock,
+    skip: !id,
   })
-  const data = isMock
-    ? { questionnairesDetail: getMockQuestionnaireWithQuestions(id) }
-    : queryData
 
   const questionnaire = data?.questionnairesDetail
 
@@ -122,17 +110,6 @@ const AnswerQuestionnaire: FC = () => {
     asDraft?: boolean,
   ) => {
     const formId = data?.questionnairesDetail?.baseInformation.formId
-
-    if (isMock && id) {
-      toast.success(formatMessage(messages.yourAnswersHaveBeenSent))
-      navigate(
-        HealthPaths.HealthQuestionnairesDetail.replace(
-          ':org',
-          organization.toLocaleLowerCase(),
-        ).replace(':id', id),
-      )
-      return
-    }
 
     if (!id || !formId) {
       toast.error(
