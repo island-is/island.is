@@ -5,6 +5,7 @@ import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-reg
 import {
   DirectorateOfEqualityClientService,
   EqualityCoverageSourceEnum,
+  ReportStatusEnum,
   ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -35,6 +36,14 @@ import {
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
+
+// A report in one of these has nothing left open at DMR to withdraw.
+const CLOSED_REPORT_STATUSES: ReportStatusEnum[] = [
+  ReportStatusEnum.APPROVED,
+  ReportStatusEnum.DENIED,
+  ReportStatusEnum.SUPERSEDED,
+  ReportStatusEnum.WITHDRAWN,
+]
 
 /**
  * What meets the company's equality obligation at submit time.
@@ -949,10 +958,13 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
-  // A 400 is a report already decided (APPROVED/DENIED/SUPERSEDED) and a 404 is
-  // no report at all. Neither leaves anything open at DMR, so neither should
-  // stop the applicant's delete; anything else does, so a delete never leaves an
-  // open report behind.
+  // A 404 is no report at all. A 400 is ambiguous: DMR gives the "already
+  // decided" refusal the same generic BadRequest name as any other bad request
+  // (the reason is only in free-text `details`), and maps validation and
+  // constraint errors to 400 too. So on a 400 the report's own status decides:
+  // decided or already withdrawn leaves nothing open at DMR and the delete may
+  // go ahead. Anything else, including a failed status read, refuses the delete
+  // so it never leaves an open report behind.
   private async withdrawReportIfOpen(
     auth: TemplateApiModuleActionProps['auth'],
     providerId: string,
@@ -960,13 +972,29 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     try {
       await this.directorateOfEqualityService.withdrawReport(auth, providerId)
     } catch (error) {
+      if (this.isNotFoundApiError(error)) return
       if (
-        this.extractFetchErrorDetails(error).status === 400 ||
-        this.isNotFoundApiError(error)
+        this.extractFetchErrorDetails(error).status === 400 &&
+        (await this.isReportClosed(auth, providerId))
       ) {
         return
       }
       throw error
+    }
+  }
+
+  private async isReportClosed(
+    auth: TemplateApiModuleActionProps['auth'],
+    providerId: string,
+  ): Promise<boolean> {
+    try {
+      const { status } = await this.directorateOfEqualityService.getReport(
+        auth,
+        providerId,
+      )
+      return CLOSED_REPORT_STATUSES.includes(status)
+    } catch {
+      return false
     }
   }
 

@@ -51,6 +51,7 @@ describe('DirectorateOfEqualityService', () => {
   let submitDraft: jest.Mock
   let deleteDraft: jest.Mock
   let withdrawReport: jest.Mock
+  let getReport: jest.Mock
 
   beforeEach(async () => {
     editOutliers = jest.fn().mockResolvedValue({})
@@ -62,6 +63,7 @@ describe('DirectorateOfEqualityService', () => {
     submitDraft = jest.fn().mockResolvedValue({})
     deleteDraft = jest.fn().mockResolvedValue(undefined)
     withdrawReport = jest.fn().mockResolvedValue(undefined)
+    getReport = jest.fn().mockResolvedValue({ status: 'APPROVED' })
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -79,6 +81,7 @@ describe('DirectorateOfEqualityService', () => {
             submitDraft,
             deleteDraft,
             withdrawReport,
+            getReport,
           },
         },
       ],
@@ -92,17 +95,21 @@ describe('DirectorateOfEqualityService', () => {
   // onDelete: a failure here refuses the applicant's delete, so only the
   // answers that leave nothing open at DMR may pass.
   describe('deleteSalaryReportDraft', () => {
+    const application = createApplication({ answers: {} })
     const run = () =>
       service.deleteSalaryReportDraft({
         auth: createCurrentUser(),
-        application: createApplication({ answers: {} }),
+        application,
         currentUserLocale: 'is',
       } as Parameters<typeof service.deleteSalaryReportDraft>[0])
 
     it('hard-deletes the draft and does not withdraw', async () => {
       await expect(run()).resolves.toBeUndefined()
 
-      expect(deleteDraft).toHaveBeenCalledTimes(1)
+      expect(deleteDraft).toHaveBeenCalledWith(
+        expect.anything(),
+        application.id,
+      )
       expect(withdrawReport).not.toHaveBeenCalled()
     })
 
@@ -113,7 +120,10 @@ describe('DirectorateOfEqualityService', () => {
 
       await expect(run()).resolves.toBeUndefined()
 
-      expect(withdrawReport).toHaveBeenCalledTimes(1)
+      expect(withdrawReport).toHaveBeenCalledWith(
+        expect.anything(),
+        application.id,
+      )
     })
 
     it('lets the delete through when DMR has nothing at all', async () => {
@@ -121,6 +131,22 @@ describe('DirectorateOfEqualityService', () => {
       withdrawReport.mockRejectedValue(await apiError(404))
 
       await expect(run()).resolves.toBeUndefined()
+    })
+
+    it('lets the delete through when the submitted report is already decided', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+      withdrawReport.mockRejectedValue(await apiError(400))
+
+      await expect(run()).resolves.toBeUndefined()
+    })
+
+    it('refuses the delete when the fallback withdraw fails', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+      withdrawReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
     })
 
     it('refuses the delete when DMR fails', async () => {
@@ -132,28 +158,60 @@ describe('DirectorateOfEqualityService', () => {
   })
 
   describe('withdrawSalaryReport', () => {
+    const application = createApplication({ answers: {} })
     const run = () =>
       service.withdrawSalaryReport({
         auth: createCurrentUser(),
-        application: createApplication({ answers: {} }),
+        application,
         currentUserLocale: 'is',
       } as Parameters<typeof service.withdrawSalaryReport>[0])
 
     it('withdraws the report tied to the application', async () => {
       await expect(run()).resolves.toBeUndefined()
 
-      expect(withdrawReport).toHaveBeenCalledTimes(1)
+      expect(withdrawReport).toHaveBeenCalledWith(
+        expect.anything(),
+        application.id,
+      )
     })
 
-    // 400: already APPROVED, DENIED or SUPERSEDED. 404: no report for this id.
-    it.each([400, 404])(
-      'lets the delete through on a %i from DMR',
+    it('lets the delete through when DMR has no report', async () => {
+      withdrawReport.mockRejectedValue(await apiError(404))
+
+      await expect(run()).resolves.toBeUndefined()
+    })
+
+    // DMR names the "already decided" refusal like any other bad request, so a
+    // 400 passes only once the report itself reads as closed.
+    it.each(['APPROVED', 'DENIED', 'SUPERSEDED', 'WITHDRAWN'])(
+      'lets the delete through on a 400 when the report is %s',
       async (status) => {
-        withdrawReport.mockRejectedValue(await apiError(status))
+        withdrawReport.mockRejectedValue(await apiError(400))
+        getReport.mockResolvedValue({ status })
 
         await expect(run()).resolves.toBeUndefined()
+        expect(getReport).toHaveBeenCalledWith(
+          expect.anything(),
+          application.id,
+        )
       },
     )
+
+    it('refuses the delete on a 400 while the report is still open', async () => {
+      withdrawReport.mockRejectedValue(
+        await apiError(400, { name: 'ValidationError' }),
+      )
+      getReport.mockResolvedValue({ status: 'POSTPONED' })
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
+
+    it('refuses the delete on a 400 when the status cannot be read', async () => {
+      withdrawReport.mockRejectedValue(await apiError(400))
+      getReport.mockRejectedValue(await FetchError.buildMock({ status: 500 }))
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
 
     it('refuses the delete when DMR fails', async () => {
       withdrawReport.mockRejectedValue(
