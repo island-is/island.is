@@ -10,7 +10,10 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { prerequisitesMessages, sharedMessages } from '../../lib/messages'
-import { getYesNoOptions } from '../../utils/childProtectionNotificationUtils'
+import {
+  getYesNoDoNotKnowOptions,
+  getYesNoOptions,
+} from '../../utils/childProtectionNotificationUtils'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
 export const notifierInfoSubSection = buildSubSection({
@@ -66,6 +69,13 @@ export const notifierInfoSubSection = buildSubSection({
           width: 'half',
           space: 4,
           options: getYesNoOptions(),
+        }),
+        buildRadioField({
+          id: 'notifierInfo.needsInterpreter',
+          title: sharedMessages.needsInterpreter,
+          widthWithIllustration: '1/3',
+          space: 4,
+          options: getYesNoDoNotKnowOptions(),
         }),
         buildTitleField({
           title: prerequisitesMessages.notifierInfo.relationshipToChild,

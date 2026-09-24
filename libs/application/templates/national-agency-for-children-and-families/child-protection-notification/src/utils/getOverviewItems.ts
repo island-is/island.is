@@ -26,11 +26,8 @@ import {
   sharedMessages,
 } from '../lib/messages'
 import {
-  DO_NOT_KNOW,
   IS,
-  KnowsNationalId,
   LanguageEnvironmentOptions,
-  NOT_APPLICABLE,
   RISK_TO_UNBORN,
   Roles,
 } from '../utils/constants'
@@ -38,7 +35,11 @@ import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
   getHasReportedBeforeTitle,
+  getKnowsNationalIdLabel,
   getParentMessages,
+  getYesNoDoNotKnowLabel,
+  getYesNoDoNotKnowNotApplicableLabel,
+  getYesNoLabel,
 } from './childProtectionNotificationUtils'
 import {
   isDayCareProvider,
@@ -57,12 +58,6 @@ import { getApplicationExternalData } from './getApplicationExternalData'
 import { getApplicantRole } from './roleUtils'
 import { Parent } from './types'
 
-const knowsNationalIdLabelMap = {
-  [KnowsNationalId.YES]: sharedMessages.radioYes,
-  [KnowsNationalId.NO]: sharedMessages.radioNo,
-  [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
-} as const
-
 // TODO: Replace with values from barnaverndargatt API when available.
 const languageUsageLabelMap = {
   [LanguageEnvironmentOptions.ONLY_ICELANDIC]:
@@ -71,19 +66,6 @@ const languageUsageLabelMap = {
     memmMessages.culture.languageUsageIcelandicAndOther,
   [LanguageEnvironmentOptions.ONLY_OTHER]:
     memmMessages.culture.languageUsageOnlyOther,
-} as const
-
-const receptionRadioLabelMap = {
-  [YES]: sharedMessages.radioYes,
-  [NO]: sharedMessages.radioNo,
-  [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
-  [NOT_APPLICABLE]: memmMessages.reception.optionNotApplicable,
-} as const
-
-const yesNoDoNotKnowLabelMap = {
-  [YES]: sharedMessages.radioYes,
-  [NO]: sharedMessages.radioNo,
-  [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
 } as const
 
 export const getOverviewItems = (answers: FormValue): Array<KeyValueItem> => {
@@ -254,6 +236,7 @@ export const getNotifierInfoItems = (
     notifierEmail,
     notifierPhoneNumber,
     notifierNotifierAnonymity,
+    notifierNeedsInterpreter,
     notifierRelationshipToChild,
   } = getApplicationAnswers(answers)
 
@@ -284,10 +267,12 @@ export const getNotifierInfoItems = (
     {
       width: 'half',
       keyText: prerequisitesMessages.notifierInfo.wantsAnonymity,
-      valueText:
-        notifierNotifierAnonymity === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      valueText: getYesNoLabel(notifierNotifierAnonymity),
+    },
+    {
+      width: 'half',
+      keyText: sharedMessages.needsInterpreter,
+      valueText: getYesNoDoNotKnowLabel(notifierNeedsInterpreter),
     },
     {
       width: 'full',
@@ -325,11 +310,7 @@ export const getChildWithNationalIdItems = (
     {
       width: 'half',
       keyText: childMessages.nationalIdLookup.radioLabel,
-      valueText: childKnowsNationalId
-        ? knowsNationalIdLabelMap[
-            childKnowsNationalId as keyof typeof knowsNationalIdLabelMap
-          ] ?? childKnowsNationalId
-        : '',
+      valueText: getKnowsNationalIdLabel(childKnowsNationalId),
     },
     ...(isKnowsNationalId(answers)
       ? [
@@ -400,19 +381,14 @@ export const getChildWithNationalIdItems = (
                   valueText: getLanguageByCode(childLanguage ?? '')?.name,
                   hideIfEmpty: true,
                 },
-                {
-                  width: 'half' as const,
-                  keyText: sharedMessages.needsInterpreter,
-                  valueText:
-                    yesNoDoNotKnowLabelMap[
-                      childNeedsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
-                    ] ??
-                    childNeedsInterpreter ??
-                    '',
-                  hideIfEmpty: true,
-                },
               ]
             : []),
+          {
+            width: 'half' as const,
+            keyText: sharedMessages.needsInterpreter,
+            valueText: getYesNoDoNotKnowLabel(childNeedsInterpreter),
+            hideIfEmpty: true,
+          },
         ]
       : []),
     ...(isNoNationalId(answers)
@@ -548,12 +524,7 @@ export const getChildManualItems = (
     {
       width: 'half',
       keyText: sharedMessages.needsInterpreter,
-      valueText:
-        yesNoDoNotKnowLabelMap[
-          childManualNeedsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
-        ] ??
-        childManualNeedsInterpreter ??
-        '',
+      valueText: getYesNoDoNotKnowLabel(childManualNeedsInterpreter),
       hideIfEmpty: true,
     },
   ]
@@ -569,11 +540,27 @@ const buildParentItems = (
   const knowsNationalIdItem: KeyValueItem = {
     width: 'full',
     keyText: getParentMessages(answers).radioLabel,
-    valueText:
-      parent?.knowsNationalId === YES
-        ? sharedMessages.radioYes
-        : sharedMessages.radioNo,
+    valueText: getYesNoLabel(parent?.knowsNationalId),
   }
+
+  const interpreterItems: Array<KeyValueItem> = [
+    {
+      width: 'half',
+      keyText: sharedMessages.needsInterpreter,
+      valueText: getYesNoDoNotKnowLabel(parent?.needsInterpreter),
+      hideIfEmpty: true,
+    },
+    ...(parent?.needsInterpreter === YES
+      ? [
+          {
+            width: 'half' as const,
+            keyText: sharedMessages.language,
+            valueText: getLanguageByCode(parent.preferredLanguage ?? '')?.name,
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
+  ]
 
   if (parent?.knowsNationalId === YES) {
     return [
@@ -603,6 +590,7 @@ const buildParentItems = (
         ),
         hideIfEmpty: true,
       },
+      ...interpreterItems,
     ]
   }
 
@@ -672,32 +660,7 @@ const buildParentItems = (
             hideIfEmpty: true,
           },
         ]),
-    ...(parent?.citizenship && parent.citizenship !== IS
-      ? [
-          {
-            width: 'half' as const,
-            keyText: sharedMessages.needsInterpreter,
-            valueText:
-              yesNoDoNotKnowLabelMap[
-                parent.needsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
-              ] ??
-              parent.needsInterpreter ??
-              '',
-            hideIfEmpty: true,
-          },
-          ...(parent.needsInterpreter === YES
-            ? [
-                {
-                  width: 'half' as const,
-                  keyText: sharedMessages.language,
-                  valueText: getLanguageByCode(parent.preferredLanguage ?? '')
-                    ?.name,
-                  hideIfEmpty: true,
-                },
-              ]
-            : []),
-        ]
-      : []),
+    ...interpreterItems,
   ]
 }
 
@@ -768,23 +731,17 @@ export const getMemmReceptionItems = (
     {
       width: 'full',
       keyText: memmMessages.reception.seekingAsylumLabel,
-      valueText:
-        receptionRadioLabelMap[
-          memmReceptionSeekingAsylum as keyof typeof receptionRadioLabelMap
-        ] ??
-        memmReceptionSeekingAsylum ??
-        '',
+      valueText: getYesNoDoNotKnowNotApplicableLabel(
+        memmReceptionSeekingAsylum,
+      ),
       hideIfEmpty: true,
     },
     {
       width: 'full',
       keyText: memmMessages.reception.refugeeStatusLabel,
-      valueText:
-        receptionRadioLabelMap[
-          memmReceptionRefugeeStatus as keyof typeof receptionRadioLabelMap
-        ] ??
-        memmReceptionRefugeeStatus ??
-        '',
+      valueText: getYesNoDoNotKnowNotApplicableLabel(
+        memmReceptionRefugeeStatus,
+      ),
       hideIfEmpty: true,
     },
   ]
@@ -799,7 +756,6 @@ export const getMemmCultureItems = (
     memmCultureLanguageUsage,
     memmCultureLanguages,
     memmCulturePreferredLanguage,
-    memmCultureNeedsInterpreter,
     memmCultureDisability,
     memmCultureDisabilityService,
   } = getApplicationAnswers(answers)
@@ -833,28 +789,12 @@ export const getMemmCultureItems = (
               getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
             hideIfEmpty: true,
           },
-          {
-            width: 'full' as const,
-            keyText: sharedMessages.needsInterpreter,
-            valueText:
-              yesNoDoNotKnowLabelMap[
-                memmCultureNeedsInterpreter as keyof typeof yesNoDoNotKnowLabelMap
-              ] ??
-              memmCultureNeedsInterpreter ??
-              '',
-            hideIfEmpty: true,
-          },
         ]
       : []),
     {
       width: 'full',
       keyText: memmMessages.culture.disabilityLabel,
-      valueText:
-        yesNoDoNotKnowLabelMap[
-          memmCultureDisability as keyof typeof yesNoDoNotKnowLabelMap
-        ] ??
-        memmCultureDisability ??
-        '',
+      valueText: getYesNoDoNotKnowLabel(memmCultureDisability),
       hideIfEmpty: true,
     },
     ...(showDisabilityService(answers)
@@ -892,12 +832,7 @@ export const getMemmWellbeingItems = (
     {
       width: 'full',
       keyText: memmMessages.wellbeing.integratedServiceLabel,
-      valueText:
-        yesNoDoNotKnowLabelMap[
-          memmWellbeingIntegratedService as keyof typeof yesNoDoNotKnowLabelMap
-        ] ??
-        memmWellbeingIntegratedService ??
-        '',
+      valueText: getYesNoDoNotKnowLabel(memmWellbeingIntegratedService),
       hideIfEmpty: true,
     },
     ...(showWellbeingContactAndManagerQuestions(answers)
@@ -905,12 +840,7 @@ export const getMemmWellbeingItems = (
           {
             width: 'full' as const,
             keyText: memmMessages.wellbeing.wellbeingContactLabel,
-            valueText:
-              yesNoDoNotKnowLabelMap[
-                memmWellbeingWellbeingContact as keyof typeof yesNoDoNotKnowLabelMap
-              ] ??
-              memmWellbeingWellbeingContact ??
-              '',
+            valueText: getYesNoDoNotKnowLabel(memmWellbeingWellbeingContact),
             hideIfEmpty: true,
           },
           ...(showWellbeingContactFields(answers)
@@ -932,12 +862,7 @@ export const getMemmWellbeingItems = (
           {
             width: 'full' as const,
             keyText: memmMessages.wellbeing.wellbeingManagerLabel,
-            valueText:
-              yesNoDoNotKnowLabelMap[
-                memmWellbeingWellbeingManager as keyof typeof yesNoDoNotKnowLabelMap
-              ] ??
-              memmWellbeingWellbeingManager ??
-              '',
+            valueText: getYesNoDoNotKnowLabel(memmWellbeingWellbeingManager),
             hideIfEmpty: true,
           },
           ...(showWellbeingManagerFields(answers)
@@ -1113,26 +1038,17 @@ export const getReasonNotificationHistoryItems = (
     {
       width: 'full',
       keyText: getHasReportedBeforeTitle(answers),
-      valueText:
-        hasReportedBefore === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      valueText: getYesNoLabel(hasReportedBefore),
     },
     {
       width: 'full',
       keyText: getHasDiscussedWithParentsTitle(answers, externalData),
-      valueText:
-        hasDiscussedWithParents === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      valueText: getYesNoLabel(hasDiscussedWithParents),
     },
     {
       width: 'full',
       keyText: getAreParentsInformedTitle(answers, externalData),
-      valueText:
-        areParentsInformed === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      valueText: getYesNoLabel(areParentsInformed),
     },
     ...(areParentsInformed === NO
       ? [

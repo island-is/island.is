@@ -110,16 +110,6 @@ export const cultureSubSection = buildSubSection({
           },
           condition: showPreferredLanguage,
         }),
-        buildRadioField({
-          id: 'memm.culture.needsInterpreter',
-          title: sharedMessages.needsInterpreter,
-          titleVariant: 'h5',
-          widthWithIllustration: '1/3',
-          space: 4,
-          doesNotRequireAnswer: true,
-          options: getYesNoDoNotKnowOptions(),
-          condition: showPreferredLanguage,
-        }),
         buildDescriptionField({
           id: 'memm.culture.disabilityLabel',
           title: memmMessages.culture.disabilityLabel,

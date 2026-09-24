@@ -78,6 +78,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'notifierInfo.notifierAnonymity',
   )
 
+  const notifierNeedsInterpreter = getValueViaPath<string>(
+    answers,
+    'notifierInfo.needsInterpreter',
+  )
+
   const notifierRelationshipToChild = getValueViaPath<string>(
     answers,
     'notifierInfo.relationshipToChild',
@@ -301,11 +306,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.culture.preferredLanguage',
   )
 
-  const memmCultureNeedsInterpreter = getValueViaPath<string>(
-    answers,
-    'memm.culture.needsInterpreter',
-  )
-
   const memmCultureDisability = getValueViaPath<string>(
     answers,
     'memm.culture.disability',
@@ -373,6 +373,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     notifierEmail,
     notifierPhoneNumber,
     notifierNotifierAnonymity,
+    notifierNeedsInterpreter,
     notifierRelationshipToChild,
     childKnowsNationalId,
     childNoNationalIdReason,
@@ -419,7 +420,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmCultureLanguageUsage,
     memmCultureLanguages,
     memmCulturePreferredLanguage,
-    memmCultureNeedsInterpreter,
     memmCultureDisability,
     memmCultureDisabilityService,
     memmWellbeingIntegratedService,
