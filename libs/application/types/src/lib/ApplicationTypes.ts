@@ -530,7 +530,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
     slug: 'stadfesta-atvinnuleit',
-    translation: ['vmst.cjs', 'uiForms.application'],
+    translation: ['vmst.cjs.application', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
     slug: 'vmst-afskraning-bota',
