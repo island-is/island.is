@@ -455,22 +455,24 @@ const HealthConversations = () => {
                 </Box>
               ))}
             </Stack>
-            {conversationsPage?.pageInfo.hasNextPage && (
-              <Box display="flex" justifyContent="center" marginTop={3}>
-                <Button
-                  onClick={loadMore}
-                  loading={loadingMore}
-                  variant="ghost"
-                  size="small"
-                >
-                  {`${formatMessage(m.fetchMore)} ${
-                    healthConversations.length
-                  }/${conversationsPage.totalCount}`}
-                </Button>
-              </Box>
-            )}
           </>
         ))}
+      {/* Kept outside the empty/non-empty branch: archiving every loaded row
+          can empty the list while more pages still exist on the server */}
+      {!initialLoading && !error && conversationsPage?.pageInfo.hasNextPage && (
+        <Box display="flex" justifyContent="center" marginTop={3}>
+          <Button
+            onClick={loadMore}
+            loading={loadingMore}
+            variant="ghost"
+            size="small"
+          >
+            {`${formatMessage(m.fetchMore)} ${healthConversations.length}/${
+              conversationsPage.totalCount
+            }`}
+          </Button>
+        </Box>
+      )}
     </IntroWrapper>
   )
 }
