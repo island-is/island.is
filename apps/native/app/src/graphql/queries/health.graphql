@@ -331,23 +331,29 @@ mutation cancelAppointment($id: String!) {
 }
 
 query GetHealthConversations(
-  $input: HealthDirectorateHealthConversationsFilterInput
+  $input: HealthDirectoratePaginatedHealthConversationsInput
 ) {
-  healthDirectorateHealthConversations(input: $input) {
-    id
-    title
-    status
-    messageCount
-    lastMessageSentAt
-    lastSenderGroupName
-    hasAttachment
-    isStarred
-    isArchived
-    isRead
-    organization {
-      name
-      logoUrl
+  healthDirectoratePaginatedHealthConversations(input: $input) {
+    data {
+      id
+      title
+      messageCount
+      lastMessageSentAt
+      lastSenderGroupName
+      hasAttachment
+      isStarred
+      isArchived
+      isRead
+      organization {
+        name
+        logoUrl
+      }
     }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
   }
 }
 
@@ -355,7 +361,6 @@ query GetHealthConversation($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
     title
-    status
     startDate
     lastMessageSentAt
     lastSenderGroupName
