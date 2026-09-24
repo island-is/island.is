@@ -177,6 +177,7 @@ env:
   XROAD_SHIP_REGISTRY_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
   XROAD_SHIP_REGISTRY_V2_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Skutan-Gov-V1'
   XROAD_SIGNATURE_COLLECTION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Medmaeli-v1'
+  XROAD_TAXI_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS'
   XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
   XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
