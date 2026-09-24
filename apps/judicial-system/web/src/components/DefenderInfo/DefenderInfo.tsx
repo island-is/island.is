@@ -140,7 +140,6 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
               : 'defender'
           }
           name={workingCase.defenderName}
-          nationalId={workingCase.defenderNationalId}
           email={workingCase.defenderEmail}
           phoneNumber={workingCase.defenderPhoneNumber}
           onAdvocateChange={handleAdvocateChange}

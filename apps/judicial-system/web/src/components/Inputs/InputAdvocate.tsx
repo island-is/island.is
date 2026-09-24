@@ -17,7 +17,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { findSelectedLawyer } from './InputAdvocate.logic'
 import {
   emailLabelStrings,
   nameLabelStrings,
@@ -33,7 +32,6 @@ interface Props {
     | 'legalRightsProtector'
     | 'litigator'
   name: string | undefined | null
-  nationalId?: string | null
   email: string | undefined | null
   phoneNumber: string | undefined | null
   onAdvocateChange: (
@@ -59,10 +57,6 @@ const InputAdvocate: FC<Props> = ({
 
   // The name of the advocate.
   name: lawyerName,
-
-  // The national id of the advocate. Used to find the selected lawyer in the
-  // registry so the option can be highlighted.
-  nationalId: lawyerNationalId,
 
   // The email of the advocate.
   email: lawyerEmail,
@@ -107,12 +101,6 @@ const InputAdvocate: FC<Props> = ({
       value: l.id,
     }))
   }, [lawyers])
-
-  const selectedLawyer = findSelectedLawyer(
-    lawyers,
-    lawyerNationalId,
-    lawyerName,
-  )
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
@@ -205,11 +193,7 @@ const InputAdvocate: FC<Props> = ({
         options={options}
         label={formatMessage(nameLabelStrings[advocateType])}
         placeholder={formatMessage(placeholderStrings.namePlaceholder)}
-        value={
-          lawyerName
-            ? { label: lawyerName, value: selectedLawyer?.id ?? '' }
-            : null
-        }
+        value={lawyerName ? { label: lawyerName, value: '' } : null}
         onChange={handleAdvocateChange}
         noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
         isDisabled={Boolean(disabled)}

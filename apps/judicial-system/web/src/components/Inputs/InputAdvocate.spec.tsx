@@ -55,7 +55,7 @@ const lawyers = [firstWithoutEmail, secondWithoutEmail, oldName, newName]
 
 const renderPicker = (
   onAdvocateChange: jest.Mock,
-  selected?: Pick<Lawyer, 'name' | 'nationalId' | 'email' | 'phoneNr'>,
+  selected?: Pick<Lawyer, 'name' | 'email' | 'phoneNr'>,
 ) =>
   render(
     <IntlProviderWrapper>
@@ -63,7 +63,6 @@ const renderPicker = (
         <InputAdvocate
           advocateType="litigator"
           name={selected?.name}
-          nationalId={selected?.nationalId}
           email={selected?.email}
           phoneNumber={selected?.phoneNr}
           onAdvocateChange={onAdvocateChange}
@@ -134,22 +133,6 @@ describe('InputAdvocate', () => {
     renderPicker(jest.fn(), secondWithoutEmail)
 
     expect(screen.getByText(secondWithoutEmail.name)).toBeInTheDocument()
-  })
-
-  it('highlights the entry whose name matches when a national id is listed twice', () => {
-    renderPicker(jest.fn(), newName)
-
-    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' })
-
-    const option = screen
-      .getByText(`${newName.name} (${newName.practice})`)
-      .closest('[role="option"]')
-    const otherOption = screen
-      .getByText(`${oldName.name} (${oldName.practice})`)
-      .closest('[role="option"]')
-
-    expect(option).toHaveAttribute('aria-selected', 'true')
-    expect(otherOption).toHaveAttribute('aria-selected', 'false')
   })
 
   it('clears the advocate when the selection is cleared', () => {

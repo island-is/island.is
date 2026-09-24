@@ -401,7 +401,6 @@ export const CivilClaimantFields = ({
                     : 'legalRightsProtector'
                 }
                 name={civilClaimant.spokespersonName}
-                nationalId={civilClaimant.spokespersonNationalId}
                 email={civilClaimant.spokespersonEmail}
                 phoneNumber={civilClaimant.spokespersonPhoneNumber}
                 onAdvocateChange={(
