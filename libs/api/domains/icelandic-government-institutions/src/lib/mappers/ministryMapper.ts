@@ -1,8 +1,8 @@
 import { MinistriesDto } from '@island.is/clients/government-invoices'
-import { Ministries } from '../models/ministries.model'
+import { MinistryCollection } from '../models/ministries.model'
 import { Ministry } from '../models/ministry.model'
 
-export const mapMinistries = (data: MinistriesDto): Ministries => {
+export const mapMinistries = (data: MinistriesDto): MinistryCollection => {
   const ministries: Ministry[] = data.ministries.map((ministry) => ({
     id: ministry.code,
     name: ministry.name,

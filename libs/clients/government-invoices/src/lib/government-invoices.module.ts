@@ -31,11 +31,7 @@ export class GovernmentInvoicesClientModule {
               issuer: config.authUrl,
               clientId: config.clientId,
               clientSecret: config.clientSecret,
-              scope: [
-                '@fjs.is/elfur_employee_read',
-                '@fjs.is/elfur_organization_read',
-                '@fjs.is/elfur_openinvoices_read',
-              ],
+              scope: ['@fjs.is/elfur_openinvoices_read'],
             }
           : undefined,
       }),

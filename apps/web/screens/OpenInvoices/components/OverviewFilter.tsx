@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
-import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -10,9 +9,7 @@ import {
   Filter,
   FilterProps,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
-import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../messages'
 import {
@@ -75,8 +72,6 @@ interface Props {
   categories: Array<DateSelectProps | CheckboxProps | AsyncSelectProps>
   variant?: FilterProps['variant']
   hits?: number
-  /** Only render below the `md` breakpoint — for a second instance placed in the normal content flow, since `SidebarLayout`'s `sidebarContent` slot is hidden there. */
-  mobileOnly?: boolean
 }
 
 export const OverviewFilter = ({
@@ -90,11 +85,8 @@ export const OverviewFilter = ({
   url,
   variant = 'default',
   hits,
-  mobileOnly,
 }: Props) => {
   const { formatMessage } = useIntl()
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
 
   const clear = () => {
     for (const category of categories) {
@@ -106,10 +98,6 @@ export const OverviewFilter = ({
   const searchInputRefs = useRef<{
     [key: string]: AsyncSearchInputHandle | null
   }>({})
-
-  if (mobileOnly && !isMobile) {
-    return null
-  }
 
   return (
     <Box
@@ -133,6 +121,7 @@ export const OverviewFilter = ({
         onFilterResult={onApply}
         variant={variant}
         align={'right'}
+        usePopoverDiscloureButtonStyling
       >
         <Box background="white" borderRadius="large">
           {categories.map((category, index) => {
@@ -184,16 +173,10 @@ export const OverviewFilter = ({
                     maxSelectableDate={category.maxSelectableDate}
                     initiallyExpanded
                     onChange={(valueFrom, valueTo) => {
-                      const valueFromString = valueFrom
-                        ? valueFrom.toISOString()
-                        : undefined
-                      const valueToString = valueTo
-                        ? valueTo.toISOString()
-                        : undefined
-                      onSearchUpdate(
-                        category.id as keyof SearchState,
-                        [valueFromString, valueToString].filter(isDefined),
-                      )
+                      onSearchUpdate(category.id as keyof SearchState, [
+                        valueFrom?.toISOString() ?? '',
+                        valueTo?.toISOString() ?? '',
+                      ])
                     }}
                   />
                 </React.Fragment>

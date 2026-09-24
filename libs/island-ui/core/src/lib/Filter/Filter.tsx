@@ -1,7 +1,16 @@
-import React, { createContext, FC, ReactNode } from 'react'
-import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
-import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
+import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
+import {
+  Dialog,
+  DialogDisclosure,
+  Popover,
+  PopoverDisclosure,
+  useDialogStore,
+  usePopoverStore,
+  useStoreState,
+} from '@ariakit/react'
+import cn from 'classnames'
 import { Box } from '../Box/Box'
+import { useBoxStyles } from '../Box/useBoxStyles'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
@@ -113,32 +122,45 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   onFilterResult,
   fluidDisclosure = false,
 }) => {
-  const dialog = useDialogState({ modal: true })
-  const popover = usePopoverState({
-    placement: 'bottom-start',
-    unstable_flip: popoverFlip,
-    gutter: 8,
+  const dialog = useDialogStore()
+  const dialogOpen = useStoreState(dialog, 'open')
+  const popover = usePopoverStore({ placement: 'bottom-start' })
+
+  const popoverBoxStyles = useBoxStyles({
+    component: Popover,
+    background: 'white',
+    borderRadius: 'large',
+    boxShadow: 'subtle',
+  })
+  const popoverDisclosureBoxStyles = useBoxStyles({
+    component: PopoverDisclosure,
+    background: 'white',
+    display: 'inlineBlock',
+    borderRadius: 'large',
+    width: fluidDisclosure ? 'full' : undefined,
   })
 
   const hasFilterInput = !!filterInput
 
-  usePreventBodyScroll(dialog.visible && variant === 'dialog')
+  usePreventBodyScroll(dialogOpen && variant === 'dialog')
+
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => setIsMounted(true), [])
 
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.sm
+  const isMobile = isMounted && width < theme.breakpoints.sm
 
   const filterInputContent = hasFilterInput ? filterInput : null
   const filterCountNumber = filterCount > 9 ? '9+' : filterCount
 
-  const popoverContent = (component: boolean) => (
-    <Box
-      component={component ? Popover : undefined}
-      aria-label={component ? labelOpen : undefined}
-      background="white"
-      borderRadius="large"
-      boxShadow="subtle"
-      className={styles.popoverContainer}
-      {...popover}
+  const popoverContent = () => (
+    <Popover
+      store={popover}
+      portal
+      gutter={8}
+      flip={popoverFlip}
+      aria-label={labelOpen}
+      className={cn(popoverBoxStyles, styles.popoverContainer)}
     >
       <Stack space={4} dividers={false}>
         {children}
@@ -161,7 +183,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           {labelClearAll}
         </Button>
       </Box>
-    </Box>
+    </Popover>
   )
 
   const popoverContainer = () => {
@@ -202,15 +224,13 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             }
           >
             {reverse && inputBox}
-            <Box
-              component={PopoverDisclosure}
-              background="white"
-              display="inlineBlock"
-              borderRadius="large"
-              width={fluidDisclosure ? 'full' : undefined}
+            <PopoverDisclosure
+              store={popover}
               tabIndex={-1}
-              {...popover}
-              className={filterCount ? styles.filterCountButton : undefined}
+              className={cn(
+                popoverDisclosureBoxStyles,
+                filterCount ? styles.filterCountButton : undefined,
+              )}
             >
               {filterCount ? (
                 <Button
@@ -242,11 +262,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                   {labelOpen}
                 </Button>
               )}
-            </Box>
+            </PopoverDisclosure>
             {!reverse && inputBox}
           </Box>
         </Box>
-        {popoverContent(true)}
+        {popoverContent()}
       </>
     )
   }
@@ -254,7 +274,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   const dialogContent = () => (
     <>
       <DialogDisclosure
-        {...dialog}
+        store={dialog}
+        tabIndex={usePopoverDiscloureButtonStyling ? -1 : undefined}
         className={
           usePopoverDiscloureButtonStyling ? undefined : styles.dialogDisclosure
         }
@@ -265,13 +286,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             borderRadius="large"
             width={fluidDisclosure ? 'full' : undefined}
           >
-            <Button
-              unfocusable
-              as="span"
-              variant="utility"
-              icon="filter"
-              nowrap
-            >
+            <Button as="span" variant="utility" icon="filter" nowrap>
               {labelOpen}
             </Button>
           </Box>
@@ -302,7 +317,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
         )}
       </DialogDisclosure>
       <Dialog
-        {...dialog}
+        store={dialog}
+        backdrop={false}
         preventBodyScroll={false}
         aria-label={labelTitle ?? labelOpen}
       >

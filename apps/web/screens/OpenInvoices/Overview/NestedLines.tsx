@@ -9,9 +9,9 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP } from '../../queries/OpenInvoices'
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { m } from '../messages'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP } from './Overview.graphql'
 import * as styles from './Overview.css'
 
 interface Props {
@@ -197,7 +197,7 @@ export const NestedLines = ({
           justifyContent="spaceBetween"
         >
           <Text variant="small" fontWeight="semiBold">
-            {`${formatMessage(m.totals.total)}: `}
+            {formatMessage(m.totals.total)}
           </Text>
           <Text variant="small" fontWeight="semiBold">
             {formatCurrency(total)}

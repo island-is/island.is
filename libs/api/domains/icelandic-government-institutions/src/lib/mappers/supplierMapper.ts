@@ -1,8 +1,8 @@
 import { SuppliersDto } from '@island.is/clients/government-invoices'
-import { Suppliers } from '../models/suppliers.model'
+import { SupplierCollection } from '../models/suppliers.model'
 import { Supplier } from '../models/supplier.model'
 
-export const mapSuppliers = (data: SuppliersDto): Suppliers => {
+export const mapSuppliers = (data: SuppliersDto): SupplierCollection => {
   const suppliers: Supplier[] = data.suppliers.map((supplier) => ({
     id: supplier.legalId,
     name: supplier.name,

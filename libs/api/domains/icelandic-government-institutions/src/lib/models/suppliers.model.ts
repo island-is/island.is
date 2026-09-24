@@ -3,4 +3,4 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Supplier } from './supplier.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsSuppliers')
-export class Suppliers extends PaginatedResponse(Supplier) {}
+export class SupplierCollection extends PaginatedResponse(Supplier) {}

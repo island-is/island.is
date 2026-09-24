@@ -8,12 +8,12 @@ import {
   Query,
 } from '@island.is/web/graphql/schema'
 
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS } from '../../queries/OpenInvoices'
 import {
   AsyncFilterItem,
   AsyncFilterPage,
 } from '../components/AsyncFilterSearchAccordion'
 import { m } from '../messages'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS } from '../Overview/Overview.graphql'
 import { formatPaymentTypeGroupTooltip } from '../utils'
 
 const MAX_LOOKUP_BATCH = 100
@@ -68,8 +68,7 @@ export const useInvoicePaymentTypeGroupFilter = (
   const fetchGroups = useCallback(
     async (variables: GroupQueryVariables) => {
       const { data } = await apolloClient.query<Query, GroupQueryVariables>({
-        query:
-          GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
+        query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
         variables,
       })
 

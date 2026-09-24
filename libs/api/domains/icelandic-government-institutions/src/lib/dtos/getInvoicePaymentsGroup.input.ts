@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsDate, IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType('IcelandicGovernmentInstitutionsInvoicePaymentsGroupInput')
 export class InvoicePaymentsGroupInput {
@@ -23,9 +23,13 @@ export class InvoicePaymentsGroupInput {
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   paymentTypeIds?: string[]
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   ministries?: string[]
 }

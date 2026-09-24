@@ -38,30 +38,24 @@ import { groupIdentity } from './utils/groupIdentity.util'
 @Injectable()
 export class GovernmentInvoicesClientService {
   public async getOpenInvoicePaymentsGroups(
-    input?: InvoicePaymentsGroupRequestDto,
+    input: InvoicePaymentsGroupRequestDto,
   ): Promise<InvoicePaymentsGroupCollectionDto | null> {
-    const { data } = await getV1OpeninvoicesInvoices(
-      input
-        ? {
-            query: {
-              dateFrom: input.dateFrom
-                ? format(input.dateFrom, 'yyyy-MM-dd')
-                : undefined,
-              dateTo: input.dateTo
-                ? format(input.dateTo, 'yyyy-MM-dd')
-                : undefined,
-              suppliers: input.suppliers,
-              debtors: input.debtors,
-              ministries: input.ministries,
-              paymentTypeIds: input.paymentTypeIds,
-              sortBy: input.sortBy,
-              sortDirection: input.sortDirection,
-              limit: input.limit,
-              page: input.page,
-            },
-          }
-        : {},
-    )
+    const { data } = await getV1OpeninvoicesInvoices({
+      query: {
+        dateFrom: input.dateFrom
+          ? format(input.dateFrom, 'yyyy-MM-dd')
+          : undefined,
+        dateTo: input.dateTo ? format(input.dateTo, 'yyyy-MM-dd') : undefined,
+        suppliers: input.suppliers,
+        debtors: input.debtors,
+        ministries: input.ministries,
+        paymentTypeIds: input.paymentTypeIds,
+        sortBy: input.sortBy,
+        sortDirection: input.sortDirection,
+        limit: input.limit,
+        page: input.page,
+      },
+    })
 
     if (!data) {
       return null
@@ -73,23 +67,24 @@ export class GovernmentInvoicesClientService {
   public async getOpenInvoicePaymentsGroup(
     requestParams: InvoiceRequestDto,
   ): Promise<InvoicePaymentsGroupDto | null> {
-    const { data } =
-      await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
-        path: {
-          supplierLegalId: requestParams.supplierLegalId,
-          erpLegalEntityId: requestParams.erpLegalEntityId,
-        },
-        query: {
-          dateFrom: requestParams.dateFrom
-            ? format(requestParams.dateFrom, 'yyyy-MM-dd')
-            : undefined,
-          dateTo: requestParams.dateTo
-            ? format(requestParams.dateTo, 'yyyy-MM-dd')
-            : undefined,
-          paymentTypeIds: requestParams.paymentTypeIds,
-          ministries: requestParams.ministries,
-        },
-      })
+    const {
+      data,
+    } = await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
+      path: {
+        supplierLegalId: requestParams.supplierLegalId,
+        erpLegalEntityId: requestParams.erpLegalEntityId,
+      },
+      query: {
+        dateFrom: requestParams.dateFrom
+          ? format(requestParams.dateFrom, 'yyyy-MM-dd')
+          : undefined,
+        dateTo: requestParams.dateTo
+          ? format(requestParams.dateTo, 'yyyy-MM-dd')
+          : undefined,
+        paymentTypeIds: requestParams.paymentTypeIds,
+        ministries: requestParams.ministries,
+      },
+    })
 
     if (!data) {
       return null
@@ -99,7 +94,7 @@ export class GovernmentInvoicesClientService {
   }
 
   public async getSuppliers(
-    requestParams?: SearchRequestDto,
+    requestParams: SearchRequestDto,
   ): Promise<SuppliersDto | null> {
     const { data } = await getV1OpeninvoicesSuppliers({
       query: requestParams,
@@ -124,7 +119,7 @@ export class GovernmentInvoicesClientService {
   }
 
   public async getDebtors(
-    requestParams?: SearchRequestDto,
+    requestParams: SearchRequestDto,
   ): Promise<DebtorsDto | null> {
     const { data } = await getV1OpeninvoicesDebtors({
       query: requestParams,
@@ -149,7 +144,7 @@ export class GovernmentInvoicesClientService {
   }
 
   public async getMinistries(
-    requestParams?: SearchRequestDto,
+    requestParams: SearchRequestDto,
   ): Promise<MinistriesDto | null> {
     const { data } = await getV1OpeninvoicesMinistries({
       query: requestParams,
@@ -174,7 +169,7 @@ export class GovernmentInvoicesClientService {
   }
 
   public async getInvoicePaymentTypes(
-    requestParams?: SearchRequestDto,
+    requestParams: SearchRequestDto,
   ): Promise<InvoicePaymentTypesDto | null> {
     const { data } = await getV1OpeninvoicesPaymenttypes({
       query: requestParams,
@@ -201,7 +196,7 @@ export class GovernmentInvoicesClientService {
   }
 
   public async getInvoicePaymentTypeGroups(
-    requestParams?: SearchRequestDto,
+    requestParams: SearchRequestDto,
   ): Promise<InvoicePaymentTypeGroupsDto | null> {
     const { data } = await getV1OpeninvoicesPaymenttypesGroups({
       query: requestParams,

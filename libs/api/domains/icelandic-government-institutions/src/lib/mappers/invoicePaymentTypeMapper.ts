@@ -3,7 +3,7 @@ import {
   InvoicePaymentTypesDto,
 } from '@island.is/clients/government-invoices'
 import { InvoicePaymentType } from '../models/invoicePaymentType.model'
-import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
+import { InvoicePaymentTypeCollection } from '../models/invoicePaymentTypes.model'
 
 export const mapInvoicePaymentType = (
   data: InvoicePaymentTypeDto,
@@ -16,7 +16,7 @@ export const mapInvoicePaymentType = (
 
 export const mapInvoicePaymentTypes = (
   data: InvoicePaymentTypesDto,
-): InvoicePaymentTypes => {
+): InvoicePaymentTypeCollection => {
   const invoiceTypes: InvoicePaymentType[] = data.invoicePaymentTypes.map(
     mapInvoicePaymentType,
   )

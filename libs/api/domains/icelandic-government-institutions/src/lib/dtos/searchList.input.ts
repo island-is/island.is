@@ -23,6 +23,16 @@ export abstract class SearchListInput extends PaginationInput() {
   @Max(100)
   override limit?: number
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  override before?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  override after?: string
+
   @Field({ nullable: true })
   @IsString()
   @IsOptional()

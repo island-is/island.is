@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { InvoiceGlLineResponseDto } from '../../../gen/fetch'
 import { InvoicePaymentTypeDto } from './invoicePaymentType.dto'
 
@@ -11,6 +10,7 @@ export interface InvoiceItemization {
 
 export const mapInvoiceGroupInvoiceItemization = (
   data: InvoiceGlLineResponseDto,
+  id: string,
 ): InvoiceItemization | null => {
   if (!data.type?.code || !data.type?.name || data.accountedAmount == null) {
     return null
@@ -24,7 +24,7 @@ export const mapInvoiceGroupInvoiceItemization = (
   }
 
   return {
-    id: uuid(),
+    id,
     title: data.type.name,
     invoicePaymentType: type,
     amount: data.accountedAmount,

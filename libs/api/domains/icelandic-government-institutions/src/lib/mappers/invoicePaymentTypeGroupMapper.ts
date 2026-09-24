@@ -3,7 +3,7 @@ import {
   InvoicePaymentTypeGroupsDto,
 } from '@island.is/clients/government-invoices'
 import { InvoicePaymentTypeGroup } from '../models/invoicePaymentTypeGroup.model'
-import { InvoicePaymentTypeGroups } from '../models/invoicePaymentTypeGroups.model'
+import { InvoicePaymentTypeGroupCollection } from '../models/invoicePaymentTypeGroups.model'
 import { buildInvoicePaymentTypeGroupId } from '../utils/invoicePaymentTypeGroupId'
 
 export const mapInvoicePaymentTypeGroup = (
@@ -18,7 +18,7 @@ export const mapInvoicePaymentTypeGroup = (
 
 export const mapInvoicePaymentTypeGroups = (
   data: InvoicePaymentTypeGroupsDto,
-): InvoicePaymentTypeGroups => {
+): InvoicePaymentTypeGroupCollection => {
   const groups: InvoicePaymentTypeGroup[] = data.invoicePaymentTypeGroups.map(
     mapInvoicePaymentTypeGroup,
   )

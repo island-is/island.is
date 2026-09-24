@@ -95,7 +95,10 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
         <Box marginTop={4}>
           <GridRow>
             {items.map((shortcut) => (
-              <GridColumn span={'1/2'}>
+              <GridColumn
+                key={`${shortcut.href}-${shortcut.title}`}
+                span={'1/2'}
+              >
                 <ShortcutCard {...shortcut} />
               </GridColumn>
             ))}

@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { t } from 'msw/lib/glossary-2792c6da'
 import NextLink from 'next/link'
 
 import {

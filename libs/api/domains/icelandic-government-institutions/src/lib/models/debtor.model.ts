@@ -7,7 +7,7 @@ export class Debtor {
   })
   id!: string
 
-  @Field(() => ID, {
+  @Field(() => String, {
     nullable: true,
     description:
       'Legal ID (kennitala) of the debtor. May be hidden for confidential debtors',

@@ -53,7 +53,7 @@ export const m = {
     },
     noResultsTitle: {
       id: 'web.openinvoices:overview.noResultsTitle',
-      defaultMessage: 'Engir greiðslur fundust',
+      defaultMessage: 'Engar greiðslur fundust',
     },
     noResultsDescription: {
       id: 'web.openinvoices:overview.noResultsDescription',
@@ -78,7 +78,7 @@ export const m = {
     },
     srCaption: {
       id: 'web.openinvoices:overview.srCaption',
-      defaultMessage: 'Tafla með yfirliti reikninga',
+      defaultMessage: 'Tafla með yfirliti greiðslna',
     },
     sortHint: {
       id: 'web.openinvoices:overview.sortHint',
@@ -88,23 +88,15 @@ export const m = {
       id: 'web.openinvoices:overview.link1Title',
       defaultMessage: 'Um vefinn',
     },
-    headerLink2Title: {
-      id: 'web.openinvoices:overview.link2Title',
-      defaultMessage: 'Birtingarreglur',
-    },
     headerLink1Url: {
       id: 'web.openinvoices:overview.link1Url',
-      defaultMessage: 'todo',
-    },
-    headerLink2Url: {
-      id: 'web.openinvoices:overview.link2Url',
       defaultMessage: 'todo',
     },
   }),
   totals: defineMessages({
     total: {
       id: 'web.openinvoices:totals.total',
-      defaultMessage: 'Samtals greitt',
+      defaultMessage: 'Samtals greitt:',
     },
     invoiceAmount: {
       id: 'web.openinvoices:totals.invoiceAmount',
@@ -125,10 +117,6 @@ export const m = {
       id: 'web.openinvoices:search.filterTitle',
       defaultMessage: 'Leitarsíur',
     },
-    filter: {
-      id: 'web.openinvoices:search.filter',
-      defaultMessage: 'Síun',
-    },
     clearFilters: {
       id: 'web.openinvoices:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
@@ -140,10 +128,6 @@ export const m = {
     closeFilter: {
       id: 'web.openinvoices:search.closeFilter',
       defaultMessage: 'Loka síu',
-    },
-    clearFilterCategory: {
-      id: 'web.openinvoices:search.clearFilterCategory',
-      defaultMessage: 'Hreinsa síu',
     },
     range: {
       id: 'web.openinvoices:search.range',
@@ -159,7 +143,7 @@ export const m = {
     },
     maxDateSpan: {
       id: 'web.openinvoices:search.maxDateSpan',
-      defaultMessage: 'Hámark 60 dagar',
+      defaultMessage: 'Hámark {days} dagar',
     },
     types: {
       id: 'web.openinvoices:search.types',

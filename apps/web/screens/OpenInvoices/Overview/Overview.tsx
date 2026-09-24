@@ -18,11 +18,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
-import {
-  formatCurrency,
-  formatCurrencyWithoutSuffix,
-  isDefined,
-} from '@island.is/shared/utils'
+import { formatCurrency, isDefined } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
@@ -43,6 +39,12 @@ import { CustomNextRedirect } from '@island.is/web/units/errors'
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_ORGANIZATION_QUERY } from '../../queries'
+import {
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+} from '../../queries/OpenInvoices'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
 import { MAX_DATE_RANGE_DAYS, ORGANIZATION_SLUG } from '../constants'
@@ -57,12 +59,6 @@ import {
 import { useAsyncFilterSource } from '../hooks/useAsyncFilterSource'
 import { useInvoicePaymentTypeGroupFilter } from '../hooks/useInvoicePaymentTypeGroupFilter'
 import { m } from '../messages'
-import {
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
-  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
-} from './Overview.graphql'
 import { OverviewTable } from './OverviewTable'
 import * as styles from './Overview.css'
 
@@ -114,7 +110,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 }) => {
   useLocalLinkTypeResolver('openinvoices')
   useContentfulId(customPageData?.id)
-  const { formatMessage } = useIntl()
+  const { formatMessage, formatNumber } = useIntl()
   const { linkResolver } = useLinkResolver()
 
   const [
@@ -194,13 +190,15 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     parseAsArrayOf(parseAsString),
   )
 
-  const { fetchPage: fetchMinistriesPage, selectedItems: ministriesItems } =
-    useAsyncFilterSource(
-      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
-      extractMinistries,
-      mapMinistry,
-      ministries,
-    )
+  const {
+    fetchPage: fetchMinistriesPage,
+    selectedItems: ministriesItems,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+    extractMinistries,
+    mapMinistry,
+    ministries,
+  )
 
   const mapSupplierWithTooltip = useCallback(
     (supplier: Parameters<typeof mapSupplier>[0]) =>
@@ -208,21 +206,25 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     [formatMessage],
   )
 
-  const { fetchPage: fetchSuppliersPage, selectedItems: suppliersItems } =
-    useAsyncFilterSource(
-      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
-      extractSuppliers,
-      mapSupplierWithTooltip,
-      suppliers,
-    )
+  const {
+    fetchPage: fetchSuppliersPage,
+    selectedItems: suppliersItems,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+    extractSuppliers,
+    mapSupplierWithTooltip,
+    suppliers,
+  )
 
-  const { fetchPage: fetchDebtorsPage, selectedItems: debtorsItems } =
-    useAsyncFilterSource(
-      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
-      extractDebtors,
-      mapDebtor,
-      debtors,
-    )
+  const {
+    fetchPage: fetchDebtorsPage,
+    selectedItems: debtorsItems,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+    extractDebtors,
+    mapDebtor,
+    debtors,
+  )
 
   const {
     fetchPage: fetchInvoicePaymentTypeGroupsPage,
@@ -321,23 +323,24 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
 
     if (totalPayments === 1) {
-      return totalPaymentsSum
+      return totalPaymentsSum != null
         ? formatMessage(m.search.resultFound, {
             sum: formatCurrency(totalPaymentsSum),
           })
         : formatMessage(m.search.resultFoundNoSum)
     }
 
-    return totalPaymentsSum
+    return totalPaymentsSum != null
       ? formatMessage(m.search.resultsFound, {
-          records: formatCurrencyWithoutSuffix(totalPayments),
+          records: formatNumber(totalPayments),
           sum: formatCurrency(totalPaymentsSum),
         })
       : formatMessage(m.search.resultsFoundNoSum, {
-          records: formatCurrencyWithoutSuffix(totalPayments),
+          records: formatNumber(totalPayments),
         })
   }, [
     formatMessage,
+    formatNumber,
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
       ?.totalPaymentsSum,
@@ -355,15 +358,18 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     return {
       recordsLine: formatMessage(m.search.recordsFoundShort, {
         records: totalPayments,
+        recordsFormatted: formatNumber(totalPayments),
       }),
-      totalLine: totalPaymentsSum
-        ? formatMessage(m.search.totalLineShort, {
-            sum: formatCurrency(totalPaymentsSum),
-          })
-        : undefined,
+      totalLine:
+        totalPaymentsSum != null
+          ? formatMessage(m.search.totalLineShort, {
+              sum: formatCurrency(totalPaymentsSum),
+            })
+          : undefined,
     }
   }, [
     formatMessage,
+    formatNumber,
     initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
       ?.totalPaymentsSum,
@@ -479,7 +485,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         />
       </Box>
 
-      {totalHits > PAGE_SIZE && !invoiceGroupsLoading && (
+      {totalHits > PAGE_SIZE && (
         <Box marginTop={2}>
           <Pagination
             variant="blue"
@@ -528,6 +534,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       <Box marginTop={6} background="blue100">
         <SidebarLayout
           fullWidthContent={true}
+          hiddenOnTablet
           paddingTop={[3, 3, 8]}
           sidebarContent={
             <Box className={styles.sidebarScroller}>
@@ -550,7 +557,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             </Box>
           }
         >
-          <Box marginLeft={[0, 0, 2]} marginRight={[0, 0, 0]}>
+          <Box marginLeft={[0, 0, 0, 2]}>
             <Box
               display="flex"
               justifyContent="spaceBetween"
@@ -584,19 +591,20 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                   <MarkdownText>{hitsSummary.totalLine || ' '}</MarkdownText>
                 </Box>
               </Box>
-              <OverviewFilter
-                onSearchUpdate={onSearchFilterUpdate}
-                onReset={onResetFilter}
-                onApply={applyFilters}
-                applyDisabled={invoiceGroupsLoading}
-                url={baseUrl}
-                hits={totalPayments}
-                locale={locale}
-                searchState={filterSearchState}
-                categories={filterCategories}
-                variant="dialog"
-                mobileOnly
-              />
+              <Box display={['block', 'block', 'block', 'none']}>
+                <OverviewFilter
+                  onSearchUpdate={onSearchFilterUpdate}
+                  onReset={onResetFilter}
+                  onApply={applyFilters}
+                  applyDisabled={invoiceGroupsLoading}
+                  url={baseUrl}
+                  hits={totalPayments}
+                  locale={locale}
+                  searchState={filterSearchState}
+                  categories={filterCategories}
+                  variant="dialog"
+                />
+              </Box>
             </Box>
             {invoiceTable}
           </Box>

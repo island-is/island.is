@@ -1,8 +1,8 @@
 import { DebtorsDto } from '@island.is/clients/government-invoices'
-import { Debtors } from '../models/debtors.model'
+import { DebtorCollection } from '../models/debtors.model'
 import { Debtor } from '../models/debtor.model'
 
-export const mapDebtors = (data: DebtorsDto): Debtors => {
+export const mapDebtors = (data: DebtorsDto): DebtorCollection => {
   const debtors: Debtor[] = data.debtors.map((debtor) => ({
     id: String(debtor.erpLegalEntityId),
     legalId: debtor.legalId,

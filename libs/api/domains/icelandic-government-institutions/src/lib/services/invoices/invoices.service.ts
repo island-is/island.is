@@ -4,9 +4,9 @@ import { InvoicePaymentsGroupInput } from '../../dtos/getInvoicePaymentsGroup.in
 import { DebtorsInput } from '../../dtos/getDebtors.input'
 import { MinistriesInput } from '../../dtos/getMinistries.input'
 import { SuppliersInput } from '../../dtos/getSuppliers.input'
-import { Debtors } from '../../models/debtors.model'
-import { Ministries } from '../../models/ministries.model'
-import { Suppliers } from '../../models/suppliers.model'
+import { DebtorCollection } from '../../models/debtors.model'
+import { MinistryCollection } from '../../models/ministries.model'
+import { SupplierCollection } from '../../models/suppliers.model'
 import { mapDebtors } from '../../mappers/debtorMapper'
 import { mapMinistries } from '../../mappers/ministryMapper'
 import { mapSuppliers } from '../../mappers/supplierMapper'
@@ -15,10 +15,10 @@ import { InvoicePaymentsGroup } from '../../models/invoicePaymentsGroup.model'
 import { InvoicePaymentsGroupCollection } from '../../models/invoicePaymentsGroups.model'
 import { InvoicePaymentsGroupsInput } from '../../dtos/getInvoicePaymentsGroups.input'
 import { InvoicePaymentTypesInput } from '../../dtos/getInvoicePaymentTypes.input'
-import { InvoicePaymentTypes } from '../../models/invoicePaymentTypes.model'
+import { InvoicePaymentTypeCollection } from '../../models/invoicePaymentTypes.model'
 import { mapInvoicePaymentTypes } from '../../mappers/invoicePaymentTypeMapper'
 import { InvoicePaymentTypeGroupsInput } from '../../dtos/getInvoicePaymentTypeGroups.input'
-import { InvoicePaymentTypeGroups } from '../../models/invoicePaymentTypeGroups.model'
+import { InvoicePaymentTypeGroupCollection } from '../../models/invoicePaymentTypeGroups.model'
 import { mapInvoicePaymentTypeGroups } from '../../mappers/invoicePaymentTypeGroupMapper'
 
 @Injectable()
@@ -40,7 +40,7 @@ export class InvoicesService {
   }
 
   async getOpenInvoicePaymentsGroups(
-    input?: InvoicePaymentsGroupsInput,
+    input: InvoicePaymentsGroupsInput,
   ): Promise<InvoicePaymentsGroupCollection | null> {
     const data = await this.govInvoicesService.getOpenInvoicePaymentsGroups(
       input,
@@ -52,7 +52,7 @@ export class InvoicesService {
 
     return {
       data: data.invoiceGroups.map((group) =>
-        mapInvoicePaymentsGroup(group, 'list', input ?? {}),
+        mapInvoicePaymentsGroup(group, 'list', input),
       ),
       totalPaymentsCount: data.totalPaymentsCount,
       totalPaymentsSum: data.totalPaymentsSum,
@@ -61,7 +61,7 @@ export class InvoicesService {
     }
   }
 
-  async getDebtors(input?: DebtorsInput): Promise<Debtors | null> {
+  async getDebtors(input: DebtorsInput): Promise<DebtorCollection | null> {
     const data = await this.govInvoicesService.getDebtors(input)
 
     if (!data) {
@@ -71,7 +71,9 @@ export class InvoicesService {
     return mapDebtors(data)
   }
 
-  async getMinistries(input?: MinistriesInput): Promise<Ministries | null> {
+  async getMinistries(
+    input: MinistriesInput,
+  ): Promise<MinistryCollection | null> {
     const data = await this.govInvoicesService.getMinistries(input)
 
     if (!data) {
@@ -82,8 +84,8 @@ export class InvoicesService {
   }
 
   async getInvoicePaymentTypes(
-    input?: InvoicePaymentTypesInput,
-  ): Promise<InvoicePaymentTypes | null> {
+    input: InvoicePaymentTypesInput,
+  ): Promise<InvoicePaymentTypeCollection | null> {
     const data = await this.govInvoicesService.getInvoicePaymentTypes(input)
 
     if (!data) {
@@ -94,8 +96,8 @@ export class InvoicesService {
   }
 
   async getInvoicePaymentTypeGroups(
-    input?: InvoicePaymentTypeGroupsInput,
-  ): Promise<InvoicePaymentTypeGroups | null> {
+    input: InvoicePaymentTypeGroupsInput,
+  ): Promise<InvoicePaymentTypeGroupCollection | null> {
     const data = await this.govInvoicesService.getInvoicePaymentTypeGroups(
       input,
     )
@@ -107,7 +109,9 @@ export class InvoicesService {
     return mapInvoicePaymentTypeGroups(data)
   }
 
-  async getSuppliers(input?: SuppliersInput): Promise<Suppliers | null> {
+  async getSuppliers(
+    input: SuppliersInput,
+  ): Promise<SupplierCollection | null> {
     const data = await this.govInvoicesService.getSuppliers(input)
 
     if (!data) {

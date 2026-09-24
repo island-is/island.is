@@ -3,6 +3,6 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { InvoicePaymentTypeGroup } from './invoicePaymentTypeGroup.model'
 
 @ObjectType('IcelandicGovernmentInstitutionsInvoicePaymentTypeGroups')
-export class InvoicePaymentTypeGroups extends PaginatedResponse(
+export class InvoicePaymentTypeGroupCollection extends PaginatedResponse(
   InvoicePaymentTypeGroup,
 ) {}

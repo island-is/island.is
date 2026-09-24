@@ -1,13 +1,12 @@
 # Government Invoices Client
 
-NestJS client library for fetching open invoices and organization employee data from the FJS Elfur API.
+NestJS client library for fetching open invoice payments from the FJS Elfur API.
 
 ## Features
 
-- Fetch open invoice groups (filtered by supplier, customer, type, and date range)
-- Fetch a single invoice group for a specific supplier-customer pair
-- List suppliers, customers, invoice types, and payment types
-- Fetch employees for a government organization
+- Fetch open invoice payment groups (filtered by supplier, debtor, ministry, payment type, and date range)
+- Fetch a single payment group for a supplier-debtor pair, including invoices and their itemization
+- List suppliers, debtors, ministries, payment types, and payment type groups
 
 ## Configuration
 

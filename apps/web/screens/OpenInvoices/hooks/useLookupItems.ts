@@ -25,8 +25,6 @@ export const useLookupItems = (
       return
     }
 
-    missing.forEach((v) => resolvedRef.current.add(v))
-
     let cancelled = false
 
     fetchLookup(missing)
@@ -34,6 +32,7 @@ export const useLookupItems = (
         if (cancelled) {
           return
         }
+        missing.forEach((v) => resolvedRef.current.add(v))
         setItems((prev) => {
           const next = { ...prev }
           resolved.forEach((item) => {

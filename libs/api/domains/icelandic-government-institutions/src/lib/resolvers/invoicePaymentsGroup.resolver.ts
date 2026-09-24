@@ -1,4 +1,6 @@
 import { Audit } from '@island.is/nest/audit'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { InvoicesService } from '../services/invoices/invoices.service'
 import { InvoicePaymentsGroup } from '../models/invoicePaymentsGroup.model'
@@ -7,6 +9,7 @@ import { InvoicePaymentsGroupInput } from '../dtos/getInvoicePaymentsGroup.input
 
 @Resolver(() => InvoicePaymentsGroup)
 @Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
+@CodeOwner(CodeOwners.Hugsmidjan)
 export class InvoicePaymentsGroupResolver {
   constructor(private readonly invoiceService: InvoicesService) {}
 

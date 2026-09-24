@@ -4,7 +4,7 @@ import { ContentFilters } from '../utils/invoicePaymentsGroupId'
 
 const baseDto: InvoicePaymentsGroupDto = {
   supplier: {
-    legalId: '7012966139',
+    legalId: '1234567890',
     name: 'Íslandspóstur ohf.',
     isConfidential: false,
     isPrivatePerson: false,
@@ -34,7 +34,7 @@ describe('mapInvoicePaymentsGroup', () => {
   it('populates totalPaymentsSum, totalPaymentsCount, and payments from the correspondingly-named dto fields', () => {
     const data: InvoicePaymentsGroupDto = {
       supplier: {
-        legalId: '7012966139',
+        legalId: '1234567890',
         name: 'Íslandspóstur ohf.',
         isConfidential: false,
         isPrivatePerson: false,
@@ -55,6 +55,7 @@ describe('mapInvoicePaymentsGroup', () => {
           invoice: {
             id: '22136687',
             number: '191552084',
+            numberRedacted: false,
             totalAmount: 12683,
             itemization: [],
           },

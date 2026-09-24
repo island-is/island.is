@@ -49,6 +49,7 @@ export const FilterDrawerAriakit = ({
       render={(props) =>
         React.cloneElement(disclosure, {
           ...props,
+          tabIndex: disclosure.props?.tabIndex ?? props.tabIndex,
           'aria-haspopup': 'dialog',
           'aria-expanded': open,
           onClick: (e: React.MouseEvent) => {

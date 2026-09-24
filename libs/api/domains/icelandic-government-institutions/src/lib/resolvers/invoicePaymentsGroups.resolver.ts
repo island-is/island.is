@@ -6,15 +6,15 @@ import { BypassAuth } from '@island.is/auth-nest-tools'
 import { InvoicesService } from '../services/invoices/invoices.service'
 import { InvoicePaymentsGroupsInput } from '../dtos/getInvoicePaymentsGroups.input'
 import { InvoicePaymentsGroupCollection } from '../models/invoicePaymentsGroups.model'
-import { Ministries } from '../models/ministries.model'
+import { MinistryCollection } from '../models/ministries.model'
 import { MinistriesInput } from '../dtos/getMinistries.input'
-import { Suppliers } from '../models/suppliers.model'
+import { SupplierCollection } from '../models/suppliers.model'
 import { SuppliersInput } from '../dtos/getSuppliers.input'
-import { Debtors } from '../models/debtors.model'
+import { DebtorCollection } from '../models/debtors.model'
 import { DebtorsInput } from '../dtos/getDebtors.input'
-import { InvoicePaymentTypes } from '../models/invoicePaymentTypes.model'
+import { InvoicePaymentTypeCollection } from '../models/invoicePaymentTypes.model'
 import { InvoicePaymentTypesInput } from '../dtos/getInvoicePaymentTypes.input'
-import { InvoicePaymentTypeGroups } from '../models/invoicePaymentTypeGroups.model'
+import { InvoicePaymentTypeGroupCollection } from '../models/invoicePaymentTypeGroups.model'
 import { InvoicePaymentTypeGroupsInput } from '../dtos/getInvoicePaymentTypeGroups.input'
 
 @Resolver(() => InvoicePaymentsGroupCollection)
@@ -35,7 +35,7 @@ export class InvoicePaymentsGroupsResolver {
     return this.invoiceService.getOpenInvoicePaymentsGroups(input)
   }
 
-  @Query(() => Ministries, {
+  @Query(() => MinistryCollection, {
     name: 'icelandicGovernmentInstitutionsMinistries',
     nullable: true,
   })
@@ -43,11 +43,11 @@ export class InvoicePaymentsGroupsResolver {
   async getMinistriesList(
     @Args('input', { type: () => MinistriesInput })
     input: MinistriesInput,
-  ): Promise<Ministries | null> {
+  ): Promise<MinistryCollection | null> {
     return this.invoiceService.getMinistries(input)
   }
 
-  @Query(() => Suppliers, {
+  @Query(() => SupplierCollection, {
     name: 'icelandicGovernmentInstitutionsSuppliers',
     nullable: true,
   })
@@ -55,11 +55,11 @@ export class InvoicePaymentsGroupsResolver {
   async getSuppliersList(
     @Args('input', { type: () => SuppliersInput })
     input: SuppliersInput,
-  ): Promise<Suppliers | null> {
+  ): Promise<SupplierCollection | null> {
     return this.invoiceService.getSuppliers(input)
   }
 
-  @Query(() => Debtors, {
+  @Query(() => DebtorCollection, {
     name: 'icelandicGovernmentInstitutionsDebtors',
     nullable: true,
   })
@@ -67,11 +67,11 @@ export class InvoicePaymentsGroupsResolver {
   async getDebtorsList(
     @Args('input', { type: () => DebtorsInput })
     input: DebtorsInput,
-  ): Promise<Debtors | null> {
+  ): Promise<DebtorCollection | null> {
     return this.invoiceService.getDebtors(input)
   }
 
-  @Query(() => InvoicePaymentTypes, {
+  @Query(() => InvoicePaymentTypeCollection, {
     name: 'icelandicGovernmentInstitutionsInvoicePaymentTypes',
     nullable: true,
   })
@@ -79,11 +79,11 @@ export class InvoicePaymentsGroupsResolver {
   async getInvoicePaymentTypesList(
     @Args('input', { type: () => InvoicePaymentTypesInput })
     input: InvoicePaymentTypesInput,
-  ): Promise<InvoicePaymentTypes | null> {
+  ): Promise<InvoicePaymentTypeCollection | null> {
     return this.invoiceService.getInvoicePaymentTypes(input)
   }
 
-  @Query(() => InvoicePaymentTypeGroups, {
+  @Query(() => InvoicePaymentTypeGroupCollection, {
     name: 'icelandicGovernmentInstitutionsInvoicePaymentTypeGroups',
     nullable: true,
   })
@@ -91,7 +91,7 @@ export class InvoicePaymentsGroupsResolver {
   async getInvoicePaymentTypeGroupsList(
     @Args('input', { type: () => InvoicePaymentTypeGroupsInput })
     input: InvoicePaymentTypeGroupsInput,
-  ): Promise<InvoicePaymentTypeGroups | null> {
+  ): Promise<InvoicePaymentTypeGroupCollection | null> {
     return this.invoiceService.getInvoicePaymentTypeGroups(input)
   }
 }

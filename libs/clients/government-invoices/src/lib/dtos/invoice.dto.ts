@@ -30,7 +30,12 @@ export const mapInvoiceDto = (
     numberRedacted: data.invoiceNumRedacted ?? false,
     totalAmount: data.invoiceTotalBaseAmountISK ?? 0,
     itemization: (data.glLines ?? [])
-      .map(mapInvoiceGroupInvoiceItemization)
+      .map((line, index) =>
+        mapInvoiceGroupInvoiceItemization(
+          line,
+          `${data.erpInvoiceId}-${index}`,
+        ),
+      )
       .filter(isDefined),
   }
 }
