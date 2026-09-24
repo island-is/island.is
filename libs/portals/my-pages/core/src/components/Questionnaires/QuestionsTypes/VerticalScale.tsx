@@ -67,7 +67,10 @@ export const VerticalScale = ({
       <Box display="inlineFlex" flexDirection="column" alignItems="flexEnd">
         <Box display="flex" alignItems="stretch">
           {(minLabel || maxLabel) && (
-            <Box className={styles.verticalEndLabels} paddingRight={3}>
+            <Box
+              className={cn(styles.verticalEndLabels, styles.endLabels)}
+              paddingRight={3}
+            >
               <Text variant="small" color="blue400" fontWeight="semiBold">
                 {maxLabel}
               </Text>
@@ -105,8 +108,6 @@ export const VerticalScale = ({
                 const passed = selectedIndex > values.indexOf(scaleValue)
                 return (
                   <Fragment key={scaleValue}>
-                    {/* Nested: an absolute sibling input sits at the top of the
-                        flex container, so focusing it would scroll the page */}
                     <label
                       className={cn(styles.tick, styles.verticalTick, {
                         [styles.tickDisabled]: disabled,
@@ -144,8 +145,13 @@ export const VerticalScale = ({
           </Box>
         </Box>
 
-        {onClear && selectedIndex >= 0 && !disabled && (
-          <Box marginTop={2}>
+        {onClear && !disabled && (
+          <Box
+            marginTop={2}
+            className={cn(styles.clearRow, {
+              [styles.clearReserved]: selectedIndex < 0,
+            })}
+          >
             <Button
               variant="text"
               size="small"

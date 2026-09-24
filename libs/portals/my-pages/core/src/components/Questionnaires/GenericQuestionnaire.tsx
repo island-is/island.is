@@ -332,7 +332,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                             )}
                           </Box>
                         )}
-                        <Stack space={4}>
+                        <Stack space={6}>
                           {section.questions?.map(
                             (question: QuestionnaireQuestion) => (
                               <Box
@@ -354,7 +354,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                             ),
                           )}
                         </Stack>
-                        <Box paddingBottom={3} paddingTop={6}>
+                        <Box paddingTop={4} paddingBottom={3}>
                           <Divider />
                         </Box>
                       </Box>

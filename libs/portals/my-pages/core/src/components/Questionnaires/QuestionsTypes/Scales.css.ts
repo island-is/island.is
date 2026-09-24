@@ -5,7 +5,7 @@ const tickSize = 8
 const tickBorder = 2
 const tickSelectedSize = 24
 const tickSelectedBorder = 8
-// Mirrors ProgressBar's hover indicator: mint ring around a white centre
+// Mirrors ProgressBar's hover indicator
 const tickHoverSize = 26
 const tickHoverBorder = 9
 const tickFontSize = 14
@@ -32,8 +32,16 @@ export const tickDisabled = style({
   opacity: 0.5,
 })
 
-// Class plus element outranks the small Text variant, which drops to 12px on mobile
-globalStyle(`${tick} p`, {
+// Keeps the button's space so answering never shifts what follows
+export const clearReserved = style({
+  visibility: 'hidden',
+})
+
+export const endLabels = style({})
+export const clearRow = style({})
+
+// Both variants drop to 12px on mobile; a text Button renders a span
+globalStyle(`${tick} p, ${endLabels} p, ${clearRow} [role="button"]`, {
   fontSize: tickFontSize,
 })
 
@@ -54,7 +62,6 @@ export const bubble = style({
       borderColor: theme.color.mint400,
       backgroundColor: theme.color.white,
     },
-    // The input sits inside the tick, so the ring is reached through its sibling
     [`${input}:focus-visible ~ * &`]: {
       boxShadow: `0 0 0 4px ${theme.color.mint400}`,
     },
@@ -74,7 +81,6 @@ export const bubbleSelected = style({
   borderWidth: tickSelectedBorder,
   borderColor: theme.color.blue400,
   selectors: {
-    // Holds its own against the hover rule above - the selected tick keeps it
     [`${tick}:hover &`]: {
       width: tickSelectedSize,
       height: tickSelectedSize,

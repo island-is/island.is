@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
+import { mockQuestionnaireList } from './mockQuestionnaire'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
@@ -52,7 +53,10 @@ const Questionnaires: FC = () => {
     fetchPolicy: 'network-only',
   })
 
-  const questionnaires = data?.questionnairesList?.questionnaires ?? []
+  const questionnaires = [
+    ...(data?.questionnairesList?.questionnaires ?? []),
+    ...mockQuestionnaireList,
+  ]
   const dataIsEmpty =
     data?.questionnairesList === null || questionnaires.length === 0
 

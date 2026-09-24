@@ -18,6 +18,7 @@ import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './Questionnaires.css'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
+import { getMockQuestionnaire, isMockQuestionnaire } from './mockQuestionnaire'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const QuestionnaireDetail: FC = () => {
@@ -35,7 +36,12 @@ const QuestionnaireDetail: FC = () => {
       ? QuestionnaireQuestionnairesOrganizationEnum.LSH
       : undefined
 
-  const { data, loading, error } = useGetQuestionnaireQuery({
+  const isMock = isMockQuestionnaire(id)
+  const {
+    data: queryData,
+    loading,
+    error,
+  } = useGetQuestionnaireQuery({
     variables: {
       input: {
         id: id ?? '',
@@ -45,8 +51,11 @@ const QuestionnaireDetail: FC = () => {
       locale: lang,
     },
     fetchPolicy: 'network-only',
-    skip: !id || !organization,
+    skip: !id || !organization || isMock,
   })
+  const data = isMock
+    ? { questionnairesDetail: getMockQuestionnaire(id) }
+    : queryData
 
   const questionnaire = data?.questionnairesDetail
   const status = questionnaire?.baseInformation.status

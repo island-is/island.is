@@ -98,8 +98,6 @@ export const HorizontalScale = ({
           const passed = selectedIndex > index
           return (
             <Fragment key={scaleValue}>
-              {/* Nested: an absolute sibling input sits at the top of the flex
-                  container, so focusing it would scroll the page */}
               <label
                 className={cn(styles.tick, styles.horizontalTick, {
                   [styles.tickDisabled]: disabled,
@@ -138,7 +136,12 @@ export const HorizontalScale = ({
       </Box>
 
       {(minLabel || maxLabel) && (
-        <Box display="flex" justifyContent="spaceBetween" marginTop={1}>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          marginTop={1}
+          className={styles.endLabels}
+        >
           <Text variant="small" color="blue400" fontWeight="semiBold">
             {minLabel}
           </Text>
@@ -148,8 +151,15 @@ export const HorizontalScale = ({
         </Box>
       )}
 
-      {onClear && selectedIndex >= 0 && !disabled && (
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+      {onClear && !disabled && (
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          marginTop={3}
+          className={cn(styles.clearRow, {
+            [styles.clearReserved]: selectedIndex < 0,
+          })}
+        >
           <Button
             variant="text"
             size="small"
