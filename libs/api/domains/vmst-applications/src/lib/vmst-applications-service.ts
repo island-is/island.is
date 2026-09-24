@@ -342,7 +342,7 @@ export class VMSTApplicationsService {
     try {
       const { applicantId } = await this.resolveApplicant(auth)
       const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
-        await this.vmstUnemploymentService.getApplicantIncomes(applicantId)
+        await this.vmstUnemploymentService.getIncome({ applicantId })
 
       const incomeCollectionKeys = [
         'irregularJobs',

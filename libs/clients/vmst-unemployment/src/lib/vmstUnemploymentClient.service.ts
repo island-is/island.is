@@ -451,20 +451,6 @@ export class VmstUnemploymentClientService {
     })
   }
 
-  /* 
-    Returns all incomes for a user.
-  */
-  async getApplicantIncomes(
-    applicantId: string,
-  ): Promise<GaldurExternalDomainModelsIncomeIncomesDTO> {
-    const api = await this.createApiClient(
-      IncomeApi,
-      'clients-vmst-unemployment',
-    )
-
-    return await api.incomeGet({ applicantId })
-  }
-
   async getApplicantAttachments(
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse> {
