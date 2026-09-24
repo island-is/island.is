@@ -6,9 +6,9 @@ import { InputMask } from '@react-input/mask'
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
 import { SUBSTANCE_ALCOHOL } from '@island.is/judicial-system/consts'
 import type { SubstanceMap } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   IndictmentCount,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -89,8 +89,8 @@ export const Offenses = ({
   handleIndictmentCountChanges,
   updateIndictmentCountState,
 }: {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   indictmentCount: IndictmentCount
   handleIndictmentCountChanges: (
     indictmentCountUpdate: UpdateIndictmentCount,
@@ -99,7 +99,7 @@ export const Offenses = ({
   updateIndictmentCountState: (
     indictmentCountId: string,
     indictmentCountUpdate: UpdateIndictmentCountState,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => void
 }) => {
   const { formatMessage } = useIntl()

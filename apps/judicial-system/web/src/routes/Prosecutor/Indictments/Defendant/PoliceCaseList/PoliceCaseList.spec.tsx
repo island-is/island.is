@@ -4,9 +4,9 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
   CaseState,
@@ -30,10 +30,9 @@ jest.mock(
 
 const policeCaseNumber = '007-2024-042535'
 
-const mockIndictment = (): Case => ({
+const mockIndictment = (): WorkingCase => ({
   id: faker.datatype.uuid(),
   created: faker.date.past().toISOString(),
-  modified: faker.date.past().toISOString(),
   type: CaseType.INDICTMENT,
   origin: CaseOrigin.UNKNOWN,
   state: CaseState.DRAFT,
@@ -44,9 +43,9 @@ const mockIndictment = (): Case => ({
   crimeScenes: {},
 })
 
-const renderPoliceCaseList = (theCase: Case) => {
+const renderPoliceCaseList = (theCase: WorkingCase) => {
   const PoliceCaseListWrapper = () => {
-    const [workingCase, setWorkingCase] = useState<Case>(theCase)
+    const [workingCase, setWorkingCase] = useState<WorkingCase>(theCase)
 
     return (
       <MockedProvider mocks={[]} addTypename={false}>
