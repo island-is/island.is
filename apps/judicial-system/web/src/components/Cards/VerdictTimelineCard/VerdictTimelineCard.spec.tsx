@@ -175,7 +175,7 @@ describe('VerdictTimelineCard', () => {
     renderComponent(mockDefendant)
 
     expect(await screen.findByText(name)).toBeInTheDocument()
-    expect(await screen.findByText('Birting dóms')).toBeInTheDocument()
+    expect(await screen.findByText('Dómur')).toBeInTheDocument()
   })
 
   it('shows appeal and service date pickers when conditions are met', async () => {
