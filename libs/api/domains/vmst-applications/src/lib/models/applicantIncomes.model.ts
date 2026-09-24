@@ -2,38 +2,38 @@ import { Field, Float, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('VmstApplicantIrregularJob')
 export class VmstApplicantIrregularJob {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  employerName?: string
+  @Field(() => String)
+  employerName!: string
 
-  @Field(() => String, { nullable: true })
-  employerSSN?: string
+  @Field(() => String)
+  employerSSN!: string
 
-  @Field(() => String, { nullable: true })
-  periodFrom?: string
+  @Field(() => String)
+  periodFrom!: string
 
   @Field(() => String, { nullable: true })
   periodTo?: string | null
 
-  @Field(() => Float, { nullable: true })
-  estimatedIncome?: number
+  @Field(() => Float)
+  estimatedIncome!: number
 }
 
 @ObjectType('VmstApplicantPartTimeJob')
 export class VmstApplicantPartTimeJob {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  employerName?: string
+  @Field(() => String)
+  employerName!: string
 
-  @Field(() => String, { nullable: true })
-  employerSSN?: string
+  @Field(() => String)
+  employerSSN!: string
 
-  @Field(() => String, { nullable: true })
-  periodFrom?: string
+  @Field(() => String)
+  periodFrom!: string
 
   @Field(() => String, { nullable: true })
   periodTo?: string | null
@@ -41,26 +41,26 @@ export class VmstApplicantPartTimeJob {
   @Field(() => Float, { nullable: true })
   ratio?: number | null
 
-  @Field(() => Float, { nullable: true })
-  estimatedIncome?: number
+  @Field(() => Float)
+  estimatedIncome!: number
 }
 
 @ObjectType('VmstApplicantPensionPayment')
 export class VmstApplicantPensionPayment {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  incomeTypeId?: string
+  @Field(() => String)
+  incomeTypeId!: string
 
-  @Field(() => String, { nullable: true })
-  pensionFundId?: string
+  @Field(() => String)
+  pensionFundId!: string
 
-  @Field(() => Float, { nullable: true })
-  estimatedIncome?: number
+  @Field(() => Float)
+  estimatedIncome!: number
 
-  @Field(() => String, { nullable: true })
-  periodFrom?: string
+  @Field(() => String)
+  periodFrom!: string
 
   @Field(() => String, { nullable: true })
   periodTo?: string | null
@@ -68,17 +68,17 @@ export class VmstApplicantPensionPayment {
 
 @ObjectType('VmstApplicantCapitalIncomePayment')
 export class VmstApplicantCapitalIncomePayment {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  incomeTypeId?: string
+  @Field(() => String)
+  incomeTypeId!: string
 
-  @Field(() => Float, { nullable: true })
-  estimatedIncome?: number
+  @Field(() => Float)
+  estimatedIncome!: number
 
-  @Field(() => String, { nullable: true })
-  periodFrom?: string
+  @Field(() => String)
+  periodFrom!: string
 
   @Field(() => String, { nullable: true })
   periodTo?: string | null
@@ -86,17 +86,17 @@ export class VmstApplicantCapitalIncomePayment {
 
 @ObjectType('VmstApplicantTRPayment')
 export class VmstApplicantTRPayment {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  incomeTypeId?: string
+  @Field(() => String)
+  incomeTypeId!: string
 
-  @Field(() => Float, { nullable: true })
-  estimatedIncome?: number
+  @Field(() => Float)
+  estimatedIncome!: number
 
-  @Field(() => String, { nullable: true })
-  periodFrom?: string
+  @Field(() => String)
+  periodFrom!: string
 
   @Field(() => String, { nullable: true })
   periodTo?: string | null
@@ -104,33 +104,33 @@ export class VmstApplicantTRPayment {
 
 @ObjectType('VmstApplicantContractorJob')
 export class VmstApplicantContractorJob {
-  @Field(() => String, { nullable: true })
-  id?: string
+  @Field(() => String)
+  id!: string
 
-  @Field(() => String, { nullable: true })
-  startDate?: string
+  @Field(() => String)
+  startDate!: string
 
-  @Field(() => String, { nullable: true })
-  endDate?: string
+  @Field(() => String)
+  endDate!: string
 }
 
 @ObjectType('VmstApplicantIncomes')
 export class VmstApplicantIncomes {
-  @Field(() => [VmstApplicantIrregularJob], { nullable: true })
-  irregularJobs?: VmstApplicantIrregularJob[]
+  @Field(() => [VmstApplicantIrregularJob])
+  irregularJobs!: VmstApplicantIrregularJob[]
 
-  @Field(() => [VmstApplicantPartTimeJob], { nullable: true })
-  partTimeJobs?: VmstApplicantPartTimeJob[]
+  @Field(() => [VmstApplicantPartTimeJob])
+  partTimeJobs!: VmstApplicantPartTimeJob[]
 
-  @Field(() => [VmstApplicantPensionPayment], { nullable: true })
-  pensionPayments?: VmstApplicantPensionPayment[]
+  @Field(() => [VmstApplicantPensionPayment])
+  pensionPayments!: VmstApplicantPensionPayment[]
 
-  @Field(() => [VmstApplicantCapitalIncomePayment], { nullable: true })
-  capitalIncomePayments?: VmstApplicantCapitalIncomePayment[]
+  @Field(() => [VmstApplicantCapitalIncomePayment])
+  capitalIncomePayments!: VmstApplicantCapitalIncomePayment[]
 
-  @Field(() => [VmstApplicantTRPayment], { nullable: true })
-  trPayments?: VmstApplicantTRPayment[]
+  @Field(() => [VmstApplicantTRPayment])
+  trPayments!: VmstApplicantTRPayment[]
 
-  @Field(() => [VmstApplicantContractorJob], { nullable: true })
-  contractorJobs?: VmstApplicantContractorJob[]
+  @Field(() => [VmstApplicantContractorJob])
+  contractorJobs!: VmstApplicantContractorJob[]
 }

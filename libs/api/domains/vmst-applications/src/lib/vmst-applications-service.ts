@@ -239,7 +239,7 @@ export class VMSTApplicationsService {
         capitalIncomePayments: dto.capitalIncomePayments,
         trPayments: dto.trPayments,
         contractorJobs: dto.contractorJobs,
-      }
+      } as VmstApplicantIncomes
     } catch (e) {
       if (e instanceof FetchError && e.status === 404) {
         return {
