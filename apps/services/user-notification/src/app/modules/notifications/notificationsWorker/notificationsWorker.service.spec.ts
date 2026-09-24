@@ -1515,12 +1515,9 @@ describe('NotificationsWorkerService', () => {
   })
 
   describe('when user declines informational notification', () => {
-    // userWhoDeclinesInformationalNotifications carries the (not yet real)
-    // `onlyActionableNotifications` setting. notificationsWorker.service.ts
-    // does not read it yet - it hardcodes `onlyActionablePriorityNotification
-    // = false` pending the userProfile PR that exposes this field - so the
-    // `shouldSend: false` cases below are expected to fail until that lands
-    // and the service is wired to read it from the user profile.
+    // userWhoDeclinesInformationalNotifications has
+    // onlyActionablePriorityNotifications set, so notificationsWorker.service.ts
+    // should suppress non-urgent notifications whose template isn't Actionable.
     const recipient = userWhoDeclinesInformationalNotifications.nationalId
 
     describe.each<{
