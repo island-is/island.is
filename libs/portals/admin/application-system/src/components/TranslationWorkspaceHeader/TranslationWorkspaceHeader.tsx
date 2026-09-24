@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, DropdownMenu, Icon, Text } from '@island.is/island-ui/core'
+import { Button, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ApplicationSystemPaths } from '../../lib/paths'
@@ -71,51 +71,6 @@ export const TranslationWorkspaceHeaderBackButton = () => {
           {label}
         </Button>
       </span>
-    </div>
-  )
-}
-
-export const TranslationWorkspaceHeaderAutosave = () => {
-  const { chrome, formatMessage } = useHeaderChrome()
-
-  if (!chrome) {
-    return null
-  }
-
-  if (chrome.autosaveFailed) {
-    const failedLabel = formatMessage(m.translationAutosaveFailed)
-
-    return (
-      <div className={styles.autosave} role="status">
-        <span className={styles.srOnly}>{failedLabel}</span>
-        <Icon icon="warning" size="small" color="red400" ariaHidden />
-        <Text variant="small" color="red600" as="span" aria-hidden="true">
-          {failedLabel}
-        </Text>
-      </div>
-    )
-  }
-
-  if (!chrome.lastAutosaveTime) {
-    return null
-  }
-
-  return (
-    <div className={styles.autosave} role="status">
-      <span className={styles.srOnly}>
-        {formatMessage(m.translationAutosaved, {
-          time: chrome.lastAutosaveTime,
-        })}
-      </span>
-      <Icon icon="checkmark" size="small" color="blue400" ariaHidden />
-      <Text variant="small" color="dark300" as="span">
-        <span className={styles.autosaveLabel} aria-hidden="true">
-          {formatMessage(m.translationAutosaveLabel)}{' '}
-        </span>
-        <span className={styles.autosaveTime} aria-hidden="true">
-          {chrome.lastAutosaveTime}
-        </span>
-      </Text>
     </div>
   )
 }

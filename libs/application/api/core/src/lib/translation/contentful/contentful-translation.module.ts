@@ -10,6 +10,9 @@ import {
   CONTENTFUL_TRANSLATION_SPACE_ID,
 } from './contentful-translation.constants'
 
+// TODO: Keep this unconfigured while in development to avoid accidental writes to Contentful
+const NOT_CONFIGURED_ACCESS_TOKEN = 'not-configured'
+
 @Module({
   imports: [ContentfulTranslationConfig.registerOptional()],
   providers: [
@@ -22,7 +25,7 @@ import {
           {
             accessToken: config.isConfigured
               ? config.managementAccessToken
-              : '',
+              : NOT_CONFIGURED_ACCESS_TOKEN,
           },
           {
             type: 'plain',

@@ -4,7 +4,6 @@ import type {
   MessageDescriptor,
 } from '../types/translationWorkspace'
 
-export const AUTOSAVE_INTERVAL_MS = 15_000
 export const GOOGLE_TRANSLATE_BATCH_SIZE = 100
 /** Keep in sync with GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST on the API. */
 export const GOOGLE_TRANSLATE_MAX_CHARS_PER_REQUEST = 30_000
@@ -139,12 +138,6 @@ export const countUnsavedTranslationKeys = (
     }
   }
   return keysWithPending.size
-}
-
-export const formatAutosaveTime = (date: Date): string => {
-  return `${String(date.getHours()).padStart(2, '0')}:${String(
-    date.getMinutes(),
-  ).padStart(2, '0')}`
 }
 
 export type GoogleTranslateItem = { id: string; sourceText: string }

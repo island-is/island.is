@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import {
   TranslationWorkspaceHeaderActions,
-  TranslationWorkspaceHeaderAutosave,
   TranslationWorkspaceHeaderBackButton,
   isApplicationTranslationWorkspacePath,
   isSharedNamespaceTranslationPath,
@@ -67,7 +66,6 @@ export const Header = () => {
                 </div>
                 <TranslationWorkspaceHeaderBackButton />
               </div>
-              <TranslationWorkspaceHeaderAutosave />
               <div className={styles.trail}>
                 <TranslationWorkspaceHeaderActions />
                 <HeaderUserMenu />

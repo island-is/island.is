@@ -11,24 +11,10 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
  * - 1140: overflow ("more") appears; IS/EN tabs hide
  * - 1000: Save / Publish move into the overflow menu
  * - 758: history button moves into the overflow menu
- * - 600: autosave indicator hides
  */
 export const overflowMenuMaxPx = 1140
 export const compactActionsMaxPx = 1000
 export const historyCompactMaxPx = 758
-export const autosaveHideMaxPx = 600
-
-export const srOnly = style({
-  position: 'absolute',
-  width: 1,
-  height: 1,
-  margin: -1,
-  padding: 0,
-  overflow: 'hidden',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
-  border: 0,
-})
 
 export const back = style({
   display: 'flex',
@@ -93,38 +79,6 @@ globalStyle(`${backCompact} > button`, {
 globalStyle(`${backCompact} > button svg`, {
   marginLeft: 0,
   marginRight: 0,
-})
-
-export const autosave = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 8,
-  flex: '0 0 auto',
-  whiteSpace: 'nowrap',
-  '@container': {
-    [`adminbar (max-width: ${autosaveHideMaxPx}px)`]: {
-      display: 'none',
-    },
-  },
-})
-
-export const autosaveLabel = style({
-  '@container': {
-    [`adminbar (max-width: ${overflowMenuMaxPx}px)`]: {
-      display: 'none',
-    },
-  },
-})
-
-export const autosaveTime = style({
-  '@container': {
-    [`adminbar (max-width: ${historyCompactMaxPx}px)`]: {
-      display: 'none',
-    },
-    [`adminbar (max-width: ${autosaveHideMaxPx}px)`]: {
-      display: 'inline',
-    },
-  },
 })
 
 /** Language toggle; hidden when the overflow menu takes over. */

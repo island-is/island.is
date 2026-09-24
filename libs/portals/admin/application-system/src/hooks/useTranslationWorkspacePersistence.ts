@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import { m } from '../lib/messages'
@@ -10,9 +10,7 @@ import {
 import type { EditedTranslations } from '../types/translationWorkspace'
 import {
   applyGoogleTranslateBatches,
-  AUTOSAVE_INTERVAL_MS,
   buildTranslationsToSave,
-  formatAutosaveTime,
 } from '../utils/translationWorkspaceEditing'
 import type {
   GoogleTranslateItem,
@@ -51,8 +49,6 @@ export const useTranslationWorkspacePersistence = ({
   onValueChange,
   onBeforeDialogOpen,
 }: UseTranslationWorkspacePersistenceArgs) => {
-  const [lastAutosaveTime, setLastAutosaveTime] = useState<string | null>(null)
-  const [autosaveFailed, setAutosaveFailed] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
 
@@ -162,7 +158,6 @@ export const useTranslationWorkspacePersistence = ({
       ) {
         await refetchTranslations()
         clearSavedEditedValues(translationsToSave)
-        setAutosaveFailed(false)
         toast.success(formatMessage(m.translationSave))
         return true
       }
@@ -188,36 +183,6 @@ export const useTranslationWorkspacePersistence = ({
     refetchTranslations,
     clearSavedEditedValues,
   ])
-
-  const handleSaveAllRef = useRef(handleSaveAll)
-  useEffect(() => {
-    handleSaveAllRef.current = handleSaveAll
-  }, [handleSaveAll])
-
-  const hasUnsavedChangesRef = useRef(hasUnsavedChanges)
-  useEffect(() => {
-    hasUnsavedChangesRef.current = hasUnsavedChanges
-  }, [hasUnsavedChanges])
-
-  const savingRef = useRef(saving)
-  useEffect(() => {
-    savingRef.current = saving
-  }, [saving])
-
-  useEffect(() => {
-    const id = setInterval(async () => {
-      if (hasUnsavedChangesRef.current && !savingRef.current) {
-        const ok = await handleSaveAllRef.current()
-        if (ok) {
-          setLastAutosaveTime(formatAutosaveTime(new Date()))
-          setAutosaveFailed(false)
-        } else {
-          setAutosaveFailed(true)
-        }
-      }
-    }, AUTOSAVE_INTERVAL_MS)
-    return () => clearInterval(id)
-  }, [])
 
   useEffect(() => {
     if (!hasUnsavedChanges) {
@@ -298,8 +263,6 @@ export const useTranslationWorkspacePersistence = ({
     saving,
     publishing,
     translatingIds,
-    lastAutosaveTime,
-    autosaveFailed,
     historyOpen,
     publishConfirmVisible,
     handleSaveAll,

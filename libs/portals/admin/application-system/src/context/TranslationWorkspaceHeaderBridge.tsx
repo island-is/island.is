@@ -28,8 +28,6 @@ export type TranslationWorkspaceHeaderChrome = {
   publishing: boolean
   onPublish: () => void
   onOpenHistory: () => void
-  lastAutosaveTime: string | null
-  autosaveFailed: boolean
 }
 
 type TranslationWorkspaceHeaderBridgeContextValue = {
@@ -94,8 +92,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
   publishing,
   onPublish,
   onOpenHistory,
-  lastAutosaveTime,
-  autosaveFailed,
   isReady,
 }: TranslationWorkspaceHeaderChrome & { isReady: boolean }) => {
   const { setWorkspaceChrome } = useTranslationWorkspaceHeaderBridge()
@@ -158,8 +154,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       publishing,
       onPublish: stableOnPublish,
       onOpenHistory: stableOnOpenHistory,
-      lastAutosaveTime,
-      autosaveFailed,
     }),
     [
       activeLocale,
@@ -175,8 +169,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       publishing,
       stableOnPublish,
       stableOnOpenHistory,
-      lastAutosaveTime,
-      autosaveFailed,
     ],
   )
 

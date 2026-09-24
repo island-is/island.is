@@ -10,10 +10,7 @@ export const ContentfulTranslationConfig = defineConfig({
   name: 'ContentfulTranslationConfig',
   schema,
   load: (env) => ({
-    managementAccessToken: env.required(
-      'CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
-      '',
-    ),
+    managementAccessToken: env.required('CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'),
     environmentId: env.optional('CONTENTFUL_ENVIRONMENT') ?? 'master',
   }),
 })
