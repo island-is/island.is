@@ -178,5 +178,10 @@ export const housingBenefitsActionCards = {
       variant: 'mint' as const,
       label: ac.inReviewTag,
     },
+    pendingAction: {
+      displayStatus: 'info' as const,
+      title: ac.historyApplicantSubmitted,
+      content: ac.pendingTitleInReviewApplicant,
+    },
   },
 }
