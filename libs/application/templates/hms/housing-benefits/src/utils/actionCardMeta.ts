@@ -179,7 +179,7 @@ export const housingBenefitsActionCards = {
       label: ac.inReviewTag,
     },
     pendingAction: {
-      displayStatus: 'info' as const,
+      displayStatus: 'success' as const,
       title: ac.historyApplicantSubmitted,
       content: ac.pendingTitleInReviewApplicant,
     },
