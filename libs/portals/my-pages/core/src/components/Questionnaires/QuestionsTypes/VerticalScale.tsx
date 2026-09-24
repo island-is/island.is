@@ -105,8 +105,8 @@ export const VerticalScale = ({
                 const passed = selectedIndex > values.indexOf(scaleValue)
                 return (
                   <Fragment key={scaleValue}>
-                    {/* The input is nested so focusing it cannot scroll the
-                        page to the top of the meter - see Scales.css */}
+                    {/* Nested: an absolute sibling input sits at the top of the
+                        flex container, so focusing it would scroll the page */}
                     <label
                       className={cn(styles.tick, styles.verticalTick, {
                         [styles.tickDisabled]: disabled,

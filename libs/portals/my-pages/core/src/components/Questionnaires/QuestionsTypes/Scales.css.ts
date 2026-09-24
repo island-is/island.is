@@ -5,11 +5,9 @@ const tickSize = 8
 const tickBorder = 2
 const tickSelectedSize = 24
 const tickSelectedBorder = 8
-// Matches the hover indicator on ProgressBar: a mint ring around a white centre
+// Mirrors ProgressBar's hover indicator: mint ring around a white centre
 const tickHoverSize = 26
 const tickHoverBorder = 9
-// Figma keeps the tick numbers at 14px; the small Text variant drops to 12 on
-// mobile, so they are set here instead
 const tickFontSize = 14
 
 export const tickWidth = tickSelectedSize
@@ -34,7 +32,7 @@ export const tickDisabled = style({
   opacity: 0.5,
 })
 
-// Class plus element keeps this ahead of the Text variant's own font size
+// Class plus element outranks the small Text variant, which drops to 12px on mobile
 globalStyle(`${tick} p`, {
   fontSize: tickFontSize,
 })
@@ -76,8 +74,7 @@ export const bubbleSelected = style({
   borderWidth: tickSelectedBorder,
   borderColor: theme.color.blue400,
   selectors: {
-    // ProgressBar leaves the selected stop alone on hover, so this holds its
-    // own size and colour against the hover rule above
+    // Holds its own against the hover rule above - the selected tick keeps it
     [`${tick}:hover &`]: {
       width: tickSelectedSize,
       height: tickSelectedSize,
