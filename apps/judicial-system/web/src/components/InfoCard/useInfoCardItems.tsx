@@ -21,11 +21,11 @@ import {
   isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
-  Case,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -291,14 +291,14 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     values: [getMergeCaseValue()],
   }
 
-  const mergedCasePoliceCaseNumbers = (mergedCase: Case): Item => ({
+  const mergedCasePoliceCaseNumbers = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-police-case-number-item',
     title: formatMessage(core.policeCaseNumber),
     values:
       mergedCase.policeCaseNumbers?.map((n) => <Text key={n}>{n}</Text>) || [],
   })
 
-  const mergedCaseCourtCaseNumber = (mergedCase: Case): Item => ({
+  const mergedCaseCourtCaseNumber = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-case-number-item',
     title: formatMessage(strings.mergedFromTitle),
     values: mergedCase.courtCaseNumber
@@ -317,19 +317,19 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       : [],
   })
 
-  const mergedCaseProsecutor = (mergedCase: Case): Item => ({
+  const mergedCaseProsecutor = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-prosecutor-item',
     title: isIndictmentCase(mergedCase.type) ? 'Ákæruvald' : 'Sóknaraðili',
     values: [mergedCase.prosecutorsOffice?.name],
   })
 
-  const mergedCaseJudge = (mergedCase: Case): Item => ({
+  const mergedCaseJudge = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-judge-item',
     title: formatMessage(core.judge),
     values: [mergedCase.judge?.name],
   })
 
-  const mergedCaseCourt = (mergedCase: Case): Item => ({
+  const mergedCaseCourt = (mergedCase: WorkingCase): Item => ({
     id: 'merged-case-court-item',
     title: formatMessage(core.court),
     values: [mergedCase.court?.name],

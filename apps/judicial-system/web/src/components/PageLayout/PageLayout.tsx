@@ -25,15 +25,13 @@ import {
   pageLayout,
   sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import BreadCrumbs from '@island.is/judicial-system-web/src/components/BreadCrumbs/BreadCrumbs'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import Logo from '@island.is/judicial-system-web/src/components/Logo/Logo'
 import Skeleton from '@island.is/judicial-system-web/src/components/Skeleton/Skeleton'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -121,7 +119,7 @@ const DisplaySection: FC<SectionProps> = ({
 }
 
 interface SidePanelProps {
-  workingCase: Case
+  workingCase: WorkingCase
   user?: User
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
@@ -197,7 +195,7 @@ const SidePanel: FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase: Case
+  workingCase: WorkingCase
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean
