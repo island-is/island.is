@@ -8,6 +8,7 @@ import { Box, ToastContainer } from '@island.is/island-ui/core'
 import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
 import {
+  ErrorBoundary,
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
@@ -80,7 +81,7 @@ class JudicialSystemApplication extends App<Props> {
   }
 
   render() {
-    const { Component, pageProps, translations } = this.props
+    const { Component, pageProps, translations, router } = this.props
 
     return (
       <>
@@ -105,7 +106,12 @@ class JudicialSystemApplication extends App<Props> {
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <Component {...pageProps} />
+                        {/* Keyed by route so a render error on one page
+                            does not keep the fallback up after the user
+                            navigates client-side to a healthy page */}
+                        <ErrorBoundary key={router.asPath}>
+                          <Component {...pageProps} />
+                        </ErrorBoundary>
                       </Box>
                       <ToastContainer />
                     </FormProvider>

@@ -1,5 +1,14 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { HealthConversationRecipientBlockedReasonEnum } from './enums'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import {
+  HealthConversationDayTypeEnum,
+  HealthConversationRecipientAvailabilityEnum,
+  HealthConversationRecipientBlockedReasonEnum,
+} from './enums'
+import {
+  HealthDirectorateHealthConversationNextOpening,
+  HealthDirectorateHealthConversationOpeningHours,
+  HealthDirectorateHealthConversationOpeningWindow,
+} from './healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationType } from './healthConversationType.model'
 
 @ObjectType()
@@ -21,21 +30,69 @@ export class HealthDirectorateHealthConversationRecipient {
   @Field()
   name!: string
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'Use canCreateConversation and conversationBlockedReason instead.',
+  })
   allowsMessaging!: boolean
 
   @Field({
-    description: 'Effective window open time (HH:mm:ss, UTC).',
+    nullable: true,
+    deprecationReason:
+      'Absent on a day the recipient is closed. Use todaysWindow and nextOpensAt instead.',
   })
-  messagingWindowOpen!: string
+  messagingWindowOpen?: string
 
   @Field({
-    description: 'Effective window close time (HH:mm:ss, UTC).',
+    nullable: true,
+    deprecationReason:
+      'Absent on a day the recipient is closed. Use todaysWindow and nextOpensAt instead.',
   })
-  messagingWindowClose!: string
+  messagingWindowClose?: string
 
-  @Field()
+  @Field({ deprecationReason: 'Use availability instead.' })
   isCurrentlyWithinWindow!: boolean
+
+  @Field({ deprecationReason: 'Use todaysWindow instead, absent when closed.' })
+  isClosedToday!: boolean
+
+  @Field(() => HealthConversationDayTypeEnum, {
+    deprecationReason: 'Use todaysWindow instead, which is already resolved.',
+  })
+  dayType!: HealthConversationDayTypeEnum
+
+  @Field(() => HealthConversationRecipientAvailabilityEnum, {
+    description:
+      'The one field to branch the UI on. As of the time of the request.',
+  })
+  availability!: HealthConversationRecipientAvailabilityEnum
+
+  @Field(() => HealthDirectorateHealthConversationOpeningWindow, {
+    nullable: true,
+    description:
+      'The hours the recipient keeps today. Absent when it is closed all of today.',
+  })
+  todaysWindow?: HealthDirectorateHealthConversationOpeningWindow
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When the current window closes. Only set while availability is OPEN and the window is not all day, so a client can warn that closing is near.',
+  })
+  closesAt?: Date
+
+  @Field(() => HealthDirectorateHealthConversationNextOpening, {
+    nullable: true,
+    description:
+      'Absent while inside the window, when allowsMessaging is false, or when no opening falls within the next two weeks.',
+  })
+  nextOpensAt?: HealthDirectorateHealthConversationNextOpening
+
+  @Field(() => HealthDirectorateHealthConversationOpeningHours, {
+    description:
+      'A day type is absent when the recipient is closed on that kind of day.',
+  })
+  openingHours!: HealthDirectorateHealthConversationOpeningHours
 
   @Field(() => Int)
   patientReplyWindowDays!: number
@@ -57,15 +114,15 @@ export class HealthDirectorateHealthConversationRecipient {
   conversationBlockedReason?: HealthConversationRecipientBlockedReasonEnum
 
   @Field({
-    description:
-      'Whether the patient can request a certificate from this recipient right now.',
+    deprecationReason:
+      'Always equals canCreateConversation. A certificate is a conversation type, flagged by isCertificate on allowedMessageTypes.',
   })
   canRequestCertificate!: boolean
 
   @Field(() => HealthConversationRecipientBlockedReasonEnum, {
     nullable: true,
-    description:
-      'Why requesting a certificate is blocked. Only set when canRequestCertificate is false.',
+    deprecationReason:
+      'Always equals conversationBlockedReason. A certificate is a conversation type, flagged by isCertificate on allowedMessageTypes.',
   })
   certificateBlockedReason?: HealthConversationRecipientBlockedReasonEnum
 }

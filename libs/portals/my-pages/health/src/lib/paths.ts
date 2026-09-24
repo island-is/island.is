@@ -51,6 +51,7 @@ export enum HealthPaths {
   HealthVaccinationsOther = `${patientData}/bolusetningar/adrar`,
   HealthWaitlists = `${patientData}/bidlistar`,
   HealthWaitlistsDetail = `${patientData}/bidlistar/:id`,
+  HealthOldPregnancies = `${patientData}/eldri-medgongur`,
   HealthQuestionnaires = '/heilsa/spurningalistar',
   HealthQuestionnairesDetail = '/heilsa/spurningalistar/:org/:id',
   HealthQuestionnairesAnswer = '/heilsa/spurningalistar/:org/:id/svara',
@@ -75,6 +76,9 @@ export enum HealthPaths {
   HealthTreatments = '/heilsa/medferd',
   HealthTreatment = '/heilsa/medferd/:id',
   HealthTreatmentEducationalContent = '/heilsa/medferd/:id/fraedsluefni',
+
+  HealthPregnancy = '/heilsa/medganga',
+  HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
 
   // Deprecated paths - kept for redirects
   HealthOverviewOld = `${basicInformation}/yfirlit`,

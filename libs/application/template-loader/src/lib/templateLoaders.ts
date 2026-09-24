@@ -27,6 +27,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: () =>
+    import(
+      '@island.is/application/templates/district-commissioners/driving-license'
+    ),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-assessment-approval'
@@ -297,6 +301,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/vmst/submit-documents'),
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: () =>
     import('@island.is/application/templates/vmst/confirm-travel'),
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: () =>
+    import('@island.is/application/templates/vmst/confirm-job-or-income'),
   [ApplicationTypes.EQUALITY_REPORT]: () =>
     import(
       '@island.is/application/templates/directorate-of-equality/equality-report'

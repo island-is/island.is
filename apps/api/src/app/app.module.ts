@@ -84,16 +84,13 @@ import { SessionsModule } from '@island.is/api/domains/sessions'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
 import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { TaxCalculatorsModule } from '@island.is/api/domains/tax-calculators'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { OpenDataModule } from '@island.is/api/domains/open-data'
 import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
-import {
-  WatsonAssistantChatConfig,
-  WatsonAssistantChatModule,
-} from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { QuestionnairesModule } from '@island.is/api/domains/questionnaires'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
@@ -368,7 +365,6 @@ const environment = getConfig
     LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
-    WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
     IcelandicMedicinesAgencyModule,
     AircraftRegistryModule,
@@ -395,6 +391,7 @@ const environment = getConfig
     FinancialStatementsInaoModule,
     VehiclesModule,
     RightsPortalModule,
+    TaxCalculatorsModule,
     AssetsModule,
     ApiDomainsHmsModule,
     HmsLoansModule,
@@ -519,7 +516,6 @@ const environment = getConfig
         SessionsApiClientConfig,
         PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
-        WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
         FinancialManagementAuthorityClientConfig,

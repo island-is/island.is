@@ -21,6 +21,11 @@ export const attachmentIcon = style({
   height: 20,
 })
 
+export const certificateAvatar = style({
+  width: 64,
+  height: 64,
+})
+
 export const detailHeader = style({
   minHeight: 32,
   ...themeUtils.responsiveStyle({
@@ -34,6 +39,12 @@ export const detailHeader = style({
 // the arrow glyph stays flush with the content edge.
 export const backButton = style({
   marginLeft: -10,
+})
+
+// Same 10px of empty circle sits below the glyph, so 22 reads as the 32 the
+// design has between the arrow and the page title.
+export const mobileBackHeader = style({
+  marginBottom: 22,
 })
 
 // Keeps the row's white button hover circle on a tinted background
@@ -54,4 +65,20 @@ globalStyle(`${termsCheckbox} label`, {
 globalStyle(`${termsCheckbox} label > div`, {
   alignSelf: 'flex-start',
   marginTop: 2,
+})
+
+export const typeInstructions = style({})
+
+// Out-specifies the shared Markdown component's light-weight p global
+globalStyle(`${typeInstructions} div p`, {
+  fontWeight: theme.typography.semiBold,
+})
+
+export const messageTextContent = style({
+  whiteSpace: 'pre-line',
+  overflowWrap: 'anywhere',
+})
+
+export const messageSegmentedContent = style({
+  overflowWrap: 'anywhere',
 })

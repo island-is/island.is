@@ -31,7 +31,7 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 
 import { strings } from './Advocates.strings'
 
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+type UpdateDefendant = Omit<UpdateDefendantInput, 'caseId'>
 
 interface Props {
   defendant: Defendant

@@ -874,11 +874,33 @@ export const en: TranslatedMessages = {
   'health.appointments.assigneeTypeService': 'Service',
   'health.appointments.assigneeTypeTeam': 'Team',
   'health.appointments.assigneeTypeOther': 'Other',
+  'health.appointments.cancelAppointment': 'Cancel appointment',
+  'health.appointments.cancelDeadline':
+    'Can be cancelled online until {date} at {time}',
+  'health.appointments.cancelNotPossible':
+    'This appointment cannot be cancelled online. Call the service provider to cancel or reschedule.',
+  'health.appointments.cancelPromptTitle':
+    'Are you sure you want to cancel the appointment?',
+  'health.appointments.cancelPromptMessage':
+    'You are about to cancel an appointment you have booked.',
+  'health.appointments.cancelPromptConfirm': 'Confirm',
+  'health.appointments.cancelPromptCancel': 'Cancel',
+  'health.appointments.cancelSuccessTitle':
+    'The appointment has been cancelled',
+  'health.appointments.cancelErrorTitle': 'Could not cancel the appointment',
+  'health.appointments.cancelErrorMessage':
+    'The action could not be completed, please try again.',
+  'health.appointments.cancelContactProvider':
+    'The appointment could not be cancelled, please call the service provider.',
+  'health.appointments.cancelUnconfirmed':
+    'The cancellation could not be confirmed, please try again.',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',
   'health.messages.errorMessage':
     'Failed to fetch messages. Please try again later.',
+  'health.messages.notFoundMessage':
+    'Message not found. It may have been removed.',
   'health.messages.noMessagesTitle': 'No messages',
   'health.messages.noMessagesText':
     'When you receive messages, they will appear here.',
@@ -904,8 +926,21 @@ export const en: TranslatedMessages = {
     "You can't reply to messages outside opening hours.",
   'health.messages.replyBlocked.windowExpired':
     "You can't reply to this conversation because the reply window has passed.",
+  'health.messages.replyBlocked.windowExpiredDay':
+    "You can't reply to messages older than {days} day.",
+  'health.messages.replyBlocked.windowExpiredDays':
+    "You can't reply to messages older than {days} days.",
   'health.messages.replyBlocked.awaitingStaff':
     "You can't reply to this conversation until staff have responded to you.",
+  'health.messages.replyBlocked.awaitingAcknowledgement':
+    "You can't reply until your previous message has reached the recipient.",
+  'health.messages.compose.introTitle': 'Contact us',
+  'health.messages.compose.introBody1':
+    'Here you can send a message. Messages are usually answered within three business days, during working hours.',
+  'health.messages.compose.introBody2':
+    'If your matter is urgent and needs an answer the same day, call <b>1700</b> or contact your treatment team.',
+  'health.messages.compose.introBody3': 'In an emergency, call <b>112.</b>',
+  'health.messages.compose.continue': 'Continue',
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
   'health.messages.compose.selectService': 'Select service',
@@ -939,6 +974,7 @@ export const en: TranslatedMessages = {
   'health.messages.compose.certificateText':
     'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
   'health.messages.compose.certificateLink': 'Request a certificate',
+  'health.messages.compose.externalLink': 'Open web chat',
   'health.messages.certificatePayment.title': 'Certificate ready for payment',
   'health.messages.certificatePayment.text':
     'This certificate costs {amount} and is unpaid. Pay for it on Ísland.is My Pages.',

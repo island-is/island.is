@@ -110,6 +110,12 @@ export const createTestingPoliceModule = async () => {
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
+  const logger = policeModule.get<{
+    debug: jest.Mock
+    info: jest.Mock
+    error: jest.Mock
+  }>(LOGGER_PROVIDER)
+
   const caseDefendantPoliceCaseNumberRepositoryService =
     policeModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
       CaseDefendantPoliceCaseNumberRepositoryService,
@@ -133,6 +139,7 @@ export const createTestingPoliceModule = async () => {
     awsS3Service,
     policeService,
     policeController,
+    logger,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,
     indictmentSubtypeRepositoryService,

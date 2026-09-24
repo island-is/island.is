@@ -2,7 +2,7 @@ import { registerDecorator, ValidationOptions } from 'class-validator'
 import { isPerson } from 'kennitala'
 
 export const IsPersonNationalId = (validationOptions?: ValidationOptions) => {
-  return (object: Object, propertyName: string) => {
+  return (object: object, propertyName: string) => {
     registerDecorator({
       name: 'IsPersonNationalId',
       target: object.constructor,

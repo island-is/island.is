@@ -11,9 +11,14 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import {
+  formatPlausiblePathToParams,
   GET_NAMESPACE_QUERY,
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
+import { healthOverviewQuickLinkClick } from '@island.is/plausible'
+import { ApiScope } from '@island.is/auth/scopes'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { useLocation } from 'react-router-dom'
 import { z } from 'zod'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
@@ -42,6 +47,7 @@ import ContactLinks from './components/ContactLinks'
 import HealthConversationsBox from './components/HealthConversationsBox/HealthConversationsBox'
 import PaymentsAndRights from './components/PaymentsAndRights'
 import SameDayHelpBox from './components/SameDayHelpBox'
+import TreatmentsBox from './components/TreatmentsBox'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './HealthOverview.css'
 
@@ -78,6 +84,7 @@ export const HealthOverview = () => {
   useNamespaces('sp.health')
   useHealthPlausibleSwap()
   const { formatMessage, locale } = useLocale()
+  const { pathname } = useLocation()
   const { width } = useWindowSize()
   const isStackedLayout = width < theme.breakpoints.lg
   const { value: showAppointments } = useFeatureFlag(
@@ -87,6 +94,11 @@ export const HealthOverview = () => {
   const { value: isNewHealthOverviewPageEnabled } = useFeatureFlag(
     Features.isNewHealthOverviewPageEnabled,
     false,
+  )
+
+  const userInfo = useUserInfo()
+  const hasAppointmentsAccess = !!userInfo?.scopes?.includes(
+    ApiScope.healthAppointments,
   )
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
@@ -152,7 +164,7 @@ export const HealthOverview = () => {
     variables: {
       status: DEFAULT_APPOINTMENTS_STATUS, // Empty will fetch all statuses
     },
-    skip: !showAppointments,
+    skip: !showAppointments || !hasAppointmentsAccess,
   })
 
   const currentMedicinePeriod =
@@ -210,7 +222,16 @@ export const HealthOverview = () => {
               <Box marginTop={2}>
                 <Inline space={[1, 2]}>
                   {quickLinks.map((link) => (
-                    <LinkResolver key={link.href} href={link.href}>
+                    <LinkResolver
+                      key={link.href}
+                      href={link.href}
+                      callback={() =>
+                        healthOverviewQuickLinkClick({
+                          ...formatPlausiblePathToParams(pathname),
+                          label: link.href,
+                        })
+                      }
+                    >
                       <Tag variant="blue">{link.label}</Tag>
                     </LinkResolver>
                   ))}
@@ -247,7 +268,7 @@ export const HealthOverview = () => {
         </GridRow>
       )}
       {/* Appointments */}
-      {showAppointments && (
+      {showAppointments && hasAppointmentsAccess && (
         <Appointments
           data={{
             data: { data: firstTwoAppointments },
@@ -257,6 +278,8 @@ export const HealthOverview = () => {
           showLinkButton
         />
       )}
+      {/* Active treatments */}
+      <TreatmentsBox />
       {/* Payments, medicine and insurance overview */}
       <PaymentsAndRights
         payments={{

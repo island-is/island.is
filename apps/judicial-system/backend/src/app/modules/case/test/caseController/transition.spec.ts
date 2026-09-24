@@ -7,6 +7,8 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealDecisionPartyRole,
+  CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
@@ -39,7 +41,7 @@ import {
 } from '../../../../middleware'
 import { randomDate, runInRequestContext } from '../../../../test'
 import { EventService } from '../../../event'
-import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { VerdictService } from '../../../verdict'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
@@ -177,6 +179,17 @@ describe('CaseController - Transition', () => {
             },
           ]
           const courtEndTime = randomDate()
+          // Completing a request case requires a complete court record
+          const appealDecisions = [
+            {
+              partyRole: AppealDecisionPartyRole.PROSECUTOR,
+              decision: CaseAppealDecision.ACCEPT,
+            },
+            {
+              partyRole: AppealDecisionPartyRole.DEFENDANT,
+              decision: CaseAppealDecision.ACCEPT,
+            },
+          ]
           const theCase = {
             id: caseId,
             origin: CaseOrigin.LOKE,
@@ -185,6 +198,7 @@ describe('CaseController - Transition', () => {
             state: oldState,
             caseFiles,
             courtEndTime,
+            appealDecisions,
           } as Case
           const updatedCase = {
             id: caseId,
@@ -194,12 +208,14 @@ describe('CaseController - Transition', () => {
             state: newState,
             caseFiles,
             courtEndTime,
+            appealDecisions,
           } as Case
           let then: Then
 
           beforeEach(async () => {
-            const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-            mockFindOne.mockResolvedValueOnce(updatedCase)
+            const mockFindLiveById =
+              mockCaseRepositoryService.findLiveById as jest.Mock
+            mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
             then = await givenWhenThen(caseId, theCase, { transition })
           })
@@ -331,12 +347,10 @@ describe('CaseController - Transition', () => {
             if (transition === CaseTransition.DELETE) {
               expect(then.result).toBe(theCase)
             } else {
-              expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-                include: caseInclude,
-                where: {
-                  id: caseId,
-                  isArchived: false,
-                },
+              expect(
+                mockCaseRepositoryService.findLiveById,
+              ).toHaveBeenCalledWith(caseId, {
+                allowDeleted: true,
                 transaction,
               })
               expect(then.result).toBe(updatedCase)
@@ -410,8 +424,9 @@ describe('CaseController - Transition', () => {
         let then: Then
 
         beforeEach(async () => {
-          const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-          mockFindOne.mockResolvedValueOnce(updatedCase)
+          const mockFindLiveById =
+            mockCaseRepositoryService.findLiveById as jest.Mock
+          mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
           then = await givenWhenThen(caseId, theCase, { transition })
         })
@@ -589,14 +604,10 @@ describe('CaseController - Transition', () => {
           if (transition === CaseTransition.DELETE) {
             expect(then.result).toBe(theCase)
           } else {
-            expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-              include: caseInclude,
-              where: {
-                id: caseId,
-                isArchived: false,
-              },
-              transaction,
-            })
+            expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+              caseId,
+              { allowDeleted: true, transaction },
+            )
             expect(then.result).toBe(updatedCase)
           }
         })
@@ -638,8 +649,9 @@ describe('CaseController - Transition', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         state: CaseState.COMPLETED,
       })
@@ -699,8 +711,9 @@ describe('CaseController - Transition', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       then = await givenWhenThen(caseId, theCase, {
         transition: CaseTransition.OPEN,

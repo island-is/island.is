@@ -268,6 +268,9 @@
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
+      "@island.is/api/domains/tax-calculators": [
+        "libs/api/domains/tax-calculators/src/index.ts"
+      ],
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
       ],
@@ -294,9 +297,6 @@
       ],
       "@island.is/api/domains/vmst-applications": [
         "libs/api/domains/vmst-applications/src/index.ts"
-      ],
-      "@island.is/api/domains/watson-assistant-chat": [
-        "libs/api/domains/watson-assistant-chat/src/index.ts"
       ],
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
@@ -416,6 +416,12 @@
       ],
       "@island.is/application/templates/directorate-of-immigration/citizenship": [
         "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
+      ],
+      "@island.is/application/templates/district-commissioners/driving-license": [
+        "libs/application/templates/district-commissioners/driving-license/src/index.ts"
+      ],
+      "@island.is/application/templates/district-commissioners/driving-license-additional": [
+        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -636,9 +642,6 @@
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
-      "@island.is/application/templates/district-commissioners/driving-license-additional": [
-        "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
-      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -693,6 +696,9 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/confirm-job-or-income": [
+        "libs/application/templates/vmst/confirm-job-or-income/src/index.ts"
+      ],
       "@island.is/application/templates/vmst/confirm-job-search": [
         "libs/application/templates/vmst/confirm-job-search/src/index.ts"
       ],
@@ -707,6 +713,9 @@
       ],
       "@island.is/application/templates/vmst/submit-documents": [
         "libs/application/templates/vmst/submit-documents/src/index.ts"
+      ],
+      "@island.is/application/templates/vmst/u2-certificate": [
+        "libs/application/templates/vmst/u2-certificate/src/index.ts"
       ],
       "@island.is/application/testing": [
         "libs/application/testing/src/index.ts"
@@ -770,9 +779,7 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
-      "@island.is/clients/blikk": [
-        "libs/clients/blikk/src/index.ts"
-      ],
+      "@island.is/clients/blikk": ["libs/clients/blikk/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -906,15 +913,11 @@
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
-      "@island.is/clients/lsh": [
-        "libs/clients/lsh/src/index.ts"
-      ],
+      "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
       "@island.is/clients/lyfjastofnun-health-providers": [
         "libs/clients/lyfjastofnun-health-providers/src/index.ts"
       ],
-      "@island.is/clients/matilda": [
-        "libs/clients/matilda/src/index.ts"
-      ],
+      "@island.is/clients/matilda": ["libs/clients/matilda/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -972,6 +975,9 @@
       ],
       "@island.is/clients/regulations-admin": [
         "libs/clients/regulations-admin/src/index.ts"
+      ],
+      "@island.is/clients/rsk/calculators": [
+        "libs/clients/rsk/calculators/src/index.ts"
       ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
@@ -1390,6 +1396,7 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/tax-calculators": ["libs/tax-calculators/src/index.ts"],
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
@@ -1414,12 +1421,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
-      "my-pages": [
-        "libs/api/domains/my-pages/src/index.ts"
-      ],
-      "@island.is/application/templates/vmst/u2-certificate": [
-        "libs/application/templates/vmst/u2-certificate/src/index.ts"
-      ]
+      "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
   }

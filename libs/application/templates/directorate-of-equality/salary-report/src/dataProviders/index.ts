@@ -31,9 +31,27 @@ export const SubCriterionCatalogApi = defineTemplateApi({
   throwOnError: false,
 })
 
+// No longer the gate — SalaryReportEligibilityApi is — but still the only
+// thing that persists the company's coverage, which resolveEqualityCoverage
+// falls back to at submit when DMR cannot answer live. Hence throwOnError:
+// false: nothing on this template reads the data before submit, so a DMR
+// outage on it must not hold up a prerequisites screen the eligibility check
+// would have admitted. Losing the fallback is the cost, and the submit path
+// already handles its absence.
 export const ActiveEqualityReportApi = defineTemplateApi({
   action: ApiActions.getActiveEqualityReport,
   externalDataId: 'activeEqualityReport',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
+// The entry gate out of PREREQUISITES: whether the company owes an equality
+// plan. throwOnError stays at its default of true — a guard that cannot read
+// its own answer has to stop the applicant on the screen rather than wave them
+// through or reject them blind.
+export const SalaryReportEligibilityApi = defineTemplateApi({
+  action: ApiActions.getSalaryReportEligibility,
+  externalDataId: 'salaryReportEligibility',
   namespace: 'DirectorateOfEquality',
 })
 

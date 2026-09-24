@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-lsh',
   preset: '../../../jest.preset.js',

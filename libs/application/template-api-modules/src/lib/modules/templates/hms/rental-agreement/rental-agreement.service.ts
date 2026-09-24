@@ -9,6 +9,7 @@ import {
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
+import { mapDraftToContractDraftRequest } from './utils/mapDraftToContractDraftRequest'
 import {
   fetchFinancialIndexationForMonths,
   listOfLastMonths,
@@ -27,8 +28,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
-    const numberOfMonths = 36 // Number of months to fetch
-    const months = listOfLastMonths(numberOfMonths)
+    const months = listOfLastMonths()
 
     return await fetchFinancialIndexationForMonths(months)
   }
@@ -47,7 +47,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
     )
 
     return await this.homeApiWithAuth(auth).contractSendDraftPost({
-      draftRequest,
+      contractDraftRequest: mapDraftToContractDraftRequest(draftRequest),
     })
   }
 
@@ -66,9 +66,7 @@ export class RentalAgreementService extends BaseTemplateApiService {
     )
 
     return await this.homeApiWithAuth(auth)
-      .contractPost({
-        leaseApplication,
-      })
+      .contractPost({ leaseApplication })
       .catch((error) => {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)

@@ -2,7 +2,7 @@ import { ActionCard, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -36,8 +36,8 @@ const Treatments = () => {
       title={formatMessage(m.healthTreatment)}
       intro={messages.treatmentsIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirTreatmentTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
       }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}

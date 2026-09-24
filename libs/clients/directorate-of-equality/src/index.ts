@@ -46,6 +46,7 @@ export type {
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
   SalaryByGenderAndScoreDto,
+  SalaryReportEligibilityDto,
   SalaryTotalsDto,
   SubCriterionCatalogEntryDto,
   SubmitApplicationReportCommentDto,
@@ -62,6 +63,7 @@ export type {
 } from '../gen/fetch'
 export {
   CompanySizeEnum,
+  EqualityCoverageSourceEnum,
   ReportCriterionTypeEnum,
   ReportTypeEnum,
   SyncMethodEnum,

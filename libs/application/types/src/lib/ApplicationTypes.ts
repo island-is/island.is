@@ -10,6 +10,7 @@ export enum ApplicationTypes {
   PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
+  DISTRICT_COMMISSIONER_DRIVING_LICENSE = 'DistrictCommissionerDrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
@@ -105,6 +106,7 @@ export enum ApplicationTypes {
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  CONFIRM_JOB_OR_INCOME = 'ConfirmJobOrIncome',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
   U2_CERTIFICATE = 'U2Certificate',
@@ -154,6 +156,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
     translation: ['dl.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    slug: 'okuskirteini-syslumadur',
+    translation: ['dl.dc.application', 'uiForms.application'],
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     slug: 'akstursmat',
@@ -538,6 +544,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
     slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
+    slug: 'vmst-stadfesting-starf-eda-tekna',
+    translation: ['vmst.cjoi.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
     slug: 'jafnrettisstofa-jafnrettisaaetlun',
