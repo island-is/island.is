@@ -53,13 +53,6 @@ const caseSchemaTypeAllowlist = [
   'src/routes/PublicProsecutor/Indictments/Overview/IndictmentReviewerSelector.tsx',
   'src/routes/PublicProsecutor/Indictments/Overview/Overview.spec.tsx',
   'src/routes/PublicProsecutor/Indictments/RegisterVerdictAppeal/RegisterVerdictAppeal.spec.tsx',
-  'src/routes/Shared/AddFiles/AddFiles.tsx',
-  'src/routes/Shared/CaseTable/CancelCase.tsx',
-  'src/routes/Shared/RouteHandler/RouteHandler.logic.ts',
-  'src/routes/Shared/RouteHandler/RouteHandler.tsx',
-  'src/routes/Shared/SignedVerdictOverview/Components/ModifyDatesModal/ModifyDatesModal.tsx',
-  'src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview.spec.tsx',
-  'src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview.tsx',
 ]
 
 export default [
