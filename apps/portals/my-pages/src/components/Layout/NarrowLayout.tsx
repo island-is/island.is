@@ -12,7 +12,7 @@ import {
   useIsPhoneWidth,
 } from '@island.is/portals/my-pages/core'
 import cn from 'classnames'
-import { ReactNode, useMemo, useRef } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { Link as ReactLink, matchPath } from 'react-router-dom'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.css'
@@ -79,6 +79,9 @@ export const NarrowLayout = ({
   // menu clears whatever it contains (e.g. the delegation banner). No overlap:
   // the header sits above the menu and would cover its top border.
   const stickyHeight = headerVisible ? headerHeight : 0
+
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const [isStuck, setIsStuck] = useState(false)
 
   const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
@@ -172,14 +175,40 @@ export const NarrowLayout = ({
   const showMobileNav =
     !isMobileTakeover && isMobile && !!subNavItems && subNavItems.length > 0
 
+  // Stuck once the sentinel has scrolled up past the menu's sticky line
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    if (!sentinel) {
+      setIsStuck(false)
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStuck(!entry.isIntersecting),
+      { rootMargin: `-${stickyHeight}px 0px 0px 0px` },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [stickyHeight, showMobileNav])
+
   // Rendered outside SidebarLayout so it spans the full width, free of the grid gutter
   return (
     <>
       {showMobileNav && (
+        <div
+          ref={sentinelRef}
+          aria-hidden="true"
+          className={styles.mobileNavSentinel}
+          // Also clears the banners
+          style={{ paddingTop: height }}
+        />
+      )}
+      {showMobileNav && (
         <Box
           width="full"
-          className={styles.mobileNav}
-          style={{ top: stickyHeight, marginTop: height }}
+          className={cn(styles.mobileNav, {
+            [styles.mobileNavStuck]: isStuck,
+          })}
+          style={{ top: stickyHeight }}
         >
           <Navigation
             renderLink={(link, item) => {
@@ -200,6 +229,7 @@ export const NarrowLayout = ({
             titleIcon={activeParent?.icon}
             singleAccordion
             isMenuDialog={true}
+            mobileNavigationButtonOpenLabel={formatMessage(m.seeAll)}
           />
         </Box>
       )}

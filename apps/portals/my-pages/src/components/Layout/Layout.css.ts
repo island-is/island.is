@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { globalStyle, style } from '@vanilla-extract/css'
+import { createVar, globalStyle, style } from '@vanilla-extract/css'
 
 export const wrap = style({
   marginBottom: -theme.spacing[1],
@@ -19,13 +19,39 @@ export const lock = style({
   bottom: 0,
 })
 
+const mobileNavEase = '300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+// Matches the GridContainer gutter
+const mobileNavGutter = createVar()
+
+// Always full width; the floating card is a clip-path, so sticking animates
+// paint only — no layout shift and the content inside never moves.
 export const mobileNav = style({
+  vars: { [mobileNavGutter]: `${theme.spacing[2]}px` },
   position: 'sticky',
   top: 0,
   zIndex: 99,
-  borderTop: `1px solid ${theme.color.blue200}`,
-  transition: 'top 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-  willChange: 'top',
+  paddingInline: mobileNavGutter,
+  backgroundColor: theme.color.blue100,
+  borderTop: `1px solid ${theme.color.transparent}`,
+  clipPath: `inset(0 ${mobileNavGutter} round ${theme.border.radius.large})`,
+  transition: `top ${mobileNavEase}, clip-path ${mobileNavEase}, border-color ${mobileNavEase}`,
+  willChange: 'top, clip-path',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      vars: { [mobileNavGutter]: `${theme.spacing[3]}px` },
+    },
+  },
+})
+
+export const mobileNavStuck = style({
+  borderTopColor: theme.color.blue200,
+  clipPath: 'inset(0 0 round 0)',
+})
+
+// Gap above the floating card. It scrolls out from under the header at the
+// exact moment the menu sticks, which is what flips the stuck state.
+export const mobileNavSentinel = style({
+  paddingBottom: theme.spacing[2],
 })
 
 // Keeps the back link pinned while the menu scrolls beneath it. The opaque

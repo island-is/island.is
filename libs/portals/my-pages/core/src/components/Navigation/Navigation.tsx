@@ -1,6 +1,7 @@
 import {
   Box,
   BoxProps,
+  Button,
   FocusableBox,
   Icon,
   IconProps,
@@ -307,16 +308,18 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               titleIcon={titleIcon}
               color={activeColor}
               action={
-                <FocusableBox
-                  component="span"
-                  background="white"
-                  className={styles.dropdownIcon}
+                // Span, not button: the whole row is already the button
+                <Button
+                  as="span"
+                  variant="utility"
+                  colorScheme="white"
+                  size="small"
+                  icon="menu"
+                  iconType="outline"
+                  unfocusable
                 >
-                  <VisuallyHidden>
-                    {mobileNavigationButtonOpenLabel}
-                  </VisuallyHidden>
-                  <Icon icon="chevronDown" size="medium" color="blue400" />
-                </FocusableBox>
+                  {mobileNavigationButtonOpenLabel}
+                </Button>
               }
             />
           </Box>
