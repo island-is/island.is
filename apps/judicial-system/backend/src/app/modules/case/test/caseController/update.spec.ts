@@ -1572,6 +1572,29 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('merge parent chosen for a received case', () => {
+    const receivedCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+    } as Case
+    const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+    })
+
+    it('should update the case', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        caseToUpdate,
+        { transaction },
+      )
+    })
+  })
+
   // The court sends the merged case's parent back with every conclusion save,
   // including while correcting a case that was concluded by merging.
   describe('merge parent sent for a case that is not received', () => {
