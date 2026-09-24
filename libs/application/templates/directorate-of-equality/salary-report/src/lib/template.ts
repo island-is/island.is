@@ -161,12 +161,11 @@ const template: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((m) =>
                   Promise.resolve(m.NotAllowedForm),
                 ),
-              // Same dead-end form as the PREREQUISITES fall-through above,
-              // and it reads no answers either — this applicant is authorized,
-              // just ineligible. The one thing it does read is why: the form
-              // names the renewal window and the date it opens, which it cannot
-              // do from `application.applicant` alone.
-              read: { answers: [], externalData: ['salaryReportEligibility'] },
+              // Same dead-end form as the PREREQUISITES fall-through above, and
+              // it reads nothing either — this applicant is authorized, just
+              // ineligible, and the one reason DMR still gives is the missing
+              // jafnréttisáætlun the form names without being told.
+              read: { answers: [], externalData: [] },
               write: { answers: [] },
               delete: false,
             },

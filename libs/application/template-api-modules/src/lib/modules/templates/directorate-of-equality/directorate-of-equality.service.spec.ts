@@ -261,18 +261,21 @@ describe('DirectorateOfEqualityService', () => {
       } as Parameters<typeof service.getSalaryReportEligibility>[0])
     }
 
-    it('passes the renewal-window refusal through with its date', async () => {
-      const earliestSubmissionDate = new Date('2026-04-03T00:00:00.000Z')
+    it("passes DMR's answer through with both deadlines", async () => {
+      const dueAt = new Date('2027-10-03T23:59:59.999Z')
+      const earliestNewDueAt = new Date('2029-09-23T23:59:59.999Z')
       getSalaryReportEligibility.mockResolvedValue({
-        eligible: false,
-        reason: 'RENEWAL_WINDOW_NOT_OPEN',
-        earliestSubmissionDate,
+        eligible: true,
+        reason: null,
+        dueAt,
+        earliestNewDueAt,
       })
 
       await expect(run()).resolves.toEqual({
-        eligible: false,
-        reason: 'RENEWAL_WINDOW_NOT_OPEN',
-        earliestSubmissionDate,
+        eligible: true,
+        reason: null,
+        dueAt,
+        earliestNewDueAt,
       })
     })
 
@@ -294,7 +297,7 @@ describe('DirectorateOfEqualityService', () => {
     })
 
     // The guard has to fail loudly: answering "ineligible" on an outage would
-    // turn DMR being down into a rejection for a company that is in its window.
+    // turn DMR being down into a rejection for a company that is eligible.
     it('surfaces an outage instead of rejecting the applicant', async () => {
       getSalaryReportEligibility.mockRejectedValue(
         await FetchError.buildMock({ status: 500 }),
@@ -415,43 +418,14 @@ describe('DirectorateOfEqualityService', () => {
       )
     })
 
-    // Two refusals share 409 and DMR does not distinguish them in the body, so
-    // the pre-flight check is what tells them apart. Getting this wrong tells an
-    // applicant who submitted too early that their report is already in review.
-    it('explains a 409 as the renewal window when the pre-check says so', async () => {
-      submitDraft.mockRejectedValue(await apiError(409))
-      getSalaryReportEligibility.mockResolvedValue({
-        eligible: false,
-        reason: 'RENEWAL_WINDOW_NOT_OPEN',
-      })
-
-      const error = await run().catch((e) => e)
-
-      expect(error.problem.errorReason.summary).toBe(
-        salaryReportMessages.errors.renewalWindowNotOpen,
-      )
-    })
-
-    it('keeps the in-progress reading of a 409 when the window is open', async () => {
+    // Both 409s DMR has left — a report already in review and a providerId
+    // collision — read as a report in progress, with no second round trip.
+    it('explains a 409 as a report already in progress', async () => {
       submitDraft.mockRejectedValue(await apiError(409))
 
       const error = await run().catch((e) => e)
 
-      expect(error.problem.errorReason.summary).toBe(
-        salaryReportMessages.errors.submitConflict,
-      )
-    })
-
-    // The pre-check only picks between two messages on a request that has
-    // already failed — it must never replace the specific 409 with its own.
-    it('falls back to the in-progress reading when the pre-check fails', async () => {
-      submitDraft.mockRejectedValue(await apiError(409))
-      getSalaryReportEligibility.mockRejectedValue(
-        await FetchError.buildMock({ status: 500 }),
-      )
-
-      const error = await run().catch((e) => e)
-
+      expect(getSalaryReportEligibility).not.toHaveBeenCalled()
       expect(error.problem.errorReason.summary).toBe(
         salaryReportMessages.errors.submitConflict,
       )
