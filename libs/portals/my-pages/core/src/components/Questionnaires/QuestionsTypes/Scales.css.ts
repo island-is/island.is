@@ -1,10 +1,16 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 const tickSize = 8
 const tickBorder = 2
 const tickSelectedSize = 24
 const tickSelectedBorder = 8
+// Matches the hover indicator on ProgressBar: a mint ring around a white centre
+const tickHoverSize = 26
+const tickHoverBorder = 9
+// Figma keeps the tick numbers at 14px; the small Text variant drops to 12 on
+// mobile, so they are set here instead
+const tickFontSize = 14
 
 export const tickWidth = tickSelectedSize
 const trackThickness = 2
@@ -21,12 +27,16 @@ export const tick = style({
   alignItems: 'center',
   cursor: 'pointer',
   userSelect: 'none',
-  selectors: {
-    [`${input}:disabled + &`]: {
-      cursor: 'not-allowed',
-      opacity: 0.5,
-    },
-  },
+})
+
+export const tickDisabled = style({
+  cursor: 'not-allowed',
+  opacity: 0.5,
+})
+
+// Class plus element keeps this ahead of the Text variant's own font size
+globalStyle(`${tick} p`, {
+  fontSize: tickFontSize,
 })
 
 export const bubble = style({
@@ -40,13 +50,22 @@ export const bubble = style({
   transition: 'width .1s, height .1s, border .1s, box-shadow .1s',
   selectors: {
     [`${tick}:hover &`]: {
-      borderColor: theme.color.blue400,
+      width: tickHoverSize,
+      height: tickHoverSize,
+      borderWidth: tickHoverBorder,
+      borderColor: theme.color.mint400,
+      backgroundColor: theme.color.white,
     },
-    [`${input}:focus-visible + ${tick} &`]: {
+    // The input sits inside the tick, so the ring is reached through its sibling
+    [`${input}:focus-visible ~ * &`]: {
       boxShadow: `0 0 0 4px ${theme.color.mint400}`,
     },
-    [`${input}:disabled + ${tick}:hover &`]: {
+    [`${tickDisabled}:hover &`]: {
+      width: tickSize,
+      height: tickSize,
+      borderWidth: tickBorder,
       borderColor: theme.color.blue300,
+      backgroundColor: theme.color.blue100,
     },
   },
 })
@@ -57,8 +76,14 @@ export const bubbleSelected = style({
   borderWidth: tickSelectedBorder,
   borderColor: theme.color.blue400,
   selectors: {
+    // ProgressBar leaves the selected stop alone on hover, so this holds its
+    // own size and colour against the hover rule above
     [`${tick}:hover &`]: {
+      width: tickSelectedSize,
+      height: tickSelectedSize,
+      borderWidth: tickSelectedBorder,
       borderColor: theme.color.blue400,
+      backgroundColor: theme.color.blue100,
     },
   },
 })

@@ -98,20 +98,23 @@ export const HorizontalScale = ({
           const passed = selectedIndex > index
           return (
             <Fragment key={scaleValue}>
-              <input
-                id={`${id}-${scaleValue}`}
-                className={cn('visually-hidden', styles.input)}
-                type="radio"
-                name={id}
-                value={scaleValue}
-                checked={selected}
-                disabled={disabled}
-                onChange={(event) => onChange(event.target.value)}
-              />
+              {/* The input is nested so focusing it cannot scroll the page to
+                  the top of the group - see Scales.css */}
               <label
-                htmlFor={`${id}-${scaleValue}`}
-                className={cn(styles.tick, styles.horizontalTick)}
+                className={cn(styles.tick, styles.horizontalTick, {
+                  [styles.tickDisabled]: disabled,
+                })}
               >
+                <input
+                  id={`${id}-${scaleValue}`}
+                  className={cn('visually-hidden', styles.input)}
+                  type="radio"
+                  name={id}
+                  value={scaleValue}
+                  checked={selected}
+                  disabled={disabled}
+                  onChange={(event) => onChange(event.target.value)}
+                />
                 <span className={styles.horizontalBubbleArea}>
                   <span
                     className={cn(styles.bubble, {
