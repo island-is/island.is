@@ -21,7 +21,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
-import { formatCurrency, isDefined } from '@island.is/shared/utils'
+import {
+  formatCurrency,
+  formatCurrencyWithoutSuffix,
+  isDefined,
+} from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
   IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
@@ -129,7 +133,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 }) => {
   useLocalLinkTypeResolver('openinvoices')
   useContentfulId(customPageData?.id)
-  const { formatMessage, formatNumber } = useIntl()
+  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
   const [
@@ -369,14 +373,14 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     return totalPaymentsSum != null
       ? formatMessage(m.search.resultsFound, {
           records: totalPayments,
-          recordsFormatted: formatNumber(totalPayments),
+          recordsFormatted: formatCurrencyWithoutSuffix(totalPayments),
           sum: formatCurrency(totalPaymentsSum),
         })
       : formatMessage(m.search.resultsFoundNoSum, {
           records: totalPayments,
-          recordsFormatted: formatNumber(totalPayments),
+          recordsFormatted: formatCurrencyWithoutSuffix(totalPayments),
         })
-  }, [formatMessage, formatNumber, totalPaymentsSum, totalPayments])
+  }, [formatMessage, totalPaymentsSum, totalPayments])
 
   // Mobile shows the same information as `hitsMessage` split across two
   // short lines instead of one long sentence (matches the Grants Plaza
@@ -385,7 +389,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     return {
       recordsLine: formatMessage(m.search.recordsFoundShort, {
         records: totalPayments,
-        recordsFormatted: formatNumber(totalPayments),
+        recordsFormatted: formatCurrencyWithoutSuffix(totalPayments),
       }),
       totalLine:
         totalPaymentsSum != null
@@ -394,7 +398,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             })
           : undefined,
     }
-  }, [formatMessage, formatNumber, totalPaymentsSum, totalPayments])
+  }, [formatMessage, totalPaymentsSum, totalPayments])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
