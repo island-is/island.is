@@ -167,29 +167,16 @@ export const housingBenefitsActionCards = {
     historyLogs: [
       {
         onEvent: DefaultEvents.SUBMIT,
-        logMessage: (application: Application) => {
-          const applicantName = getValueViaPath<string>(
-            application.externalData,
-            'nationalRegistry.data.fullName',
-          )
-          return {
-            ...ac.historyApplicantSubmitted,
-            values: { applicantName: applicantName ?? '' },
-          }
-        },
+        logMessage: ac.historyApplicantSubmitted,
       },
     ],
   },
   inReview: {
     title: ac.applicationTitle,
     description: ac.inReviewDescription,
-    pendingAction: (application: Application): PendingAction => ({
-      displayStatus: 'info',
-      title: ac.pendingTitleInReviewApplicant,
-      content: {
-        ...ac.pendingContentInReviewApplicant,
-        values: rentalMessageValues(application),
-      },
-    }),
+    tag: {
+      variant: 'mint' as const,
+      label: ac.inReviewTag,
+    },
   },
 }
