@@ -49,6 +49,8 @@ describe('DirectorateOfEqualityService', () => {
   let getSalaryReportEligibility: jest.Mock
   let updateDraft: jest.Mock
   let submitDraft: jest.Mock
+  let deleteDraft: jest.Mock
+  let withdrawReport: jest.Mock
 
   beforeEach(async () => {
     editOutliers = jest.fn().mockResolvedValue({})
@@ -58,6 +60,8 @@ describe('DirectorateOfEqualityService', () => {
     getSalaryReportEligibility = jest.fn().mockResolvedValue({ eligible: true })
     updateDraft = jest.fn().mockResolvedValue({})
     submitDraft = jest.fn().mockResolvedValue({})
+    deleteDraft = jest.fn().mockResolvedValue(undefined)
+    withdrawReport = jest.fn().mockResolvedValue(undefined)
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -73,6 +77,8 @@ describe('DirectorateOfEqualityService', () => {
             getSalaryReportEligibility,
             updateDraft,
             submitDraft,
+            deleteDraft,
+            withdrawReport,
           },
         },
       ],
@@ -81,6 +87,81 @@ describe('DirectorateOfEqualityService', () => {
     service = module.get<DirectorateOfEqualityService>(
       DirectorateOfEqualityService,
     )
+  })
+
+  // onDelete: a failure here refuses the applicant's delete, so only the
+  // answers that leave nothing open at DMR may pass.
+  describe('deleteSalaryReportDraft', () => {
+    const run = () =>
+      service.deleteSalaryReportDraft({
+        auth: createCurrentUser(),
+        application: createApplication({ answers: {} }),
+        currentUserLocale: 'is',
+      } as Parameters<typeof service.deleteSalaryReportDraft>[0])
+
+    it('hard-deletes the draft and does not withdraw', async () => {
+      await expect(run()).resolves.toBeUndefined()
+
+      expect(deleteDraft).toHaveBeenCalledTimes(1)
+      expect(withdrawReport).not.toHaveBeenCalled()
+    })
+
+    // The draft was submitted between the applicant opening the delete and
+    // confirming it, so the report has to be withdrawn instead.
+    it('withdraws when there is no draft left to delete', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+
+      await expect(run()).resolves.toBeUndefined()
+
+      expect(withdrawReport).toHaveBeenCalledTimes(1)
+    })
+
+    it('lets the delete through when DMR has nothing at all', async () => {
+      deleteDraft.mockRejectedValue(await apiError(404))
+      withdrawReport.mockRejectedValue(await apiError(404))
+
+      await expect(run()).resolves.toBeUndefined()
+    })
+
+    it('refuses the delete when DMR fails', async () => {
+      deleteDraft.mockRejectedValue(await FetchError.buildMock({ status: 500 }))
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+      expect(withdrawReport).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('withdrawSalaryReport', () => {
+    const run = () =>
+      service.withdrawSalaryReport({
+        auth: createCurrentUser(),
+        application: createApplication({ answers: {} }),
+        currentUserLocale: 'is',
+      } as Parameters<typeof service.withdrawSalaryReport>[0])
+
+    it('withdraws the report tied to the application', async () => {
+      await expect(run()).resolves.toBeUndefined()
+
+      expect(withdrawReport).toHaveBeenCalledTimes(1)
+    })
+
+    // 400: already APPROVED, DENIED or SUPERSEDED. 404: no report for this id.
+    it.each([400, 404])(
+      'lets the delete through on a %i from DMR',
+      async (status) => {
+        withdrawReport.mockRejectedValue(await apiError(status))
+
+        await expect(run()).resolves.toBeUndefined()
+      },
+    )
+
+    it('refuses the delete when DMR fails', async () => {
+      withdrawReport.mockRejectedValue(
+        await FetchError.buildMock({ status: 500 }),
+      )
+
+      await expect(run()).rejects.toThrow(TemplateApiError)
+    })
   })
 
   describe('editOutliers', () => {

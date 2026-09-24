@@ -908,6 +908,68 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
     )
   }
 
+  // onDelete from DRAFT. The draft is hard-deleted rather than withdrawn so DMR
+  // keeps no payroll data for an application that no longer exists. A 404 means
+  // there is no draft: either it was submitted in the meantime, which withdraw
+  // covers, or it was never created, which withdraw answers with its own 404.
+  async deleteSalaryReportDraft({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to delete salary report draft',
+      async () => {
+        try {
+          await this.directorateOfEqualityService.deleteDraft(
+            auth,
+            application.id,
+          )
+        } catch (error) {
+          if (!this.isNotFoundApiError(error)) throw error
+          await this.withdrawReportIfOpen(auth, application.id)
+        }
+      },
+    )
+  }
+
+  // onDelete from POSTPONE_RECEIVED and POSTPONED. Without it the report stays
+  // POSTPONED on DMR's side after the application is gone: the register shows
+  // the plan as missing and DMR refuses any new salary report with a 409, with
+  // no application left to send the plan from. Withdrawing puts the company
+  // back on whatever covered it before, as a reviewer's denial would.
+  async withdrawSalaryReport({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to withdraw salary report',
+      () => this.withdrawReportIfOpen(auth, application.id),
+    )
+  }
+
+  // A 400 is a report already decided (APPROVED/DENIED/SUPERSEDED) and a 404 is
+  // no report at all. Neither leaves anything open at DMR, so neither should
+  // stop the applicant's delete; anything else does, so a delete never leaves an
+  // open report behind.
+  private async withdrawReportIfOpen(
+    auth: TemplateApiModuleActionProps['auth'],
+    providerId: string,
+  ): Promise<void> {
+    try {
+      await this.directorateOfEqualityService.withdrawReport(auth, providerId)
+    } catch (error) {
+      if (
+        this.extractFetchErrorDetails(error).status === 400 ||
+        this.isNotFoundApiError(error)
+      ) {
+        return
+      }
+      throw error
+    }
+  }
+
   // Finalises the draft; only the pre-dataEntry answers need patching onto
   // it first — the report's narrative content was already pushed live via
   // the directorate-of-equality-application GraphQL resolver's

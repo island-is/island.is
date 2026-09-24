@@ -162,6 +162,22 @@ export const SalaryAnalysisApi = defineTemplateApi({
 // triggerEvent: SUBMIT only — POSTPONED and DRAFT_RETRY both exit via SUBMIT
 // (their intended resubmit), but POSTPONED also exits via an admin-dispatched
 // EDIT that must not PUT unedited outlier data before the applicant revises it.
+// onDelete for the states where the applicant can delete and DMR may already
+// hold a report: DRAFT hard-deletes the draft, the POSTPONED pair withdraws the
+// submitted report. Left to the default throwOnError so a DMR failure refuses
+// the delete instead of leaving an open report behind with no application.
+export const DeleteSalaryReportDraftApi = defineTemplateApi({
+  action: ApiActions.deleteSalaryReportDraft,
+  externalDataId: 'deleteSalaryReportDraft',
+  namespace: 'DirectorateOfEquality',
+})
+
+export const WithdrawSalaryReportApi = defineTemplateApi({
+  action: ApiActions.withdrawSalaryReport,
+  externalDataId: 'withdrawSalaryReport',
+  namespace: 'DirectorateOfEquality',
+})
+
 export const EditOutliersApi = defineTemplateApi({
   action: ApiActions.editOutliers,
   externalDataId: 'editOutliers',
