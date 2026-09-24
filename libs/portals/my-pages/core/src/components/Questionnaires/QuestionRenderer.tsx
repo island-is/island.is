@@ -280,7 +280,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             : 0
 
         return (
-          <Box width={'full'} paddingBottom={3}>
+          <Box width={'full'} paddingBottom={[8, 6, 3]}>
             <ProgressBar
               id={question.id}
               progress={progress}
