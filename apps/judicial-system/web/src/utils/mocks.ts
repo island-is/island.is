@@ -1,9 +1,9 @@
 import faker from 'faker'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorSelectionUsersDocument } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import type {
-  Case,
   CaseFile,
   CaseType,
   User,
@@ -193,11 +193,10 @@ export const mockProsecutorSelectionUsersQuery = [
   },
 ]
 
-export const mockCase = (caseType: CaseType): Case => {
+export const mockCase = (caseType: CaseType): WorkingCase => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
-    modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
     type: caseType,

@@ -4,7 +4,7 @@ import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseState,
@@ -15,7 +15,7 @@ import { strings } from './titleForCase.strings'
 
 export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
-  theCase: Case,
+  theCase: WorkingCase,
 ) => {
   if (isIndictmentCase(theCase.type)) {
     return 'Máli lokið'

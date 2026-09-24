@@ -9,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   InputName,
@@ -16,10 +17,7 @@ import {
   RequiredStar,
 } from '@island.is/judicial-system-web/src/components'
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
-import type {
-  Case,
-  Victim,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
 import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useNationalRegistry,
@@ -30,8 +28,8 @@ import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFiel
 
 interface Props {
   victim: Victim
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onDelete: (victim: Victim) => void
 }
 

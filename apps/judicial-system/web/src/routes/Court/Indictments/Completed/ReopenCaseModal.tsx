@@ -9,11 +9,9 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { Modal } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
@@ -21,7 +19,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
-export const canReopenCase = (workingCase: Case, user?: User) => {
+export const canReopenCase = (workingCase: WorkingCase, user?: User) => {
   if (
     !isIndictmentCase(workingCase.type) ||
     !isCompletedCase(workingCase.state)
@@ -52,7 +50,7 @@ export const canReopenCase = (workingCase: Case, user?: User) => {
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   onClose: () => void
 }
 

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
   UserRole,
@@ -18,7 +18,7 @@ import InfoCardClosedIndictment from './InfoCardClosedIndictment'
 const DEFENDER_NATIONAL_ID = '1234567890'
 
 const renderClosedIndictment = (
-  theCase: Case,
+  theCase: WorkingCase,
   userRole: UserRole = UserRole.PROSECUTOR,
   nationalId?: string,
 ) =>
@@ -114,7 +114,7 @@ describe('InfoCardClosedIndictment', () => {
   test('does not link an internal merged case number when the merge target has no id', async () => {
     const theCase = {
       ...mockCase(CaseType.INDICTMENT),
-      mergeCase: { courtCaseNumber: 'S-64/2026' } as Case,
+      mergeCase: { courtCaseNumber: 'S-64/2026' } as WorkingCase,
     }
 
     renderClosedIndictment(theCase)

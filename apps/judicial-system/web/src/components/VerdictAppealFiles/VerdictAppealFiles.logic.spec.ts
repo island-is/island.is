@@ -1,5 +1,5 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -27,7 +27,7 @@ describe('getVerdictAppealFileGroups', () => {
     created: string,
   ): CaseFile => ({ id, defendantId, category, created, name: `${id}.pdf` })
 
-  const theCase = (caseFiles: CaseFile[]): Case =>
+  const theCase = (caseFiles: CaseFile[]): WorkingCase =>
     ({
       id: 'case_id',
       type: CaseType.INDICTMENT,
@@ -46,7 +46,7 @@ describe('getVerdictAppealFileGroups', () => {
         },
       ],
       caseFiles,
-    } as Case)
+    } as WorkingCase)
 
   it('should return nothing when no declaration has been filed', () => {
     expect(

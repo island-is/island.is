@@ -3,8 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -66,7 +66,10 @@ const overviewUrl = '/rikissaksoknari/akaera/yfirlit/test_id'
 const completedCase = ({
   appealDate,
   verdictAppealDeadline = '2026-08-29T23:59:59.999Z',
-}: { appealDate?: string; verdictAppealDeadline?: string } = {}): Case => ({
+}: {
+  appealDate?: string
+  verdictAppealDeadline?: string
+} = {}): WorkingCase => ({
   ...mockCase(CaseType.INDICTMENT),
   state: CaseState.COMPLETED,
   indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -88,7 +91,7 @@ const completedCase = ({
 })
 
 const renderPage = (
-  theCase: Case,
+  theCase: WorkingCase,
   {
     features = [Feature.INDICTMENT_APPEAL],
     isLoading = false,

@@ -3,7 +3,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   CaseFileCategory,
@@ -48,7 +48,7 @@ describe('<AppealCaseFilesOverview />', () => {
         id: 'test_appeal_case_id',
         appealState: AppealCaseState.COMPLETED,
       },
-    } as Case
+    } as WorkingCase
 
     render(
       <IntlProvider locale="is" onError={jest.fn}>
@@ -77,7 +77,7 @@ describe('<AppealCaseFilesOverview />', () => {
         id: 'test_appeal_case_id',
         appealState: AppealCaseState.COMPLETED,
       },
-    } as Case
+    } as WorkingCase
 
     render(
       <IntlProvider locale="is" onError={jest.fn}>
@@ -108,7 +108,7 @@ describe('<AppealCaseFilesOverview />', () => {
         appealState: AppealCaseState.COMPLETED,
         appealedByRole: UserRole.PROSECUTOR,
       },
-    } as Case
+    } as WorkingCase
 
     render(
       <IntlProvider locale="is" onError={jest.fn}>
@@ -141,7 +141,7 @@ describe('<AppealCaseFilesOverview />', () => {
         id: 'test_appeal_case_id',
         appealState: AppealCaseState.COMPLETED,
       },
-    } as Case
+    } as WorkingCase
 
     render(
       <IntlProvider locale="is" onError={jest.fn}>
@@ -174,7 +174,7 @@ describe('<AppealCaseFilesOverview />', () => {
         id: 'test_appeal_case_id',
         appealState: AppealCaseState.COMPLETED,
       },
-    } as Case
+    } as WorkingCase
 
     render(
       <IntlProvider locale="is" onError={jest.fn}>
@@ -217,9 +217,9 @@ describe('<AppealCaseFilesOverview />', () => {
         ],
         state: CaseState.ACCEPTED,
         rulingOrderAppealCases: [rulingOrderAppealCase(appealCaseNumber)],
-      } as unknown as Case)
+      } as unknown as WorkingCase)
 
-    const renderOverview = (theCase: Case) => {
+    const renderOverview = (theCase: WorkingCase) => {
       mockRouterQuery = { appealCaseId: 'ruling_order_appeal_case_id' }
 
       render(
@@ -269,7 +269,7 @@ describe('<AppealCaseFilesOverview />', () => {
         appealState: AppealCaseState.COMPLETED,
         appealCaseNumber: '1/2025',
       },
-    } as Case
+    } as WorkingCase
 
     render(
       <IntlProvider locale="is" onError={jest.fn}>

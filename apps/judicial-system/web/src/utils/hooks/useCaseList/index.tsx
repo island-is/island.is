@@ -36,11 +36,11 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseState,
@@ -75,7 +75,7 @@ const useCaseList = () => {
 
   const openCase = useCallback(
     (
-      caseToOpen: Case,
+      caseToOpen: WorkingCase,
       openCaseInNewTab?: boolean,
       appealCaseId?: string | null,
     ) => {

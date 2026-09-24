@@ -3,14 +3,14 @@ import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AccordionListItem,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   startExpanded?: boolean
 }
 

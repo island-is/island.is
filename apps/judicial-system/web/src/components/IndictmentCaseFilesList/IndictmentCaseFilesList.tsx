@@ -27,6 +27,7 @@ import {
   isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FileNotFoundModal,
   PdfButton,
@@ -35,7 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileTable } from '@island.is/judicial-system-web/src/components/Table'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -61,7 +61,7 @@ import * as styles from './IndictmentCaseFilesList.css'
 
 const getDefenderVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -98,8 +98,8 @@ const getDefenderVisiblePoliceCaseNumbers = (
 
 const getSpokespersonVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
-  defendants: Case['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -153,8 +153,8 @@ const getSpokespersonVisiblePoliceCaseNumbers = (
 
 const getDefenceUserVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -214,7 +214,7 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   forceDisplayAdditionalFiles?: boolean
@@ -294,7 +294,7 @@ const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
 
 const useFilteredCaseFiles = (
   caseFiles?: CaseFile[] | null,
-  splitCases?: Case[] | null,
+  splitCases?: WorkingCase[] | null,
 ) => {
   return useMemo(() => {
     const splitCaseFiles =
@@ -342,7 +342,7 @@ const useFilteredCaseFiles = (
   }, [caseFiles, splitCases])
 }
 
-const useFilePermissions = (workingCase: Case, user?: User) => {
+const useFilePermissions = (workingCase: WorkingCase, user?: User) => {
   return useMemo(
     () => ({
       canViewCriminalRecordUpdate:
@@ -366,7 +366,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
   )
 }
 
-export const useSentToPrisonAdminDate = (workingCase: Case) => {
+export const useSentToPrisonAdminDate = (workingCase: WorkingCase) => {
   return useMemo(() => {
     // For now we return the newest date on any defendant that has been sent to prison admin
     // but we may need to change this in the future depending on how we want to handle
@@ -414,16 +414,21 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { prefixGeneratedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
-  const allSubpoenas = useMemo(
-    () => [
-      ...(workingCase.defendants?.flatMap((defendant) =>
+  const ownSubpoenas = useMemo(
+    () =>
+      workingCase.defendants?.flatMap((defendant) =>
         (defendant.subpoenas ?? []).map((subpoena) => ({
           defendant,
           subpoena,
           caseId: workingCase.id,
         })),
-      ) ?? []),
-      ...(workingCase.splitCases?.flatMap((splitCase) =>
+      ) ?? [],
+    [workingCase],
+  )
+
+  const splitCaseSubpoenas = useMemo(
+    () =>
+      workingCase.splitCases?.flatMap((splitCase) =>
         (splitCase.defendants ?? []).flatMap((defendant) =>
           (defendant.subpoenas ?? []).map((subpoena) => ({
             defendant,
@@ -431,27 +436,29 @@ const IndictmentCaseFilesList: FC<Props> = ({
             caseId: workingCase.id,
           })),
         ),
-      ) ?? []),
-    ],
+      ) ?? [],
     [workingCase],
   )
 
   const visibleSubpoenas = useMemo(() => {
     if (!isDefenceUser(user)) {
-      return allSubpoenas
+      return [...ownSubpoenas, ...splitCaseSubpoenas]
     }
 
     const normalizedUserNationalId = normalizeAndFormatNationalId(
       user?.nationalId ?? '',
     )
 
-    return allSubpoenas.filter(
+    // The case query fetches split-case defendants without their defender
+    // fields, so a defence user cannot be matched against them and is only
+    // shown the subpoenas of this case's own defendants.
+    return ownSubpoenas.filter(
       ({ defendant }) =>
         defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
         normalizedUserNationalId.includes(defendant.defenderNationalId),
     )
-  }, [allSubpoenas, user])
+  }, [ownSubpoenas, splitCaseSubpoenas, user])
 
   const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 

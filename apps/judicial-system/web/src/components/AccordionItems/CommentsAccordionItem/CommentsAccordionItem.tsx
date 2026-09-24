@@ -2,13 +2,13 @@ import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CommentsAccordionItem.strings'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const CommentsAccordionItem: FC<Props> = (props) => {

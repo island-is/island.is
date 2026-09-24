@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
   CaseType,
@@ -26,9 +26,9 @@ describe('VerdictAppealFiles', () => {
   const defenderNationalId = '1111111111'
 
   const theCase = (
-    caseFiles: Case['caseFiles'],
+    caseFiles: WorkingCase['caseFiles'],
     appealDefenderName?: string,
-  ): Case => ({
+  ): WorkingCase => ({
     ...mockCase(CaseType.INDICTMENT),
     defendants: [
       {
@@ -52,7 +52,7 @@ describe('VerdictAppealFiles', () => {
     isKeyAccessible: true,
   }
 
-  const renderSection = (theCase: Case) =>
+  const renderSection = (theCase: WorkingCase) =>
     render(
       <MockedProvider mocks={[]} addTypename={false}>
         <IntlProviderWrapper>

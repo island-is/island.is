@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
@@ -9,13 +9,13 @@ import {
 
 import RestrctionTags from './RestrictionTags'
 
-const renderRestrictionTags = (workingCase: Case) =>
+const renderRestrictionTags = (workingCase: WorkingCase) =>
   render(<RestrctionTags workingCase={workingCase} />)
 
 describe('<RestrictionTags />', () => {
   const selector = { selector: 'span' }
   test('should not render for investication cases', () => {
-    const theCase = { type: CaseType.BODY_SEARCH } as Case
+    const theCase = { type: CaseType.BODY_SEARCH } as WorkingCase
     const result = renderRestrictionTags(theCase)
 
     expect(result.container).toBeEmptyDOMElement()
@@ -25,7 +25,7 @@ describe('<RestrictionTags />', () => {
     const theCase = {
       isCustodyIsolation: true,
       decision: CaseDecision.ACCEPTING,
-    } as Case
+    } as WorkingCase
     renderRestrictionTags(theCase)
 
     expect(screen.getByText('Einangrun', selector)).toBeInTheDocument()
@@ -35,7 +35,7 @@ describe('<RestrictionTags />', () => {
     const theCase = {
       isCustodyIsolation: true,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-    } as Case
+    } as WorkingCase
     renderRestrictionTags(theCase)
 
     expect(screen.queryByText('Einangrun', selector)).toBeNull()
@@ -50,7 +50,7 @@ describe('<RestrictionTags />', () => {
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
         CaseCustodyRestrictions.WORKBAN,
       ],
-    } as Case
+    } as WorkingCase
 
     renderRestrictionTags(theCase)
 
@@ -73,7 +73,7 @@ describe('<RestrictionTags />', () => {
         CaseCustodyRestrictions.VISITAION,
         CaseCustodyRestrictions.WORKBAN,
       ],
-    } as Case
+    } as WorkingCase
 
     renderRestrictionTags(theCase)
 
@@ -100,7 +100,7 @@ describe('<RestrictionTags />', () => {
         CaseCustodyRestrictions.VISITAION,
         CaseCustodyRestrictions.WORKBAN,
       ],
-    } as Case
+    } as WorkingCase
 
     renderRestrictionTags(theCase)
 
@@ -129,7 +129,7 @@ describe('<RestrictionTags />', () => {
         CaseCustodyRestrictions.VISITAION,
         CaseCustodyRestrictions.WORKBAN,
       ],
-    } as Case
+    } as WorkingCase
 
     renderRestrictionTags(theCase)
 

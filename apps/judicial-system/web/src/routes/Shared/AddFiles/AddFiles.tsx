@@ -17,6 +17,7 @@ import {
   isProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -32,10 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFileCategory,
   TrackedNotificationType,
@@ -62,8 +60,8 @@ import { strings } from './AddFiles.strings'
 const canSendCaseFilesUpdatedNotification = (user?: InstitutionUser): boolean =>
   isProsecutorUser(user) || isDefenceUser(user)
 
-const getUserProps = (user: User | undefined, workingCase: Case) => {
-  const getCaseInfoNode = (workingCase: Case) => (
+const getUserProps = (user: User | undefined, workingCase: WorkingCase) => {
+  const getCaseInfoNode = (workingCase: WorkingCase) => (
     <Box marginBottom={5}>
       <ProsecutorCaseInfo workingCase={workingCase} />
     </Box>
@@ -85,7 +83,7 @@ const getUserProps = (user: User | undefined, workingCase: Case) => {
   } else if (isDistrictCourtUser(user)) {
     return {
       previousRoute: DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-      getCaseInfoNode: (workingCase: Case) => (
+      getCaseInfoNode: (workingCase: WorkingCase) => (
         <CourtCaseInfo workingCase={workingCase} />
       ),
       hasFileRepresentativeSelection: true,

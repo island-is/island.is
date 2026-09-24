@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateVictimInput,
   UpdateVictimInput,
   Victim,
@@ -79,9 +79,9 @@ const useVictims = () => {
 
   const updateVictimState = (
     update: UpdateVictimInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
-    setWorkingCase((prevWorkingCase: Case) => {
+    setWorkingCase((prevWorkingCase: WorkingCase) => {
       if (!prevWorkingCase.victims) {
         return prevWorkingCase
       }
@@ -106,7 +106,7 @@ const useVictims = () => {
 
   const addVictimToState = (
     victimId: string,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
@@ -116,7 +116,7 @@ const useVictims = () => {
 
   const removeVictimFromState = (
     victimId: string,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
@@ -126,7 +126,7 @@ const useVictims = () => {
 
   const updateVictimAndSetState = async (
     update: UpdateVictimInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     const victimId = await updateVictim(update)
 
@@ -137,7 +137,7 @@ const useVictims = () => {
 
   const createVictimAndSetState = async (
     caseId: string,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     const victimId = await createVictim({ caseId })
 
@@ -151,7 +151,7 @@ const useVictims = () => {
   const deleteVictimAndSetState = async (
     caseId: string,
     victim: Victim,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     const victimDeleted = await deleteVictim(caseId, victim.id)
 

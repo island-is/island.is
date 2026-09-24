@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
   UserRole,
@@ -18,7 +18,7 @@ import InfoCardActiveIndictment from './InfoCardActiveIndictment'
 const DEFENDER_NATIONAL_ID = '1234567890'
 
 const renderActiveIndictment = (
-  theCase: Case,
+  theCase: WorkingCase,
   userRole: UserRole = UserRole.DISTRICT_COURT_JUDGE,
   nationalId?: string,
 ) =>

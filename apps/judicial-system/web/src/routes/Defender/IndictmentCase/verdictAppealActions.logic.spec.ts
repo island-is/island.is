@@ -1,5 +1,5 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -39,13 +39,13 @@ describe('verdictAppealActions', () => {
       ...overrides,
     } as Defendant)
 
-  const theCase = (overrides: Partial<Case> = {}): Case =>
+  const theCase = (overrides: Partial<WorkingCase> = {}): WorkingCase =>
     ({
       id: 'case_id',
       state: CaseState.COMPLETED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
       ...overrides,
-    } as Case)
+    } as WorkingCase)
 
   describe('isConfirmedDefenderOf', () => {
     it('should accept the confirmed defender', () => {

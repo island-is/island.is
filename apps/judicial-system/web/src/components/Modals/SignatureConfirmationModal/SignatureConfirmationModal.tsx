@@ -9,13 +9,11 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { Modal } from '@island.is/judicial-system-web/src/components'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { useRulingSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/components/Modals/SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
-import type {
-  Case,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
 
@@ -26,7 +24,7 @@ export type SignatureType = 'ruling' | 'courtRecord'
 type SigningProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 interface SignatureConfirmationModalProps {
-  workingCase: Case
+  workingCase: WorkingCase
   signatureResponse: RequestSignatureResponse
   signatureType: SignatureType
   isAudkenni: boolean
