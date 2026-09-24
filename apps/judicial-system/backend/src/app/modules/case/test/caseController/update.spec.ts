@@ -1572,6 +1572,51 @@ describe('CaseController - Update', () => {
     })
   })
 
+  // The court sends the merged case's parent back with every conclusion save,
+  // including while correcting a case that was concluded by merging.
+  describe('merge parent sent for a case that is not received', () => {
+    const parentCaseId = uuid()
+    const correctingCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.CORRECTING,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+      mergeCaseId: parentCaseId,
+    } as Case
+
+    describe('that is the existing parent', () => {
+      const caseToUpdate = { mergeCaseId: parentCaseId } as UpdateCaseDto
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(caseId, user, correctingCase, caseToUpdate)
+      })
+
+      it('should update the case', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          caseToUpdate,
+          { transaction },
+        )
+      })
+    })
+
+    describe('that is a different parent', () => {
+      const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(caseId, user, correctingCase, caseToUpdate)
+      })
+
+      it('should refuse the merge', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('reopenReason on non-indictment case', () => {
     const nonIndictmentCase = {
       ...theCase,
