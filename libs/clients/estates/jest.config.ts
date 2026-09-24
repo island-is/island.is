@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
   displayName: 'clients-estates',
   preset: '../../../jest.preset.js',
