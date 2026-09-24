@@ -53,7 +53,7 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
     return (
       <ContextMenuCard
         title={
-          <SectionHeading title="Birting dóms" heading="h4" marginBottom={0} />
+          <SectionHeading title="Dómur" heading="h4" marginBottom={0} />
         }
         contextMenuItems={contextMenuItems}
         menuLabel={`Valmynd fyrir birtingu dóms ${defendant.name ?? ''}`.trim()}
@@ -65,7 +65,7 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
 
   return (
     <BlueBox>
-      <SectionHeading title="Birting dóms" heading="h4" marginBottom={2} />
+      <SectionHeading title="Dómur" heading="h4" marginBottom={2} />
       {body}
     </BlueBox>
   )
