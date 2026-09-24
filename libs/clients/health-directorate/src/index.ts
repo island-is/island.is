@@ -46,6 +46,7 @@ export {
   CreateEuPatientConsentDto,
 } from './lib/clients'
 export {
+  AppointmentBaseDto,
   AttachmentDownloadResult,
   CancelAppointmentResult,
   CertificateDto,
@@ -70,6 +71,7 @@ export {
   MessagingDayType,
   MessagingOpeningHoursDto,
   MessagingRecipientDto,
+  PaginatedAppointmentsDto,
   NextOpeningDto,
   OpeningHoursWindowDto,
   AllowedInteraction,

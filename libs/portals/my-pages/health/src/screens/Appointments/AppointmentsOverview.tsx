@@ -1,6 +1,5 @@
-import { ApolloError } from '@apollo/client'
 import { HealthDirectorateAppointment } from '@island.is/api/schema'
-import { Box, Tabs, Text } from '@island.is/island-ui/core'
+import { Box, Button, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -29,7 +28,53 @@ import {
 } from '../../utils/constants'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import Appointments from '../HealthOverview/components/Appointments'
-import { useGetAppointmentsQuery } from './Appointments.generated'
+import {
+  GetAppointmentsQueryVariables,
+  useGetAppointmentsQuery,
+} from './Appointments.generated'
+
+const DEFAULT_PAGE_SIZE = 10
+
+// One cursor-paginated appointments list; "load more" appends the next page
+const usePaginatedAppointments = (
+  variables: Omit<GetAppointmentsQueryVariables, 'limit' | 'after'>,
+  skip?: boolean,
+) => {
+  const [loadingMore, setLoadingMore] = useState(false)
+  const query = useGetAppointmentsQuery({
+    fetchPolicy: 'network-only',
+    variables: { ...variables, limit: DEFAULT_PAGE_SIZE },
+    skip,
+  })
+  const page = query.data?.healthDirectorateAppointments
+
+  const loadMore = () => {
+    const cursor = page?.pageInfo?.endCursor
+    if (loadingMore || !cursor) return
+    setLoadingMore(true)
+    query
+      .fetchMore({
+        variables: { ...variables, limit: DEFAULT_PAGE_SIZE, after: cursor },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          const next = fetchMoreResult?.healthDirectorateAppointments
+          if (!next) return prev
+          return {
+            ...fetchMoreResult,
+            healthDirectorateAppointments: {
+              ...next,
+              data: [
+                ...(prev.healthDirectorateAppointments?.data ?? []),
+                ...(next.data ?? []),
+              ],
+            },
+          }
+        },
+      })
+      .finally(() => setLoadingMore(false))
+  }
+
+  return { ...query, page, loadMore, loadingMore }
+}
 
 const AppointmentsOverview = () => {
   useNamespaces('sp.health')
@@ -52,36 +97,29 @@ const AppointmentsOverview = () => {
     false,
   )
 
-  const upcoming = useGetAppointmentsQuery({
-    fetchPolicy: 'network-only',
-    variables: {
-      status: DEFAULT_APPOINTMENTS_STATUS,
-    },
+  const upcoming = usePaginatedAppointments({
+    status: DEFAULT_APPOINTMENTS_STATUS,
   })
 
-  const past = useGetAppointmentsQuery({
-    fetchPolicy: 'network-only',
-    variables: {
+  const past = usePaginatedAppointments(
+    {
       // The client defaults "from" to today when omitted, which would return
       // no past appointments — any date before the data migration works here
       from: new Date('2026-01-01'),
       status: PAST_APPOINTMENTS_STATUS,
     },
-    skip: !pastTabVisited || !hasPastAppointmentsAccess,
-  })
-
-  const upcomingAppointments =
-    upcoming.data?.healthDirectorateAppointments?.data ?? []
-  const pastAppointments = (
-    past.data?.healthDirectorateAppointments?.data ?? []
+    !pastTabVisited || !hasPastAppointmentsAccess,
   )
+
+  const upcomingAppointments = upcoming.page?.data ?? []
+  const pastAppointments = (past.page?.data ?? [])
     // The query includes BOOKED, which also matches upcoming appointments
     .filter(isPastAppointment)
     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
 
   const renderAppointmentList = (
     appointments: HealthDirectorateAppointment[],
-    query: { loading: boolean; error?: ApolloError },
+    query: ReturnType<typeof usePaginatedAppointments>,
     emptyText: string,
     muted?: boolean,
   ) => {
@@ -109,16 +147,32 @@ const AppointmentsOverview = () => {
       )
     }
     return (
-      <Appointments
-        data={{
-          data: { data: appointments },
-          loading: query.loading,
-          error: query.error ? true : false,
-        }}
-        showLinkButton={false}
-        showHeader={false}
-        muted={muted}
-      />
+      <>
+        <Appointments
+          data={{
+            data: { data: appointments },
+            loading: query.loading,
+            error: query.error ? true : false,
+          }}
+          showLinkButton={false}
+          showHeader={false}
+          muted={muted}
+        />
+        {query.page?.pageInfo?.hasNextPage && (
+          <Box display="flex" justifyContent="center" marginTop={3}>
+            <Button
+              onClick={query.loadMore}
+              loading={query.loadingMore}
+              variant="ghost"
+              size="small"
+            >
+              {`${formatMessage(m.fetchMore)} ${query.page.data?.length ?? 0}/${
+                query.page.totalCount ?? 0
+              }`}
+            </Button>
+          </Box>
+        )}
+      </>
     )
   }
 
