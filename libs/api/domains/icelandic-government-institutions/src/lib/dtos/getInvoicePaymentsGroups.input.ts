@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
 import {
   IsArray,
   IsDate,
@@ -50,12 +50,12 @@ export class InvoicePaymentsGroupsInput {
   @IsString({ each: true })
   paymentTypeIds?: string[]
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsDate()
   @IsOptional()
   dateFrom?: Date
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   @IsDate()
   @IsOptional()
   dateTo?: Date
