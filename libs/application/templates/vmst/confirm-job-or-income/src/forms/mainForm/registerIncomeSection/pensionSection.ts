@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomePensionPaymentDTO } from '@island.is/clients/vmst-unemployment'
@@ -74,11 +75,26 @@ export const pensionSection = buildSubSection({
       title: m.application.pensionHeading,
       description: m.application.pensionDescription,
       children: [
+        buildDescriptionField({
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.incomeTitle,
+              values: { month },
+            }
+          },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'pensionDescription',
+        }),
         buildTableRepeaterField({
           id: 'registerPension',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPensionDefaults,
+          marginTop: 2,
           fields: {
             pensionType: {
               component: 'select',

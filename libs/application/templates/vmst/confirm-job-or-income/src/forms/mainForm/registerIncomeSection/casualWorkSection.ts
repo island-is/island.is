@@ -5,6 +5,7 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomeIrregularJobDTO } from '@island.is/clients/vmst-unemployment'
@@ -84,19 +85,25 @@ export const casualWorkSection = buildSubSection({
       title: m.application.casualWorkHeading,
       description: m.application.casualWorkDescription,
       children: [
-        buildTableRepeaterField({
-          id: 'registerCasualWork',
-          addItemButtonText: m.application.addLine,
-          hideTableHeaderIfEmpty: true,
+        buildDescriptionField({
           title: () => {
             const month = new Date().toLocaleDateString('is-IS', {
               month: 'long',
             })
             return {
-              ...m.application.partTimeRegisteredIncomeTitle,
+              ...m.application.incomeTitle,
               values: { month },
             }
           },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'casualWorkdDescription',
+        }),
+        buildTableRepeaterField({
+          id: 'registerCasualWork',
+          addItemButtonText: m.application.addLine,
+          hideTableHeaderIfEmpty: true,
+          marginTop: 2,
           defaultValue: getCasualWorkDefaults,
           fields: {
             company: {

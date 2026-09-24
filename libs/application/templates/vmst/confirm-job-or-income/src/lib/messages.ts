@@ -126,11 +126,18 @@ export const application = defineMessages({
       'Ef eitthvað breytist varðandi hlutastarf þitt, hvort sem er tekjur, starfshlutfall eða lok starfs, þarftu að tilkynna það aftur með sama hætti.',
     description: 'Alert for part-time work',
   },
-  partTimeRegisteredIncomeTitle: {
-    id: 'vmst.cjoi.application:partTimeRegisteredIncomeTitle',
-    defaultMessage: 'Skráðar tekjur í {month} mánuði',
+
+  incomeTitle: {
+    id: 'vmst.cjoi.application:incomeTitle',
+    defaultMessage: 'Skráðar tekjur í {month} mánuði.',
     description:
-      'Title for the part-time registered income table, with dynamic month name',
+      'Title for the incme sections income table, with dynamic month name',
+  },
+  incomeDescriptionLink: {
+    id: 'vmst.cjoi.application:incomeDescriptionLink#markdown',
+    defaultMessage:
+      '[Sjá allar skráðar tekjur á mínum síðum](https://island.is/minarsidur/framfaersla)',
+    description: 'description for the income table, with dynamic month name',
   },
 
   // Contract work descriptions

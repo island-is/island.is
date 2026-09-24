@@ -5,6 +5,7 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomeContractorJobDTO } from '@island.is/clients/vmst-unemployment'
@@ -64,11 +65,26 @@ export const contractWorkSection = buildSubSection({
           message: m.application.contractWorkAlert,
           alertType: 'info',
         }),
+        buildDescriptionField({
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.incomeTitle,
+              values: { month },
+            }
+          },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'contractWorkDescription',
+        }),
         buildTableRepeaterField({
           id: 'registerContractWork',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getContractWorkDefaults,
+          marginTop: 2,
           fields: {
             contractJobStart: {
               component: 'date',

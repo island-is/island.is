@@ -5,7 +5,7 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
-  buildTitleField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
@@ -81,21 +81,26 @@ export const partTimeSection = buildSubSection({
           message: m.application.partTimeAlert,
           alertType: 'info',
         }),
-        buildTitleField({}),
-        buildTableRepeaterField({
-          id: 'registerPartTime',
-          addItemButtonText: m.application.addLine,
-          hideTableHeaderIfEmpty: true,
+        buildDescriptionField({
           title: () => {
             const month = new Date().toLocaleDateString('is-IS', {
               month: 'long',
             })
             return {
-              ...m.application.partTimeRegisteredIncomeTitle,
+              ...m.application.incomeTitle,
               values: { month },
             }
           },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'partTimeDescription',
+        }),
+        buildTableRepeaterField({
+          id: 'registerPartTime',
+          addItemButtonText: m.application.addLine,
+          hideTableHeaderIfEmpty: true,
           defaultValue: getPartTimeDefaults,
+          marginTop: 2,
           fields: {
             company: {
               component: 'nationalIdWithName',

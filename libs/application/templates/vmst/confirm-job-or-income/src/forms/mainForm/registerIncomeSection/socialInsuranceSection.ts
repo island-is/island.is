@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomeTRPaymentDTO } from '@island.is/clients/vmst-unemployment'
@@ -71,11 +72,26 @@ export const socialInsuranceSection = buildSubSection({
       title: m.application.socialInsuranceHeading,
       description: m.application.socialInsuranceDescription,
       children: [
+        buildDescriptionField({
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.incomeTitle,
+              values: { month },
+            }
+          },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'socialInsuranceDescription',
+        }),
         buildTableRepeaterField({
           id: 'registerSocialInsurance',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getSocialInsuranceDefaults,
+          marginTop: 2,
           fields: {
             socialPaymentType: {
               component: 'select',

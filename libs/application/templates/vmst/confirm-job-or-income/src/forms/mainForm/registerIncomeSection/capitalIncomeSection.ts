@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildSubSection,
   getValueViaPath,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO } from '@island.is/clients/vmst-unemployment'
@@ -71,11 +72,26 @@ export const capitalIncomeSection = buildSubSection({
       title: m.application.capitalIncomeHeading,
       description: m.application.capitalIncomeDescription,
       children: [
+        buildDescriptionField({
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.incomeTitle,
+              values: { month },
+            }
+          },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'capitalIncomeDescription',
+        }),
         buildTableRepeaterField({
           id: 'registerCapitalIncome',
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getCapitalIncomeDefaults,
+          marginTop: 2,
           fields: {
             paymentType: {
               component: 'select',
