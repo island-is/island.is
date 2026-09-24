@@ -1,4 +1,4 @@
-import { WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
@@ -109,6 +109,107 @@ export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
   displayCases?: (cases: Case[]) => Case[]
+}
+
+/**
+ * What a user may reach at all, as opposed to which of those cases belong in a
+ * given list.
+ *
+ * Access options name the associations they read - `$appealCase.appeal_state$`
+ * and the like - so they carry the includes those references need. Sequelize
+ * emits an alias reference whether or not the query joined it, and Postgres
+ * then rejects the whole query, so an access rule that cannot ask for its own
+ * join is an assumption every caller has to remember.
+ */
+export type CaseAccessOptions = {
+  includes?: CaseIncludes
+  where: WhereOptions
+}
+
+// An access include is a bare request for a join. Where a list joins the same
+// association itself, the list's version wins outright - it is the narrower
+// one, and its attributes and filters are what the columns need.
+export const withAccessIncludes = (
+  accessIncludes?: CaseIncludes,
+  tableIncludes?: CaseIncludes,
+): CaseIncludes | undefined => {
+  if (!accessIncludes) {
+    return tableIncludes
+  }
+
+  const merged: CaseIncludes = { ...tableIncludes }
+
+  for (const key of Object.keys(accessIncludes) as Array<keyof CaseIncludes>) {
+    copyAccessInclude(merged, accessIncludes, key)
+  }
+
+  return merged
+}
+
+// Copied rather than shared. Access options are often module level constants,
+// and the include machinery merges attributes into whatever object it is
+// handed - sharing one would let a list's columns leak into every other query
+// built from the same rule.
+const copyAccessInclude = <K extends keyof CaseIncludes>(
+  target: CaseIncludes,
+  source: CaseIncludes,
+  key: K,
+) => {
+  if (target[key]) {
+    return
+  }
+
+  const value = source[key]
+
+  if (!value) {
+    return
+  }
+
+  target[key] = { ...value, attributes: [...value.attributes] }
+}
+
+/**
+ * Combines access rules with OR - a user who satisfies any of them may reach
+ * the case. The joins every branch needs are requested together, because a
+ * branch that is not satisfied still has to be evaluable.
+ */
+export const orAccess = (
+  ...options: CaseAccessOptions[]
+): CaseAccessOptions => {
+  let includes: CaseIncludes | undefined
+
+  for (const option of options) {
+    includes = withAccessIncludes(option.includes, includes)
+  }
+
+  return {
+    ...(includes ? { includes } : {}),
+    where: { [Op.or]: options.map((option) => option.where) },
+  }
+}
+
+/**
+ * Builds a list's where options from the access rule it sits on plus whatever
+ * the list itself requires. Going through here is what keeps a list from
+ * having to know which associations the access rule reads.
+ */
+export const withAccess = (
+  access: CaseAccessOptions,
+  options: {
+    includes?: CaseIncludes
+    where?: WhereOptions
+    displayCases?: (cases: Case[]) => Case[]
+  } = {},
+): CaseWhereOptions => {
+  const includes = withAccessIncludes(access.includes, options.includes)
+
+  return {
+    ...(includes ? { includes } : {}),
+    where: options.where
+      ? { [Op.and]: [access.where, options.where] }
+      : access.where,
+    ...(options.displayCases ? { displayCases: options.displayCases } : {}),
+  }
 }
 
 export const expandCasesWithDefendants = (cs: Case[]) =>

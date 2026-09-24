@@ -11,6 +11,7 @@ import {
 
 import * as repository from '../repository'
 import { courtOfAppealsCasesAccessWhereOptions } from './whereOptions/access'
+import { getAccessIncludes } from './caseTable.utils'
 import { getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
@@ -30,6 +31,13 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     id: 'judge_id',
     role: UserRole.DISTRICT_COURT_JUDGE,
     institution: { id: 'court_id', type: InstitutionType.DISTRICT_COURT },
+  } as User
+
+  // The access rule now carries the joins it reads, so building it needs a user.
+  const courtOfAppealsUserForAccess = {
+    id: 'coa_user_id',
+    role: UserRole.COURT_OF_APPEALS_JUDGE,
+    institution: { id: 'coa_id', type: InstitutionType.COURT_OF_APPEALS },
   } as User
 
   const defenceUser = {
@@ -71,7 +79,10 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     user: User,
   ): Promise<string> => {
     const whereOptions = caseTableWhereOptions[tableType](user)
-    const [include, order] = getGlobalIncludes(whereOptions.includes ?? {})
+    const [include, order] = getGlobalIncludes(
+      whereOptions.includes ?? {},
+      user,
+    )
 
     const sequelize = repository.Case.sequelize as Sequelize
     const queries: string[] = []
@@ -123,10 +134,8 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     try {
       await repository.Case.findAll({
         attributes: ['id'],
-        include: [
-          { association: 'appealCase', attributes: [], required: false },
-        ],
-        where: courtOfAppealsCasesAccessWhereOptions(),
+        include: getAccessIncludes(courtOfAppealsUserForAccess, []),
+        where: courtOfAppealsCasesAccessWhereOptions().where,
       })
     } catch {
       // Building the query is the subject here, not running it.
@@ -211,7 +220,24 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
       const sql = await sqlForTable(tableType, courtOfAppealsUser)
 
       expect(sql).toMatch(/appeal_type.{0,20}'RULING'/)
-      expect(sql).not.toMatch(/"verdictAppealCase"/)
+
+      // The alias is present: the access rule reads it, and asks for the join
+      // itself. What must not happen is the list selecting on it. So the join
+      // stays outer - an inner one would narrow the list to verdict appeals -
+      // and in the predicate the only column read is the id the access rule
+      // tests for null. The join's own ON clause is excluded, since matching
+      // the association scope is what a join is.
+      expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "verdictAppealCase"/)
+
+      const predicate = sql.slice(sql.indexOf(' WHERE '))
+
+      expect([
+        ...new Set(
+          [...predicate.matchAll(/"verdictAppealCase"\."(\w+)"/g)].map(
+            (m) => m[1],
+          ),
+        ),
+      ]).toEqual(['id'])
     })
 
     // The selection is driven by the verdict appeal: an inner join on the
@@ -263,7 +289,9 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
         .filter((arm) => arm.includes('INDICTMENT'))
 
       for (const arm of indictmentArms) {
-        expect(arm).toMatch(/appeal/)
+        // Case insensitive: the verdict arm now requires the appeal through the
+        // `verdictAppealCase` alias rather than a lower case column name.
+        expect(arm).toMatch(/appeal/i)
       }
     })
   })

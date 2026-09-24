@@ -14,7 +14,7 @@ export const prisonAdminRequestCasesActiveWhereOptions =
   (): CaseWhereOptions => ({
     where: {
       [Op.and]: [
-        prisonAdminRequestCasesAccessWhereOptions,
+        prisonAdminRequestCasesAccessWhereOptions.where,
         { valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] } },
       ],
     },
@@ -24,7 +24,7 @@ export const prisonAdminRequestCasesDoneWhereOptions =
   (): CaseWhereOptions => ({
     where: {
       [Op.and]: [
-        prisonAdminRequestCasesAccessWhereOptions,
+        prisonAdminRequestCasesAccessWhereOptions.where,
         { valid_to_date: { [Op.lt]: fn('NOW') } },
       ],
     },
@@ -45,7 +45,7 @@ export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions =
         },
       },
     },
-    where: prisonAdminIndictmentsAccessWhereOptions,
+    where: prisonAdminIndictmentsAccessWhereOptions.where,
     displayCases: expandCasesWithDefendants,
   })
 
@@ -62,6 +62,6 @@ export const prisonAdminIndictmentsRegisteredRulingWhereOptions =
         },
       },
     },
-    where: prisonAdminIndictmentsAccessWhereOptions,
+    where: prisonAdminIndictmentsAccessWhereOptions.where,
     displayCases: expandCasesWithDefendants,
   })

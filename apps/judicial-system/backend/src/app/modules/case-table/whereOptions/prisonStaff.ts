@@ -9,7 +9,7 @@ export const prisonStaffRequestCasesActiveWhereOptions =
   (): CaseWhereOptions => ({
     where: {
       [Op.and]: [
-        prisonStaffRequestCasesAccessWhereOptions,
+        prisonStaffRequestCasesAccessWhereOptions.where,
         { valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] } },
       ],
     },
@@ -19,7 +19,7 @@ export const prisonStaffRequestCasesDoneWhereOptions =
   (): CaseWhereOptions => ({
     where: {
       [Op.and]: [
-        prisonStaffRequestCasesAccessWhereOptions,
+        prisonStaffRequestCasesAccessWhereOptions.where,
         { valid_to_date: { [Op.lt]: fn('NOW') } },
       ],
     },

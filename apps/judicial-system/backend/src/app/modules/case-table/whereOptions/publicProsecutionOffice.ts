@@ -33,7 +33,7 @@ export const publicProsecutionOfficeIndictmentsNewWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: null },
       ],
     },
@@ -54,7 +54,7 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
@@ -124,7 +124,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
@@ -196,7 +196,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         {
           indictment_reviewer_id: { [Op.not]: null },
           indictment_ruling_decision: [
@@ -223,7 +223,7 @@ export const publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
@@ -264,7 +264,7 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
@@ -299,7 +299,7 @@ export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
@@ -315,7 +315,7 @@ export const publicProsecutionOfficeIndictmentsClosedWithoutEnforcementWhereOpti
         where: { is_closed_without_enforcement: true },
       },
     },
-    where: publicProsecutionOfficeIndictmentsAccessWhereOptions,
+    where: publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
     displayCases: expandCasesWithDefendants,
   })
 
@@ -346,7 +346,7 @@ export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
     },
     where: {
       [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        publicProsecutionOfficeIndictmentsAccessWhereOptions.where,
         { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
