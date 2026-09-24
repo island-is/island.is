@@ -248,7 +248,10 @@ export class CaseTableService {
         ...getAccessIncludes(user, [
           'defendants',
           'appealCase',
-          'rulingOrderAppealCases',
+          // Only joined for court of appeals users, so only declared for them -
+          // claiming it unconditionally would make this query drop the join for
+          // everyone else the day a rule starts reading that alias.
+          ...(isCoaUser ? (['rulingOrderAppealCases'] as const) : []),
         ]),
       ],
       where: {

@@ -21,6 +21,7 @@ import {
 } from './caseTable.utils'
 import {
   caseTableWhereOptions,
+  userAccessIncludes,
   userAccessWhereOptions,
 } from './caseTable.whereOptions'
 
@@ -138,14 +139,21 @@ describe('access rules carry the joins they read', () => {
     return (queries[0] ?? '').replace(/\s+/g, ' ')
   }
 
-  // Aliases the SQL reads, other than the case itself.
+  // Aliases the SQL reads, other than the case itself. Digits included -
+  // `appealJudge1` is a real alias, and letters alone would not see it, which
+  // is the wrong way for the broad net to fail. Nested aliases render as
+  // "appealCase->appealEventLogs" and are deliberately out of scope.
   const aliasesRead = (sql: string) =>
     [
-      ...new Set([...sql.matchAll(/"([A-Za-z]+)"\."/g)].map((m) => m[1])),
+      ...new Set(
+        [...sql.matchAll(/"([A-Za-z][A-Za-z0-9]*)"\."/g)].map((m) => m[1]),
+      ),
     ].filter((alias) => alias !== 'Case')
 
   const aliasesJoined = (sql: string) => [
-    ...new Set([...sql.matchAll(/AS "([A-Za-z]+)"/g)].map((m) => m[1])),
+    ...new Set(
+      [...sql.matchAll(/AS "([A-Za-z][A-Za-z0-9]*)"/g)].map((m) => m[1]),
+    ),
   ]
 
   describe.each(Object.entries(users))('%s', (_name, user) => {
@@ -166,11 +174,17 @@ describe('access rules carry the joins they read', () => {
         }),
       )
 
-      expect(aliasesRead(bare).sort()).toEqual(
-        expect.arrayContaining([] as string[]),
-      )
       for (const alias of aliasesRead(bare)) {
         expect(aliasesJoined(requested)).toContain(alias)
+      }
+
+      // Most roles read no alias at all, so the loop above is empty for them
+      // and proves nothing. A rule that asks for joins must read at least one
+      // alias, or it is asking for nothing - and keying that off the rule
+      // itself rather than the label keeps the guard from silently lapsing if
+      // the label is ever renamed.
+      if (userAccessIncludes(user)) {
+        expect(aliasesRead(bare)).not.toEqual([])
       }
     })
 

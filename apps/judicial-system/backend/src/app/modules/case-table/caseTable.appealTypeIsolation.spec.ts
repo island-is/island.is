@@ -1,3 +1,4 @@
+import type { ModelCtor } from 'sequelize-typescript'
 import { Model, Sequelize } from 'sequelize-typescript'
 
 import { getOptions } from '@island.is/nest/sequelize'
@@ -11,8 +12,7 @@ import {
 
 import * as repository from '../repository'
 import { courtOfAppealsCasesAccessWhereOptions } from './whereOptions/access'
-import { getAccessIncludes } from './caseTable.utils'
-import { getGlobalIncludes } from './caseTable.utils'
+import { getAccessIncludes, getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
 /**
@@ -59,7 +59,7 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     const models = Object.values(repository).filter(
       (exported) =>
         typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as typeof Model[]
+    ) as ModelCtor[]
 
     // The same define options the app runs with - `underscored` decides whether
     // the association scope names appeal_type or appealType, so a probe without
@@ -231,6 +231,7 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
 
       const predicate = sql.slice(sql.indexOf(' WHERE '))
 
+      expect(predicate).toContain('"verdictAppealCase"."id" IS NOT NULL')
       expect([
         ...new Set(
           [...predicate.matchAll(/"verdictAppealCase"\."(\w+)"/g)].map(

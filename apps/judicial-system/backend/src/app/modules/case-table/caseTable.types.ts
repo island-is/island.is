@@ -120,6 +120,14 @@ export type CaseWhereOptions = {
  * emits an alias reference whether or not the query joined it, and Postgres
  * then rejects the whole query, so an access rule that cannot ask for its own
  * join is an assumption every caller has to remember.
+ *
+ * One invariant a rule must keep: a predicate on a joined alias has to be a
+ * positive test - `IN`, `IS NOT NULL` and the like. A list may join the same
+ * association with a filter of its own, and the rule is then evaluated against
+ * that narrowed row, so a positive test can only ever admit fewer cases. A
+ * negative test - `IS NULL`, `Op.not`, `Op.notIn` - would instead be satisfied
+ * by the very rows the list filtered away, and the list's filter would start
+ * widening access rather than narrowing it.
  */
 export type CaseAccessOptions = {
   includes?: CaseIncludes
@@ -129,7 +137,7 @@ export type CaseAccessOptions = {
 // An access include is a bare request for a join. Where a list joins the same
 // association itself, the list's version wins outright - it is the narrower
 // one, and its attributes and filters are what the columns need.
-export const withAccessIncludes = (
+export const mergeAccessIncludes = (
   accessIncludes?: CaseIncludes,
   tableIncludes?: CaseIncludes,
 ): CaseIncludes | undefined => {
@@ -150,6 +158,10 @@ export const withAccessIncludes = (
 // and the include machinery merges attributes into whatever object it is
 // handed - sharing one would let a list's columns leak into every other query
 // built from the same rule.
+//
+// Shallow in `where` and in nested `includes`, which is enough because an
+// access include carries neither. One that grew nested includes would be spliced
+// into by setInclude's nested merge and would need a deeper copy.
 const copyAccessInclude = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
@@ -176,39 +188,18 @@ const copyAccessInclude = <K extends keyof CaseIncludes>(
 export const orAccess = (
   ...options: CaseAccessOptions[]
 ): CaseAccessOptions => {
+  // First wins: the accumulator is passed as the winning side. Moot while the
+  // only rules with includes hand over the same object, but two arms that
+  // disagreed about an alias would silently keep the first arm's version.
   let includes: CaseIncludes | undefined
 
   for (const option of options) {
-    includes = withAccessIncludes(option.includes, includes)
+    includes = mergeAccessIncludes(option.includes, includes)
   }
 
   return {
     ...(includes ? { includes } : {}),
     where: { [Op.or]: options.map((option) => option.where) },
-  }
-}
-
-/**
- * Builds a list's where options from the access rule it sits on plus whatever
- * the list itself requires. Going through here is what keeps a list from
- * having to know which associations the access rule reads.
- */
-export const withAccess = (
-  access: CaseAccessOptions,
-  options: {
-    includes?: CaseIncludes
-    where?: WhereOptions
-    displayCases?: (cases: Case[]) => Case[]
-  } = {},
-): CaseWhereOptions => {
-  const includes = withAccessIncludes(access.includes, options.includes)
-
-  return {
-    ...(includes ? { includes } : {}),
-    where: options.where
-      ? { [Op.and]: [access.where, options.where] }
-      : access.where,
-    ...(options.displayCases ? { displayCases: options.displayCases } : {}),
   }
 }
 

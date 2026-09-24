@@ -20,9 +20,9 @@ import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
   CaseIncludes,
+  mergeAccessIncludes,
   modelMap,
   subModelMap,
-  withAccessIncludes,
 } from './caseTable.types'
 import { userAccessIncludes } from './caseTable.whereOptions'
 
@@ -236,7 +236,7 @@ const getIncludeAndOrder = (
 // to request those joins itself could forget, and the rule would then compile
 // into SQL that Postgres rejects outright.
 const addAccessIncludes = (allIncludes: CaseIncludes, user: User) =>
-  withAccessIncludes(userAccessIncludes(user), allIncludes) ?? allIncludes
+  mergeAccessIncludes(userAccessIncludes(user), allIncludes) ?? allIncludes
 
 /**
  * The joins a user's access rule needs, for a query that assembles its own
@@ -249,12 +249,16 @@ const addAccessIncludes = (allIncludes: CaseIncludes, user: User) =>
  */
 export const getAccessIncludes = (
   user: User,
-  joinedAliases: string[],
+  joinedAliases: Array<keyof CaseIncludes>,
 ): Includeable[] => {
-  const accessIncludes = withAccessIncludes(userAccessIncludes(user), {}) ?? {}
+  const accessIncludes = mergeAccessIncludes(userAccessIncludes(user), {}) ?? {}
 
+  // Typed rather than loose strings: an alias that does not match deletes
+  // nothing, and the query then carries the same `as` twice, which Postgres
+  // rejects with `table name specified more than once` - the same runtime only
+  // failure this whole change exists to remove.
   for (const alias of joinedAliases) {
-    delete accessIncludes[alias as keyof CaseIncludes]
+    delete accessIncludes[alias]
   }
 
   const [include] = getIncludeAndOrder(accessIncludes)
