@@ -270,6 +270,18 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationWorkspacePanelClose',
     defaultMessage: 'Loka þýðingaborði',
   },
+  roleFormAccordionLabelApplicant: {
+    id: 'admin-portal.application-system:roleFormAccordionLabelApplicant',
+    defaultMessage: 'Eyðublað umsækjanda',
+  },
+  roleFormAccordionLabelDelegate: {
+    id: 'admin-portal.application-system:roleFormAccordionLabelDelegate',
+    defaultMessage: 'Eyðublað umboðsmanns',
+  },
+  roleFormAccordionLabelGeneric: {
+    id: 'admin-portal.application-system:roleFormAccordionLabelGeneric',
+    defaultMessage: 'Eyðublað ({role})',
+  },
   translationSaveFailed: {
     id: 'admin-portal.application-system:translationSaveFailed',
     defaultMessage: 'Ekki tókst að vista. {detail}',
@@ -297,6 +309,71 @@ export const m = defineMessages({
   translationStringsAllApplicationHeading: {
     id: 'admin-portal.application-system:translationStringsAllApplicationHeading',
     defaultMessage: 'Allur texti í umsókn',
+  },
+  translationReferenceLabelDefault: {
+    id: 'admin-portal.application-system:translationReferenceLabelDefault',
+    defaultMessage: 'Sjálfgefið',
+  },
+  translationReferenceLabelIcelandic: {
+    id: 'admin-portal.application-system:translationReferenceLabelIcelandic',
+    defaultMessage: 'Íslenska',
+  },
+  translationStringsEmptyScreen: {
+    id: 'admin-portal.application-system:translationStringsEmptyScreen',
+    defaultMessage: 'Engir þýðanlegir textar fundust fyrir þennan skjá.',
+  },
+  translationStringsEmptyApplication: {
+    id: 'admin-portal.application-system:translationStringsEmptyApplication',
+    defaultMessage: 'Engir þýðanlegir textar fundust fyrir þetta umsóknarform.',
+  },
+  translationValidationErrorTag: {
+    id: 'admin-portal.application-system:translationValidationErrorTag',
+    defaultMessage: 'Villa',
+  },
+  translationValidationFieldSubtitle: {
+    id: 'admin-portal.application-system:translationValidationFieldSubtitle',
+    defaultMessage: 'Reitur: {field}',
+  },
+  translationValidationEmpty: {
+    id: 'admin-portal.application-system:translationValidationEmpty',
+    defaultMessage: 'Engar villumeldingar fundust fyrir þetta sniðmát.',
+  },
+  translationStringsScreenSelectHint: {
+    id: 'admin-portal.application-system:translationStringsScreenSelectHint',
+    defaultMessage:
+      'Veldu skjá í flipanum Stöður til að skoða texta hans, eða skoðaðu allan texta sniðmátsins með því að nota „{applicationScope}“.',
+  },
+  translationStringsApplicationEmptyHint: {
+    id: 'admin-portal.application-system:translationStringsApplicationEmptyHint',
+    defaultMessage: 'Engir þýðanlegir textar fundust fyrir þetta umsóknarform.',
+  },
+  translationStringsCount: {
+    id: 'admin-portal.application-system:translationStringsCount',
+    defaultMessage: '{count} strengir',
+  },
+  translationStringsListEmpty: {
+    id: 'admin-portal.application-system:translationStringsListEmpty',
+    defaultMessage: 'Engir þýðanlegir textar fundust.',
+  },
+  translationFieldPropertyTitle: {
+    id: 'admin-portal.application-system:translationFieldPropertyTitle',
+    defaultMessage: 'Titill',
+  },
+  translationFieldPropertyDescription: {
+    id: 'admin-portal.application-system:translationFieldPropertyDescription',
+    defaultMessage: 'Lýsing',
+  },
+  translationFieldPropertyLabel: {
+    id: 'admin-portal.application-system:translationFieldPropertyLabel',
+    defaultMessage: 'Merking',
+  },
+  translationFieldPropertyError: {
+    id: 'admin-portal.application-system:translationFieldPropertyError',
+    defaultMessage: 'Villuskilaboð',
+  },
+  translationFieldNoProperties: {
+    id: 'admin-portal.application-system:translationFieldNoProperties',
+    defaultMessage: 'Engir þýðanlegir eiginleikar fyrir þennan reit.',
   },
   translationReview: {
     id: 'admin-portal.application-system:translationReview',

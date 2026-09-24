@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, Text, AccordionItem, Accordion } from '@island.is/island-ui/core'
+import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
   MessageDescriptor,
@@ -63,6 +64,7 @@ export interface TranslationWorkspaceStatesNavProps {
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
   ownedNamespaces?: readonly string[]
+  formatMessage: FormatMessage
 }
 
 const roleAccordionId = (stateKey: string, roleId: string) =>
@@ -87,6 +89,7 @@ export const TranslationWorkspaceStatesNav = ({
   editedValues,
   activeLocale,
   ownedNamespaces = [],
+  formatMessage,
 }: TranslationWorkspaceStatesNavProps) => {
   const [expandedIds, setExpandedIds] = useState(
     () => new Set(selectedAccordionIds(selectedLocation)),
@@ -262,7 +265,10 @@ export const TranslationWorkspaceStatesNav = ({
                             }
                             label={
                               <TranslationCountLabel
-                                label={getRoleFormAccordionLabel(role.roleId)}
+                                label={getRoleFormAccordionLabel(
+                                  role.roleId,
+                                  formatMessage,
+                                )}
                                 count={roleCount}
                                 variant="small"
                               />

@@ -1,4 +1,6 @@
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
+import type { FormatMessage } from '@island.is/localization'
+import { m } from '../lib/messages'
 import type {
   EditedTranslations,
   MessageDescriptor,
@@ -261,16 +263,21 @@ export const countTranslationsForScreens = (
 }
 
 /** Sidebar label for a template role's form (accordion). */
-export const getRoleFormAccordionLabel = (roleId: string): string => {
+export const getRoleFormAccordionLabel = (
+  roleId: string,
+  formatMessage: FormatMessage,
+): string => {
   switch (roleId.toLowerCase()) {
     case 'applicant':
-      return 'Applicant form'
+      return formatMessage(m.roleFormAccordionLabelApplicant)
     case 'delegate':
-      return 'Delegate form'
+      return formatMessage(m.roleFormAccordionLabelDelegate)
     default: {
       const rest = roleId.slice(1)
       const initial = roleId.charAt(0).toUpperCase()
-      return `${initial}${rest} form`
+      return formatMessage(m.roleFormAccordionLabelGeneric, {
+        role: `${initial}${rest}`,
+      })
     }
   }
 }

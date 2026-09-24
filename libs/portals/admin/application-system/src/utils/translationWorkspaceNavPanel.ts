@@ -1,4 +1,6 @@
 import { isOwnedTranslationMessageId } from '@island.is/application/utils'
+import type { FormatMessage } from '@island.is/localization'
+import { m } from '../lib/messages'
 import type {
   MessageDescriptor,
   ScreenIntrospection,
@@ -127,6 +129,7 @@ export interface FieldProperty {
 export const getFieldProperties = (
   field: ScreenIntrospection,
   validationDescriptorsByPath: Record<string, ValidationMessageDescriptor[]>,
+  formatMessage: FormatMessage,
   ownedNamespaces: readonly string[] = [],
 ): FieldProperty[] => {
   const props: FieldProperty[] = []
@@ -141,7 +144,11 @@ export const getFieldProperties = (
     ? descriptors.find((d) => d.defaultMessage === field.title) ?? null
     : null
   if (titleDescriptor) {
-    props.push({ role: 'title', label: 'Title', descriptor: titleDescriptor })
+    props.push({
+      role: 'title',
+      label: formatMessage(m.translationFieldPropertyTitle),
+      descriptor: titleDescriptor,
+    })
   }
 
   const descDescriptor = field.description
@@ -150,7 +157,7 @@ export const getFieldProperties = (
   if (descDescriptor) {
     props.push({
       role: 'description',
-      label: 'Description',
+      label: formatMessage(m.translationFieldPropertyDescription),
       descriptor: descDescriptor,
     })
   }
@@ -160,7 +167,11 @@ export const getFieldProperties = (
   )
   const remaining = descriptors.filter((d) => !usedIds.has(d.id))
   for (const d of remaining) {
-    props.push({ role: 'label', label: 'Label', descriptor: d })
+    props.push({
+      role: 'label',
+      label: formatMessage(m.translationFieldPropertyLabel),
+      descriptor: d,
+    })
   }
 
   const errorDescs = validationDescriptorsByPath[field.id]
@@ -172,7 +183,11 @@ export const getFieldProperties = (
       ) {
         continue
       }
-      props.push({ role: 'error', label: 'Error message', descriptor: d })
+      props.push({
+        role: 'error',
+        label: formatMessage(m.translationFieldPropertyError),
+        descriptor: d,
+      })
     }
   }
 

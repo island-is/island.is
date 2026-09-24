@@ -250,6 +250,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
                 editedValues={editedValues}
                 activeLocale={activeLocale}
                 ownedNamespaces={ownedNamespaces}
+                formatMessage={formatMessage}
               />
             </Box>
           </Box>

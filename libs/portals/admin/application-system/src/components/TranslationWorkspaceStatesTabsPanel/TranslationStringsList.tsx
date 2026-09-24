@@ -53,7 +53,10 @@ export const TranslationStringsList = ({
     return descriptor.defaultMessage || null
   }
 
-  const referenceLabel = activeLocale === 'en' ? 'Icelandic' : 'Default'
+  const referenceLabel =
+    activeLocale === 'en'
+      ? formatMessage(m.translationReferenceLabelIcelandic)
+      : formatMessage(m.translationReferenceLabelDefault)
 
   const getSourceText = (descriptor: MessageDescriptor) => {
     return (
@@ -99,7 +102,9 @@ export const TranslationStringsList = ({
         </Box>
         <Box display="flex" alignItems="center" columnGap={2}>
           <Text variant="small" color="dark300">
-            {descriptors.length} strings
+            {formatMessage(m.translationStringsCount, {
+              count: descriptors.length,
+            })}
           </Text>
           {showTranslateButtons && (
             <Button
@@ -151,7 +156,7 @@ export const TranslationStringsList = ({
         {descriptors.length === 0 && (
           <Box marginTop={3}>
             <Text color="dark300">
-              {emptyMessage ?? 'No translatable strings found.'}
+              {emptyMessage ?? formatMessage(m.translationStringsListEmpty)}
             </Text>
           </Box>
         )}

@@ -73,7 +73,10 @@ export const TabsPanelFieldsTab = ({
     return descriptor.defaultMessage || null
   }
 
-  const referenceLabel = activeLocale === 'en' ? 'Icelandic' : 'Default'
+  const referenceLabel =
+    activeLocale === 'en'
+      ? formatMessage(m.translationReferenceLabelIcelandic)
+      : formatMessage(m.translationReferenceLabelDefault)
   const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
 
   const getSourceText = (descriptor: {
@@ -96,10 +99,11 @@ export const TabsPanelFieldsTab = ({
         ? getFieldProperties(
             currentField,
             validationDescriptorsByPath,
+            formatMessage,
             ownedNamespaces,
           )
         : [],
-    [currentField, validationDescriptorsByPath, ownedNamespaces],
+    [currentField, validationDescriptorsByPath, formatMessage, ownedNamespaces],
   )
 
   const translatablePropertyIds = currentFieldProperties
@@ -231,7 +235,7 @@ export const TabsPanelFieldsTab = ({
               {currentFieldProperties.length === 0 && (
                 <Box marginTop={2}>
                   <Text color="dark300" variant="small">
-                    No translatable properties for this field.
+                    {formatMessage(m.translationFieldNoProperties)}
                   </Text>
                 </Box>
               )}

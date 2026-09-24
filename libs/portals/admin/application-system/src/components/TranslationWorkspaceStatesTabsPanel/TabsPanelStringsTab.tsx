@@ -86,7 +86,10 @@ export const TabsPanelStringsTab = ({
     return descriptor.defaultMessage || null
   }
 
-  const referenceLabel = activeLocale === 'en' ? 'Icelandic' : 'Default'
+  const referenceLabel =
+    activeLocale === 'en'
+      ? formatMessage(m.translationReferenceLabelIcelandic)
+      : formatMessage(m.translationReferenceLabelDefault)
 
   const getSourceText = (descriptor: MessageDescriptor) => {
     return (
@@ -139,8 +142,8 @@ export const TabsPanelStringsTab = ({
               translatingIds={translatingIds}
               emptyMessage={
                 stringsListScope === 'application'
-                  ? 'No translatable strings found for this application template.'
-                  : 'No translatable strings found for this screen.'
+                  ? formatMessage(m.translationStringsEmptyApplication)
+                  : formatMessage(m.translationStringsEmptyScreen)
               }
             />
 
@@ -171,9 +174,16 @@ export const TabsPanelStringsTab = ({
                         onValueChange(descriptor.id, value)
                       }
                       tags={[
-                        { label: 'Error', variant: 'rose', outlined: true },
+                        {
+                          label: formatMessage(m.translationValidationErrorTag),
+                          variant: 'rose',
+                          outlined: true,
+                        },
                       ]}
-                      subtitle={`Field: ${descriptor.fieldPath}`}
+                      subtitle={formatMessage(
+                        m.translationValidationFieldSubtitle,
+                        { field: descriptor.fieldPath },
+                      )}
                       referenceLabel={referenceLabel}
                       referenceValue={getReferenceForDescriptor(descriptor)}
                       onGoogleTranslate={
@@ -191,7 +201,7 @@ export const TabsPanelStringsTab = ({
             {showValidationErrors && validationDescriptors.length === 0 && (
               <Box marginTop={3}>
                 <Text color="dark300">
-                  No validation error messages found for this template.
+                  {formatMessage(m.translationValidationEmpty)}
                 </Text>
               </Box>
             )}
@@ -201,9 +211,11 @@ export const TabsPanelStringsTab = ({
         {stringsListScope === 'screen' && !selectedScreen && (
           <Box marginTop={3}>
             <Text color="dark300">
-              Select a screen from the States tab to view its strings, or view
-              every string in the template using{' '}
-              {formatMessage(m.translationStringsScopeApplication)}.
+              {formatMessage(m.translationStringsScreenSelectHint, {
+                applicationScope: formatMessage(
+                  m.translationStringsScopeApplication,
+                ),
+              })}
             </Text>
           </Box>
         )}
@@ -211,8 +223,7 @@ export const TabsPanelStringsTab = ({
         {stringsListScope === 'application' && applicationStringCount === 0 && (
           <Box marginTop={3}>
             <Text color="dark300">
-              No translatable strings were reported for this application
-              template.
+              {formatMessage(m.translationStringsApplicationEmptyHint)}
             </Text>
           </Box>
         )}
