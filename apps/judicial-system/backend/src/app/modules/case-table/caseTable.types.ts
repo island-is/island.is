@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { WhereOptions } from 'sequelize'
 
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
@@ -121,6 +121,13 @@ export type CaseWhereOptions = {
  * then rejects the whole query, so an access rule that cannot ask for its own
  * join is an assumption every caller has to remember.
  *
+ * Only the combined rules - the `*CasesAccessWhereOptions` a list or a search
+ * actually calls - carry includes. The narrower rules they are built from stay
+ * plain where clauses, because nothing outside the access module calls one.
+ * Point a list at one of those directly and the joins would not follow it; the
+ * spec that checks every case table query joins every alias it names is what
+ * catches that, rather than the type.
+ *
  * One invariant a rule must keep: a predicate on a joined alias has to be a
  * positive test - `IN`, `IS NOT NULL` and the like. A list may join the same
  * association with a filter of its own, and the rule is then evaluated against
@@ -178,29 +185,6 @@ const copyAccessInclude = <K extends keyof CaseIncludes>(
   }
 
   target[key] = { ...value, attributes: [...value.attributes] }
-}
-
-/**
- * Combines access rules with OR - a user who satisfies any of them may reach
- * the case. The joins every branch needs are requested together, because a
- * branch that is not satisfied still has to be evaluable.
- */
-export const orAccess = (
-  ...options: CaseAccessOptions[]
-): CaseAccessOptions => {
-  // First wins: the accumulator is passed as the winning side. Moot while the
-  // only rules with includes hand over the same object, but two arms that
-  // disagreed about an alias would silently keep the first arm's version.
-  let includes: CaseIncludes | undefined
-
-  for (const option of options) {
-    includes = mergeAccessIncludes(option.includes, includes)
-  }
-
-  return {
-    ...(includes ? { includes } : {}),
-    where: { [Op.or]: options.map((option) => option.where) },
-  }
 }
 
 export const expandCasesWithDefendants = (cs: Case[]) =>

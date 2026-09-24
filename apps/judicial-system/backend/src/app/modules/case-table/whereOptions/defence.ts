@@ -20,7 +20,7 @@ export const defenceRequestCasesInProgressWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
   where: {
-    ...defenceRequestCasesAccessWhereOptions(user).where,
+    ...defenceRequestCasesAccessWhereOptions(user),
     state: [CaseState.SUBMITTED, CaseState.RECEIVED],
   },
 })
@@ -37,7 +37,7 @@ export const defenceRequestCasesAppealedWhereOptions = (
       },
     },
   },
-  where: defenceRequestCasesAccessWhereOptions(user).where,
+  where: defenceRequestCasesAccessWhereOptions(user),
 })
 
 export const defenceRequestCasesCompletedWhereOptions = (
@@ -50,7 +50,7 @@ export const defenceRequestCasesCompletedWhereOptions = (
     },
   },
   where: {
-    ...defenceRequestCasesAccessWhereOptions(user).where,
+    ...defenceRequestCasesAccessWhereOptions(user),
     state: completedRequestCaseStates,
     '$appealCase.appeal_state$': {
       [Op.or]: [
@@ -69,7 +69,7 @@ export const defenceIndictmentsInProgressWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
   where: {
-    ...defenceIndictmentsAccessWhereOptions(user).where,
+    ...defenceIndictmentsAccessWhereOptions(user),
     state: CaseState.RECEIVED,
   },
 })
@@ -95,7 +95,7 @@ export const defenceIndictmentsAppealedWhereOptions = (
   },
   where: {
     [Op.and]: [
-      defenceIndictmentsAccessWhereOptions(user).where,
+      defenceIndictmentsAccessWhereOptions(user),
       {
         [Op.or]: [
           {
@@ -120,7 +120,7 @@ export const defenceIndictmentsCompletedWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
   where: {
-    ...defenceIndictmentsAccessWhereOptions(user).where,
+    ...defenceIndictmentsAccessWhereOptions(user),
     state: [
       CaseState.WAITING_FOR_CANCELLATION,
       ...completedIndictmentCaseStates,

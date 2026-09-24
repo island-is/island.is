@@ -28,7 +28,7 @@ export const districtCourtRequestCasesInProgressWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      districtCourtRequestCasesAccessWhereOptions(user).where,
+      districtCourtRequestCasesAccessWhereOptions(user),
       {
         [Op.or]: [
           { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
@@ -55,13 +55,13 @@ export const districtCourtRequestCasesAppealedWhereOptions = (
       },
     },
   },
-  where: districtCourtRequestCasesAccessWhereOptions(user).where,
+  where: districtCourtRequestCasesAccessWhereOptions(user),
 })
 
 export const districtCourtRequestCasesCompletedWhereOptions = (user: User) => ({
   where: {
     [Op.and]: [
-      districtCourtRequestCasesAccessWhereOptions(user).where,
+      districtCourtRequestCasesAccessWhereOptions(user),
       {
         state: completedRequestCaseStates,
         [Op.or]: [
@@ -80,7 +80,7 @@ export const districtCourtIndictmentsNewWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user).where,
+      districtCourtIndictmentsAccessWhereOptions(user),
       {
         state: [CaseState.SUBMITTED, CaseState.RECEIVED],
         judge_id: null,
@@ -94,7 +94,7 @@ export const districtCourtIndictmentsReceivedWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user).where,
+      districtCourtIndictmentsAccessWhereOptions(user),
       {
         state: CaseState.RECEIVED,
         judge_id: { [Op.not]: null },
@@ -112,7 +112,7 @@ export const districtCourtIndictmentsInProgressWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user).where,
+      districtCourtIndictmentsAccessWhereOptions(user),
       {
         [Op.or]: [
           {
@@ -150,7 +150,7 @@ export const districtCourtIndictmentsAppealedWhereOptions = (
   },
   where: {
     [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user).where,
+      districtCourtIndictmentsAccessWhereOptions(user),
       {
         [Op.or]: [
           { '$appealCase.appeal_state$': AppealCaseState.APPEALED },
@@ -168,7 +168,7 @@ export const districtCourtIndictmentsFinalizingWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user).where,
+      districtCourtIndictmentsAccessWhereOptions(user),
       {
         state: completedIndictmentCaseStates,
         indictment_ruling_decision: [
@@ -192,7 +192,7 @@ export const districtCourtIndictmentsCompletedWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      districtCourtIndictmentsAccessWhereOptions(user).where,
+      districtCourtIndictmentsAccessWhereOptions(user),
       {
         state: completedIndictmentCaseStates,
         [Op.not]: {

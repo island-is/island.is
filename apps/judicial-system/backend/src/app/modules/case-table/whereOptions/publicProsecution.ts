@@ -27,7 +27,7 @@ export const publicProsecutionIndictmentsInReviewWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      publicProsecutionIndictmentsAccessWhereOptions(user).where,
+      publicProsecutionIndictmentsAccessWhereOptions(user),
       isReviewedByUser(user),
       buildHasDefendantWithNullReviewDecisionCondition(true),
     ],
@@ -39,7 +39,7 @@ export const publicProsecutionIndictmentsReviewedWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      publicProsecutionIndictmentsAccessWhereOptions(user).where,
+      publicProsecutionIndictmentsAccessWhereOptions(user),
       isReviewedByUser(user),
       buildHasDefendantWithNullReviewDecisionCondition(false),
     ],
@@ -62,7 +62,7 @@ export const publicProsecutionIndictmentsAppealedWhereOptions = (
 ): CaseWhereOptions => ({
   where: {
     [Op.and]: [
-      publicProsecutionIndictmentsAccessWhereOptions(user).where,
+      publicProsecutionIndictmentsAccessWhereOptions(user),
       { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
       buildHasAppealedVerdictCondition(),
     ],
