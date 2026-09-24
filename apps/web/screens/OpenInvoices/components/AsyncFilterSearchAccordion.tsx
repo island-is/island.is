@@ -19,6 +19,7 @@ import {
   Input,
   LoadingDots,
   Tag,
+  Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { helperStyles } from '@island.is/island-ui/theme'
@@ -81,6 +82,7 @@ export const AsyncFilterSearchAccordion = ({
   const [endCursor, setEndCursor] = useState<string | null | undefined>()
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError] = useState(false)
 
   const scrollListRef = useRef<HTMLElement | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -99,6 +101,7 @@ export const AsyncFilterSearchAccordion = ({
     const generation = ++generationRef.current
     setLoading(true)
     setLoadingMore(false)
+    setError(false)
     fetchPage({ search })
       .then((page) => {
         if (generation !== generationRef.current) {
@@ -115,6 +118,7 @@ export const AsyncFilterSearchAccordion = ({
         setItems([])
         setHasNextPage(false)
         setEndCursor(undefined)
+        setError(true)
       })
       .finally(() => {
         if (generation !== generationRef.current) {
@@ -168,6 +172,8 @@ export const AsyncFilterSearchAccordion = ({
         if (generation !== generationRef.current) {
           return
         }
+        setHasNextPage(false)
+        setError(true)
       })
       .finally(() => {
         loadingMoreRef.current = false
@@ -251,6 +257,7 @@ export const AsyncFilterSearchAccordion = ({
           <Box marginBottom={2}>
             <Input
               name={`${id}-search`}
+              aria-label={title}
               placeholder={formatMessage(m.search.filterSearch)}
               size="xs"
               backgroundColor="blue"
@@ -322,11 +329,22 @@ export const AsyncFilterSearchAccordion = ({
                     <LoadingDots />
                   </Box>
                 )}
+                {error && (
+                  <Box paddingY={1}>
+                    <Text variant="small" color="red600">
+                      {formatMessage(m.overview.errorLoading)}
+                    </Text>
+                  </Box>
+                )}
               </>
             )}
           </Box>
           <Box aria-live="polite" className={helperStyles.srOnly}>
-            {loadingMore ? formatMessage(m.search.loadingMore) : ''}
+            {loadingMore
+              ? formatMessage(m.search.loadingMore)
+              : error
+              ? formatMessage(m.overview.errorLoading)
+              : ''}
           </Box>
         </AccordionItem>
       </Accordion>

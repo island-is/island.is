@@ -10,3 +10,5 @@ export const formatPaymentTypeGroupTooltip = (
 
   return `${list} (${name})`
 }
+
+export const MAX_LOOKUP_BATCH = 100

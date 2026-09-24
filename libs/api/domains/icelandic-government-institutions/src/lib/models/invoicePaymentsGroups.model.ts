@@ -6,8 +6,8 @@ import { InvoicePaymentsGroup } from './invoicePaymentsGroup.model'
 export class InvoicePaymentsGroupCollection extends PaginatedResponse(
   InvoicePaymentsGroup,
 ) {
-  @Field(() => Float)
-  totalPaymentsSum!: number
+  @Field(() => Float, { nullable: true })
+  totalPaymentsSum?: number | null
 
   @Field(() => Int)
   totalPaymentsCount!: number

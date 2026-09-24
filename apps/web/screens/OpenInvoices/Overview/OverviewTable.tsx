@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { ApolloError } from '@apollo/client'
 
 import {
   Box,
@@ -23,7 +22,7 @@ interface Props {
   ministries?: string[]
   invoiceGroups: Array<IcelandicGovernmentInstitutionsInvoicePaymentsGroup>
   loading?: boolean
-  error?: ApolloError
+  error?: boolean
   sorting: SortingState
   onSortingChange: OnChangeFn<SortingState>
 }

@@ -121,6 +121,7 @@ interface SerializedAppliedFilters
 const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   locale,
   initialInvoiceGroups,
+  initialError,
   initialAppliedFilters,
   customPageData,
   organization,
@@ -135,6 +136,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     getInvoiceGroups,
     {
       data: invoiceGroupsData,
+      previousData: previousInvoiceGroupsData,
       loading: invoiceGroupsLoading,
       error: invoiceGroupsError,
     },
@@ -176,16 +178,19 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateTo: new Date(initialAppliedFilters.dateTo),
   }))
 
-  const fetchedResult =
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+  const latestInvoiceGroupsData = invoiceGroupsData ?? previousInvoiceGroupsData
+  const hasInvoiceGroupsError =
+    !!invoiceGroupsError || (initialError && !latestInvoiceGroupsData)
+  const invoiceGroups = hasInvoiceGroupsError
+    ? undefined
+    : latestInvoiceGroupsData
+    ? latestInvoiceGroupsData.icelandicGovernmentInstitutionsInvoicePaymentsGroups
+    : initialInvoiceGroups
   const displayGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroup[] =
-    fetchedResult?.data ?? initialInvoiceGroups?.data ?? []
-  const totalCount =
-    fetchedResult?.totalCount ?? initialInvoiceGroups?.totalCount ?? 0
-  const totalPayments =
-    fetchedResult?.totalPaymentsCount ??
-    initialInvoiceGroups?.totalPaymentsCount ??
-    0
+    invoiceGroups?.data ?? []
+  const totalCount = invoiceGroups?.totalCount ?? 0
+  const totalPayments = invoiceGroups?.totalPaymentsCount ?? 0
+  const totalPaymentsSum = invoiceGroups?.totalPaymentsSum
 
   const [dateRangeEnd, setDateRangeEnd] = useQueryState(
     'dateRangeEnd',
@@ -353,10 +358,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   const hitsMessage = useMemo(() => {
-    const totalPaymentsSum =
-      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
-        ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
-
     if (totalPayments === 1) {
       return totalPaymentsSum != null
         ? formatMessage(m.search.resultFound, {
@@ -375,23 +376,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           records: totalPayments,
           recordsFormatted: formatNumber(totalPayments),
         })
-  }, [
-    formatMessage,
-    formatNumber,
-    initialInvoiceGroups?.totalPaymentsSum,
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
-      ?.totalPaymentsSum,
-    totalPayments,
-  ])
+  }, [formatMessage, formatNumber, totalPaymentsSum, totalPayments])
 
   // Mobile shows the same information as `hitsMessage` split across two
   // short lines instead of one long sentence (matches the Grants Plaza
   // pattern) — the full sentence doesn't fit comfortably on small screens.
   const hitsSummary = useMemo(() => {
-    const totalPaymentsSum =
-      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
-        ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
-
     return {
       recordsLine: formatMessage(m.search.recordsFoundShort, {
         records: totalPayments,
@@ -404,14 +394,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             })
           : undefined,
     }
-  }, [
-    formatMessage,
-    formatNumber,
-    initialInvoiceGroups?.totalPaymentsSum,
-    invoiceGroupsData?.icelandicGovernmentInstitutionsInvoicePaymentsGroups
-      ?.totalPaymentsSum,
-    totalPayments,
-  ])
+  }, [formatMessage, formatNumber, totalPaymentsSum, totalPayments])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
     const filteredValues = values?.length ? [...values] : null
@@ -516,7 +499,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           paymentTypeIds={appliedFilters.paymentTypeIds}
           ministries={appliedFilters.ministries}
           loading={invoiceGroupsLoading}
-          error={invoiceGroupsError}
+          error={hasInvoiceGroupsError}
           sorting={sorting}
           onSortingChange={onSortingChange}
         />
@@ -655,6 +638,7 @@ interface OpenInvoicesOverviewProps {
   organization?: Organization
   locale: Locale
   initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoicePaymentsGroups
+  initialError: boolean
   initialAppliedFilters: SerializedAppliedFilters
   today: string
 }
@@ -698,10 +682,10 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     filterArray<string>(arrayParser.parseServerSide(query?.[resource])),
   )
 
-  const debtorsInput = debtorsFilter?.filter(isDefined) || undefined
-  const suppliersInput = suppliersFilter?.filter(isDefined) || undefined
+  const debtorsInput = debtorsFilter?.filter(isDefined)
+  const suppliersInput = suppliersFilter?.filter(isDefined)
   const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
-  const ministriesInput = ministriesFilter?.filter(isDefined) || undefined
+  const ministriesInput = ministriesFilter?.filter(isDefined)
 
   /*
     Rebuilds the current URL with `omit` dropped and `overrides` applied, so a
@@ -739,11 +723,14 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextRedirect(buildUrl(['ministries']))
   }
 
-  const requestedDateTo =
-    parseAsIsoDateTime.parseServerSide(query?.['dateRangeEnd']) ?? today
-  const requestedDateFrom =
-    parseAsIsoDateTime.parseServerSide(query?.['dateRangeStart']) ??
-    addMonths(requestedDateTo, -1)
+  const parsedDateTo = parseAsIsoDateTime.parseServerSide(
+    query?.['dateRangeEnd'],
+  )
+  const parsedDateFrom = parseAsIsoDateTime.parseServerSide(
+    query?.['dateRangeStart'],
+  )
+  const requestedDateTo = parsedDateTo ?? today
+  const requestedDateFrom = parsedDateFrom ?? addMonths(requestedDateTo, -1)
 
   const dateFromInput = requestedDateFrom > today ? today : requestedDateFrom
   const maxRangeEnd = addDays(dateFromInput, MAX_DATE_RANGE_DAYS)
@@ -757,6 +744,7 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   if (
+    !parsedDateFrom !== !parsedDateTo ||
     dateFromInput.getTime() !== requestedDateFrom.getTime() ||
     dateToInput.getTime() !== requestedDateTo.getTime()
   ) {
@@ -772,37 +760,41 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const sortIdInput = sortIdParser.parseServerSide(query?.['sort'])
   const sortDirectionInput = sortDirectionParser.parseServerSide(query?.['dir'])
 
-  const {
-    data: { icelandicGovernmentInstitutionsInvoicePaymentsGroups },
-  } = await apolloClient.query<
-    Query,
-    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
-  >({
-    query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
-    variables: {
-      input: {
-        dateFrom: dateFromInput,
-        dateTo: dateToInput,
-        debtors: toDebtorIds(debtorsInput),
-        suppliers: suppliersInput,
-        ministries: ministriesInput,
-        paymentTypeIds: invoicePaymentTypesInput,
-        sortBy: SORT_FIELD_MAP[sortIdInput],
-        sortDirection: toSortDirection(sortDirectionInput),
-        limit: PAGE_SIZE,
-        page: pageInput,
+  let invoiceGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups | null =
+    null
+  let initialError = false
+  try {
+    const { data } = await apolloClient.query<
+      Query,
+      QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
+    >({
+      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+      variables: {
+        input: {
+          dateFrom: dateFromInput,
+          dateTo: dateToInput,
+          debtors: toDebtorIds(debtorsInput),
+          suppliers: suppliersInput,
+          ministries: ministriesInput,
+          paymentTypeIds: invoicePaymentTypesInput,
+          sortBy: SORT_FIELD_MAP[sortIdInput],
+          sortDirection: toSortDirection(sortDirectionInput),
+          limit: PAGE_SIZE,
+          page: pageInput,
+        },
       },
-    },
-  })
+    })
+    invoiceGroups =
+      data.icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? null
+  } catch {
+    initialError = true
+  }
 
   const lastPage = Math.max(
     1,
-    Math.ceil(
-      (icelandicGovernmentInstitutionsInvoicePaymentsGroups?.totalCount ?? 0) /
-        PAGE_SIZE,
-    ),
+    Math.ceil((invoiceGroups?.totalCount ?? 0) / PAGE_SIZE),
   )
-  if (pageInput > lastPage) {
+  if (!initialError && pageInput > lastPage) {
     throw new CustomNextRedirect(
       buildUrl(['page'], lastPage > 1 ? { page: String(lastPage) } : {}),
     )
@@ -810,8 +802,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
 
   return {
     locale: locale as Locale,
-    initialInvoiceGroups:
-      icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? undefined,
+    initialInvoiceGroups: invoiceGroups ?? undefined,
+    initialError,
     initialAppliedFilters: {
       dateFrom: dateFromInput.toISOString(),
       dateTo: dateToInput.toISOString(),

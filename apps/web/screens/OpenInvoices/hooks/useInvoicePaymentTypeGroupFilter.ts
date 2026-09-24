@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApolloClient } from '@apollo/client'
+import chunk from 'lodash/chunk'
 
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -14,9 +15,7 @@ import {
   AsyncFilterPage,
 } from '../components/AsyncFilterSearchAccordion'
 import { m } from '../messages'
-import { formatPaymentTypeGroupTooltip } from '../utils'
-
-const MAX_LOOKUP_BATCH = 100
+import { formatPaymentTypeGroupTooltip, MAX_LOOKUP_BATCH } from '../utils'
 
 interface KnownGroup {
   item: AsyncFilterItem
@@ -29,14 +28,6 @@ interface GroupQueryVariables {
   lookup?: Array<string>
   limit?: number
   sortDirection?: IcelandicGovernmentInstitutionsSortDirection
-}
-
-const chunk = <T>(values: Array<T>, size: number): Array<Array<T>> => {
-  const batches: Array<Array<T>> = []
-  for (let i = 0; i < values.length; i += size) {
-    batches.push(values.slice(i, i + size))
-  }
-  return batches
 }
 
 /**

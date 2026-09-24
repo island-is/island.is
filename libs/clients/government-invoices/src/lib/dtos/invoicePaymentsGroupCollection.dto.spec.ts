@@ -9,14 +9,14 @@ const baseData: OpenInvoicesGroupCollectionResponseDto = {
 }
 
 describe('mapInvoicePaymentsGroupCollectionDto', () => {
-  it('falls back to 0 when the payment totals are missing', () => {
+  it('keeps a missing sum unknown and falls back to 0 for a missing count', () => {
     const result = mapInvoicePaymentsGroupCollectionDto({
       ...baseData,
       totalPaymentsSum: undefined,
       totalPaymentsCount: undefined,
     })
 
-    expect(result?.totalPaymentsSum).toBe(0)
+    expect(result?.totalPaymentsSum).toBeNull()
     expect(result?.totalPaymentsCount).toBe(0)
   })
 

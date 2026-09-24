@@ -5,6 +5,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES = gql`
     $search: String
     $after: String
     $lookup: [String!]
+    $limit: Int
     $sortDirection: IcelandicGovernmentInstitutionsSortDirection
   ) {
     icelandicGovernmentInstitutionsMinistries(
@@ -12,6 +13,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES = gql`
         search: $search
         after: $after
         lookup: $lookup
+        limit: $limit
         sortDirection: $sortDirection
       }
     ) {
@@ -34,6 +36,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS = gql`
     $search: String
     $after: String
     $lookup: [String!]
+    $limit: Int
     $sortDirection: IcelandicGovernmentInstitutionsSortDirection
   ) {
     icelandicGovernmentInstitutionsSuppliers(
@@ -41,6 +44,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS = gql`
         search: $search
         after: $after
         lookup: $lookup
+        limit: $limit
         sortDirection: $sortDirection
       }
     ) {
@@ -63,6 +67,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS = gql`
     $search: String
     $after: String
     $lookup: [String!]
+    $limit: Int
     $sortDirection: IcelandicGovernmentInstitutionsSortDirection
   ) {
     icelandicGovernmentInstitutionsDebtors(
@@ -70,6 +75,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS = gql`
         search: $search
         after: $after
         lookup: $lookup
+        limit: $limit
         sortDirection: $sortDirection
       }
     ) {

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -99,6 +99,128 @@ export const OverviewFilter = ({
     [key: string]: AsyncSearchInputHandle | null
   }>({})
 
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => setIsMounted(true), [])
+
+  const content = (
+    <Box background="white" borderRadius="large">
+      {categories.map((category, index) => {
+        const divider =
+          index > 0 ? (
+            <Box paddingX={3}>
+              <Divider />
+            </Box>
+          ) : null
+
+        if (category.type === 'checkbox') {
+          const searchStateValue = searchState?.[category.id]?.[0]
+          return (
+            <React.Fragment key={category.id}>
+              {divider}
+              <Box
+                paddingX={3}
+                paddingY={3}
+                borderRadius="large"
+                background="white"
+              >
+                <Checkbox
+                  name={`${variant}-${category.id}`}
+                  label={category.label}
+                  checked={searchStateValue === 'true'}
+                  onChange={(event) =>
+                    onSearchUpdate(
+                      category.id as keyof SearchState,
+                      event.target.checked ? ['true'] : ['false'],
+                    )
+                  }
+                />
+              </Box>
+            </React.Fragment>
+          )
+        }
+        if (category.type === 'date') {
+          return (
+            <React.Fragment key={category.id}>
+              {divider}
+              <FilterDateAccordion
+                title={formatMessage(m.search.range)}
+                id={`${variant}-${category.id}`}
+                locale={locale}
+                valueFrom={category.valueFrom}
+                valueTo={category.valueTo}
+                isActive={category.isActive}
+                maxRangeDays={category.maxRangeDays}
+                maxSelectableDate={category.maxSelectableDate}
+                initiallyExpanded
+                onChange={(valueFrom, valueTo) => {
+                  onSearchUpdate(category.id as keyof SearchState, [
+                    valueFrom?.toISOString() ?? '',
+                    valueTo?.toISOString() ?? '',
+                  ])
+                }}
+              />
+            </React.Fragment>
+          )
+        }
+
+        if (category.type === 'asyncSelect') {
+          return (
+            <React.Fragment key={category.id}>
+              {divider}
+              <AsyncFilterSearchAccordion
+                id={`${variant}-${category.id}`}
+                title={category.label}
+                ref={(s) => {
+                  if (s) {
+                    searchInputRefs.current[category.id] = s
+                  } else {
+                    delete searchInputRefs.current[category.id]
+                  }
+                }}
+                selected={searchState?.[category.id] ?? []}
+                initiallyExpanded={
+                  category.initiallyExpanded ??
+                  (searchState?.[category.id] ?? []).length > 0
+                }
+                fetchPage={category.fetchPage}
+                selectedItems={category.selectedItems}
+                onChange={(values) =>
+                  onSearchUpdate(
+                    category.id as keyof SearchState,
+                    values.length ? values : undefined,
+                  )
+                }
+              />
+            </React.Fragment>
+          )
+        }
+
+        return null
+      })}
+      {variant === 'default' && (
+        <>
+          {categories.length > 0 && (
+            <Box paddingX={3}>
+              <Divider />
+            </Box>
+          )}
+          <Box paddingX={3} paddingY={3}>
+            <Button
+              type="submit"
+              variant="ghost"
+              size="small"
+              fluid
+              disabled={applyDisabled}
+              loading={applyDisabled}
+            >
+              {formatMessage(m.search.viewResults)}
+            </Button>
+          </Box>
+        </>
+      )}
+    </Box>
+  )
+
   return (
     <Box
       component="form"
@@ -109,137 +231,35 @@ export const OverviewFilter = ({
         onApply()
       }}
     >
-      <Filter
-        labelClearAll={formatMessage(m.search.clearFilters)}
-        labelOpen={formatMessage(m.search.openFilter)}
-        labelClose={formatMessage(m.search.closeFilter)}
-        labelClear={formatMessage(m.search.clearFilters)}
-        labelTitle={formatMessage(m.search.filterTitle)}
-        labelResult={formatMessage(m.search.viewResults)}
-        resultCount={hits}
-        onFilterClear={clear}
-        onFilterResult={onApply}
-        variant={variant}
-        align={'right'}
-        usePopoverDiscloureButtonStyling
-      >
-        <Box background="white" borderRadius="large">
-          {categories.map((category, index) => {
-            const divider =
-              index > 0 ? (
-                <Box paddingX={3}>
-                  <Divider />
-                </Box>
-              ) : null
-
-            if (category.type === 'checkbox') {
-              const searchStateValue = searchState?.[category.id]?.[0]
-              return (
-                <React.Fragment key={category.id}>
-                  {divider}
-                  <Box
-                    paddingX={3}
-                    paddingY={3}
-                    borderRadius="large"
-                    background="white"
-                  >
-                    <Checkbox
-                      name={category.id}
-                      label={category.label}
-                      checked={searchStateValue === 'true'}
-                      onChange={(event) =>
-                        onSearchUpdate(
-                          category.id as keyof SearchState,
-                          event.target.checked ? ['true'] : ['false'],
-                        )
-                      }
-                    />
-                  </Box>
-                </React.Fragment>
-              )
-            }
-            if (category.type === 'date') {
-              return (
-                <React.Fragment key={category.id}>
-                  {divider}
-                  <FilterDateAccordion
-                    title={formatMessage(m.search.range)}
-                    id={category.id}
-                    locale={locale}
-                    valueFrom={category.valueFrom}
-                    valueTo={category.valueTo}
-                    isActive={category.isActive}
-                    maxRangeDays={category.maxRangeDays}
-                    maxSelectableDate={category.maxSelectableDate}
-                    initiallyExpanded
-                    onChange={(valueFrom, valueTo) => {
-                      onSearchUpdate(category.id as keyof SearchState, [
-                        valueFrom?.toISOString() ?? '',
-                        valueTo?.toISOString() ?? '',
-                      ])
-                    }}
-                  />
-                </React.Fragment>
-              )
-            }
-
-            if (category.type === 'asyncSelect') {
-              return (
-                <React.Fragment key={category.id}>
-                  {divider}
-                  <AsyncFilterSearchAccordion
-                    id={category.id}
-                    title={category.label}
-                    ref={(s) => {
-                      if (s) {
-                        searchInputRefs.current[category.id] = s
-                      } else {
-                        delete searchInputRefs.current[category.id]
-                      }
-                    }}
-                    selected={searchState?.[category.id] ?? []}
-                    initiallyExpanded={
-                      category.initiallyExpanded ??
-                      (searchState?.[category.id] ?? []).length > 0
-                    }
-                    fetchPage={category.fetchPage}
-                    selectedItems={category.selectedItems}
-                    onChange={(values) =>
-                      onSearchUpdate(
-                        category.id as keyof SearchState,
-                        values.length ? values : undefined,
-                      )
-                    }
-                  />
-                </React.Fragment>
-              )
-            }
-
-            return null
-          })}
-          {variant === 'default' && (
-            <>
-              {categories.length > 0 && (
-                <Box paddingX={3}>
-                  <Divider />
-                </Box>
-              )}
-              <Box paddingX={3} paddingY={3}>
-                <Button
-                  type="submit"
-                  variant="ghost"
-                  size="small"
-                  fluid
-                  disabled={applyDisabled}
-                  loading={applyDisabled}
-                >
-                  {formatMessage(m.search.viewResults)}
-                </Button>
-              </Box>
-            </>
-          )}
-        </Box>
-      </Filter>
+      {variant === 'default' ? (
+        <>
+          {content}
+          <Box textAlign="right" paddingTop={2}>
+            <Button icon="reload" size="small" variant="text" onClick={clear}>
+              {formatMessage(m.search.clearFilters)}
+            </Button>
+          </Box>
+        </>
+      ) : (
+        isMounted && (
+          <Filter
+            labelClearAll={formatMessage(m.search.clearFilters)}
+            labelOpen={formatMessage(m.search.openFilter)}
+            labelClose={formatMessage(m.search.closeFilter)}
+            labelClear={formatMessage(m.search.clearFilters)}
+            labelTitle={formatMessage(m.search.filterTitle)}
+            labelResult={formatMessage(m.search.viewResults)}
+            resultCount={hits}
+            onFilterClear={clear}
+            onFilterResult={onApply}
+            variant={variant}
+            align={'right'}
+            usePopoverDiscloureButtonStyling
+          >
+            {content}
+          </Filter>
+        )
+      )}
     </Box>
   )
 }

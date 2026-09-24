@@ -9,7 +9,7 @@ import { mapOffsetPageInfo } from '../utils/pageInfo.util'
 
 export interface InvoicePaymentsGroupCollectionDto {
   totalCount: number
-  totalPaymentsSum: number
+  totalPaymentsSum: number | null
   totalPaymentsCount: number
   invoiceGroups: InvoicePaymentsGroupDto[]
   pageInfo?: PageInfoDto
@@ -24,7 +24,7 @@ export const mapInvoicePaymentsGroupCollectionDto = (
   return {
     totalCount: data.totalCount,
     totalPaymentsCount: data.totalPaymentsCount ?? 0,
-    totalPaymentsSum: data.totalPaymentsSum ?? 0,
+    totalPaymentsSum: data.totalPaymentsSum ?? null,
     invoiceGroups: (data.invoiceGroups ?? [])
       .map(mapInvoicePaymentsGroupDto)
       .filter(isDefined),
