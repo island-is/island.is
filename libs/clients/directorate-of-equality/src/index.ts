@@ -2,6 +2,9 @@ export { DirectorateOfEqualityClientService } from './lib/directorate-of-equalit
 export { DirectorateOfEqualityClientModule } from './lib/directorate-of-equality.module'
 export { DirectorateOfEqualityClientConfig } from './lib/directorate-of-equality.config'
 export type {
+  AggregateStatisticPointDto,
+  AggregateStatisticSeriesDto,
+  AggregateStatisticsDto,
   ApplicationReportCommentDto,
   ApplicationReportDetailDto,
   CompanyDto,
@@ -62,6 +65,7 @@ export type {
   WageGapTwofoldDto,
 } from '../gen/fetch'
 export {
+  AggregateStatisticUnitEnum,
   CompanySizeEnum,
   EqualityCoverageSourceEnum,
   ReportCriterionTypeEnum,

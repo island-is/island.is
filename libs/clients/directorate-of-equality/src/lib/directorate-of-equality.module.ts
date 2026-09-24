@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { client } from '../../gen/fetch/client.gen'
+import { publicClient } from './directorate-of-equality-public-client'
 import { DirectorateOfEqualityClientConfig } from './directorate-of-equality.config'
 import { DirectorateOfEqualityClientService } from './directorate-of-equality.service'
 
@@ -38,6 +39,18 @@ export class DirectorateOfEqualityClientModule {
               scope: [],
             }
           : undefined,
+      }),
+    })
+
+    publicClient.setConfig({
+      baseUrl: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      headers: {
+        'X-Road-Client': xroadConfig.xRoadClient,
+        Accept: 'application/json',
+      },
+      fetch: createEnhancedFetch({
+        name: 'clients-directorate-of-equality-public',
+        organizationSlug: 'domsmalaraduneytid',
       }),
     })
   }
