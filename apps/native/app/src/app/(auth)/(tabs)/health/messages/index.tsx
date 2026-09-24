@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native'
 import { router } from 'expo-router'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import composeIcon from '@/assets/icons/compose.png'
 import filterIcon from '@/assets/icons/filter-icon.png'
@@ -25,10 +25,16 @@ import {
 import { useThrottleState } from '@/hooks/use-throttle-state'
 import { useHealthMessagesFilterStore } from '@/stores/health-messages-filter-store'
 import { useOrganizationsStore } from '@/stores/organizations-store'
+import { isAndroid } from '@/utils/devices'
 import { pushOnce } from '@/utils/push-once'
 import { EmptyList, ListItem, ListItemSkeleton, Problem, SearchBar } from '@/ui'
 
 const DEFAULT_PAGE_SIZE = 50
+
+const LoadingWrapper = styled.View`
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
+`
 
 export default function HealthMessagesScreen() {
   const intl = useIntl()
@@ -190,14 +196,14 @@ export default function HealthMessagesScreen() {
         onEndReachedThreshold={0.5}
         onEndReached={loadMore}
         ListFooterComponent={
-          loadingMore ? (
-            <View style={{ paddingVertical: theme.spacing[3] }}>
+          loadingMore && !messagesRes.error ? (
+            <LoadingWrapper>
               <ActivityIndicator
                 size="small"
                 animating
                 color={theme.color.blue400}
               />
-            </View>
+            </LoadingWrapper>
           ) : null
         }
         refreshControl={
