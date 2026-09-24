@@ -280,7 +280,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             : 0
 
         return (
-          <Box width={'full'} paddingBottom={3}>
+          <Box width={'full'} paddingBottom={[8, 6, 3]}>
             <ProgressBar
               id={question.id}
               progress={progress}
@@ -366,7 +366,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
   }
 
   return (
-    <Box marginBottom={4}>
+    <Box>
       <Text id={labelId} variant="h5" marginBottom={question.sublabel ? 1 : 3}>
         {HtmlParser(
           question.htmlLabel && question.htmlLabel.length > 0
