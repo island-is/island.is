@@ -5,6 +5,7 @@ import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-reg
 import {
   DirectorateOfEqualityClientService,
   EqualityCoverageSourceEnum,
+  ReportStatusEnum,
   ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -35,6 +36,14 @@ import {
 const DRAFT_EMPLOYEE_PAGE_SIZE = 100
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityService'
+
+// A report in one of these has nothing left open at DMR to withdraw.
+const CLOSED_REPORT_STATUSES: ReportStatusEnum[] = [
+  ReportStatusEnum.APPROVED,
+  ReportStatusEnum.DENIED,
+  ReportStatusEnum.SUPERSEDED,
+  ReportStatusEnum.WITHDRAWN,
+]
 
 /**
  * What meets the company's equality obligation at submit time.
@@ -906,6 +915,87 @@ export class DirectorateOfEqualityService extends BaseTemplateApiService {
         )
       },
     )
+  }
+
+  // onDelete from DRAFT. The draft is hard-deleted rather than withdrawn so DMR
+  // keeps no payroll data for an application that no longer exists. A 404 means
+  // there is no draft: either it was submitted in the meantime, which withdraw
+  // covers, or it was never created, which withdraw answers with its own 404.
+  async deleteSalaryReportDraft({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to delete salary report draft',
+      async () => {
+        try {
+          await this.directorateOfEqualityService.deleteDraft(
+            auth,
+            application.id,
+          )
+        } catch (error) {
+          if (!this.isNotFoundApiError(error)) throw error
+          await this.withdrawReportIfOpen(auth, application.id)
+        }
+      },
+    )
+  }
+
+  // onDelete from POSTPONE_RECEIVED and POSTPONED. Without it the report stays
+  // POSTPONED on DMR's side after the application is gone: the register shows
+  // the plan as missing and DMR refuses any new salary report with a 409, with
+  // no application left to send the plan from. Withdrawing puts the company
+  // back on whatever covered it before, as a reviewer's denial would.
+  async withdrawSalaryReport({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    return this.withTemplateApiError(
+      application.id,
+      'Failed to withdraw salary report',
+      () => this.withdrawReportIfOpen(auth, application.id),
+    )
+  }
+
+  // A 404 is no report at all. A 400 is ambiguous: DMR gives the "already
+  // decided" refusal the same generic BadRequest name as any other bad request
+  // (the reason is only in free-text `details`), and maps validation and
+  // constraint errors to 400 too. So on a 400 the report's own status decides:
+  // decided or already withdrawn leaves nothing open at DMR and the delete may
+  // go ahead. Anything else, including a failed status read, refuses the delete
+  // so it never leaves an open report behind.
+  private async withdrawReportIfOpen(
+    auth: TemplateApiModuleActionProps['auth'],
+    providerId: string,
+  ): Promise<void> {
+    try {
+      await this.directorateOfEqualityService.withdrawReport(auth, providerId)
+    } catch (error) {
+      if (this.isNotFoundApiError(error)) return
+      if (
+        this.extractFetchErrorDetails(error).status === 400 &&
+        (await this.isReportClosed(auth, providerId))
+      ) {
+        return
+      }
+      throw error
+    }
+  }
+
+  private async isReportClosed(
+    auth: TemplateApiModuleActionProps['auth'],
+    providerId: string,
+  ): Promise<boolean> {
+    try {
+      const { status } = await this.directorateOfEqualityService.getReport(
+        auth,
+        providerId,
+      )
+      return CLOSED_REPORT_STATUSES.includes(status)
+    } catch {
+      return false
+    }
   }
 
   // Finalises the draft; only the pre-dataEntry answers need patching onto
