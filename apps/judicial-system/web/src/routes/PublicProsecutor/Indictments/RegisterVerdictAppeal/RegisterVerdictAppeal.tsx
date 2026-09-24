@@ -323,6 +323,7 @@ const RegisterVerdictAppeal = () => {
                 <InputAdvocate
                   advocateType="defender"
                   name={appealDefender.name}
+                  nationalId={appealDefender.nationalId}
                   email={appealDefender.email}
                   phoneNumber={appealDefender.phoneNumber}
                   onAdvocateChange={(name, nationalId, email, phoneNumber) =>

@@ -191,6 +191,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         <InputAdvocate
           advocateType="litigator"
           name={defendant.defenderName}
+          nationalId={defendant.defenderNationalId}
           email={defendant.defenderEmail}
           phoneNumber={defendant.defenderPhoneNumber}
           onAdvocateChange={(

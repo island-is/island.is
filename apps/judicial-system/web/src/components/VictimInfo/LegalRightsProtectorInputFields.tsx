@@ -39,6 +39,7 @@ export const LegalRightsProtectorInputFields = ({
       <InputAdvocate
         advocateType="legalRightsProtector"
         name={victim.lawyerName}
+        nationalId={victim.lawyerNationalId}
         email={victim.lawyerEmail}
         phoneNumber={victim.lawyerPhoneNumber}
         onAdvocateChange={(

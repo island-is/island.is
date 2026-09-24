@@ -32,6 +32,7 @@ interface Props {
     | 'legalRightsProtector'
     | 'litigator'
   name: string | undefined | null
+  nationalId?: string | null
   email: string | undefined | null
   phoneNumber: string | undefined | null
   onAdvocateChange: (
@@ -57,6 +58,10 @@ const InputAdvocate: FC<Props> = ({
 
   // The name of the advocate.
   name: lawyerName,
+
+  // The national id of the advocate. Identifies the selected lawyer in the
+  // registry - emails are neither unique nor always present there.
+  nationalId: lawyerNationalId,
 
   // The email of the advocate.
   email: lawyerEmail,
@@ -95,7 +100,7 @@ const InputAdvocate: FC<Props> = ({
 
     return lawyers?.map((l) => ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-      value: l.email,
+      value: l.nationalId,
     }))
   }, [lawyers])
 
@@ -110,7 +115,7 @@ const InputAdvocate: FC<Props> = ({
         const { label, value } = selectedOption
 
         const lawyer = lawyers?.find(
-          (l: Lawyer) => l.email === (value as string),
+          (l: Lawyer) => l.nationalId === (value as string),
         )
 
         name = lawyer ? lawyer.name : label
@@ -193,7 +198,9 @@ const InputAdvocate: FC<Props> = ({
         label={formatMessage(nameLabelStrings[advocateType])}
         placeholder={formatMessage(placeholderStrings.namePlaceholder)}
         value={
-          lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
+          lawyerName
+            ? { label: lawyerName, value: lawyerNationalId ?? '' }
+            : null
         }
         onChange={handleAdvocateChange}
         noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."

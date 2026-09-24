@@ -55,7 +55,9 @@ export const useLawyerRegistry = (shouldFetchLawyers: boolean) => {
       store.clear()
       setAllLawyers(lawyers)
 
-      lawyers.forEach((lawyer) => store.add({ ...lawyer, created: now }))
+      // The registry can list the same national id twice (e.g. after a name
+      // change), and a failed add would abort the whole refresh transaction.
+      lawyers.forEach((lawyer) => store.put({ ...lawyer, created: now }))
     },
     [openDB],
   )
