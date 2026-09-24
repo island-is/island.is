@@ -624,11 +624,12 @@ export class CourtSessionService {
       return
     }
 
-    const isAppealed = await this.appealCaseRepositoryService.existsForRulingFile(
-      theCase.id,
-      rulingFileId,
-      { transaction },
-    )
+    const isAppealed =
+      await this.appealCaseRepositoryService.existsForRulingFile(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
 
     if (isAppealed) {
       return
@@ -1485,11 +1486,12 @@ export class CourtSessionService {
       return
     }
 
-    const isAppealed = await this.appealCaseRepositoryService.existsForRulingFile(
-      theCase.id,
-      courtSession.rulingFileId,
-      { transaction },
-    )
+    const isAppealed =
+      await this.appealCaseRepositoryService.existsForRulingFile(
+        theCase.id,
+        courtSession.rulingFileId,
+        { transaction },
+      )
 
     if (isAppealed) {
       throw new BadRequestException(

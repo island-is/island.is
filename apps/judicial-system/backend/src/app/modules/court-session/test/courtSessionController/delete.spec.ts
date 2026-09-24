@@ -6,9 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import {
-  CaseFileCategory,
-} from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
@@ -273,7 +271,9 @@ describe('CourtSessionController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock).mockResolvedValue(true)
+      ;(
+        mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock
+      ).mockResolvedValue(true)
 
       then = await deleteSessionPronouncing(appealedRuling)
     })
@@ -287,6 +287,12 @@ describe('CourtSessionController - Delete', () => {
       expect(
         mockCourtDocumentRepositoryService.removeAllCourtDocumentsFromCourtSession,
       ).not.toHaveBeenCalled()
+    })
+
+    it('should check for an appeal of that ruling against the transaction', () => {
+      expect(
+        mockAppealCaseRepositoryService.existsForRulingFile,
+      ).toHaveBeenCalledWith(caseId, appealedRuling.id, { transaction })
     })
 
     it('should leave the ruling alone', () => {

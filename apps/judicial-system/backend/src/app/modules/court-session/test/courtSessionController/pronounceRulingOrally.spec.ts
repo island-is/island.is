@@ -389,15 +389,15 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     })
 
     it('should keep a ruling an appeal still keys on', async () => {
-      ;(mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock).mockResolvedValue(true)
+      ;(
+        mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock
+      ).mockResolvedValue(true)
 
       await swapAwayFrom(caseStillPronouncing())
 
-      expect(mockAppealCaseRepositoryService.existsForRulingFile).toHaveBeenCalledWith(
-        caseId,
-        pronouncedOrally.id,
-        { transaction },
-      )
+      expect(
+        mockAppealCaseRepositoryService.existsForRulingFile,
+      ).toHaveBeenCalledWith(caseId, pronouncedOrally.id, { transaction })
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
   })

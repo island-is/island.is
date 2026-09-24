@@ -64,8 +64,8 @@ export class AppealCaseRepositoryService {
   }
 
   // A case has at most one verdict appeal - every defendant who appeals joins
-  // it - and the unique index on (case_id, ruling_file_id) holds that, since a
-  // verdict appeal has no ruling file.
+  // it - and the unique index on (case_id, ruling_file_id), NULLS NOT DISTINCT,
+  // holds that, since a verdict appeal has no ruling file.
   async findVerdictAppealByCaseId(
     caseId: string,
     options?: AppealCaseTransactionOptions,
@@ -92,8 +92,8 @@ export class AppealCaseRepositoryService {
     }
   }
 
-  // Whether a ruling order of a case has been appealed, read from the caller's
-  // transaction - a ruling an appeal keys on must stay in the court record.
+  // Whether any appeal case of the case keys on the given ruling file, in any
+  // appeal state, read from the caller's transaction.
   async existsForRulingFile(
     caseId: string,
     rulingFileId: string,

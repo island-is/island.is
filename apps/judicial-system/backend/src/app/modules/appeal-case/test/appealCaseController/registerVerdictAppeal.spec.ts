@@ -157,7 +157,9 @@ describe('AppealCaseController - Register verdict appeal', () => {
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock).mockResolvedValue(null)
+    ;(
+      mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+    ).mockResolvedValue(null)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -206,7 +208,9 @@ describe('AppealCaseController - Register verdict appeal', () => {
         caseId,
         transaction,
       )
-      expect(mockAppealCaseRepositoryService.findVerdictAppealByCaseId).toHaveBeenCalledWith(caseId, {
+      expect(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId,
+      ).toHaveBeenCalledWith(caseId, {
         transaction,
       })
     })
@@ -271,7 +275,9 @@ describe('AppealCaseController - Register verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock).mockResolvedValue(existingAppealCase)
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(existingAppealCase)
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
       ).mockResolvedValue([
