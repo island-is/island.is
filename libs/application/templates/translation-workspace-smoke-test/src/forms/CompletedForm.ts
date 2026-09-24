@@ -22,7 +22,7 @@ export const CompletedForm: Form = buildForm({
             buildDescriptionField({
               id: 'completedDescription',
               title: m.completedTitle,
-              description: m.draftFieldDescription,
+              description: m.prerequisiteFieldDescription,
             }),
           ],
         }),

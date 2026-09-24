@@ -27,15 +27,15 @@ const template: ApplicationTemplate<
   ],
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITE,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITE]: {
         meta: {
-          name: 'Draft',
+          name: 'Prerequisite',
           status: 'draft',
           actionCard: {
             tag: {
-              label: m.actionCardDraft,
+              label: m.actionCardPrerequisite,
               variant: 'blue',
             },
           },
@@ -44,8 +44,41 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DraftForm').then((module) =>
-                  Promise.resolve(module.DraftForm),
+                import('../forms/PrerequisiteForm').then((module) =>
+                  Promise.resolve(module.PrerequisiteForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.MAIN },
+        },
+      },
+      [States.MAIN]: {
+        meta: {
+          name: 'Main',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: m.actionCardMain,
+              variant: 'blue',
+            },
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/MainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
                 ),
               actions: [
                 {

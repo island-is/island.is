@@ -8,26 +8,26 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
-export const DraftForm: Form = buildForm({
-  id: 'TranslationWorkspaceSmokeTestDraftForm',
+export const PrerequisiteForm: Form = buildForm({
+  id: 'TranslationWorkspaceSmokeTestPrerequisiteForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'draftSection',
-      title: m.draftSectionTitle,
+      id: 'prerequisiteSection',
+      title: m.prerequisiteSectionTitle,
       children: [
         buildMultiField({
-          id: 'draftMultiField',
-          title: m.draftSectionTitle,
+          id: 'prerequisiteMultiField',
+          title: m.prerequisiteSectionTitle,
           children: [
             buildTitleField({
-              title: m.draftFieldTitle,
+              title: m.prerequisiteFieldTitle,
               titleVariant: 'h3',
             }),
             buildDescriptionField({
-              id: 'draftDescription',
-              description: m.draftFieldDescription,
+              id: 'prerequisiteDescription',
+              description: m.prerequisiteFieldDescription,
             }),
           ],
         }),
