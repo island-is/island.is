@@ -52,9 +52,7 @@ const DefenderVerdictTimelineCard: FC<Props> = (props) => {
   if (contextMenuItems && contextMenuItems.length > 0) {
     return (
       <ContextMenuCard
-        title={
-          <SectionHeading title="Dómur" heading="h4" marginBottom={0} />
-        }
+        title={<SectionHeading title="Dómur" heading="h4" marginBottom={0} />}
         contextMenuItems={contextMenuItems}
         menuLabel={`Valmynd fyrir birtingu dóms ${defendant.name ?? ''}`.trim()}
       >
