@@ -57,6 +57,10 @@ import { stripEmptyFormValue } from './strip-empty-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
 import {
+  RoleFilteredApplication,
+  toRoleFilteredApplication,
+} from './role-filtered-application'
+import {
   ScreenDto,
   PageDto,
   ValidationErrorDto,
@@ -128,6 +132,7 @@ function getScreenSubmitField(
 
 interface ScreenRenderContext {
   application: ApplicationWithAttachments
+  filteredApplication: RoleFilteredApplication
   template: ApplicationTemplate
   roleInState: RoleInState
   form: Form
@@ -192,6 +197,7 @@ export class SdfScreenService {
     )
     const {
       application,
+      filteredApplication,
       form,
       filteredAnswers,
       filteredExternalData,
@@ -235,7 +241,7 @@ export class SdfScreenService {
       currentScreen,
       resolvedIndex,
       resolver,
-      application as Application,
+      filteredApplication,
       bffUser,
     )
     this.logTiming('Step 7: Build Page', step7Start)
@@ -251,7 +257,10 @@ export class SdfScreenService {
 
     const header = this.buildHeader(context, currentScreen, resolver)
 
-    const pageAnswers = this.extractPageAnswers(currentScreen, application)
+    const pageAnswers = this.extractPageAnswers(
+      currentScreen,
+      filteredApplication,
+    )
 
     this.logTiming('Total pipeline', startTime)
 
@@ -292,6 +301,11 @@ export class SdfScreenService {
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application, roleInState)
     this.logTiming('Step 3.5: Role-Based Data Filtering', step35Start)
+    const filteredApplication = toRoleFilteredApplication(
+      application,
+      filteredAnswers,
+      filteredExternalData,
+    )
 
     const step4Start = Date.now()
     const bffUser = this.buildBffUser(user, locale)
@@ -305,6 +319,7 @@ export class SdfScreenService {
 
     return {
       application,
+      filteredApplication,
       template,
       roleInState,
       form,
@@ -458,7 +473,7 @@ export class SdfScreenService {
 
   private extractPageAnswers(
     currentScreen: FormScreen,
-    application: ApplicationWithAttachments,
+    application: RoleFilteredApplication,
   ): Record<string, unknown> {
     const pageFieldIds = new Set([
       ...getFormNodeFieldIds(currentScreen),
@@ -1264,13 +1279,6 @@ export class SdfScreenService {
       }
     }
 
-    if (!read && !write) {
-      return {
-        answers: { ...application.answers },
-        externalData: { ...application.externalData },
-      }
-    }
-
     const filteredAnswers: FormValue = {}
     const filteredExternalData: ExternalData = {}
 
@@ -1304,7 +1312,7 @@ export class SdfScreenService {
     screen: FormScreen,
     index: number,
     resolver: FormTextResolver,
-    application: Application,
+    application: RoleFilteredApplication,
     user?: BffUser,
   ): PageDto {
     const components = mapScreenToComponents(

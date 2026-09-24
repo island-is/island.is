@@ -1,10 +1,11 @@
 import { FormBuilder } from '@island.is/application/core'
 import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import { Application, FormItemTypes } from '@island.is/application/types'
+import { FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
+import { RoleFilteredApplication } from '../role-filtered-application'
 
 const stubResolver = {
   resolve: (v: unknown) =>
@@ -46,7 +47,7 @@ describe('mapScreenToComponents — file upload field parity props', () => {
     const components = mapScreenToComponents(
       multi!,
       stubResolver,
-      {} as Application,
+      {} as RoleFilteredApplication,
     )
     const dto = components.find((c) => c.id === 'rentalCondition.files')
 
@@ -90,7 +91,7 @@ describe('mapScreenToComponents — file upload field parity props', () => {
     const components = mapScreenToComponents(
       multi!,
       stubResolver,
-      {} as Application,
+      {} as RoleFilteredApplication,
     )
     const dto = components.find((c) => c.id === 'files.with.description')
 

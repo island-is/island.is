@@ -1,5 +1,4 @@
 import {
-  Application,
   FormText,
   FormTextWithLocale,
   StaticText,
@@ -9,6 +8,7 @@ import type { BffUser } from '@island.is/shared/types'
 
 import { ComponentDto } from '../dto/screen.dto'
 import { FormTextResolver } from '../i18n-resolver.service'
+import { RoleFilteredApplication } from '../role-filtered-application'
 
 export type ResolvableFormText =
   | FormText
@@ -19,7 +19,7 @@ export type ResolvableFormText =
 export type FieldMapperRaw = FieldDef & Record<string, unknown>
 
 export type FieldMapperContext = {
-  application: Application
+  application: RoleFilteredApplication
   resolver: FormTextResolver
   /**
    * Resolved BFF user, threaded so dynamic field ids

@@ -1,10 +1,11 @@
 import { FormBuilder } from '@island.is/application/core'
 import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import { Application, FormItemTypes } from '@island.is/application/types'
+import { FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
+import { RoleFilteredApplication } from '../role-filtered-application'
 
 describe('mapScreenToComponents — inline refetch target metadata', () => {
   it('maps select and search refetch targets onto component DTOs', () => {
@@ -74,7 +75,11 @@ describe('mapScreenToComponents — inline refetch target metadata', () => {
         typeof v === 'string' ? v : v != null ? String(v) : '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(multi, resolver, {} as Application)
+    const components = mapScreenToComponents(
+      multi,
+      resolver,
+      {} as RoleFilteredApplication,
+    )
     const byId = (id: string) => components.find((c) => c.id === id)
 
     expect(byId('selectField')).toMatchObject({

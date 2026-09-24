@@ -1,12 +1,9 @@
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import {
-  Application,
-  FieldTypes,
-  FormItemTypes,
-} from '@island.is/application/types'
+import { FieldTypes, FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
+import { RoleFilteredApplication } from '../role-filtered-application'
 
 const stubResolver = {
   resolve: (v: unknown) =>
@@ -62,7 +59,10 @@ describe('mapScreenToComponents — display field parity props', () => {
       ],
     } as unknown as MultiFieldScreen
 
-    const app = { answers, externalData: {} } as unknown as Application
+    const app = {
+      answers,
+      externalData: {},
+    } as unknown as RoleFilteredApplication
 
     const components = mapScreenToComponents(screen, stubResolver, app)
 
@@ -134,7 +134,10 @@ describe('mapScreenToComponents — display field parity props', () => {
     } as unknown as MultiFieldScreen
 
     const runWithAnswers = (answers: Record<string, unknown>) => {
-      const app = { answers, externalData: {} } as unknown as Application
+      const app = {
+        answers,
+        externalData: {},
+      } as unknown as RoleFilteredApplication
       return mapScreenToComponents(screen, stubResolver, app)
     }
 
@@ -197,7 +200,7 @@ describe('mapScreenToComponents — display field parity props', () => {
           },
         },
       },
-    } as unknown as Application
+    } as unknown as RoleFilteredApplication
 
     const components = mapScreenToComponents(screen, stubResolver, app)
 

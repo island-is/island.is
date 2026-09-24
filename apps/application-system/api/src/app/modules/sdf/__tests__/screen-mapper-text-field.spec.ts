@@ -1,10 +1,11 @@
 import { FormBuilder } from '@island.is/application/core'
 import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import { Application, FormItemTypes } from '@island.is/application/types'
+import { FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
+import { RoleFilteredApplication } from '../role-filtered-application'
 
 describe('mapScreenToComponents — text field parity props', () => {
   it('maps TextField styling and format props onto the component DTO', () => {
@@ -55,7 +56,7 @@ describe('mapScreenToComponents — text field parity props', () => {
     const components = mapScreenToComponents(
       multi!,
       resolver,
-      {} as Application,
+      {} as RoleFilteredApplication,
     )
 
     const byId = (id: string) => components.find((c) => c.id === id)
