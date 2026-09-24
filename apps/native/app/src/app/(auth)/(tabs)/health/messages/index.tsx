@@ -44,9 +44,10 @@ export default function HealthMessagesScreen() {
   const { starred, archived } = useHealthMessagesFilterStore()
   const { getSenderLogo } = useOrganizationsStore()
   const [loadingMore, setLoadingMore] = useState(false)
+  // Ref, not state: two onEndReached in one tick would share a stale guard.
+  const loadingMoreRef = useRef(false)
 
-  // The search is served by the endpoint (it matches the conversation title or
-  // its group name), so filtering locally would only ever see the loaded pages.
+  // Searching server-side; a local filter would only see the loaded pages.
   const input = useMemo(
     () => ({
       limit: DEFAULT_PAGE_SIZE,
@@ -58,6 +59,11 @@ export default function HealthMessagesScreen() {
     }),
     [search, starred, archived],
   )
+
+  // updateQuery runs against the current variables, so an in-flight page has
+  // to be matched back to the filters it was requested with.
+  const inputRef = useRef(input)
+  inputRef.current = input
 
   const messagesRes = useGetHealthConversationsQuery({
     notifyOnNetworkStatusChange: true,
@@ -99,38 +105,53 @@ export default function HealthMessagesScreen() {
   }, [])
 
   const loadMore = useCallback(async () => {
-    if (loadingMore || messagesRes.loading || !page?.pageInfo.hasNextPage) {
+    if (
+      loadingMoreRef.current ||
+      messagesRes.loading ||
+      !page?.pageInfo.hasNextPage
+    ) {
       return
     }
+    const requestInput = input
+    loadingMoreRef.current = true
     setLoadingMore(true)
     try {
       await messagesRes.fetchMore({
         variables: {
-          input: { ...input, after: page.pageInfo.endCursor ?? undefined },
+          input: {
+            ...requestInput,
+            after: page.pageInfo.endCursor ?? undefined,
+          },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           const next =
             fetchMoreResult?.healthDirectoratePaginatedHealthConversations
-          if (!next?.data.length) {
+          if (!next || inputRef.current !== requestInput) {
             return prev
           }
+          const existing =
+            prev.healthDirectoratePaginatedHealthConversations?.data ?? []
+          // Reordering can straddle a conversation across pages.
+          const seen = new Set(existing.map((conversation) => conversation.id))
           return {
             healthDirectoratePaginatedHealthConversations: {
               ...next,
               data: [
-                ...(prev.healthDirectoratePaginatedHealthConversations?.data ??
-                  []),
-                ...next.data,
+                ...existing,
+                ...next.data.filter(
+                  (conversation) => !seen.has(conversation.id),
+                ),
               ],
             },
           }
         },
       })
     } catch {
-      // Swallowed: the next onEndReached retries the same page.
+      // The next onEndReached retries this page.
     }
+    loadingMoreRef.current = false
     setLoadingMore(false)
-  }, [loadingMore, messagesRes, page, input])
+  }, [messagesRes, page, input])
 
   // A single icon segment within the shared header pill.
   const renderHeaderIconSegment = (

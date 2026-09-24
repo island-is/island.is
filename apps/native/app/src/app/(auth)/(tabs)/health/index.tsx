@@ -55,8 +55,7 @@ import { pushOnce } from '@/utils/push-once'
 import { testIDs } from '@/utils/test-ids'
 import { MedicineHistoryCard } from '../../../../components/medicine-history-card'
 
-// The overview only previews the newest few conversations; the full list lives
-// on the messages screen.
+// The overview previews the newest few; the full list is its own screen.
 const OVERVIEW_MESSAGE_COUNT = 3
 
 const Row = styled.View`

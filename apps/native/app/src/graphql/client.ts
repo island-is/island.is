@@ -228,8 +228,7 @@ const cache = new InMemoryCache({
         userNotifications: {
           merge: true,
         },
-        // Paginated wrapper objects carry no id, so without an explicit merge
-        // Apollo warns about losing cache data every time a page is written.
+        // The paginated wrapper has no id, so Apollo needs an explicit merge.
         healthDirectoratePaginatedHealthConversations: {
           merge: true,
         },
