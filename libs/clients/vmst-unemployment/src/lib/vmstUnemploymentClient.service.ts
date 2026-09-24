@@ -57,8 +57,6 @@ import {
   GaldurExternalDomainModelsSupportDataNationalityDTO,
   GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
   GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
-  IncomeApi,
-  GaldurExternalDomainModelsIncomeIncomesDTO,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'

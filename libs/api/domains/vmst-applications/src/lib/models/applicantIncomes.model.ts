@@ -53,8 +53,8 @@ export class VmstApplicantPensionPayment {
   @Field(() => String)
   incomeTypeId!: string
 
-  @Field(() => String)
-  pensionFundId!: string
+  @Field(() => String, { nullable: true })
+  pensionFundId?: string | null
 
   @Field(() => Float)
   estimatedIncome!: number
