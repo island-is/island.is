@@ -4,7 +4,7 @@ import { findSelectedLawyer } from './InputAdvocate.logic'
 
 const oldName: Lawyer = {
   id: 'row-old',
-  name: 'Þórunn Pálína Jónsdóttir',
+  name: 'Prufa Gamladóttir',
   practice: '',
   email: 'shared@dummy.dd',
   phoneNr: '0000001',
@@ -15,12 +15,12 @@ const oldName: Lawyer = {
 const newName: Lawyer = {
   ...oldName,
   id: 'row-new',
-  name: 'Þórunn Pálína Sigurborgardóttir',
+  name: 'Prufa Nýjadóttir',
 }
 
 const other: Lawyer = {
   id: 'row-other',
-  name: 'Þorgeir Þorgeirsson',
+  name: 'Þórður Prufuson',
   practice: '',
   email: '',
   phoneNr: '0000002',

@@ -9,9 +9,9 @@ import InputAdvocate from './InputAdvocate'
 // LMFÍ does not list an email for every lawyer, two entries can share one, and
 // the same national id can appear twice (e.g. under an old and a new name), so
 // the picker identifies entries by their registry row id.
-const arni: Lawyer = {
-  id: 'row-arni',
-  name: 'Árni Harðarson',
+const firstWithoutEmail: Lawyer = {
+  id: 'row-first-without-email',
+  name: 'Aðalsteinn Prufuson',
   practice: '',
   email: '',
   phoneNr: '0000001',
@@ -19,10 +19,10 @@ const arni: Lawyer = {
   isLitigator: false,
 }
 
-const thorgeir: Lawyer = {
-  id: 'row-thorgeir',
-  name: 'Þorgeir Þorgeirsson',
-  practice: 'Lagaskjól - lögmannsstofa',
+const secondWithoutEmail: Lawyer = {
+  id: 'row-second-without-email',
+  name: 'Þórður Prufuson',
+  practice: 'Prufustofa',
   email: '',
   phoneNr: '0000002',
   nationalId: '0000000002',
@@ -31,9 +31,9 @@ const thorgeir: Lawyer = {
 
 // The same person listed under an old and a new name: same national id, same
 // email, same phone number.
-const jonsdottir: Lawyer = {
-  id: 'row-jonsdottir',
-  name: 'Þórunn Pálína Jónsdóttir',
+const oldName: Lawyer = {
+  id: 'row-old-name',
+  name: 'Prufa Gamladóttir',
   practice: 'Stofa A',
   email: 'shared@dummy.dd',
   phoneNr: '0000003',
@@ -41,9 +41,9 @@ const jonsdottir: Lawyer = {
   isLitigator: true,
 }
 
-const sigurborgardottir: Lawyer = {
-  id: 'row-sigurborgardottir',
-  name: 'Þórunn Pálína Sigurborgardóttir',
+const newName: Lawyer = {
+  id: 'row-new-name',
+  name: 'Prufa Nýjadóttir',
   practice: 'Stofa B',
   email: 'shared@dummy.dd',
   phoneNr: '0000003',
@@ -51,7 +51,7 @@ const sigurborgardottir: Lawyer = {
   isLitigator: true,
 }
 
-const lawyers = [arni, thorgeir, jonsdottir, sigurborgardottir]
+const lawyers = [firstWithoutEmail, secondWithoutEmail, oldName, newName]
 
 const renderPicker = (
   onAdvocateChange: jest.Mock,
@@ -88,16 +88,16 @@ describe('InputAdvocate', () => {
     const onAdvocateChange = jest.fn()
     renderPicker(onAdvocateChange)
 
-    pickLawyer(thorgeir)
+    pickLawyer(secondWithoutEmail)
 
     expect(onAdvocateChange).toHaveBeenCalledWith(
-      thorgeir.name,
-      thorgeir.nationalId,
-      thorgeir.email,
-      thorgeir.phoneNr,
+      secondWithoutEmail.name,
+      secondWithoutEmail.nationalId,
+      secondWithoutEmail.email,
+      secondWithoutEmail.phoneNr,
     )
     expect(onAdvocateChange).not.toHaveBeenCalledWith(
-      arni.name,
+      firstWithoutEmail.name,
       expect.anything(),
       expect.anything(),
       expect.anything(),
@@ -108,44 +108,44 @@ describe('InputAdvocate', () => {
     const onAdvocateChange = jest.fn()
     const { unmount } = renderPicker(onAdvocateChange)
 
-    pickLawyer(sigurborgardottir)
+    pickLawyer(newName)
 
     expect(onAdvocateChange).toHaveBeenLastCalledWith(
-      sigurborgardottir.name,
-      sigurborgardottir.nationalId,
-      sigurborgardottir.email,
-      sigurborgardottir.phoneNr,
+      newName.name,
+      newName.nationalId,
+      newName.email,
+      newName.phoneNr,
     )
 
     unmount()
     renderPicker(onAdvocateChange)
 
-    pickLawyer(jonsdottir)
+    pickLawyer(oldName)
 
     expect(onAdvocateChange).toHaveBeenLastCalledWith(
-      jonsdottir.name,
-      jonsdottir.nationalId,
-      jonsdottir.email,
-      jonsdottir.phoneNr,
+      oldName.name,
+      oldName.nationalId,
+      oldName.email,
+      oldName.phoneNr,
     )
   })
 
   it('shows the selected lawyer', () => {
-    renderPicker(jest.fn(), thorgeir)
+    renderPicker(jest.fn(), secondWithoutEmail)
 
-    expect(screen.getByText(thorgeir.name)).toBeInTheDocument()
+    expect(screen.getByText(secondWithoutEmail.name)).toBeInTheDocument()
   })
 
   it('highlights the entry whose name matches when a national id is listed twice', () => {
-    renderPicker(jest.fn(), sigurborgardottir)
+    renderPicker(jest.fn(), newName)
 
     fireEvent.keyDown(screen.getByRole('combobox'), { key: 'ArrowDown' })
 
     const option = screen
-      .getByText(`${sigurborgardottir.name} (${sigurborgardottir.practice})`)
+      .getByText(`${newName.name} (${newName.practice})`)
       .closest('[role="option"]')
     const otherOption = screen
-      .getByText(`${jonsdottir.name} (${jonsdottir.practice})`)
+      .getByText(`${oldName.name} (${oldName.practice})`)
       .closest('[role="option"]')
 
     expect(option).toHaveAttribute('aria-selected', 'true')
@@ -154,7 +154,7 @@ describe('InputAdvocate', () => {
 
   it('clears the advocate when the selection is cleared', () => {
     const onAdvocateChange = jest.fn()
-    renderPicker(onAdvocateChange, thorgeir)
+    renderPicker(onAdvocateChange, secondWithoutEmail)
 
     const input = screen.getByRole('combobox')
     fireEvent.keyDown(input, { key: 'Backspace' })
