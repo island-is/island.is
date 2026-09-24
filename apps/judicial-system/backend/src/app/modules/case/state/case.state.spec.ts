@@ -843,6 +843,21 @@ describe('Transition Case', () => {
       expect(res).toMatchObject({ state: CaseState.COMPLETED })
     })
 
+    it('should ignore the parent case when the decision is not a merge', () => {
+      // Act
+      const res = transitionCase(
+        CaseTransition.COMPLETE,
+        {
+          ...mergingCase(CaseState.RECEIVED, CaseState.COMPLETED),
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        } as Case,
+        { id: uuid() } as User,
+      )
+
+      // Assert
+      expect(res).toMatchObject({ state: CaseState.COMPLETED })
+    })
+
     it('should complete a merge into a case outside the system', () => {
       // Act
       const res = transitionCase(
