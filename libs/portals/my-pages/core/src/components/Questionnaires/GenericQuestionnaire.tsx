@@ -32,7 +32,8 @@ import { calculateFormula } from './utils/calculations'
 
 // Scales end with their own clear-answer row, so the divider needs less room
 const endsWithScale = (section: { questions?: QuestionnaireQuestion[] }) => {
-  const lastType = section.questions?.at(-1)?.answerOptions.type
+  const questions = section.questions ?? []
+  const lastType = questions[questions.length - 1]?.answerOptions.type
   return (
     lastType === QuestionnaireAnswerOptionType.scale ||
     lastType === QuestionnaireAnswerOptionType.thermometer
