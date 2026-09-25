@@ -173,6 +173,17 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(then.error).toBeUndefined()
     })
 
+    it("should read only the decisions of the session's ruling", () => {
+      const { calls } = (
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      ).mock
+
+      expect(calls.length).toBeGreaterThan(0)
+      calls.forEach((call) =>
+        expect(call).toEqual([caseId, rulingFileId, { transaction }]),
+      )
+    })
+
     it('should create the appeal case with the court session end time', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
