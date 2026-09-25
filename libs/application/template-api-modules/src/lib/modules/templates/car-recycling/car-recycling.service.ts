@@ -33,12 +33,19 @@ const requirePermno = (vehicle: VehicleDto): string => {
 }
 
 // message and stack are non-enumerable on an Error, so logging one as a nested
-// property yields an empty object. FetchError adds the status and the body.
-const describeError = (error: unknown) => ({
-  ...(error as object),
-  message: (error as Error)?.message,
-  stack: (error as Error)?.stack,
-})
+// property yields an empty object. Name the fields instead of spreading: a
+// FetchError also carries the whole Response, the headers and the response
+// body, and the body repeats the registration number this service is careful to
+// shorten. The client middleware already logs those with its own handling.
+const describeError = (error: unknown) => {
+  const { name, message, stack } = (error ?? {}) as Error
+  const { status, statusText } = (error ?? {}) as {
+    status?: number
+    statusText?: string
+  }
+
+  return { name, message, stack, status, statusText }
+}
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
