@@ -1,19 +1,12 @@
 import {
-  buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  ExternalData,
-  Form,
-  FormModes,
-  FormValue,
-} from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import {
   HealthInsuranceApi,
   NationalRegistryV3UserApi,
@@ -21,7 +14,6 @@ import {
 } from '../../dataProviders'
 import { m } from '../../lib/messages/messages'
 import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
-import { prerequisitesFailed } from '../../healthInsuranceUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -39,6 +31,18 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'approveExternalData',
           subTitle: m.externalDataSubtitle,
           checkboxLabel: m.externalDataCheckbox,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: 'SUBMIT',
+                name: coreMessages.buttonNext,
+                type: 'primary',
+              },
+            ],
+          }),
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryV3UserApi,
@@ -79,47 +83,6 @@ export const PrerequisitesForm: Form = buildForm({
               provider: HealthInsuranceApi,
               title: '',
               subTitle: '',
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'externalDataSuccessPrerequisites',
-          title: m.prerequisiteCheckScreenTitle,
-          condition: (_formValue: FormValue, externalData: ExternalData) => {
-            return !prerequisitesFailed(externalData)
-          },
-          children: [
-            buildCustomField({
-              id: 'prerequisiteSuccessSummary',
-              component: 'PrerequisiteSummary',
-            }),
-            buildSubmitField({
-              id: 'toDraft',
-              title: m.externalDataSuccessSubmitFieldTitle,
-              refetchApplicationAfterSubmit: true,
-              placement: 'footer',
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: m.prerequisiteStartApplication,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-        // Fix to prevent the user from continuing the application when one of the prerequisites fails.
-        buildMultiField({
-          id: 'externalDataFailedPrerequisites',
-          title: m.prerequisiteCheckScreenTitle,
-          condition: (_formValue: FormValue, externalData: ExternalData) => {
-            return prerequisitesFailed(externalData)
-          },
-          children: [
-            buildCustomField({
-              id: 'prerequisiteFailedSummary',
-              title: 'test',
-              component: 'PrerequisiteSummary',
             }),
           ],
         }),
