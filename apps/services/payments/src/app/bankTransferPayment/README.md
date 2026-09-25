@@ -95,8 +95,9 @@ sequenceDiagram
     FE->>U: Receipt screen
 ```
 
-The webhook and the FE polling loop are **two independent paths to the same idempotent
-`verify`**. Either one settles the flow; the other becomes a no-op.
+The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
+terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
+The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
 
 ## Blikk status model
 
@@ -255,6 +256,19 @@ stateDiagram-v2
    retries, the fulfillment is kept (we don't un-settle) and a warning is logged — the payment
    worker retries the charge on its next run.
 
+> **Two finalizers can both reach FJS.** The loser of the `payment_fulfillment` race in step 2
+> carries on to step 3, so a webhook and a poll landing together produce two `createFjsCharge`
+> calls. FJS is what makes that safe: `requestID = paymentFlowId` is stable, so the second create
+> is rejected as `AlreadyCreatedCharge` and reconciled by step 4. That is inferred from the client
+> surface rather than verified, so the duplicate case is handled anyway — `createFjsCharge`
+> compares the reception id FJS returned against the row it adopts, and logs
+> `CRITICAL: FJS accepted a duplicate charge …` only when they differ.
+> Alert on the structured fields rather than the prose: `needsManualReversal` (a charge at FJS we
+> never persisted) and `needsReconciliation` (conflict with a soft-deleted row). A reconcile that
+> finds no row is not logged — it cannot tell a lagging commit from a real orphan, and the caller
+> and worker retries surface it anyway. Page on a settled flow that still has no `fjs_charge` row. Either way this is a duplicate *record*, not a second debit: the payer's
+> money moves once, at the provider.
+
 > **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS
 > charge — once per payment method
 > ([`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)) — and rebuilds the
@@ -271,7 +285,8 @@ webhook body's `status` is **ignored** — `verify` fetches the authoritative st
 itself. A forged callback can therefore only trigger a (harmless, idempotent) refresh.
 
 **Polling** ([`useBankTransferStatusPolling`](../../../../../../apps/payments/hooks/useBankTransferStatusPolling.ts)):
-the FE polls `verify` by `paymentFlowId` with backoff `[1s, 2s, 4s, 8s, 15s]`, capped by a hard
+the FE polls `verify` by `paymentFlowId` with backoff `[500ms, 1s, 2s, 3s, 5s]` — dropping
+to a 10s steady state once the SCA URL is on screen — capped by a hard
 timeout derived from `expiresAt` (+30s grace; 10-min fallback if absent). Polling runs only on the
 waiting screen (`paymentStatus === bank_transfer_pending`), which is where both SCA paths land via
 SSR. It exits silently on `BankTransferNotFound`.
