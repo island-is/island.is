@@ -97,6 +97,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             customPageData?.ogDescription ?? formatMessage(m.home.description),
         }}
         searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
+        searchAriaLabel={formatMessage(m.home.searchAriaLabel)}
         searchUrl={searchUrl}
         shortcuts={{
           title: formatMessage(m.home.mostVisited),

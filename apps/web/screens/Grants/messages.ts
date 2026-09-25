@@ -246,6 +246,10 @@ export const m = {
       id: 'web.grants:home.inputPlaceholder',
       defaultMessage: 'Leitaðu á styrkjatorgi',
     },
+    searchAriaLabel: {
+      id: 'web.grants:home.searchAriaLabel',
+      defaultMessage: 'Leit á Styrkjatorgi',
+    },
     mostVisited: {
       id: 'web.grants:home.mostVisited',
       defaultMessage: 'Mest sótt',

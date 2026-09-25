@@ -55,6 +55,7 @@ export type CustomPageLayoutHeaderProps = {
   shortcuts?: Shortcuts
   searchUrl?: string
   searchPlaceholder?: string
+  searchAriaLabel?: string
   offset?: boolean
 }
 
@@ -72,7 +73,7 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
           placeholder={props.searchPlaceholder}
           backgroundColor="blue"
           size="md"
-          aria-label="Search input"
+          aria-label={props.searchAriaLabel}
           icon={{
             name: 'search',
             type: 'outline',

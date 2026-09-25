@@ -41,6 +41,7 @@ export const OpenInvoicesWrapper = (props: Props) => {
         }
         shortcuts={props.header?.shortcuts}
         searchPlaceholder={props.header?.searchPlaceholder}
+        searchAriaLabel={props.header?.searchAriaLabel}
         searchUrl={props.header?.searchUrl}
         offset={props.header?.offset}
         featuredImage={
