@@ -6,7 +6,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
-import HtmlParser from 'react-html-parser'
+import { renderSanitizedHtml } from '../utils/sanitizeHtml'
 
 export interface RadioOption {
   label: string
@@ -58,7 +58,7 @@ export const Radio: React.FC<RadioProps> = ({
     <Box>
       {label && (
         <Text variant="h5" marginBottom={2}>
-          {HtmlParser(label)}
+          {renderSanitizedHtml(label)}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
       )}
