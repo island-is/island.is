@@ -121,6 +121,13 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       defenderEmail: defender.email,
       defenderName: defender.name,
       defenderNationalId: '1234567890',
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          defenderNationalId: '1234567890',
+        },
+      ],
       requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     } as Case
 
@@ -149,6 +156,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       courtCaseNumber,
       defenderEmail: defender.email,
       defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
     } as Case
 
@@ -177,6 +190,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       courtCaseNumber,
       defenderEmail: defender.email,
       defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
       notifications: [
         {
@@ -207,6 +226,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       courtCaseNumber,
       defenderEmail: defender.email,
       defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
       notifications: [
         {
@@ -237,6 +262,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       courtCaseNumber,
       defenderEmail: defender.email,
       defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
       requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
     } as Case
@@ -259,6 +290,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       courtCaseNumber,
       defenderEmail: defender.email,
       defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
       victims: [
@@ -303,6 +340,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       // The defender is also the legal rights protector of one of the victims
       defenderEmail: defender.email,
       defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       victims: [
         {
