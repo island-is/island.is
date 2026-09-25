@@ -4,6 +4,7 @@ import {
   createClient as createManagementClient,
   type PlainClientAPI,
 } from 'contentful-management'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 import { ContentfulTranslationConfig } from './contentful-translation.config'
 import {
   CONTENTFUL_MANAGEMENT_CLIENT,
@@ -14,6 +15,7 @@ import {
   providers: [
     {
       provide: CONTENTFUL_MANAGEMENT_CLIENT,
+      scope: LazyDuringDevScope,
       useFactory: (
         config: ConfigType<typeof ContentfulTranslationConfig>,
       ): PlainClientAPI =>
