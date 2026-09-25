@@ -1,7 +1,7 @@
-import * as kennitala from 'kennitala'
-import { useQuery } from '@apollo/client'
-import Head from 'next/head'
 import { useMemo, useState } from 'react'
+import * as kennitala from 'kennitala'
+import Head from 'next/head'
+import { useQuery } from '@apollo/client'
 
 import {
   AccordionCard,
@@ -16,12 +16,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
+import { useI18n } from '../../i18n'
 import { withMainLayout } from '../../layouts/main'
 import { Screen } from '../../types'
-import { useI18n } from '../../i18n'
 import {
-  GET_PUBLIC_AUTH_TENANTS,
   GET_PUBLIC_AUTH_TENANT_SCOPES_ONLY,
+  GET_PUBLIC_AUTH_TENANTS,
 } from '../queries/Umbod'
 import { getTranslation, PublicAuthScope, PublicAuthTenant } from './types'
 
