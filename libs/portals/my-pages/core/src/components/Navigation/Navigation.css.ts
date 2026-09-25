@@ -64,20 +64,30 @@ export const level = styleVariants({
   },
 })
 
+// Shared by the menu button and the open dialog's header so the dialog opens
+// exactly over the button. Side padding matches the GridContainer gutter.
+export const menuRow = style({
+  position: 'relative',
+  padding: `${theme.spacing['p2']}px ${theme.spacing[2]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      paddingLeft: theme.spacing[3],
+      paddingRight: theme.spacing[3],
+    },
+  },
+})
+
 export const menuBtn = style({
   width: '100%',
   cursor: 'pointer',
   outline: 'none',
-  borderRadius: 8,
-  padding: `${theme.spacing['p2']}px ${theme.spacing[2]}px`,
   transition:
-    'box-shadow 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-  willChange: 'transform, box-shadow',
+    'box-shadow 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  willChange: 'box-shadow',
+  // No scale-on-press: at full width it visibly pulls both edges in
   ':focus-visible': {
-    boxShadow: `0 0 0 3px ${theme.color.blue400}`,
-  },
-  ':active': {
-    transform: 'scale(0.98)', // Subtle press feedback
+    // Inset — an outer ring gets clipped at the screen edges
+    boxShadow: `inset 0 0 0 3px ${theme.color.blue400}`,
   },
 })
 
@@ -176,34 +186,12 @@ export const transition = style({
   },
 })
 
-export const scrolledMenu = style({
-  position: 'relative',
-  marginLeft: 0,
-  marginRight: 0,
-  transition:
-    'margin-left 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94), margin-right 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-})
-
-export const scrolledMenuVisible = style({
-  borderRadius: 'unset',
-  // Match the GridContainer side padding so the menu goes edge to edge:
-  // 16px below the sm breakpoint, 24px from sm up to md (where the menu is replaced by the sidebar)
-  marginLeft: -theme.spacing[2],
-  marginRight: -theme.spacing[2],
-  transition:
-    'margin-left 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94), margin-right 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94), border-radius 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      marginLeft: -theme.spacing[3],
-      marginRight: -theme.spacing[3],
-    },
-  },
-})
-
 export const mobileNav = style({
   zIndex: 1500,
   opacity: 1,
   backgroundColor: theme.color.blue100,
+  // Matches the sticky menu bar's top border so the header row opens in place
+  borderTop: `1px solid ${theme.color.blue200}`,
   height: '100%',
 })
 
