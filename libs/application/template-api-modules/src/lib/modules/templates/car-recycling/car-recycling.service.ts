@@ -21,6 +21,25 @@ import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 
+// The registration number is the only thing identifying a vehicle to the fund,
+// and the schema allows it to be absent. Recording the rest of an application
+// while quietly dropping such a vehicle would report a recycling that never
+// happened, so refuse the submission instead.
+const requirePermno = (vehicle: VehicleDto): string => {
+  if (!vehicle?.permno) {
+    throw new Error('car-recycling: Vehicle is missing a registration number')
+  }
+  return vehicle.permno
+}
+
+// message and stack are non-enumerable on an Error, so logging one as a nested
+// property yields an empty object. FetchError adds the status and the body.
+const describeError = (error: unknown) => ({
+  ...(error as object),
+  message: (error as Error)?.message,
+  stack: (error as Error)?.stack,
+})
+
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
   constructor(
@@ -46,9 +65,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
   }
 
   async createVehicle(auth: User, vehicle: VehicleDto) {
-    if (!vehicle || !vehicle.permno) {
-      return
-    }
+    const permno = requirePermno(vehicle)
 
     let mileage = 0
     let modelYear = null
@@ -73,7 +90,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
     await this.recyclingFundService.createVehicle(
       auth,
-      vehicle.permno,
+      permno,
       mileage,
       vehicle.vin || '',
       vehicle.make || '',
@@ -88,10 +105,12 @@ export class CarRecyclingService extends BaseTemplateApiService {
     vehicle: VehicleDto,
     recyclingRequestType: CreateXRoadRecyclingRequestDtoRequestTypeEnum,
   ) {
+    const permno = requirePermno(vehicle)
+
     await this.recyclingFundService.recycleVehicle(
       auth,
       fullName.trim(),
-      vehicle.permno || '',
+      permno,
       recyclingRequestType,
     )
   }
@@ -108,41 +127,61 @@ export class CarRecyclingService extends BaseTemplateApiService {
     try {
       await this.createOwner(application, auth)
 
-      // Cancellations first: a vehicle the citizen moved out of the selection
-      // must end up cancelled even if it appears in both lists.
+      // Withdrawals are recorded before selections, matching the order the
+      // citizen made them. The two lists never share a vehicle: the overview
+      // moves one out of the other whenever either is chosen.
       await Promise.all(
         canceledVehicles.map((vehicle) =>
-          this.recycleVehicle(
-            auth,
-            applicantName,
-            vehicle,
-            CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
+          this.withVehicleContext(vehicle, () =>
+            this.recycleVehicle(
+              auth,
+              applicantName,
+              vehicle,
+              CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
+            ),
           ),
         ),
       )
 
       await Promise.all(
-        selectedVehicles.map(async (vehicle) => {
-          await this.createVehicle(auth, vehicle)
-          await this.recycleVehicle(
-            auth,
-            applicantName,
-            vehicle,
-            CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle,
-          )
-        }),
+        selectedVehicles.map((vehicle) =>
+          this.withVehicleContext(vehicle, async () => {
+            await this.createVehicle(auth, vehicle)
+            await this.recycleVehicle(
+              auth,
+              applicantName,
+              vehicle,
+              CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle,
+            )
+          }),
+        ),
       )
 
       return true
     } catch (error) {
       this.logger.error(
         `car-recycling: Error occurred when recycling vehicle(s)`,
-        {
-          error,
-        },
+        { error: describeError(error) },
       )
 
       throw new Error(`Error occurred when recycling vehicle(s)`)
+    }
+  }
+
+  // Which vehicle failed is the first thing an operator needs, and it travels
+  // only in the request body, so nothing downstream can report it.
+  private async withVehicleContext<T>(
+    vehicle: VehicleDto,
+    work: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await work()
+    } catch (error) {
+      this.logger.error(
+        `car-recycling: Failed on vehicle ${vehicle.permno?.slice(-3)}`,
+        { error: describeError(error) },
+      )
+      throw error
     }
   }
 }
