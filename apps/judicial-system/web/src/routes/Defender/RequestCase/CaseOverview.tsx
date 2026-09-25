@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
-  isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -19,6 +18,7 @@ import {
   conclusion,
   FormContentContainer,
   FormContext,
+  InfoCardRequestCase,
   MarkdownWrapper,
   PageHeader,
   PageLayout,
@@ -27,8 +27,6 @@ import {
   SignedDocument,
   ZipButton,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseState,
   RequestSharedWithDefender,
@@ -44,21 +42,6 @@ export const CaseOverview = () => {
 
   const { formatMessage } = useIntl()
   const { appealBanner, appealModals } = useAppealCaseBanner()
-  const {
-    defendants,
-    policeCaseNumbers,
-    courtCaseNumber,
-    prosecutorsOffice,
-    court,
-    prosecutor,
-    judge,
-    caseType,
-    registrar,
-    appealCaseNumber,
-    appealAssistant,
-    appealJudges,
-    victims,
-  } = useInfoCardItems()
 
   const shouldDisplayAppealBanner =
     isCompletedCase(workingCase.state) &&
@@ -123,51 +106,7 @@ export const CaseOverview = () => {
               </Box>
             )}
           <Box marginBottom={6}>
-            <InfoCard
-              sections={[
-                {
-                  id: 'defendants-section',
-                  items: [defendants({ caseType: workingCase.type })],
-                },
-                {
-                  id: 'victims-section',
-                  items: [victims],
-                },
-                {
-                  id: 'case-info-section',
-                  items: [
-                    policeCaseNumbers,
-                    courtCaseNumber,
-                    prosecutorsOffice,
-                    court,
-                    prosecutor(workingCase.type),
-                    ...(workingCase.judge ? [judge] : []),
-                    ...(isInvestigationCase(workingCase.type)
-                      ? [caseType]
-                      : []),
-                    ...(workingCase.registrar ? [registrar] : []),
-                  ],
-                  columns: 2,
-                },
-                ...(workingCase.appealCase?.appealCaseNumber
-                  ? [
-                      {
-                        id: 'court-of-appeal-section',
-                        items: [
-                          appealCaseNumber,
-                          ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealCase?.appealJudge1 &&
-                          workingCase.appealCase?.appealJudge2 &&
-                          workingCase.appealCase?.appealJudge3
-                            ? [appealJudges]
-                            : []),
-                        ],
-                        columns: 2,
-                      },
-                    ]
-                  : []),
-              ]}
-            />
+            <InfoCardRequestCase />
           </Box>
           {isCompletedCase(workingCase.state) && (
             <Box marginBottom={6}>

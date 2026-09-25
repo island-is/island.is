@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Accordion } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  isIndictmentCase,
-  isInvestigationCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   AllIndictmentCaseFiles,
   CaseFilesAccordionItem,
@@ -15,15 +12,14 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
   InfoCardClosedIndictment,
+  InfoCardRequestCase,
   PageHeader,
   PageLayout,
   PoliceDigitalCaseFilesAccordionItem,
   ReopenModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseFilesOverview,
@@ -54,22 +50,6 @@ const Result = () => {
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const {
-    defendants,
-    policeCaseNumbers,
-    courtCaseNumber,
-    prosecutor,
-    prosecutorsOffice,
-    court,
-    judge,
-    registrar,
-    caseType,
-    appealCaseNumber,
-    appealAssistant,
-    appealJudges,
-    victims,
-  } = useInfoCardItems()
-
   const isIndictment = isIndictmentCase(workingCase.type)
 
   return (
@@ -99,39 +79,7 @@ const Result = () => {
             {isIndictment ? (
               <InfoCardClosedIndictment />
             ) : (
-              <InfoCard
-                sections={[
-                  {
-                    id: 'defendants-section',
-                    items: [defendants({ caseType: workingCase.type })],
-                  },
-                  {
-                    id: 'victims-section',
-                    items: [victims],
-                  },
-                  {
-                    id: 'case-info-section',
-                    items: [
-                      policeCaseNumbers,
-                      courtCaseNumber,
-                      prosecutorsOffice,
-                      court,
-                      prosecutor(workingCase.type),
-                      judge,
-                      ...(isInvestigationCase(workingCase.type)
-                        ? [caseType]
-                        : []),
-                      ...(workingCase.registrar ? [registrar] : []),
-                    ],
-                    columns: 2,
-                  },
-                  {
-                    id: 'court-of-appeal-section',
-                    items: [appealCaseNumber, appealAssistant, appealJudges],
-                    columns: 2,
-                  },
-                ]}
-              />
+              <InfoCardRequestCase />
             )}
             {isIndictment ? (
               <>
