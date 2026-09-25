@@ -40,14 +40,6 @@ healthCheck:
     initialDelaySeconds: 3
     path: '/liveness'
     timeoutSeconds: 3
-hpa:
-  scaling:
-    metric:
-      cpuAverageUtilization: 90
-      nginxRequestsIrate: 5
-    replicas:
-      max: 10
-      min: 3
 httpRoute:
   primary-gw:
     hostnames:
@@ -92,9 +84,9 @@ podSecurityContext:
   fsGroup: 65534
 pvcs: []
 replicaCount:
-  default: 3
-  max: 10
-  min: 3
+  default: 0
+  max: 0
+  min: 0
 resources:
   limits:
     cpu: '400m'

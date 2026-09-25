@@ -4040,14 +4040,6 @@ skilavottord-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 8
-      replicas:
-        max: 10
-        min: 2
   httpRoute:
     primary-gw:
       hostnames:
@@ -4069,9 +4061,9 @@ skilavottord-web:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'
@@ -4119,14 +4111,6 @@ skilavottord-ws:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 10
-        min: 3
   httpRoute:
     primary-gw:
       hostnames:
@@ -4171,9 +4155,9 @@ skilavottord-ws:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 10
-    min: 3
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'

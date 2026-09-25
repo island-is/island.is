@@ -9,9 +9,9 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({
-      default: 2,
-      max: 10,
-      min: 2,
+      default: 0,
+      max: 0,
+      min: 0,
       scalingMagicNumber: 8,
     })
     .resources({
