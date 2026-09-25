@@ -122,6 +122,9 @@ describe('NotificationsService', () => {
   })
 
   it('should sanitize and return only valid arguments', () => {
+    const warnSpy = jest
+      .spyOn(logger, 'warn')
+      .mockImplementation(() => undefined)
     const argsWithInvalid = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
@@ -133,6 +136,15 @@ describe('NotificationsService', () => {
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
     ])
+    expect(warnSpy).toHaveBeenCalledWith(
+      'Filtering out invalid notification argument',
+      {
+        templateId: mockHnippTemplate.templateId,
+        invalidArgKey: 'invalidArg',
+        validArgKeys: mockHnippTemplate.args,
+      },
+    )
+    warnSpy.mockRestore()
   })
 
   it('should sanitize and return empty array when no valid arguments', () => {
