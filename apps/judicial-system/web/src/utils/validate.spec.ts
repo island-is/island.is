@@ -454,7 +454,7 @@ describe('Validate phonenumber format', () => {
 
 describe('Validate court case number', () => {
   beforeAll(() => {
-    jest.useFakeTimers({ now: new Date('2020-01-01') })
+    jest.useFakeTimers({ now: new Date('2020-06-15T12:00:00Z') })
   })
   afterAll(() => {
     jest.useRealTimers()
@@ -844,7 +844,7 @@ describe('Validate date format', () => {
 
 describe('Validate appeal case number format', () => {
   beforeAll(() => {
-    jest.useFakeTimers({ now: new Date('2020-01-01') })
+    jest.useFakeTimers({ now: new Date('2020-06-15T12:00:00Z') })
   })
   afterAll(() => {
     jest.useRealTimers()
