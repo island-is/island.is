@@ -27,7 +27,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
-import { CreateDefendantDto } from '../../defendant/dto/createDefendant.dto'
+import { CreateCaseDefendantDto } from './createCaseDefendant.dto'
 
 export class CreateCaseDto {
   @IsNotEmpty()
@@ -106,7 +106,7 @@ export class CreateCaseDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateDefendantDto)
-  @ApiPropertyOptional({ type: CreateDefendantDto, isArray: true })
-  readonly defendants?: CreateDefendantDto[]
+  @Type(() => CreateCaseDefendantDto)
+  @ApiPropertyOptional({ type: CreateCaseDefendantDto, isArray: true })
+  readonly defendants?: CreateCaseDefendantDto[]
 }

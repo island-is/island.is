@@ -12,9 +12,9 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant'
-import { CreateDefendantDto } from '../../../defendant/dto/createDefendant.dto'
 import { Case, CaseRepositoryService } from '../../../repository'
 import { CreateCaseDto } from '../../dto/createCase.dto'
+import { CreateCaseDefendantDto } from '../../dto/createCaseDefendant.dto'
 
 interface Then {
   result: Case
@@ -23,7 +23,7 @@ interface Then {
 
 type GivenWhenThen = (
   type: CaseType,
-  defendants?: CreateDefendantDto[],
+  defendants?: CreateCaseDefendantDto[],
 ) => Promise<Then>
 
 describe('CaseController - Create', () => {
@@ -70,7 +70,7 @@ describe('CaseController - Create', () => {
 
     givenWhenThen = async (
       type: CaseType,
-      defendants?: CreateDefendantDto[],
+      defendants?: CreateCaseDefendantDto[],
     ) => {
       const then = {} as Then
 
@@ -159,7 +159,7 @@ describe('CaseController - Create', () => {
     const defendants = [
       { name: 'Defendant 1' },
       { name: 'Defendant 2' },
-    ] as CreateDefendantDto[]
+    ] as CreateCaseDefendantDto[]
 
     beforeEach(async () => {
       const mockCreate = mockCaseRepositoryService.create as jest.Mock
@@ -237,7 +237,7 @@ describe('CaseController - Create', () => {
       then = await givenWhenThen(CaseType.INDICTMENT, [
         { name: 'Defendant 1' },
         { name: 'Defendant 2' },
-      ] as CreateDefendantDto[])
+      ] as CreateCaseDefendantDto[])
     })
 
     it('should throw Error so the whole creation is rolled back', () => {
