@@ -8,12 +8,7 @@ export const SidebarContactBox = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box
-      borderRadius="large"
-      background="purple100"
-      padding={3}
-      marginTop={3}
-    >
+    <Box borderRadius="large" background="purple100" padding={3} marginTop={3}>
       <Box display="flex" alignItems="flexStart" marginBottom={1} columnGap={2}>
         <Icon icon="mail" type="outline" color="purple400" />
         <Text variant="h4" color="purple400">
