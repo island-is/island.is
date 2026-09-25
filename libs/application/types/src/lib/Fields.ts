@@ -939,7 +939,6 @@ export interface FindVehicleField extends InputField {
   notFoundErrorTitle?: FormText
   fallbackErrorMessage?: FormText
   hasErrorTitle?: FormText
-  isNotDebtLessTag?: FormText
   validationErrors?: Record<string, FormText>
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
@@ -954,13 +953,11 @@ export interface VehicleRadioField extends InputField {
   itemType: 'VEHICLE' | 'PLATE'
   itemList: unknown[]
   shouldValidateErrorMessages?: boolean
-  shouldValidateDebtStatus?: boolean
   shouldValidateRenewal?: boolean
   alertMessageErrorTitle?: FormText
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
   inputErrorMessage: FormText
-  debtStatusErrorMessage?: FormText
   renewalExpiresAtTag?: StaticText
   validateRenewal?: (item: unknown) => boolean
 }
@@ -972,7 +969,6 @@ export interface VehicleSelectField extends InputField {
   itemList: unknown[]
   getDetails?: (value: string) => Promise<unknown>
   shouldValidateErrorMessages?: boolean
-  shouldValidateDebtStatus?: boolean
   shouldValidateRenewal?: boolean
   inputLabelText?: FormText
   inputPlaceholderText?: FormText
@@ -980,7 +976,6 @@ export interface VehicleSelectField extends InputField {
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
   inputErrorMessage: FormText
-  debtStatusErrorMessage?: FormText
   renewalExpiresAtTag?: StaticText
   validateRenewal?: (item: unknown) => boolean
 }
