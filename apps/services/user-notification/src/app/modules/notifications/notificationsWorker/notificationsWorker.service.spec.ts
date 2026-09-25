@@ -1448,7 +1448,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
-        wasSent: true
+        wasSent: true,
       })
 
       await pushSubQueue.add({
@@ -1486,7 +1486,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         args: [],
         scope: '@island.is/documents',
-        wasSent: true
+        wasSent: true,
       })
 
       await emailSubQueue.add({
