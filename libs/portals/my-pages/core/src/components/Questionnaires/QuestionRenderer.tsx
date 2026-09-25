@@ -6,7 +6,6 @@ import {
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
 import * as styles from './QuestionsTypes/QuestionTypes.css'
 import { FC } from 'react'
-import HtmlParser from 'react-html-parser'
 import { useIsMobile } from '@island.is/portals/core'
 import { QuestionAnswer } from '../../types/questionnaire'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
@@ -17,6 +16,7 @@ import { HorizontalScale } from './QuestionsTypes/HorizontalScale'
 import { VerticalScale } from './QuestionsTypes/VerticalScale'
 import { InlineRadio } from './QuestionsTypes/InlineRadio'
 import { Table } from './QuestionsTypes/Table'
+import { renderQuestionLabel, renderSanitizedHtml } from './utils/sanitizeHtml'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -368,11 +368,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
   return (
     <Box>
       <Text id={labelId} variant="h5" marginBottom={question.sublabel ? 1 : 3}>
-        {HtmlParser(
-          question.htmlLabel && question.htmlLabel.length > 0
-            ? question.htmlLabel
-            : question.label ?? '',
-        )}
+        {renderQuestionLabel(question.htmlLabel, question.label)}
         {question.answerOptions.type === 'number' &&
           question.answerOptions.min &&
           question.answerOptions.max &&
@@ -390,7 +386,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
       </Text>
       {question.sublabel && (
         <Text variant="medium" color="dark400" marginBottom={3}>
-          {HtmlParser(question.sublabel)}
+          {renderSanitizedHtml(question.sublabel)}
         </Text>
       )}
       {renderQuestionByType()}
