@@ -136,7 +136,7 @@ export const OverviewFilter = ({
               checked={searchStateValue === 'true'}
               onChange={(event) =>
                 onSearchUpdate(
-                  category.id as keyof SearchState,
+                  category.id,
                   event.target.checked ? ['true'] : ['false'],
                 )
               }
@@ -160,7 +160,7 @@ export const OverviewFilter = ({
             maxSelectableDate={category.maxSelectableDate}
             initiallyExpanded
             onChange={(valueFrom, valueTo) => {
-              onSearchUpdate(category.id as keyof SearchState, [
+              onSearchUpdate(category.id, [
                 valueFrom?.toISOString() ?? '',
                 valueTo?.toISOString() ?? '',
               ])
@@ -193,7 +193,7 @@ export const OverviewFilter = ({
             selectedItems={category.selectedItems}
             onChange={(values) =>
               onSearchUpdate(
-                category.id as keyof SearchState,
+                category.id,
                 values.length ? values : undefined,
               )
             }

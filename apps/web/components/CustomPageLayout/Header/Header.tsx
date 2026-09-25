@@ -151,24 +151,12 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            paddingTop={[6, 6, 6, 8, 8]}
-            offset={props.offset ? ['0', '0', '0', '1/12', '1/12'] : ['0']}
+            paddingTop={[6, 6, 6, 8]}
+            offset={props.offset ? ['0', '0', '0', '1/12'] : ['0']}
             span={
               props.featuredImage?.size === 'sm'
-                ? [
-                    '1/1',
-                    '1/1',
-                    '4/6',
-                    props.offset ? '7/12' : '8/12',
-                    props.offset ? '7/12' : '8/12',
-                  ]
-                : [
-                    '1/1',
-                    '1/1',
-                    '4/6',
-                    props.offset ? '6/12' : '7/12',
-                    props.offset ? '6/12' : '7/12',
-                  ]
+                ? ['1/1', '1/1', '4/6', props.offset ? '7/12' : '8/12']
+                : ['1/1', '1/1', '4/6', props.offset ? '6/12' : '7/12']
             }
           >
             {props.breadcrumbs}
@@ -189,16 +177,10 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
           <GridColumn
             span={
               props.featuredImage?.size === 'sm'
-                ? ['0', '0', '3/12', '2/12', '2/12']
-                : ['0', '0', '2/6', '4/12', '4/12']
+                ? ['0', '0', '3/12', '2/12']
+                : ['0', '0', '2/6', '4/12']
             }
-            offset={[
-              '0',
-              '0',
-              '0',
-              props.featuredImage?.size === 'sm' ? '1/12' : '1/12',
-              props.featuredImage?.size === 'sm' ? '1/12' : '1/12',
-            ]}
+            offset={['0', '0', '0', '1/12']}
             hiddenBelow="md"
           >
             {renderImage()}

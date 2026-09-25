@@ -276,7 +276,7 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
         featuredImage={{
           src:
             customSubpage?.ogImage?.url ?? formatMessage(m.home.featuredImage),
-          alt: formatMessage(m.home.featuredImageAlt),
+          alt: '',
         }}
         breadcrumbs={
           breadcrumbItems && (

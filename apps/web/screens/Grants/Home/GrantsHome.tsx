@@ -131,7 +131,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
         }}
         featuredImage={{
           src: formatMessage(m.home.featuredImage),
-          alt: formatMessage(m.home.featuredImageAlt),
+          alt: '',
         }}
         offset
         breadcrumbs={
