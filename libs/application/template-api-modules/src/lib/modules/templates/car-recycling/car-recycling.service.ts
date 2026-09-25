@@ -5,10 +5,6 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
-  CarRecyclingClientService,
-  RecyclingRequestTypes,
-} from '@island.is/clients/car-recycling'
-import {
   RecyclingFundClientService,
   CreateXRoadRecyclingRequestDtoRequestTypeEnum,
 } from '@island.is/clients/recycling-fund'
@@ -24,144 +20,99 @@ import { User } from '@island.is/auth-nest-tools'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+
+// The registration number is the only thing identifying a vehicle to the fund,
+// and the schema allows it to be absent. Recording the rest of an application
+// while quietly dropping such a vehicle would report a recycling that never
+// happened, so refuse the submission instead.
+const requirePermno = (vehicle: VehicleDto): string => {
+  if (!vehicle?.permno) {
+    throw new Error('car-recycling: Vehicle is missing a registration number')
+  }
+  return vehicle.permno
+}
+
+// message and stack are non-enumerable on an Error, so logging one as a nested
+// property yields an empty object. FetchError adds the status and the body.
+const describeError = (error: unknown) => ({
+  ...(error as object),
+  message: (error as Error)?.message,
+  stack: (error as Error)?.stack,
+})
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private carRecyclingService: CarRecyclingClientService,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly recyclingFundService: RecyclingFundClientService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
   }
-  //THE SKILAVOTTORD BACKEND IS BEING MOVED TO THE RECYCLING FUND SERVERS FROM ISLAND.IS
-  // TO BEGIN WITH WE ARE SAVING THE DATA ON BOTH SERVERS
+
+  // Skilavottorð now runs on Úrvinnslusjóður's own servers. Every call below
+  // reaches them over X-Road, and a failure throws: the client raises on any
+  // non-2xx, and the service answers a refused request with 400. Letting that
+  // propagate fails the application, so the citizen is told to try again rather
+  // than being shown a submission that was never recorded.
 
   async createOwner(application: ApplicationWithAttachments, auth: User) {
     const { applicantName } = getApplicationExternalData(
       application.externalData,
     )
-    // OLD BACKEND
-    const oldResponse = await this.carRecyclingService.createOwner(
-      auth,
-      applicantName,
-    )
 
-    // New backend under feature flag to keep it from affecting real users while we test it out
-    if (await this.useNewBackend(auth)) {
-      try {
-        await this.recyclingFundService.createOwner(auth, applicantName)
-      } catch (error) {
-        this.logger.error(
-          `car-recycling: Error creating owner in new backend`,
-          {
-            error,
-          },
-        )
-      }
-    }
-
-    return oldResponse
+    await this.recyclingFundService.createOwner(auth, applicantName)
   }
 
   async createVehicle(auth: User, vehicle: VehicleDto) {
-    if (vehicle && vehicle.permno) {
-      let mileage = 0
-      let modelYear = null
+    const permno = requirePermno(vehicle)
 
-      // If mileage is provided, convert it to a number and remove thousand separators
-      if (vehicle.mileage) {
-        const parsed = +vehicle.mileage.trim().replace(/[.,\s]/g, '')
-        mileage = Number.isFinite(parsed) ? parsed : 0
-      }
+    let mileage = 0
+    let modelYear = null
 
-      // If no mileage is provided, use the latest mileage
-      if (mileage === 0) {
-        mileage = vehicle.latestMileage || 0
-      }
-
-      // Support the newRegistrationDate, for now, to keep backwards compatibility
-      if (vehicle.newRegistrationDate) {
-        modelYear = new Date(vehicle.newRegistrationDate)
-      } else if (vehicle.modelYear) {
-        modelYear = new Date(vehicle.modelYear, 0, 1)
-      }
-
-      // OLD Backend
-      const oldResponse = await this.carRecyclingService.createVehicle(
-        auth,
-        vehicle.permno,
-        mileage,
-        vehicle.vin || '',
-        vehicle.make || '',
-        modelYear,
-        vehicle.color || '',
-      )
-
-      // New backend under feature flag to keep it from affecting real users while we test it out
-      if (await this.useNewBackend(auth)) {
-        try {
-          await this.recyclingFundService.createVehicle(
-            auth,
-            vehicle.permno,
-            mileage,
-            vehicle.vin || '',
-            vehicle.make || '',
-            modelYear,
-            vehicle.color || '',
-          )
-        } catch (error) {
-          this.logger.error(
-            `car-recycling: Error creating vehicle in new backend`,
-            {
-              error,
-            },
-          )
-        }
-      }
-
-      return oldResponse
+    // If mileage is provided, convert it to a number and remove thousand separators
+    if (vehicle.mileage) {
+      const parsed = +vehicle.mileage.trim().replace(/[.,\s]/g, '')
+      mileage = Number.isFinite(parsed) ? parsed : 0
     }
+
+    // If no mileage is provided, use the latest mileage
+    if (mileage === 0) {
+      mileage = vehicle.latestMileage || 0
+    }
+
+    // Support the newRegistrationDate, for now, to keep backwards compatibility
+    if (vehicle.newRegistrationDate) {
+      modelYear = new Date(vehicle.newRegistrationDate)
+    } else if (vehicle.modelYear) {
+      modelYear = new Date(vehicle.modelYear, 0, 1)
+    }
+
+    await this.recyclingFundService.createVehicle(
+      auth,
+      permno,
+      mileage,
+      vehicle.vin || '',
+      vehicle.make || '',
+      modelYear,
+      vehicle.color || '',
+    )
   }
 
   async recycleVehicle(
     auth: User,
     fullName: string,
     vehicle: VehicleDto,
-    recyclingRequestType: RecyclingRequestTypes,
+    recyclingRequestType: CreateXRoadRecyclingRequestDtoRequestTypeEnum,
   ) {
-    // OLD Backend
-    const oldResponse = await this.carRecyclingService.recycleVehicle(
+    const permno = requirePermno(vehicle)
+
+    await this.recyclingFundService.recycleVehicle(
       auth,
       fullName.trim(),
-      vehicle.permno || '',
+      permno,
       recyclingRequestType,
     )
-
-    // New backend under feature flag to keep it from affecting real users while we test it out
-    if (await this.useNewBackend(auth)) {
-      try {
-        await this.recyclingFundService.recycleVehicle(
-          auth,
-          fullName.trim(),
-          vehicle.permno || '',
-          recyclingRequestType === RecyclingRequestTypes.pendingRecycle
-            ? CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle
-            : CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
-        )
-      } catch (error) {
-        this.logger.error(
-          `car-recycling: Error recycling vehicle in new backend`,
-          {
-            error,
-          },
-        )
-      }
-    }
-    return oldResponse
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -173,124 +124,64 @@ export class CarRecyclingService extends BaseTemplateApiService {
       application.externalData,
     )
 
-    let isError = false
     try {
-      // Create owner
-      const ownerResponse = await this.createOwner(application, auth)
+      await this.createOwner(application, auth)
 
-      if (ownerResponse && ownerResponse.errors) {
-        isError = true
-        this.logger.error(`car-recycling: Error creating owner`, {
-          error: ownerResponse.errors,
-        })
-      }
-
-      // Canceled recycling
-      const canceledResponses = canceledVehicles.map(async (vehicle) => {
-        if (!isError) {
-          const cancelResponse = await this.recycleVehicle(
-            auth,
-            applicantName,
-            vehicle,
-            RecyclingRequestTypes.cancelled,
-          )
-
-          if (
-            cancelResponse &&
-            !cancelResponse.data.createSkilavottordRecyclingRequestAppSys.status
-          ) {
-            isError = true
-            this.logger.error(
-              `car-recycling: Error canceling recycling vehicle ${vehicle.permno?.slice(
-                -3,
-              )} `,
-              {
-                error: cancelResponse.errors,
-              },
-            )
-          }
-        }
-      })
-
-      // Wait for cancel to finish before continuing
-      await Promise.all(canceledResponses)
-
-      // Recycle
-      const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
-        if (!isError) {
-          // Create vehicle
-          const vechicleResponse = await this.createVehicle(auth, vehicle)
-
-          if (vechicleResponse && vechicleResponse.errors) {
-            isError = true
-            this.logger.error(
-              `car-recycling: Error creating vehicle ${vehicle.permno?.slice(
-                -3,
-              )} `,
-              {
-                error: vechicleResponse.errors,
-              },
-            )
-          }
-
-          if (!isError) {
-            // Recycle vehicle
-            const response = await this.recycleVehicle(
+      // Withdrawals are recorded before selections, matching the order the
+      // citizen made them. The two lists never share a vehicle: the overview
+      // moves one out of the other whenever either is chosen.
+      await Promise.all(
+        canceledVehicles.map((vehicle) =>
+          this.withVehicleContext(vehicle, () =>
+            this.recycleVehicle(
               auth,
               applicantName,
               vehicle,
-              RecyclingRequestTypes.pendingRecycle,
+              CreateXRoadRecyclingRequestDtoRequestTypeEnum.Cancelled,
+            ),
+          ),
+        ),
+      )
+
+      await Promise.all(
+        selectedVehicles.map((vehicle) =>
+          this.withVehicleContext(vehicle, async () => {
+            await this.createVehicle(auth, vehicle)
+            await this.recycleVehicle(
+              auth,
+              applicantName,
+              vehicle,
+              CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle,
             )
+          }),
+        ),
+      )
 
-            if (
-              response &&
-              !response.data.createSkilavottordRecyclingRequestAppSys.status
-            ) {
-              isError = true
-              this.logger.error(
-                `car-recycling: Error recycling vehicle ${vehicle.permno?.slice(
-                  -3,
-                )}`,
-                {
-                  error: response.errors,
-                },
-              )
-            }
-          }
-        }
-      })
-
-      // Wait for all promises to resolve or reject
-      await Promise.all(vehiclesResponses)
-
-      if (isError) {
-        return Promise.reject(
-          new Error(`car-recycling: Error occurred when recycling vehicle(s)`),
-        )
-      }
-
-      return Promise.resolve(true)
+      return true
     } catch (error) {
-      isError = true
       this.logger.error(
         `car-recycling: Error occurred when recycling vehicle(s)`,
-        {
-          error,
-        },
+        { error: describeError(error) },
       )
 
-      return Promise.reject(
-        new Error(`Error occurred when recycling vehicle(s)`),
-      )
+      throw new Error(`Error occurred when recycling vehicle(s)`)
     }
   }
 
-  async useNewBackend(auth: User): Promise<boolean> {
-    const useNewBackend = await this.featureFlagService.getValue(
-      Features.isNewCarRecyclingBackendEnabled,
-      false,
-      auth,
-    )
-    return useNewBackend
+  // Which vehicle failed is the first thing an operator needs, and it travels
+  // only in the request body, so nothing downstream can report it.
+  private async withVehicleContext<T>(
+    vehicle: VehicleDto,
+    work: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await work()
+    } catch (error) {
+      this.logger.error(
+        `car-recycling: Failed on vehicle ${vehicle.permno?.slice(-3)}`,
+        { error: describeError(error) },
+      )
+      throw error
+    }
   }
 }
