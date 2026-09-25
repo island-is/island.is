@@ -57,10 +57,6 @@ import { stripEmptyFormValue } from './strip-empty-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
 import {
-  RoleFilteredApplication,
-  toRoleFilteredApplication,
-} from './role-filtered-application'
-import {
   ScreenDto,
   PageDto,
   ValidationErrorDto,
@@ -132,12 +128,15 @@ function getScreenSubmitField(
 
 interface ScreenRenderContext {
   application: ApplicationWithAttachments
-  filteredApplication: RoleFilteredApplication
+  /**
+   * Anything that renders field content (screen/field mappers,
+   * extractPageAnswers) must use this instead of `application` directly —
+   * it carries the role-filtered answers/externalData, not the raw ones.
+   */
+  filteredApplication: ApplicationWithAttachments
   template: ApplicationTemplate
   roleInState: RoleInState
   form: Form
-  filteredAnswers: FormValue
-  filteredExternalData: ExternalData
   bffUser: BffUser
   screens: FormScreen[]
 }
@@ -195,22 +194,14 @@ export class SdfScreenService {
       options,
       startTime,
     )
-    const {
-      application,
-      filteredApplication,
-      form,
-      filteredAnswers,
-      filteredExternalData,
-      bffUser,
-      screens,
-    } = context
+    const { application, filteredApplication, form, bffUser, screens } = context
 
     const step5Start = Date.now()
     const resolvedIndex = await this.resolvePageIndex(
       applicationId,
       application,
       screens,
-      filteredAnswers,
+      filteredApplication.answers,
       pageIndexOverride,
       Boolean(options.ephemeral),
     )
@@ -224,8 +215,8 @@ export class SdfScreenService {
     )
     const navigableSections = getNavigableSectionsInForm(
       form,
-      filteredAnswers,
-      filteredExternalData,
+      filteredApplication.answers,
+      filteredApplication.externalData,
       bffUser,
     )
     const stepper = buildStepper(
@@ -301,11 +292,11 @@ export class SdfScreenService {
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application, roleInState)
     this.logTiming('Step 3.5: Role-Based Data Filtering', step35Start)
-    const filteredApplication = toRoleFilteredApplication(
-      application,
-      filteredAnswers,
-      filteredExternalData,
-    )
+    const filteredApplication: ApplicationWithAttachments = {
+      ...application,
+      answers: filteredAnswers,
+      externalData: filteredExternalData,
+    }
 
     const step4Start = Date.now()
     const bffUser = this.buildBffUser(user, locale)
@@ -323,8 +314,6 @@ export class SdfScreenService {
       template,
       roleInState,
       form,
-      filteredAnswers,
-      filteredExternalData,
       bffUser,
       screens,
     }
@@ -420,8 +409,8 @@ export class SdfScreenService {
     const buttons = isLastScreen
       ? buildFooterButtons(
           context.roleInState.actions,
-          context.filteredAnswers,
-          context.filteredExternalData,
+          context.filteredApplication.answers,
+          context.filteredApplication.externalData,
           context.bffUser,
           resolver,
           getScreenSubmitField(currentScreen),
@@ -473,7 +462,7 @@ export class SdfScreenService {
 
   private extractPageAnswers(
     currentScreen: FormScreen,
-    application: RoleFilteredApplication,
+    application: ApplicationWithAttachments,
   ): Record<string, unknown> {
     const pageFieldIds = new Set([
       ...getFormNodeFieldIds(currentScreen),
@@ -871,19 +860,27 @@ export class SdfScreenService {
           application as Application,
           template,
         )
-        const apisFromRole = role ? helper.getApisFromRoleInState(role) : []
+        const roleInState = role ? helper.getRoleInState(role) : undefined
+        const apisFromRole = roleInState?.api ?? []
 
         const templateApis = relevantProviders
           .map((p) => apisFromRole.find((a) => a.actionId === p.action))
-          .filter(Boolean)
+          .filter(Boolean) as TemplateApi[]
 
-        if (templateApis.length > 0) {
+        if (templateApis.length > 0 && roleInState) {
+          this.assertApisWritePermitted(
+            application as Application,
+            user,
+            roleInState,
+            templateApis,
+          )
+
           const result =
             await this.applicationActionService.performActionOnApplication(
               application,
               template,
               user,
-              templateApis as TemplateApi[],
+              templateApis,
               locale,
               'SUBMIT',
             )
@@ -1195,8 +1192,16 @@ export class SdfScreenService {
       applicationSnapshot as Application,
       template,
     )
-    const apisFromRole = helper.getApisFromRoleInState(role)
-    if (apisFromRole.length > 0) {
+    const roleInState = helper.getRoleInState(role)
+    const apisFromRole = roleInState?.api ?? []
+    if (apisFromRole.length > 0 && roleInState) {
+      this.assertApisWritePermitted(
+        applicationSnapshot as Application,
+        user,
+        roleInState,
+        apisFromRole,
+      )
+
       await this.applicationActionService.performActionOnApplication(
         applicationSnapshot,
         template,
@@ -1308,11 +1313,45 @@ export class SdfScreenService {
     return { answers: filteredAnswers, externalData: filteredExternalData }
   }
 
+  /**
+   * Guards a persisting template-API run against a role's declared
+   * `write.externalData` list — the write-side counterpart to
+   * `filterDataByRole` above, and the same check legacy always runs
+   * (`validateIncomingExternalDataProviders`) before persisting external
+   * data on a role's behalf. Without this, a role could trigger a
+   * persisting fetch for a data provider it was never granted write access
+   * to, even though it could never read the result back afterwards.
+   */
+  private assertApisWritePermitted(
+    application: Application,
+    user: User,
+    roleInState: RoleInState,
+    apis: TemplateApi[],
+  ): void {
+    const { write } = roleInState
+    if (write === 'all') {
+      return
+    }
+
+    const permittedDataProviders = write?.externalData ?? []
+    const illegalDataProviders = apis
+      .map((api) => api.resolveExternalDataId(application, user.nationalId))
+      .filter((resolvedId) => !permittedDataProviders.includes(resolvedId))
+
+    if (illegalDataProviders.length > 0) {
+      throw new ForbiddenException(
+        `Current role is not permitted to trigger the following data providers: ${illegalDataProviders.join(
+          ', ',
+        )}`,
+      )
+    }
+  }
+
   private buildPage(
     screen: FormScreen,
     index: number,
     resolver: FormTextResolver,
-    application: RoleFilteredApplication,
+    application: Application,
     user?: BffUser,
   ): PageDto {
     const components = mapScreenToComponents(

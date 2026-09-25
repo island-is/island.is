@@ -1,11 +1,10 @@
 import { FormBuilder } from '@island.is/application/core'
 import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import { FormItemTypes } from '@island.is/application/types'
+import { Application, FormItemTypes } from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
-import { RoleFilteredApplication } from '../role-filtered-application'
 
 describe('mapScreenToComponents — clientShowWhen children', () => {
   it('emits clientShowWhen for a select when it targets another field', () => {
@@ -44,11 +43,7 @@ describe('mapScreenToComponents — clientShowWhen children', () => {
       resolve: () => '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(
-      multi,
-      resolver,
-      {} as RoleFilteredApplication,
-    )
+    const components = mapScreenToComponents(multi, resolver, {} as Application)
 
     expect(
       components.some((c) => c.id === 'irrigationType' && c.type === 'SELECT'),
@@ -98,11 +93,7 @@ describe('mapScreenToComponents — clientShowWhen children', () => {
       resolve: () => '',
     } as unknown as FormTextResolver
 
-    const components = mapScreenToComponents(
-      multi,
-      resolver,
-      {} as RoleFilteredApplication,
-    )
+    const components = mapScreenToComponents(multi, resolver, {} as Application)
 
     expect(components.some((c) => c.id === 'irrigationType')).toBe(false)
   })

@@ -1,4 +1,4 @@
-import { FormItemTypes } from '@island.is/application/types'
+import { Application, FormItemTypes } from '@island.is/application/types'
 import { resolveFieldId, resolveFormItemId } from '@island.is/application/core'
 import {
   FieldDef,
@@ -11,7 +11,6 @@ import type { BffUser } from '@island.is/shared/types'
 import { ComponentDto } from './dto/screen.dto'
 import { FormTextResolver } from './i18n-resolver.service'
 import { asResolvableFormText, mapFieldToComponent } from './field-mappers'
-import { RoleFilteredApplication } from './role-filtered-application'
 
 const shouldIncludeMultiFieldChildForSdf = (child: FieldDef): boolean => {
   return child.isNavigable !== false
@@ -20,7 +19,7 @@ const shouldIncludeMultiFieldChildForSdf = (child: FieldDef): boolean => {
 const mapMultiFieldToComponents = (
   screen: MultiFieldScreen,
   resolver: FormTextResolver,
-  application: RoleFilteredApplication,
+  application: Application,
   user?: BffUser,
 ): ComponentDto[] => {
   return screen.children
@@ -40,7 +39,7 @@ type RepeaterScreenWithLabels = RepeaterScreen & {
 const mapRepeaterToComponent = (
   screen: RepeaterScreen,
   resolver: FormTextResolver,
-  application: RoleFilteredApplication,
+  application: Application,
   user?: BffUser,
 ): ComponentDto => {
   const repeater = screen as RepeaterScreenWithLabels
@@ -82,7 +81,7 @@ const mapRepeaterToComponent = (
 const mapExternalDataProviderToComponent = (
   screen: ExternalDataProviderScreen,
   resolver: FormTextResolver,
-  application: RoleFilteredApplication,
+  application: Application,
   user?: BffUser,
 ): ComponentDto => {
   // Data provider ids may be `(application, user) => string`. Resolve them
@@ -126,7 +125,7 @@ const mapExternalDataProviderToComponent = (
 export const mapScreenToComponents = (
   screen: FormScreen,
   resolver: FormTextResolver,
-  application: RoleFilteredApplication,
+  application: Application,
   user?: BffUser,
 ): ComponentDto[] => {
   if ('type' in screen) {

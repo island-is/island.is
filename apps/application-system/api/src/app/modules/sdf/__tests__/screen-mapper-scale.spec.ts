@@ -1,9 +1,12 @@
 import type { MultiFieldScreen } from '@island.is/application/screen-compiler'
-import { FieldTypes, FormItemTypes } from '@island.is/application/types'
+import {
+  Application,
+  FieldTypes,
+  FormItemTypes,
+} from '@island.is/application/types'
 
 import { FormTextResolver } from '../i18n-resolver.service'
 import { mapScreenToComponents } from '../screen-mapper'
-import { RoleFilteredApplication } from '../role-filtered-application'
 
 const stubResolver = {
   resolve: (v: unknown) =>
@@ -51,7 +54,7 @@ describe('mapScreenToComponents — scale field', () => {
     const components = mapScreenToComponents(
       screen,
       stubResolver,
-      {} as RoleFilteredApplication,
+      {} as Application,
     )
 
     const byId = (id: string) => components.find((c) => c.id === id)
