@@ -279,7 +279,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
 
     const withExistingEvents = (events: AppealEventLog[]) =>
       (
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue(events)
 
     it('adds an event only for a newly appealing party', async () => {

@@ -856,10 +856,10 @@ export class AppealCaseService {
       }
 
       const appealEventLogs =
-        await this.appealEventLogRepositoryService.findAll({
-          where: { appealCaseId: existingAppealCase.id },
-          transaction,
-        })
+        await this.appealEventLogRepositoryService.findAllForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       if (hasStandingVerdictAppeal({ appealEventLogs }, defendantId, side)) {
         throw new ForbiddenException(
@@ -1421,10 +1421,11 @@ export class AppealCaseService {
       }
     }
 
-    const appealEventLogs = await this.appealEventLogRepositoryService.findAll({
-      where: { appealCaseId: appealCase.id },
-      transaction,
-    })
+    const appealEventLogs =
+      await this.appealEventLogRepositoryService.findAllForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const standingAppellants = standingVerdictAppellants({ appealEventLogs })
     const isWithdrawn = (appellant: {

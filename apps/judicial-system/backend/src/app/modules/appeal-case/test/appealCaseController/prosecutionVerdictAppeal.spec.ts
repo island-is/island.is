@@ -255,7 +255,7 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
         mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
       ).mockResolvedValue(existingAppealCase)
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         event(
           AppealEventType.APPEALED,
@@ -381,7 +381,7 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
         appealState: AppealCaseState.APPEALED,
       } as AppealCase)
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         event(
           AppealEventType.APPEALED,
@@ -403,7 +403,7 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
         appealState: AppealCaseState.RECEIVED,
       } as AppealCase)
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([])
 
       await expectRejected(buildCase())

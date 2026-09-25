@@ -189,7 +189,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         appealedEvent(otherDefendantId, '2026-06-05T09:00:00Z'),
@@ -271,7 +271,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([appealedEvent(defendantId, '2026-06-04T13:34:00Z')])
 
       then = await givenWhenThen(dto)
@@ -294,7 +294,7 @@ describe('AppealCaseController - Withdraw verdict appeal', () => {
   describe('withdrawals that are not allowed', () => {
     it('should reject a withdrawal for a defendant with no standing appeal', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(otherDefendantId, '2026-06-05T09:00:00Z'),
       ])

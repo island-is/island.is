@@ -368,7 +368,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([appealedEvent(AppealOrigin.IN_COURT)])
 
       then = await givenWhenThen(
@@ -385,6 +385,12 @@ describe('CourtSessionController - Upsert appeal decision', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalled()
     })
+
+    it("should read the ruling appeal's APPEALED events in the transaction", () => {
+      expect(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+    })
   })
 
   describe('ruling appealed out of court', () => {
@@ -392,7 +398,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([appealedEvent(AppealOrigin.OUT_OF_COURT)])
 
       then = await givenWhenThen(
@@ -416,7 +422,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([appealedEvent(AppealOrigin.IN_COURT)])
 
       then = await givenWhenThen(
@@ -443,7 +449,7 @@ describe('CourtSessionController - Upsert appeal decision', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([appealedEvent(AppealOrigin.OUT_OF_COURT)])
 
       then = await givenWhenThen(
@@ -476,7 +482,12 @@ describe('CourtSessionController - Upsert appeal decision', () => {
     it('should upsert without looking up any appeal events', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalled()
-      expect(mockAppealEventLogRepositoryService.findAll).not.toHaveBeenCalled()
+      expect(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAppealEventLogRepositoryService.findAllForAppealCase,
+      ).not.toHaveBeenCalled()
     })
   })
 })
