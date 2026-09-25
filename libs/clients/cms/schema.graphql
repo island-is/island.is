@@ -12166,6 +12166,7 @@ type HnippTemplate implements Entry & _Node {
     useFallbackLocale: Boolean
     where: OrganizationFilter
   ): Organization
+  priorityType(locale: String, useFallbackLocale: Boolean): String
   scope(locale: String, useFallbackLocale: Boolean): String
   smsDelivery(locale: String, useFallbackLocale: Boolean): String
   smsPayer(locale: String, useFallbackLocale: Boolean): String
@@ -12178,6 +12179,12 @@ type HnippTemplateCollection {
   limit: Int!
   skip: Int!
   total: Int!
+}
+
+type HnippTemplateCursorCollection {
+  items: [HnippTemplate]!
+  limit: Int!
+  pages: CursorPages!
 }
 
 input HnippTemplateFilter {
@@ -12239,6 +12246,13 @@ input HnippTemplateFilter {
   notificationTitle_not_in: [String]
   organization: cfOrganizationNestedFilter
   organization_exists: Boolean
+  priorityType: String
+  priorityType_contains: String
+  priorityType_exists: Boolean
+  priorityType_in: [String]
+  priorityType_not: String
+  priorityType_not_contains: String
+  priorityType_not_in: [String]
   scope: String
   scope_contains: String
   scope_exists: Boolean
@@ -12278,6 +12292,14 @@ type HnippTemplateLinkingCollections {
     skip: Int = 0
     useFallbackLocale: Boolean
   ): EntryCollection
+  entryCursorCollection(
+    limit: Int = 100
+    locale: String
+    pageNext: String
+    pagePrev: String
+    preview: Boolean
+    useFallbackLocale: Boolean
+  ): EntryCursorCollection
 }
 
 enum HnippTemplateOrder {
@@ -12295,6 +12317,8 @@ enum HnippTemplateOrder {
   notificationDataCopy_DESC
   notificationTitle_ASC
   notificationTitle_DESC
+  priorityType_ASC
+  priorityType_DESC
   scope_ASC
   scope_DESC
   smsDelivery_ASC

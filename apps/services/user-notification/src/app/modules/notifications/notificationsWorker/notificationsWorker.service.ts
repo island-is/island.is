@@ -30,7 +30,10 @@ import {
   CreateHnippNotificationDto,
   InternalCreateHnippNotificationDto,
 } from '../dto/createHnippNotification.dto'
-import { HnippTemplate } from '../dto/hnippTemplate.response'
+import {
+  HnippTemplate,
+  HnippTemplatePriorityType,
+} from '../dto/hnippTemplate.response'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
@@ -385,11 +388,10 @@ export class NotificationsWorkerService {
 
     // This is a stopgap solution while we ensure better usage of notification templates.
     // This allows users to quickly ignore notifications that are not urgent or actionable.
-    const onlyActionablePriorityNotification = false //TODO: Fetch from userprofile settings that is not yet here.
     const shouldSendNotification =
       args.urgent ||
       !(
-        onlyActionablePriorityNotification &&
+        userProfile?.onlyActionablePriorityNotifications &&
         template.priorityType !== 'Actionable'
       )
 
@@ -404,6 +406,7 @@ export class NotificationsWorkerService {
       args,
       scope,
       shouldSendNotification,
+      template.priorityType,
     )
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
@@ -746,6 +749,7 @@ export class NotificationsWorkerService {
     args: CreateHnippNotificationDto & { messageId: string },
     scope: string,
     wasSent: boolean,
+    priorityType: HnippTemplatePriorityType,
   ) {
     const { messageId, ...message } = args
     const existing = await this.notificationModel.findOne({
@@ -769,6 +773,7 @@ export class NotificationsWorkerService {
         args: message.args,
         scope,
         wasSent,
+        priorityType,
       })
       this.logger.info('notification written to db', {
         messageId,

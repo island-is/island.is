@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export type HnippTemplatePriorityType = 'Informative' | 'Actionable' | undefined
+export const HNIPP_TEMPLATE_PRIORITY_TYPES = [
+  'Informative',
+  'Actionable',
+] as const
+
+export type HnippTemplatePriorityType =
+  | typeof HNIPP_TEMPLATE_PRIORITY_TYPES[number]
+  | undefined
 
 export class HnippTemplate {
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
