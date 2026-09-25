@@ -59,7 +59,9 @@ export class PrimarySchoolKeyInfoClientService {
     return mockAllergies
   }
 
-  async getLanguageEnvironments(_user: User): Promise<LanguageEnvironmentDto[]> {
+  async getLanguageEnvironments(
+    _user: User,
+  ): Promise<LanguageEnvironmentDto[]> {
     // TODO: withAuthContext(user, () => dataOr404Null(getLanguageEnvironments()))
     return mockLanguageEnvironments
   }
@@ -85,7 +87,10 @@ export class PrimarySchoolKeyInfoClientService {
 
   /* -- 4.4 Emergency contacts (agents) ------------------------------------- */
 
-  async getChildAgents(_user: User, _childId: string): Promise<ChildAgentDto[]> {
+  async getChildAgents(
+    _user: User,
+    _childId: string,
+  ): Promise<ChildAgentDto[]> {
     // TODO: getMeChildrenByChildIdAgents({ path: { childId } })
     return mockChildAgents
   }
@@ -162,7 +167,9 @@ export class PrimarySchoolKeyInfoClientService {
     input: HealthProfileUpdateDto,
   ): Promise<HealthProfileDto> {
     // TODO: patchMeChildrenByChildIdHealthProfile(...) — 403 FEATURE_DISABLED until §8
-    const allergies = mockAllergies.filter((a) => input.allergies.includes(a.id))
+    const allergies = mockAllergies.filter((a) =>
+      input.allergies.includes(a.id),
+    )
     return {
       ...mockHealthProfile,
       epipen: input.epipen,
