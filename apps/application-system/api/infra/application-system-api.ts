@@ -442,6 +442,8 @@ export const serviceSetup = (services: {
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
+      CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
+        '/k8s/application-system/api/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET',
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM',

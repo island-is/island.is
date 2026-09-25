@@ -52,6 +52,8 @@ export enum Features {
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
+  applicationTranslationWorkspaceReadOnly = 'isApplicationTranslationWorkspaceReadOnlyEnabled',
+
   // Service portal modules
   servicePortalHealthPatientPermitsPageEnabled = 'isServicePortalHealthPatientPermitsPageEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',

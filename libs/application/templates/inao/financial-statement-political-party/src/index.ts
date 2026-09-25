@@ -3,4 +3,6 @@ import FinancialStatementPoliticalPartyTemplate from './lib/financialStatementPo
 export const getDataProviders = () => import('./dataProviders')
 export const getFields = () => import('./fields')
 
+export * from './lib/messages'
+
 export default FinancialStatementPoliticalPartyTemplate

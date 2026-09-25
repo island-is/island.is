@@ -110,6 +110,7 @@ export enum ApplicationTypes {
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
   U2_CERTIFICATE = 'U2Certificate',
+  TRANSLATION_WORKSPACE_SMOKE_TEST = 'TranslationWorkspaceSmokeTest',
 }
 
 export const ApplicationConfigurations = {
@@ -560,5 +561,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.TRANSLATION_WORKSPACE_SMOKE_TEST]: {
+    slug: 'translation-workspace-smoke-test',
+    translation: 'twst.application',
   },
 }

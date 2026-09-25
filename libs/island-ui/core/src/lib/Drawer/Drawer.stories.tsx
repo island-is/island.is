@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Button } from '../Button/Button'
 import { withFigma } from '../../utils/withFigma'
@@ -50,3 +50,28 @@ export const OverflowScroll = () => (
     </Stack>
   </Drawer>
 )
+
+export const Controlled = () => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  return (
+    <>
+      <Button variant="primary" onClick={() => setIsVisible(true)}>
+        Open drawer using state
+      </Button>
+      <Drawer
+        baseId="demo_drawer_controlled"
+        ariaLabel="Use aria-label to explain what this is doing"
+        isVisible={isVisible}
+        hideOnClickOutside
+        onVisibilityChange={(visible) => {
+          if (!visible) {
+            setIsVisible(false)
+          }
+        }}
+      >
+        Visibility is controlled with `isVisible` and `onVisibilityChange`.
+      </Drawer>
+    </>
+  )
+}

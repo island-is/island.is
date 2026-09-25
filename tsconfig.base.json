@@ -399,6 +399,9 @@
       "@island.is/application/templates/criminal-record/messages": [
         "libs/application/templates/criminal-record/src/lib/messages.ts"
       ],
+      "@island.is/application/templates/translation-workspace-smoke-test": [
+        "libs/application/templates/translation-workspace-smoke-test/src/index.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
       ],
@@ -720,6 +723,9 @@
       "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
+      ],
+      "@island.is/application/ui-components/utilities/formatters": [
+        "libs/application/ui-components/src/utilities/formatters.ts"
       ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
