@@ -1,0 +1,24 @@
+fragment CivilClaimantFields on CivilClaimant {
+  id
+  caseId
+  name
+  nationalId
+  noNationalId
+  hasSpokesperson
+  spokespersonIsLawyer
+  spokespersonNationalId
+  spokespersonName
+  spokespersonEmail
+  spokespersonPhoneNumber
+  caseFilesSharedWithSpokesperson
+  isSpokespersonConfirmed
+  policeCaseNumbers
+  defendantIds
+}
+
+fragment CivilClaimantSpokespersonFields on CivilClaimant {
+  id
+  hasSpokesperson
+  spokespersonNationalId
+  isSpokespersonConfirmed
+}
