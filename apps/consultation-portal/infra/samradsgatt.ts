@@ -48,6 +48,7 @@ export const serviceSetup = (services: {
       },
     })
     .secrets({
+      DD_CSP_REPORT_CLIENT_TOKEN: '/k8s/DD_CSP_REPORT_CLIENT_TOKEN',
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET',
       NEXTAUTH_SECRET: '/k8s/consultation-portal/NEXTAUTH_SECRET',
