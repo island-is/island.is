@@ -141,7 +141,14 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
       const slicer = visual as VisualDescriptor
 
-      const slicerState = await slicer.getSlicerState()
+      let slicerState: models.ISlicerState
+      try {
+        slicerState = await slicer.getSlicerState()
+      } catch {
+        // A visual can fail to report its state; skip it rather than
+        // aborting the search for the ship slicer.
+        continue
+      }
 
       if (
         !slicerStateContainsExpectedTarget(
@@ -151,7 +158,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       )
         continue
 
-      slicer.setSlicerState({
+      await slicer.setSlicerState({
         ...slicerState,
         filters: [
           {
