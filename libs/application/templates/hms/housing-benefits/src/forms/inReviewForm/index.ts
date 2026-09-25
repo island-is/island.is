@@ -15,6 +15,13 @@ export const inReviewForm = buildForm({
       tabTitle: m.inReviewMessages.tabTitle,
       alertTitle: m.inReviewMessages.alertTitle,
       alertMessage: m.inReviewMessages.alertMessage,
+      descriptionFieldTitle: m.inReviewMessages.descriptionFieldTitle,
+      descriptionFieldDescription:
+        m.inReviewMessages.descriptionFieldDescription,
+      expandableDescription: m.inReviewMessages.expandableDescription,
+      expandableIntro: '',
+      bottomButtonMessage: m.inReviewMessages.bottomButtonMessage,
+      bottomButtonLabel: m.inReviewMessages.bottomButtonLabel,
       image: buildImageField({
         id: 'inReviewImage',
         image: HikingAndWateringPlants,

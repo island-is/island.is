@@ -2,44 +2,19 @@ mutation UpdateCase($input: UpdateCaseInput!) {
   updateCase(input: $input) {
     id
     court {
-      id
-      name
-      type
+      ...InstitutionFields
     }
     prosecutor {
-      id
-      name
-      title
-      email
+      ...UserFields
     }
     judge {
-      id
-      name
-      title
-      email
+      ...UserFields
     }
     registrar {
-      id
-      name
-      title
-      email
+      ...UserFields
     }
     civilClaimants {
-      id
-      caseId
-      name
-      nationalId
-      noNationalId
-      hasSpokesperson
-      spokespersonIsLawyer
-      spokespersonNationalId
-      spokespersonName
-      spokespersonEmail
-      spokespersonPhoneNumber
-      caseFilesSharedWithSpokesperson
-      isSpokespersonConfirmed
-      policeCaseNumbers
-      defendantIds
+      ...CivilClaimantFields
     }
   }
 }

@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { RefreshControl, ScrollView, View } from 'react-native'
+import { RefreshControl, ScrollView } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import { StackScreen } from '@/components/stack-screen'
@@ -13,6 +14,12 @@ import { Badge, Problem, Typography } from '@/ui'
 
 const Host = styled.View`
   flex: 1;
+`
+
+const Title = styled(Typography)`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const DispensationRow = styled.View`
@@ -60,6 +67,7 @@ export default function MedicineHistoryScreen() {
   const { id: atcCode } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   const [refetching, setRefetching] = useState(false)
 
@@ -100,6 +108,9 @@ export default function MedicineHistoryScreen() {
   return (
     <ScrollView
       style={{ flex: 1 }}
+      contentContainerStyle={{
+        paddingBottom: theme.spacing[2] + insets.bottom,
+      }}
       refreshControl={
         <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
       }
@@ -107,82 +118,75 @@ export default function MedicineHistoryScreen() {
       <StackScreen
         closeable
         networkStatus={atcNetworkStatus}
-        options={{
-          title: intl.formatMessage({
-            id: 'health.prescriptions.dispensations',
-          }),
-        }}
+        options={{ title: '' }}
       />
-      <View style={{ marginTop: theme.spacing[2] }}>
-        {atcError && !atcData ? (
-          <ProblemContainer>
-            <Problem error={atcError} />
-          </ProblemContainer>
-        ) : atcLoading && !dispensations.length ? (
-          <>
-            {Array.from({ length: 3 }).map((_, index) => (
-              <DispensationRow key={`skeleton-${index}`}>
-                <DispensationInfo>
-                  <SkeletonLine width={40} />
-                  <SkeletonLine width={70} />
-                  <SkeletonLine width={30} />
-                </DispensationInfo>
-              </DispensationRow>
-            ))}
-          </>
-        ) : dispensations.length > 0 ? (
-          <>
-            {dispensations.map((dispensation, index) => (
-              <DispensationRow key={`${dispensation.id}-${index}`}>
-                <DispensationInfo>
-                  <DispensationMetaText variant="body3">
-                    {[
-                      dispensation.date
-                        ? intl.formatDate(dispensation.date)
-                        : null,
-                      dispensation.agentName,
-                    ]
-                      .filter(Boolean)
-                      .join(' – ')}
-                  </DispensationMetaText>
-                  <Typography variant="heading5">
-                    {dispensation.name}
-                  </Typography>
-                  <Typography variant="body">
-                    {dispensation.quantity}
-                  </Typography>
-                </DispensationInfo>
-              </DispensationRow>
-            ))}
-          </>
-        ) : (
-          <NoDispensations>
-            <Badge
-              variant="blue"
-              title={intl.formatMessage({
-                id: 'health.vaccinations.directorateOfHealth',
-              })}
-            />
-            <Typography
-              variant="heading5"
-              textAlign="center"
-              style={{ marginTop: theme.spacing[1] }}
-            >
-              {intl.formatMessage({
-                id: 'health.prescriptions.noDispensations',
-                defaultMessage: 'Engar afgreiðslur fundust',
-              })}
-            </Typography>
-            <Typography variant="body3" textAlign="center">
-              {intl.formatMessage({
-                id: 'health.prescriptions.noDispensationsDescription',
-                defaultMessage:
-                  'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
-              })}
-            </Typography>
-          </NoDispensations>
-        )}
-      </View>
+      <Title variant="heading3">
+        {intl.formatMessage({ id: 'health.prescriptions.dispensations' })}
+      </Title>
+      {atcError && !atcData ? (
+        <ProblemContainer>
+          <Problem error={atcError} />
+        </ProblemContainer>
+      ) : atcLoading && !dispensations.length ? (
+        <>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <DispensationRow key={`skeleton-${index}`}>
+              <DispensationInfo>
+                <SkeletonLine width={40} />
+                <SkeletonLine width={70} />
+                <SkeletonLine width={30} />
+              </DispensationInfo>
+            </DispensationRow>
+          ))}
+        </>
+      ) : dispensations.length > 0 ? (
+        <>
+          {dispensations.map((dispensation, index) => (
+            <DispensationRow key={`${dispensation.id}-${index}`}>
+              <DispensationInfo>
+                <DispensationMetaText variant="body3">
+                  {[
+                    dispensation.date
+                      ? intl.formatDate(dispensation.date)
+                      : null,
+                    dispensation.agentName,
+                  ]
+                    .filter(Boolean)
+                    .join(' – ')}
+                </DispensationMetaText>
+                <Typography variant="heading5">{dispensation.name}</Typography>
+                <Typography variant="body">{dispensation.quantity}</Typography>
+              </DispensationInfo>
+            </DispensationRow>
+          ))}
+        </>
+      ) : (
+        <NoDispensations>
+          <Badge
+            variant="blue"
+            title={intl.formatMessage({
+              id: 'health.vaccinations.directorateOfHealth',
+            })}
+          />
+          <Typography
+            variant="heading5"
+            textAlign="center"
+            style={{ marginTop: theme.spacing[1] }}
+          >
+            {intl.formatMessage({
+              id: 'health.prescriptions.noDispensations',
+              defaultMessage: 'Engar afgreiðslur fundust',
+            })}
+          </Typography>
+          <Typography variant="body3" textAlign="center">
+            {intl.formatMessage({
+              id: 'health.prescriptions.noDispensationsDescription',
+              defaultMessage:
+                'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+            })}
+          </Typography>
+        </NoDispensations>
+      )}
     </ScrollView>
   )
 }

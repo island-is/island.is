@@ -1258,6 +1258,10 @@ export const m = defineMessages({
     id: 'service.portal:required-question',
     defaultMessage: 'Þessari spurningu er nauðsynlegt að svara',
   },
+  clearAnswer: {
+    id: 'service.portal:clear-answer',
+    defaultMessage: 'Hreinsa svar',
+  },
   confirmation: {
     id: 'service.portal:confirmation',
     defaultMessage: 'Staðfesting',
