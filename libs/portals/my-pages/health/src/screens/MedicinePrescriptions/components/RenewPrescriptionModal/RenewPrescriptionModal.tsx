@@ -1,3 +1,4 @@
+import { HealthDirectoratePrescriptionRenewalStatus } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -233,6 +234,25 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                 </GridColumn>
               ))}
             </GridRow>
+            {activePrescription.renewalStatus ===
+              HealthDirectoratePrescriptionRenewalStatus.Dismissed &&
+              activePrescription.renewResponseMessage && (
+                <GridRow>
+                  <GridColumn span={'12/12'}>
+                    <Box marginTop={5}>
+                      <AlertMessage
+                        type="warning"
+                        title={formatMessage(messages.alert)}
+                        message={
+                          <Text variant="small" whiteSpace="preLine">
+                            {activePrescription.renewResponseMessage}
+                          </Text>
+                        }
+                      />
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              )}
             <GridRow>
               <GridColumn span={'12/12'}>
                 <Box
