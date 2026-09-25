@@ -5,6 +5,72 @@ module.exports = {
     await queryInterface.sequelize.query(`
       BEGIN;
 
+      -- Local setup runs migrations before seeds. Ensure the scope and its
+      -- domain exist before granting access, preserving existing configuration.
+      INSERT INTO domain
+        (name, description, national_id, display_name, organisation_logo_key)
+      VALUES
+        ('@admin.island.is', '@admin.island.is domain', '5005101370',
+         'Ísland.is stjórnborð', 'Stafrænt Ísland')
+      ON CONFLICT (name) DO NOTHING;
+
+      -- Keep these values aligned with scope-signature-collection-municipality.ts.
+      INSERT INTO api_scope (
+        name, display_name, description, domain_name, enabled,
+        show_in_discovery_document, required, emphasize,
+        grant_to_legal_guardians, grant_to_procuring_holders,
+        allow_explicit_delegation_grant, automatic_delegation_grant,
+        also_for_delegated_user, is_access_controlled
+      )
+      VALUES (
+        '@admin.island.is/signature-collection:municipality',
+        'Meðmælakerfi Admin - Municipalities',
+        'Umsjón sveitarfélaga með söfnum meðmæla og úrvinnsla',
+        '@admin.island.is', true, true, false, false,
+        false, true, true, false, false, true
+      )
+      ON CONFLICT (name) DO NOTHING;
+
+      -- The local migration flow runs before resource and client seeds. Create
+      -- the foreign-key targets before linking the new scope to them.
+      INSERT INTO api_resource (name, display_name)
+      VALUES ('@admin.island.is', 'Ísland.is stjórnborð')
+      ON CONFLICT (name) DO NOTHING;
+
+      -- The client seed skips existing rows, so set the SPA authentication
+      -- fields here. The seed still adds grants, scopes and redirect URIs.
+      INSERT INTO client (
+        client_id, client_type, require_client_secret, require_pkce
+      )
+      VALUES ('@admin.island.is/web', 'spa', false, true)
+      ON CONFLICT (client_id) DO UPDATE SET
+        client_type = EXCLUDED.client_type,
+        require_client_secret = EXCLUDED.require_client_secret,
+        require_pkce = EXCLUDED.require_pkce;
+
+      INSERT INTO client (client_id)
+      VALUES ('@admin.island.is/bff-stjornbord')
+      ON CONFLICT (client_id) DO NOTHING;
+
+      INSERT INTO api_resource_scope (api_resource_name, scope_name)
+      VALUES (
+        '@admin.island.is',
+        '@admin.island.is/signature-collection:municipality'
+      )
+      ON CONFLICT DO NOTHING;
+
+      INSERT INTO client_allowed_scope (client_id, scope_name)
+      VALUES
+        (
+          '@admin.island.is/web',
+          '@admin.island.is/signature-collection:municipality'
+        ),
+        (
+          '@admin.island.is/bff-stjornbord',
+          '@admin.island.is/signature-collection:municipality'
+        )
+      ON CONFLICT DO NOTHING;
+
       -- Create users if they don't exist
       INSERT INTO api_scope_user (national_id, email)
       VALUES
