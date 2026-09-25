@@ -7008,79 +7008,6 @@
         },
         "required": ["id", "type", "label", "required"]
       },
-      "GridQuestionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/QuestionType"
-              }
-            ]
-          },
-          "label": {
-            "type": "string"
-          },
-          "htmlLabel": {
-            "type": "string",
-            "description": "used if label needs to use some html tags like, <b>, <u>. This replaces the label property."
-          },
-          "hint": {
-            "type": "string"
-          },
-          "required": {
-            "type": "boolean"
-          },
-          "active": {
-            "type": "boolean",
-            "default": true,
-            "description": "If false, the question is not shown, used to deprecate questions"
-          },
-          "visible": {
-            "type": "boolean",
-            "default": true,
-            "description": "If false, the question is not shown unless it is triggered"
-          },
-          "multiselect": {
-            "type": "boolean",
-            "description": "Whether a row may hold more than one selected column"
-          },
-          "columns": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "label": {
-                  "type": "string"
-                }
-              },
-              "required": ["id", "label"]
-            }
-          },
-          "rows": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "label": {
-                  "type": "string"
-                }
-              },
-              "required": ["id", "label"]
-            }
-          }
-        },
-        "required": ["id", "type", "label", "required", "columns", "rows"]
-      },
       "QuestionTriggerItemDto": {
         "type": "object",
         "properties": {
@@ -7718,59 +7645,6 @@
         },
         "required": ["questionId", "type", "rows"]
       },
-      "GridReplyViewDto": {
-        "type": "object",
-        "properties": {
-          "questionId": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "string",
-              "bool",
-              "date",
-              "number",
-              "list",
-              "table",
-              "attachment",
-              "text",
-              "grid",
-              "time",
-              "datetime",
-              "calculated"
-            ]
-          },
-          "rows": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "values": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "answer": {
-                        "type": "string"
-                      }
-                    },
-                    "required": ["id", "answer"]
-                  }
-                }
-              },
-              "required": ["id", "values"]
-            }
-          }
-        },
-        "required": ["questionId", "type", "rows"]
-      },
       "QuestionnaireSubmissionBaseDto": {
         "type": "object",
         "properties": {
@@ -7839,9 +7713,6 @@
                 },
                 {
                   "$ref": "#/components/schemas/TableQuestionDto"
-                },
-                {
-                  "$ref": "#/components/schemas/GridQuestionDto"
                 }
               ]
             }
@@ -7978,9 +7849,6 @@
                 },
                 {
                   "$ref": "#/components/schemas/TableReplyViewDto"
-                },
-                {
-                  "$ref": "#/components/schemas/GridReplyViewDto"
                 }
               ]
             }
@@ -8208,42 +8076,6 @@
                             }
                           ]
                         }
-                      }
-                    }
-                  },
-                  "required": ["questionId", "rows"]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "questionId": {
-                      "type": "string"
-                    },
-                    "rows": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "values": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "answer": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["id", "answer"]
-                            }
-                          }
-                        },
-                        "required": ["id", "values"]
                       }
                     }
                   },
@@ -8817,59 +8649,6 @@
                             }
                           ]
                         }
-                      }
-                    }
-                  },
-                  "required": ["questionId", "type", "rows"]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "questionId": {
-                      "type": "string"
-                    },
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "string",
-                        "bool",
-                        "date",
-                        "number",
-                        "list",
-                        "table",
-                        "attachment",
-                        "text",
-                        "grid",
-                        "time",
-                        "datetime",
-                        "calculated"
-                      ]
-                    },
-                    "rows": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "values": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "answer": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["id", "answer"]
-                            }
-                          }
-                        },
-                        "required": ["id", "values"]
                       }
                     }
                   },
@@ -9719,9 +9498,7 @@
           "NO_REPLY_GROUP",
           "MESSAGING_NOT_ALLOWED",
           "PATIENT_REPLY_NOT_ALLOWED",
-          "OUTSIDE_MESSAGING_WINDOW",
           "REPLY_WINDOW_EXPIRED",
-          "AWAITING_STAFF_REPLY",
           "AWAITING_ACKNOWLEDGEMENT"
         ],
         "description": "Why replying is blocked. Only set when patientCanReply is false."
@@ -9898,7 +9675,12 @@
           "pendingPaymentId": {
             "type": "string",
             "format": "uuid",
-            "description": "An unpaid intent this patient has open on the certificate. Not time-bounded: it persists until the certificate is paid for, so its presence does not mean a payment is in flight. `POST /v1/me/certificates/{certificateId}/payment-intent` resumes it, returning this same `paymentId` and a byte-identical payment-page URL. A UI hint: access is decided by `paid` alone."
+            "description": "An unpaid intent this patient has open on the certificate. Not time-bounded: it persists until the certificate is paid for, so its presence does not mean a payment is in flight — see `pendingPaymentStartedAt`. `POST /v1/me/certificates/{certificateId}/payment-intent` resumes it, returning this same `paymentId` and a byte-identical payment-page URL. A UI hint: access is decided by `paid` alone."
+          },
+          "pendingPaymentStartedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the open intent named by `pendingPaymentId` was created. A young value may still get a callback on the way; an old one is a resumable abandoned attempt. Present exactly when `pendingPaymentId` is."
           },
           "deliveryStatus": {
             "description": "Delivery state of a message the patient sent. Set only on PATIENT messages.",
@@ -9993,11 +9775,11 @@
           },
           "messagingWindowOpen": {
             "type": "string",
-            "description": "When the recipient starts accepting messages, as `HH:mm:ss` in UTC."
+            "description": "When the recipient starts accepting new conversations, as `HH:mm:ss` in UTC."
           },
           "messagingWindowClose": {
             "type": "string",
-            "description": "When the recipient stops accepting messages, as `HH:mm:ss` in UTC."
+            "description": "When the recipient stops accepting new conversations, as `HH:mm:ss` in UTC."
           },
           "patientReplyWindowDays": {
             "type": "number",
@@ -10005,7 +9787,7 @@
           },
           "isClosedToday": {
             "type": "boolean",
-            "description": "True when the recipient accepts nothing today because it has no window pair set for this kind of day."
+            "description": "True when the recipient accepts no new conversation today because it has no window pair set for this kind of day."
           },
           "dayType": {
             "description": "Which kind of day the messaging window was resolved for, in UTC.",
@@ -10297,7 +10079,8 @@
           },
           "allowsMessaging": {
             "type": "boolean",
-            "description": "Whether the recipient offers patient messaging at all. True when it accepts either new conversations or replies; false only when it accepts neither."
+            "description": "Whether the recipient offers patient messaging at all. True when it accepts either new conversations or replies; false only when it accepts neither. Equals `conversationBlockedReason !== MESSAGING_NOT_ALLOWED`. It does not say whether the patient can act: `canCreateConversation` and `canRequestCertificate` do.",
+            "deprecated": true
           },
           "messagingWindowOpen": {
             "type": "string",

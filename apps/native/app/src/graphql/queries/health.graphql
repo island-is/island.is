@@ -325,27 +325,35 @@ query getAppointmentDetail($id: String!) {
 }
 
 mutation cancelAppointment($id: String!) {
-  healthDirectorateCancelAppointment(id: $id)
+  healthDirectorateRequestAppointmentCancellation(id: $id) {
+    outcome
+  }
 }
 
 query GetHealthConversations(
-  $input: HealthDirectorateHealthConversationsFilterInput
+  $input: HealthDirectoratePaginatedHealthConversationsInput
 ) {
-  healthDirectorateHealthConversations(input: $input) {
-    id
-    title
-    status
-    messageCount
-    lastMessageSentAt
-    lastSenderGroupName
-    hasAttachment
-    isStarred
-    isArchived
-    isRead
-    organization {
-      name
-      logoUrl
+  healthDirectoratePaginatedHealthConversations(input: $input) {
+    data {
+      id
+      title
+      messageCount
+      lastMessageSentAt
+      lastSenderGroupName
+      hasAttachment
+      isStarred
+      isArchived
+      isRead
+      organization {
+        name
+        logoUrl
+      }
     }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
   }
 }
 
@@ -353,7 +361,6 @@ query GetHealthConversation($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
     title
-    status
     startDate
     lastMessageSentAt
     lastSenderGroupName
@@ -390,24 +397,47 @@ query GetHealthConversation($id: ID!) {
   }
 }
 
+fragment HealthConversationOpeningWindow on HealthDirectorateHealthConversationOpeningWindow {
+  windowOpen
+  windowClose
+  isAllDay
+}
+
 query GetHealthConversationRecipients($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
     nodeId
     groupId
     treatmentId
     name
-    allowsMessaging
-    isCurrentlyWithinWindow
-    messagingWindowOpen
-    messagingWindowClose
+    availability
+    closesAt
+    todaysWindow {
+      ...HealthConversationOpeningWindow
+    }
+    nextOpensAt {
+      date
+      windowOpen
+    }
+    openingHours {
+      weekday {
+        ...HealthConversationOpeningWindow
+      }
+      weekend {
+        ...HealthConversationOpeningWindow
+      }
+      holiday {
+        ...HealthConversationOpeningWindow
+      }
+    }
     patientReplyWindowDays
     canCreateConversation
-    conversationBlockedReason
     allowedMessageTypes {
       patientInitiatedTypeCode
       title
       description
+      instructions
       isCertificate
+      externalLinkUrl
     }
   }
 }

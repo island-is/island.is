@@ -151,8 +151,8 @@ describe('CaseController - Update', () => {
     mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue(theCase)
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockResolvedValue(theCase)
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockResolvedValue(theCase)
 
     givenWhenThen = async (
       caseId: string,
@@ -186,8 +186,9 @@ describe('CaseController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       then = await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
@@ -442,8 +443,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -509,27 +511,6 @@ describe('CaseController - Update', () => {
         ).not.toHaveBeenCalled()
       })
     })
-
-    describe('that is not received', () => {
-      let then: Then
-
-      beforeEach(async () => {
-        const notReceived = mergingCase(false)
-        notReceived.mergeCase = {
-          ...notReceived.mergeCase,
-          state: CaseState.COMPLETED,
-        } as Case
-
-        then = await givenWhenThen(caseId, user, notReceived, caseToUpdate)
-      })
-
-      it('should refuse the merge', () => {
-        expect(then.error).toBeInstanceOf(BadRequestException)
-        expect(
-          mockCourtSessionService.addMergedCaseToLatestCourtSession,
-        ).not.toHaveBeenCalled()
-      })
-    })
   })
 
   describe('indictment case completed after cancellation request', () => {
@@ -549,8 +530,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -582,8 +564,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -625,8 +608,9 @@ describe('CaseController - Update', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, indictmentCase, caseToUpdate)
     })
@@ -825,8 +809,9 @@ describe('CaseController - Update', () => {
       const updatedCase = { ...theCase, type, courtCaseNumber }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
@@ -880,8 +865,9 @@ describe('CaseController - Update', () => {
       const updatedCase = { ...theCase, type, defenderEmail }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
@@ -929,8 +915,9 @@ describe('CaseController - Update', () => {
         role: UserRole.PROSECUTOR,
         institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       })
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
@@ -994,8 +981,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, theCase, caseToUpdate)
       })
@@ -1055,8 +1043,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, originalCase, caseToUdate)
       })
@@ -1098,8 +1087,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(updatedCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, originalCase, caseToUdate)
       })
@@ -1145,8 +1135,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUdate)
     })
@@ -1185,8 +1176,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUdate)
     })
@@ -1225,8 +1217,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUdate)
     })
@@ -1264,8 +1257,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1305,8 +1299,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1343,8 +1338,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1390,8 +1386,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         type: CaseType.INDICTMENT,
         dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
@@ -1421,8 +1418,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         type: CaseType.INDICTMENT,
         isArraignmentSummonsSkipped: true,
@@ -1452,8 +1450,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce({
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
         ...theCase,
         type: CaseType.INDICTMENT,
         isArraignmentSummonsSkipped: true,
@@ -1486,8 +1485,9 @@ describe('CaseController - Update', () => {
     }
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(
         caseId,
@@ -1548,6 +1548,74 @@ describe('CaseController - Update', () => {
         mockCaseStringRepositoryService.upsertByCaseAndType,
       ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, civilDemands, {
         transaction,
+      })
+    })
+  })
+
+  describe('merge parent chosen for a received case', () => {
+    const receivedCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+    } as Case
+    const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+    })
+
+    it('should update the case', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        caseToUpdate,
+        { transaction },
+      )
+    })
+  })
+
+  // The court sends the merged case's parent back with every conclusion save,
+  // including while correcting a case that was concluded by merging.
+  describe('merge parent sent for a case that is not received', () => {
+    const parentCaseId = uuid()
+    const correctingCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.CORRECTING,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+      mergeCaseId: parentCaseId,
+    } as Case
+
+    describe('that is the existing parent', () => {
+      const caseToUpdate = { mergeCaseId: parentCaseId } as UpdateCaseDto
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(caseId, user, correctingCase, caseToUpdate)
+      })
+
+      it('should update the case', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          caseToUpdate,
+          { transaction },
+        )
+      })
+    })
+
+    describe('that is a different parent', () => {
+      const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(caseId, user, correctingCase, caseToUpdate)
+      })
+
+      it('should refuse the merge', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
       })
     })
   })
@@ -1768,7 +1836,9 @@ describe('CaseController - Update', () => {
         ...reopeningCase,
         state: CaseState.RECEIVED,
       })
-      ;(mockCaseRepositoryService.findOne as jest.Mock).mockResolvedValueOnce({
+      ;(
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      ).mockResolvedValueOnce({
         ...reopeningCase,
         state: CaseState.RECEIVED,
       })
@@ -1862,7 +1932,7 @@ describe('CaseController - Update', () => {
         } as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with merged fields', () => {
+      it('should call syncDefenderToAllDefendants with merged contact fields', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1872,8 +1942,7 @@ describe('CaseController - Update', () => {
             defenderNationalId,
             defenderEmail,
             defenderPhoneNumber,
-            defenderChoice: DefenderChoice.CHOOSE,
-            isDefenderChoiceConfirmed: true,
+            defenderChoice: null,
           },
           transaction,
         )
@@ -1887,7 +1956,7 @@ describe('CaseController - Update', () => {
         } as unknown as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with null and no choice', () => {
+      it('should call syncDefenderToAllDefendants with null name and remaining contacts', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1898,7 +1967,6 @@ describe('CaseController - Update', () => {
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
             defenderChoice: null,
-            isDefenderChoiceConfirmed: null,
           },
           transaction,
         )
@@ -1912,7 +1980,7 @@ describe('CaseController - Update', () => {
         } as UpdateCaseDto)
       })
 
-      it('should call syncDefenderToAllDefendants with WAIVE choice', () => {
+      it('should sync contact fields with defenderChoice WAIVE', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).toHaveBeenCalledWith(
@@ -1923,7 +1991,6 @@ describe('CaseController - Update', () => {
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
             defenderChoice: DefenderChoice.WAIVE,
-            isDefenderChoiceConfirmed: true,
           },
           transaction,
         )

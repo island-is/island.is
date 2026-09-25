@@ -24,12 +24,13 @@ export const QuestionnaireHeader: FC<QuestionnaireHeaderProps> = ({
       borderColor="blue200"
       display="flex"
       justifyContent="spaceBetween"
-      alignItems={['center', 'center', 'center', 'flexEnd']}
+      alignItems="center"
       flexDirection="row"
       flexWrap="wrap"
       rowGap={2}
       columnGap={3}
       padding={[0, 0, 0, 3]}
+      paddingBottom={3}
     >
       <Box display="flex" flexDirection="row" columnGap={3}>
         {img && (
@@ -47,12 +48,16 @@ export const QuestionnaireHeader: FC<QuestionnaireHeaderProps> = ({
         )}
         <Box display={'flex'} flexDirection={'column'}>
           <Text variant="small">{formatMessage(m.questionnaires)}</Text>
-          <Text variant="h5" as="h1" marginBottom={2}>
+          <Text variant="h5" as="h1">
             {title}
           </Text>
         </Box>
       </Box>
-      {buttonGroup && <Box flexShrink={0}>{buttonGroup}</Box>}
+      {buttonGroup && (
+        <Box display="flex" flexShrink={0} columnGap={2}>
+          {buttonGroup}
+        </Box>
+      )}
     </Box>
   )
 }

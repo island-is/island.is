@@ -171,7 +171,8 @@ describe('SubpoenaController - Create subpoenas', () => {
       const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
       // The case is passed directly from the controller, so no need to fetch it again
-      expect(mockCaseRepositoryService.findOne).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.findById).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.findLiveById).not.toHaveBeenCalled()
 
       expect(mockSubpoenaRepositoryService.create).toHaveBeenCalledTimes(2)
       expect(mockSubpoenaRepositoryService.create).toHaveBeenNthCalledWith(

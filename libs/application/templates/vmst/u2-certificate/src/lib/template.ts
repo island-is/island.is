@@ -25,6 +25,7 @@ import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { EESCountriesApi, EligibilityApi } from '../dataProviders'
 import { applicationMessages as m } from './messages'
@@ -66,7 +67,15 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [NationalRegistryV3UserApi, EESCountriesApi, EligibilityApi],
+              api: [
+                NationalRegistryV3UserApi.configure({
+                  params: {
+                    citizenshipWithinEES: true,
+                  },
+                }),
+                EESCountriesApi,
+                EligibilityApi,
+              ],
               delete: true,
             },
           ],
@@ -82,7 +91,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Main form',
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(2),
           actionCard: {
             tag: {
               variant: 'blue',
@@ -242,7 +251,24 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: false,
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.REVIEW,
+                  name: 'Review',
+                  type: 'primary',
+                },
+              ],
+            },
           ],
+        },
+        on: {
+          [ApplicationEvents.REVIEW]: {
+            target: States.REVIEW,
+          },
         },
       },
       [States.COMPLETED]: {
@@ -273,7 +299,32 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: false,
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: ApplicationEvents.REJECT,
+                  name: 'Reject',
+                  type: 'reject',
+                },
+                {
+                  event: ApplicationEvents.REVIEW,
+                  name: 'Review',
+                  type: 'primary',
+                },
+              ],
+            },
           ],
+        },
+        on: {
+          [DefaultEvents.REJECT]: {
+            target: States.REJECTED,
+          },
+          [ApplicationEvents.REVIEW]: {
+            target: States.REVIEW,
+          },
         },
       },
     },

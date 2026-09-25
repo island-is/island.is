@@ -1,0 +1,2188 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`GraphQL operations select these field paths AppealCaseUsers 1`] = `
+Array [
+  "users.active",
+  "users.created",
+  "users.email",
+  "users.id",
+  "users.institution.active",
+  "users.institution.created",
+  "users.institution.id",
+  "users.institution.modified",
+  "users.institution.name",
+  "users.institution.type",
+  "users.latestLogin",
+  "users.loginCount",
+  "users.mobileNumber",
+  "users.modified",
+  "users.name",
+  "users.nationalId",
+  "users.role",
+  "users.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths AttachRulingOrderDocument 1`] = `
+Array [
+  "attachRulingOrderDocument.id",
+  "attachRulingOrderDocument.key",
+  "attachRulingOrderDocument.name",
+  "attachRulingOrderDocument.size",
+  "attachRulingOrderDocument.type",
+  "attachRulingOrderDocument.userGeneratedFilename",
+]
+`;
+
+exports[`GraphQL operations select these field paths CandidateMergeCases 1`] = `
+Array [
+  "candidateMergeCases.courtCaseNumber",
+  "candidateMergeCases.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths Case 1`] = `
+Array [
+  "case.appealCase.appealAssistant.id",
+  "case.appealCase.appealAssistant.name",
+  "case.appealCase.appealCaseNumber",
+  "case.appealCase.appealConclusion",
+  "case.appealCase.appealIsolationToDate",
+  "case.appealCase.appealJudge1.id",
+  "case.appealCase.appealJudge1.name",
+  "case.appealCase.appealJudge2.id",
+  "case.appealCase.appealJudge2.name",
+  "case.appealCase.appealJudge3.id",
+  "case.appealCase.appealJudge3.name",
+  "case.appealCase.appealReceivedByCourtDate",
+  "case.appealCase.appealRulingDate",
+  "case.appealCase.appealRulingDecision",
+  "case.appealCase.appealRulingModifiedHistory",
+  "case.appealCase.appealState",
+  "case.appealCase.appealValidToDate",
+  "case.appealCase.appealedByCivilClaimantId",
+  "case.appealCase.appealedByDefendantId",
+  "case.appealCase.appealedByRole",
+  "case.appealCase.appealedDate",
+  "case.appealCase.appealedInCourt",
+  "case.appealCase.appealedOutOfCourt",
+  "case.appealCase.civilClaimantStatementDates.civilClaimantId",
+  "case.appealCase.civilClaimantStatementDates.statementDate",
+  "case.appealCase.defendantStatementDate",
+  "case.appealCase.defendantStatementDates.defendantId",
+  "case.appealCase.defendantStatementDates.statementDate",
+  "case.appealCase.id",
+  "case.appealCase.isAppealCustodyIsolation",
+  "case.appealCase.isStatementDeadlineExpired",
+  "case.appealCase.prosecutorStatementDate",
+  "case.appealCase.requestAppealRulingNotToBePublished",
+  "case.appealCase.rulingFileId",
+  "case.appealCase.statementDeadline",
+  "case.appealDeadline",
+  "case.appealDecisions.announcement",
+  "case.appealDecisions.civilClaimantId",
+  "case.appealDecisions.decision",
+  "case.appealDecisions.defendantId",
+  "case.appealDecisions.id",
+  "case.appealDecisions.partyRole",
+  "case.appealDecisions.rulingFileId",
+  "case.appealDecisions.withdrawnDate",
+  "case.arraignmentDate.date",
+  "case.arraignmentDate.location",
+  "case.arrestDate",
+  "case.canBeAppealed",
+  "case.canProsecutorAppeal",
+  "case.caseFacts",
+  "case.caseFiles.appealDeadline",
+  "case.caseFiles.canBeAppealed",
+  "case.caseFiles.caseId",
+  "case.caseFiles.category",
+  "case.caseFiles.chapter",
+  "case.caseFiles.civilClaimantId",
+  "case.caseFiles.created",
+  "case.caseFiles.defendantId",
+  "case.caseFiles.displayDate",
+  "case.caseFiles.fileRepresentative",
+  "case.caseFiles.hasBeenAppealed",
+  "case.caseFiles.id",
+  "case.caseFiles.isAppealDeadlineExpired",
+  "case.caseFiles.isKeyAccessible",
+  "case.caseFiles.isPronouncedOrally",
+  "case.caseFiles.key",
+  "case.caseFiles.modified",
+  "case.caseFiles.name",
+  "case.caseFiles.orderWithinChapter",
+  "case.caseFiles.policeCaseNumber",
+  "case.caseFiles.policeFileId",
+  "case.caseFiles.rulingFileId",
+  "case.caseFiles.size",
+  "case.caseFiles.state",
+  "case.caseFiles.submissionDate",
+  "case.caseFiles.submittedBy",
+  "case.caseFiles.type",
+  "case.caseFiles.userGeneratedFilename",
+  "case.caseFilesComments",
+  "case.caseModifiedExplanation",
+  "case.caseRepresentatives.caseFileCategory",
+  "case.caseRepresentatives.name",
+  "case.caseRepresentatives.nationalId",
+  "case.caseResentExplanation",
+  "case.caseSentToCourtDate",
+  "case.childCase.created",
+  "case.childCase.id",
+  "case.childCase.modified",
+  "case.childCase.origin",
+  "case.childCase.policeCaseNumbers",
+  "case.childCase.type",
+  "case.civilClaimants.caseFilesSharedWithSpokesperson",
+  "case.civilClaimants.caseId",
+  "case.civilClaimants.defendantIds",
+  "case.civilClaimants.hasSpokesperson",
+  "case.civilClaimants.id",
+  "case.civilClaimants.isSpokespersonConfirmed",
+  "case.civilClaimants.name",
+  "case.civilClaimants.nationalId",
+  "case.civilClaimants.noNationalId",
+  "case.civilClaimants.policeCaseNumbers",
+  "case.civilClaimants.spokespersonEmail",
+  "case.civilClaimants.spokespersonIsLawyer",
+  "case.civilClaimants.spokespersonName",
+  "case.civilClaimants.spokespersonNationalId",
+  "case.civilClaimants.spokespersonPhoneNumber",
+  "case.civilDemands",
+  "case.comments",
+  "case.conclusion",
+  "case.court.id",
+  "case.court.name",
+  "case.court.type",
+  "case.courtAttendees",
+  "case.courtCaseFacts",
+  "case.courtCaseNumber",
+  "case.courtDate.date",
+  "case.courtDate.location",
+  "case.courtDocuments",
+  "case.courtEndTime",
+  "case.courtLegalArguments",
+  "case.courtLocation",
+  "case.courtRecordSignatory.email",
+  "case.courtRecordSignatory.id",
+  "case.courtRecordSignatory.name",
+  "case.courtRecordSignatory.title",
+  "case.courtRecordSignatureDate",
+  "case.courtSessionType",
+  "case.courtSessions.attendees",
+  "case.courtSessions.attestingWitness.id",
+  "case.courtSessions.attestingWitness.name",
+  "case.courtSessions.attestingWitnessId",
+  "case.courtSessions.caseId",
+  "case.courtSessions.closedLegalProvisions",
+  "case.courtSessions.closingEntries",
+  "case.courtSessions.courtSessionStrings.courtSessionId",
+  "case.courtSessions.courtSessionStrings.id",
+  "case.courtSessions.courtSessionStrings.mergedCaseId",
+  "case.courtSessions.courtSessionStrings.stringType",
+  "case.courtSessions.courtSessionStrings.value",
+  "case.courtSessions.created",
+  "case.courtSessions.endDate",
+  "case.courtSessions.entries",
+  "case.courtSessions.filedDocuments.caseFileId",
+  "case.courtSessions.filedDocuments.caseId",
+  "case.courtSessions.filedDocuments.courtSessionId",
+  "case.courtSessions.filedDocuments.created",
+  "case.courtSessions.filedDocuments.documentOrder",
+  "case.courtSessions.filedDocuments.documentType",
+  "case.courtSessions.filedDocuments.generatedPdfUri",
+  "case.courtSessions.filedDocuments.id",
+  "case.courtSessions.filedDocuments.mergedFromCaseId",
+  "case.courtSessions.filedDocuments.modified",
+  "case.courtSessions.filedDocuments.name",
+  "case.courtSessions.filedDocuments.submittedBy",
+  "case.courtSessions.id",
+  "case.courtSessions.isAttestingWitness",
+  "case.courtSessions.isClosed",
+  "case.courtSessions.isConfirmed",
+  "case.courtSessions.judge.id",
+  "case.courtSessions.judge.name",
+  "case.courtSessions.judgeId",
+  "case.courtSessions.location",
+  "case.courtSessions.modified",
+  "case.courtSessions.ruling",
+  "case.courtSessions.rulingFileId",
+  "case.courtSessions.rulingType",
+  "case.courtSessions.startDate",
+  "case.courtStartDate",
+  "case.created",
+  "case.creatingProsecutor.email",
+  "case.creatingProsecutor.id",
+  "case.creatingProsecutor.name",
+  "case.creatingProsecutor.title",
+  "case.crimeScenes",
+  "case.decision",
+  "case.defenceAppealResultAccessDate",
+  "case.defendantWaivesRightToCounsel",
+  "case.defendants.address",
+  "case.defendants.alternativeServiceDescription",
+  "case.defendants.appealDefenderEmail",
+  "case.defendants.appealDefenderName",
+  "case.defendants.appealDefenderNationalId",
+  "case.defendants.appealDefenderPhoneNumber",
+  "case.defendants.caseFilesSharedWithDefender",
+  "case.defendants.citizenship",
+  "case.defendants.closedWithoutEnforcementDate",
+  "case.defendants.connectedCases.court.id",
+  "case.defendants.connectedCases.court.name",
+  "case.defendants.connectedCases.courtCaseNumber",
+  "case.defendants.connectedCases.id",
+  "case.defendants.defendantPlea",
+  "case.defendants.defenderChoice",
+  "case.defendants.defenderEmail",
+  "case.defendants.defenderName",
+  "case.defendants.defenderNationalId",
+  "case.defendants.defenderPhoneNumber",
+  "case.defendants.gender",
+  "case.defendants.id",
+  "case.defendants.indictmentCancelledOrDismissedState.time",
+  "case.defendants.indictmentCancelledOrDismissedState.type",
+  "case.defendants.indictmentReviewDecision",
+  "case.defendants.isAlternativeService",
+  "case.defendants.isAppealDefenderConfirmed",
+  "case.defendants.isClosedWithoutEnforcement",
+  "case.defendants.isDefenderChoiceConfirmed",
+  "case.defendants.isDrivingLicenseSuspended",
+  "case.defendants.isSentToPrisonAdmin",
+  "case.defendants.isVerdictAppealDeadlineExpired",
+  "case.defendants.name",
+  "case.defendants.nationalId",
+  "case.defendants.noNationalId",
+  "case.defendants.openedByPrisonAdminDate",
+  "case.defendants.policeCaseNumbers",
+  "case.defendants.publicProsecutorIsRegisteredInPoliceSystem",
+  "case.defendants.punishmentType",
+  "case.defendants.requestedDefenderChoice",
+  "case.defendants.requestedDefenderName",
+  "case.defendants.requestedDefenderNationalId",
+  "case.defendants.sentToPrisonAdminDate",
+  "case.defendants.subpoenaType",
+  "case.defendants.subpoenas.caseId",
+  "case.defendants.subpoenas.comment",
+  "case.defendants.subpoenas.created",
+  "case.defendants.subpoenas.defendantId",
+  "case.defendants.subpoenas.defenderNationalId",
+  "case.defendants.subpoenas.id",
+  "case.defendants.subpoenas.modified",
+  "case.defendants.subpoenas.policeSubpoenaId",
+  "case.defendants.subpoenas.servedBy",
+  "case.defendants.subpoenas.serviceDate",
+  "case.defendants.subpoenas.serviceStatus",
+  "case.defendants.verdict.appealDate",
+  "case.defendants.verdict.appealDecision",
+  "case.defendants.verdict.caseId",
+  "case.defendants.verdict.comment",
+  "case.defendants.verdict.created",
+  "case.defendants.verdict.defendantHasRequestedAppeal",
+  "case.defendants.verdict.defendantId",
+  "case.defendants.verdict.deliveredToDefenderNationalId",
+  "case.defendants.verdict.externalPoliceDocumentId",
+  "case.defendants.verdict.id",
+  "case.defendants.verdict.isAcquittedByPublicProsecutionOffice",
+  "case.defendants.verdict.isDefaultJudgement",
+  "case.defendants.verdict.modified",
+  "case.defendants.verdict.servedBy",
+  "case.defendants.verdict.serviceDate",
+  "case.defendants.verdict.serviceInformationForDefendant",
+  "case.defendants.verdict.serviceRequirement",
+  "case.defendants.verdict.serviceStatus",
+  "case.defendants.verdict.verdictDeliveredToNationalCommissionersOffice",
+  "case.defendants.verdictAppealDeadline",
+  "case.defenderEmail",
+  "case.defenderName",
+  "case.defenderNationalId",
+  "case.defenderPhoneNumber",
+  "case.demands",
+  "case.description",
+  "case.endOfSessionBookings",
+  "case.hasBeenAppealed",
+  "case.hasCivilClaims",
+  "case.id",
+  "case.indictmentAppealDeadline",
+  "case.indictmentApprover.id",
+  "case.indictmentApprover.name",
+  "case.indictmentCompletedDate",
+  "case.indictmentCounts.caseId",
+  "case.indictmentCounts.created",
+  "case.indictmentCounts.displayOrder",
+  "case.indictmentCounts.id",
+  "case.indictmentCounts.incidentDescription",
+  "case.indictmentCounts.indictmentCountSubtypes",
+  "case.indictmentCounts.lawsBroken",
+  "case.indictmentCounts.legalArguments",
+  "case.indictmentCounts.modified",
+  "case.indictmentCounts.offenses.created",
+  "case.indictmentCounts.offenses.id",
+  "case.indictmentCounts.offenses.indictmentCountId",
+  "case.indictmentCounts.offenses.modified",
+  "case.indictmentCounts.offenses.offense",
+  "case.indictmentCounts.offenses.substances",
+  "case.indictmentCounts.policeCaseNumber",
+  "case.indictmentCounts.recordedSpeed",
+  "case.indictmentCounts.speedLimit",
+  "case.indictmentCounts.vehicleRegistrationNumber",
+  "case.indictmentDecision",
+  "case.indictmentDeniedExplanation",
+  "case.indictmentIntroduction",
+  "case.indictmentReviewReturnedExplanation",
+  "case.indictmentReviewedDate",
+  "case.indictmentReviewer.id",
+  "case.indictmentReviewer.name",
+  "case.indictmentRulingDecision",
+  "case.indictmentSentToPublicProsecutorDate",
+  "case.indictmentSubtypes",
+  "case.indictmentVerdictAppealDeadlineExpired",
+  "case.indictmentVerdictViewedByAll",
+  "case.introduction",
+  "case.isAppealDeadlineExpired",
+  "case.isArraignmentSummonsSkipped",
+  "case.isClosedCourtHidden",
+  "case.isCompletedWithoutRuling",
+  "case.isCustodyIsolation",
+  "case.isHeightenedSecurityLevel",
+  "case.isValidToDateInThePast",
+  "case.isolationToDate",
+  "case.judge.email",
+  "case.judge.id",
+  "case.judge.name",
+  "case.judge.title",
+  "case.lawsBroken",
+  "case.leadInvestigator",
+  "case.legalArguments",
+  "case.legalBasis",
+  "case.legalProvisions",
+  "case.mergeCase.civilClaimants.hasSpokesperson",
+  "case.mergeCase.civilClaimants.id",
+  "case.mergeCase.civilClaimants.isSpokespersonConfirmed",
+  "case.mergeCase.civilClaimants.spokespersonNationalId",
+  "case.mergeCase.courtCaseNumber",
+  "case.mergeCase.defendants.defenderNationalId",
+  "case.mergeCase.defendants.id",
+  "case.mergeCase.defendants.isDefenderChoiceConfirmed",
+  "case.mergeCase.id",
+  "case.mergeCase.type",
+  "case.mergeCaseNumber",
+  "case.mergedCases.caseFiles.category",
+  "case.mergedCases.caseFiles.civilClaimantId",
+  "case.mergedCases.caseFiles.created",
+  "case.mergedCases.caseFiles.defendantId",
+  "case.mergedCases.caseFiles.displayDate",
+  "case.mergedCases.caseFiles.fileRepresentative",
+  "case.mergedCases.caseFiles.id",
+  "case.mergedCases.caseFiles.isKeyAccessible",
+  "case.mergedCases.caseFiles.isPronouncedOrally",
+  "case.mergedCases.caseFiles.key",
+  "case.mergedCases.caseFiles.modified",
+  "case.mergedCases.caseFiles.name",
+  "case.mergedCases.caseFiles.rulingFileId",
+  "case.mergedCases.caseFiles.size",
+  "case.mergedCases.caseFiles.state",
+  "case.mergedCases.caseFiles.submittedBy",
+  "case.mergedCases.caseFiles.type",
+  "case.mergedCases.caseFiles.userGeneratedFilename",
+  "case.mergedCases.civilClaimants.hasSpokesperson",
+  "case.mergedCases.civilClaimants.id",
+  "case.mergedCases.civilClaimants.isSpokespersonConfirmed",
+  "case.mergedCases.civilClaimants.spokespersonNationalId",
+  "case.mergedCases.court.id",
+  "case.mergedCases.court.name",
+  "case.mergedCases.courtCaseNumber",
+  "case.mergedCases.courtSessions.courtSessionStrings.courtSessionId",
+  "case.mergedCases.courtSessions.courtSessionStrings.id",
+  "case.mergedCases.courtSessions.courtSessionStrings.mergedCaseId",
+  "case.mergedCases.courtSessions.courtSessionStrings.stringType",
+  "case.mergedCases.courtSessions.courtSessionStrings.value",
+  "case.mergedCases.courtSessions.endDate",
+  "case.mergedCases.courtSessions.filedDocuments.caseFileId",
+  "case.mergedCases.courtSessions.filedDocuments.caseId",
+  "case.mergedCases.courtSessions.filedDocuments.courtSessionId",
+  "case.mergedCases.courtSessions.filedDocuments.created",
+  "case.mergedCases.courtSessions.filedDocuments.documentOrder",
+  "case.mergedCases.courtSessions.filedDocuments.documentType",
+  "case.mergedCases.courtSessions.filedDocuments.generatedPdfUri",
+  "case.mergedCases.courtSessions.filedDocuments.id",
+  "case.mergedCases.courtSessions.filedDocuments.mergedFromCaseId",
+  "case.mergedCases.courtSessions.filedDocuments.modified",
+  "case.mergedCases.courtSessions.filedDocuments.name",
+  "case.mergedCases.courtSessions.filedDocuments.submittedBy",
+  "case.mergedCases.courtSessions.id",
+  "case.mergedCases.courtSessions.isConfirmed",
+  "case.mergedCases.courtSessions.startDate",
+  "case.mergedCases.defendants.address",
+  "case.mergedCases.defendants.caseFilesSharedWithDefender",
+  "case.mergedCases.defendants.citizenship",
+  "case.mergedCases.defendants.defendantPlea",
+  "case.mergedCases.defendants.defenderChoice",
+  "case.mergedCases.defendants.defenderEmail",
+  "case.mergedCases.defendants.defenderName",
+  "case.mergedCases.defendants.defenderNationalId",
+  "case.mergedCases.defendants.defenderPhoneNumber",
+  "case.mergedCases.defendants.gender",
+  "case.mergedCases.defendants.id",
+  "case.mergedCases.defendants.isDefenderChoiceConfirmed",
+  "case.mergedCases.defendants.isVerdictAppealDeadlineExpired",
+  "case.mergedCases.defendants.name",
+  "case.mergedCases.defendants.nationalId",
+  "case.mergedCases.defendants.noNationalId",
+  "case.mergedCases.defendants.punishmentType",
+  "case.mergedCases.defendants.requestedDefenderChoice",
+  "case.mergedCases.defendants.requestedDefenderName",
+  "case.mergedCases.defendants.requestedDefenderNationalId",
+  "case.mergedCases.defendants.subpoenaType",
+  "case.mergedCases.defendants.subpoenas.caseId",
+  "case.mergedCases.defendants.subpoenas.comment",
+  "case.mergedCases.defendants.subpoenas.created",
+  "case.mergedCases.defendants.subpoenas.defendantId",
+  "case.mergedCases.defendants.subpoenas.defenderNationalId",
+  "case.mergedCases.defendants.subpoenas.id",
+  "case.mergedCases.defendants.subpoenas.modified",
+  "case.mergedCases.defendants.subpoenas.policeSubpoenaId",
+  "case.mergedCases.defendants.subpoenas.servedBy",
+  "case.mergedCases.defendants.subpoenas.serviceDate",
+  "case.mergedCases.defendants.subpoenas.serviceStatus",
+  "case.mergedCases.defendants.verdict.appealDate",
+  "case.mergedCases.defendants.verdict.appealDecision",
+  "case.mergedCases.defendants.verdict.externalPoliceDocumentId",
+  "case.mergedCases.defendants.verdict.id",
+  "case.mergedCases.defendants.verdict.serviceDate",
+  "case.mergedCases.defendants.verdict.serviceInformationForDefendant",
+  "case.mergedCases.defendants.verdict.serviceRequirement",
+  "case.mergedCases.defendants.verdictAppealDeadline",
+  "case.mergedCases.hasCivilClaims",
+  "case.mergedCases.id",
+  "case.mergedCases.indictmentRulingDecision",
+  "case.mergedCases.indictmentSubtypes",
+  "case.mergedCases.judge.email",
+  "case.mergedCases.judge.id",
+  "case.mergedCases.judge.name",
+  "case.mergedCases.judge.title",
+  "case.mergedCases.policeCaseNumbers",
+  "case.mergedCases.prosecutor.email",
+  "case.mergedCases.prosecutor.id",
+  "case.mergedCases.prosecutor.name",
+  "case.mergedCases.prosecutor.title",
+  "case.mergedCases.prosecutorsOffice.id",
+  "case.mergedCases.prosecutorsOffice.name",
+  "case.mergedCases.rulingOrderAppealCases.appealAssistant.id",
+  "case.mergedCases.rulingOrderAppealCases.appealAssistant.name",
+  "case.mergedCases.rulingOrderAppealCases.appealCaseNumber",
+  "case.mergedCases.rulingOrderAppealCases.appealConclusion",
+  "case.mergedCases.rulingOrderAppealCases.appealIsolationToDate",
+  "case.mergedCases.rulingOrderAppealCases.appealJudge1.id",
+  "case.mergedCases.rulingOrderAppealCases.appealJudge1.name",
+  "case.mergedCases.rulingOrderAppealCases.appealJudge2.id",
+  "case.mergedCases.rulingOrderAppealCases.appealJudge2.name",
+  "case.mergedCases.rulingOrderAppealCases.appealJudge3.id",
+  "case.mergedCases.rulingOrderAppealCases.appealJudge3.name",
+  "case.mergedCases.rulingOrderAppealCases.appealReceivedByCourtDate",
+  "case.mergedCases.rulingOrderAppealCases.appealRulingDate",
+  "case.mergedCases.rulingOrderAppealCases.appealRulingDecision",
+  "case.mergedCases.rulingOrderAppealCases.appealRulingModifiedHistory",
+  "case.mergedCases.rulingOrderAppealCases.appealState",
+  "case.mergedCases.rulingOrderAppealCases.appealValidToDate",
+  "case.mergedCases.rulingOrderAppealCases.appealedByCivilClaimantId",
+  "case.mergedCases.rulingOrderAppealCases.appealedByDefendantId",
+  "case.mergedCases.rulingOrderAppealCases.appealedByRole",
+  "case.mergedCases.rulingOrderAppealCases.appealedDate",
+  "case.mergedCases.rulingOrderAppealCases.appealedInCourt",
+  "case.mergedCases.rulingOrderAppealCases.appealedOutOfCourt",
+  "case.mergedCases.rulingOrderAppealCases.civilClaimantStatementDates.civilClaimantId",
+  "case.mergedCases.rulingOrderAppealCases.civilClaimantStatementDates.statementDate",
+  "case.mergedCases.rulingOrderAppealCases.defendantStatementDate",
+  "case.mergedCases.rulingOrderAppealCases.defendantStatementDates.defendantId",
+  "case.mergedCases.rulingOrderAppealCases.defendantStatementDates.statementDate",
+  "case.mergedCases.rulingOrderAppealCases.id",
+  "case.mergedCases.rulingOrderAppealCases.isAppealCustodyIsolation",
+  "case.mergedCases.rulingOrderAppealCases.isStatementDeadlineExpired",
+  "case.mergedCases.rulingOrderAppealCases.prosecutorStatementDate",
+  "case.mergedCases.rulingOrderAppealCases.requestAppealRulingNotToBePublished",
+  "case.mergedCases.rulingOrderAppealCases.rulingFileId",
+  "case.mergedCases.rulingOrderAppealCases.statementDeadline",
+  "case.mergedCases.state",
+  "case.mergedCases.type",
+  "case.mergedCases.withCourtSessions",
+  "case.notifications.created",
+  "case.notifications.id",
+  "case.notifications.recipients.success",
+  "case.notifications.type",
+  "case.openedByDefender",
+  "case.origin",
+  "case.originalAncestorId",
+  "case.parentCase.caseFiles.civilClaimantId",
+  "case.parentCase.caseFiles.created",
+  "case.parentCase.caseFiles.defendantId",
+  "case.parentCase.caseFiles.id",
+  "case.parentCase.caseFiles.isKeyAccessible",
+  "case.parentCase.caseFiles.key",
+  "case.parentCase.caseFiles.name",
+  "case.parentCase.caseFiles.size",
+  "case.parentCase.caseFiles.state",
+  "case.parentCase.courtCaseNumber",
+  "case.parentCase.created",
+  "case.parentCase.decision",
+  "case.parentCase.id",
+  "case.parentCase.modified",
+  "case.parentCase.origin",
+  "case.parentCase.policeCaseNumbers",
+  "case.parentCase.ruling",
+  "case.parentCase.state",
+  "case.parentCase.type",
+  "case.parentCase.validToDate",
+  "case.penalties",
+  "case.policeCaseNumbers",
+  "case.postponedIndefinitelyExplanation",
+  "case.prisonStaffAppealResultAccessDate",
+  "case.prosecutionAppealResultAccessDate",
+  "case.prosecutor.email",
+  "case.prosecutor.id",
+  "case.prosecutor.name",
+  "case.prosecutor.title",
+  "case.prosecutorDemands",
+  "case.prosecutorOnlySessionRequest",
+  "case.prosecutorsOffice.id",
+  "case.prosecutorsOffice.name",
+  "case.prosecutorsOffice.policeCaseNumberPrefix",
+  "case.registrar.email",
+  "case.registrar.id",
+  "case.registrar.name",
+  "case.registrar.title",
+  "case.reopenReason",
+  "case.requestCompletedDate",
+  "case.requestDriversLicenseSuspension",
+  "case.requestProsecutorOnlySession",
+  "case.requestSharedWithDefender",
+  "case.requestedCourtDate",
+  "case.requestedCustodyRestrictions",
+  "case.requestedOtherRestrictions",
+  "case.requestedValidToDate",
+  "case.ruling",
+  "case.rulingDate",
+  "case.rulingModifiedHistory",
+  "case.rulingOrderAppealCases.appealAssistant.id",
+  "case.rulingOrderAppealCases.appealAssistant.name",
+  "case.rulingOrderAppealCases.appealCaseNumber",
+  "case.rulingOrderAppealCases.appealConclusion",
+  "case.rulingOrderAppealCases.appealIsolationToDate",
+  "case.rulingOrderAppealCases.appealJudge1.id",
+  "case.rulingOrderAppealCases.appealJudge1.name",
+  "case.rulingOrderAppealCases.appealJudge2.id",
+  "case.rulingOrderAppealCases.appealJudge2.name",
+  "case.rulingOrderAppealCases.appealJudge3.id",
+  "case.rulingOrderAppealCases.appealJudge3.name",
+  "case.rulingOrderAppealCases.appealReceivedByCourtDate",
+  "case.rulingOrderAppealCases.appealRulingDate",
+  "case.rulingOrderAppealCases.appealRulingDecision",
+  "case.rulingOrderAppealCases.appealRulingModifiedHistory",
+  "case.rulingOrderAppealCases.appealState",
+  "case.rulingOrderAppealCases.appealValidToDate",
+  "case.rulingOrderAppealCases.appealedByCivilClaimantId",
+  "case.rulingOrderAppealCases.appealedByDefendantId",
+  "case.rulingOrderAppealCases.appealedByRole",
+  "case.rulingOrderAppealCases.appealedDate",
+  "case.rulingOrderAppealCases.appealedInCourt",
+  "case.rulingOrderAppealCases.appealedOutOfCourt",
+  "case.rulingOrderAppealCases.civilClaimantStatementDates.civilClaimantId",
+  "case.rulingOrderAppealCases.civilClaimantStatementDates.statementDate",
+  "case.rulingOrderAppealCases.defendantStatementDate",
+  "case.rulingOrderAppealCases.defendantStatementDates.defendantId",
+  "case.rulingOrderAppealCases.defendantStatementDates.statementDate",
+  "case.rulingOrderAppealCases.id",
+  "case.rulingOrderAppealCases.isAppealCustodyIsolation",
+  "case.rulingOrderAppealCases.isStatementDeadlineExpired",
+  "case.rulingOrderAppealCases.prosecutorStatementDate",
+  "case.rulingOrderAppealCases.requestAppealRulingNotToBePublished",
+  "case.rulingOrderAppealCases.rulingFileId",
+  "case.rulingOrderAppealCases.statementDeadline",
+  "case.rulingSignatureDate",
+  "case.sessionArrangements",
+  "case.sessionBookings",
+  "case.sharedWithProsecutorsOffice.id",
+  "case.sharedWithProsecutorsOffice.name",
+  "case.sharedWithProsecutorsOffice.type",
+  "case.splitCase.courtCaseNumber",
+  "case.splitCase.id",
+  "case.splitCases.caseFiles.category",
+  "case.splitCases.caseFiles.civilClaimantId",
+  "case.splitCases.caseFiles.created",
+  "case.splitCases.caseFiles.defendantId",
+  "case.splitCases.caseFiles.displayDate",
+  "case.splitCases.caseFiles.fileRepresentative",
+  "case.splitCases.caseFiles.id",
+  "case.splitCases.caseFiles.isKeyAccessible",
+  "case.splitCases.caseFiles.isPronouncedOrally",
+  "case.splitCases.caseFiles.key",
+  "case.splitCases.caseFiles.modified",
+  "case.splitCases.caseFiles.name",
+  "case.splitCases.caseFiles.rulingFileId",
+  "case.splitCases.caseFiles.size",
+  "case.splitCases.caseFiles.state",
+  "case.splitCases.caseFiles.submittedBy",
+  "case.splitCases.caseFiles.type",
+  "case.splitCases.caseFiles.userGeneratedFilename",
+  "case.splitCases.courtCaseNumber",
+  "case.splitCases.created",
+  "case.splitCases.defendants.id",
+  "case.splitCases.defendants.name",
+  "case.splitCases.defendants.subpoenas.caseId",
+  "case.splitCases.defendants.subpoenas.comment",
+  "case.splitCases.defendants.subpoenas.created",
+  "case.splitCases.defendants.subpoenas.defendantId",
+  "case.splitCases.defendants.subpoenas.defenderNationalId",
+  "case.splitCases.defendants.subpoenas.id",
+  "case.splitCases.defendants.subpoenas.modified",
+  "case.splitCases.defendants.subpoenas.policeSubpoenaId",
+  "case.splitCases.defendants.subpoenas.servedBy",
+  "case.splitCases.defendants.subpoenas.serviceDate",
+  "case.splitCases.defendants.subpoenas.serviceStatus",
+  "case.splitCases.id",
+  "case.state",
+  "case.translator",
+  "case.type",
+  "case.unfiledCourtDocuments.caseFileId",
+  "case.unfiledCourtDocuments.caseId",
+  "case.unfiledCourtDocuments.courtSessionId",
+  "case.unfiledCourtDocuments.created",
+  "case.unfiledCourtDocuments.documentOrder",
+  "case.unfiledCourtDocuments.documentType",
+  "case.unfiledCourtDocuments.generatedPdfUri",
+  "case.unfiledCourtDocuments.id",
+  "case.unfiledCourtDocuments.mergedFromCaseId",
+  "case.unfiledCourtDocuments.modified",
+  "case.unfiledCourtDocuments.name",
+  "case.unfiledCourtDocuments.submittedBy",
+  "case.validToDate",
+  "case.verdictAppealCase.appealEventLogs.appealOrigin",
+  "case.verdictAppealCase.appealEventLogs.created",
+  "case.verdictAppealCase.appealEventLogs.defendantId",
+  "case.verdictAppealCase.appealEventLogs.eventType",
+  "case.verdictAppealCase.appealEventLogs.id",
+  "case.verdictAppealCase.appealEventLogs.institutionName",
+  "case.verdictAppealCase.appealEventLogs.userName",
+  "case.verdictAppealCase.appealEventLogs.userRole",
+  "case.verdictAppealCase.appealEventLogs.userTitle",
+  "case.verdictAppealCase.appealState",
+  "case.verdictAppealCase.appealType",
+  "case.verdictAppealCase.id",
+  "case.victims.hasLawyer",
+  "case.victims.hasNationalId",
+  "case.victims.id",
+  "case.victims.lawyerAccessToRequest",
+  "case.victims.lawyerEmail",
+  "case.victims.lawyerName",
+  "case.victims.lawyerNationalId",
+  "case.victims.lawyerPhoneNumber",
+  "case.victims.name",
+  "case.victims.nationalId",
+  "case.withCourtSessions",
+]
+`;
+
+exports[`GraphQL operations select these field paths CaseStatistics 1`] = `
+Array [
+  "caseStatistics.count",
+  "caseStatistics.indictmentCases.averageRulingTimeDays",
+  "caseStatistics.indictmentCases.averageRulingTimeMs",
+  "caseStatistics.indictmentCases.count",
+  "caseStatistics.indictmentCases.inProgressCount",
+  "caseStatistics.indictmentCases.minDate",
+  "caseStatistics.indictmentCases.rulingCount",
+  "caseStatistics.requestCases.completedCount",
+  "caseStatistics.requestCases.count",
+  "caseStatistics.requestCases.inProgressCount",
+  "caseStatistics.requestCases.minDate",
+  "caseStatistics.subpoenas.count",
+  "caseStatistics.subpoenas.minDate",
+  "caseStatistics.subpoenas.serviceStatusStatistics.averageServiceTimeDays",
+  "caseStatistics.subpoenas.serviceStatusStatistics.averageServiceTimeMs",
+  "caseStatistics.subpoenas.serviceStatusStatistics.count",
+  "caseStatistics.subpoenas.serviceStatusStatistics.serviceStatus",
+]
+`;
+
+exports[`GraphQL operations select these field paths CaseTable 1`] = `
+Array [
+  "caseTable.rowCount",
+  "caseTable.rows.actionOnRowClick",
+  "caseTable.rows.appealCaseId",
+  "caseTable.rows.caseId",
+  "caseTable.rows.cells.sortValue",
+  "caseTable.rows.cells.value.__typename",
+  "caseTable.rows.cells.value.on(StringGroupValue).hasCheckMark",
+  "caseTable.rows.cells.value.on(StringGroupValue).strList",
+  "caseTable.rows.cells.value.on(StringValue).str",
+  "caseTable.rows.cells.value.on(TagGroupValue).firstTag.color",
+  "caseTable.rows.cells.value.on(TagGroupValue).firstTag.text",
+  "caseTable.rows.cells.value.on(TagGroupValue).secondTag.color",
+  "caseTable.rows.cells.value.on(TagGroupValue).secondTag.text",
+  "caseTable.rows.cells.value.on(TagGroupValue).thirdTag.color",
+  "caseTable.rows.cells.value.on(TagGroupValue).thirdTag.text",
+  "caseTable.rows.cells.value.on(TagValue).color",
+  "caseTable.rows.cells.value.on(TagValue).text",
+  "caseTable.rows.contextMenuActions",
+  "caseTable.rows.defendantIds",
+  "caseTable.rows.isMyCase",
+]
+`;
+
+exports[`GraphQL operations select these field paths CaseTableMembership 1`] = `
+Array [
+  "caseTableMembership.caseTableTypes",
+]
+`;
+
+exports[`GraphQL operations select these field paths ConfirmRulingOrder 1`] = `
+Array [
+  "confirmRulingOrder.id",
+  "confirmRulingOrder.submissionDate",
+]
+`;
+
+exports[`GraphQL operations select these field paths CourtRecordSignatureConfirmation 1`] = `
+Array [
+  "courtRecordSignatureConfirmation.code",
+  "courtRecordSignatureConfirmation.documentSigned",
+  "courtRecordSignatureConfirmation.message",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealCase 1`] = `
+Array [
+  "createAppealCase.appealState",
+  "createAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealEventLog 1`] = `
+Array [
+  "createAppealEventLog.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateCase 1`] = `
+Array [
+  "createCase.defendants.id",
+  "createCase.id",
+  "createCase.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateCivilClaimant 1`] = `
+Array [
+  "createCivilClaimant.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateCivilClaimantFile 1`] = `
+Array [
+  "createCivilClaimantFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateCourtCase 1`] = `
+Array [
+  "createCourtCase.courtCaseNumber",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateCourtDocument 1`] = `
+Array [
+  "createCourtDocument.caseFileId",
+  "createCourtDocument.caseId",
+  "createCourtDocument.courtSessionId",
+  "createCourtDocument.created",
+  "createCourtDocument.documentOrder",
+  "createCourtDocument.documentType",
+  "createCourtDocument.generatedPdfUri",
+  "createCourtDocument.id",
+  "createCourtDocument.modified",
+  "createCourtDocument.name",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateCourtSession 1`] = `
+Array [
+  "createCourtSession.created",
+  "createCourtSession.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateDefendant 1`] = `
+Array [
+  "createDefendant.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateDefendantFile 1`] = `
+Array [
+  "createDefendantFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateEventLog 1`] = `
+Array [
+  "createEventLog",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateFile 1`] = `
+Array [
+  "createFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateIndictmentCount 1`] = `
+Array [
+  "createIndictmentCount.caseId",
+  "createIndictmentCount.created",
+  "createIndictmentCount.displayOrder",
+  "createIndictmentCount.id",
+  "createIndictmentCount.incidentDescription",
+  "createIndictmentCount.lawsBroken",
+  "createIndictmentCount.legalArguments",
+  "createIndictmentCount.modified",
+  "createIndictmentCount.policeCaseNumber",
+  "createIndictmentCount.vehicleRegistrationNumber",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateOffense 1`] = `
+Array [
+  "createOffense.created",
+  "createOffense.id",
+  "createOffense.indictmentCountId",
+  "createOffense.modified",
+  "createOffense.offense",
+  "createOffense.substances",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreatePresignedPost 1`] = `
+Array [
+  "createPresignedPost.fields",
+  "createPresignedPost.key",
+  "createPresignedPost.url",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateSubpoenas 1`] = `
+Array [
+  "createSubpoenas.caseId",
+  "createSubpoenas.comment",
+  "createSubpoenas.created",
+  "createSubpoenas.defendantId",
+  "createSubpoenas.defenderNationalId",
+  "createSubpoenas.id",
+  "createSubpoenas.policeSubpoenaId",
+  "createSubpoenas.servedBy",
+  "createSubpoenas.serviceDate",
+  "createSubpoenas.serviceStatus",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateUser 1`] = `
+Array [
+  "createUser.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateVerdicts 1`] = `
+Array [
+  "createVerdicts.caseId",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateVictim 1`] = `
+Array [
+  "createVictim.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CurrentUser 1`] = `
+Array [
+  "currentUser.eligibleUsers.active",
+  "currentUser.eligibleUsers.canConfirmIndictment",
+  "currentUser.eligibleUsers.canManageMessageSuspension",
+  "currentUser.eligibleUsers.created",
+  "currentUser.eligibleUsers.email",
+  "currentUser.eligibleUsers.id",
+  "currentUser.eligibleUsers.institution.defaultCourtId",
+  "currentUser.eligibleUsers.institution.id",
+  "currentUser.eligibleUsers.institution.name",
+  "currentUser.eligibleUsers.institution.policeCaseNumberPrefix",
+  "currentUser.eligibleUsers.institution.type",
+  "currentUser.eligibleUsers.mobileNumber",
+  "currentUser.eligibleUsers.modified",
+  "currentUser.eligibleUsers.name",
+  "currentUser.eligibleUsers.nationalId",
+  "currentUser.eligibleUsers.role",
+  "currentUser.eligibleUsers.title",
+  "currentUser.user.active",
+  "currentUser.user.canConfirmIndictment",
+  "currentUser.user.canManageMessageSuspension",
+  "currentUser.user.created",
+  "currentUser.user.email",
+  "currentUser.user.id",
+  "currentUser.user.institution.defaultCourtId",
+  "currentUser.user.institution.id",
+  "currentUser.user.institution.name",
+  "currentUser.user.institution.policeCaseNumberPrefix",
+  "currentUser.user.institution.type",
+  "currentUser.user.mobileNumber",
+  "currentUser.user.modified",
+  "currentUser.user.name",
+  "currentUser.user.nationalId",
+  "currentUser.user.role",
+  "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteCivilClaimant 1`] = `
+Array [
+  "deleteCivilClaimant.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteCourtDocument 1`] = `
+Array [
+  "deleteCourtDocument.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteCourtSession 1`] = `
+Array [
+  "deleteCourtSession.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteDefendant 1`] = `
+Array [
+  "deleteDefendant.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteFile 1`] = `
+Array [
+  "deleteFile.success",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteIndictmentCount 1`] = `
+Array [
+  "deleteIndictmentCount.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteOffense 1`] = `
+Array [
+  "deleteOffense.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeletePoliceDigitalCaseFile 1`] = `
+Array [
+  "deletePoliceDigitalCaseFile.success",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteVictim 1`] = `
+Array [
+  "deleteVictim.deleted",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeliverCaseVerdict 1`] = `
+Array [
+  "deliverCaseVerdict.queued",
+]
+`;
+
+exports[`GraphQL operations select these field paths DuplicateIndictmentCase 1`] = `
+Array [
+  "duplicateIndictmentCase.id",
+  "duplicateIndictmentCase.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths ExtendCase 1`] = `
+Array [
+  "extendCase.id",
+  "extendCase.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths FileCourtDocumentInCourtSession 1`] = `
+Array [
+  "fileCourtDocumentInCourtSession.caseFileId",
+  "fileCourtDocumentInCourtSession.caseId",
+  "fileCourtDocumentInCourtSession.courtSessionId",
+  "fileCourtDocumentInCourtSession.created",
+  "fileCourtDocumentInCourtSession.documentOrder",
+  "fileCourtDocumentInCourtSession.documentType",
+  "fileCourtDocumentInCourtSession.generatedPdfUri",
+  "fileCourtDocumentInCourtSession.id",
+  "fileCourtDocumentInCourtSession.mergedFromCaseId",
+  "fileCourtDocumentInCourtSession.modified",
+  "fileCourtDocumentInCourtSession.name",
+]
+`;
+
+exports[`GraphQL operations select these field paths GetPreprocessedDataUrl 1`] = `
+Array [
+  "getPreprocessedDataCsvSignedUrl.url",
+]
+`;
+
+exports[`GraphQL operations select these field paths GetSignedUrl 1`] = `
+Array [
+  "getSignedUrl.url",
+]
+`;
+
+exports[`GraphQL operations select these field paths IndictmentPoliceCaseFiles 1`] = `
+Array [
+  "policeCaseFiles.chapter",
+  "policeCaseFiles.displayDate",
+  "policeCaseFiles.id",
+  "policeCaseFiles.name",
+  "policeCaseFiles.policeCaseNumber",
+  "policeCaseFiles.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths Institutions 1`] = `
+Array [
+  "institutions.active",
+  "institutions.created",
+  "institutions.id",
+  "institutions.modified",
+  "institutions.name",
+  "institutions.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCase 1`] = `
+Array [
+  "limitedAccessCase.appealCase.appealAssistant.id",
+  "limitedAccessCase.appealCase.appealAssistant.name",
+  "limitedAccessCase.appealCase.appealCaseNumber",
+  "limitedAccessCase.appealCase.appealConclusion",
+  "limitedAccessCase.appealCase.appealIsolationToDate",
+  "limitedAccessCase.appealCase.appealJudge1.id",
+  "limitedAccessCase.appealCase.appealJudge1.name",
+  "limitedAccessCase.appealCase.appealJudge2.id",
+  "limitedAccessCase.appealCase.appealJudge2.name",
+  "limitedAccessCase.appealCase.appealJudge3.id",
+  "limitedAccessCase.appealCase.appealJudge3.name",
+  "limitedAccessCase.appealCase.appealReceivedByCourtDate",
+  "limitedAccessCase.appealCase.appealRulingDate",
+  "limitedAccessCase.appealCase.appealRulingDecision",
+  "limitedAccessCase.appealCase.appealRulingModifiedHistory",
+  "limitedAccessCase.appealCase.appealState",
+  "limitedAccessCase.appealCase.appealValidToDate",
+  "limitedAccessCase.appealCase.appealedByCivilClaimantId",
+  "limitedAccessCase.appealCase.appealedByDefendantId",
+  "limitedAccessCase.appealCase.appealedByRole",
+  "limitedAccessCase.appealCase.appealedDate",
+  "limitedAccessCase.appealCase.appealedInCourt",
+  "limitedAccessCase.appealCase.appealedOutOfCourt",
+  "limitedAccessCase.appealCase.civilClaimantStatementDates.civilClaimantId",
+  "limitedAccessCase.appealCase.civilClaimantStatementDates.statementDate",
+  "limitedAccessCase.appealCase.defendantStatementDate",
+  "limitedAccessCase.appealCase.defendantStatementDates.defendantId",
+  "limitedAccessCase.appealCase.defendantStatementDates.statementDate",
+  "limitedAccessCase.appealCase.id",
+  "limitedAccessCase.appealCase.isAppealCustodyIsolation",
+  "limitedAccessCase.appealCase.isStatementDeadlineExpired",
+  "limitedAccessCase.appealCase.prosecutorStatementDate",
+  "limitedAccessCase.appealCase.requestAppealRulingNotToBePublished",
+  "limitedAccessCase.appealCase.rulingFileId",
+  "limitedAccessCase.appealCase.statementDeadline",
+  "limitedAccessCase.appealDeadline",
+  "limitedAccessCase.appealDecisions.announcement",
+  "limitedAccessCase.appealDecisions.civilClaimantId",
+  "limitedAccessCase.appealDecisions.decision",
+  "limitedAccessCase.appealDecisions.defendantId",
+  "limitedAccessCase.appealDecisions.id",
+  "limitedAccessCase.appealDecisions.partyRole",
+  "limitedAccessCase.appealDecisions.rulingFileId",
+  "limitedAccessCase.appealDecisions.withdrawnDate",
+  "limitedAccessCase.arraignmentDate.date",
+  "limitedAccessCase.arraignmentDate.location",
+  "limitedAccessCase.canBeAppealed",
+  "limitedAccessCase.canDefenderAppeal",
+  "limitedAccessCase.caseFiles.appealDeadline",
+  "limitedAccessCase.caseFiles.canBeAppealed",
+  "limitedAccessCase.caseFiles.category",
+  "limitedAccessCase.caseFiles.civilClaimantId",
+  "limitedAccessCase.caseFiles.created",
+  "limitedAccessCase.caseFiles.defendantId",
+  "limitedAccessCase.caseFiles.displayDate",
+  "limitedAccessCase.caseFiles.fileRepresentative",
+  "limitedAccessCase.caseFiles.hasBeenAppealed",
+  "limitedAccessCase.caseFiles.id",
+  "limitedAccessCase.caseFiles.isAppealDeadlineExpired",
+  "limitedAccessCase.caseFiles.isKeyAccessible",
+  "limitedAccessCase.caseFiles.isPronouncedOrally",
+  "limitedAccessCase.caseFiles.key",
+  "limitedAccessCase.caseFiles.modified",
+  "limitedAccessCase.caseFiles.name",
+  "limitedAccessCase.caseFiles.rulingFileId",
+  "limitedAccessCase.caseFiles.size",
+  "limitedAccessCase.caseFiles.state",
+  "limitedAccessCase.caseFiles.submittedBy",
+  "limitedAccessCase.caseFiles.type",
+  "limitedAccessCase.caseFiles.userGeneratedFilename",
+  "limitedAccessCase.caseModifiedExplanation",
+  "limitedAccessCase.caseResentExplanation",
+  "limitedAccessCase.caseSentToCourtDate",
+  "limitedAccessCase.childCase.id",
+  "limitedAccessCase.civilClaimants.caseFilesSharedWithSpokesperson",
+  "limitedAccessCase.civilClaimants.caseId",
+  "limitedAccessCase.civilClaimants.defendantIds",
+  "limitedAccessCase.civilClaimants.hasSpokesperson",
+  "limitedAccessCase.civilClaimants.id",
+  "limitedAccessCase.civilClaimants.isSpokespersonConfirmed",
+  "limitedAccessCase.civilClaimants.name",
+  "limitedAccessCase.civilClaimants.nationalId",
+  "limitedAccessCase.civilClaimants.noNationalId",
+  "limitedAccessCase.civilClaimants.policeCaseNumbers",
+  "limitedAccessCase.civilClaimants.spokespersonEmail",
+  "limitedAccessCase.civilClaimants.spokespersonIsLawyer",
+  "limitedAccessCase.civilClaimants.spokespersonName",
+  "limitedAccessCase.civilClaimants.spokespersonNationalId",
+  "limitedAccessCase.civilClaimants.spokespersonPhoneNumber",
+  "limitedAccessCase.conclusion",
+  "limitedAccessCase.court.id",
+  "limitedAccessCase.court.name",
+  "limitedAccessCase.court.type",
+  "limitedAccessCase.courtCaseNumber",
+  "limitedAccessCase.courtDate.date",
+  "limitedAccessCase.courtDate.location",
+  "limitedAccessCase.courtEndTime",
+  "limitedAccessCase.courtRecordSignatory.email",
+  "limitedAccessCase.courtRecordSignatory.id",
+  "limitedAccessCase.courtRecordSignatory.name",
+  "limitedAccessCase.courtRecordSignatory.title",
+  "limitedAccessCase.courtRecordSignatureDate",
+  "limitedAccessCase.courtSessionType",
+  "limitedAccessCase.courtSessions.courtSessionStrings.courtSessionId",
+  "limitedAccessCase.courtSessions.courtSessionStrings.id",
+  "limitedAccessCase.courtSessions.courtSessionStrings.mergedCaseId",
+  "limitedAccessCase.courtSessions.courtSessionStrings.stringType",
+  "limitedAccessCase.courtSessions.courtSessionStrings.value",
+  "limitedAccessCase.courtSessions.filedDocuments.caseFileId",
+  "limitedAccessCase.courtSessions.filedDocuments.caseId",
+  "limitedAccessCase.courtSessions.filedDocuments.courtSessionId",
+  "limitedAccessCase.courtSessions.filedDocuments.created",
+  "limitedAccessCase.courtSessions.filedDocuments.documentOrder",
+  "limitedAccessCase.courtSessions.filedDocuments.documentType",
+  "limitedAccessCase.courtSessions.filedDocuments.generatedPdfUri",
+  "limitedAccessCase.courtSessions.filedDocuments.id",
+  "limitedAccessCase.courtSessions.filedDocuments.mergedFromCaseId",
+  "limitedAccessCase.courtSessions.filedDocuments.modified",
+  "limitedAccessCase.courtSessions.filedDocuments.name",
+  "limitedAccessCase.courtSessions.filedDocuments.submittedBy",
+  "limitedAccessCase.courtSessions.id",
+  "limitedAccessCase.courtSessions.isConfirmed",
+  "limitedAccessCase.courtSessions.ruling",
+  "limitedAccessCase.courtSessions.startDate",
+  "limitedAccessCase.created",
+  "limitedAccessCase.creatingProsecutor.email",
+  "limitedAccessCase.creatingProsecutor.id",
+  "limitedAccessCase.creatingProsecutor.name",
+  "limitedAccessCase.creatingProsecutor.title",
+  "limitedAccessCase.decision",
+  "limitedAccessCase.defendants.address",
+  "limitedAccessCase.defendants.alternativeServiceDescription",
+  "limitedAccessCase.defendants.appealDefenderEmail",
+  "limitedAccessCase.defendants.appealDefenderName",
+  "limitedAccessCase.defendants.appealDefenderNationalId",
+  "limitedAccessCase.defendants.appealDefenderPhoneNumber",
+  "limitedAccessCase.defendants.caseFilesSharedWithDefender",
+  "limitedAccessCase.defendants.citizenship",
+  "limitedAccessCase.defendants.defendantPlea",
+  "limitedAccessCase.defendants.defenderChoice",
+  "limitedAccessCase.defendants.defenderEmail",
+  "limitedAccessCase.defendants.defenderName",
+  "limitedAccessCase.defendants.defenderNationalId",
+  "limitedAccessCase.defendants.defenderPhoneNumber",
+  "limitedAccessCase.defendants.gender",
+  "limitedAccessCase.defendants.id",
+  "limitedAccessCase.defendants.indictmentCancelledOrDismissedState.time",
+  "limitedAccessCase.defendants.indictmentCancelledOrDismissedState.type",
+  "limitedAccessCase.defendants.indictmentReviewDecision",
+  "limitedAccessCase.defendants.isAlternativeService",
+  "limitedAccessCase.defendants.isAppealDefenderConfirmed",
+  "limitedAccessCase.defendants.isDefenderChoiceConfirmed",
+  "limitedAccessCase.defendants.isRegisteredInPrisonSystem",
+  "limitedAccessCase.defendants.isSentToPrisonAdmin",
+  "limitedAccessCase.defendants.isVerdictAppealDeadlineExpired",
+  "limitedAccessCase.defendants.name",
+  "limitedAccessCase.defendants.nationalId",
+  "limitedAccessCase.defendants.noNationalId",
+  "limitedAccessCase.defendants.openedByPrisonAdminDate",
+  "limitedAccessCase.defendants.policeCaseNumbers",
+  "limitedAccessCase.defendants.punishmentType",
+  "limitedAccessCase.defendants.requestedDefenderChoice",
+  "limitedAccessCase.defendants.requestedDefenderName",
+  "limitedAccessCase.defendants.requestedDefenderNationalId",
+  "limitedAccessCase.defendants.sentToPrisonAdminDate",
+  "limitedAccessCase.defendants.subpoenaType",
+  "limitedAccessCase.defendants.subpoenas.caseId",
+  "limitedAccessCase.defendants.subpoenas.comment",
+  "limitedAccessCase.defendants.subpoenas.created",
+  "limitedAccessCase.defendants.subpoenas.defendantId",
+  "limitedAccessCase.defendants.subpoenas.defenderNationalId",
+  "limitedAccessCase.defendants.subpoenas.id",
+  "limitedAccessCase.defendants.subpoenas.modified",
+  "limitedAccessCase.defendants.subpoenas.policeSubpoenaId",
+  "limitedAccessCase.defendants.subpoenas.servedBy",
+  "limitedAccessCase.defendants.subpoenas.serviceDate",
+  "limitedAccessCase.defendants.subpoenas.serviceStatus",
+  "limitedAccessCase.defendants.verdict.appealDate",
+  "limitedAccessCase.defendants.verdict.appealDecision",
+  "limitedAccessCase.defendants.verdict.created",
+  "limitedAccessCase.defendants.verdict.externalPoliceDocumentId",
+  "limitedAccessCase.defendants.verdict.id",
+  "limitedAccessCase.defendants.verdict.isDefaultJudgement",
+  "limitedAccessCase.defendants.verdict.servedBy",
+  "limitedAccessCase.defendants.verdict.serviceDate",
+  "limitedAccessCase.defendants.verdict.serviceInformationForDefendant",
+  "limitedAccessCase.defendants.verdict.serviceRequirement",
+  "limitedAccessCase.defendants.verdict.serviceStatus",
+  "limitedAccessCase.defendants.verdictAppealDeadline",
+  "limitedAccessCase.defenderEmail",
+  "limitedAccessCase.defenderName",
+  "limitedAccessCase.defenderNationalId",
+  "limitedAccessCase.defenderPhoneNumber",
+  "limitedAccessCase.hasBeenAppealed",
+  "limitedAccessCase.hasCivilClaims",
+  "limitedAccessCase.id",
+  "limitedAccessCase.indictmentCounts.caseId",
+  "limitedAccessCase.indictmentCounts.created",
+  "limitedAccessCase.indictmentCounts.displayOrder",
+  "limitedAccessCase.indictmentCounts.id",
+  "limitedAccessCase.indictmentCounts.incidentDescription",
+  "limitedAccessCase.indictmentCounts.lawsBroken",
+  "limitedAccessCase.indictmentCounts.legalArguments",
+  "limitedAccessCase.indictmentCounts.modified",
+  "limitedAccessCase.indictmentCounts.offenses.created",
+  "limitedAccessCase.indictmentCounts.offenses.id",
+  "limitedAccessCase.indictmentCounts.offenses.indictmentCountId",
+  "limitedAccessCase.indictmentCounts.offenses.modified",
+  "limitedAccessCase.indictmentCounts.offenses.offense",
+  "limitedAccessCase.indictmentCounts.offenses.substances",
+  "limitedAccessCase.indictmentCounts.policeCaseNumber",
+  "limitedAccessCase.indictmentCounts.vehicleRegistrationNumber",
+  "limitedAccessCase.indictmentDecision",
+  "limitedAccessCase.indictmentReviewedDate",
+  "limitedAccessCase.indictmentReviewer.id",
+  "limitedAccessCase.indictmentReviewer.name",
+  "limitedAccessCase.indictmentRulingDecision",
+  "limitedAccessCase.indictmentSentToPublicProsecutorDate",
+  "limitedAccessCase.indictmentSubtypes",
+  "limitedAccessCase.indictmentVerdictAppealDeadlineExpired",
+  "limitedAccessCase.indictmentVerdictViewedByAll",
+  "limitedAccessCase.isAppealDeadlineExpired",
+  "limitedAccessCase.isCompletedWithoutRuling",
+  "limitedAccessCase.isCustodyIsolation",
+  "limitedAccessCase.isValidToDateInThePast",
+  "limitedAccessCase.isolationToDate",
+  "limitedAccessCase.judge.email",
+  "limitedAccessCase.judge.id",
+  "limitedAccessCase.judge.name",
+  "limitedAccessCase.judge.title",
+  "limitedAccessCase.leadInvestigator",
+  "limitedAccessCase.mergeCase.civilClaimants.hasSpokesperson",
+  "limitedAccessCase.mergeCase.civilClaimants.id",
+  "limitedAccessCase.mergeCase.civilClaimants.isSpokespersonConfirmed",
+  "limitedAccessCase.mergeCase.civilClaimants.spokespersonNationalId",
+  "limitedAccessCase.mergeCase.courtCaseNumber",
+  "limitedAccessCase.mergeCase.defendants.defenderNationalId",
+  "limitedAccessCase.mergeCase.defendants.id",
+  "limitedAccessCase.mergeCase.defendants.isDefenderChoiceConfirmed",
+  "limitedAccessCase.mergeCase.id",
+  "limitedAccessCase.mergeCase.type",
+  "limitedAccessCase.mergedCases.caseFiles.category",
+  "limitedAccessCase.mergedCases.caseFiles.civilClaimantId",
+  "limitedAccessCase.mergedCases.caseFiles.created",
+  "limitedAccessCase.mergedCases.caseFiles.defendantId",
+  "limitedAccessCase.mergedCases.caseFiles.displayDate",
+  "limitedAccessCase.mergedCases.caseFiles.fileRepresentative",
+  "limitedAccessCase.mergedCases.caseFiles.id",
+  "limitedAccessCase.mergedCases.caseFiles.isKeyAccessible",
+  "limitedAccessCase.mergedCases.caseFiles.isPronouncedOrally",
+  "limitedAccessCase.mergedCases.caseFiles.key",
+  "limitedAccessCase.mergedCases.caseFiles.modified",
+  "limitedAccessCase.mergedCases.caseFiles.name",
+  "limitedAccessCase.mergedCases.caseFiles.rulingFileId",
+  "limitedAccessCase.mergedCases.caseFiles.size",
+  "limitedAccessCase.mergedCases.caseFiles.state",
+  "limitedAccessCase.mergedCases.caseFiles.submittedBy",
+  "limitedAccessCase.mergedCases.caseFiles.type",
+  "limitedAccessCase.mergedCases.caseFiles.userGeneratedFilename",
+  "limitedAccessCase.mergedCases.civilClaimants.hasSpokesperson",
+  "limitedAccessCase.mergedCases.civilClaimants.id",
+  "limitedAccessCase.mergedCases.civilClaimants.isSpokespersonConfirmed",
+  "limitedAccessCase.mergedCases.civilClaimants.spokespersonNationalId",
+  "limitedAccessCase.mergedCases.court.id",
+  "limitedAccessCase.mergedCases.court.name",
+  "limitedAccessCase.mergedCases.courtCaseNumber",
+  "limitedAccessCase.mergedCases.courtSessions.courtSessionStrings.courtSessionId",
+  "limitedAccessCase.mergedCases.courtSessions.courtSessionStrings.id",
+  "limitedAccessCase.mergedCases.courtSessions.courtSessionStrings.mergedCaseId",
+  "limitedAccessCase.mergedCases.courtSessions.courtSessionStrings.stringType",
+  "limitedAccessCase.mergedCases.courtSessions.courtSessionStrings.value",
+  "limitedAccessCase.mergedCases.courtSessions.endDate",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.caseFileId",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.caseId",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.courtSessionId",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.created",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.documentOrder",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.documentType",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.generatedPdfUri",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.id",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.mergedFromCaseId",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.modified",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.name",
+  "limitedAccessCase.mergedCases.courtSessions.filedDocuments.submittedBy",
+  "limitedAccessCase.mergedCases.courtSessions.id",
+  "limitedAccessCase.mergedCases.courtSessions.isConfirmed",
+  "limitedAccessCase.mergedCases.courtSessions.ruling",
+  "limitedAccessCase.mergedCases.courtSessions.startDate",
+  "limitedAccessCase.mergedCases.defendants.defenderNationalId",
+  "limitedAccessCase.mergedCases.defendants.id",
+  "limitedAccessCase.mergedCases.defendants.indictmentCancelledOrDismissedState.time",
+  "limitedAccessCase.mergedCases.defendants.indictmentCancelledOrDismissedState.type",
+  "limitedAccessCase.mergedCases.defendants.isDefenderChoiceConfirmed",
+  "limitedAccessCase.mergedCases.defendants.isSentToPrisonAdmin",
+  "limitedAccessCase.mergedCases.defendants.policeCaseNumbers",
+  "limitedAccessCase.mergedCases.defendants.sentToPrisonAdminDate",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.caseId",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.comment",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.created",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.defendantId",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.defenderNationalId",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.id",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.modified",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.policeSubpoenaId",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.servedBy",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.serviceDate",
+  "limitedAccessCase.mergedCases.defendants.subpoenas.serviceStatus",
+  "limitedAccessCase.mergedCases.hasCivilClaims",
+  "limitedAccessCase.mergedCases.id",
+  "limitedAccessCase.mergedCases.indictmentRulingDecision",
+  "limitedAccessCase.mergedCases.indictmentSubtypes",
+  "limitedAccessCase.mergedCases.judge.id",
+  "limitedAccessCase.mergedCases.judge.name",
+  "limitedAccessCase.mergedCases.policeCaseNumbers",
+  "limitedAccessCase.mergedCases.prosecutorsOffice.id",
+  "limitedAccessCase.mergedCases.prosecutorsOffice.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealAssistant.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealAssistant.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealCaseNumber",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealConclusion",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealIsolationToDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge1.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge1.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge2.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge2.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge3.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge3.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealReceivedByCourtDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealRulingDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealRulingDecision",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealRulingModifiedHistory",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealState",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealValidToDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealedByCivilClaimantId",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealedByDefendantId",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealedByRole",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealedDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealedInCourt",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealedOutOfCourt",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.civilClaimantStatementDates.civilClaimantId",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.civilClaimantStatementDates.statementDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.defendantStatementDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.defendantStatementDates.defendantId",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.defendantStatementDates.statementDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.isAppealCustodyIsolation",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.isStatementDeadlineExpired",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.prosecutorStatementDate",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.requestAppealRulingNotToBePublished",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.rulingFileId",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.statementDeadline",
+  "limitedAccessCase.mergedCases.state",
+  "limitedAccessCase.mergedCases.type",
+  "limitedAccessCase.mergedCases.withCourtSessions",
+  "limitedAccessCase.notifications.created",
+  "limitedAccessCase.notifications.id",
+  "limitedAccessCase.notifications.recipients.success",
+  "limitedAccessCase.notifications.type",
+  "limitedAccessCase.origin",
+  "limitedAccessCase.parentCase.courtCaseNumber",
+  "limitedAccessCase.parentCase.decision",
+  "limitedAccessCase.parentCase.id",
+  "limitedAccessCase.parentCase.ruling",
+  "limitedAccessCase.parentCase.state",
+  "limitedAccessCase.parentCase.validToDate",
+  "limitedAccessCase.policeCaseNumbers",
+  "limitedAccessCase.postponedIndefinitelyExplanation",
+  "limitedAccessCase.prosecutor.email",
+  "limitedAccessCase.prosecutor.id",
+  "limitedAccessCase.prosecutor.name",
+  "limitedAccessCase.prosecutor.title",
+  "limitedAccessCase.prosecutorsOffice.id",
+  "limitedAccessCase.prosecutorsOffice.name",
+  "limitedAccessCase.registrar.email",
+  "limitedAccessCase.registrar.id",
+  "limitedAccessCase.registrar.name",
+  "limitedAccessCase.registrar.title",
+  "limitedAccessCase.reopenReason",
+  "limitedAccessCase.requestSharedWithDefender",
+  "limitedAccessCase.requestedCustodyRestrictions",
+  "limitedAccessCase.rulingDate",
+  "limitedAccessCase.rulingModifiedHistory",
+  "limitedAccessCase.rulingOrderAppealCases.appealAssistant.id",
+  "limitedAccessCase.rulingOrderAppealCases.appealAssistant.name",
+  "limitedAccessCase.rulingOrderAppealCases.appealCaseNumber",
+  "limitedAccessCase.rulingOrderAppealCases.appealConclusion",
+  "limitedAccessCase.rulingOrderAppealCases.appealIsolationToDate",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudge1.id",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudge1.name",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudge2.id",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudge2.name",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudge3.id",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudge3.name",
+  "limitedAccessCase.rulingOrderAppealCases.appealReceivedByCourtDate",
+  "limitedAccessCase.rulingOrderAppealCases.appealRulingDate",
+  "limitedAccessCase.rulingOrderAppealCases.appealRulingDecision",
+  "limitedAccessCase.rulingOrderAppealCases.appealRulingModifiedHistory",
+  "limitedAccessCase.rulingOrderAppealCases.appealState",
+  "limitedAccessCase.rulingOrderAppealCases.appealValidToDate",
+  "limitedAccessCase.rulingOrderAppealCases.appealedByCivilClaimantId",
+  "limitedAccessCase.rulingOrderAppealCases.appealedByDefendantId",
+  "limitedAccessCase.rulingOrderAppealCases.appealedByRole",
+  "limitedAccessCase.rulingOrderAppealCases.appealedDate",
+  "limitedAccessCase.rulingOrderAppealCases.appealedInCourt",
+  "limitedAccessCase.rulingOrderAppealCases.appealedOutOfCourt",
+  "limitedAccessCase.rulingOrderAppealCases.civilClaimantStatementDates.civilClaimantId",
+  "limitedAccessCase.rulingOrderAppealCases.civilClaimantStatementDates.statementDate",
+  "limitedAccessCase.rulingOrderAppealCases.defendantStatementDate",
+  "limitedAccessCase.rulingOrderAppealCases.defendantStatementDates.defendantId",
+  "limitedAccessCase.rulingOrderAppealCases.defendantStatementDates.statementDate",
+  "limitedAccessCase.rulingOrderAppealCases.id",
+  "limitedAccessCase.rulingOrderAppealCases.isAppealCustodyIsolation",
+  "limitedAccessCase.rulingOrderAppealCases.isStatementDeadlineExpired",
+  "limitedAccessCase.rulingOrderAppealCases.prosecutorStatementDate",
+  "limitedAccessCase.rulingOrderAppealCases.requestAppealRulingNotToBePublished",
+  "limitedAccessCase.rulingOrderAppealCases.rulingFileId",
+  "limitedAccessCase.rulingOrderAppealCases.statementDeadline",
+  "limitedAccessCase.rulingSignatureDate",
+  "limitedAccessCase.splitCase.courtCaseNumber",
+  "limitedAccessCase.splitCase.id",
+  "limitedAccessCase.splitCases.caseFiles.category",
+  "limitedAccessCase.splitCases.caseFiles.civilClaimantId",
+  "limitedAccessCase.splitCases.caseFiles.created",
+  "limitedAccessCase.splitCases.caseFiles.defendantId",
+  "limitedAccessCase.splitCases.caseFiles.displayDate",
+  "limitedAccessCase.splitCases.caseFiles.fileRepresentative",
+  "limitedAccessCase.splitCases.caseFiles.id",
+  "limitedAccessCase.splitCases.caseFiles.isKeyAccessible",
+  "limitedAccessCase.splitCases.caseFiles.isPronouncedOrally",
+  "limitedAccessCase.splitCases.caseFiles.key",
+  "limitedAccessCase.splitCases.caseFiles.modified",
+  "limitedAccessCase.splitCases.caseFiles.name",
+  "limitedAccessCase.splitCases.caseFiles.rulingFileId",
+  "limitedAccessCase.splitCases.caseFiles.size",
+  "limitedAccessCase.splitCases.caseFiles.state",
+  "limitedAccessCase.splitCases.caseFiles.submittedBy",
+  "limitedAccessCase.splitCases.caseFiles.type",
+  "limitedAccessCase.splitCases.caseFiles.userGeneratedFilename",
+  "limitedAccessCase.splitCases.courtCaseNumber",
+  "limitedAccessCase.splitCases.created",
+  "limitedAccessCase.splitCases.defendants.id",
+  "limitedAccessCase.splitCases.defendants.name",
+  "limitedAccessCase.splitCases.defendants.subpoenas.caseId",
+  "limitedAccessCase.splitCases.defendants.subpoenas.comment",
+  "limitedAccessCase.splitCases.defendants.subpoenas.created",
+  "limitedAccessCase.splitCases.defendants.subpoenas.defendantId",
+  "limitedAccessCase.splitCases.defendants.subpoenas.defenderNationalId",
+  "limitedAccessCase.splitCases.defendants.subpoenas.id",
+  "limitedAccessCase.splitCases.defendants.subpoenas.modified",
+  "limitedAccessCase.splitCases.defendants.subpoenas.policeSubpoenaId",
+  "limitedAccessCase.splitCases.defendants.subpoenas.servedBy",
+  "limitedAccessCase.splitCases.defendants.subpoenas.serviceDate",
+  "limitedAccessCase.splitCases.defendants.subpoenas.serviceStatus",
+  "limitedAccessCase.splitCases.id",
+  "limitedAccessCase.state",
+  "limitedAccessCase.type",
+  "limitedAccessCase.validToDate",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.appealOrigin",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.created",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.defendantId",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.eventType",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.id",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.institutionName",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.userName",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.userRole",
+  "limitedAccessCase.verdictAppealCase.appealEventLogs.userTitle",
+  "limitedAccessCase.verdictAppealCase.appealState",
+  "limitedAccessCase.verdictAppealCase.appealType",
+  "limitedAccessCase.verdictAppealCase.id",
+  "limitedAccessCase.victims.hasLawyer",
+  "limitedAccessCase.victims.hasNationalId",
+  "limitedAccessCase.victims.id",
+  "limitedAccessCase.victims.lawyerAccessToRequest",
+  "limitedAccessCase.victims.lawyerEmail",
+  "limitedAccessCase.victims.lawyerName",
+  "limitedAccessCase.victims.lawyerNationalId",
+  "limitedAccessCase.victims.lawyerPhoneNumber",
+  "limitedAccessCase.victims.name",
+  "limitedAccessCase.victims.nationalId",
+  "limitedAccessCase.withCourtSessions",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreateAppealCase 1`] = `
+Array [
+  "limitedAccessCreateAppealCase.appealState",
+  "limitedAccessCreateAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreateAppealEventLog 1`] = `
+Array [
+  "limitedAccessCreateAppealEventLog.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreateCivilClaimantFile 1`] = `
+Array [
+  "limitedAccessCreateCivilClaimantFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreateDefendantFile 1`] = `
+Array [
+  "limitedAccessCreateDefendantFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreateFile 1`] = `
+Array [
+  "limitedAccessCreateFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreatePresignedPost 1`] = `
+Array [
+  "limitedAccessCreatePresignedPost.fields",
+  "limitedAccessCreatePresignedPost.key",
+  "limitedAccessCreatePresignedPost.url",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessCreateVerdictAppeal 1`] = `
+Array [
+  "limitedAccessCreateAppealCase.appealState",
+  "limitedAccessCreateAppealCase.appealType",
+  "limitedAccessCreateAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessDeleteFile 1`] = `
+Array [
+  "limitedAccessDeleteFile.success",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessGetSignedUrl 1`] = `
+Array [
+  "limitedAccessGetSignedUrl.url",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessTransitionAppealCase 1`] = `
+Array [
+  "limitedAccessTransitionAppealCase.appealReceivedByCourtDate",
+  "limitedAccessTransitionAppealCase.appealRulingDate",
+  "limitedAccessTransitionAppealCase.appealState",
+  "limitedAccessTransitionAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessUpdateCase 1`] = `
+Array [
+  "limitedAccessUpdateCase.civilClaimants.caseFilesSharedWithSpokesperson",
+  "limitedAccessUpdateCase.civilClaimants.caseId",
+  "limitedAccessUpdateCase.civilClaimants.defendantIds",
+  "limitedAccessUpdateCase.civilClaimants.hasSpokesperson",
+  "limitedAccessUpdateCase.civilClaimants.id",
+  "limitedAccessUpdateCase.civilClaimants.isSpokespersonConfirmed",
+  "limitedAccessUpdateCase.civilClaimants.name",
+  "limitedAccessUpdateCase.civilClaimants.nationalId",
+  "limitedAccessUpdateCase.civilClaimants.noNationalId",
+  "limitedAccessUpdateCase.civilClaimants.policeCaseNumbers",
+  "limitedAccessUpdateCase.civilClaimants.spokespersonEmail",
+  "limitedAccessUpdateCase.civilClaimants.spokespersonIsLawyer",
+  "limitedAccessUpdateCase.civilClaimants.spokespersonName",
+  "limitedAccessUpdateCase.civilClaimants.spokespersonNationalId",
+  "limitedAccessUpdateCase.civilClaimants.spokespersonPhoneNumber",
+  "limitedAccessUpdateCase.court.id",
+  "limitedAccessUpdateCase.court.name",
+  "limitedAccessUpdateCase.court.type",
+  "limitedAccessUpdateCase.id",
+  "limitedAccessUpdateCase.judge.email",
+  "limitedAccessUpdateCase.judge.id",
+  "limitedAccessUpdateCase.judge.name",
+  "limitedAccessUpdateCase.judge.title",
+  "limitedAccessUpdateCase.prosecutor.email",
+  "limitedAccessUpdateCase.prosecutor.id",
+  "limitedAccessUpdateCase.prosecutor.name",
+  "limitedAccessUpdateCase.prosecutor.title",
+  "limitedAccessUpdateCase.registrar.email",
+  "limitedAccessUpdateCase.registrar.id",
+  "limitedAccessUpdateCase.registrar.name",
+  "limitedAccessUpdateCase.registrar.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths LimitedAccessUpdateDefendant 1`] = `
+Array [
+  "limitedAccessUpdateDefendant.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths MessageSuspensions 1`] = `
+Array [
+  "messageSuspensions.category",
+  "messageSuspensions.delaySeconds",
+  "messageSuspensions.modified",
+  "messageSuspensions.modifiedBy",
+  "messageSuspensions.suspended",
+]
+`;
+
+exports[`GraphQL operations select these field paths PoliceCaseFiles 1`] = `
+Array [
+  "policeCaseFiles.displayDate",
+  "policeCaseFiles.id",
+  "policeCaseFiles.name",
+  "policeCaseFiles.policeCaseNumber",
+]
+`;
+
+exports[`GraphQL operations select these field paths PoliceCaseInfo 1`] = `
+Array [
+  "policeCaseInfo.date",
+  "policeCaseInfo.licencePlate",
+  "policeCaseInfo.place",
+  "policeCaseInfo.policeCaseNumber",
+  "policeCaseInfo.subtypes",
+]
+`;
+
+exports[`GraphQL operations select these field paths PoliceDefendants 1`] = `
+Array [
+  "policeDefendants.address",
+  "policeDefendants.citizenship",
+  "policeDefendants.dateOfBirth",
+  "policeDefendants.gender",
+  "policeDefendants.name",
+  "policeDefendants.nationalId",
+]
+`;
+
+exports[`GraphQL operations select these field paths PoliceDigitalCaseFileTokenUrl 1`] = `
+Array [
+  "policeDigitalCaseFileTokenUrl",
+]
+`;
+
+exports[`GraphQL operations select these field paths PoliceDigitalCaseFiles (routes/Prosecutor/Indictments/PoliceCaseFiles/policeDigitalCaseFiles.graphql) 1`] = `
+Array [
+  "policeDigitalCaseFiles.displayDate",
+  "policeDigitalCaseFiles.id",
+  "policeDigitalCaseFiles.name",
+  "policeDigitalCaseFiles.policeCaseNumber",
+]
+`;
+
+exports[`GraphQL operations select these field paths PoliceDigitalCaseFiles (utils/hooks/usePoliceDigitalCaseFile/policeDigitalCaseFiles.graphql) 1`] = `
+Array [
+  "policeDigitalCaseFiles.caseId",
+  "policeDigitalCaseFiles.displayDate",
+  "policeDigitalCaseFiles.id",
+  "policeDigitalCaseFiles.isDeletable",
+  "policeDigitalCaseFiles.isNew",
+  "policeDigitalCaseFiles.name",
+  "policeDigitalCaseFiles.orderWithinChapter",
+  "policeDigitalCaseFiles.policeCaseNumber",
+  "policeDigitalCaseFiles.policeDigitalFileId",
+  "policeDigitalCaseFiles.policeExternalVendorId",
+]
+`;
+
+exports[`GraphQL operations select these field paths PronounceRulingOrally 1`] = `
+Array [
+  "pronounceRulingOrally.id",
+  "pronounceRulingOrally.rulingFileId",
+  "pronounceRulingOrally.rulingType",
+]
+`;
+
+exports[`GraphQL operations select these field paths ProsecutorSelectionUsers 1`] = `
+Array [
+  "users.active",
+  "users.created",
+  "users.email",
+  "users.id",
+  "users.institution.id",
+  "users.institution.name",
+  "users.institution.type",
+  "users.mobileNumber",
+  "users.modified",
+  "users.name",
+  "users.nationalId",
+  "users.role",
+  "users.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths RegisterVerdictAppeal 1`] = `
+Array [
+  "createAppealCase.appealState",
+  "createAppealCase.appealType",
+  "createAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths RejectFile 1`] = `
+Array [
+  "rejectFile.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths ReorderIndictmentCounts 1`] = `
+Array [
+  "reorderIndictmentCounts.displayOrder",
+  "reorderIndictmentCounts.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths RequestCourtRecordSignature 1`] = `
+Array [
+  "requestCourtRecordSignature.controlCode",
+  "requestCourtRecordSignature.documentToken",
+]
+`;
+
+exports[`GraphQL operations select these field paths RequestRulingSignature 1`] = `
+Array [
+  "requestRulingSignature.controlCode",
+  "requestRulingSignature.documentToken",
+]
+`;
+
+exports[`GraphQL operations select these field paths RulingSignatureConfirmation 1`] = `
+Array [
+  "rulingSignatureConfirmation.code",
+  "rulingSignatureConfirmation.documentSigned",
+  "rulingSignatureConfirmation.message",
+]
+`;
+
+exports[`GraphQL operations select these field paths SearchCases 1`] = `
+Array [
+  "searchCases.rowCount",
+  "searchCases.rows.appealCaseId",
+  "searchCases.rows.appealCaseNumber",
+  "searchCases.rows.caseId",
+  "searchCases.rows.caseTableTypes",
+  "searchCases.rows.caseType",
+  "searchCases.rows.courtCaseNumber",
+  "searchCases.rows.defendantName",
+  "searchCases.rows.defendantNationalId",
+  "searchCases.rows.matchedField",
+  "searchCases.rows.matchedValue",
+  "searchCases.rows.policeCaseNumbers",
+]
+`;
+
+exports[`GraphQL operations select these field paths SelectCourtOfficialsUsers 1`] = `
+Array [
+  "users.active",
+  "users.created",
+  "users.email",
+  "users.id",
+  "users.institution.active",
+  "users.institution.created",
+  "users.institution.id",
+  "users.institution.modified",
+  "users.institution.name",
+  "users.institution.type",
+  "users.latestLogin",
+  "users.loginCount",
+  "users.mobileNumber",
+  "users.modified",
+  "users.name",
+  "users.nationalId",
+  "users.role",
+  "users.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths SendAppealNotification 1`] = `
+Array [
+  "sendAppealNotification.notificationSent",
+]
+`;
+
+exports[`GraphQL operations select these field paths SendNotification 1`] = `
+Array [
+  "sendNotification.notificationSent",
+]
+`;
+
+exports[`GraphQL operations select these field paths SplitDefendantFromCase 1`] = `
+Array [
+  "splitDefendantFromCase.defendants.id",
+  "splitDefendantFromCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths Subpoena 1`] = `
+Array [
+  "subpoena.caseId",
+  "subpoena.comment",
+  "subpoena.created",
+  "subpoena.defendantId",
+  "subpoena.defenderNationalId",
+  "subpoena.id",
+  "subpoena.policeSubpoenaId",
+  "subpoena.servedBy",
+  "subpoena.serviceDate",
+  "subpoena.serviceStatus",
+]
+`;
+
+exports[`GraphQL operations select these field paths TransitionAppealCase 1`] = `
+Array [
+  "transitionAppealCase.appealReceivedByCourtDate",
+  "transitionAppealCase.appealRulingDate",
+  "transitionAppealCase.appealState",
+  "transitionAppealCase.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths TransitionCase 1`] = `
+Array [
+  "transitionCase.appealCase.appealReceivedByCourtDate",
+  "transitionCase.appealCase.appealState",
+  "transitionCase.appealCase.statementDeadline",
+  "transitionCase.rulingDate",
+  "transitionCase.state",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealCase 1`] = `
+Array [
+  "updateAppealCase.appealAssistant.id",
+  "updateAppealCase.appealAssistant.name",
+  "updateAppealCase.appealCaseNumber",
+  "updateAppealCase.appealConclusion",
+  "updateAppealCase.appealIsolationToDate",
+  "updateAppealCase.appealJudge1.id",
+  "updateAppealCase.appealJudge1.name",
+  "updateAppealCase.appealJudge2.id",
+  "updateAppealCase.appealJudge2.name",
+  "updateAppealCase.appealJudge3.id",
+  "updateAppealCase.appealJudge3.name",
+  "updateAppealCase.appealReceivedByCourtDate",
+  "updateAppealCase.appealRulingDecision",
+  "updateAppealCase.appealRulingModifiedHistory",
+  "updateAppealCase.appealState",
+  "updateAppealCase.appealValidToDate",
+  "updateAppealCase.civilClaimantStatementDates.civilClaimantId",
+  "updateAppealCase.civilClaimantStatementDates.statementDate",
+  "updateAppealCase.defendantStatementDate",
+  "updateAppealCase.defendantStatementDates.defendantId",
+  "updateAppealCase.defendantStatementDates.statementDate",
+  "updateAppealCase.id",
+  "updateAppealCase.isAppealCustodyIsolation",
+  "updateAppealCase.prosecutorStatementDate",
+  "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCase 1`] = `
+Array [
+  "updateCase.civilClaimants.caseFilesSharedWithSpokesperson",
+  "updateCase.civilClaimants.caseId",
+  "updateCase.civilClaimants.defendantIds",
+  "updateCase.civilClaimants.hasSpokesperson",
+  "updateCase.civilClaimants.id",
+  "updateCase.civilClaimants.isSpokespersonConfirmed",
+  "updateCase.civilClaimants.name",
+  "updateCase.civilClaimants.nationalId",
+  "updateCase.civilClaimants.noNationalId",
+  "updateCase.civilClaimants.policeCaseNumbers",
+  "updateCase.civilClaimants.spokespersonEmail",
+  "updateCase.civilClaimants.spokespersonIsLawyer",
+  "updateCase.civilClaimants.spokespersonName",
+  "updateCase.civilClaimants.spokespersonNationalId",
+  "updateCase.civilClaimants.spokespersonPhoneNumber",
+  "updateCase.court.id",
+  "updateCase.court.name",
+  "updateCase.court.type",
+  "updateCase.id",
+  "updateCase.judge.email",
+  "updateCase.judge.id",
+  "updateCase.judge.name",
+  "updateCase.judge.title",
+  "updateCase.prosecutor.email",
+  "updateCase.prosecutor.id",
+  "updateCase.prosecutor.name",
+  "updateCase.prosecutor.title",
+  "updateCase.registrar.email",
+  "updateCase.registrar.id",
+  "updateCase.registrar.name",
+  "updateCase.registrar.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCaseAppealDecision 1`] = `
+Array [
+  "updateCaseAppealDecision.announcement",
+  "updateCaseAppealDecision.caseId",
+  "updateCaseAppealDecision.decision",
+  "updateCaseAppealDecision.id",
+  "updateCaseAppealDecision.partyRole",
+  "updateCaseAppealDecision.rulingFileId",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCivilClaimant 1`] = `
+Array [
+  "updateCivilClaimant.defendantIds",
+  "updateCivilClaimant.id",
+  "updateCivilClaimant.policeCaseNumbers",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCourtDocument 1`] = `
+Array [
+  "updateCourtDocument.created",
+  "updateCourtDocument.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCourtSession 1`] = `
+Array [
+  "updateCourtSession.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCourtSessionAppealDecision 1`] = `
+Array [
+  "updateCourtSessionAppealDecision.announcement",
+  "updateCourtSessionAppealDecision.caseId",
+  "updateCourtSessionAppealDecision.civilClaimantId",
+  "updateCourtSessionAppealDecision.decision",
+  "updateCourtSessionAppealDecision.defendantId",
+  "updateCourtSessionAppealDecision.id",
+  "updateCourtSessionAppealDecision.partyRole",
+  "updateCourtSessionAppealDecision.rulingFileId",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateCourtSessionString 1`] = `
+Array [
+  "updateCourtSessionString.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateDefendant 1`] = `
+Array [
+  "updateDefendant.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateFiles 1`] = `
+Array [
+  "updateFiles.caseFiles.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateFilesReorderable 1`] = `
+Array [
+  "updateFiles.caseFiles.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateIndictmentCount 1`] = `
+Array [
+  "updateIndictmentCount.caseId",
+  "updateIndictmentCount.created",
+  "updateIndictmentCount.displayOrder",
+  "updateIndictmentCount.id",
+  "updateIndictmentCount.incidentDescription",
+  "updateIndictmentCount.indictmentCountSubtypes",
+  "updateIndictmentCount.lawsBroken",
+  "updateIndictmentCount.legalArguments",
+  "updateIndictmentCount.modified",
+  "updateIndictmentCount.offenses.created",
+  "updateIndictmentCount.offenses.id",
+  "updateIndictmentCount.offenses.indictmentCountId",
+  "updateIndictmentCount.offenses.modified",
+  "updateIndictmentCount.offenses.offense",
+  "updateIndictmentCount.offenses.substances",
+  "updateIndictmentCount.policeCaseNumber",
+  "updateIndictmentCount.recordedSpeed",
+  "updateIndictmentCount.vehicleRegistrationNumber",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateMessageSuspension 1`] = `
+Array [
+  "updateMessageSuspension.category",
+  "updateMessageSuspension.delaySeconds",
+  "updateMessageSuspension.modified",
+  "updateMessageSuspension.modifiedBy",
+  "updateMessageSuspension.suspended",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateOffense 1`] = `
+Array [
+  "updateOffense.created",
+  "updateOffense.id",
+  "updateOffense.indictmentCountId",
+  "updateOffense.modified",
+  "updateOffense.offense",
+  "updateOffense.substances",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdatePoliceDigitalCaseFiles 1`] = `
+Array [
+  "updatePoliceDigitalCaseFiles.policeDigitalCaseFiles.id",
+  "updatePoliceDigitalCaseFiles.policeDigitalCaseFiles.orderWithinChapter",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateUser 1`] = `
+Array [
+  "updateUser.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateVerdict 1`] = `
+Array [
+  "updateVerdict.defendantId",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateVictim 1`] = `
+Array [
+  "updateVictim.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths UploadCriminalRecordFile 1`] = `
+Array [
+  "uploadCriminalRecordFile.key",
+  "uploadCriminalRecordFile.name",
+  "uploadCriminalRecordFile.size",
+  "uploadCriminalRecordFile.type",
+]
+`;
+
+exports[`GraphQL operations select these field paths UploadFileToCourt 1`] = `
+Array [
+  "uploadFileToCourt.success",
+]
+`;
+
+exports[`GraphQL operations select these field paths UploadPoliceCaseFile 1`] = `
+Array [
+  "uploadPoliceCaseFile.key",
+  "uploadPoliceCaseFile.size",
+]
+`;
+
+exports[`GraphQL operations select these field paths User 1`] = `
+Array [
+  "user.active",
+  "user.canConfirmIndictment",
+  "user.canManageMessageSuspension",
+  "user.created",
+  "user.email",
+  "user.id",
+  "user.institution.active",
+  "user.institution.created",
+  "user.institution.id",
+  "user.institution.modified",
+  "user.institution.name",
+  "user.institution.type",
+  "user.mobileNumber",
+  "user.modified",
+  "user.name",
+  "user.nationalId",
+  "user.role",
+  "user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths Users 1`] = `
+Array [
+  "users.active",
+  "users.canConfirmIndictment",
+  "users.created",
+  "users.email",
+  "users.id",
+  "users.institution.active",
+  "users.institution.created",
+  "users.institution.id",
+  "users.institution.modified",
+  "users.institution.name",
+  "users.institution.type",
+  "users.latestLogin",
+  "users.loginCount",
+  "users.mobileNumber",
+  "users.modified",
+  "users.name",
+  "users.nationalId",
+  "users.role",
+  "users.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths Verdict 1`] = `
+Array [
+  "verdict.appealDate",
+  "verdict.appealDecision",
+  "verdict.comment",
+  "verdict.created",
+  "verdict.defendantHasRequestedAppeal",
+  "verdict.deliveredToDefenderNationalId",
+  "verdict.externalPoliceDocumentId",
+  "verdict.id",
+  "verdict.isAcquittedByPublicProsecutionOffice",
+  "verdict.isDefaultJudgement",
+  "verdict.modified",
+  "verdict.servedBy",
+  "verdict.serviceDate",
+  "verdict.serviceInformationForDefendant",
+  "verdict.serviceRequirement",
+  "verdict.serviceStatus",
+]
+`;

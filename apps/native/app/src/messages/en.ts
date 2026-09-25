@@ -890,6 +890,10 @@ export const en: TranslatedMessages = {
   'health.appointments.cancelErrorTitle': 'Could not cancel the appointment',
   'health.appointments.cancelErrorMessage':
     'The action could not be completed, please try again.',
+  'health.appointments.cancelContactProvider':
+    'The appointment could not be cancelled, please call the service provider.',
+  'health.appointments.cancelUnconfirmed':
+    'The cancellation could not be confirmed, please try again.',
 
   // health - messages
   'health.messages.screenTitle': 'Messages',
@@ -928,6 +932,15 @@ export const en: TranslatedMessages = {
     "You can't reply to messages older than {days} days.",
   'health.messages.replyBlocked.awaitingStaff':
     "You can't reply to this conversation until staff have responded to you.",
+  'health.messages.replyBlocked.awaitingAcknowledgement':
+    "You can't reply until your previous message has reached the recipient.",
+  'health.messages.compose.introTitle': 'Contact us',
+  'health.messages.compose.introBody1':
+    'Here you can send a message. Messages are usually answered within three business days, during working hours.',
+  'health.messages.compose.introBody2':
+    'If your matter is urgent and needs an answer the same day, call <b>1700</b> or contact your treatment team.',
+  'health.messages.compose.introBody3': 'In an emergency, call <b>112.</b>',
+  'health.messages.compose.continue': 'Continue',
   'health.messages.compose.newTitle': 'New message',
   'health.messages.compose.selectRecipient': 'Select recipient',
   'health.messages.compose.selectService': 'Select service',
@@ -938,11 +951,17 @@ export const en: TranslatedMessages = {
   'health.messages.compose.messagePlaceholder': 'Write your message here',
   'health.messages.compose.termsAccept':
     'I agree that the message will be saved to my medical record and that the appropriate healthcare professional with access to it will answer the inquiry.',
-  'health.messages.compose.availabilityWindow':
-    '{name} accepts messages every day from {openTime} to {closeTime}.',
-  'health.messages.compose.availabilityInfo':
-    'Replies are usually within 3 business days. If your matter is urgent and you need a reply the same day, call 1700. In an emergency, call 112 immediately.',
   'health.messages.compose.closedTitle': 'Closed for new messages right now',
+  'health.messages.compose.closedNowText':
+    'New messages cannot be sent at the moment.',
+  'health.messages.compose.closedNextOpensText':
+    'Messages can next be sent {when, select, today {today} tomorrow {tomorrow} other {on {date}}}{hasTime, select, false {} other { from {time}}}.',
+  'health.messages.compose.openingHoursTitle': 'Messaging hours:',
+  'health.messages.compose.openingHoursWeekdays': 'Weekdays',
+  'health.messages.compose.openingHoursWeekends': 'Weekends',
+  'health.messages.compose.openingHoursHolidays': 'Public holidays',
+  'health.messages.compose.openingHoursClosed': 'Closed',
+  'health.messages.compose.openingHoursAllDay': 'All day',
   'health.messages.compose.notAllowedTitle': 'Cannot send messages',
   'health.messages.compose.notAllowedText':
     'This service provider does not offer messaging on Ísland.is.',
@@ -951,16 +970,20 @@ export const en: TranslatedMessages = {
   'health.messages.compose.soleBlockedText':
     '{name} does not offer a messaging service through Ísland.is',
   'health.messages.compose.closingSoonTitle': 'Note: messaging is closing soon',
+  'health.messages.compose.closingSoonText':
+    'Send your message before it closes at {closeTime}.',
   'health.messages.compose.send': 'Send message',
   'health.messages.compose.sendError':
     'Failed to send message. Please try again later.',
-  'health.messages.compose.noRecipient':
-    'It is not possible to send messages at the moment',
+  'health.messages.compose.noRecipient': 'Cannot send messages',
+  'health.messages.compose.noRecipientText':
+    'None of the health clinics registered to you offer a messaging service through Ísland.is.',
   'health.messages.compose.certificateTitle':
     'Certificates cannot be requested in the app',
   'health.messages.compose.certificateText':
     'It is currently not possible to request certificates through the Ísland.is app. Please request certificates through Ísland.is My Pages.',
   'health.messages.compose.certificateLink': 'Request a certificate',
+  'health.messages.compose.externalLink': 'Open web chat',
   'health.messages.certificatePayment.title': 'Certificate ready for payment',
   'health.messages.certificatePayment.text':
     'This certificate costs {amount} and is unpaid. Pay for it on Ísland.is My Pages.',

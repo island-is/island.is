@@ -1,0 +1,44 @@
+import { Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  CurrentUser,
+  Scopes,
+} from '@island.is/auth-nest-tools'
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { Audit } from '@island.is/nest/audit'
+import { PenaltyPointsService } from '../services/penaltyPoints.service'
+import { DrivingLicensePenaltyPoints } from '../models/penalty/drivingLicensePenaltyPoints.model'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
+
+@CodeOwner(CodeOwners.Hugsmidjan)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isDriversDeprivationsEnabled)
+@Resolver(() => DrivingLicensePenaltyPoints)
+export class PenaltyPointsResolver {
+  constructor(private readonly penaltyPointsService: PenaltyPointsService) {}
+
+  @Scopes(ApiScope.internal)
+  @Audit()
+  @Query(() => DrivingLicensePenaltyPoints, { nullable: true })
+  drivingLicensePenaltyPoints(
+    @CurrentUser() user: User,
+  ): Promise<Pick<DrivingLicensePenaltyPoints, 'details'>> {
+    return this.penaltyPointsService.getPenaltyPointDetails(user)
+  }
+
+  @ResolveField('isDeprived', () => Boolean, { nullable: true })
+  async resolveIsDeprived(
+    @CurrentUser() user: User,
+  ): Promise<boolean | undefined> {
+    return this.penaltyPointsService.getIsDeprived(user)
+  }
+}

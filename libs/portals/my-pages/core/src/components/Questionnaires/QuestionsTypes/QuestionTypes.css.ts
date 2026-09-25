@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { keyframes, style } from '@vanilla-extract/css'
+import { globalStyle, keyframes, style } from '@vanilla-extract/css'
 
 export const outerSlider = style({
   height: 16,
@@ -93,4 +93,20 @@ export const numberInput = style({
       maxWidth: 300,
     },
   },
+})
+
+export const noResizeTextarea = style({})
+
+globalStyle(`${noResizeTextarea} textarea`, {
+  resize: 'none',
+})
+
+export const tableFormGrid = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(min(250px, 100%), 1fr))',
+  gap: theme.spacing[3],
+})
+
+globalStyle(`${tableFormGrid} ${numberInput}`, {
+  maxWidth: 'none',
 })

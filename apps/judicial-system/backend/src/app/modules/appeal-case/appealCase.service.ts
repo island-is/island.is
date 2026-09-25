@@ -31,15 +31,18 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { FileService } from '../file'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -97,6 +100,8 @@ export class AppealCaseService {
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly verdictRepositoryService: VerdictRepositoryService,
     private readonly defendantRepositoryService: DefendantRepositoryService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     @Inject(appealCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof appealCaseModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -825,12 +830,11 @@ export class AppealCaseService {
     // appeal rather than a joined one.
     await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
-    const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
-      {
-        where: { caseId: theCase.id, appealType: AppealCaseType.VERDICT },
-        transaction,
-      },
-    )
+    const existingAppealCase =
+      await this.appealCaseRepositoryService.findVerdictAppealByCaseId(
+        theCase.id,
+        { transaction },
+      )
 
     // The appealDate check above reads the case as it was loaded before the
     // transaction, so it cannot see an appeal filed in the meantime - two
@@ -928,8 +932,19 @@ export class AppealCaseService {
       )
     }
 
-    // No notification: the one that tells the public prosecution office about a verdict appeal is
-    // its own story, and the ruling appeal notifications do not apply here.
+    // The public prosecution is told when a defender files an appeal through the
+    // portal, and only then: an appeal the office registered itself is one it
+    // already knows about, and the prosecution's own appeal needs no telling.
+    if (actor === 'DEFENDER') {
+      addMessagesToQueue({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
+        },
+      })
+    }
 
     return appealCase
   }
@@ -1452,6 +1467,20 @@ export class AppealCaseService {
       }
 
       await this.clearAppealDefender(theCase, defendantId, transaction)
+
+      // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
+      // They are otherwise locked while a verdict appeal case exists, so leaving
+      // them behind blocks a fresh appeal upload after withdrawal.
+      const appealDeclarationFiles = (theCase.caseFiles ?? []).filter(
+        (file) =>
+          file.defendantId === defendantId &&
+          file.category &&
+          verdictAppealDeclarationFileCategories.includes(file.category),
+      )
+
+      for (const file of appealDeclarationFiles) {
+        await this.fileService.deleteCaseFile(theCase, file, transaction)
+      }
     }
 
     // The appeal case stands while any appellant of either side stands.

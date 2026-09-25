@@ -1,0 +1,14 @@
+fragment CourtDocumentFields on CourtDocumentResponse {
+  id
+  created
+  modified
+  caseId
+  courtSessionId
+  documentType
+  documentOrder
+  mergedFromCaseId
+  name
+  caseFileId
+  generatedPdfUri
+  submittedBy
+}
