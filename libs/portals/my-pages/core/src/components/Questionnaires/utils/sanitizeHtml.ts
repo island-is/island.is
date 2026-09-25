@@ -38,7 +38,7 @@ export const renderSanitizedHtml = (html?: string | null) =>
 // trim() leaves zero-width characters behind, so strip those too
 const hasText = (html?: string | null) =>
   sanitizeHtml(html ?? '', { allowedTags: [], allowedAttributes: {} })
-    .replace(/[​-‍﻿]/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .trim().length > 0
 
 // htmlLabel replaces label when present, but a hostile htmlLabel can sanitize
