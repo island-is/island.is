@@ -1,0 +1,479 @@
+{
+  "title": "Ísland.is — Tilkynningar og lestur",
+  "description": "Hourly aggregate snapshots. See apps/services/user-notification/metrics/README.md for definitions, source setup and import requirements.",
+  "layout_type": "ordered",
+  "template_variables": [
+    {
+      "name": "env",
+      "prefix": "env",
+      "default": "prod"
+    },
+    {
+      "name": "recipient_type",
+      "prefix": "recipient_type",
+      "default": "individual",
+      "available_values": ["individual", "company", "other"]
+    }
+  ],
+  "widgets": [
+    {
+      "definition": {
+        "type": "note",
+        "content": "## Tilkynningamælingar\nAllir dagar miðast við UTC. Punktar sýna söfnunartíma: fyrirtækjasendingar eru fyrir gærdaginn, Firebase fyrir daginn fyrir þremur dögum og 7 daga mælingar fyrir móttökuhópinn fyrir átta dögum. Ekki leggja saman endurteknar klukkustundarmælingar. Vantar gögn ≠ núll. Push-stillingar fá nýjan grunnpunkt; 5,9% var önnur skilgreining.",
+        "background_color": "white",
+        "font_size": "14",
+        "text_align": "left",
+        "show_tick": false,
+        "has_padding": true
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Push slökkt (%) — þekktar stillingar",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "disabled",
+                "query": "max:islandis.notifications.analytics.push.disabled_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "known",
+                "query": "max:islandis.notifications.analytics.push.known_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "100 * disabled / known"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Push-stillingar — fjöldi notenda",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "disabled",
+                "query": "max:islandis.notifications.analytics.push.disabled_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "known",
+                "query": "max:islandis.notifications.analytics.push.known_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "unknown",
+                "query": "max:islandis.notifications.analytics.push.unknown_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "disabled"
+              },
+              {
+                "formula": "known"
+              },
+              {
+                "formula": "unknown"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Fyrirtæki — skráðar sendingar síðasta heila dags eftir rás",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "deliveries",
+                "query": "max:islandis.notifications.analytics.company.deliveries_previous_day{$env,source:user-notification} by {env,channel}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "deliveries"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Ólesið við 7 daga aldur (%) — daglegir móttökuhópar",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "unread",
+                "query": "max:islandis.notifications.analytics.unread_7d.unread{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "total",
+                "query": "max:islandis.notifications.analytics.unread_7d.total{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "100 * unread / total"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Ólesið við 7 daga aldur — fjöldi",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "unread",
+                "query": "max:islandis.notifications.analytics.unread_7d.unread{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "unread"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Stærð sjö daga móttökuhópa",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "total",
+                "query": "max:islandis.notifications.analytics.unread_7d.total{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "total"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Push tap rate (%) — staðfestar móttökur",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "opened",
+                "query": "max:islandis.notifications.analytics.push.opened{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "received",
+                "query": "max:islandis.notifications.analytics.push.received{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "100 * opened / received"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Firebase — teljari og nefnari",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "opened",
+                "query": "max:islandis.notifications.analytics.push.opened{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "received",
+                "query": "max:islandis.notifications.analytics.push.received{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "opened"
+              },
+              {
+                "formula": "received"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "note",
+        "content": "## Opt-in: ekki komið\nEngin núllgildi eru búin til. Við innleiðingu verða sendar opt_in.users og opt_in.eligible_users fyrir skýrt skilgreinda gjaldgenga notendur.",
+        "background_color": "white",
+        "font_size": "14",
+        "text_align": "left",
+        "show_tick": false,
+        "has_padding": true
+      }
+    },
+    {
+      "definition": {
+        "type": "note",
+        "content": "## DLQ: stilla þarf fyrirspurn\nSpjaldið hér fyrir neðan er óvirkt þar til __CONFIGURE_DLQ_TRANSITION_FILTER__ er skipt út fyrir staðfesta síu á einu atviki þegar skilaboð fara í DLQ. Halda service:user-notification og umhverfissíu. Ekki telja allar vinnsluvillur eða núverandi stærð raðar sem ný DLQ-atvik.",
+        "background_color": "white",
+        "font_size": "14",
+        "text_align": "left",
+        "show_tick": false,
+        "has_padding": true
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "DLQ-atvik á dag — bíður staðfestrar síu",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "logs",
+                "name": "dlq",
+                "search": {
+                  "query": "service:user-notification $env __CONFIGURE_DLQ_TRANSITION_FILTER__"
+                },
+                "indexes": ["*"],
+                "compute": {
+                  "aggregation": "count",
+                  "interval": 86400000
+                },
+                "group_by": []
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "dlq"
+              }
+            ],
+            "display_type": "bars"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Safnarar — heppnuð keyrsla á klukkustund (1/0)",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "success",
+                "query": "max:islandis.notifications.analytics.collection.success{$env} by {env,source}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "success"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Safnarar — keyrslutími (ms)",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "duration",
+                "query": "max:islandis.notifications.analytics.collection.duration_ms{$env} by {env,source}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "duration"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Ytri heimildir — virkjaðar og gögn tiltæk (1/0)",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "enabled",
+                "query": "max:islandis.notifications.analytics.external.enabled{$env} by {env,source}.rollup(max, 3600).fill(null)"
+              },
+              {
+                "data_source": "metrics",
+                "name": "available",
+                "query": "max:islandis.notifications.analytics.external.available{$env} by {env,source}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "enabled"
+              },
+              {
+                "formula": "available"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Tilkynningar — heill sjö daga hópur tiltækur (1/0)",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "available",
+                "query": "max:islandis.notifications.analytics.unread_7d.available{$env,source:user-notification} by {env}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "available"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Síðasta heppnaða söfnun — Unix-tími",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "last_success",
+                "query": "max:islandis.notifications.analytics.collection.last_success{$env} by {env,source}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "last_success"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "title": "Gagnatímabil ytri heimilda — upphaf dags sem Unix-tími",
+        "requests": [
+          {
+            "response_format": "timeseries",
+            "queries": [
+              {
+                "data_source": "metrics",
+                "name": "period",
+                "query": "max:islandis.notifications.analytics.external.period_start{$env} by {env,source}.rollup(max, 3600).fill(null)"
+              }
+            ],
+            "formulas": [
+              {
+                "formula": "period"
+              }
+            ],
+            "display_type": "line"
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "type": "note",
+        "content": "Ferskleiki: síðasta heppnaða söfnun á að vera innan 90 mínútna. Ytri heimildir eru óvirkar sjálfgefið og þurfa staðfest BigQuery-view og aðgang. Tómt hlutfall við núll í nefnara er eðlilegt. Lestrartímar tilkynninga mælast frá innleiðingu; umboðstilkynningar hafa ekki sjálfstæða lestrarskráningu í núverandi líkani.",
+        "background_color": "white",
+        "font_size": "14",
+        "text_align": "left",
+        "show_tick": false,
+        "has_padding": true
+      }
+    }
+  ]
+}

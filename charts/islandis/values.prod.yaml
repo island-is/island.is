@@ -2745,6 +2745,83 @@ service-portal-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-api'
     create: true
     name: 'service-portal-api'
+service-portal-metrics:
+  args:
+    - 'main.cjs'
+    - '--job=metrics'
+  command:
+    - 'node'
+  concurrencyPolicy: 'Forbid'
+  enabled: true
+  env:
+    CODE_OWNER: 'aranja'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'service_portal_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'service_portal_api'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
+    - 'islandis'
+    - 'user-notification'
+    - 'identity-server'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+  namespace: 'service-portal'
+  podDisruptionBudget:
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '10 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/service-portal-metrics'
+    create: true
+    name: 'service-portal-metrics'
+  startingDeadlineSeconds: 600
 services-bff-portals-admin:
   enabled: true
   env:
@@ -4507,6 +4584,227 @@ user-notification-cleanup-worker:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification-cleanup-worker'
     create: true
     name: 'user-notification-cleanup-worker'
+user-notification-firebase-metrics:
+  args:
+    - 'main.cjs'
+    - '--job=external-metrics'
+    - '--source=firebase'
+  command:
+    - 'node'
+  concurrencyPolicy: 'Forbid'
+  enabled: true
+  env:
+    CODE_OWNER: 'juni'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    FIREBASE_METRICS_ENABLED: 'false'
+    LOG_LEVEL: 'info'
+    MAILBOX_METRICS_ENABLED: 'false'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server-delegation'
+    - 'application-system'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '20 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification-firebase-metrics'
+    create: true
+    name: 'user-notification-firebase-metrics'
+  startingDeadlineSeconds: 600
+user-notification-mailbox-metrics:
+  args:
+    - 'main.cjs'
+    - '--job=external-metrics'
+    - '--source=mailbox'
+  command:
+    - 'node'
+  concurrencyPolicy: 'Forbid'
+  enabled: true
+  env:
+    CODE_OWNER: 'juni'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    FIREBASE_METRICS_ENABLED: 'false'
+    LOG_LEVEL: 'info'
+    MAILBOX_METRICS_ENABLED: 'false'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server-delegation'
+    - 'application-system'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '20 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification-mailbox-metrics'
+    create: true
+    name: 'user-notification-mailbox-metrics'
+  startingDeadlineSeconds: 600
+user-notification-metrics:
+  args:
+    - 'main.cjs'
+    - '--job=metrics'
+  command:
+    - 'node'
+  concurrencyPolicy: 'Forbid'
+  enabled: true
+  env:
+    CODE_OWNER: 'juni'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'user_notification'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'user_notification'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server-delegation'
+    - 'application-system'
+    - 'envoy-gateway-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+  namespace: 'user-notification'
+  podDisruptionBudget:
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '15 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/user-notification-metrics'
+    create: true
+    name: 'user-notification-metrics'
+  startingDeadlineSeconds: 600
 user-notification-worker:
   args:
     - 'main.cjs'

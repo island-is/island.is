@@ -13,7 +13,10 @@ import { serviceSetup as appSystemFormSetup } from '../../../apps/application-sy
 // Portals
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
 import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
-import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
+import {
+  serviceSetup as servicePortalApiSetup,
+  userProfileMetricsSetup,
+} from '../../../apps/services/user-profile/infra/service-portal-api'
 
 // Payments
 import { serviceSetup as paymentsWebSetup } from '../../../apps/payments/infra/payments'
@@ -50,6 +53,8 @@ import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/
 
 import {
   userNotificationCleanUpWorkerSetup,
+  userNotificationMetricsSetup,
+  userNotificationExternalMetricsSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
   userNotificationBirthdayWorkerSetup,
@@ -185,6 +190,11 @@ const userNotificationCleanupWorkerService =
 const userNotificationBirthdayWorkerService =
   userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
+const userProfileMetrics = userProfileMetricsSetup()
+const userNotificationMetrics = userNotificationMetricsSetup()
+const firebaseMetrics = userNotificationExternalMetricsSetup('firebase')
+const mailboxMetrics = userNotificationExternalMetricsSetup('mailbox')
+
 const githubActionsCache = githubActionsCacheSetup()
 
 export const Services: EnvironmentServices = {
@@ -212,6 +222,10 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userProfileMetrics,
+    userNotificationMetrics,
+    firebaseMetrics,
+    mailboxMetrics,
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
@@ -260,6 +274,10 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userProfileMetrics,
+    userNotificationMetrics,
+    firebaseMetrics,
+    mailboxMetrics,
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
@@ -305,6 +323,10 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userProfileMetrics,
+    userNotificationMetrics,
+    firebaseMetrics,
+    mailboxMetrics,
     userNotificationBirthdayWorkerService,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -337,6 +359,10 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
+  userProfileMetrics,
+  userNotificationMetrics,
+  firebaseMetrics,
+  mailboxMetrics,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
