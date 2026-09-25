@@ -5,6 +5,14 @@ export const wrapper = style({
   width: '100%',
 })
 
+globalStyle(`${wrapper} button:last-of-type`, {
+  '@media': {
+    [`(max-width: ${theme.breakpoints.md - 1}px)`]: {
+      right: 16,
+    },
+  },
+})
+
 export const searchButton = style({})
 
 export const item = style({
