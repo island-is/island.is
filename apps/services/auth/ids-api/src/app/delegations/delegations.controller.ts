@@ -13,10 +13,13 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
+  DelegationPreferenceDto,
+  DelegationPreferenceService,
   DelegationScopeService,
   DelegationsIncomingService,
   DelegationsIndexService,
   MergedDelegationDTO,
+  SetDelegationFavouriteDto,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -46,7 +49,51 @@ export class DelegationsController {
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
     private readonly delegationIndexService: DelegationsIndexService,
+    private readonly delegationPreferenceService: DelegationPreferenceService,
   ) {}
+
+  /**
+   * What the user has chosen about the parties they can act for — which are
+   * starred and when each was last used. Drives the favourites and recently
+   * used lists on the delegation picker.
+   */
+  @Scopes('@identityserver.api/authentication')
+  @Version([VERSION_NEUTRAL, '1'])
+  @Get('preferences')
+  @ApiOkResponse({ isArray: true })
+  findPreferences(
+    @CurrentUser() user: User,
+  ): Promise<DelegationPreferenceDto[]> {
+    return this.delegationPreferenceService.findAll(user.nationalId)
+  }
+
+  @Scopes('@identityserver.api/authentication')
+  @Version([VERSION_NEUTRAL, '1'])
+  @Post('preferences/favourite')
+  setFavourite(
+    @CurrentUser() user: User,
+    @Body() dto: SetDelegationFavouriteDto,
+  ): Promise<void> {
+    return this.delegationPreferenceService.setFavourite(
+      user.nationalId,
+      dto.fromNationalId,
+      dto.isFavourite,
+    )
+  }
+
+  /** Recorded by the identity server when the user switches to a party. */
+  @Scopes('@identityserver.api/authentication')
+  @Version([VERSION_NEUTRAL, '1'])
+  @Post('preferences/usage')
+  recordUsage(
+    @CurrentUser() user: User,
+    @Body() dto: { fromNationalId: string },
+  ): Promise<void> {
+    return this.delegationPreferenceService.recordUsage(
+      user.nationalId,
+      dto.fromNationalId,
+    )
+  }
 
   @Scopes('@identityserver.api/authentication')
   @Version([VERSION_NEUTRAL, '1', '2'])
