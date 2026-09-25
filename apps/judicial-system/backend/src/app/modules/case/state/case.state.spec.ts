@@ -784,6 +784,99 @@ describe('Transition Case', () => {
     })
   })
 
+  // A case concluded by merging joins its parent case, which must still be
+  // open in court - except when completing again after a correction, where the
+  // case was already merged.
+  describe.each(indictmentCases)('complete %s by merging', (type) => {
+    const mergingCase = (fromState: CaseState, parentState: CaseState) => {
+      const parentCaseId = uuid()
+
+      return {
+        id: uuid(),
+        state: fromState,
+        type,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+        mergeCaseId: parentCaseId,
+        mergeCase: { id: parentCaseId, state: parentState },
+      } as Case
+    }
+
+    describe.each([CaseState.RECEIVED, CaseState.WAITING_FOR_CANCELLATION])(
+      'state %s',
+      (fromState) => {
+        it('should complete when the parent case is received', () => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.COMPLETE,
+            mergingCase(fromState, CaseState.RECEIVED),
+            { id: uuid() } as User,
+          )
+
+          // Assert
+          expect(res).toMatchObject({ state: CaseState.COMPLETED })
+        })
+
+        it('should not complete when the parent case is not received', () => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.COMPLETE,
+              mergingCase(fromState, CaseState.COMPLETED),
+              { id: uuid() } as User,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        })
+      },
+    )
+
+    it('should complete again after a correction whatever the state of the parent case', () => {
+      // Act
+      const res = transitionCase(
+        CaseTransition.COMPLETE,
+        mergingCase(CaseState.CORRECTING, CaseState.COMPLETED),
+        { id: uuid() } as User,
+      )
+
+      // Assert
+      expect(res).toMatchObject({ state: CaseState.COMPLETED })
+    })
+
+    it('should ignore the parent case when the decision is not a merge', () => {
+      // Act
+      const res = transitionCase(
+        CaseTransition.COMPLETE,
+        {
+          ...mergingCase(CaseState.RECEIVED, CaseState.COMPLETED),
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        } as Case,
+        { id: uuid() } as User,
+      )
+
+      // Assert
+      expect(res).toMatchObject({ state: CaseState.COMPLETED })
+    })
+
+    it('should complete a merge into a case outside the system', () => {
+      // Act
+      const res = transitionCase(
+        CaseTransition.COMPLETE,
+        {
+          id: uuid(),
+          state: CaseState.RECEIVED,
+          type,
+          indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+          mergeCaseNumber: 'S-1/2026',
+        } as Case,
+        { id: uuid() } as User,
+      )
+
+      // Assert
+      expect(res).toMatchObject({ state: CaseState.COMPLETED })
+    })
+  })
+
   describe.each([...restrictionCases, ...investigationCases])(
     'complete %s',
     (type) => {

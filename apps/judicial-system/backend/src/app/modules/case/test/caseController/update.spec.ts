@@ -22,6 +22,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   indictmentCases,
@@ -505,27 +506,6 @@ describe('CaseController - Update', () => {
       })
 
       it('should leave the court sessions of the parent case alone', () => {
-        expect(
-          mockCourtSessionService.addMergedCaseToLatestCourtSession,
-        ).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('that is not received', () => {
-      let then: Then
-
-      beforeEach(async () => {
-        const notReceived = mergingCase(false)
-        notReceived.mergeCase = {
-          ...notReceived.mergeCase,
-          state: CaseState.COMPLETED,
-        } as Case
-
-        then = await givenWhenThen(caseId, user, notReceived, caseToUpdate)
-      })
-
-      it('should refuse the merge', () => {
-        expect(then.error).toBeInstanceOf(BadRequestException)
         expect(
           mockCourtSessionService.addMergedCaseToLatestCourtSession,
         ).not.toHaveBeenCalled()
@@ -1572,6 +1552,74 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('merge parent chosen for a received case', () => {
+    const receivedCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+    } as Case
+    const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+    })
+
+    it('should update the case', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        caseToUpdate,
+        { transaction },
+      )
+    })
+  })
+
+  // The court sends the merged case's parent back with every conclusion save,
+  // including while correcting a case that was concluded by merging.
+  describe('merge parent sent for a case that is not received', () => {
+    const parentCaseId = uuid()
+    const correctingCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      state: CaseState.CORRECTING,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+      mergeCaseId: parentCaseId,
+    } as Case
+
+    describe('that is the existing parent', () => {
+      const caseToUpdate = { mergeCaseId: parentCaseId } as UpdateCaseDto
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(caseId, user, correctingCase, caseToUpdate)
+      })
+
+      it('should update the case', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          caseToUpdate,
+          { transaction },
+        )
+      })
+    })
+
+    describe('that is a different parent', () => {
+      const caseToUpdate = { mergeCaseId: uuid() } as UpdateCaseDto
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(caseId, user, correctingCase, caseToUpdate)
+      })
+
+      it('should refuse the merge', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('reopenReason on non-indictment case', () => {
     const nonIndictmentCase = {
       ...theCase,
@@ -1856,6 +1904,130 @@ describe('CaseController - Update', () => {
         verdict2,
         transaction,
       )
+    })
+  })
+
+  describe('dual-write defender to defendants for request cases', () => {
+    const defenderName = 'Jane Doe'
+    const defenderNationalId = '1234567890'
+    const defenderEmail = 'jane@example.is'
+    const defenderPhoneNumber = '5551234'
+    const requestCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      defenderName: 'Old Name',
+      defenderNationalId: '0000000000',
+      defenderEmail: 'old@example.is',
+      defenderPhoneNumber: '0000000',
+      defendantWaivesRightToCounsel: false,
+    } as Case
+
+    describe('syncs defender fields when defenderName changes on a request case', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, requestCase, {
+          defenderName,
+          defenderNationalId,
+          defenderEmail,
+          defenderPhoneNumber,
+        } as UpdateCaseDto)
+      })
+
+      it('should call syncDefenderToAllDefendants with merged contact fields', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).toHaveBeenCalledWith(
+          caseId,
+          {
+            defenderName,
+            defenderNationalId,
+            defenderEmail,
+            defenderPhoneNumber,
+            defenderChoice: null,
+          },
+          transaction,
+        )
+      })
+    })
+
+    describe('clears defender fields when defenderName is set to null', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, requestCase, {
+          defenderName: null,
+        } as unknown as UpdateCaseDto)
+      })
+
+      it('should call syncDefenderToAllDefendants with null name and remaining contacts', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).toHaveBeenCalledWith(
+          caseId,
+          {
+            defenderName: null,
+            defenderNationalId: '0000000000',
+            defenderEmail: 'old@example.is',
+            defenderPhoneNumber: '0000000',
+            defenderChoice: null,
+          },
+          transaction,
+        )
+      })
+    })
+
+    describe('sets WAIVE when defendantWaivesRightToCounsel is true', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, requestCase, {
+          defendantWaivesRightToCounsel: true,
+        } as UpdateCaseDto)
+      })
+
+      it('should sync contact fields with defenderChoice WAIVE', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).toHaveBeenCalledWith(
+          caseId,
+          {
+            defenderName: 'Old Name',
+            defenderNationalId: '0000000000',
+            defenderEmail: 'old@example.is',
+            defenderPhoneNumber: '0000000',
+            defenderChoice: DefenderChoice.WAIVE,
+          },
+          transaction,
+        )
+      })
+    })
+
+    describe('does not sync for indictment cases', () => {
+      const indictmentCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+      } as Case
+
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, indictmentCase, {
+          defenderName: 'Someone',
+        } as UpdateCaseDto)
+      })
+
+      it('should not call syncDefenderToAllDefendants', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('does not sync when non-defender fields change', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, requestCase, {
+          courtLocation: 'Some court',
+        } as UpdateCaseDto)
+      })
+
+      it('should not call syncDefenderToAllDefendants', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).not.toHaveBeenCalled()
+      })
     })
   })
 })
