@@ -125,7 +125,7 @@ export const Select = ({
             variant="heading5"
             weight={selected ? undefined : '400'}
             isPlaceholder={!selected}
-            numberOfLines={1}
+            numberOfLines={2}
           >
             {selected?.label ?? placeholder ?? ''}
           </Value>
