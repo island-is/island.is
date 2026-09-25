@@ -1,6 +1,7 @@
 import { NO, YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import {
+  childMessages,
   memmMessages,
   parentsMessages,
   reasonForNotificationMessages,
@@ -12,7 +13,7 @@ import {
   isSystemNationalId,
   isUnborn,
 } from './conditionUtils'
-import { DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
+import { KnowsNationalId, DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const getYesNoOptions = () => [
@@ -29,6 +30,35 @@ export const getYesNoDoNotKnowNotApplicableOptions = () => [
   ...getYesNoDoNotKnowOptions(),
   { value: NOT_APPLICABLE, label: memmMessages.reception.optionNotApplicable },
 ]
+
+export const getYesNoLabel = (value?: string) => {
+  if (value === YES) return sharedMessages.radioYes
+  if (value === NO) return sharedMessages.radioNo
+
+  return value ?? ''
+}
+
+export const getYesNoDoNotKnowLabel = (value?: string) => {
+  if (value === DO_NOT_KNOW) return sharedMessages.radioDoNotKnow
+
+  return getYesNoLabel(value)
+}
+
+export const getYesNoDoNotKnowNotApplicableLabel = (value?: string) => {
+  if (value === NOT_APPLICABLE) {
+    return memmMessages.reception.optionNotApplicable
+  }
+
+  return getYesNoDoNotKnowLabel(value)
+}
+
+export const getKnowsNationalIdLabel = (value?: string) => {
+  if (value === KnowsNationalId.UNBORN) {
+    return childMessages.nationalIdLookup.radioOptionUnborn
+  }
+
+  return getYesNoLabel(value)
+}
 
 export const getSelectedReasonForNotificationCategoryCodes = (
   answers: FormValue,

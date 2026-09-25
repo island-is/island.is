@@ -61,6 +61,7 @@ const notifierInfoSchema = z.object({
   email: z.string().email().optional().or(z.literal('')),
   phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
   notifierAnonymity: z.enum([YES, NO]),
+  needsInterpreter: z.string(),
   relationshipToChild: z.string(),
 })
 
@@ -76,6 +77,7 @@ const childSchema = z
         usePronounAndPreferredName: z.array(z.string()).optional(),
         preferredName: z.string().optional(),
         preferredPronoun: z.array(z.string()).nullish(),
+        needsInterpreter: z.string().optional(),
       })
       .optional(),
     manualInfo: z
@@ -109,6 +111,14 @@ const childSchema = z
           code: z.ZodIssueCode.custom,
           path: ['nationalIdInfo', 'nationalId'],
           params: errorMessages.invalidNationalId,
+        })
+      }
+
+      if (!data.nationalIdInfo?.needsInterpreter) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['nationalIdInfo', 'needsInterpreter'],
+          params: errorMessages.required,
         })
       }
 
@@ -188,25 +198,20 @@ const parentsSchema = z
         }
       }
 
-      if (parent.knowsNationalId === NO) {
-        if (parent.citizenship && parent.citizenship !== IS) {
-          if (!parent.needsInterpreter) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [key, 'needsInterpreter'],
-              params: errorMessages.required,
-            })
-          }
+      if (!parent.needsInterpreter) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'needsInterpreter'],
+          params: errorMessages.required,
+        })
+      }
 
-          // If parent is non-Icelandic and interpreter is requested, preferred language is required.
-          if (parent.needsInterpreter === YES && !parent.preferredLanguage) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              path: [key, 'preferredLanguage'],
-              params: errorMessages.required,
-            })
-          }
-        }
+      if (parent.needsInterpreter === YES && !parent.preferredLanguage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'preferredLanguage'],
+          params: errorMessages.required,
+        })
       }
     }
   })
@@ -230,7 +235,6 @@ const memmSchema = z.object({
       languageUsage: z.string(),
       languages: z.array(z.string()).optional(),
       preferredLanguage: z.string().nullish(),
-      needsInterpreter: z.string().nullish(),
       disability: z.string(),
       disabilityService: z.string().optional(),
     })
@@ -252,14 +256,6 @@ const memmSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['preferredLanguage'],
-          params: errorMessages.required,
-        })
-      }
-
-      if (hasLanguages && !data.needsInterpreter) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['needsInterpreter'],
           params: errorMessages.required,
         })
       }

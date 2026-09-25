@@ -232,19 +232,14 @@ export const childSubSection = buildSubSection({
           widthWithIllustration: '1/3',
           space: 4,
           options: getYesNoDoNotKnowOptions(),
-          condition: (answers, _, user) => {
-            const role = getApplicantRole(user?.profile?.nationalId ?? '')
-            return (
-              shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
-              role === Roles.ADULT_PERSONAL_APPLICANT
-            )
-          },
+          condition: (answers) => isKnowsNationalId(answers),
         }),
 
         buildAlertMessageField({
           id: 'child.fetchedDataInfo',
           alertType: 'info',
           message: childMessages.nationalIdLookup.fetchedDataInfo,
+          marginTop: 4,
           condition: (answers) =>
             isKnowsNationalId(answers) &&
             !!getApplicationAnswers(answers).childName,

@@ -218,17 +218,9 @@ const buildParentFields = (parentKey: ParentKey) => {
       widthWithIllustration: '1/3',
       space: 4,
       options: getYesNoDoNotKnowOptions(),
-      condition: (answers) => {
-        const parent = getApplicationAnswers(answers)[parentKey]
-
-        // Show only in the manual (does not know IDs) flow.
-        // Interpreter is relevant only for non-Icelandic citizenship.
-        return (
-          doesNotKnow(answers) &&
-          !!parent?.citizenship &&
-          parent?.citizenship !== IS
-        )
-      },
+      // Show after the parent has answered whether their national ID is known.
+      condition: (answers) =>
+        !!getApplicationAnswers(answers)[parentKey]?.knowsNationalId,
     }),
     buildSelectField({
       id: `${base}.preferredLanguage`,
@@ -242,14 +234,8 @@ const buildParentFields = (parentKey: ParentKey) => {
       condition: (answers) => {
         const parent = getApplicationAnswers(answers)[parentKey]
 
-        // Show only in the manual (does not know IDs) flow.
-        // Preferred language is shown for non-Icelandic citizenship when interpreter support is requested.
-        return (
-          doesNotKnow(answers) &&
-          !!parent?.citizenship &&
-          parent?.citizenship !== IS &&
-          parent?.needsInterpreter === YES
-        )
+        // Show after the national ID status is answered and interpreter support is requested.
+        return !!parent?.knowsNationalId && parent?.needsInterpreter === YES
       },
     }),
   ]
