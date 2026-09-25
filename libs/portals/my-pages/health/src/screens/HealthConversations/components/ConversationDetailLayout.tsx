@@ -13,13 +13,18 @@ interface Props {
   children: ReactNode
 }
 
-export const ConversationDetailLayout = ({ children }: Props) => {
-  const { formatMessage } = useLocale()
+// Phones get the full-screen thread, so the treatment heading is skipped there
+export const useTreatmentIntroShown = () => {
   const { isPhoneWidth } = useIsPhoneWidth()
   const { treatmentId } = useTreatmentScopedPaths()
+  return !!treatmentId && !isPhoneWidth
+}
 
-  // Phones get the full-screen thread, so the treatment heading is skipped there
-  if (treatmentId && !isPhoneWidth) {
+export const ConversationDetailLayout = ({ children }: Props) => {
+  const { formatMessage } = useLocale()
+  const treatmentIntroShown = useTreatmentIntroShown()
+
+  if (treatmentIntroShown) {
     return (
       <IntroWrapper
         title={formatMessage(messages.treatmentMessagesFromTeam)}

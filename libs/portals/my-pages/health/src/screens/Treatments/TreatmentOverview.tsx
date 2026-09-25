@@ -79,14 +79,6 @@ const TreatmentOverview = () => {
     },
   ]
 
-  // The treatment route preselects the recipient by treatmentId; the node is
-  // the fallback for recipients without one.
-  const newMessageHref = treatment?.responsibleNode
-    ? `${paths.conversationsNew}?node=${encodeURIComponent(
-        treatment.responsibleNode,
-      )}`
-    : paths.conversationsNew
-
   const quickLinks = [
     ...(treatment?.supportsMessaging
       ? [
@@ -172,7 +164,9 @@ const TreatmentOverview = () => {
               <TreatmentMessages
                 conversations={treatment.recentConversations ?? []}
                 newMessageHref={
-                  treatment.supportsMessaging ? newMessageHref : undefined
+                  treatment.supportsMessaging
+                    ? paths.conversationsNew
+                    : undefined
                 }
               />
             )}

@@ -56,7 +56,6 @@ export class QuestionnairesResolver {
     nullable: true,
   })
   @Audit()
-  @FeatureFlag(Features.isServicePortalHealthTreatmentsPageEnabled)
   async getTreatmentQuestionnaires(
     @CurrentUser() user: User,
     @Args('treatmentId', { type: () => ID }) treatmentId: string,

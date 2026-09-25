@@ -1,7 +1,4 @@
-import {
-  QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
-  QuestionnairesBaseItem,
-} from '@island.is/api/schema'
+import { QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum } from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
@@ -23,7 +20,10 @@ import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { FC, ReactNode, useMemo, useState } from 'react'
 import { messages } from '../../lib/messages'
-import { useGetQuestionnairesQuery } from './questionnaires.generated'
+import {
+  QuestionnaireListItemFragment,
+  useGetQuestionnairesQuery,
+} from './questionnaires.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
 import QuestionnaireCard from './components/QuestionnaireCard'
@@ -90,7 +90,7 @@ const Questionnaires: FC = () => {
     debouncedSetSearchQuery(value)
   }
 
-  const matchesSearch = (item: QuestionnairesBaseItem) => {
+  const matchesSearch = (item: QuestionnaireListItemFragment) => {
     const searchLower = searchQuery.toLowerCase()
     return (
       !searchLower ||
@@ -100,7 +100,7 @@ const Questionnaires: FC = () => {
     )
   }
 
-  const matchesStatus = (item: QuestionnairesBaseItem) =>
+  const matchesStatus = (item: QuestionnaireListItemFragment) =>
     statusFilter.length === 0 ||
     (!!item.status && statusFilter.includes(item.status))
 
@@ -128,7 +128,7 @@ const Questionnaires: FC = () => {
   )
 
   const renderQuestionnaireList = (
-    visible: QuestionnairesBaseItem[],
+    visible: QuestionnaireListItemFragment[],
     emptyState: ReactNode,
     isFiltered: boolean,
   ) => {

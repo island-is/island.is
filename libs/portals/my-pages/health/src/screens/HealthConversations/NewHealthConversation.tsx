@@ -28,7 +28,7 @@ import CertificateRequestForm, {
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
@@ -68,7 +68,6 @@ const NewHealthConversation = () => {
     string | null
   >(null)
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
-  const [searchParams] = useSearchParams()
   const [messageText, setMessageText] = useState('')
   const [customTitle, setCustomTitle] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
@@ -94,7 +93,11 @@ const NewHealthConversation = () => {
       refetchQueries: ['GetHealthConversations'],
     })
 
-  const recipients = data?.healthDirectorateHealthConversationRecipients
+  const allRecipients = data?.healthDirectorateHealthConversationRecipients
+  // From a treatment, only that treatment's care team can be messaged
+  const recipients = paths.treatmentId
+    ? allRecipients?.filter((r) => r.treatmentId === paths.treatmentId)
+    : allRecipients
   const pageMode = recipients
     ? getNewConversationPageMode(recipients)
     : undefined
@@ -128,24 +131,8 @@ const NewHealthConversation = () => {
       }
     }) ?? []
 
-  const preselectedTreatment =
-    paths.treatmentId ?? searchParams.get('treatment')
-  const treatmentMatch = preselectedTreatment
-    ? recipients?.find((r) => r.treatmentId === preselectedTreatment)
-    : undefined
-  const preselectedNode = searchParams.get('node')
-  const nodeMatches = preselectedNode
-    ? recipients?.filter((r) => r.nodeId === preselectedNode)
-    : undefined
-  const preselectMatchKey = treatmentMatch
-    ? getRecipientKey(treatmentMatch)
-    : nodeMatches?.length === 1
-    ? getRecipientKey(nodeMatches[0])
-    : null
-
   const effectiveRecipientKey =
     selectedRecipientKey ??
-    preselectMatchKey ??
     (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
 
   const recipient = recipients?.find(

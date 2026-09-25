@@ -26,7 +26,7 @@ const mapBaseInformation = (
   title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
   sentDate: q.createdDate?.toISOString() ?? '',
   status:
-    q.expiryDate && new Date(q.expiryDate) < new Date()
+    q.disabled || (q.expiryDate && new Date(q.expiryDate) < new Date())
       ? QuestionnairesStatusEnum.expired
       : q.hasDraft
       ? QuestionnairesStatusEnum.draft
@@ -39,6 +39,7 @@ const mapBaseInformation = (
   lastSubmissionId: q.lastCreatedSubmissionId,
   lastSubmitted: q.lastSubmitted ?? undefined,
   senderGroupName: q.senderGroupName ?? undefined,
+  disabled: q.disabled,
 })
 
 export const mapElQuestionnaireOverview = (
@@ -48,7 +49,7 @@ export const mapElQuestionnaireOverview = (
   baseInformation: mapBaseInformation(q, formatMessage),
   sender: q.sender ?? undefined,
   expirationDate: q.expiryDate ?? undefined,
-  canSubmit: q.canSubmit,
+  canSubmit: q.canSubmit && !q.disabled,
   submissions: q.submissions?.map((sub) => ({
     id: sub.id,
     createdAt: sub.createdDate ?? undefined,
@@ -74,7 +75,7 @@ export const mapElQuestionnaireForm = (
     baseInformation: mapBaseInformation(q, formatMessage),
     sender: q.sender ?? undefined,
     expirationDate: q.expiryDate ?? undefined,
-    canSubmit: q.canSubmit,
+    canSubmit: q.canSubmit && !q.disabled,
     submissions: q.submissions?.map((sub) => ({
       id: sub.id,
       createdAt: sub.createdDate ?? undefined,
@@ -100,7 +101,7 @@ export const mapElQuestionnaireListItem = (
   lastSubmissionId: q.lastCreatedSubmissionId,
   organization: QuestionnairesOrganizationEnum.EL,
   status:
-    q.expiryDate && new Date(q.expiryDate) < new Date()
+    q.disabled || (q.expiryDate && new Date(q.expiryDate) < new Date())
       ? QuestionnairesStatusEnum.expired
       : q.hasDraft
       ? QuestionnairesStatusEnum.draft
@@ -109,4 +110,5 @@ export const mapElQuestionnaireListItem = (
       : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: q.lastSubmitted,
   senderGroupName: q.senderGroupName ?? undefined,
+  disabled: q.disabled,
 })

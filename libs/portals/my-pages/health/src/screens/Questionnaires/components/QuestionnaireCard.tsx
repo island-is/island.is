@@ -1,7 +1,6 @@
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
-  QuestionnairesBaseItem,
 } from '@island.is/api/schema'
 import { ActionCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -9,18 +8,10 @@ import { formatDate } from '@island.is/portals/my-pages/core'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../../lib/messages'
 import { useTreatmentScopedPaths } from '../../../utils/useTreatmentScopedPaths'
+import { QuestionnaireListItemFragment } from '../questionnaires.generated'
 
 interface Props {
-  questionnaire: Pick<
-    QuestionnairesBaseItem,
-    | 'id'
-    | 'title'
-    | 'description'
-    | 'sentDate'
-    | 'status'
-    | 'organization'
-    | 'senderGroupName'
-  >
+  questionnaire: QuestionnaireListItemFragment
 }
 
 export const QuestionnaireCard = ({ questionnaire }: Props) => {
@@ -48,7 +39,9 @@ export const QuestionnaireCard = ({ questionnaire }: Props) => {
       eyebrowColor="purple400"
       text={formatDate(questionnaire.sentDate)}
       tag={{
-        label: isAnswered
+        label: questionnaire.disabled
+          ? formatMessage(messages.disabledQuestionnaire)
+          : isAnswered
           ? formatMessage(messages.answeredQuestionnaire)
           : isExpired
           ? formatMessage(messages.expiredQuestionnaire)

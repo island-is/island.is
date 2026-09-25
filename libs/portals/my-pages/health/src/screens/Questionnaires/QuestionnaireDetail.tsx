@@ -90,7 +90,9 @@ const QuestionnaireDetail: FC = () => {
       ? answerLink
       : undefined
 
-  const statusLabel = isAnswered
+  const statusLabel = questionnaire?.baseInformation.disabled
+    ? formatMessage(messages.disabledQuestionnaire)
+    : isAnswered
     ? formatMessage(messages.answeredQuestionnaire)
     : notAnswered
     ? formatMessage(messages.unAnsweredQuestionnaire)

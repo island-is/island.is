@@ -523,6 +523,45 @@ describe('display mappers', () => {
       )
     })
 
+    it('reports a withdrawn questionnaire as expired, disabled and not submittable', () => {
+      const withdrawnDetail = {
+        questionnaireId: 'el-q-12',
+        title: 'Withdrawn',
+        message: null,
+        groups: [],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        hasDraft: false,
+        disabled: true,
+      } as unknown as QuestionnaireDetailDto
+
+      const overview = mapElQuestionnaireOverview(
+        withdrawnDetail,
+        formatMessage,
+      )
+      expect(overview.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
+      expect(overview.baseInformation.disabled).toBe(true)
+      expect(overview.canSubmit).toBe(false)
+
+      const withdrawnBase = {
+        questionnaireId: 'el-q-13',
+        title: 'Withdrawn',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        numSubmitted: 0,
+        hasDraft: false,
+        lastSubmitted: null,
+        disabled: true,
+      } as unknown as QuestionnaireBaseDto
+
+      const listItem = mapElQuestionnaireListItem(withdrawnBase, formatMessage)
+      expect(listItem.status).toBe(QuestionnairesStatusEnum.expired)
+      expect(listItem.disabled).toBe(true)
+    })
+
     it('sets dependsOn and visibilityConditions for EL question triggers', () => {
       const elDetail = {
         questionnaireId: 'el-q-2',

@@ -18,7 +18,9 @@ import { MessageActions } from './components/MessageActions'
 import CertificateAction from './components/CertificateAction'
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationBackButton from './components/ConversationBackButton'
-import ConversationDetailLayout from './components/ConversationDetailLayout'
+import ConversationDetailLayout, {
+  useTreatmentIntroShown,
+} from './components/ConversationDetailLayout'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMessageBody from './components/ConversationMessageBody'
 import ConversationReplyForm from './components/ConversationReplyForm'
@@ -28,8 +30,14 @@ import { HealthDirectorateHealthConversationReplyAvailability as ReplyAvailabili
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import {
+  Navigate,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import * as styles from './HealthConversations.css'
 import {
@@ -54,6 +62,7 @@ const HealthConversationDetail = () => {
   const navigate = useNavigate()
   const paths = useTreatmentScopedPaths()
   const { isPhoneWidth } = useIsPhoneWidth()
+  const treatmentIntroShown = useTreatmentIntroShown()
   const [searchParams, setSearchParams] = useSearchParams()
   const certificatePaymentReturnId = searchParams.get('certificatePayment')
   const certificatePaymentCancelled = searchParams.get(
@@ -202,6 +211,19 @@ const HealthConversationDetail = () => {
     )
   }
 
+  // A thread opened under the wrong treatment moves to the main inbox
+  if (paths.treatmentId && item.treatmentId !== paths.treatmentId) {
+    return (
+      <Navigate
+        to={{
+          pathname: HealthPaths.HealthConversationsDetail.replace(':id', id),
+          search: searchParams.toString(),
+        }}
+        replace
+      />
+    )
+  }
+
   const handleReply = async () => {
     if (!replyText.trim()) return
     try {
@@ -281,7 +303,11 @@ const HealthConversationDetail = () => {
           )}
         </Box>
 
-        <Text variant="h4" as="h1" marginBottom={2}>
+        <Text
+          variant="h4"
+          as={treatmentIntroShown ? 'h2' : 'h1'}
+          marginBottom={2}
+        >
           {item.title}
         </Text>
 

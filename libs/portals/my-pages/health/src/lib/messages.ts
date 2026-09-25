@@ -2451,6 +2451,10 @@ export const messages = defineMessages({
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
   },
+  disabledQuestionnaire: {
+    defaultMessage: 'Útrunnið',
+    id: 'sp.health:disabled-questionnaire',
+  },
   expiredQuestionnaires: {
     defaultMessage: 'Útrunnir',
     id: 'sp.health:expired-questionnaires',
