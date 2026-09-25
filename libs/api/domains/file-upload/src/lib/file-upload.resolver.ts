@@ -1,4 +1,6 @@
 import { Args, Resolver, Mutation, Query } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { PresignedPost } from './presignedPost.model'
 import { FileStorageService } from '@island.is/file-storage'
 import { PresignedPost as S3PresignedPost } from '@aws-sdk/s3-presigned-post'
@@ -7,6 +9,7 @@ import { MalwareScanStatus } from './malwareScanStatus.model'
 const MALWARE_FETCH_ATTEMPTS = 5
 const MALWARE_MIN_MS_BETWEEN_FETCHES = 500
 
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FileUploadResolver {
   constructor(private fileStorageService: FileStorageService) {}
