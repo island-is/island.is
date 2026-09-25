@@ -14,7 +14,7 @@ describe('profile metrics', () => {
         { recipient_type: 'company', disabled: '1', known: '2', unknown: '0' },
       ]),
     }
-    const metrics = await collectProfileMetrics((db as unknown) as Sequelize)
+    const metrics = await collectProfileMetrics(db as unknown as Sequelize)
     expect(
       metrics
         .filter((m) => m.tags?.recipient_type === 'individual')

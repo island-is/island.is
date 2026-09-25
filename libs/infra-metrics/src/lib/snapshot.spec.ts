@@ -21,8 +21,8 @@ describe('snapshot metrics', () => {
   it('publishes absolute values on retries and waits for close', async () => {
     const client = mockClient()
     const collect = async () => [{ name: 'total', value: 4 }]
-    await publishSnapshot('test', collect, (client as unknown) as DogStatsD)
-    await publishSnapshot('test', collect, (client as unknown) as DogStatsD)
+    await publishSnapshot('test', collect, client as unknown as DogStatsD)
+    await publishSnapshot('test', collect, client as unknown as DogStatsD)
     expect(
       client.gauge.mock.calls
         .filter(([name]) => name === 'total')
@@ -39,7 +39,7 @@ describe('snapshot metrics', () => {
         async () => {
           throw new Error('database down')
         },
-        (client as unknown) as DogStatsD,
+        client as unknown as DogStatsD,
       ),
     ).rejects.toThrow('database down')
     expect(client.gauge).toHaveBeenCalledTimes(1)
@@ -56,7 +56,7 @@ describe('snapshot metrics', () => {
       publishSnapshot(
         'test',
         async () => [{ name: 'bad', value: NaN }],
-        (client as unknown) as DogStatsD,
+        client as unknown as DogStatsD,
       ),
     ).rejects.toThrow('Invalid snapshot')
     expect(client.gauge.mock.calls.map(([name]) => name)).toEqual([

@@ -11,7 +11,7 @@ describe('notification metrics', () => {
         .mockResolvedValueOnce([{ started_at: new Date('2026-09-24') }]),
     }
     const metrics = await collectNotificationMetrics(
-      (db as unknown) as Sequelize,
+      db as unknown as Sequelize,
       now,
     )
     expect(
@@ -36,7 +36,7 @@ describe('notification metrics', () => {
         ]),
     }
     const metrics = await collectNotificationMetrics(
-      (db as unknown) as Sequelize,
+      db as unknown as Sequelize,
       now,
     )
     expect(metrics.find((m) => m.name === 'unread_7d.available')?.value).toBe(0)
@@ -51,7 +51,7 @@ describe('notification metrics', () => {
         .mockResolvedValueOnce([{ total: '10', unread: '3' }]),
     }
     const metrics = await collectNotificationMetrics(
-      (db as unknown) as Sequelize,
+      db as unknown as Sequelize,
       now,
     )
     expect(db.query.mock.calls[2][1].replacements).toEqual({
