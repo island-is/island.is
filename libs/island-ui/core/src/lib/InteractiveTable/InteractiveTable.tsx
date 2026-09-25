@@ -79,9 +79,8 @@ type BaseInteractiveTableProps<TData extends object> = {
   }
 }
 
-export type InteractiveTableProps<
-  TData extends object
-> = BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
+export type InteractiveTableProps<TData extends object> =
+  BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
 
 export const InteractiveTable = <TData extends object>({
   columns: providedColumns,

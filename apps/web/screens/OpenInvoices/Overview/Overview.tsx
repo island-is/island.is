@@ -180,9 +180,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateFrom: new Date(initialAppliedFilters.dateFrom),
     dateTo: new Date(initialAppliedFilters.dateTo),
   }))
-  const [draftFilters, setDraftFilters] = useState<AppliedFilters>(
-    appliedFilters,
-  )
+  const [draftFilters, setDraftFilters] =
+    useState<AppliedFilters>(appliedFilters)
 
   const latestInvoiceGroupsData = invoiceGroupsData ?? previousInvoiceGroupsData
   const hasInvoiceGroupsError =
@@ -207,15 +206,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     ministries: parseAsArrayOf(parseAsString),
   })
 
-  const {
-    fetchPage: fetchMinistriesPage,
-    selectedItems: ministriesItems,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
-    extractMinistries,
-    mapMinistry,
-    draftFilters.ministries,
-  )
+  const { fetchPage: fetchMinistriesPage, selectedItems: ministriesItems } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+      extractMinistries,
+      mapMinistry,
+      draftFilters.ministries,
+    )
 
   const mapSupplierWithTooltip = useCallback(
     (supplier: Parameters<typeof mapSupplier>[0]) =>
@@ -223,25 +220,21 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     [formatMessage],
   )
 
-  const {
-    fetchPage: fetchSuppliersPage,
-    selectedItems: suppliersItems,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
-    extractSuppliers,
-    mapSupplierWithTooltip,
-    draftFilters.suppliers,
-  )
+  const { fetchPage: fetchSuppliersPage, selectedItems: suppliersItems } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+      extractSuppliers,
+      mapSupplierWithTooltip,
+      draftFilters.suppliers,
+    )
 
-  const {
-    fetchPage: fetchDebtorsPage,
-    selectedItems: debtorsItems,
-  } = useAsyncFilterSource(
-    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
-    extractDebtors,
-    mapDebtor,
-    draftFilters.debtors,
-  )
+  const { fetchPage: fetchDebtorsPage, selectedItems: debtorsItems } =
+    useAsyncFilterSource(
+      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+      extractDebtors,
+      mapDebtor,
+      draftFilters.debtors,
+    )
 
   const {
     fetchPage: fetchInvoicePaymentTypeGroupsPage,
@@ -771,7 +764,8 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const sortIdInput = sortIdParser.parseServerSide(query?.['sort'])
   const sortDirectionInput = sortDirectionParser.parseServerSide(query?.['dir'])
 
-  let invoiceGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups | null = null
+  let invoiceGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups | null =
+    null
   let initialError = false
   try {
     const { data } = await apolloClient.query<
