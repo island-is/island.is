@@ -86,16 +86,19 @@ describe('overBenchmarkMessage pluralisation', () => {
     }) as string
 
   it('uses the singular noun form for one employee', () => {
-    expect(format(1)).toContain('1 starfsmaður ber muninn')
+    expect(format(1)).toContain('Laun 1 starfsmanns víkja')
+    expect(format(1)).toContain('Hann er talinn upp')
   })
 
   it('uses the plural noun form for two', () => {
-    expect(format(2)).toContain('2 starfsmenn bera muninn')
+    expect(format(2)).toContain('Laun 2 starfsmanna víkja')
+    expect(format(2)).toContain('Þeir eru taldir upp')
   })
 
   // Icelandic CLDR puts 21 in the `one` category, and the singular noun is
-  // indeed correct there ("tuttugu og einn starfsmaður").
+  // indeed correct there ("tuttugu og eins starfsmanns").
   it('follows Icelandic plural rules at 21', () => {
-    expect(format(21)).toContain('21 starfsmaður ber muninn')
+    expect(format(21)).toContain('Laun 21 starfsmanns víkja')
+    expect(format(21)).toContain('Hann er talinn upp')
   })
 })

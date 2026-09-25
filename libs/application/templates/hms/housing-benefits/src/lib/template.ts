@@ -406,9 +406,9 @@ const template: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         meta: {
-          name: 'Í vinnslu',
+          name: 'Móttekið',
           progress: 1,
-          status: FormModes.IN_PROGRESS,
+          status: FormModes.COMPLETED,
           lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.inReview,
           onEntry: SubmitApplicationApi,

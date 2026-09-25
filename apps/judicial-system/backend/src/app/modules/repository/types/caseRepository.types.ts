@@ -290,13 +290,6 @@ export const caseInclude: Includeable[] = [
         separate: true,
       },
       {
-        model: CourtDocument,
-        as: 'mergedFiledDocuments',
-        required: false,
-        order: [['mergedDocumentOrder', 'ASC']],
-        separate: true,
-      },
-      {
         model: CourtSessionString,
         as: 'courtSessionStrings',
         required: false,
@@ -445,13 +438,6 @@ export const caseInclude: Includeable[] = [
             as: 'filedDocuments',
             required: false,
             order: [['documentOrder', 'ASC']],
-            separate: true,
-          },
-          {
-            model: CourtDocument,
-            as: 'mergedFiledDocuments',
-            required: false,
-            order: [['mergedDocumentOrder', 'ASC']],
             separate: true,
           },
           {
@@ -1274,13 +1260,6 @@ export const getLimitedAccessCaseInclude = (
           separate: true,
         },
         {
-          model: CourtDocument,
-          as: 'mergedFiledDocuments',
-          required: false,
-          order: [['mergedDocumentOrder', 'ASC']],
-          separate: true,
-        },
-        {
           model: CourtSessionString,
           as: 'courtSessionStrings',
           required: false,
@@ -1417,13 +1396,6 @@ export const getLimitedAccessCaseInclude = (
               separate: true,
             },
             {
-              model: CourtDocument,
-              as: 'mergedFiledDocuments',
-              required: false,
-              order: [['mergedDocumentOrder', 'ASC']],
-              separate: true,
-            },
-            {
               model: CourtSessionString,
               as: 'courtSessionStrings',
               required: false,
@@ -1448,10 +1420,12 @@ export const getLimitedAccessCaseInclude = (
     {
       model: Case,
       as: 'splitCase',
+      attributes: limitedAccessCaseAttributes,
     },
     {
       model: Case,
       as: 'splitCases',
+      attributes: limitedAccessCaseAttributes,
       include: [
         {
           model: Defendant,
