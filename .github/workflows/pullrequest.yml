@@ -1,5 +1,12 @@
 name: Monorepo pipeline - pull request
 
+# Runs lint, typecheck, build, test and e2e as one distributed Nx Cloud CI run: the `main` job
+# orchestrates and the `agents` jobs (our own runners) execute the tasks, see
+# `scripts/ci/nx-agents/README.md`.
+#
+# The `success` job is the required status check, and together with its `Announce success` step
+# and the `pr-event` artifact it is how `.github/actions/ci-io.ts` finds the last good run.
+
 on:
   pull_request: {}
   workflow_dispatch: {}
@@ -18,15 +25,26 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   NX_SKIP_NX_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-nx-cache') }}
-  DISABLE_CHUNKS: 'true'
-  DISABLE_GROUPING: 'false'
-  DISABLE_PROBLEMATIC: 'false'
-  CHUNK_SIZE: '8'
-  MAX_JOBS: '3'
   NX_PARALLEL: '3'
-  NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  # Ties the main job and the agents of this attempt together. Only the steps that take part in
+  # the distributed run use it as NX_CI_EXECUTION_ID. Everything else (e.g. codegen in load-deps)
+  # gets an id of its own: any nx command creates the CI execution in Nx Cloud, and when the job
+  # that created it ends the execution is closed, so agents exit and the main job fails
+  NX_AGENTS_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agents
+  NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
+  # An agent has to upload the output of every task it runs, so an output over Nx Cloud's 300MB
+  # artifact limit fails the agent, and with it the whole run. Without agents it is only a warning
+  # (the task is just never cached). The `web` build was over the limit until `.next/cache` was
+  # taken out of the build outputs of the Next.js apps. Kept as a safety net for the next big output
+  NX_CLOUD_NO_TIMEOUTS: 'true'
+  MIN_AGENTS: '1'
+  MAX_AGENTS: '10'
+  # Judicial tasks run on agents of their own, see `scripts/ci/nx-agents/assignment-rules.yaml`
+  MAX_JUDICIAL_AGENTS: '2'
+  SHARED_RUNNER: arc-shared
+  JUDICIAL_RUNNER: arc-shared
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -39,120 +57,105 @@ env:
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
-  prepare:
+  plan:
+    # With the `deploy-feature` label the build and deploy pipeline (push.yml) runs the checks,
+    # together with building the images, so this pipeline only has the `autofix` and `success`
+    # jobs. Every other job needs this one, so this is the only place to check the label
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+    runs-on: arc-shared
+    timeout-minutes: 30
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-plan
     permissions:
       contents: 'read'
       actions: 'read'
-    uses: ./.github/workflows/install.yml
-    secrets: inherit
-    with:
-      main_branch: ${{ github.base_ref }}
-
-  tests:
-    needs:
-      - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-shared
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Run unit tests
-        uses: ./.github/actions/unit-test
-        with:
-          dd-api-key: '${{ secrets.DD_API_KEY }}'
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-
-  unicorn-tests:
-    name: All projects have some tests
-    needs:
-      - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
-    runs-on: arc-shared
-    env:
-      CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      pull-requests: 'write'
+    outputs:
+      NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+      NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+      agents: ${{ steps.plan.outputs.agents }}
+      agent-count: ${{ steps.plan.outputs.agent-count }}
+      nx-args: ${{ steps.plan.outputs.nx-args }}
+      targets: ${{ steps.plan.outputs.targets }}
+      unicorn-projects: ${{ steps.plan.outputs.unicorn-projects }}
+      ci-config-hash: ${{ steps.plan.outputs.ci-config-hash }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
         with:
-          # Need full repo for Nx to find the commits at NX_* below
+          # Need full repo for Nx to find the commits at NX_*
           fetch-depth: 0
+          # All commits and trees, but only the files of this commit: Nx needs the history, not old file contents
+          filter: blob:none
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
+      # The comment still has the result of the previous commit
+      - name: Comment that the checks are running
+        if: ${{ github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: node scripts/ci/nx-agents/pr-comment.mjs running
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+      # The main job and the agents all start after this job, so make sure the
+      # generated files cache is warm instead of having each of them run codegen
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Find unicorn projects
-        id: unicorn
-        run: |
-          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns --json)
-          jq -ncr --argjson chunks "$CHUNKS" --argjson unicorns "$unicorns" '
-            [
-                $chunks.projects
-              | .[]
-              | select( . | IN( $unicorns | .[] ) )
-            ]
-            | "projects=\(. | join(","))"
-          ' | tee -a "$GITHUB_OUTPUT"
+      - name: Derive appropriate SHAs
+        uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: ${{ github.base_ref || 'main' }}
 
-      - name: Verify that projects have some tests
-        if: ${{ steps.unicorn.outputs.projects != '' }}
-        env:
-          projects: ${{ steps.unicorn.outputs.projects }}
+      - name: Set base/head sha output
+        id: export-sha
         run: |
-          # Get list of tests, with `<project-name>: ` prefixed (stream style, without cache), grouping by unique prefixes (sorted).
-          # NO_COLOR=1: Nx 22 (picocolors) forces ANSI colour on the stream prefix in CI even when stdout is piped,
-          # so lines start with escape codes instead of the project name and the anchored grep below matches nothing.
-          NO_COLOR=1 yarn nx run-many -t test --skip-nx-cache --output-style=stream --projects="${projects}" --parallel --verbose -- --listTests |
-            grep -P "^(${projects//,/|}): " | cut -d':' -f1 | sort -u > /tmp/projects-with-tests
-          # Get affected projects sorted
-          echo -e "${projects}" | sed 's/,/\n/g' | sort -u > /tmp/projects-all
-          if ! d=$(diff /tmp/projects-with-tests /tmp/projects-all); then
-            echo "These projects don't have any tests:"
-            echo "${d}"
-            exit 1
-          fi
-          echo "All projects ($projects) have tests."
+          echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+          echo "Current base SHA is $NX_BASE and head SHA is $NX_HEAD"
+          echo "{\"base_sha\": \"$NX_BASE\", \"head_sha\":\"$NX_HEAD\"}" > event.json
 
-  e2e:
-    uses: ./.github/workflows/e2e.yml
+      # This is to increase the retention days for our GitHub Actions run events
+      # See this for more information:
+      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
+      - name: Keep PR run event
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+        with:
+          name: pr-event
+          path: event.json
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: test-everything
+        uses: ./.github/actions/test-everything
+
+      - name: Plan Nx command and agents
+        id: plan
+        run: node scripts/ci/nx-agents/plan.mjs
+
+  agents:
+    name: Nx agent ${{ matrix.agent }}
     needs:
-      - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    secrets: inherit
-    with:
-      e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      nx_base: ${{ needs.prepare.outputs.NX_BASE }}
-      nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
-      affected_projects: ${{ matrix.projects }}
+      - plan
+    if: ${{ needs.plan.outputs.agent-count != '0' }}
+    runs-on: ${{ matrix.runner }}
+    # A pull request that changes the CI configuration runs every task of every project
+    timeout-minutes: 90
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-
-  linting-workspace:
-    needs:
-      - prepare
-    runs-on: arc-shared
-    timeout-minutes: 15
+      matrix:
+        # agent (name), type (shared/judicial), runner, test and e2e (does the agent run such tasks)
+        include: ${{ fromJson(needs.plan.outputs.agents) }}
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agent-${{ matrix.agent }}-setup
+      # An input of every task, set when the pull request changes the CI configuration.
+      # See `scripts/ci/ci-config-hash.mjs`
+      CI_CONFIG_HASH: ${{ needs.plan.outputs.ci-config-hash }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -163,17 +166,162 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: Linting workspace
-        run: ./scripts/ci/20_lint-workspace.sh
+      - name: Docker login to ECR repo
+        if: ${{ matrix.test }}
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
-  run-shellcheck:
+      - name: Configure Datadog Test Optimization
+        if: ${{ matrix.test }}
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: 'js'
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
+
+      - name: Setup Playwright
+        if: ${{ matrix.e2e }}
+        uses: ./.github/actions/setup-playwright
+
+      - name: Start Nx agent
+        run: ./scripts/ci/nx-agents/start-agent.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          NX_AGENT_NAME: ${{ matrix.agent }}
+          # To see what the main job does in this attempt, for "Re-run failed jobs" (see `start-agent.sh`)
+          GH_TOKEN: ${{ github.token }}
+          # The agent type in `scripts/ci/nx-agents/assignment-rules.yaml`
+          NX_AGENT_LAUNCH_TEMPLATE: ${{ matrix.type }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          CYPRESS_PROJECT_ID: 4q7jz8
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload coverage reports to Datadog
+        if: ${{ !cancelled() && matrix.test }}
+        run: |
+          if [[ -d coverage ]]; then
+            yarn datadog-ci coverage upload .
+          else
+            echo "No tests with coverage ran on this agent"
+          fi
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: datadoghq.eu
+
+  main:
+    name: Nx main job
     needs:
-      - prepare
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+      - plan
+    runs-on: arc-shared
+    # A pull request that changes the CI configuration runs every task of every project
+    timeout-minutes: 90
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    env:
+      NX_BASE: ${{ needs.plan.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.plan.outputs.NX_HEAD }}
+      NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.plan.outputs.agent-count }}
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-main-setup
+      # Has to be the same as on the agents
+      CI_CONFIG_HASH: ${{ needs.plan.outputs.ci-config-hash }}
+    outputs:
+      failed-checks: ${{ steps.run.outputs.failed-checks }}
+      failed-tasks: ${{ steps.run.outputs.failed-tasks }}
+      nx-cloud-url: ${{ steps.run.outputs.nx-cloud-url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: reviewdog/action-shellcheck@v1
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
+          # All commits and trees, but only the files of this commit: Nx needs the history, not old file contents
+          filter: blob:none
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      # "Re-run failed jobs" only re-runs the agents that failed, the run continues with those
+      - name: Check which agents are part of this attempt
+        if: ${{ github.run_attempt > 1 && needs.plan.outputs.agent-count != '0' }}
+        run: ./scripts/ci/nx-agents/check-agents.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_AGENTS: ${{ needs.plan.outputs.agent-count }}
+
+      - name: Start distributed CI run
+        if: ${{ needs.plan.outputs.agent-count != '0' }}
+        # Knowing every target of the run lets Nx Cloud stop agents as they run out of
+        # work, instead of all of them idling until the longest task is done
+        #
+        # Completion is explicit (see the last step) instead of relying on Nx Cloud's background
+        # heartbeat process, which Nx advises against in pipelines with multiple jobs
+        run: >-
+          npx nx-cloud start-ci-run
+          --distribute-on="manual"
+          --assignment-rules="scripts/ci/nx-agents/assignment-rules.yaml"
+          --stop-agents-after="$TARGETS"
+          --require-explicit-completion
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          TARGETS: ${{ needs.plan.outputs.targets }}
+
+      # Starts with the quick workspace checks, and fails right away if one of them does
+      - name: Run lint, typecheck, build, test and e2e on the agents
+        id: run
+        run: ./scripts/ci/nx-agents/run.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          NX_AGENTS_ARGS: ${{ needs.plan.outputs.nx-args }}
+          GH_TOKEN: ${{ github.token }}
+          UNICORN_PROJECTS: ${{ needs.plan.outputs.unicorn-projects }}
+
+      # Agents wait for work until the run is completed, also when this job fails or is cancelled
+      - name: Complete CI run
+        if: ${{ always() && needs.plan.outputs.agent-count != '0' }}
+        run: npx nx-cloud complete-ci-run
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+
+  # Not Nx tasks of the distributed run: this job pushes commits to the pull request, and
+  # it needs no other job so the fixes are pushed (which restarts the pipeline) early.
+  # The fixes are pushed as `format` or `lintfix` commits. The bot does not push the same kind
+  # twice in a row, so a fix that does not stick can't keep the pipeline restarting
+  autofix:
+    name: Autofix (lint, format) and shellcheck
+    runs-on: arc-shared
+    timeout-minutes: 30
+    permissions:
+      contents: 'read'
+      # Review comments from shellcheck, and the comment about what was pushed
+      pull-requests: 'write'
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-autofix
+      BASE: origin/${{ github.base_ref || 'main' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the base commit
+          fetch-depth: 0
+          # All commits and trees, but only the files of this commit: Nx needs the history, not old file contents
+          filter: blob:none
+          persist-credentials: false
+          # Need ref to know where to push to
+          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      # First, so it checks the files as they were pushed and before there is a `node_modules`.
+      # The steps after it still run when it fails, so fixes are pushed either way
+      - name: Shellcheck
+        uses: reviewdog/action-shellcheck@v1
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
@@ -181,159 +329,94 @@ jobs:
           exclude: >-
             */node_modules/*
 
-  formatting:
-    needs:
-      - prepare
-    runs-on: arc-shared
-    timeout-minutes: 15
-    env:
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    steps:
-      - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          persist-credentials: false
-          # Need full repo for Nx to find the commits at NX_*
-          fetch-depth: 0
-
       - name: Setup yarn
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/setup-yarn
 
-      - name: NX format:write
+      # Format first and push right away: formatting takes seconds, and the push starts a new run of
+      # this workflow (which cancels this one), so that is best done before the agents have started.
+      # Linting can take many minutes when a lot of projects are affected
+      - name: Format
+        if: ${{ !cancelled() }}
+        run: |
+          yarn nx format:write --base="$BASE"
+          git diff --name-only | sort > "$RUNNER_TEMP/autofix-format.txt"
+
+      - name: Push format fixes
+        id: push-format
+        if: ${{ !cancelled() }}
         env:
           DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
           DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
         run: |
-          yarn nx format:write
+          before=$(git rev-parse HEAD)
           node scripts/ci/docker/git-check-dirty.mjs "." "format" "dirtybot"
+          after=$(git rev-parse HEAD)
+          if [[ "$before" != "$after" ]]; then
+            echo "sha=$after" >> "$GITHUB_OUTPUT"
+          fi
 
-  lintfix-changed-files:
-    name: Lintfix Changed Files
-    runs-on: arc-shared
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          # Need full repo for Nx to find the commits at NX_* below
-          fetch-depth: 0
-          persist-credentials: false
-          # Need ref to know where to push to
-          # https://github.com/actions/checkout#push-a-commit-to-a-pr-using-the-built-in-token
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Run lintfix
-        id: lintfix
+      # Not after a push of format fixes, the run that push started does it.
+      # What can't be fixed fails the `lint` tasks of the distributed run, so it doesn't have to fail this job
+      - name: Lint fix
+        if: ${{ !cancelled() && steps.push-format.outputs.sha == '' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
+        continue-on-error: true
         # NOTE: We want to use the PR base, not last good, since the lint is not part of "good" build
         # and causes unintended lint changes when using a different commit
         run: |
-          yarn nx affected -t lint --base="origin/$GITHUB_BASE_REF" --fix
-          if ! git diff "$GITHUB_BASE_REF" --exit-code; then
-            echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
+          # Format fixes that the bot did not push (it does not push the same kind twice in a row) are not lint fixes
+          git checkout -- .
+          status=0
+          yarn nx affected -t lint --base="$BASE" --fix || status=$?
+          # Format the fixes, or the next run pushes format fixes for them
+          files=$(git diff --name-only | paste -sd, -)
+          if [[ -n "$files" ]]; then
+            yarn nx format:write --files="$files"
           fi
+          git diff --name-only | sort > "$RUNNER_TEMP/autofix-lint.txt"
+          exit "$status"
 
-      - name: Commit changed files
-        if: ${{ steps.lintfix.outputs.FILES_CHANGED == 'true' }}
+      - name: Push lint fixes
+        id: push-lint
+        if: ${{ !cancelled() && steps.push-format.outputs.sha == '' && !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         env:
           DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
           DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_APP_KEY }}
-        run: node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
+        run: |
+          before=$(git rev-parse HEAD)
+          node scripts/ci/docker/git-check-dirty.mjs "." "lintfix" "dirtybot"
+          after=$(git rev-parse HEAD)
+          if [[ "$before" != "$after" ]]; then
+            echo "sha=$after" >> "$GITHUB_OUTPUT"
+          fi
 
-  linting:
-    needs:
-      - prepare
-    runs-on: arc-shared
-    timeout-minutes: 35
-    env:
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Fetch NX_BASE commit
-        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Linting
-        run: yarn nx affected --target=lint
-
-  typecheck:
-    needs:
-      - prepare
-    permissions:
-      contents: 'read'
-    runs-on: arc-shared
-    timeout-minutes: 35
-    env:
-      NODE_OPTIONS: --max-old-space-size=4096
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Fetch NX_BASE commit
-        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      # The vite builds do not type check (unlike the webpack builds they
-      # replaced), so projects with a typecheck target are checked here.
-      - name: Type checking
-        run: yarn nx affected --target=typecheck
-
-  build:
-    needs:
-      - prepare
-    runs-on: arc-shared
-    timeout-minutes: 35
-    env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: ${{ needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build
+      # `always()` since the run is most likely cancelled by now
+      - name: Comment what was pushed
+        if: ${{ always() && (steps.push-format.outputs.sha != '' || steps.push-lint.outputs.sha != '') }}
+        continue-on-error: true
+        run: node scripts/ci/nx-agents/pr-comment.mjs autofix
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AUTOFIX_SHA: ${{ steps.push-lint.outputs.sha || steps.push-format.outputs.sha }}
+          AUTOFIX_LINT_FILES: ${{ runner.temp }}/autofix-lint.txt
+          AUTOFIX_FORMAT_FILES: ${{ runner.temp }}/autofix-format.txt
 
   success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
+    permissions:
+      contents: 'read'
+      pull-requests: 'write'
     needs:
-      - prepare
-      - linting-workspace
-      - tests
-      - linting
-      - typecheck
-      - run-shellcheck
-      - formatting
-      - e2e
-      - build
-      - unicorn-tests
+      - plan
+      - agents
+      - main
+      - autofix
     steps:
       - name: Notify about deploy-feature label
-        if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
+        if: ${{ github.event.pull_request.auto_merge && env.DEPLOY_FEATURE == 'true' }}
         run: |
           echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
           exit 1
@@ -350,8 +433,43 @@ jobs:
             echo "::error title=NEEDS::Some dependencies failed: $failure_statuses"
             exit 1
           fi
+          # Skipped jobs are fine (e.g. no agents when there are no tasks), the main job is not,
+          # except with the `deploy-feature` label (see the `plan` job)
+          echo -n "Did the main job run? "
+          if [[ "$DEPLOY_FEATURE" != "true" ]] && ! jq -ne --argjson needs "$NEEDS" '$needs.main.result == "success"'; then
+            echo "::error title=NEEDS::The main job did not run"
+            exit 1
+          fi
           echo "::info title=NEEDS::No failing dependencies 🎉"
           exit 0
 
       - name: Announce success
         run: echo "Build is successful"
+
+      # The steps below must not change the result of this job, which is the required status check
+
+      - name: Checkout the comment script
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci/nx-agents/pr-comment.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Comment the result
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        run: node scripts/ci/nx-agents/pr-comment.mjs result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          NEEDS: ${{ toJSON(needs) }}
+          JOB_STATUS: ${{ job.status }}

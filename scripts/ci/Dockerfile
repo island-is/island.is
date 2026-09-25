@@ -66,8 +66,16 @@ ENV CI=true \
   NX_VERBOSE_LOGGING=true \
   APP=${APP}
 
+# An input of every Nx task, set when a pull request changes the CI configuration (which is not
+# part of the build context). See `scripts/ci/ci-config-hash.mjs`. Empty is the same as not set.
+# Declared here and not further up so a new value only invalidates the layers from the build on
+ARG CI_CONFIG_HASH=""
+ENV CI_CONFIG_HASH=${CI_CONFIG_HASH}
+
 # Build with Nx Cloud caching. If credentials are missing or invalid, build will run without caching
+# The first line is what the runtime inputs of the Nx hashes see in here, to compare with a runner
 RUN --mount=type=secret,id=nx_cloud_access_token \
+  echo "node $(node --version), force-build: $(node .github/actions/force-build.mjs 2>&1 | tail -1), CI_CONFIG_HASH: '${CI_CONFIG_HASH}'" && \
   NX_CLOUD_ACCESS_TOKEN="$(cat /run/secrets/nx_cloud_access_token)" yarn run build ${APP} --prod
 
 # ------------------------------------------------
