@@ -72,7 +72,7 @@ export class CreateHnippNotificationDto {
   @ApiProperty({
     type: [ArgumentDto],
     example: [
-      { key: 'organization', value: 'Hnipp Test Crew' }, 
+      { key: 'organization', value: 'Hnipp Test Crew' },
       { key: 'documentId', value: 'abcd-abcd-abcd-abcd' },
     ],
   })
