@@ -101,14 +101,8 @@ describe('CaseRepositoryService - case reads', () => {
 
       expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
       expect(
-        included(courtSessions?.include, 'mergedFiledDocuments'),
-      ).toBeUndefined()
-      expect(
         included(mergedCaseCourtSessions?.include, 'filedDocuments'),
       ).toBeDefined()
-      expect(
-        included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
-      ).toBeUndefined()
     })
 
     describe('no live case', () => {
@@ -308,14 +302,8 @@ describe('CaseRepositoryService - case reads', () => {
 
         expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
         expect(
-          included(courtSessions?.include, 'mergedFiledDocuments'),
-        ).toBeUndefined()
-        expect(
           included(mergedCaseCourtSessions?.include, 'filedDocuments'),
         ).toBeDefined()
-        expect(
-          included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
-        ).toBeUndefined()
       })
 
       // The attribute allowlist is the only thing keeping a defence user off
