@@ -53,7 +53,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
 
   beforeEach(() => {
     policeDigitalCaseFileRepositoryService = {
-      findAll: jest.fn(),
+      findByCaseId: jest.fn(),
       create: jest.fn(),
     } as unknown as jest.Mocked<PoliceDigitalCaseFileRepositoryService>
 
@@ -102,7 +102,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
-    policeDigitalCaseFileRepositoryService.findAll
+    policeDigitalCaseFileRepositoryService.findByCaseId
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
 
@@ -121,6 +121,12 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       { nationalId: '0000000000' } as User,
     )
 
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(1, caseId)
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(2, caseId)
     expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledTimes(
       1,
     )
@@ -140,7 +146,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
-    policeDigitalCaseFileRepositoryService.findAll
+    policeDigitalCaseFileRepositoryService.findByCaseId
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
 
@@ -184,7 +190,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
-    policeDigitalCaseFileRepositoryService.findAll
+    policeDigitalCaseFileRepositoryService.findByCaseId
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
 
@@ -203,6 +209,12 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       { nationalId: '0000000000' } as User,
     )
 
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(1, caseId)
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(2, caseId)
     expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledTimes(
       1,
     )
@@ -212,5 +224,41 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     expect(caseFileRepositoryService.create).not.toHaveBeenCalled()
     expect(courtDocumentRepositoryService.create).not.toHaveBeenCalled()
     expect(awsS3Service.putObject).not.toHaveBeenCalled()
+  })
+
+  it('does not re-read the stored files when nothing is created', async () => {
+    policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
+      makePoliceSystemDigitalCaseFile() as never,
+    ])
+    policeDigitalCaseFileRepositoryService.findByCaseId.mockResolvedValueOnce([
+      makeStoredPoliceDigitalCaseFile() as never,
+    ])
+
+    const result = await service.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      CaseType.INDICTMENT,
+      CaseState.DRAFT,
+      undefined,
+      true,
+      'Prosecutor Name',
+      [policeCaseNumber],
+      { nationalId: '0000000000' } as User,
+    )
+
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenCalledTimes(1)
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenCalledWith(caseId)
+    expect(policeDigitalCaseFileRepositoryService.create).not.toHaveBeenCalled()
+    expect(result).toEqual([
+      expect.objectContaining({
+        id: 'stored-1',
+        policeDigitalFileId,
+        isDeletable: false,
+        isNew: false,
+      }),
+    ])
   })
 })
