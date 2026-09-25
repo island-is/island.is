@@ -17,6 +17,20 @@ import { useGetSignedUrlLazyQuery } from './getSignedUrl.generated'
 import type { LimitedAccessGetSignedUrlQuery } from './limitedAccessGetSignedUrl.generated'
 import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSignedUrl.generated'
 
+type LocalFilePreviewResult =
+  | { action: 'createObjectURL'; blob: Blob }
+  | { action: 'unavailable' }
+
+export const resolveLocalFilePreview = (file: {
+  originalFileObj?: File | Blob | null
+}): LocalFilePreviewResult => {
+  if (!file.originalFileObj) {
+    return { action: 'unavailable' }
+  }
+
+  return { action: 'createObjectURL', blob: file.originalFileObj }
+}
+
 interface Parameters {
   caseId: string
   connectedCaseParentId?: string
@@ -149,7 +163,14 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       if (!file.id) return
 
       if (!validateUuid(file.id)) {
-        const previewUrl = URL.createObjectURL(file.originalFileObj as Blob)
+        const localPreview = resolveLocalFilePreview(file)
+
+        if (localPreview.action === 'unavailable') {
+          toast.warning('Skjalið er ekki tilbúið')
+          return
+        }
+
+        const previewUrl = URL.createObjectURL(localPreview.blob)
         openFile(previewUrl)
         setTimeout(() => URL.revokeObjectURL(previewUrl), 1000 * 60)
       } else {
