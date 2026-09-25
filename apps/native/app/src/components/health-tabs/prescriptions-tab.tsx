@@ -38,6 +38,9 @@ export function PrescriptionsTab({ initial }: { initial?: boolean }) {
                 indication: item.indication ?? undefined,
                 dosageInstructions: item.dosageInstructions ?? undefined,
                 totalPrescribedAmount: item.totalPrescribedAmount ?? undefined,
+                // Shown in the sheet too, so a renewal that was dismissed
+                // still explains itself when the user tries again.
+                renewResponseMessage: item.renewResponseMessage ?? undefined,
               },
             })
           }
