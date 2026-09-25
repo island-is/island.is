@@ -471,6 +471,19 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:paper-mail-aria-label',
     defaultMessage: 'Fá tilkynningar í bréfpósti?',
   },
+  actionablePriorityOnlyTitle: {
+    id: 'sp.notifications:actionable-priority-only-title',
+    defaultMessage: 'Aðeins viðbragðstilkynningar',
+  },
+  actionablePriorityOnlyDescription: {
+    id: 'sp.notifications:actionable-priority-only-description',
+    defaultMessage:
+      'Fáðu eingöngu tilkynningar sem krefjast viðbragðs frá þér, svo þú missir ekki af mikilvægum atriðum þótt þú viljir ekki fá allar tilkynningar.',
+  },
+  actionablePriorityOnlyAriaLabel: {
+    id: 'sp.notifications:actionable-priority-only-aria-label',
+    defaultMessage: 'Fá aðeins viðbragðstilkynningar?',
+  },
 })
 
 export const emailsMsg = defineMessages({
