@@ -69,7 +69,7 @@ const TenantScopes = ({
   if (scopes.length === 0) {
     return (
       <Text>
-        {locale === 'is' ? 'Engar heimildir fundust.' : 'No mandates found.'}
+        {locale === 'is' ? 'Engin umboð fundust.' : 'No mandates found.'}
       </Text>
     )
   }
@@ -185,10 +185,15 @@ const Umbod: Screen<UmbodProps> = ({ tenants }) => {
               <Box marginBottom={4}>
                 <FilterInput
                   name="tenant-search"
+                  label={
+                    isIcelandic
+                      ? 'Leita eftir nafni stofnunar eða kennitölu'
+                      : 'Search by institution name or national ID'
+                  }
                   placeholder={
                     isIcelandic
                       ? 'Leita eftir nafni stofnunar eða kennitölu'
-                      : 'Search by organisation name or national ID'
+                      : 'Search by institution name or national ID'
                   }
                   value={search}
                   onChange={setSearch}
