@@ -1380,17 +1380,19 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<Case> {
+    const { defendants, ...caseFields } = caseToCreate
+
     const theCase = await this.createCase(
       {
-        ...caseToCreate,
+        ...caseFields,
         origin: CaseOrigin.RVG,
         creatingProsecutorId: user.id,
-        prosecutorId: isIndictmentCase(caseToCreate.type)
-          ? caseToCreate.prosecutorId
+        prosecutorId: isIndictmentCase(caseFields.type)
+          ? caseFields.prosecutorId
           : user.role === UserRole.PROSECUTOR
           ? user.id
           : undefined,
-        courtId: isRequestCase(caseToCreate.type)
+        courtId: isRequestCase(caseFields.type)
           ? user.institution?.defaultCourtId
           : undefined,
         prosecutorsOfficeId: user.institution?.id,
@@ -1398,7 +1400,18 @@ export class CaseService {
       transaction,
     )
 
-    await this.defendantService.createForNewCase(theCase.id, {}, transaction)
+    // A case starts with at least one defendant. The indictment flow sends the
+    // defendants entered before the case existed so they are created in the
+    // same transaction as the case, whole or not at all. The other flows enter
+    // their defendant after creation and start from an empty one. Created one
+    // at a time so the order of the form is kept.
+    for (const defendant of defendants?.length ? defendants : [{}]) {
+      await this.defendantService.createForNewCase(
+        theCase.id,
+        defendant,
+        transaction,
+      )
+    }
 
     if (isRequestCase(caseToCreate.type)) {
       await this.defendantService.syncDefenderToAllDefendants(
