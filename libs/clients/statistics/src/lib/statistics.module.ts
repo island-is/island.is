@@ -5,7 +5,10 @@ import { StatisticsClientService } from './statistics.service'
 import { enhancedFetch } from './fetchConfig'
 
 @Module({
-  imports: [UltravioletRadiationClientModule, DirectorateOfEqualityClientModule],
+  imports: [
+    UltravioletRadiationClientModule,
+    DirectorateOfEqualityClientModule,
+  ],
   providers: [enhancedFetch, StatisticsClientService],
   exports: [StatisticsClientService],
 })
