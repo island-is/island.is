@@ -256,7 +256,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       ).mockResolvedValue(existingAppealCase)
       // Another defendant is the standing appellant, not this one.
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId: uuid(),
@@ -327,7 +327,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         reactivatedAppealCase,
       )
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId,
@@ -391,7 +391,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
       ).mockResolvedValue(existingAppealCase)
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId,

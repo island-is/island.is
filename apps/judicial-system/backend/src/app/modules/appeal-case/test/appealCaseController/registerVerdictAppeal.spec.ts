@@ -279,7 +279,7 @@ describe('AppealCaseController - Register verdict appeal', () => {
         mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
       ).mockResolvedValue(existingAppealCase)
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId: uuid(),

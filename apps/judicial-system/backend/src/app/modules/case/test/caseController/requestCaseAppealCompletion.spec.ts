@@ -204,7 +204,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),
@@ -251,7 +251,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           // Appealed in court, so correcting the record can take it away again.
@@ -310,7 +310,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),
@@ -357,7 +357,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     it('should reject the correction and delete nothing', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),
@@ -401,7 +401,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: outOfCourtEventId,
@@ -460,7 +460,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
     // if it were.
     it('should allow the correction and keep the appeal', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),

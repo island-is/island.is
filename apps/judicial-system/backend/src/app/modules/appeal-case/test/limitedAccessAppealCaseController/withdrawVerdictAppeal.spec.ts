@@ -179,7 +179,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         appealedEvent(otherDefendantId, '2026-06-05T09:00:00Z'),
@@ -242,7 +242,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         appealedEvent(otherDefendantId, '2026-06-05T09:00:00Z'),
@@ -281,7 +281,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         {
@@ -332,7 +332,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
     it('should reject a withdrawal when the defendant is not appealing', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         withdrawnEvent(defendantId, '2026-06-05T09:00:00Z'),
@@ -350,7 +350,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     // followed by a fresh appeal leaves them standing.
     it('should allow a withdrawal after the defendant appealed again', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         appealedEvent(defendantId, '2026-06-04T13:34:00Z'),
         withdrawnEvent(defendantId, '2026-06-05T09:00:00Z'),

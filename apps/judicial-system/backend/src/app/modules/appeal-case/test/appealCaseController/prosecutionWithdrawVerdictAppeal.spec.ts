@@ -173,7 +173,7 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         event(
           defendantId,
@@ -225,7 +225,7 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         event(
           defendantId,
@@ -263,7 +263,7 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
 
     it('should reject withdrawing a defendant the prosecution did not appeal', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         event(
           defendantId,

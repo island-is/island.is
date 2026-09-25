@@ -38,7 +38,6 @@ import {
   AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
-  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -1534,15 +1533,11 @@ export class CaseService {
     // enforce it rather than rely on that.
     const existingAppealCase = theCase.appealCase
     if (existingAppealCase) {
-      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
-        {
-          where: {
-            appealCaseId: existingAppealCase.id,
-            eventType: AppealEventType.APPEALED,
-          },
-          transaction,
-        },
-      )
+      const appealedEvents =
+        await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       const lock = appealCorrectionLock({
         appealState: existingAppealCase.appealState,
@@ -1592,13 +1587,11 @@ export class CaseService {
     actor: TUser,
     transaction: Transaction,
   ): Promise<void> {
-    const existingEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: appealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const existingEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const hasProsecutionEvent = existingEvents.some((event) =>
       prosecutionRoles.includes(event.userRole),
@@ -2190,13 +2183,10 @@ export class CaseService {
       // nothing about it, and correcting the court record cannot take it away -
       // it must survive both the rejection below and the cleanup further down.
       const appealedEvents = existingAppealCase
-        ? await this.appealEventLogRepositoryService.findAll({
-            where: {
-              appealCaseId: existingAppealCase.id,
-              eventType: AppealEventType.APPEALED,
-            },
-            transaction,
-          })
+        ? await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+            existingAppealCase.id,
+            { transaction },
+          )
         : []
       const appealedOutOfCourt = hasOutOfCourtAppeal(appealedEvents)
 
