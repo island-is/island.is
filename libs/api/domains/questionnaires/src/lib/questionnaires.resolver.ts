@@ -15,7 +15,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { AnsweredQuestionnaires } from '../models/answeredQuestion.model'
 import { Questionnaire } from '../models/questionnaire.model'
 import { QuestionnairesList } from '../models/questionnaires.model'
@@ -49,6 +49,24 @@ export class QuestionnairesResolver {
     @Args('locale', { type: () => String }) locale: Locale = 'is',
   ): Promise<QuestionnairesList | null> {
     return this.questionnairesService.getQuestionnaires(user, locale)
+  }
+
+  @Query(() => QuestionnairesList, {
+    name: 'questionnairesTreatmentList',
+    nullable: true,
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthTreatmentsPageEnabled)
+  async getTreatmentQuestionnaires(
+    @CurrentUser() user: User,
+    @Args('treatmentId', { type: () => ID }) treatmentId: string,
+    @Args('locale', { type: () => String }) locale: Locale = 'is',
+  ): Promise<QuestionnairesList | null> {
+    return this.questionnairesService.getTreatmentQuestionnaires(
+      user,
+      locale,
+      treatmentId,
+    )
   }
 
   @Query(() => Questionnaire, { name: 'questionnairesDetail', nullable: true })

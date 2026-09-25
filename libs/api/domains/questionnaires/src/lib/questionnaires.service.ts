@@ -112,6 +112,29 @@ export class QuestionnairesService {
     }
   }
 
+  async getTreatmentQuestionnaires(
+    user: User,
+    locale: Locale,
+    treatmentId: string,
+  ): Promise<QuestionnairesList | null> {
+    const { useEl } = await this.getQuestionnaireFeatureFlags(user)
+    if (!useEl) {
+      return null
+    }
+
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+    const data = await this.api.getTreatmentQuestionnaires(user, treatmentId)
+
+    return {
+      questionnaires: (data ?? []).map((q) =>
+        mapElQuestionnaireListItem(q, formatMessage),
+      ),
+    }
+  }
+
   async getQuestionnaire(
     user: User,
     locale: Locale,

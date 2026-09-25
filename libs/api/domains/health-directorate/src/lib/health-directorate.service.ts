@@ -871,8 +871,6 @@ export class HealthDirectorateService {
         c.replyBlockedReason,
       ),
       replyAvailability: toReplyAvailability(c),
-      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
-      messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
@@ -988,7 +986,7 @@ export class HealthDirectorateService {
       nodeId: input.nodeId,
       groupId: input.groupId,
       treatmentId: input.treatmentId ?? undefined,
-      patientInitiatedTypeCode: input.patientInitiatedTypeCode,
+      patientInitiatedTypeCode: input.patientInitiatedTypeCode ?? undefined,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
     }

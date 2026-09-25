@@ -17,10 +17,11 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useParams } from 'react-router-dom'
+import { generatePath, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 import Appointments from '../HealthOverview/components/Appointments'
 import TreatmentLinkCard from './components/TreatmentLinkCard'
@@ -28,18 +29,18 @@ import TreatmentMessages from './components/TreatmentMessages'
 import { useGetHealthTreatmentQuery } from './TreatmentOverview.generated'
 
 type UseParams = {
-  id: string
+  treatmentId: string
 }
 
 const TreatmentOverview = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
-  const { id } = useParams() as UseParams
+  const { treatmentId } = useParams() as UseParams
 
   const { data, loading, error } = useGetHealthTreatmentQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { id },
+    variables: { id: treatmentId },
   })
 
   const initialLoading = loading && !data
@@ -59,42 +60,48 @@ const TreatmentOverview = () => {
   const firstTwoAppointments =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
+  const paths = useTreatmentScopedPaths()
+  const educationalContentPath = generatePath(
+    HealthPaths.HealthTreatmentEducationalContent,
+    { treatmentId },
+  )
+
   const linkCards = [
     {
       label: formatMessage(messages.questionnaires),
-      to: HealthPaths.HealthQuestionnaires,
+      to: paths.questionnaires,
       lastSentAt: treatment?.lastQuestionnaireSentAt,
     },
     {
       label: formatMessage(m.healthTreatmentEducationalContent),
-      to: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
+      to: educationalContentPath,
       lastSentAt: treatment?.lastDocumentSentAt,
     },
   ]
 
-  // Carries the treatment id (matches the recipient's treatmentId) and the
-  // provider node so the new-message screen can preselect the recipient.
+  // The treatment route preselects the recipient by treatmentId; the node is
+  // the fallback for recipients without one.
   const newMessageHref = treatment?.responsibleNode
-    ? `${HealthPaths.HealthConversationsNew}?node=${encodeURIComponent(
+    ? `${paths.conversationsNew}?node=${encodeURIComponent(
         treatment.responsibleNode,
-      )}&treatment=${encodeURIComponent(treatment.id)}`
-    : HealthPaths.HealthConversationsNew
+      )}`
+    : paths.conversationsNew
 
   const quickLinks = [
     ...(treatment?.supportsMessaging
       ? [
           {
-            href: HealthPaths.HealthConversations,
+            href: paths.conversations,
             label: formatMessage(m.messages),
           },
         ]
       : []),
     {
-      href: HealthPaths.HealthQuestionnaires,
+      href: paths.questionnaires,
       label: formatMessage(messages.questionnaires),
     },
     {
-      href: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
+      href: educationalContentPath,
       label: formatMessage(m.healthTreatmentEducationalContent),
     },
   ]

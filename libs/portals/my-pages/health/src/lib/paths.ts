@@ -74,8 +74,15 @@ export enum HealthPaths {
   HealthConversationsDetail = '/heilsa/skilabod/:id',
 
   HealthTreatments = '/heilsa/medferd',
-  HealthTreatment = '/heilsa/medferd/:id',
-  HealthTreatmentEducationalContent = '/heilsa/medferd/:id/fraedsluefni',
+  HealthTreatment = '/heilsa/medferd/:treatmentId',
+  HealthTreatmentEducationalContent = '/heilsa/medferd/:treatmentId/fraedsluefni',
+  HealthTreatmentConversations = '/heilsa/medferd/:treatmentId/skilabod',
+  HealthTreatmentConversationsNew = '/heilsa/medferd/:treatmentId/skilabod/nytt',
+  HealthTreatmentConversationsDetail = '/heilsa/medferd/:treatmentId/skilabod/:id',
+  HealthTreatmentQuestionnaires = '/heilsa/medferd/:treatmentId/spurningalistar',
+  HealthTreatmentQuestionnairesDetail = '/heilsa/medferd/:treatmentId/spurningalistar/:org/:id',
+  HealthTreatmentQuestionnairesAnswer = '/heilsa/medferd/:treatmentId/spurningalistar/:org/:id/svara',
+  HealthTreatmentQuestionnairesAnswered = '/heilsa/medferd/:treatmentId/spurningalistar/:org/:id/skoda-svor/:submissionId',
 
   HealthPregnancy = '/heilsa/medganga',
   HealthPregnancyOverview = '/heilsa/medganga/min-medganga',

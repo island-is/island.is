@@ -9,6 +9,7 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
   groupId
   treatmentId
   name
+  allowsCustomTitle
   availability
   closesAt
   todaysWindow {

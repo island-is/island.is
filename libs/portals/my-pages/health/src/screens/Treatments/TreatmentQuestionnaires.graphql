@@ -1,0 +1,13 @@
+query GetTreatmentQuestionnaires($treatmentId: ID!, $locale: String!) {
+  questionnairesTreatmentList(treatmentId: $treatmentId, locale: $locale) {
+    questionnaires {
+      id
+      title
+      description
+      sentDate
+      status
+      organization
+      senderGroupName
+    }
+  }
+}

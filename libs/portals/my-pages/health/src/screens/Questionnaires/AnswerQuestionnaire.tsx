@@ -15,7 +15,7 @@ import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { FC, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
-import { HealthPaths } from '../../lib/paths'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import * as styles from './Questionnaires.css'
 import {
   useGetQuestionnaireWithQuestionsQuery,
@@ -26,6 +26,7 @@ const AnswerQuestionnaire: FC = () => {
   useNamespaces('sp.health')
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
   const { formatMessage, lang } = useLocale()
   const { data: organizations } = useOrganizations()
   const [submitQuestionnaire, { loading: submitting }] =
@@ -154,10 +155,10 @@ const AnswerQuestionnaire: FC = () => {
               )
             : toast.success(formatMessage(messages.yourAnswersHaveBeenSent))
           navigate(
-            HealthPaths.HealthQuestionnairesDetail.replace(
-              ':org',
-              organization?.toLocaleLowerCase() ?? '',
-            ).replace(':id', id),
+            paths.questionnaireDetail({
+              org: organization.toLocaleLowerCase(),
+              id,
+            }),
           )
         } else {
           toast.error(

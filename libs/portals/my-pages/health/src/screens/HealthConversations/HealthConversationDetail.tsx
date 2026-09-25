@@ -2,9 +2,6 @@ import {
   Box,
   Button,
   Divider,
-  GridColumn,
-  GridContainer,
-  GridRow,
   Icon,
   Text,
   toast,
@@ -21,6 +18,7 @@ import { MessageActions } from './components/MessageActions'
 import CertificateAction from './components/CertificateAction'
 import ConversationAvatar from './components/ConversationAvatar'
 import ConversationBackButton from './components/ConversationBackButton'
+import ConversationDetailLayout from './components/ConversationDetailLayout'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMessageBody from './components/ConversationMessageBody'
 import ConversationReplyForm from './components/ConversationReplyForm'
@@ -32,7 +30,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationDetailQuery,
@@ -54,6 +52,7 @@ const HealthConversationDetail = () => {
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
   const { isPhoneWidth } = useIsPhoneWidth()
   const [searchParams, setSearchParams] = useSearchParams()
   const certificatePaymentReturnId = searchParams.get('certificatePayment')
@@ -171,47 +170,35 @@ const HealthConversationDetail = () => {
 
   if (loading && !data) {
     return (
-      <GridContainer>
-        <GridRow marginTop={[1, 0, 0]}>
-          <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-            <Box padding={6}>
-              <CardLoader />
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <ConversationDetailLayout>
+        <Box padding={6}>
+          <CardLoader />
+        </Box>
+      </ConversationDetailLayout>
     )
   }
 
   if (error) {
     return (
-      <GridContainer>
-        <GridRow marginTop={[1, 0, 0]}>
-          <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-            <Box padding={6}>
-              <Problem error={error} noBorder={false} />
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <ConversationDetailLayout>
+        <Box padding={6}>
+          <Problem error={error} noBorder={false} />
+        </Box>
+      </ConversationDetailLayout>
     )
   }
 
   if (!item) {
     return (
-      <GridContainer>
-        <GridRow marginTop={[1, 0, 0]}>
-          <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-            <Box padding={6}>
-              <Problem
-                type="no_data"
-                noBorder={false}
-                title={formatMessage(messages.healthConversationNotFound)}
-              />
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <ConversationDetailLayout>
+        <Box padding={6}>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(messages.healthConversationNotFound)}
+          />
+        </Box>
+      </ConversationDetailLayout>
     )
   }
 
@@ -248,241 +235,231 @@ const HealthConversationDetail = () => {
     if (isMobileReplyView) {
       setReplyOpen(false)
     } else {
-      navigate(HealthPaths.HealthConversations)
+      navigate(paths.conversations)
     }
   }
 
   return (
-    <GridContainer>
-      <GridRow marginTop={[1, 0, 0]}>
-        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
-          <Box
-            className={styles.messageCard}
-            background="white"
-            paddingTop={[2, 2, 3]}
-            paddingBottom={[10, 5, 5]}
-            paddingX={[2, 5, 5]}
-          >
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              marginBottom={1}
-              className={styles.detailHeader}
-            >
-              <Box className={styles.backButton}>
-                <ConversationBackButton onClick={handleBack} />
-              </Box>
-              {!isMobileReplyView && (
-                <MessageActions
-                  bookmarked={item.isStarred}
-                  archived={item.isArchived}
-                  onReply={!replyOpen && canReply ? openReply : undefined}
-                  onFav={() => {
-                    if (item.isStarred) {
-                      unstarMessage({ variables: { input: { id } } })
-                    } else {
-                      starMessage({ variables: { input: { id } } })
-                    }
-                  }}
-                  onStash={() => {
-                    if (item.isArchived) {
-                      unarchiveMessage({ variables: { input: { id } } })
-                    } else {
-                      archiveMessage({ variables: { input: { id } } })
-                    }
-                  }}
-                />
-              )}
-            </Box>
+    <ConversationDetailLayout>
+      <Box
+        className={styles.messageCard}
+        background="white"
+        paddingTop={[2, 2, 3]}
+        paddingBottom={[10, 5, 5]}
+        paddingX={[2, 5, 5]}
+      >
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={1}
+          className={styles.detailHeader}
+        >
+          <Box className={styles.backButton}>
+            <ConversationBackButton onClick={handleBack} />
+          </Box>
+          {!isMobileReplyView && (
+            <MessageActions
+              bookmarked={item.isStarred}
+              archived={item.isArchived}
+              onReply={!replyOpen && canReply ? openReply : undefined}
+              onFav={() => {
+                if (item.isStarred) {
+                  unstarMessage({ variables: { input: { id } } })
+                } else {
+                  starMessage({ variables: { input: { id } } })
+                }
+              }}
+              onStash={() => {
+                if (item.isArchived) {
+                  unarchiveMessage({ variables: { input: { id } } })
+                } else {
+                  archiveMessage({ variables: { input: { id } } })
+                }
+              }}
+            />
+          )}
+        </Box>
 
-            <Text variant="h4" as="h1" marginBottom={2}>
-              {item.title}
-            </Text>
+        <Text variant="h4" as="h1" marginBottom={2}>
+          {item.title}
+        </Text>
 
-            {isMobileReplyView ? (
-              /* Mobile takes over the screen while replying: the thread is
+        {isMobileReplyView ? (
+          /* Mobile takes over the screen while replying: the thread is
               hidden and only the recipient + reply form are shown. */
+          <ConversationReplyForm
+            ref={replyRef}
+            replyToName={replyToName}
+            value={replyText}
+            onChange={setReplyText}
+            inputRef={replyInputRef}
+          />
+        ) : (
+          <>
+            {/* Message thread */}
+            {item.messages.map((msg, index) => {
+              const isPatient = msg.direction === 'PATIENT'
+              const senderName = isPatient
+                ? userInfo.profile.name ?? ''
+                : item.organization?.name ?? msg.senderGroupName ?? ''
+              const extraAttachments = msg.certificateId
+                ? msg.attachments.slice(1)
+                : msg.attachments
+              const attachmentsLocked = msg.requiresPayment && !msg.paid
+
+              return (
+                <Box key={msg.id}>
+                  {index > 0 && (
+                    <Box paddingY={1}>
+                      <Divider />
+                    </Box>
+                  )}
+
+                  {/* Sender info */}
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="spaceBetween"
+                    alignItems="center"
+                    paddingTop={index > 0 ? 3 : 0}
+                    marginBottom={3}
+                  >
+                    <Box display="flex" flexDirection="row">
+                      {isPatient ? (
+                        <ConversationAvatar
+                          variant="user"
+                          name={userInfo.profile.name ?? ''}
+                          large
+                        />
+                      ) : (
+                        <ConversationAvatar
+                          variant="organization"
+                          logoUrl={item.organization?.logoUrl ?? undefined}
+                          large
+                        />
+                      )}
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        marginLeft={2}
+                        justifyContent="center"
+                      >
+                        <Text variant="eyebrow" fontWeight="medium" truncate>
+                          {senderName}
+                        </Text>
+                        <Text variant="medium">
+                          {formatDateWithTime(msg.messageSentAt)}
+                        </Text>
+                      </Box>
+                    </Box>
+                    {msg.attachments.length > 0 && (
+                      <Icon
+                        icon="attach"
+                        size="small"
+                        color="black"
+                        type="outline"
+                        className={styles.attachmentIcon}
+                      />
+                    )}
+                  </Box>
+
+                  {/* Body */}
+                  <ConversationMessageBody message={msg} />
+
+                  {/* Certificate */}
+                  {(msg.certificateId || msg.requiresPayment) && (
+                    <CertificateAction
+                      certificateId={msg.certificateId}
+                      requiresPayment={msg.requiresPayment}
+                      paid={msg.paid}
+                      amountIsk={msg.amountIsk}
+                      pendingPaymentStartedAt={msg.pendingPaymentStartedAt}
+                      isReturningFromPayment={
+                        !!msg.certificateId &&
+                        msg.certificateId === certificatePaymentReturnId
+                      }
+                      fileName={msg.attachments[0]?.fileName}
+                      downloadServiceURL={
+                        msg.attachments[0]?.downloadServiceURL
+                      }
+                      onPaid={handleCertificatePaid}
+                      onRefresh={refetch}
+                    />
+                  )}
+
+                  {/* Attachments */}
+                  {extraAttachments.length > 0 && !attachmentsLocked && (
+                    <Box
+                      display="flex"
+                      flexWrap="wrap"
+                      columnGap={2}
+                      rowGap={1}
+                      marginBottom={3}
+                    >
+                      {extraAttachments.map((file) => (
+                        <Button
+                          key={file.id}
+                          variant="utility"
+                          icon="document"
+                          iconType="outline"
+                          onClick={() => formSubmit(file.downloadServiceURL)}
+                        >
+                          {file.fileName}
+                        </Button>
+                      ))}
+                    </Box>
+                  )}
+                </Box>
+              )
+            })}
+
+            {/* Reply form — desktop only; mobile branches above */}
+            {replyOpen && (
               <ConversationReplyForm
                 ref={replyRef}
+                withSenderHeader
+                senderName={userInfo.profile.name ?? ''}
                 replyToName={replyToName}
                 value={replyText}
                 onChange={setReplyText}
                 inputRef={replyInputRef}
               />
-            ) : (
-              <>
-                {/* Message thread */}
-                {item.messages.map((msg, index) => {
-                  const isPatient = msg.direction === 'PATIENT'
-                  const senderName = isPatient
-                    ? userInfo.profile.name ?? ''
-                    : item.organization?.name ?? msg.senderGroupName ?? ''
-                  const extraAttachments = msg.certificateId
-                    ? msg.attachments.slice(1)
-                    : msg.attachments
-                  const attachmentsLocked = msg.requiresPayment && !msg.paid
-
-                  return (
-                    <Box key={msg.id}>
-                      {index > 0 && (
-                        <Box paddingY={1}>
-                          <Divider />
-                        </Box>
-                      )}
-
-                      {/* Sender info */}
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        justifyContent="spaceBetween"
-                        alignItems="center"
-                        paddingTop={index > 0 ? 3 : 0}
-                        marginBottom={3}
-                      >
-                        <Box display="flex" flexDirection="row">
-                          {isPatient ? (
-                            <ConversationAvatar
-                              variant="user"
-                              name={userInfo.profile.name ?? ''}
-                              large
-                            />
-                          ) : (
-                            <ConversationAvatar
-                              variant="organization"
-                              logoUrl={item.organization?.logoUrl ?? undefined}
-                              large
-                            />
-                          )}
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            marginLeft={2}
-                            justifyContent="center"
-                          >
-                            <Text
-                              variant="eyebrow"
-                              fontWeight="medium"
-                              truncate
-                            >
-                              {senderName}
-                            </Text>
-                            <Text variant="medium">
-                              {formatDateWithTime(msg.messageSentAt)}
-                            </Text>
-                          </Box>
-                        </Box>
-                        {msg.attachments.length > 0 && (
-                          <Icon
-                            icon="attach"
-                            size="small"
-                            color="black"
-                            type="outline"
-                            className={styles.attachmentIcon}
-                          />
-                        )}
-                      </Box>
-
-                      {/* Body */}
-                      <ConversationMessageBody message={msg} />
-
-                      {/* Certificate */}
-                      {(msg.certificateId || msg.requiresPayment) && (
-                        <CertificateAction
-                          certificateId={msg.certificateId}
-                          requiresPayment={msg.requiresPayment}
-                          paid={msg.paid}
-                          amountIsk={msg.amountIsk}
-                          pendingPaymentStartedAt={msg.pendingPaymentStartedAt}
-                          isReturningFromPayment={
-                            !!msg.certificateId &&
-                            msg.certificateId === certificatePaymentReturnId
-                          }
-                          fileName={msg.attachments[0]?.fileName}
-                          downloadServiceURL={
-                            msg.attachments[0]?.downloadServiceURL
-                          }
-                          onPaid={handleCertificatePaid}
-                          onRefresh={refetch}
-                        />
-                      )}
-
-                      {/* Attachments */}
-                      {extraAttachments.length > 0 && !attachmentsLocked && (
-                        <Box
-                          display="flex"
-                          flexWrap="wrap"
-                          columnGap={2}
-                          rowGap={1}
-                          marginBottom={3}
-                        >
-                          {extraAttachments.map((file) => (
-                            <Button
-                              key={file.id}
-                              variant="utility"
-                              icon="document"
-                              iconType="outline"
-                              onClick={() =>
-                                formSubmit(file.downloadServiceURL)
-                              }
-                            >
-                              {file.fileName}
-                            </Button>
-                          ))}
-                        </Box>
-                      )}
-                    </Box>
-                  )
-                })}
-
-                {/* Reply form — desktop only; mobile branches above */}
-                {replyOpen && (
-                  <ConversationReplyForm
-                    ref={replyRef}
-                    withSenderHeader
-                    senderName={userInfo.profile.name ?? ''}
-                    replyToName={replyToName}
-                    value={replyText}
-                    onChange={setReplyText}
-                    inputRef={replyInputRef}
-                  />
-                )}
-              </>
             )}
+          </>
+        )}
 
-            <MobileActionFooter>
-              {replyOpen ? (
-                <ConversationCancelSubmit
-                  cancelLabel={formatMessage(messages.cancel)}
-                  submitLabel={formatMessage(messages.healthConversationSend)}
-                  onCancel={() => setReplyOpen(false)}
-                  onSubmit={handleReply}
-                  submitDisabled={!replyText.trim()}
-                  loading={replySending}
-                  fluid={isPhoneWidth}
-                />
-              ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
-                <ReplyBlockedAlert
-                  availability={item.replyAvailability}
-                  replyWindowDays={item.patientReplyWindowDays}
-                />
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="medium"
-                  preTextIcon="undo"
-                  preTextIconType="outline"
-                  onClick={openReply}
-                  fluid={isPhoneWidth}
-                >
-                  {formatMessage(m.replyDocument)}
-                </Button>
-              )}
-            </MobileActionFooter>
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+        <MobileActionFooter>
+          {replyOpen ? (
+            <ConversationCancelSubmit
+              cancelLabel={formatMessage(messages.cancel)}
+              submitLabel={formatMessage(messages.healthConversationSend)}
+              onCancel={() => setReplyOpen(false)}
+              onSubmit={handleReply}
+              submitDisabled={!replyText.trim()}
+              loading={replySending}
+              fluid={isPhoneWidth}
+            />
+          ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
+            <ReplyBlockedAlert
+              availability={item.replyAvailability}
+              replyWindowDays={item.patientReplyWindowDays}
+            />
+          ) : (
+            <Button
+              variant="ghost"
+              size="medium"
+              preTextIcon="undo"
+              preTextIconType="outline"
+              onClick={openReply}
+              fluid={isPhoneWidth}
+            >
+              {formatMessage(m.replyDocument)}
+            </Button>
+          )}
+        </MobileActionFooter>
+      </Box>
+    </ConversationDetailLayout>
   )
 }
 

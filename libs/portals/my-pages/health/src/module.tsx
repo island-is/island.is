@@ -175,6 +175,10 @@ const TreatmentEducationalContent = lazy(() =>
   import('./screens/Treatments/TreatmentEducationalContent'),
 )
 
+const TreatmentQuestionnaires = lazy(() =>
+  import('./screens/Treatments/TreatmentQuestionnaires'),
+)
+
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
@@ -731,6 +735,55 @@ export const healthModule: PortalModule = {
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <TreatmentEducationalContent />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthTreatmentConversations,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversations />,
+    },
+    {
+      name: hm.healthConversationsNewTitle,
+      path: HealthPaths.HealthTreatmentConversationsNew,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <NewHealthConversation />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthTreatmentConversationsDetail,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <HealthConversationDetail />,
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthTreatmentQuestionnaires,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TreatmentQuestionnaires />,
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthTreatmentQuestionnairesDetail,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <QuestionnairesDetail />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthTreatmentQuestionnairesAnswer,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <QuestionnairesAnswer />,
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthTreatmentQuestionnairesAnswered,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <QuestionnairesAnswered />,
     },
   ],
 }

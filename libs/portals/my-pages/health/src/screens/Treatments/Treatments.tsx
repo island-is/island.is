@@ -25,7 +25,10 @@ const Treatments = () => {
   if (!loading && !error && treatments?.length === 1) {
     return (
       <Navigate
-        to={HealthPaths.HealthTreatment.replace(':id', treatments[0].id)}
+        to={HealthPaths.HealthTreatment.replace(
+          ':treatmentId',
+          treatments[0].id,
+        )}
         replace
       />
     )
@@ -70,7 +73,10 @@ const Treatments = () => {
                 cta={{
                   onClick: () =>
                     navigate(
-                      HealthPaths.HealthTreatment.replace(':id', treatment.id),
+                      HealthPaths.HealthTreatment.replace(
+                        ':treatmentId',
+                        treatment.id,
+                      ),
                     ),
                   label: formatMessage(messages.seeMore),
                   variant: 'text',

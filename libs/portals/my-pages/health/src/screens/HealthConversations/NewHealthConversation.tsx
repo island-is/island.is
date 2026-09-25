@@ -30,14 +30,14 @@ import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { getWindowLabels } from './utils/messagingWindow'
 import {
   getNewConversationPageMode,
   pickClosedRecipient,
 } from './utils/recipientAvailability'
-import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { MAX_MESSAGE_LENGTH, MAX_TITLE_LENGTH } from './utils/constants'
 import { Markdown } from '@island.is/shared/components'
 import { HealthDirectorateHealthConversationRecipientAvailability as Availability } from '@island.is/api/schema'
 import ClosedRecipientAlert from './components/ClosedRecipientAlert'
@@ -61,6 +61,7 @@ const NewHealthConversation = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
   const { isPhoneWidth } = useIsPhoneWidth()
 
   const [selectedRecipientKey, setSelectedRecipientKey] = useState<
@@ -69,6 +70,7 @@ const NewHealthConversation = () => {
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
   const [searchParams] = useSearchParams()
   const [messageText, setMessageText] = useState('')
+  const [customTitle, setCustomTitle] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
     {},
   )
@@ -126,7 +128,8 @@ const NewHealthConversation = () => {
       }
     }) ?? []
 
-  const preselectedTreatment = searchParams.get('treatment')
+  const preselectedTreatment =
+    paths.treatmentId ?? searchParams.get('treatment')
   const treatmentMatch = preselectedTreatment
     ? recipients?.find((r) => r.treatmentId === preselectedTreatment)
     : undefined
@@ -152,6 +155,10 @@ const NewHealthConversation = () => {
   const selectedRecipientOption =
     recipientOptions.find((o) => o.value === effectiveRecipientKey) ?? null
 
+  // Care teams take a free-text title instead of a conversation type
+  const usesCustomTitle =
+    !!recipient?.treatmentId && recipient.allowsCustomTitle
+
   const typeOptions =
     recipient?.allowedMessageTypes.map((t) => ({
       label: t.title,
@@ -165,7 +172,8 @@ const NewHealthConversation = () => {
   const selectedType = recipient?.allowedMessageTypes.find(
     (t) => t.patientInitiatedTypeCode === selectedTypeCode,
   )
-  const isCertificateSelected = !!selectedType?.isCertificate
+  const isCertificateSelected =
+    !usesCustomTitle && !!selectedType?.isCertificate
 
   const isConversationBlocked =
     !!recipient && recipient.availability !== Availability.OPEN
@@ -174,7 +182,9 @@ const NewHealthConversation = () => {
 
   const isFormValid = isCertificateSelected
     ? !!certificateInput && termsAccepted
-    : !!selectedTypeCode && !!messageText.trim() && termsAccepted
+    : (usesCustomTitle ? !!customTitle.trim() : !!selectedTypeCode) &&
+      !!messageText.trim() &&
+      termsAccepted
 
   const sendingAny = sending || sendingCertificate
 
@@ -214,18 +224,36 @@ const NewHealthConversation = () => {
 
   const goToConversation = (conversationId?: string | null) => {
     if (conversationId) {
-      navigate(
-        HealthPaths.HealthConversationsDetail.replace(':id', conversationId),
-      )
+      navigate(paths.conversationDetail(conversationId))
     } else {
-      navigate(HealthPaths.HealthConversations)
+      navigate(paths.conversations)
     }
   }
 
   const handleSubmit = async () => {
-    if (!canSubmit || !recipient || !selectedTypeCode || !selectedType) return
+    if (!canSubmit || !recipient) return
 
     try {
+      if (usesCustomTitle) {
+        const result = await createMessage({
+          variables: {
+            input: {
+              nodeId: recipient.nodeId,
+              groupId: recipient.groupId,
+              treatmentId: recipient.treatmentId,
+              title: customTitle.trim(),
+              messageTextContent: messageText.trim(),
+            },
+          },
+        })
+        goToConversation(
+          result.data?.healthDirectorateCreateHealthConversation?.id,
+        )
+        return
+      }
+
+      if (!selectedTypeCode || !selectedType) return
+
       if (isCertificateSelected) {
         if (!certificateInput) return
         const result = await createCertificateRequest({
@@ -272,7 +300,7 @@ const NewHealthConversation = () => {
     return (
       <Box marginTop={[1, 0, 0]}>
         <ConversationMobileBackHeader
-          onClick={() => navigate(HealthPaths.HealthConversations)}
+          onClick={() => navigate(paths.conversations)}
         />
         <IntroWrapper
           title={messages.healthConversationsContactTitle}
@@ -304,7 +332,7 @@ const NewHealthConversation = () => {
   return (
     <Box marginTop={[1, 0, 0]}>
       <ConversationMobileBackHeader
-        onClick={() => navigate(HealthPaths.HealthConversations)}
+        onClick={() => navigate(paths.conversations)}
       />
       <IntroWrapper
         title={messages.healthConversationsNewTitle}
@@ -342,7 +370,7 @@ const NewHealthConversation = () => {
                 className={styles.backButton}
               >
                 <ConversationBackButton
-                  onClick={() => navigate(HealthPaths.HealthConversations)}
+                  onClick={() => navigate(paths.conversations)}
                 />
               </Box>
             </Hidden>
@@ -364,62 +392,88 @@ const NewHealthConversation = () => {
               paddingTop={[3, 3, 4]}
               paddingBottom={[10, 5, 5]}
             >
-              <GridRow marginBottom={3}>
-                {hasMultipleRecipients && (
-                  <GridColumn
-                    span={['12/12', '6/12']}
-                    paddingBottom={[2, 0, 0]}
-                  >
-                    <Select
-                      name="recipient"
-                      label={formatMessage(
-                        messages.healthConversationsNewSelectRecipient,
-                      )}
-                      placeholder={formatMessage(
-                        messages.healthConversationsNewSelectRecipientPlaceholder,
-                      )}
-                      options={recipientOptions}
-                      value={selectedRecipientOption}
-                      onChange={(opt) =>
-                        handleRecipientChange(opt?.value ?? null)
+              {(hasMultipleRecipients || !usesCustomTitle) && (
+                <GridRow marginBottom={3}>
+                  {hasMultipleRecipients && (
+                    <GridColumn
+                      span={['12/12', '6/12']}
+                      paddingBottom={[2, 0, 0]}
+                    >
+                      <Select
+                        name="recipient"
+                        label={formatMessage(
+                          messages.healthConversationsNewSelectRecipient,
+                        )}
+                        placeholder={formatMessage(
+                          messages.healthConversationsNewSelectRecipientPlaceholder,
+                        )}
+                        options={recipientOptions}
+                        value={selectedRecipientOption}
+                        onChange={(opt) =>
+                          handleRecipientChange(opt?.value ?? null)
+                        }
+                        backgroundColor="blue"
+                        size="sm"
+                        required
+                      />
+                    </GridColumn>
+                  )}
+                  {!usesCustomTitle && (
+                    <GridColumn
+                      span={
+                        hasMultipleRecipients
+                          ? ['12/12', '6/12']
+                          : ['12/12', '8/12']
                       }
-                      backgroundColor="blue"
-                      size="sm"
-                      required
-                    />
-                  </GridColumn>
-                )}
-                <GridColumn
-                  span={
-                    hasMultipleRecipients
-                      ? ['12/12', '6/12']
-                      : ['12/12', '8/12']
-                  }
-                >
-                  <Select
-                    name="service-type"
+                    >
+                      <Select
+                        name="service-type"
+                        label={formatMessage(
+                          messages.healthConversationsNewSelectService,
+                        )}
+                        placeholder={formatMessage(
+                          messages.healthConversationsNewSelectServicePlaceholder,
+                        )}
+                        options={typeOptions}
+                        value={selectedOption}
+                        onChange={(opt) => handleTypeChange(opt?.value ?? null)}
+                        backgroundColor="blue"
+                        size="sm"
+                        required
+                        isDisabled={!recipient || isConversationBlocked}
+                      />
+                    </GridColumn>
+                  )}
+                </GridRow>
+              )}
+
+              {usesCustomTitle && (
+                <Box marginBottom={3}>
+                  <Input
+                    name="message-subject"
                     label={formatMessage(
-                      messages.healthConversationsNewSelectService,
+                      messages.healthConversationsNewSubject,
                     )}
                     placeholder={formatMessage(
-                      messages.healthConversationsNewSelectServicePlaceholder,
+                      messages.healthConversationsNewSubjectPlaceholder,
                     )}
-                    options={typeOptions}
-                    value={selectedOption}
-                    onChange={(opt) => handleTypeChange(opt?.value ?? null)}
                     backgroundColor="blue"
-                    size="sm"
+                    value={customTitle}
+                    onChange={(e) => setCustomTitle(e.target.value)}
+                    maxLength={MAX_TITLE_LENGTH}
+                    disabled={isConversationBlocked}
                     required
-                    isDisabled={!recipient || isConversationBlocked}
                   />
-                </GridColumn>
-              </GridRow>
-
-              {!isCertificateSelected && selectedType?.instructions && (
-                <Box marginBottom={2} className={styles.typeInstructions}>
-                  <Markdown>{selectedType.instructions}</Markdown>
                 </Box>
               )}
+
+              {!usesCustomTitle &&
+                !isCertificateSelected &&
+                selectedType?.instructions && (
+                  <Box marginBottom={2} className={styles.typeInstructions}>
+                    <Markdown>{selectedType.instructions}</Markdown>
+                  </Box>
+                )}
 
               {isCertificateSelected ? (
                 <CertificateRequestForm
@@ -472,7 +526,7 @@ const NewHealthConversation = () => {
                 <ConversationCancelSubmit
                   cancelLabel={formatMessage(messages.cancel)}
                   submitLabel={formatMessage(messages.healthConversationSend)}
-                  onCancel={() => navigate(HealthPaths.HealthConversations)}
+                  onCancel={() => navigate(paths.conversations)}
                   onSubmit={handleSubmit}
                   submitDisabled={!canSubmit}
                   loading={sendingAny}

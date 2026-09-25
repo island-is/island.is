@@ -15,6 +15,7 @@ import {
   CardLoader,
   LinkButton,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -27,7 +28,7 @@ import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
 import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { ApolloCache } from '@apollo/client'
 import {
   HealthDirectorateHealthConversation,
@@ -43,6 +44,7 @@ import {
   useArchiveHealthConversationMutation,
   useUnarchiveHealthConversationMutation,
 } from './HealthConversations.generated'
+import { useGetHealthTreatmentQuery } from '../Treatments/TreatmentOverview.generated'
 
 const DEFAULT_PAGE_SIZE = 20
 
@@ -106,6 +108,8 @@ type FilterValues = {
 const HealthConversations = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const paths = useTreatmentScopedPaths()
+  const { treatmentId } = paths
 
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
@@ -127,9 +131,24 @@ const HealthConversations = () => {
   }, [filterValues])
 
   const listVariables = useMemo(
-    () => ({ input: { ...filterInput, limit: DEFAULT_PAGE_SIZE } }),
-    [filterInput],
+    () => ({
+      input: {
+        ...filterInput,
+        ...(treatmentId ? { treatmentId } : {}),
+        limit: DEFAULT_PAGE_SIZE,
+      },
+    }),
+    [filterInput, treatmentId],
   )
+
+  const { data: treatmentData } = useGetHealthTreatmentQuery({
+    variables: { id: treatmentId ?? '' },
+    skip: !treatmentId,
+  })
+  // Hidden until the treatment is known, so it never flashes in and out
+  const canCreate =
+    !treatmentId ||
+    !!treatmentData?.healthDirectorateTreatment?.supportsMessaging
 
   const { data, loading, error, fetchMore } = useGetHealthConversationsQuery({
     fetchPolicy: 'cache-and-network',
@@ -228,21 +247,35 @@ const HealthConversations = () => {
 
   return (
     <IntroWrapper
-      title={m.messages}
-      intro={messages.healthConversationsIntro}
+      title={treatmentId ? messages.treatmentMessagesFromTeam : m.messages}
+      intro={
+        treatmentId
+          ? messages.treatmentConversationsIntro
+          : messages.healthConversationsIntro
+      }
+      serviceProvider={
+        treatmentId
+          ? {
+              slug: STAFRAEN_HEILSA_SLUG,
+              tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
+            }
+          : undefined
+      }
       desktopContentSpan="10/12"
     >
-      <Box
-        display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
-        marginBottom={3}
-      >
-        <LinkButton
-          to={HealthPaths.HealthConversationsNew}
-          text={formatMessage(messages.healthConversationsCreate)}
-          variant="primary"
-          size="small"
-        />
-      </Box>
+      {canCreate && (
+        <Box
+          display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
+          marginBottom={3}
+        >
+          <LinkButton
+            to={paths.conversationsNew}
+            text={formatMessage(messages.healthConversationsCreate)}
+            variant="primary"
+            size="small"
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         justifyContent="spaceBetween"
@@ -317,18 +350,20 @@ const HealthConversations = () => {
             </Box>
           </Filter>
         </Box>
-        <Box
-          display={['none', 'none', 'none', 'block']}
-          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
-          marginLeft={2}
-        >
-          <LinkButton
-            to={HealthPaths.HealthConversationsNew}
-            text={formatMessage(messages.healthConversationsCreate)}
-            variant="primary"
-            size="small"
-          />
-        </Box>
+        {canCreate && (
+          <Box
+            display={['none', 'none', 'none', 'block']}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+            marginLeft={2}
+          >
+            <LinkButton
+              to={paths.conversationsNew}
+              text={formatMessage(messages.healthConversationsCreate)}
+              variant="primary"
+              size="small"
+            />
+          </Box>
+        )}
       </Box>
       {initialLoading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
@@ -383,10 +418,7 @@ const HealthConversations = () => {
                   columnGap={2}
                 >
                   <Link
-                    to={HealthPaths.HealthConversationsDetail.replace(
-                      ':id',
-                      item.id,
-                    )}
+                    to={paths.conversationDetail(item.id)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',

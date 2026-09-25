@@ -1,10 +1,8 @@
 import {
-  QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
   QuestionnairesBaseItem,
 } from '@island.is/api/schema'
 import {
-  ActionCard,
   Box,
   Checkbox,
   Filter,
@@ -17,7 +15,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  formatDate,
   IntroWrapper,
   STAFRAEN_HEILSA_SLUG,
   m,
@@ -25,19 +22,17 @@ import {
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { FC, ReactNode, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
+import QuestionnaireCard from './components/QuestionnaireCard'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Questionnaires: FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   useHealthPlausibleSwap()
-  const navigate = useNavigate()
 
   const [inputValue, setInputValue] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
@@ -132,52 +127,6 @@ const Questionnaires: FC = () => {
     />
   )
 
-  const renderQuestionnaireCard = (questionnaire: QuestionnairesBaseItem) => {
-    const status = questionnaire.status
-    const isAnswered = status === QuestionnairesStatusEnum.answered
-    const isDraft = status === QuestionnairesStatusEnum.draft
-    const isExpired = status === QuestionnairesStatusEnum.expired
-    return (
-      <ActionCard
-        key={questionnaire.id}
-        heading={questionnaire.title}
-        headingVariant="h4"
-        subText={questionnaire.description ?? ''}
-        eyebrow={
-          questionnaire.senderGroupName ??
-          (questionnaire.organization ===
-          QuestionnaireQuestionnairesOrganizationEnum.EL
-            ? formatMessage(messages.healthDirectorate)
-            : formatMessage(messages.landspitali))
-        }
-        eyebrowColor="purple400"
-        text={formatDate(questionnaire.sentDate)}
-        tag={{
-          label: isAnswered
-            ? formatMessage(messages.answeredQuestionnaire)
-            : isExpired
-            ? formatMessage(messages.expiredQuestionnaire)
-            : isDraft
-            ? formatMessage(messages.draftQuestionnaire)
-            : formatMessage(messages.unAnsweredQuestionnaire),
-          variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
-        }}
-        cta={{
-          label: formatMessage(messages.questionnaireSeeMore),
-          variant: 'text',
-          icon: 'arrowForward',
-          onClick: () =>
-            navigate(
-              HealthPaths.HealthQuestionnairesDetail.replace(
-                ':org',
-                questionnaire.organization?.toLocaleLowerCase() ?? '',
-              ).replace(':id', questionnaire.id),
-            ),
-        }}
-      />
-    )
-  }
-
   const renderQuestionnaireList = (
     visible: QuestionnairesBaseItem[],
     emptyState: ReactNode,
@@ -205,7 +154,14 @@ const Questionnaires: FC = () => {
         {visible.length === 0 ? (
           emptyState
         ) : (
-          <Stack space={3}>{visible.map(renderQuestionnaireCard)}</Stack>
+          <Stack space={3}>
+            {visible.map((questionnaire) => (
+              <QuestionnaireCard
+                key={questionnaire.id}
+                questionnaire={questionnaire}
+              />
+            ))}
+          </Stack>
         )}
       </>
     )

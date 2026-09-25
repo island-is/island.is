@@ -64,7 +64,10 @@ export const client = new ApolloClient({
           // (the cursor is left out of the key), a page with `after` is
           // appended, and a fetch without it (page one) replaces the list.
           healthDirectoratePaginatedHealthConversations: {
-            keyArgs: ['input', ['status', 'starred', 'search', 'limit']],
+            keyArgs: [
+              'input',
+              ['status', 'starred', 'search', 'treatmentId', 'limit'],
+            ],
             merge(existing, incoming, { args, readField }) {
               if (!existing || !args?.input?.after) {
                 return incoming
