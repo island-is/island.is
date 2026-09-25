@@ -44,7 +44,7 @@ const TenantScopes = ({
   tenantId: string
   locale: string
 }) => {
-  const { data, loading } = useQuery<PublicTenantScopesQuery>(
+  const { data, loading, error } = useQuery<PublicTenantScopesQuery>(
     GET_PUBLIC_AUTH_TENANT_SCOPES_ONLY,
     {
       variables: { tenantId },
@@ -54,6 +54,16 @@ const TenantScopes = ({
 
   if (loading) {
     return <SkeletonLoader height={160} />
+  }
+
+  if (error) {
+    return (
+      <Text>
+        {locale === 'is'
+          ? 'Ekki tókst að sækja umboð.'
+          : 'Unable to load mandates.'}
+      </Text>
+    )
   }
 
   if (scopes.length === 0) {
