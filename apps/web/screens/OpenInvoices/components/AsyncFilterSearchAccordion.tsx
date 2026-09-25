@@ -286,6 +286,12 @@ export const AsyncFilterSearchAccordion = ({
                         {item.label}
                       </Box>
                       <Icon icon="close" size="small" color="blue400" />
+                      <Box component="span" className={helperStyles.srOnly}>
+                        {formatMessage(m.search.removeFilter, {
+                          label: item.label,
+                          category: title,
+                        })}
+                      </Box>
                     </Box>
                   </Tag>
                 ))}

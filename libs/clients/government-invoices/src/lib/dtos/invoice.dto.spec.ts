@@ -50,6 +50,18 @@ describe('mapInvoiceDto', () => {
     expect(result).toBeNull()
   })
 
+  it('maps a redacted invoice when invoiceNum is missing but invoiceNumRedacted is true', () => {
+    const result = mapInvoiceDto({
+      ...baseData,
+      invoiceNum: null,
+      invoiceNumRedacted: true,
+    })
+
+    expect(result).not.toBeNull()
+    expect(result?.number).toBeNull()
+    expect(result?.numberRedacted).toBe(true)
+  })
+
   it('maps an invoice when invoiceCurrencyCode is missing', () => {
     const result = mapInvoiceDto({ ...baseData, invoiceCurrencyCode: null })
 

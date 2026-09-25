@@ -1,6 +1,6 @@
-import { Audit } from '@island.is/nest/audit'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CodeOwner } from '@island.is/nest/core'
-import { CodeOwners } from '@island.is/shared/constants'
+import { CACHE_CONTROL_MAX_AGE, CodeOwners } from '@island.is/shared/constants'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { InvoicesService } from '../services/invoices/invoices.service'
@@ -17,8 +17,9 @@ import { InvoicePaymentTypesInput } from '../dtos/getInvoicePaymentTypes.input'
 import { InvoicePaymentTypeGroupCollection } from '../models/invoicePaymentTypeGroups.model'
 import { InvoicePaymentTypeGroupsInput } from '../dtos/getInvoicePaymentTypeGroups.input'
 
+const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
+
 @Resolver(() => InvoicePaymentsGroupCollection)
-@Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 @CodeOwner(CodeOwners.Hugsmidjan)
 export class InvoicePaymentsGroupsResolver {
   constructor(private readonly invoiceService: InvoicesService) {}
@@ -35,6 +36,7 @@ export class InvoicePaymentsGroupsResolver {
     return this.invoiceService.getOpenInvoicePaymentsGroups(input)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => MinistryCollection, {
     name: 'icelandicGovernmentInstitutionsMinistries',
     nullable: true,
@@ -47,6 +49,7 @@ export class InvoicePaymentsGroupsResolver {
     return this.invoiceService.getMinistries(input)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => SupplierCollection, {
     name: 'icelandicGovernmentInstitutionsSuppliers',
     nullable: true,
@@ -59,6 +62,7 @@ export class InvoicePaymentsGroupsResolver {
     return this.invoiceService.getSuppliers(input)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => DebtorCollection, {
     name: 'icelandicGovernmentInstitutionsDebtors',
     nullable: true,
@@ -71,6 +75,7 @@ export class InvoicePaymentsGroupsResolver {
     return this.invoiceService.getDebtors(input)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => InvoicePaymentTypeCollection, {
     name: 'icelandicGovernmentInstitutionsInvoicePaymentTypes',
     nullable: true,
@@ -83,6 +88,7 @@ export class InvoicePaymentsGroupsResolver {
     return this.invoiceService.getInvoicePaymentTypes(input)
   }
 
+  @CacheControl(defaultCache)
   @Query(() => InvoicePaymentTypeGroupCollection, {
     name: 'icelandicGovernmentInstitutionsInvoicePaymentTypeGroups',
     nullable: true,

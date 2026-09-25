@@ -13,6 +13,12 @@ export const mobileRow = style({
   },
 })
 
+export const mobileRowBeforeFooter = style({
+  '::after': {
+    display: 'none',
+  },
+})
+
 export const line = style({
   borderLeft: `2px solid ${theme.color.blue400}`,
   width: 0,

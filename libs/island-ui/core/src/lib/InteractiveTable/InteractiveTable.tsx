@@ -70,6 +70,7 @@ type BaseInteractiveTableProps<TData extends object> = {
   defaultSorting?: SortingState
   srCaption?: string
   sortHint?: string
+  loadingLabel?: string
   meta?: TableMeta<TData>
   cellBox?: {
     header?: Omit<UseBoxStylesProps, 'component'>
@@ -78,8 +79,9 @@ type BaseInteractiveTableProps<TData extends object> = {
   }
 }
 
-export type InteractiveTableProps<TData extends object> =
-  BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
+export type InteractiveTableProps<
+  TData extends object
+> = BaseInteractiveTableProps<TData> & (WithExpander<TData> | WithoutExpander)
 
 export const InteractiveTable = <TData extends object>({
   columns: providedColumns,
@@ -98,6 +100,7 @@ export const InteractiveTable = <TData extends object>({
   defaultSorting,
   srCaption = 'Table with sortable columns.',
   sortHint = 'Activate to sort.',
+  loadingLabel = 'Loading…',
   meta,
   cellBox,
 }: InteractiveTableProps<TData>) => {
@@ -279,7 +282,15 @@ export const InteractiveTable = <TData extends object>({
         {loading ? (
           <tr>
             <td colSpan={desktopColumnCount}>
-              <Box padding={4} display="flex" justifyContent="center">
+              <Box
+                padding={4}
+                display="flex"
+                justifyContent="center"
+                aria-busy="true"
+              >
+                <span role="status" className={helperStyles.srOnly}>
+                  {loadingLabel}
+                </span>
                 <LoadingDots />
               </Box>
             </td>
@@ -503,7 +514,15 @@ export const InteractiveTable = <TData extends object>({
   const mobileView = (
     <Box>
       {loading ? (
-        <Box padding={4} display="flex" justifyContent="center">
+        <Box
+          padding={4}
+          display="flex"
+          justifyContent="center"
+          aria-busy="true"
+        >
+          <span role="status" className={helperStyles.srOnly}>
+            {loadingLabel}
+          </span>
           <LoadingDots />
         </Box>
       ) : (
@@ -513,7 +532,7 @@ export const InteractiveTable = <TData extends object>({
               <Text color="dark400">{emptyMessage}</Text>
             </Box>
           )}
-          {table.getRowModel().rows.map((row, rowIndex) => {
+          {table.getRowModel().rows.map((row, rowIndex, rows) => {
             const titleCell = row
               .getVisibleCells()
               .find((c) => c.column.id === mobileTitleKey)
@@ -530,7 +549,10 @@ export const InteractiveTable = <TData extends object>({
               <Box
                 key={row.id}
                 background={isExpanded || isCollapsing ? 'blue100' : undefined}
-                className={styles.mobileRow}
+                className={cn(styles.mobileRow, {
+                  [styles.mobileRowBeforeFooter]:
+                    hasFooter && rowIndex === rows.length - 1,
+                })}
                 position="relative"
                 paddingTop={rowIndex > 0 ? 5 : 3}
                 paddingBottom={3}
@@ -559,7 +581,7 @@ export const InteractiveTable = <TData extends object>({
                   ) : (
                     <Text
                       variant="h4"
-                      as="h2"
+                      as="h4"
                       color="blue400"
                       id={
                         mobileTitleKey
@@ -698,12 +720,14 @@ export const InteractiveTable = <TData extends object>({
                   key={footerGroup.id}
                   borderTopWidth="standard"
                   borderColor="blue200"
+                  paddingLeft={2}
+                  paddingRight={2}
                   paddingTop={3}
                   paddingBottom={3}
                 >
                   {titleHeader?.column.columnDef.footer !== undefined && (
                     <Box marginBottom={1}>
-                      <Text variant="h4" as="h2" color="blue400">
+                      <Text variant="h4" as="h4" color="blue400">
                         {flexRender(
                           titleHeader.column.columnDef.footer,
                           titleHeader.getContext(),

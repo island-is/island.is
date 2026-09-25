@@ -9,6 +9,7 @@ import {
   parseAsString,
   parseAsStringLiteral,
   useQueryState,
+  useQueryStates,
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
@@ -17,8 +18,6 @@ import {
   OnChangeFn,
   Pagination,
   SortingState,
-  Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import {
@@ -181,6 +180,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateFrom: new Date(initialAppliedFilters.dateFrom),
     dateTo: new Date(initialAppliedFilters.dateTo),
   }))
+  const [draftFilters, setDraftFilters] = useState<AppliedFilters>(
+    appliedFilters,
+  )
 
   const latestInvoiceGroupsData = invoiceGroupsData ?? previousInvoiceGroupsData
   const hasInvoiceGroupsError =
@@ -196,38 +198,24 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const totalPayments = invoiceGroups?.totalPaymentsCount ?? 0
   const totalPaymentsSum = invoiceGroups?.totalPaymentsSum
 
-  const [dateRangeEnd, setDateRangeEnd] = useQueryState(
-    'dateRangeEnd',
-    parseAsIsoDateTime.withDefault(initialDates.dateTo),
-  )
-  const [dateRangeStart, setDateRangeStart] = useQueryState(
-    'dateRangeStart',
-    parseAsIsoDateTime.withDefault(initialDates.dateFrom),
-  )
-  const [invoicePaymentTypes, setInvoiceTypes] = useQueryState(
-    'invoicePaymentTypes',
-    parseAsArrayOf(parseAsString),
-  )
-  const [suppliers, setSuppliers] = useQueryState(
-    'suppliers',
-    parseAsArrayOf(parseAsString),
-  )
-  const [debtors, setDebtors] = useQueryState(
-    'debtors',
-    parseAsArrayOf(parseAsString),
-  )
-  const [ministries, setMinistries] = useQueryState(
-    'ministries',
-    parseAsArrayOf(parseAsString),
-  )
+  const [, setUrlFilters] = useQueryStates({
+    dateRangeStart: parseAsIsoDateTime,
+    dateRangeEnd: parseAsIsoDateTime,
+    invoicePaymentTypes: parseAsArrayOf(parseAsString),
+    suppliers: parseAsArrayOf(parseAsString),
+    debtors: parseAsArrayOf(parseAsString),
+    ministries: parseAsArrayOf(parseAsString),
+  })
 
-  const { fetchPage: fetchMinistriesPage, selectedItems: ministriesItems } =
-    useAsyncFilterSource(
-      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
-      extractMinistries,
-      mapMinistry,
-      ministries,
-    )
+  const {
+    fetchPage: fetchMinistriesPage,
+    selectedItems: ministriesItems,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+    extractMinistries,
+    mapMinistry,
+    draftFilters.ministries,
+  )
 
   const mapSupplierWithTooltip = useCallback(
     (supplier: Parameters<typeof mapSupplier>[0]) =>
@@ -235,28 +223,32 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     [formatMessage],
   )
 
-  const { fetchPage: fetchSuppliersPage, selectedItems: suppliersItems } =
-    useAsyncFilterSource(
-      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
-      extractSuppliers,
-      mapSupplierWithTooltip,
-      suppliers,
-    )
+  const {
+    fetchPage: fetchSuppliersPage,
+    selectedItems: suppliersItems,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+    extractSuppliers,
+    mapSupplierWithTooltip,
+    draftFilters.suppliers,
+  )
 
-  const { fetchPage: fetchDebtorsPage, selectedItems: debtorsItems } =
-    useAsyncFilterSource(
-      GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
-      extractDebtors,
-      mapDebtor,
-      debtors,
-    )
+  const {
+    fetchPage: fetchDebtorsPage,
+    selectedItems: debtorsItems,
+  } = useAsyncFilterSource(
+    GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+    extractDebtors,
+    mapDebtor,
+    draftFilters.debtors,
+  )
 
   const {
     fetchPage: fetchInvoicePaymentTypeGroupsPage,
     selected: selectedInvoicePaymentTypeGroups,
     selectedItems: invoicePaymentTypeGroupItems,
     toPaymentTypeCodes,
-  } = useInvoicePaymentTypeGroupFilter(invoicePaymentTypes)
+  } = useInvoicePaymentTypeGroupFilter(draftFilters.paymentTypeIds)
 
   const totalHits = totalCount
 
@@ -304,6 +296,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const runInvoiceGroupsQuery = useCallback(
     (page: number) => {
+      setDraftFilters(appliedFilters)
       setCurrentPage(page)
       getInvoiceGroups({
         variables: { input: buildInput(appliedFilters, page) },
@@ -312,31 +305,30 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     [appliedFilters, buildInput, getInvoiceGroups, setCurrentPage],
   )
 
-  const applyFilters = useCallback(() => {
-    const nextFilters: AppliedFilters = {
-      dateFrom: dateRangeStart ?? initialDates.dateFrom,
-      dateTo: dateRangeEnd ?? initialDates.dateTo,
-      debtors: debtors ?? undefined,
-      suppliers: suppliers ?? undefined,
-      ministries: ministries ?? undefined,
-      paymentTypeIds: invoicePaymentTypes ?? undefined,
-    }
+  const applyFilters = useCallback(
+    (nextFilters: AppliedFilters) => {
+      const isDefaultRange =
+        nextFilters.dateFrom.getTime() === initialDates.dateFrom.getTime() &&
+        nextFilters.dateTo.getTime() === initialDates.dateTo.getTime()
 
-    setAppliedFilters(nextFilters)
-    setCurrentPage(1)
-    getInvoiceGroups({ variables: { input: buildInput(nextFilters, 1) } })
-  }, [
-    buildInput,
-    getInvoiceGroups,
-    setCurrentPage,
-    debtors,
-    suppliers,
-    ministries,
-    invoicePaymentTypes,
-    dateRangeStart,
-    dateRangeEnd,
-    initialDates,
-  ])
+      setAppliedFilters(nextFilters)
+      setUrlFilters({
+        dateRangeStart: isDefaultRange ? null : nextFilters.dateFrom,
+        dateRangeEnd: isDefaultRange ? null : nextFilters.dateTo,
+        invoicePaymentTypes: nextFilters.paymentTypeIds?.length
+          ? nextFilters.paymentTypeIds
+          : null,
+        suppliers: nextFilters.suppliers?.length ? nextFilters.suppliers : null,
+        debtors: nextFilters.debtors?.length ? nextFilters.debtors : null,
+        ministries: nextFilters.ministries?.length
+          ? nextFilters.ministries
+          : null,
+      })
+      setCurrentPage(1)
+      getInvoiceGroups({ variables: { input: buildInput(nextFilters, 1) } })
+    },
+    [buildInput, getInvoiceGroups, initialDates, setCurrentPage, setUrlFilters],
+  )
 
   const isInitialMount = useRef(true)
   useEffect(() => {
@@ -353,12 +345,12 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }
 
   const onResetFilter = () => {
-    setDateRangeStart(null)
-    setDateRangeEnd(null)
-    setInvoiceTypes(null)
-    setSuppliers(null)
-    setDebtors(null)
-    setMinistries(null)
+    const defaultFilters: AppliedFilters = {
+      dateFrom: initialDates.dateFrom,
+      dateTo: initialDates.dateTo,
+    }
+    setDraftFilters(defaultFilters)
+    applyFilters(defaultFilters)
   }
 
   const hitsMessage = useMemo(() => {
@@ -401,41 +393,50 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   }, [formatMessage, totalPaymentsSum, totalPayments])
 
   const onSearchFilterUpdate = (categoryId: string, values?: Array<string>) => {
-    const filteredValues = values?.length ? [...values] : null
+    const filteredValues = values?.length ? [...values] : undefined
     switch (categoryId) {
       case 'dateRange': {
-        const dateStart = filteredValues?.[0]
-          ? new Date(filteredValues[0])
-          : null
-        const dateEnd = filteredValues?.[1] ? new Date(filteredValues[1]) : null
-
-        setDateRangeStart(dateStart)
-        setDateRangeEnd(dateEnd)
+        setDraftFilters((prev) => ({
+          ...prev,
+          dateFrom: filteredValues?.[0]
+            ? new Date(filteredValues[0])
+            : initialDates.dateFrom,
+          dateTo: filteredValues?.[1]
+            ? new Date(filteredValues[1])
+            : initialDates.dateTo,
+        }))
         break
       }
       case 'invoicePaymentTypes': {
-        const codes = filteredValues ? toPaymentTypeCodes(filteredValues) : null
-        setInvoiceTypes(codes?.length ? codes : null)
+        const codes = filteredValues
+          ? toPaymentTypeCodes(filteredValues)
+          : undefined
+        setDraftFilters((prev) => ({
+          ...prev,
+          paymentTypeIds: codes?.length ? codes : undefined,
+        }))
         break
       }
       case 'suppliers': {
-        setSuppliers(filteredValues)
+        setDraftFilters((prev) => ({ ...prev, suppliers: filteredValues }))
         break
       }
       case 'debtors': {
-        setDebtors(filteredValues)
         // Buyers (debtors) and ministries are mutually exclusive — picking
         // one clears the other.
-        if (filteredValues) {
-          setMinistries(null)
-        }
+        setDraftFilters((prev) => ({
+          ...prev,
+          debtors: filteredValues,
+          ministries: filteredValues ? undefined : prev.ministries,
+        }))
         break
       }
       case 'ministries': {
-        if (filteredValues) {
-          setDebtors(null)
-        }
-        setMinistries(filteredValues)
+        setDraftFilters((prev) => ({
+          ...prev,
+          ministries: filteredValues,
+          debtors: filteredValues ? undefined : prev.debtors,
+        }))
         break
       }
     }
@@ -443,10 +444,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const filterSearchState = {
     invoicePaymentTypes: selectedInvoicePaymentTypeGroups,
-    suppliers: suppliers ?? undefined,
-    debtors: debtors ?? undefined,
-    ministries: ministries ?? undefined,
-    dateRange: [dateRangeStart.toISOString(), dateRangeEnd.toISOString()],
+    suppliers: draftFilters.suppliers,
+    debtors: draftFilters.debtors,
+    ministries: draftFilters.ministries,
+    dateRange: [
+      draftFilters.dateFrom.toISOString(),
+      draftFilters.dateTo.toISOString(),
+    ],
   }
 
   const filterCategories = [
@@ -454,13 +458,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       type: 'date' as const,
       id: 'dateRange',
       label: formatMessage(m.search.range),
-      valueFrom: dateRangeStart,
-      valueTo: dateRangeEnd,
+      valueFrom: draftFilters.dateFrom,
+      valueTo: draftFilters.dateTo,
       maxRangeDays: MAX_DATE_RANGE_DAYS,
       maxSelectableDate: initialDates.dateTo,
       isActive:
-        dateRangeStart.getTime() !== initialDates.dateFrom.getTime() ||
-        dateRangeEnd.getTime() !== initialDates.dateTo.getTime(),
+        draftFilters.dateFrom.getTime() !== initialDates.dateFrom.getTime() ||
+        draftFilters.dateTo.getTime() !== initialDates.dateTo.getTime(),
     },
     {
       type: 'asyncSelect' as const,
@@ -482,7 +486,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       label: formatMessage(m.search.types),
       fetchPage: fetchInvoicePaymentTypeGroupsPage,
       selectedItems: invoicePaymentTypeGroupItems,
-      initiallyExpanded: (invoicePaymentTypes?.length ?? 0) > 0,
+      initiallyExpanded: (draftFilters.paymentTypeIds?.length ?? 0) > 0,
     },
     {
       type: 'asyncSelect' as const,
@@ -536,7 +540,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       description={formatMessage(m.overview.description)}
       featuredImage={{
         src: formatMessage(m.overview.featuredImage),
-        alt: formatMessage(m.overview.featuredImageAlt),
       }}
       header={{
         breadcrumbs: breadcrumbItems,
@@ -561,24 +564,18 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           hiddenOnTablet
           paddingTop={[3, 3, 8]}
           sidebarContent={
-            <Box className={styles.sidebarScroller}>
-              <Stack space={3}>
-                <Text variant="h4" as="h4" paddingY={1}>
-                  {formatMessage(m.overview.searchTitle)}
-                </Text>
-                <OverviewFilter
-                  onSearchUpdate={onSearchFilterUpdate}
-                  onReset={onResetFilter}
-                  onApply={applyFilters}
-                  applyDisabled={invoiceGroupsLoading}
-                  url={baseUrl}
-                  hits={totalPayments}
-                  locale={locale}
-                  searchState={filterSearchState}
-                  categories={filterCategories}
-                />
-              </Stack>
-            </Box>
+            <OverviewFilter
+              title={formatMessage(m.overview.searchTitle)}
+              onSearchUpdate={onSearchFilterUpdate}
+              onReset={onResetFilter}
+              onApply={() => applyFilters(draftFilters)}
+              applyDisabled={invoiceGroupsLoading}
+              url={baseUrl}
+              hits={totalPayments}
+              locale={locale}
+              searchState={filterSearchState}
+              categories={filterCategories}
+            />
           }
         >
           <Box marginLeft={[0, 0, 0, 2]}>
@@ -588,14 +585,24 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               alignItems="flexEnd"
               marginBottom={2}
             >
-              <Box display={['none', 'none', 'block']}>
+              <Box
+                display={['none', 'none', 'block']}
+                className={
+                  hasInvoiceGroupsError ? styles.hiddenLine : undefined
+                }
+              >
                 <MarkdownText>
                   {invoiceGroupsLoading
                     ? formatMessage(m.search.fetchingResults)
                     : hitsMessage}
                 </MarkdownText>
               </Box>
-              <Box display={['block', 'block', 'none']}>
+              <Box
+                display={['block', 'block', 'none']}
+                className={
+                  hasInvoiceGroupsError ? styles.hiddenLine : undefined
+                }
+              >
                 <MarkdownText>
                   {invoiceGroupsLoading
                     ? formatMessage(m.search.fetchingResults)
@@ -619,7 +626,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                 <OverviewFilter
                   onSearchUpdate={onSearchFilterUpdate}
                   onReset={onResetFilter}
-                  onApply={applyFilters}
+                  onApply={() => applyFilters(draftFilters)}
                   applyDisabled={invoiceGroupsLoading}
                   url={baseUrl}
                   hits={totalPayments}
@@ -764,8 +771,7 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const sortIdInput = sortIdParser.parseServerSide(query?.['sort'])
   const sortDirectionInput = sortDirectionParser.parseServerSide(query?.['dir'])
 
-  let invoiceGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups | null =
-    null
+  let invoiceGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups | null = null
   let initialError = false
   try {
     const { data } = await apolloClient.query<

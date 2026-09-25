@@ -1,4 +1,3 @@
-import { Audit } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { Args, Query, Resolver } from '@nestjs/graphql'
@@ -8,7 +7,6 @@ import { BypassAuth } from '@island.is/auth-nest-tools'
 import { InvoicePaymentsGroupInput } from '../dtos/getInvoicePaymentsGroup.input'
 
 @Resolver(() => InvoicePaymentsGroup)
-@Audit({ namespace: '@island.is/api/icelandic-government-institutions' })
 @CodeOwner(CodeOwners.Hugsmidjan)
 export class InvoicePaymentsGroupResolver {
   constructor(private readonly invoiceService: InvoicesService) {}

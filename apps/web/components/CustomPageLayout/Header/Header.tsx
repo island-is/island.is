@@ -111,7 +111,7 @@ export const CustomPageLayoutHeader = (props: CustomPageLayoutHeaderProps) => {
     return (
       <Box marginTop={4}>
         {title && (
-          <Text variant="eyebrow" as="h3" paddingBottom={1} color="purple400">
+          <Text variant="eyebrow" as="h2" paddingBottom={1} color="purple400">
             {title}
           </Text>
         )}

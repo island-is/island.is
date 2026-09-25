@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator'
 import { SortDirections } from './sortEnums'
@@ -36,6 +37,7 @@ export abstract class SearchListInput extends PaginationInput() {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  @MaxLength(100)
   search?: string
 
   @Field(() => [String], {

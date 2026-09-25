@@ -11,6 +11,7 @@ import {
 } from '../../gen/fetch'
 import { SearchRequestDto } from './dtos/searchRequest.dto'
 import { InvoiceRequestDto } from './dtos/invoiceRequest.dto'
+import { dataOr404Null } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 import { SuppliersDto } from './dtos/suppliers.dto'
 import { mapSupplierDto } from './dtos/supplier.dto'
@@ -67,8 +68,8 @@ export class GovernmentInvoicesClientService {
   public async getOpenInvoicePaymentsGroup(
     requestParams: InvoiceRequestDto,
   ): Promise<InvoicePaymentsGroupDto | null> {
-    const { data } =
-      await getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
+    const data = await dataOr404Null(
+      getV1OpeninvoicesInvoicesBySupplierLegalIdByErpLegalEntityId({
         path: {
           supplierLegalId: requestParams.supplierLegalId,
           erpLegalEntityId: requestParams.erpLegalEntityId,
@@ -83,7 +84,8 @@ export class GovernmentInvoicesClientService {
           paymentTypeIds: requestParams.paymentTypeIds,
           ministries: requestParams.ministries,
         },
-      })
+      }),
+    )
 
     if (!data) {
       return null

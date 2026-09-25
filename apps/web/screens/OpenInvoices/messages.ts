@@ -22,10 +22,6 @@ export const m = {
       defaultMessage:
         'https://images.ctfassets.net/8k0h54kbe6bj/3GD65AzjZTv6TEguWRWyKQ/7d7ca644d742d5ded3f5a7cac84169c2/skjaldarmerki-bla-linuteikning.svg',
     },
-    featuredImageAlt: {
-      id: 'web.openinvoices:overview.featuredImageAlt',
-      defaultMessage: 'Mynd af skrifborði og skrifborðsstól',
-    },
     supplier: {
       id: 'web.openinvoices:overview.supplier',
       defaultMessage: 'Seljandi',
@@ -120,6 +116,10 @@ export const m = {
     clearFilters: {
       id: 'web.openinvoices:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
+    },
+    removeFilter: {
+      id: 'web.openinvoices:search.removeFilter',
+      defaultMessage: 'Fjarlægja {label} úr síu: {category}',
     },
     openFilter: {
       id: 'web.openinvoices:search.openFilter',

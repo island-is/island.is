@@ -1,5 +1,10 @@
 import React, { createContext, FC, ReactNode } from 'react'
-import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
+import {
+  Dialog,
+  DialogDisclosure,
+  useDialogStore,
+  useStoreState,
+} from '@ariakit/react'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
@@ -113,7 +118,8 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   onFilterResult,
   fluidDisclosure = false,
 }) => {
-  const dialog = useDialogState({ modal: true })
+  const dialog = useDialogStore()
+  const dialogOpen = useStoreState(dialog, 'open')
   const popover = usePopoverState({
     placement: 'bottom-start',
     unstable_flip: popoverFlip,
@@ -122,7 +128,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   const hasFilterInput = !!filterInput
 
-  usePreventBodyScroll(dialog.visible && variant === 'dialog')
+  usePreventBodyScroll(dialogOpen && variant === 'dialog')
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
@@ -253,24 +259,21 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   const dialogContent = () => (
     <>
-      <DialogDisclosure
-        {...dialog}
-        tabIndex={usePopoverDiscloureButtonStyling ? -1 : undefined}
-        className={
-          usePopoverDiscloureButtonStyling ? undefined : styles.dialogDisclosure
-        }
-      >
-        {usePopoverDiscloureButtonStyling ? (
-          <Box
-            background="white"
-            borderRadius="large"
-            width={fluidDisclosure ? 'full' : undefined}
+      {usePopoverDiscloureButtonStyling ? (
+        <Box
+          background="white"
+          borderRadius="large"
+          width={fluidDisclosure ? 'full' : undefined}
+        >
+          <DialogDisclosure
+            store={dialog}
+            render={<Button variant="utility" icon="filter" nowrap />}
           >
-            <Button as="span" variant="utility" icon="filter" nowrap>
-              {labelOpen}
-            </Button>
-          </Box>
-        ) : (
+            {labelOpen}
+          </DialogDisclosure>
+        </Box>
+      ) : (
+        <DialogDisclosure store={dialog} className={styles.dialogDisclosure}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
@@ -294,10 +297,10 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               unfocusable
             />
           </Box>
-        )}
-      </DialogDisclosure>
+        </DialogDisclosure>
+      )}
       <Dialog
-        {...dialog}
+        store={dialog}
         preventBodyScroll={false}
         aria-label={labelTitle ?? labelOpen}
       >
@@ -326,7 +329,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                 colorScheme="light"
                 icon="close"
                 iconType="outline"
-                onClick={dialog.hide}
+                onClick={() => dialog.hide()}
                 title={labelClose}
               />
             </Box>
@@ -344,7 +347,13 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             paddingBottom={3}
           >
             <Stack space={2} dividers={false} align="center">
-              <Button size="small" onClick={dialog.hide}>
+              <Button
+                size="small"
+                onClick={() => {
+                  onFilterResult?.()
+                  dialog.hide()
+                }}
+              >
                 {labelResult} ({resultCount})
               </Button>
               <Button
@@ -391,33 +400,30 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
       >
         {filterInputContent}
 
-        <FilterDrawerAriakit
-          initialVisibility={false}
-          ariaLabel={''}
-          labelShowResult={labelResult}
-          labelClearAll={labelClearAll}
-          labelTitle={labelTitle}
-          onFilterClear={onFilterClear}
-          onFilterResult={onFilterResult}
-          disclosure={
-            <Box
-              background="white"
-              marginTop={'auto'}
-              borderRadius="large"
-              width={fluidDisclosure ? 'full' : undefined}
-              tabIndex={-1}
-              className={filterCount ? styles.filterCountButton : undefined}
-            >
-              {filterCount ? (
-                <Button
-                  as="span"
-                  variant="utility"
-                  icon={!filterCount ? 'filter' : undefined}
-                  fluid
-                  nowrap
-                >
-                  {labelOpen}
-
+        <Box
+          background="white"
+          marginTop={'auto'}
+          borderRadius="large"
+          width={fluidDisclosure ? 'full' : undefined}
+          className={filterCount ? styles.filterCountButton : undefined}
+        >
+          <FilterDrawerAriakit
+            initialVisibility={false}
+            ariaLabel={''}
+            labelShowResult={labelResult}
+            labelClearAll={labelClearAll}
+            labelTitle={labelTitle}
+            onFilterClear={onFilterClear}
+            onFilterResult={onFilterResult}
+            disclosure={
+              <Button
+                variant="utility"
+                icon={filterCount ? undefined : 'filter'}
+                fluid
+                nowrap
+              >
+                {labelOpen}
+                {!!filterCount && (
                   <Box
                     as="span"
                     background="blue400"
@@ -433,23 +439,19 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                       {filterCountNumber}
                     </Text>
                   </Box>
-                </Button>
-              ) : (
-                <Button as="span" variant="utility" icon="filter" fluid nowrap>
-                  {labelOpen}
-                </Button>
-              )}
+                )}
+              </Button>
+            }
+          >
+            <Box width="full" tabIndex={-1}>
+              <Box className={styles.mobilePopoverContainer}>
+                <Stack space={4} dividers={false}>
+                  {children}
+                </Stack>
+              </Box>
             </Box>
-          }
-        >
-          <Box width="full" tabIndex={-1}>
-            <Box className={styles.mobilePopoverContainer}>
-              <Stack space={4} dividers={false}>
-                {children}
-              </Stack>
-            </Box>
-          </Box>
-        </FilterDrawerAriakit>
+          </FilterDrawerAriakit>
+        </Box>
       </Box>
     )
   }

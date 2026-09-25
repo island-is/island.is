@@ -13,7 +13,6 @@ interface Props {
   description?: string
   featuredImage?: {
     src: string
-    alt: string
   }
   header?: Omit<
     Partial<CustomPageLayoutHeaderProps>,
@@ -46,7 +45,7 @@ export const OpenInvoicesWrapper = (props: Props) => {
         offset={props.header?.offset}
         featuredImage={
           props.featuredImage
-            ? { ...props.featuredImage, size: 'sm' }
+            ? { ...props.featuredImage, alt: '', size: 'sm' }
             : undefined
         }
         breadcrumbs={

@@ -6,9 +6,6 @@ export const mapSuppliers = (data: SuppliersDto): SupplierCollection => {
   const suppliers: Supplier[] = data.suppliers.map((supplier) => ({
     id: supplier.legalId,
     name: supplier.name,
-    isConfidential: supplier.isConfidential,
-    isPrivatePerson: supplier.isPrivatePerson,
-    isPrivatePersonProxy: supplier.isPrivatePersonProxy,
   }))
 
   return {

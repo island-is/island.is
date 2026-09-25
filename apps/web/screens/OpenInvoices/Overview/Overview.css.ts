@@ -1,7 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
-import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 
 export const searchInput = style({
   maxWidth: '475px',
@@ -28,11 +27,4 @@ export const loader = style({
 
 export const hiddenLine = style({
   visibility: 'hidden',
-})
-
-export const sidebarScroller = style({
-  maxHeight: `calc(100dvh - ${STICKY_NAV_HEIGHT + theme.spacing[1]}px)`,
-  overflowY: 'auto',
-  overflowX: 'hidden',
-  paddingBottom: theme.spacing[4],
 })

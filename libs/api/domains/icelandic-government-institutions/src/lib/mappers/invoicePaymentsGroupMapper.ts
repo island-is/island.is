@@ -22,9 +22,6 @@ export const mapInvoicePaymentsGroup = (
     supplier: {
       id: data.supplier.legalId,
       name: data.supplier.name,
-      isConfidential: data.supplier.isConfidential,
-      isPrivatePerson: data.supplier.isPrivatePerson,
-      isPrivatePersonProxy: data.supplier.isPrivatePersonProxy,
     },
     debtor: {
       id: String(data.debtor.erpLegalEntityId),
