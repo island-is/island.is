@@ -129,6 +129,7 @@ const template: ApplicationTemplate<
                 ChildSafetyLevelsApi,
                 PostalCodesApi,
                 ChildUnknownNationalIdStatesApi,
+                SchoolTypesApi,
               ],
               delete: true,
             },

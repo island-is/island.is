@@ -6,11 +6,13 @@ import {
   ChildNationalIdTypeCode,
   KnowsNationalId,
   LanguageEnvironmentOptions,
+  Roles,
   SCHOOL_TYPES,
   SHOW_LANGUAGE_SECTION_TYPES,
 } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
+import { getApplicantRole } from './roleUtils'
 import { ParentKey } from './types'
 
 export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
@@ -44,6 +46,14 @@ export const shouldShowNonPrimarySchoolAgeChildInfo = (answers: FormValue) => {
   )
 }
 
+export const shouldShowAdultPersonalApplicantChildInfo = (
+  answers: FormValue,
+  userNationalId?: string,
+) =>
+  shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+  !!userNationalId &&
+  getApplicantRole(userNationalId) === Roles.ADULT_PERSONAL_APPLICANT
+
 export const isUnborn = (answers: FormValue) =>
   getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.UNBORN
 
@@ -57,11 +67,11 @@ export const doesNotKnowParentIds =
   (parentKey: ParentKey) => (answers: FormValue) =>
     getApplicationAnswers(answers)[parentKey]?.knowsNationalId === NO
 
-export const isSchoolType = (answers: FormValue) =>
-  SCHOOL_TYPES.includes(getApplicationAnswers(answers).memmEducationType ?? '')
+export const isSchoolType = (educationType?: string) =>
+  SCHOOL_TYPES.includes(educationType ?? '')
 
-export const isDayCareProvider = (answers: FormValue) =>
-  getApplicationAnswers(answers).memmEducationType === 'Dagforeldri'
+export const isDayCareProvider = (educationType?: string) =>
+  educationType === 'Dagforeldri'
 
 export const showLanguageSection = (answers: FormValue) =>
   SHOW_LANGUAGE_SECTION_TYPES.includes(

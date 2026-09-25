@@ -152,20 +152,20 @@ export const prerequisitesMessages = {
       defaultMessage: 'Barn',
       description: 'Child',
     },
-    school: {
-      id: 'cpn.application:prerequisites.child.school',
+    education: {
+      id: 'cpn.application:prerequisites.child.education',
       defaultMessage: 'Í hvaða dagvistun eða skóla er barnið?',
-      description: 'Child school',
+      description: 'Child education',
     },
-    schoolType: {
-      id: 'cpn.application:prerequisites.child.schoolType',
+    educationType: {
+      id: 'cpn.application:prerequisites.child.educationType',
       defaultMessage: 'Dagvistun eða skóli',
-      description: 'Child school type',
+      description: 'Child education type',
     },
-    schoolTypePlaceholder: {
-      id: 'cpn.application:prerequisites.child.schoolTypePlaceholder',
+    educationTypePlaceholder: {
+      id: 'cpn.application:prerequisites.child.educationTypePlaceholder',
       defaultMessage: 'Veldu dagvistun eða skóla',
-      description: 'Child school type placeholder',
+      description: 'Child education type placeholder',
     },
     startNotification: {
       id: 'cpn.application:prerequisites.child.startNotification',

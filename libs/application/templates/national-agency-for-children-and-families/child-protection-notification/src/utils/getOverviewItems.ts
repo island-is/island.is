@@ -29,7 +29,6 @@ import {
   IS,
   LanguageEnvironmentOptions,
   RISK_TO_UNBORN,
-  Roles,
 } from '../utils/constants'
 import {
   getAreParentsInformedTitle,
@@ -46,7 +45,7 @@ import {
   isKnowsNationalId,
   isNoNationalId,
   isSchoolType,
-  shouldShowNonPrimarySchoolAgeChildInfo,
+  shouldShowAdultPersonalApplicantChildInfo,
   showDisabilityService,
   showPreferredLanguage,
   showWellbeingContactAndManagerQuestions,
@@ -55,7 +54,6 @@ import {
 } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
-import { getApplicantRole } from './roleUtils'
 import { Parent } from './types'
 
 // TODO: Replace with values from barnaverndargatt API when available.
@@ -298,13 +296,12 @@ export const getChildWithNationalIdItems = (
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
-    childSchoolType,
-    childSchoolName,
+    childEducationType,
+    childEducationSchoolName,
+    childEducationCaregiverName,
     childLanguage,
     childNeedsInterpreter,
   } = getApplicationAnswers(answers)
-
-  const role = getApplicantRole(userNationalId)
 
   return [
     {
@@ -356,21 +353,30 @@ export const getChildWithNationalIdItems = (
                 },
               ]
             : []),
-          ...(shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
-          role === Roles.ADULT_PERSONAL_APPLICANT
+          ...(shouldShowAdultPersonalApplicantChildInfo(answers, userNationalId)
             ? [
                 {
                   width: 'half' as const,
-                  keyText: prerequisitesMessages.child.schoolType,
-                  valueText: childSchoolType ?? '',
+                  keyText: prerequisitesMessages.child.educationType,
+                  valueText: childEducationType ?? '',
                   hideIfEmpty: true,
                 },
-                ...(childSchoolType
+                ...(isSchoolType(childEducationType)
                   ? [
                       {
                         width: 'half' as const,
                         keyText: memmMessages.education.schoolName,
-                        valueText: childSchoolName ?? '',
+                        valueText: childEducationSchoolName ?? '',
+                        hideIfEmpty: true,
+                      },
+                    ]
+                  : []),
+                ...(isDayCareProvider(childEducationType)
+                  ? [
+                      {
+                        width: 'half' as const,
+                        keyText: coreMessages.name,
+                        valueText: childEducationCaregiverName ?? '',
                         hideIfEmpty: true,
                       },
                     ]
@@ -689,7 +695,8 @@ export const getMemmEducationItems = (
     memmEducationCaregiverName,
   } = getApplicationAnswers(answers)
 
-  const hasNameField = isSchoolType(answers) || isDayCareProvider(answers)
+  const hasNameField =
+    isSchoolType(memmEducationType) || isDayCareProvider(memmEducationType)
 
   return [
     {
@@ -698,7 +705,7 @@ export const getMemmEducationItems = (
       valueText: memmEducationType ?? '',
       hideIfEmpty: true,
     },
-    ...(isSchoolType(answers)
+    ...(isSchoolType(memmEducationType)
       ? [
           {
             width: 'half' as const,
@@ -708,7 +715,7 @@ export const getMemmEducationItems = (
           },
         ]
       : []),
-    ...(isDayCareProvider(answers)
+    ...(isDayCareProvider(memmEducationType)
       ? [
           {
             width: 'half' as const,
