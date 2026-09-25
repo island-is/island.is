@@ -10,6 +10,7 @@ import { AuthService } from './auth.service'
 
 const nationalId = '1234567890'
 const lawyerRegistryInfo = {
+  id: 'lawyer-registry-row',
   nationalId,
   name: 'Registry Lawyer',
   email: 'registry@example.com',
