@@ -1,18 +1,25 @@
 query GetHealthConversations(
-  $input: HealthDirectorateHealthConversationsFilterInput
+  $input: HealthDirectoratePaginatedHealthConversationsInput
 ) {
-  healthDirectorateHealthConversations(input: $input) {
-    id
-    title
-    organization {
-      ...HealthConversationOrganizationFragment
+  healthDirectoratePaginatedHealthConversations(input: $input) {
+    data {
+      id
+      title
+      organization {
+        ...HealthConversationOrganizationFragment
+      }
+      groupName
+      lastMessageSentAt
+      isStarred
+      isArchived
+      isRead
+      hasAttachment
     }
-    lastSenderGroupName
-    lastMessageSentAt
-    isStarred
-    isArchived
-    isRead
-    hasAttachment
+    totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
 

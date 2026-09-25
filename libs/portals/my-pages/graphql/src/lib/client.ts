@@ -3,6 +3,7 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
+  Reference,
 } from '@apollo/client'
 import fetch from 'cross-fetch'
 
@@ -57,6 +58,30 @@ export const client = new ApolloClient({
           authDelegations: {
             merge(_, incoming) {
               return incoming
+            },
+          },
+          // Cursor pagination: each filter combination is its own list
+          // (the cursor is left out of the key), a page with `after` is
+          // appended, and a fetch without it (page one) replaces the list.
+          healthDirectoratePaginatedHealthConversations: {
+            keyArgs: ['input', ['status', 'starred', 'search', 'limit']],
+            merge(existing, incoming, { args, readField }) {
+              if (!existing || !args?.input?.after) {
+                return incoming
+              }
+              // Rows can shift between pages when a new message arrives
+              const existingIds = new Set(
+                existing.data.map((ref: Reference) => readField('id', ref)),
+              )
+              return {
+                ...incoming,
+                data: [
+                  ...existing.data,
+                  ...incoming.data.filter(
+                    (ref: Reference) => !existingIds.has(readField('id', ref)),
+                  ),
+                ],
+              }
             },
           },
         },

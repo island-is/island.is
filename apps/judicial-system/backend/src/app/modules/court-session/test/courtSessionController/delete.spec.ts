@@ -1,23 +1,24 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { BadRequestException } from '@nestjs/common'
-
 import {
-  AppealCaseState,
-  CaseFileCategory,
-} from '@island.is/judicial-system/types'
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common'
+
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
 import { FileService } from '../../../file'
 import {
-  AppealCase,
   AppealCaseRepositoryService,
   Case,
   CaseFile,
+  CourtDocumentRepositoryService,
   CourtSession,
   CourtSessionRepositoryService,
+  CourtSessionStringRepositoryService,
 } from '../../../repository'
 
 interface Then {
@@ -25,9 +26,11 @@ interface Then {
   error: Error
 }
 
-// Deleting a court session takes its account of the session's ruling with it. A
-// ruling that was only ever pronounced orally there has nothing left holding it
-// up, so it goes too - unlike one the district court has since written up.
+// Only the latest court session can be deleted, and it is emptied first - its
+// documents return to the case, its strings go - before the row does. Deleting
+// it also takes its account of the session's ruling with it. A ruling that was
+// only ever pronounced orally there has nothing left holding it up, so it goes
+// too - unlike one the district court has since written up.
 describe('CourtSessionController - Delete', () => {
   const caseId = uuid()
   const courtSessionId = uuid()
@@ -38,6 +41,8 @@ describe('CourtSessionController - Delete', () => {
   let sessionsPronouncing: CourtSession[] = []
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
+  let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
+  let mockCourtSessionStringRepositoryService: CourtSessionStringRepositoryService
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockFileService: FileService
   let transaction: Transaction
@@ -50,6 +55,8 @@ describe('CourtSessionController - Delete', () => {
     const {
       sequelize,
       courtSessionRepositoryService,
+      courtDocumentRepositoryService,
+      courtSessionStringRepositoryService,
       appealCaseRepositoryService,
       fileService,
       courtSessionController,
@@ -62,8 +69,18 @@ describe('CourtSessionController - Delete', () => {
     )
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
+    mockCourtDocumentRepositoryService = courtDocumentRepositoryService
+    mockCourtSessionStringRepositoryService =
+      courtSessionStringRepositoryService
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockFileService = fileService
+    // Which session is the latest is read from the transaction, so the stub
+    // answers with the last of the sessions the test set up on the case.
+    ;(
+      mockCourtSessionRepositoryService.findLatestByCase as jest.Mock
+    ).mockImplementation(
+      async () => sessionsPronouncing[sessionsPronouncing.length - 1] ?? null,
+    )
     // The cleanup reads the ruling from the transaction, so the stub resolves it
     // the way the database would.
     ;(mockFileService.findByIdOrNull as jest.Mock).mockImplementation(
@@ -158,6 +175,87 @@ describe('CourtSessionController - Delete', () => {
         transaction,
       )
     })
+
+    it('should check it is the latest session against the transaction', () => {
+      expect(
+        mockCourtSessionRepositoryService.findLatestByCase,
+      ).toHaveBeenCalledWith(caseId, { transaction })
+    })
+
+    it('should empty the session before deleting it: documents, then strings, then the row', () => {
+      const removeDocuments =
+        mockCourtDocumentRepositoryService.removeAllCourtDocumentsFromCourtSession as jest.Mock
+      const deleteStrings =
+        mockCourtSessionStringRepositoryService.deleteAllForCourtSession as jest.Mock
+      const deleteRow = mockCourtSessionRepositoryService.delete as jest.Mock
+
+      expect(removeDocuments).toHaveBeenCalledWith(
+        caseId,
+        courtSessionId,
+        transaction,
+      )
+      expect(deleteStrings).toHaveBeenCalledWith(caseId, courtSessionId, {
+        transaction,
+      })
+      expect(removeDocuments.mock.invocationCallOrder[0]).toBeLessThan(
+        deleteStrings.mock.invocationCallOrder[0],
+      )
+      expect(deleteStrings.mock.invocationCallOrder[0]).toBeLessThan(
+        deleteRow.mock.invocationCallOrder[0],
+      )
+    })
+  })
+
+  // The controller checks the same rule against the guard's snapshot of the
+  // case; this is the check against the transaction's view, which is the one
+  // that holds when two requests race.
+  describe('session that is no longer the latest', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockCourtSessionRepositoryService.findLatestByCase as jest.Mock
+      ).mockResolvedValue({ id: uuid(), caseId } as CourtSession)
+
+      then = await deleteSessionPronouncing()
+    })
+
+    it('should refuse to delete the session', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe(
+        `Only the latest court session of case ${caseId} can be deleted`,
+      )
+    })
+
+    it('should touch nothing', () => {
+      expect(
+        mockCourtDocumentRepositoryService.removeAllCourtDocumentsFromCourtSession,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockCourtSessionStringRepositoryService.deleteAllForCourtSession,
+      ).not.toHaveBeenCalled()
+      expect(mockCourtSessionRepositoryService.delete).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('case has no sessions in the transaction', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockCourtSessionRepositoryService.findLatestByCase as jest.Mock
+      ).mockResolvedValue(null)
+
+      then = await deleteSessionPronouncing()
+    })
+
+    it('should refuse to delete the session', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe(
+        `Could not find court session ${courtSessionId} of case ${caseId}`,
+      )
+      expect(mockCourtSessionRepositoryService.delete).not.toHaveBeenCalled()
+    })
   })
 
   // Deleting the session would leave the appeal pointing at a ruling no court
@@ -173,15 +271,9 @@ describe('CourtSessionController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [
-          {
-            id: uuid(),
-            rulingFileId: appealedRuling.id,
-            appealState: AppealCaseState.APPEALED,
-          } as AppealCase,
-        ],
-      )
+      ;(
+        mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock
+      ).mockResolvedValue(true)
 
       then = await deleteSessionPronouncing(appealedRuling)
     })
@@ -192,6 +284,15 @@ describe('CourtSessionController - Delete', () => {
         'The ruling order pronounced in this court session has been appealed, so the court session cannot be deleted',
       )
       expect(mockCourtSessionRepositoryService.delete).not.toHaveBeenCalled()
+      expect(
+        mockCourtDocumentRepositoryService.removeAllCourtDocumentsFromCourtSession,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should check for an appeal of that ruling against the transaction', () => {
+      expect(
+        mockAppealCaseRepositoryService.existsForRulingFile,
+      ).toHaveBeenCalledWith(caseId, appealedRuling.id, { transaction })
     })
 
     it('should leave the ruling alone', () => {

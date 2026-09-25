@@ -1,16 +1,34 @@
+fragment HealthConversationOpeningWindow on HealthDirectorateHealthConversationOpeningWindow {
+  windowOpen
+  windowClose
+  isAllDay
+}
+
 fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecipient {
   nodeId
   groupId
   treatmentId
   name
-  allowsMessaging
-  messagingWindowOpen
-  messagingWindowClose
-  patientReplyWindowDays
-  canCreateConversation
-  conversationBlockedReason
-  canRequestCertificate
-  certificateBlockedReason
+  availability
+  closesAt
+  todaysWindow {
+    ...HealthConversationOpeningWindow
+  }
+  nextOpensAt {
+    date
+    windowOpen
+  }
+  openingHours {
+    weekday {
+      ...HealthConversationOpeningWindow
+    }
+    weekend {
+      ...HealthConversationOpeningWindow
+    }
+    holiday {
+      ...HealthConversationOpeningWindow
+    }
+  }
   allowedMessageTypes {
     patientInitiatedTypeCode
     title
@@ -18,7 +36,6 @@ fragment HealthConversationRecipient on HealthDirectorateHealthConversationRecip
     instructions
     isCertificate
     externalLinkUrl
-    isCurrentlyOpen
   }
 }
 

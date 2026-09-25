@@ -15,6 +15,7 @@ import {
   Answered,
   formatDate,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -39,8 +40,14 @@ const AnsweredQuestionnaire: FC = () => {
   useHealthPlausibleSwap()
 
   const { formatMessage, lang } = useLocale()
-  const [currentSubmission, setCurrentSubmission] =
-    useState<QuestionnaireSubmissionDetail>()
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState(
+    submissionId ?? '',
+  )
+
+  // The route can change submission while this component stays mounted
+  useEffect(() => {
+    setSelectedSubmissionId(submissionId ?? '')
+  }, [submissionId])
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum =
     org === 'el'
@@ -66,18 +73,6 @@ const AnsweredQuestionnaire: FC = () => {
     useGetQuestionnaireLazyQuery({ fetchPolicy: 'network-only' })
 
   useEffect(() => {
-    // Set current submission from answered questionnaire data
-    const submission = data?.getAnsweredQuestionnaire?.data[0]
-    if (submission) {
-      setCurrentSubmission({
-        id: submission.submissionId ?? '',
-        lastUpdated: submission.date ?? '',
-        isDraft: submission.isDraft ?? false,
-      } as QuestionnaireSubmissionDetail)
-    }
-  }, [data, id, submissionId])
-
-  useEffect(() => {
     getQuestionnaire({
       variables: {
         input: { id: id ?? '', organization: organization },
@@ -86,9 +81,25 @@ const AnsweredQuestionnaire: FC = () => {
     })
   }, [getQuestionnaire, id, lang, organization])
 
+  // The submissions list is the source of truth for the dropdown. Fall back
+  // to the answered response until the list has loaded.
+  const answered = data?.getAnsweredQuestionnaire?.data[0]
+  const currentSubmission: QuestionnaireSubmissionDetail | undefined =
+    questionnaireData?.questionnairesDetail?.submissions?.find(
+      (submission) => submission.id === selectedSubmissionId,
+    ) ??
+    (answered
+      ? ({
+          id: answered.submissionId ?? selectedSubmissionId,
+          lastUpdated: answered.date ?? '',
+          isDraft: answered.isDraft ?? false,
+        } as QuestionnaireSubmissionDetail)
+      : undefined)
+
   const isDraft = currentSubmission?.isDraft
 
   const handleSubmissionChange = (submissionId: string) => {
+    setSelectedSubmissionId(submissionId)
     refetch({
       input: {
         id: id ?? '',
@@ -97,11 +108,6 @@ const AnsweredQuestionnaire: FC = () => {
       },
       locale: lang,
     })
-    const selectedSubmission =
-      questionnaireData?.questionnairesDetail?.submissions?.find(
-        (submission) => submission.id === submissionId,
-      )
-    setCurrentSubmission(selectedSubmission)
   }
 
   if (!id) {
@@ -119,6 +125,10 @@ const AnsweredQuestionnaire: FC = () => {
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={
         data?.getAnsweredQuestionnaire?.data[0]?.title ??
         formatMessage(messages.questionnaire)
@@ -184,6 +194,7 @@ const AnsweredQuestionnaire: FC = () => {
             variant="utility"
             onClick={() => window.print()}
             preTextIcon="print"
+            preTextIconType="outline"
           >
             {formatMessage(m.print)}
           </Button>,

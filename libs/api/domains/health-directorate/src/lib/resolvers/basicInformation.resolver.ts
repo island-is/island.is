@@ -41,6 +41,7 @@ import { WaitlistDetail } from '.././models/waitlist.model'
 import { Waitlists } from '.././models/waitlists.model'
 import { Appointments } from '../models/appointments.model'
 import { AppointmentDetail } from '../models/appointmentDetail.model'
+import { CancelAppointmentResponse } from '../models/cancelAppointmentResponse.model'
 import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
@@ -57,7 +58,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -82,7 +83,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
-  @Scopes(ApiScope.healthOrganDonation, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
     @Args('locale', { type: () => String, nullable: true })
@@ -97,7 +98,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  @Scopes(ApiScope.healthVaccinations, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.health)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -111,7 +112,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateWaitlists',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlists(
     @Args('locale', { type: () => String, nullable: true })
@@ -126,7 +127,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateWaitlist',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthWaitlistsPageEnabled)
   getWaitlist(
     @Args('locale', { type: () => String, nullable: true })
@@ -142,7 +143,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateReferrals',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferrals(
     @Args('locale', { type: () => String, nullable: true })
@@ -157,7 +158,7 @@ export class BasicInformationResolver {
     name: 'healthDirectorateReferral',
   })
   @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthLists)
   @FeatureFlag(Features.servicePortalHealthReferralsPageEnabled)
   getReferral(
     @Args('locale', { type: () => String, nullable: true })
@@ -175,7 +176,7 @@ export class BasicInformationResolver {
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async getAppointments(
     @Args() input: HealthDirectorateAppointmentsInput,
     @CurrentUser() user: User,
@@ -189,7 +190,7 @@ export class BasicInformationResolver {
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async getAppointment(
     @Args() input: HealthDirectorateAppointmentInput,
     @CurrentUser() user: User,
@@ -199,14 +200,29 @@ export class BasicInformationResolver {
 
   @Mutation(() => Boolean, {
     name: 'healthDirectorateCancelAppointment',
+    deprecationReason:
+      'Use healthDirectorateRequestAppointmentCancellation, which reports the provider’s actual answer. Kept for deployed native app versions.',
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
-  @Scopes(ApiScope.internal, ApiScope.health)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async cancelAppointment(
     @Args() input: HealthDirectorateAppointmentInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
     return this.api.cancelAppointment(user, input)
+  }
+
+  @Mutation(() => CancelAppointmentResponse, {
+    name: 'healthDirectorateRequestAppointmentCancellation',
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
+  async requestAppointmentCancellation(
+    @Args() input: HealthDirectorateAppointmentInput,
+    @CurrentUser() user: User,
+  ): Promise<CancelAppointmentResponse> {
+    return this.api.requestAppointmentCancellation(user, input)
   }
 }

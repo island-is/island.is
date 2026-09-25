@@ -12,6 +12,7 @@ import {
 
 import { CaseRepositoryService } from '../repository'
 import { CaseTableService } from './caseTable.service'
+import { userAccessIncludes } from './caseTable.whereOptions'
 
 const prosecutionUser = (id: string): User =>
   ({
@@ -218,6 +219,31 @@ describe('CaseTableService', () => {
           matchedValue: overrides.matchedValue ?? '001-2024',
           matchedField: overrides.matchedField ?? 'policeCaseNumbers',
         }[key]),
+    })
+
+    // searchCases builds its own include list rather than going through
+    // getGlobalIncludes, so it is the one query that has to ask for the access
+    // rule's joins itself. Asserted at the caller, because a spec that only
+    // exercises the helper stays green when the call site drops it - and the
+    // query then names an alias it never joined, which Postgres rejects.
+    //
+    // Driven off the rule rather than a hard coded alias, so it keeps up if the
+    // rule starts reading another association.
+    it('joins whatever the access rule reads', async () => {
+      mockFindAll.mockResolvedValue([])
+      const user = courtOfAppealsUser('user-1')
+
+      await service.searchCases('test', user)
+
+      const call = mockFindAll.mock.calls[0][0]
+      const joined = call.include.map((include: { as: string }) => include.as)
+      const required = Object.keys(userAccessIncludes(user) ?? {})
+
+      // Guards against the assertion below quietly becoming vacuous.
+      expect(required).not.toEqual([])
+      for (const alias of required) {
+        expect(joined).toContain(alias)
+      }
     })
 
     it('requests rulingOrderAppealCases and extra appealCase fields for COA users', async () => {

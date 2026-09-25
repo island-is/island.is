@@ -68,9 +68,9 @@ export const TimeCard = ({
         </Box>
         <Box
           display="flex"
+          flexWrap="wrap"
           columnGap={3}
           rowGap={1}
-          flexDirection={isMobile ? 'column' : 'row'}
           marginBottom={1}
         >
           <Box display="flex" alignItems="flexStart" columnGap={1}>

@@ -1,4 +1,5 @@
 import {
+  HealthDirectorateAppointmentCancelOutcome,
   HealthDirectorateAppointmentModality,
   HealthDirectorateAppointmentStatus,
 } from '@island.is/api/schema'
@@ -24,7 +25,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { PAST_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { isPastAppointment } from '../../utils/appointments'
 
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import * as styles from './AppointmentDetail.css'
@@ -45,7 +46,7 @@ const AppointmentDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [cancelModalVisible, setCancelModalVisible] = useState(false)
 
-  const { data, loading, error } = useGetAppointmentDetailQuery({
+  const { data, loading, error, refetch } = useGetAppointmentDetailQuery({
     fetchPolicy: 'network-only',
     variables: { id: id ?? '' },
     skip: !id,
@@ -60,9 +61,7 @@ const AppointmentDetail = () => {
   // Only booked (upcoming) appointments get actions
   const isBooked =
     appointment?.status === HealthDirectorateAppointmentStatus.BOOKED
-  const isPast =
-    !!appointment?.status &&
-    PAST_APPOINTMENTS_STATUS.includes(appointment.status)
+  const isPast = isPastAppointment(appointment)
 
   const onConfirmCancel = () => {
     if (!id) {
@@ -70,12 +69,28 @@ const AppointmentDetail = () => {
     }
     cancelAppointment({ variables: { id } })
       .then((response) => {
-        if (response.data?.healthDirectorateCancelAppointment) {
-          toast.success(formatMessage(messages.cancelAppointmentSuccess))
-          setCancelModalVisible(false)
-          navigate(HealthPaths.HealthAppointments, { replace: true })
-        } else {
-          toast.error(formatMessage(messages.cancelAppointmentError))
+        const result =
+          response.data?.healthDirectorateRequestAppointmentCancellation
+        switch (result?.outcome) {
+          case HealthDirectorateAppointmentCancelOutcome.CANCELLED:
+            toast.success(formatMessage(messages.cancelAppointmentSuccess))
+            setCancelModalVisible(false)
+            navigate(HealthPaths.HealthAppointments, { replace: true })
+            break
+          case HealthDirectorateAppointmentCancelOutcome.REFUSED:
+          case HealthDirectorateAppointmentCancelOutcome.BLOCKED:
+            // Online cancellation isn't happening either way.
+            setCancelModalVisible(false)
+            toast.error(formatMessage(messages.cancelContactProvider))
+            refetch()
+            break
+          case HealthDirectorateAppointmentCancelOutcome.UNCONFIRMED:
+            // Sent but unanswered — the modal stays open so the confirm
+            // button doubles as the retry.
+            toast.error(formatMessage(messages.cancelUnconfirmed))
+            break
+          default:
+            toast.error(formatMessage(messages.cancelAppointmentError))
         }
       })
       .catch(() => {
@@ -102,7 +117,7 @@ const AppointmentDetail = () => {
         />
       )}
       {!error && appointment && (
-        <Stack space={5}>
+        <Stack space={[3, 3, 5]}>
           <Box>
             <Box
               border="standard"
@@ -115,7 +130,7 @@ const AppointmentDetail = () => {
                 justifyContent="spaceBetween"
                 alignItems="center"
               >
-                <Stack space={3}>
+                <Stack space={[2, 2, 3]}>
                   <Box display="flex" alignItems="center" columnGap={2}>
                     <Text
                       variant="h4"
@@ -156,7 +171,7 @@ const AppointmentDetail = () => {
               )}
             </Box>
 
-            {isBooked && (
+            {isBooked && !isPast && (
               <Box
                 display="flex"
                 alignItems="center"

@@ -1,0 +1,19 @@
+{
+  "name": "tax-calculators",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/tax-calculators/src",
+  "projectType": "library",
+  "tags": ["lib:js", "scope:js"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/tax-calculators"],
+      "options": {
+        "jestConfig": "libs/tax-calculators/jest.config.ts"
+      }
+    }
+  }
+}

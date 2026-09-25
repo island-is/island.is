@@ -1,14 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Platform, ScrollView, View } from 'react-native'
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { NativeStackHeaderItem } from '@react-navigation/native-stack'
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+} from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
+import { ClosedRecipientCard } from '@/components/closed-recipient-card'
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
+import { RecipientNoticeCard } from '@/components/recipient-notice-card'
+import { HealthMessageIntro } from '@/components/health-message-intro'
+import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
-  HealthDirectorateHealthConversationRecipientBlockedReason,
+  HealthDirectorateHealthConversationRecipientAvailability,
   LocaleEnum,
   useCreateHealthConversationMutation,
   useGetHealthConversationRecipientsQuery,
@@ -17,11 +27,9 @@ import {
 import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { uiStore } from '@/stores/ui-store'
-import { getMessagingWindowInfo } from '@/utils/messaging-window'
 import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
-  Checkbox,
   GeneralCardSkeleton,
   Problem,
   ProblemTemplate,
@@ -54,6 +62,9 @@ export default function HealthMessageComposeScreen() {
   const theme = useTheme()
   const locale = useLocale()
   const isReply = !!conversationId
+  // Replies go straight to the form: the intro explains starting a new
+  // conversation, and the consent it collects only applies to new ones.
+  const hasIntro = !isReply
 
   const [message, setMessage] = useState('')
   const [recipientKey, setRecipientKey] = useState<string>()
@@ -61,44 +72,44 @@ export default function HealthMessageComposeScreen() {
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [recipientMenuOpen, setRecipientMenuOpen] = useState(false)
   const [serviceMenuOpen, setServiceMenuOpen] = useState(false)
+  const [step, setStep] = useState<'intro' | 'compose'>(
+    hasIntro ? 'intro' : 'compose',
+  )
 
   const recipientsRes = useGetHealthConversationRecipientsQuery({
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
     skip: isReply,
   })
-  const allRecipients = useMemo(
+  // Every recipient the user has stays in the picker; whether each one can take
+  // a new conversation right now is decided per selection by
+  // canCreateConversation and explained by the card shown in the form's place.
+  const recipients = useMemo(
     () =>
       recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
     [recipientsRes.data],
-  )
-  // Only recipients that currently accept patient-initiated messages can start
-  // a new conversation.
-  const recipients = useMemo(
-    () => allRecipients.filter((r) => r.allowsMessaging),
-    [allRecipients],
   )
   const selectedRecipient = recipients.find(
     (r) => getRecipientKey(r) === recipientKey,
   )
 
-  // When the user has a single recipient that can't take messages (its window
-  // is closed, or it doesn't offer messaging at all), we replace the whole form
-  // with a full-screen explanation instead of a disabled form.
+  // When the user has a single recipient that can't take a new conversation
+  // (its window is closed, or it doesn't accept patient-initiated messages at
+  // all), the explanation takes over the whole sheet: there is no other
+  // recipient to switch to, so the picker is not worth showing either.
   const soleRecipient =
-    !isReply && allRecipients.length === 1 ? allRecipients[0] : undefined
+    !isReply && recipients.length === 1 ? recipients[0] : undefined
+  const isSoleBlocked = !!soleRecipient && !soleRecipient.canCreateConversation
   const soleWindowClosed =
-    soleRecipient?.conversationBlockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
-  const soleNotAllowed =
-    !!soleRecipient &&
-    !soleWindowClosed &&
-    (!soleRecipient.allowsMessaging ||
-      !!soleRecipient.conversationBlockedReason)
-  const isSoleBlocked = soleWindowClosed || soleNotAllowed
-  const soleWindowInfo = getMessagingWindowInfo({
-    windowOpen: soleRecipient?.messagingWindowOpen,
-    windowClose: soleRecipient?.messagingWindowClose,
-  })
+    isSoleBlocked &&
+    soleRecipient?.availability ===
+      HealthDirectorateHealthConversationRecipientAvailability.Closed
+  const soleNotAllowed = isSoleBlocked && !soleWindowClosed
+  // A recipient picked from the dropdown that can't be messaged — closed for
+  // now, or not offering messaging at all — takes a card in place of the form.
+  // There is nothing to fill in either way, so we don't render a composer under
+  // it; the card explains which of the two it is.
+  const isSelectedBlocked =
+    !isReply && selectedRecipient?.canCreateConversation === false
   // Certificate types are shown in the dropdown too, but they can't be
   // submitted from the app — selecting one swaps the form for a notice that
   // links to My Pages (see the certificate branch in the render below).
@@ -107,6 +118,12 @@ export default function HealthMessageComposeScreen() {
     (s) => s.patientInitiatedTypeCode === typeCode,
   )
   const isCertificateSelected = !isReply && !!selectedType?.isCertificate
+  // Some types are handled somewhere else entirely (e.g. the Heilsuvera web
+  // chat) and carry the destination on the type itself.
+  const externalLinkUrl = !isReply ? selectedType?.externalLinkUrl : undefined
+  // Neither kind can be composed here: the message field and send button are
+  // replaced by a notice that points at the real destination.
+  const hidesComposer = isCertificateSelected || !!externalLinkUrl
   const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
   const recipientsLoading = !isReply && recipientsRes.loading
@@ -151,10 +168,17 @@ export default function HealthMessageComposeScreen() {
       onError,
     })
 
+  // Set while navigating away after a send, so the Android step-back listener
+  // below lets that navigation through. Without it the `router.back()` fallback
+  // dispatches GO_BACK, gets intercepted, and leaves the user on a compose
+  // screen for a conversation that was already created.
+  const isCompletingRef = useRef(false)
+
   const [createConversation, { loading: creating }] =
     useCreateHealthConversationMutation({
       refetchQueries: ['GetHealthConversations'],
       onCompleted: (data) => {
+        isCompletingRef.current = true
         const id = data.healthDirectorateCreateHealthConversation?.id
         if (id) {
           // Replace the compose screen so back returns to the inbox.
@@ -171,24 +195,13 @@ export default function HealthMessageComposeScreen() {
 
   const sending = replying || creating
 
-  // The recipient can't be messaged right now (outside window, messaging
-  // disabled, etc.) — dim and disable the message inputs.
-  const isFormLocked =
-    !isReply && selectedRecipient?.canCreateConversation === false
-
-  // Any blocked reason means the patient can't message this recipient right now,
-  // so hide the send button. Closing-soon is only a warning (no blocked reason),
-  // so it keeps the button.
-  const hideSendButton = !!selectedRecipient?.conversationBlockedReason
-
   const canSend = isReply
     ? !!message.trim()
     : !!message.trim() &&
       !!selectedRecipient &&
       !!typeCode &&
-      !isCertificateSelected &&
-      termsAccepted &&
-      !isFormLocked
+      !hidesComposer &&
+      !isSelectedBlocked
 
   const onSend = () => {
     if (isReply && conversationId) {
@@ -199,7 +212,7 @@ export default function HealthMessageComposeScreen() {
       })
       return
     }
-    if (isCertificateSelected) {
+    if (hidesComposer) {
       return
     }
     if (selectedRecipient && typeCode) {
@@ -261,25 +274,94 @@ export default function HealthMessageComposeScreen() {
   // path lets us dismiss the menu before the sheet goes.
   const isMenuOpen = recipientMenuOpen || serviceMenuOpen
 
+  const goBackToIntro = useCallback(() => setStep('intro'), [])
+
+  // Android has no close item in the modal header, so the header arrow and the
+  // hardware/gesture back all pop the sheet. Intercept those to step back to
+  // the intro instead, while letting navigation that follows a send through
+  // untouched (see `isCompletingRef`).
+  const navigation = useNavigation()
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !hasIntro || step !== 'compose') {
+      return
+    }
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      if (isCompletingRef.current) {
+        return
+      }
+      if (e.data.action.type !== 'GO_BACK' && e.data.action.type !== 'POP') {
+        return
+      }
+      e.preventDefault()
+      goBackToIntro()
+    })
+    return unsubscribe
+  }, [navigation, hasIntro, step, goBackToIntro])
+
+  // iOS clears the header's left slot for modals (close lives on the right), so
+  // the step-back chevron is added explicitly. Mirrors `blueBackItem`.
+  const headerLeftItems = useCallback(
+    (): NativeStackHeaderItem[] => [
+      {
+        type: 'button',
+        label: '',
+        icon: { type: 'sfSymbol', name: 'chevron.backward' },
+        tintColor: theme.color.blue400,
+        onPress: goBackToIntro,
+      },
+    ],
+    [theme.color.blue400, goBackToIntro],
+  )
+
+  if (step === 'intro') {
+    return (
+      <>
+        <StackScreen
+          closeable
+          options={{
+            title: '',
+            gestureEnabled: true,
+            // Header options are merged per key, so the form's chevron has to
+            // be cleared explicitly — omitting the key would leave it in place.
+            headerLeftItems: [],
+          }}
+        />
+        <HealthMessageIntro
+          termsAccepted={termsAccepted}
+          onToggleTerms={() => setTermsAccepted(!termsAccepted)}
+          onContinue={() => setStep('compose')}
+        />
+      </>
+    )
+  }
+
   return (
     <>
       <StackScreen
         closeable
-        options={{ title: '', gestureEnabled: !isMenuOpen }}
+        options={{
+          title: '',
+          gestureEnabled: !isMenuOpen,
+          ...(hasIntro && Platform.OS === 'ios' && { headerLeftItems }),
+        }}
       />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
           padding: theme.spacing[2],
-          paddingBottom: theme.spacing[4],
+          // Android: adjustResize is set on MainActivity, but this sheet is
+          // its own window, so the keyboard overlays it instead of resizing
+          // it. Pad by the keyboard height to give the Send button somewhere
+          // to scroll clear to.
+          paddingBottom:
+            theme.spacing[4] + (Platform.OS === 'android' ? keyboardHeight : 0),
           rowGap: theme.spacing[2],
           // Let the full-screen "blocked" message fill the sheet.
           ...(isSoleBlocked && { flexGrow: 1 }),
         }}
         keyboardShouldPersistTaps="handled"
-        // iOS: inset for the keyboard so the Send button clears it (Android
-        // uses adjustResize).
+        // iOS: inset for the keyboard so the Send button clears it.
         automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
         {!isSoleBlocked && (
@@ -300,33 +382,10 @@ export default function HealthMessageComposeScreen() {
               id: 'health.messages.errorMessage',
             })}
           />
-        ) : soleWindowClosed ? (
-          <Problem
-            type="no_data"
-            title={intl.formatMessage({
-              id: 'health.messages.compose.closedTitle',
-            })}
-            message={[
-              soleWindowInfo.windowOpenLabel && soleWindowInfo.windowCloseLabel
-                ? intl.formatMessage(
-                    { id: 'health.messages.compose.availabilityWindow' },
-                    {
-                      name: soleRecipient?.name,
-                      openTime: soleWindowInfo.windowOpenLabel,
-                      closeTime: soleWindowInfo.windowCloseLabel,
-                    },
-                  )
-                : null,
-              intl.formatMessage({
-                id: 'health.messages.compose.availabilityInfo',
-              }),
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          />
+        ) : soleWindowClosed && soleRecipient ? (
+          <ClosedRecipientCard recipient={soleRecipient} />
         ) : soleNotAllowed ? (
-          <Problem
-            type="no_data"
+          <RecipientNoticeCard
             title={intl.formatMessage({
               id: 'health.messages.compose.soleBlockedTitle',
             })}
@@ -336,10 +395,12 @@ export default function HealthMessageComposeScreen() {
             )}
           />
         ) : noRecipients ? (
-          <Problem
-            type="no_data"
+          <RecipientNoticeCard
             title={intl.formatMessage({
               id: 'health.messages.compose.noRecipient',
+            })}
+            message={intl.formatMessage({
+              id: 'health.messages.compose.noRecipientText',
             })}
           />
         ) : (
@@ -379,108 +440,109 @@ export default function HealthMessageComposeScreen() {
             {selectedRecipient && (
               <ConversationAvailabilityAlert recipient={selectedRecipient} />
             )}
-            <View
-              pointerEvents={isFormLocked ? 'none' : 'auto'}
-              style={{
-                opacity: isFormLocked ? 0.5 : 1,
-                rowGap: theme.spacing[2],
-              }}
-            >
-              {!isReply && serviceOptions.length > 0 && (
-                <Select
-                  label={intl.formatMessage({
-                    id: 'health.messages.compose.selectService',
-                  })}
-                  placeholder={intl.formatMessage({
-                    id: 'health.messages.compose.selectServicePlaceholder',
-                  })}
-                  value={typeCode}
-                  options={serviceOptions.map((s) => ({
-                    label: s.title,
-                    value: s.patientInitiatedTypeCode,
-                  }))}
-                  onSelect={setTypeCode}
-                  onOpenChange={setServiceMenuOpen}
-                  disabled={isFormLocked}
-                />
-              )}
-
-              {!isCertificateSelected && (
-                <>
-                  <View style={{ rowGap: theme.spacing.smallGutter }}>
-                    <TextField
+            {!isSelectedBlocked && (
+              <>
+                <View style={{ rowGap: theme.spacing[2] }}>
+                  {!isReply && serviceOptions.length > 0 && (
+                    <Select
                       label={intl.formatMessage({
-                        id: 'health.messages.compose.messageLabel',
+                        id: 'health.messages.compose.selectService',
                       })}
                       placeholder={intl.formatMessage({
-                        id: 'health.messages.compose.messagePlaceholder',
+                        id: 'health.messages.compose.selectServicePlaceholder',
                       })}
-                      value={message}
-                      onChangeText={setMessage}
-                      multiline
-                      numberOfLines={6}
-                      inputStyle={{ minHeight: 120 }}
-                      maxLength={MESSAGE_MAX_LENGTH}
-                      disabled={isFormLocked}
+                      value={typeCode}
+                      options={serviceOptions.map((s) => ({
+                        label: s.title,
+                        value: s.patientInitiatedTypeCode,
+                      }))}
+                      onSelect={setTypeCode}
+                      onOpenChange={setServiceMenuOpen}
                     />
-                    <Typography
-                      variant="body3"
-                      color={theme.color.dark300}
-                      textAlign="right"
-                    >
-                      {`${message.length}/${MESSAGE_MAX_LENGTH}`}
-                    </Typography>
-                  </View>
+                  )}
+                  {!hidesComposer && !!selectedType?.instructions && (
+                    <ServiceInstructions text={selectedType.instructions} />
+                  )}
 
-                  {!isReply && (
-                    <View style={{ marginTop: -theme.spacing[2] }}>
-                      <Checkbox
-                        checked={termsAccepted}
-                        onPress={() => setTermsAccepted(!termsAccepted)}
+                  {!hidesComposer && (
+                    <View style={{ rowGap: theme.spacing.smallGutter }}>
+                      <TextField
                         label={intl.formatMessage({
-                          id: 'health.messages.compose.termsAccept',
+                          id: 'health.messages.compose.messageLabel',
                         })}
+                        placeholder={intl.formatMessage({
+                          id: 'health.messages.compose.messagePlaceholder',
+                        })}
+                        value={message}
+                        onChangeText={setMessage}
+                        multiline
+                        numberOfLines={6}
+                        inputStyle={{ minHeight: 120 }}
+                        maxLength={MESSAGE_MAX_LENGTH}
                       />
+                      <Typography
+                        variant="body3"
+                        color={theme.color.dark300}
+                        textAlign="right"
+                      >
+                        {`${message.length}/${MESSAGE_MAX_LENGTH}`}
+                      </Typography>
                     </View>
                   )}
-                </>
-              )}
-            </View>
-            {/* Certificate requests aren't supported in the app — point the
-                user to My Pages instead of a send form. Rendered outside the
-                lockable form wrapper so the link is always tappable. */}
-            {isCertificateSelected && (
-              <ProblemTemplate
-                variant="info"
-                showIcon
-                title={intl.formatMessage({
-                  id: 'health.messages.compose.certificateTitle',
-                })}
-                message={intl.formatMessage({
-                  id: 'health.messages.compose.certificateText',
-                })}
-                detailLink={{
-                  text: intl.formatMessage({
-                    id: 'health.messages.compose.certificateLink',
-                  }),
-                  url: certificateUrl,
-                }}
-              />
-            )}
-            {!hideSendButton && !isCertificateSelected && (
-              <View
-                onLayout={(e) =>
-                  setSendButtonHeight(e.nativeEvent.layout.height)
-                }
-              >
-                <Button
-                  title={intl.formatMessage({
-                    id: 'health.messages.compose.send',
-                  })}
-                  onPress={onSend}
-                  disabled={!canSend || sending}
-                />
-              </View>
+                </View>
+                {/* Certificate requests aren't supported in the app — point the
+                user to My Pages instead of a send form. */}
+                {isCertificateSelected && (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={intl.formatMessage({
+                      id: 'health.messages.compose.certificateTitle',
+                    })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.compose.certificateText',
+                    })}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.compose.certificateLink',
+                      }),
+                      url: certificateUrl,
+                    }}
+                  />
+                )}
+                {/* External services (the Heilsuvera web chat) are opened rather
+                than messaged. The description is written server-side and
+                already states whether the service is open right now. */}
+                {!!externalLinkUrl && (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={selectedType?.title ?? ''}
+                    message={selectedType?.description ?? ''}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.compose.externalLink',
+                      }),
+                      url: externalLinkUrl,
+                    }}
+                  />
+                )}
+                {!hidesComposer && (
+                  <View
+                    onLayout={(e) =>
+                      setSendButtonHeight(e.nativeEvent.layout.height)
+                    }
+                  >
+                    <Button
+                      title={intl.formatMessage({
+                        id: 'health.messages.compose.send',
+                      })}
+                      onPress={onSend}
+                      disabled={!canSend || sending}
+                    />
+                  </View>
+                )}
+              </>
             )}
           </>
         )}

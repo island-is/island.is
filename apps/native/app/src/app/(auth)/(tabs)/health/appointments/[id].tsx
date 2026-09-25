@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   ImageSourcePropType,
   Linking,
   SafeAreaView,
   ScrollView,
   View,
 } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
+import { toast, ToastHost } from '@/components/toast'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import styled, { useTheme } from 'styled-components/native'
 import calendarIcon from '@/assets/icons/calendar.png'
+import calendarCancelIcon from '@/assets/icons/calendar-cancel.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLink from '@/assets/icons/external-link.png'
 import infoIcon from '@/assets/icons/info-bubble-outline.png'
@@ -23,8 +26,11 @@ import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
   HealthDirectorateAppointmentAssigneeType,
+  HealthDirectorateAppointmentCancelOutcome,
   HealthDirectorateAppointmentLinkType,
   HealthDirectorateAppointmentModality,
+  HealthDirectorateAppointmentStatus,
+  useCancelAppointmentMutation,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
 import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
@@ -79,11 +85,17 @@ const MoreInfoRow = styled.View`
 const EyebrowContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const ProblemContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const CancelSection = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const StickyFooter = styled.View`
@@ -125,6 +137,7 @@ export default function AppointmentDetailScreen() {
   const { id: appointmentId } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
   const theme = useTheme()
+  const router = useRouter()
 
   const appointmentFromCache =
     useFragment_experimental<HealthDirectorateAppointment>({
@@ -137,10 +150,18 @@ export default function AppointmentDetailScreen() {
       returnPartialData: true,
     })
 
-  const { data, loading, error, networkStatus } = useGetAppointmentDetailQuery({
-    variables: { id: appointmentId ?? '' },
-    skip: !appointmentId,
-  })
+  const { data, loading, error, networkStatus, refetch } =
+    useGetAppointmentDetailQuery({
+      variables: { id: appointmentId ?? '' },
+      skip: !appointmentId,
+    })
+
+  const [cancelAppointment, { loading: cancelling }] =
+    useCancelAppointmentMutation({
+      // Not awaited: a failed list refetch would reject the mutation and
+      // hide the outcome below.
+      refetchQueries: ['getAppointments'],
+    })
 
   const appointment =
     data?.healthDirectorateAppointment ?? appointmentFromCache?.data
@@ -289,6 +310,85 @@ export default function AppointmentDetailScreen() {
     date: dateStr,
     time,
   } = formatAppointmentDate(intl, appointment?.date)
+
+  // Whether cancelling is offered at all, and until when, is the server's
+  // call - never inferred from the appointment date on the client.
+  const canCancel = detail?.canCancel === true
+  const isBooked =
+    appointment?.status === HealthDirectorateAppointmentStatus.Booked
+  const cancelDeadline = formatAppointmentDate(intl, detail?.canCancelBefore)
+
+  const showCancelError = useCallback(
+    (messageId: string) => {
+      toast.error(
+        intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
+        {
+          message: intl.formatMessage({ id: messageId }),
+        },
+      )
+    },
+    [intl],
+  )
+
+  const confirmCancel = useCallback(() => {
+    if (!appointmentId) {
+      return
+    }
+    cancelAppointment({ variables: { id: appointmentId } })
+      .then((res) => {
+        switch (
+          res.data?.healthDirectorateRequestAppointmentCancellation.outcome
+        ) {
+          case HealthDirectorateAppointmentCancelOutcome.Cancelled:
+            router.back()
+            // Rendered by the root ToastHost, the sheet having gone.
+            toast.success(
+              intl.formatMessage({
+                id: 'health.appointments.cancelSuccessTitle',
+              }),
+            )
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Refused:
+          case HealthDirectorateAppointmentCancelOutcome.Blocked:
+            // Refetch so the detail says whether the button is still offered.
+            void refetch()
+            showCancelError('health.appointments.cancelContactProvider')
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Unconfirmed:
+            // Sent but unanswered, so the button doubles as the retry.
+            showCancelError('health.appointments.cancelUnconfirmed')
+            break
+          default:
+            showCancelError('health.appointments.cancelErrorMessage')
+        }
+      })
+      .catch(() => showCancelError('health.appointments.cancelErrorMessage'))
+  }, [appointmentId, cancelAppointment, intl, refetch, router, showCancelError])
+
+  const handleCancelPress = useCallback(() => {
+    RNAlert.alert(
+      intl.formatMessage({ id: 'health.appointments.cancelPromptTitle' }),
+      intl.formatMessage({ id: 'health.appointments.cancelPromptMessage' }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptConfirm',
+          }),
+          style: 'destructive',
+          // Marks this the preferred action, which iOS gives the prominent
+          // (filled) treatment in its alert.
+          isPreferred: true,
+          onPress: confirmCancel,
+        },
+      ],
+    )
+  }, [confirmCancel, intl])
 
   const hasMoreInfo =
     !!appointment &&
@@ -487,6 +587,44 @@ export default function AppointmentDetailScreen() {
               </IconList>
             </Header>
 
+            {isBooked && canCancel && (
+              <CancelSection>
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.appointments.cancelAppointment',
+                  })}
+                  icon={calendarCancelIcon as ImageSourcePropType}
+                  isUtilityButton
+                  isOutlined
+                  loading={cancelling}
+                  disabled={cancelling}
+                  onPress={handleCancelPress}
+                  style={{ alignSelf: 'flex-start' }}
+                />
+                {detail?.canCancelBefore && (
+                  <Typography variant="body3">
+                    {intl.formatMessage(
+                      { id: 'health.appointments.cancelDeadline' },
+                      { date: cancelDeadline.date, time: cancelDeadline.time },
+                    )}
+                  </Typography>
+                )}
+              </CancelSection>
+            )}
+
+            {isBooked && !!detail && !canCancel && (
+              <CancelSection>
+                <Alert
+                  type="info"
+                  size="small"
+                  hasBorder
+                  message={intl.formatMessage({
+                    id: 'health.appointments.cancelNotPossible',
+                  })}
+                />
+              </CancelSection>
+            )}
+
             {hasMoreInfo && (
               <EyebrowContainer>
                 <Typography variant="eyebrow" color={theme.color.purple400}>
@@ -633,6 +771,9 @@ export default function AppointmentDetailScreen() {
           <SafeAreaView />
         </StickyFooter>
       )}
+
+      {/* A formSheet renders above the root host, so toasts need one here. */}
+      <ToastHost ignoreTabBar />
     </View>
   )
 }

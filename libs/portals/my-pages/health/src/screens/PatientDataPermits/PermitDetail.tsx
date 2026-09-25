@@ -168,7 +168,7 @@ const PermitDetail: React.FC = () => {
           <Text variant="eyebrow" color="purple400" marginBottom={2}>
             {formatMessage(messages.information)}
           </Text>
-          <InfoLineStack>
+          <InfoLineStack space={[0, 0, 2]}>
             <InfoLine
               label={formatMessage(messages.referralFrom) ?? ''}
               content={formatMessage(messages.healthDirectorate)}

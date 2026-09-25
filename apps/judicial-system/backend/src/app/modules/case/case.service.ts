@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -51,6 +51,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   IndictmentDecision,
@@ -80,6 +81,7 @@ import {
 } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -92,18 +94,15 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
-  caseInclude,
   CaseRepositoryService,
   CaseStringRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSessionRepositoryService,
   DateLog,
   DateLogRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   EventLog,
-  Institution,
   UpdateCase,
 } from '../repository'
 import { VerdictService } from '../verdict'
@@ -113,6 +112,7 @@ import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
+import { CaseCloningService } from './caseCloning.service'
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -177,12 +177,14 @@ export class CaseService {
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
-    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
+    @Inject(forwardRef(() => CourtSessionService))
+    private readonly courtSessionService: CourtSessionService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -1322,13 +1324,8 @@ export class CaseService {
     allowDeleted = false,
     transaction?: Transaction,
   ): Promise<Case> {
-    const theCase = await this.caseRepositoryService.findOne({
-      include: caseInclude,
-      where: {
-        id: caseId,
-        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
-        isArchived: false,
-      },
+    const theCase = await this.caseRepositoryService.findLiveById(caseId, {
+      allowDeleted,
       transaction,
     })
 
@@ -1361,13 +1358,7 @@ export class CaseService {
   }
 
   async findMinimalById(id: string): Promise<MinimalCase> {
-    const minimalCase = await this.caseRepositoryService.findOne({
-      where: {
-        id,
-        isArchived: false,
-        state: { [Op.not]: CaseState.DELETED },
-      },
-    })
+    const minimalCase = await this.caseRepositoryService.findLiveMinimalById(id)
 
     if (!minimalCase) {
       throw new NotFoundException(`Case ${id} not found`)
@@ -1376,81 +1367,12 @@ export class CaseService {
     return minimalCase
   }
 
-  async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
-
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        { model: Institution, as: 'court', attributes: ['id', 'name'] },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: ['id', 'noNationalId', 'nationalId', 'name'],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          type: CaseType.INDICTMENT,
-          state: [CaseState.RECEIVED],
-          id: { [Op.ne]: theCase.id },
-        },
-      },
-    })
+  getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findConnectedIndictmentCases(theCase)
   }
 
-  async getCandidateMergeCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
-
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    const expectedCount = theCase.defendants.length
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: [],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          id: { [Op.ne]: theCase.id },
-          type: CaseType.INDICTMENT,
-          state: CaseState.RECEIVED,
-          courtId: theCase.courtId,
-        },
-      },
-      // Ensure all defendants matched by grouping and counting
-      group: ['Case.id'],
-      having: literal(`COUNT(DISTINCT "defendants"."id") = ${expectedCount}`),
-    })
+  getCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findCandidateMergeCases(theCase)
   }
 
   async create(
@@ -1477,6 +1399,19 @@ export class CaseService {
     )
 
     await this.defendantService.createForNewCase(theCase.id, {}, transaction)
+
+    if (isRequestCase(caseToCreate.type)) {
+      await this.defendantService.syncDefenderToAllDefendants(
+        theCase.id,
+        {
+          defenderName: caseToCreate.defenderName,
+          defenderNationalId: caseToCreate.defenderNationalId,
+          defenderEmail: caseToCreate.defenderEmail,
+          defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
+        },
+        transaction,
+      )
+    }
 
     return this.findById(theCase.id, false, transaction)
   }
@@ -2186,6 +2121,8 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
+    const isReopeningCase = update.reopenReason !== undefined
+
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2194,7 +2131,7 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    if (update.reopenReason !== undefined) {
+    if (isReopeningCase) {
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
@@ -2360,6 +2297,52 @@ export class CaseService {
       })
     }
 
+    // Keep defendant-level defender fields in sync with case-level fields for
+    // request cases. This dual-write is the first step toward per-defendant
+    // defenders — later phases will flip readers to the defendant rows and
+    // eventually drop the case-level columns.
+    if (isRequestCase(theCase.type)) {
+      const defenderFieldChanged =
+        caseUpdate.defenderName !== undefined ||
+        caseUpdate.defenderNationalId !== undefined ||
+        caseUpdate.defenderEmail !== undefined ||
+        caseUpdate.defenderPhoneNumber !== undefined ||
+        caseUpdate.defendantWaivesRightToCounsel !== undefined
+
+      if (defenderFieldChanged) {
+        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
+        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
+        const waives =
+          caseUpdate.defendantWaivesRightToCounsel !== undefined
+            ? caseUpdate.defendantWaivesRightToCounsel
+            : theCase.defendantWaivesRightToCounsel
+
+        await this.defendantService.syncDefenderToAllDefendants(
+          theCase.id,
+          {
+            defenderName:
+              caseUpdate.defenderName !== undefined
+                ? caseUpdate.defenderName
+                : theCase.defenderName,
+            defenderNationalId:
+              caseUpdate.defenderNationalId !== undefined
+                ? caseUpdate.defenderNationalId
+                : theCase.defenderNationalId,
+            defenderEmail:
+              caseUpdate.defenderEmail !== undefined
+                ? caseUpdate.defenderEmail
+                : theCase.defenderEmail,
+            defenderPhoneNumber:
+              caseUpdate.defenderPhoneNumber !== undefined
+                ? caseUpdate.defenderPhoneNumber
+                : theCase.defenderPhoneNumber,
+            defenderChoice: waives ? DefenderChoice.WAIVE : null,
+          },
+          transaction,
+        )
+      }
+    }
+
     // Update police case numbers of case files if necessary
     await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
 
@@ -2466,28 +2449,22 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
+      // The COMPLETE transition has already checked that the parent case is
+      // received
       const parentCase = theCase.mergeCase
-
-      if (parentCase?.state !== CaseState.RECEIVED) {
-        throw new BadRequestException(
-          `Cannot merge indictment case ${theCase.id} with parent case ${
-            parentCase?.id ?? 'unknown'
-          } in state ${parentCase?.state ?? 'unknown'}`,
-        )
-      }
 
       // Update the latest court session if it is unconfirmed
       if (
-        parentCase.withCourtSessions &&
+        parentCase?.withCourtSessions &&
         parentCase.courtSessions &&
         parentCase.courtSessions.length > 0 &&
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]
           .isConfirmed
       ) {
-        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
+        await this.courtSessionService.addMergedCaseToLatestCourtSession(
           parentCase.id,
           theCase.id,
-          { transaction },
+          transaction,
         )
       }
     }
@@ -2539,6 +2516,10 @@ export class CaseService {
         from: theCase.court?.name,
         to: updatedCase?.court?.name,
       })
+    }
+
+    if (isReopeningCase) {
+      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
     }
 
     if (returnUpdatedCase) {
@@ -2811,6 +2792,7 @@ export class CaseService {
       'defenderNationalId',
       'defenderEmail',
       'defenderPhoneNumber',
+      'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
       'translator',
@@ -2861,6 +2843,22 @@ export class CaseService {
           ),
         ),
       )
+
+      if (isRequestCase(theCase.type)) {
+        await this.defendantService.syncDefenderToAllDefendants(
+          extendedCase.id,
+          {
+            defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderChoice: theCase.defendantWaivesRightToCounsel
+              ? DefenderChoice.WAIVE
+              : null,
+          },
+          transaction,
+        )
+      }
     }
 
     return extendedCase
@@ -2871,8 +2869,8 @@ export class CaseService {
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    const splitCase = await this.caseRepositoryService.split(
-      theCase.id,
+    const splitCase = await this.caseCloningService.split(
+      theCase,
       defendant.id,
       { transaction },
     )
