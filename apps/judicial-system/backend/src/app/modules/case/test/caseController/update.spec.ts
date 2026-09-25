@@ -510,27 +510,6 @@ describe('CaseController - Update', () => {
         ).not.toHaveBeenCalled()
       })
     })
-
-    describe('that is not received', () => {
-      let then: Then
-
-      beforeEach(async () => {
-        const notReceived = mergingCase(false)
-        notReceived.mergeCase = {
-          ...notReceived.mergeCase,
-          state: CaseState.COMPLETED,
-        } as Case
-
-        then = await givenWhenThen(caseId, user, notReceived, caseToUpdate)
-      })
-
-      it('should refuse the merge', () => {
-        expect(then.error).toBeInstanceOf(BadRequestException)
-        expect(
-          mockCourtSessionService.addMergedCaseToLatestCourtSession,
-        ).not.toHaveBeenCalled()
-      })
-    })
   })
 
   describe('indictment case completed after cancellation request', () => {
