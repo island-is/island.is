@@ -1,46 +1,47 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
+import { ClosedRecipientCard } from '@/components/closed-recipient-card'
+import { RecipientNoticeCard } from '@/components/recipient-notice-card'
 import {
   GetHealthConversationRecipientsQuery,
-  HealthDirectorateHealthConversationRecipientBlockedReason,
+  HealthDirectorateHealthConversationRecipientAvailability,
 } from '@/graphql/types/schema'
 import { Alert } from '@/ui'
-import { getMessagingWindowInfo } from '@/utils/messaging-window'
+import { formatTimeLabel, isClosingSoon } from '@/utils/messaging-window'
 
 type Recipient = NonNullable<
   GetHealthConversationRecipientsQuery['healthDirectorateHealthConversationRecipients']
 >[number]
 
 // Explains why messaging a recipient is blocked or closing soon, mirroring the
-// my-pages ConversationAvailabilityAlert.
+// my-pages ConversationAvailabilityAlert. The two states where sending is
+// impossible take a card, rendered in place of the form; closing soon keeps the
+// form usable and only warns above it.
 export const ConversationAvailabilityAlert = ({
   recipient,
 }: {
   recipient: Recipient
 }) => {
   const intl = useIntl()
-  const blockedReason = recipient.conversationBlockedReason
-  const windowInfo = getMessagingWindowInfo({
-    windowOpen: recipient.messagingWindowOpen,
-    windowClose: recipient.messagingWindowClose,
-  })
 
-  // Messaging-not-allowed keeps its own dedicated message (no window text).
-  // Keyed off canCreateConversation rather than the reason: the reason is
-  // dropped when the server sends one this client doesn't know, and a recipient
-  // that can't be messaged must never fall through to the availability text.
-  const isNotAllowed =
-    !recipient.canCreateConversation &&
-    blockedReason !==
-      HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
+  // Closed for now: its own card, listing when the recipient next opens and the
+  // hours it keeps on each kind of day.
+  if (
+    recipient.availability ===
+    HealthDirectorateHealthConversationRecipientAvailability.Closed
+  ) {
+    return <ClosedRecipientCard recipient={recipient} />
+  }
 
-  if (isNotAllowed) {
+  // Messaging-not-allowed gets the same card, with its own message (no opening
+  // hours to show). Keyed off canCreateConversation rather than the
+  // availability enum: an availability this client doesn't know is dropped to
+  // undefined, and a recipient that can't be messaged must never fall through
+  // to the closing-soon branch and render nothing.
+  if (!recipient.canCreateConversation) {
     return (
-      <Alert
-        type="info"
-        size="small"
-        hasBorder
+      <RecipientNoticeCard
         title={intl.formatMessage({
           id: 'health.messages.compose.notAllowedTitle',
         })}
@@ -51,60 +52,25 @@ export const ConversationAvailabilityAlert = ({
     )
   }
 
-  // Closed and closing-soon share the same availability text; only the
-  // title/colour differ. The window sentence embeds the open/close times, so
-  // drop it when the recipient has no messaging window rather than render
-  // "from  to " with blanks.
-  const hasWindow =
-    !!windowInfo.windowOpenLabel && !!windowInfo.windowCloseLabel
-  const availabilityText = [
-    hasWindow
-      ? intl.formatMessage(
-          { id: 'health.messages.compose.availabilityWindow' },
-          {
-            name: recipient.name,
-            openTime: windowInfo.windowOpenLabel,
-            closeTime: windowInfo.windowCloseLabel,
-          },
-        )
-      : null,
-    intl.formatMessage({ id: 'health.messages.compose.availabilityInfo' }),
-  ]
-    .filter(Boolean)
-    .join(' ')
-
-  const isClosed =
-    blockedReason ===
-    HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
-
-  if (isClosed) {
-    return (
-      <Alert
-        type="info"
-        size="small"
-        hasBorder
-        title={intl.formatMessage({
-          id: 'health.messages.compose.closedTitle',
-        })}
-        message={availabilityText}
-      />
-    )
+  // Open: warn only when the window is about to close. An all-day window has no
+  // closesAt, so it never warns.
+  const closeTime = formatTimeLabel(recipient.todaysWindow?.windowClose)
+  if (!isClosingSoon(recipient.closesAt) || !closeTime) {
+    return null
   }
 
-  if (windowInfo.isClosingSoon) {
-    return (
-      <Alert
-        type="warning"
-        size="small"
-        hasBorder
-        title={intl.formatMessage({
-          id: 'health.messages.compose.closingSoonTitle',
-        })}
-        message={availabilityText}
-      />
-    )
-  }
-
-  // Messaging is open and not closing soon: nothing to warn about.
-  return null
+  return (
+    <Alert
+      type="warning"
+      size="small"
+      hasBorder
+      title={intl.formatMessage({
+        id: 'health.messages.compose.closingSoonTitle',
+      })}
+      message={intl.formatMessage(
+        { id: 'health.messages.compose.closingSoonText' },
+        { closeTime },
+      )}
+    />
+  )
 }
