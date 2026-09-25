@@ -423,12 +423,14 @@ const HealthConversations = () => {
                         fontWeight={item.isRead ? 'regular' : 'medium'}
                       >
                         {item.title}
-                        {!item.isRead && (
-                          <VisuallyHidden>
-                            {` - ${formatMessage(m.notificationUnread)}`}
-                          </VisuallyHidden>
-                        )}
                       </Text>
+                      {/* Sits outside the truncated Text: an absolute box in there
+                          escapes the clip and widens the page */}
+                      {!item.isRead && (
+                        <VisuallyHidden>
+                          {` - ${formatMessage(m.notificationUnread)}`}
+                        </VisuallyHidden>
+                      )}
                     </Box>
                   </Link>
 
