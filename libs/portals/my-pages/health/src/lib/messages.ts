@@ -2452,7 +2452,7 @@ export const messages = defineMessages({
     id: 'sp.health:expired-questionnaire',
   },
   disabledQuestionnaire: {
-    defaultMessage: 'Útrunnið',
+    defaultMessage: 'Afturkallaður',
     id: 'sp.health:disabled-questionnaire',
   },
   expiredQuestionnaires: {
@@ -2596,6 +2596,10 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá öll skilaboð',
     id: 'sp.health:see-all-messages',
   },
+  allQuestionnaires: {
+    defaultMessage: 'Allir spurningalistar',
+    id: 'sp.health:all-questionnaires',
+  },
   treatmentConversationsIntro: {
     defaultMessage:
       'Hér getur þú átt í samskiptum við meðferðarteymi vegna meðferðar þinnar.',
@@ -2611,7 +2615,7 @@ export const messages = defineMessages({
   },
   noTreatmentQuestionnaires: {
     defaultMessage:
-      'Engir virkir spurningalistar eru vegna meðferðarinnar. Útrunna spurningalista má finna á síðunni Spurningalistar.',
+      'Engir virkir spurningalistar eru vegna meðferðarinnar þinnar.',
     id: 'sp.health:no-treatment-questionnaires',
   },
   educationalContentIntro: {

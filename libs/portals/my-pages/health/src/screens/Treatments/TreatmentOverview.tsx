@@ -3,7 +3,6 @@ import {
   GridColumn,
   GridRow,
   Inline,
-  Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -131,36 +130,36 @@ const TreatmentOverview = () => {
               ))}
             </Inline>
           </Box>
-          <Stack space={6}>
-            <Box>
-              <Text
-                variant="eyebrow"
-                color="purple400"
-                fontWeight="semiBold"
-                marginBottom={2}
-              >
-                {formatMessage(m.myInfo)}
-              </Text>
-              <GridRow rowGap={2}>
-                {linkCards.map((card) => (
-                  <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
-                    <TreatmentLinkCard
-                      label={card.label}
-                      to={card.to}
-                      text={
-                        card.lastSentAt
-                          ? formatMessage(messages.lastSent, {
-                              date: formatDate(card.lastSentAt),
-                            })
-                          : undefined
-                      }
-                    />
-                  </GridColumn>
-                ))}
-              </GridRow>
-            </Box>
+          <Box>
+            <Text
+              variant="eyebrow"
+              color="purple400"
+              fontWeight="semiBold"
+              marginBottom={2}
+            >
+              {formatMessage(m.myInfo)}
+            </Text>
+            <GridRow rowGap={2}>
+              {linkCards.map((card) => (
+                <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
+                  <TreatmentLinkCard
+                    label={card.label}
+                    to={card.to}
+                    text={
+                      card.lastSentAt
+                        ? formatMessage(messages.lastSent, {
+                            date: formatDate(card.lastSentAt),
+                          })
+                        : undefined
+                    }
+                  />
+                </GridColumn>
+              ))}
+            </GridRow>
+          </Box>
 
-            {(treatment.recentConversations?.length ?? 0) > 0 && (
+          {(treatment.recentConversations?.length ?? 0) > 0 && (
+            <Box marginTop={[3, 3, 6]}>
               <TreatmentMessages
                 conversations={treatment.recentConversations ?? []}
                 newMessageHref={
@@ -169,8 +168,10 @@ const TreatmentOverview = () => {
                     : undefined
                 }
               />
-            )}
+            </Box>
+          )}
 
+          <Box marginTop={6}>
             <Appointments
               data={{
                 data: { data: firstTwoAppointments },
@@ -179,7 +180,7 @@ const TreatmentOverview = () => {
               }}
               showLinkButton
             />
-          </Stack>
+          </Box>
         </>
       )}
     </IntroWrapper>

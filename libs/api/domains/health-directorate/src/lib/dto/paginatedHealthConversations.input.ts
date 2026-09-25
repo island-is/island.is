@@ -6,6 +6,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -36,6 +37,8 @@ export class HealthDirectoratePaginatedHealthConversationsInput {
 
   @Field(() => ID, { nullable: true })
   @IsString()
+  @MaxLength(255)
+  @Matches(/[^.]/)
   @IsOptional()
   treatmentId?: string
 

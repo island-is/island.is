@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   ValidateIf,
 } from 'class-validator'
@@ -27,6 +28,8 @@ export class HealthDirectorateCreateConversationInput {
 
   @Field({ nullable: true })
   @IsString()
+  @MaxLength(255)
+  @Matches(/[^.]/)
   @IsOptional()
   treatmentId?: string
 
@@ -45,12 +48,13 @@ export class HealthDirectorateCreateConversationInput {
   })
   @ValidateIf((input) => !input.patientInitiatedTypeCode || !!input.title)
   @IsString()
-  @IsNotEmpty()
+  @Matches(/\S/)
   @MaxLength(150)
   title?: string
 
   @Field()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(300)
   messageTextContent!: string
 }

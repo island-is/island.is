@@ -2240,6 +2240,10 @@ export const m = defineMessages({
     id: 'service.portal:answer',
     defaultMessage: 'Svar',
   },
+  answers: {
+    id: 'service.portal:answers',
+    defaultMessage: 'Svör',
+  },
   forward: {
     id: 'service.portal:forward',
     defaultMessage: 'Áfram',

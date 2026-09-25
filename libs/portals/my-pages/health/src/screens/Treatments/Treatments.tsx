@@ -7,7 +7,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, generatePath, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetHealthTreatmentsOverviewQuery } from './TreatmentOverview.generated'
@@ -25,10 +25,9 @@ const Treatments = () => {
   if (!loading && !error && treatments?.length === 1) {
     return (
       <Navigate
-        to={HealthPaths.HealthTreatment.replace(
-          ':treatmentId',
-          treatments[0].id,
-        )}
+        to={generatePath(HealthPaths.HealthTreatment, {
+          treatmentId: treatments[0].id,
+        })}
         replace
       />
     )
@@ -73,10 +72,9 @@ const Treatments = () => {
                 cta={{
                   onClick: () =>
                     navigate(
-                      HealthPaths.HealthTreatment.replace(
-                        ':treatmentId',
-                        treatment.id,
-                      ),
+                      generatePath(HealthPaths.HealthTreatment, {
+                        treatmentId: treatment.id,
+                      }),
                     ),
                   label: formatMessage(messages.seeMore),
                   variant: 'text',

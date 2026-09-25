@@ -12,7 +12,7 @@ export const SidebarContactBox = () => {
       borderRadius="large"
       background="purple100"
       padding={3}
-      marginTop={[4, 4, 3]}
+      marginTop={3}
     >
       <Box display="flex" alignItems="flexStart" marginBottom={1} columnGap={2}>
         <Icon icon="mail" type="outline" color="purple400" />

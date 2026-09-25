@@ -1,5 +1,8 @@
-query GetTreatmentQuestionnaires($treatmentId: ID!, $locale: String!) {
-  questionnairesTreatmentList(treatmentId: $treatmentId, locale: $locale) {
+query GetTreatmentQuestionnaires(
+  $input: QuestionnairesTreatmentListInput!
+  $locale: String!
+) {
+  questionnairesTreatmentList(input: $input, locale: $locale) {
     questionnaires {
       ...QuestionnaireListItem
     }

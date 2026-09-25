@@ -23,6 +23,7 @@ import {
   GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
+  QuestionnairesTreatmentListInput,
 } from './dto/questionnaire.input'
 import { QuestionnairesResponse } from './dto/response.dto'
 import { QuestionnairesService } from './questionnaires.service'
@@ -58,13 +59,13 @@ export class QuestionnairesResolver {
   @Audit()
   async getTreatmentQuestionnaires(
     @CurrentUser() user: User,
-    @Args('treatmentId', { type: () => ID }) treatmentId: string,
+    @Args('input') input: QuestionnairesTreatmentListInput,
     @Args('locale', { type: () => String }) locale: Locale = 'is',
   ): Promise<QuestionnairesList | null> {
     return this.questionnairesService.getTreatmentQuestionnaires(
       user,
       locale,
-      treatmentId,
+      input.treatmentId,
     )
   }
 

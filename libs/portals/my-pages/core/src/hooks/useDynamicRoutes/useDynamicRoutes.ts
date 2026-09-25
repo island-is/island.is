@@ -213,12 +213,14 @@ const treatmentChildren = (base: string): PortalNavigationItem[] => [
     name: m.healthTreatmentEducationalContent,
     path: `${base}/fraedsluefni`,
     navHide: true,
+    breadcrumbHide: true,
     systemRoute: true,
   },
   {
     name: m.messages,
     path: `${base}/skilabod`,
     navHide: true,
+    breadcrumbHide: true,
     systemRoute: true,
     children: [
       {
@@ -243,12 +245,14 @@ const treatmentChildren = (base: string): PortalNavigationItem[] => [
     name: m.questionnaires,
     path: `${base}/spurningalistar`,
     navHide: true,
+    breadcrumbHide: true,
     systemRoute: true,
     children: [
       {
         name: m.questionnaire,
         path: `${base}/spurningalistar/:org/:id`,
         navHide: true,
+        breadcrumbHide: true,
         systemRoute: true,
         children: [
           {
@@ -259,9 +263,10 @@ const treatmentChildren = (base: string): PortalNavigationItem[] => [
             systemRoute: true,
           },
           {
-            name: m.questionnaire,
+            name: m.answers,
             path: `${base}/spurningalistar/:org/:id/skoda-svor/:submissionId`,
             navHide: true,
+            breadcrumbHide: true,
             systemRoute: true,
           },
         ],
