@@ -830,12 +830,11 @@ export class AppealCaseService {
     // appeal rather than a joined one.
     await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
-    const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
-      {
-        where: { caseId: theCase.id, appealType: AppealCaseType.VERDICT },
-        transaction,
-      },
-    )
+    const existingAppealCase =
+      await this.appealCaseRepositoryService.findVerdictAppealByCaseId(
+        theCase.id,
+        { transaction },
+      )
 
     // The appealDate check above reads the case as it was loaded before the
     // transaction, so it cannot see an appeal filed in the meantime - two

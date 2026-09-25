@@ -693,6 +693,9 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/confirm-job-or-income": [
+        "libs/application/templates/vmst/confirm-job-or-income/src/index.ts"
+      ],
       "@island.is/application/templates/vmst/confirm-job-search": [
         "libs/application/templates/vmst/confirm-job-search/src/index.ts"
       ],
@@ -999,6 +1002,9 @@
       ],
       "@island.is/clients/transport-authority/exemption-for-transportation": [
         "libs/clients/transport-authority/exemption-for-transportation/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/taxi": [
+        "libs/clients/transport-authority/taxi/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
