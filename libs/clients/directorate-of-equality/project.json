@@ -32,6 +32,17 @@
         "command": "yarn openapi-ts -f libs/clients/directorate-of-equality/src/lib/openapi-ts.config.ts"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
+    },
+    "update-openapi-document-local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl http://localhost:5100/swagger/application/json > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/directorate-of-equality"
+      }
     }
   }
 }

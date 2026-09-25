@@ -80,6 +80,14 @@ export const getCartesianGridComponents = ({
   const dataKey = xAxisKey || undefined
 
   const xAxisFormatter = tickFormatter
+
+  // Only free-text category labels are wrapped and all shown - date/number
+  // axes keep Recharts' tick thinning so long series don't overlap
+  const wrapCategoryLabels =
+    !!slice.xAxisValueType && !['date', 'number'].includes(slice.xAxisValueType)
+  const wrapXAxis = !slice.flipAxis && wrapCategoryLabels
+  const wrapYAxis = !!slice.flipAxis && wrapCategoryLabels
+
   const yAxisFormatter = (v: string | number) =>
     formatValueForPresentation(
       activeLocale,
@@ -106,18 +114,18 @@ export const getCartesianGridComponents = ({
       }}
       dy={theme.spacing.p2}
       interval={
-        customStyleConfig.xAxis?.interval ?? (slice.flipAxis ? 'preserveEnd' : 0)
+        customStyleConfig.xAxis?.interval ?? (wrapXAxis ? 0 : 'preserveEnd')
       }
       angle={customStyleConfig.xAxis?.angle ?? 0}
       domain={customStyleConfig.xAxis?.domain ?? [0, 'auto']}
       type={slice.flipAxis ? 'number' : 'category'}
       height={
         customStyleConfig.xAxis?.height ??
-        (slice.flipAxis ? DEFAULT_XAXIS_HEIGHT : WRAPPED_XAXIS_HEIGHT)
+        (wrapXAxis ? WRAPPED_XAXIS_HEIGHT : DEFAULT_XAXIS_HEIGHT)
       }
       tick={
         customStyleConfig.xAxis?.tick ??
-        (slice.flipAxis ? undefined : <WrappedAxisTick />)
+        (wrapXAxis ? <WrappedAxisTick /> : undefined)
       }
       allowDecimals={
         slice.reduceAndRoundValue === true && slice.flipAxis ? false : true
@@ -136,16 +144,16 @@ export const getCartesianGridComponents = ({
       type={slice.flipAxis ? 'category' : 'number'}
       dataKey={slice.flipAxis ? xAxisKey : undefined}
       interval={
-        customStyleConfig.yAxis?.interval ?? (slice.flipAxis ? 0 : 'preserveEnd')
+        customStyleConfig.yAxis?.interval ?? (wrapYAxis ? 0 : 'preserveEnd')
       }
       domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
       width={
         customStyleConfig.yAxis?.width ??
-        (slice.flipAxis ? WRAPPED_YAXIS_WIDTH : DEFAULT_YAXIS_WIDTH)
+        (wrapYAxis ? WRAPPED_YAXIS_WIDTH : DEFAULT_YAXIS_WIDTH)
       }
       tick={
         customStyleConfig.yAxis?.tick ??
-        (slice.flipAxis ? <WrappedAxisTick textAnchor="end" dy={4} /> : undefined)
+        (wrapYAxis ? <WrappedAxisTick textAnchor="end" dy={4} /> : undefined)
       }
       ticks={customStyleConfig.yAxis?.ticks ?? undefined}
       allowDecimals={

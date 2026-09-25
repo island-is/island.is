@@ -99,6 +99,7 @@ export default {
     'manualChapter',
     'chart',
     'chartComponent',
+    'chartNumberBoxGroup',
     'featuredEvents',
     'bigBulletList',
     'iconBullet',

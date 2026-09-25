@@ -21,6 +21,10 @@ import { GetStatisticsQuery } from './types'
 import { StatisticsClientConfig } from './statistics.config'
 import { FetchWithCache } from './fetchConfig'
 
+// Namespaces DOE series keys so they can't collide with CSV keys and so the
+// DOE endpoint is only called when a chart actually asks for one of them
+const DOE_KEY_PREFIX = 'doe.'
+
 @Injectable()
 export class StatisticsClientService {
   constructor(
@@ -36,16 +40,17 @@ export class StatisticsClientService {
 
   /**
    * The DOE aggregate-statistics endpoint returns all of its series in one
-   * call (no per-key filtering), so it's fetched alongside the CSV source
-   * on every request. Isolated in its own try/catch so a DOE outage can't
-   * break charts that don't use it.
+   * call (no per-key filtering). Isolated in its own try/catch so a DOE
+   * outage can't break other series requested in the same query.
    */
   private async getDirectorateOfEqualityStatistics(): Promise<StatisticSourceData> {
     try {
       const { series } =
         await this.directorateOfEqualityService.getAggregateStatistics()
       return {
-        data: Object.fromEntries(series.map((s) => [s.key, s.points])),
+        data: Object.fromEntries(
+          series.map((s) => [`${DOE_KEY_PREFIX}${s.key}`, s.points]),
+        ),
       }
     } catch (error) {
       this.logger.error(error)
@@ -60,8 +65,11 @@ export class StatisticsClientService {
           this.fetch,
           this.config?.sourceDataPaths?.split(','),
         ),
-        this.getDirectorateOfEqualityStatistics(),
       ]
+
+      if (query.sourceDataKeys.some((key) => key.startsWith(DOE_KEY_PREFIX))) {
+        promises.push(this.getDirectorateOfEqualityStatistics())
+      }
 
       if (query.sourceDataKeys.includes(LATEST_UV_MEASUREMENT_KEY)) {
         promises.push(this.ultravioletRadiationService.getLatestMeasurement())
@@ -79,14 +87,11 @@ export class StatisticsClientService {
         )
       }
 
-      const [csvSourceData, doeSourceData, ...rest] = await Promise.all(
-        promises,
-      )
+      const [csvSourceData, ...rest] = await Promise.all(promises)
 
       const statistics = await _getMultipleStatistics(query, {
         data: {
           ...csvSourceData.data,
-          ...doeSourceData.data,
           ...rest.reduce((acc, item) => ({ ...acc, ...item.data }), {}),
         },
       })

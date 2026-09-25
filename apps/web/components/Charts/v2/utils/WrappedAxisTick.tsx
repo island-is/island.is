@@ -10,6 +10,9 @@ interface WrappedAxisTickProps {
   x?: number
   y?: number
   payload?: { value?: string | number }
+  index?: number
+  // Injected by Recharts when cloning a custom tick element
+  tickFormatter?: (value: unknown, index: number) => string
   textAnchor?: 'start' | 'middle' | 'end'
   fontSize?: number
   dy?: number
@@ -21,13 +24,18 @@ export const WrappedAxisTick = ({
   x = 0,
   y = 0,
   payload,
+  index = 0,
+  tickFormatter,
   textAnchor = 'middle',
   fontSize = theme.typography.baseFontSize,
   dy = 16,
   maxCharsPerLine = DEFAULT_MAX_CHARS_PER_LINE,
   maxLines = DEFAULT_MAX_LINES,
 }: WrappedAxisTickProps) => {
-  const label = String(payload?.value ?? '')
+  const label = String(
+    (tickFormatter ? tickFormatter(payload?.value, index) : payload?.value) ??
+      '',
+  )
   const lines = wrapAxisLabel(label, maxCharsPerLine, maxLines)
 
   return (

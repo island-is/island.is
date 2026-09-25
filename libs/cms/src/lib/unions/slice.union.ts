@@ -45,6 +45,7 @@ import {
   IChart,
   IChartComponent,
   IChartNumberBox,
+  IChartNumberBoxGroup,
   IFeaturedEvents,
   IGenericList,
   ILatestGenericListItems,
@@ -143,6 +144,10 @@ import {
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
 import {
+  ChartNumberBoxGroup,
+  mapChartNumberBoxGroup,
+} from '../models/chartNumberBoxGroup.model'
+import {
   FeaturedEvents,
   mapFeaturedEvents,
 } from '../models/featuredEvents.model'
@@ -216,6 +221,7 @@ export type SliceTypes =
   | IChart
   | IChartComponent
   | IChartNumberBox
+  | IChartNumberBoxGroup
   | IFeaturedEvents
   | IGenericList
   | IGrantCardsList
@@ -274,6 +280,7 @@ export const SliceUnion = createUnionType({
     Chart,
     ChartComponent,
     ChartNumberBox,
+    ChartNumberBoxGroup,
     FeaturedEvents,
     GenericList,
     LatestGenericListItems,
@@ -374,6 +381,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapChartComponent(slice as IChartComponent)
     case 'chartNumberBox':
       return mapChartNumberBox(slice as IChartNumberBox)
+    case 'chartNumberBoxGroup':
+      return mapChartNumberBoxGroup(slice as IChartNumberBoxGroup)
     case 'featuredEvents':
       return mapFeaturedEvents(slice as IFeaturedEvents)
     case 'genericList':
