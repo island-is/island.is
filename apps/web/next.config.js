@@ -14,6 +14,14 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/flokkur/umbod',
+        destination: '/umbod',
+      },
+      {
+        source: '/en/category/mandates',
+        destination: '/en/mandates',
+      },
+      {
         source: '/umsoknir/:slug',
         destination: 'https://island.is/umsoknir/:slug',
       },
