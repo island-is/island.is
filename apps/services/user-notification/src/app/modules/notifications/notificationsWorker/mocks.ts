@@ -106,6 +106,20 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   onlyActionablePriorityNotifications: false,
 }
 
+export const userWhoDeclinesInformationalNotifications: MockUserProfileDto = {
+  name: 'userWhoDeclinesInformationalNotifications',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'declinesinformational@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionablePriorityNotifications: true,
+}
+
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   name: 'userWithFeatureFlagDisabled',
   nationalId: createNationalId('person'),
@@ -250,6 +264,7 @@ export const getMockHnippTemplate = ({
   scope = '@island.is/documents',
   smsPayer = 'Landlæknir',
   smsDelivery = 'OPT_IN',
+  priorityType,
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -260,6 +275,7 @@ export const getMockHnippTemplate = ({
   scope,
   smsPayer,
   smsDelivery,
+  priorityType,
 })
 
 export const userProfiles = [
@@ -268,6 +284,7 @@ export const userProfiles = [
   userWithNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
+  userWhoDeclinesInformationalNotifications,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
   userWithNoEmail,
