@@ -1,0 +1,209 @@
+import { useIntl } from 'react-intl'
+import { useQuery } from '@apollo/client'
+
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { formatCurrency } from '@island.is/shared/utils'
+import {
+  IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
+  QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupArgs,
+} from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP } from '../../queries/OpenInvoices'
+import { EmptyTable } from '../components/EmptyTable/EmptyTable'
+import { m } from '../messages'
+import * as styles from './Overview.css'
+
+interface Props {
+  supplierLegalId: string
+  erpLegalEntityId: number
+  total: number
+  dateFrom?: Date
+  dateTo?: Date
+  paymentTypeIds?: string[]
+  ministries?: string[]
+}
+
+export const NestedLines = ({
+  supplierLegalId,
+  erpLegalEntityId,
+  dateFrom,
+  dateTo,
+  paymentTypeIds,
+  ministries,
+  total,
+}: Props) => {
+  const { formatMessage } = useIntl()
+  const { format } = useDateUtils()
+
+  const { data, error, loading } = useQuery<
+    {
+      icelandicGovernmentInstitutionsInvoicePaymentsGroup?: IcelandicGovernmentInstitutionsInvoicePaymentsGroup
+    },
+    QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupArgs
+  >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUP, {
+    variables: {
+      input: {
+        supplierLegalId,
+        erpLegalEntityId,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+        paymentTypeIds: paymentTypeIds ?? undefined,
+        ministries: ministries ?? undefined,
+      },
+    },
+  })
+
+  const payments =
+    data?.icelandicGovernmentInstitutionsInvoicePaymentsGroup?.payments ?? []
+
+  const renderItemizations = () => {
+    if (error) {
+      return <EmptyTable message={formatMessage(m.overview.errorLoading)} />
+    }
+
+    if (loading || !payments.length) {
+      return (
+        <EmptyTable
+          loading={loading}
+          message={formatMessage(m.overview.emptyTable)}
+        />
+      )
+    }
+
+    return payments.map((payment) => {
+      const invoiceTotal = payment.invoice.totalAmount
+      const isFullyPaid =
+        invoiceTotal == null || payment.amount === invoiceTotal
+      const itemizationsCount = payment.invoice.itemizations?.length ?? 0
+      const invoiceAmountBackground =
+        itemizationsCount % 2 === 0 ? 'white' : undefined
+      const paidRowIndex = itemizationsCount + (isFullyPaid ? 0 : 1)
+      const paidBackground = paidRowIndex % 2 === 0 ? 'white' : undefined
+
+      return (
+        <Box
+          paddingBottom={3}
+          paddingLeft={2}
+          paddingRight={2}
+          key={payment.id}
+        >
+          <Box marginBottom={2} display="flex">
+            <Box marginRight={2}>
+              <Text variant="small" fontWeight="semiBold">
+                {format(new Date(payment.date), 'do MMMM yyyy')}
+              </Text>
+            </Box>
+            {payment.invoice.numberRedacted !== true && (
+              <Text variant="small">
+                {formatMessage(m.totals.invoiceHeading, {
+                  number: payment.invoice.number,
+                  linked: String(!isFullyPaid),
+                })}
+              </Text>
+            )}
+          </Box>
+          <T.Table>
+            <T.Body>
+              {payment.invoice.itemizations?.map((invoiceItem, i) => {
+                const background = i % 2 === 0 ? 'white' : undefined
+                return (
+                  <T.Row key={invoiceItem.id}>
+                    <T.Data
+                      box={{
+                        textAlign: 'left',
+                        background,
+                        className: styles.noBorder,
+                      }}
+                    >
+                      <Text variant="small">{invoiceItem.label}</Text>
+                    </T.Data>
+                    <T.Data
+                      box={{
+                        textAlign: 'right',
+                        background,
+                        className: styles.noBorder,
+                      }}
+                    >
+                      <Text variant="small">
+                        {formatCurrency(invoiceItem.amount)}
+                      </Text>
+                    </T.Data>
+                  </T.Row>
+                )
+              })}
+              {!isFullyPaid && (
+                <T.Row>
+                  <T.Data
+                    box={{
+                      background: invoiceAmountBackground,
+                      className: styles.noBorder,
+                    }}
+                  >
+                    <Text variant="small">
+                      {formatMessage(m.totals.invoiceAmount)}
+                    </Text>
+                  </T.Data>
+                  <T.Data
+                    box={{
+                      textAlign: 'right',
+                      background: invoiceAmountBackground,
+                      className: styles.noBorder,
+                    }}
+                  >
+                    <Text variant="small">{formatCurrency(invoiceTotal)}</Text>
+                  </T.Data>
+                </T.Row>
+              )}
+              <T.Row>
+                <T.Data
+                  box={{
+                    background: paidBackground,
+                    className: styles.noBorder,
+                  }}
+                >
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(m.totals.paid)}
+                  </Text>
+                </T.Data>
+                <T.Data
+                  box={{
+                    textAlign: 'right',
+                    background: paidBackground,
+                    className: styles.noBorder,
+                  }}
+                >
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatCurrency(payment.amount)}
+                  </Text>
+                </T.Data>
+              </T.Row>
+            </T.Body>
+          </T.Table>
+        </Box>
+      )
+    })
+  }
+
+  return (
+    <Box background="blue100" paddingTop={3}>
+      <div className={styles.line} />
+      {renderItemizations()}
+      <Box paddingY={3} paddingLeft={2} background="blue100">
+        <Box
+          marginRight={2}
+          marginBottom={2}
+          display="flex"
+          justifyContent="spaceBetween"
+        >
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(m.totals.total)}
+          </Text>
+          <Text variant="small" fontWeight="semiBold">
+            {formatCurrency(total)}
+          </Text>
+        </Box>
+      </Box>
+    </Box>
+  )
+}

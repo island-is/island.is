@@ -316,6 +316,24 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      ELFUR_CLIENT_ID: {
+        dev: '@fjs.is/stafraent-island-api-elfur',
+        staging: '@fjs.is/stafraent-island-api-elfur',
+        prod: '@fjs.is/stafraent-island-api-elfur',
+      },
+      ELFUR_BASE_PATH: {
+        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+        staging:
+          'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
+        // TODO: Restore the production Elfur URL when invoice data can be exposed in prod.
+        // prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
+        prod: 'https://todo.invalid',
+      },
+      ELFUR_BASE_IDS_URL: {
+        dev: 'https://identity-server.staging01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       RSK_CALCULATORS_BASE_URL: {
         dev: 'https://reiknivelarapi.rsk.is',
         staging: 'https://reiknivelarapi.rsk.is',
@@ -407,6 +425,7 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:

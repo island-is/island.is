@@ -39,7 +39,7 @@ export const filterCountNumber = style({
   lineHeight: '24px',
 })
 
-globalStyle(`${filterCountButton} > span`, {
+globalStyle(`${filterCountButton} > span, ${filterCountButton} > button`, {
   position: 'relative',
   paddingRight: 42,
 })
