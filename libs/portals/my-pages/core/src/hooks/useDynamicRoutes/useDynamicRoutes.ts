@@ -170,6 +170,7 @@ export const useDynamicRoutes = () => {
       vmstData?.unemploymentApplication?.isVisible
     ) {
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentStatus)
+      dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentPayments)
       dynamicPathArray.push(DynamicPaths.SocialBenefitsUnemploymentMyData)
     }
     if (activationAllowanceEnabled && vmstData?.activationGrant?.isVisible) {

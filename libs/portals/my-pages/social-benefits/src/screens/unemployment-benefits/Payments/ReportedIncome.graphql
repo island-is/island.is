@@ -1,0 +1,48 @@
+query GetVmstApplicantIncomes {
+  vmstApplicantIncomes {
+    irregularJobs {
+      id
+      employerName
+      employerSSN
+      periodFrom
+      periodTo
+      estimatedIncome
+    }
+    partTimeJobs {
+      id
+      employerName
+      employerSSN
+      periodFrom
+      periodTo
+      ratio
+      estimatedIncome
+    }
+    pensionPayments {
+      id
+      incomeTypeId
+      pensionFundId
+      estimatedIncome
+      periodFrom
+      periodTo
+    }
+    capitalIncomePayments {
+      id
+      incomeTypeId
+      estimatedIncome
+      periodFrom
+      periodTo
+    }
+    trPayments {
+      id
+      incomeTypeId
+      estimatedIncome
+      periodFrom
+      periodTo
+    }
+    contractorJobs {
+      id
+      startDate
+      endDate
+    }
+  }
+}

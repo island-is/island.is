@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
@@ -7,6 +7,7 @@ import {
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
+  GaldurExternalDomainModelsIncomeIncomesDTO,
   GaldurExternalDomainModelsIncomeIncomesResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { FetchError } from '@island.is/clients/middlewares'
@@ -23,6 +24,7 @@ import {
   VmstApplicationsOverview,
   VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
+  VmstApplicantIncomes,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 import { maskString } from '@island.is/shared/utils'
@@ -334,6 +336,55 @@ export class VMSTApplicationsService {
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsAvailableActions> {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
+  }
+
+  async getApplicantIncomes(auth: User): Promise<VmstApplicantIncomes> {
+    try {
+      const { applicantId } = await this.resolveApplicant(auth)
+      const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
+        await this.vmstUnemploymentService.getIncome({ applicantId })
+
+      const incomeCollectionKeys = [
+        'irregularJobs',
+        'partTimeJobs',
+        'pensionPayments',
+        'capitalIncomePayments',
+        'trPayments',
+        'contractorJobs',
+      ] as const
+
+      const invalidKeys = incomeCollectionKeys.filter(
+        (key) => !Array.isArray(dto[key]),
+      )
+      if (invalidKeys.length > 0) {
+        throw new BadGatewayException(
+          `VMST applicant incomes response has invalid shape for: ${invalidKeys.join(
+            ', ',
+          )}`,
+        )
+      }
+
+      return {
+        irregularJobs: dto.irregularJobs,
+        partTimeJobs: dto.partTimeJobs,
+        pensionPayments: dto.pensionPayments,
+        capitalIncomePayments: dto.capitalIncomePayments,
+        trPayments: dto.trPayments,
+        contractorJobs: dto.contractorJobs,
+      } as VmstApplicantIncomes
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        return {
+          irregularJobs: [],
+          partTimeJobs: [],
+          pensionPayments: [],
+          capitalIncomePayments: [],
+          trPayments: [],
+          contractorJobs: [],
+        }
+      }
+      throw e
+    }
   }
 
   async getApplicantAttachments(

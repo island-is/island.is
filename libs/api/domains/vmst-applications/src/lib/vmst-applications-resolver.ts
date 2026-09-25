@@ -19,6 +19,7 @@ import {
   VmstApplicationsAttachment,
   VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
+  VmstApplicantIncomes,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import { VmstApplicationsIncomeValidationInput } from './dto/incomeValidation.input'
@@ -182,6 +183,16 @@ export class VMSTApplicationsResolver {
     )
 
     return this.vmstApplicationsService.getApplicantActions(applicantId)
+  }
+
+  @Query(() => VmstApplicantIncomes, {
+    name: 'vmstApplicantIncomes',
+  })
+  @Audit()
+  async getApplicantIncomes(
+    @CurrentUser() auth: User,
+  ): Promise<VmstApplicantIncomes> {
+    return this.vmstApplicationsService.getApplicantIncomes(auth)
   }
 
   @Query(() => VmstApplicationsApplicantAttachmentsResponse, {
