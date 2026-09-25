@@ -328,7 +328,13 @@ export class CaseController {
         }
       }
 
-      if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
+      // A case being corrected sends its existing parent back unchanged, so
+      // only a change of parent is refused outside the received state.
+      if (
+        update.mergeCaseId &&
+        update.mergeCaseId !== theCase.mergeCaseId &&
+        theCase.state !== CaseState.RECEIVED
+      ) {
         throw new BadRequestException(
           'Cannot merge case that is not in a received state',
         )

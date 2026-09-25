@@ -42,7 +42,7 @@ export default function MedicineScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <SafeAreaView style={[{ paddingHorizontal: 16 }]}>
+      <SafeAreaView>
         <TabPills
           buttons={tabs.map((tab) => ({
             title: tab.title,

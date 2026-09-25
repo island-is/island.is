@@ -951,11 +951,17 @@ export const en: TranslatedMessages = {
   'health.messages.compose.messagePlaceholder': 'Write your message here',
   'health.messages.compose.termsAccept':
     'I agree that the message will be saved to my medical record and that the appropriate healthcare professional with access to it will answer the inquiry.',
-  'health.messages.compose.availabilityWindow':
-    '{name} accepts messages every day from {openTime} to {closeTime}.',
-  'health.messages.compose.availabilityInfo':
-    'Replies are usually within 3 business days. If your matter is urgent and you need a reply the same day, call 1700. In an emergency, call 112 immediately.',
   'health.messages.compose.closedTitle': 'Closed for new messages right now',
+  'health.messages.compose.closedNowText':
+    'New messages cannot be sent at the moment.',
+  'health.messages.compose.closedNextOpensText':
+    'Messages can next be sent {when, select, today {today} tomorrow {tomorrow} other {on {date}}}{hasTime, select, false {} other { from {time}}}.',
+  'health.messages.compose.openingHoursTitle': 'Messaging hours:',
+  'health.messages.compose.openingHoursWeekdays': 'Weekdays',
+  'health.messages.compose.openingHoursWeekends': 'Weekends',
+  'health.messages.compose.openingHoursHolidays': 'Public holidays',
+  'health.messages.compose.openingHoursClosed': 'Closed',
+  'health.messages.compose.openingHoursAllDay': 'All day',
   'health.messages.compose.notAllowedTitle': 'Cannot send messages',
   'health.messages.compose.notAllowedText':
     'This service provider does not offer messaging on Ísland.is.',
@@ -964,11 +970,14 @@ export const en: TranslatedMessages = {
   'health.messages.compose.soleBlockedText':
     '{name} does not offer a messaging service through Ísland.is',
   'health.messages.compose.closingSoonTitle': 'Note: messaging is closing soon',
+  'health.messages.compose.closingSoonText':
+    'Send your message before it closes at {closeTime}.',
   'health.messages.compose.send': 'Send message',
   'health.messages.compose.sendError':
     'Failed to send message. Please try again later.',
-  'health.messages.compose.noRecipient':
-    'It is not possible to send messages at the moment',
+  'health.messages.compose.noRecipient': 'Cannot send messages',
+  'health.messages.compose.noRecipientText':
+    'None of the health clinics registered to you offer a messaging service through Ísland.is.',
   'health.messages.compose.certificateTitle':
     'Certificates cannot be requested in the app',
   'health.messages.compose.certificateText':
@@ -1147,8 +1156,6 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalModal.description':
     'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
   'health.prescriptions.renewalModal.selectRecipient': 'Send to',
-  'health.prescriptions.renewalModal.medicineInformation':
-    'Medicine information',
   'health.prescriptions.renewalModal.medicineName': 'Medication name',
   'health.prescriptions.renewalModal.usedFor': 'Used for',
   'health.prescriptions.renewalModal.cancel': 'Cancel',

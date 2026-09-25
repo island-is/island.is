@@ -51,6 +51,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   IndictmentDecision,
@@ -1399,6 +1400,19 @@ export class CaseService {
 
     await this.defendantService.createForNewCase(theCase.id, {}, transaction)
 
+    if (isRequestCase(caseToCreate.type)) {
+      await this.defendantService.syncDefenderToAllDefendants(
+        theCase.id,
+        {
+          defenderName: caseToCreate.defenderName,
+          defenderNationalId: caseToCreate.defenderNationalId,
+          defenderEmail: caseToCreate.defenderEmail,
+          defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
+        },
+        transaction,
+      )
+    }
+
     return this.findById(theCase.id, false, transaction)
   }
 
@@ -2283,6 +2297,52 @@ export class CaseService {
       })
     }
 
+    // Keep defendant-level defender fields in sync with case-level fields for
+    // request cases. This dual-write is the first step toward per-defendant
+    // defenders — later phases will flip readers to the defendant rows and
+    // eventually drop the case-level columns.
+    if (isRequestCase(theCase.type)) {
+      const defenderFieldChanged =
+        caseUpdate.defenderName !== undefined ||
+        caseUpdate.defenderNationalId !== undefined ||
+        caseUpdate.defenderEmail !== undefined ||
+        caseUpdate.defenderPhoneNumber !== undefined ||
+        caseUpdate.defendantWaivesRightToCounsel !== undefined
+
+      if (defenderFieldChanged) {
+        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
+        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
+        const waives =
+          caseUpdate.defendantWaivesRightToCounsel !== undefined
+            ? caseUpdate.defendantWaivesRightToCounsel
+            : theCase.defendantWaivesRightToCounsel
+
+        await this.defendantService.syncDefenderToAllDefendants(
+          theCase.id,
+          {
+            defenderName:
+              caseUpdate.defenderName !== undefined
+                ? caseUpdate.defenderName
+                : theCase.defenderName,
+            defenderNationalId:
+              caseUpdate.defenderNationalId !== undefined
+                ? caseUpdate.defenderNationalId
+                : theCase.defenderNationalId,
+            defenderEmail:
+              caseUpdate.defenderEmail !== undefined
+                ? caseUpdate.defenderEmail
+                : theCase.defenderEmail,
+            defenderPhoneNumber:
+              caseUpdate.defenderPhoneNumber !== undefined
+                ? caseUpdate.defenderPhoneNumber
+                : theCase.defenderPhoneNumber,
+            defenderChoice: waives ? DefenderChoice.WAIVE : null,
+          },
+          transaction,
+        )
+      }
+    }
+
     // Update police case numbers of case files if necessary
     await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
 
@@ -2732,6 +2792,7 @@ export class CaseService {
       'defenderNationalId',
       'defenderEmail',
       'defenderPhoneNumber',
+      'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
       'translator',
@@ -2782,6 +2843,22 @@ export class CaseService {
           ),
         ),
       )
+
+      if (isRequestCase(theCase.type)) {
+        await this.defendantService.syncDefenderToAllDefendants(
+          extendedCase.id,
+          {
+            defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderChoice: theCase.defendantWaivesRightToCounsel
+              ? DefenderChoice.WAIVE
+              : null,
+          },
+          transaction,
+        )
+      }
     }
 
     return extendedCase
