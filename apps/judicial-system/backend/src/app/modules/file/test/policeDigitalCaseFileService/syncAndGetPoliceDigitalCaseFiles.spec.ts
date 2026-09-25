@@ -53,7 +53,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
 
   beforeEach(() => {
     policeDigitalCaseFileRepositoryService = {
-      findAll: jest.fn(),
+      findByCaseId: jest.fn(),
       create: jest.fn(),
     } as unknown as jest.Mocked<PoliceDigitalCaseFileRepositoryService>
 
@@ -102,7 +102,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
-    policeDigitalCaseFileRepositoryService.findAll
+    policeDigitalCaseFileRepositoryService.findByCaseId
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
 
@@ -121,6 +121,12 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       { nationalId: '0000000000' } as User,
     )
 
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(1, caseId)
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(2, caseId)
     expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledTimes(
       1,
     )
@@ -140,7 +146,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
-    policeDigitalCaseFileRepositoryService.findAll
+    policeDigitalCaseFileRepositoryService.findByCaseId
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
 
@@ -184,7 +190,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
       makePoliceSystemDigitalCaseFile() as never,
     ])
-    policeDigitalCaseFileRepositoryService.findAll
+    policeDigitalCaseFileRepositoryService.findByCaseId
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([makeStoredPoliceDigitalCaseFile() as never])
 
@@ -203,6 +209,12 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       { nationalId: '0000000000' } as User,
     )
 
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(1, caseId)
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenNthCalledWith(2, caseId)
     expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledTimes(
       1,
     )
