@@ -237,7 +237,7 @@ Umbod.getProps = async ({ apolloClient }) => {
 export default withMainLayout(Umbod, {
   showSearchInHeader: false,
   languageToggleHrefOverride: {
-    is: '/flokkur/umbod',
-    en: '/en/category/mandates',
+    is: '/umbod',
+    en: '/en/mandates',
   },
 })
