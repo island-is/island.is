@@ -19,6 +19,47 @@ const serviceWorkerName = `${serviceName}-worker`
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
+
+export const userNotificationMetricsSetup = () =>
+  scheduledJob('user-notification-metrics')
+    .namespace(serviceName)
+    .image(imageName)
+    .serviceAccount('user-notification-metrics')
+    .codeOwner(CodeOwners.Juni)
+    .command('node')
+    .args('main.cjs', '--job=metrics')
+    .db({ name: serviceName })
+    .schedule('15 * * * *')
+    .concurrencyPolicy('Forbid')
+    .startingDeadlineSeconds(600)
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
+
+// No external credentials/data sources are assumed. Enable a source only after
+// configuring its aggregate BigQuery view and validating coverage (see metrics/README.md).
+export const userNotificationExternalMetricsSetup = (
+  source: 'firebase' | 'mailbox',
+) =>
+  scheduledJob(`user-notification-${source}-metrics`)
+    .namespace(serviceName)
+    .image(imageName)
+    .serviceAccount(`user-notification-${source}-metrics`)
+    .codeOwner(CodeOwners.Juni)
+    .command('node')
+    .args('main.cjs', '--job=external-metrics', `--source=${source}`)
+    .env({
+      FIREBASE_METRICS_ENABLED: 'false',
+      MAILBOX_METRICS_ENABLED: 'false',
+    })
+    .schedule('20 * * * *')
+    .concurrencyPolicy('Forbid')
+    .startingDeadlineSeconds(600)
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 const EMAIL_QUEUE_NAME = `${serviceName}-email`
@@ -80,7 +121,8 @@ const getEnv = (services: {
     (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
   ),
   AUTH_DELEGATION_API_URL: {
-    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
+    dev:
+      'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
       'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',

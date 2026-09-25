@@ -3,6 +3,7 @@ import {
   json,
   service,
   ServiceBuilder,
+  scheduledJob,
 } from '../../../../infra/src/dsl/dsl'
 import {
   EnvironmentVariables,
@@ -18,6 +19,23 @@ const namespace = 'service-portal'
 const serviceId = `${namespace}-api`
 const imageId = 'services-user-profile'
 
+export const userProfileMetricsSetup = () =>
+  scheduledJob('service-portal-metrics')
+    .namespace(namespace)
+    .image(imageId)
+    .serviceAccount('service-portal-metrics')
+    .codeOwner(CodeOwners.Aranja)
+    .command('node')
+    .args('main.cjs', '--job=metrics')
+    .db({ name: serviceId })
+    .schedule('10 * * * *')
+    .concurrencyPolicy('Forbid')
+    .startingDeadlineSeconds(600)
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
+
 const envVariables: EnvironmentVariables = {
   SERVICE_PORTAL_BASE_URL: {
     dev: 'https://beta.dev01.devland.is/minarsidur',
@@ -32,7 +50,8 @@ const envVariables: EnvironmentVariables = {
     prod: 'https://innskra.island.is',
   },
   AUTH_DELEGATION_API_URL: {
-    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
+    dev:
+      'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
       'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',
