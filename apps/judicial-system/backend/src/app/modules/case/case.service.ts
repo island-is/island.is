@@ -2389,19 +2389,13 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
+      // The COMPLETE transition has already checked that the parent case is
+      // received
       const parentCase = theCase.mergeCase
-
-      if (parentCase?.state !== CaseState.RECEIVED) {
-        throw new BadRequestException(
-          `Cannot merge indictment case ${theCase.id} with parent case ${
-            parentCase?.id ?? 'unknown'
-          } in state ${parentCase?.state ?? 'unknown'}`,
-        )
-      }
 
       // Update the latest court session if it is unconfirmed
       if (
-        parentCase.withCourtSessions &&
+        parentCase?.withCourtSessions &&
         parentCase.courtSessions &&
         parentCase.courtSessions.length > 0 &&
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]

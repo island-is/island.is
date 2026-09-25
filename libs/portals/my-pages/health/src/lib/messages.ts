@@ -2172,7 +2172,7 @@ export const messages = defineMessages({
   },
   healthConversationReplyBlockedAwaitingAcknowledgementText: {
     defaultMessage:
-      'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda',
+      'Skilaboðin hafa verið send. Hægt verður að svara aftur þegar þau hafa borist móttakanda.',
     id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
   },
   healthConversationReplyBlockedWindowExpiredText: {

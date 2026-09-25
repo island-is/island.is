@@ -23,11 +23,31 @@ import {
   useGetHealthConversationsQuery,
 } from '@/graphql/types/schema'
 import { useThrottleState } from '@/hooks/use-throttle-state'
-import { useHealthMessagesFilterStore } from '@/stores/health-messages-filter-store'
+import {
+  healthMessagesFilterStore,
+  useHealthMessagesFilterStore,
+} from '@/stores/health-messages-filter-store'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { isAndroid } from '@/utils/devices'
 import { pushOnce } from '@/utils/push-once'
-import { EmptyList, ListItem, ListItemSkeleton, Problem, SearchBar } from '@/ui'
+import {
+  EmptyList,
+  ListItem,
+  ListItemSkeleton,
+  Problem,
+  SearchBar,
+  Tag,
+} from '@/ui'
+
+const TagsWrapper = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  /* 4px + the search row's 8px matches the inbox's 12px gap. */
+  padding-top: 4px;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing[2]}px;
+  flex-wrap: wrap;
+`
 
 const DEFAULT_PAGE_SIZE = 50
 
@@ -73,7 +93,7 @@ export default function HealthMessagesScreen() {
   const page = messagesRes.data?.healthDirectoratePaginatedHealthConversations
   const conversations = page?.data ?? []
 
-  const showSearch = conversations.length > 0 || query.length > 0
+  const isFilterApplied = starred || archived
 
   // `cache-and-network` hands back a persisted empty inbox before the network
   // reply lands, so `data` being set is no proof we have rows — that flashed the
@@ -82,6 +102,14 @@ export default function HealthMessagesScreen() {
     messagesRes.loading &&
     messagesRes.networkStatus !== NetworkStatus.refetch &&
     conversations.length === 0
+
+  // A filter refetch empties `conversations` mid-flight, so the row count
+  // alone would flicker the search bar out and back.
+  const showSearch =
+    conversations.length > 0 ||
+    query.length > 0 ||
+    isFilterApplied ||
+    showSkeletons
 
   const [refetching, setRefetching] = useState(false)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -231,23 +259,51 @@ export default function HealthMessagesScreen() {
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         ListHeaderComponent={
-          showSearch ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingHorizontal: theme.spacing[2],
-                paddingVertical: theme.spacing[1],
-              }}
-            >
-              <SearchBar
-                placeholder={intl.formatMessage({
-                  id: 'health.messages.searchPlaceholder',
-                })}
-                value={query}
-                onChangeText={setQuery}
-              />
-            </View>
-          ) : null
+          <>
+            {showSearch ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  paddingHorizontal: theme.spacing[2],
+                  paddingVertical: theme.spacing[1],
+                }}
+              >
+                <SearchBar
+                  placeholder={intl.formatMessage({
+                    id: 'health.messages.searchPlaceholder',
+                  })}
+                  value={query}
+                  onChangeText={setQuery}
+                />
+              </View>
+            ) : null}
+            {isFilterApplied ? (
+              <TagsWrapper>
+                {starred && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterStarredTagTitle',
+                    })}
+                    closable
+                    onClose={() =>
+                      healthMessagesFilterStore.setState({ starred: false })
+                    }
+                  />
+                )}
+                {archived && (
+                  <Tag
+                    title={intl.formatMessage({
+                      id: 'inbox.filterArchivedTagTitle',
+                    })}
+                    closable
+                    onClose={() =>
+                      healthMessagesFilterStore.setState({ archived: false })
+                    }
+                  />
+                )}
+              </TagsWrapper>
+            ) : null}
+          </>
         }
         renderItem={({ item }) => (
           <Pressable

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'tax-calculators',
   preset: './jest.preset.js',

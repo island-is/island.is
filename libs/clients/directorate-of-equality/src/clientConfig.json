@@ -412,7 +412,7 @@
     },
     "/api/v1/application/reports/salary/eligibility": {
       "get": {
-        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. Two preconditions are checked: (1) the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`, checked first) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts and the same answer `GET reports/equality/active` gives; and (2) the 3-year renewal window must be open, i.e. the current report is due in 6 months or less (`RENEWAL_WINDOW_NOT_OPEN`). The renewal rule is also enforced as a 409 on `POST reports/salary` (in the production environment only), and the equality precondition as a 404.",
+        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. One precondition is checked: the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts and the same answer `GET reports/equality/active` gives. Enforced as a 404 on `POST reports/salary`.\n\nThere is no longer any timing restriction: the 6-month renewal window was removed and a company may file however far out its current deadline is. Filing early is not free, though — a report’s three years run from APPROVAL, so whatever is left on the current certificate is absorbed rather than added, and a company with a year still to run gets three years from today instead of four. `earliestNewDueAt` (what filing now would earn) against `dueAt` (what they have) is the size of that trade, returned whether or not `eligible` is true so the portal can put it to the applicant before they start.",
         "operationId": "getApplicationSalaryReportEligibility",
         "parameters": [],
         "responses": {
@@ -466,7 +466,7 @@
     },
     "/api/v1/application/reports/salary": {
       "post": {
-        "description": "Files a salary report for the resolved company.\n\n404 when the company has no equality coverage to file against — neither an APPROVED, in-force equality report nor an unexpired certificate on the retired register (`GET reports/salary/eligibility` reports the same as `MISSING_EQUALITY_REPORT`).\n\n409 on three distinct refusals: (1) the 3-year renewal window is not open yet, i.e. the current report is due more than 6 months out — the same rule `GET reports/salary/eligibility` reports as `RENEWAL_WINDOW_NOT_OPEN`, and enforced here in the production environment only; (2) the company already has a SALARY report in IN_REVIEW or POSTPONED, which a reviewer is mid-workflow on (a merely SUBMITTED predecessor is withdrawn silently instead, and does not 409); (3) the `(providerType, providerId)` tuple is already registered to a different company, or to a report of the other type. The three are not distinguished in the response body today; the reason is in `message`.",
+        "description": "Files a salary report for the resolved company. There is no timing restriction — the 6-month renewal window was removed, and a company may file however far out its current deadline is. See `GET reports/salary/eligibility` for what filing early costs.\n\n404 when the company has no equality coverage to file against — neither an APPROVED, in-force equality report nor an unexpired certificate on the retired register (`GET reports/salary/eligibility` reports the same as `MISSING_EQUALITY_REPORT`).\n\n409 on two distinct refusals: (1) the company already has a SALARY report in IN_REVIEW or POSTPONED, which a reviewer is mid-workflow on (a merely SUBMITTED predecessor is withdrawn silently instead, and does not 409); (2) the `(providerType, providerId)` tuple is already registered to a different company, or to a report of the other type. The two are not distinguished in the response body today; the reason is in `message`.",
         "operationId": "submitApplicationSalaryReport",
         "parameters": [],
         "requestBody": {
@@ -2983,7 +2983,13 @@
       },
       "CompanySectorEnum": {
         "type": "string",
-        "enum": ["UNKNOWN", "PRIVATE", "PUBLIC"],
+        "enum": [
+          "UNKNOWN",
+          "FYRIRTAEKI",
+          "RADUNEYTI",
+          "RIKISADILI",
+          "SVEITARFELAG"
+        ],
         "description": "Ownership sector (private vs government/state), derived from the RSK legal form. UNKNOWN means unclassified — it does NOT mean private."
       },
       "CompanyReportStatusEnum": {
@@ -3959,26 +3965,25 @@
           },
           "reason": {
             "type": "string",
-            "enum": ["RENEWAL_WINDOW_NOT_OPEN", "MISSING_EQUALITY_REPORT"],
+            "enum": ["MISSING_EQUALITY_REPORT"],
             "nullable": true,
-            "description": "Machine-readable reason when `eligible` is false; null when eligible. `MISSING_EQUALITY_REPORT` (no approved, in-force equality report — takes priority) or `RENEWAL_WINDOW_NOT_OPEN` (current report due more than 6 months out)."
+            "description": "Machine-readable reason when `eligible` is false; null when eligible. Only `MISSING_EQUALITY_REPORT` today — no approved, in-force equality report and no unexpired legacy certificate."
           },
           "dueAt": {
             "type": "string",
             "format": "date-time",
             "example": "2029-10-03T23:59:59.999Z",
             "nullable": true,
-            "description": "The company's next salary-report due date (`next_salary_report_due_at`). An end-of-day deadline — the company is not late until the named day is over. Null when no obligation is on record."
+            "description": "The company's current salary-report deadline (`next_salary_report_due_at`). An end-of-day deadline — the company is not late until the named day is over. Null when no obligation is on record."
           },
-          "earliestSubmissionDate": {
+          "earliestNewDueAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2029-04-03T00:00:00.000Z",
-            "nullable": true,
-            "description": "Earliest moment the company may submit (due date minus the 6-month window), normalised to 00:00 on that day — the whole of the named date can be filed on. Null when there is no due date to anchor on."
+            "example": "2029-09-22T23:59:59.999Z",
+            "description": "The deadline a report filed now would earn, **if it were approved today** — three years on, to the end of that day. Review normally takes days or weeks and the real date moves out with it, so treat this as the earliest possible answer rather than a promise.\n\nRead against `dueAt` it is what an early filing trades: the remaining time on the current certificate is absorbed into the new three years rather than added to them. A company with a year still to run gets three years from today, not four — so a consumer that files on a schedule of its own should put `dueAt` in front of the employer first."
           }
         },
-        "required": ["eligible"]
+        "required": ["eligible", "earliestNewDueAt"]
       },
       "SalaryDataBasisEnum": {
         "type": "string",
@@ -3989,20 +3994,12 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
-          "nationalId": { "type": "string" },
           "address": { "type": "string" },
           "city": { "type": "string" },
           "postcode": { "type": "string" },
           "isatCategory": { "type": "string" }
         },
-        "required": [
-          "name",
-          "nationalId",
-          "address",
-          "city",
-          "postcode",
-          "isatCategory"
-        ]
+        "required": ["name", "address", "city", "postcode", "isatCategory"]
       },
       "SubmitReportSubsidiaryDto": {
         "type": "object",
@@ -4056,8 +4053,11 @@
           "importedFromExcel": { "type": "boolean" },
           "providerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Upstream island.is application UUID, stored as the report provider_id."
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^(?!\\.{1,2}$)[^/\\\\]+$",
+            "example": "2026-Q1-042",
+            "description": "The caller’s own identifier for this submission, stored as the report provider_id. Any non-empty string up to 256 characters — a UUID, `2026-Q1-042`, whatever the calling system mints; the format carries no meaning here. Surrounding whitespace is trimmed, because this value is also the idempotency key and two ids differing only by spacing would file two reports. Uniqueness is enforced on `(provider_type, provider_id)`. It may not contain `/` or `\\`, and may not be `.` or `..`, since this id is also the path segment that reads the report back and a URL rewrites those before routing."
           },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
@@ -4088,7 +4088,7 @@
           "salaryDataPeriod": {
             "type": "string",
             "nullable": true,
-            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`, ignored for `AVERAGE`. Must name a month that has already happened, no earlier than 36 months ago."
+            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`. Must name a month that has already happened, no earlier than 36 months ago. When the basis is `AVERAGE` there is no single month to name: island.is clears any value sent, and the partner API refuses it with a 400 — so do not send one."
           },
           "parsed": {
             "description": "Parsed workbook payload from `POST /reports/excel/import`. Contains the criteria tree, role list, and employee rows.",
@@ -4140,17 +4140,39 @@
           "replayed": {
             "type": "boolean",
             "description": "True when the providerId had already been used and this call filed nothing — the report named here is the earlier one, and the body just sent was not read. A corrected re-file needs a new providerId."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "POSTPONED",
+              "IN_REVIEW",
+              "DENIED",
+              "APPROVED",
+              "SUPERSEDED",
+              "WITHDRAWN"
+            ],
+            "description": "Status of the report this call refers to. SUBMITTED means it is in the reviewer queue; POSTPONED means outliers were detected and left unexplained, and it cannot be reviewed until they are."
+          },
+          "unexplainedOutlierOrdinals": {
+            "description": "Employee ordinals whose pay difference is unexplained, present only when status is POSTPONED. Every one of them must be covered by a group sent to PUT …/outliers before the report can be reviewed.",
+            "type": "array",
+            "items": { "type": "number" }
           }
         },
-        "required": ["reportId", "replayed"]
+        "required": ["reportId", "replayed", "status"]
       },
       "SubmitEqualityReportDto": {
         "type": "object",
         "properties": {
           "providerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Upstream island.is application UUID, stored as the report provider_id."
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^(?!\\.{1,2}$)[^/\\\\]+$",
+            "example": "2026-Q1-042",
+            "description": "The caller’s own identifier for this submission, stored as the report provider_id. Any non-empty string up to 256 characters — a UUID, `2026-Q1-042`, whatever the calling system mints; the format carries no meaning here. Surrounding whitespace is trimmed, because this value is also the idempotency key and two ids differing only by spacing would file two reports. Uniqueness is enforced on `(provider_type, provider_id)`. It may not contain `/` or `\\`, and may not be `.` or `..`, since this id is also the path segment that reads the report back and a URL rewrites those before routing."
           },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {

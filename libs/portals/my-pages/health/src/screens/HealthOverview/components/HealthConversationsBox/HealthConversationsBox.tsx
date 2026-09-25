@@ -60,13 +60,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
 
   const { data, loading, error } = useGetHealthConversationsQuery({
     fetchPolicy: 'network-only',
-    variables: { input: {} },
+    variables: { input: { limit } },
     skip: !hasHealthScope,
   })
 
-  const conversations = (
-    data?.healthDirectorateHealthConversations ?? []
-  ).slice(0, limit)
+  const conversations =
+    data?.healthDirectoratePaginatedHealthConversations?.data ?? []
 
   return (
     <Box
