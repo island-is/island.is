@@ -150,14 +150,18 @@ export const assetsModule: PortalModule = {
         name: m.farmerLands,
         path: AssetsPaths.AssetsFarmerLands,
         key: FARMERS_LANDS_FLAG,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
+        enabled:
+          userInfo.scopes.includes(ApiScope.internal) ||
+          userInfo.scopes.includes(ApiScope.internalProcuring),
         element: <FarmerLandsOverview />,
       },
       {
         name: m.farmerLands,
         path: AssetsPaths.AssetsFarmerLandDetail,
         key: FARMERS_LANDS_FLAG,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
+        enabled:
+          userInfo.scopes.includes(ApiScope.internal) ||
+          userInfo.scopes.includes(ApiScope.internalProcuring),
         element: <FarmerLandDetail />,
       },
       {
