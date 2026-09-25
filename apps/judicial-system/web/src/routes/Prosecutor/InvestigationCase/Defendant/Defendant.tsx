@@ -111,22 +111,21 @@ const Defendant = () => {
   )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
-    if (workingCase.defendants && workingCase.defendants.length > 1) {
-      if (workingCase.id) {
-        const defendantDeleted = await deleteDefendant(
-          workingCase.id,
-          defendant.id,
-        )
+    if (!workingCase.defendants || workingCase.defendants.length <= 1) {
+      return
+    }
 
-        if (defendantDeleted && workingCase.defendants) {
-          removeDefendantFromState(defendant)
-        } else {
-          // TODO: handle error
-        }
-      } else {
-        removeDefendantFromState(defendant)
+    if (workingCase.id) {
+      const deleted = await deleteDefendant(workingCase.id, defendant.id)
+
+      // The failure has been reported. Keep the defendant in the form so
+      // the deletion can be retried.
+      if (!deleted) {
+        return
       }
     }
+
+    removeDefendantFromState(defendant)
   }
 
   const removeDefendantFromState = (defendant: TDefendant) => {
@@ -143,6 +142,13 @@ const Defendant = () => {
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
       const defendantId = await createDefendant({ caseId: workingCase.id })
+
+      // The failure has been reported. Adding a defendant the server does
+      // not know about would only make every later save of it fail too.
+      if (!defendantId) {
+        return
+      }
+
       createEmptyDefendant(defendantId)
     } else {
       createEmptyDefendant()
