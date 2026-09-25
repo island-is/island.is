@@ -118,7 +118,12 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
         meta: { type: 'interactive', span: 2 },
         cell: ({ row }) => {
           const item = row.original
-          if (!item.renewalStatus && item.isRenewable) {
+          const canRenew =
+            item.isRenewable &&
+            (!item.renewalStatus ||
+              item.renewalStatus ===
+                HealthDirectoratePrescriptionRenewalStatus.Dismissed)
+          if (canRenew) {
             const button = (
               <Button
                 variant={isMobile ? 'ghost' : 'text'}
