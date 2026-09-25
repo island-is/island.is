@@ -931,7 +931,7 @@ export const is = {
     'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
   'health.messages.compose.introTitle': 'Hafa samband',
   'health.messages.compose.introBody1':
-    'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma.',
+    'Hér er hægt að senda skilaboð og þeim er yfirleitt svarað innan þriggja virkra daga, á dagvinnutíma.',
   'health.messages.compose.introBody2':
     'Ef erindið er brýnt og þarfnast svars samdægurs hringdu í <b>1700</b> eða hafðu samband við þitt meðferðarteymi.',
   'health.messages.compose.introBody3':
