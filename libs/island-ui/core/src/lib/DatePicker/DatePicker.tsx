@@ -50,6 +50,21 @@ const languageConfig = {
   },
 }
 
+// react-datepicker always installs floating-ui's `flip` middleware, which opens
+// the calendar above the input when there is no room below it, and only appends
+// `popperModifiers` after it. `popperProps` is spread over its defaults though,
+// so a middleware list without `flip` replaces them. The offset mirrors the
+// default one react-datepicker installs, so the calendar sits where it always has.
+const POPPER_OFFSET = 10
+const noFlipPopperProps = {
+  middleware: [
+    {
+      name: 'offset',
+      fn: ({ y }: { y: number }) => ({ y: y + POPPER_OFFSET }),
+    },
+  ],
+} as ReactDatePickerProps['popperProps']
+
 const tryParseDate = (
   str: string,
   primary: string,
@@ -101,6 +116,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   displaySelectInput = false,
   detachedCalendar = false,
   fixedHeight = false,
+  preventFlip = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
@@ -300,6 +316,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           fixedHeight={fixedHeight}
           showPopperArrow={false}
           popperPlacement="bottom-start"
+          popperProps={preventFlip ? noFlipPopperProps : undefined}
           open={isOpen}
           onInputClick={() => {
             if (!range) setIsOpen(true)
