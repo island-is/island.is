@@ -35,9 +35,11 @@ const sanitizeConfig: sanitizeHtml.IOptions = {
 export const renderSanitizedHtml = (html?: string | null) =>
   HtmlParser(sanitizeHtml(html ?? '', sanitizeConfig))
 
+// trim() leaves zero-width characters behind, so strip those too
 const hasText = (html?: string | null) =>
-  sanitizeHtml(html ?? '', { allowedTags: [], allowedAttributes: {} }).trim()
-    .length > 0
+  sanitizeHtml(html ?? '', { allowedTags: [], allowedAttributes: {} })
+    .replace(/[​-‍﻿]/g, '')
+    .trim().length > 0
 
 // htmlLabel replaces label when present, but a hostile htmlLabel can sanitize
 // down to nothing, so the fallback is decided on the sanitized text.

@@ -56,6 +56,7 @@ describe('renderSanitizedHtml', () => {
       expect(renderLabel(undefined, 'Venjulegt')).toBe('Venjulegt')
       expect(renderLabel('', 'Venjulegt')).toBe('Venjulegt')
       expect(renderLabel('<p></p>', 'Venjulegt')).toBe('Venjulegt')
+      expect(renderLabel('<span>&#8203;</span>', 'Venjulegt')).toBe('Venjulegt')
     })
 
     it('falls back to label when htmlLabel sanitizes down to nothing', () => {
