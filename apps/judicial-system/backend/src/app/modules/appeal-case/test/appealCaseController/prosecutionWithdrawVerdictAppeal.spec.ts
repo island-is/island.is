@@ -192,6 +192,12 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
       then = await givenWhenThen(dto)
     })
 
+    it('should read every event of the appeal case in the transaction', () => {
+      expect(
+        mockAppealEventLogRepositoryService.findAllForAppealCase,
+      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+    })
+
     it('should record a prosecution APPEAL_WITHDRAWN event for that defendant', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(

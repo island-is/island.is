@@ -385,6 +385,12 @@ describe('CourtSessionController - Upsert appeal decision', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalled()
     })
+
+    it("should read the ruling appeal's APPEALED events in the transaction", () => {
+      expect(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+    })
   })
 
   describe('ruling appealed out of court', () => {
@@ -478,6 +484,9 @@ describe('CourtSessionController - Upsert appeal decision', () => {
       expect(mockAppealDecisionRepositoryService.upsert).toHaveBeenCalled()
       expect(
         mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAppealEventLogRepositoryService.findAllForAppealCase,
       ).not.toHaveBeenCalled()
     })
   })

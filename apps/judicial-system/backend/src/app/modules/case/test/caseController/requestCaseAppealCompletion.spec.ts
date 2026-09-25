@@ -217,6 +217,12 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       await accept(theCase)
     })
 
+    it("should read the appeal case's APPEALED events in the transaction", () => {
+      expect(
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
+      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+    })
+
     it('should not create or delete the appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
       expect(mockAppealCaseRepositoryService.delete).not.toHaveBeenCalled()
