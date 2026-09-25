@@ -141,7 +141,14 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
       const slicer = visual as VisualDescriptor
 
-      const slicerState = await slicer.getSlicerState()
+      let slicerState: models.ISlicerState
+      try {
+        slicerState = await slicer.getSlicerState()
+      } catch {
+        // A visual can fail to report its state; skip it rather than
+        // aborting the search for the ship slicer.
+        continue
+      }
 
       if (
         !slicerStateContainsExpectedTarget(
@@ -151,28 +158,32 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       )
         continue
 
-      slicer.setSlicerState({
-        ...slicerState,
-        filters: [
-          {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            $schema: 'http://powerbi.com/product/schema#basic',
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            filterType: 1,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            operator: 'In',
-            requireSingleSelection: false,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            target: fiskistofaShipSearchTarget,
-            ...(slicerState.filters?.[0] as IBasicFilter),
-            values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
-          },
-        ],
-      })
+      try {
+        await slicer.setSlicerState({
+          ...slicerState,
+          filters: [
+            {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              $schema: 'http://powerbi.com/product/schema#basic',
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              filterType: 1,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              operator: 'In',
+              requireSingleSelection: false,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              target: fiskistofaShipSearchTarget,
+              ...(slicerState.filters?.[0] as IBasicFilter),
+              values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
+            },
+          ],
+        })
+      } catch {
+        continue
+      }
     }
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
