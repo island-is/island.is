@@ -117,7 +117,7 @@ describe('DebtsLoader', () => {
 
     expect(screen.getByText('Engar skuldir fundust')).toBeInTheDocument()
     expect(
-      screen.getByText('Þú ert ekki með ógreidda reikninga hjá ríkinu.'),
+      screen.getByText('Þú ert ekki með ógreiddar skuldir frá ríkinu.'),
     ).toBeInTheDocument()
 
     await waitFor(() => expect(addExternalData).toHaveBeenCalled())

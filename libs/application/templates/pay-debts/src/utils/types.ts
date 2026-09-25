@@ -1,5 +1,6 @@
 export type CustomerDebt = {
   payID: string
+  documentID?: string
   chargeTypeId: string
   chargeTypeName: string
   dueDate: string

@@ -24,7 +24,7 @@ describe('completedForm conclusion', () => {
       FieldTypes.EXPANDABLE_DESCRIPTION,
     ) as ExpandableDescriptionField
 
-    expect(nextSteps.introText).toBe(messages.nextStepsIntro)
+    expect(nextSteps.introText).toBe('')
     expect(nextSteps.description).toBe(messages.nextStepsDescription)
   })
 

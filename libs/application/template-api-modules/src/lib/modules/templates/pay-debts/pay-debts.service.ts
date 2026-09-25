@@ -41,6 +41,7 @@ export class PayDebtsService extends BaseTemplateApiService {
         cost: Number(debt.cost),
         debts: Number(debt.debts),
         payID: debt.payID,
+        documentID: debt.documentID,
         salaryPayerName: mockSalaryPayerName(index),
       })),
     }

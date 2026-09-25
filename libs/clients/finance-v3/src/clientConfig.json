@@ -227,7 +227,8 @@
           "interest": { "type": "integer", "format": "int64" },
           "cost": { "type": "integer", "format": "int64" },
           "debts": { "type": "integer", "format": "int64" },
-          "payID": { "type": "string" }
+          "payID": { "type": "string" },
+          "documentID": { "type": "string" }
         }
       },
       "customerDebtsnationalID_GET_response": {

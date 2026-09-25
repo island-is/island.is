@@ -21,6 +21,7 @@ describe('PayDebtsService', () => {
           cost: BigInt(3000),
           debts: BigInt(125000),
           payID: 'PAY-123',
+          documentID: 'DOC-123',
         },
       ],
     })
@@ -56,6 +57,7 @@ describe('PayDebtsService', () => {
           cost: 3000,
           debts: 125000,
           payID: 'PAY-123',
+          documentID: 'DOC-123',
         },
       ],
     })
