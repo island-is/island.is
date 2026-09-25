@@ -225,4 +225,40 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     expect(courtDocumentRepositoryService.create).not.toHaveBeenCalled()
     expect(awsS3Service.putObject).not.toHaveBeenCalled()
   })
+
+  it('does not re-read the stored files when nothing is created', async () => {
+    policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
+      makePoliceSystemDigitalCaseFile() as never,
+    ])
+    policeDigitalCaseFileRepositoryService.findByCaseId.mockResolvedValueOnce([
+      makeStoredPoliceDigitalCaseFile() as never,
+    ])
+
+    const result = await service.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      CaseType.INDICTMENT,
+      CaseState.DRAFT,
+      undefined,
+      true,
+      'Prosecutor Name',
+      [policeCaseNumber],
+      { nationalId: '0000000000' } as User,
+    )
+
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenCalledTimes(1)
+    expect(
+      policeDigitalCaseFileRepositoryService.findByCaseId,
+    ).toHaveBeenCalledWith(caseId)
+    expect(policeDigitalCaseFileRepositoryService.create).not.toHaveBeenCalled()
+    expect(result).toEqual([
+      expect.objectContaining({
+        id: 'stored-1',
+        policeDigitalFileId,
+        isDeletable: false,
+        isNew: false,
+      }),
+    ])
+  })
 })
