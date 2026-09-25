@@ -31,6 +31,25 @@ module.exports = {
       )
       ON CONFLICT (name) DO NOTHING;
 
+      INSERT INTO api_resource_scope (api_resource_name, scope_name)
+      VALUES (
+        '@admin.island.is',
+        '@admin.island.is/signature-collection:municipality'
+      )
+      ON CONFLICT DO NOTHING;
+
+      INSERT INTO client_allowed_scope (client_id, scope_name)
+      VALUES
+        (
+          '@admin.island.is/web',
+          '@admin.island.is/signature-collection:municipality'
+        ),
+        (
+          '@admin.island.is/bff-stjornbord',
+          '@admin.island.is/signature-collection:municipality'
+        )
+      ON CONFLICT DO NOTHING;
+
       -- Create users if they don't exist
       INSERT INTO api_scope_user (national_id, email)
       VALUES
