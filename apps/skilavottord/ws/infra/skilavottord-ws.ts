@@ -31,16 +31,6 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .ingress({
-      primary: {
-        host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
-        },
-        paths: ['/app/skilavottord/api/graphql'],
-      },
-    })
     .grantNamespaces('application-system')
     .resources({
       limits: {

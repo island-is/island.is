@@ -38,28 +38,4 @@ export const serviceSetup = (services: {
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       NEXTAUTH_SECRET: '/k8s/skilavottord/web/NEXTAUTH_SECRET',
     })
-    .ingress({
-      primary: {
-        host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
-        },
-        paths: ['/app/skilavottord/'],
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          prod: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-        },
-      },
-    })
     .grantNamespaces('nginx-ingress-external')
