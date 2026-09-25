@@ -180,7 +180,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         <Text marginBottom={3}>
           {formatMessage(messages.renewalMedicineRequestText)}
         </Text>
-        {targetOptions.length > 0 && (
+        {targetOptions.length > 1 && (
           <Box marginBottom={3}>
             <Select
               name="renewalTarget"
