@@ -9,10 +9,12 @@ import {
   GridRow,
   Icon,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
+import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
-import { CardLoader } from '@island.is/portals/my-pages/core'
+import { CardLoader, Modal } from '@island.is/portals/my-pages/core'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
 import { EducationPaths } from '../../../../lib/paths'
 import { KeyInfoSection } from './KeyInfoSection'
@@ -51,6 +53,10 @@ export const EmergencyContactsSection = ({
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
 
+  const [contactToRemove, setContactToRemove] = useState<
+    EmergencyContact | undefined
+  >(undefined)
+
   const addPath = generatePath(EducationPaths.PrimarySchoolContactAdd, {
     studentId: studentId ?? '',
   })
@@ -60,7 +66,11 @@ export const EmergencyContactsSection = ({
       agentId,
     })
 
-  const handleRemove = (contact: EmergencyContact) => onRemove?.(contact.id)
+  const handleConfirmRemove = async () => {
+    if (!contactToRemove) return
+    await onRemove?.(contactToRemove.id)
+    setContactToRemove(undefined)
+  }
   const canEdit = (contact: EmergencyContact) => contact.canEdit === true
 
   const showRegisteredBy = (contact: EmergencyContact) =>
@@ -87,6 +97,14 @@ export const EmergencyContactsSection = ({
                 <GridColumn span={['1/1', '1/1', '1/1', '4/12']}>
                   <Text variant="h5" as="span" lineHeight="lg">
                     {contact.name}
+                    {showRegisteredBy(contact) && !canEdit(contact) && (
+                      <>
+                        {' '}
+                        <Tooltip
+                          text={formatMessage(kim.contactRegisteredNote)}
+                        />
+                      </>
+                    )}
                   </Text>
                 </GridColumn>
                 <GridColumn span={['1/1', '1/1', '1/1', '5/12']}>
@@ -108,11 +126,6 @@ export const EmergencyContactsSection = ({
                             'd. MMMM yyyy',
                             { locale: is },
                           )}`}
-                      </Text>
-                    )}
-                    {showRegisteredBy(contact) && !canEdit(contact) && (
-                      <Text variant="small" color="dark400">
-                        {formatMessage(kim.contactRegisteredNote)}
                       </Text>
                     )}
                   </Box>
@@ -142,7 +155,7 @@ export const EmergencyContactsSection = ({
                         colorScheme="destructive"
                         size="small"
                         disabled={saving}
-                        onClick={() => handleRemove(contact)}
+                        onClick={() => setContactToRemove(contact)}
                       >
                         {formatMessage(kim.remove)}
                       </Button>
@@ -175,6 +188,34 @@ export const EmergencyContactsSection = ({
           {formatMessage(kim.contactAdd)}
         </Button>
       </Box>
+      {contactToRemove && (
+        <Modal
+          id="key-info-contact-remove-modal"
+          isVisible
+          initialVisibility
+          buttonsSpacing="spaceBetween"
+          onCloseModal={() => setContactToRemove(undefined)}
+          title={formatMessage(kim.contactRemoveTitle)}
+          text={formatMessage(kim.contactRemoveText, {
+            name: contactToRemove.name,
+          })}
+          buttons={[
+            {
+              id: 'key-info-contact-remove-cancel',
+              type: 'ghost',
+              text: formatMessage(kim.cancel),
+              onClick: () => setContactToRemove(undefined),
+            },
+            {
+              id: 'key-info-contact-remove-confirm',
+              type: 'primary',
+              text: formatMessage(kim.remove),
+              loading: saving,
+              onClick: handleConfirmRemove,
+            },
+          ]}
+        />
+      )}
     </KeyInfoSection>
   )
 }

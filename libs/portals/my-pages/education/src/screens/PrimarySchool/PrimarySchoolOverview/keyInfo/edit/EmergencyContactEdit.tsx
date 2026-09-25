@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
+import * as kennitala from 'kennitala'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
   Button,
-  GridColumn,
-  GridRow,
+  Input,
   Select,
   Stack,
   Text,
@@ -13,6 +13,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { CardLoader, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './editForm.css'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../../lib/messages'
 import { EducationPaths } from '../../../../../lib/paths'
 import { SectionError } from '../SectionError'
@@ -21,8 +22,9 @@ import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
 
 /**
  * Dedicated edit screen for a single aðstandandi (emergency contact).
- * (PrimarySchoolContactEdit). Only the relation type is editable (the contact's
- * name / national id are read-only). Save/cancel return to the overview.
+ * (PrimarySchoolContactEdit). Mirrors the add screen's layout: the national id
+ * and name are shown read-only (both come from the existing record / Þjóðskrá)
+ * and only the relation type is editable. Save/cancel return to the overview.
  */
 export const EmergencyContactEdit = () => {
   useNamespaces('sp.education-primary-school')
@@ -53,6 +55,10 @@ export const EmergencyContactEdit = () => {
     setRelationTypeId(contact?.relationTypeId)
   }, [contact?.relationTypeId])
 
+  // Only the relation type is editable, so the form is dirty once it differs
+  // from the loaded contact. Save stays disabled until then.
+  const isDirty = relationTypeId !== contact?.relationTypeId
+
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
   })
@@ -80,55 +86,60 @@ export const EmergencyContactEdit = () => {
         />
       )}
       {!loading && !error && contact && (
-        <Stack space={3}>
-          <Box>
-            <Text variant="small" fontWeight="semiBold" marginBottom={1}>
-              {formatMessage(kim.contactName)}
-            </Text>
-            <Text variant="default">{contact.name}</Text>
-          </Box>
-          <GridRow>
-            <GridColumn span={['1/1', '1/1', '1/1', '5/12']}>
-              <Select
-                name="relation-type"
-                size="sm"
-                label={formatMessage(kim.contactRelationType)}
-                isLoading={relationOptionsLoading}
-                options={relationOptions}
-                value={
-                  relationOptions.find(
-                    (option) => option.value === relationTypeId,
-                  ) ?? null
-                }
-                onChange={(option) =>
-                  setRelationTypeId(option?.value ?? undefined)
-                }
+        <Box className={styles.formContainer}>
+          <Stack space={3}>
+            <Box>
+              <Input
+                backgroundColor="blue"
+                name="contact-national-id"
+                type="tel"
+                readOnly
+                label={formatMessage(kim.contactNationalId)}
+                value={kennitala.format(contact.nationalId)}
               />
-            </GridColumn>
-          </GridRow>
-          {relationOptionsError && (
-            <SectionError error={relationOptionsError} />
-          )}
-          <Box display="flex" columnGap={2}>
-            <Button
-              variant="primary"
-              size="small"
-              loading={saving}
-              disabled={!relationTypeId}
-              onClick={handleSave}
-            >
-              {formatMessage(kim.save)}
-            </Button>
-            <Button
-              variant="ghost"
-              size="small"
-              disabled={saving}
-              onClick={() => navigate(overviewPath)}
-            >
-              {formatMessage(kim.cancel)}
-            </Button>
-          </Box>
-        </Stack>
+              <Box paddingTop={1} paddingLeft={2}>
+                <Text variant="medium" fontWeight="semiBold">
+                  {contact.name}
+                </Text>
+              </Box>
+            </Box>
+            <Select
+              name="relation-type"
+              required
+              backgroundColor="blue"
+              label={formatMessage(kim.contactRelationPrompt)}
+              isLoading={relationOptionsLoading}
+              options={relationOptions}
+              value={
+                relationOptions.find(
+                  (option) => option.value === relationTypeId,
+                ) ?? null
+              }
+              onChange={(option) =>
+                setRelationTypeId(option?.value ?? undefined)
+              }
+            />
+            {relationOptionsError && (
+              <SectionError error={relationOptionsError} />
+            )}
+            <Box display="flex" justifyContent="flexEnd" columnGap={2}>
+              <Button
+                variant="ghost"
+                disabled={saving}
+                onClick={() => navigate(overviewPath)}
+              >
+                {formatMessage(kim.cancel)}
+              </Button>
+              <Button
+                loading={saving}
+                disabled={!relationTypeId || !isDirty}
+                onClick={handleSave}
+              >
+                {formatMessage(kim.confirm)}
+              </Button>
+            </Box>
+          </Stack>
+        </Box>
       )}
     </>
   )

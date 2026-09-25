@@ -179,6 +179,10 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-cancel',
     defaultMessage: 'Hætta við',
   },
+  confirm: {
+    id: 'sp.education-primary-school:key-info-confirm',
+    defaultMessage: 'Staðfesta',
+  },
   yes: {
     id: 'sp.education-primary-school:key-info-yes',
     defaultMessage: 'Já',
@@ -197,10 +201,13 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contact-add',
     defaultMessage: 'Bæta við aðstandanda',
   },
+  contactAddTitle: {
+    id: 'sp.education-primary-school:key-info-contact-add-title',
+    defaultMessage: 'Bæta við aðstandendum barns',
+  },
   contactAddIntro: {
     id: 'sp.education-primary-school:key-info-contact-add-intro',
-    defaultMessage:
-      'Skráðu kennitölu aðstandanda og tengsl við barnið. Nafn sækist sjálfkrafa úr Þjóðskrá.',
+    defaultMessage: 'Leitaðu eftir aðstandenda með kennitölu',
   },
   contactEditTitle: {
     id: 'sp.education-primary-school:key-info-contact-edit-title',
@@ -214,6 +221,10 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contact-name',
     defaultMessage: 'Nafn',
   },
+  contactFullName: {
+    id: 'sp.education-primary-school:key-info-contact-full-name',
+    defaultMessage: 'Fullt nafn',
+  },
   contactNationalId: {
     id: 'sp.education-primary-school:key-info-contact-national-id',
     defaultMessage: 'Kennitala',
@@ -222,9 +233,17 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contact-national-id-invalid',
     defaultMessage: 'Ógild kennitala',
   },
+  contactPersonNotFound: {
+    id: 'sp.education-primary-school:key-info-contact-person-not-found',
+    defaultMessage: 'Einstaklingur fannst ekki í þjóðskrá',
+  },
   contactRelationType: {
     id: 'sp.education-primary-school:key-info-contact-relation-type',
     defaultMessage: 'Tengsl',
+  },
+  contactRelationPrompt: {
+    id: 'sp.education-primary-school:key-info-contact-relation-prompt',
+    defaultMessage: 'Skráðu tengsl við barn',
   },
   contactRegisteredBy: {
     id: 'sp.education-primary-school:key-info-contact-registered-by',
@@ -258,6 +277,15 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     defaultMessage:
       'Aðstandendur uppfæra sjálfir símanúmer og netfang á Mínum síðum.',
   },
+  contactRemoveTitle: {
+    id: 'sp.education-primary-school:key-info-contact-remove-title',
+    defaultMessage: 'Fjarlægja aðstandanda',
+  },
+  contactRemoveText: {
+    id: 'sp.education-primary-school:key-info-contact-remove-text',
+    defaultMessage:
+      'Ertu viss um að þú viljir fjarlægja {name} sem aðstandanda? Þú getur bætt honum við aftur ef þörf er á.',
+  },
 
   // 2. Tungumálaumhverfi
   languageProfileTitle: {
@@ -270,7 +298,7 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   },
   languageEditIntro: {
     id: 'sp.education-primary-school:key-info-language-edit-intro',
-    defaultMessage: 'Hér getur þú uppfært tungumálaumhverfi barnsins',
+    defaultMessage: 'Skráðu tungumálaumhverfi fyrir barn',
   },
   languageEnvironment: {
     id: 'sp.education-primary-school:key-info-language-environment',
@@ -286,10 +314,18 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   },
   interpreter: {
     id: 'sp.education-primary-school:key-info-interpreter',
+    defaultMessage: 'Túlkur í samskiptum við skóla',
+  },
+  interpreterInfo: {
+    id: 'sp.education-primary-school:key-info-interpreter-info',
     defaultMessage: 'Forsjáaraðili þarf túlk í samskiptum við skóla',
   },
   signLanguage: {
     id: 'sp.education-primary-school:key-info-sign-language',
+    defaultMessage: 'Táknmál',
+  },
+  signLanguageInfo: {
+    id: 'sp.education-primary-school:key-info-sign-language-info',
     defaultMessage: 'Barn notar táknmál',
   },
 
@@ -304,11 +340,7 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   },
   healthEditIntro: {
     id: 'sp.education-primary-school:key-info-health-edit-intro',
-    defaultMessage: 'Hér getur þú uppfært heilsufarsupplýsingar barnsins',
-  },
-  allergyTitle: {
-    id: 'sp.education-primary-school:key-info-allergy-title',
-    defaultMessage: 'Ofnæmi og óþol',
+    defaultMessage: 'Skráðu heilsufarsupplýsingar fyrir barn',
   },
   foodAllergies: {
     id: 'sp.education-primary-school:key-info-food-allergies',
@@ -321,6 +353,18 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   environmentalAllergies: {
     id: 'sp.education-primary-school:key-info-environmental-allergies',
     defaultMessage: 'Umhverfisofnæmi',
+  },
+  foodAllergyChoose: {
+    id: 'sp.education-primary-school:key-info-allergy-choose',
+    defaultMessage: 'Veldu ofnæmi og óþol',
+  },
+  medicineAllergyChoose: {
+    id: 'sp.education-primary-school:key-info-medicine-allergy-choose',
+    defaultMessage: 'Veldu lyfjaofnæmi',
+  },
+  environmentalAllergyChoose: {
+    id: 'sp.education-primary-school:key-info-environmental-allergy-choose',
+    defaultMessage: 'Veldu umhverfisofnæmi',
   },
   epipen: {
     id: 'sp.education-primary-school:key-info-epipen',

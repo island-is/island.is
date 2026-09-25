@@ -3,17 +3,19 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
   Button,
-  Checkbox,
   GridColumn,
   GridRow,
+  RadioButton,
   Select,
   Stack,
   Text,
   toast,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { CardLoader } from '@island.is/portals/my-pages/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
+import * as styles from './editForm.css'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../../lib/messages'
 import { EducationPaths } from '../../../../../lib/paths'
 import { SectionError } from '../SectionError'
@@ -28,7 +30,6 @@ import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
  * `friggOptions(type: languageEnvironment)` — the same source the
  * new-primary-school application uses. The child's languages / preferred
  * language come from the ISO 639-1 list (getAllLanguageCodes), not MMS.
- * TODO: Should the languages come from MMS as well, or is the ISO 639-1 list sufficient?
  *
  */
 export const LanguageProfileEdit = () => {
@@ -58,33 +59,67 @@ export const LanguageProfileEdit = () => {
   const [preferredLanguage, setPreferredLanguage] = useState<
     string | undefined
   >(profile?.preferredLanguage)
-  const [interpreter, setInterpreter] = useState<boolean>(
-    profile?.interpreter ?? false,
+  const [interpreter, setInterpreter] = useState<boolean | undefined>(
+    profile?.interpreter,
   )
-  const [signLanguage, setSignLanguage] = useState<boolean>(
-    profile?.signLanguage ?? false,
+  const [signLanguage, setSignLanguage] = useState<boolean | undefined>(
+    profile?.signLanguage,
   )
 
-  // Prefill once the profile arrives from the data seam.
+  // A value-based signature of the server data. `profile` is rebuilt as a fresh
+  // object on every render in the hook (and `languages` is a new array each
+  // time), so using those as effect deps re-runs the prefill on every render and
+  // clobbers the guardian's in-progress edits (e.g. an interpreter/sign-language
+  // "Nei"). This string only changes when the data itself changes.
+  const profileSignature = profile
+    ? JSON.stringify({
+        languageEnvironmentId: profile.languageEnvironmentId,
+        languages: profile.languages ?? [],
+        preferredLanguage: profile.preferredLanguage,
+        interpreter: profile.interpreter,
+        signLanguage: profile.signLanguage,
+      })
+    : ''
+
+  // Prefill when the profile first arrives (and re-sync after a save/refetch).
   useEffect(() => {
     setLanguageEnvironmentId(profile?.languageEnvironmentId)
     setLanguages(profile?.languages ?? [])
     setPreferredLanguage(profile?.preferredLanguage)
-    setInterpreter(profile?.interpreter ?? false)
-    setSignLanguage(profile?.signLanguage ?? false)
-  }, [
-    profile?.languageEnvironmentId,
-    profile?.languages,
-    profile?.preferredLanguage,
-    profile?.interpreter,
-    profile?.signLanguage,
-  ])
+    setInterpreter(profile?.interpreter)
+    setSignLanguage(profile?.signLanguage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileSignature])
+
+  // Value-based signature of the current form state, built the same way as
+  // `profileSignature`. Save stays disabled until this diverges from the loaded
+  // profile, i.e. the guardian has actually changed something.
+  const currentSignature = JSON.stringify({
+    languageEnvironmentId,
+    languages,
+    preferredLanguage,
+    interpreter,
+    signLanguage,
+  })
+  const isDirty = currentSignature !== profileSignature
+
+  // Every field is required, so save stays blocked until they are all filled in.
+  const isValid =
+    !!languageEnvironmentId &&
+    languages.length > 0 &&
+    !!preferredLanguage &&
+    interpreter !== undefined &&
+    signLanguage !== undefined
 
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
   })
 
   const handleSave = async () => {
+    // The undefined checks also narrow interpreter/signLanguage to boolean for
+    // the required LanguageProfileUpdateInput.
+    if (!isValid || interpreter === undefined || signLanguage === undefined)
+      return
     try {
       await saveLanguageProfile({
         languageEnvironmentId,
@@ -116,98 +151,143 @@ export const LanguageProfileEdit = () => {
       {loading && <CardLoader />}
       {!loading && error && <SectionError error={error} />}
       {!loading && !error && (
-        <Stack space={3}>
-          <Box>
-            <Text variant="small" fontWeight="semiBold" marginBottom={1}>
-              {formatMessage(kim.languageEnvironment)}
-            </Text>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '10/12']}>
-                <Select
-                  name="languageEnvironment"
-                  size="sm"
-                  isLoading={optionsLoading}
-                  options={languageEnvironmentOptions}
-                  value={selectedLanguageEnvironment}
-                  onChange={(option) =>
-                    setLanguageEnvironmentId(option?.value ?? undefined)
-                  }
+        <Box className={styles.formContainer}>
+          <Stack space={3}>
+            <Box>
+              <GridRow>
+                <GridColumn span="12/12">
+                  <Select
+                    name="languageEnvironment"
+                    backgroundColor="blue"
+                    label={formatMessage(kim.languageEnvironment)}
+                    size="sm"
+                    isLoading={optionsLoading}
+                    options={languageEnvironmentOptions}
+                    value={selectedLanguageEnvironment}
+                    required
+                    onChange={(option) =>
+                      setLanguageEnvironmentId(option?.value ?? undefined)
+                    }
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
+            {optionsError && (
+              <SectionError error={{ message: optionsError.message }} />
+            )}
+            <Box>
+              <GridRow>
+                <GridColumn span="12/12">
+                  <Select
+                    name="languages"
+                    backgroundColor="blue"
+                    label={formatMessage(kim.childLanguages)}
+                    size="sm"
+                    isMulti
+                    isSearchable
+                    required
+                    isClearable={false}
+                    options={languageOptions}
+                    value={selectedLanguages}
+                    onChange={(selected) => {
+                      const next = (selected ?? []).map(
+                        (option) => option.value,
+                      )
+                      setLanguages(next)
+                      // Drop the preferred language if it is no longer selected,
+                      // so it can't be saved as a preferred language outside the
+                      // child's language list.
+                      if (preferredLanguage && !next.includes(preferredLanguage)) {
+                        setPreferredLanguage(undefined)
+                      }
+                    }}
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
+            <Box>
+              <GridRow>
+                <GridColumn span="12/12">
+                  <Select
+                    name="preferredLanguage"
+                    backgroundColor="blue"
+                    size="sm"
+                    required
+                    label={formatMessage(kim.preferredLanguage)}
+                    isLoading={optionsLoading}
+                    options={selectedLanguages}
+                    value={preferredLanguageOption}
+                    onChange={(option) =>
+                      setPreferredLanguage(option?.value ?? undefined)
+                    }
+                  />
+                </GridColumn>
+              </GridRow>
+            </Box>
+            <Box>
+              <Text variant="h5" fontWeight="semiBold" marginBottom={1}>
+                {formatMessage(kim.interpreter)}{' '}
+                <Tooltip text={formatMessage(kim.interpreterInfo)} />
+              </Text>
+              <Box display="flex" flexDirection="column" rowGap={2}>
+                <RadioButton
+                  name="interpreter"
+                  id="interpreter-yes"
+                  label={formatMessage(kim.yes)}
+                  checked={interpreter === true}
+                  onChange={() => setInterpreter(true)}
                 />
-              </GridColumn>
-            </GridRow>
-          </Box>
-          {optionsError && (
-            <SectionError error={{ message: optionsError.message }} />
-          )}
-          <Box>
-            <Text variant="small" fontWeight="semiBold" marginBottom={1}>
-              {formatMessage(kim.childLanguages)}
-            </Text>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '10/12']}>
-                <Select
-                  name="languages"
-                  size="sm"
-                  isMulti
-                  options={languageOptions}
-                  value={selectedLanguages}
-                  onChange={(selected) =>
-                    setLanguages((selected ?? []).map((option) => option.value))
-                  }
+                <RadioButton
+                  name="interpreter"
+                  id="interpreter-no"
+                  label={formatMessage(kim.no)}
+                  checked={interpreter === false}
+                  onChange={() => setInterpreter(false)}
                 />
-              </GridColumn>
-            </GridRow>
-          </Box>
-          <Box>
-            <Text variant="small" fontWeight="semiBold" marginBottom={1}>
-              {formatMessage(kim.preferredLanguage)}
-            </Text>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '10/12']}>
-                <Select
-                  name="preferredLanguage"
-                  size="sm"
-                  isLoading={optionsLoading}
-                  options={selectedLanguages}
-                  value={preferredLanguageOption}
-                  onChange={(option) =>
-                    setPreferredLanguage(option?.value ?? undefined)
-                  }
+              </Box>
+            </Box>
+            <Box>
+              <Text variant="h5" fontWeight="semiBold" marginBottom={1}>
+                {formatMessage(kim.signLanguage)}
+                <Tooltip text={formatMessage(kim.signLanguageInfo)} />
+              </Text>
+              <Box display="flex" flexDirection="column" rowGap={2}>
+                <RadioButton
+                  name="signLanguage"
+                  id="signLanguage-yes"
+                  label={formatMessage(kim.yes)}
+                  checked={signLanguage === true}
+                  onChange={() => setSignLanguage(true)}
                 />
-              </GridColumn>
-            </GridRow>
-          </Box>
-
-          <Checkbox
-            name="interpreter"
-            label={formatMessage(kim.interpreter)}
-            checked={interpreter}
-            onChange={(event) => setInterpreter(event.target.checked)}
-          />
-          <Checkbox
-            name="signLanguage"
-            label={formatMessage(kim.signLanguage)}
-            checked={signLanguage}
-            onChange={(event) => setSignLanguage(event.target.checked)}
-          />
-          <Box display="flex" columnGap={2}>
-            <Button
-              variant="primary"
-              size="small"
-              onClick={handleSave}
-              loading={saving}
-            >
-              {formatMessage(kim.save)}
-            </Button>
-            <Button
-              variant="ghost"
-              size="small"
-              onClick={() => navigate(overviewPath)}
-            >
-              {formatMessage(kim.cancel)}
-            </Button>
-          </Box>
-        </Stack>
+                <RadioButton
+                  name="signLanguage"
+                  id="signLanguage-no"
+                  label={formatMessage(kim.no)}
+                  checked={signLanguage === false}
+                  onChange={() => setSignLanguage(false)}
+                />
+              </Box>
+            </Box>
+            <Box display="flex" justifyContent="flexEnd" columnGap={2}>
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => navigate(overviewPath)}
+              >
+                {formatMessage(kim.cancel)}
+              </Button>
+              <Button
+                variant="primary"
+                size="small"
+                onClick={handleSave}
+                loading={saving}
+                disabled={!isValid || !isDirty}
+              >
+                {formatMessage(kim.save)}
+              </Button>
+            </Box>
+          </Stack>
+        </Box>
       )}
     </>
   )

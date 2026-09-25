@@ -54,8 +54,6 @@ export interface PrimarySchoolKeyInfo {
   emergencyContacts: SectionState<EmergencyContact[]>
   languageProfile: SectionState<LanguageProfile>
   healthProfile: SectionState<HealthProfile>
-  /** MMS has not opened the health-profile PATCH yet (§8, FEATURE_DISABLED). */
-  healthEditEnabled: boolean
   /** true while any key-info mutation is in flight */
   saving: boolean
   addAgent: (input: EmergencyContactCreateInput) => Promise<void>
@@ -271,7 +269,6 @@ export const usePrimarySchoolKeyInfo = (
       loading: healthQuery.loading,
       error: toMmsError(healthQuery.error),
     },
-    healthEditEnabled: healthProfileData?.canEdit ?? false,
     saving:
       addAgentState.loading ||
       updateAgentState.loading ||

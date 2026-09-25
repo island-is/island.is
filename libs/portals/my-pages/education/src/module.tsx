@@ -161,7 +161,11 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
-        <PrimarySchoolStudentWrapper hideTabs intro={kim.contactAddIntro}>
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactAddTitle}
+          intro={kim.contactAddIntro}
+        >
           <PrimarySchoolContactAdd />
         </PrimarySchoolStudentWrapper>
       ),
@@ -173,7 +177,11 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
-        <PrimarySchoolStudentWrapper hideTabs intro={kim.contactEditIntro}>
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactEditTitle}
+          intro={kim.contactEditIntro}
+        >
           <PrimarySchoolContactEdit />
         </PrimarySchoolStudentWrapper>
       ),
@@ -185,7 +193,11 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
-        <PrimarySchoolStudentWrapper hideTabs intro={kim.languageEditIntro}>
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.languageEditTitle}
+          intro={kim.languageEditIntro}
+        >
           <PrimarySchoolLanguageEdit />
         </PrimarySchoolStudentWrapper>
       ),
@@ -197,7 +209,11 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
-        <PrimarySchoolStudentWrapper hideTabs intro={kim.healthEditIntro}>
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.healthEditTitle}
+          intro={kim.healthEditIntro}
+        >
           <PrimarySchoolHealthEdit />
         </PrimarySchoolStudentWrapper>
       ),

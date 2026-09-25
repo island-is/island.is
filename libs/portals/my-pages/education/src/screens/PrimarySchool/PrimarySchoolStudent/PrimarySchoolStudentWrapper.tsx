@@ -29,19 +29,23 @@ export const PrimarySchoolStudentWrapper = ({
   children,
   hideTabs = false,
   intro = psm.studentHubIntro,
+  title: titleOverride,
 }: {
   children: ReactNode
   hideTabs?: boolean
   intro?: MessageDescriptor
+  /** Override the H1; defaults to the student's name. */
+  title?: MessageDescriptor | string
 }) => {
   useNamespaces('sp.education-primary-school')
   const { formatMessage } = useLocale()
   const { studentId } = useParams<{ studentId: string }>()
   const location = useLocation()
   const loaderData = useLoaderData() as PrimarySchoolStudentLoaderData
-  const title = USE_MOCK_KEY_INFO
+  const studentName = USE_MOCK_KEY_INFO
     ? mockStudent.name ?? psm.schoolLabel
     : loaderData?.studentName ?? psm.schoolLabel
+  const title = titleOverride ?? studentName
 
   const { data: assessmentData, loading: assessmentLoading } =
     usePrimarySchoolAssessmentDataQuery({
@@ -64,10 +68,11 @@ export const PrimarySchoolStudentWrapper = ({
     <IntroWrapper
       title={title}
       intro={intro}
+      marginBottom={hideTabs ? 0 : undefined}
       serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
       {hideTabs ? (
-        <Box paddingTop={2}>{children}</Box>
+        children
       ) : hasAssessment ? (
         <>
           <Hidden print>
