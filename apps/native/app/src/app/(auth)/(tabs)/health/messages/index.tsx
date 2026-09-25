@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { NetworkStatus } from '@apollo/client'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ImageSourcePropType,
@@ -21,11 +22,13 @@ import {
   HealthDirectorateHealthConversationStatusFilter,
   useGetHealthConversationsQuery,
 } from '@/graphql/types/schema'
+import { useThrottleState } from '@/hooks/use-throttle-state'
 import {
   healthMessagesFilterStore,
   useHealthMessagesFilterStore,
 } from '@/stores/health-messages-filter-store'
 import { useOrganizationsStore } from '@/stores/organizations-store'
+import { isAndroid } from '@/utils/devices'
 import { pushOnce } from '@/utils/push-once'
 import {
   EmptyList,
@@ -46,43 +49,49 @@ const TagsWrapper = styled.View`
   flex-wrap: wrap;
 `
 
+const DEFAULT_PAGE_SIZE = 50
+
+const LoadingWrapper = styled.View`
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
+`
+
 export default function HealthMessagesScreen() {
   const intl = useIntl()
   const theme = useTheme()
   const [query, setQuery] = useState('')
+  const search = useThrottleState(query)
   const { starred, archived } = useHealthMessagesFilterStore()
   const { getSenderLogo } = useOrganizationsStore()
+  const [loadingMore, setLoadingMore] = useState(false)
+  // Ref, not state: two onEndReached in one tick would share a stale guard.
+  const loadingMoreRef = useRef(false)
+
+  // Searching server-side; a local filter would only see the loaded pages.
+  const input = useMemo(
+    () => ({
+      limit: DEFAULT_PAGE_SIZE,
+      search: search.trim() || undefined,
+      starred: starred || undefined,
+      status: archived
+        ? HealthDirectorateHealthConversationStatusFilter.Archived
+        : undefined,
+    }),
+    [search, starred, archived],
+  )
+
+  // updateQuery runs against the current variables, so an in-flight page has
+  // to be matched back to the filters it was requested with.
+  const inputRef = useRef(input)
+  inputRef.current = input
 
   const messagesRes = useGetHealthConversationsQuery({
     notifyOnNetworkStatusChange: true,
-    variables: {
-      input: {
-        starred: starred || undefined,
-        status: archived
-          ? HealthDirectorateHealthConversationStatusFilter.Archived
-          : undefined,
-      },
-    },
+    variables: { input },
   })
 
-  const conversations =
-    messagesRes.data?.healthDirectorateHealthConversations ?? []
-
-  const filteredConversations = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) {
-      return conversations
-    }
-    return conversations.filter((conversation) => {
-      const title = conversation.title?.toLowerCase() ?? ''
-      const sender = (
-        conversation.organization?.name ??
-        conversation.lastSenderGroupName ??
-        ''
-      ).toLowerCase()
-      return title.includes(q) || sender.includes(q)
-    })
-  }, [conversations, query])
+  const page = messagesRes.data?.healthDirectoratePaginatedHealthConversations
+  const conversations = page?.data ?? []
 
   const isFilterApplied = starred || archived
 
@@ -122,6 +131,55 @@ export default function HealthMessagesScreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const loadMore = useCallback(async () => {
+    if (
+      loadingMoreRef.current ||
+      messagesRes.loading ||
+      !page?.pageInfo.hasNextPage
+    ) {
+      return
+    }
+    const requestInput = input
+    loadingMoreRef.current = true
+    setLoadingMore(true)
+    try {
+      await messagesRes.fetchMore({
+        variables: {
+          input: {
+            ...requestInput,
+            after: page.pageInfo.endCursor ?? undefined,
+          },
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          const next =
+            fetchMoreResult?.healthDirectoratePaginatedHealthConversations
+          if (!next || inputRef.current !== requestInput) {
+            return prev
+          }
+          const existing =
+            prev.healthDirectoratePaginatedHealthConversations?.data ?? []
+          // Reordering can straddle a conversation across pages.
+          const seen = new Set(existing.map((conversation) => conversation.id))
+          return {
+            healthDirectoratePaginatedHealthConversations: {
+              ...next,
+              data: [
+                ...existing,
+                ...next.data.filter(
+                  (conversation) => !seen.has(conversation.id),
+                ),
+              ],
+            },
+          }
+        },
+      })
+    } catch {
+      // The next onEndReached retries this page.
+    }
+    loadingMoreRef.current = false
+    setLoadingMore(false)
+  }, [messagesRes, page, input])
 
   // A single icon segment within the shared header pill.
   const renderHeaderIconSegment = (
@@ -180,10 +238,23 @@ export default function HealthMessagesScreen() {
       />
       <FlatList
         style={{ flex: 1 }}
-        data={filteredConversations}
+        data={conversations}
         keyExtractor={(item) => item.id}
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
+        onEndReachedThreshold={0.5}
+        onEndReached={loadMore}
+        ListFooterComponent={
+          loadingMore && !messagesRes.error ? (
+            <LoadingWrapper>
+              <ActivityIndicator
+                size="small"
+                animating
+                color={theme.color.blue400}
+              />
+            </LoadingWrapper>
+          ) : null
+        }
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
