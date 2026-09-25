@@ -68,7 +68,7 @@ const HealthConversationDetail = () => {
       { toastId: 'certificatePaymentCancelled' },
     )
     searchParams.delete('certificatePaymentCancelled')
-    setSearchParams(searchParams, { replace: true })
+    setSearchParams(searchParams, { replace: true, preventScrollReset: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certificatePaymentCancelled])
 
@@ -127,7 +127,7 @@ const HealthConversationDetail = () => {
     refetch()
     if (certificatePaymentReturnId) {
       searchParams.delete('certificatePayment')
-      setSearchParams(searchParams, { replace: true })
+      setSearchParams(searchParams, { replace: true, preventScrollReset: true })
     }
   }
 
