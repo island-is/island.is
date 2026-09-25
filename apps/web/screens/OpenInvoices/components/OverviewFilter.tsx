@@ -192,10 +192,7 @@ export const OverviewFilter = ({
             fetchPage={category.fetchPage}
             selectedItems={category.selectedItems}
             onChange={(values) =>
-              onSearchUpdate(
-                category.id,
-                values.length ? values : undefined,
-              )
+              onSearchUpdate(category.id, values.length ? values : undefined)
             }
           />
         </React.Fragment>
