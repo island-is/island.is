@@ -121,8 +121,9 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
         decision: CaseAppealDecision.NOT_APPLICABLE,
       },
     ]
-    const mockFindAll = mockAppealDecisionRepositoryService.findAll as jest.Mock
-    mockFindAll.mockImplementation(() => Promise.resolve(decisions))
+    const mockFindAllForRuling =
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+    mockFindAllForRuling.mockImplementation(() => Promise.resolve(decisions))
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
@@ -170,6 +171,17 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     it('should confirm the court session', () => {
       expect(mockCourtSessionRepositoryService.update).toHaveBeenCalled()
       expect(then.error).toBeUndefined()
+    })
+
+    it("should read only the decisions of the session's ruling", () => {
+      const { calls } = (
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      ).mock
+
+      expect(calls.length).toBeGreaterThan(0)
+      calls.forEach((call) =>
+        expect(call).toEqual([caseId, rulingFileId, { transaction }]),
+      )
     })
 
     it('should create the appeal case with the court session end time', () => {

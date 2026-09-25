@@ -1,4 +1,4 @@
-import { FindOptions, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   Inject,
@@ -34,28 +34,15 @@ interface UpdateAppealDecision {
   withdrawnDate?: Date | null
 }
 
-interface FindAllOptions {
-  where?: FindOptions['where']
-  order?: FindOptions['order']
-  lock?: FindOptions['lock']
-  transaction?: Transaction
-}
-
-interface UpsertAppealDecisionOptions {
-  transaction: Transaction
-}
-
-interface UpdateAppealDecisionOptions {
-  transaction: Transaction
-}
-
-interface UpdateRulingFileOptions {
-  transaction: Transaction
-}
-
-interface DeleteAllForRulingOptions {
-  transaction: Transaction
-}
+// The party key as a where clause. Absent ids become null: Sequelize rejects
+// undefined in a where, and the unique index treats nulls as equal.
+const toPartyWhere = (party: AppealDecisionPartyKey) => ({
+  caseId: party.caseId,
+  rulingFileId: party.rulingFileId ?? null,
+  partyRole: party.partyRole,
+  defendantId: party.defendantId ?? null,
+  civilClaimantId: party.civilClaimantId ?? null,
+})
 
 @Injectable()
 export class AppealDecisionRepositoryService {
@@ -65,35 +52,114 @@ export class AppealDecisionRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findAll(options?: FindAllOptions): Promise<AppealDecision[]> {
+  // Every party's decision for a ruling.
+  async findAllForRuling(
+    caseId: string,
+    rulingFileId: string,
+    options: { transaction: Transaction },
+  ): Promise<AppealDecision[]> {
     try {
-      this.logger.debug('Finding appeal decisions')
+      this.logger.debug(
+        `Finding appeal decisions of case ${caseId} for ruling ${rulingFileId}`,
+      )
 
-      const findOptions: FindOptions = {}
+      const result = await this.appealDecisionModel.findAll({
+        where: { caseId, rulingFileId },
+        transaction: options.transaction,
+      })
 
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      if (options?.lock) {
-        findOptions.lock = options.lock
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      const result = await this.appealDecisionModel.findAll(findOptions)
-
-      this.logger.debug(`Found ${result.length} appeal decisions`)
+      this.logger.debug(
+        `Found ${result.length} appeal decisions of case ${caseId} for ruling ${rulingFileId}`,
+      )
 
       return result
     } catch (error) {
-      this.logger.error('Error finding appeal decisions:', { error })
+      this.logger.error(
+        `Error finding appeal decisions of case ${caseId} for ruling ${rulingFileId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Takes a row lock on every party's decision for a ruling, so concurrent
+  // writers to the same ruling's decisions serialize on it. Rows are locked in
+  // id order, the same order in every transaction, so two lockers cannot
+  // deadlock on each other. Lock before writing: a transaction that first
+  // updates its own row and then locks the rest can deadlock against another
+  // doing the same.
+  async lockAllForRuling(
+    caseId: string,
+    rulingFileId: string,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Locking appeal decisions of case ${caseId} for ruling ${rulingFileId}`,
+      )
+
+      await this.appealDecisionModel.findAll({
+        where: { caseId, rulingFileId },
+        order: [['id', 'ASC']],
+        lock: Transaction.LOCK.UPDATE,
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error locking appeal decisions of case ${caseId} for ruling ${rulingFileId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async existsForRuling(
+    caseId: string,
+    rulingFileId: string,
+    options: { transaction: Transaction },
+  ): Promise<boolean> {
+    try {
+      this.logger.debug(
+        `Checking for appeal decisions of case ${caseId} for ruling ${rulingFileId}`,
+      )
+
+      const result = await this.appealDecisionModel.findOne({
+        where: { caseId, rulingFileId },
+        transaction: options.transaction,
+      })
+
+      return Boolean(result)
+    } catch (error) {
+      this.logger.error(
+        `Error checking for appeal decisions of case ${caseId} for ruling ${rulingFileId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The party's decision row, or null if the party has recorded none yet.
+  async findByParty(
+    party: AppealDecisionPartyKey,
+    options: { transaction: Transaction },
+  ): Promise<AppealDecision | null> {
+    try {
+      this.logger.debug(
+        `Finding appeal decision for ${party.partyRole} in case ${party.caseId}`,
+      )
+
+      return await this.appealDecisionModel.findOne({
+        where: toPartyWhere(party),
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding appeal decision for ${party.partyRole} in case ${party.caseId}:`,
+        { error },
+      )
 
       throw error
     }
@@ -102,7 +168,7 @@ export class AppealDecisionRepositoryService {
   async update(
     appealDecisionId: string,
     data: UpdateAppealDecision,
-    options: UpdateAppealDecisionOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(`Updating appeal decision ${appealDecisionId}`)
@@ -139,7 +205,7 @@ export class AppealDecisionRepositoryService {
     caseId: string,
     fromRulingFileId: string,
     toRulingFileId: string,
-    options: UpdateRulingFileOptions,
+    options: { transaction: Transaction },
   ): Promise<number> {
     try {
       this.logger.debug(
@@ -175,7 +241,7 @@ export class AppealDecisionRepositoryService {
   async deleteAllForRuling(
     caseId: string,
     rulingFileId: string,
-    options: DeleteAllForRulingOptions,
+    options: { transaction: Transaction },
   ): Promise<number> {
     try {
       this.logger.debug(
@@ -205,20 +271,14 @@ export class AppealDecisionRepositoryService {
   async upsert(
     party: AppealDecisionPartyKey,
     data: UpdateAppealDecision,
-    options: UpsertAppealDecisionOptions,
+    options: { transaction: Transaction },
   ): Promise<AppealDecision> {
     try {
       this.logger.debug(
         `Upserting appeal decision for ${party.partyRole} in case ${party.caseId}`,
       )
 
-      const key = {
-        caseId: party.caseId,
-        rulingFileId: party.rulingFileId ?? null,
-        partyRole: party.partyRole,
-        defendantId: party.defendantId ?? null,
-        civilClaimantId: party.civilClaimantId ?? null,
-      }
+      const key = toPartyWhere(party)
 
       // Atomic insert-or-update keyed on the party. A read-then-write would
       // race two concurrent requests for the same party into a duplicate

@@ -142,8 +142,9 @@ describe('CourtSessionController - Correct ruling order appeal', () => {
     })
 
     decisions = acceptedDecisions
-    const mockFindAll = appealDecisionRepositoryService.findAll as jest.Mock
-    mockFindAll.mockImplementation(() => Promise.resolve(decisions))
+    const mockFindAllForRuling =
+      appealDecisionRepositoryService.findAllForRuling as jest.Mock
+    mockFindAllForRuling.mockImplementation(() => Promise.resolve(decisions))
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
