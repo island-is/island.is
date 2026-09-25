@@ -185,16 +185,15 @@ export class NotificationsController {
       recipient_type: isCompany(body.recipient) ? 'company' : 'individual',
     })
 
-    const flattenedArgs: Record<string, string> = {}
-    for (const arg of validArgs) {
-      flattenedArgs[arg.key] = arg.value
-    }
     this.logger.info('Message queued', {
       messageId: id,
-      ...flattenedArgs,
-      ...sanitizedBody,
-      args: {}, // Remove args, since they're in a better format in `flattenedArgs`
-      queue: { url: this.queue.url, name: this.queue.queueName },
+      templateId: body.templateId,
+      senderId: body.senderId,
+      queueName: this.queue.queueName,
+      args: validArgs.map(({ key, value }) => ({
+        key,
+        length: value.length,
+      })),
     })
 
     return {
