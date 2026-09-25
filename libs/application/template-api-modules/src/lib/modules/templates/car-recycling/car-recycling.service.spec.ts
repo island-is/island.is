@@ -1,15 +1,14 @@
 import { createApplication } from '@island.is/application/testing'
-import { CarRecyclingClientService } from '@island.is/clients/car-recycling'
 import { Test, TestingModule } from '@nestjs/testing'
 import { CarRecyclingService } from './car-recycling.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { RecyclingFundClientService } from '@island.is/clients/recycling-fund'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 describe('CarRecyclingService', () => {
   let carRecyclingService: CarRecyclingService
+  let recyclingFundService: RecyclingFundClientService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,18 +19,8 @@ describe('CarRecyclingService', () => {
           useValue: logger,
         },
         {
-          provide: CarRecyclingClientService,
-          useValue: {
-            sendApplication: jest.fn().mockResolvedValue({
-              applicationLineId: '123A',
-            }),
-          },
-        },
-        {
           provide: VehicleSearchApi,
-          useValue: {
-            // Mock methods as needed for your tests
-          },
+          useValue: {},
         },
         {
           provide: RecyclingFundClientService,
@@ -41,45 +30,84 @@ describe('CarRecyclingService', () => {
             recycleVehicle: jest.fn(),
           },
         },
-        {
-          provide: FeatureFlagService,
-          useValue: {
-            getValue: jest.fn().mockResolvedValue(false),
-          },
-        },
       ],
     }).compile()
 
     carRecyclingService = module.get<CarRecyclingService>(CarRecyclingService)
+    recyclingFundService = module.get<RecyclingFundClientService>(
+      RecyclingFundClientService,
+    )
   })
 
-  it('should send car recycling application', async () => {
-    const auth = createCurrentUser()
-    const application = createApplication({
+  const applicationWith = (permno: string) =>
+    createApplication({
       answers: {
-        'vehicles.selectedVehicles': [
-          {
-            permno: 'AH-H32',
-          },
-        ],
+        'vehicles.selectedVehicles': [{ permno }],
         'vehicles.canceledVehicles': [],
+      },
+      // The applicant's name is read from the identity provider and sent on as
+      // the requestor, so the recycling fund records who asked.
+      externalData: {
+        identity: {
+          data: { name: 'Gervimaður Test', nationalId: '0101302399' },
+          date: new Date(),
+          status: 'success',
+        },
       },
     })
 
-    jest.spyOn(carRecyclingService, 'createOwner').mockImplementation(jest.fn())
-    jest
-      .spyOn(carRecyclingService, 'createVehicle')
-      .mockImplementation(jest.fn())
-    jest
-      .spyOn(carRecyclingService, 'recycleVehicle')
-      .mockImplementation(jest.fn())
-
+  it('should send car recycling application', async () => {
     const result = await carRecyclingService.sendApplication({
-      application,
-      auth,
+      application: applicationWith('AH-H32'),
+      auth: createCurrentUser(),
       currentUserLocale: 'is',
     })
 
     expect(result).toBeTruthy()
+  })
+
+  it('records the owner, the vehicle and the recycling request', async () => {
+    await carRecyclingService.sendApplication({
+      application: applicationWith('AH-H32'),
+      auth: createCurrentUser(),
+      currentUserLocale: 'is',
+    })
+
+    expect(recyclingFundService.createOwner).toHaveBeenCalledTimes(1)
+    expect(recyclingFundService.createVehicle).toHaveBeenCalledTimes(1)
+    expect(recyclingFundService.recycleVehicle).toHaveBeenCalledTimes(1)
+  })
+
+  // Without the old backend there is no response to inspect, so a refused
+  // request reaches us only as a thrown error. Swallowing it would mark the
+  // application submitted when nothing was recorded.
+  it('fails the application when the recycling fund refuses the request', async () => {
+    jest
+      .spyOn(recyclingFundService, 'recycleVehicle')
+      .mockRejectedValue(new Error('400 Bad Request'))
+
+    await expect(
+      carRecyclingService.sendApplication({
+        application: applicationWith('AH-H32'),
+        auth: createCurrentUser(),
+        currentUserLocale: 'is',
+      }),
+    ).rejects.toThrow('Error occurred when recycling vehicle(s)')
+  })
+
+  it('fails the application when the owner cannot be recorded', async () => {
+    jest
+      .spyOn(recyclingFundService, 'createOwner')
+      .mockRejectedValue(new Error('500 Internal Server Error'))
+
+    await expect(
+      carRecyclingService.sendApplication({
+        application: applicationWith('AH-H32'),
+        auth: createCurrentUser(),
+        currentUserLocale: 'is',
+      }),
+    ).rejects.toThrow('Error occurred when recycling vehicle(s)')
+
+    expect(recyclingFundService.createVehicle).not.toHaveBeenCalled()
   })
 })
