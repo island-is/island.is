@@ -2900,6 +2900,34 @@
         "summary": "",
         "tags": ["Application"]
       }
+    },
+    "/api/v1/application/statistics": {
+      "get": {
+        "operationId": "getAggregateStatistics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Aggregate coverage, sector and pay-gap figures, as current values and monthly series.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AggregateStatisticsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["Application"]
+      }
     }
   },
   "info": {
@@ -5653,6 +5681,71 @@
         "properties": {
           "groupId": { "type": "string", "format": "uuid", "nullable": true }
         }
+      },
+      "AggregateStatisticUnitEnum": {
+        "type": "string",
+        "enum": ["COUNT", "PERCENT"]
+      },
+      "AggregateStatisticPointDto": {
+        "type": "object",
+        "properties": {
+          "header": {
+            "type": "string",
+            "description": "X-axis key. Milliseconds since epoch as a string for time series; a stable label (e.g. a sector) otherwise."
+          },
+          "value": {
+            "type": "number",
+            "nullable": true,
+            "description": "Null means the figure is not publishable rather than zero — either it could not be computed, or the cohort behind it is too small to publish. A consumer must render it as absent, never as 0."
+          }
+        },
+        "required": ["header", "value"]
+      },
+      "AggregateStatisticSeriesDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Stable machine key, e.g. `coverage.covered`. Safe to reference from a CMS chart; the Icelandic label is not."
+          },
+          "label": {
+            "type": "string",
+            "description": "Icelandic label for display."
+          },
+          "unit": {
+            "allOf": [
+              { "$ref": "#/components/schemas/AggregateStatisticUnitEnum" }
+            ]
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregateStatisticPointDto"
+            }
+          }
+        },
+        "required": ["key", "label", "unit", "points"]
+      },
+      "AggregateStatisticsDto": {
+        "type": "object",
+        "properties": {
+          "generatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When these figures were computed. The register moves continuously, so a published chart without this cannot be reconciled against a later one."
+          },
+          "minimumCohort": {
+            "type": "number",
+            "description": "Cohort size below which a derived figure is withheld (its `value` is null). Published so a reader can tell a suppressed point from a missing one."
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregateStatisticSeriesDto"
+            }
+          }
+        },
+        "required": ["generatedAt", "minimumCohort", "series"]
       }
     }
   }

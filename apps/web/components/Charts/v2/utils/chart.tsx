@@ -10,9 +10,12 @@ import {
   DEFAULT_XAXIS_HEIGHT,
   DEFAULT_XAXIS_KEY,
   DEFAULT_YAXIS_WIDTH,
+  WRAPPED_XAXIS_HEIGHT,
+  WRAPPED_YAXIS_WIDTH,
 } from '../constants'
 import { ChartComponentType, ChartType, CustomStyleConfig } from '../types'
 import { formatValueForPresentation } from './format'
+import { WrappedAxisTick } from './WrappedAxisTick'
 
 const KNOWN_COMPONENT_TYPES: ChartComponentType[] = [
   ChartComponentType.line,
@@ -77,6 +80,14 @@ export const getCartesianGridComponents = ({
   const dataKey = xAxisKey || undefined
 
   const xAxisFormatter = tickFormatter
+
+  // Only free-text category labels are wrapped and all shown - date/number
+  // axes keep Recharts' tick thinning so long series don't overlap
+  const wrapCategoryLabels =
+    !!slice.xAxisValueType && !['date', 'number'].includes(slice.xAxisValueType)
+  const wrapXAxis = !slice.flipAxis && wrapCategoryLabels
+  const wrapYAxis = !!slice.flipAxis && wrapCategoryLabels
+
   const yAxisFormatter = (v: string | number) =>
     formatValueForPresentation(
       activeLocale,
@@ -102,12 +113,20 @@ export const getCartesianGridComponents = ({
         fontFamily: theme.typography.fontFamily,
       }}
       dy={theme.spacing.p2}
-      interval={customStyleConfig.xAxis?.interval ?? 'preserveEnd'}
+      interval={
+        customStyleConfig.xAxis?.interval ?? (wrapXAxis ? 0 : 'preserveEnd')
+      }
       angle={customStyleConfig.xAxis?.angle ?? 0}
       domain={customStyleConfig.xAxis?.domain ?? [0, 'auto']}
       type={slice.flipAxis ? 'number' : 'category'}
-      height={customStyleConfig.xAxis?.height ?? DEFAULT_XAXIS_HEIGHT}
-      tick={customStyleConfig.xAxis?.tick ?? undefined}
+      height={
+        customStyleConfig.xAxis?.height ??
+        (wrapXAxis ? WRAPPED_XAXIS_HEIGHT : DEFAULT_XAXIS_HEIGHT)
+      }
+      tick={
+        customStyleConfig.xAxis?.tick ??
+        (wrapXAxis ? <WrappedAxisTick /> : undefined)
+      }
       allowDecimals={
         slice.reduceAndRoundValue === true && slice.flipAxis ? false : true
       }
@@ -115,7 +134,6 @@ export const getCartesianGridComponents = ({
     <YAxis
       axisLine={{ stroke: theme.color.blue200 }}
       aria-hidden="true"
-      width={customStyleConfig.yAxis?.width ?? DEFAULT_YAXIS_WIDTH}
       style={{
         fontSize:
           customStyleConfig.yAxis?.fontSize ?? theme.typography.baseFontSize,
@@ -125,9 +143,18 @@ export const getCartesianGridComponents = ({
       tickFormatter={slice.flipAxis ? xAxisFormatter : yAxisFormatter}
       type={slice.flipAxis ? 'category' : 'number'}
       dataKey={slice.flipAxis ? xAxisKey : undefined}
-      interval={customStyleConfig.yAxis?.interval ?? 'preserveEnd'}
+      interval={
+        customStyleConfig.yAxis?.interval ?? (wrapYAxis ? 0 : 'preserveEnd')
+      }
       domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
-      tick={customStyleConfig.yAxis?.tick ?? undefined}
+      width={
+        customStyleConfig.yAxis?.width ??
+        (wrapYAxis ? WRAPPED_YAXIS_WIDTH : DEFAULT_YAXIS_WIDTH)
+      }
+      tick={
+        customStyleConfig.yAxis?.tick ??
+        (wrapYAxis ? <WrappedAxisTick textAnchor="end" dy={4} /> : undefined)
+      }
       ticks={customStyleConfig.yAxis?.ticks ?? undefined}
       allowDecimals={
         slice.reduceAndRoundValue === true && !slice.flipAxis ? false : true

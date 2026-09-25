@@ -2,8 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type { StatisticSourceData } from '@island.is/shared/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { DirectorateOfEqualityClientService } from '@island.is/clients/directorate-of-equality'
 import {
   LATEST_MEASUREMENT_KEY as LATEST_UV_MEASUREMENT_KEY,
   MEASUREMENT_SERIES_PAST_72_HOURS_KEY as UV_MEASUREMENT_SERIES_PAST_72_HOURS_KEY,
@@ -19,6 +21,10 @@ import { GetStatisticsQuery } from './types'
 import { StatisticsClientConfig } from './statistics.config'
 import { FetchWithCache } from './fetchConfig'
 
+// Namespaces DOE series keys so they can't collide with CSV keys and so the
+// DOE endpoint is only called when a chart actually asks for one of them
+const DOE_KEY_PREFIX = 'doe.'
+
 @Injectable()
 export class StatisticsClientService {
   constructor(
@@ -29,7 +35,28 @@ export class StatisticsClientService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private ultravioletRadiationService: UltravioletRadiationClientService,
+    private directorateOfEqualityService: DirectorateOfEqualityClientService,
   ) {}
+
+  /**
+   * The DOE aggregate-statistics endpoint returns all of its series in one
+   * call (no per-key filtering). Isolated in its own try/catch so a DOE
+   * outage can't break other series requested in the same query.
+   */
+  private async getDirectorateOfEqualityStatistics(): Promise<StatisticSourceData> {
+    try {
+      const { series } =
+        await this.directorateOfEqualityService.getAggregateStatistics()
+      return {
+        data: Object.fromEntries(
+          series.map((s) => [`${DOE_KEY_PREFIX}${s.key}`, s.points]),
+        ),
+      }
+    } catch (error) {
+      this.logger.error(error)
+      return { data: {} }
+    }
+  }
 
   async getMultipleStatistics(query: GetStatisticsQuery) {
     try {
@@ -39,6 +66,10 @@ export class StatisticsClientService {
           this.config?.sourceDataPaths?.split(','),
         ),
       ]
+
+      if (query.sourceDataKeys.some((key) => key.startsWith(DOE_KEY_PREFIX))) {
+        promises.push(this.getDirectorateOfEqualityStatistics())
+      }
 
       if (query.sourceDataKeys.includes(LATEST_UV_MEASUREMENT_KEY)) {
         promises.push(this.ultravioletRadiationService.getLatestMeasurement())
