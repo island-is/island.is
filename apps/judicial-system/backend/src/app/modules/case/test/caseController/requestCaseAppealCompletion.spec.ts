@@ -217,10 +217,17 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       await accept(theCase)
     })
 
+    // Read twice: once to look for an out-of-court appeal, once to reconcile
+    // the in-court appellants' events.
     it("should read the appeal case's APPEALED events in the transaction", () => {
       expect(
-        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase,
-      ).toHaveBeenCalledWith(appealCaseId, { transaction })
+        (
+          mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+        ).mock.calls,
+      ).toEqual([
+        [appealCaseId, { transaction }],
+        [appealCaseId, { transaction }],
+      ])
     })
 
     it('should not create or delete the appeal case', () => {
