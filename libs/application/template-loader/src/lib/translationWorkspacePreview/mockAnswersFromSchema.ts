@@ -35,9 +35,6 @@ const generateMockValue = (schema: z.ZodTypeAny, depth = 0): unknown => {
     return generateMockValue(unwrapped.removeDefault(), depth + 1)
   }
   if (unwrapped instanceof z.ZodString) {
-    // Matches the filler used by the (currently unwired) dummy-data generator in
-    // `@island.is/application-system-api/core`'s translation tooling - unmistakably
-    // placeholder text, not real applicant data.
     return 'Lorem ipsum'
   }
   if (unwrapped instanceof z.ZodNumber) {
@@ -123,14 +120,64 @@ const generateMockExternalData = (
   return externalData
 }
 
-/** Values are filler, not validated against the schema - only ever read by React components. */
+const MOCK_NATIONAL_REGISTRY_INDIVIDUAL = {
+  nationalId: '0000000000',
+  age: 67,
+  givenName: 'Lorem',
+  familyName: 'Ipsum',
+  fullName: 'Lorem Ipsum',
+  citizenship: { code: 'IS', name: 'Iceland' },
+  address: {
+    streetAddress: 'Lorem 1',
+    postalCode: '101',
+    locality: 'Reykjavík',
+    city: 'Reykjavík',
+    municipalityCode: '0000',
+  },
+  genderCode: '1',
+  maritalTitle: { code: '1', description: 'Single' },
+  birthDate: PREVIEW_DATE,
+}
+
+const KNOWN_PROVIDER_DATA_DEFAULTS: Record<string, unknown> = {
+  nationalRegistry: MOCK_NATIONAL_REGISTRY_INDIVIDUAL,
+  nationalRegistrySpouse: MOCK_NATIONAL_REGISTRY_INDIVIDUAL,
+  nationalRegistryCohabitants: [MOCK_NATIONAL_REGISTRY_INDIVIDUAL],
+  userProfile: {
+    mobilePhoneNumber: '6555555',
+    email: 'lorem.ipsum@island.is',
+    bankInfo: '0000-00-000000',
+  },
+}
+
+const isPlainProviderKey = (prop: string): boolean =>
+  /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(prop) && !(prop in {})
+
+const withExternalDataFallback = (externalData: ExternalData): ExternalData =>
+  new Proxy(externalData, {
+    get(target, prop, receiver) {
+      const value = Reflect.get(target, prop, receiver)
+      if (value !== undefined || typeof prop !== 'string') {
+        return value
+      }
+      if (!isPlainProviderKey(prop)) {
+        return value
+      }
+      return {
+        data: KNOWN_PROVIDER_DATA_DEFAULTS[prop] ?? {},
+        date: PREVIEW_DATE,
+        status: 'success',
+      } as DataProviderResult
+    },
+  })
+
 export const generateMockPreviewData = (
   schema: Schema,
 ): { answers: FormValue; externalData: ExternalData } => {
   try {
     const rootObject = unwrapEffects(schema)
     if (!(rootObject instanceof z.ZodObject)) {
-      return { answers: {}, externalData: {} }
+      return { answers: {}, externalData: withExternalDataFallback({}) }
     }
 
     const shape = rootObject.shape
@@ -145,13 +192,13 @@ export const generateMockPreviewData = (
       answers[key] = generateMockValue(shape[key]) as Answer
     }
 
-    return { answers, externalData }
+    return { answers, externalData: withExternalDataFallback(externalData) }
   } catch (e) {
     console.warn(
       `generateMockPreviewData: failed to derive mock preview data from dataSchema: ${
         e instanceof Error ? e.message : String(e)
       }`,
     )
-    return { answers: {}, externalData: {} }
+    return { answers: {}, externalData: withExternalDataFallback({}) }
   }
 }
