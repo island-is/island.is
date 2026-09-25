@@ -101,7 +101,14 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config apps/judicial-system/web/codegen.yml"
-      }
+      },
+      "inputs": [
+        {
+          "runtime": "node scripts/hash-files apps/judicial-system/api/src/api.graphql"
+        },
+        "{projectRoot}/codegen.yml",
+        "{projectRoot}/**/*.graphql"
+      ]
     },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"

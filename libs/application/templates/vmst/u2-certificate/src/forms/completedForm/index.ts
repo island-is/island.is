@@ -39,6 +39,7 @@ export const CompletedForm = buildForm({
           id: 'expandableDescriptionField',
           title: sharedMessages.whatHappensNextTitle,
           description: sharedMessages.whatHappensNextDescription,
+          startExpanded: true,
         }),
         buildOverviewField({
           id: 'completedOverview',

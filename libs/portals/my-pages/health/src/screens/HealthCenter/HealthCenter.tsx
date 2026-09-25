@@ -99,7 +99,7 @@ const HealthCenter = () => {
       {healthCenterData?.current && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <InfoLineStack
-            space={2}
+            space={[0, 0, 2]}
             label={formatMessage(messages.myRegistration)}
           >
             <InfoLine

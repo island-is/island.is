@@ -818,7 +818,7 @@
     },
     "TollmedferdResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -833,7 +833,7 @@
     },
     "VidbotarskjolResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -868,7 +868,7 @@
     },
     "ValykillResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -883,7 +883,7 @@
     },
     "AfhendingarskilmalarResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -898,7 +898,7 @@
     },
     "Markadssvaedi_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -965,7 +965,7 @@
     },
     "ValykillResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -980,7 +980,7 @@
     },
     "UndanthagurResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -995,7 +995,7 @@
     },
     "UppruniResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1056,7 +1056,7 @@
     },
     "LeyfiResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1071,7 +1071,7 @@
     },
     "MarkadssvaediResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1086,7 +1086,7 @@
     },
     "BonnResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1124,7 +1124,7 @@
     },
     "Gjold_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1219,7 +1219,7 @@
     },
     "TegundAfgreidsluResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1234,7 +1234,7 @@
     },
     "Tollgengi_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1249,7 +1249,7 @@
     },
     "BonnResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1264,7 +1264,7 @@
     },
     "Kostnadur_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1279,7 +1279,7 @@
     },
     "Tollmedferd_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1294,7 +1294,7 @@
     },
     "KostnadurResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1309,7 +1309,7 @@
     },
     "LandMyntResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1391,7 +1391,7 @@
     },
     "Urvinnslugjold_GET_response": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1406,7 +1406,7 @@
     },
     "TollskrarLyklar_GET_response": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1421,7 +1421,7 @@
     },
     "Geymslustadur_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1436,7 +1436,7 @@
     },
     "Magntala_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1476,7 +1476,7 @@
     },
     "MagntalaResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1491,7 +1491,7 @@
     },
     "AkvordunarstadurResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1506,7 +1506,7 @@
     },
     "MagntalaResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1521,7 +1521,7 @@
     },
     "UmbudirResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1536,7 +1536,7 @@
     },
     "VillurResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1551,7 +1551,7 @@
     },
     "TollarResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1566,7 +1566,7 @@
     },
     "Flutningsmati_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1581,7 +1581,7 @@
     },
     "TegundVidskiptaResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1596,7 +1596,7 @@
     },
     "MarkadssvaediResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1611,7 +1611,7 @@
     },
     "Uppruni_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1626,7 +1626,7 @@
     },
     "GjoldResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1664,7 +1664,7 @@
     },
     "Tollar_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1679,7 +1679,7 @@
     },
     "GeymslustadurResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1691,7 +1691,7 @@
     },
     "TollarResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1822,7 +1822,7 @@
     },
     "UmbudirResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1837,7 +1837,7 @@
     },
     "VidbotarskjolResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1875,7 +1875,7 @@
     },
     "Bonn_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1923,7 +1923,7 @@
     },
     "TollskrarLyklarResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1938,7 +1938,7 @@
     },
     "UndanthagurResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1953,7 +1953,7 @@
     },
     "AbendiResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1968,7 +1968,7 @@
     },
     "Akvordunarstadir_GET_response": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1983,7 +1983,7 @@
     },
     "LandMynt_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -1998,7 +1998,7 @@
     },
     "AfhendingarskilmalarResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2013,7 +2013,7 @@
     },
     "Abendi_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2028,7 +2028,7 @@
     },
     "Villur_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2080,7 +2080,7 @@
     },
     "TegundVidskiptaResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2095,7 +2095,7 @@
     },
     "Valykill_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2110,7 +2110,7 @@
     },
     "FlutningsmatiResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2145,7 +2145,7 @@
     },
     "Umbudir_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2232,7 +2232,7 @@
     },
     "VillurResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2247,7 +2247,7 @@
     },
     "Afhendingarskilmalar_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2262,7 +2262,7 @@
     },
     "LandMyntResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2277,7 +2277,7 @@
     },
     "TegundAfgreidslu_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2315,7 +2315,7 @@
     },
     "TollmedferdResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2330,7 +2330,7 @@
     },
     "UrvinnslugjoldResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2360,7 +2360,7 @@
     },
     "UrvinnslugjoldResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2375,7 +2375,7 @@
     },
     "AbendiResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2390,7 +2390,7 @@
     },
     "Vidbotarskjol_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2405,7 +2405,7 @@
     },
     "LeyfiResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2420,7 +2420,7 @@
     },
     "TollgengiResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2476,7 +2476,7 @@
     },
     "KostnadurResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2491,7 +2491,7 @@
     },
     "TegundAfgreidsluResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2506,7 +2506,7 @@
     },
     "GeymslustadurResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2521,7 +2521,7 @@
     },
     "Undanthagur_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2536,7 +2536,7 @@
     },
     "UppruniResponse_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2551,7 +2551,7 @@
     },
     "FlutningsmatiResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2589,7 +2589,7 @@
     },
     "GjoldResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2604,7 +2604,7 @@
     },
     "TollgengiResponse": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2619,7 +2619,7 @@
     },
     "Leyfi_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"
@@ -2719,7 +2719,7 @@
     },
     "TegundVidskipta_GET_response_1": {
       "type": "object",
-      "required": ["Listi", "status"],
+      "required": ["status"],
       "properties": {
         "status": {
           "$ref": "#/definitions/Status_DT"

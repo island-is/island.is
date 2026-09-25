@@ -59,6 +59,12 @@ export const GET_HEALTH_TREATMENTS_NAV_QUERY = gql`
   }
 `
 
+export const GET_HEALTH_PREGNANCY_NAV_QUERY = gql`
+  query GetHealthPregnancyNavigation {
+    healthDirectorateHasActivePregnancy
+  }
+`
+
 export const GET_NAMESPACE_QUERY = gql`
   query GetNamespace($input: GetNamespaceInput!) {
     getNamespace(input: $input) {
@@ -97,6 +103,26 @@ export const useDynamicRoutes = () => {
     GET_VMST_APPLICATIONS_OVERVIEW_QUERY,
     {
       skip: !unemploymentBenefitsEnabled && !activationAllowanceEnabled,
+    },
+  )
+
+  const { value: pregnancyEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthPregnancyPageEnabled,
+    false,
+  )
+
+  const { pathname } = useLocation()
+
+  // Only fetches on health pages; the cache then serves every consumer.
+  // Deliberately excluded from the loading aggregate below so it never
+  // delays other dynamic screens.
+  const { data: pregnancyData } = useQuery<Query>(
+    GET_HEALTH_PREGNANCY_NAV_QUERY,
+    {
+      skip: !pregnancyEnabled,
+      fetchPolicy: pathname.startsWith(HEALTH_ROUTE)
+        ? 'cache-first'
+        : 'cache-only',
     },
   )
 
@@ -155,10 +181,19 @@ export const useDynamicRoutes = () => {
       )
     }
 
+    /**
+     * portals-my-pages/health
+     * Show pregnancy routes only if the user has an active pregnancy.
+     */
+    if (pregnancyData?.healthDirectorateHasActivePregnancy) {
+      dynamicPathArray.push(DynamicPaths.HealthPregnancy)
+      dynamicPathArray.push(DynamicPaths.HealthPregnancyOverview)
+    }
+
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, licenseBook, vmstOverview])
+  }, [data, licenseBook, vmstOverview, pregnancyData])
 
   return {
     activeDynamicRoutes,
@@ -170,11 +205,6 @@ export const useDynamicRoutes = () => {
       vmstLoading,
   }
 }
-
-const cloneNavItem = (item: PortalNavigationItem): PortalNavigationItem => ({
-  ...item,
-  children: item.children?.map(cloneNavItem),
-})
 
 /**
  * Adds a "Meðferð" section under Heilsa with one child per treatment.
@@ -188,7 +218,6 @@ const injectHealthTreatmentNavItems = (
     if (child.path !== HEALTH_ROUTE) {
       return child
     }
-    const health = cloneNavItem(child)
     const treatmentsParent: PortalNavigationItem = {
       name: m.healthTreatment,
       path: HEALTH_TREATMENT_BASE_ROUTE,
@@ -206,7 +235,7 @@ const injectHealthTreatmentNavItems = (
         ],
       })),
     }
-    const healthChildren = [...(health.children ?? [])]
+    const healthChildren = [...(child.children ?? [])]
     const conversationsIndex = healthChildren.findIndex(
       (item) => item.path === HEALTH_CONVERSATIONS_ROUTE,
     )
@@ -215,8 +244,7 @@ const injectHealthTreatmentNavItems = (
       0,
       treatmentsParent,
     )
-    health.children = healthChildren
-    return health
+    return { ...child, children: healthChildren }
   }),
 })
 

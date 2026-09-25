@@ -1,4 +1,4 @@
-import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
+import { Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -18,12 +18,8 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { Verdict } from '../models/verdict.model'
 
-interface FindOneOptions {
-  where?: FindOptions['where']
+interface FindVerdictOptions {
   transaction?: Transaction
-  include?: FindOptions['include']
-  attributes?: FindOptions['attributes']
-  order?: FindOptions['order']
 }
 
 interface CreateVerdictOptions {
@@ -62,44 +58,68 @@ export class VerdictRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findOne(options?: FindOneOptions): Promise<Verdict | null> {
+  async findById(
+    verdictId: string,
+    options?: FindVerdictOptions,
+  ): Promise<Verdict | null> {
     try {
-      this.logger.debug('Finding verdict with conditions:', {
-        where: Object.keys(options?.where ?? {}),
+      this.logger.debug(`Finding verdict ${verdictId}`)
+
+      return await this.verdictModel.findOne({
+        where: { id: verdictId },
+        transaction: options?.transaction,
       })
-
-      const findOptions: FindOptions = {}
-
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.include) {
-        findOptions.include = options.include
-      }
-
-      if (options?.attributes) {
-        findOptions.attributes = options.attributes
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      const result = await this.verdictModel.findOne(findOptions)
-
-      this.logger.debug(`Verdict ${result ? 'found' : 'not found'}`)
-
-      return result
     } catch (error) {
-      this.logger.error('Error finding verdict with conditions:', {
-        where: Object.keys(options?.where ?? {}),
-        error,
+      this.logger.error(`Error finding verdict ${verdictId}:`, { error })
+
+      throw error
+    }
+  }
+
+  // externalPoliceDocumentId is the verdict's document id in the police
+  // systems, handed back to us when the verdict is registered with them.
+  async findByExternalPoliceDocumentId(
+    externalPoliceDocumentId: string,
+  ): Promise<Verdict | null> {
+    try {
+      this.logger.debug(
+        `Finding verdict with police document id ${externalPoliceDocumentId}`,
+      )
+
+      return await this.verdictModel.findOne({
+        where: { externalPoliceDocumentId },
       })
+    } catch (error) {
+      this.logger.error(
+        `Error finding verdict with police document id ${externalPoliceDocumentId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The defendant's most recent verdict, across every case they appear in.
+  // Returns null when the defendant has no verdict yet.
+  async findLatestForDefendant(
+    defendantId: string,
+    options?: FindVerdictOptions,
+  ): Promise<Verdict | null> {
+    try {
+      this.logger.debug(
+        `Finding the latest verdict of defendant ${defendantId}`,
+      )
+
+      return await this.verdictModel.findOne({
+        where: { defendantId },
+        order: [['created', 'DESC']],
+        transaction: options?.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding the latest verdict of defendant ${defendantId}:`,
+        { error },
+      )
 
       throw error
     }

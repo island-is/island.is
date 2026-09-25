@@ -60,13 +60,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
 
   const { data, loading, error } = useGetHealthConversationsQuery({
     fetchPolicy: 'network-only',
-    variables: { input: {} },
+    variables: { input: { limit } },
     skip: !hasHealthScope,
   })
 
-  const conversations = (
-    data?.healthDirectorateHealthConversations ?? []
-  ).slice(0, limit)
+  const conversations =
+    data?.healthDirectoratePaginatedHealthConversations?.data ?? []
 
   return (
     <Box
@@ -197,8 +196,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     >
                       <Box overflow="hidden">
                         <Text variant="medium" truncate>
-                          {item.organization?.name?.trim() ||
-                            item.lastSenderGroupName}
+                          {item.groupName?.trim() || item.organization?.name}
                         </Text>
                       </Box>
                       {item.lastMessageSentAt && (

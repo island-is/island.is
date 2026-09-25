@@ -130,10 +130,9 @@ export class CourtSessionService {
     addMessagesToQueue(...messages)
   }
 
-  // Records a merged case in a court session: its court documents are filed
-  // there, and if any were, the session gains the ENTRIES text that says the
-  // case was joined to this one - dated by the indictment's confirmation, or
-  // its sending to court, when the merged case has such an event.
+  // Records a merged case in a court session: its court documents are copied
+  // in, and if any were, the session gains the ENTRIES text that says the case
+  // was joined to this one.
   private async addMergedCaseToCourtSession(
     caseId: string,
     courtSessionId: string,
@@ -141,17 +140,36 @@ export class CourtSessionService {
     transaction: Transaction,
   ): Promise<void> {
     const added =
-      await this.courtDocumentRepositoryService.updateMergedCourtDocuments({
-        parentCaseId: caseId,
-        parentCaseCourtSessionId: courtSessionId,
-        caseId: mergedCase.id,
-        transaction,
-      })
+      await this.courtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession(
+        {
+          parentCaseId: caseId,
+          parentCaseCourtSessionId: courtSessionId,
+          mergedCaseId: mergedCase.id,
+          transaction,
+        },
+      )
 
     if (!added) {
       return
     }
 
+    await this.createMergedCaseEntries(
+      caseId,
+      courtSessionId,
+      mergedCase,
+      transaction,
+    )
+  }
+
+  // The court's record of why two cases were joined, dated by the merged
+  // indictment's confirmation, or its sending to court, when the merged case
+  // has such an event.
+  private async createMergedCaseEntries(
+    caseId: string,
+    courtSessionId: string,
+    mergedCase: Case,
+    transaction: Transaction,
+  ): Promise<void> {
     const event =
       await this.eventLogRepositoryService.findLatestForCaseAndTypes(
         mergedCase.id,
@@ -178,8 +196,20 @@ export class CourtSessionService {
   }
 
   // A new court session takes in everything the case has waiting for one: its
-  // unfiled court documents, then the documents of each case merged into it -
-  // oldest merge first, so the record reads in the order the cases were joined.
+  // own unfiled court documents, then the documents of each case merged into
+  // it - oldest merge first, so the record reads in the order the cases were
+  // joined, each merged case's documents together as one block.
+  //
+  // A case merged in while an earlier session was open already has its copies
+  // here; deleting that session returned them to the available documents, so
+  // filing takes them back in. A case merged in with no session open has none
+  // yet, and is copied in now.
+  //
+  // Every merged case with documents in the session then gets its ENTRIES
+  // text. The strings go with a session when it is deleted, so this is where
+  // the record of the merge is written again - a confirmed entry the court
+  // wrote itself is not preserved across a delete, which is how it has always
+  // worked.
   async create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
     const courtSession = await this.courtSessionRepositoryService.create(
       theCase.id,
@@ -198,12 +228,34 @@ export class CourtSessionService {
     )
 
     for (const mergedCase of mergedCases) {
-      await this.addMergedCaseToCourtSession(
+      await this.courtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession(
+        {
+          parentCaseId: theCase.id,
+          parentCaseCourtSessionId: courtSession.id,
+          mergedCaseId: mergedCase.id,
+          transaction,
+        },
+      )
+    }
+
+    const filedMergedCaseIds =
+      await this.courtDocumentRepositoryService.findMergedCaseIdsFiledInCourtSession(
         theCase.id,
         courtSession.id,
-        mergedCase,
-        transaction,
+        { transaction },
       )
+
+    for (const mergedCaseId of filedMergedCaseIds) {
+      const mergedCase = mergedCases.find((c) => c.id === mergedCaseId)
+
+      if (mergedCase) {
+        await this.createMergedCaseEntries(
+          theCase.id,
+          courtSession.id,
+          mergedCase,
+          transaction,
+        )
+      }
     }
 
     return courtSession
@@ -572,12 +624,14 @@ export class CourtSessionService {
       return
     }
 
-    const appealCases = await this.appealCaseRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      transaction,
-    })
+    const isAppealed =
+      await this.appealCaseRepositoryService.existsForRulingFile(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
 
-    if (appealCases.length > 0) {
+    if (isAppealed) {
       return
     }
 
@@ -595,7 +649,9 @@ export class CourtSessionService {
   // absent. Mirrors areMergedCaseEntriesComplete in the web client.
   private validateMergedCaseEntriesComplete(courtSession: CourtSession): void {
     const mergedCaseIds = new Set(
-      courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+      courtSession.filedDocuments?.flatMap((document) =>
+        document.mergedFromCaseId ? [document.mergedFromCaseId] : [],
+      ),
     )
 
     for (const mergedCaseId of mergedCaseIds) {
@@ -1430,12 +1486,14 @@ export class CourtSessionService {
       return
     }
 
-    const appealCases = await this.appealCaseRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId: courtSession.rulingFileId },
-      transaction,
-    })
+    const isAppealed =
+      await this.appealCaseRepositoryService.existsForRulingFile(
+        theCase.id,
+        courtSession.rulingFileId,
+        { transaction },
+      )
 
-    if (appealCases.length > 0) {
+    if (isAppealed) {
       throw new BadRequestException(
         'The ruling order pronounced in this court session has been appealed, so the court session cannot be deleted',
       )

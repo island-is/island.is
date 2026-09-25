@@ -1,11 +1,18 @@
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IntlProvider } from 'react-intl'
+import { render, screen } from '@testing-library/react'
+
+import type {
+  Case,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseState,
   CaseType,
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { getDefendantLabel } from './CaseInfo'
+import { CourtCaseInfo, getDefendantLabel } from './CaseInfo'
 
 describe('getDefendantLabel - Indictment', () => {
   const formatMessage = createFormatMessage()
@@ -51,5 +58,37 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
   test('should render label for multiple defendants', () => {
     const defendants = [{}, {}] as Defendant[]
     expect(fn(defendants)).toBe('varnaraðilar')
+  })
+})
+
+describe('<CourtCaseInfo /> completed indictment', () => {
+  const renderCourtCaseInfo = (theCase: Case) =>
+    render(
+      <IntlProvider locale="is" onError={jest.fn}>
+        <CourtCaseInfo workingCase={theCase} />
+      </IntlProvider>,
+    )
+
+  test('should render the ruling date', () => {
+    renderCourtCaseInfo({
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      rulingDate: '2026-09-23T12:00:00.000Z',
+    } as Case)
+
+    expect(
+      screen.getByText('Máli lokið 23. september 2026'),
+    ).toBeInTheDocument()
+  })
+
+  test('should render the label without a date while the ruling date is missing', () => {
+    renderCourtCaseInfo({
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      rulingDate: null,
+    } as Case)
+
+    expect(screen.getByText('Máli lokið')).toBeInTheDocument()
+    expect(screen.queryByText(/undefined/)).not.toBeInTheDocument()
   })
 })

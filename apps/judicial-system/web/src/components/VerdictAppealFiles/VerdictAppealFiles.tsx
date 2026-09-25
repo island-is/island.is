@@ -3,7 +3,6 @@ import { useContext } from 'react'
 import { AnimatePresence } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
 import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -72,11 +71,13 @@ const VerdictAppealFiles: FC = () => {
                   alignItems="flexEnd"
                   textAlign="right"
                 >
+                  {/* Date only, no time of day. An appeal the public
+                  prosecution office registers on a letter has only the date the
+                  letter was filed, so showing the upload time for appeals filed
+                  in the portal would make the two look inconsistent when they
+                  are not (design, 2026-09-16). */}
                   <Text whiteSpace="nowrap">
-                    {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
-                      file.created,
-                      TIME_FORMAT,
-                    )}`}
+                    {formatDate(file.created, 'dd.MM.y')}
                   </Text>
                   <Text whiteSpace="nowrap" variant="small">
                     {formatSentInBy(
