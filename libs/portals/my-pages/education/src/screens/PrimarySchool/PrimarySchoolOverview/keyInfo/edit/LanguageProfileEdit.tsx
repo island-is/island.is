@@ -197,7 +197,10 @@ export const LanguageProfileEdit = () => {
                       // Drop the preferred language if it is no longer selected,
                       // so it can't be saved as a preferred language outside the
                       // child's language list.
-                      if (preferredLanguage && !next.includes(preferredLanguage)) {
+                      if (
+                        preferredLanguage &&
+                        !next.includes(preferredLanguage)
+                      ) {
                         setPreferredLanguage(undefined)
                       }
                     }}
