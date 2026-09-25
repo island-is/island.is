@@ -931,7 +931,7 @@ export const is = {
     'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
   'health.messages.compose.introTitle': 'Hafa samband',
   'health.messages.compose.introBody1':
-    'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma.',
+    'Hér er hægt að senda skilaboð og þeim er yfirleitt svarað innan þriggja virkra daga, á dagvinnutíma.',
   'health.messages.compose.introBody2':
     'Ef erindið er brýnt og þarfnast svars samdægurs hringdu í <b>1700</b> eða hafðu samband við þitt meðferðarteymi.',
   'health.messages.compose.introBody3':
@@ -1146,7 +1146,6 @@ export const is = {
   'health.prescriptions.renewalModal.description':
     'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
   'health.prescriptions.renewalModal.selectRecipient': 'Sendist til',
-  'health.prescriptions.renewalModal.medicineInformation': 'Upplýsingar um lyf',
   'health.prescriptions.renewalModal.medicineName': 'Heiti lyfs',
   'health.prescriptions.renewalModal.usedFor': 'Notað við',
   'health.prescriptions.renewalModal.cancel': 'Hætta við',
