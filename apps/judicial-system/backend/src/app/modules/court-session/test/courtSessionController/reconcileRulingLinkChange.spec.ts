@@ -150,10 +150,14 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
-    // Default: the swap target is a clean ruling file (no recorded decisions).
+    // Default: no recorded decisions, and the swap target is a clean ruling
+    // file.
     ;(
-      mockAppealDecisionRepositoryService.findAll as jest.Mock
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
     ).mockResolvedValue([])
+    ;(
+      mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+    ).mockResolvedValue(false)
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockFileService = fileService
@@ -345,10 +349,8 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      ).mockResolvedValue([
-        { id: 'existing-decision', rulingFileId: newRulingFileId },
-      ])
+        mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+      ).mockResolvedValue(true)
 
       then = await givenWhenThen(
         caseWith({ appealState: AppealCaseState.APPEALED, appealFiles: true }),
@@ -361,6 +363,9 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
     })
 
     it('should reject the swap and write nothing', () => {
+      expect(
+        mockAppealDecisionRepositoryService.existsForRuling,
+      ).toHaveBeenCalledWith(caseId, newRulingFileId, { transaction })
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
       expect(

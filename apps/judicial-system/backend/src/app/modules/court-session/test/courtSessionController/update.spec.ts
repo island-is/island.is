@@ -198,9 +198,9 @@ describe('CourtSessionController - Update', () => {
 
       // The case in this spec has no defendants or civil claimants, so a
       // prosecutor decision is all the confirm-time validation requires.
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([
         {
           partyRole: AppealDecisionPartyRole.PROSECUTOR,
           decision: CaseAppealDecision.ACCEPT,
@@ -260,9 +260,9 @@ describe('CourtSessionController - Update', () => {
       existingCourtSession.rulingFileId = fileId
       existingCourtSession.notifiedRulingFileId = fileId
 
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([
         {
           partyRole: AppealDecisionPartyRole.PROSECUTOR,
           decision: CaseAppealDecision.ACCEPT,
@@ -325,9 +325,12 @@ describe('CourtSessionController - Update', () => {
 
       // No decisions have been recorded against the new ruling file, which
       // leaves both the confirm-time completeness check and the swap check happy.
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([])
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([])
+      ;(
+        mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+      ).mockResolvedValue(false)
 
       const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce({

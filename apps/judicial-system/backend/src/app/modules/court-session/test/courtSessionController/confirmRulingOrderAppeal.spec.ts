@@ -121,8 +121,9 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
         decision: CaseAppealDecision.NOT_APPLICABLE,
       },
     ]
-    const mockFindAll = mockAppealDecisionRepositoryService.findAll as jest.Mock
-    mockFindAll.mockImplementation(() => Promise.resolve(decisions))
+    const mockFindAllForRuling =
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+    mockFindAllForRuling.mockImplementation(() => Promise.resolve(decisions))
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
