@@ -458,6 +458,7 @@ const NewHealthConversation = () => {
                       messages.healthConversationsNewSubjectPlaceholder,
                     )}
                     backgroundColor="blue"
+                    size="sm"
                     value={customTitle}
                     onChange={(e) => setCustomTitle(e.target.value)}
                     maxLength={MAX_TITLE_LENGTH}
