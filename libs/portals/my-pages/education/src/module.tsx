@@ -3,6 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { UniversityCareersStudyType } from '@island.is/api/schema'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
+import { primarySchoolKeyInfoMessages as kim } from './lib/messages'
 import { Navigate } from 'react-router-dom'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
 import {
@@ -72,6 +73,30 @@ const PrimarySchoolAssessment = lazy(() =>
   ),
 )
 
+const PrimarySchoolContactAdd = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/EmergencyContactAdd'
+  ),
+)
+
+const PrimarySchoolContactEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/EmergencyContactEdit'
+  ),
+)
+
+const PrimarySchoolLanguageEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/LanguageProfileEdit'
+  ),
+)
+
+const PrimarySchoolHealthEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/HealthProfileEdit'
+  ),
+)
+
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
 const MICRO_CREDENTIALS_FLAG = 'UniversityMicroCredentials'
 
@@ -126,6 +151,70 @@ export const educationModule: PortalModule = {
       element: (
         <PrimarySchoolStudentWrapper>
           <PrimarySchoolOverview />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Bæta við aðstandanda',
+      path: EducationPaths.PrimarySchoolContactAdd,
+      key: PRIMARY_SCHOOL_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactAddTitle}
+          intro={kim.contactAddIntro}
+        >
+          <PrimarySchoolContactAdd />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta tengslum',
+      path: EducationPaths.PrimarySchoolContactEdit,
+      key: PRIMARY_SCHOOL_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactEditTitle}
+          intro={kim.contactEditIntro}
+        >
+          <PrimarySchoolContactEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta tungumálaumhverfi',
+      path: EducationPaths.PrimarySchoolLanguageEdit,
+      key: PRIMARY_SCHOOL_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.languageEditTitle}
+          intro={kim.languageEditIntro}
+        >
+          <PrimarySchoolLanguageEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta heilsufarsupplýsingum',
+      path: EducationPaths.PrimarySchoolHealthEdit,
+      key: PRIMARY_SCHOOL_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.healthEditTitle}
+          intro={kim.healthEditIntro}
+        >
+          <PrimarySchoolHealthEdit />
         </PrimarySchoolStudentWrapper>
       ),
     },
