@@ -193,12 +193,32 @@ const PassportSchema = z
 const ChildrenPassportSchema = z
   .object({
     nationalId: z.string().min(1),
-    publishDate: z.string().min(1),
-    expirationDate: z.string().min(1),
-    passportNumber: z.string().min(1),
-    passportTypeId: z.string().min(1),
-    countryOfIssuerId: z.string().min(1),
-    attachment: z.array(FileDocumentSchema).min(1),
+    hasPassport: z.enum([YES, NO]).optional(),
+    publishDate: z.string().optional(),
+    expirationDate: z.string().optional(),
+    passportNumber: z.string().optional(),
+    passportTypeId: z.string().optional(),
+    countryOfIssuerId: z.string().optional(),
+    attachment: z.array(FileDocumentSchema).optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.hasPassport === NO) return
+    const stringFields = [
+      'publishDate',
+      'expirationDate',
+      'passportNumber',
+      'passportTypeId',
+      'countryOfIssuerId',
+    ] as const
+    for (const path of stringFields) {
+      const v = val[path]
+      if (!v || v.length === 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: [path] })
+      }
+    }
+    if (!val.attachment || val.attachment.length === 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['attachment'] })
+    }
   })
   .refine(
     ({ expirationDate, publishDate }) => {
