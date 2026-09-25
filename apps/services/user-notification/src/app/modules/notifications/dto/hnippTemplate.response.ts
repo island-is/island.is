@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export const HNIPP_TEMPLATE_PRIORITY_TYPES = [
   'Informative',
@@ -46,5 +46,5 @@ export class HnippTemplate {
   @ApiProperty({
     example: 'Informative',
   })
-  priorityType?: HnippTemplatePriorityType
+  priorityType!: HnippTemplatePriorityType
 }
