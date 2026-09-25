@@ -37,10 +37,19 @@ module.exports = {
       VALUES ('@admin.island.is', 'Ísland.is stjórnborð')
       ON CONFLICT (name) DO NOTHING;
 
+      -- The client seed skips existing rows, so set the SPA authentication
+      -- fields here. The seed still adds grants, scopes and redirect URIs.
+      INSERT INTO client (
+        client_id, client_type, require_client_secret, require_pkce
+      )
+      VALUES ('@admin.island.is/web', 'spa', false, true)
+      ON CONFLICT (client_id) DO UPDATE SET
+        client_type = EXCLUDED.client_type,
+        require_client_secret = EXCLUDED.require_client_secret,
+        require_pkce = EXCLUDED.require_pkce;
+
       INSERT INTO client (client_id)
-      VALUES
-        ('@admin.island.is/web'),
-        ('@admin.island.is/bff-stjornbord')
+      VALUES ('@admin.island.is/bff-stjornbord')
       ON CONFLICT (client_id) DO NOTHING;
 
       INSERT INTO api_resource_scope (api_resource_name, scope_name)
