@@ -31,6 +31,18 @@ module.exports = {
       )
       ON CONFLICT (name) DO NOTHING;
 
+      -- The local migration flow runs before resource and client seeds. Create
+      -- the foreign-key targets before linking the new scope to them.
+      INSERT INTO api_resource (name, display_name)
+      VALUES ('@admin.island.is', 'Ísland.is stjórnborð')
+      ON CONFLICT (name) DO NOTHING;
+
+      INSERT INTO client (client_id)
+      VALUES
+        ('@admin.island.is/web'),
+        ('@admin.island.is/bff-stjornbord')
+      ON CONFLICT (client_id) DO NOTHING;
+
       INSERT INTO api_resource_scope (api_resource_name, scope_name)
       VALUES (
         '@admin.island.is',
