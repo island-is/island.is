@@ -90,11 +90,10 @@ export class ApplicationTranslationService {
       return existing.flush
     }
 
-    const bucket: { inputs: UpsertTranslationInput[]; flush: Promise<void> } =
-      {
-        inputs: [...inputs],
-        flush: undefined as unknown as Promise<void>,
-      }
+    const bucket: { inputs: UpsertTranslationInput[]; flush: Promise<void> } = {
+      inputs: [...inputs],
+      flush: undefined as unknown as Promise<void>,
+    }
 
     bucket.flush = new Promise<void>((resolve, reject) => {
       setTimeout(() => {
@@ -388,7 +387,9 @@ export class ApplicationTranslationService {
 
     if (failedNamespaces.length > 0) {
       throw new BadRequestException(
-        `Failed to save translations for namespace(s): ${failedNamespaces.join(', ')}`,
+        `Failed to save translations for namespace(s): ${failedNamespaces.join(
+          ', ',
+        )}`,
       )
     }
 
@@ -489,7 +490,9 @@ export class ApplicationTranslationService {
       skip += limit
     }
 
-    return items.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+    return items.sort(
+      (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime(),
+    )
   }
 
   async rollbackToPublish(
@@ -502,9 +505,10 @@ export class ApplicationTranslationService {
     let targetSnapshot
     try {
       targetSnapshot =
-        await this.managementClient.snapshot.getForEntry<NamespaceEntryFields>(
-          { entryId: namespace, snapshotId },
-        )
+        await this.managementClient.snapshot.getForEntry<NamespaceEntryFields>({
+          entryId: namespace,
+          snapshotId,
+        })
     } catch (error) {
       if ((error as { name?: string })?.name === 'NotFound') {
         return null

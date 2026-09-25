@@ -244,7 +244,13 @@ describe('ApplicationTranslationService', () => {
 
       await expect(
         service.bulkUpsertTranslations(
-          [{ namespace: 'test.ns', messageKey: 'test.ns:key.one', valueIs: 'x' }],
+          [
+            {
+              namespace: 'test.ns',
+              messageKey: 'test.ns:key.one',
+              valueIs: 'x',
+            },
+          ],
           user,
         ),
       ).rejects.toBeInstanceOf(ServiceUnavailableException)
@@ -353,7 +359,10 @@ describe('ApplicationTranslationService', () => {
         buildEntry({
           namespace: { [DEFAULT_LOCALE]: 'test.ns' },
           strings: {
-            [DEFAULT_LOCALE]: { 'test.ns:key.one': 'A', 'test.ns:key.two': 'B' },
+            [DEFAULT_LOCALE]: {
+              'test.ns:key.one': 'A',
+              'test.ns:key.two': 'B',
+            },
             [ENGLISH_LOCALE]: {},
           },
         }),
@@ -458,9 +467,8 @@ describe('ApplicationTranslationService', () => {
         ],
         user,
       )
-      const expectation = expect(resultPromise).rejects.toBeInstanceOf(
-        BadRequestException,
-      )
+      const expectation =
+        expect(resultPromise).rejects.toBeInstanceOf(BadRequestException)
       await jest.advanceTimersByTimeAsync(3000)
       await jest.advanceTimersByTimeAsync(3000)
       await expectation
@@ -532,7 +540,9 @@ describe('ApplicationTranslationService', () => {
         .mockRejectedValueOnce(
           Object.assign(new Error('conflict'), { name: 'VersionMismatch' }),
         )
-        .mockResolvedValueOnce(buildEntry(entry.fields, { publishedVersion: 1 }))
+        .mockResolvedValueOnce(
+          buildEntry(entry.fields, { publishedVersion: 1 }),
+        )
       managementSnapshotGetManyForEntrySpy.mockResolvedValue({
         items: [buildLatestPublishSnapshotItem('snap-1')],
       })
@@ -555,9 +565,18 @@ describe('ApplicationTranslationService', () => {
       )
       managementSnapshotGetManyForEntrySpy.mockResolvedValue({
         items: [
-          buildLatestPublishSnapshotItem('snap-older', '2026-01-01T00:00:00.000Z'),
-          buildLatestPublishSnapshotItem('snap-newest', '2026-03-01T00:00:00.000Z'),
-          buildLatestPublishSnapshotItem('snap-middle', '2026-02-01T00:00:00.000Z'),
+          buildLatestPublishSnapshotItem(
+            'snap-older',
+            '2026-01-01T00:00:00.000Z',
+          ),
+          buildLatestPublishSnapshotItem(
+            'snap-newest',
+            '2026-03-01T00:00:00.000Z',
+          ),
+          buildLatestPublishSnapshotItem(
+            'snap-middle',
+            '2026-02-01T00:00:00.000Z',
+          ),
         ],
       })
 
@@ -620,7 +639,11 @@ describe('ApplicationTranslationService', () => {
 
     it('pages through multiple snapshot pages until a short page is seen', async () => {
       const page = (id: string) => ({
-        sys: { id, snapshotType: 'publish', createdAt: '2026-01-01T00:00:00.000Z' },
+        sys: {
+          id,
+          snapshotType: 'publish',
+          createdAt: '2026-01-01T00:00:00.000Z',
+        },
       })
       managementSnapshotGetManyForEntrySpy
         .mockResolvedValueOnce({
@@ -691,11 +714,7 @@ describe('ApplicationTranslationService', () => {
         items: [buildLatestPublishSnapshotItem('snap-7')],
       })
 
-      const result = await service.rollbackToPublish(
-        'snap-id',
-        'test.ns',
-        user,
-      )
+      const result = await service.rollbackToPublish('snap-id', 'test.ns', user)
 
       expect(managementEntryUpdateSpy).toHaveBeenCalledWith(
         { entryId: 'test.ns' },

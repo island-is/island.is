@@ -44,7 +44,9 @@ export const isNamespaceNotExtractedError = (
     return false
   }
 
-  const problem = findProblemInApolloError(error, [ProblemType.HTTP_BAD_REQUEST])
+  const problem = findProblemInApolloError(error, [
+    ProblemType.HTTP_BAD_REQUEST,
+  ])
   if (problem?.detail?.includes(NAMESPACE_NOT_EXTRACTED_MARKER)) {
     return true
   }
