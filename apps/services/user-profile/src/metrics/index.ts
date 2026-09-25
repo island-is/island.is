@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import type { Client } from 'pg'
 import { LoggingModule, LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { publishSnapshot } from '@island.is/infra-metrics'
 import { SequelizeConfigService } from '../app/sequelizeConfig.service'
@@ -24,7 +25,14 @@ import { collectProfileMetrics } from './collect'
           dialectOptions: {
             ...options.dialectOptions,
             statement_timeout: 60000,
-            options: '-c default_transaction_read_only=on',
+          },
+          hooks: {
+            ...options.hooks,
+            afterConnect: async (connection: unknown) => {
+              await (connection as Client).query(
+                'SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY',
+              )
+            },
           },
         }
       },
