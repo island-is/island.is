@@ -4,6 +4,7 @@ import { info } from 'kennitala'
 import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
 import {
   ChildNationalIdTypeCode,
+  GUARDIAN_NOT_AWARE_ABUSE_SUSPICION,
   KnowsNationalId,
   LanguageEnvironmentOptions,
   SCHOOL_TYPES,
@@ -88,6 +89,16 @@ export const showWellbeingManagerFields = (answers: FormValue) =>
 
 export const showDisabilityService = (answers: FormValue) =>
   getApplicationAnswers(answers).memmCultureDisability === YES
+
+export const showAbuseSuspicionWarning = (answers: FormValue) => {
+  const { areParentsInformed, notificationHistoryBiggestConcern } =
+    getApplicationAnswers(answers)
+
+  return (
+    areParentsInformed === NO &&
+    notificationHistoryBiggestConcern === GUARDIAN_NOT_AWARE_ABUSE_SUSPICION
+  )
+}
 
 export const isReasonForNotificationSubCategorySelected = (
   answers: FormValue,
