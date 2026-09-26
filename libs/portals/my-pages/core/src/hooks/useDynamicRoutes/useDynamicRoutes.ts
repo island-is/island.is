@@ -261,13 +261,6 @@ const treatmentChildren = (base: string): PortalNavigationItem[] => [
             breadcrumbHide: true,
             systemRoute: true,
           },
-          {
-            name: m.answers,
-            path: `${base}/spurningalistar/:org/:id/skoda-svor/:submissionId`,
-            navHide: true,
-            breadcrumbHide: true,
-            systemRoute: true,
-          },
         ],
       },
     ],
