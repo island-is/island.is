@@ -184,7 +184,7 @@ const AnswerQuestionnaire: FC = () => {
   }
 
   // Withdrawn, expired or already answered questionnaires can't be answered
-  if (id && questionnaire && !questionnaire.canSubmit) {
+  if (id && questionnaire?.canSubmit === false) {
     return (
       <Navigate
         to={paths.questionnaireDetail({
