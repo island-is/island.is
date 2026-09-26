@@ -206,8 +206,7 @@ export const useDynamicRoutes = () => {
   }
 }
 
-// Hidden pages under a treatment, mirroring the global messages and
-// questionnaires entries so breadcrumbs lead back to the treatment.
+// Hidden pages under a treatment. Breadcrumbs stop at the treatment, per design.
 const treatmentChildren = (base: string): PortalNavigationItem[] => [
   {
     name: m.healthTreatmentEducationalContent,

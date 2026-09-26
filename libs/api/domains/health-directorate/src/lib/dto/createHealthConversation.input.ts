@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import {
   IsInt,
   IsNotEmpty,
@@ -26,7 +26,7 @@ export class HealthDirectorateCreateConversationInput {
   @IsInt()
   groupId!: number
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   @IsString()
   @MaxLength(255)
   @Matches(/[^.]/)
@@ -38,8 +38,9 @@ export class HealthDirectorateCreateConversationInput {
     description:
       'Omitted only for a recipient whose allowsCustomTitle is true.',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
   patientInitiatedTypeCode?: string
 
   @Field({

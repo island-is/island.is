@@ -32,6 +32,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
 import {
   Navigate,
+  generatePath,
   useNavigate,
   useParams,
   useSearchParams,
@@ -216,7 +217,7 @@ const HealthConversationDetail = () => {
     return (
       <Navigate
         to={{
-          pathname: HealthPaths.HealthConversationsDetail.replace(':id', id),
+          pathname: generatePath(HealthPaths.HealthConversationsDetail, { id }),
           search: searchParams.toString(),
         }}
         replace

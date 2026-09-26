@@ -28,7 +28,7 @@ import CertificateRequestForm, {
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
@@ -281,6 +281,11 @@ const NewHealthConversation = () => {
     } catch {
       toast.error(formatMessage(m.errorTitle))
     }
+  }
+
+  // A treatment without a care team to message has nothing to show here
+  if (paths.treatmentId && recipients?.length === 0) {
+    return <Navigate to={paths.conversations} replace />
   }
 
   if (!initialLoading && !error && pageMode === 'contactOnly') {

@@ -13,7 +13,7 @@ import { useOrganizations } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { FC, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import * as styles from './Questionnaires.css'
@@ -181,6 +181,19 @@ const AnswerQuestionnaire: FC = () => {
   const handleCancel = () => {
     toast.info(formatMessage(m.questionnaireCanceled))
     navigate(-1)
+  }
+
+  // Withdrawn, expired or already answered questionnaires can't be answered
+  if (id && questionnaire && !questionnaire.canSubmit) {
+    return (
+      <Navigate
+        to={paths.questionnaireDetail({
+          org: organization.toLocaleLowerCase(),
+          id,
+        })}
+        replace
+      />
+    )
   }
 
   return (

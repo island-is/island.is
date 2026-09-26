@@ -15,6 +15,7 @@ import {
   LinkResolver,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
 import { generatePath, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
@@ -65,12 +66,26 @@ const TreatmentOverview = () => {
     { treatmentId },
   )
 
+  const { value: messagesEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthMessagesPageEnabled,
+    false,
+  )
+  const { value: questionnairesEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthQuestionnairesPageEnabled,
+    false,
+  )
+  const showMessages = messagesEnabled && !!treatment?.supportsMessaging
+
   const linkCards = [
-    {
-      label: formatMessage(messages.questionnaires),
-      to: paths.questionnaires,
-      lastSentAt: treatment?.lastQuestionnaireSentAt,
-    },
+    ...(questionnairesEnabled
+      ? [
+          {
+            label: formatMessage(messages.questionnaires),
+            to: paths.questionnaires,
+            lastSentAt: treatment?.lastQuestionnaireSentAt,
+          },
+        ]
+      : []),
     {
       label: formatMessage(m.healthTreatmentEducationalContent),
       to: educationalContentPath,
@@ -79,7 +94,7 @@ const TreatmentOverview = () => {
   ]
 
   const quickLinks = [
-    ...(treatment?.supportsMessaging
+    ...(showMessages
       ? [
           {
             href: paths.conversations,
@@ -87,10 +102,14 @@ const TreatmentOverview = () => {
           },
         ]
       : []),
-    {
-      href: paths.questionnaires,
-      label: formatMessage(messages.questionnaires),
-    },
+    ...(questionnairesEnabled
+      ? [
+          {
+            href: paths.questionnaires,
+            label: formatMessage(messages.questionnaires),
+          },
+        ]
+      : []),
     {
       href: educationalContentPath,
       label: formatMessage(m.healthTreatmentEducationalContent),
@@ -158,14 +177,12 @@ const TreatmentOverview = () => {
             </GridRow>
           </Box>
 
-          {(treatment.recentConversations?.length ?? 0) > 0 && (
+          {messagesEnabled && (treatment.recentConversations?.length ?? 0) > 0 && (
             <Box marginTop={[3, 3, 6]}>
               <TreatmentMessages
                 conversations={treatment.recentConversations ?? []}
                 newMessageHref={
-                  treatment.supportsMessaging
-                    ? paths.conversationsNew
-                    : undefined
+                  showMessages ? paths.conversationsNew : undefined
                 }
               />
             </Box>

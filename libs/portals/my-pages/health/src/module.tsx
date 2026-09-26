@@ -6,6 +6,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
+import TreatmentScopedRoute from './screens/Treatments/components/TreatmentScopedRoute'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -741,49 +742,91 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthTreatmentConversations,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <HealthConversations />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthMessagesPageEnabled}
+        >
+          <HealthConversations />
+        </TreatmentScopedRoute>
+      ),
     },
     {
       name: hm.healthConversationsNewTitle,
       path: HealthPaths.HealthTreatmentConversationsNew,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <NewHealthConversation />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthMessagesPageEnabled}
+        >
+          <NewHealthConversation />
+        </TreatmentScopedRoute>
+      ),
     },
     {
       name: m.messages,
       path: HealthPaths.HealthTreatmentConversationsDetail,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <HealthConversationDetail />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthMessagesPageEnabled}
+        >
+          <HealthConversationDetail />
+        </TreatmentScopedRoute>
+      ),
     },
     {
       name: hm.questionnaires,
       path: HealthPaths.HealthTreatmentQuestionnaires,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <TreatmentQuestionnaires />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <TreatmentQuestionnaires />
+        </TreatmentScopedRoute>
+      ),
     },
     {
       name: hm.questionnaires,
       path: HealthPaths.HealthTreatmentQuestionnairesDetail,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <QuestionnairesDetail />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <QuestionnairesDetail />
+        </TreatmentScopedRoute>
+      ),
     },
     {
       name: hm.questionnaire,
       path: HealthPaths.HealthTreatmentQuestionnairesAnswer,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <QuestionnairesAnswer />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <QuestionnairesAnswer />
+        </TreatmentScopedRoute>
+      ),
     },
     {
       name: hm.questionnaire,
       path: HealthPaths.HealthTreatmentQuestionnairesAnswered,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <QuestionnairesAnswered />,
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <QuestionnairesAnswered />
+        </TreatmentScopedRoute>
+      ),
     },
   ],
 }
