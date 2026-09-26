@@ -16,7 +16,7 @@ import { Charge } from '@island.is/clients/charge-fjs-v2'
 import {
   BlikkClientError,
   BlikkClientService,
-  CreateBlikkPaymentRequest,
+  CreateDirectDebtorPaymentReqBody,
 } from '@island.is/clients/blikk'
 import {
   BankTransferErrorCode,
@@ -650,7 +650,7 @@ export class BankTransferService {
   async createBankTransferPayment(
     input: CreateBankTransferPaymentInput,
   ): Promise<BankTransferPaymentResult> {
-    const body: CreateBlikkPaymentRequest = {
+    const body: CreateDirectDebtorPaymentReqBody = {
       amount: input.amount,
       currency: input.currency,
       sourceReferenceId: input.correlationId,

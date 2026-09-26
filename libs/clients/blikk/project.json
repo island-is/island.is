@@ -14,6 +14,25 @@
       "options": {
         "jestConfig": "libs/clients/blikk/jest.config.ts"
       }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -fsS https://api.blikk.tech/ecom/openapi.json > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.PaymentCallback = .components.callbacks[\"{$request.body#/callbackUrl}\"].post.requestBody.content[\"application/json\"].schema' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/blikk"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-ts -f libs/clients/blikk/src/lib/openapi-ts.config.ts"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   }
 }
