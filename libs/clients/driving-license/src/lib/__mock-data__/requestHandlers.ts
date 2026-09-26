@@ -30,38 +30,23 @@ export const lastV6TemporaryRequest: {
   body?: Record<string, unknown>
 } = {}
 
+// Same capture for the v6 BE submit. BE is the one write this migration moves
+// that is live in production with no feature flag, and its v6 model was
+// reshaped (`userId` and `healthDeclarationModel` dropped, `healthDeclaration`
+// added and required). This lets a test pin the exact keys that reach RLS.
+export const lastV6BeRequest: {
+  headers?: Record<string, string | null>
+  body?: Record<string, unknown>
+} = {}
+
 export const VALID_AUTH = 'Bearer OKIDOKE'
 export const INVALID_AUTH = 'Bearer NOPEDEDOPE'
 
 export const XROAD_BASE_PATH = 'http://localhost:8081'
-export const XROAD_DRIVING_LICENSE_PATH_V5 =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5/api/drivinglicense/v5'
+export const XROAD_DRIVING_LICENSE_PATH_V6 =
+  'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v6/api/drivinglicense/v6'
 export const XROAD_DRIVING_LICENSE_PATH_V1 =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1/api'
-
-const MOCK_HAS_QUALITY_PHOTO = {
-  [MOCK_TOKEN.STUDENT]: true,
-  [MOCK_TOKEN.TEACHER]: true,
-  [MOCK_TOKEN.DEPRIVED]: false,
-  [MOCK_TOKEN.NO_LICENSE]: false,
-  [MOCK_TOKEN.MANY_CATEGORIES]: true,
-  [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
-  [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
-}
-
-const MOCK_HAS_SIGNATURE = {
-  [MOCK_TOKEN.STUDENT]: true,
-  [MOCK_TOKEN.TEACHER]: true,
-  [MOCK_TOKEN.DEPRIVED]: false,
-  [MOCK_TOKEN.NO_LICENSE]: false,
-  [MOCK_TOKEN.MANY_CATEGORIES]: true,
-  [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
-  [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
-}
-
-const url = (path: string) => {
-  return new URL(path, XROAD_BASE_PATH).toString()
-}
 
 export const requestHandlers = [
   rest.post(
@@ -87,40 +72,10 @@ export const requestHandlers = [
       )
     },
   ),
-  rest.get(/api\/drivinglicense\/v5\/hasqualityphoto/, (req, res, ctx) => {
-    const jwttoken = req.headers.get('jwttoken')
-
-    let mock_token: MOCK_TOKEN
-    if (jwttoken) {
-      mock_token = jwttoken as MOCK_TOKEN
-    } else {
-      return res(ctx.status(401))
-    }
-
-    return res(
-      ctx.status(200),
-      ctx.json(MOCK_HAS_QUALITY_PHOTO[mock_token] ? 1 : 0),
-    )
-  }),
-
-  rest.get(/api\/drivinglicense\/v5\/hasqualitysignature/, (req, res, ctx) => {
-    const jwttoken = req.headers.get('jwttoken')
-
-    let mock_token: MOCK_TOKEN
-    if (jwttoken) {
-      mock_token = jwttoken as MOCK_TOKEN
-    } else {
-      return res(ctx.status(401))
-    }
-
-    return res(
-      ctx.status(200),
-      ctx.json(MOCK_HAS_SIGNATURE[mock_token] ? 1 : 0),
-    )
-  }),
-
   // Captures the serialized body so tests can assert on the exact keys that
-  // reach RLS — see `lastNewCategoryRequest` above.
+  // reach RLS — see `lastNewCategoryRequest` above. Stays on the v5 path
+  // because the B-full/B-temp submits deliberately remain on v5 (see the
+  // comments on postCreateDrivingLicenseFull / ...Temporary in the service).
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\//,
     async (req, res, ctx) => {
@@ -129,16 +84,33 @@ export const requestHandlers = [
     },
   ),
 
-  rest.post(/api\/applications\/v5\/applyfor\/renewal65/, (req, res, ctx) => {
-    const jwttoken = req.headers.get('jwttoken')
-    if (!jwttoken) {
-      return res(ctx.status(401))
+  rest.post(/api\/applications\/v6\/applyfor\/be$/, async (req, res, ctx) => {
+    lastV6BeRequest.headers = {
+      jwttoken: req.headers.get('jwttoken'),
+      authorization: req.headers.get('authorization'),
     }
+    lastV6BeRequest.body = await req.json()
+    return res(
+      ctx.status(200),
+      ctx.json({
+        category: 'BE',
+        result: true,
+        applicationGuid: 'be-guid-0001',
+      }),
+    )
+  }),
+
+  // v6 identity travels in the `jwttoken` header (see apiConfiguration.ts); this
+  // handler does not need to inspect it, so it just returns success. Per-person
+  // quality-photo/signature scenarios are covered by spying on the v6 ImageApi
+  // directly in the service spec.
+  rest.post(/api\/applications\/v6\/applyfor\/renewal65/, (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
         category: 'B',
         result: true,
+        applicationGuid: 'renewal65-guid-0001',
       }),
     )
   }),
