@@ -27,12 +27,14 @@ import {
   CreateApplicationApi,
   CurrentApplicationApi,
   NationalRegistryV3UserApi,
-  ChildrenCustodyInformationApiV3,
-  NationalRegistryV3SpouseApi,
+  // ChildrenCustodyInformationApiV3,
+  // NationalRegistryV3SpouseApi,
   MunicipalityApi,
   TaxDataApi,
   TaxDataSpouseApi,
   SendSpouseEmailApi,
+  MockSpouseApi,
+  MockChildrenApi,
 } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -82,8 +84,10 @@ const FinancialAidTemplate: ApplicationTemplate<
               api: [
                 CurrentApplicationApi,
                 NationalRegistryV3UserApi,
-                NationalRegistryV3SpouseApi,
-                ChildrenCustodyInformationApiV3,
+                // NationalRegistryV3SpouseApi,
+                // ChildrenCustodyInformationApiV3,
+                MockSpouseApi,
+                MockChildrenApi,
                 MunicipalityApi,
                 TaxDataApi,
               ],

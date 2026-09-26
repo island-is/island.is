@@ -10,7 +10,9 @@ const ApplicantConfirmation = ({ application }: FAFieldBaseProps) => {
 
   const applicantHasSpouse = hasSpouse(answers, externalData)
   const missingIncomeFiles =
-    answers.income === ApproveOptions.Yes && !hasFiles('incomeFiles', answers)
+    answers.income === ApproveOptions.Yes &&
+    !hasFiles('incomeFiles', answers) &&
+    !hasFiles('rvkIncomeFiles', answers)
 
   const firstStepText = () => {
     switch (true) {
