@@ -206,6 +206,67 @@ export const useDynamicRoutes = () => {
   }
 }
 
+// Hidden pages under a treatment. Breadcrumbs stop at the treatment, per design.
+const treatmentChildren = (base: string): PortalNavigationItem[] => [
+  {
+    name: m.healthTreatmentEducationalContent,
+    path: `${base}/fraedsluefni`,
+    navHide: true,
+    breadcrumbHide: true,
+    systemRoute: true,
+  },
+  {
+    name: m.messages,
+    path: `${base}/skilabod`,
+    navHide: true,
+    breadcrumbHide: true,
+    systemRoute: true,
+    children: [
+      {
+        name: m.messages,
+        path: `${base}/skilabod/nytt`,
+        navHide: true,
+        breadcrumbHide: true,
+        mobileTakeover: true,
+        systemRoute: true,
+      },
+      {
+        name: m.messages,
+        path: `${base}/skilabod/:id`,
+        navHide: true,
+        breadcrumbHide: true,
+        mobileTakeover: true,
+        systemRoute: true,
+      },
+    ],
+  },
+  {
+    name: m.questionnaires,
+    path: `${base}/spurningalistar`,
+    navHide: true,
+    breadcrumbHide: true,
+    systemRoute: true,
+    children: [
+      {
+        name: m.questionnaire,
+        path: `${base}/spurningalistar/:org/:id`,
+        navHide: true,
+        breadcrumbHide: true,
+        systemRoute: true,
+        children: [
+          {
+            name: m.questionnaire,
+            path: `${base}/spurningalistar/:org/:id/svara`,
+            navHide: true,
+            breadcrumbHide: true,
+            systemRoute: true,
+          },
+        ],
+      },
+    ],
+  },
+]
+
 /**
  * Adds a "Meðferð" section under Heilsa with one child per treatment.
  */
@@ -225,14 +286,9 @@ const injectHealthTreatmentNavItems = (
         name: treatment.name.trim() || m.healthTreatment,
         path: `${HEALTH_TREATMENT_BASE_ROUTE}/${treatment.id}`,
         systemRoute: true,
-        children: [
-          {
-            name: m.healthTreatmentEducationalContent,
-            path: `${HEALTH_TREATMENT_BASE_ROUTE}/${treatment.id}/fraedsluefni`,
-            navHide: true,
-            systemRoute: true,
-          },
-        ],
+        children: treatmentChildren(
+          `${HEALTH_TREATMENT_BASE_ROUTE}/${treatment.id}`,
+        ),
       })),
     }
     const healthChildren = [...(child.children ?? [])]

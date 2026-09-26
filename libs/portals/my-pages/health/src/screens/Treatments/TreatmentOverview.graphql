@@ -14,7 +14,6 @@ query GetHealthTreatment($id: ID!) {
     organizationName
     departmentName
     supportsMessaging
-    responsibleNode
     lastQuestionnaireSentAt
     lastDocumentSentAt
     recentConversations {

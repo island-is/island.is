@@ -23,6 +23,7 @@ import {
   GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
+  QuestionnairesTreatmentListInput,
 } from './dto/questionnaire.input'
 import { QuestionnairesResponse } from './dto/response.dto'
 import { QuestionnairesService } from './questionnaires.service'
@@ -49,6 +50,23 @@ export class QuestionnairesResolver {
     @Args('locale', { type: () => String }) locale: Locale = 'is',
   ): Promise<QuestionnairesList | null> {
     return this.questionnairesService.getQuestionnaires(user, locale)
+  }
+
+  @Query(() => QuestionnairesList, {
+    name: 'questionnairesTreatmentList',
+    nullable: true,
+  })
+  @Audit()
+  async getTreatmentQuestionnaires(
+    @CurrentUser() user: User,
+    @Args('input') input: QuestionnairesTreatmentListInput,
+    @Args('locale', { type: () => String }) locale: Locale = 'is',
+  ): Promise<QuestionnairesList | null> {
+    return this.questionnairesService.getTreatmentQuestionnaires(
+      user,
+      locale,
+      input.treatmentId,
+    )
   }
 
   @Query(() => Questionnaire, { name: 'questionnairesDetail', nullable: true })

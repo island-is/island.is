@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import {
   IsBoolean,
   IsEmpty,
@@ -6,6 +6,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  Matches,
   Max,
   MaxLength,
   Min,
@@ -33,6 +34,13 @@ export class HealthDirectoratePaginatedHealthConversationsInput {
   @MaxLength(100)
   @IsOptional()
   search?: string
+
+  @Field(() => ID, { nullable: true })
+  @IsString()
+  @MaxLength(255)
+  @Matches(/[^.]/)
+  @IsOptional()
+  treatmentId?: string
 
   @Field(() => Int, {
     nullable: true,

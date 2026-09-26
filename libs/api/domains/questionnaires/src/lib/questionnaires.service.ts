@@ -43,6 +43,23 @@ import {
 import { NAMESPACE } from './utils/constants'
 import { m } from './utils/messages'
 
+// Expired last, otherwise newest first
+const sortQuestionnaires = (
+  questionnaires: QuestionnairesList['questionnaires'],
+) =>
+  [...(questionnaires ?? [])].sort((a, b) => {
+    const aIsExpired = a.status === QuestionnairesStatusEnum.expired
+    const bIsExpired = b.status === QuestionnairesStatusEnum.expired
+
+    if (aIsExpired && !bIsExpired) return 1
+    if (!aIsExpired && bIsExpired) return -1
+
+    const dateA = Date.parse(a.sentDate) || 0
+    const dateB = Date.parse(b.sentDate) || 0
+
+    return dateB - dateA
+  })
+
 @Injectable()
 export class QuestionnairesService {
   constructor(
@@ -94,21 +111,39 @@ export class QuestionnairesService {
     }
 
     return {
-      questionnaires: [elQuestionnaires, lshQuestionnaires]
-        .flatMap((list) => list.questionnaires)
-        .filter((q) => q !== undefined)
-        .sort((a, b) => {
-          const aIsExpired = a.status === QuestionnairesStatusEnum.expired
-          const bIsExpired = b.status === QuestionnairesStatusEnum.expired
+      questionnaires: sortQuestionnaires(
+        [elQuestionnaires, lshQuestionnaires]
+          .flatMap((list) => list.questionnaires)
+          .filter((q) => q !== undefined),
+      ),
+    }
+  }
 
-          if (aIsExpired && !bIsExpired) return 1
-          if (!aIsExpired && bIsExpired) return -1
+  async getTreatmentQuestionnaires(
+    user: User,
+    locale: Locale,
+    treatmentId: string,
+  ): Promise<QuestionnairesList | null> {
+    const { useEl } = await this.getQuestionnaireFeatureFlags(user)
+    if (!useEl) {
+      return null
+    }
 
-          const dateA = Date.parse(a.sentDate) || 0
-          const dateB = Date.parse(b.sentDate) || 0
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+    try {
+      const data = await this.api.getTreatmentQuestionnaires(user, treatmentId)
 
-          return dateB - dateA
-        }),
+      return {
+        questionnaires: sortQuestionnaires(
+          (data ?? []).map((q) => mapElQuestionnaireListItem(q, formatMessage)),
+        ),
+      }
+    } catch (error) {
+      this.logger.error('Failed to fetch EL treatment questionnaires', error)
+      throw error
     }
   }
 
