@@ -2334,6 +2334,28 @@ export const messages = defineMessages({
     defaultMessage: 'Meðganga',
     id: 'sp.health:pregnancy',
   },
+  pregnancyRedirectIntro: {
+    defaultMessage:
+      'Við erum að vinna að nýrri lausn fyrir meðgöngur á Mínum síðum á Ísland.is. Þar til hún er tilbúin getur þú áfram nálgast gögn um meðgöngu þína á Mínum síðum Heilsuveru.',
+    id: 'sp.health:pregnancy-redirect-intro',
+  },
+  pregnancyOnHeilsuveruTitle: {
+    defaultMessage: 'Meðganga á Heilsuveru',
+    id: 'sp.health:pregnancy-on-heilsuveru-title',
+  },
+  pregnancyOnHeilsuveruText: {
+    defaultMessage:
+      'Í Heilsuveru getur þú áfram skoðað upplýsingar og gögn um meðgönguna þína.',
+    id: 'sp.health:pregnancy-on-heilsuveru-text',
+  },
+  pregnancyHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:pregnancy-heilsuveru-link',
+  },
+  landlaeknirPregnancyTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um meðgönguna þína.',
+    id: 'sp.health:landlaeknir-pregnancy-tooltip',
+  },
   readingMaterialPregnancy: {
     defaultMessage: 'Lesefni um meðgöngu',
     id: 'sp.health:reading-material-pregnancy',
