@@ -156,6 +156,36 @@ export const requestHandlers = [
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
+  rest.get(url('/api/v1/AdilarMalsUndirritanir'), (req, res, ctx) => {
+    const estateType = req.url.searchParams.get('typa')
+    const hasAuth = req.url.searchParams.get('audkenni') ? true : false
+
+    if (!hasAuth) {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+
+    switch (estateType) {
+      case 'Einkaskipti':
+        return res(
+          ctx.status(200),
+          ctx.json([
+            {
+              kennitala: '0101302209',
+              nafn: 'Heir A',
+              undirritad: false,
+            },
+          ]),
+        )
+      case 'OskiptBu':
+        return res(ctx.status(200), ctx.json(0))
+      case 'ErfdafjarSkyrsla':
+        return res(ctx.status(200), ctx.json({}))
+      case 'FyrirFramGreiddur':
+        return res(ctx.status(200), ctx.body(''))
+      default:
+        return res(ctx.status(200), ctx.json([]))
+    }
+  }),
   rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
     const body = req.body as VedbandayfirlitSkeyti
     const assetId = body.fastanumer ?? ''

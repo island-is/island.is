@@ -1999,6 +1999,17 @@ export const m = defineMessages({
     defaultMessage: 'Erfðafjárskýrslan hefur verið send til sýslumanns.',
     description: 'Description shown after the application has been submitted',
   },
+  signingNoSignatoriesTitle: {
+    id: 'ir.application:signing.noSignatoriesTitle',
+    defaultMessage: 'Engar undirskriftir nauðsynlegar',
+    description: 'Title shown when there are no signatories',
+  },
+  signingNoSignatoriesDescription: {
+    id: 'ir.application:signing.noSignatoriesDescription',
+    defaultMessage:
+      'Enginn erfingi þarf að undirrita þessa erfðafjárskýrslu. Þú getur lokið umsókninni hér að neðan.',
+    description: 'Description shown when there are no signatories',
+  },
 
   // Signing State Messages
   signingTitle: {
