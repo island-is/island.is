@@ -45,7 +45,7 @@ export interface CreateBankTransferPaymentInput extends BankTransferDebtor {
   items?: CatalogItemWithQuantity[]
   // Unix seconds.
   expiresAt?: number
-  bankAccountNumber?: string
+  bankAccountNumber: string
 }
 
 export interface BankTransferPaymentResult {
