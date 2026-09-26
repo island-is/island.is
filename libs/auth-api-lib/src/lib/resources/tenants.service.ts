@@ -35,6 +35,29 @@ export class TenantsService {
     private readonly apiScopeGroupModel: typeof ApiScopeGroup,
   ) {}
 
+  async findAllPublic(): Promise<TenantDto[]> {
+    const tenants = await this.domainModel.findAll({
+      attributes: ['name', 'displayName', 'nationalId'],
+      include: [
+        {
+          model: ApiScope,
+          as: 'scopes',
+          attributes: [],
+          required: true,
+          where: { enabled: true },
+        },
+      ],
+    })
+
+    return tenants
+      .sort((a, b) => a.name.localeCompare(b.name, 'is'))
+      .map((tenant) => ({
+        name: tenant.name,
+        displayName: [{ locale: 'is', value: tenant.displayName }],
+        nationalId: tenant.nationalId,
+      }))
+  }
+
   async findAllByUser(user: User): Promise<TenantDto[]> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 

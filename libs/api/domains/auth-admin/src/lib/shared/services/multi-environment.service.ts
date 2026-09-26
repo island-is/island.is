@@ -6,6 +6,10 @@ import {
   AdminDevApi,
   AdminProdApi,
   AdminStagingApi,
+  PublicApi,
+  PublicDevApi,
+  PublicProdApi,
+  PublicStagingApi,
 } from '@island.is/clients/auth/admin-api'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { type ApiResponse, handle204 } from '@island.is/clients/middlewares'
@@ -26,6 +30,12 @@ export abstract class MultiEnvironmentService {
     private readonly adminStagingApi?: AdminApi,
     @Inject(AdminProdApi.key)
     private readonly adminProdApi?: AdminApi,
+    @Inject(PublicDevApi.key)
+    private readonly publicDevApi?: PublicApi,
+    @Inject(PublicStagingApi.key)
+    private readonly publicStagingApi?: PublicApi,
+    @Inject(PublicProdApi.key)
+    private readonly publicProdApi?: PublicApi,
   ) {
     if (!this.adminDevApi && !this.adminStagingApi && !this.adminProdApi) {
       logger.error(
@@ -57,6 +67,19 @@ export abstract class MultiEnvironmentService {
     }
   }
 
+  private publicApiByEnvironment(environment: Environment) {
+    switch (environment) {
+      case Environment.Development:
+        return this.publicDevApi
+      case Environment.Staging:
+        return this.publicStagingApi
+      case Environment.Production:
+        return this.publicProdApi
+      default:
+        return undefined
+    }
+  }
+
   /** Returns true if the admin API client for the given environment is configured. */
   protected isEnvironmentConfigured(environment: Environment): boolean {
     switch (environment) {
@@ -81,6 +104,20 @@ export abstract class MultiEnvironmentService {
     request: (api: AdminApi) => Promise<ApiResponse<T>>,
   ) {
     const api = this.adminApiByEnvironmentWithAuth(environment, user)
+
+    if (!api) {
+      this.logger.warn(`Environment configuration missing for ${environment}`)
+      return Promise.resolve(null)
+    }
+
+    return handle204(request(api))
+  }
+
+  makePublicRequest<T>(
+    environment: Environment,
+    request: (api: PublicApi) => Promise<ApiResponse<T>>,
+  ) {
+    const api = this.publicApiByEnvironment(environment)
 
     if (!api) {
       this.logger.warn(`Environment configuration missing for ${environment}`)
