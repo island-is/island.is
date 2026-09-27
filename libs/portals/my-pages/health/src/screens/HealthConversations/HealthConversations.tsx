@@ -405,7 +405,7 @@ const HealthConversations = () => {
                     />
                     <Box minWidth={0}>
                       <Box display="flex" alignItems="center" columnGap={1}>
-                        <Text variant="medium">
+                        <Text variant="medium" className={styles.senderName}>
                           {item.groupName || item.organization?.name}
                         </Text>
                         {item.hasAttachment && (
