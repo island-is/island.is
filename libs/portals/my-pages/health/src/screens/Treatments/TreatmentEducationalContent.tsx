@@ -120,11 +120,13 @@ const TreatmentEducationalContent = () => {
                         })}
                       </Text>
                     </Box>
-                    <LinkButton
-                      to={card.href}
-                      text={formatMessage(messages.openDocument)}
-                      variant="text"
-                    />
+                    <Box alignSelf="flexEnd">
+                      <LinkButton
+                        to={card.href}
+                        text={formatMessage(messages.openDocument)}
+                        variant="text"
+                      />
+                    </Box>
                   </Box>
                 </Box>
               ))}
