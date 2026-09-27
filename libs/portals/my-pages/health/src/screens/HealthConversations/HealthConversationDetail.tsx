@@ -88,14 +88,19 @@ const HealthConversationDetail = () => {
 
   useEffect(() => {
     if (replyOpen) {
-      replyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      replyInputRef.current?.focus()
+      if (isPhoneWidth) {
+        window.scrollTo({ top: 0 })
+      } else {
+        replyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+      replyInputRef.current?.focus({ preventScroll: isPhoneWidth })
     } else if (replyWasOpenRef.current) {
       // Both reply triggers unmount while the form is open, so return focus
       // to the re-rendered footer button
       replyWasOpenRef.current = false
       replyButtonRef.current?.focus()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replyOpen])
 
   const { data, loading, error, refetch } = useGetHealthConversationDetailQuery(
