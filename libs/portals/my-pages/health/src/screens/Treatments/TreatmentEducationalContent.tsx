@@ -8,6 +8,7 @@ import {
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
+import { useIsMobile } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -22,6 +23,7 @@ const TreatmentEducationalContent = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
   const { id } = useParams() as UseParams
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -66,7 +68,7 @@ const TreatmentEducationalContent = () => {
         <CardLoader />
       ) : (
         <Stack space={3}>
-          <Box width="half">
+          <Box width={isMobile ? 'full' : 'half'}>
             <Input
               name="treatment-documents-search"
               aria-label={formatMessage(m.searchPlaceholder)}

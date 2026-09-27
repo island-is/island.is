@@ -105,6 +105,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
+            labelledBy={labelId}
             placeholder={question.answerOptions.placeholder ?? undefined}
             value={answer?.answers?.[0]?.value ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
@@ -123,6 +124,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
+            labelledBy={labelId}
             placeholder={question.answerOptions.placeholder ?? undefined}
             value={answer?.answers?.[0]?.value ?? undefined}
             onChange={(value: string) => handleValueChange(value)}
@@ -144,6 +146,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
         return (
           <TextInput
             id={question.id}
+            labelledBy={labelId}
             placeholder={question.answerOptions.placeholder ?? undefined}
             value={firstValue ?? ''}
             onChange={(value: string) => handleValueChange(value)}
@@ -193,7 +196,9 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             }}
             disabled={disabled}
             error={error}
+            required={question.required ?? false}
             direction="vertical"
+            labelledBy={labelId}
           />
         )
       }
@@ -214,6 +219,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
             disabled={disabled}
             error={error}
             direction="vertical"
+            labelledBy={labelId}
           />
         )
       }
@@ -290,6 +296,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
               }))}
               selectedValue={selectedValue}
               onOptionClick={(value) => handleValueChange(value)}
+              labelledBy={labelId}
             />
           </Box>
         )
@@ -304,6 +311,7 @@ export const QuestionRenderer: FC<QuestionRendererProps> = ({
               label=""
               locale="is"
               id={question.id}
+              ariaLabelledBy={labelId}
               placeholderText={
                 question.answerOptions.placeholder ||
                 formatMessage(m.chooseDate)

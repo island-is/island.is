@@ -372,7 +372,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<QuestionnaireDetailDto | null> {
     const questionnaire = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         questionnaireControllerGetQuestionnaireDetailV1({
           path: {
             id: id,

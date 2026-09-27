@@ -78,10 +78,11 @@ const HealthConversationDetail = () => {
   const isMobileReplyView = replyOpen && isPhoneWidth
   const replyRef = useRef<HTMLDivElement>(null)
   const replyInputRef = useRef<HTMLTextAreaElement | null>(null)
-  const replyTriggerRef = useRef<HTMLElement | null>(null)
+  const replyButtonRef = useRef<HTMLButtonElement | null>(null)
+  const replyWasOpenRef = useRef(false)
 
   const openReply = () => {
-    replyTriggerRef.current = document.activeElement as HTMLElement | null
+    replyWasOpenRef.current = true
     setReplyOpen(true)
   }
 
@@ -89,8 +90,11 @@ const HealthConversationDetail = () => {
     if (replyOpen) {
       replyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       replyInputRef.current?.focus()
-    } else {
-      replyTriggerRef.current?.focus()
+    } else if (replyWasOpenRef.current) {
+      // Both reply triggers unmount while the form is open, so return focus
+      // to the re-rendered footer button
+      replyWasOpenRef.current = false
+      replyButtonRef.current?.focus()
     }
   }, [replyOpen])
 
@@ -468,6 +472,7 @@ const HealthConversationDetail = () => {
                 />
               ) : (
                 <Button
+                  ref={replyButtonRef}
                   variant="ghost"
                   size="medium"
                   preTextIcon="undo"

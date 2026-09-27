@@ -39,7 +39,13 @@ export const RegisterModal = ({
   return (
     <ModalBase
       isVisible={isVisible}
+      onVisibilityChange={(visible) => {
+        if (!visible) {
+          onClose()
+        }
+      }}
       baseId={id}
+      modalLabel={title}
       className={styles.modalBaseStyle}
     >
       <Box paddingTop={10} paddingBottom={9} paddingX={3} background="white">

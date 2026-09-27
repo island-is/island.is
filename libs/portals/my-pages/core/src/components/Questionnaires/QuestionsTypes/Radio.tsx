@@ -24,6 +24,7 @@ export interface RadioProps {
   disabled?: boolean
   required?: boolean
   direction?: 'horizontal' | 'vertical'
+  labelledBy?: string
 }
 
 export const Radio: React.FC<RadioProps> = ({
@@ -36,7 +37,9 @@ export const Radio: React.FC<RadioProps> = ({
   disabled = false,
   required = false,
   direction = 'vertical',
+  labelledBy,
 }) => {
+  const errorId = `${id}-error`
   const radioButtons = options.map((option) => (
     <Box width="full" key={option.value}>
       <RadioButton
@@ -55,7 +58,13 @@ export const Radio: React.FC<RadioProps> = ({
   ))
 
   return (
-    <Box>
+    <Box
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+      aria-required={required || undefined}
+      aria-invalid={!!error || undefined}
+      aria-describedby={error ? errorId : undefined}
+    >
       {label && (
         <Text variant="h5" marginBottom={2}>
           {HtmlParser(label)}
@@ -75,7 +84,7 @@ export const Radio: React.FC<RadioProps> = ({
       ) : (
         <Stack space={2}>{radioButtons}</Stack>
       )}
-      {error && <InputError errorMessage={error} />}
+      {error && <InputError id={errorId} errorMessage={error} />}
     </Box>
   )
 }

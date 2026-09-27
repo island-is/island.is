@@ -12,6 +12,7 @@ interface Props {
   label?: string
   skipOutboundTrack?: boolean
   callback?: () => void
+  'aria-label'?: string
 }
 
 export const LinkResolver = ({
@@ -20,6 +21,7 @@ export const LinkResolver = ({
   className,
   skipOutboundTrack,
   callback,
+  'aria-label': ariaLabel,
 }: Props) => {
   const { pathname } = useLocation()
   const routes = useRoutes()
@@ -31,6 +33,7 @@ export const LinkResolver = ({
         href={href}
         target="_blank"
         rel="noreferrer noopener"
+        aria-label={ariaLabel}
         className={cn(styles.link, {
           [`${className}`]: className,
         })}
@@ -60,6 +63,7 @@ export const LinkResolver = ({
         [`${className}`]: className,
       })}
       to={href}
+      aria-label={ariaLabel}
       onClick={callback}
     >
       {children}

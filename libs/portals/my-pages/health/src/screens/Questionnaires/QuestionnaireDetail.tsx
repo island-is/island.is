@@ -260,14 +260,13 @@ const QuestionnaireDetail: FC = () => {
         </InfoLineStack>
       )}
       {!loading && !data?.questionnairesDetail && !error && (
-        <Box background="white" margin={4} borderRadius="lg">
-          <Problem
-            type="not_found"
-            noBorder={false}
-            title={formatMessage(messages.questionnaireNotFound)}
-            message={formatMessage(messages.questionnaireNotFoundDetail)}
-          />
-        </Box>
+        <Problem
+          type="no_data"
+          title={formatMessage(messages.questionnaireNotFound)}
+          message={formatMessage(messages.questionnaireNotFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+          noBorder={false}
+        />
       )}
     </IntroWrapper>
   )

@@ -249,7 +249,7 @@ const HealthConversations = () => {
         alignItems="center"
         marginBottom={3}
       >
-        <Box style={{ minWidth: 0 }}>
+        <Box flexGrow={1} style={{ minWidth: 0 }}>
           <Filter
             labelClearAll={formatMessage(m.clearAllFilters)}
             labelClear={formatMessage(m.clearFilter)}
@@ -257,6 +257,7 @@ const HealthConversations = () => {
             reverse
             variant="popover"
             align="left"
+            filterInputFluid
             mobileWrap={false}
             filterCount={filterCount}
             filterInput={

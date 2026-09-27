@@ -412,6 +412,18 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
+  medicineCalculatorRemoveLabel: {
+    id: 'sp.health:medicine-calculator-remove-label',
+    defaultMessage: 'Fjarlægja {arg} af lyfjakaupalista',
+  },
+  medicineCalculatorIncreaseLabel: {
+    id: 'sp.health:medicine-calculator-increase-label',
+    defaultMessage: 'Fjölga pakkningum af {arg}',
+  },
+  medicineCalculatorDecreaseLabel: {
+    id: 'sp.health:medicine-calculator-decrease-label',
+    defaultMessage: 'Fækka pakkningum af {arg}',
+  },
   organDonation: {
     id: 'sp.health:organ-donation',
     defaultMessage: 'Líffæragjöf',
@@ -2965,6 +2977,10 @@ export const messages = defineMessages({
   awaitingApproval: {
     defaultMessage: 'Bíður gildistöku',
     id: 'sp.health:awaiting-approval',
+  },
+  validFromDate: {
+    defaultMessage: 'Tekur gildi {date}',
+    id: 'sp.health:valid-from-date',
   },
   filterByCountry: {
     defaultMessage: 'Sía eftir landi',
