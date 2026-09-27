@@ -40,6 +40,7 @@ export const Radio: React.FC<RadioProps> = ({
   labelledBy,
 }) => {
   const errorId = `${id}-error`
+  const labelId = `${id}-label`
   const radioButtons = options.map((option) => (
     <Box width="full" key={option.value}>
       <RadioButton
@@ -60,13 +61,13 @@ export const Radio: React.FC<RadioProps> = ({
   return (
     <Box
       role="radiogroup"
-      aria-labelledby={labelledBy}
+      aria-labelledby={labelledBy ?? (label ? labelId : undefined)}
       aria-required={required || undefined}
       aria-invalid={!!error || undefined}
       aria-describedby={error ? errorId : undefined}
     >
       {label && (
-        <Text variant="h5" marginBottom={2}>
+        <Text id={labelId} variant="h5" marginBottom={2}>
           {HtmlParser(label)}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
