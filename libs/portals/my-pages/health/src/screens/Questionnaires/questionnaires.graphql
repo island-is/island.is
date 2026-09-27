@@ -92,15 +92,8 @@ fragment QuestionnaireSection on QuestionnaireSection {
 query GetQuestionnaires($locale: String!) {
   questionnairesList(locale: $locale) {
     questionnaires {
-      id
-      title
-      description
-      sentDate
-      status
-      lastSubmitted
-      organization
-      department
-      senderGroupName
+      ...QuestionnaireBaseInfo
+      canSubmitAgain
     }
   }
 }

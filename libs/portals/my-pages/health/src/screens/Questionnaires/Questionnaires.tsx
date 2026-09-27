@@ -11,6 +11,7 @@ import {
   Input,
   Stack,
   Tabs,
+  Tag,
   Text,
   VisuallyHidden,
 } from '@island.is/island-ui/core'
@@ -161,6 +162,16 @@ const Questionnaires: FC = () => {
             ? formatMessage(messages.draftQuestionnaire)
             : formatMessage(messages.unAnsweredQuestionnaire),
           variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
+          renderTag: questionnaire.canSubmitAgain
+            ? (tagEl) => (
+                <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
+                  {tagEl}
+                  <Tag variant="blue" outlined disabled>
+                    {formatMessage(messages.canAnswerAgain)}
+                  </Tag>
+                </Box>
+              )
+            : undefined,
         }}
         cta={{
           label: formatMessage(messages.questionnaireSeeMore),

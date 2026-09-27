@@ -2521,6 +2521,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svara aftur',
     id: 'sp.health:answer-again',
   },
+  canAnswerAgain: {
+    defaultMessage: 'Hægt að svara aftur',
+    id: 'sp.health:can-answer-again',
+  },
   questionnaireNotFound: {
     defaultMessage: 'Spurningalisti fannst ekki',
     id: 'sp.health:questionnaire-not-found',

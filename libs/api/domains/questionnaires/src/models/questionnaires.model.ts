@@ -52,6 +52,9 @@ export class QuestionnairesBaseItem {
 
   @Field(() => String, { nullable: true })
   senderGroupName?: string
+
+  @Field(() => Boolean, { nullable: true })
+  canSubmitAgain?: boolean
 }
 
 @ObjectType('QuestionnairesList')

@@ -92,21 +92,31 @@ export const mapElQuestionnaireForm = (
 export const mapElQuestionnaireListItem = (
   q: QuestionnaireBaseDto,
   formatMessage: FormatMessage,
-): QuestionnairesBaseItem => ({
-  id: q.questionnaireId,
-  title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
-  description: q.message ?? undefined,
-  sentDate: q.createdDate?.toISOString() ?? '',
-  lastSubmissionId: q.lastCreatedSubmissionId,
-  organization: QuestionnairesOrganizationEnum.EL,
-  status:
-    q.expiryDate && new Date(q.expiryDate) < new Date()
+): QuestionnairesBaseItem => {
+  const now = new Date()
+  const status =
+    q.expiryDate && new Date(q.expiryDate) < now
       ? QuestionnairesStatusEnum.expired
       : q.hasDraft
       ? QuestionnairesStatusEnum.draft
       : q.numSubmitted > 0 || q.lastSubmitted
       ? QuestionnairesStatusEnum.answered
-      : QuestionnairesStatusEnum.notAnswered,
-  lastSubmitted: q.lastSubmitted,
-  senderGroupName: q.senderGroupName ?? undefined,
-})
+      : QuestionnairesStatusEnum.notAnswered
+
+  return {
+    id: q.questionnaireId,
+    title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
+    description: q.message ?? undefined,
+    sentDate: q.createdDate?.toISOString() ?? '',
+    lastSubmissionId: q.lastCreatedSubmissionId,
+    organization: QuestionnairesOrganizationEnum.EL,
+    status,
+    lastSubmitted: q.lastSubmitted,
+    senderGroupName: q.senderGroupName ?? undefined,
+    canSubmitAgain:
+      status === QuestionnairesStatusEnum.answered &&
+      (q.numSubmissionsAllowed == null ||
+        q.numSubmitted < q.numSubmissionsAllowed) &&
+      (!q.nextSubmissionDate || new Date(q.nextSubmissionDate) <= now),
+  }
+}
