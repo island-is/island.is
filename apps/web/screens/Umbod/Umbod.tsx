@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 import * as kennitala from 'kennitala'
 import Head from 'next/head'
 import { useQuery } from '@apollo/client'
-import { useIntl } from 'react-intl'
 
 import {
   AccordionCard,
@@ -16,21 +16,21 @@ import {
   Table,
   Text,
 } from '@island.is/island-ui/core'
+import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
+import { CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier } from '@island.is/web/graphql/schema'
 
 import { useI18n } from '../../i18n'
 import { withMainLayout } from '../../layouts/main'
-import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
-import { CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier } from '@island.is/web/graphql/schema'
-import {
-  GET_PUBLIC_AUTH_TENANT_SCOPES_ONLY,
-  GET_PUBLIC_AUTH_TENANTS,
-} from '../queries/Umbod'
 import {
   type CustomScreen,
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
-import { getTranslation, PublicAuthScope, PublicAuthTenant } from './types'
+import {
+  GET_PUBLIC_AUTH_TENANT_SCOPES_ONLY,
+  GET_PUBLIC_AUTH_TENANTS,
+} from '../queries/Umbod'
 import { m } from './translations.strings'
+import { getTranslation, PublicAuthScope, PublicAuthTenant } from './types'
 
 interface UmbodProps {
   tenants: PublicAuthTenant[]
