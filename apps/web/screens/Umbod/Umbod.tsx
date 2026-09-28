@@ -19,7 +19,6 @@ import {
 
 import { useI18n } from '../../i18n'
 import { withMainLayout } from '../../layouts/main'
-import { Screen } from '../../types'
 import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
 import { CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier } from '@island.is/web/graphql/schema'
 import {
