@@ -32,7 +32,7 @@ import {
 import { getTranslation, PublicAuthScope, PublicAuthTenant } from './types'
 import { m } from './translations.strings'
 
-interface UmbodProps {
+export interface UmbodProps {
   tenants: PublicAuthTenant[]
 }
 
@@ -137,7 +137,11 @@ const TenantCard = ({
   )
 }
 
-const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
+export const UmbodContent = ({
+  tenants,
+  showTitle = true,
+  embedded = false,
+}: UmbodProps & { showTitle?: boolean; embedded?: boolean }) => {
   const { activeLocale } = useI18n()
   const { formatMessage } = useIntl()
   const [search, setSearch] = useState('')
@@ -160,19 +164,25 @@ const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
   )
   return (
     <>
-      <Head>
-        <title>{formatMessage(m.pageTitle)} | Ísland.is</title>
-      </Head>
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '10/12', '8/12']}
-            offset={['0', '1/12', '2/12']}
+            span={embedded ? ['9/9', '9/9', '7/9'] : ['12/12', '10/12', '8/12']}
+            offset={embedded ? ['0', '0', '1/9'] : ['0', '1/12', '2/12']}
           >
-            <Box paddingY={[5, 7, 8]}>
-              <Text as="h1" variant="h1" marginBottom={2}>
-                {formatMessage(m.pageTitle)}
-              </Text>
+            <Box
+              paddingTop={embedded ? 4 : [5, 7, 8]}
+              paddingBottom={[5, 7, 8]}
+            >
+              {showTitle && (
+                <Text
+                  as={embedded ? 'h2' : 'h1'}
+                  variant={embedded ? 'h2' : 'h1'}
+                  marginBottom={2}
+                >
+                  {formatMessage(m.pageTitle)}
+                </Text>
+              )}
               <Text marginBottom={5}>{formatMessage(m.introduction)}</Text>
               <Box marginBottom={4}>
                 <FilterInput
@@ -202,6 +212,19 @@ const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
+    </>
+  )
+}
+
+const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <>
+      <Head>
+        <title>{formatMessage(m.pageTitle)} | Ísland.is</title>
+      </Head>
+      <UmbodContent tenants={tenants} />
     </>
   )
 }

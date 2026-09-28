@@ -1,12 +1,24 @@
-import withApollo from '../../../../../graphql/withApollo'
-import { withLocale } from '../../../../../i18n'
-import Umbod from '../../../../../screens/Umbod/Umbod'
+import type { ComponentProps } from 'react'
+
+import OrganizationPageScreen from '../../../[...slugs]'
 import { getServerSidePropsWrapper } from '../../../../../utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  withLocale('is')(Umbod),
+const Screen = Object.assign(
+  (props: ComponentProps<typeof OrganizationPageScreen>) => (
+    <OrganizationPageScreen {...props} />
+  ),
+  {
+    getProps: (
+      context: Parameters<typeof OrganizationPageScreen.getProps>[0],
+    ) =>
+      OrganizationPageScreen.getProps({
+        ...context,
+        query: {
+          ...context.query,
+          slugs: ['stafraent-island', 'umbodskerfi', 'rafraen-umbod'],
+        },
+      }),
+  },
 )
 
 export default Screen
