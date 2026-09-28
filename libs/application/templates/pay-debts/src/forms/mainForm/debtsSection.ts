@@ -17,12 +17,22 @@ import { debts as messages } from '../../lib/messages'
 import {
   getDebts,
   getDebtsFromExternalData,
+  getDownloadServiceURL,
   hasFetchedDebts,
 } from '../../utils/getDebts'
 import { formatDate } from '../../utils/formatDate'
+import { CustomerDebt } from '../../utils/types'
 
 const dueDateOrNothing = (date: string): StaticText =>
   formatDate(date) ?? messages.table.noDateLabel
+
+const getInvoiceURL = (
+  downloadServiceURL: string | undefined,
+  debt: CustomerDebt,
+): string | undefined =>
+  downloadServiceURL && debt.documentID
+    ? `${downloadServiceURL}${debt.documentID}`
+    : undefined
 
 const hasDebtsToPay = (_answers: unknown, externalData: ExternalData) =>
   hasFetchedDebts(externalData) &&
@@ -81,17 +91,21 @@ export const debtsSection = buildSection({
               messages.table.principalHeader,
               messages.table.interestHeader,
               messages.table.costHeader,
+              { label: messages.table.invoiceHeader, link: true, width: 100 },
             ],
-            rows: (application) =>
-              getDebts(application).map<StaticText[][]>((debt) => [
+            rows: (application) => {
+              const downloadServiceURL = getDownloadServiceURL(application)
+              return getDebts(application).map<StaticText[][]>((debt) => [
                 [
                   dueDateOrNothing(debt.dueDate),
                   debt.timePeriod,
                   formatCurrency(debt.principal),
                   formatCurrency(debt.interest),
                   formatCurrency(debt.cost),
+                  getInvoiceURL(downloadServiceURL, debt) ?? '',
                 ],
-              ]),
+              ])
+            },
             info: (application) =>
               getDebts(application).map((debt) =>
                 debt.salaryPayerName

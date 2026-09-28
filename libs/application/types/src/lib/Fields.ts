@@ -1037,6 +1037,7 @@ export type InteractiveTableHeaderCell =
       width?: number
       truncate?: boolean
       expandable?: boolean
+      link?: boolean
       tooltip?: StaticText
     }
 
@@ -1056,7 +1057,9 @@ export interface InteractiveTableField extends BaseField {
   }
   footerRow?: StaticText[] | ((application: Application) => StaticText[])
   expandedRows?: {
-    header: StaticText[] | ((application: Application) => StaticText[])
+    header:
+      | InteractiveTableHeaderCell[]
+      | ((application: Application) => InteractiveTableHeaderCell[])
     rows: StaticText[][][] | ((application: Application) => StaticText[][][])
     info?:
       | (StaticText | undefined)[]

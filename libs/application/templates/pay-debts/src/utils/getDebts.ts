@@ -36,6 +36,14 @@ export const getDebtsFromExternalData = (
 export const getDebts = (application: Application): CustomerDebt[] =>
   getDebtsFromExternalData(application.externalData)
 
+export const getDownloadServiceURL = (
+  application: Application,
+): string | undefined =>
+  getValueViaPath<string>(
+    application.externalData,
+    `${DEBTS_EXTERNAL_DATA_ID}.data.downloadServiceURL`,
+  )
+
 export const debtsSignature = (debts: CustomerDebt[]): string =>
   debts
     .map((debt) =>

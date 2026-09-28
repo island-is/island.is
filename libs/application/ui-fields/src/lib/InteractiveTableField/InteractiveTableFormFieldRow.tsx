@@ -8,7 +8,11 @@ import {
   useState,
 } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { Application, StaticText } from '@island.is/application/types'
+import {
+  Application,
+  InteractiveTableHeaderCell,
+  StaticText,
+} from '@island.is/application/types'
 import {
   Button,
   Checkbox,
@@ -154,7 +158,7 @@ interface Props {
   inputPlaceholder: string
   inputColumnLabel?: string
   columns: InteractiveTableColumn[]
-  expandedHeader?: StaticText[]
+  expandedHeader?: InteractiveTableHeaderCell[]
   expandedRows?: StaticText[][]
   expandedInfo?: StaticText
   colSpan: number
@@ -363,7 +367,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   )
 }
 
-const areCellsEqual = (prev?: StaticText[], next?: StaticText[]) => {
+const areCellsEqual = <T,>(prev?: T[], next?: T[]) => {
   if (prev === next) return true
   if (!prev || !next || prev.length !== next.length) return false
   return prev.every((cell, index) => cell === next[index])

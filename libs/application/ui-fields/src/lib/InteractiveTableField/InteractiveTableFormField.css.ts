@@ -112,3 +112,14 @@ globalStyle(`${tableWrapper} ${expandedTable} td`, {
 globalStyle(`${tableWrapper} ${expandedTable} tbody tr:last-child td`, {
   borderBottomWidth: 0,
 })
+
+export const invoiceLinkButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  border: 'none',
+  background: 'transparent',
+  padding: 0,
+  cursor: 'pointer',
+})

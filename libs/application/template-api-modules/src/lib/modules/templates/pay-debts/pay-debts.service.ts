@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -17,7 +19,13 @@ const mockSalaryPayerName = (index: number) =>
 
 @Injectable()
 export class PayDebtsService extends BaseTemplateApiService {
-  constructor(private readonly financeClientV3Service: FinanceClientV3Service) {
+  constructor(
+    private readonly financeClientV3Service: FinanceClientV3Service,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
+  ) {
     super(ApplicationTypes.PAY_DEBTS)
   }
 
@@ -29,6 +37,7 @@ export class PayDebtsService extends BaseTemplateApiService {
     return {
       message: result?.message ?? '',
       timestamp: result?.timestamp ?? '',
+      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
       debts: (result?.debts ?? []).map((debt, index) => ({
         chargeTypeId: debt.chargeTypeId,
         chargeTypeName: debt.chargeTypeName,

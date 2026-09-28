@@ -106,6 +106,12 @@ export const debts = {
       defaultMessage: 'Kostnaður',
       description: 'Cost header of the expanded charge type sub-table',
     },
+    invoiceHeader: {
+      id: 'pd.application:debts.table.invoiceHeader',
+      defaultMessage: 'Reikningur',
+      description:
+        'Invoice document link header of the expanded charge type sub-table',
+    },
     salaryWithholdingInfo: {
       id: 'pd.application:debts.table.salaryWithholdingInfo',
       defaultMessage:
