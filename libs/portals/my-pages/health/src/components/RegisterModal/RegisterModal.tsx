@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { messages } from '../../lib/messages'
 import * as styles from './RegisterModal.css'
 import { HealthCenterDoctorOption } from '../../utils/types'
@@ -36,6 +36,20 @@ export const RegisterModal = ({
   const { formatMessage } = useLocale()
   const [doctorId, setDoctorId] = useState<number>()
 
+  useEffect(() => {
+    if (isVisible) {
+      setDoctorId(undefined)
+    }
+  }, [isVisible])
+
+  // Callers clear their selection on close, so hold the content through the fade-out
+  const visibleContent = useRef({ title, healthCenterDoctors })
+  if (isVisible) {
+    visibleContent.current = { title, healthCenterDoctors }
+  }
+  const shownTitle = visibleContent.current.title
+  const shownDoctors = visibleContent.current.healthCenterDoctors
+
   return (
     <ModalBase
       isVisible={isVisible}
@@ -45,8 +59,9 @@ export const RegisterModal = ({
         }
       }}
       baseId={id}
-      modalLabel={title}
+      modalLabel={shownTitle}
       className={styles.modalBaseStyle}
+      preventBodyScroll
     >
       <Box paddingTop={10} paddingBottom={9} paddingX={3} background="white">
         <Box className={styles.closeModalButtonStyle}>
@@ -59,7 +74,7 @@ export const RegisterModal = ({
         </Box>
         <Box className={styles.modalGridStyle}>
           <Box className={styles.modalGridContentStyle}>
-            <Text variant="h2">{title}</Text>
+            <Text variant="h2">{shownTitle}</Text>
             {description ? (
               <Text marginTop={2} marginBottom={3}>
                 {description}
@@ -68,11 +83,15 @@ export const RegisterModal = ({
               // Temp fix - will refactor and use core model component
               <Box marginY={15}></Box>
             )}
-            {healthCenterDoctors?.length ? (
+            {shownDoctors?.length ? (
               <Box marginBottom={3}>
                 <Select
                   isClearable
-                  options={healthCenterDoctors}
+                  options={shownDoctors}
+                  value={
+                    shownDoctors.find((doctor) => doctor.value === doctorId) ??
+                    null
+                  }
                   label={formatMessage(messages.chooseDoctorLabel)}
                   placeholder={formatMessage(messages.chooseDoctorPlaceholder)}
                   onChange={(val) => {
