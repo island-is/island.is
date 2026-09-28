@@ -28,7 +28,11 @@ describe('PayDebtsService', () => {
     const financeClient = {
       getCustomerDebts,
     } as unknown as FinanceClientV3Service
-    const service = new PayDebtsService(financeClient)
+    const downloadServiceConfig = {
+      baseUrl: 'http://localhost:3377',
+      isConfigured: true,
+    }
+    const service = new PayDebtsService(financeClient, downloadServiceConfig)
     const nationalId = '0101307789'
     const auth = { nationalId } as User
 
@@ -44,6 +48,7 @@ describe('PayDebtsService', () => {
     expect(result).toEqual({
       message: 'Success',
       timestamp: '2026-08-19T12:00:00Z',
+      downloadServiceURL: 'http://localhost:3377/download/v1/finance/',
       debts: [
         {
           chargeTypeId: 'A1',

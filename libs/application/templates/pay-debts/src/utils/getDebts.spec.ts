@@ -1,9 +1,10 @@
-import { ExternalData } from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import { CustomerDebt } from './types'
 import {
   DEBTS_MAX_AGE_MS,
   debtsAreStale,
   debtsSignature,
+  getDownloadServiceURL,
   hasFetchedDebts,
 } from './getDebts'
 
@@ -55,6 +56,29 @@ describe('debtsAreStale', () => {
     expect(debtsAreStale(debtsFetchedAt(new Date(), 'failure'))).toBe(true)
     expect(debtsAreStale(debtsFetchedAt(undefined))).toBe(true)
     expect(debtsAreStale(debtsFetchedAt('not a date'))).toBe(true)
+  })
+})
+
+describe('getDownloadServiceURL', () => {
+  it('reads the download service base URL from external data', () => {
+    const externalData = {
+      customerDebts: {
+        data: {
+          debts: [],
+          downloadServiceURL: 'http://localhost:3377/download/v1/finance/',
+        },
+      },
+    } as unknown as ExternalData
+
+    expect(
+      getDownloadServiceURL({ externalData } as unknown as Application),
+    ).toBe('http://localhost:3377/download/v1/finance/')
+  })
+
+  it('is undefined when not present', () => {
+    expect(
+      getDownloadServiceURL({ externalData: {} } as unknown as Application),
+    ).toBeUndefined()
   })
 })
 

@@ -137,8 +137,53 @@ describe('debtsSection', () => {
     } as unknown as Application
 
     expect(rows(application)).toEqual([
-      [['01.08.2025', '202508', '500.000 kr.', '55.990 kr.', '10.000 kr.']],
+      [
+        [
+          '01.08.2025',
+          '202508',
+          '500.000 kr.',
+          '55.990 kr.',
+          '10.000 kr.',
+          '',
+        ],
+      ],
     ])
+  })
+
+  it('links the invoice column to the download service URL when a documentID is present', () => {
+    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
+      | InteractiveTableField
+      | undefined
+    const header = table?.expandedRows?.header
+    const rows = table?.expandedRows?.rows
+
+    if (typeof rows !== 'function' || typeof header === 'function' || !header) {
+      throw new Error('Expected a static header and dynamic rows')
+    }
+
+    expect(header).toContainEqual({
+      label: messages.table.invoiceHeader,
+      link: true,
+      width: 90,
+    })
+
+    const application = {
+      externalData: {
+        customerDebts: {
+          data: {
+            debts: [{ ...debt, documentID: '42' }],
+            downloadServiceURL: 'http://localhost:3377/download/v1/finance/',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      } as unknown as ExternalData,
+      answers: {},
+    } as unknown as Application
+
+    expect(rows(application)[0][0][5]).toBe(
+      'http://localhost:3377/download/v1/finance/42',
+    )
   })
 
   it('says a debt has no gjalddagi or eindagi rather than showing the placeholder date', () => {

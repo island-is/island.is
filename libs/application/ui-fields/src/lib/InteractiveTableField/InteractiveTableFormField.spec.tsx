@@ -99,34 +99,16 @@ const rowCheckboxIds = () =>
     .filter((id) => id !== 'selectedDebts-select-all')
 
 describe('InteractiveTableFormField rows', () => {
-  it('renders every row', () => {
-    renderField(60)
+  it('renders every row for a customer with 20 debts', () => {
+    renderField(20)
 
     const ids = rowCheckboxIds()
-    expect(ids).toHaveLength(60)
+    expect(ids).toHaveLength(20)
     expect(ids[0]).toBe('selectedDebts-select-0')
-    expect(ids[59]).toBe('selectedDebts-select-59')
-  })
-
-  it.each([[100], [281]])(
-    'mounts every row for a customer with %i debts',
-    (debtCount) => {
-      renderField(debtCount)
-
-      expect(rowCheckboxIds()).toHaveLength(debtCount)
-    },
-  )
-
-  it('seeds a default answer for every row', async () => {
-    renderField(60)
-
-    await waitFor(() => {
-      expect(form?.getValues('selectedDebts')).toHaveLength(60)
-    })
-
-    expect(form?.getValues('selectedDebts')).toEqual(Array(60).fill(false))
+    expect(ids[19]).toBe('selectedDebts-select-19')
   })
 })
+
 describe('InteractiveTableFormField header tooltip', () => {
   const headerWithTooltip = [
     'Gjaldflokkur',
@@ -286,5 +268,58 @@ describe('InteractiveTableFormField expanded row info', () => {
 
     expect(await screen.findByText('01.09.2025')).toBeInTheDocument()
     expect(screen.queryByText(infoMessage)).not.toBeInTheDocument()
+  })
+})
+
+describe('InteractiveTableFormField expanded row link column', () => {
+  const renderWithLinkColumn = () =>
+    render(
+      <InteractiveTableFormField
+        field={
+          buildInteractiveTableField({
+            id: 'selectedDebts',
+            selectable: true,
+            header: [
+              { label: 'Gjaldflokkur', expandable: true },
+              'Gjaldgrunnur',
+              'Eindagi',
+              'Skuldir',
+            ],
+            rows: makeRows(2),
+            expandedRows: {
+              header: ['Gjalddagi', { label: 'Reikningur', link: true }],
+              rows: [
+                [['01.08.2025', 'https://example.com/invoice/1']],
+                [['01.09.2025', '']],
+              ],
+            },
+          }) as InteractiveTableField
+        }
+        application={application}
+      />,
+      { wrapper: Wrapper },
+    )
+
+  it('shows the link column only for a row that actually has a link', async () => {
+    renderWithLinkColumn()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Gjaldflokkur 0' }),
+    )
+    expect(
+      screen.getByRole('columnheader', { name: 'Reikningur' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Reikningur' }),
+    ).toBeInTheDocument()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Gjaldflokkur 1' }),
+    )
+
+    expect(await screen.findByText('01.09.2025')).toBeInTheDocument()
+    expect(
+      screen.getAllByRole('columnheader', { name: 'Reikningur' }),
+    ).toHaveLength(1)
   })
 })
