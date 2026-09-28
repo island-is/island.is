@@ -8,7 +8,6 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
 import {
@@ -17,6 +16,7 @@ import {
   useLocalSearchParams,
   usePathname,
 } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -102,6 +102,7 @@ export default function HealthMessageDetailScreen() {
     justCreated?: string
   }>()
   const intl = useIntl()
+  const insets = useSafeAreaInsets()
   const client = useApolloClient()
   const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
@@ -601,51 +602,56 @@ export default function HealthMessageDetailScreen() {
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
-            <SafeAreaView>
-              {/* Lift the reply button / blocked alert clear of the home
-                  indicator so it doesn't sit on the bottom edge. */}
-              <View style={{ paddingBottom: theme.spacing[1] }}>
-                {isSkeleton ? (
-                  // The card skeleton carries a bottom margin of its own, which
-                  // would leave the placeholder sitting higher than the button
-                  // or alert that replaces it.
-                  <GeneralCardSkeleton
-                    height={48}
-                    style={{ marginBottom: 0 }}
-                  />
-                ) : conversation?.patientCanReply ? (
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'health.messages.replyButton',
-                    })}
-                    isTransparent
-                    isOutlined
-                    iconPosition="start"
-                    icon={require('@/assets/icons/reply.png')}
-                    onPress={() =>
-                      router.push({
-                        pathname: composeHref,
-                        params: {
-                          conversationId: id,
-                          recipientName:
-                            conversation?.organization?.name ??
-                            conversation?.lastSenderGroupName ??
-                            '',
-                          subject: conversation?.title ?? '',
-                        },
-                      })
-                    }
-                  />
-                ) : (
-                  <Alert
-                    type="info"
-                    size="small"
-                    message={replyBlockedMessage}
-                    hasBorder
-                  />
-                )}
-              </View>
-            </SafeAreaView>
+            {/* The home indicator is what lifts the reply button / blocked
+                alert clear of the bottom edge. A device without one (SE,
+                iPhone 8) reports a 0 inset, so a minimum stands in for it
+                there. Android is already padded by ButtonDrawer, and its
+                gesture inset would double up on top of that. */}
+            <View
+              style={{
+                paddingBottom:
+                  (Platform.OS === 'ios'
+                    ? Math.max(insets.bottom, theme.spacing[2])
+                    : 0) + theme.spacing[1],
+              }}
+            >
+              {isSkeleton ? (
+                // The card skeleton carries a bottom margin of its own, which
+                // would leave the placeholder sitting higher than the button
+                // or alert that replaces it.
+                <GeneralCardSkeleton height={48} style={{ marginBottom: 0 }} />
+              ) : conversation?.patientCanReply ? (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.messages.replyButton',
+                  })}
+                  isTransparent
+                  isOutlined
+                  iconPosition="start"
+                  icon={require('@/assets/icons/reply.png')}
+                  onPress={() =>
+                    router.push({
+                      pathname: composeHref,
+                      params: {
+                        conversationId: id,
+                        recipientName:
+                          conversation?.organization?.name ??
+                          conversation?.lastSenderGroupName ??
+                          '',
+                        subject: conversation?.title ?? '',
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <Alert
+                  type="info"
+                  size="small"
+                  message={replyBlockedMessage}
+                  hasBorder
+                />
+              )}
+            </View>
           </ButtonDrawer>
         ) : null}
       </View>

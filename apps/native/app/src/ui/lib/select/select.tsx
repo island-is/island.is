@@ -23,8 +23,11 @@ const Host = styled.Pressable`
     }),
     true,
   )};
+  /* Left padding matches TextField so the label lines up with the fields this
+     sits next to in a form; the chevron keeps its wider inset on the right. */
   padding: ${({ theme }) => theme.spacing[1]}px
-    ${({ theme }) => theme.spacing[2]}px;
+    ${({ theme }) => theme.spacing[2]}px ${({ theme }) => theme.spacing[1]}px
+    ${({ theme }) => theme.spacing[1]}px;
   background-color: ${dynamicColor((props) => ({
     dark: 'shade300',
     light: props.theme.color.blue100,
@@ -44,6 +47,7 @@ const Label = styled(Typography)`
 
 const Value = styled(Typography)<{ isPlaceholder: boolean }>`
   margin-top: ${({ theme }) => theme.spacing.smallGutter}px;
+  padding-left: ${({ theme }) => theme.spacing[1]}px;
   ${({ isPlaceholder }) =>
     isPlaceholder &&
     css`
