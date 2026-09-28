@@ -47,6 +47,7 @@ import {
   CasesInterceptor,
 } from './interceptors/case.interceptor'
 import { ArchiveResponse } from './models/archive.response'
+import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
 
@@ -94,6 +95,22 @@ export class InternalCaseController {
     this.eventService.postEvent('CREATE_XRD', createdCase)
 
     return createdCase
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Get('case/:caseId/caseFileClassification')
+  @ApiOkResponse({
+    type: CaseFileClassificationResponse,
+    description:
+      'Returns whether new police case files belong to the case files record (gagnapakki) or are additional case files (viðbótargögn)',
+  })
+  async getCaseFileClassification(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<CaseFileClassificationResponse> {
+    this.logger.debug(`Getting case file classification for case ${caseId}`)
+
+    return this.internalCaseService.getCaseFileClassification(theCase)
   }
 
   @Post('cases/archive')

@@ -238,6 +238,32 @@ export class CaseRepositoryService {
     return originalAncestorId
   }
 
+  // Walks the parentCaseId duplicate chain to the newest non-deleted leaf.
+  // Split cases are out of scope for case file classification.
+  // Only id and state are loaded for children; callers must not rely on other fields.
+  async findLiveDescendantCase(
+    theCase: Pick<Case, 'id' | 'state'>,
+  ): Promise<Pick<Case, 'id' | 'state'>> {
+    let current: Pick<Case, 'id' | 'state'> = theCase
+
+    while (true) {
+      const child = await this.caseModel.findOne({
+        where: {
+          parentCaseId: current.id,
+          state: { [Op.not]: CaseState.DELETED },
+        },
+        attributes: ['id', 'state'],
+        order: [['created', 'DESC']],
+      })
+
+      if (!child) {
+        return current
+      }
+
+      current = child
+    }
+  }
+
   // The next case that has outlived its retention window, with the whole graph
   // the archive is built from. The caller writes the archive and clears the
   // encrypted properties in the same transaction, so this read joins the

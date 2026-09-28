@@ -467,6 +467,11 @@ export const isRulingOrDismissalCase = (
   )
 }
 
+export enum CaseFileClassification {
+  CASE_FILES_RECORD = 'CASE_FILES_RECORD',
+  ADDITIONAL_CASE_FILE = 'ADDITIONAL_CASE_FILE',
+}
+
 export const hasIndictmentCaseBeenSubmittedToCourt = (
   state?: CaseState | null,
 ): boolean => {
@@ -478,6 +483,20 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
+}
+
+export const getIndictmentCaseFileClassification = (
+  state?: CaseState | null,
+): CaseFileClassification => {
+  // Includes WAITING_FOR_CANCELLATION: the indictment already went to court,
+  // so new police files are additional even before a live duplicate exists.
+  const isAdditionalCaseFile =
+    state === CaseState.WAITING_FOR_CANCELLATION ||
+    hasIndictmentCaseBeenSubmittedToCourt(state)
+
+  return isAdditionalCaseFile
+    ? CaseFileClassification.ADDITIONAL_CASE_FILE
+    : CaseFileClassification.CASE_FILES_RECORD
 }
 
 export const isIndictmentCaseState = (

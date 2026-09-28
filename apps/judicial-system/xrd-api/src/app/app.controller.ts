@@ -28,6 +28,7 @@ import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
+import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
 import { Defender } from './models/defender.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { PoliceDocumentSupplements } from './models/policeDocumentSupplements.response'
@@ -73,6 +74,22 @@ export class AppController {
 
       return createdCase
     })
+  }
+
+  @Get('case/:caseId/caseFileClassification')
+  @ApiOkResponse({
+    type: CaseFileClassificationResponse,
+    description:
+      'Returns whether new police case files belong to the case files record (gagnapakki) or are additional case files (viðbótargögn)',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid input or not applicable' })
+  @ApiResponse({ status: 502, description: 'Failed to get classification' })
+  async getCaseFileClassification(
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+  ): Promise<CaseFileClassificationResponse> {
+    this.logger.debug(`Getting case file classification for case ${caseId}`)
+
+    return this.appService.getCaseFileClassification(caseId)
   }
 
   @Get('defenders')

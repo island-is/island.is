@@ -1,6 +1,14 @@
 import each from 'jest-each'
 
-import { CaseType, isInvestigationCase, isRestrictionCase } from './case'
+import {
+  CaseFileClassification,
+  CaseState,
+  CaseType,
+  getIndictmentCaseFileClassification,
+  hasIndictmentCaseBeenSubmittedToCourt,
+  isInvestigationCase,
+  isRestrictionCase,
+} from './case'
 
 describe('Case Type', () => {
   each`
@@ -35,4 +43,48 @@ describe('Case Type', () => {
     expect(isRestrictionCase(type)).toBe(false)
     expect(isInvestigationCase(type)).toBe(true)
   })
+})
+
+describe('hasIndictmentCaseBeenSubmittedToCourt', () => {
+  each`
+    state
+    ${CaseState.SUBMITTED}
+    ${CaseState.RECEIVED}
+    ${CaseState.COMPLETED}
+    ${CaseState.CORRECTING}
+  `.it('should return true for $state', ({ state }) => {
+    expect(hasIndictmentCaseBeenSubmittedToCourt(state)).toBe(true)
+  })
+
+  each`
+    state
+    ${CaseState.DRAFT}
+    ${CaseState.WAITING_FOR_REVIEW}
+    ${CaseState.WAITING_FOR_CONFIRMATION}
+    ${CaseState.WAITING_FOR_CANCELLATION}
+    ${CaseState.DELETED}
+    ${undefined}
+    ${null}
+  `.it('should return false for $state', ({ state }) => {
+    expect(hasIndictmentCaseBeenSubmittedToCourt(state)).toBe(false)
+  })
+})
+
+describe('getIndictmentCaseFileClassification', () => {
+  each`
+    state                                    | classification
+    ${CaseState.DRAFT}                       | ${CaseFileClassification.CASE_FILES_RECORD}
+    ${CaseState.WAITING_FOR_REVIEW}          | ${CaseFileClassification.CASE_FILES_RECORD}
+    ${CaseState.WAITING_FOR_CONFIRMATION}    | ${CaseFileClassification.CASE_FILES_RECORD}
+    ${CaseState.SUBMITTED}                   | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
+    ${CaseState.RECEIVED}                    | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
+    ${CaseState.WAITING_FOR_CANCELLATION}    | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
+    ${CaseState.COMPLETED}                   | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
+    ${CaseState.CORRECTING}                  | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
+  `.it(
+    'should classify $state as $classification',
+    ({ state, classification }) => {
+      expect(getIndictmentCaseFileClassification(state)).toBe(classification)
+    },
+  )
 })

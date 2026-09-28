@@ -31,6 +31,7 @@ import {
   courtSubtypes,
   EventType,
   getIndictmentAppealDeadline,
+  getIndictmentCaseFileClassification,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -89,6 +90,7 @@ import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusio
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { ArchiveResponse } from './models/archive.response'
+import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -1767,6 +1769,17 @@ export class InternalCaseService {
         '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
       },
     })
+  }
+
+  async getCaseFileClassification(
+    theCase: Case,
+  ): Promise<CaseFileClassificationResponse> {
+    const liveCase =
+      await this.caseRepositoryService.findLiveDescendantCase(theCase)
+
+    return {
+      classification: getIndictmentCaseFileClassification(liveCase.state),
+    }
   }
 
   async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
