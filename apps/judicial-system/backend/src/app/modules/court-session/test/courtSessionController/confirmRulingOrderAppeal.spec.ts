@@ -173,7 +173,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(then.error).toBeUndefined()
     })
 
-    it('should read only the decisions of the session's ruling', () => {
+    it('should read only the decisions of the ruling of the session', () => {
       const { calls } = (
         mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
       ).mock
