@@ -2634,10 +2634,6 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá öll skilaboð',
     id: 'sp.health:see-all-messages',
   },
-  allQuestionnaires: {
-    defaultMessage: 'Allir spurningalistar',
-    id: 'sp.health:all-questionnaires',
-  },
   treatmentConversationsIntro: {
     defaultMessage:
       'Hér getur þú átt í samskiptum við meðferðarteymi vegna meðferðar þinnar.',

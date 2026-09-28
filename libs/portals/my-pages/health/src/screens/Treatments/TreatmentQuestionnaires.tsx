@@ -4,14 +4,12 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   IntroWrapper,
-  LinkButton,
   STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 import QuestionnaireCard from '../Questionnaires/components/QuestionnaireCard'
 import { useGetTreatmentQuestionnairesQuery } from './TreatmentQuestionnaires.generated'
@@ -46,17 +44,6 @@ const TreatmentQuestionnaires = () => {
       serviceProvider={{
         slug: STAFRAEN_HEILSA_SLUG,
         tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
-      }}
-      buttonGroup={{
-        actions: [
-          <LinkButton
-            key="all-questionnaires"
-            to={HealthPaths.HealthQuestionnaires}
-            text={formatMessage(messages.allQuestionnaires)}
-            icon="arrowForward"
-            variant="utility"
-          />,
-        ],
       }}
       desktopContentSpan="10/12"
     >
