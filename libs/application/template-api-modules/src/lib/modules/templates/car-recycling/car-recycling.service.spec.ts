@@ -121,6 +121,26 @@ describe('CarRecyclingService', () => {
 
     expect(recyclingFundService.createVehicle).toHaveBeenCalledTimes(3)
     expect(recyclingFundService.recycleVehicle).toHaveBeenCalledTimes(3)
+
+    // Counts alone would pass if all three calls carried the same vehicle.
+    const argAt = (fn: unknown, index: number) =>
+      (fn as jest.Mock).mock.calls.map((call) => call[index]).sort()
+
+    expect(argAt(recyclingFundService.createVehicle, 1)).toEqual([
+      'AH-H32',
+      'BX-N01',
+      'CY-P22',
+    ])
+    expect(argAt(recyclingFundService.recycleVehicle, 2)).toEqual([
+      'AH-H32',
+      'BX-N01',
+      'CY-P22',
+    ])
+    expect(argAt(recyclingFundService.recycleVehicle, 3)).toEqual([
+      CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle,
+      CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle,
+      CreateXRoadRecyclingRequestDtoRequestTypeEnum.PendingRecycle,
+    ])
   })
 
   // The schema allows a vehicle without a registration number. Recording the
@@ -267,5 +287,57 @@ describe('CarRecyclingService', () => {
       'statusText',
     ])
     expect(JSON.stringify(payload)).not.toContain('0101302399')
+  })
+
+  // slice(-3) returns the whole number for a plate of three characters or
+  // fewer, and an Icelandic personalised plate can be that short.
+  it('logs no fragment of a short registration number', async () => {
+    jest
+      .spyOn(recyclingFundService, 'recycleVehicle')
+      .mockRejectedValue(new Error('400 Bad Request'))
+
+    await expect(
+      carRecyclingService.sendApplication({
+        application: applicationWith(['XY1']),
+        auth: createCurrentUser(),
+        currentUserLocale: 'is',
+      }),
+    ).rejects.toThrow('Error occurred when recycling vehicle(s)')
+
+    expect(logged.mock.calls[0][0]).toBe(
+      'car-recycling: Failed on a vehicle with a short registration number',
+    )
+    expect(JSON.stringify(logged.mock.calls[0])).not.toContain('XY1')
+  })
+
+  // Promise.all rejects while its siblings are still in flight, so a vehicle
+  // could reach the fund after the citizen had been told the submission failed.
+  it('waits for every vehicle to settle before reporting failure', async () => {
+    const started: string[] = []
+    const finished: string[] = []
+
+    jest
+      .spyOn(recyclingFundService, 'recycleVehicle')
+      .mockImplementation(async (_auth, _name, permno) => {
+        started.push(permno)
+        if (permno === 'AH-H32') {
+          throw new Error('400 Bad Request')
+        }
+        await new Promise((resolve) => setTimeout(resolve, 20))
+        finished.push(permno)
+        return undefined as never
+      })
+
+    await expect(
+      carRecyclingService.sendApplication({
+        application: applicationWith(['AH-H32', 'BX-N01', 'CY-P22']),
+        auth: createCurrentUser(),
+        currentUserLocale: 'is',
+      }),
+    ).rejects.toThrow('Error occurred when recycling vehicle(s)')
+
+    // Nothing may still be writing to the fund once the citizen has been told.
+    expect(started).toHaveLength(3)
+    expect(finished.sort()).toEqual(['BX-N01', 'CY-P22'])
   })
 })

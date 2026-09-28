@@ -37,10 +37,22 @@ const requirePermno = (vehicle: VehicleDto): string => {
 // Called from .map(), outside any step, so it must not throw: String() covers a
 // permno that is not one, which the TypeScript type permits even though the
 // schema does not.
-const vehicleStep = (vehicle: VehicleDto): string =>
-  vehicle?.permno
-    ? `vehicle ${String(vehicle.permno).slice(-3)}`
-    : 'a vehicle with no registration number'
+//
+// Taking the last three characters hides nothing when the number is three
+// characters or fewer, and an Icelandic personalised plate can be that short.
+// Those get no fragment at all. The application id is in the logging context
+// either way, so the vehicle is still findable.
+const SHORTENED = 3
+
+const vehicleStep = (vehicle: VehicleDto): string => {
+  if (!vehicle?.permno) {
+    return 'a vehicle with no registration number'
+  }
+  const permno = String(vehicle.permno)
+  return permno.length > SHORTENED
+    ? `vehicle ${permno.slice(-SHORTENED)}`
+    : 'a vehicle with a short registration number'
+}
 
 // message and stack are non-enumerable on an Error, so logging one as a nested
 // property yields an empty object. Name the fields instead of spreading: a
@@ -57,6 +69,21 @@ const describeError = (error: unknown) => {
   }
 
   return { name, message, stack, status, statusText }
+}
+
+// Promise.all rejects as soon as one entry does, leaving its siblings in flight:
+// they go on to record vehicles at the fund after the citizen has been told the
+// submission failed. Waiting for all of them first means the fund's state is
+// settled before we report, and the first failure is still what propagates.
+const allSettledOrThrow = async (work: Promise<unknown>[]): Promise<void> => {
+  const results = await Promise.allSettled(work)
+  const failed = results.find(
+    (result): result is PromiseRejectedResult => result.status === 'rejected',
+  )
+
+  if (failed) {
+    throw failed.reason
+  }
 }
 
 @Injectable()
@@ -151,7 +178,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       // Withdrawals are recorded before selections, matching the order the
       // citizen made them. The two lists never share a vehicle: the overview
       // moves one out of the other whenever either is chosen.
-      await Promise.all(
+      await allSettledOrThrow(
         canceledVehicles.map((vehicle) =>
           this.withStep(vehicleStep(vehicle), () =>
             this.recycleVehicle(
@@ -164,7 +191,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
         ),
       )
 
-      await Promise.all(
+      await allSettledOrThrow(
         selectedVehicles.map((vehicle) =>
           this.withStep(vehicleStep(vehicle), async () => {
             await this.createVehicle(auth, vehicle)

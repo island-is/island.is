@@ -12,6 +12,15 @@ import {
 } from '../../gen/fetch'
 import { logger } from '@island.is/logging'
 
+// Taking the last three characters hides nothing when the registration number
+// is three characters or fewer, and an Icelandic personalised plate can be that
+// short. Those are left out of the log rather than written in full. These lines
+// are logged on every successful call, not only on a failure.
+const SHORTENED = 3
+
+export const shortPermno = (permno: string): string =>
+  permno && permno.length > SHORTENED ? permno.slice(-SHORTENED) : ''
+
 @Injectable()
 export class RecyclingFundClientService {
   constructor(private readonly api: XRoadApi) {}
@@ -60,7 +69,7 @@ export class RecyclingFundClientService {
     ).xRoadControllerCreateVehicle(request)
 
     logger.info('Car-recycling: createVehicle', {
-      permno: permno.slice(-3) ?? '',
+      permno: shortPermno(permno),
     })
     return r
   }
@@ -85,7 +94,7 @@ export class RecyclingFundClientService {
     ).xRoadControllerCreateRecyclingRequest(request)
 
     logger.info('Car-recycling:recycleVehicle', {
-      permno: permno.slice(-3) ?? '',
+      permno: shortPermno(permno),
       requestType,
     })
     return r
