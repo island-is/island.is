@@ -86,6 +86,15 @@ export const line = style({
 
 export const expandedTable = style({})
 
+globalStyle(`${expandedTable} > div`, {
+  scrollbarWidth: 'none',
+  msOverflowStyle: 'none',
+})
+
+globalStyle(`${expandedTable} > div::-webkit-scrollbar`, {
+  display: 'none',
+})
+
 globalStyle(`${tableWrapper} ${expandedTable} table`, {
   tableLayout: 'auto',
   width: '100%',
