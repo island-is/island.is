@@ -221,6 +221,32 @@ describe('public prosecution case tables', () => {
     )
   })
 
+  // The order the design settled on: the result reads last, after the deadline
+  // it qualifies.
+  it('titles the review list columns as the design does', () => {
+    expect(
+      caseTables[
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW
+      ].columns.map((column) => column.title),
+    ).toEqual(['Málsnúmer', 'Varnaraðili', 'Tegund', 'Frestur', 'Niðurstaða'])
+  })
+
+  // The ticket asks for the same column the reviewed list uses, not one that
+  // merely looks like it - the title is shared by three column keys, so
+  // matching on the title alone would let the two lists drift into showing the
+  // result differently.
+  it('shows the result with the same column the reviewed list uses', () => {
+    const inReview =
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW]
+        .columnKeys
+    const reviewed =
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]
+        .columnKeys
+
+    expect(inReview[inReview.length - 1]).toBe('indictmentRulingDecision')
+    expect(reviewed).toContain('indictmentRulingDecision')
+  })
+
   // The office's list of the same name is the one the columns were borrowed
   // from, and the ticket leaves tidying them to a later one.
   it('borrows the columns of the office list of the same name', () => {
