@@ -29,7 +29,6 @@ export class HealthDirectorateCreateConversationInput {
   @Field(() => ID, { nullable: true })
   @IsString()
   @MaxLength(255)
-  @Matches(/[^.]/)
   @IsOptional()
   treatmentId?: string
 

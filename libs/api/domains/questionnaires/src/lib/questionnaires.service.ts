@@ -133,17 +133,12 @@ export class QuestionnairesService {
       [NAMESPACE],
       locale,
     )
-    try {
-      const data = await this.api.getTreatmentQuestionnaires(user, treatmentId)
+    const data = await this.api.getTreatmentQuestionnaires(user, treatmentId)
 
-      return {
-        questionnaires: sortQuestionnaires(
-          (data ?? []).map((q) => mapElQuestionnaireListItem(q, formatMessage)),
-        ),
-      }
-    } catch (error) {
-      this.logger.error('Failed to fetch EL treatment questionnaires', error)
-      throw error
+    return {
+      questionnaires: sortQuestionnaires(
+        (data ?? []).map((q) => mapElQuestionnaireListItem(q, formatMessage)),
+      ),
     }
   }
 
