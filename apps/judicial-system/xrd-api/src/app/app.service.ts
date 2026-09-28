@@ -67,9 +67,7 @@ export class AppService {
     )
   }
 
-  async getCasePoliceState(
-    caseId: string,
-  ): Promise<CasePoliceStateResponse> {
+  async getCasePoliceState(caseId: string): Promise<CasePoliceStateResponse> {
     return this.auditTrailService.audit(
       'xrd-api',
       AuditedAction.GET_CASE_POLICE_STATE,

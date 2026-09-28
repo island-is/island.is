@@ -1771,9 +1771,7 @@ export class InternalCaseService {
     })
   }
 
-  async getCasePoliceState(
-    theCase: Case,
-  ): Promise<CasePoliceStateResponse> {
+  async getCasePoliceState(theCase: Case): Promise<CasePoliceStateResponse> {
     const liveCase = await this.caseRepositoryService.findLiveDescendantCase(
       theCase,
     )
