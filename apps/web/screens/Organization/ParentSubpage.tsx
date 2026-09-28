@@ -1,4 +1,4 @@
-import { type IntlConfig,IntlProvider } from 'react-intl'
+import { type IntlConfig, IntlProvider } from 'react-intl'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
