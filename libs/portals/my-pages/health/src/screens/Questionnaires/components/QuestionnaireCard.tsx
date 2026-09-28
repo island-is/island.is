@@ -2,7 +2,7 @@ import {
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum as QuestionnairesStatusEnum,
 } from '@island.is/api/schema'
-import { ActionCard } from '@island.is/island-ui/core'
+import { ActionCard, Box, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import { useNavigate } from 'react-router-dom'
@@ -49,6 +49,16 @@ export const QuestionnaireCard = ({ questionnaire }: Props) => {
           ? formatMessage(messages.draftQuestionnaire)
           : formatMessage(messages.unAnsweredQuestionnaire),
         variant: isAnswered ? 'blue' : isExpired ? 'red' : 'purple',
+        renderTag: questionnaire.canSubmitAgain
+          ? (tagEl) => (
+              <Box display="flex" flexWrap="wrap" columnGap={1} rowGap={1}>
+                {tagEl}
+                <Tag variant="blue" outlined disabled>
+                  {formatMessage(messages.canAnswerAgain)}
+                </Tag>
+              </Box>
+            )
+          : undefined,
       }}
       cta={{
         label: formatMessage(messages.questionnaireSeeMore),
