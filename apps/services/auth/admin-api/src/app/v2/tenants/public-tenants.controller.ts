@@ -19,7 +19,7 @@ export class PublicTenantsController {
     description: 'Get all publicly visible tenants.',
     response: { status: 200, type: [PublicTenantDto] },
   })
-  findAll(): Promise<PublicTenantDto[]> {
+  async findAll(): Promise<PublicTenantDto[]> {
     return this.tenantsService.findAllPublic()
   }
 }

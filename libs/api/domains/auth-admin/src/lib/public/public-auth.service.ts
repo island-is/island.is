@@ -5,8 +5,6 @@ import { handle204 } from '@island.is/clients/middlewares'
 
 import { PublicAuthScope, PublicAuthTenant } from './public-auth.models'
 
-const ADMIN_TENANT_ID = '@admin.island.is'
-
 @Injectable()
 export class PublicAuthService {
   constructor(
@@ -19,13 +17,11 @@ export class PublicAuthService {
       []
 
     return tenants
-      .filter((tenant) => tenant.name !== ADMIN_TENANT_ID)
       .map((tenant) => ({
         id: tenant.name,
         displayName: tenant.displayName,
         nationalId: tenant.nationalId,
       }))
-      .filter((tenant) => Boolean(tenant.nationalId))
       .sort((a, b) => {
         const nameA =
           a.displayName.find(({ locale }) => locale === 'is')?.value ??
