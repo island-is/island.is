@@ -36,7 +36,11 @@ describe('case table sql probe', () => {
       repository.Case.findAll({
         attributes: ['id'],
         include: [
-          { model: repository.AppealCase, as: 'appealCase', attributes: ['id'] },
+          {
+            model: repository.AppealCase,
+            as: 'appealCase',
+            attributes: ['id'],
+          },
         ],
       }),
     )
