@@ -11,7 +11,9 @@ export default {
 type Picker = React.ComponentType<React.PropsWithChildren<DatePickerProps>>
 
 const format = (date: Date | null | undefined) =>
-  date ? `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-GB')}` : '—'
+  date
+    ? `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-GB')}`
+    : '—'
 
 const Scenario = ({
   title,
@@ -65,7 +67,9 @@ const Scenario = ({
         handleCloseCalendar={() => record('calendar closed')}
       />
       <div style={{ marginTop: 20, fontSize: 14 }}>
-        <div>Selected: {format(startDate)} → {format(endDate)}</div>
+        <div>
+          Selected: {format(startDate)} → {format(endDate)}
+        </div>
         <div>Callback log:</div>
         <ol style={{ marginTop: 4 }}>
           {events.map((event, index) => (
