@@ -1,4 +1,4 @@
-import { shortPermno } from './recyclingFundClient.service'
+import { shortPermno } from './shortPermno'
 
 describe('shortPermno', () => {
   it('keeps the last three characters of an ordinary registration number', () => {

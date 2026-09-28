@@ -11,15 +11,7 @@ import {
   CreateXRoadRecyclingRequestDtoRequestTypeEnum,
 } from '../../gen/fetch'
 import { logger } from '@island.is/logging'
-
-// Taking the last three characters hides nothing when the registration number
-// is three characters or fewer, and an Icelandic personalised plate can be that
-// short. Those are left out of the log rather than written in full. These lines
-// are logged on every successful call, not only on a failure.
-const SHORTENED = 3
-
-export const shortPermno = (permno: string): string =>
-  permno && permno.length > SHORTENED ? permno.slice(-SHORTENED) : ''
+import { shortPermno } from './shortPermno'
 
 @Injectable()
 export class RecyclingFundClientService {
