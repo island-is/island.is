@@ -35,7 +35,9 @@ export const AssessmentAccordionItem = ({ id, name, studentId }: Props) => {
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && called && <AssessmentTable results={results} />}
+      {!loading && !error && called && (
+        <AssessmentTable results={results} course={name} />
+      )}
     </AccordionItem>
   )
 }

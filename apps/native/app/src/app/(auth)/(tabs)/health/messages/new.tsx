@@ -10,13 +10,15 @@ import {
 } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
+import { ClosedRecipientCard } from '@/components/closed-recipient-card'
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
+import { RecipientNoticeCard } from '@/components/recipient-notice-card'
 import { HealthMessageIntro } from '@/components/health-message-intro'
 import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
-  HealthDirectorateHealthConversationRecipientBlockedReason,
+  HealthDirectorateHealthConversationRecipientAvailability,
   LocaleEnum,
   useCreateHealthConversationMutation,
   useGetHealthConversationRecipientsQuery,
@@ -25,7 +27,6 @@ import {
 import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { uiStore } from '@/stores/ui-store'
-import { getMessagingWindowInfo } from '@/utils/messaging-window'
 import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
@@ -81,7 +82,7 @@ export default function HealthMessageComposeScreen() {
   })
   // Every recipient the user has stays in the picker; whether each one can take
   // a new conversation right now is decided per selection by
-  // canCreateConversation and explained by the availability alert.
+  // canCreateConversation and explained by the card shown in the form's place.
   const recipients = useMemo(
     () =>
       recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
@@ -93,20 +94,22 @@ export default function HealthMessageComposeScreen() {
 
   // When the user has a single recipient that can't take a new conversation
   // (its window is closed, or it doesn't accept patient-initiated messages at
-  // all), we replace the whole form with a full-screen explanation instead of a
-  // disabled form.
+  // all), the explanation takes over the whole sheet: there is no other
+  // recipient to switch to, so the picker is not worth showing either.
   const soleRecipient =
     !isReply && recipients.length === 1 ? recipients[0] : undefined
   const isSoleBlocked = !!soleRecipient && !soleRecipient.canCreateConversation
   const soleWindowClosed =
     isSoleBlocked &&
-    soleRecipient?.conversationBlockedReason ===
-      HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
+    soleRecipient?.availability ===
+      HealthDirectorateHealthConversationRecipientAvailability.Closed
   const soleNotAllowed = isSoleBlocked && !soleWindowClosed
-  const soleWindowInfo = getMessagingWindowInfo({
-    windowOpen: soleRecipient?.messagingWindowOpen,
-    windowClose: soleRecipient?.messagingWindowClose,
-  })
+  // A recipient picked from the dropdown that can't be messaged — closed for
+  // now, or not offering messaging at all — takes a card in place of the form.
+  // There is nothing to fill in either way, so we don't render a composer under
+  // it; the card explains which of the two it is.
+  const isSelectedBlocked =
+    !isReply && selectedRecipient?.canCreateConversation === false
   // Certificate types are shown in the dropdown too, but they can't be
   // submitted from the app — selecting one swaps the form for a notice that
   // links to My Pages (see the certificate branch in the render below).
@@ -192,22 +195,13 @@ export default function HealthMessageComposeScreen() {
 
   const sending = replying || creating
 
-  // The recipient can't be messaged right now (outside window, messaging
-  // disabled, etc.) — dim and disable the message inputs.
-  const isFormLocked =
-    !isReply && selectedRecipient?.canCreateConversation === false
-
-  // A recipient that can't take a new conversation right now can't be sent to,
-  // so hide the send button. Closing-soon still allows sending, so it keeps it.
-  const hideSendButton = selectedRecipient?.canCreateConversation === false
-
   const canSend = isReply
     ? !!message.trim()
     : !!message.trim() &&
       !!selectedRecipient &&
       !!typeCode &&
       !hidesComposer &&
-      !isFormLocked
+      !isSelectedBlocked
 
   const onSend = () => {
     if (isReply && conversationId) {
@@ -388,33 +382,10 @@ export default function HealthMessageComposeScreen() {
               id: 'health.messages.errorMessage',
             })}
           />
-        ) : soleWindowClosed ? (
-          <Problem
-            type="no_data"
-            title={intl.formatMessage({
-              id: 'health.messages.compose.closedTitle',
-            })}
-            message={[
-              soleWindowInfo.windowOpenLabel && soleWindowInfo.windowCloseLabel
-                ? intl.formatMessage(
-                    { id: 'health.messages.compose.availabilityWindow' },
-                    {
-                      name: soleRecipient?.name,
-                      openTime: soleWindowInfo.windowOpenLabel,
-                      closeTime: soleWindowInfo.windowCloseLabel,
-                    },
-                  )
-                : null,
-              intl.formatMessage({
-                id: 'health.messages.compose.availabilityInfo',
-              }),
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          />
+        ) : soleWindowClosed && soleRecipient ? (
+          <ClosedRecipientCard recipient={soleRecipient} />
         ) : soleNotAllowed ? (
-          <Problem
-            type="no_data"
+          <RecipientNoticeCard
             title={intl.formatMessage({
               id: 'health.messages.compose.soleBlockedTitle',
             })}
@@ -424,10 +395,12 @@ export default function HealthMessageComposeScreen() {
             )}
           />
         ) : noRecipients ? (
-          <Problem
-            type="no_data"
+          <RecipientNoticeCard
             title={intl.formatMessage({
               id: 'health.messages.compose.noRecipient',
+            })}
+            message={intl.formatMessage({
+              id: 'health.messages.compose.noRecipientText',
             })}
           />
         ) : (
@@ -467,114 +440,109 @@ export default function HealthMessageComposeScreen() {
             {selectedRecipient && (
               <ConversationAvailabilityAlert recipient={selectedRecipient} />
             )}
-            <View
-              pointerEvents={isFormLocked ? 'none' : 'auto'}
-              style={{
-                opacity: isFormLocked ? 0.5 : 1,
-                rowGap: theme.spacing[2],
-              }}
-            >
-              {!isReply && serviceOptions.length > 0 && (
-                <Select
-                  label={intl.formatMessage({
-                    id: 'health.messages.compose.selectService',
-                  })}
-                  placeholder={intl.formatMessage({
-                    id: 'health.messages.compose.selectServicePlaceholder',
-                  })}
-                  value={typeCode}
-                  options={serviceOptions.map((s) => ({
-                    label: s.title,
-                    value: s.patientInitiatedTypeCode,
-                  }))}
-                  onSelect={setTypeCode}
-                  onOpenChange={setServiceMenuOpen}
-                  disabled={isFormLocked}
-                />
-              )}
-              {!hidesComposer && !!selectedType?.instructions && (
-                <ServiceInstructions text={selectedType.instructions} />
-              )}
+            {!isSelectedBlocked && (
+              <>
+                <View style={{ rowGap: theme.spacing[2] }}>
+                  {!isReply && serviceOptions.length > 0 && (
+                    <Select
+                      label={intl.formatMessage({
+                        id: 'health.messages.compose.selectService',
+                      })}
+                      placeholder={intl.formatMessage({
+                        id: 'health.messages.compose.selectServicePlaceholder',
+                      })}
+                      value={typeCode}
+                      options={serviceOptions.map((s) => ({
+                        label: s.title,
+                        value: s.patientInitiatedTypeCode,
+                      }))}
+                      onSelect={setTypeCode}
+                      onOpenChange={setServiceMenuOpen}
+                    />
+                  )}
+                  {!hidesComposer && !!selectedType?.instructions && (
+                    <ServiceInstructions text={selectedType.instructions} />
+                  )}
 
-              {!hidesComposer && (
-                <View style={{ rowGap: theme.spacing.smallGutter }}>
-                  <TextField
-                    label={intl.formatMessage({
-                      id: 'health.messages.compose.messageLabel',
-                    })}
-                    placeholder={intl.formatMessage({
-                      id: 'health.messages.compose.messagePlaceholder',
-                    })}
-                    value={message}
-                    onChangeText={setMessage}
-                    multiline
-                    numberOfLines={6}
-                    inputStyle={{ minHeight: 120 }}
-                    maxLength={MESSAGE_MAX_LENGTH}
-                    disabled={isFormLocked}
-                  />
-                  <Typography
-                    variant="body3"
-                    color={theme.color.dark300}
-                    textAlign="right"
-                  >
-                    {`${message.length}/${MESSAGE_MAX_LENGTH}`}
-                  </Typography>
+                  {!hidesComposer && (
+                    <View style={{ rowGap: theme.spacing.smallGutter }}>
+                      <TextField
+                        label={intl.formatMessage({
+                          id: 'health.messages.compose.messageLabel',
+                        })}
+                        placeholder={intl.formatMessage({
+                          id: 'health.messages.compose.messagePlaceholder',
+                        })}
+                        value={message}
+                        onChangeText={setMessage}
+                        multiline
+                        numberOfLines={6}
+                        inputStyle={{ minHeight: 120 }}
+                        maxLength={MESSAGE_MAX_LENGTH}
+                      />
+                      <Typography
+                        variant="body3"
+                        color={theme.color.dark300}
+                        textAlign="right"
+                      >
+                        {`${message.length}/${MESSAGE_MAX_LENGTH}`}
+                      </Typography>
+                    </View>
+                  )}
                 </View>
-              )}
-            </View>
-            {/* Certificate requests aren't supported in the app — point the
-                user to My Pages instead of a send form. Rendered outside the
-                lockable form wrapper so the link is always tappable. */}
-            {isCertificateSelected && (
-              <ProblemTemplate
-                variant="info"
-                showIcon
-                title={intl.formatMessage({
-                  id: 'health.messages.compose.certificateTitle',
-                })}
-                message={intl.formatMessage({
-                  id: 'health.messages.compose.certificateText',
-                })}
-                detailLink={{
-                  text: intl.formatMessage({
-                    id: 'health.messages.compose.certificateLink',
-                  }),
-                  url: certificateUrl,
-                }}
-              />
-            )}
-            {/* External services (the Heilsuvera web chat) are opened rather
+                {/* Certificate requests aren't supported in the app — point the
+                user to My Pages instead of a send form. */}
+                {isCertificateSelected && (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={intl.formatMessage({
+                      id: 'health.messages.compose.certificateTitle',
+                    })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.compose.certificateText',
+                    })}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.compose.certificateLink',
+                      }),
+                      url: certificateUrl,
+                    }}
+                  />
+                )}
+                {/* External services (the Heilsuvera web chat) are opened rather
                 than messaged. The description is written server-side and
                 already states whether the service is open right now. */}
-            {!!externalLinkUrl && (
-              <ProblemTemplate
-                variant="info"
-                showIcon
-                title={selectedType?.title ?? ''}
-                message={selectedType?.description ?? ''}
-                detailLink={{
-                  text: intl.formatMessage({
-                    id: 'health.messages.compose.externalLink',
-                  }),
-                  url: externalLinkUrl,
-                }}
-              />
-            )}
-            {!hideSendButton && !hidesComposer && (
-              <View
-                onLayout={(e) =>
-                  setSendButtonHeight(e.nativeEvent.layout.height)
-                }
-              >
-                <Button
-                  title={intl.formatMessage({
-                    id: 'health.messages.compose.send',
-                  })}
-                  onPress={onSend}
-                  disabled={!canSend || sending}
-                />
-              </View>
+                {!!externalLinkUrl && (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={selectedType?.title ?? ''}
+                    message={selectedType?.description ?? ''}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.compose.externalLink',
+                      }),
+                      url: externalLinkUrl,
+                    }}
+                  />
+                )}
+                {!hidesComposer && (
+                  <View
+                    onLayout={(e) =>
+                      setSendButtonHeight(e.nativeEvent.layout.height)
+                    }
+                  >
+                    <Button
+                      title={intl.formatMessage({
+                        id: 'health.messages.compose.send',
+                      })}
+                      onPress={onSend}
+                      disabled={!canSend || sending}
+                    />
+                  </View>
+                )}
+              </>
             )}
           </>
         )}

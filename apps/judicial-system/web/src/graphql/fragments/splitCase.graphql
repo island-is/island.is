@@ -1,0 +1,15 @@
+fragment SplitCaseFields on Case {
+  id
+  created
+  courtCaseNumber
+  defendants {
+    id
+    name
+    subpoenas {
+      ...SubpoenaFields
+    }
+  }
+  caseFiles {
+    ...CaseFileFields
+  }
+}

@@ -41,4 +41,9 @@ export const m = defineMessages({
     defaultMessage:
       'Lýstu erindinu. Athugið að nýjar beiðnir/tilvísanir þurfa jafnan mat fagaðila.',
   },
+  instructionsGeneralInquiry: {
+    id: 'api.health-directorate:instructions-general-inquiry',
+    defaultMessage:
+      'Lýstu stuttlega ástæðu, helstu einkennum og tímalengd. Við aðstoðum þig eftir eðli erindis, t.d. með tímabókun, símtali eða ráðgjöf.',
+  },
 })

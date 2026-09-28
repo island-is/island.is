@@ -1307,10 +1307,10 @@ export class ApplicationsService {
         dataFromUrlRequestDto,
       )
     } else {
-      dataFromUrlRequestDto.loggedInUserNationalId =
+      dataFromUrlRequestDto.actorNationalId =
         user.actor?.nationalId || user.nationalId
 
-      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
+      dataFromUrlRequestDto.nationalId = user.actor?.nationalId
         ? user.nationalId
         : undefined
 

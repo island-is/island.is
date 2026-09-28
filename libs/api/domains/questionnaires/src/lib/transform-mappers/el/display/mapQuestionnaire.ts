@@ -53,7 +53,8 @@ export const mapElQuestionnaireOverview = (
     id: sub.id,
     createdAt: sub.createdDate ?? undefined,
     isDraft: sub.isDraft,
-    lastUpdated: sub.lastUpdatedDate ?? undefined,
+    // Submitted date first so it matches the date on the answered view
+    lastUpdated: sub.submittedDate ?? sub.lastUpdatedDate ?? undefined,
   })),
 })
 
@@ -78,7 +79,8 @@ export const mapElQuestionnaireForm = (
       id: sub.id,
       createdAt: sub.createdDate ?? undefined,
       isDraft: sub.isDraft,
-      lastUpdated: sub.lastUpdatedDate ?? undefined,
+      // Submitted date first so it matches the date on the answered view
+      lastUpdated: sub.submittedDate ?? sub.lastUpdatedDate ?? undefined,
     })),
     sections: q.groups.map((g) =>
       mapGroupToSection(g, allQuestions, formatMessage, q.triggers),

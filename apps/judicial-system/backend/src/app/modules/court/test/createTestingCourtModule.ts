@@ -35,7 +35,7 @@ export const createTestingCourtModule = async () => {
       {
         provide: CaseRepositoryService,
         useValue: {
-          findById: jest.fn().mockResolvedValue(null),
+          findByIdWithJudgeAndRegistrar: jest.fn().mockResolvedValue(null),
         },
       },
       {

@@ -6,6 +6,9 @@ import { BadRequestException } from '@nestjs/common'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
+  AppealCaseTransition,
+  AppealEventType,
+  CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
   DefendantNotificationType,
@@ -13,10 +16,12 @@ import {
   IndictmentCaseReviewDecision,
   RequestCaseNotificationType,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { AppealCaseService } from '../../../appeal-case/appealCase.service'
 import {
   AppealCase,
   Case,
@@ -53,6 +58,7 @@ describe('DefendantController - Update', () => {
   let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
+  let mockAppealCaseService: AppealCaseService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -62,12 +68,14 @@ describe('DefendantController - Update', () => {
       sequelize,
       defendantRepositoryService,
       defendantEventLogRepositoryService,
+      appealCaseService,
       defendantController,
     } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
+    mockAppealCaseService = appealCaseService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -496,6 +504,234 @@ describe('DefendantController - Update', () => {
     it('should update the defendant', () => {
       expect(then.error).toBeUndefined()
       expect(then.result).toBe(updatedDefendant)
+    })
+  })
+
+  // For the public prosecution the reviewer's decision is the appeal, so the
+  // appeal is filed and withdrawn here, in the same transaction as the
+  // decision. The API asks for it by setting registerVerdictAppeal; the backend
+  // never reads the INDICTMENT_APPEAL feature itself.
+  describe('the verdict appeal a review decision comes to', () => {
+    const rulingCase = (overrides: Partial<Case> = {}): Partial<Case> => ({
+      indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+      ...overrides,
+    })
+
+    const appealedVerdictAppealCase = {
+      id: uuid(),
+      appealState: AppealCaseState.APPEALED,
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEALED,
+          defendantId,
+          userRole: UserRole.PROSECUTOR,
+          created: new Date(),
+        },
+      ],
+    } as AppealCase
+
+    beforeEach(() => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValue({ ...defendant } as Defendant)
+    })
+
+    it('should file an appeal when the decision becomes APPEAL', async () => {
+      const then = await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        defendant,
+        rulingCase(),
+      )
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseService.create).toHaveBeenCalledWith(
+        expect.objectContaining({ id: caseId }),
+        user,
+        undefined,
+        transaction,
+        { defendantId },
+      )
+    })
+
+    // The intent is not a defendant field and must never reach the database.
+    it('should not write the intent to the defendant', async () => {
+      await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        defendant,
+        rulingCase(),
+      )
+
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        { indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL },
+        { transaction },
+      )
+    })
+
+    // Without the intent the decision is saved and nothing else happens -
+    // exactly as before verdict appeals, which is what an environment with the
+    // feature hidden gets.
+    it('should file nothing when the intent is absent', async () => {
+      await givenWhenThen(
+        { indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL },
+        CaseType.INDICTMENT,
+        caseId,
+        defendant,
+        rulingCase(),
+      )
+
+      expect(mockAppealCaseService.create).not.toHaveBeenCalled()
+    })
+
+    // Reconfirming a decision is not an act of review and must not file a
+    // second appeal.
+    it('should file nothing when the decision did not change', async () => {
+      await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        {
+          ...defendant,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        } as Defendant,
+        rulingCase(),
+      )
+
+      expect(mockAppealCaseService.create).not.toHaveBeenCalled()
+    })
+
+    // A fine is appealed as a ruling order, not as a verdict.
+    it('should file nothing for a fine', async () => {
+      await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        defendant,
+        rulingCase({
+          indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+        }),
+      )
+
+      expect(mockAppealCaseService.create).not.toHaveBeenCalled()
+    })
+
+    it('should withdraw the appeal when the decision is taken back', async () => {
+      await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        {
+          ...defendant,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        } as Defendant,
+        rulingCase({ verdictAppealCase: appealedVerdictAppealCase }),
+      )
+
+      expect(mockAppealCaseService.transition).toHaveBeenCalledWith(
+        expect.objectContaining({ id: caseId }),
+        appealedVerdictAppealCase,
+        AppealCaseTransition.WITHDRAW_APPEAL,
+        user,
+        transaction,
+        defendantId,
+      )
+    })
+
+    // A decision recorded as APPEAL before verdict appeals were switched on has
+    // no appeal case and no event behind it. Withdrawing one that was never
+    // filed is refused, so it must not be attempted at all - otherwise every
+    // already reviewed case would be stuck on its first change.
+    it('should withdraw nothing when no appeal stands for the defendant', async () => {
+      const then = await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        {
+          ...defendant,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        } as Defendant,
+        rulingCase(),
+      )
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseService.transition).not.toHaveBeenCalled()
+    })
+
+    // An appeal case exists, but the standing appeal on it is the defendant's
+    // own - the prosecution has none to withdraw. The defence side of the same
+    // appeal case must never be withdrawn by the prosecution's decision.
+    it('should withdraw nothing when only the defence side has appealed', async () => {
+      const then = await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        {
+          ...defendant,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        } as Defendant,
+        rulingCase({
+          verdictAppealCase: {
+            id: uuid(),
+            appealState: AppealCaseState.APPEALED,
+            appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEALED,
+                defendantId,
+                userRole: UserRole.DEFENDER,
+                created: new Date(),
+              },
+            ],
+          } as AppealCase,
+        }),
+      )
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseService.transition).not.toHaveBeenCalled()
+    })
+
+    // The appeal is the decision's, so a failure to file it must take the
+    // decision down with it rather than leave the two disagreeing.
+    it('should fail the whole update when filing the appeal fails', async () => {
+      const mockCreate = mockAppealCaseService.create as jest.Mock
+      mockCreate.mockRejectedValueOnce(new Error('Some error'))
+
+      const then = await givenWhenThen(
+        {
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          registerVerdictAppeal: true,
+        },
+        CaseType.INDICTMENT,
+        caseId,
+        defendant,
+        rulingCase(),
+      )
+
+      expect(then.error).toBeInstanceOf(Error)
     })
   })
 

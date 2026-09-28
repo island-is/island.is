@@ -43,6 +43,7 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
 import {
@@ -216,6 +217,17 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       )
     }
 
+    // The prosecution's own appeal, which does not depend on the verdict having
+    // been served on the defendant, so it sits outside the service branch.
+    const prosecutionAppealItem = getProsecutionVerdictAppealItem(
+      workingCase.verdictAppealCase,
+      defendant.id,
+    )
+
+    if (prosecutionAppealItem) {
+      items.push(prosecutionAppealItem)
+    }
+
     pushIf(
       !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
       formatMessage(strings.sendToPrisonAdminDate, {
@@ -243,6 +255,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     isServiceRequired,
     serviceRequirementText,
     verdict,
+    workingCase.verdictAppealCase,
   ])
 
   const handleDateChange = (
@@ -531,7 +544,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         ]}
       >
         <VerdictTimelineBody
-          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Dómur'}
           items={textItems}
         >
           {showDatePickers && (

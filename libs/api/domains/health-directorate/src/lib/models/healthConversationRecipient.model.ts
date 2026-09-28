@@ -1,11 +1,13 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 import {
   HealthConversationDayTypeEnum,
+  HealthConversationRecipientAvailabilityEnum,
   HealthConversationRecipientBlockedReasonEnum,
 } from './enums'
 import {
   HealthDirectorateHealthConversationNextOpening,
   HealthDirectorateHealthConversationOpeningHours,
+  HealthDirectorateHealthConversationOpeningWindow,
 } from './healthConversationOpeningHours.model'
 import { HealthDirectorateHealthConversationType } from './healthConversationType.model'
 
@@ -28,33 +30,56 @@ export class HealthDirectorateHealthConversationRecipient {
   @Field()
   name!: string
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'Use canCreateConversation and conversationBlockedReason instead.',
+  })
   allowsMessaging!: boolean
 
   @Field({
     nullable: true,
-    description:
-      'Effective window open time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s.',
+    deprecationReason:
+      'Absent on a day the recipient is closed. Use todaysWindow and nextOpensAt instead.',
   })
   messagingWindowOpen?: string
 
   @Field({
     nullable: true,
-    description:
-      'Effective window close time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s.',
+    deprecationReason:
+      'Absent on a day the recipient is closed. Use todaysWindow and nextOpensAt instead.',
   })
   messagingWindowClose?: string
 
-  @Field()
+  @Field({ deprecationReason: 'Use availability instead.' })
   isCurrentlyWithinWindow!: boolean
 
-  @Field()
+  @Field({ deprecationReason: 'Use todaysWindow instead, absent when closed.' })
   isClosedToday!: boolean
 
   @Field(() => HealthConversationDayTypeEnum, {
-    description: 'Which kind of day today’s window was resolved for, in UTC.',
+    deprecationReason: 'Use todaysWindow instead, which is already resolved.',
   })
   dayType!: HealthConversationDayTypeEnum
+
+  @Field(() => HealthConversationRecipientAvailabilityEnum, {
+    description:
+      'The one field to branch the UI on. As of the time of the request.',
+  })
+  availability!: HealthConversationRecipientAvailabilityEnum
+
+  @Field(() => HealthDirectorateHealthConversationOpeningWindow, {
+    nullable: true,
+    description:
+      'The hours the recipient keeps today. Absent when it is closed all of today.',
+  })
+  todaysWindow?: HealthDirectorateHealthConversationOpeningWindow
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'When the current window closes. Only set while availability is OPEN and the window is not all day, so a client can warn that closing is near.',
+  })
+  closesAt?: Date
 
   @Field(() => HealthDirectorateHealthConversationNextOpening, {
     nullable: true,
@@ -89,15 +114,15 @@ export class HealthDirectorateHealthConversationRecipient {
   conversationBlockedReason?: HealthConversationRecipientBlockedReasonEnum
 
   @Field({
-    description:
-      'Whether the patient can request a certificate from this recipient right now.',
+    deprecationReason:
+      'Always equals canCreateConversation. A certificate is a conversation type, flagged by isCertificate on allowedMessageTypes.',
   })
   canRequestCertificate!: boolean
 
   @Field(() => HealthConversationRecipientBlockedReasonEnum, {
     nullable: true,
-    description:
-      'Why requesting a certificate is blocked. Only set when canRequestCertificate is false.',
+    deprecationReason:
+      'Always equals conversationBlockedReason. A certificate is a conversation type, flagged by isCertificate on allowedMessageTypes.',
   })
   certificateBlockedReason?: HealthConversationRecipientBlockedReasonEnum
 }
