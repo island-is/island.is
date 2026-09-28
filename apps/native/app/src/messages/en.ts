@@ -1156,8 +1156,6 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalModal.description':
     'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
   'health.prescriptions.renewalModal.selectRecipient': 'Send to',
-  'health.prescriptions.renewalModal.medicineInformation':
-    'Medicine information',
   'health.prescriptions.renewalModal.medicineName': 'Medication name',
   'health.prescriptions.renewalModal.usedFor': 'Used for',
   'health.prescriptions.renewalModal.cancel': 'Cancel',
