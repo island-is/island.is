@@ -163,56 +163,51 @@ export const UmbodContent = ({
     [activeLocale, normalizedSearch, tenants],
   )
   return (
-    <>
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            span={embedded ? ['9/9', '9/9', '7/9'] : ['12/12', '10/12', '8/12']}
-            offset={embedded ? ['0', '0', '1/9'] : ['0', '1/12', '2/12']}
-          >
-            <Box
-              paddingTop={embedded ? 4 : [5, 7, 8]}
-              paddingBottom={[5, 7, 8]}
-            >
-              {showTitle && (
-                <Text
-                  as={embedded ? 'h2' : 'h1'}
-                  variant={embedded ? 'h2' : 'h1'}
-                  marginBottom={2}
-                >
-                  {formatMessage(m.pageTitle)}
-                </Text>
-              )}
-              <Text marginBottom={5}>{formatMessage(m.introduction)}</Text>
-              <Box marginBottom={4}>
-                <FilterInput
-                  name="tenant-search"
-                  label={formatMessage(m.searchLabel)}
-                  placeholder={formatMessage(m.searchLabel)}
-                  value={search}
-                  onChange={setSearch}
-                  backgroundColor="blue"
-                />
-              </Box>
-              <Stack space={2}>
-                {filteredTenants.map((tenant) => (
-                  <TenantCard
-                    key={tenant.id}
-                    tenant={tenant}
-                    locale={activeLocale}
-                  />
-                ))}
-              </Stack>
-              {filteredTenants.length === 0 && (
-                <Box paddingY={5} textAlign="center">
-                  <Text>{formatMessage(m.noServiceProviders)}</Text>
-                </Box>
-              )}
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          span={embedded ? ['9/9', '9/9', '7/9'] : ['12/12', '10/12', '8/12']}
+          offset={embedded ? ['0', '0', '1/9'] : ['0', '1/12', '2/12']}
+        >
+          <Box paddingTop={embedded ? 4 : [5, 7, 8]} paddingBottom={[5, 7, 8]}>
+            {showTitle && (
+              <Text
+                as={embedded ? 'h2' : 'h1'}
+                variant={embedded ? 'h2' : 'h1'}
+                marginBottom={2}
+              >
+                {formatMessage(m.pageTitle)}
+              </Text>
+            )}
+            <Text marginBottom={5}>{formatMessage(m.introduction)}</Text>
+            <Box marginBottom={4}>
+              <FilterInput
+                name="tenant-search"
+                label={formatMessage(m.searchLabel)}
+                placeholder={formatMessage(m.searchLabel)}
+                value={search}
+                onChange={setSearch}
+                backgroundColor="blue"
+              />
             </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </>
+            <Stack space={2}>
+              {filteredTenants.map((tenant) => (
+                <TenantCard
+                  key={tenant.id}
+                  tenant={tenant}
+                  locale={activeLocale}
+                />
+              ))}
+            </Stack>
+            {filteredTenants.length === 0 && (
+              <Box paddingY={5} textAlign="center">
+                <Text>{formatMessage(m.noServiceProviders)}</Text>
+              </Box>
+            )}
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

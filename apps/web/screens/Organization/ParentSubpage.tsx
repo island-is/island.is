@@ -1,6 +1,6 @@
+import { type IntlConfig, IntlProvider } from 'react-intl'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { IntlProvider, type IntlConfig } from 'react-intl'
 
 import {
   Box,
@@ -24,9 +24,9 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 
-import { UmbodContent, type UmbodProps } from '../Umbod/Umbod'
 import { GET_CUSTOM_PAGE_QUERY } from '../queries/CustomPage'
 import { GET_PUBLIC_AUTH_TENANTS } from '../queries/Umbod'
+import { UmbodContent, type UmbodProps } from '../Umbod/Umbod'
 import {
   getProps,
   StandaloneParentSubpageProps,
