@@ -59,9 +59,9 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
 
-    const mockFindAll =
-      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
+    const mockFindPoliceDigitalCaseFiles =
+      policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber as jest.Mock
+    mockFindPoliceDigitalCaseFiles.mockResolvedValue([])
 
     const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
     mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
