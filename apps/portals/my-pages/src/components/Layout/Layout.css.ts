@@ -19,12 +19,11 @@ export const lock = style({
   bottom: 0,
 })
 
-export const btn = style({})
-
 export const mobileNav = style({
   position: 'sticky',
   top: 0,
   zIndex: 99,
+  borderTop: `1px solid ${theme.color.blue200}`,
   transition: 'top 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
   willChange: 'top',
 })
@@ -110,10 +109,6 @@ export const fullWidthMinHeight = style({
       minHeight: `calc(100dvh - ${theme.headerHeight.large}px)`,
     },
   },
-})
-
-globalStyle(`${btn} > span`, {
-  boxShadow: 'none',
 })
 
 export const fullWidthSplit = style({
