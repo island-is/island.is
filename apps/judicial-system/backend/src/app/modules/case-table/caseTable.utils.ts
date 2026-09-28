@@ -18,7 +18,13 @@ import {
 import { canWithdrawCaseLevelAppeal } from '../appeal-case/appealCase.helpers'
 import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
-import { CaseIncludes, modelMap, subModelMap } from './caseTable.types'
+import {
+  CaseIncludes,
+  mergeAccessIncludes,
+  modelMap,
+  subModelMap,
+} from './caseTable.types'
+import { userAccessIncludes } from './caseTable.whereOptions'
 
 const getIsMyCaseAttributes = (user: User): string[] => {
   if (isProsecutionUser(user)) {
@@ -225,8 +231,44 @@ const getIncludeAndOrder = (
   return [include, globalOrder]
 }
 
+// Every query built here joins whatever the user's access rule reads, on top of
+// what the list asked for. Doing it in one place is the point: a list that had
+// to request those joins itself could forget, and the rule would then compile
+// into SQL that Postgres rejects outright.
+const addAccessIncludes = (allIncludes: CaseIncludes, user: User) =>
+  mergeAccessIncludes(userAccessIncludes(user), allIncludes) ?? allIncludes
+
+/**
+ * The joins a user's access rule needs, for a query that assembles its own
+ * include list instead of going through getGlobalIncludes - searchCases is the
+ * only one. Aliases the caller already joins are left alone, so the caller's
+ * own version wins exactly as it does everywhere else.
+ *
+ * A caller that skips this gets SQL naming an alias it never joined, which
+ * Postgres rejects outright: `missing FROM-clause entry`.
+ */
+export const getAccessIncludes = (
+  user: User,
+  joinedAliases: Array<keyof CaseIncludes>,
+): Includeable[] => {
+  const accessIncludes = mergeAccessIncludes(userAccessIncludes(user), {}) ?? {}
+
+  // Typed rather than loose strings: an alias that does not match deletes
+  // nothing, and the query then carries the same `as` twice, which Postgres
+  // rejects with `table name specified more than once` - the same runtime only
+  // failure this whole change exists to remove.
+  for (const alias of joinedAliases) {
+    delete accessIncludes[alias]
+  }
+
+  const [include] = getIncludeAndOrder(accessIncludes)
+
+  return include
+}
+
 export const getGlobalIncludes = (
   globalIncludes: CaseIncludes,
+  user: User,
 ): [Includeable[], Order] => {
   const allIncludes: CaseIncludes = {}
 
@@ -234,7 +276,7 @@ export const getGlobalIncludes = (
     setInclude(allIncludes, globalIncludes, m)
   }
 
-  return getIncludeAndOrder(allIncludes)
+  return getIncludeAndOrder(addAccessIncludes(allIncludes, user))
 }
 
 export const getAllIncludes = (
@@ -268,7 +310,7 @@ export const getAllIncludes = (
     }
   }
 
-  return getIncludeAndOrder(allIncludes)
+  return getIncludeAndOrder(addAccessIncludes(allIncludes, user))
 }
 
 export const isMyCase = (

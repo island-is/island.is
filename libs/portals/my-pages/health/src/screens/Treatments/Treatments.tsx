@@ -2,12 +2,12 @@ import { ActionCard, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, generatePath, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetHealthTreatmentsOverviewQuery } from './TreatmentOverview.generated'
@@ -25,7 +25,9 @@ const Treatments = () => {
   if (!loading && !error && treatments?.length === 1) {
     return (
       <Navigate
-        to={HealthPaths.HealthTreatment.replace(':id', treatments[0].id)}
+        to={generatePath(HealthPaths.HealthTreatment, {
+          treatmentId: treatments[0].id,
+        })}
         replace
       />
     )
@@ -36,8 +38,8 @@ const Treatments = () => {
       title={formatMessage(m.healthTreatment)}
       intro={messages.treatmentsIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirTreatmentTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
       }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
@@ -70,7 +72,9 @@ const Treatments = () => {
                 cta={{
                   onClick: () =>
                     navigate(
-                      HealthPaths.HealthTreatment.replace(':id', treatment.id),
+                      generatePath(HealthPaths.HealthTreatment, {
+                        treatmentId: treatment.id,
+                      }),
                     ),
                   label: formatMessage(messages.seeMore),
                   variant: 'text',

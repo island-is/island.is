@@ -3,9 +3,11 @@ import { Inject, UseGuards } from '@nestjs/common'
 import {
   type User,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { PaginatedRentalAgreementCollection } from '../models/rentalAgreements/rentalAgreementCollection.model'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
@@ -23,6 +25,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { RentalAgreementsInput } from '../dto/rentalAgreements.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Scopes(ApiScope.meDetails, ApiScope.company)
 @CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms' })

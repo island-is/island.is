@@ -11,11 +11,11 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useLawyerRegistry } from '@island.is/judicial-system-web/src/utils/hooks/useLawyerRegistry/useLawyerRegistry'
 
-interface LawyerRegistryContext {
+interface LawyerRegistryContextValue {
   lawyers?: Lawyer[]
 }
 
-export const LawyerRegistryContext = createContext<LawyerRegistryContext>({
+export const LawyerRegistryContext = createContext<LawyerRegistryContextValue>({
   lawyers: [],
 })
 

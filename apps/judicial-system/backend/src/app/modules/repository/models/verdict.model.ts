@@ -49,7 +49,7 @@ export class Verdict extends Model {
   externalPoliceDocumentId?: string
 
   @ForeignKey(() => Defendant)
-  @Column({ type: DataType.UUID, allowNull: false, unique: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   defendantId!: string
 
   @BelongsTo(() => Defendant, 'defendantId')

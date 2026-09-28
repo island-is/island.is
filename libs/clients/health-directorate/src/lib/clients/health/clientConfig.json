@@ -1330,15 +1330,6 @@
             "schema": {
               "$ref": "#/components/schemas/Locale"
             }
-          },
-          {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1406,15 +1397,6 @@
             "description": "The locale to use for the response",
             "schema": {
               "$ref": "#/components/schemas/Locale"
-            }
-          },
-          {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -2029,24 +2011,32 @@
             }
           },
           {
-            "name": "page",
-            "required": true,
+            "name": "limit",
+            "required": false,
             "in": "query",
-            "description": "1-based page number.",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "pageSize",
-            "required": true,
-            "in": "query",
-            "description": "Number of items per page (max 100).",
+            "description": "Items per page, 1-100. Defaults to 20.",
             "schema": {
               "minimum": 1,
               "maximum": 100,
               "type": "number"
+            }
+          },
+          {
+            "name": "after",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page after it. Not combinable with before.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page before it. Not combinable with after.",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -2188,7 +2178,7 @@
     },
     "/v1/me/appointments/{id}/cancel": {
       "post": {
-        "description": "Cancel an appointment. 200: appointment cancelled, 409: request blocked or refused.",
+        "description": "Cancel an appointment. 200: appointment cancelled, 409: request blocked or refused. An answered 200 or 409 carries the appointment as it now stands.",
         "operationId": "MeAppointmentController_cancelAppointment_v1",
         "parameters": [
           {
@@ -2570,7 +2560,8 @@
     },
     "/v1/me/conversations": {
       "get": {
-        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override and ?starred= to filter by star.",
+        "deprecated": true,
+        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star, ?search= to match the title or group name and ?treatmentId= to scope to one treatment. Deprecated – use v2, which returns a paginated envelope.",
         "operationId": "MeConversationController_getConversations_v1",
         "parameters": [
           {
@@ -2589,6 +2580,26 @@
             "description": "Filter by starred flag.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored. Matched literally: `%`, `_` and `[` carry no wildcard meaning.",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "treatmentId",
+            "required": false,
+            "in": "query",
+            "description": "Scope the list to one treatment (care-team group); the same id GET /me/treatments returns. Matched exactly, and an id with no rows returns an empty list rather than a 404.",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
             }
           }
         ],
@@ -2650,7 +2661,7 @@
         "tags": ["Conversations"]
       },
       "post": {
-        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Returns 504 (with `errorCode` `ACK_NOT_CONFIRMED` from `MessagingSubmitFailureReason`) when the provider does not acknowledge the message within the wait: the message was sent and may well have been delivered, it is kept but not shown until the acknowledgement arrives, and repeating the request unchanged waits again.",
+        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Returns 201 once the provider acknowledges it or the acknowledgement wait elapses.",
         "operationId": "MeConversationController_createConversation_v1",
         "parameters": [],
         "requestBody": {
@@ -2735,6 +2746,134 @@
             }
           },
           "504": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Conversations"]
+      }
+    },
+    "/v2/me/conversations": {
+      "get": {
+        "description": "Get the current user's conversations, ordered by most recent activity, paginated. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star, ?search= to match the title or group name and ?treatmentId= to scope to one treatment.",
+        "operationId": "MeConversationController_getConversationsV2_v2",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by patient-side status. 'active' (default) excludes archived/deleted. 'archived' returns only archived. 'all' returns both active and archived (deleted is always excluded).",
+            "schema": {
+              "$ref": "#/components/schemas/ConversationStatusFilter"
+            }
+          },
+          {
+            "name": "starred",
+            "required": false,
+            "in": "query",
+            "description": "Filter by starred flag.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored, and `%`, `_` and `[` carry no wildcard meaning.",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "treatmentId",
+            "required": false,
+            "in": "query",
+            "description": "Scope the list to one treatment (care-team group); the same id GET /me/treatments returns. Matched exactly, and an id with no rows returns an empty page rather than a 404.",
+            "schema": {
+              "maxLength": 255,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page, 1-100. Defaults to 20.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "type": "number"
+            }
+          },
+          {
+            "name": "after",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page after it. Not combinable with before.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "before",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page: fetch the page before it. Not combinable with after.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedConversationsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpProblemResponse"
+                }
+              }
+            }
+          },
+          "500": {
             "description": "",
             "content": {
               "application/json": {
@@ -2944,7 +3083,7 @@
     },
     "/v1/me/conversations/{id}/messages": {
       "post": {
-        "description": "Append a patient reply to an existing conversation. Returns 504 (with `errorCode` `ACK_NOT_CONFIRMED` from `MessagingSubmitFailureReason`) when the provider does not acknowledge the reply within the wait: the reply was sent and may well have been delivered, it is kept but not shown until the acknowledgement arrives, and repeating the request unchanged waits again.",
+        "description": "Append a patient reply to an existing conversation. Returns 201 once the provider acknowledges it or the acknowledgement wait elapses.",
         "operationId": "MeConversationController_replyToConversation_v1",
         "parameters": [
           {
@@ -3528,7 +3667,7 @@
     },
     "/v1/me/certificates": {
       "post": {
-        "description": "Submit a certificate request.",
+        "description": "Submit a certificate request. Returns 201 once the provider acknowledges it or the acknowledgement wait elapses. Submitting the same request again while it is still pending returns the request already sent; 409 when an identical request is pending on a conversation hidden from the patient.",
         "operationId": "MeCertificateController_createCertificateRequest_v1",
         "parameters": [],
         "requestBody": {
@@ -3798,7 +3937,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
+                  "$ref": "#/components/schemas/CertificatePaymentConflictDto"
                 }
               }
             }
@@ -5221,7 +5360,7 @@
     },
     "/v1/me/treatments/{id}/conversations": {
       "get": {
-        "description": "The conversations belonging to this treatment. Returns the same shape as GET /me/conversations, so a client can reuse its existing model. Unbounded, like the main inbox. Returns 200 with an empty array — never 404 — for a treatment the user is not enrolled in, because the id is used only as a filter and is not checked against the provider. Key \"no longer enrolled\" off GET /me/treatments instead.",
+        "description": "The conversations belonging to this treatment. Returns the same shape as GET /me/conversations, so a client can reuse its existing model. Unbounded, like the main inbox. Returns 200 with an empty array — never 404 — for a treatment the user is not enrolled in, because the id is used only as a filter and is not checked against the provider. Key \"no longer enrolled\" off GET /me/treatments instead. The path id is the only treatment scope here; a treatmentId query parameter is ignored.",
         "operationId": "MeTreatmentController_getTreatmentConversations_v1",
         "parameters": [
           {
@@ -5249,6 +5388,16 @@
             "description": "Filter by starred flag.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored. Matched literally: `%`, `_` and `[` carry no wildcard meaning.",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
             }
           }
         ],
@@ -5559,7 +5708,7 @@
           },
           "errorCode": {
             "type": "string",
-            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
+            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, PaymentIntentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
           },
           "resourceType": {
             "type": "string",
@@ -6243,6 +6392,10 @@
           "questionnaireId": {
             "type": "string"
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this questionnaire belongs to; the same id GET /me/treatments returns. Omitted when the provider sent none."
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -6296,9 +6449,19 @@
           },
           "hasDraft": {
             "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Whether the provider has withdrawn the questionnaire; a disabled questionnaire is still returned but cannot be submitted"
+          },
+          "disabledDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "When the provider withdrew the questionnaire, null unless disabled"
           }
         },
-        "required": ["questionnaireId", "numSubmitted", "hasDraft"]
+        "required": ["questionnaireId", "numSubmitted", "hasDraft", "disabled"]
       },
       "QuestionType": {
         "type": "string",
@@ -6310,7 +6473,11 @@
           "list",
           "table",
           "attachment",
-          "text"
+          "text",
+          "grid",
+          "time",
+          "datetime",
+          "calculated"
         ]
       },
       "BaseQuestionDto": {
@@ -6857,6 +7024,24 @@
             "type": "string",
             "x-nestjs_zod-has-null": true
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
+            "x-nestjs_zod-has-null": true
+          },
           "answer": {
             "anyOf": [
               {
@@ -6870,13 +7055,31 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "BooleanReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "answer": {
@@ -6892,7 +7095,7 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "DateReplyViewDto": {
         "type": "object",
@@ -6901,12 +7104,39 @@
             "type": "string",
             "x-nestjs_zod-has-null": true
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
+            "x-nestjs_zod-has-null": true
+          },
           "answer": {
             "anyOf": [
               {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                  }
+                ]
               },
               {
                 "type": "null"
@@ -6916,13 +7146,30 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
-      "ListReplyDto": {
+      "ListReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ]
           },
           "values": {
             "type": "array",
@@ -6940,13 +7187,31 @@
             }
           }
         },
-        "required": ["questionId", "values"]
+        "required": ["questionId", "type", "values"]
       },
       "NumberReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "answer": {
@@ -6962,13 +7227,31 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "StringReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "answer": {
@@ -6984,13 +7267,31 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": ["questionId", "answer"]
+        "required": ["questionId", "type", "answer"]
       },
       "TableReplyViewDto": {
         "type": "object",
         "properties": {
           "questionId": {
             "type": "string",
+            "x-nestjs_zod-has-null": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "bool",
+              "date",
+              "number",
+              "list",
+              "table",
+              "attachment",
+              "text",
+              "grid",
+              "time",
+              "datetime",
+              "calculated"
+            ],
             "x-nestjs_zod-has-null": true
           },
           "rows": {
@@ -7005,6 +7306,23 @@
                       "questionId": {
                         "type": "string"
                       },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
+                      },
                       "answer": {
                         "anyOf": [
                           {
@@ -7016,13 +7334,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "answer": {
                         "anyOf": [
@@ -7035,13 +7370,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "answer": {
                         "anyOf": [
@@ -7054,7 +7406,7 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
@@ -7062,12 +7414,38 @@
                       "questionId": {
                         "type": "string"
                       },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
+                      },
                       "answer": {
                         "anyOf": [
                           {
-                            "type": "string",
-                            "format": "date",
-                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                              },
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                              }
+                            ]
                           },
                           {
                             "type": "null"
@@ -7075,13 +7453,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "answer": {
                         "anyOf": [
@@ -7094,13 +7489,30 @@
                         ]
                       }
                     },
-                    "required": ["questionId", "answer"]
+                    "required": ["questionId", "type", "answer"]
                   },
                   {
                     "type": "object",
                     "properties": {
                       "questionId": {
                         "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "bool",
+                          "date",
+                          "number",
+                          "list",
+                          "table",
+                          "attachment",
+                          "text",
+                          "grid",
+                          "time",
+                          "datetime",
+                          "calculated"
+                        ]
                       },
                       "values": {
                         "type": "array",
@@ -7118,7 +7530,7 @@
                         }
                       }
                     },
-                    "required": ["questionId", "values"]
+                    "required": ["questionId", "type", "values"]
                   }
                 ]
               }
@@ -7126,7 +7538,7 @@
             "x-nestjs_zod-has-null": true
           }
         },
-        "required": ["questionId", "rows"]
+        "required": ["questionId", "type", "rows"]
       },
       "QuestionnaireSubmissionBaseDto": {
         "type": "object",
@@ -7209,6 +7621,10 @@
           "questionnaireId": {
             "type": "string"
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this questionnaire belongs to; the same id GET /me/treatments returns. Omitted when the provider sent none."
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -7262,6 +7678,16 @@
           },
           "hasDraft": {
             "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Whether the provider has withdrawn the questionnaire; a disabled questionnaire is still returned but cannot be submitted"
+          },
+          "disabledDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "When the provider withdrew the questionnaire, null unless disabled"
           },
           "hint": {
             "type": "string",
@@ -7322,7 +7748,7 @@
                   "$ref": "#/components/schemas/DateReplyViewDto"
                 },
                 {
-                  "$ref": "#/components/schemas/ListReplyDto"
+                  "$ref": "#/components/schemas/ListReplyViewDto"
                 },
                 {
                   "$ref": "#/components/schemas/NumberReplyViewDto"
@@ -7341,6 +7767,7 @@
           "questionnaireId",
           "numSubmitted",
           "hasDraft",
+          "disabled",
           "daysBetweenReplies",
           "canSubmit",
           "submissions",
@@ -7386,9 +7813,18 @@
                       "type": "string"
                     },
                     "answer": {
-                      "type": "string",
-                      "format": "date",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                        },
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                        }
+                      ]
                     }
                   },
                   "required": ["questionId", "answer"]
@@ -7496,9 +7932,18 @@
                                   "type": "string"
                                 },
                                 "answer": {
-                                  "type": "string",
-                                  "format": "date",
-                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "format": "date",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                    },
+                                    {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                                    }
+                                  ]
                                 }
                               },
                               "required": ["questionId", "answer"]
@@ -7625,6 +8070,23 @@
                     "questionId": {
                       "type": "string"
                     },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
+                    },
                     "answer": {
                       "anyOf": [
                         {
@@ -7636,13 +8098,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "answer": {
                       "anyOf": [
@@ -7655,7 +8134,7 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
@@ -7663,12 +8142,38 @@
                     "questionId": {
                       "type": "string"
                     },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
+                    },
                     "answer": {
                       "anyOf": [
                         {
-                          "type": "string",
-                          "format": "date",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                            },
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                            }
+                          ]
                         },
                         {
                           "type": "null"
@@ -7676,13 +8181,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "answer": {
                       "anyOf": [
@@ -7695,13 +8217,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "answer": {
                       "anyOf": [
@@ -7714,13 +8253,30 @@
                       ]
                     }
                   },
-                  "required": ["questionId", "answer"]
+                  "required": ["questionId", "type", "answer"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "values": {
                       "type": "array",
@@ -7738,13 +8294,30 @@
                       }
                     }
                   },
-                  "required": ["questionId", "values"]
+                  "required": ["questionId", "type", "values"]
                 },
                 {
                   "type": "object",
                   "properties": {
                     "questionId": {
                       "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "string",
+                        "bool",
+                        "date",
+                        "number",
+                        "list",
+                        "table",
+                        "attachment",
+                        "text",
+                        "grid",
+                        "time",
+                        "datetime",
+                        "calculated"
+                      ]
                     },
                     "rows": {
                       "type": "array",
@@ -7758,6 +8331,23 @@
                                 "questionId": {
                                   "type": "string"
                                 },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
+                                },
                                 "answer": {
                                   "anyOf": [
                                     {
@@ -7769,13 +8359,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "answer": {
                                   "anyOf": [
@@ -7788,13 +8395,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "answer": {
                                   "anyOf": [
@@ -7807,7 +8431,7 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
@@ -7815,12 +8439,38 @@
                                 "questionId": {
                                   "type": "string"
                                 },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
+                                },
                                 "answer": {
                                   "anyOf": [
                                     {
-                                      "type": "string",
-                                      "format": "date",
-                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        {
+                                          "type": "string",
+                                          "format": "date-time",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                                        }
+                                      ]
                                     },
                                     {
                                       "type": "null"
@@ -7828,13 +8478,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "answer": {
                                   "anyOf": [
@@ -7847,13 +8514,30 @@
                                   ]
                                 }
                               },
-                              "required": ["questionId", "answer"]
+                              "required": ["questionId", "type", "answer"]
                             },
                             {
                               "type": "object",
                               "properties": {
                                 "questionId": {
                                   "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "string",
+                                    "bool",
+                                    "date",
+                                    "number",
+                                    "list",
+                                    "table",
+                                    "attachment",
+                                    "text",
+                                    "grid",
+                                    "time",
+                                    "datetime",
+                                    "calculated"
+                                  ]
                                 },
                                 "values": {
                                   "type": "array",
@@ -7871,14 +8555,14 @@
                                   }
                                 }
                               },
-                              "required": ["questionId", "values"]
+                              "required": ["questionId", "type", "values"]
                             }
                           ]
                         }
                       }
                     }
                   },
-                  "required": ["questionId", "rows"]
+                  "required": ["questionId", "type", "rows"]
                 }
               ]
             },
@@ -8085,36 +8769,23 @@
           "canCancel"
         ]
       },
-      "PaginationDto": {
+      "PageInfoDto": {
         "type": "object",
         "properties": {
-          "page": {
-            "type": "number"
-          },
-          "pageSize": {
-            "type": "number"
-          },
-          "totalResults": {
-            "type": "number"
-          },
-          "totalPages": {
-            "type": "number"
-          },
-          "hasNext": {
+          "hasNextPage": {
             "type": "boolean"
           },
-          "hasPrevious": {
+          "hasPreviousPage": {
             "type": "boolean"
+          },
+          "startCursor": {
+            "type": "string"
+          },
+          "endCursor": {
+            "type": "string"
           }
         },
-        "required": [
-          "page",
-          "pageSize",
-          "totalResults",
-          "totalPages",
-          "hasNext",
-          "hasPrevious"
-        ]
+        "required": ["hasNextPage"]
       },
       "PaginatedAppointmentsDto": {
         "type": "object",
@@ -8125,11 +8796,14 @@
               "$ref": "#/components/schemas/AppointmentBaseDto"
             }
           },
-          "pagination": {
-            "$ref": "#/components/schemas/PaginationDto"
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDto"
+          },
+          "totalCount": {
+            "type": "number"
           }
         },
-        "required": ["data", "pagination"]
+        "required": ["data", "pageInfo", "totalCount"]
       },
       "OpeningHoursSlotDto": {
         "type": "object",
@@ -8421,9 +9095,17 @@
             "type": "string",
             "enum": ["CANCELLED"],
             "description": "Always CANCELLED: this response exists only when the provider agreed. A refusal is a 409 carrying CANCELLATION_REFUSED, no answer is a 504 carrying ACK_NOT_CONFIRMED."
+          },
+          "appointment": {
+            "description": "The appointment as it stands after the answer, so no second read is needed to update the view.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentDetailDto"
+              }
+            ]
           }
         },
-        "required": ["conversationId", "requestedAt", "status"]
+        "required": ["conversationId", "requestedAt", "status", "appointment"]
       },
       "CancelAppointmentConflictReason": {
         "type": "string",
@@ -8478,6 +9160,14 @@
           "resourceId": {
             "type": "string",
             "description": "The id of the resource a 402 wants paid for. Absent on every other status."
+          },
+          "appointment": {
+            "description": "Present only for CANCELLATION_REFUSED: the appointment as it stands after the refusal, so no second read is needed to update the view.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AppointmentDetailDto"
+              }
+            ]
           }
         },
         "required": ["type", "title"]
@@ -8668,6 +9358,10 @@
             "type": "string",
             "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this conversation belongs to; the same id GET /me/treatments returns. Omitted for a thread that belongs to no treatment."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -8692,6 +9386,24 @@
           "unread"
         ]
       },
+      "PaginatedConversationsDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationBaseDto"
+            }
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfoDto"
+          },
+          "totalCount": {
+            "type": "number"
+          }
+        },
+        "required": ["data", "pageInfo", "totalCount"]
+      },
       "ConversationReplyBlockedReason": {
         "type": "string",
         "enum": [
@@ -8699,9 +9411,9 @@
           "REPLIES_DISABLED",
           "NO_REPLY_GROUP",
           "MESSAGING_NOT_ALLOWED",
-          "OUTSIDE_MESSAGING_WINDOW",
+          "PATIENT_REPLY_NOT_ALLOWED",
           "REPLY_WINDOW_EXPIRED",
-          "AWAITING_STAFF_REPLY"
+          "AWAITING_ACKNOWLEDGEMENT"
         ],
         "description": "Why replying is blocked. Only set when patientCanReply is false."
       },
@@ -8848,7 +9560,12 @@
           "pendingPaymentId": {
             "type": "string",
             "format": "uuid",
-            "description": "An unpaid intent this patient has open on the certificate. Not time-bounded: it persists until the certificate is paid for, so its presence does not mean a payment is in flight. `POST /v1/me/certificates/{certificateId}/payment-intent` resumes it, returning this same `paymentId` and a byte-identical payment-page URL. A UI hint: access is decided by `paid` alone."
+            "description": "An unpaid intent this patient has open on the certificate. Not time-bounded: it persists until the certificate is paid for, so its presence does not mean a payment is in flight — see `pendingPaymentStartedAt`. `POST /v1/me/certificates/{certificateId}/payment-intent` resumes it, returning this same `paymentId` and a byte-identical payment-page URL. A UI hint: access is decided by `paid` alone."
+          },
+          "pendingPaymentStartedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the open intent named by `pendingPaymentId` was created. A young value may still get a callback on the way; an old one is a resumable abandoned attempt. Present exactly when `pendingPaymentId` is."
           },
           "attachments": {
             "type": "array",
@@ -8911,6 +9628,10 @@
             "type": "string",
             "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this conversation belongs to; the same id GET /me/treatments returns. Omitted for a thread that belongs to no treatment."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -8933,17 +9654,9 @@
               }
             ]
           },
-          "messagingWindowOpen": {
-            "type": "string",
-            "description": "When the recipient starts accepting messages, as `HH:mm:ss` in UTC."
-          },
-          "messagingWindowClose": {
-            "type": "string",
-            "description": "When the recipient stops accepting messages, as `HH:mm:ss` in UTC."
-          },
           "patientReplyWindowDays": {
             "type": "number",
-            "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`."
+            "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`. Absent when no settings row gates the thread, which is a thread with no reply window at all rather than one of unstated length."
           },
           "unread": {
             "type": "boolean",
@@ -8997,7 +9710,7 @@
           },
           "errorCode": {
             "type": "string",
-            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
+            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, PaymentIntentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
           },
           "resourceType": {
             "type": "string",
@@ -9069,7 +9782,7 @@
           },
           "patientInitiatedTypeCode": {
             "type": "string",
-            "description": "PatientInitiatedConversationType code, e.g. TREATMENT_FOLLOWUP."
+            "description": "PatientInitiatedConversationType code, e.g. TREATMENT_FOLLOWUP. Omitted only for a recipient whose allowsCustomTitle is true; every other recipient requires one."
           },
           "title": {
             "type": "string",
@@ -9095,13 +9808,7 @@
             }
           }
         },
-        "required": [
-          "nodeId",
-          "groupId",
-          "patientInitiatedTypeCode",
-          "title",
-          "messageTextContent"
-        ]
+        "required": ["nodeId", "groupId", "messageTextContent"]
       },
       "CreateReplyRequestDto": {
         "type": "object",
@@ -9128,6 +9835,73 @@
         },
         "required": ["messageTextContent"]
       },
+      "MessagingDayType": {
+        "type": "string",
+        "enum": ["WEEKDAY", "WEEKEND", "HOLIDAY"],
+        "description": "Which kind of day the window was resolved for, in UTC. Holidays are Icelandic public holidays and take precedence over weekends."
+      },
+      "NextOpeningDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The UTC instant the recipient next opens."
+          },
+          "windowOpen": {
+            "type": "string",
+            "description": "When the recipient opens on that day, `HH:mm:ss` in UTC. Same time of day as `date`."
+          },
+          "windowClose": {
+            "type": "string",
+            "description": "When it closes again on that day, `HH:mm:ss` in UTC."
+          }
+        },
+        "required": ["date", "windowOpen", "windowClose"]
+      },
+      "OpeningHoursWindowDto": {
+        "type": "object",
+        "properties": {
+          "windowOpen": {
+            "type": "string",
+            "description": "When the recipient opens on that kind of day, `HH:mm:ss` in UTC."
+          },
+          "windowClose": {
+            "type": "string",
+            "description": "When it closes again, `HH:mm:ss` in UTC."
+          }
+        },
+        "required": ["windowOpen", "windowClose"]
+      },
+      "MessagingOpeningHoursDto": {
+        "type": "object",
+        "properties": {
+          "weekday": {
+            "description": "Hours on a weekday. Absent when the recipient is closed on weekdays.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursWindowDto"
+              }
+            ]
+          },
+          "weekend": {
+            "description": "Hours on a Saturday or Sunday. Absent when the recipient is closed at weekends.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursWindowDto"
+              }
+            ]
+          },
+          "holiday": {
+            "description": "Hours on an Icelandic public holiday, which takes precedence over a weekend. Absent when the recipient is closed on holidays.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHoursWindowDto"
+              }
+            ]
+          }
+        }
+      },
       "AllowedConversationTypeDto": {
         "type": "object",
         "properties": {
@@ -9151,6 +9925,7 @@
         "type": "string",
         "enum": [
           "MESSAGING_NOT_ALLOWED",
+          "PATIENT_INITIATED_NOT_ALLOWED",
           "OUTSIDE_MESSAGING_WINDOW",
           "NO_ALLOWED_TYPES"
         ],
@@ -9173,23 +9948,60 @@
             "type": "string",
             "description": "Set when this recipient is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so **key the list on all three fields** and send this value back on create to say which was chosen. It is the same id GET /me/treatments returns."
           },
+          "allowsCustomTitle": {
+            "type": "boolean",
+            "description": "True when the patient writes the conversation title themselves and sends no patientInitiatedTypeCode. Set for a treatment; false for a clinic or service recipient, which require a type."
+          },
           "allowsMessaging": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the recipient offers patient messaging at all. True when it accepts either new conversations or replies; false only when it accepts neither. Equals `conversationBlockedReason !== MESSAGING_NOT_ALLOWED`. It does not say whether the patient can act: `canCreateConversation` does.",
+            "deprecated": true
           },
           "messagingWindowOpen": {
             "type": "string",
-            "description": "Effective window open time (HH:mm:ss, UTC)."
+            "description": "Today’s window open time (HH:mm:ss, UTC). Absent when isClosedToday is true; nextOpensAt then carries the next open day and its hours. Always equal to `openingHours[dayType].windowOpen`; read that.",
+            "deprecated": true
           },
           "messagingWindowClose": {
             "type": "string",
-            "description": "Effective window close time (HH:mm:ss, UTC)."
+            "description": "Today’s window close time (HH:mm:ss, UTC). Absent when isClosedToday is true; nextOpensAt then carries the next open day and its hours. Always equal to `openingHours[dayType].windowClose`; read that.",
+            "deprecated": true
           },
           "isCurrentlyWithinWindow": {
             "type": "boolean",
-            "description": "True when the current UTC time is within the messaging window."
+            "description": "True when the current UTC time is within the messaging window. Always false when isClosedToday is true."
+          },
+          "isClosedToday": {
+            "type": "boolean",
+            "description": "True when the recipient accepts nothing today because it has no window pair set for this kind of day."
+          },
+          "dayType": {
+            "description": "Which kind of day the window was resolved for, in UTC. Holidays are Icelandic public holidays and take precedence over weekends.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessagingDayType"
+              }
+            ]
+          },
+          "nextOpensAt": {
+            "description": "When the recipient next opens, and the hours of that day. Absent while inside the window, and absent when the recipient opens on no day within the next two weeks.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NextOpeningDto"
+              }
+            ]
+          },
+          "openingHours": {
+            "description": "The recipient’s hours for every kind of day. Always present; a day type is absent from it when the recipient is closed on that kind of day. An empty object paired with isCurrentlyWithinWindow: true means the recipient has no messaging hours at all.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessagingOpeningHoursDto"
+              }
+            ]
           },
           "patientReplyWindowDays": {
-            "type": "number"
+            "type": "number",
+            "description": "A recipient with no messaging hours reports the system default here; the value gates nothing for it."
           },
           "allowedConversationTypes": {
             "type": "array",
@@ -9211,10 +10023,12 @@
           },
           "canRequestCertificate": {
             "type": "boolean",
-            "description": "Whether the patient can request a certificate from this recipient right now."
+            "description": "Always equal to `canCreateConversation`. Read that field; a certificate is one of the conversation types `allowedConversationTypes` carries, flagged by its `isCertificate`.",
+            "deprecated": true
           },
           "certificateBlockedReason": {
-            "description": "Why requesting a certificate is blocked. Only set when canRequestCertificate is false.",
+            "description": "Always equal to `conversationBlockedReason`. Read that field.",
+            "deprecated": true,
             "allOf": [
               {
                 "$ref": "#/components/schemas/RecipientCreateBlockedReason"
@@ -9226,10 +10040,12 @@
           "nodeId",
           "groupId",
           "name",
+          "allowsCustomTitle",
           "allowsMessaging",
-          "messagingWindowOpen",
-          "messagingWindowClose",
           "isCurrentlyWithinWindow",
+          "isClosedToday",
+          "dayType",
+          "openingHours",
           "patientReplyWindowDays",
           "allowedConversationTypes",
           "canCreateConversation",
@@ -9419,6 +10235,57 @@
           }
         },
         "required": ["paymentId", "paymentPageUrl"]
+      },
+      "PaymentIntentBlockedReason": {
+        "type": "string",
+        "enum": ["ALREADY_PAID", "NOT_PAYABLE", "UNRESOLVED_ISSUER"],
+        "description": "ALREADY_PAID: the certificate is paid for and the PDF is downloadable. NOT_PAYABLE: it is free, either ungated or from an HCP that has stopped charging. UNRESOLVED_ISSUER: payment is owed but the issuing HCP cannot be resolved, so nothing can be priced and there is no open intent to resume."
+      },
+      "CertificatePaymentConflictDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "A URI reference that identifies the problem type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HttpProblemType"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          },
+          "errorCode": {
+            "description": "ALREADY_PAID: the certificate is paid for and the PDF is downloadable. NOT_PAYABLE: it is free, either ungated or from an HCP that has stopped charging. UNRESOLVED_ISSUER: payment is owed but the issuing HCP cannot be resolved, so nothing can be priced and there is no open intent to resume.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentIntentBlockedReason"
+              }
+            ]
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "What a 402 wants paid for, so the client can open a payment intent for it. Values come from PaymentResourceType. Absent on every other status."
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The id of the resource a 402 wants paid for. Absent on every other status."
+          }
+        },
+        "required": ["type", "title"]
       },
       "PregnancyStaffDto": {
         "type": "object",
@@ -10160,6 +11027,10 @@
           "title": {
             "type": "string",
             "description": "Title of the conversation carrying the document. Nullable in storage, so the client labels an untitled document itself."
+          },
+          "groupName": {
+            "type": "string",
+            "description": "Name of the provider group the conversation carrying the document was opened with. Nullable in storage, so omitted when the provider did not name one."
           },
           "messageSentAt": {
             "format": "date-time",

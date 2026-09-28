@@ -658,12 +658,6 @@ export const contractsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þína samninga úr leiguskrá Húsnæðis og Mannvirkjastofnunar.',
   },
-
-  contractDetailSubtitle: {
-    id: 'sp.contracts:contract-detail-subtitle',
-    defaultMessage: 'Leigusamningur vegna íbúðarhúsnæðis',
-  },
-
   agreementNumber: {
     id: 'sp.contracts:agreement-number',
     defaultMessage: 'Samningsnúmer',
@@ -687,8 +681,11 @@ export const contractsMessages = defineMessages({
   },
   rentalAgreementDate: {
     id: 'sp.contracts:rental-agreement-date',
-    defaultMessage:
-      '{from, date, long} - {to, select, undefined {} other {to, date, long}}',
+    defaultMessage: '{from, date, long} - {to, date, long}',
+  },
+  rentalAgreementDateFrom: {
+    id: 'sp.contracts:rental-agreement-date-from',
+    defaultMessage: '{from, date, long} -',
   },
   status: {
     id: 'sp.contracts:status',

@@ -9,15 +9,16 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { messages } from '../..'
-import { HealthPaths } from '../../lib/paths'
 import * as styles from './Questionnaires.css'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 
 const QuestionnaireDetail: FC = () => {
   useNamespaces('sp.health')
@@ -26,6 +27,7 @@ const QuestionnaireDetail: FC = () => {
   useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
 
   const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
     org === 'el'
@@ -67,27 +69,30 @@ const QuestionnaireDetail: FC = () => {
     )
   }
 
+  const questionnaireParams = { org: organization.toLocaleLowerCase(), id }
+
   const answeredLink = latestSubmissionId
-    ? HealthPaths.HealthQuestionnairesAnswered.replace(
-        ':org',
-        organization?.toLocaleLowerCase() ?? '',
-      )
-        .replace(':id', id)
-        .replace(':submissionId', latestSubmissionId)
+    ? paths.questionnaireAnswered({
+        ...questionnaireParams,
+        submissionId: latestSubmissionId,
+      })
     : undefined
 
-  const answerLink = HealthPaths.HealthQuestionnairesAnswer.replace(
-    ':org',
-    organization?.toLocaleLowerCase() ?? '',
-  ).replace(':id', id)
+  const answerLink = paths.questionnaireAnswer(questionnaireParams)
 
-  const link = isAnswered
-    ? answeredLink
-    : canSubmit && (notAnswered || isDraft)
-    ? answerLink
-    : undefined
+  const hasSubmission =
+    questionnaire?.submissions?.some((sub) => !sub.isDraft) ?? false
 
-  const statusLabel = isAnswered
+  const link =
+    isAnswered || (isExpired && hasSubmission)
+      ? answeredLink
+      : canSubmit && (notAnswered || isDraft)
+      ? answerLink
+      : undefined
+
+  const statusLabel = questionnaire?.baseInformation.disabled
+    ? formatMessage(messages.disabledQuestionnaire)
+    : isAnswered
     ? formatMessage(messages.answeredQuestionnaire)
     : notAnswered
     ? formatMessage(messages.unAnsweredQuestionnaire)
@@ -115,6 +120,10 @@ const QuestionnaireDetail: FC = () => {
 
   return (
     <IntroWrapper
+      serviceProvider={{
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaQuestionnairesTooltip),
+      }}
       title={
         loading
           ? formatMessage(messages.questionnaire)
@@ -129,7 +138,13 @@ const QuestionnaireDetail: FC = () => {
       buttonGroup={{
         actions: [
           link ? (
-            <>
+            <Box
+              key="answer-buttons"
+              display="flex"
+              flexWrap="wrap"
+              columnGap={2}
+              rowGap={2}
+            >
               {!isDraft && canSubmitAgain && (
                 <Box className={styles.button} key={'answer-again-link-box'}>
                   <Button
@@ -149,24 +164,24 @@ const QuestionnaireDetail: FC = () => {
                   key={'answer-link'}
                   fluid
                   variant="utility"
-                  colorScheme={isAnswered ? 'light' : 'primary'}
+                  colorScheme={link === answeredLink ? 'light' : 'primary'}
                   size="small"
                   onClick={() => navigate(link)}
                 >
-                  {isAnswered && !isExpired
+                  {link === answeredLink
                     ? formatMessage(messages.seeAnswers)
                     : isDraft
                     ? formatMessage(messages.continueDraftQuestionnaire)
                     : formatMessage(messages.answer)}
                 </Button>
               </Box>
-            </>
+            </Box>
           ) : null,
           isDraft && answeredLink ? (
-            <Box className={styles.button} key={'answer-link-box'}>
+            <Box className={styles.button} key={'answer-link-draft-box'}>
               <Button
+                key={'answer-link-draft'}
                 fluid
-                key={'answer-link'}
                 variant="utility"
                 colorScheme="light"
                 size="small"
@@ -185,17 +200,25 @@ const QuestionnaireDetail: FC = () => {
       desktopContentSpan="10/12"
     >
       {questionnaire && !error && (
-        <InfoLineStack>
+        <InfoLineStack space={[0, 0, 2]}>
           <InfoLine
             loading={loading}
             key="questionnaire-status"
             label={formatMessage(messages.status)}
             content={
-              <Tag disabled outlined={false} variant={statusTagVariant}>
+              <Tag disabled outlined variant={statusTagVariant}>
                 {statusLabel}
               </Tag>
             }
           />
+          {questionnaire?.baseInformation.lastSubmitted && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-answered-date"
+              label={formatMessage(messages.answeredDate)}
+              content={formatDate(questionnaire.baseInformation.lastSubmitted)}
+            />
+          )}
           <InfoLine
             loading={loading}
             key="questionnaire-organization"
@@ -211,7 +234,7 @@ const QuestionnaireDetail: FC = () => {
           <InfoLine
             loading={loading}
             key="questionnaire-sent"
-            label={formatMessage(messages.date)}
+            label={formatMessage(messages.questionnaireSentDate)}
             content={
               questionnaire?.baseInformation.sentDate
                 ? formatDate(questionnaire?.baseInformation.sentDate)

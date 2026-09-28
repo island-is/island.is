@@ -44,8 +44,8 @@ describe('CaseController - Get court record signature confirmation', () => {
     mockPutGeneratedObject.mockRejectedValue(new Error('Some error'))
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockRejectedValue(new Error('Some error'))
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockRejectedValue(new Error('Some error'))
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -95,8 +95,9 @@ describe('CaseController - Get court record signature confirmation', () => {
     const documentToken = uuid()
 
     beforeEach(() => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
     })
 
     describe('successful completion', () => {
@@ -108,8 +109,9 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseRepositoryService.update as jest.Mock
         mockUpdate.mockResolvedValueOnce(theCase)
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(theCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(theCase)
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })

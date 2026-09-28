@@ -15,8 +15,11 @@ criteria before submitting the report.
 ## Who can use this template
 
 Only companies (validated via national id) may apply — see
-`mapUserToRole` in `lib/template.ts`. An applicant without an active equality
-report is routed to a "not allowed" state instead of the main form.
+`mapUserToRole` in `lib/template.ts`. A company DMR will not accept a report
+from is routed to a "not allowed" state instead of the main form, for the one
+reason DMR gives: `MISSING_EQUALITY_REPORT` (no approved jafnréttisáætlun and no
+unexpired certificate). There is no timing restriction — a company may file
+however far out its current deadline is.
 
 ## Organization
 
@@ -25,10 +28,10 @@ Directorate of Equality (Jafnréttisstofa).
 ## State flow
 
 - **`prerequisites`** — collects consent and triggers the external data
-  providers (company data, blank Excel template, active equality report
-  check, etc.). Branches to either `draft` or `notAllowed` depending on
-  whether the applicant has an active equality report
-  (`hasActiveEqualityReport`).
+  providers (company data, blank Excel template, salary report eligibility
+  check, etc.). Branches to either `draft` or `notAllowed` on DMR's
+  eligibility pre-flight (`isSalaryReportEligible`), which checks the
+  equality obligation.
 - **`notAllowed`** — terminal state shown when the applicant isn't eligible.
 - **`draft`** — the main form: company details, criteria/sub-criteria
   weighting, employee data (imported or entered manually), job classification

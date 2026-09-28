@@ -59,6 +59,15 @@ export type UpdateCaseFile = {
   rulingFileId?: string | null
 }
 
+// Where a copied case file points: the S3 key its own object was copied to,
+// and the copies of the defendant and civil claimant the original referenced,
+// if any.
+export type CopyCaseFileTarget = {
+  key: string
+  defendantId?: string
+  civilClaimantId?: string
+}
+
 // Sequelize returns [affectedRows, rows] from update; naming the two halves
 // keeps the tuple from leaking to callers.
 export type UpdatedCaseFiles = {
@@ -331,6 +340,324 @@ export class CaseFileRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error resetting the state of the case files of case ${caseId} that are stored in court:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The files of a case in the given categories. Which categories is the
+  // caller's decision - the copy of a case takes only the prosecution's.
+  // Deleted files are soft-deleted and stay in the table, so they are excluded
+  // here: a copy of them would be a live file again.
+  async findAllByCaseAndCategories(
+    caseId: string,
+    categories: CaseFileCategory[],
+    options: { transaction: Transaction },
+  ): Promise<CaseFile[]> {
+    try {
+      this.logger.debug(
+        `Finding the case files of case ${caseId} in ${categories.length} categories`,
+      )
+
+      const caseFiles = await this.caseFileModel.findAll({
+        where: {
+          caseId,
+          category: categories,
+          state: { [Op.not]: CaseFileState.DELETED },
+        },
+        transaction: options.transaction,
+      })
+
+      this.logger.debug(
+        `Found ${caseFiles.length} case files of case ${caseId} in ${categories.length} categories`,
+      )
+
+      return caseFiles
+    } catch (error) {
+      this.logger.error(
+        `Error finding the case files of case ${caseId} in ${categories.length} categories:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Creates the row for a copy of a case file on another case. The copy is a
+  // fully independent draft: it points at its own S3 object (the caller copies
+  // the object and supplies the new key), goes back to being stored only in
+  // RVG, and loses the hash, which was computed for the original key. The
+  // police file id is kept so a file already fetched from the police system
+  // (LÖKE) is not offered for re-upload on the copy.
+  async copyToCase(
+    sourceFile: CaseFile,
+    newCaseId: string,
+    target: CopyCaseFileTarget,
+    options: { transaction: Transaction },
+  ): Promise<CaseFile> {
+    try {
+      this.logger.debug(
+        `Copying case file ${sourceFile.id} of case ${sourceFile.caseId} to case ${newCaseId}`,
+      )
+
+      return await this.caseFileModel.create(
+        {
+          ...sourceFile.toJSON(),
+          id: undefined,
+          caseId: newCaseId,
+          key: target.key,
+          state: CaseFileState.STORED_IN_RVG,
+          defendantId: target.defendantId,
+          civilClaimantId: target.civilClaimantId,
+          policeFileId: sourceFile.policeFileId,
+          hash: undefined,
+          hashAlgorithm: undefined,
+        },
+        { transaction: options.transaction },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying case file ${sourceFile.id} of case ${sourceFile.caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Moves the files of a defendant in the given categories to another case,
+  // when the defendant is split off into a case of their own. The rows move as
+  // they are - same S3 object, same state - since a file leaves with its
+  // defendant rather than being duplicated. Returns the number of files moved.
+  async moveAllForDefendantToCase(
+    caseId: string,
+    defendantId: string,
+    newCaseId: string,
+    categories: CaseFileCategory[],
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Moving the case files of defendant ${defendantId} in ${categories.length} categories from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        { caseId: newCaseId },
+        {
+          where: { caseId, defendantId, category: categories },
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Moved ${numberOfAffectedRows} case files of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error moving the case files of defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Copies the files of a case that are linked to no defendant, in the given
+  // categories, to another case as new rows. Unlike copyToCase the copy is not
+  // an independent draft: it keeps the original's S3 key, state and hash,
+  // because both cases need the same document. Deleted files are soft-deleted
+  // and stay in the table, so they are excluded. When a civilClaimantIdMap is
+  // given (on split), files that point at a civil claimant missing from the
+  // map are skipped, and copied claimant references are remapped.
+  async copyAllWithoutDefendantToCase(
+    caseId: string,
+    newCaseId: string,
+    categories: CaseFileCategory[],
+    options: {
+      transaction: Transaction
+      civilClaimantIdMap?: ReadonlyMap<string, string>
+    },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the case files linked to no defendant in ${categories.length} categories of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const caseFiles = await this.caseFileModel.findAll({
+        where: {
+          caseId,
+          defendantId: null,
+          category: categories,
+          state: { [Op.not]: CaseFileState.DELETED },
+        },
+        transaction: options.transaction,
+      })
+
+      const { civilClaimantIdMap } = options
+
+      const filesToCopy = civilClaimantIdMap
+        ? caseFiles.filter(
+            (caseFile) =>
+              !caseFile.civilClaimantId ||
+              civilClaimantIdMap.has(caseFile.civilClaimantId),
+          )
+        : caseFiles
+
+      await Promise.all(
+        filesToCopy.map((caseFile) =>
+          this.caseFileModel.create(
+            {
+              ...caseFile.toJSON(),
+              id: undefined,
+              caseId: newCaseId,
+              civilClaimantId:
+                caseFile.civilClaimantId && civilClaimantIdMap
+                  ? civilClaimantIdMap.get(caseFile.civilClaimantId)
+                  : caseFile.civilClaimantId,
+            },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${filesToCopy.length} case files linked to no defendant of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the case files linked to no defendant of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // A civil claimant's files go with the claimant. Files are soft-deleted, so
+  // the row stays for anything that references it, but the claimant reference
+  // has to be cleared: the foreign key does not cascade, and a soft-deleted row
+  // still pointing at the claimant would block the claimant's own delete.
+  async deleteAllForCivilClaimant(
+    caseId: string,
+    civilClaimantId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the case files of civil claimant ${civilClaimantId} of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          civilClaimantId: null,
+        },
+        {
+          where: { caseId, civilClaimantId },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the case files of civil claimant ${civilClaimantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async deleteAllForCivilClaimantsOfCase(
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting the case files of all civil claimants of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.caseFileModel.update(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          civilClaimantId: null,
+        },
+        {
+          where: { caseId, civilClaimantId: { [Op.not]: null } },
+          transaction: options.transaction,
+        },
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error deleting the case files of all civil claimants of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // After defendant files have been moved onto a split case, remap civil
+  // claimant references through the given map from original claimant ids to
+  // their copies, and clear pointers at claimants that were not copied with
+  // this defendant so they do not keep a link into the original case.
+  async remapCivilClaimantIdsForCase(
+    caseId: string,
+    civilClaimantIdMap: ReadonlyMap<string, string>,
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Remapping civil claimant references on case files of case ${caseId}`,
+      )
+
+      await Promise.all(
+        [...civilClaimantIdMap.entries()].map(
+          ([oldCivilClaimantId, newCivilClaimantId]) =>
+            this.caseFileModel.update(
+              { civilClaimantId: newCivilClaimantId },
+              {
+                where: {
+                  caseId,
+                  civilClaimantId: oldCivilClaimantId,
+                },
+                transaction: options.transaction,
+              },
+            ),
+        ),
+      )
+
+      const remappedCivilClaimantIds = [...civilClaimantIdMap.values()]
+
+      await this.caseFileModel.update(
+        { civilClaimantId: null },
+        {
+          where: {
+            caseId,
+            civilClaimantId:
+              remappedCivilClaimantIds.length > 0
+                ? { [Op.notIn]: remappedCivilClaimantIds }
+                : { [Op.ne]: null },
+          },
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Remapped civil claimant references on case files of case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error remapping civil claimant references on case files of case ${caseId}:`,
         { error },
       )
 

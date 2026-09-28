@@ -1,4 +1,3 @@
-// TODO: Add tests
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
@@ -719,12 +718,17 @@ export const isCourtSessionValid = (
 // Each merged case with documents in a session gets its own entries booking in
 // the court record, and each is required. The set is derived from the filed
 // documents rather than from the strings, so a merged case that has never been
-// written about is missing rather than absent.
+// written about is missing rather than absent. Mirrors the backend's
+// courtSession.service.validateMergedCaseEntriesComplete, which reads the same
+// documents: the copies a merged case contributed to the session, each naming
+// the case it came from.
 export const areMergedCaseEntriesComplete = (
   courtSession: CourtSessionResponse,
 ): boolean => {
   const mergedCaseIds = new Set(
-    courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+    courtSession.filedDocuments?.flatMap((document) =>
+      document.mergedFromCaseId ? [document.mergedFromCaseId] : [],
+    ),
   )
 
   return Array.from(mergedCaseIds).every(

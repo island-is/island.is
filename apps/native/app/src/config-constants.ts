@@ -32,8 +32,6 @@ export const config = {
     '@island.is/health/payments',
     '@island.is/health/rights-status',
     '@island.is/health/medicines',
-    '@island.is/health/vaccinations',
-    '@island.is/health/organ-donation',
     '@island.is/licenses:barcode',
     '@island.is/auth/passkeys',
   ],

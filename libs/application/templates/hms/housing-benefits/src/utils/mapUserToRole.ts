@@ -1,13 +1,8 @@
-import {
-  Application,
-  ApplicationRole,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { Application, ApplicationRole } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
-import { DEV_INSTITUTION_TESTER_NATIONAL_ID, Roles } from './constants'
+import { Roles } from './constants'
 import { getRejectedAssigneeNationalIds } from './assigneeRejectionUtils'
-import { isHousingBenefitsNonProduction } from './prerequisiteMockDataUtils'
 
 const hasAssigneeCompletedPrereq = (
   application: Application,
@@ -50,18 +45,6 @@ export const mapUserToRole = (
   const normalizedNationalId = kennitala.isValid(nationalId)
     ? kennitala.sanitize(nationalId)
     : nationalId
-
-  const isHmsInstitution =
-    normalizedNationalId ===
-    kennitala.sanitize(InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN)
-  const isDevInstitutionTester =
-    isHousingBenefitsNonProduction() &&
-    normalizedNationalId ===
-      kennitala.sanitize(DEV_INSTITUTION_TESTER_NATIONAL_ID)
-
-  if (isHmsInstitution || isDevInstitutionTester) {
-    return Roles.INSTITUTION
-  }
 
   if (
     nationalId === application.applicant ||

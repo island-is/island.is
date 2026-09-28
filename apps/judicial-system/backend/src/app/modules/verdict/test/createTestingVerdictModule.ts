@@ -105,6 +105,13 @@ export const createTestingVerdictModule = async () => {
 
   const fileService = verdictModule.get<FileService>(FileService)
 
+  const pdfService = verdictModule.get<PdfService>(PdfService)
+
+  const defendantService = verdictModule.get<DefendantService>(DefendantService)
+
+  const internalCaseService =
+    verdictModule.get<InternalCaseService>(InternalCaseService)
+
   const verdictController =
     verdictModule.get<VerdictController>(VerdictController)
 
@@ -122,6 +129,9 @@ export const createTestingVerdictModule = async () => {
     policeService,
     eventService,
     fileService,
+    pdfService,
+    defendantService,
+    internalCaseService,
     verdictRepositoryService,
     caseRepositoryService,
     sequelize,

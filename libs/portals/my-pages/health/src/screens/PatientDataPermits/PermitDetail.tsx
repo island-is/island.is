@@ -16,6 +16,7 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
@@ -85,8 +86,8 @@ const PermitDetail: React.FC = () => {
         <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
       }
       serviceProvider={{
-        slug: 'landlaeknir',
-        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaPatientPermitsTooltip),
       }}
       buttonGroup={
         !loading && !error
@@ -167,7 +168,7 @@ const PermitDetail: React.FC = () => {
           <Text variant="eyebrow" color="purple400" marginBottom={2}>
             {formatMessage(messages.information)}
           </Text>
-          <InfoLineStack>
+          <InfoLineStack space={[0, 0, 2]}>
             <InfoLine
               label={formatMessage(messages.referralFrom) ?? ''}
               content={formatMessage(messages.healthDirectorate)}

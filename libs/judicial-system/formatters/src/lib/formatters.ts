@@ -106,6 +106,21 @@ export const normalizeAndFormatNationalId = (
   return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
 }
 
+/** Replaces Þjóðskrá/LÖKE placeholder "Ótilgreindu" with clearer wording. */
+export const normalizePersonAddress = <T extends string | null | undefined>(
+  address: T,
+): T | 'ótilgreindu lögheimili' => {
+  if (address === null || address === undefined) {
+    return address
+  }
+
+  if (address.trim().toLowerCase() === 'ótilgreindu') {
+    return 'ótilgreindu lögheimili'
+  }
+
+  return address
+}
+
 export const getInitials = (name?: string | null): string | undefined => {
   if (!name?.trim()) return undefined
 

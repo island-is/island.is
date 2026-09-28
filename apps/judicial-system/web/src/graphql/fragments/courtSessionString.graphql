@@ -1,0 +1,7 @@
+fragment CourtSessionStringFields on CourtSessionString {
+  id
+  courtSessionId
+  mergedCaseId
+  stringType
+  value
+}

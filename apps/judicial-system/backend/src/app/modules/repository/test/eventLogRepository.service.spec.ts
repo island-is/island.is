@@ -1,3 +1,5 @@
+import { Transaction } from 'sequelize'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -10,11 +12,17 @@ import { EventLogRepositoryService } from '../services/eventLogRepository.servic
 
 describe('EventLogRepositoryService', () => {
   let service: EventLogRepositoryService
-  let model: { findOne: jest.Mock; create: jest.Mock; count: jest.Mock }
+  let model: {
+    findOne: jest.Mock
+    findAll: jest.Mock
+    create: jest.Mock
+    count: jest.Mock
+  }
 
   beforeEach(async () => {
     model = {
       findOne: jest.fn().mockResolvedValue(null),
+      findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       count: jest.fn().mockResolvedValue([]),
     }
@@ -88,6 +96,47 @@ describe('EventLogRepositoryService', () => {
 
       await expect(
         service.existsForCaseAndType(EventType.LOGIN, 'some-case-id'),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('findLatestForCaseAndTypes', () => {
+    const eventTypes = [
+      EventType.CASE_SENT_TO_COURT,
+      EventType.INDICTMENT_CONFIRMED,
+    ]
+
+    it('reads the newest event of any of the types in the given transaction', async () => {
+      const transaction = {} as never
+      const eventLog = { id: 'some-event-log-id' }
+      model.findOne.mockResolvedValueOnce(eventLog)
+
+      const result = await service.findLatestForCaseAndTypes(
+        'some-case-id',
+        eventTypes,
+        { transaction },
+      )
+
+      expect(model.findOne).toHaveBeenCalledWith({
+        where: { caseId: 'some-case-id', eventType: eventTypes },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+      expect(result).toBe(eventLog)
+    })
+
+    it('returns null when the case has no such event', async () => {
+      expect(
+        await service.findLatestForCaseAndTypes('some-case-id', eventTypes),
+      ).toBeNull()
+    })
+
+    it('rethrows when the lookup fails', async () => {
+      const error = new Error('Some error')
+      model.findOne.mockRejectedValueOnce(error)
+
+      await expect(
+        service.findLatestForCaseAndTypes('some-case-id', eventTypes),
       ).rejects.toThrow(error)
     })
   })
@@ -174,6 +223,90 @@ describe('EventLogRepositoryService', () => {
 
       await expect(
         service.countLoginsByNationalIds(['some-national-id']),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyByTypesToCase', () => {
+    const caseId = 'some-case-id'
+    const newCaseId = 'some-new-case-id'
+    const transaction = {} as Transaction
+    const eventTypes = [
+      EventType.INDICTMENT_CONFIRMED,
+      EventType.CASE_RECEIVED_BY_COURT,
+    ]
+
+    it('copies the event logs of the given types to the new case as new rows, timestamps included', async () => {
+      const created = new Date('2026-01-01T09:00:00Z')
+      model.findAll.mockResolvedValueOnce([
+        {
+          toJSON: () => ({
+            id: 'some-event-log-id',
+            caseId,
+            eventType: EventType.INDICTMENT_CONFIRMED,
+            created,
+            userName: 'Prosecutor',
+          }),
+        },
+        {
+          toJSON: () => ({
+            id: 'other-event-log-id',
+            caseId,
+            eventType: EventType.CASE_RECEIVED_BY_COURT,
+            created,
+          }),
+        },
+      ])
+
+      await service.copyByTypesToCase(caseId, newCaseId, eventTypes, {
+        transaction,
+      })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId, eventType: eventTypes },
+        transaction,
+      })
+      expect(model.create).toHaveBeenCalledTimes(2)
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          eventType: EventType.INDICTMENT_CONFIRMED,
+          created,
+          userName: 'Prosecutor',
+        },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          eventType: EventType.CASE_RECEIVED_BY_COURT,
+          created,
+        },
+        { transaction },
+      )
+    })
+
+    it('copies nothing when the case has no event logs of those types', async () => {
+      await service.copyByTypesToCase(caseId, newCaseId, eventTypes, {
+        transaction,
+      })
+
+      expect(model.create).not.toHaveBeenCalled()
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { toJSON: () => ({ id: 'some-event-log-id' }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyByTypesToCase(caseId, newCaseId, eventTypes, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })

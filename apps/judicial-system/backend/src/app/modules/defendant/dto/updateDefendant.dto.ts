@@ -156,6 +156,16 @@ export class UpdateDefendantDto {
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
+  // Whether a changed review decision should also file or withdraw the
+  // prosecution's verdict appeal. Set by the API, which reads the
+  // INDICTMENT_APPEAL feature; the backend never reads the feature itself, so
+  // an environment where it is hidden simply never asks for this. Not a
+  // defendant field - it is stripped before the update reaches the database.
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly registerVerdictAppeal?: boolean
+
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })

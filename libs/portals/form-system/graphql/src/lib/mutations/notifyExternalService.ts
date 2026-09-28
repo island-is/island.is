@@ -6,8 +6,20 @@ export const NOTIFY_EXTERNAL_SERVICE = gql`
     $input: FormSystemNotificationInput!
   ) {
     notifyFormSystemExternalSystem(input: $input) {
+      operationSuccessful
       screen {
         ...Screen
+      }
+      screenError {
+        hasError
+        title {
+          is
+          en
+        }
+        message {
+          is
+          en
+        }
       }
     }
   }

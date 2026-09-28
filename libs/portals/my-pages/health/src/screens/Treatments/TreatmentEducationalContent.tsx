@@ -1,9 +1,9 @@
-import { Box, Input, Stack, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
   m,
@@ -15,18 +15,18 @@ import { messages } from '../../lib/messages'
 import { useGetHealthTreatmentDocumentsQuery } from './TreatmentEducationalContent.generated'
 
 type UseParams = {
-  id: string
+  treatmentId: string
 }
 
 const TreatmentEducationalContent = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
-  const { id } = useParams() as UseParams
+  const { treatmentId } = useParams() as UseParams
   const [searchQuery, setSearchQuery] = useState('')
 
   const { data, loading, error } = useGetHealthTreatmentDocumentsQuery({
-    variables: { treatmentId: id },
+    variables: { treatmentId },
   })
 
   // One card per link; the parent document supplies the sent date and a
@@ -39,6 +39,7 @@ const TreatmentEducationalContent = () => {
           link.label?.trim() ||
           document.title?.trim() ||
           formatMessage(m.healthTreatmentEducationalContent),
+        groupName: document.groupName?.trim() || undefined,
         sentAt: document.sentAt,
         href: link.href,
       })),
@@ -54,9 +55,10 @@ const TreatmentEducationalContent = () => {
       title={formatMessage(m.healthTreatmentEducationalContent)}
       intro={messages.educationalContentIntro}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(messages.landlaeknirTreatmentTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
       }}
+      desktopContentSpan="10/12"
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
@@ -85,26 +87,36 @@ const TreatmentEducationalContent = () => {
                 <Box
                   key={card.key}
                   background="white"
-                  border="standard"
                   borderColor="blue200"
                   borderRadius="large"
-                  padding={3}
+                  borderWidth="standard"
+                  paddingX={[3, 3, 4]}
+                  paddingY={3}
                 >
+                  {card.groupName && (
+                    <Box marginBottom={1}>
+                      <Text variant="eyebrow" color="purple400">
+                        {card.groupName}
+                      </Text>
+                    </Box>
+                  )}
                   <Box
                     display="flex"
+                    flexDirection={['column', 'row']}
                     justifyContent="spaceBetween"
-                    alignItems="flexEnd"
-                    columnGap={2}
+                    alignItems={['flexStart', 'flexEnd']}
+                    columnGap={3}
+                    rowGap={2}
                   >
                     <Box>
-                      <Text variant="h4" as="h2" marginBottom={3}>
+                      <Text variant="h4" as="h2">
                         {card.title}
                       </Text>
-                      <Tag variant="purple" outlined disabled>
+                      <Text paddingTop={1}>
                         {formatMessage(messages.sent, {
                           date: formatDate(card.sentAt),
                         })}
-                      </Tag>
+                      </Text>
                     </Box>
                     <LinkButton
                       to={card.href}

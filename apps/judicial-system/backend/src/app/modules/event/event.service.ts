@@ -21,6 +21,7 @@ import {
 
 import { type Case, DateLog } from '../repository'
 import { eventModuleConfig } from './event.config'
+import { serializeErrorForSlack } from './event.logic'
 
 const errorEmojis = [
   ':sos:',
@@ -359,7 +360,7 @@ export class EventService {
                 type: 'mrkdwn',
                 text: `${
                   errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
-                } *${message}:*\n${infoText}>${JSON.stringify(reason)}`,
+                } *${message}:*\n${infoText}>${serializeErrorForSlack(reason)}`,
               },
             },
           ],

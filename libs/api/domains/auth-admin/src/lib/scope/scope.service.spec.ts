@@ -78,6 +78,13 @@ const createFindAllScopesMock = (environment: Environment, len = 3) =>
     environment,
   }))
 
+// The update endpoint answers with an empty body, so only the status matters.
+const createMockVoidApiResponse = (status: number) =>
+  Promise.resolve({
+    raw: { status },
+    value: () => Promise.resolve(undefined),
+  })
+
 const createMockAdminApi = (
   createData: AdminCreateScopeDto,
   findAllData: AdminScopeDTO[],
@@ -96,6 +103,9 @@ const createMockAdminApi = (
   meScopeClientsControllerFindAllRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse([])),
+  meScopeClientsControllerUpdateScopeClientsRaw: jest
+    .fn()
+    .mockResolvedValue(createMockVoidApiResponse(200)),
   meScopeUsersControllerFindUsersByScopeRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse([])),
@@ -151,6 +161,10 @@ describe('ScopeService', () => {
     mockAdminDevApi.meScopeClientsControllerFindAllRaw.mockClear()
     mockAdminStagingApi.meScopeClientsControllerFindAllRaw.mockClear()
     mockAdminProdApi.meScopeClientsControllerFindAllRaw.mockClear()
+    // Update scope clients
+    mockAdminDevApi.meScopeClientsControllerUpdateScopeClientsRaw.mockClear()
+    mockAdminStagingApi.meScopeClientsControllerUpdateScopeClientsRaw.mockClear()
+    mockAdminProdApi.meScopeClientsControllerUpdateScopeClientsRaw.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -393,6 +407,48 @@ describe('ScopeService', () => {
           clientId: '@island.is/native',
           clientType: 'native',
           displayName: [{ locale: 'is', value: 'App' }],
+        },
+      ])
+    })
+
+    it('should report a successful client update as a successful environment', async () => {
+      // Act
+      const result = await scopeService.updateScopeClients(currentUser, {
+        tenantId: TENANT_ID,
+        scopeName: '@island.is/scope1',
+        addedClientIds: ['@island.is/web'],
+        removedClientIds: [],
+        environments: [Environment.Development],
+      })
+
+      // Assert
+      expect(result).toEqual({
+        environments: [Environment.Development],
+      })
+    })
+
+    it('should report a 204 client update as a failed environment', async () => {
+      // Arrange
+      // The admin api answers 204 when the scope does not belong to the tenant.
+      mockAdminDevApi.meScopeClientsControllerUpdateScopeClientsRaw.mockResolvedValueOnce(
+        createMockVoidApiResponse(204),
+      )
+
+      // Act
+      const result = await scopeService.updateScopeClients(currentUser, {
+        tenantId: TENANT_ID,
+        scopeName: '@other.is/scope',
+        addedClientIds: ['@island.is/web'],
+        removedClientIds: [],
+        environments: [Environment.Development],
+      })
+
+      // Assert
+      expect(result.environments).toBeUndefined()
+      expect(result.failedEnvironments).toEqual([
+        {
+          environment: Environment.Development,
+          message: expect.stringContaining('does not belong to tenant'),
         },
       ])
     })

@@ -42,16 +42,15 @@ export class UserNotificationBirthday18WorkerService {
             ],
           }
           const id = await this.queue.add(body)
-          const flattenedArgs: Record<string, string> = {}
-          for (const arg of body.args) {
-            flattenedArgs[arg.key] = arg.value
-          }
           this.logger.info('Message queued', {
             messageId: id,
-            ...flattenedArgs,
-            ...body,
-            args: {}, // Remove args, since they're in a better format in `flattenedArgs`
-            queue: { url: this.queue.url, name: this.queue.queueName },
+            templateId: body.templateId,
+            senderId: body.senderId,
+            queueName: this.queue.queueName,
+            args: body.args.map(({ key, value }) => ({
+              key,
+              length: value.length,
+            })),
           })
         }),
     ).catch((e) =>

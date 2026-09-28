@@ -128,3 +128,41 @@ describe('subsidiaries schema', () => {
     })
   })
 })
+
+// The per-group "Vista" button writes the plan straight to answers, and every
+// PUT re-runs this schema over what it is handed. `outlierGroups` cannot take
+// that write — its refinement demands a filled-in group — so the button writes
+// `outlierGroupsDraft` instead, and these are the shapes a screen mid-edit
+// really produces.
+const parseSalaryAnalysis = (value: unknown) =>
+  dataSchema.shape.salaryAnalysis.safeParse(value)
+
+describe('salaryAnalysis.outlierGroupsDraft', () => {
+  const BLANK_GROUP = {
+    name: '',
+    reason: '',
+    action: '',
+    remedyDate: '',
+    signatureName: '',
+    signatureRole: '',
+    employeeOrdinals: [1, 2],
+  }
+
+  it('accepts a group that has not been filled in yet', () => {
+    expect(
+      parseSalaryAnalysis({ outlierGroupsDraft: [BLANK_GROUP] }).success,
+    ).toBe(true)
+  })
+
+  it('accepts a group saved without its members', () => {
+    expect(parseSalaryAnalysis({ outlierGroupsDraft: [{}] }).success).toBe(true)
+  })
+
+  // The point of the separate key: the same content under `outlierGroups` is
+  // what the submit has to reject.
+  it('still requires the real answer to be complete', () => {
+    expect(parseSalaryAnalysis({ outlierGroups: [BLANK_GROUP] }).success).toBe(
+      false,
+    )
+  })
+})
