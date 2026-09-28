@@ -175,10 +175,10 @@ describe('case table includes are isolated from each other', () => {
   // against itself and pass either way.
   it('leaves the cell generators as they were declared', () => {
     jest.isolateModules(() => {
-        const { caseTableCellGenerators } = require('./caseTable.cellGenerators')
+      const { caseTableCellGenerators } = require('./caseTable.cellGenerators')
       const { getAllIncludes } = require('./caseTable.utils')
       const { caseTableWhereOptions } = require('./caseTable.whereOptions')
-  
+
       const before = serialize(caseTableCellGenerators)
 
       for (const tableType of allTableTypes) {
