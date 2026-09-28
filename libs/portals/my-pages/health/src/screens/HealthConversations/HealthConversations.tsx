@@ -456,12 +456,12 @@ const HealthConversations = () => {
                         fontWeight={item.isRead ? 'regular' : 'medium'}
                       >
                         {item.title}
-                        {!item.isRead && (
-                          <VisuallyHidden>
-                            {` - ${formatMessage(m.notificationUnread)}`}
-                          </VisuallyHidden>
-                        )}
                       </Text>
+                      {!item.isRead && (
+                        <VisuallyHidden>
+                          {` - ${formatMessage(m.notificationUnread)}`}
+                        </VisuallyHidden>
+                      )}
                     </Box>
                   </Link>
 
