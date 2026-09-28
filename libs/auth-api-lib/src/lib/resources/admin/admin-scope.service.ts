@@ -219,6 +219,8 @@ export class AdminScopeService {
       where: {
         domainName: tenantId,
         enabled: true,
+        allowExplicitDelegationGrant: true,
+        archived: null,
       },
       attributes: ['name', 'displayName', 'description'],
     })

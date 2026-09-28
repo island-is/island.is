@@ -44,7 +44,11 @@ export class TenantsService {
           as: 'scopes',
           attributes: [],
           required: true,
-          where: { enabled: true },
+          where: {
+            enabled: true,
+            allowExplicitDelegationGrant: true,
+            archived: null,
+          },
         },
       ],
     })
