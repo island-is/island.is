@@ -16,7 +16,7 @@ import { messages } from '../../lib/messages'
 import { useGetHealthTreatmentDocumentsQuery } from './TreatmentEducationalContent.generated'
 
 type UseParams = {
-  id: string
+  treatmentId: string
 }
 
 const TreatmentEducationalContent = () => {
@@ -24,11 +24,11 @@ const TreatmentEducationalContent = () => {
 
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
-  const { id } = useParams() as UseParams
+  const { treatmentId } = useParams() as UseParams
   const [searchQuery, setSearchQuery] = useState('')
 
   const { data, loading, error } = useGetHealthTreatmentDocumentsQuery({
-    variables: { treatmentId: id },
+    variables: { treatmentId },
   })
 
   // One card per link; the parent document supplies the sent date and a

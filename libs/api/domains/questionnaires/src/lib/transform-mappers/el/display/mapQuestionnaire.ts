@@ -18,6 +18,11 @@ import { mapDraftRepliesToAnswers } from '../draft/mapToDraft'
 import { HealthDirectorateQuestionDto } from '../types'
 import { mapGroupToSection } from './mapSection'
 
+const isExpired = (q: Pick<QuestionnaireBaseDto, 'disabled' | 'expiryDate'>) =>
+  q.disabled || (!!q.expiryDate && new Date(q.expiryDate) < new Date())
+
+const isSubmittable = (q: QuestionnaireDetailDto) => q.canSubmit && !q.disabled
+
 const mapBaseInformation = (
   q: QuestionnaireDetailDto,
   formatMessage: FormatMessage,
@@ -25,20 +30,20 @@ const mapBaseInformation = (
   id: q.questionnaireId,
   title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
   sentDate: q.createdDate?.toISOString() ?? '',
-  status:
-    q.expiryDate && new Date(q.expiryDate) < new Date()
-      ? QuestionnairesStatusEnum.expired
-      : q.hasDraft
-      ? QuestionnairesStatusEnum.draft
-      : q.submissions?.length > 0
-      ? QuestionnairesStatusEnum.answered
-      : QuestionnairesStatusEnum.notAnswered,
+  status: isExpired(q)
+    ? QuestionnairesStatusEnum.expired
+    : q.hasDraft
+    ? QuestionnairesStatusEnum.draft
+    : q.submissions?.length > 0
+    ? QuestionnairesStatusEnum.answered
+    : QuestionnairesStatusEnum.notAnswered,
   description: q.message ?? undefined,
   formId: q.questionnaireId,
   organization: QuestionnairesOrganizationEnum.EL,
   lastSubmissionId: q.lastCreatedSubmissionId,
   lastSubmitted: q.lastSubmitted ?? undefined,
   senderGroupName: q.senderGroupName ?? undefined,
+  disabled: q.disabled,
 })
 
 export const mapElQuestionnaireOverview = (
@@ -48,7 +53,7 @@ export const mapElQuestionnaireOverview = (
   baseInformation: mapBaseInformation(q, formatMessage),
   sender: q.sender ?? undefined,
   expirationDate: q.expiryDate ?? undefined,
-  canSubmit: q.canSubmit,
+  canSubmit: isSubmittable(q),
   submissions: q.submissions?.map((sub) => ({
     id: sub.id,
     createdAt: sub.createdDate ?? undefined,
@@ -74,7 +79,7 @@ export const mapElQuestionnaireForm = (
     baseInformation: mapBaseInformation(q, formatMessage),
     sender: q.sender ?? undefined,
     expirationDate: q.expiryDate ?? undefined,
-    canSubmit: q.canSubmit,
+    canSubmit: isSubmittable(q),
     submissions: q.submissions?.map((sub) => ({
       id: sub.id,
       createdAt: sub.createdDate ?? undefined,
@@ -94,14 +99,13 @@ export const mapElQuestionnaireListItem = (
   formatMessage: FormatMessage,
 ): QuestionnairesBaseItem => {
   const now = new Date()
-  const status =
-    q.expiryDate && new Date(q.expiryDate) < now
-      ? QuestionnairesStatusEnum.expired
-      : q.hasDraft
-      ? QuestionnairesStatusEnum.draft
-      : q.numSubmitted > 0 || q.lastSubmitted
-      ? QuestionnairesStatusEnum.answered
-      : QuestionnairesStatusEnum.notAnswered
+  const status = isExpired(q)
+    ? QuestionnairesStatusEnum.expired
+    : q.hasDraft
+    ? QuestionnairesStatusEnum.draft
+    : q.numSubmitted > 0 || q.lastSubmitted
+    ? QuestionnairesStatusEnum.answered
+    : QuestionnairesStatusEnum.notAnswered
 
   return {
     id: q.questionnaireId,
@@ -113,6 +117,7 @@ export const mapElQuestionnaireListItem = (
     status,
     lastSubmitted: q.lastSubmitted,
     senderGroupName: q.senderGroupName ?? undefined,
+    disabled: q.disabled,
     canSubmitAgain:
       status === QuestionnairesStatusEnum.answered &&
       (q.numSubmissionsAllowed == null ||

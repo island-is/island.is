@@ -1991,6 +1991,14 @@ export const messages = defineMessages({
     defaultMessage: 'Veldu viðtakanda úr fellilistanum',
     id: 'sp.health:health-messages-new-select-recipient-placeholder',
   },
+  healthConversationsNewSubject: {
+    defaultMessage: 'Efni',
+    id: 'sp.health:health-messages-new-subject',
+  },
+  healthConversationsNewSubjectPlaceholder: {
+    defaultMessage: 'Sláðu inn efni skilaboðanna',
+    id: 'sp.health:health-messages-new-subject-placeholder',
+  },
   healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
@@ -2477,6 +2485,10 @@ export const messages = defineMessages({
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
   },
+  disabledQuestionnaire: {
+    defaultMessage: 'Afturkallaður',
+    id: 'sp.health:disabled-questionnaire',
+  },
   expiredQuestionnaires: {
     defaultMessage: 'Útrunnir',
     id: 'sp.health:expired-questionnaires',
@@ -2621,6 +2633,28 @@ export const messages = defineMessages({
   seeAllMessages: {
     defaultMessage: 'Sjá öll skilaboð',
     id: 'sp.health:see-all-messages',
+  },
+  allQuestionnaires: {
+    defaultMessage: 'Allir spurningalistar',
+    id: 'sp.health:all-questionnaires',
+  },
+  treatmentConversationsIntro: {
+    defaultMessage:
+      'Hér getur þú átt í samskiptum við meðferðarteymi vegna meðferðar þinnar.',
+    id: 'sp.health:treatment-conversations-intro',
+  },
+  treatmentQuestionnaires: {
+    defaultMessage: 'Spurningalistar vegna meðferðar',
+    id: 'sp.health:treatment-questionnaires',
+  },
+  treatmentQuestionnairesIntro: {
+    defaultMessage: 'Hér má finna spurningalista tengda meðferðinni þinni.',
+    id: 'sp.health:treatment-questionnaires-intro',
+  },
+  noTreatmentQuestionnaires: {
+    defaultMessage:
+      'Engir virkir spurningalistar eru vegna meðferðarinnar þinnar.',
+    id: 'sp.health:no-treatment-questionnaires',
   },
   educationalContentIntro: {
     defaultMessage:

@@ -3,7 +3,6 @@ import {
   GridColumn,
   GridRow,
   Inline,
-  Stack,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -16,11 +15,13 @@ import {
   LinkResolver,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
-import { useParams } from 'react-router-dom'
+import { generatePath, useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 import Appointments from '../HealthOverview/components/Appointments'
 import TreatmentLinkCard from './components/TreatmentLinkCard'
@@ -28,18 +29,18 @@ import TreatmentMessages from './components/TreatmentMessages'
 import { useGetHealthTreatmentQuery } from './TreatmentOverview.generated'
 
 type UseParams = {
-  id: string
+  treatmentId: string
 }
 
 const TreatmentOverview = () => {
   useNamespaces('sp.health')
 
   const { formatMessage } = useLocale()
-  const { id } = useParams() as UseParams
+  const { treatmentId } = useParams() as UseParams
 
   const { data, loading, error } = useGetHealthTreatmentQuery({
     fetchPolicy: 'cache-and-network',
-    variables: { id },
+    variables: { id: treatmentId },
   })
 
   const initialLoading = loading && !data
@@ -59,42 +60,58 @@ const TreatmentOverview = () => {
   const firstTwoAppointments =
     appointmentsData?.healthDirectorateAppointments?.data?.slice(0, 2) || []
 
+  const paths = useTreatmentScopedPaths()
+  const educationalContentPath = generatePath(
+    HealthPaths.HealthTreatmentEducationalContent,
+    { treatmentId },
+  )
+
+  const { value: messagesEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthMessagesPageEnabled,
+    false,
+  )
+  const { value: questionnairesEnabled } = useFeatureFlag(
+    Features.isServicePortalHealthQuestionnairesPageEnabled,
+    false,
+  )
+  const showMessages = messagesEnabled && !!treatment?.supportsMessaging
+
   const linkCards = [
-    {
-      label: formatMessage(messages.questionnaires),
-      to: HealthPaths.HealthQuestionnaires,
-      lastSentAt: treatment?.lastQuestionnaireSentAt,
-    },
-    {
-      label: formatMessage(m.healthTreatmentEducationalContent),
-      to: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
-      lastSentAt: treatment?.lastDocumentSentAt,
-    },
-  ]
-
-  // Carries the treatment id (matches the recipient's treatmentId) and the
-  // provider node so the new-message screen can preselect the recipient.
-  const newMessageHref = treatment?.responsibleNode
-    ? `${HealthPaths.HealthConversationsNew}?node=${encodeURIComponent(
-        treatment.responsibleNode,
-      )}&treatment=${encodeURIComponent(treatment.id)}`
-    : HealthPaths.HealthConversationsNew
-
-  const quickLinks = [
-    ...(treatment?.supportsMessaging
+    ...(questionnairesEnabled
       ? [
           {
-            href: HealthPaths.HealthConversations,
-            label: formatMessage(m.messages),
+            label: formatMessage(messages.questionnaires),
+            to: paths.questionnaires,
+            lastSentAt: treatment?.lastQuestionnaireSentAt,
           },
         ]
       : []),
     {
-      href: HealthPaths.HealthQuestionnaires,
-      label: formatMessage(messages.questionnaires),
+      label: formatMessage(m.healthTreatmentEducationalContent),
+      to: educationalContentPath,
+      lastSentAt: treatment?.lastDocumentSentAt,
     },
+  ]
+
+  const quickLinks = [
+    ...(showMessages
+      ? [
+          {
+            href: paths.conversations,
+            label: formatMessage(m.messages),
+          },
+        ]
+      : []),
+    ...(questionnairesEnabled
+      ? [
+          {
+            href: paths.questionnaires,
+            label: formatMessage(messages.questionnaires),
+          },
+        ]
+      : []),
     {
-      href: HealthPaths.HealthTreatmentEducationalContent.replace(':id', id),
+      href: educationalContentPath,
       label: formatMessage(m.healthTreatmentEducationalContent),
     },
   ]
@@ -132,44 +149,46 @@ const TreatmentOverview = () => {
               ))}
             </Inline>
           </Box>
-          <Stack space={6}>
-            <Box>
-              <Text
-                variant="eyebrow"
-                color="purple400"
-                fontWeight="semiBold"
-                marginBottom={2}
-              >
-                {formatMessage(m.myInfo)}
-              </Text>
-              <GridRow rowGap={2}>
-                {linkCards.map((card) => (
-                  <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
-                    <TreatmentLinkCard
-                      label={card.label}
-                      to={card.to}
-                      text={
-                        card.lastSentAt
-                          ? formatMessage(messages.lastSent, {
-                              date: formatDate(card.lastSentAt),
-                            })
-                          : undefined
-                      }
-                    />
-                  </GridColumn>
-                ))}
-              </GridRow>
-            </Box>
+          <Box>
+            <Text
+              variant="eyebrow"
+              color="purple400"
+              fontWeight="semiBold"
+              marginBottom={2}
+            >
+              {formatMessage(m.myInfo)}
+            </Text>
+            <GridRow rowGap={2}>
+              {linkCards.map((card) => (
+                <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
+                  <TreatmentLinkCard
+                    label={card.label}
+                    to={card.to}
+                    text={
+                      card.lastSentAt
+                        ? formatMessage(messages.lastSent, {
+                            date: formatDate(card.lastSentAt),
+                          })
+                        : undefined
+                    }
+                  />
+                </GridColumn>
+              ))}
+            </GridRow>
+          </Box>
 
-            {(treatment.recentConversations?.length ?? 0) > 0 && (
+          {messagesEnabled && (treatment.recentConversations?.length ?? 0) > 0 && (
+            <Box marginTop={[3, 3, 6]}>
               <TreatmentMessages
                 conversations={treatment.recentConversations ?? []}
                 newMessageHref={
-                  treatment.supportsMessaging ? newMessageHref : undefined
+                  showMessages ? paths.conversationsNew : undefined
                 }
               />
-            )}
+            </Box>
+          )}
 
+          <Box marginTop={6}>
             <Appointments
               data={{
                 data: { data: firstTwoAppointments },
@@ -178,7 +197,7 @@ const TreatmentOverview = () => {
               }}
               showLinkButton
             />
-          </Stack>
+          </Box>
         </>
       )}
     </IntroWrapper>
