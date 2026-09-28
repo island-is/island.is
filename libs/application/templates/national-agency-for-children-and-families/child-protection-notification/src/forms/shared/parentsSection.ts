@@ -23,7 +23,6 @@ import {
 } from '../../utils/childProtectionNotificationUtils'
 import {
   doesNotKnowParentIds,
-  isKnowsNationalId,
   isUnborn,
   knowsParentIds,
   showParentsSection,

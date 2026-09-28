@@ -79,7 +79,7 @@ export const parentsMessages = {
     description: {
       id: 'cpn.application:parents.guardians.description',
       defaultMessage:
-        'Forsjár- eða umsjáraðili er sá aðili sem fer með lögformleg fyrirsvar fyrir barn, ræður persónulegum högum og tekur ákvarðanir fyrir hönd þess eftir því sem aldur og þroski barns gefur tilefni til.',
+        'Forsjár- eða umsjáraðili er sá aðili sem fer með lögformlegt fyrirsvar fyrir barn, ræður persónulegum högum og tekur ákvarðanir fyrir hönd þess eftir því sem aldur og þroski barns gefur tilefni til.',
       description: 'Intro description for the guardians section',
     },
     radioLabel: {
