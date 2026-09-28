@@ -1,6 +1,7 @@
 import {
   Field,
   Float,
+  GraphQLISODateTime,
   ID,
   InterfaceType,
   ObjectType,
@@ -31,12 +32,11 @@ export class VmstApplicantEmployer {
 
 @ObjectType('VmstApplicantPeriod')
 export class VmstApplicantPeriod {
-  // ISO 8601 local date-time (`2026-05-01T00:00:00`), as sent by Galdur.
-  @Field(() => String)
-  from!: string
+  @Field(() => GraphQLISODateTime)
+  from!: Date
 
-  @Field(() => String, { nullable: true })
-  to?: string | null
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  to?: Date | null
 }
 
 const exhaustiveCheck = (param: never) => {

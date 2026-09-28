@@ -32,11 +32,22 @@ import {
   VmstApplicantCapitalIncomePayment,
   VmstApplicantTRPayment,
   VmstApplicantContractorJob,
+  VmstApplicantPeriod,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 import { maskString } from '@island.is/shared/utils'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@nestjs/config'
+
+// Galdur sends ISO 8601 local date-times without a timezone (`2026-05-01T00:00:00`);
+// convert to Date so the DateTime scalar can serialize them.
+const buildPeriod = (
+  from: string | null | undefined,
+  to: string | null | undefined,
+): VmstApplicantPeriod => ({
+  from: new Date(from ?? 0),
+  to: to == null ? null : new Date(to),
+})
 
 @Injectable()
 export class VMSTApplicationsService {
@@ -376,7 +387,7 @@ export class VMSTApplicationsService {
           (job): VmstApplicantIrregularJob => ({
             type: VmstApplicantIncomeRowType.IrregularJob,
             id: job.id ?? '',
-            period: { from: job.periodFrom ?? '', to: job.periodTo },
+            period: buildPeriod(job.periodFrom, job.periodTo),
             estimatedIncome: job.estimatedIncome ?? null,
             employer: {
               name: job.employerName ?? '',
@@ -388,7 +399,7 @@ export class VMSTApplicationsService {
           (job): VmstApplicantPartTimeJob => ({
             type: VmstApplicantIncomeRowType.PartTimeJob,
             id: job.id ?? '',
-            period: { from: job.periodFrom ?? '', to: job.periodTo },
+            period: buildPeriod(job.periodFrom, job.periodTo),
             estimatedIncome: job.estimatedIncome ?? null,
             employer: {
               name: job.employerName ?? '',
@@ -401,7 +412,7 @@ export class VMSTApplicationsService {
           (payment): VmstApplicantPensionPayment => ({
             type: VmstApplicantIncomeRowType.PensionPayment,
             id: payment.id ?? '',
-            period: { from: payment.periodFrom ?? '', to: payment.periodTo },
+            period: buildPeriod(payment.periodFrom, payment.periodTo),
             estimatedIncome: payment.estimatedIncome ?? null,
             incomeTypeId: payment.incomeTypeId ?? '',
             pensionFundId: payment.pensionFundId,
@@ -411,7 +422,7 @@ export class VMSTApplicationsService {
           (payment): VmstApplicantCapitalIncomePayment => ({
             type: VmstApplicantIncomeRowType.CapitalIncomePayment,
             id: payment.id ?? '',
-            period: { from: payment.periodFrom ?? '', to: payment.periodTo },
+            period: buildPeriod(payment.periodFrom, payment.periodTo),
             estimatedIncome: payment.estimatedIncome ?? null,
             incomeTypeId: payment.incomeTypeId ?? '',
           }),
@@ -420,7 +431,7 @@ export class VMSTApplicationsService {
           (payment): VmstApplicantTRPayment => ({
             type: VmstApplicantIncomeRowType.TRPayment,
             id: payment.id ?? '',
-            period: { from: payment.periodFrom ?? '', to: payment.periodTo },
+            period: buildPeriod(payment.periodFrom, payment.periodTo),
             estimatedIncome: payment.estimatedIncome ?? null,
             incomeTypeId: payment.incomeTypeId ?? '',
           }),
@@ -429,14 +440,14 @@ export class VMSTApplicationsService {
           (job): VmstApplicantContractorJob => ({
             type: VmstApplicantIncomeRowType.ContractorJob,
             id: job.id ?? '',
-            period: { from: job.startDate ?? '', to: job.endDate },
+            period: buildPeriod(job.startDate, job.endDate),
             estimatedIncome: null,
           }),
         ),
       ]
 
-      return rows.sort((a, b) =>
-        (b.period.from ?? '').localeCompare(a.period.from ?? ''),
+      return rows.sort(
+        (a, b) => b.period.from.getTime() - a.period.from.getTime(),
       )
     } catch (e) {
       if (e instanceof FetchError && e.status === 404) {
