@@ -59,6 +59,12 @@ const TenantScopes = ({
     },
   )
   const scopes = data?.publicAuthTenantScopes ?? []
+  const sortedScopes = [...scopes].sort((firstScope, secondScope) =>
+    getTranslation(firstScope.displayName, locale).localeCompare(
+      getTranslation(secondScope.displayName, locale),
+      locale,
+    ),
+  )
 
   if (loading) {
     return <SkeletonLoader height={160} />
@@ -89,7 +95,7 @@ const TenantScopes = ({
         </Table.Row>
       </Table.Head>
       <Table.Body>
-        {scopes.map((scope) => {
+        {sortedScopes.map((scope) => {
           const title = getTranslation(scope.displayName, locale)
           const description = getTranslation(scope.description, locale)
 
