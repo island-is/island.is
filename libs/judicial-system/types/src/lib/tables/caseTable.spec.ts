@@ -231,8 +231,9 @@ describe('public prosecution case tables', () => {
     ).toEqual(['Málsnúmer', 'Varnaraðili', 'Tegund', 'Frestur', 'Niðurstaða'])
   })
 
-  // "Sami og er í málalista yfirlesin mál" - the same column, not one that
-  // merely looks like it, so the two lists cannot drift into showing the
+  // The ticket asks for the same column the reviewed list uses, not one that
+  // merely looks like it - the title is shared by three column keys, so
+  // matching on the title alone would let the two lists drift into showing the
   // result differently.
   it('shows the result with the same column the reviewed list uses', () => {
     const inReview =
