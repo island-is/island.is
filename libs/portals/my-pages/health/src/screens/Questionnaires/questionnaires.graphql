@@ -5,10 +5,22 @@ fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
   description
   sentDate
   status
+  disabled
   lastSubmitted
   lastSubmissionId
   organization
   department
+  senderGroupName
+}
+
+fragment QuestionnaireListItem on QuestionnairesBaseItem {
+  id
+  title
+  description
+  sentDate
+  status
+  disabled
+  organization
   senderGroupName
 }
 
@@ -92,15 +104,7 @@ fragment QuestionnaireSection on QuestionnaireSection {
 query GetQuestionnaires($locale: String!) {
   questionnairesList(locale: $locale) {
     questionnaires {
-      id
-      title
-      description
-      sentDate
-      status
-      lastSubmitted
-      organization
-      department
-      senderGroupName
+      ...QuestionnaireListItem
     }
   }
 }
