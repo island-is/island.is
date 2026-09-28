@@ -21,10 +21,10 @@ export const TreatmentLinkCard = ({ label, to, text }: Props) => (
       height="full"
     >
       <Box>
-        <Text variant="h5" color="blue400">
+        <Text variant="h4" color="blue400">
           {label}
         </Text>
-        {text && <Text variant="medium">{text}</Text>}
+        {text && <Text>{text}</Text>}
       </Box>
       <Icon icon="arrowForward" color="blue400" size="small" />
     </Box>

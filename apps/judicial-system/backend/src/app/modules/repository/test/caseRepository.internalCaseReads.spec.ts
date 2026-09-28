@@ -13,6 +13,7 @@ import {
 import { createTestingRepositoryModule } from './createTestingRepositoryModule'
 
 import { Case } from '../models/case.model'
+import { User } from '../models/user.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 import {
@@ -34,12 +35,17 @@ describe('CaseRepositoryService - internal case reads', () => {
   const theCase = { id: uuid() } as Case
 
   let caseRepositoryService: CaseRepositoryService
-  let mockCaseModel: { findOne: jest.Mock; findAll: jest.Mock }
+  let mockCaseModel: {
+    findOne: jest.Mock
+    findAll: jest.Mock
+    count: jest.Mock
+  }
   let mockResolvePoliceCaseNumbersForCases: jest.Mock
 
   // The options the one read was made with
   const findAllOptions = () => mockCaseModel.findAll.mock.calls[0][0]
   const findOneOptions = () => mockCaseModel.findOne.mock.calls[0][0]
+  const countOptions = () => mockCaseModel.count.mock.calls[0][0]
 
   beforeEach(async () => {
     const {
@@ -52,6 +58,7 @@ describe('CaseRepositoryService - internal case reads', () => {
     mockCaseModel = caseModel as unknown as {
       findOne: jest.Mock
       findAll: jest.Mock
+      count: jest.Mock
     }
     mockResolvePoliceCaseNumbersForCases = (
       caseDefendantPoliceCaseNumberRepositoryService as jest.Mocked<CaseDefendantPoliceCaseNumberRepositoryService>
@@ -59,6 +66,7 @@ describe('CaseRepositoryService - internal case reads', () => {
 
     mockCaseModel.findAll.mockResolvedValue(cases)
     mockCaseModel.findOne.mockResolvedValue(theCase)
+    mockCaseModel.count.mockResolvedValue(3)
   })
 
   describe('findNextCaseToArchive', () => {
@@ -365,6 +373,35 @@ describe('CaseRepositoryService - internal case reads', () => {
       expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(cases, {
         transaction: undefined,
       })
+    })
+  })
+
+  describe('countIndictmentsAwaitingConfirmationForProsecutorsOffice', () => {
+    const prosecutorsOfficeId = uuid()
+    let result: number
+
+    beforeEach(async () => {
+      result =
+        await caseRepositoryService.countIndictmentsAwaitingConfirmationForProsecutorsOffice(
+          prosecutorsOfficeId,
+        )
+    })
+
+    it('should count only indictments waiting to be confirmed', () => {
+      expect(countOptions().where).toEqual({
+        type: CaseType.INDICTMENT,
+        state: CaseState.WAITING_FOR_CONFIRMATION,
+        '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
+      })
+      expect(result).toBe(3)
+    })
+
+    it('should find the office through the prosecutor who created the indictment', () => {
+      // An unconfirmed indictment has no prosecutors office of its own, so the
+      // office is only reachable through the creating prosecutor's join.
+      expect(countOptions().include).toEqual([
+        { model: User, as: 'creatingProsecutor' },
+      ])
     })
   })
 })

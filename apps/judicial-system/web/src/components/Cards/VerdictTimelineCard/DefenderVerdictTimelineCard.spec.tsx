@@ -58,7 +58,7 @@ describe('DefenderVerdictTimelineCard', () => {
   it('renders the heading, the defendant and the bullets', async () => {
     renderComponent(servedDefendant)
 
-    expect(await screen.findByText('Birting dóms')).toBeInTheDocument()
+    expect(await screen.findByText('Dómur')).toBeInTheDocument()
     expect(screen.getByText(name)).toBeInTheDocument()
     expect(screen.getByText('• Dómur birtur 01.06.2026')).toBeInTheDocument()
     expect(
@@ -116,7 +116,7 @@ describe('DefenderVerdictTimelineCard', () => {
       publicProsecutorIsRegisteredInPoliceSystem: true,
     } as Defendant)
 
-    expect(await screen.findByText('Birting dóms')).toBeInTheDocument()
+    expect(await screen.findByText('Dómur')).toBeInTheDocument()
     expect(screen.queryByText(/Áfrýjunarfrestur/)).not.toBeInTheDocument()
     expect(screen.queryByText(/Sent til fullnustu/)).not.toBeInTheDocument()
     expect(

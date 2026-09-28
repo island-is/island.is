@@ -3,9 +3,9 @@ import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
   IndictmentDecision,
@@ -80,7 +80,7 @@ const useCase = () => {
 
   const createCase = useMemo(
     () =>
-      async (theCase: Case): Promise<Case | undefined> => {
+      async (theCase: WorkingCase): Promise<WorkingCase | undefined> => {
         try {
           if (isCreatingCase === false) {
             if (!theCase.type || !theCase.policeCaseNumbers) {
@@ -107,7 +107,7 @@ const useCase = () => {
             })
 
             if (data) {
-              return data.createCase as Case
+              return data.createCase as WorkingCase
             }
           }
         } catch {
@@ -199,7 +199,7 @@ const useCase = () => {
       async (
         caseId: string,
         transition: CaseTransition,
-        setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        setWorkingCase?: Dispatch<SetStateAction<WorkingCase>>,
         transitionUpdate?: {
           indictmentDecision?: IndictmentDecision | null
           indictmentRulingDecision?: CaseIndictmentRulingDecision | null
@@ -228,7 +228,7 @@ const useCase = () => {
           if (setWorkingCase) {
             setWorkingCase((prevWorkingCase) => ({
               ...prevWorkingCase,
-              ...(res.transitionCase as Case),
+              ...(res.transitionCase as WorkingCase),
             }))
           }
 
@@ -337,8 +337,8 @@ const useCase = () => {
 
   const setAndSendCaseToServer = async (
     updates: UpdateCase[],
-    workingCase: Case,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    workingCase: WorkingCase,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     try {
       const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)

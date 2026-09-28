@@ -1,0 +1,211 @@
+import {
+  buildAlertMessageField,
+  buildCustomField,
+  buildTableRepeaterField,
+  buildMultiField,
+  buildSubSection,
+  getValueViaPath,
+  buildDescriptionField,
+} from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
+import { uuid } from 'uuidv4'
+import * as m from '../../../lib/messages'
+import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
+import {
+  getCurrentMonthEndDate,
+  getCurrentMonthStartDate,
+} from '../../../utils/date'
+import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildEmployerSSNDelete } from '../../../utils/reconcile'
+import {
+  getCompanyNationalId,
+  toOptionalNumber,
+  toOptionalString,
+  toRequiredString,
+} from '../../../utils/rowCoercions'
+
+const getPartTimeDefaults = (application: Application) => {
+  const jobs =
+    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
+      application.externalData,
+      'income.data.partTimeJobs',
+    ) ?? []
+
+  return jobs.map((job) => ({
+    validationId: job.id,
+    company: {
+      nationalId: job.employerSSN ?? '',
+      name: job.employerName?.trim() ?? '',
+    },
+    jobStart: job.periodFrom ?? '',
+    jobEnd: job.periodTo ?? '',
+    workPercentage: job.ratio != null ? String(job.ratio) : '',
+    estimatedIncome:
+      job.estimatedIncome != null ? String(job.estimatedIncome) : '',
+  }))
+}
+
+const partTimeValidationProps: IncomeValidationFieldProps = {
+  fieldId: 'registerPartTime',
+  incomeTypeKey: 'partTimeJobs',
+  persistedPath: 'income.data.partTimeJobs',
+  callbackId: 'PartTimeValidation',
+  messages: {
+    fallbackErrorMessage: 'partTimeValidationErrorMessage',
+  },
+  buildDelete: buildEmployerSSNDelete,
+  rowToInput: (row) => ({
+    validationId: toRequiredString(row.validationId),
+    employerSSN: getCompanyNationalId(row),
+    periodFrom: toRequiredString(row.jobStart),
+    periodTo: toOptionalString(row.jobEnd),
+    ratio: toOptionalNumber(row.workPercentage),
+    estimatedIncome: toOptionalNumber(row.estimatedIncome),
+  }),
+}
+
+export const partTimeSection = buildSubSection({
+  id: 'partTimeSection',
+  title: m.application.partTimeHeading,
+  condition: isPartTime,
+  children: [
+    buildMultiField({
+      id: 'partTimeMultiField',
+      title: m.application.partTimeHeading,
+      description: m.application.partTimeDescription,
+      children: [
+        buildAlertMessageField({
+          id: 'partTimeAlert',
+          message: m.application.partTimeAlert,
+          alertType: 'info',
+        }),
+        buildDescriptionField({
+          title: () => {
+            const month = new Date().toLocaleDateString('is-IS', {
+              month: 'long',
+            })
+            return {
+              ...m.application.incomeTitle,
+              values: { month },
+            }
+          },
+          description: m.application.incomeDescriptionLink,
+          titleVariant: 'h4',
+          id: 'partTimeDescription',
+        }),
+        buildTableRepeaterField({
+          id: 'registerPartTime',
+          addItemButtonText: m.application.addLine,
+          hideTableHeaderIfEmpty: true,
+          defaultValue: getPartTimeDefaults,
+          marginTop: 2,
+          fields: {
+            company: {
+              component: 'nationalIdWithName',
+              searchCompanies: true,
+              searchPersons: false,
+              required: true,
+            },
+            jobStart: {
+              component: 'date',
+              label: m.application.jobStart,
+              width: 'half',
+              required: true,
+              minDate: getCurrentMonthStartDate,
+              maxDate: getCurrentMonthEndDate,
+            },
+            jobEnd: {
+              component: 'date',
+              label: m.application.jobEnd,
+              width: 'half',
+              minDate: (_application, activeField) => {
+                const fromDate = activeField?.jobStart
+                if (fromDate) {
+                  return new Date(fromDate)
+                }
+                return getCurrentMonthStartDate()
+              },
+            },
+            workPercentage: {
+              component: 'input',
+              label: m.application.workPercentage,
+              width: 'half',
+              type: 'number',
+              suffix: '%',
+              required: true,
+              min: 0,
+              max: 100,
+            },
+            estimatedIncome: {
+              component: 'input',
+              label: m.application.estimatedMonthlyIncome,
+              width: 'half',
+              type: 'number',
+              currency: true,
+              required: true,
+              min: 0,
+            },
+            // Correlates each row with the 3rd party validation response.
+            // Reuse the row's existing id if it already has one; otherwise this
+            // function re-runs on every render and generating a fresh uuid each
+            // time causes an infinite update loop.
+            validationId: {
+              component: 'hiddenInput',
+              defaultValue: (
+                _application: Application,
+                activeField?: Record<string, string>,
+              ) => activeField?.validationId ?? uuid(),
+            },
+          },
+          table: {
+            header: [
+              m.application.tableHeaderNationalId,
+              m.application.tableHeaderCompany,
+              m.application.tableHeaderWorkPercentage,
+              m.application.tableHeaderJobStart,
+              m.application.tableHeaderEstimatedIncome,
+            ],
+            rows: [
+              'nationalId',
+              'company.name',
+              'workPercentage',
+              'jobStart',
+              'estimatedIncome',
+            ],
+            format: {
+              nationalId: (value) => {
+                if (!value) return ''
+                const clean = value.replace('-', '')
+                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+              },
+              jobStart: formatIsDateLong,
+              workPercentage: (value) => {
+                if (!value) return ''
+                return `${value}%`
+              },
+              estimatedIncome: formatIsCurrency,
+            },
+          },
+        }),
+        buildAlertMessageField({
+          id: 'partTimeOverlapAlert',
+          title: m.errorMessages.partTimeOverlappingPeriods,
+          message: m.errorMessages.partTimeOverlappingPeriodsAlertMessage,
+          alertType: 'warning',
+          marginTop: 6,
+          condition: hasPartTimeOverlap,
+        }),
+        buildCustomField(
+          {
+            id: 'partTimeValidation',
+            doesNotRequireAnswer: true,
+            component: 'IncomeValidation',
+          },
+          partTimeValidationProps,
+        ),
+      ],
+    }),
+  ],
+})

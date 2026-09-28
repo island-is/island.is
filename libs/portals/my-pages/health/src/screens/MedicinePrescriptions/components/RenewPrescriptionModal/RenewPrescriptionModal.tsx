@@ -157,6 +157,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       }}
       toggleClose={toggleClose}
       removeOnClose
+      modalLabel={formatMessage(messages.renewalMedicineRequest)}
       className={styles.modal}
     >
       <Box paddingY={[4, 4, 4, 8]} paddingX={[4, 4, 4, 12]}>
@@ -165,6 +166,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             circle
             colorScheme="negative"
             icon="close"
+            aria-label={formatMessage(messages.closeModal)}
             onClick={() => {
               closeModal()
             }}
