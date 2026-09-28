@@ -21,6 +21,11 @@ import {
  * the same rows come back in a different order.
  */
 describe('case table includes are isolated from each other', () => {
+  // One user per include shape, which is all the role space collapses to:
+  // `getAvailableActionsIncludes` branches on prosecution / defence / neither,
+  // and the court of appeals rule is the only access rule carrying includes at
+  // all. No where options parameterise their `includes` by user. A new branch
+  // in either place needs a fifth user here, or it goes uncovered silently.
   const users: Record<string, User> = {
     publicProsecutor: {
       id: 'public_prosecutor_id',
@@ -139,8 +144,12 @@ describe('case table includes are isolated from each other', () => {
   // other list is the only comparison that can see a leak at all: isolate both
   // sides and every build is a first build, which is contaminated by nothing
   // whether or not the copying works.
+  // Built once and shared with the guard below: an isolated sweep is the
+  // expensive half, and its results are order independent by construction,
+  // which is exactly what this file goes on to assert.
+  const isolated = buildAll(true)
+
   it('serves a list the same whether or not other lists were served first', () => {
-    const isolated = buildAll(true)
     const sequential = buildAll(false)
 
     for (const [key, value] of isolated) {
@@ -151,7 +160,6 @@ describe('case table includes are isolated from each other', () => {
   // The comparison above means nothing if the builds produced no include trees
   // to compare, or the same tree for everything.
   it('builds real and distinct include trees to compare', () => {
-    const isolated = buildAll(true)
     const threw = [...isolated.entries()].filter(([, value]) =>
       value.startsWith('threw:'),
     )
