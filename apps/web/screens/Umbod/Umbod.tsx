@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import * as kennitala from 'kennitala'
 import Head from 'next/head'
 import { useQuery } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import {
   AccordionCard,
@@ -19,11 +20,18 @@ import {
 import { useI18n } from '../../i18n'
 import { withMainLayout } from '../../layouts/main'
 import { Screen } from '../../types'
+import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
+import { CustomPageUniqueIdentifier as GraphQLCustomPageUniqueIdentifier } from '@island.is/web/graphql/schema'
 import {
   GET_PUBLIC_AUTH_TENANT_SCOPES_ONLY,
   GET_PUBLIC_AUTH_TENANTS,
 } from '../queries/Umbod'
+import {
+  type CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
 import { getTranslation, PublicAuthScope, PublicAuthTenant } from './types'
+import { m } from './translations.strings'
 
 interface UmbodProps {
   tenants: PublicAuthTenant[]
@@ -44,6 +52,7 @@ const TenantScopes = ({
   tenantId: string
   locale: string
 }) => {
+  const { formatMessage } = useIntl()
   const { data, loading, error } = useQuery<PublicTenantScopesQuery>(
     GET_PUBLIC_AUTH_TENANT_SCOPES_ONLY,
     {
@@ -57,21 +66,11 @@ const TenantScopes = ({
   }
 
   if (error) {
-    return (
-      <Text>
-        {locale === 'is'
-          ? 'Ekki tókst að sækja umboð.'
-          : 'Unable to load mandates.'}
-      </Text>
-    )
+    return <Text>{formatMessage(m.loadMandatesError)}</Text>
   }
 
   if (scopes.length === 0) {
-    return (
-      <Text>
-        {locale === 'is' ? 'Engin umboð fundust.' : 'No mandates found.'}
-      </Text>
-    )
+    return <Text>{formatMessage(m.noMandates)}</Text>
   }
 
   return (
@@ -80,12 +79,12 @@ const TenantScopes = ({
         <Table.Row>
           <Table.HeadData>
             <Text variant="medium" fontWeight="semiBold">
-              {locale === 'is' ? 'Heiti umboðs' : 'Mandate name'}
+              {formatMessage(m.mandateName)}
             </Text>
           </Table.HeadData>
           <Table.HeadData>
             <Text variant="medium" fontWeight="semiBold">
-              {locale === 'is' ? 'Lýsing' : 'Description'}
+              {formatMessage(m.description)}
             </Text>
           </Table.HeadData>
         </Table.Row>
@@ -139,9 +138,9 @@ const TenantCard = ({
   )
 }
 
-const Umbod: Screen<UmbodProps> = ({ tenants }) => {
+const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
   const { activeLocale } = useI18n()
-  const isIcelandic = activeLocale === 'is'
+  const { formatMessage } = useIntl()
   const [search, setSearch] = useState('')
   const normalizedSearch = search.trim().toLocaleLowerCase(activeLocale)
   const filteredTenants = useMemo(
@@ -163,9 +162,7 @@ const Umbod: Screen<UmbodProps> = ({ tenants }) => {
   return (
     <>
       <Head>
-        <title>
-          {isIcelandic ? 'Rafræn umboð' : 'Electronic mandates'} | Ísland.is
-        </title>
+        <title>{formatMessage(m.pageTitle)} | Ísland.is</title>
       </Head>
       <GridContainer>
         <GridRow>
@@ -175,26 +172,14 @@ const Umbod: Screen<UmbodProps> = ({ tenants }) => {
           >
             <Box paddingY={[5, 7, 8]}>
               <Text as="h1" variant="h1" marginBottom={2}>
-                {isIcelandic ? 'Rafræn umboð' : 'Electronic mandates'}
+                {formatMessage(m.pageTitle)}
               </Text>
-              <Text marginBottom={5}>
-                {isIcelandic
-                  ? 'Smelltu á þjónustuaðila til að skoða umboð hans.'
-                  : 'Select a service provider to view its mandates.'}
-              </Text>
+              <Text marginBottom={5}>{formatMessage(m.introduction)}</Text>
               <Box marginBottom={4}>
                 <FilterInput
                   name="tenant-search"
-                  label={
-                    isIcelandic
-                      ? 'Leita eftir nafni stofnunar eða kennitölu'
-                      : 'Search by institution name or national ID'
-                  }
-                  placeholder={
-                    isIcelandic
-                      ? 'Leita eftir nafni stofnunar eða kennitölu'
-                      : 'Search by institution name or national ID'
-                  }
+                  label={formatMessage(m.searchLabel)}
+                  placeholder={formatMessage(m.searchLabel)}
                   value={search}
                   onChange={setSearch}
                   backgroundColor="blue"
@@ -211,11 +196,7 @@ const Umbod: Screen<UmbodProps> = ({ tenants }) => {
               </Stack>
               {filteredTenants.length === 0 && (
                 <Box paddingY={5} textAlign="center">
-                  <Text>
-                    {isIcelandic
-                      ? 'Engir þjónustuaðilar fundust.'
-                      : 'No service providers found.'}
-                  </Text>
+                  <Text>{formatMessage(m.noServiceProviders)}</Text>
                 </Box>
               )}
             </Box>
@@ -234,10 +215,16 @@ Umbod.getProps = async ({ apolloClient }) => {
   return { tenants: data.publicAuthTenants }
 }
 
-export default withMainLayout(Umbod, {
-  showSearchInHeader: false,
-  languageToggleHrefOverride: {
-    is: '/s/stafraent-island/umbodskerfi/rafraen-umbod',
-    en: '/en/o/digital-iceland/authorisation-system/electronic-mandates',
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.ElectronicMandates as GraphQLCustomPageUniqueIdentifier,
+    Umbod,
+  ),
+  {
+    showSearchInHeader: false,
+    languageToggleHrefOverride: {
+      is: '/s/stafraent-island/umbodskerfi/rafraen-umbod',
+      en: '/en/o/digital-iceland/authorisation-system/electronic-mandates',
+    },
   },
-})
+)
