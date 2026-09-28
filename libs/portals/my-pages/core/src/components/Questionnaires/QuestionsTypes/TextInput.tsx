@@ -61,14 +61,8 @@ export const TextInput: React.FC<TextInputProps> = ({
       // the input renders the stored value back with a comma
       newValue = newValue.replace(',', '.')
 
-      const numValue = parseFloat(newValue)
-      if (!isNaN(numValue)) {
-        if (min !== undefined && numValue < parseFloat(min)) {
-          newValue = min.toString()
-        } else if (max !== undefined && numValue > parseFloat(max)) {
-          newValue = max.toString()
-        }
-      }
+      // Range is enforced on blur: clamping per keystroke makes every value
+      // between min and max unreachable, the first digit is always below min
     }
 
     onChange(newValue)

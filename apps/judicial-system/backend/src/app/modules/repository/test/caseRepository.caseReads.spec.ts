@@ -7,6 +7,7 @@ import { createTestingRepositoryModule } from './createTestingRepositoryModule'
 
 import { Case } from '../models/case.model'
 import { Defendant } from '../models/defendant.model'
+import { User } from '../models/user.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 import {
@@ -25,12 +26,17 @@ describe('CaseRepositoryService - case reads', () => {
   const theCase = { id: caseId } as Case
 
   let caseRepositoryService: CaseRepositoryService
-  let mockCaseModel: { findOne: jest.Mock; findAll: jest.Mock }
+  let mockCaseModel: {
+    findOne: jest.Mock
+    findAll: jest.Mock
+    findByPk: jest.Mock
+  }
   let mockResolvePoliceCaseNumbersForCases: jest.Mock
 
   // The options the one read was made with
   const findAllOptions = () => mockCaseModel.findAll.mock.calls[0][0]
   const findOneOptions = () => mockCaseModel.findOne.mock.calls[0][0]
+  const findByPkArgs = () => mockCaseModel.findByPk.mock.calls[0]
 
   beforeEach(async () => {
     const {
@@ -43,6 +49,7 @@ describe('CaseRepositoryService - case reads', () => {
     mockCaseModel = caseModel as unknown as {
       findOne: jest.Mock
       findAll: jest.Mock
+      findByPk: jest.Mock
     }
     mockResolvePoliceCaseNumbersForCases = (
       caseDefendantPoliceCaseNumberRepositoryService as jest.Mocked<CaseDefendantPoliceCaseNumberRepositoryService>
@@ -50,6 +57,7 @@ describe('CaseRepositoryService - case reads', () => {
 
     mockCaseModel.findAll.mockResolvedValue(cases)
     mockCaseModel.findOne.mockResolvedValue(theCase)
+    mockCaseModel.findByPk.mockResolvedValue(theCase)
   })
 
   describe('findLiveById', () => {
@@ -78,6 +86,29 @@ describe('CaseRepositoryService - case reads', () => {
         [theCase],
         { transaction },
       )
+    })
+
+    // A document copied from a merged case is an ordinary filed document of
+    // the case it was copied into, so a court session reads its documents in
+    // one place - here and under a merged case alike.
+    it('should read the documents of a court session in one place', () => {
+      const include = findOneOptions().include
+      const courtSessions = included(include, 'courtSessions')
+      const mergedCaseCourtSessions = included(
+        included(include, 'mergedCases')?.include,
+        'courtSessions',
+      )
+
+      expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
+      expect(
+        included(courtSessions?.include, 'mergedFiledDocuments'),
+      ).toBeUndefined()
+      expect(
+        included(mergedCaseCourtSessions?.include, 'filedDocuments'),
+      ).toBeDefined()
+      expect(
+        included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
+      ).toBeUndefined()
     })
 
     describe('no live case', () => {
@@ -140,6 +171,100 @@ describe('CaseRepositoryService - case reads', () => {
     })
   })
 
+  describe('findSplitSourceById', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findSplitSourceById(caseId, {
+        transaction,
+      })
+    })
+
+    it('should read the whole case graph in the callers transaction', () => {
+      // No state filter, unlike findLiveById: the split case is the one being
+      // documented, so its source has to stay readable after it has itself
+      // been deleted or archived.
+      expect(findByPkArgs()).toEqual([
+        caseId,
+        { include: caseInclude, transaction },
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no source case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findSplitSourceById(caseId)
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('findByIdWithJudgeAndRegistrar', () => {
+    const transaction = {} as never
+    let result: Case | null
+
+    beforeEach(async () => {
+      result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
+        caseId,
+        { transaction },
+      )
+    })
+
+    it('should read the case with both of its court users and nothing else', () => {
+      expect(findByPkArgs()).toEqual([
+        caseId,
+        {
+          include: [
+            { model: User, as: 'judge' },
+            { model: User, as: 'registrar' },
+          ],
+          transaction,
+        },
+      ])
+      expect(result).toBe(theCase)
+    })
+
+    it('should resolve the police case numbers in the same transaction', () => {
+      expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+        [theCase],
+        { transaction },
+      )
+    })
+
+    describe('no case', () => {
+      beforeEach(async () => {
+        mockCaseModel.findByPk.mockReset()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+        mockCaseModel.findByPk.mockResolvedValue(null)
+
+        result = await caseRepositoryService.findByIdWithJudgeAndRegistrar(
+          caseId,
+        )
+      })
+
+      it('should resolve nothing', () => {
+        expect(result).toBeNull()
+        expect(mockResolvePoliceCaseNumbersForCases).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('findLimitedAccessById', () => {
     const transaction = {} as never
 
@@ -171,6 +296,55 @@ describe('CaseRepositoryService - case reads', () => {
           [theCase],
           { transaction },
         )
+      })
+
+      it('should read the documents of a court session in one place', () => {
+        const include = findOneOptions().include
+        const courtSessions = included(include, 'courtSessions')
+        const mergedCaseCourtSessions = included(
+          included(include, 'mergedCases')?.include,
+          'courtSessions',
+        )
+
+        expect(included(courtSessions?.include, 'filedDocuments')).toBeDefined()
+        expect(
+          included(courtSessions?.include, 'mergedFiledDocuments'),
+        ).toBeUndefined()
+        expect(
+          included(mergedCaseCourtSessions?.include, 'filedDocuments'),
+        ).toBeDefined()
+        expect(
+          included(mergedCaseCourtSessions?.include, 'mergedFiledDocuments'),
+        ).toBeUndefined()
+      })
+
+      // The attribute allowlist is the only thing keeping a defence user off
+      // the rest of the case columns - the case interceptor serves whatever
+      // the read returns, unredacted.
+      it('should restrict every linked case to the limited access columns', () => {
+        const include = findOneOptions().include
+        const attributesOf = (as: string) => included(include, as)?.attributes
+
+        expect(attributesOf('parentCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('childCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('mergeCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('mergedCases')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('splitCase')).toEqual(limitedAccessCaseAttributes)
+        expect(attributesOf('splitCases')).toEqual(limitedAccessCaseAttributes)
+      })
+
+      it('should not read the prosecutor only text of the split cases', () => {
+        const include = findOneOptions().include
+
+        const splitCase = included(include, 'splitCase')?.attributes
+        const splitCases = included(include, 'splitCases')?.attributes
+
+        expect(splitCase).toBeDefined()
+        expect(splitCase).not.toContain('comments')
+        expect(splitCase).not.toContain('caseFilesComments')
+        expect(splitCases).toBeDefined()
+        expect(splitCases).not.toContain('comments')
+        expect(splitCases).not.toContain('caseFilesComments')
       })
 
       it('should not narrow the parties on the linked cases', () => {

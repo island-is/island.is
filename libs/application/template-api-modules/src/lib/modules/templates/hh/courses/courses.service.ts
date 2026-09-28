@@ -163,6 +163,7 @@ export class CoursesService extends BaseTemplateApiService {
           participantList,
           ticket?.id,
           courseUrl,
+          { nationalId, healthcenter },
           auth.authorization,
         )
       } catch (error) {
@@ -495,6 +496,7 @@ export class CoursesService extends BaseTemplateApiService {
     participantList: ApplicationAnswers['participantList'],
     ticketId: string | number | undefined,
     courseUrl: string | null,
+    applicant: { nationalId: string; healthcenter?: string },
     authorization: string,
   ): Promise<void> {
     let priceAmount: number | undefined
@@ -520,16 +522,20 @@ export class CoursesService extends BaseTemplateApiService {
       )
     }
 
+    const { externalIdPrefix, namePrefix } = this.getZendeskEnvPrefixes()
+    const courseExternalId = `${externalIdPrefix}${course.id}`
+    const instanceExternalId = `${externalIdPrefix}${courseInstance.id}`
+
     const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.course,
-      { name: course.title, external_id: course.id },
+      { name: `${namePrefix}${course.title}`, external_id: courseExternalId },
     )
 
     const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
       {
-        name: courseInstance.displayedTitle ?? course.title,
-        external_id: courseInstance.id,
+        name: `${namePrefix}${courseInstance.displayedTitle ?? course.title}`,
+        external_id: instanceExternalId,
         custom_object_fields: {
           course_start_date: courseInstance.startDate.split('T')[0],
           course_start_time: this.formatCourseInstanceTimeRange(courseInstance),
@@ -546,20 +552,34 @@ export class CoursesService extends BaseTemplateApiService {
     if (participantList.length === 0) return
 
     const numericTicketId = this.toZendeskNumber(ticketId)
+    const registrationTime = format(new Date(), 'dd.MM.yyyy HH:mm')
 
     await this.zendeskService.runCustomObjectJob(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
       'create_or_update_by_external_id',
       participantList.map((p) => {
         const participantPhone = p.nationalIdWithName.phone?.trim()
+        const participantWorkplace = p.workplace?.trim()
+        const participantTitle = p.jobTitle?.trim()
+        // Healthcenter is only collected for the applicant
+        const participantClinic =
+          p.nationalIdWithName.nationalId === applicant.nationalId
+            ? applicant.healthcenter?.trim()
+            : undefined
 
         return {
           name: p.nationalIdWithName.name,
-          external_id: `${courseInstance.id}-${p.nationalIdWithName.nationalId}`,
+          external_id: `${instanceExternalId}-${p.nationalIdWithName.nationalId}`,
           custom_object_fields: {
             kennitala: p.nationalIdWithName.nationalId,
             email: p.nationalIdWithName.email,
             ...(participantPhone && { participant_phone: participantPhone }),
+            ...(participantWorkplace && {
+              participant_workplace: participantWorkplace,
+            }),
+            ...(participantTitle && { participant_title: participantTitle }),
+            ...(participantClinic && { participant_clinic: participantClinic }),
+            registration_time: registrationTime,
             course_instance: instanceRecord.id,
             ...(numericTicketId !== undefined && {
               ticket_id: numericTicketId,
@@ -568,6 +588,28 @@ export class CoursesService extends BaseTemplateApiService {
         }
       }),
     )
+  }
+
+  /**
+   * All environments share the same Zendesk instance, so custom object records
+   * created outside of prod are prefixed to keep them apart.
+   * Records without a prefix are prod records.
+   */
+  private getZendeskEnvPrefixes(): {
+    externalIdPrefix: string
+    namePrefix: string
+  } {
+    // hh_env_dev -> dev
+    const env = this.coursesConfig.zendeskEnvTag.replace(/^hh_env_/, '')
+
+    if (env === 'prod') {
+      return { externalIdPrefix: '', namePrefix: '' }
+    }
+
+    return {
+      externalIdPrefix: `${env}-`,
+      namePrefix: `[${env.toUpperCase()}] `,
+    }
   }
 
   private toZendeskNumber(

@@ -624,12 +624,14 @@ export class CourtSessionService {
       return
     }
 
-    const appealCases = await this.appealCaseRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      transaction,
-    })
+    const isAppealed =
+      await this.appealCaseRepositoryService.existsForRulingFile(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
 
-    if (appealCases.length > 0) {
+    if (isAppealed) {
       return
     }
 
@@ -1484,12 +1486,14 @@ export class CourtSessionService {
       return
     }
 
-    const appealCases = await this.appealCaseRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId: courtSession.rulingFileId },
-      transaction,
-    })
+    const isAppealed =
+      await this.appealCaseRepositoryService.existsForRulingFile(
+        theCase.id,
+        courtSession.rulingFileId,
+        { transaction },
+      )
 
-    if (appealCases.length > 0) {
+    if (isAppealed) {
       throw new BadRequestException(
         'The ruling order pronounced in this court session has been appealed, so the court session cannot be deleted',
       )

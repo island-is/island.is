@@ -12,121 +12,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       courtCaseNumber
     }
     splitCases {
-      id
-      created
-      courtCaseNumber
-      defendants {
-        id
-        name
-        subpoenas {
-          id
-          created
-          serviceStatus
-          serviceDate
-          servedBy
-          comment
-          defenderNationalId
-          caseId
-          defendantId
-          policeSubpoenaId
-        }
-      }
-      caseFiles {
-        id
-        created
-        modified
-        name
-        type
-        category
-        state
-        key
-        size
-        userGeneratedFilename
-        displayDate
-        submittedBy
-        fileRepresentative
-        isKeyAccessible
-        defendantId
-        civilClaimantId
-        rulingFileId
-        isPronouncedOrally
-      }
+      ...SplitCaseFields
     }
     caseFiles {
-      id
-      created
-      modified
-      name
-      type
-      category
-      state
-      key
-      size
-      userGeneratedFilename
-      displayDate
-      submittedBy
-      fileRepresentative
-      isKeyAccessible
-      defendantId
-      civilClaimantId
-      rulingFileId
-      isPronouncedOrally
+      ...CaseFileFields
       hasBeenAppealed
       canBeAppealed
       appealDeadline
       isAppealDeadlineExpired
     }
     defendants {
-      id
-      noNationalId
-      nationalId
-      name
-      gender
-      address
-      citizenship
-      defenderName
-      defenderNationalId
-      defenderEmail
-      defenderPhoneNumber
-      defenderChoice
-      defendantPlea
-      requestedDefenderChoice
-      requestedDefenderNationalId
-      requestedDefenderName
-      isDefenderChoiceConfirmed
-      caseFilesSharedWithDefender
-      appealDefenderName
-      appealDefenderNationalId
-      appealDefenderEmail
-      appealDefenderPhoneNumber
-      isAppealDefenderConfirmed
-      verdictAppealDeadline
-      isVerdictAppealDeadlineExpired
-      subpoenaType
-      isSentToPrisonAdmin
+      ...DefendantFields
       isRegisteredInPrisonSystem
-      sentToPrisonAdminDate
-      openedByPrisonAdminDate
-      punishmentType
-      isAlternativeService
-      alternativeServiceDescription
-      indictmentReviewDecision
-      indictmentCancelledOrDismissedState {
-        type
-        time
-      }
-      policeCaseNumbers
       subpoenas {
-        id
-        created
-        serviceStatus
-        serviceDate
-        servedBy
-        comment
-        defenderNationalId
-        caseId
-        defendantId
-        policeSubpoenaId
+        ...SubpoenaFields
       }
       verdict {
         id
@@ -148,22 +47,15 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     defenderPhoneNumber
     requestSharedWithDefender
     court {
-      id
-      name
-      type
+      ...InstitutionFields
     }
     leadInvestigator
     requestedCustodyRestrictions
     creatingProsecutor {
-      id
-      name
-      title
+      ...UserFields
     }
     prosecutor {
-      id
-      name
-      title
-      email
+      ...UserFields
     }
     courtCaseNumber
     courtEndTime
@@ -177,21 +69,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     rulingSignatureDate
     reopenReason
     registrar {
-      id
-      name
-      title
-      email
+      ...UserFields
     }
     judge {
-      id
-      name
-      title
-      email
+      ...UserFields
     }
     courtRecordSignatory {
-      id
-      name
-      title
+      ...UserFields
     }
     courtRecordSignatureDate
     parentCase {
@@ -214,47 +98,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     hasBeenAppealed
     appealDeadline
     appealCase {
-      id
-      appealState
-      appealedByDefendantId
-      appealedByCivilClaimantId
-      appealedByRole
-      appealedDate
-      statementDeadline
-      isStatementDeadlineExpired
-      appealCaseNumber
-      appealReceivedByCourtDate
-      appealRulingDate
-      prosecutorStatementDate
-      defendantStatementDate
-      defendantStatementDates {
-        defendantId
-        statementDate
-      }
-      civilClaimantStatementDates {
-        civilClaimantId
-        statementDate
-      }
-      appealAssistant {
-        id
-        name
-      }
-      appealJudge1 {
-        id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
-      }
-      appealRulingDecision
-      appealConclusion
-      appealRulingModifiedHistory
-      rulingFileId
+      ...AppealCaseFields
     }
     verdictAppealCase {
       id
@@ -273,52 +117,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       }
     }
     rulingOrderAppealCases {
-      id
-      appealState
-      appealedByDefendantId
-      appealedByCivilClaimantId
-      appealedByRole
-      appealedInCourt
-      appealedDate
-      statementDeadline
-      isStatementDeadlineExpired
-      appealCaseNumber
-      appealReceivedByCourtDate
-      appealRulingDate
-      prosecutorStatementDate
-      defendantStatementDate
-      defendantStatementDates {
-        defendantId
-        statementDate
-      }
-      civilClaimantStatementDates {
-        civilClaimantId
-        statementDate
-      }
-      appealAssistant {
-        id
-        name
-      }
-      appealJudge1 {
-        id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
-      }
-      appealRulingDecision
-      appealConclusion
-      appealRulingModifiedHistory
-      requestAppealRulingNotToBePublished
-      appealValidToDate
-      isAppealCustodyIsolation
-      appealIsolationToDate
-      rulingFileId
+      ...AppealCaseFields
     }
     appealDecisions {
       id
@@ -370,10 +169,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isDefenderChoiceConfirmed
       }
       civilClaimants {
-        id
-        hasSpokesperson
-        spokespersonNationalId
-        isSpokespersonConfirmed
+        ...CivilClaimantSpokespersonFields
       }
     }
     indictmentCounts {
@@ -403,25 +199,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isConfirmed
       ruling
       filedDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedFromCaseId
-        name
-        caseFileId
-        generatedPdfUri
-        submittedBy
+        ...CourtDocumentFields
       }
       courtSessionStrings {
-        id
-        courtSessionId
-        mergedCaseId
-        stringType
-        value
+        ...CourtSessionStringFields
       }
     }
     mergedCases {
@@ -444,23 +225,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         }
         sentToPrisonAdminDate
         subpoenas {
-          id
-          created
-          serviceStatus
-          serviceDate
-          servedBy
-          comment
-          defenderNationalId
-          caseId
-          defendantId
-          policeSubpoenaId
+          ...SubpoenaFields
         }
       }
       civilClaimants {
-        id
-        hasSpokesperson
-        spokespersonNationalId
-        isSpokespersonConfirmed
+        ...CivilClaimantSpokespersonFields
       }
       courtSessions {
         id
@@ -469,45 +238,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         ruling
         isConfirmed
         filedDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedFromCaseId
-          name
-          caseFileId
-          generatedPdfUri
-          submittedBy
+          ...CourtDocumentFields
         }
         courtSessionStrings {
-          id
-          courtSessionId
-          mergedCaseId
-          stringType
-          value
+          ...CourtSessionStringFields
         }
       }
       caseFiles {
-        id
-        created
-        modified
-        name
-        type
-        category
-        state
-        key
-        size
-        userGeneratedFilename
-        displayDate
-        submittedBy
-        isKeyAccessible
-        defendantId
-        civilClaimantId
-        rulingFileId
-        isPronouncedOrally
+        ...CaseFileFields
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -524,71 +262,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         name
       }
       rulingOrderAppealCases {
-        id
-        appealState
-        appealedByDefendantId
-        appealedByCivilClaimantId
-        appealedByRole
-        appealedInCourt
-        appealedDate
-        statementDeadline
-        isStatementDeadlineExpired
-        appealCaseNumber
-        appealReceivedByCourtDate
-        appealRulingDate
-        prosecutorStatementDate
-        defendantStatementDate
-        defendantStatementDates {
-          defendantId
-          statementDate
-        }
-        civilClaimantStatementDates {
-          civilClaimantId
-          statementDate
-        }
-        appealAssistant {
-          id
-          name
-        }
-        appealJudge1 {
-          id
-          name
-        }
-        appealJudge2 {
-          id
-          name
-        }
-        appealJudge3 {
-          id
-          name
-        }
-        appealRulingDecision
-        appealConclusion
-        appealRulingModifiedHistory
-        requestAppealRulingNotToBePublished
-        appealValidToDate
-        isAppealCustodyIsolation
-        appealIsolationToDate
-        rulingFileId
+        ...AppealCaseFields
       }
     }
     hasCivilClaims
     civilClaimants {
-      id
-      caseId
-      name
-      nationalId
-      noNationalId
-      hasSpokesperson
-      spokespersonIsLawyer
-      spokespersonNationalId
-      spokespersonName
-      spokespersonEmail
-      spokespersonPhoneNumber
-      caseFilesSharedWithSpokesperson
-      isSpokespersonConfirmed
-      policeCaseNumbers
-      defendantIds
+      ...CivilClaimantFields
     }
     victims {
       id

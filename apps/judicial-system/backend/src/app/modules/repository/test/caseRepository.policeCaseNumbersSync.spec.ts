@@ -132,13 +132,13 @@ describe('CaseRepositoryService — police case number junction sync', () => {
     })
   })
 
-  describe('findOne', () => {
+  describe('findAll', () => {
     it('does not load junction when policeCaseNumbers is not in attributes', async () => {
       const built = stubCase('c1', ['x'])
 
-      caseModel.findOne.mockResolvedValue(built)
+      caseModel.findAll.mockResolvedValue([built])
 
-      await caseRepositoryService.findOne({
+      await caseRepositoryService.findAll({
         where: { id: 'c1' },
         attributes: ['id'],
       })
@@ -147,7 +147,9 @@ describe('CaseRepositoryService — police case number junction sync', () => {
       expect(findDistinctPoliceCaseNumbersByCaseIds).not.toHaveBeenCalled()
       expect(built.policeCaseNumbers).toEqual(['x'])
     })
+  })
 
+  describe('findLiveById', () => {
     it('resolves policeCaseNumbers for included merged cases', async () => {
       const mergedCase = stubCase('merged-case-id', ['legacy-merged'])
       const rootCase = stubCase('root-case-id', ['legacy-root'])
@@ -163,15 +165,34 @@ describe('CaseRepositoryService — police case number junction sync', () => {
         ]),
       )
 
-      await caseRepositoryService.findOne({
-        where: { id: 'root-case-id' },
-      })
+      await caseRepositoryService.findLiveById('root-case-id')
 
       expect(resolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
         expect.arrayContaining([rootCase, mergedCase]),
         { transaction: undefined },
       )
       expect(rootCase.policeCaseNumbers).toEqual(['007-2024-root'])
+      expect(mergedCase.policeCaseNumbers).toEqual(['007-2024-merged'])
+    })
+  })
+
+  describe('findSplitSourceById', () => {
+    it('resolves policeCaseNumbers for the source case graph', async () => {
+      const mergedCase = stubCase('merged-case-id', ['legacy-merged'])
+      const sourceCase = stubCase('source-case-id', ['legacy-source'])
+      Object.assign(sourceCase, { mergedCases: [mergedCase] })
+
+      caseModel.findByPk.mockResolvedValue(sourceCase)
+      findDistinctPoliceCaseNumbersByCaseIds.mockResolvedValue(
+        new Map([
+          ['source-case-id', ['007-2024-source']],
+          ['merged-case-id', ['007-2024-merged']],
+        ]),
+      )
+
+      await caseRepositoryService.findSplitSourceById('source-case-id')
+
+      expect(sourceCase.policeCaseNumbers).toEqual(['007-2024-source'])
       expect(mergedCase.policeCaseNumbers).toEqual(['007-2024-merged'])
     })
   })

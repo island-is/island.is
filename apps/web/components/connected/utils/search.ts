@@ -25,18 +25,20 @@ export const getSortedAndFilteredList = <T>(
   keys: (keyof T)[],
 ): T[] => {
   const fullSearchString: string = searchTerms.join(' ')
+  const searchableValue = (item: T, key: keyof T) =>
+    String(item[key] ?? '')
+      .trim()
+      .toLowerCase()
 
   const startsWithFullSearchString = (item: T): boolean => {
     return keys.some((key) =>
-      (item[key] as string)?.trim().toLowerCase().startsWith(fullSearchString),
+      searchableValue(item, key).startsWith(fullSearchString),
     )
   }
 
   const containsAllTerms = (item: T): boolean => {
     return searchTerms.every((searchTerm) =>
-      keys.some((key) =>
-        (item[key] as string)?.trim().toLowerCase().includes(searchTerm),
-      ),
+      keys.some((key) => searchableValue(item, key).includes(searchTerm)),
     )
   }
 
