@@ -41,21 +41,15 @@ export class PublicAuthService {
   }
 
   async getScopes(tenantId: string): Promise<PublicAuthScope[]> {
-    if (tenantId === ADMIN_TENANT_ID) {
-      return []
-    }
-
     const scopes =
       (await handle204(
         this.publicApi.publicScopesControllerFindAllByTenantIdRaw({ tenantId }),
       )) ?? []
 
-    return scopes
-      .map((scope) => ({
-        scopeName: scope.name,
-        displayName: scope.displayName,
-        description: scope.description,
-      }))
-      .sort((a, b) => a.scopeName.localeCompare(b.scopeName, 'is'))
+    return scopes.map((scope) => ({
+      scopeName: scope.name,
+      displayName: scope.displayName,
+      description: scope.description,
+    }))
   }
 }

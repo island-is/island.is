@@ -53,13 +53,11 @@ export class TenantsService {
       ],
     })
 
-    return tenants
-      .sort((a, b) => a.name.localeCompare(b.name, 'is'))
-      .map((tenant) => ({
-        name: tenant.name,
-        displayName: [{ locale: 'is', value: tenant.displayName }],
-        nationalId: tenant.nationalId,
-      }))
+    return tenants.map((tenant) => ({
+      name: tenant.name,
+      displayName: [{ locale: 'is', value: tenant.displayName }],
+      nationalId: tenant.nationalId,
+    }))
   }
 
   async findAllByUser(user: User): Promise<TenantDto[]> {

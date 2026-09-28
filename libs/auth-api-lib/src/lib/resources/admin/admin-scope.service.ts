@@ -26,7 +26,6 @@ import {
   AdminPatchScopeDto,
   superUserScopeFields,
 } from './dto/admin-patch-scope.dto'
-import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -36,6 +35,7 @@ import {
   delegationTypeSuperUserFilter,
   SUPER_USER_DELEGATION_TYPES,
 } from '../utils/filters'
+import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -214,7 +214,9 @@ export class AdminScopeService {
       )
   }
 
-  async findAllPublicByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
+  async findAllPublicByTenantId(
+    tenantId: string,
+  ): Promise<Pick<AdminScopeDTO, 'name' | 'displayName' | 'description'>[]> {
     const apiScopes = await this.apiScope.findAll({
       where: {
         domainName: tenantId,
@@ -232,12 +234,19 @@ export class AdminScopeService {
 
     return apiScopes
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map((apiScope) =>
-        this.adminTranslationService.mapApiScopeToAdminScopeDTO(
-          apiScope,
-          translations,
-        ),
-      )
+      .map((apiScope) => ({
+        name: apiScope.name,
+        displayName: this.adminTranslationService.createTranslatedValueDTOs({
+          key: 'displayName',
+          defaultValueIS: apiScope.displayName,
+          translations: translations.get(apiScope.name),
+        }),
+        description: this.adminTranslationService.createTranslatedValueDTOs({
+          key: 'description',
+          defaultValueIS: apiScope.description,
+          translations: translations.get(apiScope.name),
+        }),
+      }))
   }
 
   /**

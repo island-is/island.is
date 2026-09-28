@@ -6,6 +6,8 @@ import { Documentation } from '@island.is/nest/swagger'
 
 import { PublicScopeDto } from './dto/public-scope.dto'
 
+const ADMIN_TENANT_ID = '@admin.island.is'
+
 @ApiTags('public')
 @Controller({
   path: 'public/tenants/:tenantId/scopes',
@@ -22,14 +24,10 @@ export class PublicScopesController {
   async findAllByTenantId(
     @Param('tenantId') tenantId: string,
   ): Promise<PublicScopeDto[]> {
-    const scopes = await this.adminScopeService.findAllPublicByTenantId(
-      tenantId,
-    )
+    if (tenantId === ADMIN_TENANT_ID) {
+      return []
+    }
 
-    return scopes.map(({ name, displayName, description }) => ({
-      name,
-      displayName,
-      description,
-    }))
+    return this.adminScopeService.findAllPublicByTenantId(tenantId)
   }
 }
