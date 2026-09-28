@@ -54,6 +54,14 @@ describe('public prosecution review list', () => {
   })
 
   const sqlForTable = async (tableType: CaseTableType, user: User) => {
+    // Built before the stub goes in, so a throw here cannot leave
+    // `sequelize.query` stubbed for the rest of the file.
+    const whereOptions = caseTableWhereOptions[tableType](user)
+    const [include, order] = getGlobalIncludes(
+      whereOptions.includes ?? {},
+      user,
+    )
+
     const sequelize = repository.Case.sequelize as Sequelize
     const queries: string[] = []
     const stub = (sql: unknown) => {
@@ -66,12 +74,6 @@ describe('public prosecution review list', () => {
     const originalQueryRaw = anySequelize.queryRaw
     anySequelize.query = stub
     anySequelize.queryRaw = stub
-
-    const whereOptions = caseTableWhereOptions[tableType](user)
-    const [include, order] = getGlobalIncludes(
-      whereOptions.includes ?? {},
-      user,
-    )
 
     try {
       await repository.Case.findAll({
@@ -106,6 +108,12 @@ describe('public prosecution review list', () => {
       publicProsecutionUser,
     )
 
+    // Matched whole, closing paren included. `IN ('FINE', 'RULING'` on its own
+    // still matches a list widened to a third decision, which is the very
+    // regression this guards - so the obvious loosening silently empties it.
+    // The element order is load-bearing too: the office and prison admin rules
+    // render the same two values as ('RULING', 'FINE'), so this also catches
+    // the list being wired to the wrong access rule.
     expect(sql).toContain(
       `"Case"."indictment_ruling_decision" IN ('FINE', 'RULING')`,
     )
