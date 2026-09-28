@@ -19,7 +19,6 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
