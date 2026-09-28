@@ -24,7 +24,14 @@ import {
   VmstApplicationsOverview,
   VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
-  VmstApplicantIncomes,
+  VmstApplicantIncomeRow,
+  VmstApplicantIncomeRowType,
+  VmstApplicantIrregularJob,
+  VmstApplicantPartTimeJob,
+  VmstApplicantPensionPayment,
+  VmstApplicantCapitalIncomePayment,
+  VmstApplicantTRPayment,
+  VmstApplicantContractorJob,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 import { maskString } from '@island.is/shared/utils'
@@ -338,7 +345,7 @@ export class VMSTApplicationsService {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
   }
 
-  async getApplicantIncomes(auth: User): Promise<VmstApplicantIncomes> {
+  async getApplicantIncomeRows(auth: User): Promise<VmstApplicantIncomeRow[]> {
     try {
       const { applicantId } = await this.resolveApplicant(auth)
       const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
@@ -364,24 +371,76 @@ export class VMSTApplicationsService {
         )
       }
 
-      return {
-        irregularJobs: dto.irregularJobs,
-        partTimeJobs: dto.partTimeJobs,
-        pensionPayments: dto.pensionPayments,
-        capitalIncomePayments: dto.capitalIncomePayments,
-        trPayments: dto.trPayments,
-        contractorJobs: dto.contractorJobs,
-      } as VmstApplicantIncomes
+      const rows: VmstApplicantIncomeRow[] = [
+        ...(dto.irregularJobs ?? []).map(
+          (job): VmstApplicantIrregularJob => ({
+            type: VmstApplicantIncomeRowType.IrregularJob,
+            id: job.id ?? '',
+            period: { from: job.periodFrom ?? '', to: job.periodTo },
+            estimatedIncome: job.estimatedIncome ?? null,
+            employer: {
+              name: job.employerName ?? '',
+              ssn: job.employerSSN ?? '',
+            },
+          }),
+        ),
+        ...(dto.partTimeJobs ?? []).map(
+          (job): VmstApplicantPartTimeJob => ({
+            type: VmstApplicantIncomeRowType.PartTimeJob,
+            id: job.id ?? '',
+            period: { from: job.periodFrom ?? '', to: job.periodTo },
+            estimatedIncome: job.estimatedIncome ?? null,
+            employer: {
+              name: job.employerName ?? '',
+              ssn: job.employerSSN ?? '',
+            },
+            ratio: job.ratio,
+          }),
+        ),
+        ...(dto.pensionPayments ?? []).map(
+          (payment): VmstApplicantPensionPayment => ({
+            type: VmstApplicantIncomeRowType.PensionPayment,
+            id: payment.id ?? '',
+            period: { from: payment.periodFrom ?? '', to: payment.periodTo },
+            estimatedIncome: payment.estimatedIncome ?? null,
+            incomeTypeId: payment.incomeTypeId ?? '',
+            pensionFundId: payment.pensionFundId,
+          }),
+        ),
+        ...(dto.capitalIncomePayments ?? []).map(
+          (payment): VmstApplicantCapitalIncomePayment => ({
+            type: VmstApplicantIncomeRowType.CapitalIncomePayment,
+            id: payment.id ?? '',
+            period: { from: payment.periodFrom ?? '', to: payment.periodTo },
+            estimatedIncome: payment.estimatedIncome ?? null,
+            incomeTypeId: payment.incomeTypeId ?? '',
+          }),
+        ),
+        ...(dto.trPayments ?? []).map(
+          (payment): VmstApplicantTRPayment => ({
+            type: VmstApplicantIncomeRowType.TRPayment,
+            id: payment.id ?? '',
+            period: { from: payment.periodFrom ?? '', to: payment.periodTo },
+            estimatedIncome: payment.estimatedIncome ?? null,
+            incomeTypeId: payment.incomeTypeId ?? '',
+          }),
+        ),
+        ...(dto.contractorJobs ?? []).map(
+          (job): VmstApplicantContractorJob => ({
+            type: VmstApplicantIncomeRowType.ContractorJob,
+            id: job.id ?? '',
+            period: { from: job.startDate ?? '', to: job.endDate },
+            estimatedIncome: null,
+          }),
+        ),
+      ]
+
+      return rows.sort((a, b) =>
+        (b.period.from ?? '').localeCompare(a.period.from ?? ''),
+      )
     } catch (e) {
       if (e instanceof FetchError && e.status === 404) {
-        return {
-          irregularJobs: [],
-          partTimeJobs: [],
-          pensionPayments: [],
-          capitalIncomePayments: [],
-          trPayments: [],
-          contractorJobs: [],
-        }
+        return []
       }
       throw e
     }

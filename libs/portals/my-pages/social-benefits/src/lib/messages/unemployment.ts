@@ -210,4 +210,8 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:reportedIncomeTRPayer',
     defaultMessage: 'Tryggingastofnun',
   },
+  reportedIncomeEmpty: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeEmpty',
+    defaultMessage: 'Engar tilkynntar tekjur fundust',
+  },
 })

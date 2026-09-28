@@ -1,48 +1,35 @@
-query GetVmstApplicantIncomes {
-  vmstApplicantIncomes {
-    irregularJobs {
-      id
-      employerName
-      employerSSN
-      periodFrom
-      periodTo
-      estimatedIncome
+query GetVmstApplicantIncomeRows {
+  vmstApplicantIncomeRows {
+    __typename
+    id
+    type
+    period {
+      from
+      to
     }
-    partTimeJobs {
-      id
-      employerName
-      employerSSN
-      periodFrom
-      periodTo
+    estimatedIncome
+    ... on VmstApplicantIrregularJob {
+      employer {
+        name
+        ssn
+      }
+    }
+    ... on VmstApplicantPartTimeJob {
+      employer {
+        name
+        ssn
+      }
       ratio
-      estimatedIncome
     }
-    pensionPayments {
-      id
+    ... on VmstApplicantPensionPayment {
       incomeTypeId
       pensionFundId
-      estimatedIncome
-      periodFrom
-      periodTo
     }
-    capitalIncomePayments {
-      id
+    ... on VmstApplicantCapitalIncomePayment {
       incomeTypeId
-      estimatedIncome
-      periodFrom
-      periodTo
     }
-    trPayments {
-      id
+    ... on VmstApplicantTRPayment {
       incomeTypeId
-      estimatedIncome
-      periodFrom
-      periodTo
-    }
-    contractorJobs {
-      id
-      startDate
-      endDate
     }
   }
 }

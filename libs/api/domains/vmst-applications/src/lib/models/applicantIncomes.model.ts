@@ -1,136 +1,130 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql'
+import {
+  Field,
+  Float,
+  ID,
+  InterfaceType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 
-@ObjectType('VmstApplicantIrregularJob')
-export class VmstApplicantIrregularJob {
-  @Field(() => String)
-  id!: string
-
-  @Field(() => String)
-  employerName!: string
-
-  @Field(() => String)
-  employerSSN!: string
-
-  @Field(() => String)
-  periodFrom!: string
-
-  @Field(() => String, { nullable: true })
-  periodTo?: string | null
-
-  @Field(() => Float)
-  estimatedIncome!: number
+export enum VmstApplicantIncomeRowType {
+  IrregularJob = 'IrregularJob',
+  PartTimeJob = 'PartTimeJob',
+  PensionPayment = 'PensionPayment',
+  CapitalIncomePayment = 'CapitalIncomePayment',
+  TRPayment = 'TRPayment',
+  ContractorJob = 'ContractorJob',
 }
 
-@ObjectType('VmstApplicantPartTimeJob')
-export class VmstApplicantPartTimeJob {
+registerEnumType(VmstApplicantIncomeRowType, {
+  name: 'VmstApplicantIncomeRowType',
+})
+
+@ObjectType('VmstApplicantEmployer')
+export class VmstApplicantEmployer {
   @Field(() => String)
-  id!: string
+  name!: string
 
   @Field(() => String)
-  employerName!: string
+  ssn!: string
+}
 
+@ObjectType('VmstApplicantPeriod')
+export class VmstApplicantPeriod {
+  // ISO 8601 local date-time (`2026-05-01T00:00:00`), as sent by Galdur.
   @Field(() => String)
-  employerSSN!: string
-
-  @Field(() => String)
-  periodFrom!: string
+  from!: string
 
   @Field(() => String, { nullable: true })
-  periodTo?: string | null
+  to?: string | null
+}
+
+const exhaustiveCheck = (param: never) => {
+  throw new Error(`Missing interfaceType ${param}`)
+}
+
+@InterfaceType('VmstApplicantIncomeRow', {
+  resolveType(row: VmstApplicantIncomeRow) {
+    switch (row.type) {
+      case VmstApplicantIncomeRowType.IrregularJob:
+        return VmstApplicantIrregularJob
+      case VmstApplicantIncomeRowType.PartTimeJob:
+        return VmstApplicantPartTimeJob
+      case VmstApplicantIncomeRowType.PensionPayment:
+        return VmstApplicantPensionPayment
+      case VmstApplicantIncomeRowType.CapitalIncomePayment:
+        return VmstApplicantCapitalIncomePayment
+      case VmstApplicantIncomeRowType.TRPayment:
+        return VmstApplicantTRPayment
+      case VmstApplicantIncomeRowType.ContractorJob:
+        return VmstApplicantContractorJob
+      default:
+        return exhaustiveCheck(row.type)
+    }
+  },
+})
+export abstract class VmstApplicantIncomeRow {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => VmstApplicantIncomeRowType)
+  type!: VmstApplicantIncomeRowType
+
+  @Field(() => VmstApplicantPeriod)
+  period!: VmstApplicantPeriod
+
+  // Nullable because contractor jobs report no estimated income.
+  @Field(() => Float, { nullable: true })
+  estimatedIncome?: number | null
+}
+
+@ObjectType('VmstApplicantIrregularJob', {
+  implements: () => [VmstApplicantIncomeRow],
+})
+export class VmstApplicantIrregularJob extends VmstApplicantIncomeRow {
+  @Field(() => VmstApplicantEmployer)
+  employer!: VmstApplicantEmployer
+}
+
+@ObjectType('VmstApplicantPartTimeJob', {
+  implements: () => [VmstApplicantIncomeRow],
+})
+export class VmstApplicantPartTimeJob extends VmstApplicantIncomeRow {
+  @Field(() => VmstApplicantEmployer)
+  employer!: VmstApplicantEmployer
 
   @Field(() => Float, { nullable: true })
   ratio?: number | null
-
-  @Field(() => Float)
-  estimatedIncome!: number
 }
 
-@ObjectType('VmstApplicantPensionPayment')
-export class VmstApplicantPensionPayment {
-  @Field(() => String)
-  id!: string
-
+@ObjectType('VmstApplicantPensionPayment', {
+  implements: () => [VmstApplicantIncomeRow],
+})
+export class VmstApplicantPensionPayment extends VmstApplicantIncomeRow {
   @Field(() => String)
   incomeTypeId!: string
 
   @Field(() => String, { nullable: true })
   pensionFundId?: string | null
-
-  @Field(() => Float)
-  estimatedIncome!: number
-
-  @Field(() => String)
-  periodFrom!: string
-
-  @Field(() => String, { nullable: true })
-  periodTo?: string | null
 }
 
-@ObjectType('VmstApplicantCapitalIncomePayment')
-export class VmstApplicantCapitalIncomePayment {
-  @Field(() => String)
-  id!: string
-
+@ObjectType('VmstApplicantCapitalIncomePayment', {
+  implements: () => [VmstApplicantIncomeRow],
+})
+export class VmstApplicantCapitalIncomePayment extends VmstApplicantIncomeRow {
   @Field(() => String)
   incomeTypeId!: string
-
-  @Field(() => Float)
-  estimatedIncome!: number
-
-  @Field(() => String)
-  periodFrom!: string
-
-  @Field(() => String, { nullable: true })
-  periodTo?: string | null
 }
 
-@ObjectType('VmstApplicantTRPayment')
-export class VmstApplicantTRPayment {
-  @Field(() => String)
-  id!: string
-
+@ObjectType('VmstApplicantTRPayment', {
+  implements: () => [VmstApplicantIncomeRow],
+})
+export class VmstApplicantTRPayment extends VmstApplicantIncomeRow {
   @Field(() => String)
   incomeTypeId!: string
-
-  @Field(() => Float)
-  estimatedIncome!: number
-
-  @Field(() => String)
-  periodFrom!: string
-
-  @Field(() => String, { nullable: true })
-  periodTo?: string | null
 }
 
-@ObjectType('VmstApplicantContractorJob')
-export class VmstApplicantContractorJob {
-  @Field(() => String)
-  id!: string
-
-  @Field(() => String)
-  startDate!: string
-
-  @Field(() => String)
-  endDate!: string
-}
-
-@ObjectType('VmstApplicantIncomes')
-export class VmstApplicantIncomes {
-  @Field(() => [VmstApplicantIrregularJob])
-  irregularJobs!: VmstApplicantIrregularJob[]
-
-  @Field(() => [VmstApplicantPartTimeJob])
-  partTimeJobs!: VmstApplicantPartTimeJob[]
-
-  @Field(() => [VmstApplicantPensionPayment])
-  pensionPayments!: VmstApplicantPensionPayment[]
-
-  @Field(() => [VmstApplicantCapitalIncomePayment])
-  capitalIncomePayments!: VmstApplicantCapitalIncomePayment[]
-
-  @Field(() => [VmstApplicantTRPayment])
-  trPayments!: VmstApplicantTRPayment[]
-
-  @Field(() => [VmstApplicantContractorJob])
-  contractorJobs!: VmstApplicantContractorJob[]
-}
+@ObjectType('VmstApplicantContractorJob', {
+  implements: () => [VmstApplicantIncomeRow],
+})
+export class VmstApplicantContractorJob extends VmstApplicantIncomeRow {}

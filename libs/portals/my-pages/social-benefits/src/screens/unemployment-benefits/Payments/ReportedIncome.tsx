@@ -1,15 +1,28 @@
 import { useLocale } from '@island.is/localization'
+import { VmstApplicantIncomeRowType } from '@island.is/api/schema'
 import {
   amountFormat,
   formatNationalId,
 } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import { unemploymentBenefitsMessages as um } from '../../../lib/messages/unemployment'
 import { ReportedIncomeRow, ReportedIncomeTable } from './ReportedIncomeTable'
-import { useGetVmstApplicantIncomesQuery } from './ReportedIncome.generated'
+import { useGetVmstApplicantIncomeRowsQuery } from './ReportedIncome.generated'
 
 const DASH = '-'
 const LONG_DATE_FORMAT = 'd. MMMM yyyy'
+
+const TYPE_LABELS: Record<
+  VmstApplicantIncomeRowType,
+  typeof um[keyof typeof um]
+> = {
+  [VmstApplicantIncomeRowType.IrregularJob]: um.reportedIncomeTypeIrregular,
+  [VmstApplicantIncomeRowType.PartTimeJob]: um.reportedIncomeTypePartTime,
+  [VmstApplicantIncomeRowType.PensionPayment]: um.reportedIncomeTypePension,
+  [VmstApplicantIncomeRowType.CapitalIncomePayment]:
+    um.reportedIncomeTypeCapital,
+  [VmstApplicantIncomeRowType.TRPayment]: um.reportedIncomeTypeTR,
+  [VmstApplicantIncomeRowType.ContractorJob]: um.reportedIncomeTypeContractor,
+}
 
 const formatAmount = (value?: number | null) =>
   value != null ? amountFormat(value) : DASH
@@ -21,7 +34,7 @@ const formatPayer = (name?: string | null, ssn?: string | null) => {
 
 export const ReportedIncome = () => {
   const { formatMessage, formatDateFns } = useLocale()
-  const { data, loading, error } = useGetVmstApplicantIncomesQuery()
+  const { data, loading, error } = useGetVmstApplicantIncomeRowsQuery()
 
   const formatLongDate = (value?: string | null) => {
     if (!value) return DASH
@@ -32,67 +45,26 @@ export const ReportedIncome = () => {
     }
   }
 
-  if (!loading && error) {
-    return <Problem error={error} noBorder={false} />
-  }
+  const rows: ReportedIncomeRow[] = (data?.vmstApplicantIncomeRows ?? []).map(
+    (item, index) => {
+      const payer =
+        item.__typename === 'VmstApplicantIrregularJob' ||
+        item.__typename === 'VmstApplicantPartTimeJob'
+          ? formatPayer(item.employer.name, item.employer.ssn)
+          : item.__typename === 'VmstApplicantTRPayment'
+          ? formatMessage(um.reportedIncomeTRPayer)
+          : DASH
 
-  const incomes = data?.vmstApplicantIncomes
-  const rows: ReportedIncomeRow[] = [
-    ...(incomes?.irregularJobs ?? []).map((item, index) => ({
-      id: item.id ?? `irregular-${index}`,
-      type: formatMessage(um.reportedIncomeTypeIrregular),
-      payer: formatPayer(item.employerName, item.employerSSN),
-      date: formatLongDate(item.periodFrom),
-      dateTo: formatLongDate(item.periodTo),
-      amount: formatAmount(item.estimatedIncome),
-      sortDate: item.periodFrom,
-    })),
-    ...(incomes?.partTimeJobs ?? []).map((item, index) => ({
-      id: item.id ?? `partTime-${index}`,
-      type: formatMessage(um.reportedIncomeTypePartTime),
-      payer: formatPayer(item.employerName, item.employerSSN),
-      date: formatLongDate(item.periodFrom),
-      dateTo: formatLongDate(item.periodTo),
-      amount: formatAmount(item.estimatedIncome),
-      sortDate: item.periodFrom,
-    })),
-    ...(incomes?.pensionPayments ?? []).map((item, index) => ({
-      id: item.id ?? `pension-${index}`,
-      type: formatMessage(um.reportedIncomeTypePension),
-      payer: DASH,
-      date: formatLongDate(item.periodFrom),
-      dateTo: formatLongDate(item.periodTo),
-      amount: formatAmount(item.estimatedIncome),
-      sortDate: item.periodFrom,
-    })),
-    ...(incomes?.capitalIncomePayments ?? []).map((item, index) => ({
-      id: item.id ?? `capital-${index}`,
-      type: formatMessage(um.reportedIncomeTypeCapital),
-      payer: DASH,
-      date: formatLongDate(item.periodFrom),
-      dateTo: formatLongDate(item.periodTo),
-      amount: formatAmount(item.estimatedIncome),
-      sortDate: item.periodFrom,
-    })),
-    ...(incomes?.trPayments ?? []).map((item, index) => ({
-      id: item.id ?? `tr-${index}`,
-      type: formatMessage(um.reportedIncomeTypeTR),
-      payer: formatMessage(um.reportedIncomeTRPayer),
-      date: formatLongDate(item.periodFrom),
-      dateTo: formatLongDate(item.periodTo),
-      amount: formatAmount(item.estimatedIncome),
-      sortDate: item.periodFrom,
-    })),
-    ...(incomes?.contractorJobs ?? []).map((item, index) => ({
-      id: item.id ?? `contractor-${index}`,
-      type: formatMessage(um.reportedIncomeTypeContractor),
-      payer: DASH,
-      date: formatLongDate(item.startDate),
-      dateTo: formatLongDate(item.endDate),
-      amount: DASH,
-      sortDate: item.startDate,
-    })),
-  ].sort((a, b) => (b.sortDate ?? '').localeCompare(a.sortDate ?? ''))
+      return {
+        id: item.id || `${item.type}-${index}`,
+        type: formatMessage(TYPE_LABELS[item.type]),
+        payer,
+        date: formatLongDate(item.period.from),
+        dateTo: formatLongDate(item.period.to),
+        amount: formatAmount(item.estimatedIncome),
+      }
+    },
+  )
 
-  return <ReportedIncomeTable rows={rows} loading={loading} />
+  return <ReportedIncomeTable rows={rows} loading={loading} error={error} />
 }
