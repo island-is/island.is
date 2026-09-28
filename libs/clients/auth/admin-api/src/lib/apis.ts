@@ -29,19 +29,6 @@ export const AdminProdApi: AdminApiEnv = {
   key: 'AdminProdApi',
 }
 
-export const PublicDevApi: AdminApiEnv = {
-  env: Environment.Development,
-  key: 'PublicDevApi',
-}
-export const PublicStagingApi: AdminApiEnv = {
-  env: Environment.Staging,
-  key: 'PublicStagingApi',
-}
-export const PublicProdApi: AdminApiEnv = {
-  env: Environment.Production,
-  key: 'PublicProdApi',
-}
-
 export const CurrentPublicApi = 'CurrentPublicApi'
 
 export const exportedApis: Provider[] = [
@@ -65,24 +52,6 @@ export const exportedApis: Provider[] = [
     inject: [AuthAdminApiClientConfig.KEY],
   }
 })
-
-exportedApis.push(
-  ...[PublicDevApi, PublicStagingApi, PublicProdApi].map((publicApi) => ({
-    provide: publicApi.key,
-    useFactory: (config: ConfigType<typeof AuthAdminApiClientConfig>) =>
-      config.basePaths[publicApi.env]
-        ? new PublicApi(
-            new Configuration({
-              fetchApi: createEnhancedFetch({
-                name: `clients-auth-public-${publicApi.env}-api`,
-              }),
-              basePath: config.basePaths[publicApi.env],
-            }),
-          )
-        : undefined,
-    inject: [AuthAdminApiClientConfig.KEY],
-  })),
-)
 
 exportedApis.push({
   provide: CurrentPublicApi,

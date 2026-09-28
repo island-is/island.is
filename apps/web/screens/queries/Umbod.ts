@@ -9,7 +9,6 @@ export const GET_PUBLIC_AUTH_TENANTS = gql`
         locale
         value
       }
-      availableEnvironments
     }
   }
 `
@@ -33,7 +32,6 @@ export const GET_PUBLIC_AUTH_TENANT_SCOPES = gql`
         locale
         value
       }
-      availableEnvironments
     }
   }
 `

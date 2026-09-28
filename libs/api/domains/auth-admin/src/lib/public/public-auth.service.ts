@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { PublicApi, CurrentPublicApi } from '@island.is/clients/auth/admin-api'
 import { handle204 } from '@island.is/clients/middlewares'
-import { Environment } from '@island.is/shared/types'
 
 import { PublicAuthScope, PublicAuthTenant } from './public-auth.models'
 
@@ -13,17 +12,6 @@ export class PublicAuthService {
   constructor(
     @Inject(CurrentPublicApi) private readonly publicApi: PublicApi,
   ) {}
-
-  private get currentEnvironment(): Environment {
-    switch (process.env.ENVIRONMENT) {
-      case 'prod':
-        return Environment.Production
-      case 'staging':
-        return Environment.Staging
-      default:
-        return Environment.Development
-    }
-  }
 
   async getTenants(): Promise<PublicAuthTenant[]> {
     const tenants =
@@ -36,7 +24,6 @@ export class PublicAuthService {
         id: tenant.name,
         displayName: tenant.displayName,
         nationalId: tenant.nationalId,
-        availableEnvironments: [this.currentEnvironment],
       }))
       .filter((tenant) => Boolean(tenant.nationalId))
       .sort((a, b) => {
@@ -68,7 +55,6 @@ export class PublicAuthService {
         scopeName: scope.name,
         displayName: scope.displayName,
         description: scope.description,
-        availableEnvironments: [this.currentEnvironment],
       }))
       .sort((a, b) => a.scopeName.localeCompare(b.scopeName, 'is'))
   }

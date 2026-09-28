@@ -7,14 +7,12 @@ export interface PublicAuthTenant {
   id: string
   nationalId?: string
   displayName: TranslatedValue[]
-  availableEnvironments: string[]
 }
 
 export interface PublicAuthScope {
   scopeName: string
   displayName: TranslatedValue[]
   description: TranslatedValue[]
-  availableEnvironments: string[]
 }
 
 export const getTranslation = (
