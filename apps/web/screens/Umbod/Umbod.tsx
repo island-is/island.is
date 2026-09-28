@@ -237,7 +237,7 @@ Umbod.getProps = async ({ apolloClient }) => {
 export default withMainLayout(Umbod, {
   showSearchInHeader: false,
   languageToggleHrefOverride: {
-    is: '/umbod',
-    en: '/en/mandates',
+    is: '/s/stafraent-island/umbodskerfi/rafraen-umbod',
+    en: '/en/o/digital-iceland/authorisation-system/electronic-mandates',
   },
 })
