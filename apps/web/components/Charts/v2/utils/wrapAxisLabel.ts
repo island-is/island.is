@@ -2,6 +2,19 @@ import { hyphenateText } from '@island.is/island-ui/core'
 
 const SOFT_HYPHEN = '­'
 
+// Last resort for a syllable that is still too long, e.g. a foreign word
+// hyphenateText has no pattern for
+const splitToLength = (text: string, length: number): string[] => {
+  if (length < 1 || text.length <= length) {
+    return [text]
+  }
+  const chunks: string[] = []
+  for (let i = 0; i < text.length; i += length) {
+    chunks.push(text.slice(i, i + length))
+  }
+  return chunks
+}
+
 /**
  * Wraps a chart axis label into multiple lines instead of Recharts either
  * overflowing it or (with interval="preserveEnd") dropping every other tick
@@ -50,11 +63,14 @@ export const wrapAxisLabel = (
     // The word itself is too long for one line - break it at syllable
     // boundaries (soft hyphens) instead of mid-syllable
     pushCurrentLine()
-    const syllables = word.split(SOFT_HYPHEN)
+    const syllables = word
+      .split(SOFT_HYPHEN)
+      .flatMap((syllable) => splitToLength(syllable, maxCharsPerLine - 1))
     let piece = ''
     for (const syllable of syllables) {
       const withSyllable = piece + syllable
-      if (withSyllable.length > maxCharsPerLine && piece) {
+      // Leave room for the hyphen added when the piece is pushed
+      if (withSyllable.length > maxCharsPerLine - 1 && piece) {
         lines.push(`${piece}-`)
         piece = syllable
       } else {
@@ -68,7 +84,10 @@ export const wrapAxisLabel = (
 
   if (lines.length > maxLines) {
     const truncated = lines.slice(0, maxLines)
-    truncated[maxLines - 1] = `${truncated[maxLines - 1]}…`
+    const lastLine = truncated[maxLines - 1]
+      .slice(0, maxCharsPerLine - 1)
+      .replace(/[\s-]+$/, '')
+    truncated[maxLines - 1] = `${lastLine}…`
     return truncated
   }
 

@@ -100,6 +100,7 @@ export default {
     'chart',
     'chartComponent',
     'chartNumberBoxGroup',
+    'chartNumberBox',
     'featuredEvents',
     'bigBulletList',
     'iconBullet',

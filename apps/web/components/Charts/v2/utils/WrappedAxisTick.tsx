@@ -15,6 +15,7 @@ interface WrappedAxisTickProps {
   tickFormatter?: (value: unknown, index: number) => string
   textAnchor?: 'start' | 'middle' | 'end'
   fontSize?: number
+  style?: { fontSize?: number | string }
   dy?: number
   maxCharsPerLine?: number
   maxLines?: number
@@ -28,6 +29,7 @@ export const WrappedAxisTick = ({
   tickFormatter,
   textAnchor = 'middle',
   fontSize = theme.typography.baseFontSize,
+  style,
   dy = 16,
   maxCharsPerLine = DEFAULT_MAX_CHARS_PER_LINE,
   maxLines = DEFAULT_MAX_LINES,
@@ -43,7 +45,8 @@ export const WrappedAxisTick = ({
       x={x}
       y={y}
       textAnchor={textAnchor}
-      fontSize={fontSize}
+      // The axis forwards customStyleConfig's font size through `style`
+      fontSize={style?.fontSize ?? fontSize}
       fontFamily={theme.typography.fontFamily}
       fill={theme.color.dark400}
     >
