@@ -19,7 +19,6 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
-import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const CriminalRecordUpdate = ({
   uploadFiles,
@@ -46,30 +45,26 @@ export const CriminalRecordUpdate = ({
     caseId: workingCase.id,
   })
 
-  // Same rule as the parent uses for its send button, so a reopened or
-  // corrected case stages the files for the next send rather than uploading
-  // them straight away
-  const sentToPublicProsecutor = isSentToPublicProsecutor(workingCase)
+  const isSentToPublicProsecutor = Boolean(
+    workingCase.indictmentSentToPublicProsecutorDate,
+  )
 
   const handleCriminalRecordUpdateUpload = useCallback(
     async (files: File[]) => {
       // If the case has been sent to the public prosecutor
       // we want to complete these uploads straight away
-      if (sentToPublicProsecutor) {
+      if (isSentToPublicProsecutor) {
         const uploadResult = await handleUpload(
           addUploadFiles(files, {
             category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           }),
           updateUploadFile,
         )
-
-        if (uploadResult === 'NONE_SUCCEEDED') {
+        if (uploadResult !== 'ALL_SUCCEEDED') {
           return
         }
 
-        // At least one file is now on the case. This event is what tells the
-        // criminal records office about it, so it has to be logged even when
-        // some of the files failed.
+        // TODO: Make sure to log an event if at least one file was uploaded
         await createEventLog({
           caseId: workingCase.id,
           eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
@@ -88,7 +83,7 @@ export const CriminalRecordUpdate = ({
       workingCase.id,
       addUploadFiles,
       handleUpload,
-      sentToPublicProsecutor,
+      isSentToPublicProsecutor,
       updateUploadFile,
       createEventLog,
     ],

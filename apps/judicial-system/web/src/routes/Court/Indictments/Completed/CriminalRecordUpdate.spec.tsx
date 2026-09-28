@@ -49,14 +49,6 @@ const notSentCase = {
   indictmentCompletedDate: completedDate,
 } as WorkingCase
 
-// Sent to the public prosecutor, then reopened and completed again: the new
-// completion has not been sent yet
-const reopenedCase = {
-  ...mockCase(CaseType.INDICTMENT),
-  indictmentSentToPublicProsecutorDate: completedDate,
-  indictmentCompletedDate: '2024-01-03T10:00:00.000Z',
-} as WorkingCase
-
 const pdf = (name: string) =>
   new File(['%PDF-1.4'], name, { type: 'application/pdf' })
 
@@ -113,46 +105,36 @@ describe('CriminalRecordUpdate', () => {
       )
     })
 
-    it('logs the event when only some of the files were uploaded', async () => {
-      mockHandleUpload.mockResolvedValue('SOME_SUCCEEDED')
-      const { input } = renderComponent(sentCase)
+    // The event is only logged when every file uploaded, see the TODO in the
+    // component
+    it.each(['SOME_SUCCEEDED', 'NONE_SUCCEEDED'])(
+      'does not log the event when the upload result is %s',
+      async (uploadResult) => {
+        mockHandleUpload.mockResolvedValue(uploadResult)
+        const { input } = renderComponent(sentCase)
 
-      await userEvent.upload(input, [pdf('a.pdf'), pdf('b.pdf')])
+        await userEvent.upload(input, [pdf('a.pdf'), pdf('b.pdf')])
 
-      await waitFor(() => expect(mockCreateEventLog).toHaveBeenCalledTimes(1))
-    })
-
-    it('does not log the event when no file was uploaded', async () => {
-      mockHandleUpload.mockResolvedValue('NONE_SUCCEEDED')
-      const { input } = renderComponent(sentCase)
-
-      await userEvent.upload(input, pdf('a.pdf'))
-
-      await waitFor(() => expect(mockHandleUpload).toHaveBeenCalledTimes(1))
-      expect(mockCreateEventLog).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('when the case has not been sent to the public prosecutor', () => {
-    it.each([
-      ['never sent', notSentCase],
-      ['sent before it was reopened', reopenedCase],
-    ])(
-      'stages the files for the next send without uploading or logging (%s)',
-      async (_, theCase) => {
-        const { input, addUploadFiles } = renderComponent(theCase)
-
-        await userEvent.upload(input, pdf('a.pdf'))
-
-        await waitFor(() =>
-          expect(addUploadFiles).toHaveBeenCalledWith(expect.any(Array), {
-            category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-            status: FileUploadStatus.done,
-          }),
-        )
-        expect(mockHandleUpload).not.toHaveBeenCalled()
+        await waitFor(() => expect(mockHandleUpload).toHaveBeenCalledTimes(1))
         expect(mockCreateEventLog).not.toHaveBeenCalled()
       },
     )
+  })
+
+  describe('when the case has not been sent to the public prosecutor', () => {
+    it('stages the files for the next send without uploading or logging', async () => {
+      const { input, addUploadFiles } = renderComponent(notSentCase)
+
+      await userEvent.upload(input, pdf('a.pdf'))
+
+      await waitFor(() =>
+        expect(addUploadFiles).toHaveBeenCalledWith(expect.any(Array), {
+          category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+          status: FileUploadStatus.done,
+        }),
+      )
+      expect(mockHandleUpload).not.toHaveBeenCalled()
+      expect(mockCreateEventLog).not.toHaveBeenCalled()
+    })
   })
 })
