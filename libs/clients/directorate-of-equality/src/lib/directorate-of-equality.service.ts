@@ -7,7 +7,6 @@ import {
   deleteApplicationReportDraft,
   editApplicationEqualityContent,
   editApplicationOutliers,
-  getAggregateStatistics,
   getApplicationActiveEqualityReport,
   getApplicationBlankExcelTemplate,
   getApplicationEqualityContentPdf,
@@ -37,7 +36,6 @@ import {
   updateApplicationReportDraft,
 } from '../../gen/fetch'
 import type {
-  AggregateStatisticsDto,
   ApplicationReportCommentDto,
   ApplicationReportDetailDto,
   CompanyDto,
@@ -70,7 +68,6 @@ import type {
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { publicClient } from './directorate-of-equality-public-client'
 
 const LOGGING_CONTEXT = 'DirectorateOfEqualityClientService'
 
@@ -87,23 +84,6 @@ export class DirectorateOfEqualityClientService {
       return await data(withAuthContext(user, fn))
     } catch (error) {
       this.logger.error(errorLogMessage, { context: LOGGING_CONTEXT, error })
-      throw error
-    }
-  }
-
-  /**
-   * Public aggregate coverage/sector/pay-gap figures. Unauthenticated —
-   * uses `publicClient` rather than `unwrap`/`withAuthContext`, since this
-   * is not scoped to a citizen or company.
-   */
-  async getAggregateStatistics(): Promise<AggregateStatisticsDto> {
-    try {
-      return await data(getAggregateStatistics({ client: publicClient }))
-    } catch (error) {
-      this.logger.error('Failed to get aggregate statistics', {
-        context: LOGGING_CONTEXT,
-        error,
-      })
       throw error
     }
   }

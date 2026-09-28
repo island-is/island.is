@@ -412,7 +412,7 @@
     },
     "/api/v1/application/reports/salary/eligibility": {
       "get": {
-        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. Two preconditions are checked: (1) the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`, checked first) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts and the same answer `GET reports/equality/active` gives; and (2) the 3-year renewal window must be open, i.e. the current report is due in 6 months or less (`RENEWAL_WINDOW_NOT_OPEN`). The renewal rule is also enforced as a 409 on `POST reports/salary` (in the production environment only), and the equality precondition as a 404.",
+        "description": "Pre-flight check of whether the resolved company may submit a salary report right now, with a machine-readable `reason` when blocked so the application portal can gate entry into the flow. One precondition is checked: the company’s equality obligation must be met (`MISSING_EQUALITY_REPORT`) — by an APPROVED, in-force equality report filed here **or** by an unexpired certificate from the Directorate’s retired register, the same two the admin register counts and the same answer `GET reports/equality/active` gives. Enforced as a 404 on `POST reports/salary`.\n\nThere is no longer any timing restriction: the 6-month renewal window was removed and a company may file however far out its current deadline is. Filing early is not free, though — a report’s three years run from APPROVAL, so whatever is left on the current certificate is absorbed rather than added, and a company with a year still to run gets three years from today instead of four. `earliestNewDueAt` (what filing now would earn) against `dueAt` (what they have) is the size of that trade, returned whether or not `eligible` is true so the portal can put it to the applicant before they start.",
         "operationId": "getApplicationSalaryReportEligibility",
         "parameters": [],
         "responses": {
@@ -466,7 +466,7 @@
     },
     "/api/v1/application/reports/salary": {
       "post": {
-        "description": "Files a salary report for the resolved company.\n\n404 when the company has no equality coverage to file against — neither an APPROVED, in-force equality report nor an unexpired certificate on the retired register (`GET reports/salary/eligibility` reports the same as `MISSING_EQUALITY_REPORT`).\n\n409 on three distinct refusals: (1) the 3-year renewal window is not open yet, i.e. the current report is due more than 6 months out — the same rule `GET reports/salary/eligibility` reports as `RENEWAL_WINDOW_NOT_OPEN`, and enforced here in the production environment only; (2) the company already has a SALARY report in IN_REVIEW or POSTPONED, which a reviewer is mid-workflow on (a merely SUBMITTED predecessor is withdrawn silently instead, and does not 409); (3) the `(providerType, providerId)` tuple is already registered to a different company, or to a report of the other type. The three are not distinguished in the response body today; the reason is in `message`.",
+        "description": "Files a salary report for the resolved company. There is no timing restriction — the 6-month renewal window was removed, and a company may file however far out its current deadline is. See `GET reports/salary/eligibility` for what filing early costs.\n\n404 when the company has no equality coverage to file against — neither an APPROVED, in-force equality report nor an unexpired certificate on the retired register (`GET reports/salary/eligibility` reports the same as `MISSING_EQUALITY_REPORT`).\n\n409 on two distinct refusals: (1) the company already has a SALARY report in IN_REVIEW or POSTPONED, which a reviewer is mid-workflow on (a merely SUBMITTED predecessor is withdrawn silently instead, and does not 409); (2) the `(providerType, providerId)` tuple is already registered to a different company, or to a report of the other type. The two are not distinguished in the response body today; the reason is in `message`.",
         "operationId": "submitApplicationSalaryReport",
         "parameters": [],
         "requestBody": {
@@ -1419,6 +1419,521 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiKeyDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-providers": {
+      "get": {
+        "description": "Every approved provider the signed-in company may allow to act for it, by name. Active providers only, each with its kennitala so two similar names can be told apart. Built from the approved list alone — nothing a provider puts in a link can add to it.",
+        "operationId": "getApplicationPartnerProviders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPartnerProvidersResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-delegations": {
+      "get": {
+        "description": "The providers the signed-in company currently allows to act for it, newest first, revoked providers left out. Reads the same live delegation rows the partner API enforces — by company id here, by kennitala there, which a composite foreign key keeps pointing at the same company — so what this lists is exactly who can file.",
+        "operationId": "getApplicationPartnerDelegations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCompanyPartnerDelegationsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "post": {
+        "description": "Allows a provider to act for the signed-in company. Omit `scopes` to hand over everything the provider was approved for, as the self-service web does — a delegation is all or nothing. `404` for a provider that is not on the approved list; `400` for a named scope it was not approved for; `409` if it is already allowed. Recorded on the company’s timeline.",
+        "operationId": "grantApplicationPartnerDelegation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantPartnerDelegationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyPartnerDelegationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-delegations/{id}": {
+      "delete": {
+        "description": "Withdraws a provider’s permission to act for the signed-in company. Takes effect on the provider’s next request. Idempotent. Another company’s delegation answers 404.",
+        "operationId": "revokeApplicationPartnerDelegation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "format": "uuid", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyPartnerDelegationDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-client": {
+      "get": {
+        "description": "The signed-in organisation’s own provider record, if Jafnréttisstofa has approved it as one. `404` for anyone else — which is how the self-service web decides whether to show the provider screens. Needs no entry in the employer register.",
+        "operationId": "getApplicationPartnerClient",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PartnerClientDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-client/keys": {
+      "get": {
+        "description": "Every vendor key the signed-in provider holds, newest first, revoked and expired ones included. Never contains a secret.",
+        "operationId": "getApplicationPartnerClientKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPartnerClientKeysResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      },
+      "post": {
+        "description": "Mints a vendor key (`doev_…`) for the signed-in provider. **The secret is shown exactly once.** Rotate by minting a new one, deploying it, then revoking the old one.",
+        "operationId": "issueApplicationPartnerClientKey",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePartnerClientKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssuedPartnerClientKeyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/partner-client/keys/{id}": {
+      "delete": {
+        "description": "Revokes one of the signed-in provider’s keys. Idempotent. Another provider’s key answers 404.",
+        "operationId": "revokeApplicationPartnerClientKey",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The key’s `id` as listed, not the `keyId` inside the credential.",
+            "schema": { "format": "uuid", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PartnerClientKeyDto" }
               }
             }
           },
@@ -2900,34 +3415,6 @@
         "summary": "",
         "tags": ["Application"]
       }
-    },
-    "/api/v1/application/statistics": {
-      "get": {
-        "operationId": "getAggregateStatistics",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Aggregate coverage, sector and pay-gap figures, as current values and monthly series.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AggregateStatisticsDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
-              }
-            }
-          }
-        },
-        "summary": "",
-        "tags": ["Application"]
-      }
     }
   },
   "info": {
@@ -3993,26 +4480,25 @@
           },
           "reason": {
             "type": "string",
-            "enum": ["RENEWAL_WINDOW_NOT_OPEN", "MISSING_EQUALITY_REPORT"],
+            "enum": ["MISSING_EQUALITY_REPORT"],
             "nullable": true,
-            "description": "Machine-readable reason when `eligible` is false; null when eligible. `MISSING_EQUALITY_REPORT` (no approved, in-force equality report — takes priority) or `RENEWAL_WINDOW_NOT_OPEN` (current report due more than 6 months out)."
+            "description": "Machine-readable reason when `eligible` is false; null when eligible. Only `MISSING_EQUALITY_REPORT` today — no approved, in-force equality report and no unexpired legacy certificate."
           },
           "dueAt": {
             "type": "string",
             "format": "date-time",
             "example": "2029-10-03T23:59:59.999Z",
             "nullable": true,
-            "description": "The company's next salary-report due date (`next_salary_report_due_at`). An end-of-day deadline — the company is not late until the named day is over. Null when no obligation is on record."
+            "description": "The company's current salary-report deadline (`next_salary_report_due_at`). An end-of-day deadline — the company is not late until the named day is over. Null when no obligation is on record."
           },
-          "earliestSubmissionDate": {
+          "earliestNewDueAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2029-04-03T00:00:00.000Z",
-            "nullable": true,
-            "description": "Earliest moment the company may submit (due date minus the 6-month window), normalised to 00:00 on that day — the whole of the named date can be filed on. Null when there is no due date to anchor on."
+            "example": "2029-09-22T23:59:59.999Z",
+            "description": "The deadline a report filed now would earn, **if it were approved today** — three years on, to the end of that day. Review normally takes days or weeks and the real date moves out with it, so treat this as the earliest possible answer rather than a promise.\n\nRead against `dueAt` it is what an early filing trades: the remaining time on the current certificate is absorbed into the new three years rather than added to them. A company with a year still to run gets three years from today, not four — so a consumer that files on a schedule of its own should put `dueAt` in front of the employer first."
           }
         },
-        "required": ["eligible"]
+        "required": ["eligible", "earliestNewDueAt"]
       },
       "SalaryDataBasisEnum": {
         "type": "string",
@@ -4023,20 +4509,12 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
-          "nationalId": { "type": "string" },
           "address": { "type": "string" },
           "city": { "type": "string" },
           "postcode": { "type": "string" },
           "isatCategory": { "type": "string" }
         },
-        "required": [
-          "name",
-          "nationalId",
-          "address",
-          "city",
-          "postcode",
-          "isatCategory"
-        ]
+        "required": ["name", "address", "city", "postcode", "isatCategory"]
       },
       "SubmitReportSubsidiaryDto": {
         "type": "object",
@@ -4090,8 +4568,11 @@
           "importedFromExcel": { "type": "boolean" },
           "providerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Upstream island.is application UUID, stored as the report provider_id."
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^(?!\\.{1,2}$)[^/\\\\]+$",
+            "example": "2026-Q1-042",
+            "description": "The caller’s own identifier for this submission, stored as the report provider_id. Any non-empty string up to 256 characters — a UUID, `2026-Q1-042`, whatever the calling system mints; the format carries no meaning here. Surrounding whitespace is trimmed, because this value is also the idempotency key and two ids differing only by spacing would file two reports. Uniqueness is enforced on `(provider_type, provider_id)`. It may not contain `/` or `\\`, and may not be `.` or `..`, since this id is also the path segment that reads the report back and a URL rewrites those before routing."
           },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
@@ -4122,7 +4603,7 @@
           "salaryDataPeriod": {
             "type": "string",
             "nullable": true,
-            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`, ignored for `AVERAGE`. Must name a month that has already happened, no earlier than 36 months ago."
+            "description": "The payroll month the data is based on, as an ISO date (`YYYY-MM-DD`; any day within the month is accepted and normalised to the 1st). Required when `salaryDataBasis` is `MONTH`. Must name a month that has already happened, no earlier than 36 months ago. When the basis is `AVERAGE` there is no single month to name: island.is clears any value sent, and the partner API refuses it with a 400 — so do not send one."
           },
           "parsed": {
             "description": "Parsed workbook payload from `POST /reports/excel/import`. Contains the criteria tree, role list, and employee rows.",
@@ -4174,17 +4655,39 @@
           "replayed": {
             "type": "boolean",
             "description": "True when the providerId had already been used and this call filed nothing — the report named here is the earlier one, and the body just sent was not read. A corrected re-file needs a new providerId."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "POSTPONED",
+              "IN_REVIEW",
+              "DENIED",
+              "APPROVED",
+              "SUPERSEDED",
+              "WITHDRAWN"
+            ],
+            "description": "Status of the report this call refers to. SUBMITTED means it is in the reviewer queue; POSTPONED means outliers were detected and left unexplained, and it cannot be reviewed until they are."
+          },
+          "unexplainedOutlierOrdinals": {
+            "description": "Employee ordinals whose pay difference is unexplained, present only when status is POSTPONED. Every one of them must be covered by a group sent to PUT …/outliers before the report can be reviewed.",
+            "type": "array",
+            "items": { "type": "number" }
           }
         },
-        "required": ["reportId", "replayed"]
+        "required": ["reportId", "replayed", "status"]
       },
       "SubmitEqualityReportDto": {
         "type": "object",
         "properties": {
           "providerId": {
             "type": "string",
-            "format": "uuid",
-            "description": "Upstream island.is application UUID, stored as the report provider_id."
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^(?!\\.{1,2}$)[^/\\\\]+$",
+            "example": "2026-Q1-042",
+            "description": "The caller’s own identifier for this submission, stored as the report provider_id. Any non-empty string up to 256 characters — a UUID, `2026-Q1-042`, whatever the calling system mints; the format carries no meaning here. Surrounding whitespace is trimmed, because this value is also the idempotency key and two ids differing only by spacing would file two reports. Uniqueness is enforced on `(provider_type, provider_id)`. It may not contain `/` or `\\`, and may not be `.` or `..`, since this id is also the path segment that reads the report back and a URL rewrites those before routing."
           },
           "companyAdminName": { "type": "string" },
           "companyAdminTitle": {
@@ -4701,7 +5204,7 @@
           },
           "scopes": {
             "type": "array",
-            "description": "What the key may do. Omit for the default set — `report:read`, `salary:submit` and `equality:submit`, which is everything a vendor needs to file. `scoring:write` is never granted implicitly and must be named here: it authors the company’s starfsmat, which is a different act from filing against one, and it carries a delete that cascades the whole model away. An unrecognised scope is rejected rather than stored.",
+            "description": "What the key may do. Omit for every scope, `scoring:write` included — access is all or nothing, and no Jafnréttisstofa screen narrows it. Name a subset only to restrict a key deliberately; note that `scoring:write` carries a delete that cascades the whole starfsmat away. An empty array is refused rather than read as omitted, and an unrecognised scope is rejected rather than stored.",
             "items": {
               "type": "string",
               "enum": [
@@ -4850,6 +5353,265 @@
           }
         },
         "required": ["apiKeys"]
+      },
+      "PartnerProviderDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "nationalId": {
+            "type": "string",
+            "description": "The firm’s kennitala."
+          }
+        },
+        "required": ["id", "name", "nationalId"]
+      },
+      "GetPartnerProvidersResponseDto": {
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PartnerProviderDto" }
+          }
+        },
+        "required": ["providers"]
+      },
+      "CompanyPartnerDelegationDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "provider": { "$ref": "#/components/schemas/PartnerProviderDto" },
+          "scopes": {
+            "type": "array",
+            "description": "What the company allowed this provider to do.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
+            }
+          },
+          "grantedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "grantedByNationalId": {
+            "type": "string",
+            "description": "Kennitala of the person who granted it."
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "scopes",
+          "grantedAt",
+          "grantedByNationalId"
+        ]
+      },
+      "GetCompanyPartnerDelegationsResponseDto": {
+        "type": "object",
+        "properties": {
+          "delegations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompanyPartnerDelegationDto"
+            }
+          }
+        },
+        "required": ["delegations"]
+      },
+      "GrantPartnerDelegationDto": {
+        "type": "object",
+        "properties": {
+          "partnerClientId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The provider’s `id`, as listed."
+          },
+          "scopes": {
+            "type": "array",
+            "description": "Omit to hand the provider everything it was approved for — the self-service web always does: a delegation is all or nothing. Named, it must be within that approval. `scoring:write` lets the provider author and delete this company’s starfsmat.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
+            }
+          }
+        },
+        "required": ["partnerClientId"]
+      },
+      "PartnerClientDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "nationalId": {
+            "type": "string",
+            "description": "The firm’s kennitala."
+          },
+          "name": { "type": "string" },
+          "scopes": {
+            "type": "array",
+            "description": "The ceiling on what the firm may ever do. What it may do for a given company is this intersected with that company’s delegation.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "salary:submit",
+                "equality:submit",
+                "report:read",
+                "scoring:write"
+              ]
+            }
+          },
+          "createdByUserId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The DoE admin who approved the firm."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Set once the firm is cut off. A revoked firm authenticates nowhere, whatever keys or delegations it still holds."
+          },
+          "revokedByUserId": { "type": "string", "nullable": true },
+          "revokedReason": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "name",
+          "scopes",
+          "createdByUserId",
+          "createdAt"
+        ]
+      },
+      "PartnerClientKeyDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "partnerClientId": { "type": "string", "format": "uuid" },
+          "keyId": {
+            "type": "string",
+            "description": "Public half of the key, as it appears in the issued credential. Not a secret."
+          },
+          "label": { "type": "string", "nullable": true },
+          "createdVia": {
+            "description": "Which issuance path minted the key — the firm itself on the self-service web, or a DoE reviewer.",
+            "allOf": [{ "$ref": "#/components/schemas/ApiKeyOriginEnum" }]
+          },
+          "createdByNationalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Kennitala of the person who minted the key on the self-service path. Null on the admin path."
+          },
+          "createdByUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "DoE reviewer who minted the key. Null on the self-service path."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Null means no expiry."
+          },
+          "lastUsedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "Last time the key authenticated a request. Written at most once a minute per key."
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          },
+          "revokedByNationalId": { "type": "string", "nullable": true },
+          "revokedByUserId": { "type": "string", "nullable": true },
+          "revokedReason": { "type": "string", "nullable": true }
+        },
+        "required": [
+          "id",
+          "partnerClientId",
+          "keyId",
+          "createdVia",
+          "createdAt"
+        ]
+      },
+      "GetPartnerClientKeysResponseDto": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PartnerClientKeyDto" }
+          }
+        },
+        "required": ["keys"]
+      },
+      "CreatePartnerClientKeyDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text label to tell this key apart from the others, e.g. the environment it is deployed to.",
+            "maxLength": 256
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true,
+            "description": "When the key stops being accepted. Omit for no expiry."
+          }
+        }
+      },
+      "IssuedPartnerClientKeyDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The full plaintext key, `doev_<env>_<keyId>.<secret>`. Shown exactly once — it cannot be retrieved again, only replaced."
+          },
+          "id": { "type": "string", "format": "uuid" },
+          "partnerClientId": { "type": "string", "format": "uuid" },
+          "keyId": { "type": "string" },
+          "label": { "type": "string", "nullable": true },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-02-19T10:30:00.000Z",
+            "nullable": true
+          }
+        },
+        "required": ["key", "id", "partnerClientId", "keyId", "createdAt"]
       },
       "CreateDraftCompanyDto": {
         "type": "object",
@@ -5665,71 +6427,6 @@
         "properties": {
           "groupId": { "type": "string", "format": "uuid", "nullable": true }
         }
-      },
-      "AggregateStatisticUnitEnum": {
-        "type": "string",
-        "enum": ["COUNT", "PERCENT"]
-      },
-      "AggregateStatisticPointDto": {
-        "type": "object",
-        "properties": {
-          "header": {
-            "type": "string",
-            "description": "X-axis key. Milliseconds since epoch as a string for time series; a stable label (e.g. a sector) otherwise."
-          },
-          "value": {
-            "type": "number",
-            "nullable": true,
-            "description": "Null means the figure is not publishable rather than zero — either it could not be computed, or the cohort behind it is too small to publish. A consumer must render it as absent, never as 0."
-          }
-        },
-        "required": ["header", "value"]
-      },
-      "AggregateStatisticSeriesDto": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "description": "Stable machine key, e.g. `coverage.covered`. Safe to reference from a CMS chart; the Icelandic label is not."
-          },
-          "label": {
-            "type": "string",
-            "description": "Icelandic label for display."
-          },
-          "unit": {
-            "allOf": [
-              { "$ref": "#/components/schemas/AggregateStatisticUnitEnum" }
-            ]
-          },
-          "points": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AggregateStatisticPointDto"
-            }
-          }
-        },
-        "required": ["key", "label", "unit", "points"]
-      },
-      "AggregateStatisticsDto": {
-        "type": "object",
-        "properties": {
-          "generatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "When these figures were computed. The register moves continuously, so a published chart without this cannot be reconciled against a later one."
-          },
-          "minimumCohort": {
-            "type": "number",
-            "description": "Cohort size below which a derived figure is withheld (its `value` is null). Published so a reader can tell a suppressed point from a missing one."
-          },
-          "series": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AggregateStatisticSeriesDto"
-            }
-          }
-        },
-        "required": ["generatedAt", "minimumCohort", "series"]
       }
     }
   }
