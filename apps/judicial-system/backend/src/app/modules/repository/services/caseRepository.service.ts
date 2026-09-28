@@ -245,6 +245,7 @@ export class CaseRepositoryService {
     theCase: Pick<Case, 'id' | 'state'>,
   ): Promise<Pick<Case, 'id' | 'state'>> {
     let current: Pick<Case, 'id' | 'state'> = theCase
+    const visited = new Set<string>([theCase.id])
 
     while (true) {
       const child = await this.caseModel.findOne({
@@ -260,6 +261,13 @@ export class CaseRepositoryService {
         return current
       }
 
+      if (visited.has(child.id)) {
+        throw new InternalServerErrorException(
+          `Cyclic parentCaseId chain detected at case ${child.id}`,
+        )
+      }
+
+      visited.add(child.id)
       current = child
     }
   }

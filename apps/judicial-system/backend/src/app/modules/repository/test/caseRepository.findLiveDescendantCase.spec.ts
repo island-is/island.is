@@ -1,5 +1,6 @@
 import { Op } from 'sequelize'
 
+import { InternalServerErrorException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -132,5 +133,30 @@ describe('CaseRepositoryService — findLiveDescendantCase', () => {
         }),
       }),
     )
+  })
+
+  it('throws when a child ID repeats in the parentCaseId chain', async () => {
+    const theCase = {
+      id: 'root-id',
+      state: CaseState.COMPLETED,
+    } as Case
+    const mid = {
+      id: 'mid-id',
+      state: CaseState.WAITING_FOR_CANCELLATION,
+    } as Case
+    const cycleBackToRoot = {
+      id: 'root-id',
+      state: CaseState.DRAFT,
+    } as Case
+
+    caseModel.findOne
+      .mockResolvedValueOnce(mid)
+      .mockResolvedValueOnce(cycleBackToRoot)
+
+    await expect(
+      caseRepositoryService.findLiveDescendantCase(theCase),
+    ).rejects.toThrow(InternalServerErrorException)
+
+    expect(caseModel.findOne).toHaveBeenCalledTimes(2)
   })
 })
