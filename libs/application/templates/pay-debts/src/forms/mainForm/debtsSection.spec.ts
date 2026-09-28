@@ -124,16 +124,7 @@ describe('debtsSection', () => {
     } as unknown as Application
 
     expect(rows(application)).toEqual([
-      [
-        [
-          '01.08.2025',
-          '202508',
-          '500.000 kr.',
-          '55.990 kr.',
-          '10.000 kr.',
-          '',
-        ],
-      ],
+      [['01.08.2025', '202508', '500.000 kr.', '55.990 kr.', '10.000 kr.', '']],
     ])
   })
 
