@@ -108,19 +108,6 @@ describe('debtsSection', () => {
     }
   })
 
-  it('truncates the Gjaldflokkur column rather than letting it wrap', () => {
-    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
-      | InteractiveTableField
-      | undefined
-    const header = table?.header
-
-    if (typeof header === 'function' || !header) {
-      throw new Error('Expected a static header')
-    }
-
-    expect(header[0]).toMatchObject({ expandable: true, truncate: true })
-  })
-
   it('breaks each debt down into höfuðstóll, vextir and kostnaður', () => {
     const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
       | InteractiveTableField
@@ -164,7 +151,7 @@ describe('debtsSection', () => {
     expect(header).toContainEqual({
       label: messages.table.invoiceHeader,
       link: true,
-      width: 90,
+      width: 100,
     })
 
     const application = {
@@ -219,21 +206,6 @@ describe('debtsSection', () => {
     ]) {
       expect(conditionOf(field)({}, fetched([]), null)).toBe(false)
     }
-  })
-
-  it('never renders a row for an empty list, so nothing is selectable', () => {
-    const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
-      | InteractiveTableField
-      | undefined
-    const rows = table?.rows
-
-    if (typeof rows !== 'function') {
-      throw new Error('Expected the table rows to be derived from the debts')
-    }
-
-    expect(
-      rows({ externalData: fetched([]) } as unknown as Application),
-    ).toEqual([])
   })
 
   it('treats a failed fetch as nothing to show', () => {

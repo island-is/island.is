@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FC, PropsWithChildren } from 'react'
-import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import {
   Application,
   ApplicationStatus,
@@ -40,11 +40,8 @@ const application: Application = {
   applicantActors: [],
 }
 
-let form: UseFormReturn | undefined
-
 const Wrapper: FC<PropsWithChildren> = ({ children }) => {
   const methods = useForm()
-  form = methods
 
   return <FormProvider {...methods}>{children}</FormProvider>
 }
