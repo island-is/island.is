@@ -126,8 +126,8 @@ const mergeAttributes = <T>(target: T[], source: T[]) => {
 
 // Merges one association's include into the tree being built for a query.
 //
-// Every value that enters the tree is copied first (see copyInclude): the cell
-// generators are module level constants, and the merges below write into
+// Every value that enters the tree is copied first (see copyIncludeInto): the
+// cell generators are module level constants, and the merges below write into
 // whatever object they are handed. Aliasing one in would leave another list's
 // attributes and joins on the generator afterwards.
 const setInclude = <K extends keyof CaseIncludes>(
