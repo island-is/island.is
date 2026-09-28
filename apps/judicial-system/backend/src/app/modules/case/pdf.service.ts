@@ -131,9 +131,10 @@ export class PdfService {
       })
 
     const policeDigitalCaseFiles =
-      await this.policeDigitalCaseFileRepositoryService.findAll({
-        where: { caseId: theCase.id, policeCaseNumber },
-      })
+      await this.policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+      )
 
     const generatedPdf = await createCaseFilesRecord(
       theCase,
