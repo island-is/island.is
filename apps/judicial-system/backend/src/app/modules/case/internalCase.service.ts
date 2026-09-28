@@ -1774,8 +1774,9 @@ export class InternalCaseService {
   async getCaseFileClassification(
     theCase: Case,
   ): Promise<CaseFileClassificationResponse> {
-    const liveCase =
-      await this.caseRepositoryService.findLiveDescendantCase(theCase)
+    const liveCase = await this.caseRepositoryService.findLiveDescendantCase(
+      theCase,
+    )
 
     return {
       classification: getIndictmentCaseFileClassification(liveCase.state),
