@@ -473,6 +473,7 @@ export default function AppointmentDetailScreen() {
                       width={16}
                       height={16}
                       tintColor="blue400"
+                      resizeMode="contain"
                     />
                     <Typography variant="body">
                       {weekday}, {dateStr}

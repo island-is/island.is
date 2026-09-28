@@ -29,7 +29,7 @@ import { useTransitionCaseMutation } from './transitionCase.generated'
 import type { UpdateCaseMutation } from './updateCase.generated'
 import { useUpdateCaseMutation } from './updateCase.generated'
 import type { UpdateCase } from './useCase.logic'
-import { formatUpdates } from './useCase.logic'
+import { createCaseInput, formatUpdates } from './useCase.logic'
 
 const useCase = () => {
   const { limitedAccess } = useContext(UserContext)
@@ -83,27 +83,14 @@ const useCase = () => {
       async (theCase: WorkingCase): Promise<WorkingCase | undefined> => {
         try {
           if (isCreatingCase === false) {
-            if (!theCase.type || !theCase.policeCaseNumbers) {
+            const input = createCaseInput(theCase)
+
+            if (!input) {
               throw new Error('Missing required fields')
             }
 
             const { data } = await createCaseMutation({
-              variables: {
-                input: normalizeBlankStrings({
-                  type: theCase.type,
-                  indictmentSubtypes: theCase.indictmentSubtypes,
-                  description: theCase.description,
-                  policeCaseNumbers: theCase.policeCaseNumbers,
-                  defenderName: theCase.defenderName,
-                  defenderNationalId: theCase.defenderNationalId,
-                  defenderEmail: theCase.defenderEmail,
-                  defenderPhoneNumber: theCase.defenderPhoneNumber,
-                  requestSharedWithDefender: theCase.requestSharedWithDefender,
-                  leadInvestigator: theCase.leadInvestigator,
-                  crimeScenes: theCase.crimeScenes,
-                  prosecutorId: theCase.prosecutor?.id,
-                }),
-              },
+              variables: { input: normalizeBlankStrings(input) },
             })
 
             if (data) {

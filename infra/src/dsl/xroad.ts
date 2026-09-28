@@ -843,6 +843,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
     },
+    XROAD_TAXI_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/TAXI-ISLANDIS',
+    },
   },
 })
 

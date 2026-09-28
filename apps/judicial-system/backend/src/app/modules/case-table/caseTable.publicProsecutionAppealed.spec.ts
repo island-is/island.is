@@ -110,7 +110,10 @@ describe('public prosecution appealed case list', () => {
 
   const sqlForTable = (tableType: CaseTableType, user: User) => {
     const whereOptions = caseTableWhereOptions[tableType](user)
-    const [include, order] = getGlobalIncludes(whereOptions.includes ?? {})
+    const [include, order] = getGlobalIncludes(
+      whereOptions.includes ?? {},
+      user,
+    )
 
     return captureSql(() =>
       repository.Case.findAll({
@@ -267,7 +270,7 @@ describe('public prosecution appealed case list', () => {
     const sql = await captureSql(() =>
       repository.Case.findAll({
         attributes: ['id'],
-        where: userAccessWhereOptions(publicProsecutionUser),
+        where: userAccessWhereOptions(publicProsecutionUser).where,
       }),
     )
 

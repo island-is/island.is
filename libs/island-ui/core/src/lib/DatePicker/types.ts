@@ -40,6 +40,7 @@ export interface DatePickerProps {
   handleOpenCalendar?: () => void
   handleClear?: () => void
   required?: boolean
+  ariaLabelledBy?: string
   inputName?: string
   appearInline?: boolean
   size?: DatePickerSize

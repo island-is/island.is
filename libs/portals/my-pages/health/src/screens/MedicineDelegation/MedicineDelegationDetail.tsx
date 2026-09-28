@@ -118,7 +118,11 @@ const MedicineDelegationDetail = () => {
           label={messages.status}
           content={
             filteredData?.status
-              ? permitTagSelector(filteredData.status, formatMessage).label
+              ? permitTagSelector(
+                  filteredData.status,
+                  formatMessage,
+                  filteredData.dates?.from,
+                ).label
               : ''
           }
         />

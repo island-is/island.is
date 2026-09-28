@@ -111,6 +111,82 @@ export type CaseWhereOptions = {
   displayCases?: (cases: Case[]) => Case[]
 }
 
+/**
+ * What a user may reach at all, as opposed to which of those cases belong in a
+ * given list.
+ *
+ * Access options name the associations they read - `$appealCase.appeal_state$`
+ * and the like - so they carry the includes those references need. Sequelize
+ * emits an alias reference whether or not the query joined it, and Postgres
+ * then rejects the whole query, so an access rule that cannot ask for its own
+ * join is an assumption every caller has to remember.
+ *
+ * Only the combined rules - the `*CasesAccessWhereOptions` a list or a search
+ * actually calls - carry includes. The narrower rules they are built from stay
+ * plain where clauses, because nothing outside the access module calls one.
+ * Point a list at one of those directly and the joins would not follow it; the
+ * spec that checks every case table query joins every alias it names is what
+ * catches that, rather than the type.
+ *
+ * One invariant a rule must keep: a predicate on a joined alias has to be a
+ * positive test - `IN`, `IS NOT NULL` and the like. A list may join the same
+ * association with a filter of its own, and the rule is then evaluated against
+ * that narrowed row, so a positive test can only ever admit fewer cases. A
+ * negative test - `IS NULL`, `Op.not`, `Op.notIn` - would instead be satisfied
+ * by the very rows the list filtered away, and the list's filter would start
+ * widening access rather than narrowing it.
+ */
+export type CaseAccessOptions = {
+  includes?: CaseIncludes
+  where: WhereOptions
+}
+
+// An access include is a bare request for a join. Where a list joins the same
+// association itself, the list's version wins outright - it is the narrower
+// one, and its attributes and filters are what the columns need.
+export const mergeAccessIncludes = (
+  accessIncludes?: CaseIncludes,
+  tableIncludes?: CaseIncludes,
+): CaseIncludes | undefined => {
+  if (!accessIncludes) {
+    return tableIncludes
+  }
+
+  const merged: CaseIncludes = { ...tableIncludes }
+
+  for (const key of Object.keys(accessIncludes) as Array<keyof CaseIncludes>) {
+    copyAccessInclude(merged, accessIncludes, key)
+  }
+
+  return merged
+}
+
+// Copied rather than shared. Access options are often module level constants,
+// and the include machinery merges attributes into whatever object it is
+// handed - sharing one would let a list's columns leak into every other query
+// built from the same rule.
+//
+// Shallow in `where` and in nested `includes`, which is enough because an
+// access include carries neither. One that grew nested includes would be spliced
+// into by setInclude's nested merge and would need a deeper copy.
+const copyAccessInclude = <K extends keyof CaseIncludes>(
+  target: CaseIncludes,
+  source: CaseIncludes,
+  key: K,
+) => {
+  if (target[key]) {
+    return
+  }
+
+  const value = source[key]
+
+  if (!value) {
+    return
+  }
+
+  target[key] = { ...value, attributes: [...value.attributes] }
+}
+
 export const expandCasesWithDefendants = (cs: Case[]) =>
   cs.flatMap((c) => {
     const jsonCase = c.toJSON()
