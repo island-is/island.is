@@ -541,6 +541,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
   [ApplicationTypes.EQUALITY_REPORT]: {
     nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
     slug: InstitutionTypes.JAFNRETTISSTOFA,

@@ -13,8 +13,10 @@ import {
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
+import { Feature } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
@@ -29,6 +31,7 @@ export class DefendantResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
 
   @Mutation(() => Defendant, { nullable: true })
@@ -57,10 +60,23 @@ export class DefendantResolver {
     const { caseId, defendantId, ...updateDefendant } = input
     this.logger.debug(`Updating defendant ${defendantId} for case ${caseId}`)
 
+    // For the public prosecution the review decision is the appeal, so a
+    // changed decision files or withdraws one - in the same transaction as the
+    // decision itself, on the backend. Whether that happens is this layer's
+    // call, because the feature lives here: the backend never reads it, and an
+    // environment where it is hidden simply never asks. Deliberately not part
+    // of the input - a client must not be able to ask for it.
+    const registersVerdictAppeal =
+      updateDefendant.indictmentReviewDecision !== undefined &&
+      !this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
-      this.backendService.updateDefendant(caseId, defendantId, updateDefendant),
+      this.backendService.updateDefendant(caseId, defendantId, {
+        ...updateDefendant,
+        ...(registersVerdictAppeal ? { registerVerdictAppeal: true } : {}),
+      }),
       defendantId,
     )
   }

@@ -111,6 +111,8 @@ export class UserProfileService {
       smsNotifications: userProfile.smsNotifications,
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,
+      onlyActionablePriorityNotifications:
+        userProfile.onlyActionablePriorityNotifications,
     }))
 
     return {
@@ -155,6 +157,7 @@ export class UserProfileService {
         emailNotifications: true,
         smsNotifications: false,
         isRestricted: false,
+        onlyActionablePriorityNotifications: false,
       }
     }
 
@@ -203,7 +206,10 @@ export class UserProfileService {
       smsNotifications?: boolean
       documentNotifications?: boolean
       emailNotifications?: boolean
+      onlyPriorityNotifications?: boolean
     } = {}
+
+    let isOnlyPrioNotificationsEnabled = false
 
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
@@ -281,6 +287,8 @@ export class UserProfileService {
         documentNotifications:
           currentUserProfile?.documentNotifications ?? undefined,
         emailNotifications: currentUserProfile?.emailNotifications ?? undefined,
+        onlyPriorityNotifications:
+          currentUserProfile?.onlyActionablePriorityNotifications,
       }
 
       // Check if SMS notifications feature is enabled
@@ -293,6 +301,21 @@ export class UserProfileService {
       const smsNotificationsUpdate =
         isDefined(userProfile.smsNotifications) && isSmsNotificationEnabled
           ? { smsNotifications: userProfile.smsNotifications }
+          : {}
+
+      // Check if Only Priority Notification feature flag is enabled
+      isOnlyPrioNotificationsEnabled = await this.featureFlagService.getValue(
+        Features.isOnlyActionablePriorityNotificationsEnabled,
+        false,
+      )
+
+      const onlyPrioNotificationsUpdate =
+        isDefined(userProfile.onlyActionablePriorityNotifications) &&
+        isOnlyPrioNotificationsEnabled
+          ? {
+              onlyActionablePriorityNotifications:
+                userProfile.onlyActionablePriorityNotifications,
+            }
           : {}
 
       const update = {
@@ -316,6 +339,7 @@ export class UserProfileService {
           documentNotifications: userProfile.documentNotifications,
         }),
         ...smsNotificationsUpdate,
+        ...onlyPrioNotificationsUpdate,
       }
 
       const updateEmailVerified = isEmailDefined
@@ -449,6 +473,17 @@ export class UserProfileService {
       this.metrics.increment('notification.setting.changed', 1, {
         setting: 'email',
         value: userProfile.emailNotifications ? 'on' : 'off',
+      })
+    }
+    if (
+      isOnlyPrioNotificationsEnabled &&
+      isDefined(userProfile.onlyActionablePriorityNotifications) &&
+      userProfile.onlyActionablePriorityNotifications !==
+        previousNotificationSettings.onlyPriorityNotifications
+    ) {
+      this.metrics.increment('notification.setting.changed', 1, {
+        setting: 'onlyActionablePriorityNotifications',
+        value: userProfile.onlyActionablePriorityNotifications ? 'on' : 'off',
       })
     }
 
@@ -1503,6 +1538,8 @@ export class UserProfileService {
       lastNudge: userProfile.lastNudge,
       nextNudge: userProfile.nextNudge,
       isRestricted: false,
+      onlyActionablePriorityNotifications:
+        userProfile.onlyActionablePriorityNotifications,
     }
 
     if (

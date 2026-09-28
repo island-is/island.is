@@ -26,6 +26,7 @@ import ConversationMessageBody from './components/ConversationMessageBody'
 import ConversationReplyForm from './components/ConversationReplyForm'
 import MobileActionFooter from './components/MobileActionFooter'
 import ReplyBlockedAlert from './components/ReplyBlockedAlert'
+import { HealthDirectorateHealthConversationReplyAvailability as ReplyAvailability } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -238,6 +239,8 @@ const HealthConversationDetail = () => {
     ? item.organization?.name ?? latestStaffMessage.senderGroupName ?? undefined
     : undefined
 
+  const canReply = item.replyAvailability === ReplyAvailability.CAN_REPLY
+
   const handleBack = () => {
     /* On mobile, replying takes over the screen, so back should return to the
     the thread first. On desktop the reply form is just appended below
@@ -274,11 +277,7 @@ const HealthConversationDetail = () => {
                 <MessageActions
                   bookmarked={item.isStarred}
                   archived={item.isArchived}
-                  onReply={
-                    !replyOpen && item.patientCanReply !== false
-                      ? openReply
-                      : undefined
-                  }
+                  onReply={!replyOpen && canReply ? openReply : undefined}
                   onFav={() => {
                     if (item.isStarred) {
                       unstarMessage({ variables: { input: { id } } })
@@ -462,9 +461,9 @@ const HealthConversationDetail = () => {
                   loading={replySending}
                   fluid={isPhoneWidth}
                 />
-              ) : item.patientCanReply === false ? (
+              ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
                 <ReplyBlockedAlert
-                  reason={item.replyBlockedReason}
+                  availability={item.replyAvailability}
                   replyWindowDays={item.patientReplyWindowDays}
                 />
               ) : (

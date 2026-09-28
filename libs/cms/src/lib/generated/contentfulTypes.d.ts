@@ -1251,6 +1251,38 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
+export interface ICalculatorFields {
+  /** Internal title */
+  internalTitle: string
+
+  /** Type */
+  type:
+    | 'withholdingTaxOnWages'
+    | 'childBenefit'
+    | 'vehicleTax'
+    | 'vehicleBenefit'
+
+  /** Config json */
+  configJson: Record<string, any>
+}
+
+export interface ICalculator extends Entry<ICalculatorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'calculator'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEnhancedAssetFields {
   /** Title */
   title?: string | undefined
@@ -4690,6 +4722,7 @@ export interface ISliceConnectedComponentFields {
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
     | 'ECOI/Calculator'
+    | 'RSK/Calculator'
     | undefined
 
   /** Localized JSON */
@@ -5784,6 +5817,7 @@ export type CONTENT_TYPE =
   | 'auction'
   | 'bigBulletList'
   | 'bloodDonationRestriction'
+  | 'calculator'
   | 'card'
   | 'cardSection'
   | 'chart'

@@ -162,9 +162,9 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-      [],
-    )
+    ;(
+      mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+    ).mockResolvedValue(null)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -251,9 +251,9 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(existingAppealCase)
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
       ).mockResolvedValue([
@@ -373,15 +373,13 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
 
     // Seen only under the lock: the prosecution has no mirror on the verdict.
     it('should reject appealing a defendant the prosecution has already appealed', async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [
-          {
-            id: appealCaseId,
-            appealType: AppealCaseType.VERDICT,
-            appealState: AppealCaseState.APPEALED,
-          } as AppealCase,
-        ],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue({
+        id: appealCaseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+      } as AppealCase)
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
       ).mockResolvedValue([
@@ -397,15 +395,13 @@ describe('AppealCaseController - Prosecution verdict appeal', () => {
 
     // Once the court of appeals has received the case the decision is made.
     it('should reject an appeal once the court of appeals has received the case', async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [
-          {
-            id: appealCaseId,
-            appealType: AppealCaseType.VERDICT,
-            appealState: AppealCaseState.RECEIVED,
-          } as AppealCase,
-        ],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue({
+        id: appealCaseId,
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+      } as AppealCase)
       ;(
         mockAppealEventLogRepositoryService.findAll as jest.Mock
       ).mockResolvedValue([])

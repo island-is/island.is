@@ -682,6 +682,20 @@ export class VerdictService {
                 serviceInformationForDefendant:
                   verdict.serviceInformationForDefendant,
                 isDefaultJudgement: verdict.isDefaultJudgement,
+                // These three are the office's record of what became of the
+                // judgment, and they came against the judgment rather than
+                // against the copy of it that was served - so re-serving must
+                // not lose them. Everything that reads them asks the
+                // defendant's latest verdict, so a value left behind on the
+                // superseded row reads as if it had never been recorded: the
+                // appealed case lists and the read access that goes with them
+                // for the appeal date, "Áfrýjunarleyfi" for the leave request,
+                // and "Sýknudómar" for the acquittal.
+                appealDate: verdict.appealDate,
+                defendantHasRequestedAppeal:
+                  verdict.defendantHasRequestedAppeal,
+                isAcquittedByPublicProsecutionOffice:
+                  verdict.isAcquittedByPublicProsecutionOffice,
               },
               { transaction },
             )

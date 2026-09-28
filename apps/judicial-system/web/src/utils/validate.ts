@@ -1,4 +1,3 @@
-// TODO: Add tests
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
