@@ -33,9 +33,9 @@ const requireMessageStore = (): Message[] => {
  * Named structurally so that the library does not depend on sequelize for a
  * type. Sequelize 6 runs the registered functions when `commit()` completes
  * (whether or not the COMMIT itself succeeded) and never when the transaction
- * is rolled back. A savepoint runs its own functions when the savepoint is
- * released, not when the outer transaction commits, so pass the outer
- * transaction rather than a savepoint.
+ * is rolled back. A savepoint runs its own functions when its own `commit()`
+ * runs, not when the outer transaction commits, so pass the outer transaction
+ * rather than a savepoint.
  */
 export interface AfterCommitTransaction {
   afterCommit(fn: () => void): void
