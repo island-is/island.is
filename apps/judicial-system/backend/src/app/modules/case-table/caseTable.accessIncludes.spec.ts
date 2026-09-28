@@ -1,8 +1,3 @@
-import type { ModelCtor } from 'sequelize-typescript'
-import { Model, Sequelize } from 'sequelize-typescript'
-
-import { getOptions } from '@island.is/nest/sequelize'
-
 import type { User } from '@island.is/judicial-system/types'
 import {
   caseTables,
@@ -13,6 +8,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
+import {
+  captureSql as captureRawSql,
+  initCaseTableModels,
+} from './caseTable.sqlProbe'
 import {
   getAccessIncludes,
   getAllIncludes,
@@ -96,48 +95,12 @@ describe('access rules carry the joins they read', () => {
     } as User,
   }
 
-  beforeAll(() => {
-    const models = Object.values(repository).filter(
-      (exported) =>
-        typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as ModelCtor[]
+  beforeAll(initCaseTableModels)
 
-    // The define options the app runs with - without `underscored` the aliases
-    // and columns render differently and the assertions mean nothing.
-    new Sequelize({
-      dialect: 'postgres',
-      models,
-      logging: false,
-      define: getOptions().define,
-    })
-  })
-
-  const captureSql = async (run: () => Promise<unknown>): Promise<string> => {
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await run()
-    } catch {
-      // Building the query is the subject here; running it is not.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return (queries[0] ?? '').replace(/\s+/g, ' ')
-  }
+  // This spec matches aliases across clause boundaries, so it reads the SQL
+  // with its indentation collapsed rather than as emitted.
+  const captureSql = async (run: () => Promise<unknown>): Promise<string> =>
+    (await captureRawSql(run)).replace(/\s+/g, ' ')
 
   // Aliases the SQL reads, other than the case itself. Digits included -
   // `appealJudge1` is a real alias, and letters alone would not see it, which
