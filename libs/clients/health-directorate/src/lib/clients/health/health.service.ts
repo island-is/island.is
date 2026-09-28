@@ -26,6 +26,7 @@ import {
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetConversationsV2V2,
   meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
@@ -50,6 +51,7 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentQuestionnairesV1,
   meTreatmentControllerGetTreatmentV1,
   meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
@@ -76,7 +78,9 @@ import {
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
@@ -690,6 +694,17 @@ export class HealthDirectorateHealthService {
     return conversations ?? null
   }
 
+  public async getPaginatedConversations(
+    auth: Auth,
+    query?: MeConversationControllerGetConversationsV2V2Data['query'],
+  ): Promise<PaginatedConversationsDto | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(meConversationControllerGetConversationsV2V2({ query })),
+    )
+
+    return conversations ?? null
+  }
+
   public async getConversation(
     auth: Auth,
     id: string,
@@ -897,6 +912,21 @@ export class HealthDirectorateHealthService {
     )
 
     return treatment ?? null
+  }
+
+  public async getTreatmentQuestionnaires(
+    auth: Auth,
+    id: string,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentQuestionnairesV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return questionnaires ?? null
   }
 
   public async getTreatmentDocuments(

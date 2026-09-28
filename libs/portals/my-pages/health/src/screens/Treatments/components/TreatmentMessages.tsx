@@ -9,7 +9,7 @@ import {
 import cn from 'classnames'
 import isToday from 'date-fns/isToday'
 import { messages } from '../../../lib/messages'
-import { HealthPaths } from '../../../lib/paths'
+import { useTreatmentScopedPaths } from '../../../utils/useTreatmentScopedPaths'
 import * as conversationStyles from '../../HealthOverview/components/HealthConversationsBox/HealthConversationsBox.css'
 import * as listStyles from '../../HealthConversations/HealthConversations.css'
 
@@ -31,6 +31,7 @@ const MAX_CONVERSATIONS = 3
 
 export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
   const { formatMessage } = useLocale()
+  const paths = useTreatmentScopedPaths()
   const visibleConversations = conversations.slice(0, MAX_CONVERSATIONS)
 
   return (
@@ -74,10 +75,7 @@ export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
         return (
           <LinkResolver
             key={conversation.id}
-            href={HealthPaths.HealthConversationsDetail.replace(
-              ':id',
-              conversation.id,
-            )}
+            href={paths.conversationDetail(conversation.id)}
             className={conversationStyles.conversationLink}
           >
             <Box paddingX={[0, 0, 3]}>
@@ -136,7 +134,7 @@ export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
           borderColor="blue200"
         >
           <LinkButton
-            to={HealthPaths.HealthConversations}
+            to={paths.conversations}
             text={formatMessage(messages.seeAllMessages)}
             variant="text"
             size="small"

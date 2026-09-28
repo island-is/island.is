@@ -19,10 +19,7 @@ export enum States {
   ASSIGNEE_APPROVAL = 'assigneeApproval',
   APPLICANT_SUBMIT = 'applicantSubmit',
   ADD_HOUSEHOLD_MEMBER = 'addHouseholdMember',
-  EXTRA_DATA = 'extraData',
   IN_REVIEW = 'inReview',
-  APPROVED = 'approved',
-  REJECTED = 'rejected',
   DELAYED = 'delayed',
 }
 
@@ -31,9 +28,6 @@ export enum TemplateApiActions {
   notifyAssignees = 'notifyAssignees',
   notifyApplicantOnAssigneeSubmit = 'notifyApplicantOnAssigneeSubmit',
   notifyApplicantOnAssigneeReject = 'notifyApplicantOnAssigneeReject',
-  notifyApplicantOnExtraDataRequested = 'notifyApplicantOnExtraDataRequested',
-  notifyApplicantOnApprovedByInstitution = 'notifyApplicantOnApprovedByInstitution',
-  notifyApplicantOnRejectedByInstitution = 'notifyApplicantOnRejectedByInstitution',
 }
 
 export enum Roles {
@@ -42,11 +36,7 @@ export enum Roles {
   UNSIGNED_DRAFT_ASSIGNEE = 'unsignedDraftAssignee',
   SIGNED_ASSIGNEE = 'signedAssignee',
   REJECTED_ASSIGNEE = 'rejectedAssignee',
-  INSTITUTION = 'institution',
 }
-
-/** Gervimaður Bretland — institution UI tester; never assigned or mapped on production. */
-export const DEV_INSTITUTION_TESTER_NATIONAL_ID = '0101304929'
 
 export const UPLOAD_ACCEPT = '.pdf,.doc,.docx,.rtf,.jpg,.jpeg,.png,.heic'
 

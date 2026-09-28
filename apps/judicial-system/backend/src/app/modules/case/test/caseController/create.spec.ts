@@ -1,4 +1,4 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -12,7 +12,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant'
-import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 
 interface Then {
@@ -61,8 +61,8 @@ describe('CaseController - Create', () => {
 
     const mockCreate = mockCaseRepositoryService.create as jest.Mock
     mockCreate.mockRejectedValue(new Error('Some error'))
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockRejectedValue(new Error('Some error'))
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (type: CaseType) => {
       const then = {} as Then
@@ -90,8 +90,9 @@ describe('CaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(returnedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(CaseType.CUSTODY)
     })
@@ -115,15 +116,10 @@ describe('CaseController - Create', () => {
         {},
         transaction,
       )
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: caseInclude,
-        where: {
-          id: caseId,
-          isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
-        },
-        transaction,
-      })
+      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+        caseId,
+        { allowDeleted: false, transaction },
+      )
       expect(then.result).toBe(returnedCase)
     })
   })

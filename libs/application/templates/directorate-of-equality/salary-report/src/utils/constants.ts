@@ -43,6 +43,8 @@ export enum ApiActions {
   createSalaryDraft = 'createSalaryDraft',
   importSalaryDraftWorkbook = 'importSalaryDraftWorkbook',
   submitSalaryReport = 'submitSalaryReport',
+  deleteSalaryReportDraft = 'deleteSalaryReportDraft',
+  withdrawSalaryReport = 'withdrawSalaryReport',
   analyzeSalaryReport = 'analyzeSalaryReport',
   editOutliers = 'editOutliers',
   getReportComments = 'getReportComments',

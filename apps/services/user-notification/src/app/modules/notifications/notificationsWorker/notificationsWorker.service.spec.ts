@@ -1314,6 +1314,34 @@ describe('NotificationsWorkerService', () => {
       )
     })
 
+    it('should send SMS content as GSM-7 with URLs percent-encoded', async () => {
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await smsSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        mobilePhoneNumber: userWithNoDelegations.mobilePhoneNumber ?? '',
+        smsContent:
+          'Guðrún Þórðardóttir: Nýtt skjal – „Pósthólf“ 📄\n\nSkoða nánar: \nhttps://island.is/leit?q=þjónusta',
+      } as SmsQueueMessage)
+
+      await wait(2)
+
+      expect(smsService.sendSms).toHaveBeenCalledWith(
+        userWithNoDelegations.mobilePhoneNumber,
+        'Gudrun Thordardottir: Nytt skjal - "Postholf" \n\nSkoda nanar: \nhttps://island.is/leit?q=%C3%BEj%C3%B3nusta',
+        { payer: undefined },
+      )
+    })
+
     it('should normalize phone numbers by stripping hyphens before sending SMS', async () => {
       const messageId = randomUUID()
 

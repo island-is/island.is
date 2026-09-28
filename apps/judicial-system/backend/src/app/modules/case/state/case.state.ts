@@ -68,6 +68,27 @@ const assertHasIndictmentApprover = (
   }
 }
 
+// A case concluded by merging joins its parent case, which can only take it in
+// while the parent is itself open in court.
+const assertMergeParentReceived = (theCase: Case): void => {
+  if (
+    theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.MERGE ||
+    !theCase.mergeCaseId
+  ) {
+    return
+  }
+
+  const parentCase = theCase.mergeCase
+
+  if (parentCase?.state !== CaseState.RECEIVED) {
+    throw new ForbiddenException(
+      `Cannot merge indictment case ${theCase.id} with parent case ${
+        parentCase?.id ?? 'unknown'
+      } in state ${parentCase?.state ?? 'unknown'}`,
+    )
+  }
+}
+
 const indictmentCaseStateMachine: Map<
   IndictmentCaseTransition,
   IndictmentCaseRule
@@ -194,13 +215,20 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.RECEIVED,
         IndictmentCaseState.CORRECTING,
       ],
-      transition: (update: UpdateCase, theCase: Case): UpdateCase => ({
-        ...update,
-        // Shouldn't ever happen since court end time should always be set
-        // but just in case, we don't want rulingDate to be empty when completed.
-        rulingDate: theCase.courtEndTime ?? nowFactory(),
-        state: CaseState.COMPLETED,
-      }),
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        // Completing again after a correction does not merge the case again
+        if (theCase.state !== CaseState.CORRECTING) {
+          assertMergeParentReceived(theCase)
+        }
+
+        return {
+          ...update,
+          // Shouldn't ever happen since court end time should always be set
+          // but just in case, we don't want rulingDate to be empty when completed.
+          rulingDate: theCase.courtEndTime ?? nowFactory(),
+          state: CaseState.COMPLETED,
+        }
+      },
     },
   ],
   [

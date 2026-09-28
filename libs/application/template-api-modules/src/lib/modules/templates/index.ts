@@ -1,5 +1,7 @@
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
+import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
+import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
 import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
 import { U2CertificateService } from './vmst/u2-certificate/u2-certificate.service'
 import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
@@ -299,6 +301,7 @@ export const modules = [
   DeRegisterUnemploymentBenefitsModule,
   SubmitDocumentsModule,
   ConfirmTravelModule,
+  ConfirmJobOrIncomeModule,
   DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
   PayDebtsModule,
@@ -402,6 +405,7 @@ export const services = [
   DeRegisterUnemploymentBenefitsService,
   SubmitDocumentsService,
   ConfirmTravelService,
+  ConfirmJobOrIncomeService,
   DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
   PayDebtsService,

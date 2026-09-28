@@ -1,0 +1,40 @@
+fragment DefendantFields on Defendant {
+  id
+  noNationalId
+  nationalId
+  name
+  gender
+  address
+  citizenship
+  defenderName
+  defenderNationalId
+  defenderEmail
+  defenderPhoneNumber
+  defenderChoice
+  defendantPlea
+  requestedDefenderChoice
+  requestedDefenderNationalId
+  requestedDefenderName
+  isDefenderChoiceConfirmed
+  caseFilesSharedWithDefender
+  appealDefenderName
+  appealDefenderNationalId
+  appealDefenderEmail
+  appealDefenderPhoneNumber
+  isAppealDefenderConfirmed
+  verdictAppealDeadline
+  isVerdictAppealDeadlineExpired
+  subpoenaType
+  isSentToPrisonAdmin
+  sentToPrisonAdminDate
+  openedByPrisonAdminDate
+  punishmentType
+  isAlternativeService
+  alternativeServiceDescription
+  indictmentReviewDecision
+  policeCaseNumbers
+  indictmentCancelledOrDismissedState {
+    type
+    time
+  }
+}

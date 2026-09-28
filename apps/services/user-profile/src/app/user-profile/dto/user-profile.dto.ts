@@ -82,4 +82,8 @@ export class UserProfileDto {
   @ApiProperty()
   @IsBoolean()
   readonly isRestricted?: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  onlyActionablePriorityNotifications!: boolean
 }

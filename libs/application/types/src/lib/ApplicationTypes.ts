@@ -106,6 +106,7 @@ export enum ApplicationTypes {
   DEREGISTER_UNEMPLOYMENT_BENEFITS = 'DeregisterUnemploymentBenefits',
   VMST_SUBMIT_DOCUMENTS = 'VmstSubmitDocuments',
   UNEMPLOYMENT_CONFIRM_TRAVEL = 'UnemploymentConfirmTravel',
+  CONFIRM_JOB_OR_INCOME = 'ConfirmJobOrIncome',
   EQUALITY_REPORT = 'EqualityReport',
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
@@ -531,7 +532,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CONFIRM_JOB_SEARCH]: {
     slug: 'stadfesta-atvinnuleit',
-    translation: ['vmst.cjs', 'uiForms.application'],
+    translation: ['vmst.cjs.application', 'uiForms.application'],
   },
   [ApplicationTypes.DEREGISTER_UNEMPLOYMENT_BENEFITS]: {
     slug: 'vmst-afskraning-bota',
@@ -544,6 +545,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: {
     slug: 'vmst-tilkynning-ferda',
     translation: ['vmst.ct.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
+    slug: 'vmst-stadfesting-starf-eda-tekna',
+    translation: ['vmst.cjoi.application', 'uiForms.application'],
   },
   [ApplicationTypes.EQUALITY_REPORT]: {
     slug: 'jafnrettisstofa-jafnrettisaaetlun',
