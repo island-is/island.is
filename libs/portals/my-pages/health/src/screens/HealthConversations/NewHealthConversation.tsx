@@ -47,6 +47,7 @@ import {
   useCreateHealthConversationMutation,
   useCreateHealthCertificateRequestMutation,
 } from './NewHealthConversation.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const getRecipientKey = (recipient: {
   nodeId: string
@@ -59,6 +60,7 @@ const getRecipientKey = (recipient: {
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const paths = useTreatmentScopedPaths()

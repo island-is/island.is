@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetHealthTreatmentDocumentsQuery } from './TreatmentEducationalContent.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   treatmentId: string
@@ -21,6 +22,7 @@ type UseParams = {
 
 const TreatmentEducationalContent = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
 
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()

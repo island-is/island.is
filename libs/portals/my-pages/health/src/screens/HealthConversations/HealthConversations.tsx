@@ -45,6 +45,7 @@ import {
   useUnarchiveHealthConversationMutation,
 } from './HealthConversations.generated'
 import { useGetHealthTreatmentQuery } from '../Treatments/TreatmentOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_PAGE_SIZE = 20
 
@@ -107,6 +108,7 @@ type FilterValues = {
 
 const HealthConversations = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const paths = useTreatmentScopedPaths()
   const { treatmentId } = paths

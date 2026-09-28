@@ -50,6 +50,7 @@ import {
   useUnarchiveHealthConversationDetailMutation,
   useReplyToHealthConversationMutation,
 } from './HealthConversationDetail.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   id: string
@@ -57,6 +58,7 @@ type UseParams = {
 
 const HealthConversationDetail = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
   const userInfo = useUserInfo()

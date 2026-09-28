@@ -25,6 +25,7 @@ import {
 import Limitations from './Limitations'
 import { Loader } from './Loader'
 import { NoAccess } from './NoAccess'
+import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 const OPT_IN = 'opt-in'
 const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
@@ -32,6 +33,7 @@ const OPT_OUT = 'opt-out'
 
 export const OrganRegistrationForm = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 
