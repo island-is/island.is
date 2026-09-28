@@ -159,7 +159,6 @@ export class TransportAuthorityApi {
         requireMileage: vehicle.requiresMileageRegistration,
         mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
       },
-      isDebtLess: true,
       validationErrorMessages: ownerChangeValidation?.hasError
         ? ownerChangeValidation.errorMessages
         : null,
@@ -308,7 +307,6 @@ export class TransportAuthorityApi {
       )
 
     return {
-      isDebtLess: true,
       validationErrorMessages: operatorChangeValidation?.hasError
         ? operatorChangeValidation.errorMessages
         : null,
