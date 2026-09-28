@@ -102,7 +102,7 @@ export const contractWorkSection = buildSubSection({
               label: m.application.workEnds,
               width: 'half',
               required: true,
-              maxDate: getCurrentMonthEndDate(),
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.contractJobStart
                 if (fromDate) {
