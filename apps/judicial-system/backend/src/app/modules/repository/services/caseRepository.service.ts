@@ -62,14 +62,6 @@ interface FindAllOptions {
   having?: FindOptions['having']
 }
 
-interface CreateCaseOptions {
-  transaction: Transaction
-}
-
-interface UpdateCaseOptions {
-  transaction: Transaction
-}
-
 // The period the statistics are asked for, and the institution they are asked
 // about - an institution matches a case it either prosecutes or presides over.
 export type CaseStatisticsFilter = {
@@ -1081,7 +1073,10 @@ export class CaseRepositoryService {
     }
   }
 
-  async create(data: Partial<Case>, options: CreateCaseOptions): Promise<Case> {
+  async create(
+    data: Partial<Case>,
+    options: { transaction: Transaction },
+  ): Promise<Case> {
     try {
       this.logger.debug('Creating a new case with data:', {
         data: Object.keys(data),
@@ -1118,7 +1113,7 @@ export class CaseRepositoryService {
   async update(
     caseId: string,
     data: UpdateCase,
-    options: UpdateCaseOptions,
+    options: { transaction: Transaction },
   ): Promise<Case> {
     try {
       this.logger.debug(`Updating case ${caseId} with data:`, {
