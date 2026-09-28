@@ -47,7 +47,7 @@ import {
   CasesInterceptor,
 } from './interceptors/case.interceptor'
 import { ArchiveResponse } from './models/archive.response'
-import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
 
@@ -98,19 +98,19 @@ export class InternalCaseController {
   }
 
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Get('case/:caseId/caseFileClassification')
+  @Get('case/:caseId/state')
   @ApiOkResponse({
-    type: CaseFileClassificationResponse,
+    type: CasePoliceStateResponse,
     description:
-      'Returns whether new police case files belong to the case files record (gagnapakki) or are additional case files (viðbótargögn)',
+      'Returns whether the indictment case is DRAFT or SUBMITTED for police case-file handling',
   })
-  async getCaseFileClassification(
+  async getCasePoliceState(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-  ): Promise<CaseFileClassificationResponse> {
-    this.logger.debug(`Getting case file classification for case ${caseId}`)
+  ): Promise<CasePoliceStateResponse> {
+    this.logger.debug(`Getting case police state for case ${caseId}`)
 
-    return this.internalCaseService.getCaseFileClassification(theCase)
+    return this.internalCaseService.getCasePoliceState(theCase)
   }
 
   @Post('cases/archive')

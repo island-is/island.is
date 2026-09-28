@@ -1,10 +1,10 @@
 import each from 'jest-each'
 
 import {
-  CaseFileClassification,
+  CasePoliceState,
   CaseState,
   CaseType,
-  getIndictmentCaseFileClassification,
+  getIndictmentCasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
   isInvestigationCase,
   isRestrictionCase,
@@ -70,21 +70,18 @@ describe('hasIndictmentCaseBeenSubmittedToCourt', () => {
   })
 })
 
-describe('getIndictmentCaseFileClassification', () => {
+describe('getIndictmentCasePoliceState', () => {
   each`
-    state                                    | classification
-    ${CaseState.DRAFT}                       | ${CaseFileClassification.CASE_FILES_RECORD}
-    ${CaseState.WAITING_FOR_REVIEW}          | ${CaseFileClassification.CASE_FILES_RECORD}
-    ${CaseState.WAITING_FOR_CONFIRMATION}    | ${CaseFileClassification.CASE_FILES_RECORD}
-    ${CaseState.SUBMITTED}                   | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
-    ${CaseState.RECEIVED}                    | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
-    ${CaseState.WAITING_FOR_CANCELLATION}    | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
-    ${CaseState.COMPLETED}                   | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
-    ${CaseState.CORRECTING}                  | ${CaseFileClassification.ADDITIONAL_CASE_FILE}
-  `.it(
-    'should classify $state as $classification',
-    ({ state, classification }) => {
-      expect(getIndictmentCaseFileClassification(state)).toBe(classification)
-    },
-  )
+    state                                    | policeState
+    ${CaseState.DRAFT}                       | ${CasePoliceState.DRAFT}
+    ${CaseState.WAITING_FOR_REVIEW}          | ${CasePoliceState.DRAFT}
+    ${CaseState.WAITING_FOR_CONFIRMATION}    | ${CasePoliceState.DRAFT}
+    ${CaseState.SUBMITTED}                   | ${CasePoliceState.SUBMITTED}
+    ${CaseState.RECEIVED}                    | ${CasePoliceState.SUBMITTED}
+    ${CaseState.WAITING_FOR_CANCELLATION}    | ${CasePoliceState.SUBMITTED}
+    ${CaseState.COMPLETED}                   | ${CasePoliceState.SUBMITTED}
+    ${CaseState.CORRECTING}                  | ${CasePoliceState.SUBMITTED}
+  `.it('should map $state to $policeState', ({ state, policeState }) => {
+    expect(getIndictmentCasePoliceState(state)).toBe(policeState)
+  })
 })

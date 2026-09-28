@@ -28,7 +28,7 @@ import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
-import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { Defender } from './models/defender.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { PoliceDocumentSupplements } from './models/policeDocumentSupplements.response'
@@ -76,20 +76,20 @@ export class AppController {
     })
   }
 
-  @Get('case/:caseId/caseFileClassification')
+  @Get('case/:caseId/state')
   @ApiOkResponse({
-    type: CaseFileClassificationResponse,
+    type: CasePoliceStateResponse,
     description:
-      'Returns whether new police case files belong to the case files record (gagnapakki) or are additional case files (viðbótargögn)',
+      'Returns whether the indictment case is DRAFT or SUBMITTED for police case-file handling',
   })
   @ApiResponse({ status: 400, description: 'Invalid input or not applicable' })
-  @ApiResponse({ status: 502, description: 'Failed to get classification' })
-  async getCaseFileClassification(
+  @ApiResponse({ status: 502, description: 'Failed to get case state' })
+  async getCasePoliceState(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
-  ): Promise<CaseFileClassificationResponse> {
-    this.logger.debug(`Getting case file classification for case ${caseId}`)
+  ): Promise<CasePoliceStateResponse> {
+    this.logger.debug(`Getting case police state for case ${caseId}`)
 
-    return this.appService.getCaseFileClassification(caseId)
+    return this.appService.getCasePoliceState(caseId)
   }
 
   @Get('defenders')

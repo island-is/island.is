@@ -467,9 +467,10 @@ export const isRulingOrDismissalCase = (
   )
 }
 
-export enum CaseFileClassification {
-  CASE_FILES_RECORD = 'CASE_FILES_RECORD',
-  ADDITIONAL_CASE_FILE = 'ADDITIONAL_CASE_FILE',
+/** Police-facing case state for the XRD case/state endpoint. */
+export enum CasePoliceState {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
 }
 
 export const hasIndictmentCaseBeenSubmittedToCourt = (
@@ -485,18 +486,16 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
   )
 }
 
-export const getIndictmentCaseFileClassification = (
+export const getIndictmentCasePoliceState = (
   state?: CaseState | null,
-): CaseFileClassification => {
+): CasePoliceState => {
   // Includes WAITING_FOR_CANCELLATION: the indictment already went to court,
-  // so new police files are additional even before a live duplicate exists.
-  const isAdditionalCaseFile =
+  // so the case is treated as submitted even before a live duplicate exists.
+  const isSubmitted =
     state === CaseState.WAITING_FOR_CANCELLATION ||
     hasIndictmentCaseBeenSubmittedToCourt(state)
 
-  return isAdditionalCaseFile
-    ? CaseFileClassification.ADDITIONAL_CASE_FILE
-    : CaseFileClassification.CASE_FILES_RECORD
+  return isSubmitted ? CasePoliceState.SUBMITTED : CasePoliceState.DRAFT
 }
 
 export const isIndictmentCaseState = (

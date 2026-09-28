@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { v4 as uuid } from 'uuid'
 
-import { CaseFileClassification } from '@island.is/judicial-system/types'
+import { CasePoliceState } from '@island.is/judicial-system/types'
 
 import appModuleConfig from '../app.config'
 import { createTestingAppModule } from './createTestingAppModule'
@@ -10,7 +10,7 @@ jest.mock('isomorphic-fetch')
 
 const config = appModuleConfig()
 
-describe('AppController - Get case file classification', () => {
+describe('AppController - Get case police state', () => {
   let appController: Awaited<ReturnType<typeof createTestingAppModule>>
 
   beforeEach(async () => {
@@ -25,16 +25,16 @@ describe('AppController - Get case file classification', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: jest.fn().mockResolvedValueOnce({
-          classification: CaseFileClassification.CASE_FILES_RECORD,
+          state: CasePoliceState.DRAFT,
         }),
       })
 
-      await appController.getCaseFileClassification(caseId)
+      await appController.getCasePoliceState(caseId)
     })
 
-    it('should call backend at /api/internal/case/:caseId/caseFileClassification', () => {
+    it('should call backend at /api/internal/case/:caseId/state', () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backend.url}/api/internal/case/${caseId}/caseFileClassification`,
+        `${config.backend.url}/api/internal/case/${caseId}/state`,
         {
           method: 'GET',
           headers: {
@@ -46,7 +46,7 @@ describe('AppController - Get case file classification', () => {
     })
   })
 
-  describe('classification returned', () => {
+  describe('state returned', () => {
     const caseId = uuid()
 
     beforeEach(async () => {
@@ -54,16 +54,16 @@ describe('AppController - Get case file classification', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: jest.fn().mockResolvedValueOnce({
-          classification: CaseFileClassification.ADDITIONAL_CASE_FILE,
+          state: CasePoliceState.SUBMITTED,
         }),
       })
     })
 
-    it('should return the classification', async () => {
-      const result = await appController.getCaseFileClassification(caseId)
+    it('should return the state', async () => {
+      const result = await appController.getCasePoliceState(caseId)
 
       expect(result).toEqual({
-        classification: CaseFileClassification.ADDITIONAL_CASE_FILE,
+        state: CasePoliceState.SUBMITTED,
       })
     })
   })

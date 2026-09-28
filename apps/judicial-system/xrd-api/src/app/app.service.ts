@@ -35,7 +35,7 @@ import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
-import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { Groups } from './models/componentDefinitions/groups.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
@@ -67,13 +67,13 @@ export class AppService {
     )
   }
 
-  async getCaseFileClassification(
+  async getCasePoliceState(
     caseId: string,
-  ): Promise<CaseFileClassificationResponse> {
+  ): Promise<CasePoliceStateResponse> {
     return this.auditTrailService.audit(
       'xrd-api',
-      AuditedAction.GET_CASE_FILE_CLASSIFICATION,
-      this.fetchCaseFileClassification(caseId),
+      AuditedAction.GET_CASE_POLICE_STATE,
+      this.fetchCasePoliceState(caseId),
       caseId,
     )
   }
@@ -156,12 +156,12 @@ export class AppService {
       })
   }
 
-  private async fetchCaseFileClassification(
+  private async fetchCasePoliceState(
     caseId: string,
-  ): Promise<CaseFileClassificationResponse> {
+  ): Promise<CasePoliceStateResponse> {
     try {
       const res = await fetch(
-        `${this.config.backend.url}/api/internal/case/${caseId}/caseFileClassification`,
+        `${this.config.backend.url}/api/internal/case/${caseId}/state`,
         {
           method: 'GET',
           headers: {
@@ -174,7 +174,7 @@ export class AppService {
       const response = await res.json()
 
       if (res.ok) {
-        return response as CaseFileClassificationResponse
+        return response as CasePoliceStateResponse
       }
 
       if (res.status < 500) {
@@ -189,7 +189,7 @@ export class AppService {
 
       throw new BadGatewayException({
         ...reason,
-        message: `Failed to get case file classification for case ${caseId}`,
+        message: `Failed to get case police state for case ${caseId}`,
       })
     }
   }

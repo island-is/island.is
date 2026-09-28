@@ -239,7 +239,7 @@ export class CaseRepositoryService {
   }
 
   // Walks the parentCaseId duplicate chain to the newest non-deleted leaf.
-  // Split cases are out of scope for case file classification.
+  // Split cases are out of scope for case police state.
   // Only id and state are loaded for children; callers must not rely on other fields.
   async findLiveDescendantCase(
     theCase: Pick<Case, 'id' | 'state'>,

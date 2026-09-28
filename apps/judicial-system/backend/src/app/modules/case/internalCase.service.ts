@@ -31,7 +31,7 @@ import {
   courtSubtypes,
   EventType,
   getIndictmentAppealDeadline,
-  getIndictmentCaseFileClassification,
+  getIndictmentCasePoliceState,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -90,7 +90,7 @@ import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusio
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { ArchiveResponse } from './models/archive.response'
-import { CaseFileClassificationResponse } from './models/caseFileClassification.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -1771,15 +1771,15 @@ export class InternalCaseService {
     })
   }
 
-  async getCaseFileClassification(
+  async getCasePoliceState(
     theCase: Case,
-  ): Promise<CaseFileClassificationResponse> {
+  ): Promise<CasePoliceStateResponse> {
     const liveCase = await this.caseRepositoryService.findLiveDescendantCase(
       theCase,
     )
 
     return {
-      classification: getIndictmentCaseFileClassification(liveCase.state),
+      state: getIndictmentCasePoliceState(liveCase.state),
     }
   }
 

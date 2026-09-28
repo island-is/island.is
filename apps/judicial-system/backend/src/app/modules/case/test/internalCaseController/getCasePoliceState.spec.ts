@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 
 import {
-  CaseFileClassification,
+  CasePoliceState,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -9,16 +9,16 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { Case } from '../../../repository'
-import { CaseFileClassificationResponse } from '../../models/caseFileClassification.response'
+import { CasePoliceStateResponse } from '../../models/casePoliceState.response'
 
 interface Then {
-  result: CaseFileClassificationResponse
+  result: CasePoliceStateResponse
   error: Error
 }
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
-describe('InternalCaseController - Get case file classification', () => {
+describe('InternalCaseController - Get case police state', () => {
   let givenWhenThen: GivenWhenThen
   let mockFindLiveDescendantCase: jest.Mock
 
@@ -33,7 +33,7 @@ describe('InternalCaseController - Get case file classification', () => {
       const then = {} as Then
 
       try {
-        then.result = await internalCaseController.getCaseFileClassification(
+        then.result = await internalCaseController.getCasePoliceState(
           caseId,
           theCase,
         )
@@ -53,12 +53,12 @@ describe('InternalCaseController - Get case file classification', () => {
       state: CaseState.DRAFT,
     } as Case
 
-    it('should return CASE_FILES_RECORD', async () => {
+    it('should return DRAFT', async () => {
       const then = await givenWhenThen(caseId, theCase)
 
       expect(mockFindLiveDescendantCase).toHaveBeenCalledWith(theCase)
       expect(then.result).toEqual({
-        classification: CaseFileClassification.CASE_FILES_RECORD,
+        state: CasePoliceState.DRAFT,
       })
     })
   })
@@ -71,11 +71,11 @@ describe('InternalCaseController - Get case file classification', () => {
       state: CaseState.SUBMITTED,
     } as Case
 
-    it('should return ADDITIONAL_CASE_FILE', async () => {
+    it('should return SUBMITTED', async () => {
       const then = await givenWhenThen(caseId, theCase)
 
       expect(then.result).toEqual({
-        classification: CaseFileClassification.ADDITIONAL_CASE_FILE,
+        state: CasePoliceState.SUBMITTED,
       })
     })
   })
@@ -97,12 +97,12 @@ describe('InternalCaseController - Get case file classification', () => {
       mockFindLiveDescendantCase.mockResolvedValueOnce(liveDraft)
     })
 
-    it('should classify from the live draft as CASE_FILES_RECORD', async () => {
+    it('should map from the live draft as DRAFT', async () => {
       const then = await givenWhenThen(caseId, theCase)
 
       expect(mockFindLiveDescendantCase).toHaveBeenCalledWith(theCase)
       expect(then.result).toEqual({
-        classification: CaseFileClassification.CASE_FILES_RECORD,
+        state: CasePoliceState.DRAFT,
       })
     })
   })
@@ -123,11 +123,11 @@ describe('InternalCaseController - Get case file classification', () => {
       mockFindLiveDescendantCase.mockResolvedValueOnce(submittedDuplicate)
     })
 
-    it('should classify from the submitted duplicate as ADDITIONAL_CASE_FILE', async () => {
+    it('should map from the submitted duplicate as SUBMITTED', async () => {
       const then = await givenWhenThen(caseId, theCase)
 
       expect(then.result).toEqual({
-        classification: CaseFileClassification.ADDITIONAL_CASE_FILE,
+        state: CasePoliceState.SUBMITTED,
       })
     })
   })
@@ -140,12 +140,12 @@ describe('InternalCaseController - Get case file classification', () => {
       state: CaseState.COMPLETED,
     } as Case
 
-    it('should fall back to the original case as ADDITIONAL_CASE_FILE', async () => {
+    it('should fall back to the original case as SUBMITTED', async () => {
       // Default mock returns theCase itself (no live descendant)
       const then = await givenWhenThen(caseId, theCase)
 
       expect(then.result).toEqual({
-        classification: CaseFileClassification.ADDITIONAL_CASE_FILE,
+        state: CasePoliceState.SUBMITTED,
       })
     })
   })
