@@ -129,9 +129,17 @@ describe('case table includes are isolated from each other', () => {
     }
 
     jest.isolateModules(() => {
-      for (const tableType of allTableTypes) {
-        for (const [userName, user] of userEntries) {
-          buildOne(results, tableType, userName, user)
+      // Twice. Recording on the first traversal would take the first key's
+      // value before anything could have contaminated it, so a leak that only
+      // a later build triggers would leave that key looking clean. The second
+      // traversal reads a registry that has already served everything.
+      const saturate = new Map<string, string>()
+
+      for (const pass of [saturate, results]) {
+        for (const tableType of allTableTypes) {
+          for (const [userName, user] of userEntries) {
+            buildOne(pass, tableType, userName, user)
+          }
         }
       }
     })
