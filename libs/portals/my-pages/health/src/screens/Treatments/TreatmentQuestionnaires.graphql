@@ -1,6 +1,6 @@
 query GetTreatmentQuestionnaires(
   $input: QuestionnairesTreatmentListInput!
-  $locale: String!
+  $locale: LocaleEnum
 ) {
   questionnairesTreatmentList(input: $input, locale: $locale) {
     questionnaires {

@@ -7,6 +7,7 @@ import {
   LinkButton,
   STAFRAEN_HEILSA_SLUG,
 } from '@island.is/portals/my-pages/core'
+import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
@@ -26,7 +27,10 @@ const TreatmentQuestionnaires = () => {
   const { treatmentId } = useParams() as UseParams
 
   const { data, loading, error } = useGetTreatmentQuestionnairesQuery({
-    variables: { input: { treatmentId }, locale: lang },
+    variables: {
+      input: { treatmentId },
+      locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is,
+    },
     fetchPolicy: 'network-only',
   })
 
