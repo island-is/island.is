@@ -39,7 +39,6 @@ describe('messages queued after commit', () => {
 
   const logger = {
     debug: jest.fn(),
-    info: jest.fn(),
     error: jest.fn(),
   } as unknown as Logger
   const messageService = {

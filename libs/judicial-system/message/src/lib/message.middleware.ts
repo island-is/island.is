@@ -31,8 +31,11 @@ const requireMessageStore = (): Message[] => {
 /**
  * A Sequelize `Transaction`, seen through the one method this library needs.
  * Named structurally so that the library does not depend on sequelize for a
- * type. Sequelize 6 runs the registered functions once the transaction has
- * committed and never when it is rolled back.
+ * type. Sequelize 6 runs the registered functions when `commit()` completes
+ * (whether or not the COMMIT itself succeeded) and never when the transaction
+ * is rolled back. A savepoint runs its own functions when the savepoint is
+ * released, not when the outer transaction commits, so pass the outer
+ * transaction rather than a savepoint.
  */
 export interface AfterCommitTransaction {
   afterCommit(fn: () => void): void
@@ -65,6 +68,11 @@ export const addMessagesToQueue = (...messages: Message[]) => {
  * response ends, exactly as `addMessagesToQueue` does. Omitting the argument is
  * a type error, so a transaction that was not threaded through to the call site
  * cannot silently fall through to the unconditional behaviour.
+ *
+ * Call it while the transaction is still open. Sequelize accepts a function
+ * registered on a transaction that has already committed but never runs it,
+ * so the messages would be lost without a trace. Inside a `registerAfterCommit`
+ * callback the work is already committed: pass `undefined` there.
  *
  * The request's message store is looked up when this is called, so calling it
  * outside a request throws right away rather than when the transaction commits.
