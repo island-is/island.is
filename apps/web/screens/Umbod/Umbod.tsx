@@ -163,8 +163,7 @@ export const UmbodContent = ({
     [activeLocale, normalizedSearch, tenants],
   )
   return (
-    <>
-      <GridContainer>
+    <GridContainer>
         <GridRow>
           <GridColumn
             span={embedded ? ['9/9', '9/9', '7/9'] : ['12/12', '10/12', '8/12']}
@@ -212,7 +211,6 @@ export const UmbodContent = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-    </>
   )
 }
 

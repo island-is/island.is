@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 
-import OrganizationPageScreen from '../../../[...slugs]'
 import { getServerSidePropsWrapper } from '../../../../../../utils/getServerSidePropsWrapper'
+import OrganizationPageScreen from '../../../[...slugs]'
 
 const Screen = Object.assign(
   ({
