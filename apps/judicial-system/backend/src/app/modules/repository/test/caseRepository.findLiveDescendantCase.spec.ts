@@ -78,9 +78,7 @@ describe('CaseRepositoryService — findLiveDescendantCase', () => {
     } as Case
     const child = { id: 'draft-id', state: CaseState.DRAFT } as Case
 
-    caseModel.findOne
-      .mockResolvedValueOnce(child)
-      .mockResolvedValueOnce(null)
+    caseModel.findOne.mockResolvedValueOnce(child).mockResolvedValueOnce(null)
 
     const result = await caseRepositoryService.findLiveDescendantCase(theCase)
 
