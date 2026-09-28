@@ -19,6 +19,7 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
+import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const CriminalRecordUpdate = ({
   uploadFiles,
@@ -45,33 +46,34 @@ export const CriminalRecordUpdate = ({
     caseId: workingCase.id,
   })
 
-  const isSentToPublicProsecutor = Boolean(
-    workingCase.indictmentSentToPublicProsecutorDate,
-  )
+  // Same rule as the parent uses for its send button, so a reopened or
+  // corrected case stages the files for the next send rather than uploading
+  // them straight away
+  const sentToPublicProsecutor = isSentToPublicProsecutor(workingCase)
 
   const handleCriminalRecordUpdateUpload = useCallback(
     async (files: File[]) => {
       // If the case has been sent to the public prosecutor
       // we want to complete these uploads straight away
-      if (isSentToPublicProsecutor) {
+      if (sentToPublicProsecutor) {
         const uploadResult = await handleUpload(
           addUploadFiles(files, {
             category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           }),
           updateUploadFile,
         )
-        if (uploadResult !== 'ALL_SUCCEEDED') {
+
+        if (uploadResult === 'NONE_SUCCEEDED') {
           return
         }
 
-        // TODO: Make sure to log an event if at least one file was uploaded
-        const eventLogCreated = createEventLog({
+        // At least one file is now on the case. This event is what tells the
+        // criminal records office about it, so it has to be logged even when
+        // some of the files failed.
+        await createEventLog({
           caseId: workingCase.id,
           eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
         })
-        if (!eventLogCreated) {
-          return
-        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click
@@ -86,7 +88,7 @@ export const CriminalRecordUpdate = ({
       workingCase.id,
       addUploadFiles,
       handleUpload,
-      isSentToPublicProsecutor,
+      sentToPublicProsecutor,
       updateUploadFile,
       createEventLog,
     ],
