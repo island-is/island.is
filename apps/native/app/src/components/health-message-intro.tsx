@@ -1,15 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, ScrollView, View, useWindowDimensions } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Image, ScrollView, View } from 'react-native'
+import { initialWindowMetrics } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
 import illustrationSrc from '@/assets/illustrations/health-messages-intro.png'
 import { Button, Checkbox, Typography } from '@/ui'
 
-// The illustration is the first thing dropped on short devices, matching the
-// passkey modal.
-const MIN_HEIGHT_FOR_ILLUSTRATION = 650
+// Less room than this and the illustration is dropped rather than squeezed.
+const MIN_ILLUSTRATION_HEIGHT = 96
 
 interface HealthMessageIntroProps {
   termsAccepted: boolean
@@ -28,8 +27,19 @@ export const HealthMessageIntro = ({
 }: HealthMessageIntroProps) => {
   const intl = useIntl()
   const theme = useTheme()
-  const { height } = useWindowDimensions()
-  const insets = useSafeAreaInsets()
+  // Not useSafeAreaInsets: inside the tabs it reports the tab bar height (83pt
+  // on an SE), which this sheet covers. Only the home indicator needs clearing.
+  const homeIndicatorInset = initialWindowMetrics?.insets.bottom ?? 0
+  const [viewportHeight, setViewportHeight] = useState(0)
+  const [copyHeight, setCopyHeight] = useState(0)
+  const [consentHeight, setConsentHeight] = useState(0)
+
+  // The checkbox is the only way on, so it gets its space first and the
+  // illustration takes the rest. Measured, not a window-height threshold: this
+  // is a form sheet, and the copy grows with locale and text size.
+  const gaps = theme.spacing[2] * 3
+  const spareHeight = viewportHeight - copyHeight - consentHeight - gaps
+  const showIllustration = spareHeight >= MIN_ILLUSTRATION_HEIGHT
 
   // Weights map to font families here, so a bare `fontWeight` on a nested Text
   // would keep the inherited light face — the chunk has to go through
@@ -44,17 +54,21 @@ export const HealthMessageIntro = ({
     <View style={{ flex: 1 }}>
       <ScrollView
         style={{ flex: 1 }}
+        onLayout={(e) => setViewportHeight(e.nativeEvent.layout.height)}
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: theme.spacing[2],
-          paddingBottom: theme.spacing[2],
+          paddingBottom: theme.spacing[1],
           rowGap: theme.spacing[2],
         }}
       >
-        <Typography variant="heading2" textAlign="center">
-          {intl.formatMessage({ id: 'health.messages.compose.introTitle' })}
-        </Typography>
-        <View style={{ rowGap: theme.spacing[2] }}>
+        <View
+          style={{ rowGap: theme.spacing[2] }}
+          onLayout={(e) => setCopyHeight(e.nativeEvent.layout.height)}
+        >
+          <Typography variant="heading2" textAlign="center">
+            {intl.formatMessage({ id: 'health.messages.compose.introTitle' })}
+          </Typography>
           <Typography textAlign="center">
             <FormattedMessage id="health.messages.compose.introBody1" />
           </Typography>
@@ -71,7 +85,7 @@ export const HealthMessageIntro = ({
             />
           </Typography>
         </View>
-        {height > MIN_HEIGHT_FOR_ILLUSTRATION && (
+        {showIllustration ? (
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Image
               source={illustrationSrc}
@@ -79,14 +93,20 @@ export const HealthMessageIntro = ({
               resizeMode="contain"
             />
           </View>
+        ) : (
+          // Soaks up the slack the illustration would have, so the consent
+          // sits with the button instead of floating mid-step.
+          <View style={{ flex: 1 }} />
         )}
-        <Checkbox
-          checked={termsAccepted}
-          onPress={onToggleTerms}
-          label={intl.formatMessage({
-            id: 'health.messages.compose.termsAccept',
-          })}
-        />
+        <View onLayout={(e) => setConsentHeight(e.nativeEvent.layout.height)}>
+          <Checkbox
+            checked={termsAccepted}
+            onPress={onToggleTerms}
+            label={intl.formatMessage({
+              id: 'health.messages.compose.termsAccept',
+            })}
+          />
+        </View>
       </ScrollView>
       {/* Pinned so the consent action stays reachable without scrolling. The
           bottom inset is applied here rather than on a SafeAreaView wrapper,
@@ -94,8 +114,8 @@ export const HealthMessageIntro = ({
       <View
         style={{
           paddingHorizontal: theme.spacing[2],
-          paddingTop: theme.spacing[2],
-          paddingBottom: Math.max(insets.bottom, theme.spacing[2]),
+          paddingTop: theme.spacing[1],
+          paddingBottom: Math.max(homeIndicatorInset, theme.spacing[3]),
           backgroundColor: theme.color.white,
         }}
       >
