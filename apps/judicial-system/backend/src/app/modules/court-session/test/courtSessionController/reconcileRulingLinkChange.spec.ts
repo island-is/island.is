@@ -469,7 +469,7 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([outOfCourtAppealedEvent])
 
       then = await givenWhenThen(
@@ -498,7 +498,7 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([outOfCourtAppealedEvent])
 
       then = await swapTo(AppealCaseState.APPEALED)

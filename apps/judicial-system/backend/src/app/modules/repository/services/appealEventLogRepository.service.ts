@@ -1,24 +1,13 @@
-import { FindOptions, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { AppealEventType } from '@island.is/judicial-system/types'
+
 import { AppealEventLog } from '../models/appealEventLog.model'
-
-interface FindAllAppealEventLogOptions {
-  where?: FindOptions['where']
-  transaction?: Transaction
-}
-
-interface CreateAppealEventLogOptions {
-  transaction: Transaction
-}
-
-interface DeleteAppealEventLogOptions {
-  transaction: Transaction
-}
 
 @Injectable()
 export class AppealEventLogRepositoryService {
@@ -28,15 +17,70 @@ export class AppealEventLogRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findAll(
-    options: FindAllAppealEventLogOptions,
+  // Every event of an appeal case, of any type.
+  async findAllForAppealCase(
+    appealCaseId: string,
+    options: { transaction: Transaction },
   ): Promise<AppealEventLog[]> {
-    return this.appealEventLogModel.findAll(options)
+    try {
+      this.logger.debug(
+        `Finding appeal event logs for appeal case ${appealCaseId}`,
+      )
+
+      const result = await this.appealEventLogModel.findAll({
+        where: { appealCaseId },
+        transaction: options.transaction,
+      })
+
+      this.logger.debug(
+        `Found ${result.length} appeal event log(s) for appeal case ${appealCaseId}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error finding appeal event logs for appeal case ${appealCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The APPEALED events of an appeal case - one per party appeal, whether filed
+  // by the party itself or created from an in-court appeal decision.
+  async findAppealedEventsForAppealCase(
+    appealCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<AppealEventLog[]> {
+    try {
+      this.logger.debug(
+        `Finding APPEALED event logs for appeal case ${appealCaseId}`,
+      )
+
+      const result = await this.appealEventLogModel.findAll({
+        where: { appealCaseId, eventType: AppealEventType.APPEALED },
+        transaction: options.transaction,
+      })
+
+      this.logger.debug(
+        `Found ${result.length} APPEALED event log(s) for appeal case ${appealCaseId}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error finding APPEALED event logs for appeal case ${appealCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
   }
 
   async create(
     data: Partial<AppealEventLog>,
-    options: CreateAppealEventLogOptions,
+    options: { transaction: Transaction },
   ): Promise<AppealEventLog> {
     try {
       this.logger.debug(
@@ -64,7 +108,7 @@ export class AppealEventLogRepositoryService {
   // itself is deleted (the event logs reference it via a foreign key).
   async deleteByAppealCaseId(
     appealCaseId: string,
-    options: DeleteAppealEventLogOptions,
+    options: { transaction: Transaction },
   ): Promise<number> {
     try {
       this.logger.debug(
@@ -96,7 +140,7 @@ export class AppealEventLogRepositoryService {
   // parties that withdrew or were corrected away).
   async deleteByIds(
     ids: string[],
-    options: DeleteAppealEventLogOptions,
+    options: { transaction: Transaction },
   ): Promise<number> {
     if (ids.length === 0) {
       return 0
