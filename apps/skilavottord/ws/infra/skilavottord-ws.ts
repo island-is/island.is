@@ -4,7 +4,6 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
   service('skilavottord-ws')
     .namespace('skilavottord')
     .serviceAccount('skilavottord-ws')
-    .replicaCount({ default: 0, max: 0, min: 0 })
     .db({ name: 'skilavottord' })
     .migrations()
     .secrets({
