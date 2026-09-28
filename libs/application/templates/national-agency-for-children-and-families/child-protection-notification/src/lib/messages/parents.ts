@@ -79,7 +79,7 @@ export const parentsMessages = {
     description: {
       id: 'cpn.application:parents.guardians.description',
       defaultMessage:
-        'Forsjáraðili er sá aðili sem fer með lögformleg fyrirsvar fyrir barn, ræður persónulegum högum og tekur ákvarðanir fyrir hönd þess eftir því sem aldur og þroski barns gefur tilefni til.',
+        'Forsjár- eða umsjáraðili er sá aðili sem fer með lögformleg fyrirsvar fyrir barn, ræður persónulegum högum og tekur ákvarðanir fyrir hönd þess eftir því sem aldur og þroski barns gefur tilefni til.',
       description: 'Intro description for the guardians section',
     },
     radioLabel: {
@@ -105,48 +105,6 @@ export const parentsMessages = {
         'Upplýsingar t.d. um lögheimili forsjár- eða umsjáraðila, póstnúmer, sveitarfélag, tegund forsjár, ríkisfang, fæðingarstað og dagsetningu nýskráningar eru ekki birtar hér en hafa verið sóttar og verða sendar með tilkynningunni til barnaverndar.',
       description:
         'Info alert shown after guardian data is fetched from national registry',
-    },
-  }),
-  custodians: defineMessages({
-    sectionTitle: {
-      id: 'cpn.application:parents.custodians.sectionTitle',
-      defaultMessage: 'Forsjár- eða umsjáraðilar',
-      description: 'Custodians section title',
-    },
-    title: {
-      id: 'cpn.application:parents.custodians.title',
-      defaultMessage: 'Upplýsingar um forsjár- eða umsjáraðila',
-      description: 'Custodians title',
-    },
-    description: {
-      id: 'cpn.application:parents.custodians.description',
-      defaultMessage:
-        'Upplýsingar um forsjár- eða umsjáraðila barns með kerfiskennitölu eru ekki tiltækar í opinberum skrám.',
-      description: 'Intro description for the custodians section',
-    },
-    radioLabel: {
-      id: 'cpn.application:parents.custodians.radioLabel',
-      defaultMessage:
-        'Þekkir þú kennitölu eða kerfiskennitölu forsjár- eða umsjáraðila barnsins?',
-      description:
-        'Radio label asking whether the user knows the custodians SSN',
-    },
-    parent1Title: {
-      id: 'cpn.application:parents.custodians.parent1Title',
-      defaultMessage: 'Forsjáraðili/umsjáraðili 1',
-      description: 'Title for custodian 1 section',
-    },
-    parent2Title: {
-      id: 'cpn.application:parents.custodians.parent2Title',
-      defaultMessage: 'Forsjáraðili/umsjáraðili 2',
-      description: 'Title for custodian 2 section',
-    },
-    fetchedDataInfo: {
-      id: 'cpn.application:parents.custodians.fetchedDataInfo',
-      defaultMessage:
-        'Upplýsingar t.d. um lögheimili forsjár- eða umsjáraðila, póstnúmer, sveitarfélag, tegund forsjár, ríkisfang, fæðingarstað og dagsetningu nýskráningar eru ekki birtar hér en hafa verið sóttar og verða sendar með tilkynningunni til barnaverndar.',
-      description:
-        'Info alert shown after custodian data is fetched from national registry',
     },
   }),
 }

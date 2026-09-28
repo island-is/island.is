@@ -41,7 +41,7 @@ export const childSafetySection = buildSection({
 
             const urgencyLevel = Number(childSafetyUrgencyLevel)
 
-            if (urgencyLevel <= 3) {
+            if (urgencyLevel <= 2) {
               return 'error'
             }
 
@@ -49,7 +49,7 @@ export const childSafetySection = buildSection({
               return 'warning'
             }
 
-            return 'success'
+            return 'info'
           },
           doesNotRequireAnswer: true,
           marginTop: 0,

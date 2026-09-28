@@ -13,12 +13,14 @@ export const childSafetyMessages = defineMessages({
     description: 'Child safety section description',
   },
   sliderQuestion: {
+    // TODO: Update text for Adult Personal application
     id: 'cpn.application:childSafety.sliderQuestion',
     defaultMessage:
       'Hversu öruggt eða óöruggt telur þjónustuveitandi barnið vera núna?',
     description: 'Child safety slider question',
   },
   sliderQuestionUnborn: {
+    // TODO: Update text for Adult Personal application
     id: 'cpn.application:childSafety.sliderQuestionUnborn',
     defaultMessage:
       'Hversu öruggt eða óöruggt telur þjónustuveitandi ófædda barnið vera núna?',
@@ -26,7 +28,8 @@ export const childSafetyMessages = defineMessages({
   },
   warningText: {
     id: 'cpn.application:childSafety.warningText#markdown',
-    defaultMessage: 'Ef barnið er í bráðri hættu, hringdu í **112**',
+    defaultMessage:
+      'Ef barnið er í bráðri hættu, hringdu í **112** og haltu síðan áfram með tilkynninguna.',
     description: 'Warning text for child safety section',
   },
 })

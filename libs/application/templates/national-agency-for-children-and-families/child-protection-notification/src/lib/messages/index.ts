@@ -1,6 +1,6 @@
 export * from './applicationCard'
 export * from './child'
-export * from './completed'
+export * from './conclusion'
 export * from './memm'
 export * from './parents'
 export * from './protectiveFactors'
