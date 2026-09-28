@@ -5,7 +5,7 @@ import { errorMessages } from './messages'
 const casualWorkEntrySchema = z.object({
   company: z.object({
     nationalId: z.string().min(1),
-    name: z.string().optional(),
+    name: z.string().min(1),
   }),
   dateFrom: z.string().min(1),
   dateTo: z.string().min(1),
@@ -55,7 +55,7 @@ const casualWorkArraySchema = z
 const partTimeEntrySchema = z.object({
   company: z.object({
     nationalId: z.string().min(1),
-    name: z.string().optional(),
+    name: z.string().min(1),
   }),
   jobStart: z.string().min(1),
   jobEnd: z.string().optional(),
