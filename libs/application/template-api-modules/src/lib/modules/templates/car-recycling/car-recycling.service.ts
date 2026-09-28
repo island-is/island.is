@@ -32,11 +32,23 @@ const requirePermno = (vehicle: VehicleDto): string => {
   return vehicle.permno
 }
 
+// Only the last three characters, as everywhere else in this service: a full
+// registration number identifies both the vehicle and, through it, its owner.
+// Called from .map(), outside any step, so it must not throw: String() covers a
+// permno that is not one, which the TypeScript type permits even though the
+// schema does not.
+const vehicleStep = (vehicle: VehicleDto): string =>
+  vehicle?.permno
+    ? `vehicle ${String(vehicle.permno).slice(-3)}`
+    : 'a vehicle with no registration number'
+
 // message and stack are non-enumerable on an Error, so logging one as a nested
 // property yields an empty object. Name the fields instead of spreading: a
 // FetchError also carries the whole Response, the headers and the response
 // body, and the body repeats the registration number this service is careful to
-// shorten. The client middleware already logs those with its own handling.
+// shorten. The client middleware already logs the url, body and problem, at warn
+// for a status below 500, so the reason for a refusal is on that line, not this
+// one.
 const describeError = (error: unknown) => {
   const { name, message, stack } = (error ?? {}) as Error
   const { status, statusText } = (error ?? {}) as {
@@ -132,14 +144,16 @@ export class CarRecyclingService extends BaseTemplateApiService {
     )
 
     try {
-      await this.createOwner(application, auth)
+      await this.withStep('recording the owner', () =>
+        this.createOwner(application, auth),
+      )
 
       // Withdrawals are recorded before selections, matching the order the
       // citizen made them. The two lists never share a vehicle: the overview
       // moves one out of the other whenever either is chosen.
       await Promise.all(
         canceledVehicles.map((vehicle) =>
-          this.withVehicleContext(vehicle, () =>
+          this.withStep(vehicleStep(vehicle), () =>
             this.recycleVehicle(
               auth,
               applicantName,
@@ -152,7 +166,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       await Promise.all(
         selectedVehicles.map((vehicle) =>
-          this.withVehicleContext(vehicle, async () => {
+          this.withStep(vehicleStep(vehicle), async () => {
             await this.createVehicle(auth, vehicle)
             await this.recycleVehicle(
               auth,
@@ -165,29 +179,24 @@ export class CarRecyclingService extends BaseTemplateApiService {
       )
 
       return true
-    } catch (error) {
-      this.logger.error(
-        `car-recycling: Error occurred when recycling vehicle(s)`,
-        { error: describeError(error) },
-      )
-
+    } catch {
+      // The step that failed has already logged it, with the detail only that
+      // step had. Logging again here recorded every failure twice.
       throw new Error(`Error occurred when recycling vehicle(s)`)
     }
   }
 
-  // Which vehicle failed is the first thing an operator needs, and it travels
-  // only in the request body, so nothing downstream can report it.
-  private async withVehicleContext<T>(
-    vehicle: VehicleDto,
-    work: () => Promise<T>,
-  ): Promise<T> {
+  // Which step failed is the first thing an operator needs, and for a vehicle it
+  // travels only in the request body, so nothing downstream can report it. The
+  // application system logs the submission failure itself, with the application
+  // id, so a second line in sendApplication only repeated this one.
+  private async withStep<T>(step: string, work: () => Promise<T>): Promise<T> {
     try {
       return await work()
     } catch (error) {
-      this.logger.error(
-        `car-recycling: Failed on vehicle ${vehicle.permno?.slice(-3)}`,
-        { error: describeError(error) },
-      )
+      this.logger.error(`car-recycling: Failed on ${step}`, {
+        error: describeError(error),
+      })
       throw error
     }
   }
