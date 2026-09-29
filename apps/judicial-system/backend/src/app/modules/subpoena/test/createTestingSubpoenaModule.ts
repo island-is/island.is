@@ -14,13 +14,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueueAfterCommit,
-  type AfterCommitTransaction,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
@@ -41,6 +37,7 @@ import { SubpoenaController } from '../subpoena.controller'
 import { SubpoenaService } from '../subpoena.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../user/user.service')
 jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
@@ -157,19 +154,16 @@ export const createTestingSubpoenaModule = async () => {
   const messageService = subpoenaModule.get<MessageService>(MessageService)
 
   const queuedMessages: Message[] = []
-  const mockAddMessagesToQueueAfterCommit =
-    addMessagesToQueueAfterCommit as jest.Mock
-  mockAddMessagesToQueueAfterCommit.mockImplementation(
-    (_: AfterCommitTransaction | undefined, ...msgs: Message[]) => {
-      queuedMessages.push(...msgs)
-    },
-  )
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
 
   subpoenaModule.close()
 
   return {
     queuedMessages,
-    mockAddMessagesToQueueAfterCommit,
+    mockQueueMessagesAfterCommit,
     userService,
     pdfService,
     fileService,

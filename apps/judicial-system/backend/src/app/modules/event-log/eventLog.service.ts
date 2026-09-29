@@ -5,10 +5,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueueAfterCommit,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
@@ -16,6 +13,7 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { EventLogRepositoryService } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 
@@ -105,17 +103,14 @@ export class EventLogService {
       return false
     } finally {
       if (caseId) {
-        this.addMessagesForEventNotificationToQueue(
-          {
-            eventType,
-            caseId,
-            userDescriptor: {
-              name: userName,
-              institution: { name: institutionName },
-            },
+        this.addMessagesForEventNotificationToQueue({
+          eventType,
+          caseId,
+          userDescriptor: {
+            name: userName,
+            institution: { name: institutionName },
           },
-          transaction,
-        )
+        })
       }
     }
   }
@@ -135,24 +130,19 @@ export class EventLogService {
   }
 
   // Sends events to queue for notification dispatch
-  private addMessagesForEventNotificationToQueue(
-    {
-      eventType,
-      caseId,
-      userDescriptor,
-    }: {
-      eventType: EventType
-      caseId: string
-      userDescriptor: UserDescriptor
-    },
-    // Event logs are often written outside any transaction; then the row is
-    // already durable and the message is queued right away.
-    transaction: Transaction | undefined,
-  ) {
+  private addMessagesForEventNotificationToQueue({
+    eventType,
+    caseId,
+    userDescriptor,
+  }: {
+    eventType: EventType
+    caseId: string
+    userDescriptor: UserDescriptor
+  }) {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
-      addMessagesToQueueAfterCommit(transaction, {
+      queueMessagesAfterCommit({
         type: MessageType.EVENT_NOTIFICATION_DISPATCH,
         caseId: caseId,
         // There is a user property defined in the Message type definition, but

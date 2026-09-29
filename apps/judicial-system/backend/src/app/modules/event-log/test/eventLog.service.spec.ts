@@ -5,18 +5,19 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import * as MessageModule from '@island.is/judicial-system/message'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { EventLogRepositoryService } from '../../repository'
 import { CreateEventLogDto } from '../dto/createEventLog.dto'
 import { EventLogService } from '../eventLog.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../repository/services/eventLogRepository.service')
 
 describe('EventLogService - create', () => {
@@ -44,7 +45,7 @@ describe('EventLogService - create', () => {
   }
 
   let mockEventLogRepositoryService: EventLogRepositoryService
-  let mockAddMessagesToQueueAfterCommit: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
   let eventLogService: EventLogService
 
   beforeEach(async () => {
@@ -62,37 +63,18 @@ describe('EventLogService - create', () => {
       EventLogRepositoryService,
     )
     eventLogService = eventLogModule.get(EventLogService)
-    mockAddMessagesToQueueAfterCommit = (
-      jest.requireMock(
-        '@island.is/judicial-system/message',
-      ) as typeof MessageModule
-    ).addMessagesToQueueAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
   })
 
-  it('queues the event notification against the transaction', async () => {
+  it('queues the event notification for after the commit', async () => {
     const result = await eventLogService.create(event, transaction)
 
     expect(mockEventLogRepositoryService.create).toHaveBeenCalledWith(event, {
       transaction,
     })
-    // Queued against the transaction, so a rollback sends nothing
-    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-      transaction,
-      message,
-    )
+    // Queued for after the commit, so a rollback sends nothing
+    expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith(message)
     expect(result).toBe(true)
-  })
-
-  it('queues the event notification right away when there is no transaction', async () => {
-    await eventLogService.create(event)
-
-    expect(mockEventLogRepositoryService.create).toHaveBeenCalledWith(event, {
-      transaction: undefined,
-    })
-    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-      undefined,
-      message,
-    )
   })
 
   it('still queues the notification when the event log row cannot be written', async () => {
@@ -101,10 +83,7 @@ describe('EventLogService - create', () => {
 
     const result = await eventLogService.create(event, transaction)
 
-    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-      transaction,
-      message,
-    )
+    expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith(message)
     expect(result).toBe(false)
   })
 
@@ -115,6 +94,6 @@ describe('EventLogService - create', () => {
     )
 
     expect(mockEventLogRepositoryService.create).toHaveBeenCalled()
-    expect(mockAddMessagesToQueueAfterCommit).not.toHaveBeenCalled()
+    expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 })

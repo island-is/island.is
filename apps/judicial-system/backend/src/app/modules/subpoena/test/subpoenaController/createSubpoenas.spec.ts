@@ -15,8 +15,6 @@ import {
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
-import { getTransactionContext } from '../../../../middleware'
-import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CaseRepositoryService,
@@ -84,7 +82,7 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
   let mockQueuedMessages: Message[]
-  let mockAddMessagesToQueueAfterCommit: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let subpoenaController: SubpoenaController
@@ -97,7 +95,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       courtDocumentRepositoryService,
       subpoenaController: controller,
       queuedMessages,
-      mockAddMessagesToQueueAfterCommit: mockAddMessages,
+      mockQueueMessagesAfterCommit: mockQueueMessages,
     } = await createTestingSubpoenaModule()
 
     mockCaseRepositoryService = caseRepositoryService
@@ -105,7 +103,7 @@ describe('SubpoenaController - Create subpoenas', () => {
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
     subpoenaController = controller
     mockQueuedMessages = queuedMessages
-    mockAddMessagesToQueueAfterCommit = mockAddMessages
+    mockQueueMessagesAfterCommit = mockQueueMessages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -122,26 +120,15 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       // Clear queued messages before each test
       mockQueuedMessages.length = 0
-      mockAddMessagesToQueueAfterCommit.mockClear()
+      mockQueueMessagesAfterCommit.mockClear()
 
       try {
-        // Revocation messages register via registerAfterCommit; unit tests do
-        // not run TransactionCommitInterceptor, so drain callbacks here after
-        // a successful handler return (matching the success-path interceptor).
-        await runInRequestContext(async () => {
-          then.result = await subpoenaController.createSubpoenas(
-            caseId,
-            theCase,
-            createSubpoenasDto,
-            { id: uuid() } as User,
-          )
-
-          await Promise.all(
-            (getTransactionContext()?.afterCommit ?? []).map((callback) =>
-              callback(),
-            ),
-          )
-        })
+        then.result = await subpoenaController.createSubpoenas(
+          caseId,
+          theCase,
+          createSubpoenasDto,
+          { id: uuid() } as User,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -229,10 +216,9 @@ describe('SubpoenaController - Create subpoenas', () => {
         ]),
       )
 
-      // Queued against the handler's transaction, so a rollback sends nothing
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledTimes(1)
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-        transaction,
+      // Queued for after the commit, so a rollback sends nothing
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledTimes(1)
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith(
         ...mockQueuedMessages,
       )
 
@@ -430,35 +416,16 @@ describe('SubpoenaController - Create subpoenas', () => {
       }
 
       const user = { id: uuid() } as User
-      let result: Subpoena[] | undefined
 
       mockQueuedMessages.length = 0
-      mockAddMessagesToQueueAfterCommit.mockClear()
+      mockQueueMessagesAfterCommit.mockClear()
 
-      await runInRequestContext(async () => {
-        result = await subpoenaController.createSubpoenas(
-          caseId,
-          theCase,
-          createSubpoenasDto,
-          user,
-        )
-
-        // Delivery messages are buffered immediately; revocation waits for commit.
-        expect(
-          mockQueuedMessages.some(
-            (message) =>
-              message.type ===
-              MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
-          ),
-        ).toBe(false)
-        expect(getTransactionContext()?.afterCommit).toHaveLength(1)
-
-        await Promise.all(
-          (getTransactionContext()?.afterCommit ?? []).map((callback) =>
-            callback(),
-          ),
-        )
-      })
+      const result = await subpoenaController.createSubpoenas(
+        caseId,
+        theCase,
+        createSubpoenasDto,
+        user,
+      )
 
       expect(mockQueuedMessages).toEqual(
         expect.arrayContaining([
@@ -481,25 +448,22 @@ describe('SubpoenaController - Create subpoenas', () => {
       )
       expect(mockQueuedMessages).toHaveLength(3)
 
-      // The delivery messages wait for the handler's transaction to commit; the
-      // revocation message is queued from an after-commit callback, where the
-      // transaction has already committed, so it must not be passed again
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledTimes(2)
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenNthCalledWith(
+      // The revocation and the delivery messages are both queued for after the
+      // commit, the revocation first
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledTimes(2)
+      expect(mockQueueMessagesAfterCommit).toHaveBeenNthCalledWith(
         1,
-        transaction,
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+        }),
+      )
+      expect(mockQueueMessagesAfterCommit).toHaveBeenNthCalledWith(
+        2,
         expect.objectContaining({
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
         }),
         expect.objectContaining({
           type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
-        }),
-      )
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenNthCalledWith(
-        2,
-        undefined,
-        expect.objectContaining({
-          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
         }),
       )
 

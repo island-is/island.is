@@ -43,7 +43,7 @@ describe('InternalSubpoenaController - Update subpoena', () => {
   const updatedSubpoena = { ...subpoena } as Subpoena
 
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
-  let mockAddMessagesToQueueAfterCommit: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -52,12 +52,12 @@ describe('InternalSubpoenaController - Update subpoena', () => {
       sequelize,
       subpoenaRepositoryService,
       internalSubpoenaController,
-      mockAddMessagesToQueueAfterCommit: mockAddMessages,
+      mockQueueMessagesAfterCommit: mockQueueMessages,
     } = await createTestingSubpoenaModule()
 
     mockSubpoenaRepositoryService = subpoenaRepositoryService
-    mockAddMessagesToQueueAfterCommit = mockAddMessages
-    mockAddMessagesToQueueAfterCommit.mockClear()
+    mockQueueMessagesAfterCommit = mockQueueMessages
+    mockQueueMessagesAfterCommit.mockClear()
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -89,7 +89,7 @@ describe('InternalSubpoenaController - Update subpoena', () => {
       then = await givenWhenThen(update)
     })
 
-    it('should queue the service notification against the transaction', () => {
+    it('should queue the service notification for after the commit', () => {
       expect(mockSubpoenaRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         defendantId,
@@ -97,16 +97,13 @@ describe('InternalSubpoenaController - Update subpoena', () => {
         update,
         { transaction, throwOnZeroRows: false },
       )
-      // Queued against the transaction, so a rollback sends nothing
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-        transaction,
-        {
-          type: MessageType.SUBPOENA_NOTIFICATION,
-          caseId,
-          elementId: [defendantId, subpoenaId],
-          body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
-        },
-      )
+      // Queued for after the commit, so a rollback sends nothing
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
+        type: MessageType.SUBPOENA_NOTIFICATION,
+        caseId,
+        elementId: [defendantId, subpoenaId],
+        body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
+      })
       expect(then.result).toBe(updatedSubpoena)
     })
   })
@@ -116,16 +113,13 @@ describe('InternalSubpoenaController - Update subpoena', () => {
       await givenWhenThen({ serviceStatus: ServiceStatus.FAILED })
     })
 
-    it('should queue the failure notification against the transaction', () => {
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-        transaction,
-        {
-          type: MessageType.SUBPOENA_NOTIFICATION,
-          caseId,
-          elementId: [defendantId, subpoenaId],
-          body: { type: SubpoenaNotificationType.SERVICE_FAILED },
-        },
-      )
+    it('should queue the failure notification for after the commit', () => {
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
+        type: MessageType.SUBPOENA_NOTIFICATION,
+        caseId,
+        elementId: [defendantId, subpoenaId],
+        body: { type: SubpoenaNotificationType.SERVICE_FAILED },
+      })
     })
   })
 
@@ -135,7 +129,7 @@ describe('InternalSubpoenaController - Update subpoena', () => {
     })
 
     it('should queue nothing', () => {
-      expect(mockAddMessagesToQueueAfterCommit).not.toHaveBeenCalled()
+      expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 })

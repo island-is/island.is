@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import * as MessageModule from '@island.is/judicial-system/message'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   IndictmentCaseNotificationType,
@@ -10,8 +9,13 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
+
+// Mocked here as well as in the harness: this spec imports the helper before
+// the harness, so the harness's mock would come too late for it
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: Verdict
@@ -52,7 +56,7 @@ describe('InternalVerdictController - Update verdict', () => {
   } as PoliceUpdateVerdictDto
 
   let mockVerdictRepositoryService: VerdictRepositoryService
-  let mockAddMessagesToQueueAfterCommit: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -63,11 +67,7 @@ describe('InternalVerdictController - Update verdict', () => {
       await createTestingVerdictModule()
 
     mockVerdictRepositoryService = verdictRepositoryService
-    mockAddMessagesToQueueAfterCommit = (
-      jest.requireMock(
-        '@island.is/judicial-system/message',
-      ) as typeof MessageModule
-    ).addMessagesToQueueAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -107,7 +107,7 @@ describe('InternalVerdictController - Update verdict', () => {
         dto,
         { transaction },
       )
-      expect(mockAddMessagesToQueueAfterCommit).not.toHaveBeenCalled()
+      expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(then.result).toBe(updatedVerdict)
     })
   })
@@ -128,19 +128,14 @@ describe('InternalVerdictController - Update verdict', () => {
       then = await givenWhenThen(suspendedCase)
     })
 
-    it('should queue the suspension notification once the update is durable', () => {
-      // The update ran in a managed transaction that has committed by the time
-      // the message is queued, so it is queued without a transaction
-      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-        undefined,
-        {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-          caseId,
-          body: {
-            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-          },
+    it('should queue the suspension notification for after the commit', () => {
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId,
+        body: {
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
         },
-      )
+      })
       expect(then.result).toBe(updatedVerdict)
     })
   })

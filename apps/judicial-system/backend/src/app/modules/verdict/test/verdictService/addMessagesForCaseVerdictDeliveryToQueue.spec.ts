@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import * as MessageModule from '@island.is/judicial-system/message'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   ServiceRequirement,
@@ -10,6 +9,7 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   Case,
   Defendant,
@@ -17,6 +17,10 @@ import {
   VerdictRepositoryService,
 } from '../../../repository'
 import { VerdictService } from '../../verdict.service'
+
+// Mocked here as well as in the harness: this spec imports the helper before
+// the harness, so the harness's mock would come too late for it
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
   const caseId = uuid()
@@ -27,7 +31,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
   let verdictService: VerdictService
   let mockVerdictRepositoryService: VerdictRepositoryService
-  let mockAddMessagesToQueueAfterCommit: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
 
   beforeEach(async () => {
     jest.resetAllMocks()
@@ -37,11 +41,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
     verdictService = service
     mockVerdictRepositoryService = verdictRepositoryService
-    mockAddMessagesToQueueAfterCommit = (
-      jest.requireMock(
-        '@island.is/judicial-system/message',
-      ) as typeof MessageModule
-    ).addMessagesToQueueAfterCommit as jest.Mock
+    mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
 
     const mockCreate = mockVerdictRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue({ id: uuid() } as Verdict)
@@ -88,16 +88,13 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
       },
       { transaction },
     )
-    // Queued against the transaction, so a rollback sends nothing
-    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-      transaction,
-      {
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-        user,
-        caseId,
-        elementId: [defendantId],
-      },
-    )
+    // Queued for after the commit, so a rollback sends nothing
+    expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+      user,
+      caseId,
+      elementId: [defendantId],
+    })
     expect(result).toEqual({ queued: true })
   })
 
@@ -126,8 +123,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
     expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
     expect(mockVerdictRepositoryService.create).not.toHaveBeenCalled()
-    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
-      transaction,
+    expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith(
       expect.objectContaining({
         type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
       }),

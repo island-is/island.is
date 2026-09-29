@@ -27,7 +27,6 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
-  addMessagesToQueueAfterCommit,
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -37,6 +36,7 @@ import {
   isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import {
   CaseCompletedGuard,
   CaseExistsGuard,
@@ -192,10 +192,7 @@ export class InternalVerdictController {
         isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
         hasDrivingLicenseSuspension
       ) {
-        // The managed transaction above has already committed - a rollback
-        // would have thrown before reaching this point - so the update is
-        // durable and the message is queued without a transaction.
-        addMessagesToQueueAfterCommit(undefined, {
+        queueMessagesAfterCommit({
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId: theCase.id,
           body: {
