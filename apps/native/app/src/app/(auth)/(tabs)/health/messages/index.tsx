@@ -317,7 +317,9 @@ export default function HealthMessagesScreen() {
             <ListItem
               title={item.organization?.name ?? item.lastSenderGroupName ?? ''}
               subtitle={item.title ?? ''}
-              subtitleNumberOfLines={2}
+              // A 150-char subject (the compose cap) wraps to five lines at
+              // heading5 on the narrowest phones.
+              subtitleNumberOfLines={5}
               date={item.lastMessageSentAt ?? undefined}
               unread={!item.isRead}
               starred={item.isStarred}
