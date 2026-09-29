@@ -231,7 +231,7 @@ export const m = defineMessages({
   },
   translationBackToList: {
     id: 'admin-portal.application-system:translationBackToList',
-    defaultMessage: 'Til baka',
+    defaultMessage: 'Til baka í yfirlit',
   },
   translationSave: {
     id: 'admin-portal.application-system:translationSave',

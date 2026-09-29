@@ -16,19 +16,25 @@ export const overflowMenuMaxPx = 1140
 export const compactActionsMaxPx = 1000
 export const historyCompactMaxPx = 758
 
+const laptopMin = 1280
+
 export const back = style({
   display: 'flex',
   alignItems: 'center',
   flex: '0 0 auto',
+  marginLeft: 20,
+  '@container': {
+    'adminbar (max-width: 1240px)': {
+      marginLeft: 24,
+    },
+  },
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.lg - 1}px)`]: {
       order: 1,
+      marginLeft: 0,
     },
   },
 })
-
-/** Show labelled header controls from typical laptop width and up. */
-const laptopMin = 1280
 
 export const backWide = style({
   display: 'none',

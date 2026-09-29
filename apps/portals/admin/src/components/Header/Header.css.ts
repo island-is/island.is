@@ -75,7 +75,7 @@ export const lead = style({
 
 export const switcher = style({
   minWidth: 0,
-  flex: '1 1 auto',
+  flex: '0 1 290px',
   overflow: 'hidden',
   '@media': {
     [belowLg]: {
