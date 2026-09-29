@@ -128,7 +128,7 @@ export const casualWorkSection = buildSubSection({
               label: m.application.dateTo,
               width: 'half',
               required: true,
-
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {

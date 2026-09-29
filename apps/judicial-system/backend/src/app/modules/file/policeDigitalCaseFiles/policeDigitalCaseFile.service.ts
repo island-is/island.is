@@ -159,9 +159,7 @@ export class PoliceDigitalCaseFileService {
           courtCaseNumber,
           policeCaseNumbers,
         }),
-        this.policeDigitalCaseFileRepositoryService.findAll({
-          where: { caseId },
-        }),
+        this.policeDigitalCaseFileRepositoryService.findByCaseId(caseId),
       ])
 
     // Only consider files from the police system whose policeCaseNumber is among the stored ones on the case
@@ -228,9 +226,7 @@ export class PoliceDigitalCaseFileService {
     // Re-fetch only if we inserted new records
     const currentDigitalCaseFiles =
       filesToCreate.length > 0
-        ? await this.policeDigitalCaseFileRepositoryService.findAll({
-            where: { caseId },
-          })
+        ? await this.policeDigitalCaseFileRepositoryService.findByCaseId(caseId)
         : currentPoliceDigitalCaseFiles
 
     return currentDigitalCaseFiles

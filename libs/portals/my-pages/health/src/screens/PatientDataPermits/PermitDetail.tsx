@@ -192,6 +192,7 @@ const PermitDetail: React.FC = () => {
                       const tag = permitTagSelector(
                         permit.status,
                         formatMessage,
+                        permit.validFrom,
                       )
                       return (
                         <Tag

@@ -461,6 +461,7 @@ describe('CaseFileRepositoryService', () => {
         newCaseId,
         {
           key: `${newCaseId}/def/document.pdf`,
+          isKeyAccessible: false,
           defendantId: 'new-defendant-id',
           civilClaimantId: 'new-civil-claimant-id',
         },
@@ -474,6 +475,9 @@ describe('CaseFileRepositoryService', () => {
           name: 'document.pdf',
           category: CaseFileCategory.CASE_FILE,
           key: `${newCaseId}/def/document.pdf`,
+          // The object is not there yet - the caller says so rather than the
+          // copy inheriting the original's accessible object
+          isKeyAccessible: false,
           // Back to being stored only in RVG
           state: CaseFileState.STORED_IN_RVG,
           // Pointed at the copies of the defendant and civil claimant
@@ -495,7 +499,7 @@ describe('CaseFileRepositoryService', () => {
       await service.copyToCase(
         sourceFile,
         newCaseId,
-        { key: `${newCaseId}/def/document.pdf` },
+        { key: `${newCaseId}/def/document.pdf`, isKeyAccessible: true },
         { transaction },
       )
 
@@ -516,7 +520,7 @@ describe('CaseFileRepositoryService', () => {
         service.copyToCase(
           sourceFile,
           newCaseId,
-          { key: `${newCaseId}/def/document.pdf` },
+          { key: `${newCaseId}/def/document.pdf`, isKeyAccessible: true },
           { transaction },
         ),
       ).rejects.toThrow(error)

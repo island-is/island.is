@@ -19,6 +19,7 @@ import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
+  getAccessIncludes,
   getActionOnRowClick,
   getAllIncludes,
   getAttributes,
@@ -74,6 +75,7 @@ export class CaseTableService {
       whereOptionsByType.map(async ({ type, whereOptions }) => {
         const [include, globalOrder] = getGlobalIncludes(
           whereOptions.includes ?? {},
+          user,
         )
 
         const cases = await this.caseRepositoryService.findAll({
@@ -242,10 +244,19 @@ export class CaseTableService {
               },
             ]
           : []),
+        // Whatever the access rule reads and this query has not joined itself.
+        ...getAccessIncludes(user, [
+          'defendants',
+          'appealCase',
+          // Only joined for court of appeals users, so only declared for them -
+          // claiming it unconditionally would make this query drop the join for
+          // everyone else the day a rule starts reading that alias.
+          ...(isCoaUser ? (['rulingOrderAppealCases'] as const) : []),
+        ]),
       ],
       where: {
         [Op.and]: [
-          userAccessWhereOptions(user),
+          userAccessWhereOptions(user).where,
           {
             [Op.or]: [
               literal(`
