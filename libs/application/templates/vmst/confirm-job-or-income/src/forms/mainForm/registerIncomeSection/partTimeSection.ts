@@ -120,6 +120,7 @@ export const partTimeSection = buildSubSection({
               component: 'date',
               label: m.application.jobEnd,
               width: 'half',
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.jobStart
                 if (fromDate) {
