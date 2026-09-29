@@ -1,8 +1,23 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 
 import { DelegationPreferenceDto } from './dto/delegation-preference.dto'
 import { DelegationPreference } from './models/delegation-preference.model'
+
+/**
+ * How many recently used parties a read returns. The picker shows fewer than
+ * this; the surplus covers parties whose delegation has since been revoked and
+ * which the screen therefore drops.
+ */
+const MAX_RECENT = 10
+
+/**
+ * Nothing here checks that a delegation actually exists (see the class comment),
+ * so without a cap an actor could star arbitrarily many parties and grow both
+ * the table and every subsequent read. Far above what anyone holds in practice.
+ */
+const MAX_FAVOURITES = 100
 
 /**
  * Favourites and last used, for the "Veldu notanda" screen.
@@ -19,17 +34,40 @@ export class DelegationPreferenceService {
     private readonly delegationPreferenceModel: typeof DelegationPreference,
   ) {}
 
+  /**
+   * Everything the picker can display and nothing more: the starred parties,
+   * and the most recently used ones. An actor who has switched between many
+   * parties over the years still reads a bounded number of rows.
+   */
   async findAll(toNationalId: string): Promise<DelegationPreferenceDto[]> {
-    const preferences = await this.delegationPreferenceModel.findAll({
-      where: { toNationalId },
-      attributes: ['fromNationalId', 'isFavourite', 'lastUsedAt'],
-    })
+    const attributes = ['fromNationalId', 'isFavourite', 'lastUsedAt'] as const
 
-    return preferences.map((preference) => ({
-      fromNationalId: preference.fromNationalId,
-      isFavourite: preference.isFavourite,
-      lastUsedAt: preference.lastUsedAt ?? null,
-    }))
+    const [favourites, recent] = await Promise.all([
+      this.delegationPreferenceModel.findAll({
+        where: { toNationalId, isFavourite: true },
+        attributes: [...attributes],
+        limit: MAX_FAVOURITES,
+      }),
+      this.delegationPreferenceModel.findAll({
+        where: { toNationalId, lastUsedAt: { [Op.ne]: null } },
+        attributes: [...attributes],
+        order: [['lastUsedAt', 'DESC']],
+        limit: MAX_RECENT,
+      }),
+    ])
+
+    // A party can be both starred and recently used, and must appear once.
+    const byNationalId = new Map<string, DelegationPreferenceDto>()
+
+    for (const preference of [...favourites, ...recent]) {
+      byNationalId.set(preference.fromNationalId, {
+        fromNationalId: preference.fromNationalId,
+        isFavourite: preference.isFavourite,
+        lastUsedAt: preference.lastUsedAt ?? null,
+      })
+    }
+
+    return [...byNationalId.values()]
   }
 
   async setFavourite(
@@ -37,29 +75,59 @@ export class DelegationPreferenceService {
     fromNationalId: string,
     isFavourite: boolean,
   ): Promise<void> {
-    const [preference] = await this.delegationPreferenceModel.findOrCreate({
-      where: { toNationalId, fromNationalId },
-      defaults: { toNationalId, fromNationalId, isFavourite },
+    if (!isFavourite) {
+      // Unstarring is not worth a row of its own. One that carries nothing else
+      // goes away; one that still records a use keeps that and loses the star.
+      await this.delegationPreferenceModel.destroy({
+        where: { toNationalId, fromNationalId, lastUsedAt: null },
+      })
+
+      await this.delegationPreferenceModel.update(
+        { isFavourite: false },
+        { where: { toNationalId, fromNationalId } },
+      )
+
+      return
+    }
+
+    const favourites = await this.delegationPreferenceModel.count({
+      where: { toNationalId, isFavourite: true },
     })
 
-    if (preference.isFavourite !== isFavourite) {
-      await preference.update({ isFavourite })
+    if (favourites >= MAX_FAVOURITES) {
+      throw new BadRequestException(
+        `Cannot have more than ${MAX_FAVOURITES} favourite delegations`,
+      )
     }
+
+    // Touches isFavourite only, so a concurrent switch cannot lose its
+    // lastUsedAt, and the whole write is one round trip.
+    await this.delegationPreferenceModel.upsert(
+      { toNationalId, fromNationalId, isFavourite: true },
+      {
+        conflictFields: ['toNationalId', 'fromNationalId'],
+        fields: ['isFavourite'],
+      },
+    )
   }
 
   /**
    * Called when the actor actually switches to a party. Leaves isFavourite
    * alone — a row may already exist because the party is starred.
+   *
+   * On the login path, so it is deliberately a single statement: findOrCreate
+   * would open a transaction and then write the timestamp a second time.
    */
   async recordUsage(
     toNationalId: string,
     fromNationalId: string,
   ): Promise<void> {
-    const [preference] = await this.delegationPreferenceModel.findOrCreate({
-      where: { toNationalId, fromNationalId },
-      defaults: { toNationalId, fromNationalId, lastUsedAt: new Date() },
-    })
-
-    await preference.update({ lastUsedAt: new Date() })
+    await this.delegationPreferenceModel.upsert(
+      { toNationalId, fromNationalId, lastUsedAt: new Date() },
+      {
+        conflictFields: ['toNationalId', 'fromNationalId'],
+        fields: ['lastUsedAt'],
+      },
+    )
   }
 }

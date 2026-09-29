@@ -19,6 +19,7 @@ import {
   DelegationsIncomingService,
   DelegationsIndexService,
   MergedDelegationDTO,
+  RecordDelegationUsageDto,
   SetDelegationFavouriteDto,
 } from '@island.is/auth-api-lib'
 import {
@@ -70,6 +71,10 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Version([VERSION_NEUTRAL, '1'])
   @Post('preferences/favourite')
+  @Documentation({
+    description: 'Stars or unstars one party for the signed in actor.',
+    response: { status: 200 },
+  })
   setFavourite(
     @CurrentUser() user: User,
     @Body() dto: SetDelegationFavouriteDto,
@@ -85,9 +90,13 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Version([VERSION_NEUTRAL, '1'])
   @Post('preferences/usage')
+  @Documentation({
+    description: 'Records that the actor has switched to a party.',
+    response: { status: 200 },
+  })
   recordUsage(
     @CurrentUser() user: User,
-    @Body() dto: { fromNationalId: string },
+    @Body() dto: RecordDelegationUsageDto,
   ): Promise<void> {
     return this.delegationPreferenceService.recordUsage(
       user.nationalId,
@@ -156,12 +165,11 @@ export class DelegationsController {
     @Body()
     request: DelegationVerification,
   ): Promise<DelegationVerificationResult> {
-    const verified =
-      await this.delegationsIncomingService.verifyDelegationAtProvider(
-        user,
-        request.fromNationalId,
-        request.delegationTypes,
-      )
+    const verified = await this.delegationsIncomingService.verifyDelegationAtProvider(
+      user,
+      request.fromNationalId,
+      request.delegationTypes,
+    )
 
     return { verified }
   }

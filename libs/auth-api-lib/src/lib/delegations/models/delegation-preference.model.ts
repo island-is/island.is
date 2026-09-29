@@ -30,11 +30,9 @@ import { ApiProperty } from '@nestjs/swagger'
   updatedAt: 'modified',
   indexes: [
     {
+      // Leading column serves the only read: everything for one actor.
       fields: ['to_national_id', 'from_national_id'],
       unique: true,
-    },
-    {
-      fields: ['to_national_id'],
     },
   ],
 })

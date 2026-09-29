@@ -52,13 +52,6 @@ module.exports = {
         name: 'delegation_preference_to_from_unique',
         transaction,
       })
-
-      // The only read pattern: everything this actor has starred or used.
-      await queryInterface.addIndex('delegation_preference', {
-        fields: ['to_national_id'],
-        name: 'delegation_preference_to_national_id',
-        transaction,
-      })
     })
   },
 
