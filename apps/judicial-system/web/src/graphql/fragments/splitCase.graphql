@@ -2,9 +2,21 @@ fragment SplitCaseFields on Case {
   id
   created
   courtCaseNumber
+  # type and the defender fields are what decides whether a defence user may
+  # open this case - see canDefenceUserOpenLinkedCase. Sending a defender's
+  # national id to the parties of a case they are not on was weighed and
+  # accepted: it is not treated as sensitive here, and the alternative was a
+  # list of case numbers nobody could follow.
+  #
+  # Civil claimants are deliberately left out. The list below is built from
+  # this case's defendants, so the party being matched is a defender; the
+  # spokesperson fields would be a second identifier shipped for nothing.
+  type
   defendants {
     id
     name
+    defenderNationalId
+    isDefenderChoiceConfirmed
     subpoenas {
       ...SubpoenaFields
     }

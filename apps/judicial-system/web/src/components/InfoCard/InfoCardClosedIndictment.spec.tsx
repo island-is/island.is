@@ -52,7 +52,7 @@ describe('InfoCardClosedIndictment', () => {
   // were on the active card only, so Landsrettur - which always renders the
   // closed card - could not see them at all.
   describe('linked cases', () => {
-    const splitCaseFixture = () =>
+    const splitCaseFixture = (splitCaseDefenderNationalId?: string) =>
       ({
         ...mockCase(CaseType.INDICTMENT),
         splitCases: [
@@ -60,7 +60,14 @@ describe('InfoCardClosedIndictment', () => {
             id: 'split-case-id',
             type: CaseType.INDICTMENT,
             courtCaseNumber: 'S-88/2026',
-            defendants: [{ id: 'split-defendant', name: 'Split Defendant' }],
+            defendants: [
+              {
+                id: 'split-defendant',
+                name: 'Split Defendant',
+                defenderNationalId: splitCaseDefenderNationalId,
+                isDefenderChoiceConfirmed: Boolean(splitCaseDefenderNationalId),
+              },
+            ],
           },
         ],
       } as unknown as Case)
@@ -113,18 +120,9 @@ describe('InfoCardClosedIndictment', () => {
     })
 
     // Shown either way; clickable only where the user could open it.
-    //
-    // A defence user gets no link at all. Deciding whether they are a party to
-    // the split case would mean reading its defendants' defender national ids,
-    // and the split case payload deliberately does not carry them - sending
-    // them would hand one party the personal identifiers of lawyers on a case
-    // they may have nothing to do with. Merged cases resolve this the same
-    // way, by not including linked defendants in the limited access payload at
-    // all. Withholding the link can hide one that would have worked; it never
-    // offers one that would not.
-    it('does not link a split case for a defence user', async () => {
+    it('does not link a split case a defender is not a party to', async () => {
       renderClosedIndictment(
-        splitCaseFixture(),
+        splitCaseFixture('9999999999'),
         UserRole.DEFENDER,
         DEFENDER_NATIONAL_ID,
       )
@@ -133,6 +131,23 @@ describe('InfoCardClosedIndictment', () => {
       expect(screen.queryByRole('link', { name: 'S-88/2026' })).toBeNull()
     })
 
+    it('links a split case the defender is a party to', async () => {
+      renderClosedIndictment(
+        splitCaseFixture(DEFENDER_NATIONAL_ID),
+        UserRole.DEFENDER,
+        DEFENDER_NATIONAL_ID,
+      )
+
+      const link = await screen.findByRole('link', { name: 'S-88/2026' })
+
+      expect(link).toHaveAttribute(
+        'href',
+        `${ROUTE_HANDLER_ROUTE}/split-case-id`,
+      )
+    })
+
+    // Everyone outside the defence short-circuits the check, so they link
+    // whatever the linked case carries.
     it('links a split case for a user who can open any case', async () => {
       renderClosedIndictment(splitCaseFixture(), UserRole.PROSECUTOR)
 
