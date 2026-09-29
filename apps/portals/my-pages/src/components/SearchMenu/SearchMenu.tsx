@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
 import { RefObject, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
@@ -146,12 +147,27 @@ export const SearchMenu = ({
             <span aria-live="polite">{announcedMessage}</span>
           </VisuallyHidden>
           <Box marginTop={3}>
-            {query.length > 1 && !searchResults.length && (
-              <Text variant="h5" as="p">
-                {formatMessage(m.noSearchResults)}
-              </Text>
+            {!query && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(m.nothing)}
+                message={formatMessage(m.searchForResults)}
+                imgSrc="./assets/images/bench.svg"
+              />
             )}
-            {statusMessage && <Text>{statusMessage}</Text>}
+            {query.length > 1 && !searchResults.length && (
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(m.noSearchResults)}
+                message={formatMessage(m.noSearchResultsText, {
+                  arg: <strong>{query}</strong>,
+                })}
+                imgSrc="./assets/images/sofa.svg"
+              />
+            )}
+            {searchResults.length > 0 && <Text>{statusMessage}</Text>}
           </Box>
           {searchResults.length > 0 && (
             <Box marginTop={2} paddingBottom={3}>
