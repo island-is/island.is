@@ -80,16 +80,15 @@ const VideoContent = ({
         <Box display="flex" alignItems="center" columnGap={1}>
           <Icon icon="videoCam" size="small" color="blue400" type="outline" />
           <Text>{formatMessage(messages.appointmentModalityVideo)}</Text>
-          {content.isCanceled && (
+          {content.isCanceled ? (
             <Tag variant="red" outlined disabled>
               {formatMessage(messages.healthConversationVideoCallCanceled)}
             </Tag>
-          )}
-          {!content.isCanceled && content.isExpired && (
+          ) : content.isExpired ? (
             <Tag variant="darkerBlue" outlined disabled>
               {formatMessage(messages.healthConversationVideoCallExpired)}
             </Tag>
-          )}
+          ) : null}
         </Box>
         {content.appointmentDate && (
           <Box display="flex" alignItems="center" columnGap={1}>
