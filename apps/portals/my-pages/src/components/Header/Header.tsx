@@ -68,12 +68,7 @@ const DocumentsLink = ({
   </Link>
 )
 
-export type MenuTypes =
-  | 'side'
-  | 'user'
-  | 'notifications'
-  | 'search'
-  | undefined
+export type MenuTypes = 'side' | 'user' | 'notifications' | 'search' | undefined
 interface Props {
   position: number
   includeSearchInHeader?: boolean
@@ -295,9 +290,7 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                           >
                             <SearchInput
                               placeholder={formatMessage(m.searchOnMyPages)}
-                              buttonAriaLabel={formatMessage(
-                                m.searchOnMyPages,
-                              )}
+                              buttonAriaLabel={formatMessage(m.searchOnMyPages)}
                               whiteMenuBackground
                               box={{ marginLeft: 'auto' }}
                               onInputInitialized={() =>
