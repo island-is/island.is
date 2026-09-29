@@ -238,6 +238,26 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
       .map((d) => ({ ...jsonCase, defendants: [d] }))
   })
 
+/**
+ * Presents the verdict appeal as the case's appeal.
+ *
+ * A row is about one appeal, and everything downstream asks `appealCase` which
+ * one - the id on the row, the context menu, the page the row opens. On a
+ * verdict appeal list that appeal is the verdict appeal, so it is put where
+ * the rest of the machinery looks rather than teaching each reader which lists
+ * are verdict lists. `expandCasesWithAppeals` does the same for ruling order
+ * appeals.
+ *
+ * `verdictAppealCase` stays as it is: the columns on these lists read it by
+ * name, and the appeal is the same object under both.
+ */
+export const presentVerdictAppealAsCaseAppeal = (cs: Case[]) =>
+  cs.map((c) => {
+    const jsonCase = c.toJSON()
+
+    return { ...jsonCase, appealCase: jsonCase.verdictAppealCase }
+  })
+
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
 // emitted case has the relevant appeal slotted into `appealCase`, so cell
