@@ -97,6 +97,10 @@ export class EventLogService {
 
       return true
     } catch (error) {
+      // TODO: Decide if tolerating failure is the right approach here.
+      // If we don't log the event, we might not be able to send notifications to users about important events.
+      // This could lead to users missing important information about their cases.
+
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
 
