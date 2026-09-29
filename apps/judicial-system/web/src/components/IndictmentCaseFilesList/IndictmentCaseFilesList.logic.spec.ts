@@ -16,7 +16,10 @@ describe('shouldShowPoliceDigitalCaseFilesSection', () => {
 
   it.each([
     [UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE],
-    [UserRole.PROSECUTOR_REPRESENTATIVE, InstitutionType.POLICE_PROSECUTORS_OFFICE],
+    [
+      UserRole.PROSECUTOR_REPRESENTATIVE,
+      InstitutionType.POLICE_PROSECUTORS_OFFICE,
+    ],
     [UserRole.DISTRICT_COURT_JUDGE, InstitutionType.DISTRICT_COURT],
     [UserRole.COURT_OF_APPEALS_JUDGE, InstitutionType.COURT_OF_APPEALS],
   ])('shows files for %s at %s', (role, type) => {
@@ -44,11 +47,7 @@ describe('shouldShowPoliceDigitalCaseFilesSection', () => {
     ],
   ])('hides files for %s', (role, type) => {
     expect(
-      shouldShowPoliceDigitalCaseFilesSection(
-        user(role, type),
-        files,
-        false,
-      ),
+      shouldShowPoliceDigitalCaseFilesSection(user(role, type), files, false),
     ).toBe(false)
   })
 
