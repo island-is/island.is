@@ -15,9 +15,10 @@ import { isMarkdownMessageId } from '../../utils/translationWorkspaceStaticText'
 
 export const inferTranslationWorkspaceShowFieldName = (
   screen: ScreenIntrospection,
+  isMultiFieldChild = false,
 ): boolean => {
   if (screen.type === FieldTypes.RADIO || screen.type === FieldTypes.CHECKBOX) {
-    return false
+    return isMultiFieldChild
   }
   if (
     screen.type === FieldTypes.TITLE ||

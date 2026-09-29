@@ -55,6 +55,7 @@ export type LeafFieldPreviewProps = {
   previewFieldValues?: Record<string, string>
   previewFields?: Record<string, PreviewFieldComponent>
   previewApplication: Application
+  isMultiFieldChild?: boolean
 }
 
 export const LeafFieldPreview = ({
@@ -68,6 +69,7 @@ export const LeafFieldPreview = ({
   previewFieldValues,
   previewFields,
   previewApplication,
+  isMultiFieldChild,
 }: LeafFieldPreviewProps) => {
   if (PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type)) {
     return null
@@ -102,6 +104,7 @@ export const LeafFieldPreview = ({
         previewApplication={previewApplication}
         previewFields={previewFields}
         errorMessage={fieldErrorMessage}
+        isMultiFieldChild={isMultiFieldChild}
       />
     )
   }

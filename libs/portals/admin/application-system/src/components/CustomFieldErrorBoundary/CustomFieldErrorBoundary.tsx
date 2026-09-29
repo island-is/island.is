@@ -9,13 +9,14 @@ interface Props {
 
 interface State {
   error: Error | null
+  showDetails: boolean
 }
 
 export class CustomFieldErrorBoundary extends Component<Props, State> {
-  override state: State = { error: null }
+  override state: State = { error: null, showDetails: false }
 
   static getDerivedStateFromError(error: Error): State {
-    return { error }
+    return { error, showDetails: false }
   }
 
   override componentDidUpdate(prevProps: Props) {
@@ -24,7 +25,7 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
       (prevProps.resetKey !== this.props.resetKey ||
         prevProps.componentName !== this.props.componentName)
     ) {
-      this.setState({ error: null })
+      this.setState({ error: null, showDetails: false })
     }
   }
 
@@ -36,6 +37,10 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
     )
   }
 
+  private toggleDetails = () => {
+    this.setState((prev) => ({ showDetails: !prev.showDetails }))
+  }
+
   override render() {
     if (this.state.error) {
       return (
@@ -44,18 +49,32 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
           border="standard"
           borderRadius="standard"
           background="red100"
-          cursor="pointer"
-          onClick={() => this.setState({ error: null })}
         >
           <Text variant="eyebrow" color="red600">
-            Preview · {this.props.componentName}
+            Forskoðun · {this.props.componentName}
           </Text>
           <Text variant="small" color="dark300">
-            {this.state.error.message}
+            Ekki tókst að forskoða þennan reit með sýnigögnum.
+            <br />
+            Þetta hefur ekki áhrif á textastrengina sjálfa, þeir eru áfram
+            sýnilegir og breytanlegir hér til hægri.
           </Text>
-          <Text variant="small" color="blue400">
-            Click to retry
-          </Text>
+          <Box
+            display="inlineBlock"
+            cursor="pointer"
+            onClick={this.toggleDetails}
+          >
+            <Text variant="small" color="blue400">
+              {this.state.showDetails
+                ? 'Fela tæknilegar upplýsingar'
+                : 'Sjá tæknilegar upplýsingar'}
+            </Text>
+          </Box>
+          {this.state.showDetails && (
+            <Text variant="small" color="dark300">
+              {this.state.error.message}
+            </Text>
+          )}
         </Box>
       )
     }

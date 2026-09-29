@@ -20,6 +20,7 @@ export type CustomFieldPreviewProps = {
   previewApplication: Application
   previewFields?: Record<string, PreviewFieldComponent>
   errorMessage?: string
+  isMultiFieldChild?: boolean
 }
 
 export const shouldRenderCustomOrRegisteredField = (
@@ -45,6 +46,7 @@ export const CustomFieldPreview = ({
   previewApplication,
   previewFields,
   errorMessage,
+  isMultiFieldChild,
 }: CustomFieldPreviewProps) => {
   const layout = fieldPreviewLayoutProps(screen)
   const registry = previewFields ?? {}
@@ -70,7 +72,10 @@ export const CustomFieldPreview = ({
               field={builtField}
               error={errorMessage}
               errors={{}}
-              showFieldName={inferTranslationWorkspaceShowFieldName(screen)}
+              showFieldName={inferTranslationWorkspaceShowFieldName(
+                screen,
+                isMultiFieldChild,
+              )}
               goToScreen={noop}
               refetch={noop}
             />

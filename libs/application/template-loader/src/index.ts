@@ -147,7 +147,7 @@ export const getApplicationTranslationWorkspacePreview = async (
     ApplicationStateSchema<EventObject>,
     EventObject
   >
-  return generateMockPreviewData(template.dataSchema)
+  return generateMockPreviewData(template.dataSchema, templateId)
 }
 
 /**

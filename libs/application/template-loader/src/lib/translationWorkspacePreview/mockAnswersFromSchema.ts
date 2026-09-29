@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { ApplicationTypes } from '@island.is/application/types'
 import type {
   Answer,
   DataProviderResult,
@@ -148,6 +149,23 @@ const KNOWN_PROVIDER_DATA_DEFAULTS: Record<string, unknown> = {
     email: 'lorem.ipsum@island.is',
     bankInfo: '0000-00-000000',
   },
+  VMSTApplicationRights: [],
+}
+
+const KNOWN_ANSWERS_DEFAULTS_BY_TYPE: Partial<
+  Record<ApplicationTypes, FormValue>
+> = {
+  [ApplicationTypes.PARENTAL_LEAVE]: {
+    periods: [
+      {
+        startDate: '2026-04-01',
+        endDate: '2026-04-30',
+        ratio: '100',
+        firstPeriodStart: 'specificDate',
+        useLength: 'no',
+      },
+    ],
+  },
 }
 
 const isPlainProviderKey = (prop: string): boolean =>
@@ -173,11 +191,19 @@ const withExternalDataFallback = (externalData: ExternalData): ExternalData =>
 
 export const generateMockPreviewData = (
   schema: Schema,
+  typeId?: ApplicationTypes,
 ): { answers: FormValue; externalData: ExternalData } => {
   try {
     const rootObject = unwrapEffects(schema)
+    const answersOverride = typeId
+      ? KNOWN_ANSWERS_DEFAULTS_BY_TYPE[typeId]
+      : undefined
+
     if (!(rootObject instanceof z.ZodObject)) {
-      return { answers: {}, externalData: withExternalDataFallback({}) }
+      return {
+        answers: { ...answersOverride },
+        externalData: withExternalDataFallback({}),
+      }
     }
 
     const shape = rootObject.shape
@@ -192,7 +218,10 @@ export const generateMockPreviewData = (
       answers[key] = generateMockValue(shape[key]) as Answer
     }
 
-    return { answers, externalData: withExternalDataFallback(externalData) }
+    return {
+      answers: { ...answers, ...answersOverride },
+      externalData: withExternalDataFallback(externalData),
+    }
   } catch (e) {
     console.warn(
       `generateMockPreviewData: failed to derive mock preview data from dataSchema: ${

@@ -89,6 +89,7 @@ export const TranslationWorkspaceFieldPreview = ({
                     previewFieldValues={previewFieldValues}
                     previewFields={previewFields}
                     previewApplication={previewApplication}
+                    isMultiFieldChild
                   />
                 </Box>
               </GridColumn>
