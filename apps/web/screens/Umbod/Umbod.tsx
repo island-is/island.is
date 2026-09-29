@@ -33,7 +33,8 @@ import { m } from './translations.strings'
 import { getTranslation, PublicAuthScope, PublicAuthTenant } from './types'
 
 export interface UmbodProps {
-  tenants: PublicAuthTenant[]
+  tenants?: PublicAuthTenant[]
+  loadError?: boolean
 }
 
 interface PublicTenantsQuery {
@@ -144,7 +145,8 @@ const TenantCard = ({
 }
 
 export const UmbodContent = ({
-  tenants,
+  tenants = [],
+  loadError = false,
   showTitle = true,
   embedded = false,
 }: UmbodProps & { showTitle?: boolean; embedded?: boolean }) => {
@@ -186,29 +188,37 @@ export const UmbodContent = ({
               </Text>
             )}
             <Text marginBottom={5}>{formatMessage(m.introduction)}</Text>
-            <Box marginBottom={4}>
-              <FilterInput
-                name="tenant-search"
-                label={formatMessage(m.searchLabel)}
-                placeholder={formatMessage(m.searchLabel)}
-                value={search}
-                onChange={setSearch}
-                backgroundColor="blue"
-              />
-            </Box>
-            <Stack space={2}>
-              {filteredTenants.map((tenant) => (
-                <TenantCard
-                  key={tenant.id}
-                  tenant={tenant}
-                  locale={activeLocale}
-                />
-              ))}
-            </Stack>
-            {filteredTenants.length === 0 && (
+            {loadError ? (
               <Box paddingY={5} textAlign="center">
-                <Text>{formatMessage(m.noServiceProviders)}</Text>
+                <Text>{formatMessage(m.loadServiceProvidersError)}</Text>
               </Box>
+            ) : (
+              <>
+                <Box marginBottom={4}>
+                  <FilterInput
+                    name="tenant-search"
+                    label={formatMessage(m.searchLabel)}
+                    placeholder={formatMessage(m.searchLabel)}
+                    value={search}
+                    onChange={setSearch}
+                    backgroundColor="blue"
+                  />
+                </Box>
+                <Stack space={2}>
+                  {filteredTenants.map((tenant) => (
+                    <TenantCard
+                      key={tenant.id}
+                      tenant={tenant}
+                      locale={activeLocale}
+                    />
+                  ))}
+                </Stack>
+                {filteredTenants.length === 0 && (
+                  <Box paddingY={5} textAlign="center">
+                    <Text>{formatMessage(m.noServiceProviders)}</Text>
+                  </Box>
+                )}
+              </>
             )}
           </Box>
         </GridColumn>
@@ -231,11 +241,15 @@ const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
 }
 
 Umbod.getProps = async ({ apolloClient }) => {
-  const { data } = await apolloClient.query<PublicTenantsQuery>({
-    query: GET_PUBLIC_AUTH_TENANTS,
-  })
+  try {
+    const { data } = await apolloClient.query<PublicTenantsQuery>({
+      query: GET_PUBLIC_AUTH_TENANTS,
+    })
 
-  return { tenants: data.publicAuthTenants }
+    return { tenants: data.publicAuthTenants }
+  } catch {
+    return { tenants: [], loadError: true }
+  }
 }
 
 export default withMainLayout(

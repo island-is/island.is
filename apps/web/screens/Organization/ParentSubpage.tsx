@@ -56,6 +56,7 @@ export type OrganizationParentSubpageProps = StandaloneParentSubpageProps & {
   subpageSlug?: string
   baseUrl: string
   tenants?: UmbodProps['tenants']
+  mandatesLoadError?: boolean
   mandatesMessages?: IntlConfig['messages']
 }
 
@@ -75,6 +76,7 @@ const OrganizationParentSubpage: Screen<
   baseUrl,
   selectedIndex,
   tenants,
+  mandatesLoadError,
   mandatesMessages,
 }) => {
   const router = useRouter()
@@ -201,7 +203,11 @@ const OrganizationParentSubpage: Screen<
           </GridContainer>
           {showUmbod ? (
             <IntlProvider locale={activeLocale} messages={mandatesMessages}>
-              <UmbodContent tenants={tenants ?? []} embedded />
+              <UmbodContent
+                tenants={tenants}
+                loadError={mandatesLoadError}
+                embedded
+              />
             </IntlProvider>
           ) : (
             <SubPageContent
@@ -231,18 +237,29 @@ OrganizationParentSubpage.getProps = async (context) => {
   const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
   const baseUrl = `${protocol}${host}`
 
-  const tenants = isElectronicMandatesSubpage(parentSubpageSlug, subpageSlug)
-    ? await context.apolloClient
-        .query<{ publicAuthTenants: UmbodProps['tenants'] }>({
-          query: GET_PUBLIC_AUTH_TENANTS,
-        })
-        .then((response) => response.data.publicAuthTenants)
-    : undefined
-
-  const mandatesMessages = isElectronicMandatesSubpage(
+  const isElectronicMandates = isElectronicMandatesSubpage(
     parentSubpageSlug,
     subpageSlug,
   )
+  let tenants: UmbodProps['tenants']
+  let mandatesLoadError = false
+
+  if (isElectronicMandates) {
+    try {
+      const response = await context.apolloClient.query<{
+        publicAuthTenants: UmbodProps['tenants']
+      }>({
+        query: GET_PUBLIC_AUTH_TENANTS,
+      })
+
+      tenants = response.data.publicAuthTenants
+    } catch {
+      tenants = []
+      mandatesLoadError = true
+    }
+  }
+
+  const mandatesMessages = isElectronicMandates
     ? await context.apolloClient
         .query<Query, QueryGetCustomPageArgs>({
           query: GET_CUSTOM_PAGE_QUERY,
