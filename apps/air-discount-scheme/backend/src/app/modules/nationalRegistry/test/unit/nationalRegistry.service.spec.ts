@@ -11,7 +11,11 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import {
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
+  NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 const user: NationalRegistryUser = {
   nationalId: '1306886513',
@@ -33,8 +37,18 @@ const auth: AuthUser = {
 
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
+  let v2Client: NationalRegistryClientService
+  const v3Client = {
+    getAllDataIndividual: jest.fn(),
+    getCustodians: jest.fn(),
+  }
+  const featureFlagService = { getValue: jest.fn() }
 
   beforeEach(async () => {
+    v3Client.getAllDataIndividual.mockReset()
+    v3Client.getCustodians.mockReset()
+    featureFlagService.getValue.mockReset()
+    featureFlagService.getValue.mockResolvedValue(false)
     const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -45,6 +59,14 @@ describe('NationalRegistryService', () => {
       ],
       providers: [
         NationalRegistryService,
+        {
+          provide: NationalRegistryV3ClientService,
+          useValue: v3Client,
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: featureFlagService,
+        },
         {
           provide: CACHE_MANAGER,
           useClass: jest.fn(() => ({
@@ -64,6 +86,66 @@ describe('NationalRegistryService', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
+    v2Client = moduleRef.get(NationalRegistryClientService)
+  })
+
+  describe('getRelations', () => {
+    it('uses v2 when the flag is off', async () => {
+      jest
+        .spyOn(v2Client, 'getCustodyChildren')
+        .mockResolvedValue(['0101011234'])
+
+      await expect(nationalRegistryService.getRelations(auth)).resolves.toEqual(
+        ['0101011234'],
+      )
+      expect(featureFlagService.getValue).toHaveBeenCalledWith(
+        Features.shouldAirDiscountSchemeUseNationalRegistryV3,
+        false,
+        auth,
+      )
+      expect(v3Client.getAllDataIndividual).not.toHaveBeenCalled()
+    })
+
+    it('reads custody children from v3 when the flag is on', async () => {
+      featureFlagService.getValue.mockResolvedValue(true)
+      v3Client.getAllDataIndividual.mockResolvedValue({
+        forsja: {
+          born: [{ barnKennitala: '0101011234' }, { barnKennitala: null }],
+        },
+      })
+      const v2Lookup = jest.spyOn(v2Client, 'getCustodyChildren')
+
+      await expect(nationalRegistryService.getRelations(auth)).resolves.toEqual(
+        ['0101011234'],
+      )
+      expect(v3Client.getAllDataIndividual).toHaveBeenCalledWith(auth.nationalId)
+      expect(v2Lookup).not.toHaveBeenCalled()
+    })
+  })
+
+  it('reads custodians from v3 without adding the caller', async () => {
+    featureFlagService.getValue.mockResolvedValue(true)
+    v3Client.getCustodians.mockResolvedValue([
+      { forsjaAdiliKennitala: '1306886513' },
+      { forsjaAdiliKennitala: null },
+    ])
+    v3Client.getAllDataIndividual.mockResolvedValue({
+      kennitala: '1306886513',
+      nafn: 'Jón Gunnar Jónsson',
+      kyn: { kynKodi: '1' },
+      heimilisfang: {
+        husHeiti: 'Bessastaðir 1',
+        postnumer: '225',
+        poststod: 'Álftanes',
+      },
+    })
+    const v2Lookup = jest.spyOn(v2Client, 'getOtherCustodyParents')
+
+    await expect(
+      nationalRegistryService.getCustodians(auth, '0101011234'),
+    ).resolves.toEqual([user])
+    expect(v3Client.getCustodians).toHaveBeenCalledWith('0101011234')
+    expect(v2Lookup).not.toHaveBeenCalled()
   })
 
   describe('getUser', () => {
