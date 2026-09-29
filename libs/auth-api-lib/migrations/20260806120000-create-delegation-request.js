@@ -16,15 +16,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      domain_name: {
-        type: Sequelize.STRING,
-        allowNull: true,
-        references: {
-          model: 'domain',
-          key: 'name',
-        },
-        onDelete: 'CASCADE',
-      },
       relationship: {
         type: Sequelize.STRING(1024),
         allowNull: false,
@@ -144,16 +135,12 @@ module.exports = {
       name: 'delegation_request_delegation_unique',
     })
 
-    // Unique indexes treat NULLs as distinct, hence the COALESCE.
-    await queryInterface.sequelize.query(`
-      CREATE UNIQUE INDEX "delegation_request_unique_pending"
-      ON "delegation_request" (
-        "from_national_id",
-        "to_national_id",
-        COALESCE("domain_name", '')
-      )
-      WHERE "status" = 'pending';
-    `)
+    await queryInterface.addIndex('delegation_request', {
+      name: 'delegation_request_unique_pending',
+      unique: true,
+      fields: ['from_national_id', 'to_national_id'],
+      where: { status: 'pending' },
+    })
 
     await queryInterface.addIndex('delegation_request', {
       name: 'delegation_request_from_status_idx',

@@ -12,5 +12,6 @@ export {
 } from './createDelegationRequest.input'
 export {
   DelegationRequestInput,
-  FulfillDelegationRequestInput,
+  ApproveDelegationRequestInput,
+  ApproveDelegationRequestScopeInput,
 } from './delegationRequest.input'

@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, UniqueConstraintError } from 'sequelize'
+import { and, Op, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
@@ -21,6 +21,8 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { Domain } from '../resources/models/domain.model'
 import { DelegationResourcesService } from '../resources/delegation-resources.service'
+import { DelegationDirection } from './types/delegationDirection'
+import { DelegationsOutgoingService } from './delegations-outgoing.service'
 import { NotificationsApi } from '../user-notification'
 import { DelegationRequestError } from './constants/delegation-request-errors'
 import {
@@ -30,10 +32,10 @@ import {
 } from './constants/hnipp'
 import { DelegationConfig } from './DelegationConfig'
 import {
+  ApproveDelegationRequestDTO,
   CreateDelegationRequestDTO,
   DelegationRequestDTO,
 } from './dto/delegation-request.dto'
-import { Delegation } from './models/delegation.model'
 import { DelegationRequestDelegation } from './models/delegation-request-delegation.model'
 import { DelegationRequestScope } from './models/delegation-request-scope.model'
 import { DelegationRequest } from './models/delegation-request.model'
@@ -41,6 +43,7 @@ import { NamesService } from './names.service'
 import { DelegationRequestStatus } from './types/delegationRequestStatus'
 
 const REQUEST_TTL_DAYS = 30
+const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000
 
 const DUPLICATE_PENDING_MESSAGE =
   'A pending delegation request to this party already exists.'
@@ -54,12 +57,11 @@ export class DelegationRequestService {
     private delegationRequestScopeModel: typeof DelegationRequestScope,
     @InjectModel(ApiScope)
     private apiScopeModel: typeof ApiScope,
-    @InjectModel(Delegation)
-    private delegationModel: typeof Delegation,
     @InjectModel(DelegationRequestDelegation)
     private delegationRequestDelegationModel: typeof DelegationRequestDelegation,
     private namesService: NamesService,
     private delegationResourceService: DelegationResourcesService,
+    private delegationsOutgoingService: DelegationsOutgoingService,
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
     private sequelize: Sequelize,
@@ -98,15 +100,14 @@ export class DelegationRequestService {
     ]
     const scopeNames = requestedScopes.map((s) => s.scopeName)
     const grantableScopes = await this.apiScopeModel.findAll({
-      where: {
-        name: { [Op.in]: scopeNames },
-        enabled: true,
-        allowExplicitDelegationGrant: true,
-        isAccessControlled: { [Op.ne]: true },
-        ...(isCompany
-          ? { grantToProcuringHolders: true }
-          : { grantToAuthenticatedUser: true }),
-      },
+      where: and(
+        { name: { [Op.in]: scopeNames } },
+        ...(await this.delegationResourceService.apiScopeFilter({
+          user,
+          direction: DelegationDirection.REQUEST,
+          requestGrantorType: isCompany ? 'company' : 'individual',
+        })),
+      ),
     })
     if (grantableScopes.length !== scopeNames.length) {
       throw new BadRequestException(
@@ -114,12 +115,10 @@ export class DelegationRequestService {
       )
     }
 
+    await this.expireStale({ toNationalId: requesterNationalId })
     await this.assertNotRejectionBlocked(requesterNationalId)
-    await this.assertNoDuplicatePending(
-      granterNationalId,
-      requesterNationalId,
-      dto.domainName ?? null,
-    )
+    await this.assertUnderRateLimits(requesterNationalId, granterNationalId)
+    await this.assertNoDuplicatePending(granterNationalId, requesterNationalId)
     await this.assertUnderPendingCap(requesterNationalId)
 
     if (!isCompany) {
@@ -136,7 +135,6 @@ export class DelegationRequestService {
             id: uuid(),
             fromNationalId: granterNationalId,
             toNationalId: requesterNationalId,
-            domainName: dto.domainName ?? null,
             relationship: dto.relationship,
             reason: dto.reason,
             status: DelegationRequestStatus.Pending,
@@ -216,8 +214,9 @@ export class DelegationRequestService {
   async reject(user: User, id: string): Promise<DelegationRequestDTO> {
     const request = await this.getGranterRequest(user, id)
     this.assertPending(request)
+    await this.assertCanGrantRequestedScopes(user, request)
 
-    await request.update({
+    await this.transitionFromPending(id, {
       status: DelegationRequestStatus.Rejected,
       resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
     })
@@ -239,70 +238,85 @@ export class DelegationRequestService {
     }
     this.assertPending(request)
 
-    await request.update({ status: DelegationRequestStatus.Cancelled })
+    await this.transitionFromPending(id, {
+      status: DelegationRequestStatus.Cancelled,
+    })
     return this.findById(user, id)
   }
 
-  async markFulfilled(
+  async approve(
     user: User,
     id: string,
-    delegationId: string,
+    dto: ApproveDelegationRequestDTO,
   ): Promise<DelegationRequestDTO> {
     const request = await this.getGranterRequest(user, id)
     this.assertPending(request)
 
-    const fulfillingDelegation = await this.delegationModel.findOne({
-      where: {
-        id: delegationId,
-        fromNationalId: request.fromNationalId,
-        toNationalId: request.toNationalId,
-      },
-      attributes: ['id'],
+    const scopeNames = [...new Set(dto.scopes.map((scope) => scope.name))]
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: { name: { [Op.in]: scopeNames } },
+      attributes: ['name', 'domainName'],
     })
-    if (!fulfillingDelegation) {
-      throw new BadRequestException(
-        'Delegation does not match the parties of this request.',
-      )
+    if (apiScopes.length !== scopeNames.length) {
+      throw new BadRequestException('One or more scopes do not exist.')
     }
+    const domainByScope = new Map(apiScopes.map((s) => [s.name, s.domainName]))
 
-    await request.update({
-      status: DelegationRequestStatus.Approved,
-      resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
-    })
+    const scopesByDomain = new Map<
+      string,
+      ApproveDelegationRequestDTO['scopes']
+    >()
+    for (const scope of dto.scopes) {
+      const domainName = domainByScope.get(scope.name) as string
+      scopesByDomain.set(domainName, [
+        ...(scopesByDomain.get(domainName) ?? []),
+        scope,
+      ])
+    }
+    const delegations = [...scopesByDomain].map(([domainName, scopes]) => ({
+      toNationalId: request.toNationalId,
+      domainName,
+      scopes,
+    }))
 
-    const domainNames = [
-      ...new Set(
-        request.requestScopes
-          ?.map((s) => s.apiScope?.domainName)
-          .filter((name): name is string => Boolean(name)) ?? [],
-      ),
-    ]
-    const delegationIds = new Set<string>([fulfillingDelegation.id])
-    if (domainNames.length > 0) {
-      const delegations = await this.delegationModel.findAll({
-        where: {
-          fromNationalId: request.fromNationalId,
-          toNationalId: request.toNationalId,
-          domainName: { [Op.in]: domainNames },
-        },
-        attributes: ['id'],
+    await this.sequelize.transaction(async (transaction) => {
+      const locked = await this.delegationRequestModel.findByPk(id, {
+        transaction,
+        lock: transaction.LOCK.UPDATE,
       })
-      delegations.forEach((d) => delegationIds.add(d.id))
-    }
-    await this.delegationRequestDelegationModel.bulkCreate(
-      [...delegationIds].map((linkedId) => ({
-        id: uuid(),
-        delegationRequestId: request.id,
-        delegationId: linkedId,
-      })),
-      { ignoreDuplicates: true },
-    )
+      if (!locked) {
+        throw new NotFoundException('Delegation request not found.')
+      }
+      this.assertPending(locked)
+
+      const delegationIds = await this.delegationsOutgoingService.createBatchInTransaction(
+        user,
+        delegations,
+        transaction,
+      )
+
+      await locked.update(
+        {
+          status: DelegationRequestStatus.Approved,
+          resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
+        },
+        { transaction },
+      )
+      await this.delegationRequestDelegationModel.bulkCreate(
+        delegationIds.map((delegationId) => ({
+          id: uuid(),
+          delegationRequestId: id,
+          delegationId,
+        })),
+        { transaction },
+      )
+    })
 
     void this.notifyRequester(
       user,
       request.toNationalId,
       DELEGATION_REQUEST_APPROVED_TEMPLATE_ID,
-      request.requestScopes?.map((s) => s.apiScope?.domainName) ?? [],
+      [...scopesByDomain.keys()],
     )
 
     return this.findById(user, id)
@@ -357,18 +371,92 @@ export class DelegationRequestService {
         `Delegation request is not pending (status: ${request.status}).`,
       )
     }
+    if (request.expiresAt < new Date()) {
+      throw new BadRequestException('Delegation request has expired.')
+    }
+  }
+
+  private async transitionFromPending(
+    id: string,
+    values: Pick<DelegationRequest, 'status'> &
+      Partial<Pick<DelegationRequest, 'resolvedByNationalId'>>,
+  ): Promise<void> {
+    const [updated] = await this.delegationRequestModel.update(values, {
+      where: { id, status: DelegationRequestStatus.Pending },
+    })
+    if (updated === 0) {
+      throw new BadRequestException('Delegation request is not pending.')
+    }
+  }
+
+  private async assertCanGrantRequestedScopes(
+    user: User,
+    request: DelegationRequest,
+  ): Promise<void> {
+    if (!user.actor) {
+      return
+    }
+    const scopesByDomain = new Map<string, string[]>()
+    for (const scope of request.requestScopes ?? []) {
+      const domainName = scope.apiScope?.domainName
+      if (domainName) {
+        scopesByDomain.set(domainName, [
+          ...(scopesByDomain.get(domainName) ?? []),
+          scope.scopeName,
+        ])
+      }
+    }
+    for (const [domainName, scopeNames] of scopesByDomain) {
+      const canGrant = await this.delegationResourceService.validateScopeAccess(
+        user,
+        domainName,
+        DelegationDirection.OUTGOING,
+        scopeNames,
+      )
+      if (!canGrant) {
+        throw new ForbiddenException(
+          'You do not have access to the requested scopes.',
+        )
+      }
+    }
+  }
+
+  private async assertUnderRateLimits(
+    requesterNationalId: string,
+    granterNationalId: string,
+  ): Promise<void> {
+    const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS)
+    const [total, toGranter] = await Promise.all([
+      this.delegationRequestModel.count({
+        where: {
+          toNationalId: requesterNationalId,
+          created: { [Op.gte]: since },
+        },
+      }),
+      this.delegationRequestModel.count({
+        where: {
+          toNationalId: requesterNationalId,
+          fromNationalId: granterNationalId,
+          created: { [Op.gte]: since },
+        },
+      }),
+    ])
+    if (
+      total >= this.delegationConfig.delegationRequestMaxPerDay ||
+      toGranter >= this.delegationConfig.delegationRequestMaxPerGrantorPerDay
+    ) {
+      throw new BadRequestException(DelegationRequestError.RateLimited)
+    }
   }
 
   private async assertNoDuplicatePending(
     fromNationalId: string,
     toNationalId: string,
-    domainName: string | null,
   ): Promise<void> {
     const existing = await this.delegationRequestModel.findOne({
       where: {
         fromNationalId,
         toNationalId,
-        domainName: domainName ?? { [Op.is]: null },
         status: DelegationRequestStatus.Pending,
       },
     })

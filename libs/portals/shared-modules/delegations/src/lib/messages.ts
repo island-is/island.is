@@ -39,11 +39,13 @@ export const m = defineMessages({
     defaultMessage: 'Allsherjarumboð',
   },
   delegationTypeGeneralMandateOutgoing: {
-    id: 'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
+    id:
+      'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
     defaultMessage: 'Allsherjarumboð þú hefur veitt öðrum',
   },
   delegationTypeGeneralMandateIncoming: {
-    id: 'sp.access-control-delegations:delegation-type-general-mandate-incoming',
+    id:
+      'sp.access-control-delegations:delegation-type-general-mandate-incoming',
     defaultMessage: 'Allsherjarumboð sem þú hefur fengið',
   },
   delegationTypeProcurationHolder: {
@@ -67,7 +69,8 @@ export const m = defineMessages({
     defaultMessage: 'Eru sótt úr fyrirtækjaskrá Skattsins',
   },
   delegationTypePersonalRepresentativeDesc: {
-    id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
+    id:
+      'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
   outgoingDelegationsHeader: {
@@ -778,7 +781,8 @@ export const m = defineMessages({
       'Umboðsveitendur í sömu beiðni þurfa allir að vera annaðhvort einstaklingar eða fyrirtæki, því réttindin sem hægt er að biðja um eru ekki þau sömu.',
   },
   requestChangeGranterTypeClearScopes: {
-    id: 'sp.access-control-delegations:request-change-granter-type-clear-scopes',
+    id:
+      'sp.access-control-delegations:request-change-granter-type-clear-scopes',
     defaultMessage:
       'Þú hefur valið réttindi fyrir annars konar umboðsveitanda. Ef þú breytir umboðsveitanda úr einstaklingi í fyrirtæki (eða öfugt) þarf að hreinsa valin réttindi. Viltu halda áfram?',
   },
@@ -892,6 +896,11 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:request-blocked-error',
     defaultMessage:
       'Ekki er hægt að senda beiðni um umboð. Lokað hefur verið á nýjar beiðnir vegna ítrekaðra hafnana.',
+  },
+  requestRateLimitedError: {
+    id: 'sp.access-control-delegations:request-rate-limited-error',
+    defaultMessage:
+      'Þú hefur sent of margar beiðnir um umboð í dag. Reyndu aftur á morgun.',
   },
   requestRelationshipHeader: {
     id: 'sp.access-control-delegations:request-relationship-header',

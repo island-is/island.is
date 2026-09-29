@@ -9,11 +9,13 @@ import {
   DelegationRequestScope,
   DelegationRequestService,
   DelegationRequestStatus,
+  Delegation,
   Domain,
   NamesService,
   NotificationsApi,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalId,
@@ -44,11 +46,13 @@ describe('DelegationRequestsController', () => {
   let domain: Domain
   let scope: ApiScope
   let notifySpy: jest.SpyInstance
+  let svc: DelegationRequestService
 
   beforeAll(async () => {
     app = await setupWithAuth({ user: requester })
     server = request(app.getHttpServer())
     factory = new FixtureFactory(app)
+    svc = await app.resolve(DelegationRequestService)
 
     domain = await factory.createDomain({ name: faker.random.word() })
     scope = await factory.createApiScope({
@@ -90,9 +94,15 @@ describe('DelegationRequestsController', () => {
     await app.cleanUp()
   })
 
+  const inOneYear = () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+
+  const expireRequest = (id: string) =>
+    app
+      .get(getModelToken(DelegationRequest))
+      .update({ expiresAt: new Date(Date.now() - 1000) }, { where: { id } })
+
   const validBody = () => ({
     toGranterNationalId: granterNationalId,
-    domainName: domain.name,
     relationship: 'Ættingi',
     reason: 'Þarf að sinna málum',
     scopes: [{ scopeName: scope.name }],
@@ -224,45 +234,214 @@ describe('DelegationRequestsController', () => {
     expect(res.body.detail).toEqual(DelegationRequestError.Blocked)
   })
 
-  describe('markFulfilled', () => {
+  it('limits requests to the same grantor per day, cancelled ones included', async () => {
+    const created = await server.post(path).send(validBody())
+    await server.post(`${path}/${created.body.id}/cancel`)
+
+    const res = await server.post(path).send(validBody())
+
+    expect(res.status).toEqual(400)
+    expect(res.body.detail).toEqual(DelegationRequestError.RateLimited)
+  })
+
+  it('limits the number of requests created per day', async () => {
+    // Default limit is 5 requests per requester per day.
+    for (let i = 0; i < 5; i++) {
+      const created = await server.post(path).send({
+        ...validBody(),
+        toGranterNationalId: createNationalId('person'),
+      })
+      expect(created.status).toEqual(201)
+      await server.post(`${path}/${created.body.id}/cancel`)
+    }
+
+    const res = await server.post(path).send({
+      ...validBody(),
+      toGranterNationalId: createNationalId('person'),
+    })
+
+    expect(res.status).toEqual(400)
+    expect(res.body.detail).toEqual(DelegationRequestError.RateLimited)
+  })
+
+  it('does not count expired requests towards the pending cap', async () => {
+    for (let i = 0; i < 2; i++) {
+      const created = await server.post(path).send({
+        ...validBody(),
+        toGranterNationalId: createNationalId('person'),
+      })
+      await expireRequest(created.body.id)
+    }
+
+    const res = await server.post(path).send({
+      ...validBody(),
+      toGranterNationalId: createNationalId('person'),
+    })
+
+    expect(res.status).toEqual(201)
+  })
+
+  it('rejects creating a request while acting on behalf of someone', async () => {
+    const actingUser = createCurrentUser({
+      nationalId: createNationalId('person'),
+      actor: { nationalId: requester.nationalId },
+    })
+
+    await expect(
+      svc.createRequest(actingUser, validBody()),
+    ).rejects.toMatchObject({ status: 403 })
+  })
+
+  describe('as grantor', () => {
     const granter = createCurrentUser({ nationalId: granterNationalId })
 
-    it('links a delegation between the request parties', async () => {
+    it('approves by creating the delegation and linking only it', async () => {
       const created = await server.post(path).send(validBody())
-      const delegation = await factory.createCustomDelegation({
+      const unrelated = await factory.createCustomDelegation({
+        fromNationalId: granterNationalId,
+        toNationalId: requester.nationalId,
+        domainName: (await factory.createDomain({ name: faker.random.word() }))
+          .name,
+      })
+
+      const result = await svc.approve(granter, created.body.id, {
+        scopes: [{ name: scope.name, validTo: inOneYear() }],
+      })
+
+      expect(result.status).toEqual(DelegationRequestStatus.Approved)
+      const delegation = await app
+        .get(getModelToken(Delegation))
+        .findByPk(result.resolvedDelegationId)
+      expect(delegation).toMatchObject({
         fromNationalId: granterNationalId,
         toNationalId: requester.nationalId,
         domainName: domain.name,
       })
-
-      const service = await app.resolve(DelegationRequestService)
-      const result = await service.markFulfilled(
-        granter,
-        created.body.id,
-        delegation.id,
-      )
-
-      expect(result.status).toEqual(DelegationRequestStatus.Approved)
-      expect(result.resolvedDelegationId).toEqual(delegation.id)
+      expect(result.resolvedDelegationId).not.toEqual(unrelated.id)
     })
 
-    it('rejects a delegation between other parties', async () => {
+    it('cannot approve a request twice', async () => {
       const created = await server.post(path).send(validBody())
-      const otherDelegation = await factory.createCustomDelegation({
-        domainName: domain.name,
-      })
+      const input = { scopes: [{ name: scope.name, validTo: inOneYear() }] }
+      await svc.approve(granter, created.body.id, input)
 
-      const service = await app.resolve(DelegationRequestService)
       await expect(
-        service.markFulfilled(granter, created.body.id, otherDelegation.id),
-      ).rejects.toThrow(
-        'Delegation does not match the parties of this request.',
-      )
+        svc.approve(granter, created.body.id, input),
+      ).rejects.toMatchObject({ status: 400 })
+    })
 
-      const request = await app
-        .get(getModelToken(DelegationRequest))
-        .findByPk(created.body.id)
-      expect(request.status).toEqual(DelegationRequestStatus.Pending)
+    it('cannot act on an expired request', async () => {
+      const created = await server.post(path).send(validBody())
+      await expireRequest(created.body.id)
+
+      await expect(
+        svc.approve(granter, created.body.id, {
+          scopes: [{ name: scope.name, validTo: inOneYear() }],
+        }),
+      ).rejects.toMatchObject({ status: 400 })
+      await expect(svc.reject(granter, created.body.id)).rejects.toMatchObject({
+        status: 400,
+      })
+    })
+
+    it('cannot cancel a request addressed to them', async () => {
+      const created = await server.post(path).send(validBody())
+
+      await expect(svc.cancel(granter, created.body.id)).rejects.toMatchObject({
+        status: 404,
+      })
+    })
+  })
+
+  describe('authorization', () => {
+    const outsider = createCurrentUser({
+      nationalId: createNationalId('person'),
+    })
+
+    it('hides the request from anyone who is not a party to it', async () => {
+      const created = await server.post(path).send(validBody())
+      const { id } = created.body
+
+      for (const call of [
+        () => svc.findById(outsider, id),
+        () => svc.reject(outsider, id),
+        () => svc.cancel(outsider, id),
+        () =>
+          svc.approve(outsider, id, {
+            scopes: [{ name: scope.name, validTo: inOneYear() }],
+          }),
+      ]) {
+        await expect(call()).rejects.toMatchObject({ status: 404 })
+      }
+    })
+
+    it('does not let the requester approve or reject their own request', async () => {
+      const created = await server.post(path).send(validBody())
+      const { id } = created.body
+
+      await expect(svc.reject(requester, id)).rejects.toMatchObject({
+        status: 404,
+      })
+      await expect(
+        svc.approve(requester, id, {
+          scopes: [{ name: scope.name, validTo: inOneYear() }],
+        }),
+      ).rejects.toMatchObject({ status: 404 })
+    })
+  })
+
+  describe('company grantor', () => {
+    const companyNationalId = createNationalId('company')
+    const procurationHolder = createCurrentUser({
+      nationalId: companyNationalId,
+      actor: { nationalId: createNationalId('person') },
+      delegationType: [AuthDelegationType.ProcurationHolder],
+      scope: [AuthScope.delegations],
+    })
+
+    const createCompanyRequest = async (scopeName: string) => {
+      const created = await app.get(getModelToken(DelegationRequest)).create({
+        id: faker.datatype.uuid(),
+        fromNationalId: companyNationalId,
+        toNationalId: requester.nationalId,
+        relationship: 'Starfsmaður',
+        reason: 'Þarf að sinna málum',
+        status: DelegationRequestStatus.Pending,
+        createdByNationalId: requester.nationalId,
+        expiresAt: inOneYear(),
+      })
+      await app.get(getModelToken(DelegationRequestScope)).create({
+        id: faker.datatype.uuid(),
+        delegationRequestId: created.id,
+        scopeName,
+      })
+      return created.id as string
+    }
+
+    it('lets a procuration holder who can grant the scopes reject', async () => {
+      const companyScope = await factory.createApiScope({
+        domainName: domain.name,
+        allowExplicitDelegationGrant: true,
+        grantToProcuringHolders: true,
+      })
+      const id = await createCompanyRequest(companyScope.name)
+
+      const result = await svc.reject(procurationHolder, id)
+
+      expect(result.status).toEqual(DelegationRequestStatus.Rejected)
+    })
+
+    it('does not let an actor reject scopes they could not grant', async () => {
+      const personalScope = await factory.createApiScope({
+        domainName: domain.name,
+        allowExplicitDelegationGrant: true,
+        grantToProcuringHolders: false,
+      })
+      const id = await createCompanyRequest(personalScope.name)
+
+      await expect(svc.reject(procurationHolder, id)).rejects.toMatchObject({
+        status: 403,
+      })
     })
   })
 

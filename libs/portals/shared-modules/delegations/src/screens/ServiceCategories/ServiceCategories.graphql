@@ -1,13 +1,11 @@
 query AuthScopeCategories(
   $lang: String!
   $direction: AuthDelegationDirection
-  $requestCatalog: Boolean
-  $requestGrantorType: String
+  $requestGrantorType: AuthDelegationRequestGrantorType
 ) {
   authScopeCategories(
     lang: $lang
     direction: $direction
-    requestCatalog: $requestCatalog
     requestGrantorType: $requestGrantorType
   ) {
     id
@@ -31,13 +29,11 @@ query AuthScopeCategories(
 query AuthScopeTags(
   $lang: String!
   $direction: AuthDelegationDirection
-  $requestCatalog: Boolean
-  $requestGrantorType: String
+  $requestGrantorType: AuthDelegationRequestGrantorType
 ) {
   authScopeTags(
     lang: $lang
     direction: $direction
-    requestCatalog: $requestCatalog
     requestGrantorType: $requestGrantorType
   ) {
     id

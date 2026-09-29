@@ -27,7 +27,11 @@ import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
 import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
 
-export type RequestGrantorType = 'company' | 'individual'
+export const RequestGrantorType = {
+  company: 'company',
+  individual: 'individual',
+} as const
+export type RequestGrantorType = typeof RequestGrantorType[keyof typeof RequestGrantorType]
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<

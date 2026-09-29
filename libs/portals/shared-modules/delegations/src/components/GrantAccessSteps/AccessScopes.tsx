@@ -32,11 +32,9 @@ import { RecipientsTag } from '../RecipientsTag'
 
 export const AccessScopes = ({
   title = m.choosePermissionsTitle,
-  requestCatalog = false,
   requestGrantorType,
 }: {
   title?: MessageDescriptor
-  requestCatalog?: boolean
   requestGrantorType?: 'company' | 'individual'
 } = {}) => {
   const { lang } = useLocale()
@@ -58,7 +56,6 @@ export const AccessScopes = ({
     variables: {
       lang,
       direction: AuthDelegationDirection.outgoing,
-      requestCatalog,
       requestGrantorType,
     },
   })
@@ -68,7 +65,6 @@ export const AccessScopes = ({
       variables: {
         lang,
         direction: AuthDelegationDirection.outgoing,
-        requestCatalog,
         requestGrantorType,
       },
     },

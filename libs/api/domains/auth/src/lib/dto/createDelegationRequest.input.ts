@@ -14,9 +14,6 @@ export class CreateDelegationRequestInput {
   @Field(() => String)
   toGranterNationalId!: string
 
-  @Field(() => String, { nullable: true })
-  domainName?: string
-
   @Field(() => String)
   relationship!: string
 

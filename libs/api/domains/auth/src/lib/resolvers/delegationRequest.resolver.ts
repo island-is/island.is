@@ -19,11 +19,16 @@ import type {
   OrganizationLogoByNationalIdDataLoader,
 } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import { CreateDelegationRequestInput } from '../dto/createDelegationRequest.input'
 import {
+  ApproveDelegationRequestInput,
   DelegationRequestInput,
-  FulfillDelegationRequestInput,
 } from '../dto/delegationRequest.input'
 import {
   DelegationRequest,
@@ -31,7 +36,8 @@ import {
 } from '../models/delegationRequest.model'
 import { DelegationRequestsService } from '../services/delegationRequests.service'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isDelegationRequestsEnabled)
 @Resolver(() => DelegationRequest)
 export class DelegationRequestResolver {
   constructor(
@@ -89,17 +95,13 @@ export class DelegationRequestResolver {
     return this.delegationRequestsService.cancel(user, input.requestId)
   }
 
-  @Mutation(() => DelegationRequest, { name: 'fulfillAuthDelegationRequest' })
-  fulfill(
+  @Mutation(() => DelegationRequest, { name: 'approveAuthDelegationRequest' })
+  approve(
     @CurrentUser() user: User,
-    @Args('input', { type: () => FulfillDelegationRequestInput })
-    input: FulfillDelegationRequestInput,
+    @Args('input', { type: () => ApproveDelegationRequestInput })
+    input: ApproveDelegationRequestInput,
   ): Promise<DelegationRequestDTO> {
-    return this.delegationRequestsService.fulfill(
-      user,
-      input.requestId,
-      input.delegationId,
-    )
+    return this.delegationRequestsService.approve(user, input)
   }
 
   @ResolveField('from', () => Identity)
@@ -112,7 +114,10 @@ export class DelegationRequestResolver {
 
   @ResolveField('to', () => Identity)
   resolveTo(@Parent() request: DelegationRequestDTO): Promise<Identity> {
-    return this.identityService.getIdentityWithFallback(request.toNationalId, {})
+    return this.identityService.getIdentityWithFallback(
+      request.toNationalId,
+      {},
+    )
   }
 }
 

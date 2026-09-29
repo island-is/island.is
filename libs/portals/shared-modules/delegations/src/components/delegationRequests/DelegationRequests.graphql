@@ -10,7 +10,6 @@ fragment AuthDelegationRequestData on AuthDelegationRequest {
     name
     type
   }
-  domainName
   relationship
   reason
   status
@@ -47,7 +46,9 @@ query AuthDelegationRequest($input: AuthDelegationRequestInput!) {
   }
 }
 
-mutation CreateAuthDelegationRequest($input: AuthCreateDelegationRequestInput!) {
+mutation CreateAuthDelegationRequest(
+  $input: AuthCreateDelegationRequestInput!
+) {
   createAuthDelegationRequest(input: $input) {
     ...AuthDelegationRequestData
   }
@@ -67,11 +68,12 @@ mutation CancelAuthDelegationRequest($input: AuthDelegationRequestInput!) {
   }
 }
 
-mutation FulfillAuthDelegationRequest(
-  $input: AuthFulfillDelegationRequestInput!
+mutation ApproveAuthDelegationRequest(
+  $input: AuthApproveDelegationRequestInput!
 ) {
-  fulfillAuthDelegationRequest(input: $input) {
+  approveAuthDelegationRequest(input: $input) {
     id
     status
+    resolvedDelegationId
   }
 }

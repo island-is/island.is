@@ -8,7 +8,6 @@ import {
   Column,
   CreatedAt,
   DataType,
-  ForeignKey,
   HasMany,
   Model,
   PrimaryKey,
@@ -16,7 +15,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { Domain } from '../../resources/models/domain.model'
 import { DelegationRequestDTO } from '../dto/delegation-request.dto'
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
 import { DelegationRequestDelegation } from './delegation-request-delegation.model'
@@ -28,11 +26,10 @@ import { DelegationRequestScope } from './delegation-request-scope.model'
   createdAt: 'created',
   updatedAt: 'modified',
   indexes: [
-    // The migration defines the real index (partial, with COALESCE on domain_name).
     {
       name: 'delegation_request_unique_pending',
       unique: true,
-      fields: ['from_national_id', 'to_national_id', 'domain_name'],
+      fields: ['from_national_id', 'to_national_id'],
       where: { status: DelegationRequestStatus.Pending },
     },
   ],
@@ -60,13 +57,6 @@ export class DelegationRequest extends Model<
     allowNull: false,
   })
   toNationalId!: string
-
-  @ForeignKey(() => Domain)
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  domainName?: string | null
 
   @Column({
     type: DataType.STRING(1024),
@@ -123,7 +113,6 @@ export class DelegationRequest extends Model<
       id: this.id,
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
-      domainName: this.domainName,
       relationship: this.relationship,
       reason: this.reason,
       status: this.status,

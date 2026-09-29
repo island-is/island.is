@@ -11,7 +11,6 @@ import {
 import {
   ScopesApi,
   ScopesControllerFindCategoriesDirectionEnum,
-  ScopesControllerFindCategoriesRequestGrantorTypeEnum,
   ScopesControllerFindTagsDirectionEnum,
   ScopesControllerFindTagsRequestGrantorTypeEnum,
   MeDelegationsControllerFindAllDirectionEnum,
@@ -19,6 +18,7 @@ import {
 
 import { ScopeCategory } from '../models/scopeCategory.model'
 import { ScopeTag } from '../models/scopeTag.model'
+import { RequestGrantorType } from '../dto/requestGrantorType'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -42,20 +42,22 @@ export class ScopeCategoriesResolver {
       nullable: true,
     })
     direction?: MeDelegationsControllerFindAllDirectionEnum,
-    @Args('requestCatalog', { type: () => Boolean, nullable: true })
-    requestCatalog?: boolean,
-    @Args('requestGrantorType', { type: () => String, nullable: true })
-    requestGrantorType?: string,
+    @Args('requestGrantorType', {
+      type: () => RequestGrantorType,
+      nullable: true,
+      description:
+        'When set, returns the catalog of scopes that can be requested from this kind of grantor.',
+    })
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeCategory[]> {
     const categories = await this.scopesApiWithAuth(
       user,
     ).scopesControllerFindCategories({
       lang,
-      direction: requestCatalog
+      direction: requestGrantorType
         ? ScopesControllerFindCategoriesDirectionEnum.request
-        : (direction as unknown as ScopesControllerFindCategoriesDirectionEnum),
-      requestGrantorType:
-        requestGrantorType as ScopesControllerFindCategoriesRequestGrantorTypeEnum,
+        : ((direction as unknown) as ScopesControllerFindCategoriesDirectionEnum),
+      requestGrantorType,
     })
 
     return categories as ScopeCategory[]
@@ -74,18 +76,20 @@ export class ScopeCategoriesResolver {
       nullable: true,
     })
     direction?: MeDelegationsControllerFindAllDirectionEnum,
-    @Args('requestCatalog', { type: () => Boolean, nullable: true })
-    requestCatalog?: boolean,
-    @Args('requestGrantorType', { type: () => String, nullable: true })
-    requestGrantorType?: string,
+    @Args('requestGrantorType', {
+      type: () => RequestGrantorType,
+      nullable: true,
+      description:
+        'When set, returns the catalog of scopes that can be requested from this kind of grantor.',
+    })
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeTag[]> {
     const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
       lang,
-      direction: requestCatalog
+      direction: requestGrantorType
         ? ScopesControllerFindTagsDirectionEnum.request
-        : (direction as unknown as ScopesControllerFindTagsDirectionEnum),
-      requestGrantorType:
-        requestGrantorType as ScopesControllerFindTagsRequestGrantorTypeEnum,
+        : ((direction as unknown) as ScopesControllerFindTagsDirectionEnum),
+      requestGrantorType: (requestGrantorType as unknown) as ScopesControllerFindTagsRequestGrantorTypeEnum,
     })
 
     return tags as ScopeTag[]
@@ -111,8 +115,7 @@ export class ScopeCategoriesResolver {
       user,
     ).scopesControllerFindCategories({
       lang,
-      direction:
-        direction as unknown as ScopesControllerFindCategoriesDirectionEnum,
+      direction: (direction as unknown) as ScopesControllerFindCategoriesDirectionEnum,
     })
 
     return (categories as ScopeCategory[]).find((c) => c.slug === slug) ?? null
@@ -136,7 +139,7 @@ export class ScopeCategoriesResolver {
   ): Promise<ScopeTag | null> {
     const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
       lang,
-      direction: direction as unknown as ScopesControllerFindTagsDirectionEnum,
+      direction: (direction as unknown) as ScopesControllerFindTagsDirectionEnum,
     })
 
     return (tags as ScopeTag[]).find((t) => t.slug === slug) ?? null

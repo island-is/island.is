@@ -7,6 +7,7 @@ import { m } from './messages'
 const errorMessages: Record<string, typeof m.requestError> = {
   DELEGATION_REQUEST_TOO_MANY_PENDING: m.requestTooManyPendingError,
   DELEGATION_REQUEST_BLOCKED: m.requestBlockedError,
+  DELEGATION_REQUEST_RATE_LIMITED: m.requestRateLimitedError,
 }
 
 export const getCreateRequestErrorMessage = (error: unknown) => {

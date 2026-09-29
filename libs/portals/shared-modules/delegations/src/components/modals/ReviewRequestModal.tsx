@@ -24,7 +24,6 @@ import {
 } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
-import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
 import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
@@ -32,7 +31,7 @@ import {
   AuthScopeTagsQuery,
 } from '../../screens/ServiceCategories/ServiceCategories.generated'
 import {
-  useFulfillAuthDelegationRequestMutation,
+  useApproveAuthDelegationRequestMutation,
   AuthDelegationRequestsIncomingDocument,
   AuthDelegationRequestsIncomingQuery,
 } from '../delegationRequests/DelegationRequests.generated'
@@ -84,10 +83,9 @@ export const ReviewRequestModal = ({
   }, [request])
 
   const [
-    createAuthDelegations,
+    approveDelegationRequest,
     { loading: approveLoading },
-  ] = useCreateAuthDelegationsMutation()
-  const [fulfillDelegationRequest] = useFulfillAuthDelegationRequestMutation({
+  ] = useApproveAuthDelegationRequestMutation({
     refetchQueries: [
       { query: AuthDelegationRequestsIncomingDocument },
       'AuthDelegationsGroupedByIdentityOutgoing',
@@ -95,34 +93,17 @@ export const ReviewRequestModal = ({
   })
 
   const onApprove = async (request: IncomingRequest) => {
-    const selectedScopes = request.scopes.filter(
-      (scope) => selected[scope.scopeName] && scope.domainName,
-    )
-    if (selectedScopes.length === 0 || !validTo) {
+    const scopes = request.scopes
+      .filter((scope) => selected[scope.scopeName])
+      .map((scope) => ({ name: scope.scopeName, validTo }))
+    if (scopes.length === 0 || !validTo) {
       toast.error(formatMessage(m.requestApproveError))
       return
     }
 
-    const scopes = selectedScopes.map((scope) => ({
-      name: scope.scopeName,
-      validTo,
-      domainName: scope.domainName as string,
-    }))
-
     try {
-      const result = await createAuthDelegations({
-        variables: {
-          input: { toNationalIds: [request.to.nationalId], scopes },
-        },
-      })
-      const createdDelegationId = result.data?.createAuthDelegations?.[0]?.id
-      if (!createdDelegationId) {
-        throw new Error('No delegation created')
-      }
-      await fulfillDelegationRequest({
-        variables: {
-          input: { requestId: request.id, delegationId: createdDelegationId },
-        },
+      await approveDelegationRequest({
+        variables: { input: { requestId: request.id, scopes } },
       })
       toast.success(formatMessage(m.requestApproveSuccess))
       onClose()

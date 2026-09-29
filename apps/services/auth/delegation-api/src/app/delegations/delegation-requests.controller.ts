@@ -11,11 +11,11 @@ import {
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
+  ApproveDelegationRequestDTO,
   CreateDelegationRequestDTO,
   DelegationDirection,
   DelegationRequestDTO,
   DelegationRequestService,
-  FulfillDelegationRequestDTO,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -26,6 +26,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { delegationScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 import type { DocumentationParamOptions } from '@island.is/nest/swagger'
 import { isDefined } from '@island.is/shared/utils'
@@ -39,7 +44,8 @@ const requestId: DocumentationParamOptions = {
   description: 'The id of the delegation request.',
 }
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.isDelegationRequestsEnabled)
 @Scopes(...delegationScopes)
 @ApiSecurity('ias', delegationScopes)
 @ApiTags('me/delegation-requests')
@@ -152,8 +158,10 @@ export class DelegationRequestsController {
     return this.delegationRequestService.cancel(user, requestId)
   }
 
-  @Post(':requestId/fulfill')
+  @Post(':requestId/approve')
   @Documentation({
+    description:
+      'Creates the delegations for the given scopes and marks the request approved, atomically.',
     response: { status: 200, type: DelegationRequestDTO },
     request: { params: { requestId } },
   })
@@ -161,15 +169,11 @@ export class DelegationRequestsController {
     resources: (request) => request?.id ?? undefined,
     meta: (request) => ({ delegationId: request.resolvedDelegationId }),
   })
-  fulfill(
+  approve(
     @CurrentUser() user: User,
     @Param('requestId') requestId: string,
-    @Body() dto: FulfillDelegationRequestDTO,
+    @Body() dto: ApproveDelegationRequestDTO,
   ): Promise<DelegationRequestDTO> {
-    return this.delegationRequestService.markFulfilled(
-      user,
-      requestId,
-      dto.delegationId,
-    )
+    return this.delegationRequestService.approve(user, requestId, dto)
   }
 }

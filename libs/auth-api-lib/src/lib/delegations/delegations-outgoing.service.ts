@@ -221,19 +221,31 @@ export class DelegationsOutgoingService {
     input: CreateDelegationBatchDTO,
   ): Promise<DelegationDTO[]> {
     const results = await this.createOrUpdateMany(user, input.delegations)
-
-    const byRecipient = new Map<string, typeof results>()
-    for (const result of results) {
-      const recipient = result.delegation.toNationalId
-      const group = byRecipient.get(recipient) ?? []
-      group.push(result)
-      byRecipient.set(recipient, group)
-    }
-    for (const group of byRecipient.values()) {
-      void this.notifyDelegationUpdate(user, group)
-    }
-
+    this.notifyByRecipient(user, results)
     return results.map((result) => result.delegation)
+  }
+
+  // Indexing and notifications run only once the caller's transaction commits.
+  async createBatchInTransaction(
+    user: User,
+    inputs: CreateDelegationDTO[],
+    transaction: Transaction,
+  ): Promise<string[]> {
+    for (const input of inputs) {
+      await this.validateCreateDelegation(user, input)
+    }
+    const written = await this.writeAll(user, inputs, transaction)
+
+    transaction.afterCommit(() => {
+      this.reindex(user, written)
+      this.loadWritten(user, written)
+        .then((results) => this.notifyByRecipient(user, results))
+        .catch(() =>
+          this.logger.error('Failed to load delegations after commit'),
+        )
+    })
+
+    return written.map((w) => w.id)
   }
 
   private async createOrUpdateMany(
@@ -244,26 +256,45 @@ export class DelegationsOutgoingService {
       await this.validateCreateDelegation(user, input)
     }
 
-    const written = await this.sequelize.transaction(async (transaction) => {
-      const rows: Array<{
-        id: string
-        toNationalId: string
-        hadExistingScopes: boolean
-      }> = []
-      for (const input of inputs) {
-        rows.push(await this.writeForDomain(user, input, transaction))
-      }
-      return rows
-    })
+    const written = await this.sequelize.transaction((transaction) =>
+      this.writeAll(user, inputs, transaction),
+    )
 
     // Reindex after commit so we never index changes that might roll back.
+    this.reindex(user, written)
+
+    return this.loadWritten(user, written)
+  }
+
+  private async writeAll(
+    user: User,
+    inputs: CreateDelegationDTO[],
+    transaction: Transaction,
+  ) {
+    const rows: Array<{
+      id: string
+      toNationalId: string
+      hadExistingScopes: boolean
+    }> = []
+    for (const input of inputs) {
+      rows.push(await this.writeForDomain(user, input, transaction))
+    }
+    return rows
+  }
+
+  private reindex(user: User, written: Array<{ toNationalId: string }>) {
     for (const toNationalId of new Set(written.map((w) => w.toNationalId))) {
       void this.delegationIndexService.indexCustomDelegations(
         toNationalId,
         user,
       )
     }
+  }
 
+  private loadWritten(
+    user: User,
+    written: Array<{ id: string; hadExistingScopes: boolean }>,
+  ): Promise<Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>> {
     return Promise.all(
       written.map(async ({ id, hadExistingScopes }) => {
         const delegation = await this.findOneInternal(
@@ -279,6 +310,22 @@ export class DelegationsOutgoingService {
         return { delegation, hadExistingScopes }
       }),
     )
+  }
+
+  private notifyByRecipient(
+    user: User,
+    results: Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>,
+  ) {
+    const byRecipient = new Map<string, typeof results>()
+    for (const result of results) {
+      const recipient = result.delegation.toNationalId
+      const group = byRecipient.get(recipient) ?? []
+      group.push(result)
+      byRecipient.set(recipient, group)
+    }
+    for (const group of byRecipient.values()) {
+      void this.notifyDelegationUpdate(user, group)
+    }
   }
 
   private async validateCreateDelegation(
@@ -394,12 +441,11 @@ export class DelegationsOutgoingService {
         return
       }
 
-      const allowDelegationNotification =
-        await this.featureFlagService.getValue(
-          Features.isDelegationNotificationEnabled,
-          false,
-          user,
-        )
+      const allowDelegationNotification = await this.featureFlagService.getValue(
+        Features.isDelegationNotificationEnabled,
+        false,
+        user,
+      )
       if (!allowDelegationNotification) {
         return
       }
@@ -489,11 +535,10 @@ export class DelegationsOutgoingService {
         return { kind: 'notFound' as const }
       }
 
-      const existingScopes =
-        await this.delegationScopeService.findByDelegationId(
-          delegationId,
-          transaction,
-        )
+      const existingScopes = await this.delegationScopeService.findByDelegationId(
+        delegationId,
+        transaction,
+      )
 
       if (
         !(await this.delegationResourceService.validateScopeAccess(
@@ -535,11 +580,10 @@ export class DelegationsOutgoingService {
         )
       }
 
-      const remainingScopes =
-        await this.delegationScopeService.findByDelegationId(
-          delegationId,
-          transaction,
-        )
+      const remainingScopes = await this.delegationScopeService.findByDelegationId(
+        delegationId,
+        transaction,
+      )
 
       if (remainingScopes.length === 0) {
         // No scopes remain — delete the delegation row so it doesn't linger

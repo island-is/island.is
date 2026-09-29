@@ -8,7 +8,7 @@ import { ScopeSelection, useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
-import { useFulfillAuthDelegationRequestMutation } from '../delegationRequests/DelegationRequests.generated'
+import { useApproveAuthDelegationRequestMutation } from '../delegationRequests/DelegationRequests.generated'
 import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -47,13 +47,17 @@ export const ConfirmAccessModal = ({
     createAuthDelegations,
     { loading: createLoading },
   ] = useCreateAuthDelegationsMutation()
-  const [fulfillDelegationRequest] = useFulfillAuthDelegationRequestMutation()
+  const [
+    approveDelegationRequest,
+    { loading: approveLoading },
+  ] = useApproveAuthDelegationRequestMutation()
   const [
     patchAuthDelegation,
     { loading: patchLoading },
   ] = usePatchAuthDelegationMutation()
   const [submitting, setSubmitting] = useState(false)
-  const mutationLoading = submitting || createLoading || patchLoading
+  const mutationLoading =
+    submitting || createLoading || patchLoading || approveLoading
 
   const handleConfirm = async () => {
     if (onConfirm) {
@@ -94,32 +98,25 @@ export const ConfirmAccessModal = ({
         })
       }
 
-      const result = await createAuthDelegations({
-        variables: {
-          input: {
-            toNationalIds: identities.map((identity) => identity.nationalId),
-            scopes,
-          },
-        },
-      })
-
-      const createdDelegationId = result.data?.createAuthDelegations?.[0]?.id
-      if (pendingRequestId && createdDelegationId) {
-        try {
-          await fulfillDelegationRequest({
-            variables: {
-              input: {
-                requestId: pendingRequestId,
-                delegationId: createdDelegationId,
-              },
+      if (pendingRequestId) {
+        await approveDelegationRequest({
+          variables: {
+            input: {
+              requestId: pendingRequestId,
+              scopes: scopes.map(({ name, validTo }) => ({ name, validTo })),
             },
-          })
-        } catch {
-          // The delegation exists; failing to link the request should not block.
-          toast.error(formatMessage(m.confirmError))
-        } finally {
-          setPendingRequestId(undefined)
-        }
+          },
+        })
+        setPendingRequestId(undefined)
+      } else {
+        await createAuthDelegations({
+          variables: {
+            input: {
+              toNationalIds: identities.map((identity) => identity.nationalId),
+              scopes,
+            },
+          },
+        })
       }
 
       navigate(DelegationPaths.DelegationsNew)

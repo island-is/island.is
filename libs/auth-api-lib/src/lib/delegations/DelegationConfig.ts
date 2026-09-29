@@ -34,6 +34,8 @@ const schema = z.object({
   userInfoUrl: z.string(),
   defaultValidityPeriodInDays: z.number().min(1),
   delegationRequestMaxPending: z.number().min(1),
+  delegationRequestMaxPerDay: z.number().min(1),
+  delegationRequestMaxPerGrantorPerDay: z.number().min(1),
   delegationRequestRejectionLockThreshold: z.number().min(1),
   delegationRequestRejectionLockDays: z.number().min(1),
 })
@@ -115,6 +117,10 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
       env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,
     delegationRequestMaxPending:
       env.optionalJSON('DELEGATION_REQUEST_MAX_PENDING') ?? 2,
+    delegationRequestMaxPerDay:
+      env.optionalJSON('DELEGATION_REQUEST_MAX_PER_DAY') ?? 5,
+    delegationRequestMaxPerGrantorPerDay:
+      env.optionalJSON('DELEGATION_REQUEST_MAX_PER_GRANTOR_PER_DAY') ?? 1,
     delegationRequestRejectionLockThreshold:
       env.optionalJSON('DELEGATION_REQUEST_REJECTION_LOCK_THRESHOLD') ?? 2,
     delegationRequestRejectionLockDays:

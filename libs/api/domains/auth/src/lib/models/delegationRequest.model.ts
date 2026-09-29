@@ -47,9 +47,6 @@ export class DelegationRequest {
   @Field(() => Identity)
   to!: Identity
 
-  @Field(() => String, { nullable: true })
-  domainName?: string | null
-
   @Field(() => String)
   relationship!: string
 

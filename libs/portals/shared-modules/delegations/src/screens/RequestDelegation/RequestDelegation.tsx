@@ -291,7 +291,6 @@ const RequestDelegation = () => {
       content: (
         <AccessScopes
           title={m.requestChooseScopesTitle}
-          requestCatalog
           requestGrantorType={requestGrantorType}
         />
       ),

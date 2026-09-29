@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/auth/delegation-api'
 
 import { CreateDelegationRequestInput } from '../dto/createDelegationRequest.input'
+import { ApproveDelegationRequestInput } from '../dto/delegationRequest.input'
 
 @Injectable()
 export class DelegationRequestsService {
@@ -30,7 +31,9 @@ export class DelegationRequestsService {
   }
 
   getById(user: User, requestId: string): Promise<DelegationRequestDTO> {
-    return this.withAuth(user).delegationRequestsControllerFindOne({ requestId })
+    return this.withAuth(user).delegationRequestsControllerFindOne({
+      requestId,
+    })
   }
 
   create(
@@ -40,7 +43,6 @@ export class DelegationRequestsService {
     return this.withAuth(user).delegationRequestsControllerCreate({
       createDelegationRequestDTO: {
         toGranterNationalId: input.toGranterNationalId,
-        domainName: input.domainName,
         relationship: input.relationship,
         reason: input.reason,
         scopes: input.scopes.map((scope) => ({
@@ -59,14 +61,13 @@ export class DelegationRequestsService {
     return this.withAuth(user).delegationRequestsControllerCancel({ requestId })
   }
 
-  fulfill(
+  approve(
     user: User,
-    requestId: string,
-    delegationId: string,
+    input: ApproveDelegationRequestInput,
   ): Promise<DelegationRequestDTO> {
-    return this.withAuth(user).delegationRequestsControllerFulfill({
-      requestId,
-      fulfillDelegationRequestDTO: { delegationId },
+    return this.withAuth(user).delegationRequestsControllerApprove({
+      requestId: input.requestId,
+      approveDelegationRequestDTO: { scopes: input.scopes },
     })
   }
 }

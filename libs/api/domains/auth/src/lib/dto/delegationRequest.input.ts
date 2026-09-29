@@ -6,11 +6,20 @@ export class DelegationRequestInput {
   requestId!: string
 }
 
-@InputType('AuthFulfillDelegationRequestInput')
-export class FulfillDelegationRequestInput {
+@InputType('AuthApproveDelegationRequestScopeInput')
+export class ApproveDelegationRequestScopeInput {
+  @Field(() => String)
+  name!: string
+
+  @Field(() => Date)
+  validTo!: Date
+}
+
+@InputType('AuthApproveDelegationRequestInput')
+export class ApproveDelegationRequestInput {
   @Field(() => ID)
   requestId!: string
 
-  @Field(() => ID)
-  delegationId!: string
+  @Field(() => [ApproveDelegationRequestScopeInput])
+  scopes!: ApproveDelegationRequestScopeInput[]
 }

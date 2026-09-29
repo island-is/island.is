@@ -15,6 +15,7 @@ import {
 } from 'class-validator'
 
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
+import { UpdateDelegationScopeDTO } from './delegation-scope.dto'
 
 export class DelegationRequestScopeDTO {
   @IsString()
@@ -76,13 +77,6 @@ export class CreateDelegationRequestDTO {
   })
   toGranterNationalId!: string
 
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({
-    description: 'Name identifying the domain the delegation is requested in.',
-  })
-  domainName?: string
-
   @IsString()
   @MinLength(1)
   @MaxLength(1024)
@@ -104,12 +98,18 @@ export class CreateDelegationRequestDTO {
   scopes!: RequestDelegationScopeDTO[]
 }
 
-export class FulfillDelegationRequestDTO {
-  @IsString()
+export class ApproveDelegationRequestDTO {
   @ApiProperty({
-    description: 'Id of the delegation created to fulfill this request.',
+    type: [UpdateDelegationScopeDTO],
+    description:
+      'Scopes to grant. May differ from the requested scopes; each must be grantable by the current user.',
   })
-  delegationId!: string
+  @Type(() => UpdateDelegationScopeDTO)
+  @ValidateNested({ each: true })
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMaxSize(100)
+  scopes!: UpdateDelegationScopeDTO[]
 }
 
 export class DelegationRequestDTO {
@@ -124,11 +124,6 @@ export class DelegationRequestDTO {
   @IsString()
   @ApiProperty()
   toNationalId!: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ nullable: true, type: String })
-  domainName?: string | null
 
   @IsString()
   @ApiProperty()

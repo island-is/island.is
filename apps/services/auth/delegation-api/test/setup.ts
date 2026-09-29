@@ -29,6 +29,8 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
   customScopeRules: [],
   defaultValidityPeriodInDays: 90,
   delegationRequestMaxPending: 2,
+  delegationRequestMaxPerDay: 5,
+  delegationRequestMaxPerGrantorPerDay: 1,
   delegationRequestRejectionLockThreshold: 2,
   delegationRequestRejectionLockDays: 365,
   isConfigured: true,

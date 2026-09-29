@@ -1,4 +1,10 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  ParseEnumPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -104,7 +110,11 @@ export class ScopesController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
-    @Query('requestGrantorType') requestGrantorType?: RequestGrantorType,
+    @Query(
+      'requestGrantorType',
+      new ParseEnumPipe(RequestGrantorType, { optional: true }),
+    )
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeCategoryDTO[]> {
     return this.scopeService.findScopeCategories(
       user,
@@ -153,7 +163,11 @@ export class ScopesController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
-    @Query('requestGrantorType') requestGrantorType?: RequestGrantorType,
+    @Query(
+      'requestGrantorType',
+      new ParseEnumPipe(RequestGrantorType, { optional: true }),
+    )
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeTagDTO[]> {
     return this.scopeService.findScopeTags(
       user,
