@@ -3,6 +3,7 @@ import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
+import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
@@ -18,8 +19,6 @@ import {
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import useSections from './index'
 
