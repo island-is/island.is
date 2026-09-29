@@ -118,7 +118,9 @@ describe('NationalRegistryService', () => {
       await expect(nationalRegistryService.getRelations(auth)).resolves.toEqual(
         ['0101011234'],
       )
-      expect(v3Client.getAllDataIndividual).toHaveBeenCalledWith(auth.nationalId)
+      expect(v3Client.getAllDataIndividual).toHaveBeenCalledWith(
+        auth.nationalId,
+      )
       expect(v2Lookup).not.toHaveBeenCalled()
     })
   })
