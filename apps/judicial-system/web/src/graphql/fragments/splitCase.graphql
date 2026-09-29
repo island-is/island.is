@@ -2,23 +2,12 @@ fragment SplitCaseFields on Case {
   id
   created
   courtCaseNumber
-  # type, the defender fields and the civil claimants are what decides whether
-  # a defence user may open this case - see canDefenceUserOpenLinkedCase. The
-  # merged case payload already carries the same set.
-  type
   defendants {
     id
     name
-    defenderNationalId
-    isDefenderChoiceConfirmed
     subpoenas {
       ...SubpoenaFields
     }
-  }
-  civilClaimants {
-    id
-    isSpokespersonConfirmed
-    spokespersonNationalId
   }
   caseFiles {
     ...CaseFileFields
