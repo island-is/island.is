@@ -146,6 +146,40 @@ describe('InfoCardClosedIndictment', () => {
       )
     })
 
+    // A split case takes the civil claimants that applied to the defendant who
+    // left with it, so the party who can open it is not always a defendant.
+    it('links a split case the spokesperson is a party to', async () => {
+      renderClosedIndictment(
+        {
+          ...mockCase(CaseType.INDICTMENT),
+          splitCases: [
+            {
+              id: 'split-case-id',
+              type: CaseType.INDICTMENT,
+              courtCaseNumber: 'S-88/2026',
+              defendants: [{ id: 'split-defendant', name: 'Split Defendant' }],
+              civilClaimants: [
+                {
+                  id: 'split-claimant',
+                  isSpokespersonConfirmed: true,
+                  spokespersonNationalId: DEFENDER_NATIONAL_ID,
+                },
+              ],
+            },
+          ],
+        } as unknown as Case,
+        UserRole.DEFENDER,
+        DEFENDER_NATIONAL_ID,
+      )
+
+      const link = await screen.findByRole('link', { name: 'S-88/2026' })
+
+      expect(link).toHaveAttribute(
+        'href',
+        `${ROUTE_HANDLER_ROUTE}/split-case-id`,
+      )
+    })
+
     // Everyone outside the defence short-circuits the check, so they link
     // whatever the linked case carries.
     it('links a split case for a user who can open any case', async () => {

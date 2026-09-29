@@ -513,6 +513,22 @@ export const caseInclude: Includeable[] = [
         ],
       },
       {
+        // A split case takes the civil claimants that applied to the defendant
+        // who left with it, so a spokesperson can be a confirmed party here.
+        // The attributes are the ones that decide whether they may open it.
+        model: CivilClaimant,
+        as: 'civilClaimants',
+        attributes: [
+          'id',
+          'hasSpokesperson',
+          'spokespersonNationalId',
+          'isSpokespersonConfirmed',
+        ],
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+      {
         model: CaseFile,
         as: 'caseFiles',
         required: false,
@@ -1449,6 +1465,22 @@ export const getLimitedAccessCaseInclude = (
               },
             },
           ],
+        },
+        {
+          // A split case takes the civil claimants that applied to the defendant
+          // who left with it, so a spokesperson can be a confirmed party here.
+          // The attributes are the ones that decide whether they may open it.
+          model: CivilClaimant,
+          as: 'civilClaimants',
+          attributes: [
+            'id',
+            'hasSpokesperson',
+            'spokespersonNationalId',
+            'isSpokespersonConfirmed',
+          ],
+          required: false,
+          order: [['created', 'ASC']],
+          separate: true,
         },
         {
           model: CaseFile,
