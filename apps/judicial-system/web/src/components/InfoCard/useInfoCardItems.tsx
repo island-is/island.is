@@ -25,6 +25,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { LinkComponent } from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
+  AppealCase,
   Case,
   CaseType,
   Defendant,
@@ -54,7 +55,18 @@ type HeadingLevel = 'h2' | 'h3' | 'h4' | 'h5'
 
 // Semantic heading level for the item titles built here. The visual size stays
 // h4 so only the level exposed to assistive technology changes.
-const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
+/**
+ * `appealCase` says which appeal the Court of Appeals items describe. Left out,
+ * it is resolved from the query string, which is what every page built around
+ * a ruling appeal wants. A page about a different appeal - the verdict appeal
+ * overview - has to name it, because that resolver falls back to the
+ * case-level ruling appeal and would otherwise put one appeal's case number
+ * and judges on another appeal's page.
+ */
+const useInfoCardItems = (
+  titleAs: HeadingLevel = 'h4',
+  appealCase?: AppealCase | null,
+) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
@@ -62,7 +74,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   // and an appeal of each ruling order at once, and the Court of Appeals opens
   // one page per appeal, naming it in the query string. Falls back to the case
   // level appeal, which is what every page without that query string wants.
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const resolvedAppealCase = useTargetAppealCaseByAppealCaseId()
+  const targetAppealCase =
+    appealCase === undefined ? resolvedAppealCase : appealCase
 
   const defendants = ({
     caseType,

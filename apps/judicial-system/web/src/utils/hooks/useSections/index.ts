@@ -1605,14 +1605,19 @@ const useSections = (
             },
           ]
         : []),
-      ...(!targetAppealCase?.appealState ||
-      (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
-        !targetAppealCase.appealReceivedByCourtDate)
+      // One appeal proceeding in the stepper at a time, chosen by the route.
+      // A case can carry a ruling appeal and a verdict appeal at once, and the
+      // verdict route sets no appealCaseId - so targetAppealCase resolves to
+      // the ruling appeal there. Left in, its section sits earlier in this
+      // list and is the one the side panel marks active, which would leave the
+      // verdict step the reader is looking at unhighlighted.
+      ...(isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE)
+        ? getCourtOfAppealVerdictAppealSections(workingCase)
+        : !targetAppealCase?.appealState ||
+          (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
+            !targetAppealCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
-      ...(workingCase.verdictAppealCase
-        ? getCourtOfAppealVerdictAppealSections(workingCase)
-        : []),
     ]
   }
 

@@ -62,7 +62,14 @@ const VerdictAppealOverview = () => {
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
-          <InfoCardClosedIndictment />
+          {/* Named explicitly: the card otherwise resolves the appeal from
+              the query string, which this route does not set, and would fall
+              back to the case-level ruling appeal - a different proceeding.
+              The verdict appeal carries no case number yet, so the Court of
+              Appeals section stays out until a step exists that sets one. */}
+          <InfoCardClosedIndictment
+            appealCase={workingCase.verdictAppealCase}
+          />
           {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
             <Conclusion
               title={districtCourtConclusionTitle}

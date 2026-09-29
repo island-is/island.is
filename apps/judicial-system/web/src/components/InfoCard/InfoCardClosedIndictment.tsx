@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 
@@ -19,6 +20,10 @@ export interface Props {
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
   displaySentToPrisonAdminDate?: boolean
+  // Which appeal the Court of Appeals section describes. Left out, it is the
+  // one named in the query string - correct for every page built around a
+  // ruling appeal. A page about a different appeal has to say so.
+  appealCase?: AppealCase | null
 }
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
@@ -26,7 +31,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   // The appeal this page is about - the same one the items below read, so the
   // section appears exactly when that appeal has a case number.
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const resolvedAppealCase = useTargetAppealCaseByAppealCaseId()
+  const targetAppealCase =
+    props.appealCase === undefined ? resolvedAppealCase : props.appealCase
 
   const {
     defendants,
@@ -48,7 +55,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
-  } = useInfoCardItems()
+  } = useInfoCardItems(undefined, props.appealCase)
 
   const {
     displayAppealExpirationInfo,
