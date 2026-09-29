@@ -153,16 +153,18 @@ export const createTestingSubpoenaModule = async () => {
 
   const messageService = subpoenaModule.get<MessageService>(MessageService)
 
-  const queuedMessages: Message[] = []
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
   const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
   mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   subpoenaModule.close()
 
   return {
-    queuedMessages,
+    queuedMessagesAfterCommit,
     mockQueueMessagesAfterCommit,
     userService,
     pdfService,

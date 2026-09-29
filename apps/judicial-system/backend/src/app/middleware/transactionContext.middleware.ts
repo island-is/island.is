@@ -169,9 +169,10 @@ export class TransactionContextMiddleware implements NestMiddleware {
       // 'close' can be emitted from the socket rather than from the request's
       // own async context.
       res.on('close', async () => {
-        // Anything but 'open' means the interceptor has this: either it is
-        // committing right now, in which case rolling back would race its
-        // COMMIT on the same transaction, or it has already finished.
+        // Anything but 'open' means the interceptor has this: it is committing
+        // right now, in which case rolling back would race its COMMIT on the
+        // same transaction, it is running the after commit callbacks, or it
+        // has already finished.
         if (!context.transaction || context.settlement !== 'open') {
           return
         }

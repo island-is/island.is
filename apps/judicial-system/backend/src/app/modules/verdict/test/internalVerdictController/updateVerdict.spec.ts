@@ -13,10 +13,6 @@ import { queueMessagesAfterCommit } from '../../../../middleware'
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
 
-// Mocked here as well as in the harness: this spec imports the helper before
-// the harness, so the harness's mock would come too late for it
-jest.mock('../../../../middleware/queueMessagesAfterCommit')
-
 interface Then {
   result: Verdict
   error: Error

@@ -94,7 +94,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       subpoenaRepositoryService,
       courtDocumentRepositoryService,
       subpoenaController: controller,
-      queuedMessages,
+      queuedMessagesAfterCommit,
       mockQueueMessagesAfterCommit: mockQueueMessages,
     } = await createTestingSubpoenaModule()
 
@@ -102,7 +102,7 @@ describe('SubpoenaController - Create subpoenas', () => {
     mockSubpoenaRepositoryService = subpoenaRepositoryService
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
     subpoenaController = controller
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockQueueMessagesAfterCommit = mockQueueMessages
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -216,11 +216,8 @@ describe('SubpoenaController - Create subpoenas', () => {
         ]),
       )
 
-      // Queued for after the commit, so a rollback sends nothing
+      // Queued for after the commit, in one call, so a rollback sends nothing
       expect(mockQueueMessagesAfterCommit).toHaveBeenCalledTimes(1)
-      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith(
-        ...mockQueuedMessages,
-      )
 
       expect(then.result).toEqual([subpoena1, subpoena2])
       expect(then.error).toBeUndefined()

@@ -18,10 +18,6 @@ import {
 } from '../../../repository'
 import { VerdictService } from '../../verdict.service'
 
-// Mocked here as well as in the harness: this spec imports the helper before
-// the harness, so the harness's mock would come too late for it
-jest.mock('../../../../middleware/queueMessagesAfterCommit')
-
 describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
   const caseId = uuid()
   const defendantId = uuid()
