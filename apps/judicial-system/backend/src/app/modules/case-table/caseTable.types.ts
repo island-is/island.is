@@ -155,36 +155,66 @@ export const mergeAccessIncludes = (
   const merged: CaseIncludes = { ...tableIncludes }
 
   for (const key of Object.keys(accessIncludes) as Array<keyof CaseIncludes>) {
-    copyAccessInclude(merged, accessIncludes, key)
+    if (merged[key]) {
+      continue
+    }
+
+    copyIncludeInto(merged, accessIncludes, key)
   }
 
   return merged
 }
 
-// Copied rather than shared. Access options are often module level constants,
-// and the include machinery merges attributes into whatever object it is
-// handed - sharing one would let a list's columns leak into every other query
-// built from the same rule.
-//
-// Shallow in `where` and in nested `includes`, which is enough because an
-// access include carries neither. One that grew nested includes would be spliced
-// into by setInclude's nested merge and would need a deeper copy.
-const copyAccessInclude = <K extends keyof CaseIncludes>(
+/**
+ * Copied rather than shared, all the way down.
+ *
+ * Both the access options and the cell generators are module level constants,
+ * and the include machinery merges into whatever object it is handed rather
+ * than building a new one. Alias a constant into a query's include tree and the
+ * next merge writes another list's attributes and joins into the constant,
+ * where they stay for the lifetime of the process - so what one list fetches
+ * comes to depend on which lists were requested before it.
+ *
+ * The nested level is copied too. An access include carries no nested includes
+ * today, but a generator include does, and both go through the same merge.
+ *
+ * `where` is shared, not copied. Nothing merges into it - it is read straight
+ * through to Sequelize - and copying it would mean walking the operator symbols
+ * a where clause is built from.
+ */
+export const copyIncludeInto = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
   key: K,
 ) => {
-  if (target[key]) {
-    return
-  }
-
   const value = source[key]
 
   if (!value) {
     return
   }
 
-  target[key] = { ...value, attributes: [...value.attributes] }
+  const copy = { ...value, attributes: [...value.attributes] }
+
+  if (copy.includes) {
+    const nested = { ...copy.includes }
+
+    for (const nestedKey of Object.keys(nested) as Array<keyof typeof nested>) {
+      const nestedValue = nested[nestedKey]
+
+      if (!nestedValue) {
+        continue
+      }
+
+      nested[nestedKey] = {
+        ...nestedValue,
+        attributes: [...nestedValue.attributes],
+      }
+    }
+
+    copy.includes = nested
+  }
+
+  target[key] = copy
 }
 
 export const expandCasesWithDefendants = (cs: Case[]) =>

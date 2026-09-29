@@ -1,8 +1,3 @@
-import type { ModelCtor } from 'sequelize-typescript'
-import { Model, Sequelize } from 'sequelize-typescript'
-
-import { getOptions } from '@island.is/nest/sequelize'
-
 import type { User } from '@island.is/judicial-system/types'
 import {
   caseTables,
@@ -12,6 +7,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
+import { captureSql, initCaseTableModels } from './caseTable.sqlProbe'
 import { getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
@@ -37,59 +33,25 @@ describe('public prosecution review list', () => {
     },
   } as User
 
-  beforeAll(() => {
-    const models = Object.values(repository).filter(
-      (exported) =>
-        typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as ModelCtor[]
+  beforeAll(initCaseTableModels)
 
-    // The same define options the app runs with - without `underscored` the
-    // probe would assert against column names production never emits.
-    new Sequelize({
-      dialect: 'postgres',
-      models,
-      logging: false,
-      define: getOptions().define,
-    })
-  })
-
-  const sqlForTable = async (tableType: CaseTableType, user: User) => {
-    // Built before the stub goes in, so a throw here cannot leave
-    // `sequelize.query` stubbed for the rest of the file.
+  const sqlForTable = (tableType: CaseTableType, user: User) => {
+    // Built before captureSql installs its stub, so a throw here cannot leave
+    // the query layer stubbed for the rest of the file.
     const whereOptions = caseTableWhereOptions[tableType](user)
     const [include, order] = getGlobalIncludes(
       whereOptions.includes ?? {},
       user,
     )
 
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await repository.Case.findAll({
+    return captureSql(() =>
+      repository.Case.findAll({
         attributes: ['id'],
         include,
         where: whereOptions.where,
         order,
-      })
-    } catch {
-      // Building the query is the subject here; running it is not.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return queries[0] ?? ''
+      }),
+    )
   }
 
   it('shows the result of the review', () => {
