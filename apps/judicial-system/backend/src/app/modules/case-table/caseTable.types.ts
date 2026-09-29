@@ -248,8 +248,14 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
  * are verdict lists. `expandCasesWithAppeals` does the same for ruling order
  * appeals.
  *
- * `verdictAppealCase` stays as it is: the columns on these lists read it by
- * name, and the appeal is the same object under both.
+ * `verdictAppealCase` stays as it is, unlike `rulingOrderAppealCases` below.
+ * That one is a collection fanned out into a row per appeal, so leaving it
+ * would let downstream re-iterate it; this is a single association with no fan
+ * out, so there is nothing to drop. Keeping it lets the columns on these lists
+ * go on declaring the association they read, which is what decides the join
+ * and what the access includes spec checks. A generator that read `appealCase`
+ * while asking for `verdictAppealCase` would work here and render nothing on a
+ * list that had not made this substitution.
  */
 export const presentVerdictAppealAsCaseAppeal = (cs: Case[]) =>
   cs.map((c) => {
