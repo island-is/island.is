@@ -317,6 +317,7 @@ export default function HealthMessagesScreen() {
             <ListItem
               title={item.organization?.name ?? item.lastSenderGroupName ?? ''}
               subtitle={item.title ?? ''}
+              subtitleNumberOfLines={2}
               date={item.lastMessageSentAt ?? undefined}
               unread={!item.isRead}
               starred={item.isStarred}

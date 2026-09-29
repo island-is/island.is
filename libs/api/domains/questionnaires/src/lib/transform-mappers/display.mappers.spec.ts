@@ -476,6 +476,32 @@ describe('display mappers', () => {
       expect(mapped.lastSubmissionId).toBe('sub-1')
     })
 
+    it('sets canSubmitAgain on answered EL list items with submissions left', () => {
+      const answered = {
+        questionnaireId: 'el-q-5',
+        title: 'Repeatable',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        numSubmitted: 1,
+        numSubmissionsAllowed: null,
+        hasDraft: false,
+        lastSubmitted: new Date('2024-06-01T00:00:00.000Z'),
+      } as unknown as QuestionnaireBaseDto
+
+      const map = (overrides: Partial<QuestionnaireBaseDto>) =>
+        mapElQuestionnaireListItem(
+          { ...answered, ...overrides } as QuestionnaireBaseDto,
+          formatMessage,
+        ).canSubmitAgain
+
+      expect(map({})).toBe(true)
+      expect(map({ numSubmissionsAllowed: 3 })).toBe(true)
+      expect(map({ numSubmissionsAllowed: 1 })).toBe(false)
+      expect(map({ nextSubmissionDate: new Date('2999-01-01') })).toBe(false)
+      expect(map({ nextSubmissionDate: new Date('2000-01-01') })).toBe(true)
+      expect(map({ hasDraft: true })).toBe(false)
+      expect(map({ expiryDate: new Date('2000-01-01') })).toBe(false)
+    })
+
     it('sets expired status even when answered or drafted, when expiryDate is in the past', () => {
       const pastExpiry = new Date('2000-01-01T00:00:00.000Z')
 

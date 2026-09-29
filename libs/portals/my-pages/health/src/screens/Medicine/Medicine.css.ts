@@ -16,6 +16,12 @@ export const saveButtonWrapperStyle = recipe({
   base: {
     whiteSpace: 'nowrap',
     position: 'relative',
+    selectors: {
+      '&:focus-within': {
+        opacity: 1,
+        zIndex: 1,
+      },
+    },
   },
   variants: {
     visible: {

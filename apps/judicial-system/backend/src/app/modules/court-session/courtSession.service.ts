@@ -27,7 +27,6 @@ import {
   AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
-  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CourtSessionRulingType,
@@ -774,13 +773,11 @@ export class CourtSessionService {
     // An appeal a party filed itself is not held up by the court record: it has
     // no decision = APPEAL row, so the absence of one is not the correction
     // removing anything, and reconciliation leaves such an appeal in place.
-    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: existingAppealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const appealedEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        existingAppealCase.id,
+        { transaction },
+      )
 
     if (hasOutOfCourtAppeal(appealedEvents)) {
       return
@@ -825,13 +822,11 @@ export class CourtSessionService {
       return
     }
 
-    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: existingAppealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const appealedEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        existingAppealCase.id,
+        { transaction },
+      )
 
     const lock = appealCorrectionLock({
       appealState: existingAppealCase.appealState,
@@ -903,13 +898,11 @@ export class CourtSessionService {
   ): Promise<void> {
     const appellants = inCourtAppellantsFromDecisions(appeals)
 
-    const existingEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: appealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const existingEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     // A party's stable identity within a ruling's appeal - the defence party id,
     // or the prosecution, which has no party id.
@@ -1074,13 +1067,11 @@ export class CourtSessionService {
     // there is still an appeal - a court-record correction cannot take it away -
     // so only an appeal that existed solely because of the corrected-away
     // decisions may be deleted.
-    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: existingAppealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const appealedEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        existingAppealCase.id,
+        { transaction },
+      )
 
     if (hasOutOfCourtAppeal(appealedEvents)) {
       this.logger.debug(
@@ -1164,15 +1155,11 @@ export class CourtSessionService {
       existingAppealCase &&
       existingAppealCase.appealState === AppealCaseState.APPEALED
     ) {
-      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
-        {
-          where: {
-            appealCaseId: existingAppealCase.id,
-            eventType: AppealEventType.APPEALED,
-          },
-          transaction,
-        },
-      )
+      const appealedEvents =
+        await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       // A party's own appeal is not a consequence of the ruling being pronounced
       // here, so dropping the ruling from the court record must not destroy it.
@@ -1411,13 +1398,11 @@ export class CourtSessionService {
       return
     }
 
-    const appealedEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: existingAppealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const appealedEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        existingAppealCase.id,
+        { transaction },
+      )
 
     const lock = appealCorrectionLock({
       appealState: existingAppealCase.appealState,

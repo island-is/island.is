@@ -1,5 +1,6 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useIsMobile } from '@island.is/portals/core'
 import { messages } from '../../../lib/messages'
 import { HealthConversationRecipientFragment } from '../NewHealthConversation.generated'
 import {
@@ -21,6 +22,8 @@ interface Props {
  */
 const ClosedRecipientAlert = ({ recipient }: Props) => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
+  const bodyVariant = isMobile ? 'medium' : 'small'
 
   const hours = getOpeningHoursLabels(recipient.openingHours)
   const nextOpening = getNextOpeningInfo(recipient.nextOpensAt)
@@ -50,11 +53,11 @@ const ClosedRecipientAlert = ({ recipient }: Props) => {
           <Text as="h5" variant="h5" marginBottom={1}>
             {formatMessage(messages.healthConversationClosedTitle)}
           </Text>
-          <Text variant="small">
+          <Text variant={bodyVariant}>
             {formatMessage(messages.healthConversationClosedNowText)}
           </Text>
           {nextOpening && (
-            <Text variant="small" fontWeight="semiBold">
+            <Text variant={bodyVariant} fontWeight="semiBold">
               {formatMessage(messages.healthConversationClosedNextOpensText, {
                 hasTime: nextOpening.opensAtMidnight ? 'false' : 'true',
                 time: nextOpening.timeLabel,
@@ -65,7 +68,7 @@ const ClosedRecipientAlert = ({ recipient }: Props) => {
           )}
           {hours && (
             <Box marginTop={2}>
-              <Text variant="small" fontWeight="semiBold">
+              <Text variant={bodyVariant} fontWeight="semiBold">
                 {formatMessage(messages.healthConversationOpeningHoursTitle)}
               </Text>
               <Box component="ul" paddingLeft={3}>
@@ -86,7 +89,7 @@ const ClosedRecipientAlert = ({ recipient }: Props) => {
                   ] as const
                 ).map(([label, window]) => (
                   <li key={label.id} style={{ listStyleType: 'disc' }}>
-                    <Text variant="small">
+                    <Text variant={bodyVariant}>
                       {`${formatMessage(label)}: ${hourRange(window)}`}
                     </Text>
                   </li>

@@ -17,6 +17,7 @@ export enum CustomPageUniqueIdentifier {
   SupremeCourtDeterminations = 'SupremeCourtDeterminations',
   SupremeCourtAppeals = 'SupremeCourtAppeals',
   AskTheBudgetBill = 'AskTheBudgetBill',
+  ElectronicMandates = 'ElectronicMandates',
 }
 
 export interface StatisticSourceValue {

@@ -943,6 +943,8 @@ export const is = {
   'health.messages.compose.selectServicePlaceholder':
     'Veldu þjónustu úr fellilistanum',
   'health.messages.compose.to': 'Til: {name}',
+  'health.messages.compose.subjectLabel': 'Efni',
+  'health.messages.compose.subjectPlaceholder': 'Sláðu inn efni skilaboðanna',
   'health.messages.compose.messageLabel': 'Skilaboð',
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'health.messages.compose.termsAccept':

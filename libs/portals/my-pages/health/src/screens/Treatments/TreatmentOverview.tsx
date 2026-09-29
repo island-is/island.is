@@ -27,6 +27,7 @@ import Appointments from '../HealthOverview/components/Appointments'
 import TreatmentLinkCard from './components/TreatmentLinkCard'
 import TreatmentMessages from './components/TreatmentMessages'
 import { useGetHealthTreatmentQuery } from './TreatmentOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   treatmentId: string
@@ -34,6 +35,7 @@ type UseParams = {
 
 const TreatmentOverview = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
 
   const { formatMessage } = useLocale()
   const { treatmentId } = useParams() as UseParams
