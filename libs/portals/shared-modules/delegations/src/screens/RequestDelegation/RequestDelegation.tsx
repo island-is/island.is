@@ -15,11 +15,12 @@ import {
 import { InputController, SelectController } from '@island.is/shared/form-fields'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  DELEGATION_REQUEST_GRANTOR_KEY,
+  takeDelegationRequestGrantor,
   DELEGATION_REQUEST_SCOPES_PARAM,
   IntroHeader,
   m as coreMessages,
 } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
@@ -157,6 +158,7 @@ const RequestDetails = ({
 const RequestDelegation = () => {
   useNamespaces(['sp.access-control-delegations'])
   const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
   const navigate = useNavigate()
 
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false)
@@ -236,23 +238,13 @@ const RequestDelegation = () => {
   }, [requestGrantorType, selectedScopes.length, formatMessage, setSelectedScopes])
 
   useEffect(() => {
-    try {
-      const raw = window.sessionStorage.getItem(DELEGATION_REQUEST_GRANTOR_KEY)
-      if (raw) {
-        const grantor = JSON.parse(raw)
-        if (grantor?.nationalId) {
-          recipientMethods.setValue(
-            'identities',
-            [{ nationalId: grantor.nationalId, name: grantor.name ?? '' }],
-            { shouldValidate: true },
-          )
-        }
-        window.sessionStorage.removeItem(DELEGATION_REQUEST_GRANTOR_KEY)
-      }
-    } catch {
-      // noop
+    const grantor = takeDelegationRequestGrantor(userInfo)
+    if (grantor) {
+      recipientMethods.setValue('identities', [grantor], {
+        shouldValidate: true,
+      })
     }
-  }, [recipientMethods])
+  }, [recipientMethods, userInfo])
 
   const steps: FlowStep[] = [
     {

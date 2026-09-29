@@ -7,8 +7,8 @@ import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 
 import { m } from '../../lib/messages'
 import {
-  DELEGATION_REQUEST_GRANTOR_KEY,
   getDelegationRequestPath,
+  storeDelegationRequestGrantor,
 } from '../../utils/delegationRequest'
 
 interface RequestDelegationButtonProps {
@@ -42,17 +42,10 @@ export const RequestDelegationButton = ({
     if (actorNationalId) {
       const grantorNationalId = user?.profile?.nationalId
       if (grantorNationalId) {
-        try {
-          window.sessionStorage.setItem(
-            DELEGATION_REQUEST_GRANTOR_KEY,
-            JSON.stringify({
-              nationalId: grantorNationalId,
-              name: user?.profile?.name ?? '',
-            }),
-          )
-        } catch {
-          // noop
-        }
+        storeDelegationRequestGrantor(
+          { nationalId: grantorNationalId, name: user?.profile?.name ?? '' },
+          actorNationalId,
+        )
       }
       switchUser(
         actorNationalId,
