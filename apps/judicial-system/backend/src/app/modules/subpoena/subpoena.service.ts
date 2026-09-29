@@ -16,7 +16,7 @@ import {
   getServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
-  addMessagesToQueue,
+  addMessagesToQueueAfterCommit,
   Message,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -174,6 +174,7 @@ export class SubpoenaService {
       defendantsToProcess,
       subpoenas,
       user,
+      transaction,
     )
 
     this.eventService.postEvent('SUBPOENA_ISSUED', theCase, {
@@ -219,9 +220,12 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      // Only buffer after commit so a rollback cannot publish via MessageMiddleware.
+      // Only buffer after commit so a rollback cannot publish via
+      // MessageMiddleware. The request transaction has already committed when
+      // the callback runs, and Sequelize never runs a function registered on a
+      // committed transaction, so the messages are queued without one.
       registerAfterCommit(async () => {
-        addMessagesToQueue(...messages)
+        addMessagesToQueueAfterCommit(undefined, ...messages)
       })
     }
   }
@@ -231,6 +235,7 @@ export class SubpoenaService {
     defendants: Defendant[],
     subpoenas: Subpoena[],
     user: TUser,
+    transaction: Transaction,
   ): Promise<void> {
     const messages = []
 
@@ -256,7 +261,7 @@ export class SubpoenaService {
     }
 
     if (messages.length > 0) {
-      addMessagesToQueue(...messages)
+      addMessagesToQueueAfterCommit(transaction, ...messages)
     }
   }
 
@@ -278,18 +283,19 @@ export class SubpoenaService {
 
   private addMessagesForSubpoenaUpdateToQueue(
     subpoena: Subpoena,
+    transaction: Transaction,
     serviceStatus?: ServiceStatus,
   ): void {
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        addMessagesToQueue({
+        addMessagesToQueueAfterCommit(transaction, {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: { type: SubpoenaNotificationType.SERVICE_SUCCESSFUL },
         })
       } else if (isFailedServiceStatus(serviceStatus)) {
-        addMessagesToQueue({
+        addMessagesToQueueAfterCommit(transaction, {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
@@ -389,7 +395,11 @@ export class SubpoenaService {
     }
 
     // No need to wait for this to finish
-    this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
+    this.addMessagesForSubpoenaUpdateToQueue(
+      subpoena,
+      transaction,
+      serviceStatus,
+    )
 
     if (
       update.serviceStatus &&

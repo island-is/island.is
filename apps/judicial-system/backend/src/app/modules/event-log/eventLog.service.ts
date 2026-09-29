@@ -6,7 +6,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  addMessagesToQueue,
+  addMessagesToQueueAfterCommit,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -105,14 +105,17 @@ export class EventLogService {
       return false
     } finally {
       if (caseId) {
-        this.addMessagesForEventNotificationToQueue({
-          eventType,
-          caseId,
-          userDescriptor: {
-            name: userName,
-            institution: { name: institutionName },
+        this.addMessagesForEventNotificationToQueue(
+          {
+            eventType,
+            caseId,
+            userDescriptor: {
+              name: userName,
+              institution: { name: institutionName },
+            },
           },
-        })
+          transaction,
+        )
       }
     }
   }
@@ -132,19 +135,24 @@ export class EventLogService {
   }
 
   // Sends events to queue for notification dispatch
-  private addMessagesForEventNotificationToQueue({
-    eventType,
-    caseId,
-    userDescriptor,
-  }: {
-    eventType: EventType
-    caseId: string
-    userDescriptor: UserDescriptor
-  }) {
+  private addMessagesForEventNotificationToQueue(
+    {
+      eventType,
+      caseId,
+      userDescriptor,
+    }: {
+      eventType: EventType
+      caseId: string
+      userDescriptor: UserDescriptor
+    },
+    // Event logs are often written outside any transaction; then the row is
+    // already durable and the message is queued right away.
+    transaction: Transaction | undefined,
+  ) {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
-      addMessagesToQueue({
+      addMessagesToQueueAfterCommit(transaction, {
         type: MessageType.EVENT_NOTIFICATION_DISPATCH,
         caseId: caseId,
         // There is a user property defined in the Message type definition, but

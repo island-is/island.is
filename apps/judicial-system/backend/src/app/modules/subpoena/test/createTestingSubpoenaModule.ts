@@ -15,7 +15,8 @@ import {
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 import {
-  addMessagesToQueue,
+  addMessagesToQueueAfterCommit,
+  type AfterCommitTransaction,
   Message,
   MessageService,
 } from '@island.is/judicial-system/message'
@@ -156,15 +157,19 @@ export const createTestingSubpoenaModule = async () => {
   const messageService = subpoenaModule.get<MessageService>(MessageService)
 
   const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
-  })
+  const mockAddMessagesToQueueAfterCommit =
+    addMessagesToQueueAfterCommit as jest.Mock
+  mockAddMessagesToQueueAfterCommit.mockImplementation(
+    (_: AfterCommitTransaction | undefined, ...msgs: Message[]) => {
+      queuedMessages.push(...msgs)
+    },
+  )
 
   subpoenaModule.close()
 
   return {
     queuedMessages,
+    mockAddMessagesToQueueAfterCommit,
     userService,
     pdfService,
     fileService,

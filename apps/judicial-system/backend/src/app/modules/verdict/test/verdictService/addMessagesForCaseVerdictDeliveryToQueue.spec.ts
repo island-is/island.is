@@ -27,7 +27,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
   let verdictService: VerdictService
   let mockVerdictRepositoryService: VerdictRepositoryService
-  let mockAddMessagesToQueue: jest.Mock
+  let mockAddMessagesToQueueAfterCommit: jest.Mock
 
   beforeEach(async () => {
     jest.resetAllMocks()
@@ -37,11 +37,11 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
     verdictService = service
     mockVerdictRepositoryService = verdictRepositoryService
-    mockAddMessagesToQueue = (
+    mockAddMessagesToQueueAfterCommit = (
       jest.requireMock(
         '@island.is/judicial-system/message',
       ) as typeof MessageModule
-    ).addMessagesToQueue as jest.Mock
+    ).addMessagesToQueueAfterCommit as jest.Mock
 
     const mockCreate = mockVerdictRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue({ id: uuid() } as Verdict)
@@ -55,7 +55,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
       serviceRequirement: ServiceRequirement.REQUIRED,
       serviceInformationForDefendant: [],
       isDefaultJudgement: false,
-    } as Verdict
+    } as unknown as Verdict
 
     const theCase = {
       id: caseId,
@@ -88,12 +88,16 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
       },
       { transaction },
     )
-    expect(mockAddMessagesToQueue).toHaveBeenCalledWith({
-      type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-      user,
-      caseId,
-      elementId: [defendantId],
-    })
+    // Queued against the transaction, so a rollback sends nothing
+    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
+      transaction,
+      {
+        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+        user,
+        caseId,
+        elementId: [defendantId],
+      },
+    )
     expect(result).toEqual({ queued: true })
   })
 
@@ -122,7 +126,12 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
     expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
     expect(mockVerdictRepositoryService.create).not.toHaveBeenCalled()
-    expect(mockAddMessagesToQueue).toHaveBeenCalled()
+    expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
+      transaction,
+      expect.objectContaining({
+        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+      }),
+    )
   })
 
   // Everything that asks what became of a judgment reads the defendant's latest
@@ -142,7 +151,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
       appealDate,
       defendantHasRequestedAppeal: true,
       isAcquittedByPublicProsecutionOffice: true,
-    } as Verdict
+    } as unknown as Verdict
 
     const theCase = {
       id: caseId,

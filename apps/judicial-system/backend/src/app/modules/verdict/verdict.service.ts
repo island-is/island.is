@@ -12,7 +12,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  addMessagesToQueue,
+  addMessagesToQueueAfterCommit,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
@@ -279,7 +279,7 @@ export class VerdictService {
       isVerdictServed && defendant?.isDrivingLicenseSuspended
 
     if (shouldSendDrivingLicenseSuspensionNotification) {
-      addMessagesToQueue({
+      addMessagesToQueueAfterCommit(transaction, {
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -701,7 +701,7 @@ export class VerdictService {
             )
           }
 
-          addMessagesToQueue({
+          addMessagesToQueueAfterCommit(transaction, {
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
             user,
             caseId: theCase.id,

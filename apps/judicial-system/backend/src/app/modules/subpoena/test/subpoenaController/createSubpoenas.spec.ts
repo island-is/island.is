@@ -84,6 +84,7 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
   let mockQueuedMessages: Message[]
+  let mockAddMessagesToQueueAfterCommit: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let subpoenaController: SubpoenaController
@@ -96,6 +97,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       courtDocumentRepositoryService,
       subpoenaController: controller,
       queuedMessages,
+      mockAddMessagesToQueueAfterCommit: mockAddMessages,
     } = await createTestingSubpoenaModule()
 
     mockCaseRepositoryService = caseRepositoryService
@@ -103,6 +105,7 @@ describe('SubpoenaController - Create subpoenas', () => {
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
     subpoenaController = controller
     mockQueuedMessages = queuedMessages
+    mockAddMessagesToQueueAfterCommit = mockAddMessages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -119,6 +122,7 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       // Clear queued messages before each test
       mockQueuedMessages.length = 0
+      mockAddMessagesToQueueAfterCommit.mockClear()
 
       try {
         // Revocation messages register via registerAfterCommit; unit tests do
@@ -223,6 +227,13 @@ describe('SubpoenaController - Create subpoenas', () => {
             elementId: [defendantId2, subpoenaId2],
           }),
         ]),
+      )
+
+      // Queued against the request transaction, so a rollback sends nothing
+      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledTimes(1)
+      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
+        transaction,
+        ...mockQueuedMessages,
       )
 
       expect(then.result).toEqual([subpoena1, subpoena2])
@@ -422,6 +433,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       let result: Subpoena[] | undefined
 
       mockQueuedMessages.length = 0
+      mockAddMessagesToQueueAfterCommit.mockClear()
 
       await runInRequestContext(async () => {
         result = await subpoenaController.createSubpoenas(
@@ -468,6 +480,28 @@ describe('SubpoenaController - Create subpoenas', () => {
         ]),
       )
       expect(mockQueuedMessages).toHaveLength(3)
+
+      // The delivery messages wait for the request transaction to commit; the
+      // revocation message is queued from an after-commit callback, where the
+      // transaction has already committed, so it must not be passed again
+      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledTimes(2)
+      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenNthCalledWith(
+        1,
+        transaction,
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+        }),
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+        }),
+      )
+      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenNthCalledWith(
+        2,
+        undefined,
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+        }),
+      )
 
       expect(result).toEqual([subpoena1])
     })

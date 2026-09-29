@@ -32,7 +32,7 @@ describe('VerdictService - update', () => {
 
   let mockVerdictRepositoryService: VerdictRepositoryService
   let transaction: Transaction
-  let mockAddMessagesToQueue: jest.Mock
+  let mockAddMessagesToQueueAfterCommit: jest.Mock
   let verdictService: VerdictService
 
   let givenWhenThen: GivenWhenThen
@@ -46,11 +46,11 @@ describe('VerdictService - update', () => {
     verdictService = service
     mockVerdictRepositoryService = verdictRepositoryService
     transaction = {} as Transaction
-    mockAddMessagesToQueue = (
+    mockAddMessagesToQueueAfterCommit = (
       jest.requireMock(
         '@island.is/judicial-system/message',
       ) as typeof MessageModule
-    ).addMessagesToQueue as jest.Mock
+    ).addMessagesToQueueAfterCommit as jest.Mock
 
     givenWhenThen = async ({ verdict, update, theCase, defendantId }) => {
       const then = {} as Then
@@ -110,13 +110,17 @@ describe('VerdictService - update', () => {
         { transaction },
       )
 
-      expect(mockAddMessagesToQueue).toHaveBeenCalledWith({
-        type: 'INDICTMENT_CASE_NOTIFICATION',
-        caseId,
-        body: {
-          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+      // Queued against the transaction, so a rollback sends nothing
+      expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
+        transaction,
+        {
+          type: 'INDICTMENT_CASE_NOTIFICATION',
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
         },
-      })
+      )
 
       expect(then.result).toBe(updatedVerdict)
     })
@@ -158,7 +162,7 @@ describe('VerdictService - update', () => {
 
     it('should update verdict without enqueuing notification', () => {
       expect(mockVerdictRepositoryService.update).toHaveBeenCalledTimes(1)
-      expect(mockAddMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockAddMessagesToQueueAfterCommit).not.toHaveBeenCalled()
       expect(then.result).toBeDefined()
     })
   })
