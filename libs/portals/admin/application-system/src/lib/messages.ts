@@ -282,6 +282,30 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:roleFormAccordionLabelGeneric',
     defaultMessage: 'Eyðublað ({role})',
   },
+  roleFormLabelAssignee: {
+    id: 'admin-portal.application-system:roleFormLabelAssignee',
+    defaultMessage: 'Eyðublað tengds aðila',
+  },
+  roleFormLabelReviewer: {
+    id: 'admin-portal.application-system:roleFormLabelReviewer',
+    defaultMessage: 'Eyðublað yfirferðaraðila',
+  },
+  roleFormLabelProcurer: {
+    id: 'admin-portal.application-system:roleFormLabelProcurer',
+    defaultMessage: 'Eyðublað málsvara',
+  },
+  roleFormLabelBuyer: {
+    id: 'admin-portal.application-system:roleFormLabelBuyer',
+    defaultMessage: 'Eyðublað kaupanda',
+  },
+  roleFormLabelActor: {
+    id: 'admin-portal.application-system:roleFormLabelActor',
+    defaultMessage: 'Eyðublað aðila',
+  },
+  roleFormLabelVmst: {
+    id: 'admin-portal.application-system:roleFormLabelVmst',
+    defaultMessage: 'Eyðublað Vinnumálastofnunar',
+  },
   translationSaveFailed: {
     id: 'admin-portal.application-system:translationSaveFailed',
     defaultMessage: 'Ekki tókst að vista. {detail}',
@@ -403,6 +427,14 @@ export const m = defineMessages({
   translationWorkspaceTabsAriaLabel: {
     id: 'admin-portal.application-system:translationWorkspaceTabsAriaLabel',
     defaultMessage: 'Flokkar þýðingaborðs',
+  },
+  translationScreenStatusColumn: {
+    id: 'admin-portal.application-system:translationScreenStatusColumn',
+    defaultMessage: 'Skjár - staða',
+  },
+  translationStringsColumn: {
+    id: 'admin-portal.application-system:translationStringsColumn',
+    defaultMessage: 'Strengir',
   },
   translationFieldAutofill: {
     id: 'admin-portal.application-system:translationFieldAutofill',

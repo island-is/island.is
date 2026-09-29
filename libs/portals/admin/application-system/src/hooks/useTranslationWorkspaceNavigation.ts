@@ -7,18 +7,8 @@ import type {
 import {
   findInitialSidebarSelection,
   flattenNavEntries,
+  isSameSidebarLocation,
 } from '../utils/translationWorkspaceSelection'
-
-const sameLocation = (
-  a: SidebarNavLocation | null,
-  b: SidebarNavLocation,
-): boolean =>
-  !!a &&
-  a.stateKey === b.stateKey &&
-  a.roleId === b.roleId &&
-  a.sectionId === b.sectionId &&
-  (a.subsectionId ?? null) === (b.subsectionId ?? null) &&
-  (a.leafSourceScreenId ?? null) === (b.leafSourceScreenId ?? null)
 
 type UseTranslationWorkspaceNavigationArgs = {
   introspection: WorkspaceTemplateIntrospection | null
@@ -83,7 +73,7 @@ export const useTranslationWorkspaceNavigation = ({
   const currentEntryIndex = useMemo(() => {
     if (!selectedLocation) return -1
     return navEntries.findIndex((entry) =>
-      sameLocation(selectedLocation, entry.location),
+      isSameSidebarLocation(selectedLocation, entry.location),
     )
   }, [navEntries, selectedLocation])
 

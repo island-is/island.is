@@ -19,6 +19,17 @@ const excludeHiddenScreens = (
 ): ScreenIntrospection[] =>
   screens.filter((screen) => !PREVIEW_EXCLUDED_FIELD_TYPES.has(screen.type))
 
+export const isSameSidebarLocation = (
+  a: SidebarNavLocation | null,
+  b: SidebarNavLocation,
+): boolean =>
+  !!a &&
+  a.stateKey === b.stateKey &&
+  a.roleId === b.roleId &&
+  a.sectionId === b.sectionId &&
+  (a.subsectionId ?? null) === (b.subsectionId ?? null) &&
+  (a.leafSourceScreenId ?? null) === (b.leafSourceScreenId ?? null)
+
 export const getActiveForm = (
   introspection: WorkspaceTemplateIntrospection | null,
   selectedLocation: SidebarNavLocation | null,

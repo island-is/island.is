@@ -262,8 +262,8 @@ export const countTranslationsForScreens = (
   )
 }
 
-/** Sidebar label for a template role's form (accordion). */
-export const getRoleFormAccordionLabel = (
+/** Human-readable label for a template role's form. */
+export const getRoleFormLabel = (
   roleId: string,
   formatMessage: FormatMessage,
 ): string => {
@@ -272,6 +272,18 @@ export const getRoleFormAccordionLabel = (
       return formatMessage(m.roleFormAccordionLabelApplicant)
     case 'delegate':
       return formatMessage(m.roleFormAccordionLabelDelegate)
+    case 'assignee':
+      return formatMessage(m.roleFormLabelAssignee)
+    case 'reviewer':
+      return formatMessage(m.roleFormLabelReviewer)
+    case 'procurer':
+      return formatMessage(m.roleFormLabelProcurer)
+    case 'buyer':
+      return formatMessage(m.roleFormLabelBuyer)
+    case 'actor':
+      return formatMessage(m.roleFormLabelActor)
+    case 'vmst':
+      return formatMessage(m.roleFormLabelVmst)
     default: {
       const rest = roleId.slice(1)
       const initial = roleId.charAt(0).toUpperCase()

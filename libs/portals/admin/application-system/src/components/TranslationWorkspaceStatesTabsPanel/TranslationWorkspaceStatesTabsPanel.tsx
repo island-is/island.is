@@ -25,7 +25,6 @@ import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
 export interface TranslationWorkspaceStatesTabsPanelProps {
   states: TemplateStateNav[]
-  selectedScreenId: string | undefined
   selectedLocation: SidebarNavLocation | null
   onNavClick: (nav: ScreenIntrospection, location: SidebarNavLocation) => void
   formatMessage: FormatMessage
@@ -61,7 +60,6 @@ const withCount = (label: string, count: number) =>
 
 export const TranslationWorkspaceStatesTabsPanel = ({
   states,
-  selectedScreenId,
   selectedLocation,
   onNavClick,
   formatMessage,
@@ -243,7 +241,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
             <Box className={styles.tabsPanelInner}>
               <TranslationWorkspaceStatesNav
                 states={states}
-                selectedScreenId={selectedScreenId}
                 selectedLocation={selectedLocation}
                 onNavClick={onNavClick}
                 persistedByKey={persistedByKey}

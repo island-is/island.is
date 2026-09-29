@@ -180,7 +180,6 @@ export const TranslationWorkspace = () => {
     const navPanel = (
       <TranslationWorkspaceStatesTabsPanel
         states={introspection.states}
-        selectedScreenId={selectedScreen?.id}
         selectedLocation={selectedLocation}
         onNavClick={handleSidebarNavClick}
         formatMessage={formatMessage}
