@@ -28,10 +28,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
