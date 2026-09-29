@@ -24,6 +24,8 @@ import { GrantTypeService } from './grant-type/grant-type.service'
 import { IdpProviderResolver } from './idp-provider/idp-provider.resolver'
 import { IdpProviderService } from './idp-provider/idp-provider.service'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { PublicAuthResolver } from './public/public-auth.resolver'
+import { PublicAuthService } from './public/public-auth.service'
 
 @Module({
   imports: [AuthAdminApiClientModule, AuthDelegationApiClientModule, CmsModule],
@@ -48,6 +50,8 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     GrantTypeService,
     IdpProviderResolver,
     IdpProviderService,
+    PublicAuthResolver,
+    PublicAuthService,
   ],
 })
 export class AuthAdminModule {}
