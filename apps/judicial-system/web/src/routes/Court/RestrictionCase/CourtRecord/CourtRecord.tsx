@@ -56,6 +56,7 @@ import {
   useCase,
   useDebouncedInput,
   useOnceOn,
+  useSerializedSave,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { withCaseLevelAppealDecision } from '@island.is/judicial-system-web/src/utils/utils'
 import {
@@ -78,6 +79,8 @@ export const CourtRecord: FC = () => {
     useState<string>('')
 
   const router = useRouter()
+  // Runs court end time saves one at a time and knows which value the server has
+  const saveCourtEndTime = useSerializedSave<string | null | undefined>()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
@@ -495,16 +498,36 @@ export const CourtRecord: FC = () => {
                     selectedDate={workingCase.courtEndTime}
                     onChange={(date: Date | undefined, valid: boolean) => {
                       if (date && valid) {
-                        setAndSendCaseToServer(
-                          [
-                            {
-                              courtEndTime: formatDateForServer(date),
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
-                        )
+                        const courtEndTime = formatDateForServer(date)
+
+                        // A failed save toasts, but the optimistic value would still
+                        // validate the step and let the judge continue with a court
+                        // end time the server never got. The save rolls the field
+                        // back to the value the server has, so the step stays invalid
+                        // until the time is actually persisted.
+                        saveCourtEndTime({
+                          // Per case: the page is reused when the judge moves to another case
+                          key: `courtEndTime:${workingCase.id}`,
+                          confirmed: workingCase.courtEndTime,
+                          value: courtEndTime,
+                          persist: () =>
+                            setAndSendCaseToServer(
+                              [{ courtEndTime, force: true }],
+                              workingCase,
+                              setWorkingCase,
+                            ),
+                          rollback: (confirmedCourtEndTime) =>
+                            setWorkingCase((prev) =>
+                              // A save that fails after the judge has moved on to another
+                              // case must not touch that case
+                              prev.id !== workingCase.id
+                                ? prev
+                                : {
+                                    ...prev,
+                                    courtEndTime: confirmedCourtEndTime,
+                                  },
+                            ),
+                        })
                       }
                     }}
                     blueBox={false}

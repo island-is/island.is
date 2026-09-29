@@ -93,8 +93,16 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   ])
 
   // Unified helper: get a signed URL
+  // mergedCaseId names the merged case a single file belongs to, for a list
+  // that is mostly this case's own files but holds a few from cases merged into
+  // it - the court record, where a document copied in from a merged case still
+  // points at that case's file. A list that is wholly a merged case's files
+  // says so once, through connectedCaseParentId, and passes nothing here.
   const getFileUrl = useCallback(
-    async (fileId: string): Promise<string | undefined> => {
+    async (
+      fileId: string,
+      mergedCaseId?: string,
+    ): Promise<string | undefined> => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
       try {
         const { data } = await query({
@@ -102,7 +110,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
             input: {
               id: fileId,
               caseId: connectedCaseParentId ?? caseId,
-              mergedCaseId: connectedCaseParentId && caseId,
+              mergedCaseId: mergedCaseId ?? (connectedCaseParentId && caseId),
             },
           },
         })
@@ -128,8 +136,8 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
 
   // Handlers
   const onOpen = useCallback(
-    async (fileId: string) => {
-      const url = await getFileUrl(fileId)
+    async (fileId: string, mergedCaseId?: string) => {
+      const url = await getFileUrl(fileId, mergedCaseId)
 
       if (url) openFile(url)
     },

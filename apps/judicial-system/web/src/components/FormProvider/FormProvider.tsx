@@ -16,7 +16,6 @@ import {
   PROSECUTION_CREATE_TRAVEL_BAN_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseOrigin,
   CaseState,
@@ -29,6 +28,14 @@ import { useCaseLazyQuery } from './case.generated'
 import type { LimitedAccessCaseQuery } from './limitedAccessCase.generated'
 import { useLimitedAccessCaseLazyQuery } from './limitedAccessCase.generated'
 
+// The case as the web fetches it: every field either case query selects, and
+// nothing else. Reading a field neither query selects is a compile error, which
+// is what keeps the queries from growing to cover the whole schema. The two
+// queries serve different roles and select different fields, so a screen that
+// reads a field only the other role's query selects gets undefined at runtime.
+export type WorkingCase = NonNullable<CaseQuery['case']> &
+  NonNullable<LimitedAccessCaseQuery['limitedAccessCase']>
+
 type ProviderState =
   | 'creating'
   | 'fetch'
@@ -39,8 +46,8 @@ type ProviderState =
   | undefined
 
 interface FormContextValue {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
@@ -48,7 +55,7 @@ interface FormContextValue {
   refreshCase: () => void
   getCase: (
     id: string,
-    onCompleted: (theCase: Case) => void,
+    onCompleted: (theCase: WorkingCase) => void,
     onError: () => void,
   ) => void
 }
@@ -57,10 +64,9 @@ interface Props {
   children: ReactNode
 }
 
-const initialState: Case = {
+const initialState: WorkingCase = {
   id: '',
   created: '',
-  modified: '',
   origin: CaseOrigin.UNKNOWN,
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
@@ -111,7 +117,7 @@ const FormProvider = ({ children }: Props) => {
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
   const [pathname, setPathname] = useState<string>()
-  const [workingCase, setWorkingCase] = useState<Case>({
+  const [workingCase, setWorkingCase] = useState<WorkingCase>({
     ...initialState,
     type: caseType,
     policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
@@ -162,7 +168,11 @@ const FormProvider = ({ children }: Props) => {
   })
 
   const getCase = useCallback(
-    (id: string, onCompleted: (theCase: Case) => void, onError: () => void) => {
+    (
+      id: string,
+      onCompleted: (theCase: WorkingCase) => void,
+      onError: () => void,
+    ) => {
       const promisedCase = limitedAccess
         ? queryLimitedAccessCase({ variables: { input: { id } } })
         : queryCase({ variables: { input: { id } } })
@@ -170,7 +180,12 @@ const FormProvider = ({ children }: Props) => {
       promisedCase
         .then((caseData) => {
           if (caseData && caseData.data) {
-            const data = caseData.data as CaseQuery & LimitedAccessCaseQuery
+            // Whichever query ran, its result is a WorkingCase. This is the
+            // one place the two query result types meet the shared context type.
+            const data = caseData.data as {
+              case?: WorkingCase | null
+              limitedAccessCase?: WorkingCase | null
+            }
             const theCase = data[limitedAccess ? 'limitedAccessCase' : 'case']
 
             if (theCase) {
@@ -200,7 +215,7 @@ const FormProvider = ({ children }: Props) => {
     ) {
       getCase(
         id,
-        (theCase: Case) => {
+        (theCase) => {
           setWorkingCase(theCase)
 
           // The case has been loaded from the server

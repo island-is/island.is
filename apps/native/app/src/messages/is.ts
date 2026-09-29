@@ -886,6 +886,10 @@ export const is = {
   'health.appointments.cancelErrorTitle': 'Ekki tókst að afbóka tímann',
   'health.appointments.cancelErrorMessage':
     'Ekki tókst að framkvæma aðgerð, reyndu aftur.',
+  'health.appointments.cancelContactProvider':
+    'Ekki tókst að afbóka tíma, vinsamlegast hringdu í þjónustuveitanda.',
+  'health.appointments.cancelUnconfirmed':
+    'Ekki tókst að staðfesta afbókun, reyndu aftur.',
 
   // health - messages
   'health.messages.screenTitle': 'Skilaboð',
@@ -923,6 +927,16 @@ export const is = {
     'Ekki er hægt að svara skilaboðum sem eru eldri en {days} dagar.',
   'health.messages.replyBlocked.awaitingStaff':
     'Ekki er hægt að svara þessum skilaboðum fyrr en starfsfólk hefur svarað þér.',
+  'health.messages.replyBlocked.awaitingAcknowledgement':
+    'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda.',
+  'health.messages.compose.introTitle': 'Hafa samband',
+  'health.messages.compose.introBody1':
+    'Hér er hægt að senda skilaboð og þeim er alla jafnan svarað innan þriggja virkra daga, á dagvinnutíma.',
+  'health.messages.compose.introBody2':
+    'Ef erindið er brýnt og þarfnast svars samdægurs hringdu í <b>1700</b> eða hafðu samband við þitt meðferðarteymi.',
+  'health.messages.compose.introBody3':
+    'Í neyðartilvikum, hringdu í <b>112.</b>',
+  'health.messages.compose.continue': 'Halda áfram',
   'health.messages.compose.newTitle': 'Ný skilaboð',
   'health.messages.compose.selectRecipient': 'Veldu viðtakanda',
   'health.messages.compose.selectService': 'Veldu þjónustu',
@@ -933,11 +947,17 @@ export const is = {
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'health.messages.compose.termsAccept':
     'Ég samþykki að skilaboðin vistist í sjúkraskrá og að viðeigandi heilbrigðisstarfsmaður með aðgang að henni svari erindinu.',
-  'health.messages.compose.availabilityWindow':
-    '{name} tekur við skilaboðum alla daga frá kl. {openTime} til {closeTime}.',
-  'health.messages.compose.availabilityInfo':
-    'Venjulega er svarað innan 3 virkra daga. Ef erindið er brýnt og þú þarft svar sama dag skaltu hringja í 1700. Ef um neyðartilvik er að ræða skaltu hringja strax í 112.',
   'health.messages.compose.closedTitle': 'Lokað fyrir ný skilaboð núna',
+  'health.messages.compose.closedNowText':
+    'Ekki er hægt að senda ný skilaboð eins og er.',
+  'health.messages.compose.closedNextOpensText':
+    'Næst er hægt að senda skilaboð {hasTime, select, false {} other {frá kl. {time} }}{when, select, today {í dag} tomorrow {á morgun} other {{date}}}.',
+  'health.messages.compose.openingHoursTitle': 'Móttökutími skilaboða:',
+  'health.messages.compose.openingHoursWeekdays': 'Virkir dagar',
+  'health.messages.compose.openingHoursWeekends': 'Helgar',
+  'health.messages.compose.openingHoursHolidays': 'Lögbundnir frídagar',
+  'health.messages.compose.openingHoursClosed': 'Lokað',
+  'health.messages.compose.openingHoursAllDay': 'Allan sólarhringinn',
   'health.messages.compose.notAllowedTitle': 'Ekki hægt að senda skilaboð',
   'health.messages.compose.notAllowedText':
     'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
@@ -947,16 +967,20 @@ export const is = {
     '{name} býður ekki upp á skilaboðaþjónustu í gegnum Ísland.is',
   'health.messages.compose.closingSoonTitle':
     'Athugið: það lokar bráðlega fyrir skilaboð',
+  'health.messages.compose.closingSoonText':
+    'Sendu skilaboðin þín áður en lokað er kl. {closeTime}.',
   'health.messages.compose.send': 'Senda skilaboð',
   'health.messages.compose.sendError':
     'Ekki tókst að senda skilaboð. Vinsamlegast reyndu aftur síðar.',
-  'health.messages.compose.noRecipient':
-    'Ekki er hægt að senda skilaboð eins og er',
+  'health.messages.compose.noRecipient': 'Ekki hægt að senda skilaboð',
+  'health.messages.compose.noRecipientText':
+    'Engin heilsugæsla sem skráð er á þig býður upp á skilaboðaþjónustu í gegnum Ísland.is.',
   'health.messages.compose.certificateTitle':
     'Ekki hægt að sækja um vottorð í gegnum appið',
   'health.messages.compose.certificateText':
     'Eins og er er ekki hægt að sækja um vottorð í gegnum Ísland.is appið. Vinsamlegast sækið um vottorð í gegnum Mínar síður Ísland.is.',
   'health.messages.compose.certificateLink': 'Sækja um vottorð',
+  'health.messages.compose.externalLink': 'Opna netspjall',
   'health.messages.certificatePayment.title': 'Vottorð tilbúið til greiðslu',
   'health.messages.certificatePayment.text':
     'Vottorðið kostar {amount} og er ógreitt. Greiddu fyrir vottorðið á Mínum síðum Ísland.is.',

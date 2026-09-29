@@ -25,7 +25,7 @@ interface Props {
 const columnHelper = createColumnHelper<FarmerLandRegistryEntry>()
 
 export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const columns = useMemo(
     () => [
@@ -37,8 +37,7 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
         cell: ({ getValue }) => formatNationalId(getValue() ?? ''),
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandRegistryEntry>) => {

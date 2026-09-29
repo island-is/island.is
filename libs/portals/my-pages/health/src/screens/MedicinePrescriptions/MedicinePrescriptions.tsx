@@ -156,9 +156,9 @@ const MedicinePrescriptions = () => {
             filterInput={
               <Input
                 placeholder={formatMessage(m.searchPlaceholder)}
+                aria-label={formatMessage(m.searchLabel)}
                 name="rafraen-skjol-input"
                 size="xs"
-                label={formatMessage(m.searchLabel)}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 backgroundColor="blue"
                 icon={{ name: 'search' }}

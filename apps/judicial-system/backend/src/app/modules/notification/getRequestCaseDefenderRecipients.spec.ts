@@ -136,9 +136,7 @@ describe('formatRequestCaseDefenderNames', () => {
 
   it('should return a single name', () => {
     const result = formatRequestCaseDefenderNames({
-      defendants: [
-        { defenderEmail: 'a@test.is', defenderName: 'Jon' },
-      ],
+      defendants: [{ defenderEmail: 'a@test.is', defenderName: 'Jon' }],
     } as unknown as Case)
 
     expect(result).toBe('Jon')

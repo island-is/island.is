@@ -14,23 +14,41 @@ import { messages } from '../../../lib/messages'
 import * as styles from '../HealthConversations.css'
 import {
   useCreateHealthCertificatePaymentIntentMutation,
+  useGetHealthCertificateLazyQuery,
   useGetHealthCertificateQuery,
 } from '../HealthConversationDetail.generated'
 
 const POLL_INTERVAL_MS = 4000
 const POLL_TIMEOUT_MS = 2 * 60 * 1000
 
+// A recent intent may still get its payment callback; an older one is an
+// abandoned attempt the patient can simply resume, so it must never block
+// the Pay button.
+const isPaymentMaybeInFlight = (
+  pendingPaymentStartedAt?: Date | string | null,
+) =>
+  Boolean(
+    pendingPaymentStartedAt &&
+      Date.now() - new Date(pendingPaymentStartedAt).getTime() <
+        POLL_TIMEOUT_MS,
+  )
+
 const useCertificatePaymentPolling = ({
   certificateId,
-  pendingPaymentId,
+  pendingPaymentStartedAt,
   isReturningFromPayment,
   onPaid,
 }: Pick<
   Props,
-  'certificateId' | 'pendingPaymentId' | 'isReturningFromPayment' | 'onPaid'
+  | 'certificateId'
+  | 'pendingPaymentStartedAt'
+  | 'isReturningFromPayment'
+  | 'onPaid'
 >) => {
   const [isPolling, setIsPolling] = useState(
-    Boolean(pendingPaymentId || isReturningFromPayment),
+    () =>
+      Boolean(isReturningFromPayment) ||
+      isPaymentMaybeInFlight(pendingPaymentStartedAt),
   )
 
   useEffect(() => {
@@ -39,11 +57,13 @@ const useCertificatePaymentPolling = ({
     return () => clearTimeout(timeout)
   }, [isPolling])
 
-  // A pending payment can appear on an already-mounted message via a
-  // conversation refetch — start polling for it as well, not only on mount.
+  // A fresh intent can also arrive on an already-mounted message via a
+  // conversation refetch (e.g. the bfcache return from the gateway). Safe to
+  // re-arm on, unlike the removed pendingPaymentId effect: only a recent
+  // timestamp arms, so each one buys at most one bounded polling window.
   useEffect(() => {
-    if (pendingPaymentId) setIsPolling(true)
-  }, [pendingPaymentId])
+    if (isPaymentMaybeInFlight(pendingPaymentStartedAt)) setIsPolling(true)
+  }, [pendingPaymentStartedAt])
 
   const { data: pollData } = useGetHealthCertificateQuery({
     variables: { id: certificateId ?? '' },
@@ -135,11 +155,12 @@ interface Props {
   requiresPayment?: boolean | null
   paid?: boolean | null
   amountIsk?: number | null
-  pendingPaymentId?: string | null
+  pendingPaymentStartedAt?: Date | string | null
   isReturningFromPayment?: boolean
   fileName?: string | null
   downloadServiceURL?: string | null
   onPaid: () => void
+  onRefresh: () => void
 }
 
 const CertificateAction = ({
@@ -147,22 +168,26 @@ const CertificateAction = ({
   requiresPayment,
   paid,
   amountIsk,
-  pendingPaymentId,
+  pendingPaymentStartedAt,
   isReturningFromPayment,
   fileName,
   downloadServiceURL,
   onPaid,
+  onRefresh,
 }: Props) => {
   const { formatMessage, lang } = useLocale()
   const isPolling = useCertificatePaymentPolling({
     certificateId,
-    pendingPaymentId,
+    pendingPaymentStartedAt,
     isReturningFromPayment,
     onPaid,
   })
 
   const [createPaymentIntent, { loading: paymentLoading }] =
     useCreateHealthCertificatePaymentIntentMutation()
+  const [checkCertificate] = useGetHealthCertificateLazyQuery({
+    fetchPolicy: 'network-only',
+  })
 
   const handlePay = async () => {
     if (!certificateId) return
@@ -183,6 +208,21 @@ const CertificateAction = ({
       }
       window.location.href = paymentPageUrl
     } catch {
+      // The refusal may be good news (paid all along via a late callback,
+      // or no longer payable) - re-check the certificate and let its state
+      // decide before claiming failure.
+      const { data } = await checkCertificate({
+        variables: { id: certificateId },
+      })
+      const certificate = data?.healthDirectorateCertificate
+      if (certificate?.paid) {
+        onPaid()
+        return
+      }
+      if (certificate && certificate.requiresPayment === false) {
+        onRefresh()
+        return
+      }
       toast.error(
         formatMessage(messages.healthConversationCertificatePaymentError),
       )

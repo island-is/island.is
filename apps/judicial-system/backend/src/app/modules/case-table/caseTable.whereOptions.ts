@@ -28,6 +28,8 @@ import {
 import {
   courtOfAppealsCasesCompletedWhereOptions,
   courtOfAppealsCasesInProgressWhereOptions,
+  courtOfAppealsVerdictAppealsCompletedWhereOptions,
+  courtOfAppealsVerdictAppealsInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
   defenceIndictmentsAppealedWhereOptions,
@@ -70,6 +72,7 @@ import {
   prosecutionRequestCasesInProgressWhereOptions,
 } from './whereOptions/prosecution'
 import {
+  publicProsecutionIndictmentsAppealedWhereOptions,
   publicProsecutionIndictmentsInReviewWhereOptions,
   publicProsecutionIndictmentsReviewedWhereOptions,
 } from './whereOptions/publicProsecution'
@@ -134,6 +137,10 @@ export const caseTableWhereOptions: Record<
     courtOfAppealsCasesInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED]:
     courtOfAppealsCasesCompletedWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS]:
+    courtOfAppealsVerdictAppealsInProgressWhereOptions,
+  [CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED]:
+    courtOfAppealsVerdictAppealsCompletedWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
     districtCourtRequestCasesInProgressWhereOptions,
   [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
@@ -194,6 +201,8 @@ export const caseTableWhereOptions: Record<
     publicProsecutionIndictmentsInReviewWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]:
     publicProsecutionIndictmentsReviewedWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]:
+    publicProsecutionIndictmentsAppealedWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT]:
     prosecutionIndictmentsInDraftWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION]:

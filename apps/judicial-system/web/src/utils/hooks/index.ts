@@ -11,6 +11,11 @@ export { useGetLawyers } from './useLawyers/useLawyers'
 export { default as useViewport } from './useViewport/useViewport'
 export { default as useOnceOn } from './useOnceOn'
 export {
+  default as useCaseTableGroups,
+  getVisibleCaseTableGroups,
+} from './useCaseTableGroups'
+export { default as useSerializedSave } from './useSerializedSave'
+export {
   type CaseFileStatus,
   type CaseFileWithStatus,
   UploadState,

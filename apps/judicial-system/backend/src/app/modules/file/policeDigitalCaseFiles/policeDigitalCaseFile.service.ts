@@ -155,7 +155,10 @@ export class PoliceDigitalCaseFileService {
 
     const [policeSystemDigitalCaseFiles, currentPoliceDigitalCaseFiles] =
       await Promise.all([
-        this.policeService.getAllPoliceSystemDigitalCaseFiles(caseId, user),
+        this.policeService.getAllPoliceSystemDigitalCaseFiles(caseId, user, {
+          courtCaseNumber,
+          policeCaseNumbers,
+        }),
         this.policeDigitalCaseFileRepositoryService.findAll({
           where: { caseId },
         }),
@@ -250,6 +253,10 @@ export class PoliceDigitalCaseFileService {
     caseId: string,
     user: User,
     policeDigitalFileId: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     return this.policeService.getTokenUrl(
       caseId,
@@ -257,6 +264,7 @@ export class PoliceDigitalCaseFileService {
       policeDigitalFileId,
       user,
       'getPoliceDigitalCaseFileTokenUrl',
+      caseNumbers,
     )
   }
 

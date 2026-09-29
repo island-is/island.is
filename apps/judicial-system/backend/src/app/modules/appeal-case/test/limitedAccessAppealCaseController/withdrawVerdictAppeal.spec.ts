@@ -7,6 +7,7 @@ import {
   AppealCaseTransition,
   AppealCaseType,
   AppealEventType,
+  CaseFileCategory,
   CaseState,
   CaseType,
   User,
@@ -15,12 +16,14 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
+import { FileService } from '../../../file'
 import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealEventLog,
   AppealEventLogRepositoryService,
   Case,
+  CaseFile,
   CaseRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
@@ -46,6 +49,16 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
   const otherDefendantId = uuid()
   const verdictId = uuid()
   const defenderNationalId = '1111111111'
+  const declarationFile = {
+    id: uuid(),
+    defendantId,
+    category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  } as CaseFile
+  const otherDefendantDeclarationFile = {
+    id: uuid(),
+    defendantId: otherDefendantId,
+    category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+  } as CaseFile
 
   const defender = {
     id: uuid(),
@@ -66,7 +79,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     id: caseId,
     type: CaseType.INDICTMENT,
     state: CaseState.COMPLETED,
-    caseFiles: [],
+    caseFiles: [declarationFile, otherDefendantDeclarationFile],
     defendants: [
       {
         id: defendantId,
@@ -106,6 +119,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockFileService: FileService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -118,6 +132,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
       appealEventLogRepositoryService,
       caseRepositoryService,
       verdictRepositoryService,
+      fileService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
@@ -125,6 +140,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
+    mockFileService = fileService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -198,6 +214,20 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
       )
     })
 
+    it('should soft-delete that defendant appeal declaration files only', () => {
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledTimes(1)
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
+        declarationFile,
+        transaction,
+      )
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalledWith(
+        theCase,
+        otherDefendantDeclarationFile,
+        transaction,
+      )
+    })
+
     // The verdict appeal stands as long as anyone is still appealing it, so neither the
     // appeal case nor the notification moves.
     it('should leave the appeal case standing', () => {
@@ -228,6 +258,14 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
         appealCaseId,
         { appealState: AppealCaseState.WITHDRAWN },
         { transaction },
+      )
+    })
+
+    it('should soft-delete that defendant appeal declaration files', () => {
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
+        declarationFile,
+        transaction,
       )
     })
 
@@ -278,6 +316,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
       expect(then.error).toBeDefined()
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
 
     it('should reject a withdrawal by someone who is not the confirmed defender', async () => {
@@ -288,6 +327,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
 
       expect(then.error).toBeDefined()
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
 
     it('should reject a withdrawal when the defendant is not appealing', async () => {
@@ -303,6 +343,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
       expect(then.error).toBeDefined()
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
       expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
+      expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
 
     // A defendant may appeal again while the deadline runs, so a withdrawal
@@ -325,6 +366,11 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
           defendantId,
         }),
         { transaction },
+      )
+      expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
+        declarationFile,
+        transaction,
       )
     })
   })

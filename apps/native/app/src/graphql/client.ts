@@ -228,6 +228,10 @@ const cache = new InMemoryCache({
         userNotifications: {
           merge: true,
         },
+        // The paginated wrapper has no id, so Apollo needs an explicit merge.
+        healthDirectoratePaginatedHealthConversations: {
+          merge: true,
+        },
         getUserProfile: {
           merge: true,
         },

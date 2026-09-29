@@ -10,7 +10,6 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  getCaseTableGroups,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
@@ -23,7 +22,10 @@ import type {
   CaseType,
   SearchCasesRow,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCaseList,
+  useCaseTableGroups,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { useSearchCasesLazyQuery } from './searchCases.generated'
@@ -109,8 +111,9 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   const { handleOpenCase } = useCaseList()
   const { user } = useContext(UserContext)
 
+  const groups = useCaseTableGroups()
+
   const tableTypeToTitle = useMemo(() => {
-    const groups = getCaseTableGroups(user)
     const map = new Map<CaseTableType, string>()
     groups.forEach((g) => {
       g.tables.forEach((t) => {
@@ -118,7 +121,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
       })
     })
     return map
-  }, [user])
+  }, [groups])
 
   const [searchString, setSearchString] = useState<string>('')
   const [debouncedQuery, setDebouncedQuery] = useState<string>('')

@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -94,7 +94,6 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
-  caseInclude,
   CaseRepositoryService,
   CaseStringRepositoryService,
   CourtDocumentRepositoryService,
@@ -104,7 +103,6 @@ import {
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   EventLog,
-  Institution,
   UpdateCase,
 } from '../repository'
 import { VerdictService } from '../verdict'
@@ -1326,13 +1324,8 @@ export class CaseService {
     allowDeleted = false,
     transaction?: Transaction,
   ): Promise<Case> {
-    const theCase = await this.caseRepositoryService.findOne({
-      include: caseInclude,
-      where: {
-        id: caseId,
-        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
-        isArchived: false,
-      },
+    const theCase = await this.caseRepositoryService.findLiveById(caseId, {
+      allowDeleted,
       transaction,
     })
 
@@ -1365,13 +1358,7 @@ export class CaseService {
   }
 
   async findMinimalById(id: string): Promise<MinimalCase> {
-    const minimalCase = await this.caseRepositoryService.findOne({
-      where: {
-        id,
-        isArchived: false,
-        state: { [Op.not]: CaseState.DELETED },
-      },
-    })
+    const minimalCase = await this.caseRepositoryService.findLiveMinimalById(id)
 
     if (!minimalCase) {
       throw new NotFoundException(`Case ${id} not found`)
@@ -1380,81 +1367,12 @@ export class CaseService {
     return minimalCase
   }
 
-  async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
-
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        { model: Institution, as: 'court', attributes: ['id', 'name'] },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: ['id', 'noNationalId', 'nationalId', 'name'],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          type: CaseType.INDICTMENT,
-          state: [CaseState.RECEIVED],
-          id: { [Op.ne]: theCase.id },
-        },
-      },
-    })
+  getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findConnectedIndictmentCases(theCase)
   }
 
-  async getCandidateMergeCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
-
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    const expectedCount = theCase.defendants.length
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: [],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          id: { [Op.ne]: theCase.id },
-          type: CaseType.INDICTMENT,
-          state: CaseState.RECEIVED,
-          courtId: theCase.courtId,
-        },
-      },
-      // Ensure all defendants matched by grouping and counting
-      group: ['Case.id'],
-      having: literal(`COUNT(DISTINCT "defendants"."id") = ${expectedCount}`),
-    })
+  getCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findCandidateMergeCases(theCase)
   }
 
   async create(
@@ -1482,7 +1400,7 @@ export class CaseService {
 
     await this.defendantService.createForNewCase(theCase.id, {}, transaction)
 
-    if (isRequestCase(caseToCreate.type) && caseToCreate.defenderName) {
+    if (isRequestCase(caseToCreate.type)) {
       await this.defendantService.syncDefenderToAllDefendants(
         theCase.id,
         {
@@ -1490,8 +1408,6 @@ export class CaseService {
           defenderNationalId: caseToCreate.defenderNationalId,
           defenderEmail: caseToCreate.defenderEmail,
           defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
-          defenderChoice: DefenderChoice.CHOOSE,
-          isDefenderChoiceConfirmed: true,
         },
         transaction,
       )
@@ -2394,20 +2310,12 @@ export class CaseService {
         caseUpdate.defendantWaivesRightToCounsel !== undefined
 
       if (defenderFieldChanged) {
-        const mergedName =
-          caseUpdate.defenderName !== undefined
-            ? caseUpdate.defenderName
-            : theCase.defenderName
+        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
+        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
         const waives =
           caseUpdate.defendantWaivesRightToCounsel !== undefined
             ? caseUpdate.defendantWaivesRightToCounsel
             : theCase.defendantWaivesRightToCounsel
-
-        const defenderChoice = waives
-          ? DefenderChoice.WAIVE
-          : mergedName
-          ? DefenderChoice.CHOOSE
-          : null
 
         await this.defendantService.syncDefenderToAllDefendants(
           theCase.id,
@@ -2428,8 +2336,7 @@ export class CaseService {
               caseUpdate.defenderPhoneNumber !== undefined
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
-            defenderChoice,
-            isDefenderChoiceConfirmed: defenderChoice !== null ? true : null,
+            defenderChoice: waives ? DefenderChoice.WAIVE : null,
           },
           transaction,
         )
@@ -2542,19 +2449,13 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
+      // The COMPLETE transition has already checked that the parent case is
+      // received
       const parentCase = theCase.mergeCase
-
-      if (parentCase?.state !== CaseState.RECEIVED) {
-        throw new BadRequestException(
-          `Cannot merge indictment case ${theCase.id} with parent case ${
-            parentCase?.id ?? 'unknown'
-          } in state ${parentCase?.state ?? 'unknown'}`,
-        )
-      }
 
       // Update the latest court session if it is unconfirmed
       if (
-        parentCase.withCourtSessions &&
+        parentCase?.withCourtSessions &&
         parentCase.courtSessions &&
         parentCase.courtSessions.length > 0 &&
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]
@@ -2891,6 +2792,7 @@ export class CaseService {
       'defenderNationalId',
       'defenderEmail',
       'defenderPhoneNumber',
+      'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
       'translator',
@@ -2942,7 +2844,7 @@ export class CaseService {
         ),
       )
 
-      if (theCase.defenderName) {
+      if (isRequestCase(theCase.type)) {
         await this.defendantService.syncDefenderToAllDefendants(
           extendedCase.id,
           {
@@ -2950,8 +2852,9 @@ export class CaseService {
             defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
-            defenderChoice: DefenderChoice.CHOOSE,
-            isDefenderChoiceConfirmed: true,
+            defenderChoice: theCase.defendantWaivesRightToCounsel
+              ? DefenderChoice.WAIVE
+              : null,
           },
           transaction,
         )

@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { fakeBusiness } from '@island.is/judicial-system-web/pages/api/nationalRegistry/constants'
-import type { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
+import type { NationalRegistryResponseBusiness } from '../../../../src/types'
+import { shouldMockNationalRegistry } from '../../../../src/utils/nationalRegistryMock'
+import { fakeBusiness } from '../constants'
 
 const getBusinessesByNationalId = async (
   nationalId: string,
@@ -24,10 +25,9 @@ export default async function handler(
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
 
-  const businesses =
-    process.env.NODE_ENV === 'production'
-      ? await getBusinessesByNationalId(nationalId)
-      : { items: [fakeBusiness] }
+  const businesses = shouldMockNationalRegistry()
+    ? { items: [fakeBusiness] }
+    : await getBusinessesByNationalId(nationalId)
 
   res.status(200).json(businesses)
 }

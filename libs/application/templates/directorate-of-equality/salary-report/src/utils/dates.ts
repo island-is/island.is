@@ -64,3 +64,16 @@ export const isRemedyDateInWindow = (
   const { min, max } = remedyDateBounds(now)
   return picked >= min && picked <= max
 }
+
+// A date DMR stored arrives as a full ISO instant rather than the date-only
+// value it represents (see toDateInputValue), so it is sliced back to its date
+// part before formatting — `parseISO` on the instant resolves it in the
+// browser's zone and lands a day either side west or east of UTC.
+//
+// The slice is the contract, not just the safe reading: DMR confirms its dates
+// are calendar days in UTC — `dueAt` and `earliestNewDueAt` close their day at
+// 23:59:59.999 — even though they stay declared `format: date-time`. Iceland is
+// UTC the year round, so the day named here is the day the applicant
+// experiences.
+export const formatBackendDate = (value?: string | Date | null): string =>
+  formatDateValue(toDateInputValue(value))

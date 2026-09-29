@@ -229,4 +229,5 @@ export {
   ContextMenuCaseActionType,
   CaseTableType,
 } from './lib/tables/caseTableTypes'
+export type { CaseTableGroup } from './lib/tables/caseTableTypes'
 export { getCaseTableGroups } from './lib/tables/caseTableGroup'

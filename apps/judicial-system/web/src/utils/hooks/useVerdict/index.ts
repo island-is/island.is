@@ -97,8 +97,8 @@ const useVerdict = (currentVerdict?: Verdict) => {
 
   const skip =
     !currentVerdict ||
-    !currentVerdict?.externalPoliceDocumentId ||
-    Boolean(currentVerdict?.serviceStatus)
+    !currentVerdict.externalPoliceDocumentId ||
+    Boolean(currentVerdict.serviceStatus)
   const {
     data,
     loading: verdictLoading,

@@ -316,6 +316,11 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      RSK_CALCULATORS_BASE_URL: {
+        dev: 'https://reiknivelarapi.rsk.is',
+        staging: 'https://reiknivelarapi.rsk.is',
+        prod: 'https://reiknivelarapi.rsk.is',
+      },
       LYFJASTOFNUN_PHARMACIES_BASE_URL: {
         dev: 'https://api.serlyfjaskra.is',
         staging: 'https://api.serlyfjaskra.is',

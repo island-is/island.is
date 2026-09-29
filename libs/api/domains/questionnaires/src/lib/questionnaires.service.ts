@@ -312,6 +312,7 @@ export class QuestionnairesService {
 
       const submission = {
         id: questionnaireId,
+        submissionId,
         title: ELdata.title ?? formatMessage(m.questionnaireWithoutTitle),
         isDraft: ELdata.submission.isDraft ?? false,
         description: ELdata.message ?? undefined,
@@ -479,15 +480,13 @@ export class QuestionnairesService {
   ): string[] {
     if ('rows' in reply) {
       return reply.rows.map((row) =>
-        Array.isArray(row)
-          ? row
-              .map((cell) =>
-                'answer' in cell
-                  ? this.formatCellAnswer(cell.answer, formatMessage)
-                  : cell.values.map((v) => v.answer).join(', '),
-              )
-              .join(' | ')
-          : row.values.map((v) => v.answer).join(', '),
+        row
+          .map((cell) =>
+            'answer' in cell
+              ? this.formatCellAnswer(cell.answer, formatMessage)
+              : cell.values.map((v) => v.answer).join(', '),
+          )
+          .join(' | '),
       )
     } else if ('values' in reply) {
       return reply.values.map((v) => v.answer)

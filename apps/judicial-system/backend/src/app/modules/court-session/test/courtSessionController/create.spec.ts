@@ -28,9 +28,11 @@ interface Then {
 type GivenWhenThen = (caseId: string) => Promise<Then>
 
 // A new court session takes in everything the case has waiting for one: its
-// unfiled court documents, then the documents of each case merged into it. A
-// merged case whose documents were filed also gets its ENTRIES text - the
-// court's record of why the cases were joined.
+// own unfiled court documents, then the documents of each case merged into it.
+// A case merged in while an earlier session was open already has its copies
+// here and filing takes them back in; one merged in with no session open is
+// copied in now. Every merged case with documents in the session gets its
+// ENTRIES text - the court's record of why the cases were joined.
 describe('CourtSessionController - Create', () => {
   const caseId = uuid()
   const courtSessionId = uuid()
@@ -70,9 +72,12 @@ describe('CourtSessionController - Create', () => {
 
     const mockCreate = mockCourtSessionRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdCourtSession)
-    const mockUpdateMergedCourtDocuments =
-      mockCourtDocumentRepositoryService.updateMergedCourtDocuments as jest.Mock
-    mockUpdateMergedCourtDocuments.mockResolvedValue(false)
+    const mockCopyMergedCaseCourtDocuments =
+      mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession as jest.Mock
+    mockCopyMergedCaseCourtDocuments.mockResolvedValue(false)
+    const mockFindMergedCaseIds =
+      mockCourtDocumentRepositoryService.findMergedCaseIdsFiledInCourtSession as jest.Mock
+    mockFindMergedCaseIds.mockResolvedValue([])
     const mockFindLatestForCaseAndTypes =
       mockEventLogRepositoryService.findLatestForCaseAndTypes as jest.Mock
     mockFindLatestForCaseAndTypes.mockResolvedValue(null)
@@ -122,7 +127,7 @@ describe('CourtSessionController - Create', () => {
 
     it('should record no merged case when there is none', () => {
       expect(
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments,
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession,
       ).not.toHaveBeenCalled()
       expect(
         mockCourtSessionStringRepositoryService.create,
@@ -148,13 +153,20 @@ describe('CourtSessionController - Create', () => {
         olderMergedCase,
         newerMergedCase,
       ])
-      // The older case has documents to file, the newer has none left.
-      const mockUpdateMergedCourtDocuments =
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments as jest.Mock
-      mockUpdateMergedCourtDocuments.mockImplementation(
-        async ({ caseId: mergedCaseId }: { caseId: string }) =>
+      // The older case is copied in now; the newer one's copies were already
+      // in the case and the filing above took them back into the session.
+      const mockCopyMergedCaseCourtDocuments =
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession as jest.Mock
+      mockCopyMergedCaseCourtDocuments.mockImplementation(
+        async ({ mergedCaseId }: { mergedCaseId: string }) =>
           mergedCaseId === olderMergedCase.id,
       )
+      const mockFindMergedCaseIds =
+        mockCourtDocumentRepositoryService.findMergedCaseIdsFiledInCourtSession as jest.Mock
+      mockFindMergedCaseIds.mockResolvedValue([
+        olderMergedCase.id,
+        newerMergedCase.id,
+      ])
       const mockFindLatestForCaseAndTypes =
         mockEventLogRepositoryService.findLatestForCaseAndTypes as jest.Mock
       mockFindLatestForCaseAndTypes.mockResolvedValue({
@@ -164,21 +176,21 @@ describe('CourtSessionController - Create', () => {
       await givenWhenThen(caseId)
     })
 
-    it('should file each merged case into the new session, oldest merge first', () => {
+    it('should copy each merged case into the new session, oldest merge first', () => {
       expect(
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments,
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession,
       ).toHaveBeenNthCalledWith(1, {
         parentCaseId: caseId,
         parentCaseCourtSessionId: courtSessionId,
-        caseId: olderMergedCase.id,
+        mergedCaseId: olderMergedCase.id,
         transaction,
       })
       expect(
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments,
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession,
       ).toHaveBeenNthCalledWith(2, {
         parentCaseId: caseId,
         parentCaseCourtSessionId: courtSessionId,
-        caseId: newerMergedCase.id,
+        mergedCaseId: newerMergedCase.id,
         transaction,
       })
     })
@@ -193,13 +205,19 @@ describe('CourtSessionController - Create', () => {
       )
     })
 
-    it('should record the merged case in the entries of the session', () => {
+    // Both merged cases have documents in the session - the one copied in now
+    // and the one whose copies were filed back in - so both are written up.
+    it('should record every merged case in the session in the entries', () => {
+      expect(
+        mockCourtDocumentRepositoryService.findMergedCaseIdsFiledInCourtSession,
+      ).toHaveBeenCalledWith(caseId, courtSessionId, { transaction })
       expect(
         mockCourtSessionStringRepositoryService.create,
-      ).toHaveBeenCalledTimes(1)
+      ).toHaveBeenCalledTimes(2)
       expect(
         mockCourtSessionStringRepositoryService.create,
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenNthCalledWith(
+        1,
         {
           caseId,
           courtSessionId,
@@ -212,17 +230,47 @@ describe('CourtSessionController - Create', () => {
         },
         { transaction },
       )
+      expect(
+        mockCourtSessionStringRepositoryService.create,
+      ).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ mergedCaseId: newerMergedCase.id }),
+        { transaction },
+      )
     })
 
     it('should file the case documents before the merged cases', () => {
       const fileAll =
         mockCourtDocumentRepositoryService.fileAllAvailableCourtDocumentsInCourtSession as jest.Mock
-      const updateMerged =
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments as jest.Mock
+      const copyMerged =
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession as jest.Mock
 
       expect(fileAll.mock.invocationCallOrder[0]).toBeLessThan(
-        updateMerged.mock.invocationCallOrder[0],
+        copyMerged.mock.invocationCallOrder[0],
       )
+    })
+  })
+
+  // A merged case can have nothing to bring in - every document was removed
+  // from the record, or it never had one. It gets no section and no entries.
+  describe('a merged case has no documents in the session', () => {
+    const emptyMergedCase = { id: uuid(), courtCaseNumber: 'S-4/2026' } as Case
+
+    beforeEach(async () => {
+      const mockFindAllMergedToCase =
+        mockCaseRepositoryService.findAllMergedToCase as jest.Mock
+      mockFindAllMergedToCase.mockResolvedValue([emptyMergedCase])
+
+      await givenWhenThen(caseId)
+    })
+
+    it('should not add entries for it', () => {
+      expect(
+        mockEventLogRepositoryService.findLatestForCaseAndTypes,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockCourtSessionStringRepositoryService.create,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -233,9 +281,12 @@ describe('CourtSessionController - Create', () => {
       const mockFindAllMergedToCase =
         mockCaseRepositoryService.findAllMergedToCase as jest.Mock
       mockFindAllMergedToCase.mockResolvedValue([mergedCase])
-      const mockUpdateMergedCourtDocuments =
-        mockCourtDocumentRepositoryService.updateMergedCourtDocuments as jest.Mock
-      mockUpdateMergedCourtDocuments.mockResolvedValue(true)
+      const mockCopyMergedCaseCourtDocuments =
+        mockCourtDocumentRepositoryService.copyMergedCaseCourtDocumentsIntoCourtSession as jest.Mock
+      mockCopyMergedCaseCourtDocuments.mockResolvedValue(true)
+      const mockFindMergedCaseIds =
+        mockCourtDocumentRepositoryService.findMergedCaseIdsFiledInCourtSession as jest.Mock
+      mockFindMergedCaseIds.mockResolvedValue([mergedCase.id])
 
       await givenWhenThen(caseId)
     })

@@ -32,7 +32,6 @@ import {
   OffenseRepositoryService,
   SubpoenaRepositoryService,
   VerdictRepositoryService,
-  VictimRepositoryService,
 } from '../repository'
 
 interface DuplicateCaseOptions {
@@ -138,12 +137,12 @@ const splitCaseFileCategories = [
 ]
 
 // Copies a case's object graph - the case row, its defendants, indictment
-// counts and offenses, victims, case strings, civil claimants and case files -
-// into a new case, with variations: a duplicate copies everything the
-// prosecution entered, a split moves one defendant and what hangs off them and
-// copies what the two cases share. The per-model copies and moves live in the
-// repositories; this service owns the order, the id remapping between them and
-// the S3 objects behind the case files.
+// counts and offenses, case strings, civil claimants and case files - into a
+// new case, with variations: a duplicate copies everything the prosecution
+// entered, a split moves one defendant and what hangs off them and copies what
+// the two cases share. The per-model copies and moves live in the repositories;
+// this service owns the order, the id remapping between them and the S3 objects
+// behind the case files.
 @Injectable()
 export class CaseCloningService {
   constructor(
@@ -155,7 +154,6 @@ export class CaseCloningService {
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly indictmentCountRepositoryService: IndictmentCountRepositoryService,
     private readonly offenseRepositoryService: OffenseRepositoryService,
-    private readonly victimRepositoryService: VictimRepositoryService,
     private readonly caseStringRepositoryService: CaseStringRepositoryService,
     private readonly dateLogRepositoryService: DateLogRepositoryService,
     private readonly eventLogRepositoryService: EventLogRepositoryService,
@@ -333,10 +331,6 @@ export class CaseCloningService {
         { transaction },
       )
 
-      await this.victimRepositoryService.copyAllToCase(caseId, newCaseId, {
-        transaction,
-      })
-
       await this.caseStringRepositoryService.copyByTypesToCase(
         caseId,
         newCaseId,
@@ -385,11 +379,11 @@ export class CaseCloningService {
 
   // Splits a defendant off into a case of their own. The defendant and what
   // hangs off them - subpoenas, verdicts, defendant event logs, case files -
-  // move to the new case; what the two cases share - victims, indictment
-  // counts with their offenses, the civil demands, the arraignment date, the
-  // case level files and the events that brought the indictment to court - is
-  // copied. As with
-  // duplication, the case is the one the route resolved, not a second read.
+  // move to the new case; what the two cases share - indictment counts with
+  // their offenses, civil claimants that apply to the defendant, the civil
+  // demands, the arraignment date, the case level files and the events that
+  // brought the indictment to court - is copied. As with duplication, the case
+  // is the one the route resolved, not a second read.
   async split(
     caseToSplit: Case,
     defendantId: string,
@@ -490,10 +484,6 @@ export class CaseCloningService {
         { transaction },
       )
 
-      await this.victimRepositoryService.copyAllToCase(caseId, newCaseId, {
-        transaction,
-      })
-
       // Copy all indictment counts and their offenses to the new case. The
       // offenses hang off the counts, so they are copied against the new count
       // ids - the split used to leave them behind
@@ -509,8 +499,20 @@ export class CaseCloningService {
         { transaction },
       )
 
+      // Copy civil claimants that apply to the split defendant. Done before the
+      // case file work so files that point at those claimants can be remapped.
+      const civilClaimantIdMap =
+        await this.civilClaimantRepositoryService.copyApplicableToCaseForDefendant(
+          caseId,
+          newCaseId,
+          defendantId,
+          { transaction },
+        )
+
       // The defendant's case files leave with them; the files linked to no
-      // defendant are needed by both cases
+      // defendant are needed by both cases. Files that point at a civil
+      // claimant that was not copied with the defendant stay on the original
+      // case when copying, and lose that pointer when moved.
       await this.caseFileRepositoryService.moveAllForDefendantToCase(
         caseId,
         defendantId,
@@ -519,11 +521,17 @@ export class CaseCloningService {
         { transaction },
       )
 
+      await this.caseFileRepositoryService.remapCivilClaimantIdsForCase(
+        newCaseId,
+        civilClaimantIdMap,
+        { transaction },
+      )
+
       await this.caseFileRepositoryService.copyAllWithoutDefendantToCase(
         caseId,
         newCaseId,
         splitCaseFileCategories,
-        { transaction },
+        { transaction, civilClaimantIdMap },
       )
 
       await this.caseDefendantPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant(

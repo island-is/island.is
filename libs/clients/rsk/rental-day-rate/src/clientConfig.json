@@ -498,17 +498,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                  "$ref": "#/components/schemas/RentalDaysPeriodRegistration"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                  "$ref": "#/components/schemas/RentalDaysPeriodRegistration"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RentalDayRegistrationModel"
+                  "$ref": "#/components/schemas/RentalDaysPeriodRegistration"
                 }
               }
             }
@@ -781,6 +781,43 @@
           "timabil": {
             "type": "string",
             "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalDaysPeriodEntry": {
+        "required": ["availableDays", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentalDaysPeriodRegistration": {
+        "required": ["entries", "month", "year"],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RentalDaysPeriodEntry"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

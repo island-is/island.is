@@ -52,6 +52,13 @@ export type applicantInformationProps = {
   applicantInformationDescription?: FormText
   baseInfoReadOnly?: boolean
   emailAndPhoneReadOnly?: boolean
+  /**
+   * When true and `emailAndPhoneReadOnly` is enabled, the phone field becomes
+   * editable if the user profile does not contain a phone number. Useful for
+   * flows where applicants with only a foreign number (not stored in the user
+   * profile) still need to be able to enter one.
+   */
+  makePhoneEditableIfMissing?: boolean
   compactFields?: boolean
   customAddressLabel?: StaticText
   customPostalCodeAndCityLabel?: StaticText

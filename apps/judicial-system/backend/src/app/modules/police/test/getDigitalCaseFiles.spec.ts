@@ -224,4 +224,45 @@ describe('PoliceController - Get digital case files', () => {
       ])
     })
   })
+
+  describe('when the police digital case files request fails', () => {
+    const theUser = { name: 'Test User' } as User
+    const theCase = {
+      id: uuid(),
+      courtCaseNumber: 'S-284/2026',
+      policeCaseNumbers: ['313-2026-018628', '313-2026-018629'],
+    } as Case
+    let mockLogger: { error: jest.Mock }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        text: async () => 'not found',
+      })
+
+      const { policeController, logger } = await createTestingPoliceModule()
+      mockLogger = logger
+
+      then = { result: [] }
+      await policeController
+        .getDigitalCaseFiles(theCase.id, theUser, theCase)
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+    })
+
+    it('should log court and police case numbers', () => {
+      expect(then.error).toBeDefined()
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        `Failed to get police digital case files for case ${theCase.id}`,
+        expect.objectContaining({
+          caseId: theCase.id,
+          courtCaseNumber: 'S-284/2026',
+          policeCaseNumbers: '313-2026-018628, 313-2026-018629',
+        }),
+      )
+    })
+  })
 })

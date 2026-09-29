@@ -26,6 +26,7 @@ import ConversationMessageBody from './components/ConversationMessageBody'
 import ConversationReplyForm from './components/ConversationReplyForm'
 import MobileActionFooter from './components/MobileActionFooter'
 import ReplyBlockedAlert from './components/ReplyBlockedAlert'
+import { HealthDirectorateHealthConversationReplyAvailability as ReplyAvailability } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useRef, useState } from 'react'
@@ -99,6 +100,24 @@ const HealthConversationDetail = () => {
       variables: { id },
     },
   )
+
+  // Abandoning a certificate payment (closed tab, back button, dropped
+  // connection) triggers no redirect back to us, so payment state is
+  // refreshed whenever the patient returns to the page.
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') refetch()
+    }
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) refetch()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    window.addEventListener('pageshow', onPageShow)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+      window.removeEventListener('pageshow', onPageShow)
+    }
+  }, [refetch])
 
   const handleCertificatePaid = () => {
     toast.success(
@@ -220,6 +239,8 @@ const HealthConversationDetail = () => {
     ? item.organization?.name ?? latestStaffMessage.senderGroupName ?? undefined
     : undefined
 
+  const canReply = item.replyAvailability === ReplyAvailability.CAN_REPLY
+
   const handleBack = () => {
     /* On mobile, replying takes over the screen, so back should return to the
     the thread first. On desktop the reply form is just appended below
@@ -256,11 +277,7 @@ const HealthConversationDetail = () => {
                 <MessageActions
                   bookmarked={item.isStarred}
                   archived={item.isArchived}
-                  onReply={
-                    !replyOpen && item.patientCanReply !== false
-                      ? openReply
-                      : undefined
-                  }
+                  onReply={!replyOpen && canReply ? openReply : undefined}
                   onFav={() => {
                     if (item.isStarred) {
                       unstarMessage({ variables: { input: { id } } })
@@ -376,7 +393,7 @@ const HealthConversationDetail = () => {
                           requiresPayment={msg.requiresPayment}
                           paid={msg.paid}
                           amountIsk={msg.amountIsk}
-                          pendingPaymentId={msg.pendingPaymentId}
+                          pendingPaymentStartedAt={msg.pendingPaymentStartedAt}
                           isReturningFromPayment={
                             !!msg.certificateId &&
                             msg.certificateId === certificatePaymentReturnId
@@ -386,6 +403,7 @@ const HealthConversationDetail = () => {
                             msg.attachments[0]?.downloadServiceURL
                           }
                           onPaid={handleCertificatePaid}
+                          onRefresh={refetch}
                         />
                       )}
 
@@ -443,9 +461,9 @@ const HealthConversationDetail = () => {
                   loading={replySending}
                   fluid={isPhoneWidth}
                 />
-              ) : item.patientCanReply === false ? (
+              ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
                 <ReplyBlockedAlert
-                  reason={item.replyBlockedReason}
+                  availability={item.replyAvailability}
                   replyWindowDays={item.patientReplyWindowDays}
                 />
               ) : (

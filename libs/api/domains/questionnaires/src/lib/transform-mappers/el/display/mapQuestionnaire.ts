@@ -25,17 +25,19 @@ const mapBaseInformation = (
   id: q.questionnaireId,
   title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
   sentDate: q.createdDate?.toISOString() ?? '',
-  status: q.hasDraft
-    ? QuestionnairesStatusEnum.draft
-    : q.submissions?.length > 0
-    ? QuestionnairesStatusEnum.answered
-    : q.expiryDate && new Date(q.expiryDate) < new Date()
-    ? QuestionnairesStatusEnum.expired
-    : QuestionnairesStatusEnum.notAnswered,
+  status:
+    q.expiryDate && new Date(q.expiryDate) < new Date()
+      ? QuestionnairesStatusEnum.expired
+      : q.hasDraft
+      ? QuestionnairesStatusEnum.draft
+      : q.submissions?.length > 0
+      ? QuestionnairesStatusEnum.answered
+      : QuestionnairesStatusEnum.notAnswered,
   description: q.message ?? undefined,
   formId: q.questionnaireId,
   organization: QuestionnairesOrganizationEnum.EL,
   lastSubmissionId: q.lastCreatedSubmissionId,
+  lastSubmitted: q.lastSubmitted ?? undefined,
   senderGroupName: q.senderGroupName ?? undefined,
 })
 
@@ -51,7 +53,8 @@ export const mapElQuestionnaireOverview = (
     id: sub.id,
     createdAt: sub.createdDate ?? undefined,
     isDraft: sub.isDraft,
-    lastUpdated: sub.lastUpdatedDate ?? undefined,
+    // Submitted date first so it matches the date on the answered view
+    lastUpdated: sub.submittedDate ?? sub.lastUpdatedDate ?? undefined,
   })),
 })
 
@@ -76,7 +79,8 @@ export const mapElQuestionnaireForm = (
       id: sub.id,
       createdAt: sub.createdDate ?? undefined,
       isDraft: sub.isDraft,
-      lastUpdated: sub.lastUpdatedDate ?? undefined,
+      // Submitted date first so it matches the date on the answered view
+      lastUpdated: sub.submittedDate ?? sub.lastUpdatedDate ?? undefined,
     })),
     sections: q.groups.map((g) =>
       mapGroupToSection(g, allQuestions, formatMessage, q.triggers),
@@ -95,13 +99,14 @@ export const mapElQuestionnaireListItem = (
   sentDate: q.createdDate?.toISOString() ?? '',
   lastSubmissionId: q.lastCreatedSubmissionId,
   organization: QuestionnairesOrganizationEnum.EL,
-  status: q.hasDraft
-    ? QuestionnairesStatusEnum.draft
-    : q.numSubmitted > 0 || q.lastSubmitted
-    ? QuestionnairesStatusEnum.answered
-    : q.expiryDate && new Date(q.expiryDate) < new Date()
-    ? QuestionnairesStatusEnum.expired
-    : QuestionnairesStatusEnum.notAnswered,
+  status:
+    q.expiryDate && new Date(q.expiryDate) < new Date()
+      ? QuestionnairesStatusEnum.expired
+      : q.hasDraft
+      ? QuestionnairesStatusEnum.draft
+      : q.numSubmitted > 0 || q.lastSubmitted
+      ? QuestionnairesStatusEnum.answered
+      : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: q.lastSubmitted,
   senderGroupName: q.senderGroupName ?? undefined,
 })

@@ -55,6 +55,9 @@ import { pushOnce } from '@/utils/push-once'
 import { testIDs } from '@/utils/test-ids'
 import { MedicineHistoryCard } from '../../../../components/medicine-history-card'
 
+// The overview previews the newest few; the full list is its own screen.
+const OVERVIEW_MESSAGE_COUNT = 3
+
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
   column-gap: ${({ theme }) => theme.spacing[1]}px;
@@ -161,7 +164,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         style={{
           flexDirection: 'row',
           borderBottomWidth: 1,
-          borderBottomColor: theme.color.dark300,
+          borderBottomColor: theme.color.blue400,
         }}
       >
         <Typography
@@ -265,7 +268,7 @@ export default function HealthOverviewScreen() {
         id: 'prescriptionsAndCertificates',
         titleId: 'health.drugCertificates.title',
         icon: medicineIcon,
-        route: '/health/medicine/legacy',
+        route: '/health/medicine/certificates',
         enabled: !isMedicineEnabled,
       },
       {
@@ -374,6 +377,7 @@ export default function HealthOverviewScreen() {
   const messagesRes = useGetHealthConversationsQuery({
     skip: !hasBeenFocused || !isHealthMessagesEnabled,
     notifyOnNetworkStatusChange: true,
+    variables: { input: { limit: OVERVIEW_MESSAGE_COUNT } },
   })
 
   const medicinePurchaseData =
@@ -387,7 +391,8 @@ export default function HealthOverviewScreen() {
     organDonationRes.data?.healthDirectorateOrganDonation.donor
   const appointments =
     appointmentsRes.data?.healthDirectorateAppointments?.data ?? []
-  const messages = messagesRes.data?.healthDirectorateHealthConversations ?? []
+  const messages =
+    messagesRes.data?.healthDirectoratePaginatedHealthConversations?.data ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -592,9 +597,11 @@ export default function HealthOverviewScreen() {
             />
             {(!hasBeenFocused || messagesRes.loading) && (
               <View style={{ marginHorizontal: -theme.spacing[2] }}>
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <ListItemSkeleton key={index} />
-                ))}
+                {Array.from({ length: OVERVIEW_MESSAGE_COUNT }).map(
+                  (_, index) => (
+                    <ListItemSkeleton key={index} />
+                  ),
+                )}
               </View>
             )}
             {messagesRes.error && messages.length === 0 && (
@@ -620,7 +627,7 @@ export default function HealthOverviewScreen() {
               )}
             {hasBeenFocused && !messagesRes.loading && messages.length > 0 && (
               <View style={{ marginHorizontal: -theme.spacing[2] }}>
-                {messages.slice(0, 3).map((message) => (
+                {messages.map((message) => (
                   <TouchableOpacity
                     key={message.id}
                     onPress={() =>
