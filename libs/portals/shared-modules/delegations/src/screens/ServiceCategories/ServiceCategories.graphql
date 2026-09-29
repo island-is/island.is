@@ -1,5 +1,15 @@
-query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
-  authScopeCategories(lang: $lang, direction: $direction) {
+query AuthScopeCategories(
+  $lang: String!
+  $direction: AuthDelegationDirection
+  $requestCatalog: Boolean
+  $requestGrantorType: String
+) {
+  authScopeCategories(
+    lang: $lang
+    direction: $direction
+    requestCatalog: $requestCatalog
+    requestGrantorType: $requestGrantorType
+  ) {
     id
     title
     description
@@ -18,8 +28,18 @@ query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
   }
 }
 
-query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
-  authScopeTags(lang: $lang, direction: $direction) {
+query AuthScopeTags(
+  $lang: String!
+  $direction: AuthDelegationDirection
+  $requestCatalog: Boolean
+  $requestGrantorType: String
+) {
+  authScopeTags(
+    lang: $lang
+    direction: $direction
+    requestCatalog: $requestCatalog
+    requestGrantorType: $requestGrantorType
+  ) {
     id
     title
     description

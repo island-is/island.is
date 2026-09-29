@@ -3,6 +3,7 @@ import { Type } from 'class-transformer'
 import {
   ArrayNotEmpty,
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsOptional,
@@ -34,6 +35,24 @@ export class DelegationRequestScopeDTO {
   @IsString()
   @ApiPropertyOptional({ nullable: true, type: String })
   domainDisplayName?: string | null
+
+  /** National id of the scope's organisation, used to resolve its logo. */
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  domainNationalId?: string | null
+
+  /** What the scope grants access to, shown as "Lýsing á umboði". */
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  description?: string | null
+
+  /** Whether the scope grants write access ("Skoða og breyta" vs "Skoða"). */
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ nullable: true, type: Boolean })
+  allowsWrite?: boolean | null
 
   @IsOptional()
   @IsDateString()

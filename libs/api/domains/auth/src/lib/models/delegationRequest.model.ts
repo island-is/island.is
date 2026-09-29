@@ -21,6 +21,19 @@ export class DelegationRequestScope {
   @Field(() => String, { nullable: true })
   domainDisplayName?: string | null
 
+  /** Organisation logo, resolved from the domain's national id. */
+  @Field(() => String, { nullable: true })
+  organisationLogoUrl?: string | null
+
+  // Internal — used by the organisationLogoUrl field resolver.
+  domainNationalId?: string | null
+
+  @Field(() => String, { nullable: true })
+  description?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  allowsWrite?: boolean | null
+
   @Field(() => Date, { nullable: true })
   validTo?: Date | null
 }
@@ -58,6 +71,10 @@ export class DelegationRequest {
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | null
+
+  /** Id of the delegation created when the request was approved. */
+  @Field(() => String, { nullable: true })
+  resolvedDelegationId?: string | null
 
   // Internal attributes used by field resolvers.
   fromNationalId!: string

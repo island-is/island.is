@@ -32,34 +32,62 @@ export const RequestConfirmModal = ({
 
   const [createRequest, { loading }] = useCreateAuthDelegationRequestMutation()
 
-  const granter = identities[0]
+  const granters = identities.filter((identity) => identity.nationalId)
 
-  const handleConfirm = () => {
-    if (!granter) {
+  const handleConfirm = async () => {
+    if (granters.length === 0) {
       setErrorMessage(formatMessage(m.requestError))
       return
     }
 
     setErrorMessage(null)
-    createRequest({
-      variables: {
-        input: {
-          toGranterNationalId: granter.nationalId,
-          relationship,
-          reason,
-          scopes: selectedScopes.map((scope) => ({
-            scopeName: scope.name,
-            validTo: scope.validTo,
-          })),
-        },
-      },
-    })
-      .then(() => onSuccess())
-      .catch((error) => {
-        // Keep the modal open with a persistent explanation — guardrail
-        // errors (pending cap, rejection lock) need more than a toast.
-        setErrorMessage(formatMessage(getCreateRequestErrorMessage(error)))
-      })
+
+    // One request per grantor. Report per-grantor failures rather than a single
+    // opaque error, since guardrails (pending cap, rejection lock, duplicates)
+    // can reject some grantors while others succeed.
+    const results = await Promise.allSettled(
+      granters.map((granter) =>
+        createRequest({
+          variables: {
+            input: {
+              toGranterNationalId: granter.nationalId,
+              relationship,
+              reason,
+              scopes: selectedScopes.map((scope) => ({
+                scopeName: scope.name,
+                validTo: scope.validTo,
+              })),
+            },
+          },
+        }),
+      ),
+    )
+
+    const failures = results
+      .map((result, index) => ({ result, granter: granters[index] }))
+      .filter(({ result }) => result.status === 'rejected')
+
+    if (failures.length === 0) {
+      onSuccess()
+      return
+    }
+
+    // Keep the modal open with a persistent explanation — guardrail errors need
+    // more than a toast, and with multiple grantors the message names each one.
+    setErrorMessage(
+      failures
+        .map(({ result, granter }) => {
+          const reasonText = formatMessage(
+            getCreateRequestErrorMessage(
+              (result as PromiseRejectedResult).reason,
+            ),
+          )
+          return granters.length > 1
+            ? `${granter.name || granter.nationalId}: ${reasonText}`
+            : reasonText
+        })
+        .join('\n'),
+    )
   }
 
   return (
@@ -73,15 +101,15 @@ export const RequestConfirmModal = ({
       eyebrow={formatMessage(coreMessages.digitalDelegations)}
     >
       <Box display="flex" flexDirection="column" rowGap={[3, 3, 4]}>
-        {granter && (
-          <div className={styles.idCard}>
+        {granters.map((granter) => (
+          <div key={granter.nationalId} className={styles.idCard}>
             <Text variant="eyebrow">{formatMessage(m.requestTo)}</Text>
             <Box>
               <Text variant="h5">{granter.name}</Text>
               <Text variant="default">{`kt. ${granter.nationalId}`}</Text>
             </Box>
           </div>
-        )}
+        ))}
         <Box display="flex" flexDirection="column" rowGap={1}>
           <Text variant="h5">{formatMessage(m.requestRelationshipHeader)}</Text>
           <Text variant="default">{relationship}</Text>

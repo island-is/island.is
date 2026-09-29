@@ -1,4 +1,5 @@
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -27,6 +28,9 @@ import {
   useAuthDelegationsGroupedByIdentityOutgoingQuery,
 } from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { useAuthDelegationsGroupedByIdentityIncomingQuery } from '../../components/delegations/incoming/DelegationsGroupedByIdentityIncoming.generated'
+import { useAuthDelegationRequestsIncomingQuery } from '../../components/delegationRequests/DelegationRequests.generated'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { AuthDelegationRequestStatus } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 import { DelegationsTable } from '../../components/tables/DelegationsTable'
@@ -36,8 +40,6 @@ import {
   getProcuringHolderTableData,
 } from '../../components/tables/getTableData'
 import CustomDelegationsTable from '../../components/tables/CustomDelegationsTable'
-import { IncomingRequests } from '../../components/delegationRequests/IncomingRequests'
-import { OutgoingRequests } from '../../components/delegationRequests/OutgoingRequests'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import * as styles from './AccessControlNew.css'
 import { theme } from '@island.is/island-ui/theme'
@@ -86,6 +88,23 @@ const AccessControlNew = () => {
   const faqList =
     (isCompany(userInfo) && contentfulData?.faqListCompany) ||
     contentfulData?.faqList
+
+  // Pending incoming delegation requests — surface an alert linking to the
+  // Umboðsbeiðnir page. Gated by the same feature flag as the requests flow.
+  const { value: delegationRequestsEnabled } = useFeatureFlag(
+    Features.isDelegationRequestsEnabled,
+    false,
+  )
+  const { data: incomingRequestsData } = useAuthDelegationRequestsIncomingQuery({
+    skip: !delegationRequestsEnabled,
+    fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
+  })
+  const hasPendingRequests =
+    delegationRequestsEnabled &&
+    (incomingRequestsData?.authDelegationRequestsIncoming ?? []).some(
+      (request) => request.status === AuthDelegationRequestStatus.pending,
+    )
 
   // Outgoing
   const {
@@ -214,6 +233,26 @@ const AccessControlNew = () => {
         </div>
       </IntroHeader>
 
+      {hasPendingRequests && (
+        <Box marginBottom={[2, 2, 3]}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.requestsAlertTitle)}
+            message={formatMessage(m.requestsAlertMessage)}
+            action={
+              <Button
+                variant="text"
+                icon="arrowForward"
+                size="small"
+                onClick={() => navigate(DelegationPaths.DelegationRequestsList)}
+              >
+                {formatMessage(m.requestsAlertLink)}
+              </Button>
+            }
+          />
+        </Box>
+      )}
+
       {/* Empty state */}
       {!incomingDelegations?.length &&
         !outgoingDelegations?.length &&
@@ -276,9 +315,6 @@ const AccessControlNew = () => {
         />
       )}
 
-      {/* Outgoing delegation requests (requests I have sent) */}
-      <OutgoingRequests />
-
       {/* Outgoing general mandate delegations table */}
       {outgoingGeneralMandateDelegations &&
         outgoingGeneralMandateDelegations.length > 0 && (
@@ -333,9 +369,6 @@ const AccessControlNew = () => {
             </Text>
           </Box>
         )}
-
-      {/* Incoming delegation requests (others asking me for a delegation) */}
-      {!onlyOutgoingDelegations && <IncomingRequests />}
 
       {/* Legal guardian delegations table */}
       {!onlyOutgoingDelegations &&

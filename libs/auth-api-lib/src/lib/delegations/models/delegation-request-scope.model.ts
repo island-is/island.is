@@ -83,6 +83,9 @@ export class DelegationRequestScope extends Model<
       displayName: this.apiScope?.displayName ?? 'N/A',
       domainName: this.apiScope?.domainName ?? null,
       domainDisplayName: this.apiScope?.domain?.displayName ?? null,
+      domainNationalId: this.apiScope?.domain?.nationalId ?? null,
+      description: this.apiScope?.description ?? null,
+      allowsWrite: this.apiScope?.allowsWrite ?? null,
       validTo: this.validTo,
     }
   }

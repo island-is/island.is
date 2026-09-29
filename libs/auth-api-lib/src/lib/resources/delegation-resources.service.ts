@@ -27,6 +27,8 @@ import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
 import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
 
+export type RequestGrantorType = 'company' | 'individual'
+
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
   infer ScopeRule
@@ -65,7 +67,9 @@ export class DelegationResourcesService {
     },
   ): Promise<Domain[]> {
     const onlyDelegations =
-      supportsDelegations || direction === DelegationDirection.OUTGOING
+      supportsDelegations ||
+      direction === DelegationDirection.OUTGOING ||
+      direction === DelegationDirection.REQUEST
 
     const domainNameFilter: WhereOptions<Domain> = domainNames
       ? { name: domainNames }
@@ -200,10 +204,12 @@ export class DelegationResourcesService {
     user,
     prefix,
     direction,
+    requestGrantorType,
   }: {
     user: User
     prefix?: string
     direction?: DelegationDirection
+    requestGrantorType?: RequestGrantorType
   }) {
     const apiScopeFilter: Array<WhereOptions<ApiScope>> = [
       {
@@ -219,6 +225,26 @@ export class DelegationResourcesService {
         ...(await this.delegationTypeFilter(user, prefix)),
         ...this.grantToAuthenticatedUserFilter(user, prefix),
       )
+    }
+
+    if (direction === DelegationDirection.REQUEST) {
+      apiScopeFilter.push({
+        [col(prefix, 'isAccessControlled')]: { [Op.ne]: true },
+      })
+
+      // A person and a company can grant different scopes, so the request
+      // catalog is narrowed to what the chosen grantor is actually able to
+      // grant: a company grants through its procuration holders, an individual
+      // grants scopes that can be delegated to an authenticated user.
+      if (requestGrantorType === 'company') {
+        apiScopeFilter.push({
+          [col(prefix, 'grantToProcuringHolders')]: true,
+        })
+      } else if (requestGrantorType === 'individual') {
+        apiScopeFilter.push({
+          [col(prefix, 'grantToAuthenticatedUser')]: true,
+        })
+      }
     }
 
     return apiScopeFilter
@@ -237,6 +263,7 @@ export class DelegationResourcesService {
     domainName,
     language,
     direction,
+    requestGrantorType,
     attributes,
     additionalIncludes = [],
   }: {
@@ -244,10 +271,15 @@ export class DelegationResourcesService {
     domainName?: string | null
     language?: string
     direction?: DelegationDirection
+    requestGrantorType?: RequestGrantorType
     attributes?: Array<keyof Attributes<ApiScope>>
     additionalIncludes?: Includeable[]
   }): Promise<ApiScope[]> {
-    const filters = await this.apiScopeFilter({ user, direction })
+    const filters = await this.apiScopeFilter({
+      user,
+      direction,
+      requestGrantorType,
+    })
 
     const scopes = await this.apiScopeModel.findAll({
       attributes: attributes as string[],

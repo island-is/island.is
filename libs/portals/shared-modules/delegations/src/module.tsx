@@ -9,6 +9,7 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { Features } from '@island.is/react/feature-flags'
+import { isCompany } from '@island.is/shared/utils'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
 import { Navigate } from 'react-router-dom'
@@ -24,6 +25,9 @@ const GrantAccessNew = lazy(() =>
 )
 const RequestDelegation = lazy(() =>
   import('./screens/RequestDelegation/RequestDelegation'),
+)
+const DelegationRequests = lazy(() =>
+  import('./screens/DelegationRequests/DelegationRequests'),
 )
 
 const AccessOutgoing = lazy(() =>
@@ -68,6 +72,11 @@ export const createDelegationsModule = (
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
+    // Requesting a delegation is not available in the company view (§7.2.5) — a
+    // company's procuration holders decide on incoming requests instead. Hide
+    // the "request a delegation" nav item and route for companies (the backend
+    // also rejects it), while keeping the requests overview for reviewing.
+    const canRequestDelegation = !isCompany(userInfo)
     const commonProps = {
       name: coreMessages.accessControlDelegations,
       navHide: !hasAccess || useNewRoutes,
@@ -101,10 +110,20 @@ export const createDelegationsModule = (
             element: <GrantAccessNew />,
           },
           {
-            name: m.requestDelegationNavTitle,
-            path: DelegationPaths.DelegationRequest,
+            name: m.delegationRequestsNavTitle,
+            path: DelegationPaths.DelegationRequestsList,
             navHide: !delegationRequestsEnabled,
             enabled: hasAccess && Boolean(delegationRequestsEnabled),
+            element: <DelegationRequests />,
+          },
+          {
+            name: m.requestDelegationNavTitle,
+            path: DelegationPaths.DelegationRequest,
+            navHide: !delegationRequestsEnabled || !canRequestDelegation,
+            enabled:
+              hasAccess &&
+              Boolean(delegationRequestsEnabled) &&
+              canRequestDelegation,
             element: <RequestDelegation />,
           },
           {

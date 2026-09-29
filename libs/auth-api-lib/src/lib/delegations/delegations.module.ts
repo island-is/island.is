@@ -34,6 +34,7 @@ import { DelegationRequestService } from './delegation-request.service'
 import { DelegationsService } from './delegations.service'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { DelegationRequest } from './models/delegation-request.model'
+import { DelegationRequestDelegation } from './models/delegation-request-delegation.model'
 import { DelegationRequestScope } from './models/delegation-request-scope.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
@@ -71,6 +72,7 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
       DelegationDelegationType,
       DelegationRequest,
       DelegationRequestScope,
+      DelegationRequestDelegation,
     ]),
     UserSystemNotificationModule,
     SyslumennClientModule,

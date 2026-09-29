@@ -31,10 +31,13 @@ import { useAuthDomainsQuery } from '../../hooks/useDomains/useDomains.generated
 import { RecipientsTag } from '../RecipientsTag'
 
 export const AccessScopes = ({
-  // The request flow asks which permissions to request, not grant.
   title = m.choosePermissionsTitle,
+  requestCatalog = false,
+  requestGrantorType,
 }: {
   title?: MessageDescriptor
+  requestCatalog?: boolean
+  requestGrantorType?: 'company' | 'individual'
 } = {}) => {
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
@@ -52,12 +55,22 @@ export const AccessScopes = ({
     loading: categoriesLoading,
     error: categoriesError,
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-    variables: { lang, direction: AuthDelegationDirection.outgoing },
+    variables: {
+      lang,
+      direction: AuthDelegationDirection.outgoing,
+      requestCatalog,
+      requestGrantorType,
+    },
   })
   const { data: tagsData } = useQuery<AuthScopeTagsQuery>(
     AuthScopeTagsDocument,
     {
-      variables: { lang, direction: AuthDelegationDirection.outgoing },
+      variables: {
+        lang,
+        direction: AuthDelegationDirection.outgoing,
+        requestCatalog,
+        requestGrantorType,
+      },
     },
   )
   const { selectedScopes, setSelectedScopes, requestedScopeNames } =

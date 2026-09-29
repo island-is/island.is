@@ -106,18 +106,21 @@ export const assetsModule: PortalModule = {
           ApiScope.internal,
           ApiScope.internalProcuring,
         ].some((scope) => userInfo.scopes.includes(scope)),
+        requiredScopes: [ApiScope.assets, ApiScope.workMachines, ApiScope.vehicles, ApiScope.ships, ApiScope.internal, ApiScope.internalProcuring],
         element: <Navigate to={AssetsPaths.AssetsRealEstate} replace />,
       },
       {
         name: m.realEstate,
         path: AssetsPaths.AssetsRealEstate,
         enabled: userInfo.scopes.includes(ApiScope.assets),
+        requiredScopes: [ApiScope.assets],
         element: <AssetsOverview />,
       },
       {
         name: m.detailInfo,
         path: AssetsPaths.AssetsRealEstateDetail,
         enabled: userInfo.scopes.includes(ApiScope.assets),
+        requiredScopes: [ApiScope.assets],
         element: <RealEstateAssetDetail />,
       },
       {
@@ -125,6 +128,7 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsShips,
         key: USER_SHIPS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.ships),
+        requiredScopes: [ApiScope.ships],
         element: <ShipsOverview />,
       },
       {
@@ -132,18 +136,21 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsShipDetail,
         key: USER_SHIPS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.ships),
+        requiredScopes: [ApiScope.ships],
         element: <ShipDetail />,
       },
       {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachines,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
+        requiredScopes: [ApiScope.workMachines],
         element: <WorkMachinesOverview />,
       },
       {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachinesDetail,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
+        requiredScopes: [ApiScope.workMachines],
         element: <WorkMachinesDetail />,
       },
       {
@@ -151,6 +158,7 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsFarmerLands,
         key: FARMERS_LANDS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.internal),
+        requiredScopes: [ApiScope.internal],
         element: <FarmerLandsOverview />,
       },
       {
@@ -158,18 +166,21 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsFarmerLandDetail,
         key: FARMERS_LANDS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.internal),
+        requiredScopes: [ApiScope.internal],
         element: <FarmerLandDetail />,
       },
       {
         name: m.myVehicles,
         path: AssetsPaths.AssetsVehicles,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         element: <Navigate to={AssetsPaths.AssetsMyVehicles} replace />,
       },
       {
         name: m.myVehicles,
         path: AssetsPaths.AssetsMyVehicles,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         loader: translationLoader({ userInfo, ...rest }),
         element: <Overview />,
       },
@@ -177,24 +188,28 @@ export const assetsModule: PortalModule = {
         name: m.vehicles,
         path: AssetsPaths.AssetsVehiclesDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         element: <VehicleDetail />,
       },
       {
         name: m.vehiclesHistory,
         path: AssetsPaths.AssetsVehiclesHistory,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         element: <VehicleHistory />,
       },
       {
         name: m.vehicleMileage,
         path: AssetsPaths.AssetsVehiclesDetailMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         element: <VehicleMileage />,
       },
       {
         name: m.vehiclesBulkMileage,
         path: AssetsPaths.AssetsVehiclesBulkMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
         element: <VehicleBulkMileage />,
       },
@@ -202,6 +217,7 @@ export const assetsModule: PortalModule = {
         name: m.vehiclesBulkMileageUpload,
         path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
         element: (
           <BulkMileageWrapper>
@@ -213,6 +229,7 @@ export const assetsModule: PortalModule = {
         name: m.vehiclesBulkMileageJobOverview,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
         element: (
           <BulkMileageWrapper>
@@ -224,6 +241,7 @@ export const assetsModule: PortalModule = {
         name: m.vehiclesBulkMileageJobDetail,
         path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        requiredScopes: [ApiScope.vehicles],
         loader: isAllowedBulkMileageUploadLoader({ userInfo, ...rest }),
         element: (
           <BulkMileageWrapper>
@@ -244,24 +262,28 @@ export const assetsModule: PortalModule = {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualProperties,
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
+        requiredScopes: [ApiScope.intellectualProperties],
         element: <IPOverview />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesDesign,
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
+        requiredScopes: [ApiScope.intellectualProperties],
         element: <IPDesignDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
+        requiredScopes: [ApiScope.intellectualProperties],
         element: <IPTrademarkDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesPatent,
         enabled: userInfo.scopes.includes(ApiScope.intellectualProperties),
+        requiredScopes: [ApiScope.intellectualProperties],
         element: <IPPatentDetail />,
       },
       ...redirects,

@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import {
   ApiScope,
   hasNotificationScopes,
+  notificationScopes,
   UserProfileScope,
 } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
@@ -59,18 +60,21 @@ export const informationModule: PortalModule = {
         name: m.userInfo,
         path: InformationPaths.MyInfoRoot,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
       },
       {
         name: m.myInfo,
         path: InformationPaths.MyInfoRootOverview,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <UserInfoOverview />,
       },
       {
         name: m.contracts,
         path: InformationPaths.MyContracts,
         enabled: scopes.includes(ApiScope.meDetails),
+        requiredScopes: [ApiScope.meDetails],
         key: 'MyContracts',
         element: <UserContractsOverview />,
       },
@@ -78,6 +82,7 @@ export const informationModule: PortalModule = {
         name: m.contract,
         path: InformationPaths.MyContractsDetail,
         enabled: scopes.includes(ApiScope.meDetails),
+        requiredScopes: [ApiScope.meDetails],
         key: 'MyContracts',
         element: <UserContract />,
       },
@@ -85,24 +90,28 @@ export const informationModule: PortalModule = {
         name: m.userInfo,
         path: InformationPaths.UserInfo,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <UserInfo />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.BioChild,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <FamilyMemberBioChild />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.ChildCustody,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <FamilyMemberChildCustody />,
       },
       {
         name: m.familySpouse,
         path: InformationPaths.Spouse,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <Spouse />,
       },
       {
@@ -123,6 +132,7 @@ export const informationModule: PortalModule = {
         name: m.notifications,
         path: InformationPaths.Notifications,
         enabled: hasNotificationsAccess,
+        requiredScopes: notificationScopes,
         element: <Notifications />,
       },
       {
@@ -183,6 +193,7 @@ export const companyInformationModule: PortalModule = {
         name: m.lists,
         path: InformationPaths.CompanyLists,
         enabled: scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         element: (
           <Navigate
             to={

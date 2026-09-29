@@ -13,13 +13,22 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { DelegationRequestDTO } from '@island.is/clients/auth/delegation-api'
 import { IdentityClientService } from '@island.is/clients/identity'
+import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
+import type {
+  LogoUrl,
+  OrganizationLogoByNationalIdDataLoader,
+} from '@island.is/cms'
+import { Loader } from '@island.is/nest/dataloader'
 
 import { CreateDelegationRequestInput } from '../dto/createDelegationRequest.input'
 import {
   DelegationRequestInput,
   FulfillDelegationRequestInput,
 } from '../dto/delegationRequest.input'
-import { DelegationRequest } from '../models/delegationRequest.model'
+import {
+  DelegationRequest,
+  DelegationRequestScope,
+} from '../models/delegationRequest.model'
 import { DelegationRequestsService } from '../services/delegationRequests.service'
 
 @UseGuards(IdsUserGuard)
@@ -104,5 +113,20 @@ export class DelegationRequestResolver {
   @ResolveField('to', () => Identity)
   resolveTo(@Parent() request: DelegationRequestDTO): Promise<Identity> {
     return this.identityService.getIdentityWithFallback(request.toNationalId, {})
+  }
+}
+
+@Resolver(() => DelegationRequestScope)
+export class DelegationRequestScopeResolver {
+  @ResolveField('organisationLogoUrl', () => String, { nullable: true })
+  async resolveOrganisationLogoUrl(
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
+    @Parent() scope: DelegationRequestScope,
+  ): Promise<LogoUrl> {
+    if (!scope.domainNationalId) {
+      return null
+    }
+    return organizationLogoLoader.load(scope.domainNationalId)
   }
 }

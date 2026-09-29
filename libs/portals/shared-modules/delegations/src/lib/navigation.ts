@@ -52,6 +52,12 @@ export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
     breadcrumbHide: false,
   },
   {
+    name: m.delegationRequestsNavTitle,
+    path: DelegationPaths.DelegationRequestsList,
+    navHide: false,
+    breadcrumbHide: false,
+  },
+  {
     name: m.requestDelegationNavTitle,
     path: DelegationPaths.DelegationRequest,
     navHide: false,

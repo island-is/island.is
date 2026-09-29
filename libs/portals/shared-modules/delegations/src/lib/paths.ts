@@ -13,5 +13,6 @@ export enum DelegationPaths {
   Faq = '/umbod/faq', // FAQ page
 
   // Request-a-delegation ("Beiðni um umboð")
+  DelegationRequestsList = '/umbod/beidnir', // Umboðsbeiðnir overview (incoming + outgoing)
   DelegationRequest = '/umbod/bidja', // Request a delegation from someone
 }

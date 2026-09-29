@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 import {
   AlertMessage,
@@ -7,6 +9,7 @@ import {
   Button,
   SkeletonLoader,
   Table as T,
+  Tag,
   Text,
   toast,
   UserAvatar,
@@ -14,10 +17,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
+import { AuthDelegationRequestStatus } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
+import { DelegationPaths } from '../../lib/paths'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { ReviewRequestModal } from '../modals/ReviewRequestModal'
+import { RequestSectionHeader } from './RequestSectionHeader'
+import { requestStatusTag } from './requestStatusTag'
+import * as styles from './DelegationRequests.css'
 import {
   useAuthDelegationRequestsIncomingQuery,
   useRejectAuthDelegationRequestMutation,
@@ -28,8 +36,18 @@ import {
 type IncomingRequest =
   AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
 
-export const IncomingRequests = () => {
+const matchesSearch = (request: IncomingRequest, search: string) => {
+  if (!search) return true
+  const term = search.toLowerCase()
+  return (
+    request.to.name.toLowerCase().includes(term) ||
+    request.to.nationalId.includes(term.replace('-', ''))
+  )
+}
+
+export const IncomingRequests = ({ search = '' }: { search?: string }) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   const { data, loading } = useAuthDelegationRequestsIncomingQuery({
     fetchPolicy: 'cache-and-network',
@@ -42,7 +60,9 @@ export const IncomingRequests = () => {
     })
 
   const requests = (data?.authDelegationRequestsIncoming ?? []).filter(
-    (request) => request.status === 'pending',
+    (request) =>
+      request.status !== AuthDelegationRequestStatus.cancelled &&
+      matchesSearch(request, search),
   )
 
   const [requestToReview, setRequestToReview] =
@@ -51,9 +71,7 @@ export const IncomingRequests = () => {
     useState<IncomingRequest | null>(null)
 
   const onRejectConfirm = () => {
-    if (!requestToReject) {
-      return
-    }
+    if (!requestToReject) return
     rejectRequest({ variables: { input: { requestId: requestToReject.id } } })
       .then(() => toast.success(formatMessage(m.requestRejectSuccess)))
       .catch(() => toast.error(formatMessage(m.requestRejectError)))
@@ -72,87 +90,102 @@ export const IncomingRequests = () => {
     return null
   }
 
-  const headerArray = [
-    { value: formatMessage(m.requestFrom) },
-    { value: formatMessage(m.requestRelationshipHeader) },
-    { value: formatMessage(m.requestScopeCount) },
-    { value: formatMessage(m.requestDateSent) },
-    { value: '' },
-  ]
-
   return (
-    <Box
-      marginBottom={6}
-      display="flex"
-      flexDirection="column"
-      rowGap={[0, 0, 0, 2]}
-    >
-      <Text variant="h5">{formatMessage(m.incomingRequestsTitle)}</Text>
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            {headerArray.map((item, i) => (
-              <T.HeadData key={item.value + i}>
+    <Box marginBottom={6}>
+      <RequestSectionHeader
+        direction="incoming"
+        title={formatMessage(m.incomingRequestsSectionTitle)}
+        subtitle={formatMessage(m.incomingRequestsSectionSubtitle)}
+      />
+      <div className={styles.tableContainer}>
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>
                 <Text variant="medium" fontWeight="semiBold">
-                  {item.value}
+                  {formatMessage(m.name)}
                 </Text>
               </T.HeadData>
-            ))}
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {requests.map((request) => (
-            <T.Row key={request.id}>
-              <T.Data>
-                <Box display="flex" alignItems="center" columnGap={2}>
-                  <UserAvatar color="blue" username={request.from.name} />
-                  <Box>
-                    <Text variant="medium">{request.from.name}</Text>
-                    <Text variant="small" color="dark400">
-                      {formatNationalId(request.from.nationalId)}
-                    </Text>
-                  </Box>
-                </Box>
-              </T.Data>
-              <T.Data>
-                <Text variant="medium">{request.relationship}</Text>
-              </T.Data>
-              <T.Data>
+              <T.HeadData>
                 <Text variant="medium" fontWeight="semiBold">
-                  {request.scopes.length}
+                  {formatMessage(m.colDateReceived)}
                 </Text>
-              </T.Data>
-              <T.Data>
-                <Text variant="medium">
-                  {request.createdAt
-                    ? format(new Date(request.createdAt), 'dd.MM.yyyy')
-                    : '-'}
-                </Text>
-              </T.Data>
-              <T.Data>
-                <Box display="flex" justifyContent="flexEnd">
-                  <Button
-                    variant="text"
-                    icon="arrowForward"
-                    iconType="outline"
-                    size="small"
-                    onClick={() => setRequestToReview(request)}
-                  >
-                    {formatMessage(m.requestReviewButton)}
-                  </Button>
-                </Box>
-              </T.Data>
+              </T.HeadData>
+              <T.HeadData />
             </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
+          </T.Head>
+          <T.Body>
+            {requests.map((request) => (
+              <T.Row key={request.id}>
+                <T.Data>
+                  <Box display="flex" alignItems="center" columnGap={2}>
+                    <UserAvatar color="blue" username={request.to.name} />
+                    <Box>
+                      <Text variant="medium">{request.to.name}</Text>
+                      <Text variant="small" color="dark400">
+                        {formatNationalId(request.to.nationalId)}
+                      </Text>
+                    </Box>
+                  </Box>
+                </T.Data>
+                <T.Data>
+                  <Text variant="medium">
+                    {request.createdAt
+                      ? format(new Date(request.createdAt), 'd. MMMM yyyy', {
+                          locale: is,
+                        })
+                      : '-'}
+                  </Text>
+                </T.Data>
+                <T.Data>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="flexEnd"
+                    columnGap={3}
+                  >
+                    {request.status !== AuthDelegationRequestStatus.pending &&
+                      requestStatusTag[request.status] && (
+                        <Tag
+                          variant={requestStatusTag[request.status]!.variant}
+                          outlined
+                          disabled
+                        >
+                          {formatMessage(
+                            requestStatusTag[request.status]!.label,
+                          )}
+                        </Tag>
+                      )}
+                    <Button
+                      variant="text"
+                      icon="arrowForward"
+                      size="small"
+                      onClick={() => setRequestToReview(request)}
+                    >
+                      {formatMessage(m.reviewBeidniButton)}
+                    </Button>
+                  </Box>
+                </T.Data>
+              </T.Row>
+            ))}
+          </T.Body>
+        </T.Table>
+      </div>
 
       <ReviewRequestModal
         request={requestToReview}
+        readOnly={
+          !!requestToReview &&
+          requestToReview.status !== AuthDelegationRequestStatus.pending
+        }
         onClose={() => setRequestToReview(null)}
         onReject={(request) => {
           setRequestToReview(null)
           setRequestToReject(request)
+        }}
+        onViewDelegation={() => {
+          setRequestToReview(null)
+          navigate(DelegationPaths.DelegationsNew)
         }}
       />
 
@@ -168,7 +201,7 @@ export const IncomingRequests = () => {
         <Box display="flex" flexDirection="column" rowGap={3} marginTop={2}>
           <Text>
             {formatMessage(m.requestRejectConfirmText, {
-              name: requestToReject?.from.name,
+              name: requestToReject?.to.name,
             })}
           </Text>
           <AlertMessage

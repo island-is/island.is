@@ -1,41 +1,103 @@
+import { useEffect, useMemo, useState } from 'react'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { useQuery } from '@apollo/client'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Checkbox,
+  DatePicker,
+  Table as T,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
+import {
+  AuthDelegationDirection,
+  AuthDelegationRequestStatus,
+} from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
-import { IdentityCard } from '../IdentityCard/IdentityCard'
-import { RequestScopesTable } from '../delegationRequests/RequestScopesTable'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
+import {
+  AuthScopeCategoriesDocument,
+  AuthScopeCategoriesQuery,
+  AuthScopeTagsDocument,
+  AuthScopeTagsQuery,
+} from '../../screens/ServiceCategories/ServiceCategories.generated'
 import {
   useFulfillAuthDelegationRequestMutation,
   AuthDelegationRequestsIncomingDocument,
   AuthDelegationRequestsIncomingQuery,
 } from '../delegationRequests/DelegationRequests.generated'
+import * as styles from './Modals.css'
 
 type IncomingRequest =
   AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
 
+const defaultValidity = (request: IncomingRequest): Date => {
+  // The grantor sets one validity for the whole grant. Seed it with the
+  // latest date the requester asked for, falling back to one year out.
+  const requested = request.scopes
+    .map((scope) => (scope.validTo ? new Date(scope.validTo) : null))
+    .filter((date): date is Date => date !== null)
+  if (requested.length > 0) {
+    return new Date(Math.max(...requested.map((date) => date.getTime())))
+  }
+  return add(new Date(), { years: 1 })
+}
+
 /**
- * Review an incoming delegation request: who is asking, their stated
- * relationship and reason, and the scopes as the rows they would become
- * once granted — with approve/reject actions. Approving grants the
- * delegation directly (the modal already shows everything the grant wizard
- * would re-ask) and the new delegation appears in the tables on the page.
+ * Shows a delegation request. Two modes:
+ * - actionable (grantor reviewing an incoming request): pick scopes, set a
+ *   validity, approve or reject.
+ * - read-only (requester viewing a request they sent): details only, with the
+ *   option to withdraw (afturkalla) it.
  */
 export const ReviewRequestModal = ({
   request,
   onClose,
   onReject,
+  onCancel,
+  onViewDelegation,
+  readOnly = false,
+  direction = 'incoming',
 }: {
   request: IncomingRequest | null
   onClose: () => void
-  onReject: (request: IncomingRequest) => void
+  // Not needed in read-only mode.
+  onReject?: (request: IncomingRequest) => void
+  // Read-only mode only: withdraw (afturkalla) the sent request.
+  onCancel?: (request: IncomingRequest) => void
+  // Shown for an approved request to open the resulting delegation.
+  onViewDelegation?: (request: IncomingRequest) => void
+  readOnly?: boolean
+  // 'incoming' shows the requester (grantor's view); 'outgoing' shows the
+  // grantor (requester's view of a request they sent).
+  direction?: 'incoming' | 'outgoing'
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+  const isOutgoing = direction === 'outgoing'
+  const isGrantorReview = !readOnly && !isOutgoing
+
+  const [selected, setSelected] = useState<Record<string, boolean>>({})
+  const [validTo, setValidTo] = useState<Date | null>(null)
+
+  // Seed selection (all scopes) and validity when a request opens.
+  useEffect(() => {
+    if (request) {
+      setSelected(
+        Object.fromEntries(request.scopes.map((s) => [s.scopeName, true])),
+      )
+      setValidTo(defaultValidity(request))
+    }
+  }, [request])
 
   const [createAuthDelegations, { loading: approveLoading }] =
     useCreateAuthDelegationsMutation()
@@ -47,28 +109,24 @@ export const ReviewRequestModal = ({
   })
 
   const onApprove = async (request: IncomingRequest) => {
-    if (request.scopes.some((scope) => !scope.domainName)) {
+    const selectedScopes = request.scopes.filter(
+      (scope) => selected[scope.scopeName] && scope.domainName,
+    )
+    if (selectedScopes.length === 0 || !validTo) {
       toast.error(formatMessage(m.requestApproveError))
       return
     }
 
-    const scopes = request.scopes.map((scope) => ({
+    const scopes = selectedScopes.map((scope) => ({
       name: scope.scopeName,
-      // Fall back to the standard one year validity when the requester
-      // didn't ask for a specific end date.
-      validTo: scope.validTo
-        ? new Date(scope.validTo)
-        : add(new Date(), { days: 365 }),
-      domainName: scope.domainName ?? '',
+      validTo,
+      domainName: scope.domainName as string,
     }))
 
     try {
       const result = await createAuthDelegations({
         variables: {
-          input: {
-            toNationalIds: [request.to.nationalId],
-            scopes,
-          },
+          input: { toNationalIds: [request.to.nationalId], scopes },
         },
       })
       const createdDelegationId = result.data?.createAuthDelegations?.[0]?.id
@@ -77,10 +135,7 @@ export const ReviewRequestModal = ({
       }
       await fulfillDelegationRequest({
         variables: {
-          input: {
-            requestId: request.id,
-            delegationId: createdDelegationId,
-          },
+          input: { requestId: request.id, delegationId: createdDelegationId },
         },
       })
       toast.success(formatMessage(m.requestApproveSuccess))
@@ -90,11 +145,51 @@ export const ReviewRequestModal = ({
     }
   }
 
+  const hasSelection = request?.scopes.some((s) => selected[s.scopeName])
+
+  const { data: categoriesData, loading: categoriesLoading } =
+    useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
+      variables: { lang, direction: AuthDelegationDirection.outgoing },
+      skip: !isGrantorReview || !request,
+    })
+  const { data: tagsData, loading: tagsLoading } = useQuery<AuthScopeTagsQuery>(
+    AuthScopeTagsDocument,
+    {
+      variables: { lang, direction: AuthDelegationDirection.outgoing },
+      skip: !isGrantorReview || !request,
+    },
+  )
+
+  const grantableScopeNames = useMemo(() => {
+    const names = new Set<string>()
+    for (const category of categoriesData?.authScopeCategories ?? []) {
+      for (const scope of category.scopes) {
+        names.add(scope.name)
+      }
+    }
+    for (const tag of tagsData?.authScopeTags ?? []) {
+      for (const scope of tag.scopes) {
+        names.add(scope.name)
+      }
+    }
+    return names
+  }, [categoriesData, tagsData])
+
+  const catalogLoading = categoriesLoading || tagsLoading
+  const ungrantableScopes =
+    request && isGrantorReview && !catalogLoading
+      ? request.scopes.filter((s) => !grantableScopeNames.has(s.scopeName))
+      : []
+  const cannotGrant = ungrantableScopes.length > 0
+
+  // In read-only mode the counterparty is the grantor (request.from); when
+  // acting as the grantor it is the requester (request.to).
+  const title = isOutgoing ? m.requestSentTitle : m.requestReviewTitle
+
   return (
     <Modal
       id="review-request-modal"
-      label={formatMessage(m.requestReviewTitle)}
-      title={formatMessage(m.requestReviewTitle)}
+      label={formatMessage(title)}
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={request !== null}
@@ -108,35 +203,209 @@ export const ReviewRequestModal = ({
             rowGap={[3, 3, 4]}
             marginTop={2}
           >
-            <IdentityCard
-              label={formatMessage(m.requestFrom)}
-              title={request.from.name}
-              description={formatNationalId(request.from.nationalId)}
-              color="blue"
-            />
-            <Box display="flex" flexDirection="column" rowGap={1}>
-              <Text variant="h5">
-                {formatMessage(m.requestRelationshipHeader)}
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="flexStart"
+              columnGap={2}
+            >
+              <Text variant="h2" as="h2">
+                {formatMessage(title)}
               </Text>
-              <Text variant="default">{request.relationship}</Text>
+              {request.createdAt && (
+                <Box flexShrink={0}>
+                  <Tag variant="blue" outlined disabled>
+                    {formatMessage(
+                      isOutgoing ? m.requestSentBadge : m.requestReceivedBadge,
+                      {
+                        date: format(
+                          new Date(request.createdAt),
+                          'd. MMMM yyyy',
+                          { locale: is },
+                        ),
+                      },
+                    )}
+                  </Tag>
+                </Box>
+              )}
             </Box>
-            <Box display="flex" flexDirection="column" rowGap={1}>
-              <Text variant="h5">{formatMessage(m.requestReasonHeader)}</Text>
-              <Text variant="default">{request.reason}</Text>
-            </Box>
-            <Box display="flex" flexDirection="column" rowGap={[1, 1, 2]}>
-              <Text variant="h5">{formatMessage(m.accessScopes)}</Text>
-              <RequestScopesTable scopes={request.scopes} />
-            </Box>
-            {request.expiresAt && (
-              <Text variant="small" color="dark400">
-                {`${formatMessage(m.requestExpiresAt)}: ${format(
-                  new Date(request.expiresAt),
-                  'dd.MM.yyyy',
-                )}`}
+
+            {!readOnly && (
+              <Text variant="default">
+                {formatMessage(m.requestReviewIntro)}
               </Text>
             )}
+
+            <Box display="flex" flexDirection="column" rowGap={2}>
+              <Text variant="h5">
+                {formatMessage(
+                  isOutgoing
+                    ? m.requestAskingSectionTitle
+                    : m.requestRequesterSectionTitle,
+                )}
+              </Text>
+              <Box
+                alignSelf="flexStart"
+                borderColor="blue200"
+                borderWidth="standard"
+                borderRadius="large"
+                paddingX={[3, 4]}
+                paddingY={3}
+                display="flex"
+                flexDirection="column"
+                rowGap={1}
+              >
+                <Text variant="h5" as="h3">
+                  {(isOutgoing ? request.from : request.to).name}
+                </Text>
+                <Text variant="default" color="dark400">
+                  {`kt. ${formatNationalId(
+                    (isOutgoing ? request.from : request.to).nationalId,
+                  )}`}
+                </Text>
+              </Box>
+            </Box>
+
+            <Box display="flex" flexDirection="column" rowGap={[1, 1, 2]}>
+              <Text variant="h5">
+                {formatMessage(m.requestScopesSectionTitle)}
+              </Text>
+              <div className={styles.reviewScopesTable}>
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      {!readOnly && (
+                        <T.HeadData>
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(m.reviewScopeSelect)}
+                          </Text>
+                        </T.HeadData>
+                      )}
+                      <T.HeadData>
+                        <Text variant="medium" fontWeight="semiBold">
+                          {formatMessage(m.headerScopeName)}
+                        </Text>
+                      </T.HeadData>
+                      <T.HeadData>
+                        <Text variant="medium" fontWeight="semiBold">
+                          {formatMessage(m.reviewScopeDescription)}
+                        </Text>
+                      </T.HeadData>
+                      <T.HeadData>
+                        <Text variant="medium" fontWeight="semiBold">
+                          {formatMessage(m.reviewScopeType)}
+                        </Text>
+                      </T.HeadData>
+                    </T.Row>
+                  </T.Head>
+                  <T.Body>
+                    {request.scopes.map((scope) => (
+                      <T.Row key={scope.scopeName}>
+                        {!readOnly && (
+                          <T.Data>
+                            <Checkbox
+                              name={`select-${scope.scopeName}`}
+                              checked={!!selected[scope.scopeName]}
+                              onChange={() =>
+                                setSelected((prev) => ({
+                                  ...prev,
+                                  [scope.scopeName]: !prev[scope.scopeName],
+                                }))
+                              }
+                            />
+                          </T.Data>
+                        )}
+                        <T.Data>
+                          <Box display="flex" flexDirection="column">
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              columnGap={1}
+                            >
+                              {scope.organisationLogoUrl && (
+                                <img
+                                  src={scope.organisationLogoUrl}
+                                  alt=""
+                                  width={16}
+                                  height={16}
+                                />
+                              )}
+                              <Text variant="small" color="dark400">
+                                {scope.domainDisplayName}
+                              </Text>
+                            </Box>
+                            <Text variant="medium">
+                              {scope.displayName ?? scope.scopeName}
+                            </Text>
+                          </Box>
+                        </T.Data>
+                        <T.Data>
+                          <Text variant="small" color="dark400">
+                            {scope.description}
+                          </Text>
+                        </T.Data>
+                        <T.Data>
+                          <Text variant="medium">
+                            {formatMessage(
+                              scope.allowsWrite
+                                ? m.accessTypeReadWrite
+                                : m.accessTypeRead,
+                            )}
+                          </Text>
+                        </T.Data>
+                      </T.Row>
+                    ))}
+                  </T.Body>
+                </T.Table>
+              </div>
+            </Box>
+
+            <Box display="flex" flexDirection="column" rowGap={1}>
+              <Text variant="h5">
+                {formatMessage(m.requestExplanationTitle)}
+              </Text>
+              <div className={styles.reviewReasonBox}>
+                <Text variant="default">{request.reason}</Text>
+              </div>
+            </Box>
+
+            <Box display="flex" flexDirection="column" rowGap={1} width="half">
+              <Text variant="h5">{formatMessage(m.validityPeriod)}</Text>
+              {readOnly ? (
+                <div className={styles.reviewReasonBox}>
+                  <Text variant="default">
+                    {validTo ? format(validTo, 'dd.MM.yyyy') : '-'}
+                  </Text>
+                </div>
+              ) : (
+                <DatePicker
+                  name="review-valid-to"
+                  locale="is"
+                  minDate={new Date()}
+                  placeholderText={formatMessage(m.validityPeriod)}
+                  selected={validTo ?? undefined}
+                  handleChange={(date) => setValidTo(date)}
+                  size="sm"
+                  backgroundColor="blue"
+                  required
+                />
+              )}
+            </Box>
           </Box>
+
+          {cannotGrant && (
+            <Box marginTop={3}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.requestCannotGrantTitle)}
+                message={formatMessage(m.requestCannotGrantMessage, {
+                  scopes: ungrantableScopes
+                    .map((s) => s.displayName ?? s.scopeName)
+                    .join(', '),
+                })}
+              />
+            </Box>
+          )}
 
           <Box position="sticky" bottom={0} background="white" paddingTop={4}>
             <Box
@@ -146,21 +415,57 @@ export const ReviewRequestModal = ({
               width="full"
               paddingBottom={[3, 3, 4]}
             >
-              <Button
-                variant="ghost"
-                colorScheme="destructive"
-                onClick={() => onReject(request)}
-              >
-                {formatMessage(m.requestReject)}
+              <Button size="small" variant="ghost" onClick={onClose}>
+                {formatMessage(coreMessages.buttonCancel)}
               </Button>
-              <Button
-                variant="primary"
-                icon="checkmark"
-                loading={approveLoading}
-                onClick={() => onApprove(request)}
-              >
-                {formatMessage(m.requestApprove)}
-              </Button>
+              {readOnly ? (
+                <>
+                  {request.status === AuthDelegationRequestStatus.pending &&
+                    onCancel && (
+                      <Button
+                        size="small"
+                        variant="primary"
+                        colorScheme="destructive"
+                        onClick={() => onCancel(request)}
+                      >
+                        {formatMessage(m.requestCancelBeidniButton)}
+                      </Button>
+                    )}
+                  {request.status === AuthDelegationRequestStatus.approved &&
+                    request.resolvedDelegationId &&
+                    onViewDelegation && (
+                      <Button
+                        size="small"
+                        variant="primary"
+                        icon="arrowForward"
+                        onClick={() => onViewDelegation(request)}
+                      >
+                        {formatMessage(m.requestViewDelegation)}
+                      </Button>
+                    )}
+                </>
+              ) : (
+                <Box display="flex" columnGap={2}>
+                  <Button
+                    size="small"
+                    variant="primary"
+                    colorScheme="destructive"
+                    onClick={() => onReject?.(request)}
+                  >
+                    {formatMessage(m.requestRejectReviewButton)}
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="primary"
+                    icon="checkmark"
+                    loading={approveLoading}
+                    disabled={!hasSelection || !validTo || cannotGrant}
+                    onClick={() => onApprove(request)}
+                  >
+                    {formatMessage(m.requestConfirmReviewButton)}
+                  </Button>
+                </Box>
+              )}
             </Box>
           </Box>
         </>

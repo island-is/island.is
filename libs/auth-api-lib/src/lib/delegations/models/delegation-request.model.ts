@@ -19,6 +19,7 @@ import {
 import { Domain } from '../../resources/models/domain.model'
 import { DelegationRequestDTO } from '../dto/delegation-request.dto'
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
+import { DelegationRequestDelegation } from './delegation-request-delegation.model'
 import { DelegationRequestScope } from './delegation-request-scope.model'
 
 /**
@@ -30,7 +31,7 @@ import { DelegationRequestScope } from './delegation-request-scope.model'
  *
  * Requests are a separate concept from {@link Delegation}: approving a request
  * creates a normal delegation through the existing grant path, and the request
- * is then linked via `resolvedDelegationId` and marked `approved`.
+ * is then linked to the resulting delegations and marked `approved`.
  */
 @Table({
   tableName: 'delegation_request',
@@ -118,17 +119,6 @@ export class DelegationRequest extends Model<
   })
   resolvedByNationalId?: string | null
 
-  /**
-   * Id of the delegation created when the request was approved. Kept as a plain
-   * reference (not a DB-level FK) so the request row survives for audit even if
-   * the resulting delegation is later revoked/deleted.
-   */
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  resolvedDelegationId?: string | null
-
   /** When a still-pending request should be considered expired. */
   @Column({
     type: DataType.DATE,
@@ -145,6 +135,9 @@ export class DelegationRequest extends Model<
   @HasMany(() => DelegationRequestScope, { onDelete: 'cascade' })
   requestScopes?: NonAttribute<DelegationRequestScope[]>
 
+  @HasMany(() => DelegationRequestDelegation, { onDelete: 'cascade' })
+  resolvedDelegations?: NonAttribute<DelegationRequestDelegation[]>
+
   toDTO(): DelegationRequestDTO {
     return {
       id: this.id,
@@ -156,7 +149,7 @@ export class DelegationRequest extends Model<
       status: this.status,
       createdByNationalId: this.createdByNationalId,
       resolvedByNationalId: this.resolvedByNationalId,
-      resolvedDelegationId: this.resolvedDelegationId,
+      resolvedDelegationId: this.resolvedDelegations?.[0]?.delegationId ?? null,
       expiresAt: this.expiresAt,
       createdAt: this.created,
       scopes: this.requestScopes

@@ -13,7 +13,6 @@ import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { Features } from '@island.is/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -21,6 +20,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { Domain } from '../resources/models/domain.model'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { NotificationsApi } from '../user-notification'
 import { DelegationRequestError } from './constants/delegation-request-errors'
 import {
@@ -33,6 +33,8 @@ import {
   CreateDelegationRequestDTO,
   DelegationRequestDTO,
 } from './dto/delegation-request.dto'
+import { Delegation } from './models/delegation.model'
+import { DelegationRequestDelegation } from './models/delegation-request-delegation.model'
 import { DelegationRequestScope } from './models/delegation-request-scope.model'
 import { DelegationRequest } from './models/delegation-request.model'
 import { NamesService } from './names.service'
@@ -50,8 +52,12 @@ export class DelegationRequestService {
     private delegationRequestScopeModel: typeof DelegationRequestScope,
     @InjectModel(ApiScope)
     private apiScopeModel: typeof ApiScope,
+    @InjectModel(Delegation)
+    private delegationModel: typeof Delegation,
+    @InjectModel(DelegationRequestDelegation)
+    private delegationRequestDelegationModel: typeof DelegationRequestDelegation,
     private namesService: NamesService,
-    private rskRelationshipsClient: RskRelationshipsClient,
+    private delegationResourceService: DelegationResourcesService,
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
     private sequelize: Sequelize,
@@ -89,18 +95,25 @@ export class DelegationRequestService {
 
     const isCompany = kennitala.isCompany(granterNationalId)
 
-    // Validate the requested scopes exist and are explicitly delegatable.
+    // Validate the requested scopes exist, are explicitly delegatable, are not
+    // access controlled, and can actually be granted by this grantor type: a
+    // company grants through its procuration holders, an individual grants
+    // scopes that can be delegated to an authenticated user.
     const scopeNames = [...new Set(dto.scopes.map((s) => s.scopeName))]
     const grantableScopes = await this.apiScopeModel.findAll({
       where: {
         name: { [Op.in]: scopeNames },
         enabled: true,
         allowExplicitDelegationGrant: true,
+        isAccessControlled: { [Op.ne]: true },
+        ...(isCompany
+          ? { grantToProcuringHolders: true }
+          : { grantToAuthenticatedUser: true }),
       },
     })
     if (grantableScopes.length !== scopeNames.length) {
       throw new BadRequestException(
-        'One or more requested scopes do not exist or cannot be delegated.',
+        'One or more requested scopes do not exist or cannot be granted by this grantor.',
       )
     }
 
@@ -115,32 +128,16 @@ export class DelegationRequestService {
     )
     await this.assertUnderPendingCap(requesterNationalId)
 
-    // Confirm the grantor exists (and, for individuals, is not deceased) and
-    // resolve who should be notified.
-    let recipients: string[]
-    if (isCompany) {
-      const legalEntity =
-        await this.rskRelationshipsClient.getLegalEntityRelationships(
-          user,
-          granterNationalId,
-        )
-      if (!legalEntity) {
-        throw new BadRequestException(
-          'The requested company could not be found.',
-        )
-      }
-      recipients = (legalEntity.relationships ?? [])
-        .map((r) => r.nationalId)
-        .filter((id): id is string => Boolean(id))
-      if (recipients.length === 0) {
-        throw new BadRequestException(
-          'The requested company has no registered procuration holders to receive the request.',
-        )
-      }
-    } else {
+    // The grantor is the notification recipient. When the grantor is a company,
+    // the user-notification service resolves its procuration holders from the
+    // delegation records and fans out to them (setting onBehalfOf = the
+    // company), so we do not look them up here. For individuals we still reject
+    // up front if the grantor is deceased, rather than creating a request that
+    // can never be acted on.
+    if (!isCompany) {
       await this.namesService.validateRecipientNotDeceased(granterNationalId)
-      recipients = [granterNationalId]
     }
+    const recipients = [granterNationalId]
 
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + REQUEST_TTL_DAYS)
@@ -175,7 +172,13 @@ export class DelegationRequestService {
     })
 
     const requesterName = await this.namesService.getUserName(user)
-    void this.notifyNewRequest(user, recipients, requesterName, dto.relationship)
+    void this.notifyNewRequest(
+      user,
+      recipients,
+      requesterName,
+      dto.relationship,
+      grantableScopes.map((s) => s.domainName),
+    )
 
     return this.findById(user, request.id)
   }
@@ -190,6 +193,7 @@ export class DelegationRequestService {
           model: DelegationRequestScope,
           include: [{ model: ApiScope, include: [Domain] }],
         },
+        { model: DelegationRequestDelegation },
       ],
       order: [['created', 'DESC']],
     })
@@ -210,6 +214,7 @@ export class DelegationRequestService {
           model: DelegationRequestScope,
           include: [{ model: ApiScope, include: [Domain] }],
         },
+        { model: DelegationRequestDelegation },
       ],
       order: [['created', 'DESC']],
     })
@@ -237,6 +242,7 @@ export class DelegationRequestService {
       request.toNationalId,
       DELEGATION_REQUEST_REJECTED_TEMPLATE_ID,
       granterName,
+      request.requestScopes?.map((s) => s.apiScope?.domainName) ?? [],
     )
 
     return this.findById(user, id)
@@ -269,8 +275,40 @@ export class DelegationRequestService {
     await request.update({
       status: DelegationRequestStatus.Approved,
       resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
-      resolvedDelegationId: delegationId,
     })
+
+    const domainNames = [
+      ...new Set(
+        request.requestScopes
+          ?.map((s) => s.apiScope?.domainName)
+          .filter((name): name is string => Boolean(name)) ?? [],
+      ),
+    ]
+    const delegationIds = new Set<string>()
+    if (delegationId) {
+      delegationIds.add(delegationId)
+    }
+    if (domainNames.length > 0) {
+      const delegations = await this.delegationModel.findAll({
+        where: {
+          fromNationalId: request.fromNationalId,
+          toNationalId: request.toNationalId,
+          domainName: { [Op.in]: domainNames },
+        },
+        attributes: ['id'],
+      })
+      delegations.forEach((d) => delegationIds.add(d.id))
+    }
+    if (delegationIds.size > 0) {
+      await this.delegationRequestDelegationModel.bulkCreate(
+        [...delegationIds].map((linkedId) => ({
+          id: uuid(),
+          delegationRequestId: request.id,
+          delegationId: linkedId,
+        })),
+        { ignoreDuplicates: true },
+      )
+    }
 
     const granterName = await this.namesService.getUserName(user)
     void this.notifyRequester(
@@ -278,6 +316,7 @@ export class DelegationRequestService {
       request.toNationalId,
       DELEGATION_REQUEST_APPROVED_TEMPLATE_ID,
       granterName,
+      request.requestScopes?.map((s) => s.apiScope?.domainName) ?? [],
     )
 
     return this.findById(user, id)
@@ -293,6 +332,7 @@ export class DelegationRequestService {
           model: DelegationRequestScope,
           include: [{ model: ApiScope, include: [Domain] }],
         },
+        { model: DelegationRequestDelegation },
       ],
     })
     if (
@@ -315,6 +355,7 @@ export class DelegationRequestService {
           model: DelegationRequestScope,
           include: [{ model: ApiScope, include: [Domain] }],
         },
+        { model: DelegationRequestDelegation },
       ],
     })
     // The grantor side is the current subject (an individual, or a company the
@@ -417,15 +458,22 @@ export class DelegationRequestService {
     recipients: string[],
     requesterName: string,
     relationship: string,
+    domainNames: Array<string | null | undefined>,
   ): Promise<void> {
     if (!(await this.notificationsEnabled(user))) {
       return
     }
+    const { domainNameIs, domainNameEn } = await this.resolveDomainNames(
+      user,
+      domainNames,
+    )
     await Promise.all(
       recipients.map((recipient) =>
         this.sendNotification(recipient, DELEGATION_REQUEST_TEMPLATE_ID, [
           { key: 'name', value: requesterName },
           { key: 'relationship', value: relationship },
+          { key: 'domainNameIs', value: domainNameIs },
+          { key: 'domainNameEn', value: domainNameEn },
         ]),
       ),
     )
@@ -436,13 +484,50 @@ export class DelegationRequestService {
     recipient: string,
     templateId: string,
     granterName: string,
+    domainNames: Array<string | null | undefined>,
   ): Promise<void> {
     if (!(await this.notificationsEnabled(user))) {
       return
     }
+    const { domainNameIs, domainNameEn } = await this.resolveDomainNames(
+      user,
+      domainNames,
+    )
     await this.sendNotification(recipient, templateId, [
       { key: 'name', value: granterName },
+      { key: 'domainNameIs', value: domainNameIs },
+      { key: 'domainNameEn', value: domainNameEn },
     ])
+  }
+
+  private async resolveDomainNames(
+    user: User,
+    domainNames: Array<string | null | undefined>,
+  ): Promise<{ domainNameIs: string; domainNameEn: string }> {
+    const distinct = [
+      ...new Set(domainNames.filter((name): name is string => Boolean(name))),
+    ]
+    const join = async (language: string): Promise<string> => {
+      const names = await Promise.all(
+        distinct.map(async (name) => {
+          try {
+            const domain = await this.delegationResourceService.findOneDomain(
+              user,
+              name,
+              language,
+            )
+            return domain.displayName
+          } catch {
+            return name
+          }
+        }),
+      )
+      return names.filter(Boolean).join(', ')
+    }
+    return {
+      domainNameIs: await join('is'),
+      domainNameEn: await join('en'),
+    }
   }
 
   private async notificationsEnabled(user: User): Promise<boolean> {

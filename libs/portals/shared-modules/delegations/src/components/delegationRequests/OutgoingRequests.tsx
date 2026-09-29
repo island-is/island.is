@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 import {
   Box,
@@ -9,40 +11,40 @@ import {
   Tag,
   Text,
   toast,
+  UserAvatar,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatNationalId } from '@island.is/portals/core'
 import { AuthDelegationRequestStatus } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
-import ExpandableRow from '../tables/ExpandableRow/ExpandableRow'
-import { IdentityInfo } from '../tables/IdentityInfo/IdentityInfo'
-import * as styles from '../tables/Tables.css'
-import { RequestScopesTable } from './RequestScopesTable'
+import { DelegationPaths } from '../../lib/paths'
+import { RequestSectionHeader } from './RequestSectionHeader'
+import { ReviewRequestModal } from '../modals/ReviewRequestModal'
+import { requestStatusTag } from './requestStatusTag'
+import * as styles from './DelegationRequests.css'
 import {
   useAuthDelegationRequestsOutgoingQuery,
   useCancelAuthDelegationRequestMutation,
   AuthDelegationRequestsOutgoingDocument,
+  AuthDelegationRequestsOutgoingQuery,
 } from './DelegationRequests.generated'
 
-const statusMessage = {
-  [AuthDelegationRequestStatus.pending]: m.requestStatusPending,
-  [AuthDelegationRequestStatus.approved]: m.requestStatusApproved,
-  [AuthDelegationRequestStatus.rejected]: m.requestStatusRejected,
-  [AuthDelegationRequestStatus.cancelled]: m.requestStatusCancelled,
-  [AuthDelegationRequestStatus.expired]: m.requestStatusExpired,
-} as const
+type OutgoingRequest =
+  AuthDelegationRequestsOutgoingQuery['authDelegationRequestsOutgoing'][number]
 
-const statusVariant = {
-  [AuthDelegationRequestStatus.pending]: 'blue',
-  [AuthDelegationRequestStatus.approved]: 'mint',
-  [AuthDelegationRequestStatus.rejected]: 'red',
-  [AuthDelegationRequestStatus.cancelled]: 'disabled',
-  [AuthDelegationRequestStatus.expired]: 'disabled',
-} as const
+const matchesSearch = (request: OutgoingRequest, search: string) => {
+  if (!search) return true
+  const term = search.toLowerCase()
+  return (
+    request.from.name.toLowerCase().includes(term) ||
+    request.from.nationalId.includes(term.replace('-', ''))
+  )
+}
 
-export const OutgoingRequests = () => {
+export const OutgoingRequests = ({ search = '' }: { search?: string }) => {
   const { formatMessage } = useLocale()
-  const [expandedRow, setExpandedRow] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const { data, loading } = useAuthDelegationRequestsOutgoingQuery({
     fetchPolicy: 'cache-and-network',
@@ -53,7 +55,13 @@ export const OutgoingRequests = () => {
     refetchQueries: [{ query: AuthDelegationRequestsOutgoingDocument }],
   })
 
-  const requests = data?.authDelegationRequestsOutgoing ?? []
+  const [requestToView, setRequestToView] = useState<OutgoingRequest | null>(
+    null,
+  )
+
+  const requests = (data?.authDelegationRequestsOutgoing ?? []).filter(
+    (request) => matchesSearch(request, search),
+  )
 
   const onCancel = (requestId: string) => {
     cancelRequest({ variables: { input: { requestId } } })
@@ -73,104 +81,113 @@ export const OutgoingRequests = () => {
     return null
   }
 
-  const headerArray = [
-    { value: '' },
-    { value: formatMessage(m.requestTo) },
-    { value: formatMessage(m.requestScopeCount) },
-    { value: formatMessage(m.requestDateSent) },
-    { value: formatMessage(m.requestStatus) },
-    { value: '' },
-  ]
-
   return (
-    <Box
-      marginBottom={6}
-      display="flex"
-      flexDirection="column"
-      rowGap={[0, 0, 0, 2]}
-    >
-      <Text variant="h5">{formatMessage(m.outgoingRequestsTitle)}</Text>
+    <Box marginBottom={6}>
+      <RequestSectionHeader
+        direction="outgoing"
+        title={formatMessage(m.outgoingRequestsSectionTitle)}
+        subtitle={formatMessage(m.outgoingRequestsSectionSubtitle)}
+      />
       <div className={styles.tableContainer}>
         <T.Table>
           <T.Head>
             <T.Row>
-              {headerArray.map((item, i) => (
-                <T.HeadData key={item.value + i} style={{ paddingInline: 16 }}>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {item.value}
-                  </Text>
-                </T.HeadData>
-              ))}
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(m.name)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(m.colDateSent)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData />
             </T.Row>
           </T.Head>
           <T.Body>
-            {requests.map((request) => (
-              <ExpandableRow
-                key={request.id}
-                onExpandCallback={() => setExpandedRow(request.id)}
-                data={[
-                  {
-                    value: (
-                      <IdentityInfo
-                        identity={{
-                          nationalId: request.to.nationalId,
-                          name: request.to.name,
-                        }}
-                        isExpanded={expandedRow === request.id}
-                      />
-                    ),
-                  },
-                  {
-                    value: (
-                      <Text variant="medium" fontWeight="semiBold">
-                        {request.scopes.length}
-                      </Text>
-                    ),
-                  },
-                  {
-                    value: request.createdAt
-                      ? format(new Date(request.createdAt), 'dd.MM.yyyy')
-                      : '-',
-                  },
-                  {
-                    value: (
-                      <Tag
-                        variant={statusVariant[request.status]}
-                        disabled
-                        outlined
-                      >
-                        {formatMessage(statusMessage[request.status])}
-                      </Tag>
-                    ),
-                  },
-                  {
-                    value: (
-                      <Box flexShrink={0} display="flex" columnGap={2}>
-                        {request.status ===
-                          AuthDelegationRequestStatus.pending && (
-                          <Button
-                            variant="text"
-                            icon="trash"
-                            iconType="outline"
-                            size="small"
-                            colorScheme="destructive"
-                            onClick={() => onCancel(request.id)}
-                          >
-                            {formatMessage(m.requestCancel)}
-                          </Button>
-                        )}
+            {requests.map((request) => {
+              const tag = requestStatusTag[request.status]
+              return (
+                <T.Row key={request.id}>
+                  <T.Data>
+                    <Box display="flex" alignItems="center" columnGap={2}>
+                      <UserAvatar color="blue" username={request.from.name} />
+                      <Box>
+                        <Text variant="medium">{request.from.name}</Text>
+                        <Text variant="small" color="dark400">
+                          {formatNationalId(request.from.nationalId)}
+                        </Text>
                       </Box>
-                    ),
-                    align: 'right',
-                  },
-                ]}
-              >
-                <RequestScopesTable scopes={request.scopes} />
-              </ExpandableRow>
-            ))}
+                    </Box>
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="medium">
+                      {request.createdAt
+                        ? format(new Date(request.createdAt), 'd. MMMM yyyy', {
+                            locale: is,
+                          })
+                        : '-'}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      columnGap={3}
+                    >
+                      {request.status !==
+                        AuthDelegationRequestStatus.pending &&
+                        tag && (
+                          <Tag variant={tag.variant} outlined disabled>
+                            {formatMessage(tag.label)}
+                          </Tag>
+                        )}
+                      {request.status ===
+                        AuthDelegationRequestStatus.pending && (
+                        <Button
+                          variant="text"
+                          icon="trash"
+                          iconType="outline"
+                          size="small"
+                          colorScheme="destructive"
+                          onClick={() => onCancel(request.id)}
+                        >
+                          {formatMessage(m.requestCancel)}
+                        </Button>
+                      )}
+                      <Button
+                        variant="text"
+                        icon="arrowForward"
+                        size="small"
+                        onClick={() => setRequestToView(request)}
+                      >
+                        {formatMessage(m.reviewBeidniButton)}
+                      </Button>
+                    </Box>
+                  </T.Data>
+                </T.Row>
+              )
+            })}
           </T.Body>
         </T.Table>
       </div>
+
+      <ReviewRequestModal
+        readOnly
+        direction="outgoing"
+        request={requestToView}
+        onClose={() => setRequestToView(null)}
+        onCancel={(request) => {
+          onCancel(request.id)
+          setRequestToView(null)
+        }}
+        onViewDelegation={() => {
+          setRequestToView(null)
+          navigate(DelegationPaths.DelegationsNew)
+        }}
+      />
     </Box>
   )
 }

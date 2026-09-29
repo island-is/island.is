@@ -16,11 +16,15 @@ fragment AuthDelegationRequestData on AuthDelegationRequest {
   status
   expiresAt
   createdAt
+  resolvedDelegationId
   scopes {
     scopeName
     displayName
     domainName
     domainDisplayName
+    organisationLogoUrl
+    description
+    allowsWrite
     validTo
   }
 }

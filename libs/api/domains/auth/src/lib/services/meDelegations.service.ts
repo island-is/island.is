@@ -334,6 +334,7 @@ export class MeDelegationsService {
         nationalId: nationalId ?? '',
         name: personName,
         type: firstDelegation.type,
+        direction: isOutgoing ? 'outgoing' : 'incoming',
         subjectId: firstDelegation.subjectId ?? null,
         totalScopeCount: allScopes.length,
         scopes: allScopes,
