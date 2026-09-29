@@ -233,6 +233,11 @@ export const m = {
       defaultMessage: 'Sniðmát með villum',
       description: 'Download error template button label',
     },
+    rowLabel: {
+      id: 'rsk.crfc.application:multi.upload.row.label',
+      defaultMessage: 'lína {row}',
+      description: 'Fallback label for a file row with no registration number',
+    },
     errorMessageToUser: {
       id: 'rsk.crfc.application:multi.upload.error.message.to.user',
       defaultMessage:
@@ -286,6 +291,12 @@ export const m = {
       id: 'rsk.crfc.application:table.view.empty.state',
       defaultMessage: 'Ekkert fannst fyrir þessa leit.',
       description: 'Vehicle table empty state message',
+    },
+    disabledTooRecentOnDayRate: {
+      id: 'rsk.crfc.application:table.view.disabled.too.recent.on.dayrate',
+      defaultMessage: 'Nýskráð á daggjald - breytanlegt frá {date}',
+      description:
+        'Shown instead of the mileage input when a vehicle has been on the day rate for less than 15 days',
     },
     submitErrorMessage: {
       id: 'rsk.crfc.application:table.view.submit.error',

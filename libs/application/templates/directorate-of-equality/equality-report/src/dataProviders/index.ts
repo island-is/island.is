@@ -36,11 +36,18 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
-export const EqualityReportTemplateHtmlApi = defineTemplateApi({
-  action: ApiActions.getEqualityReportTemplateHtml,
-  externalDataId: 'equalityReportTemplateHtml',
+// The bytes of a PDF-backed previous plan. Its own on-demand provider rather
+// than part of `PreviousEqualityReportContentApi`, so several megabytes of
+// base64 are fetched only when the applicant asks to see the document — not on
+// every render of the screen that mentions it.
+export const PreviousEqualityReportPdfApi = defineTemplateApi({
+  action: ApiActions.getPreviousEqualityReportPdf,
+  externalDataId: 'previousEqualityReportPdf',
   namespace: 'DirectorateOfEquality',
   order: 0,
+  // The runner returns the bytes on the mutation response either way, so the
+  // download works without parking megabytes of base64 in the application row.
+  shouldPersistToExternalData: false,
 })
 
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
@@ -69,18 +76,18 @@ export const SubmitReportCommentApi = defineTemplateApi({
   throwOnError: false,
 })
 
-export const SubmitEqualityReportApi = defineTemplateApi({
-  action: ApiActions.submitEqualityReport,
+// Idempotent on providerId — reopening this step returns the same draft.
+export const CreateEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.createEqualityDraft,
+  externalDataId: 'equalityDraft',
   namespace: 'DirectorateOfEquality',
-  shouldPersistToExternalData: true,
+  shouldPersistToExternalData: false,
   throwOnError: true,
 })
 
-// PUTs just the report's narrative content in place — used as DRAFT_RETRY's
-// onExit, since submitEqualityReport is a one-shot create call that a
-// revision can't safely re-invoke.
-export const EditEqualityContentApi = defineTemplateApi({
-  action: ApiActions.editEqualityContent,
+export const SubmitEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.submitEqualityDraft,
+  externalDataId: 'submitEqualityDraft',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,

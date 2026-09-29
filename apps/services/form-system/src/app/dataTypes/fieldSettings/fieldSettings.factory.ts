@@ -50,6 +50,7 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.APPLICANT:
         keys = [
           'applicantType',
+          'isAddressRequired',
           'isPhoneRequired',
           'isEmailRequired',
           'fetchEmailFromMyPages',

@@ -1,3 +1,4 @@
+import { HealthDirectoratePrescriptionRenewalStatus } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -157,6 +158,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       }}
       toggleClose={toggleClose}
       removeOnClose
+      modalLabel={formatMessage(messages.renewalMedicineRequest)}
       className={styles.modal}
     >
       <Box paddingY={[4, 4, 4, 8]} paddingX={[4, 4, 4, 12]}>
@@ -165,6 +167,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             circle
             colorScheme="negative"
             icon="close"
+            aria-label={formatMessage(messages.closeModal)}
             onClick={() => {
               closeModal()
             }}
@@ -179,7 +182,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         <Text marginBottom={3}>
           {formatMessage(messages.renewalMedicineRequestText)}
         </Text>
-        {targetOptions.length > 0 && (
+        {targetOptions.length > 1 && (
           <Box marginBottom={3}>
             <Select
               name="renewalTarget"
@@ -192,6 +195,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                 setSelectedTarget({ nodeId, groupId: Number(groupId) })
               }}
               backgroundColor="blue"
+              size="sm"
             />
           </Box>
         )}
@@ -232,6 +236,25 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                 </GridColumn>
               ))}
             </GridRow>
+            {activePrescription.renewalStatus ===
+              HealthDirectoratePrescriptionRenewalStatus.Dismissed &&
+              activePrescription.renewResponseMessage && (
+                <GridRow>
+                  <GridColumn span={'12/12'}>
+                    <Box marginTop={5}>
+                      <AlertMessage
+                        type="warning"
+                        title={formatMessage(messages.alert)}
+                        message={
+                          <Text variant="small" whiteSpace="preLine">
+                            {activePrescription.renewResponseMessage}
+                          </Text>
+                        }
+                      />
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              )}
             <GridRow>
               <GridColumn span={'12/12'}>
                 <Box

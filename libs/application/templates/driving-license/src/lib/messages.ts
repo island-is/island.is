@@ -466,6 +466,23 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Type of application for driving license',
   },
+  digitalLicenseSubSectionTitle: {
+    id: 'dl.application:digitalLicense.subSectionTitle',
+    defaultMessage: 'Stafrænt skírteini',
+    description: 'Title of the digital-licence information sub-section',
+  },
+  digitalLicenseAlertTitle: {
+    id: 'dl.application:digitalLicense.alertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Title of the digital-licence information alert box',
+  },
+  digitalLicenseAlertMessage: {
+    id: 'dl.application:digitalLicense.alertMessage#markdown',
+    defaultMessage:
+      'Ökuskírteinið verður fyrst gefið út á stafrænu formi og verður aðgengilegt í Ísland.is appinu þegar afgreiðslu er lokið.\n\nPlastökuskírteinið verður framleitt um miðjan nóvember og sent í pósti á skráð lögheimili um leið og það er tilbúið.',
+    description:
+      'Body of the digital-licence information alert: licence is issued digitally first (available in the Ísland.is app), plastic card produced mid-November and mailed afterwards to the registered legal domicile',
+  },
   drivingLicenseApplyingForTitle: {
     id: 'dl.application:drivingLicenseApplyingForTitle',
     defaultMessage: 'Ég er að sækja um:',
@@ -1098,8 +1115,13 @@ export const requirementsMessages = defineMessages({
     description: 'requirement unmet 65 plus renewal',
   },
   noExtendedDrivingLicenseDescription: {
-    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
-    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    // V2: the previous copy repeated the title verbatim, so the card never
+    // explained why the applicant was blocked. Id bumped so the new text is
+    // picked up rather than overridden by the old Contentful entry (same
+    // approach as beLicenseQualityPhotoDescriptionV2 above).
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescriptionV2#markdown',
+    defaultMessage:
+      'Þú ert með aukin ökuréttindi (t.d. C, CE, D1 eða D1E) sem voru gefin út á öðrum tíma en almennu ökuréttindin þín. Endurnýjun á slíkum réttindum fer ekki fram hér. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: 'requirement unmet 65 plus renewal',
   },
 })

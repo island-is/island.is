@@ -323,6 +323,49 @@ describe('MeTenantsController', () => {
         })
       })
 
+      it('PATCH should set and clear municipalityCode', async () => {
+        const created = await fixtureFactory.createDomain({
+          name: '@super.patch.municipality.domain',
+          nationalId: createNationalId('company'),
+        })
+
+        const setRes = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            municipalityCode: '0000',
+          })
+
+        expect(setRes.status).toBe(200)
+        expect(setRes.body).toMatchObject({
+          name: created.name,
+          municipalityCode: '0000',
+        })
+
+        const clearRes = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            municipalityCode: null,
+          })
+
+        expect(clearRes.status).toBe(200)
+        expect(clearRes.body.municipalityCode).toBeNull()
+      })
+
+      it('PATCH should reject an invalid municipalityCode', async () => {
+        const created = await fixtureFactory.createDomain({
+          name: '@super.patch.invalid-municipality.domain',
+          nationalId: createNationalId('company'),
+        })
+
+        const res = await server
+          .patch(`/v2/me/tenants/${encodeURIComponent(created.name)}`)
+          .send({
+            municipalityCode: 'Reykjavík',
+          })
+
+        expect(res.status).toBe(400)
+      })
+
       it('PATCH should update nationalId', async () => {
         const created = await fixtureFactory.createDomain({
           name: '@super.patch.national-id.domain',

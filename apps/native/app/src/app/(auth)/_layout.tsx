@@ -199,6 +199,13 @@ export default function AuthLayout() {
         }}
       />
       <Stack.Screen
+        name="(modals)/renew-prescription"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: '',
+        }}
+      />
+      <Stack.Screen
         name="(modals)/update-app"
         options={({ route }) => {
           const closable =

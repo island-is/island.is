@@ -39,6 +39,27 @@ export const isVisible =
     return fns.reduce((s, fn) => (!s ? false : fn(answers)), true)
   }
 
+/**
+ * True for a B-temp or B-full draft whose own redesign flag was on when it was
+ * created. Those drafts get the BE-style health-certificate upload and submit
+ * through the v6 `withhealthdeclaration` endpoint; everything else keeps the
+ * legacy flow.
+ *
+ * Reads the flag *persisted into answers* at prerequisites, because the draft
+ * form has no access to the live feature-flag client. That also makes the choice
+ * sticky per draft, which is what keeps in-flight applications on the flow they
+ * started with when a flag is flipped mid-lifecycle.
+ *
+ * One predicate for both products rather than one each: a single predicate means
+ * a single writer of the `healthCertificate` answer, so the "exactly one block
+ * visible at a time" invariant stays checkable at a glance.
+ */
+export const isRedesignedBTempOrBFull = (answers: FormValue) =>
+  (getValueViaPath(answers, 'applicationFor') === B_TEMP &&
+    getValueViaPath(answers, 'isBTempRedesignEnabled') === true) ||
+  (getValueViaPath(answers, 'applicationFor') === B_FULL &&
+    getValueViaPath(answers, 'isBFullRedesignEnabled') === true)
+
 export const isApplicationForCondition =
   (result: DrivingLicenseApplicationFor | DrivingLicenseApplicationFor[]) =>
   (answers: FormValue) => {

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients/form-system',
   preset: '../../../jest.preset.js',

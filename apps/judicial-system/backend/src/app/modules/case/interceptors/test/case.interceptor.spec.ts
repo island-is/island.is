@@ -415,6 +415,90 @@ describe('CaseInterceptor - reopenReason mapping', () => {
   })
 })
 
+describe('CaseInterceptor - indictmentReviewReturnedExplanation mapping', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  interface Then {
+    result: { indictmentReviewReturnedExplanation?: string }
+    error: Error
+  }
+
+  let givenWhenThen: () => Promise<Then>
+
+  beforeEach(() => {
+    givenWhenThen = async (): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
+      const then = {} as Then
+
+      await firstValueFrom(
+        interceptor.intercept(
+          {
+            switchToHttp: () => ({ getRequest: mockRequest }),
+          } as unknown as ExecutionContext,
+          { handle: mockHandle } as unknown as CallHandler,
+        ),
+      )
+        .then((result) => (then.result = result as Then['result']))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('when caseStrings contains an INDICTMENT_REVIEW_RETURNED_EXPLANATION entry', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = {
+        ...makeCase([]),
+        caseStrings: [
+          {
+            stringType: StringType.INDICTMENT_REVIEW_RETURNED_EXPLANATION,
+            value: 'needs changes',
+          },
+        ],
+      }
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.PROSECUTOR, nationalId },
+        },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen()
+    })
+
+    it('includes the indictmentReviewReturnedExplanation in the response', () => {
+      expect(then.result.indictmentReviewReturnedExplanation).toBe(
+        'needs changes',
+      )
+    })
+  })
+
+  describe('when caseStrings is undefined', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.PROSECUTOR, nationalId },
+        },
+      }))
+      mockHandle.mockReturnValueOnce(of(makeCase([])))
+
+      then = await givenWhenThen()
+    })
+
+    it('returns undefined for indictmentReviewReturnedExplanation', () => {
+      expect(then.result.indictmentReviewReturnedExplanation).toBeUndefined()
+    })
+  })
+})
+
 describe('CaseInterceptor - rulingModifiedHistory', () => {
   const mockRequest = jest.fn()
   const mockHandle = jest.fn()

@@ -15,6 +15,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { AttachRulingOrderDocumentInput } from './dto/attachRulingOrderDocument.input'
 import { ConfirmRulingOrderInput } from './dto/confirmRulingOrder.input'
 import { CreateCivilClaimantFileInput } from './dto/createCivilClaimantFile.input'
 import { CreateCriminalRecordInput } from './dto/createCriminalRecord.input'
@@ -197,6 +198,26 @@ export class FileResolver {
       user.id,
       AuditedAction.CONFIRM_RULING_ORDER,
       this.backendService.confirmRulingOrder(caseId, id),
+      id,
+    )
+  }
+
+  @Mutation(() => CaseFile)
+  attachRulingOrderDocument(
+    @Args('input', { type: () => AttachRulingOrderDocumentInput })
+    input: AttachRulingOrderDocumentInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<CaseFile> {
+    const { caseId, id, ...attachDocument } = input
+
+    this.logger.debug(
+      `Attaching a document to ruling order ${id} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.ATTACH_RULING_ORDER_DOCUMENT,
+      this.backendService.attachRulingOrderDocument(caseId, id, attachDocument),
       id,
     )
   }

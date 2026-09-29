@@ -36,11 +36,27 @@ import {
   ApplicantCreateApplicantRequestedAttachmentRequest,
   GaldurXRoadAPIModelsApplicantForeignTravelEligibilityResponse,
   GaldurDomainModelsBaseViewModel,
+  IncomeApi,
+  IncomeSupportDataApi,
+  GaldurExternalDomainModelsIncomeIncomeTypeDTO,
+  PensionFundsApi,
+  GaldurExternalDomainModelsPensionFundPensionFundItemDTO,
   GaldurXRoadAPIModelsApplicantApplicantAttachmentsResponse,
-  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
   JobSearchConfirmationApi,
   GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse,
   ApplicantWithdrawLatestApplicationRequest,
+  GaldurExternalDomainRequestsHasValidApplicationResponse,
+  IncomePostRequest,
+  IncomeGetRequest,
+  GaldurExternalDomainModelsIncomeIncomesDTO,
+  GaldurExternalDomainModelsIncomeIncomesResponse,
+  IncomeValidateRequest,
+  GaldurDomainModelsSettingsWorkShiftPeriodsWorkShiftPeriodDTO,
+  U2CertificateApi,
+  GaldurXRoadAPIModelsApplicantApplicantEligibilityResponse,
+  GaldurExternalDomainModelsSupportDataNationalityDTO,
+  GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse,
+  GaldurXRoadAPIModelsApplicantU2EligibilityResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -63,7 +79,12 @@ type VmstApis =
   | ApplicantApi
   | ApplicationApi
   | SupportDataApi
+  | IncomeApi
+  | IncomeSupportDataApi
+  | PensionFundsApi
+  | U2CertificateApi
   | JobSearchConfirmationApi
+  | IncomeApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -573,6 +594,38 @@ export class VmstUnemploymentClientService {
     return await api.applicantUpdateApplicant(requestParameters)
   }
 
+  async createIncome(
+    requestParameters: IncomePostRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesResponse> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomePost(requestParameters)
+  }
+
+  async getIncomeTypes(options?: {
+    onlyTrTypes?: boolean
+    onlyPensionTypes?: boolean
+    onlyCapitalTypes?: boolean
+  }): Promise<Array<GaldurExternalDomainModelsIncomeIncomeTypeDTO>> {
+    const api = await this.createApiClient(
+      IncomeSupportDataApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeSupportDataGetIncomeTypes(options ?? {})
+  }
+
+  async getPensionFunds(): Promise<
+    Array<GaldurExternalDomainModelsPensionFundPensionFundItemDTO>
+  > {
+    const api = await this.createApiClient(
+      PensionFundsApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.pensionFundsGetPensionFunds()
+  }
+
   async createApplicantRequestedAttachments(
     requestParameters: ApplicantCreateApplicantRequestedAttachmentRequest,
   ): Promise<GaldurDomainModelsBaseViewModel> {
@@ -599,11 +652,157 @@ export class VmstUnemploymentClientService {
     })
   }
 
+  async checkU2Eligibility(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsApplicantU2EligibilityResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateCanCreateU2Certificate({
+      applicantId,
+    })
+  }
+
+  async getEESCountries(): Promise<
+    Array<GaldurExternalDomainModelsSupportDataNationalityDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.supportDataGetAllNationalities({
+      onlyInEUAndOrEEA: true,
+    })
+  }
+
+  async validateU2(
+    auth: User,
+    dateWhenLeaving: Date,
+    destinationCountryId: string,
+  ): Promise<GaldurDomainModelsApplicationsU2CertificateViewModelsU2CertificateValidationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateValidateU2Certificate({
+      applicantId,
+      galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
+        dateWhenLeaving: dateWhenLeaving,
+        destinationCountryId: destinationCountryId,
+      },
+    })
+  }
+
+  async submitU2Application(
+    auth: User,
+    destinationCountryId: string,
+    departureDate: Date,
+    applicationId: string,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.u2CertificateCreateU2Certificate({
+      applicantId,
+      galdurExternalDomainRequestsU2CertificateCreateU2CertificateRequest: {
+        destinationCountryId,
+        dateWhenLeaving: departureDate,
+        applicationId,
+      },
+    })
+  }
+
+  async getEditProfileEligibility(
+    auth: User,
+  ): Promise<GaldurExternalDomainRequestsHasValidApplicationResponse> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      ApplicantApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.applicantGetProfileEligibility({
+      id: applicantId,
+    })
+  }
+
   async getQuestionnaire(): Promise<GaldurXRoadAPIModelsJobSearchConfirmationQuestionaireSchemaResponse> {
     const api = await this.createApiClient(
       JobSearchConfirmationApi,
       'clients-vmst-unemployment',
     )
     return await api.jobSearchConfirmationGetQuestionaireSchema()
+  }
+
+  async getIncome(
+    requestParameters: IncomeGetRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesDTO> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeGet(requestParameters)
+  }
+
+  async validatIncome(
+    requestParameters: IncomeValidateRequest,
+  ): Promise<GaldurExternalDomainModelsIncomeIncomesResponse> {
+    const api = await this.createApiClient(
+      IncomeApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.incomeValidate(requestParameters)
+  }
+
+  async getWorkshiftPeriods(): Promise<
+    Array<GaldurDomainModelsSettingsWorkShiftPeriodsWorkShiftPeriodDTO>
+  > {
+    const api = await this.createApiClient(
+      SupportDataApi,
+      'clients-vmst-unemployment',
+    )
+    return await api.supportDataGetAllWorkShiftPeriods()
+  }
+  async revokeU2Application(
+    auth: User,
+  ): Promise<GaldurDomainModelsBaseViewModel> {
+    const { applicantId } = await this.resolveApplicant(auth)
+
+    if (!applicantId) {
+      throw new Error('Failed to resolve applicantId')
+    }
+    const api = await this.createApiClient(
+      U2CertificateApi,
+      'clients-vmst-unemployment',
+    )
+
+    return await api.u2CertificateWithdrawU2Certificate({
+      applicantId,
+    })
   }
 }

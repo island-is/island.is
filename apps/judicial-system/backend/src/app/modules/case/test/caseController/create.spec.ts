@@ -1,4 +1,4 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -12,15 +12,19 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant'
-import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { CreateCaseDto } from '../../dto/createCase.dto'
+import { CreateCaseDefendantDto } from '../../dto/createCaseDefendant.dto'
 
 interface Then {
   result: Case
   error: Error
 }
 
-type GivenWhenThen = (type: CaseType) => Promise<Then>
+type GivenWhenThen = (
+  type: CaseType,
+  defendants?: CreateCaseDefendantDto[],
+) => Promise<Then>
 
 describe('CaseController - Create', () => {
   const userId = uuid()
@@ -61,10 +65,13 @@ describe('CaseController - Create', () => {
 
     const mockCreate = mockCaseRepositoryService.create as jest.Mock
     mockCreate.mockRejectedValue(new Error('Some error'))
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockRejectedValue(new Error('Some error'))
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (type: CaseType) => {
+    givenWhenThen = async (
+      type: CaseType,
+      defendants?: CreateCaseDefendantDto[],
+    ) => {
       const then = {} as Then
 
       try {
@@ -72,6 +79,7 @@ describe('CaseController - Create', () => {
           ...createProperties,
           type,
           prosecutorId: userId,
+          ...(defendants ? { defendants } : {}),
         } as unknown as CreateCaseDto)
       } catch (error) {
         then.error = error as Error
@@ -90,8 +98,9 @@ describe('CaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(returnedCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(returnedCase)
 
       then = await givenWhenThen(CaseType.CUSTODY)
     })
@@ -115,15 +124,10 @@ describe('CaseController - Create', () => {
         {},
         transaction,
       )
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: caseInclude,
-        where: {
-          id: caseId,
-          isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
-        },
-        transaction,
-      })
+      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+        caseId,
+        { allowDeleted: false, transaction },
+      )
       expect(then.result).toBe(returnedCase)
     })
   })
@@ -147,6 +151,99 @@ describe('CaseController - Create', () => {
         },
         { transaction },
       )
+    })
+  })
+
+  describe('indictment case created with defendants', () => {
+    const caseId = uuid()
+    const defendants = [
+      { name: 'Defendant 1' },
+      { name: 'Defendant 2' },
+    ] as CreateCaseDefendantDto[]
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({ id: caseId })
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({ id: caseId })
+
+      await givenWhenThen(CaseType.INDICTMENT, defendants)
+    })
+
+    it('should create the case without the defendants', () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      const [createdCase] = mockCreate.mock.calls[0]
+
+      expect(createdCase).not.toHaveProperty('defendants')
+      expect(createdCase).toMatchObject({
+        ...createProperties,
+        type: CaseType.INDICTMENT,
+      })
+    })
+
+    it('should create every defendant in order, in the same transaction', () => {
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(2)
+      expect(mockDefendantService.createForNewCase).toHaveBeenNthCalledWith(
+        1,
+        caseId,
+        defendants[0],
+        transaction,
+      )
+      expect(mockDefendantService.createForNewCase).toHaveBeenNthCalledWith(
+        2,
+        caseId,
+        defendants[1],
+        transaction,
+      )
+    })
+  })
+
+  describe('case created with an empty defendant list', () => {
+    const caseId = uuid()
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({ id: caseId })
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({ id: caseId })
+
+      await givenWhenThen(CaseType.INDICTMENT, [])
+    })
+
+    it('should create a single empty defendant', () => {
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(1)
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
+        caseId,
+        {},
+        transaction,
+      )
+    })
+  })
+
+  describe('a later defendant fails to be created', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({ id: uuid() })
+      const mockDefendantCreate =
+        mockDefendantService.createForNewCase as jest.Mock
+      mockDefendantCreate
+        .mockResolvedValueOnce({})
+        .mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(CaseType.INDICTMENT, [
+        { name: 'Defendant 1' },
+        { name: 'Defendant 2' },
+      ] as CreateCaseDefendantDto[])
+    })
+
+    it('should throw Error so the whole creation is rolled back', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
+      expect(mockCaseRepositoryService.findLiveById).not.toHaveBeenCalled()
     })
   })
 

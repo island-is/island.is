@@ -178,6 +178,7 @@ const PassportTemplate: ApplicationTemplate<
             schedulePruneReminderAfterDays(
               sevenDays,
               2,
+              m.pruneReason,
               Features.passportScheduledNotifications,
             ),
           onEntry: defineTemplateApi({

@@ -11,7 +11,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 import { dynamicColor, font } from '../../utils'
 import { Typography } from '../typography/typography'
 
-const Host = styled.Pressable`
+const Host = styled.Pressable<{ readOnly: boolean }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -26,9 +26,11 @@ const Host = styled.Pressable`
     }),
     true,
   )};
+  /* A read-only field is not something you can type into, so it drops the
+     tinted "input" fill and sits flat on the screen background. */
   background-color: ${dynamicColor((props) => ({
-    dark: 'shade300',
-    light: props.theme.color.blue100,
+    dark: props.readOnly ? 'background' : 'shade300',
+    light: props.readOnly ? props.theme.color.white : props.theme.color.blue100,
   }))};
 `
 
@@ -99,7 +101,7 @@ export const TextField = ({
 
   return (
     <View style={style}>
-      <Host onPress={() => inputRef.current?.focus()}>
+      <Host readOnly={readOnly} onPress={() => inputRef.current?.focus()}>
         <View style={{ flex: 1 }}>
           <Label readOnly={readOnly} variant="eyebrow">
             {label}

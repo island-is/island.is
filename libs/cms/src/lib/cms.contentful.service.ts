@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { logger } from '@island.is/logging'
 import { GraphQLError } from 'graphql'
 import { Injectable } from '@nestjs/common'
@@ -1190,7 +1189,9 @@ export class CmsContentfulService {
       .filter((category) => category?.title && category?.slug)
   }
 
-  async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
+  async getOpenDataPage({
+    lang,
+  }: GetOpenDataPageInput): Promise<OpenDataPage | null> {
     const params = {
       ['content_type']: 'openDataPage',
       include: 10,
@@ -1208,7 +1209,7 @@ export class CmsContentfulService {
 
   async getOpenDataSubpage({
     lang,
-  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {
+  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage | null> {
     const params = {
       ['content_type']: 'openDataSubpage',
       include: 10,

@@ -1,5 +1,6 @@
 import { InputController } from '@island.is/shared/form-fields'
 import {
+  AlertMessage,
   Box,
   Button,
   Divider,
@@ -13,6 +14,10 @@ import { useFormContext, useWatch } from 'react-hook-form'
 import { messages } from '../../lib/messages'
 import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate-of-equality'
 import type { SubCriterionStep } from '../../utils/types'
+import {
+  MAX_SUB_CRITERION_STEPS,
+  MIN_SUB_CRITERION_STEPS,
+} from '../../utils/constants'
 import { useStepCountSync } from './useStepCountSync'
 
 type Props = {
@@ -35,17 +40,39 @@ export const SubCriterionItem: FC<Props> = ({
   const { setValue } = useFormContext()
   const [stepsExpanded, setStepsExpanded] = useState(true)
 
-  const catalogOptions = catalogEntries.map((entry) => ({
+  // Keyed by index, not title: the personal-criterion list spans four
+  // Yfirviðmið (see SubCriteriaEditor), so two entries can share a title and a
+  // title lookup would silently apply whichever came first.
+  const catalogOptions = catalogEntries.map((entry, i) => ({
     label: entry.title,
-    value: entry.title,
+    value: String(i),
   }))
 
-  const applyCatalogEntry = (title: string | undefined) => {
-    const entry = catalogEntries.find((e) => e.title === title)
+  const {
+    loadedStepCount,
+    canRestoreTrimmedSteps,
+    isStepCountOutOfRange,
+    forgetTrimmedSteps,
+  } = useStepCountSync(fieldName)
+  const steps: SubCriterionStep[] =
+    useWatch({ name: `${fieldName}.steps` }) ?? []
+
+  // Steps that go away take their definitions with them, and everyone
+  // classified in them moves down the scale (see useStepCountSync). Raising the
+  // count back undoes both, but only until "Halda áfram" — so flag it while it
+  // is still the applicant's to undo.
+  const hasReducedSteps =
+    loadedStepCount !== undefined && steps.length < loadedStepCount
+
+  const applyCatalogEntry = (value: string | undefined) => {
+    const entry = value == null ? undefined : catalogEntries[Number(value)]
     if (!entry) return
     setValue(`${fieldName}.title`, entry.title)
     setValue(`${fieldName}.description`, entry.description)
     if (entry.steps.length > 0) {
+      // The template's definitions replace the list outright, so any step
+      // parked by an earlier reduction belongs to text that is now gone.
+      forgetTrimmedSteps()
       setValue(`${fieldName}.stepCount`, String(entry.steps.length))
       setValue(
         `${fieldName}.steps`,
@@ -56,10 +83,6 @@ export const SubCriterionItem: FC<Props> = ({
       )
     }
   }
-
-  useStepCountSync(fieldName)
-  const steps: SubCriterionStep[] =
-    useWatch({ name: `${fieldName}.steps` }) ?? []
 
   return (
     <Box>
@@ -138,10 +161,46 @@ export const SubCriterionItem: FC<Props> = ({
             name={`${fieldName}.stepCount`}
             label={formatMessage(messages.report.subCriteria.stepCountLabel)}
             type="number"
+            min={MIN_SUB_CRITERION_STEPS}
+            max={MAX_SUB_CRITERION_STEPS}
             backgroundColor="blue"
+            error={
+              isStepCountOutOfRange
+                ? formatMessage(messages.report.subCriteria.stepCountRange, {
+                    min: MIN_SUB_CRITERION_STEPS,
+                    max: MAX_SUB_CRITERION_STEPS,
+                  })
+                : undefined
+            }
           />
         </Box>
       </Box>
+
+      {hasReducedSteps && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="warning"
+            title={formatMessage(
+              messages.report.subCriteria.stepReductionWarningTitle,
+            )}
+            message={[
+              formatMessage(messages.report.subCriteria.stepReductionWarning, {
+                loaded: loadedStepCount,
+                current: steps.length,
+              }),
+              // Only where raising the count back really does undo it: after a
+              // sniðmát replaced the list, the þrep it discarded are gone.
+              canRestoreTrimmedSteps &&
+                formatMessage(
+                  messages.report.subCriteria.stepReductionUndoHint,
+                  { loaded: loadedStepCount },
+                ),
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          />
+        </Box>
+      )}
 
       {/* Steps section */}
       <Box

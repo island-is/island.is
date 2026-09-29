@@ -61,6 +61,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
@@ -172,9 +177,9 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.SYSLUMENN,
   },
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
-    nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
-    slug: InstitutionTypes.FJARSYSLA_RIKISINS,
-    contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
@@ -212,6 +217,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.SYSLUMENN,
   },
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
     nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
@@ -531,14 +541,24 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
   [ApplicationTypes.EQUALITY_REPORT]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
   [ApplicationTypes.SALARY_REPORT]: {
-    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
-    slug: InstitutionTypes.DOMSMALARADUNEYTID,
-    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+    nationalId: InstitutionNationalIds.JAFNRETTISSTOFA,
+    slug: InstitutionTypes.JAFNRETTISSTOFA,
+    contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
 }

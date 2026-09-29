@@ -4,16 +4,17 @@ import { m } from '../../lib/messages'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
-import { useDelegationForm } from '../../context'
+import { ScopeSelection, useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
 import { useFulfillAuthDelegationRequestMutation } from '../delegationRequests/DelegationRequests.generated'
+import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { AuthApiScope } from '@island.is/api/schema'
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -27,7 +28,7 @@ export const ConfirmAccessModal = ({
   onConfirm?: () => void
   isVisible: boolean
   loading?: boolean
-  removedScopes?: AuthApiScope[]
+  removedScopes?: ScopeSelection[]
   isEdit?: boolean
 }) => {
   const { width } = useWindowSize()
@@ -35,33 +36,65 @@ export const ConfirmAccessModal = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { identities, selectedScopes, pendingRequestId, setPendingRequestId } =
-    useDelegationForm()
+  const {
+    identities,
+    selectedScopes,
+    pendingRequestId,
+    setPendingRequestId,
+  } = useDelegationForm()
 
-  const [createAuthDelegations, { loading: mutationLoading }] =
-    useCreateAuthDelegationsMutation()
+  const [
+    createAuthDelegations,
+    { loading: createLoading },
+  ] = useCreateAuthDelegationsMutation()
   const [fulfillDelegationRequest] = useFulfillAuthDelegationRequestMutation()
+  const [
+    patchAuthDelegation,
+    { loading: patchLoading },
+  ] = usePatchAuthDelegationMutation()
+  const [submitting, setSubmitting] = useState(false)
+  const mutationLoading = submitting || createLoading || patchLoading
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (onConfirm) {
       onConfirm()
-    } else {
-      const invalidScopes = selectedScopes.filter(
-        (scope) => !scope.domain?.name || !scope.validTo,
-      )
+      return
+    }
 
-      if (invalidScopes.length > 0) {
-        toast.error(formatMessage(coreMessages.somethingWrong))
-        return
+    const invalidScopes = selectedScopes.filter(
+      (scope) => !scope.domain?.name || !scope.validTo,
+    )
+
+    if (invalidScopes.length > 0) {
+      toast.error(formatMessage(coreMessages.somethingWrong))
+      return
+    }
+
+    if (submitting) return
+    setSubmitting(true)
+
+    const scopes = selectedScopes.map((scope) => ({
+      name: scope.name,
+      validTo: scope.validTo as Date,
+      domainName: scope.domain!.name,
+    }))
+
+    const deleteScopesByDelegation = new Map<string, string[]>()
+    for (const scope of removedScopes ?? []) {
+      if (!scope.delegationId) continue
+      const names = deleteScopesByDelegation.get(scope.delegationId) ?? []
+      names.push(scope.name)
+      deleteScopesByDelegation.set(scope.delegationId, names)
+    }
+
+    try {
+      for (const [delegationId, names] of deleteScopesByDelegation) {
+        await patchAuthDelegation({
+          variables: { input: { delegationId, deleteScopes: names } },
+        })
       }
 
-      const scopes = selectedScopes.map((scope) => ({
-        name: scope.name,
-        validTo: scope.validTo as Date,
-        domainName: scope.domain!.name,
-      }))
-
-      createAuthDelegations({
+      const result = await createAuthDelegations({
         variables: {
           input: {
             toNationalIds: identities.map((identity) => identity.nationalId),
@@ -69,35 +102,34 @@ export const ConfirmAccessModal = ({
           },
         },
       })
-        .then(async (result) => {
-          // If this grant originated from an approved delegation request,
-          // link the newly created delegation back to that request.
-          const createdDelegationId =
-            result.data?.createAuthDelegations?.[0]?.id
-          if (pendingRequestId && createdDelegationId) {
-            try {
-              await fulfillDelegationRequest({
-                variables: {
-                  input: {
-                    requestId: pendingRequestId,
-                    delegationId: createdDelegationId,
-                  },
-                },
-              })
-            } catch {
-              // The delegation was created successfully; failing to link the
-              // request should not block the user. Surface a soft error.
-              toast.error(formatMessage(m.confirmError))
-            } finally {
-              setPendingRequestId(undefined)
-            }
-          }
-          navigate(DelegationPaths.DelegationsNew)
-        })
-        .catch(() => {
+
+      // If this grant originated from an approved delegation request,
+      // link the newly created delegation back to that request.
+      const createdDelegationId = result.data?.createAuthDelegations?.[0]?.id
+      if (pendingRequestId && createdDelegationId) {
+        try {
+          await fulfillDelegationRequest({
+            variables: {
+              input: {
+                requestId: pendingRequestId,
+                delegationId: createdDelegationId,
+              },
+            },
+          })
+        } catch {
+          // The delegation was created successfully; failing to link the
+          // request should not block the user. Surface a soft error.
           toast.error(formatMessage(m.confirmError))
-          navigate(DelegationPaths.DelegationsNew)
-        })
+        } finally {
+          setPendingRequestId(undefined)
+        }
+      }
+
+      navigate(DelegationPaths.DelegationsNew)
+    } catch {
+      toast.error(formatMessage(m.confirmError))
+    } finally {
+      setSubmitting(false)
     }
   }
 

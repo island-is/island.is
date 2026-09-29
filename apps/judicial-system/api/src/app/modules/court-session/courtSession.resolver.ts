@@ -21,6 +21,7 @@ import { CourtSessionString } from './dto/courtSessionString.response'
 import { CreateCourtSessionInput } from './dto/createCourtSession.input'
 import { DeleteCourtSessionInput } from './dto/deleteCourtSession.input'
 import { DeleteCourtSessionResponse } from './dto/deleteCourtSession.response'
+import { PronounceRulingOrallyInput } from './dto/pronounceRulingOrally.input'
 import { UpdateCourtSessionInput } from './dto/updateCourtSession.input'
 import { UpdateCourtSessionAppealDecisionInput } from './dto/updateCourtSessionAppealDecision.input'
 import { UpdateCourtSessionStringInput } from './dto/updateCourtSessionString.input'
@@ -121,6 +122,26 @@ export class CourtSessionResolver {
         courtSessionId,
         updateAppealDecision,
       ),
+      courtSessionId,
+    )
+  }
+
+  @Mutation(() => CourtSessionResponse, { nullable: true })
+  pronounceRulingOrally(
+    @Args('input', { type: () => PronounceRulingOrallyInput })
+    input: PronounceRulingOrallyInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<CourtSessionResponse> {
+    const { caseId, courtSessionId } = input
+
+    this.logger.debug(
+      `Pronouncing a ruling orally in court session ${courtSessionId} for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.PRONOUNCE_RULING_ORALLY,
+      this.backendService.pronounceRulingOrally(caseId, courtSessionId),
       courtSessionId,
     )
   }

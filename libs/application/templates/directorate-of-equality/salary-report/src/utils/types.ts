@@ -48,18 +48,20 @@ export type SubCriterion = {
 // context for display is looked up elsewhere, not carried here.
 export type StepAssignment = { stepId: string }
 
-// Per-key breakdown (see README): the two additionalFixed* values sum to the
-// old flat additionalSalary; the four bonus/occasional values sum to bonusSalary.
+// Per-key breakdown, in workbook column order: the three additionalFixed* values
+// (columns J–L) sum to the derived additionalSalary, the three bonus* values
+// (M–O) to bonusSalary. Template 2.0 folded Bónusgreiðslur into bonusOther and
+// added additionalFixedOther, which counts toward regluleg laun.
 export type SalaryComponentKey =
   | 'additionalFixedOvertime'
   | 'additionalFixedCarAllowance'
-  | 'bonusOccasionalCarAllowance'
+  | 'additionalFixedOther'
   | 'bonusOccasionalOvertime'
-  | 'bonusPayments'
+  | 'bonusOccasionalCarAllowance'
   | 'bonusOther'
 
-// id is the client-minted UUID join key; the human-facing ABC-000 label is
-// derived from ordinal at display time (see utils/employeeIdentifier.ts).
+// id is the client-minted UUID join key; `ordinal` is the human-facing number
+// shown on every screen and in the workbook.
 export type Employee = {
   id: string
   ordinal: number
@@ -69,13 +71,13 @@ export type Employee = {
   field?: string | null
   department?: string | null
   startDate: string
-  workRatio: number
+  paidHours: number
   baseSalary: number
   additionalFixedOvertime?: number | null
   additionalFixedCarAllowance?: number | null
-  bonusOccasionalCarAllowance?: number | null
+  additionalFixedOther?: number | null
   bonusOccasionalOvertime?: number | null
-  bonusPayments?: number | null
+  bonusOccasionalCarAllowance?: number | null
   bonusOther?: number | null
   outlierGroupId?: string | null
 }
@@ -88,18 +90,6 @@ export type Role = {
   stepIds: string[]
 }
 
-// No name input yet (see README) — API assigns a default server-side when omitted.
-export type OutlierGroup = {
-  id: string
-  name?: string
-  reason?: string
-  action?: string
-  signatureName?: string
-  signatureRole?: string
-  // Member employee ids (replaces the old ordinal list).
-  employeeIds: string[]
-}
-
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
@@ -109,7 +99,7 @@ export enum Gender {
 // Moved from fields/JobClassificationEditor/utils.ts — shared by both classification editors.
 
 export type StepMeta = {
-  steps: { order: number; score: number }[]
+  steps: { order: number; score: number; description: string }[]
   totalSteps: number
   maxScore: number
   weight: number

@@ -410,6 +410,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   } = data
 
   return {
@@ -427,6 +429,8 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    disabledKey,
+    disabledReason,
   }
 }
 
@@ -1007,6 +1011,7 @@ export const buildTableRepeaterField = (
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   } = data
 
   return {
@@ -1028,6 +1033,7 @@ export const buildTableRepeaterField = (
     onSubmitLoad,
     loadErrorMessage,
     initActiveFieldIfEmpty,
+    hideTableHeaderIfEmpty,
   }
 }
 

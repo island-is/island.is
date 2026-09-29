@@ -2,6 +2,7 @@ import { ForbiddenException } from '@nestjs/common'
 
 import {
   AppealCaseState,
+  AppealDecisionPartyRole,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTransition,
@@ -43,18 +44,93 @@ interface RequestCaseRule {
   transition: Transition
 }
 
+const assertHasDefendants = (theCase: Case): void => {
+  if (!theCase.defendants || theCase.defendants.length === 0) {
+    throw new ForbiddenException(
+      'Cannot submit indictment to court without at least one defendant',
+    )
+  }
+}
+
+const assertHasIndictmentApprover = (
+  update: UpdateCase,
+  theCase: Case,
+): void => {
+  const indictmentApproverId =
+    update.indictmentApproverId !== undefined
+      ? update.indictmentApproverId
+      : theCase.indictmentApproverId
+
+  if (!indictmentApproverId) {
+    throw new ForbiddenException(
+      'Cannot ask for review without an indictment approver',
+    )
+  }
+}
+
+// A case concluded by merging joins its parent case, which can only take it in
+// while the parent is itself open in court.
+const assertMergeParentReceived = (theCase: Case): void => {
+  if (
+    theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.MERGE ||
+    !theCase.mergeCaseId
+  ) {
+    return
+  }
+
+  const parentCase = theCase.mergeCase
+
+  if (parentCase?.state !== CaseState.RECEIVED) {
+    throw new ForbiddenException(
+      `Cannot merge indictment case ${theCase.id} with parent case ${
+        parentCase?.id ?? 'unknown'
+      } in state ${parentCase?.state ?? 'unknown'}`,
+    )
+  }
+}
+
 const indictmentCaseStateMachine: Map<
   IndictmentCaseTransition,
   IndictmentCaseRule
 > = new Map([
   [
-    IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
+    IndictmentCaseTransition.ACCEPT_REVIEW,
     {
-      fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
+      fromStates: [IndictmentCaseState.WAITING_FOR_REVIEW],
       transition: (update: UpdateCase): UpdateCase => ({
         ...update,
         state: CaseState.WAITING_FOR_CONFIRMATION,
       }),
+    },
+  ],
+  [
+    IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
+    {
+      fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        assertHasDefendants(theCase)
+
+        return {
+          ...update,
+          state: CaseState.WAITING_FOR_CONFIRMATION,
+        }
+      },
+    },
+  ],
+  [
+    IndictmentCaseTransition.ASK_FOR_REVIEW,
+    {
+      fromStates: [IndictmentCaseState.DRAFT],
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        assertHasDefendants(theCase)
+        assertHasIndictmentApprover(update, theCase)
+
+        return {
+          ...update,
+          state: CaseState.WAITING_FOR_REVIEW,
+          indictmentReviewReturnedExplanation: null,
+        }
+      },
     },
   ],
   [
@@ -68,14 +144,29 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.DENY_REVIEW,
+    {
+      fromStates: [IndictmentCaseState.WAITING_FOR_REVIEW],
+      transition: (update: UpdateCase): UpdateCase => ({
+        ...update,
+        state: CaseState.DRAFT,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.SUBMIT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
-      transition: (update: UpdateCase): UpdateCase => ({
-        ...update,
-        state: CaseState.SUBMITTED,
-        indictmentDeniedExplanation: null,
-      }),
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        assertHasDefendants(theCase)
+
+        return {
+          ...update,
+          state: CaseState.SUBMITTED,
+          indictmentDeniedExplanation: null,
+          indictmentReviewReturnedExplanation: null,
+        }
+      },
     },
   ],
   [
@@ -124,13 +215,20 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.RECEIVED,
         IndictmentCaseState.CORRECTING,
       ],
-      transition: (update: UpdateCase, theCase: Case): UpdateCase => ({
-        ...update,
-        // Shouldn't ever happen since court end time should always be set
-        // but just in case, we don't want rulingDate to be empty when completed.
-        rulingDate: theCase.courtEndTime ?? nowFactory(),
-        state: CaseState.COMPLETED,
-      }),
+      transition: (update: UpdateCase, theCase: Case): UpdateCase => {
+        // Completing again after a correction does not merge the case again
+        if (theCase.state !== CaseState.CORRECTING) {
+          assertMergeParentReceived(theCase)
+        }
+
+        return {
+          ...update,
+          // Shouldn't ever happen since court end time should always be set
+          // but just in case, we don't want rulingDate to be empty when completed.
+          rulingDate: theCase.courtEndTime ?? nowFactory(),
+          state: CaseState.COMPLETED,
+        }
+      },
     },
   ],
   [
@@ -138,6 +236,7 @@ const indictmentCaseStateMachine: Map<
     {
       fromStates: [
         IndictmentCaseState.DRAFT,
+        IndictmentCaseState.WAITING_FOR_REVIEW,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
       ],
       transition: (update: UpdateCase): UpdateCase => ({
@@ -213,14 +312,65 @@ const indictmentCaseStateMachine: Map<
   ],
 ])
 
+// The court record screen persists its fields one at a time, and the client
+// moves on to the confirmation screen on its own step validation. When a save
+// fails (network down, backend error) the client's optimistic state can pass
+// that validation while the row it is about to conclude never got the value -
+// and a request case concluded without a court end time or without both
+// parties' in-court appeal decisions cannot be appealed to the court of
+// appeals. Completion is the last point where the row is still open, so the
+// state machine checks the persisted court record rather than trusting the
+// client.
+const assertRequestCaseCourtRecordComplete = (
+  update: UpdateCase,
+  theCase: Case,
+): void => {
+  // An update may clear the court end time explicitly (null), which is not
+  // the same as leaving it alone (undefined)
+  const courtEndTime =
+    update.courtEndTime !== undefined
+      ? update.courtEndTime
+      : theCase.courtEndTime
+
+  if (!courtEndTime) {
+    throw new ForbiddenException(
+      'Cannot complete a request case without a court end time',
+    )
+  }
+
+  // The in-court decisions live in the case-level appeal_decision rows (no
+  // ruling file). A row may exist with only an announcement, so the decision
+  // itself is what has to be there.
+  const hasCaseLevelAppealDecision = (partyRole: AppealDecisionPartyRole) =>
+    theCase.appealDecisions?.some(
+      (decision) =>
+        !decision.rulingFileId &&
+        decision.partyRole === partyRole &&
+        Boolean(decision.decision),
+    ) ?? false
+
+  if (
+    !hasCaseLevelAppealDecision(AppealDecisionPartyRole.PROSECUTOR) ||
+    !hasCaseLevelAppealDecision(AppealDecisionPartyRole.DEFENDANT)
+  ) {
+    throw new ForbiddenException(
+      'Cannot complete a request case without in-court appeal decisions for both the prosecutor and the defendant',
+    )
+  }
+}
+
 const requestCaseCompletionSideEffect =
   (state: CaseState) => (update: UpdateCase, theCase: Case) => {
-    const currentCourtEndTime =
-      update.courtEndTime ?? theCase.courtEndTime ?? nowFactory()
+    assertRequestCaseCourtRecordComplete(update, theCase)
+
     const newUpdate: UpdateCase = {
       ...update,
       state,
-      rulingDate: currentCourtEndTime,
+      // Asserted above, so the ruling date is always the actual court end time
+      rulingDate:
+        update.courtEndTime !== undefined
+          ? update.courtEndTime
+          : theCase.courtEndTime,
     }
 
     // Handle completed without ruling
@@ -357,17 +507,6 @@ const transitionIndictmentCase = (
   if (!rule?.fromStates.some((state) => state === currentState)) {
     throw new ForbiddenException(
       `The transition ${transition} cannot be applied to an indictment case in state ${currentState}`,
-    )
-  }
-
-  // Do not allow submitting indictment to court with 0 defendants
-  if (
-    (transition === IndictmentCaseTransition.ASK_FOR_CONFIRMATION ||
-      transition === IndictmentCaseTransition.SUBMIT) &&
-    (!theCase.defendants || theCase.defendants.length === 0)
-  ) {
-    throw new ForbiddenException(
-      'Cannot submit indictment to court without at least one defendant',
     )
   }
 

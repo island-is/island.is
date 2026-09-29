@@ -19,6 +19,7 @@ import {
   getActionOnRowClick,
   getAttributes,
   getContextMenuActions,
+  getGlobalIncludes,
   isMyCase,
 } from './caseTable.utils'
 
@@ -45,6 +46,46 @@ const defenceUser = (nationalId: string): User =>
   } as User)
 
 describe('caseTable.utils', () => {
+  // A `separate: true` include is fetched by its own query, so the only place
+  // its ordering can be stated is on the include itself - it cannot ride along
+  // in the parent query's ORDER BY the way a joined include does.
+  //
+  // Sequelize drops an option it does not recognise without a word, so getting
+  // the key wrong here costs nothing visible: the child query simply comes back
+  // in whatever order the database felt like.
+  describe('order on a separate include', () => {
+    const judge = {
+      id: 'judge_id',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
+
+    const dateLogsInclude = () => {
+      const [includes] = getGlobalIncludes(
+        { dateLogs: { attributes: ['date', 'dateType'] } },
+        judge,
+      )
+
+      return includes.find(
+        (include) => (include as { as?: string }).as === 'dateLogs',
+      ) as Record<string, unknown>
+    }
+
+    it('reaches Sequelize under the key it reads', () => {
+      expect(dateLogsInclude()).toMatchObject({
+        as: 'dateLogs',
+        separate: true,
+        order: [['created', 'DESC']],
+      })
+    })
+
+    // The way it went wrong: spreading the order array rather than naming it
+    // put the term under "0", where nothing reads it.
+    it('does not smuggle the order in under a numeric key', () => {
+      expect(Object.keys(dateLogsInclude())).not.toContain('0')
+    })
+  })
+
   describe('getAttributes', () => {
     // canCancelAppeal (via userIsAppellant) only sees the attributes fetched for
     // the user's role, so every case column it reads must be listed here
@@ -67,6 +108,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'user-1',
         prosecutorId: 'other',
+        indictmentApproverId: null,
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -78,6 +120,19 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'user-1',
+        indictmentApproverId: null,
+        judgeId: null,
+        registrarId: null,
+      } as unknown as Case
+      expect(isMyCase(theCase, user)).toBe(true)
+    })
+
+    it('returns true for prosecution user when they are indictment approver', () => {
+      const user = prosecutionUser('user-1')
+      const theCase = {
+        creatingProsecutorId: 'other',
+        prosecutorId: 'other2',
+        indictmentApproverId: 'user-1',
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -89,6 +144,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'other2',
+        indictmentApproverId: 'other3',
         judgeId: null,
         registrarId: null,
       } as unknown as Case
@@ -100,6 +156,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: 'judge-1',
         registrarId: null,
       } as unknown as Case
@@ -111,6 +168,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: null,
         registrarId: 'reg-1',
       } as unknown as Case
@@ -122,6 +180,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
+        indictmentApproverId: null,
         judgeId: 'other',
         registrarId: 'other2',
       } as unknown as Case
@@ -184,8 +243,11 @@ describe('caseTable.utils', () => {
   })
 
   describe('canDeleteIndictmentCase', () => {
-    it('returns true for DRAFT and WAITING_FOR_CONFIRMATION', () => {
+    it('returns true for DRAFT, WAITING_FOR_REVIEW, and WAITING_FOR_CONFIRMATION', () => {
       expect(canDeleteIndictmentCase({ state: CaseState.DRAFT })).toBe(true)
+      expect(
+        canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_REVIEW }),
+      ).toBe(true)
       expect(
         canDeleteIndictmentCase({ state: CaseState.WAITING_FOR_CONFIRMATION }),
       ).toBe(true)

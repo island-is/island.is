@@ -67,27 +67,17 @@ export const isOnboardingRequired = (
   }
 }
 
-/** Map a raw Blikk status onto the pending sub-status. */
+/**
+ * Map a raw Blikk status onto the pending sub-status. Only `SCA_REQUIRED` asks the payer to act —
+ * that is the point at which Blikk has decided whether there is an SCA URL to open at all, so an
+ * earlier status is always "waiting", never "your turn".
+ */
 export const mapRawStatusToBankTransferPendingStatus = (
   status: string,
-  scaRedirectUrl: string | undefined,
-  onboardingOrigin: string,
-): BankTransferPendingStatus => {
-  if (status === 'SCA_REQUIRED') {
-    return BankTransferPendingStatus.SCA_REQUIRED
-  }
-
-  // If the payment is a DRAFT and has a non-onboarding SCA URL, return SCA_REQUIRED.
-  if (
-    status === 'DRAFT' &&
-    scaRedirectUrl &&
-    !isOnboardingRequired(status, scaRedirectUrl, onboardingOrigin)
-  ) {
-    return BankTransferPendingStatus.SCA_REQUIRED
-  }
-
-  return BankTransferPendingStatus.PROCESSING
-}
+): BankTransferPendingStatus =>
+  status === 'SCA_REQUIRED'
+    ? BankTransferPendingStatus.SCA_REQUIRED
+    : BankTransferPendingStatus.PROCESSING
 
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   name: item.chargeItemName,

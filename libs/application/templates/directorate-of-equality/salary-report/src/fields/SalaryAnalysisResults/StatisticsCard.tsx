@@ -4,12 +4,15 @@ export type StatisticCardProps = {
   title: string
   content: string
   color?: 'blue' | 'purple'
+  // Small print under the figure, used for quieter context such as the benchmark.
+  subtext?: string
 }
 
 export const StatisticCard = ({
   title,
   content,
   color = 'blue',
+  subtext,
 }: StatisticCardProps) => {
   const background = color === 'blue' ? 'blue100' : 'purple100'
 
@@ -30,6 +33,11 @@ export const StatisticCard = ({
       >
         {content}
       </Text>
+      {subtext && (
+        <Text variant="small" color="dark350">
+          {subtext}
+        </Text>
+      )}
     </Box>
   )
 }

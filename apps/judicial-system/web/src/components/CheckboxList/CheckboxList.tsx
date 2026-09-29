@@ -2,6 +2,7 @@ import type { FC } from 'react'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { motion } from 'motion/react'
 
 import { Checkbox } from '@island.is/island-ui/core'
 import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
@@ -24,6 +25,17 @@ interface Props {
   fullWidth?: boolean
   blueBox?: boolean
   dataTestId?: string
+  stagger?: boolean
+}
+
+const staggerContainerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+}
+
+const staggerItemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0 },
 }
 
 const CheckboxList: FC<Props> = ({
@@ -33,6 +45,7 @@ const CheckboxList: FC<Props> = ({
   fullWidth,
   blueBox = true,
   dataTestId = 'checkbox',
+  stagger = false,
 }: Props) => {
   const { formatMessage } = useIntl()
 
@@ -40,14 +53,18 @@ const CheckboxList: FC<Props> = ({
     typeof value === 'string' ? value : formatMessage(value)
 
   const checkboxList = (
-    <div
+    <motion.div
       className={cn(styles.checkboxGrid, {
         [styles.fullWidth]: fullWidth,
       })}
+      variants={stagger ? staggerContainerVariants : undefined}
+      initial={stagger ? 'hidden' : false}
+      animate={stagger ? 'visible' : undefined}
     >
       {checkboxes.map((checkbox) => (
-        <div
+        <motion.div
           className={styles.checkboxItem}
+          variants={stagger ? staggerItemVariants : undefined}
           data-testid={dataTestId}
           key={checkbox.id}
         >
@@ -70,9 +87,9 @@ const CheckboxList: FC<Props> = ({
             large
             filled
           />
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   )
 
   return blueBox ? <BlueBox>{checkboxList}</BlueBox> : checkboxList

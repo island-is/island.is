@@ -34,9 +34,13 @@ import {
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  canDefenceUserOpenLinkedCase,
+  getDefaultDefendantGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
@@ -54,6 +58,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
+  // Which appeal these details belong to. A case can carry a case level appeal
+  // and an appeal of each ruling order at once, and the Court of Appeals opens
+  // one page per appeal, naming it in the query string. Falls back to the case
+  // level appeal, which is what every page without that query string wants.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const defendants = ({
     caseType,
@@ -94,7 +103,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       ),
       values: defendants
         ? [
-            <div key="defendants-grid" className={grid({ gap: 3 })}>
+            <div key="defendants-grid" className={stack({ gap: 3 })}>
               {defendants.map((defendant, index) => (
                 <div
                   key={`defendants-grid-${defendant.id}`}
@@ -256,7 +265,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     const mergeCaseId = workingCase.mergeCase?.id
     const internalCourtCaseNumber = workingCase.mergeCase?.courtCaseNumber
     if (internalCourtCaseNumber) {
-      return mergeCaseId ? (
+      const shouldLink =
+        Boolean(mergeCaseId) &&
+        canDefenceUserOpenLinkedCase(user, workingCase.mergeCase)
+
+      return shouldLink ? (
         <LinkComponent
           href={`${ROUTE_HANDLER_ROUTE}/${mergeCaseId}`}
           key={mergeCaseId}
@@ -296,12 +309,16 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: formatMessage(strings.mergedFromTitle),
     values: mergedCase.courtCaseNumber
       ? [
-          <LinkComponent
-            href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
-            key={mergedCase.id}
-          >
-            {mergedCase.courtCaseNumber}
-          </LinkComponent>,
+          canDefenceUserOpenLinkedCase(user, mergedCase) ? (
+            <LinkComponent
+              href={`${ROUTE_HANDLER_ROUTE}/${mergedCase.id}`}
+              key={mergedCase.id}
+            >
+              {mergedCase.courtCaseNumber}
+            </LinkComponent>
+          ) : (
+            mergedCase.courtCaseNumber
+          ),
         ]
       : [],
   })
@@ -336,7 +353,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     title: 'Klofinn frá',
     values: isNonEmptyArray(splitCaseEntries)
       ? [
-          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+          <div key="split-cases-grid" className={stack({ gap: 2 })}>
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
@@ -372,13 +389,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCase?.appealCaseNumber],
+    values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealCase?.appealAssistant?.name],
+    values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -387,9 +404,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealCase?.appealJudge1?.name || '',
-          workingCase.appealCase?.appealJudge2?.name || '',
-          workingCase.appealCase?.appealJudge3?.name || '',
+          targetAppealCase?.appealJudge1?.name || '',
+          targetAppealCase?.appealJudge2?.name || '',
+          targetAppealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
@@ -467,7 +484,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.civilClaimants)
       ? [
-          <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
+          <div key="civil-claimants-grid" className={stack({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant, index) => (
               <div
                 key={civilClaimant.id}
@@ -496,11 +513,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ),
     values: isNonEmptyArray(workingCase.victims)
       ? [
-          <div key="victims-grid" className={grid({ gap: 3 })}>
+          <div key="victims-grid" className={stack({ gap: 3 })}>
             {workingCase.victims.map((victim, index) => (
               <div
                 key={victim.id}
-                className={cn(grid({ gap: 1 }), {
+                className={cn(stack({ gap: 1 }), {
                   [styles.renderDividerFull]:
                     isNonEmptyArray(workingCase.victims) &&
                     index !== workingCase.victims.length - 1,

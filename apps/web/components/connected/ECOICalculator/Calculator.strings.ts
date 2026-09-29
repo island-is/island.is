@@ -71,6 +71,21 @@ export const m = {
       defaultMessage: 'Sundurliðun á niðurstöðum',
       description: 'Sundurliðun á niðurstöðum',
     },
+    tableTabLabel: {
+      id: 'web.ecoi.calculator:results.tableTabLabel',
+      defaultMessage: 'Tafla',
+      description: 'Tafla',
+    },
+    chartTabLabel: {
+      id: 'web.ecoi.calculator:results.chartTabLabel',
+      defaultMessage: 'Stöplarit',
+      description: 'Stöplarit',
+    },
+    radarChartTabLabel: {
+      id: 'web.ecoi.calculator:results.radarChartTabLabel',
+      defaultMessage: 'Köngulóargraf',
+      description: 'Köngulóargraf',
+    },
     tableCategory: {
       id: 'web.ecoi.calculator:results.tableCategory',
       defaultMessage: 'Flokkur',

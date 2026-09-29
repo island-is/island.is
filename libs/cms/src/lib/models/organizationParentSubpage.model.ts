@@ -53,7 +53,7 @@ export const mapOrganizationParentSubpage = ({
   return {
     typename: 'OrganizationParentSubpage',
     id: sys.id,
-    title: fields.title,
+    title: fields.title ?? '',
     shortTitle: fields.shortTitle ?? '',
     href,
     organizationPageTitle: fields.organizationPage?.fields?.title ?? '',

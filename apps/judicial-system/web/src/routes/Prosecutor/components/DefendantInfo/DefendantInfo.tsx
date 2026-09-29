@@ -31,7 +31,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isBusiness,
   mapStringToGender,
@@ -138,7 +138,7 @@ const DefendantInfo: FC<Props> = (props) => {
   }, [businessData, error])
 
   return (
-    <BlueBox className={grid({ gap: 2 })}>
+    <BlueBox className={stack({ gap: 2 })}>
       {onDelete && (
         <Box display="flex" justifyContent="flexEnd">
           <Button
@@ -260,17 +260,21 @@ const DefendantInfo: FC<Props> = (props) => {
           )
         }}
         onBlur={(evt) => {
-          validateAndSetErrorMessage(
+          const isValid = validateAndSetErrorMessage(
             ['empty'],
             evt.target.value,
             setAccusedAddressErrorMessage,
           )
 
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            address: evt.target.value.trim(),
-          })
+          // Gate the save on validity, like InputName does for the name: a
+          // required field that fails validation is flagged, not persisted.
+          if (isValid) {
+            onChange({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              address: evt.target.value.trim(),
+            })
+          }
         }}
         required
       />

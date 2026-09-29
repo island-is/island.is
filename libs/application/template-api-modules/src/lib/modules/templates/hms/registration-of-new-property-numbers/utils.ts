@@ -5,11 +5,11 @@ import {
 } from '@island.is/clients/hms-application-system'
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { Fasteign } from '@island.is/clients/assets'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   APPLICATION_NAME,
   APPLICATION_TYPE,
   ContactAnswer,
-  formatCurrency,
   Hlutverk,
   NotandagognFlokkur,
   NotandagognHeiti,

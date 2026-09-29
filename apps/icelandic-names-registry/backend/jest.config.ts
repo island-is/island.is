@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'icelandic-names-registry-backend',
   preset: './jest.preset.js',

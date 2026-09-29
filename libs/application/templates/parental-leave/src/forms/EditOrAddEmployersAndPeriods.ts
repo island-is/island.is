@@ -39,10 +39,7 @@ import {
   getMinimumStartDate,
   getPeriodSectionTitle,
 } from '../lib/parentalLeaveUtils'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
 

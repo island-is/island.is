@@ -1,0 +1,256 @@
+import { Transaction } from 'sequelize'
+
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { CivilClaimant } from '../models/civilClaimant.model'
+
+export type UpdateCivilClaimant = {
+  noNationalId?: boolean
+  nationalId?: string
+  name?: string
+  hasSpokesperson?: boolean
+  spokespersonIsLawyer?: boolean
+  spokespersonNationalId?: string
+  spokespersonName?: string
+  spokespersonEmail?: string
+  spokespersonPhoneNumber?: string
+  caseFilesSharedWithSpokesperson?: boolean
+  isSpokespersonConfirmed?: boolean
+  policeCaseNumbers?: string[]
+  defendantIds?: string[]
+}
+
+// Sequelize returns [affectedRows, rows] from update; naming the two halves keeps
+// the tuple from leaking to callers.
+export type UpdatedCivilClaimants = {
+  numberOfAffectedRows: number
+  civilClaimants: CivilClaimant[]
+}
+
+@Injectable()
+export class CivilClaimantRepositoryService {
+  constructor(
+    @InjectModel(CivilClaimant)
+    private readonly civilClaimantModel: typeof CivilClaimant,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
+
+  async create(
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<CivilClaimant> {
+    try {
+      this.logger.debug(`Creating a civil claimant for case ${caseId}`)
+
+      return await this.civilClaimantModel.create(
+        { caseId },
+        { transaction: options.transaction },
+      )
+    } catch (error) {
+      this.logger.error(`Error creating a civil claimant for case ${caseId}:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  // A civil claimant is only addressable within its own case, so both keys are
+  // named parameters rather than a caller-supplied where clause.
+  async updateByIdAndCase(
+    civilClaimantId: string,
+    caseId: string,
+    update: UpdateCivilClaimant,
+  ): Promise<UpdatedCivilClaimants> {
+    try {
+      this.logger.debug(
+        `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
+      )
+
+      const [numberOfAffectedRows, civilClaimants] =
+        await this.civilClaimantModel.update(update, {
+          where: { id: civilClaimantId, caseId },
+          returning: true,
+        })
+
+      return { numberOfAffectedRows, civilClaimants }
+    } catch (error) {
+      this.logger.error(
+        `Error updating civil claimant ${civilClaimantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async deleteByIdAndCase(
+    civilClaimantId: string,
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Deleting civil claimant ${civilClaimantId} of case ${caseId}`,
+      )
+
+      return await this.civilClaimantModel.destroy({
+        where: { id: civilClaimantId, caseId },
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error deleting civil claimant ${civilClaimantId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async deleteAllForCase(
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(`Deleting all civil claimants of case ${caseId}`)
+
+      return await this.civilClaimantModel.destroy({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error deleting all civil claimants of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Copies every civil claimant of a case to another case as a new row, with
+  // its defendant references remapped through the given map from original
+  // defendant ids to their copies; references to defendants missing from the
+  // map are dropped. Returns a map from each original civil claimant id to its
+  // copy so the caller can remap the references that point at civil claimants.
+  async copyAllToCase(
+    caseId: string,
+    newCaseId: string,
+    defendantIdMap: ReadonlyMap<string, string>,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying all civil claimants of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const civilClaimants = await this.civilClaimantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const civilClaimantIdMap = new Map<string, string>()
+
+      for (const civilClaimant of civilClaimants) {
+        const remappedDefendantIds = civilClaimant.defendantIds
+          ?.map((defendantId) => defendantIdMap.get(defendantId))
+          .filter((defendantId): defendantId is string => Boolean(defendantId))
+
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction: options.transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${civilClaimantIdMap.size} civil claimants of case ${caseId} to case ${newCaseId}`,
+      )
+
+      return civilClaimantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying all civil claimants of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // When a defendant is split into a new case, only civil claimants that apply
+  // to that defendant are copied: claimants with no defendant references
+  // (they apply to every defendant) and claimants whose defendantIds include
+  // the split defendant. Specific defendant references are narrowed to just
+  // that defendant - the defendant keeps its id when moved. Returns a map from
+  // each original civil claimant id to its copy so the caller can remap the
+  // references that point at civil claimants.
+  async copyApplicableToCaseForDefendant(
+    caseId: string,
+    newCaseId: string,
+    defendantId: string,
+    options: { transaction: Transaction },
+  ): Promise<Map<string, string>> {
+    try {
+      this.logger.debug(
+        `Copying civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}`,
+      )
+
+      const civilClaimants = await this.civilClaimantModel.findAll({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
+      const civilClaimantIdMap = new Map<string, string>()
+
+      for (const civilClaimant of civilClaimants) {
+        const appliesToDefendant =
+          !civilClaimant.defendantIds?.length ||
+          civilClaimant.defendantIds.includes(defendantId)
+
+        if (!appliesToDefendant) {
+          continue
+        }
+
+        const remappedDefendantIds = !civilClaimant.defendantIds?.length
+          ? civilClaimant.defendantIds
+          : [defendantId]
+
+        const newCivilClaimant = await this.civilClaimantModel.create(
+          {
+            ...civilClaimant.toJSON(),
+            id: undefined,
+            caseId: newCaseId,
+            defendantIds: remappedDefendantIds,
+          },
+          { transaction: options.transaction },
+        )
+
+        civilClaimantIdMap.set(civilClaimant.id, newCivilClaimant.id)
+      }
+
+      this.logger.debug(
+        `Copied ${civilClaimantIdMap.size} civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}`,
+      )
+
+      return civilClaimantIdMap
+    } catch (error) {
+      this.logger.error(
+        `Error copying civil claimants of case ${caseId} that apply to defendant ${defendantId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+}

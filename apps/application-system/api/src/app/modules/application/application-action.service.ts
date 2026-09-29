@@ -213,23 +213,39 @@ export class ApplicationActionService {
       updatedApplication = update.updatedApplication as BaseApplication
 
       // Wait for both promises in parallel, no fail fast
-      await Promise.allSettled([
-        this.historyService.saveStateTransition(
-          application.id,
-          newState,
-          auth,
-          event,
-        ),
-        handleScheduledNotifications(
-          // Clean up old and create new scheduled notifications
-          this.applicationService,
-          updatedApplication,
-          template,
-          newState,
-          this.featureFlagService,
-          auth,
-        ),
-      ])
+      const [historyResult, scheduledNotificationsResult] =
+        await Promise.allSettled([
+          this.historyService.saveStateTransition(
+            application.id,
+            newState,
+            auth,
+            event,
+          ),
+          handleScheduledNotifications(
+            // Clean up old and create new scheduled notifications
+            this.applicationService,
+            updatedApplication,
+            template,
+            newState,
+            this.intlService,
+            this.featureFlagService,
+            auth,
+          ),
+        ])
+
+      if (historyResult.status === 'rejected') {
+        this.logger.error(
+          `Failed to save state transition history for application ${application.id}`,
+          historyResult.reason,
+        )
+      }
+
+      if (scheduledNotificationsResult.status === 'rejected') {
+        this.logger.error(
+          `Failed to handle scheduled notifications for application ${application.id}`,
+          scheduledNotificationsResult.reason,
+        )
+      }
     } catch (e) {
       this.logger.error(e)
       return {

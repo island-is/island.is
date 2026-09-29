@@ -14,6 +14,19 @@ import { DEFAULT_LOCALE } from '../../constants'
 
 const CSV_DELIMITER = ';'
 
+const encodeCsvField = (value: string) => {
+  if (!value) return ''
+  if (
+    value.includes(CSV_DELIMITER) ||
+    value.includes('"') ||
+    value.includes('\n') ||
+    value.includes('\r')
+  ) {
+    return `"${value.replace(/"/g, '""')}"`
+  }
+  return value
+}
+
 export const ContentExportScreen = () => {
   const cma = useCMA()
   const sdk = useSDK<PageExtensionSDK>()
@@ -28,7 +41,7 @@ export const ContentExportScreen = () => {
     isExporting: boolean
     tags: { label: string; value: string }[]
     selectedTagId: string | null
-    exportType: 'contentType' | 'pages'
+    exportType: 'contentType' | 'pages' | 'assets'
     orgSlug: string | null
     orgSlugEn: string | null
     orgSlugLoading: boolean
@@ -222,6 +235,105 @@ export const ContentExportScreen = () => {
     sdk.locales.default,
     state.contentTypes,
     state.selectedContentTypeId,
+  ])
+
+  const exportAssets = useCallback(async () => {
+    const tagId = state.selectedTagId
+    const assets = []
+    let skip = 0
+    let total = Infinity
+    const chunkSize = 100
+    while (skip < total) {
+      const response = await cma.asset.getMany({
+        query: {
+          'metadata.tags.sys.id[in]': tagId,
+          limit: chunkSize,
+          skip,
+          'sys.archivedAt[exists]': false,
+        },
+      })
+      total = response.total
+      skip += chunkSize
+      assets.push(...response.items)
+    }
+
+    const locales = [
+      sdk.locales.default,
+      ...sdk.locales.available.filter(
+        (locale) => locale !== sdk.locales.default,
+      ),
+    ]
+
+    const csvHeader: string[] = [
+      'Contentful URL',
+      'Contentful Status',
+      'Contentful Tags',
+    ]
+
+    for (const locale of locales) {
+      csvHeader.push(`Title (${locale})`)
+      csvHeader.push(`Description (${locale})`)
+      csvHeader.push(`File name (${locale})`)
+      csvHeader.push(`File URL (${locale})`)
+      csvHeader.push(`File type (${locale})`)
+      csvHeader.push(`File size in bytes (${locale})`)
+    }
+
+    csvHeader.push('Contentful Created At')
+    csvHeader.push('Contentful Updated At')
+    csvHeader.push('Contentful Published At')
+    csvHeader.push('Contentful ID')
+
+    const csvBody: string[] = []
+
+    for (const asset of assets) {
+      const row: string[] = []
+      row.push(
+        `https://app.contentful.com/spaces/${sdk.ids.space}/environments/${sdk.ids.environment}/assets/${asset.sys.id}`,
+      )
+      let assetStatus = 'Draft'
+      if (asset.sys.updatedAt > asset.sys.publishedAt) assetStatus = 'Changed'
+      else if (asset.sys.publishedAt) assetStatus = 'Published'
+      row.push(assetStatus)
+
+      row.push(asset.metadata?.tags?.map((tag) => tag.sys.id).join(',') ?? '')
+
+      for (const locale of locales) {
+        const file = asset.fields.file?.[locale]
+        // Contentful returns protocol relative urls
+        const fileUrl = file?.url
+          ? file.url.startsWith('//')
+            ? `https:${file.url}`
+            : file.url
+          : ''
+        row.push(encodeCsvField(asset.fields.title?.[locale] ?? ''))
+        row.push(encodeCsvField(asset.fields.description?.[locale] ?? ''))
+        row.push(encodeCsvField(file?.fileName ?? ''))
+        row.push(fileUrl)
+        row.push(file?.contentType ?? '')
+        row.push(String(file?.details?.size ?? ''))
+      }
+
+      row.push(asset.sys.createdAt ?? '')
+      row.push(asset.sys.updatedAt ?? '')
+      row.push(asset.sys.publishedAt ?? '')
+      row.push(asset.sys.id)
+      csvBody.push(row.join(CSV_DELIMITER))
+    }
+
+    const csvContent = `${csvHeader.join(CSV_DELIMITER)}\n${csvBody.join('\n')}`
+
+    const filename = `assets-${tagId}-${
+      new Date().toISOString().split('.')[0]
+    }.csv`
+    downloadCsv(csvContent, filename)
+  }, [
+    cma.asset,
+    sdk.ids.environment,
+    sdk.ids.space,
+    sdk.locales.available,
+    sdk.locales.default,
+    state.selectedTagId,
   ])
 
   const exportPageEntries = useCallback(async () => {
@@ -456,6 +568,7 @@ export const ContentExportScreen = () => {
     setState((prev) => ({ ...prev, isExporting: true }))
     try {
       if (state.exportType === 'contentType') await exportContentTypeEntries()
+      else if (state.exportType === 'assets') await exportAssets()
       else await exportPageEntries()
     } catch (error) {
       console.error(error)
@@ -466,6 +579,7 @@ export const ContentExportScreen = () => {
   }, [
     exportContentTypeEntries,
     exportPageEntries,
+    exportAssets,
     state.exportType,
     sdk.notifier,
   ])
@@ -481,6 +595,8 @@ export const ContentExportScreen = () => {
     !state.isExporting &&
     (state.exportType === 'contentType'
       ? Boolean(state.selectedContentTypeId)
+      : state.exportType === 'assets'
+      ? Boolean(state.selectedTagId)
       : Boolean(state.selectedTagId) && !state.orgSlugLoading)
 
   return (
@@ -504,6 +620,15 @@ export const ContentExportScreen = () => {
         >
           Export published page entries with specific tag
         </Radio>
+        <Radio
+          value="assets"
+          isChecked={state.exportType === 'assets'}
+          onChange={() =>
+            setState((prev) => ({ ...prev, exportType: 'assets' }))
+          }
+        >
+          Export assets with specific tag
+        </Radio>
       </Flex>
       {state.exportType === 'contentType' && (
         <Flex gap="16px" flexWrap="wrap">
@@ -521,7 +646,7 @@ export const ContentExportScreen = () => {
           />
         </Flex>
       )}
-      {state.exportType === 'pages' && (
+      {state.exportType !== 'contentType' && (
         <Flex gap="16px" flexDirection="column" marginBottom="spacingM">
           <ValueSelect
             id="tagExportSelect"
@@ -541,7 +666,7 @@ export const ContentExportScreen = () => {
             label="Owner tag"
             placeholder="Select a tag"
           />
-          {state.selectedTagId && (
+          {state.selectedTagId && state.exportType === 'pages' && (
             <Flex gap="8px" flexDirection="column">
               <span>
                 Organization page slug ({DEFAULT_LOCALE}):{' '}

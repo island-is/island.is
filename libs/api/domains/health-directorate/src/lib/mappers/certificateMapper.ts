@@ -1,8 +1,10 @@
 import {
+  CertificateDto,
   CertificateRequestDto,
   CertificateTypeCode,
 } from '@island.is/clients/health-directorate'
 import { CertificateTypeEnum } from '../models/enums'
+import { HealthDirectorateCertificate } from '../models/certificate.model'
 import { HealthDirectorateCertificateRequest } from '../models/certificateRequest.model'
 
 export const toCertificateTypeCode = (
@@ -21,4 +23,18 @@ export const mapCertificateRequest = (
 ): HealthDirectorateCertificateRequest => ({
   id: dto.id,
   conversationId: dto.conversationId,
+})
+
+export const mapCertificate = (
+  dto: CertificateDto,
+): HealthDirectorateCertificate => ({
+  id: dto.id,
+  conversationId: dto.conversationId,
+  messageId: dto.messageId,
+  conversationTypeCode: dto.conversationTypeCode,
+  certificateRequestId: dto.certificateRequestId,
+  issuedAt: dto.issuedAt,
+  requiresPayment: dto.requiresPayment,
+  paid: dto.paid,
+  amountIsk: dto.amountIsk,
 })

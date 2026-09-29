@@ -57,8 +57,11 @@ export class ApplicationsXRoadService {
 
     const memberCode = this.getXroadMemberCode(xRoadClient)
     const formOwner = form.organizationNationalId
+    const canAccessApplication =
+      memberCode === formOwner ||
+      (memberCode === '5512201410' && formOwner === '6509142520')
 
-    if (memberCode !== formOwner) {
+    if (!canAccessApplication) {
       this.logger.warn(
         `X-Road client with member code ${memberCode} attempted to access application ${id} owned by ${formOwner}`,
       )
@@ -93,6 +96,16 @@ export class ApplicationsXRoadService {
       )
     }
 
+    this.logger.info('form system application fetched via xroad', {
+      applicationId: id,
+      formId: form.id,
+      formSlug: form.slug,
+      isTest: application.isTest,
+      organizationNationalId: form.organizationNationalId,
+      xRoadClient,
+      datadogEvent: 'form_system_application_fetched_xroad',
+    })
+
     return applicationJsonDto
   }
 
@@ -101,7 +114,19 @@ export class ApplicationsXRoadService {
       `Fetching file with id ${id} for X-Road client ${xRoadClient}`,
     )
 
-    const applicationId = id.split('/')[0]
+    let decodedId: string
+
+    try {
+      decodedId = decodeURIComponent(id)
+    } catch (error) {
+      if (error instanceof URIError) {
+        throw new BadRequestException('Invalid application file identifier')
+      }
+
+      throw error
+    }
+
+    const applicationId = decodedId.split('/')[0]
     const application = await this.applicationModel.findByPk(applicationId)
 
     if (!application) {
@@ -124,26 +149,29 @@ export class ApplicationsXRoadService {
 
     const memberCode = this.getXroadMemberCode(xRoadClient)
     const formOwner = form.organizationNationalId
+    const canAccessApplicationFile =
+      memberCode === formOwner ||
+      (memberCode === '5512201410' && formOwner === '6509142520')
 
-    if (memberCode !== formOwner) {
+    if (!canAccessApplicationFile) {
       this.logger.warn(
-        `X-Road client with member code ${memberCode} attempted to access application ${applicationId} owned by ${formOwner}`,
+        `X-Road client with member code ${memberCode} attempted to get file with id ${id} which belongs to application ${applicationId} owned by ${formOwner}`,
       )
       throw new UnauthorizedException(
         `This application-file is owned by a different organization.`,
       )
     }
 
-    const fileContent = await this.fileService.getFile(id)
+    const fileContent = await this.fileService.getFile(decodedId)
     if (fileContent == null) {
       throw new NotFoundException(`File with id ${id} not found`)
     }
 
     const file = new FileResponseDto()
-    file.id = id
+    file.id = decodedId
     file.file = fileContent
-    file.filename = this.displayNameFromS3Key(id)
-    file.fileType = this.fileTypeFromS3Key(id)
+    file.filename = this.displayNameFromS3Key(decodedId)
+    file.fileType = this.fileTypeFromS3Key(decodedId)
     file.size = Buffer.byteLength(fileContent, 'base64')
     return file
   }

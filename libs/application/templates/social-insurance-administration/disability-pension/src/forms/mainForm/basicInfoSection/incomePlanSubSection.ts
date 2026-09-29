@@ -15,8 +15,8 @@ import {
   getCurrencies,
   getTypesOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Application } from '@island.is/application/types'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import { SectionRouteEnum } from '../../../types/routes'
 import { siaGeneralCurrenciesQuery } from '../../../graphql/queries'
 import { generateMonthInput } from '../../../utils/generateMonthInput'

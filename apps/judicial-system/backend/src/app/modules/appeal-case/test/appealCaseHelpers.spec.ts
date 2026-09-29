@@ -9,6 +9,9 @@ import {
 import { AppealCase, AppealEventLog, Case } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
+  hasStandingVerdictAppeal,
+  standingVerdictAppellantIds,
+  standingVerdictAppellants,
   userIsAppellant,
 } from '../appealCase.helpers'
 
@@ -149,6 +152,31 @@ describe('userIsAppellant', () => {
       )
     })
 
+    // The prosecution appeals a verdict regarding a defendant, so its event
+    // names the defendant too; that is not the defendant's appeal.
+    it('is false for the defender of a defendant only the prosecution appealed', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        defendants: [
+          {
+            id: 'd1',
+            isDefenderChoiceConfirmed: true,
+            defenderNationalId: '1111111111',
+          },
+        ],
+      } as Case
+
+      expect(
+        userIsAppellant(
+          theCase,
+          appealCaseWith([
+            appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
+          ]),
+          defender('1111111111'),
+        ),
+      ).toBe(false)
+    })
+
     it('is false when the defender choice is not confirmed', () => {
       const theCase = {
         type: CaseType.INDICTMENT,
@@ -212,6 +240,22 @@ describe('appellantRepresentativeNationalIds', () => {
     expect(appellantRepresentativeNationalIds(theCase, appealCase).size).toBe(0)
   })
 
+  // The defendant whose verdict the prosecution appealed is the one to notify.
+  it('does not treat the defendant named on a prosecution appeal as an appellant', () => {
+    const theCase = {
+      defendants: [{ id: 'd1', defenderNationalId: '1111111111' }],
+    } as Case
+
+    expect(
+      appellantRepresentativeNationalIds(
+        theCase,
+        appealCaseWith([
+          appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
+        ]),
+      ),
+    ).toEqual(new Set())
+  })
+
   it('collects every appellant when several parties appealed', () => {
     const theCase = {
       type: CaseType.INDICTMENT,
@@ -228,5 +272,162 @@ describe('appellantRepresentativeNationalIds', () => {
     expect(
       [...appellantRepresentativeNationalIds(theCase, appealCase)].sort(),
     ).toEqual(['defender-1', 'defender-2'])
+  })
+})
+
+describe('standingVerdictAppellantIds', () => {
+  const event = (
+    defendantId: string,
+    eventType: AppealEventType,
+    created: string,
+    userRole: UserRole = UserRole.DEFENDER,
+  ) =>
+    ({
+      defendantId,
+      eventType,
+      created: new Date(created),
+      userRole,
+    } as AppealEventLog)
+
+  // The prosecution's appeal regarding a defendant is the other side's appeal,
+  // not the defendant's.
+  it('does not list a defendant only the prosecution appealed', () => {
+    const appealCase = appealCaseWith([
+      event(
+        'a',
+        AppealEventType.APPEALED,
+        '2026-06-04T10:00:00Z',
+        UserRole.PROSECUTOR,
+      ),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual([])
+  })
+
+  // An appeal the public prosecution office registered on a letter is the
+  // defendant's appeal.
+  it('lists a defendant whose appeal the public prosecution office registered', () => {
+    const appealCase = appealCaseWith([
+      event(
+        'a',
+        AppealEventType.APPEALED,
+        '2026-06-04T10:00:00Z',
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+      ),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual(['a'])
+  })
+
+  it('is empty when nothing has been appealed', () => {
+    expect(standingVerdictAppellantIds(appealCaseWith([]))).toEqual([])
+  })
+
+  it('lists every defendant that appealed', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEALED, '2026-06-04T10:00:00Z'),
+      event('b', AppealEventType.APPEALED, '2026-06-05T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase).sort()).toEqual(['a', 'b'])
+  })
+
+  it('drops a defendant that withdrew', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEALED, '2026-06-04T10:00:00Z'),
+      event('b', AppealEventType.APPEALED, '2026-06-05T10:00:00Z'),
+      event('a', AppealEventType.APPEAL_WITHDRAWN, '2026-06-06T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual(['b'])
+  })
+
+  // A defendant may appeal again while the deadline still runs, so it is the
+  // latest event that decides rather than the presence of a withdrawal.
+  it('keeps a defendant that appealed again after withdrawing', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEALED, '2026-06-04T10:00:00Z'),
+      event('a', AppealEventType.APPEAL_WITHDRAWN, '2026-06-05T10:00:00Z'),
+      event('a', AppealEventType.APPEALED, '2026-06-06T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual(['a'])
+  })
+
+  it('ignores events that are not about appealing or withdrawing', () => {
+    const appealCase = appealCaseWith([
+      event('a', AppealEventType.APPEAL_STATEMENT_SENT, '2026-06-04T10:00:00Z'),
+    ])
+
+    expect(standingVerdictAppellantIds(appealCase)).toEqual([])
+  })
+})
+
+describe('standingVerdictAppellants', () => {
+  const event = (
+    defendantId: string,
+    eventType: AppealEventType,
+    created: string,
+    userRole: UserRole,
+  ) =>
+    ({
+      defendantId,
+      eventType,
+      created: new Date(created),
+      userRole,
+    } as AppealEventLog)
+
+  // Both sides may appeal the same defendant's verdict; each stands or falls on
+  // its own events.
+  it('keeps the two sides of one defendant apart', () => {
+    const appealCase = appealCaseWith([
+      event(
+        'a',
+        AppealEventType.APPEALED,
+        '2026-06-04T10:00:00Z',
+        UserRole.DEFENDER,
+      ),
+      event(
+        'a',
+        AppealEventType.APPEALED,
+        '2026-06-05T10:00:00Z',
+        UserRole.PROSECUTOR,
+      ),
+      event(
+        'a',
+        AppealEventType.APPEAL_WITHDRAWN,
+        '2026-06-06T10:00:00Z',
+        UserRole.DEFENDER,
+      ),
+    ])
+
+    expect(standingVerdictAppellants(appealCase)).toEqual([
+      { defendantId: 'a', side: 'PROSECUTION' },
+    ])
+    expect(hasStandingVerdictAppeal(appealCase, 'a', 'PROSECUTION')).toBe(true)
+    expect(hasStandingVerdictAppeal(appealCase, 'a', 'DEFENCE')).toBe(false)
+  })
+
+  it('treats a prosecutor representative as the prosecution side', () => {
+    const appealCase = appealCaseWith([
+      event(
+        'a',
+        AppealEventType.APPEALED,
+        '2026-06-04T10:00:00Z',
+        UserRole.PROSECUTOR_REPRESENTATIVE,
+      ),
+    ])
+
+    expect(standingVerdictAppellants(appealCase)).toEqual([
+      { defendantId: 'a', side: 'PROSECUTION' },
+    ])
+  })
+
+  it('ignores events without a defendant', () => {
+    const appealCase = appealCaseWith([
+      { eventType: AppealEventType.APPEALED, userRole: UserRole.PROSECUTOR },
+    ] as AppealEventLog[])
+
+    expect(standingVerdictAppellants(appealCase)).toEqual([])
   })
 })

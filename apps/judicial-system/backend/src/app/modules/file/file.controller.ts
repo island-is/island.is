@@ -70,6 +70,7 @@ import {
   DefendantExistsGuard,
 } from '../defendant'
 import { Case, CaseFile, Defendant } from '../repository'
+import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dto'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
@@ -383,6 +384,45 @@ export class FileController {
   }
 
   @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('file/:fileId/document')
+  @ApiOkResponse({
+    type: CaseFile,
+    description:
+      'Attaches the document the district court wrote up for a ruling order pronounced orally',
+  })
+  attachRulingOrderDocument(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+    @Body() attachDocument: AttachRulingOrderDocumentDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(
+      `Attaching a document to ruling order ${fileId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.attachRulingOrderDocument(
+        theCase,
+        caseFile,
+        attachDocument,
+        user,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
@@ -534,6 +574,7 @@ export class FileController {
   getPoliceDigitalCaseFileTokenUrl(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
     @Query('policeDigitalFileId') policeDigitalFileId: string,
   ): Promise<SignedUrl> {
     if (!policeDigitalFileId?.trim()) {
@@ -545,7 +586,10 @@ export class FileController {
     )
 
     return this.policeDigitalCaseFileService
-      .getTokenUrl(caseId, user, policeDigitalFileId)
+      .getTokenUrl(caseId, user, policeDigitalFileId, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        policeCaseNumbers: theCase.policeCaseNumbers,
+      })
       .then((url) => ({ url }))
   }
 

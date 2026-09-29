@@ -169,6 +169,13 @@ type ChangeActions =
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
+      type: 'TOGGLE_VALIDATE_ELIGIBILITY'
+      payload: {
+        checked: boolean
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
@@ -278,6 +285,7 @@ type InputSettingsActions =
       payload: {
         field: FormSystemField
         property:
+          | 'isAddressRequired'
           | 'isPhoneRequired'
           | 'isEmailRequired'
           | 'fetchEmailFromMyPages'
@@ -306,12 +314,18 @@ type InputSettingsActions =
     }
   | {
       type: 'CHANGE_LIST_ITEM'
-      payload: {
-        property: 'label' | 'description'
-        lang: 'is' | 'en'
-        value: string
-        id: UniqueIdentifier
-      }
+      payload:
+        | {
+            property: 'label' | 'description'
+            lang: 'is' | 'en'
+            value: string
+            id: UniqueIdentifier
+          }
+        | {
+            property: 'value'
+            value: string
+            id: UniqueIdentifier
+          }
     }
   | { type: 'ADD_LIST_ITEM'; payload: { newListItem: FormSystemListItem } }
   | {
@@ -380,7 +394,6 @@ type InputSettingsActions =
         chargeItemName?: string
         chargeType?: string
         performingOrgID?: string
-        priceAmount?: number
         update: (updatedActiveItem?: ActiveItem) => void
       }
     }
@@ -918,6 +931,17 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'TOGGLE_VALIDATE_ELIGIBILITY': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          validateEligibility: action.payload.checked,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'CHANGE_HAS_SUMMARY_SCREEN': {
       const updatedState = {
         ...state,
@@ -943,6 +967,8 @@ export const controlReducer = (
     case 'CHANGE_SUBMISSION_URL': {
       const nextUrl = action.payload.value
       const useValidate = action.payload.useValidate
+      const nextUseValidate =
+        useValidate !== undefined ? useValidate : form.useValidate
 
       // Only force these flags when switching to Zendesk
       const nextFields =
@@ -970,6 +996,12 @@ export const controlReducer = (
               }
             })
           : fields
+      const nextScreens =
+        form.useValidate === true && nextUseValidate === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
 
       const updatedState = {
         ...state,
@@ -977,8 +1009,11 @@ export const controlReducer = (
           ...form,
           submissionServiceUrl: nextUrl,
           fields: nextFields,
-          useValidate:
-            useValidate !== undefined ? useValidate : form.useValidate,
+          screens: nextScreens,
+          useValidate: nextUseValidate,
+          validateEligibility: nextUseValidate
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -1008,11 +1043,22 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_USE_VALIDATE': {
+      const nextScreens =
+        form.useValidate === true && action.payload.value === false
+          ? screens?.map((screen) =>
+              screen ? { ...screen, shouldValidate: false } : screen,
+            )
+          : screens
+
       const updatedState = {
         ...state,
         form: {
           ...form,
+          screens: nextScreens,
           useValidate: action.payload.value,
+          validateEligibility: action.payload.value
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -1396,10 +1442,12 @@ export const controlReducer = (
         chargeItemName,
         chargeType,
         performingOrgID,
-        priceAmount,
         update,
         field,
       } = action.payload
+      const { priceAmount, ...fieldSettings } = removeTypename(
+        field.fieldSettings ?? {},
+      )
 
       const newField = {
         ...field,
@@ -1408,16 +1456,13 @@ export const controlReducer = (
           en: chargeItemName,
         },
         fieldSettings: {
-          ...field.fieldSettings,
-          __typename: undefined,
+          ...fieldSettings,
           chargeItemCode,
           chargeItemName,
           chargeType,
           performingOrgID,
-          priceAmount,
         },
       }
-      console.log('Updating payment settings with', newField.fieldSettings)
       update({ type: 'Field', data: newField })
       return {
         ...state,
@@ -1541,15 +1586,18 @@ export const controlReducer = (
     case 'CHANGE_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
       const list = field.list as FormSystemListItem[]
-      const { property, lang, value, id } = action.payload
+      const { value, id } = action.payload
       const listItem = list?.find((l) => l?.id === id) as FormSystemListItem
 
       const newListItem = {
         ...listItem,
-        [property]: {
-          ...listItem[property],
-          [lang]: value,
-        },
+        [action.payload.property]:
+          action.payload.property === 'value'
+            ? value
+            : {
+                ...listItem[action.payload.property],
+                [action.payload.lang]: value,
+              },
       }
 
       const newField = {

@@ -12,6 +12,16 @@ import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 const USER_SHIPS_FLAG = 'UserShips'
 const FARMERS_LANDS_FLAG = 'FarmersLands'
 
+const internalScopes = [ApiScope.internal, ApiScope.internalProcuring]
+
+const assetsRootScopes = [
+  ApiScope.assets,
+  ApiScope.workMachines,
+  ApiScope.vehicles,
+  ApiScope.ships,
+  ...internalScopes,
+]
+
 const IPOverview = lazy(() =>
   import(
     './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
@@ -98,15 +108,10 @@ export const assetsModule: PortalModule = {
       {
         name: m.assets,
         path: AssetsPaths.AssetsRoot,
-        enabled: [
-          ApiScope.assets,
-          ApiScope.workMachines,
-          ApiScope.vehicles,
-          ApiScope.ships,
-          ApiScope.internal,
-          ApiScope.internalProcuring,
-        ].some((scope) => userInfo.scopes.includes(scope)),
-        requiredScopes: [ApiScope.assets, ApiScope.workMachines, ApiScope.vehicles, ApiScope.ships, ApiScope.internal, ApiScope.internalProcuring],
+        enabled: assetsRootScopes.some((scope) =>
+          userInfo.scopes.includes(scope),
+        ),
+        requiredScopes: assetsRootScopes,
         element: <Navigate to={AssetsPaths.AssetsRealEstate} replace />,
       },
       {
@@ -157,16 +162,20 @@ export const assetsModule: PortalModule = {
         name: m.farmerLands,
         path: AssetsPaths.AssetsFarmerLands,
         key: FARMERS_LANDS_FLAG,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
-        requiredScopes: [ApiScope.internal],
+        enabled: internalScopes.some((scope) =>
+          userInfo.scopes.includes(scope),
+        ),
+        requiredScopes: internalScopes,
         element: <FarmerLandsOverview />,
       },
       {
         name: m.farmerLands,
         path: AssetsPaths.AssetsFarmerLandDetail,
         key: FARMERS_LANDS_FLAG,
-        enabled: userInfo.scopes.includes(ApiScope.internal),
-        requiredScopes: [ApiScope.internal],
+        enabled: internalScopes.some((scope) =>
+          userInfo.scopes.includes(scope),
+        ),
+        requiredScopes: internalScopes,
         element: <FarmerLandDetail />,
       },
       {

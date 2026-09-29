@@ -9,16 +9,17 @@ import {
   editApplicationOutliers,
   getApplicationActiveEqualityReport,
   getApplicationBlankExcelTemplate,
+  getApplicationEqualityContentPdf,
   getApplicationCompany,
   getApplicationDraftAnalysis,
   getApplicationDraftCriteriaTree,
   getApplicationEqualityReportTemplateDocx,
-  getApplicationEqualityReportTemplateHtml,
   getApplicationReport,
   getApplicationReportDraft,
   getApplicationReportOutliers,
   importApplicationReportDraftWorkbook,
   getApplicationReportComments,
+  getApplicationSalaryReportEligibility,
   getApplicationSubCriterionCatalog,
   importApplicationSalaryReportWorkbook,
   listApplicationDraftCriteria,
@@ -28,12 +29,12 @@ import {
   listApplicationDraftRoles,
   listApplicationDraftRolesWithSteps,
   presignApplicationImportUpload,
-  submitApplicationEqualityReport,
   submitApplicationReportComment,
   submitApplicationReportDraft,
   submitApplicationSalaryReport,
   syncApplicationReportDraft,
   updateApplicationReportDraft,
+  withdrawApplicationReport,
 } from '../../gen/fetch'
 import type {
   ApplicationReportCommentDto,
@@ -59,9 +60,9 @@ import type {
   PresignUploadResponseDto,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
+  SalaryReportEligibilityDto,
   SubmitApplicationReportCommentDto,
   SubmitDraftDto,
-  SubmitEqualityReportDto,
   SubmitSalaryReportDto,
   SyncDraftDto,
   UpdateDraftDto,
@@ -104,11 +105,22 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
-  async getEqualityReportTemplateHtml(user: User): Promise<string> {
+  /**
+   * Whether the company may file a salary report right now, and why not when
+   * it may not.
+   *
+   * Subsumes getActiveEqualityReport as a *gate* — DMR checks the equality
+   * obligation first and answers MISSING_EQUALITY_REPORT before it looks at the
+   * renewal window — but not as a data source: the screens that show the
+   * approved plan still need the report summary itself.
+   */
+  async getSalaryReportEligibility(
+    user: User,
+  ): Promise<SalaryReportEligibilityDto> {
     return this.unwrap(
       user,
-      () => getApplicationEqualityReportTemplateHtml(),
-      'Failed to get equality report template HTML',
+      () => getApplicationSalaryReportEligibility(),
+      'Failed to get salary report eligibility',
     )
   }
 
@@ -120,14 +132,22 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
-  async submitEqualityReport(
+  /**
+   * The company's own uploaded jafnréttisáætlun PDF.
+   *
+   * Separate from `getReport` because the report detail deliberately omits
+   * these bytes — they are megabytes of base64 and would otherwise ride along
+   * on every read. 404 when the report's content is rich text rather than an
+   * uploaded file.
+   */
+  async getEqualityContentPdf(
     user: User,
-    body: SubmitEqualityReportDto,
-  ): Promise<CreateReportResponseDto> {
+    providerId: string,
+  ): Promise<Blob | File> {
     return this.unwrap(
       user,
-      () => submitApplicationEqualityReport({ body }),
-      'Failed to submit equality report',
+      () => getApplicationEqualityContentPdf({ path: { providerId } }),
+      'Failed to get equality content PDF',
     )
   }
 
@@ -301,6 +321,17 @@ export class DirectorateOfEqualityClientService {
       user,
       () => deleteApplicationReportDraft({ path: { providerId } }),
       'Failed to delete report draft',
+    )
+  }
+
+  // Withdraws the submitted report tied to an island.is application the
+  // applicant deleted. Idempotent on WITHDRAWN; 400 once the report is decided
+  // (APPROVED/DENIED/SUPERSEDED), 404 when there is no report for providerId.
+  async withdrawReport(user: User, providerId: string): Promise<void> {
+    return this.unwrap(
+      user,
+      () => withdrawApplicationReport({ path: { providerId } }),
+      'Failed to withdraw report',
     )
   }
 

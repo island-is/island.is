@@ -10,8 +10,8 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Locale } from '@island.is/shared/types'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'

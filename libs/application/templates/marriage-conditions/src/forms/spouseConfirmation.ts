@@ -28,7 +28,7 @@ import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { removeCountryCode } from '@island.is/application/ui-components'
+import { removeCountryCode } from '@island.is/shared/utils'
 import { dataCollection } from './sharedSections/dataCollection'
 import { ManOnThePhone } from '@island.is/application/assets/graphics'
 

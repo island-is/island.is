@@ -18,10 +18,7 @@ export const exportedApis = [HomeApi].map((Api) => ({
           autoAuth: {
             mode: 'token',
             issuer: '',
-            tokenEndpoint: config.authTokenEndpoint.replace(
-              '{TENANT_ID}',
-              config.authTenantId,
-            ),
+            tokenEndpoint: config.authTokenEndpoint,
             clientId: config.authClientId,
             clientSecret: config.authClientSecret,
             scope: [`api://${config.authClientId}/.default`],

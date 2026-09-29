@@ -11,6 +11,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
@@ -120,8 +121,9 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
         decision: CaseAppealDecision.NOT_APPLICABLE,
       },
     ]
-    const mockFindAll = mockAppealDecisionRepositoryService.findAll as jest.Mock
-    mockFindAll.mockImplementation(() => Promise.resolve(decisions))
+    const mockFindAllForRuling =
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+    mockFindAllForRuling.mockImplementation(() => Promise.resolve(decisions))
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
@@ -171,10 +173,22 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
       expect(then.error).toBeUndefined()
     })
 
+    it('should read only the decisions of the ruling of the session', () => {
+      const { calls } = (
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      ).mock
+
+      expect(calls.length).toBeGreaterThan(0)
+      calls.forEach((call) =>
+        expect(call).toEqual([caseId, rulingFileId, { transaction }]),
+      )
+    })
+
     it('should create the appeal case with the court session end time', () => {
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
+          appealType: AppealCaseType.RULING,
           appealState: AppealCaseState.APPEALED,
           rulingFileId,
           appealDate: endDate,
@@ -277,7 +291,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
 
     const withExistingEvents = (events: AppealEventLog[]) =>
       (
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue(events)
 
     it('adds an event only for a newly appealing party', async () => {

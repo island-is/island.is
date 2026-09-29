@@ -31,9 +31,27 @@ export const SubCriterionCatalogApi = defineTemplateApi({
   throwOnError: false,
 })
 
+// No longer the gate — SalaryReportEligibilityApi is — but still the only
+// thing that persists the company's coverage, which resolveEqualityCoverage
+// falls back to at submit when DMR cannot answer live. Hence throwOnError:
+// false: nothing on this template reads the data before submit, so a DMR
+// outage on it must not hold up a prerequisites screen the eligibility check
+// would have admitted. Losing the fallback is the cost, and the submit path
+// already handles its absence.
 export const ActiveEqualityReportApi = defineTemplateApi({
   action: ApiActions.getActiveEqualityReport,
   externalDataId: 'activeEqualityReport',
+  namespace: 'DirectorateOfEquality',
+  throwOnError: false,
+})
+
+// The entry gate out of PREREQUISITES: whether the company owes an equality
+// plan. throwOnError stays at its default of true — a guard that cannot read
+// its own answer has to stop the applicant on the screen rather than wave them
+// through or reject them blind.
+export const SalaryReportEligibilityApi = defineTemplateApi({
+  action: ApiActions.getSalaryReportEligibility,
+  externalDataId: 'salaryReportEligibility',
   namespace: 'DirectorateOfEquality',
 })
 
@@ -153,12 +171,31 @@ export const EditOutliersApi = defineTemplateApi({
   triggerEvent: DefaultEvents.SUBMIT,
 })
 
+// onDelete for the states where the applicant can delete and DMR may already
+// hold a report: DRAFT hard-deletes the draft, the POSTPONED pair withdraws the
+// submitted report. Left to the default throwOnError so a DMR failure refuses
+// the delete instead of leaving an open report behind with no application.
+export const DeleteSalaryReportDraftApi = defineTemplateApi({
+  action: ApiActions.deleteSalaryReportDraft,
+  externalDataId: 'deleteSalaryReportDraft',
+  namespace: 'DirectorateOfEquality',
+})
+
+export const WithdrawSalaryReportApi = defineTemplateApi({
+  action: ApiActions.withdrawSalaryReport,
+  externalDataId: 'withdrawSalaryReport',
+  namespace: 'DirectorateOfEquality',
+})
+
 // Triggered manually from the CommentThread field for on-demand refresh, and
 // also wired as onEntry on DRAFT/POSTPONED/DRAFT_RETRY/APPROVED/DENIED so
 // externalData is fresh on first render (e.g. for the postponedForm
 // landing-screen decision).
 // Listed on a role's `api` array purely so updateApplicationExternalData is
 // permitted to invoke it for that role.
+// throwOnError stays false: this runs as an onEntry on DRAFT, POSTPONED and
+// DRAFT_RETRY, and an onEntry blocks the new state from being persisted when it
+// throws — a prefetch failing must never strand an application mid-transition.
 export const GetReportCommentsApi = defineTemplateApi({
   action: ApiActions.getReportComments,
   externalDataId: 'getReportComments',

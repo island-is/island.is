@@ -1,5 +1,6 @@
 import { Box, Button, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 import { messages } from '../../lib/messages'
 import type { PersonalFactor } from '../../utils/types'
 
@@ -32,9 +33,11 @@ export const PersonalCriteriaList = ({
       <Text variant="h4" marginBottom={2}>
         {formatMessage(messages.report.criteria.personalFactorTitle)}
       </Text>
-      <Text marginBottom={3}>
-        {formatMessage(messages.report.criteria.personalFactorIntro)}
-      </Text>
+      <Box marginBottom={3}>
+        <Markdown>
+          {formatMessage(messages.report.criteria.personalFactorIntro)}
+        </Markdown>
+      </Box>
 
       <Stack space={4} dividers={true}>
         {personalFactors.map((factor) => (

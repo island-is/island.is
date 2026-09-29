@@ -18,6 +18,7 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
+export const EARLIEST_RENTAL_PERIOD_START_DATE = new Date(2023, 0, 1)
 
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
   return {
@@ -96,9 +97,6 @@ export const hasDuplicateApplicants = (
 
   return false
 }
-
-export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 export const parseCurrency = (value: string): number | undefined => {
   const numeric = value.replace(/[^\d]/g, '')

@@ -5,8 +5,10 @@ import { ApolloProvider } from '@apollo/client'
 
 import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
+import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
 import {
+  ErrorBoundary,
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
@@ -16,6 +18,20 @@ import {
   ViewportProvider,
 } from '@island.is/judicial-system-web/src/components'
 import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
+import { userMonitoring } from '@island.is/user-monitoring'
+
+if (typeof window !== 'undefined') {
+  const { ddLogsClientToken, environment, appVersion } = getPublicRuntimeEnv()
+
+  if (ddLogsClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'judicial-system-web',
+      clientToken: ddLogsClientToken,
+      env: environment || 'local',
+      version: appVersion || 'unknown',
+    })
+  }
+}
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
@@ -65,7 +81,7 @@ class JudicialSystemApplication extends App<Props> {
   }
 
   render() {
-    const { Component, pageProps, translations } = this.props
+    const { Component, pageProps, translations, router } = this.props
 
     return (
       <>
@@ -90,7 +106,12 @@ class JudicialSystemApplication extends App<Props> {
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <Component {...pageProps} />
+                        {/* Keyed by route so a render error on one page
+                            does not keep the fallback up after the user
+                            navigates client-side to a healthy page */}
+                        <ErrorBoundary key={router.asPath}>
+                          <Component {...pageProps} />
+                        </ErrorBoundary>
                       </Box>
                       <ToastContainer />
                     </FormProvider>
@@ -116,6 +137,18 @@ class JudicialSystemApplication extends App<Props> {
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-regular.woff2')
                             format('woff2'),
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-regular.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: italic;
+                        font-weight: 300;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Light Italic'),
+                          local('IBMPlexSans-LightItalic'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-300italic.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-300italic.woff')
                             format('woff');
                       }
                       @font-face {
@@ -152,6 +185,30 @@ class JudicialSystemApplication extends App<Props> {
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff2')
                             format('woff2'),
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: normal;
+                        font-weight: 700;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Bold'),
+                          local('IBMPlexSans-Bold'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: italic;
+                        font-weight: 700;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Bold Italic'),
+                          local('IBMPlexSans-BoldItalic'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700italic.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700italic.woff')
                             format('woff');
                       }
                     `}</style>

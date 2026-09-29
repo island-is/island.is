@@ -1,10 +1,10 @@
 import {
   buildCustomField,
-  buildDescriptionField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
 import { messages } from '../../../lib/messages'
+import { ProgressPaths } from '../../../utils/constants'
 
 export const dataEntrySubSection = buildSubSection({
   id: 'dataEntry',
@@ -18,13 +18,11 @@ export const dataEntrySubSection = buildSubSection({
         buildCustomField({
           id: 'dataEntry.excelTemplateDownload',
           component: 'ExcelTemplateDownload',
-          doesNotRequireAnswer: true,
-        }),
-        buildDescriptionField({
-          id: 'dataEntry.excelTemplateDownloadDescription',
-
-          description:
-            messages.report.dataEntry.excelTemplateDownloadDescription,
+          // The step's own data lives on the DMR draft, so this marker is the
+          // only thing that tells the shell the screen is done — see
+          // ProgressPaths. Replaces `doesNotRequireAnswer: true`: a screen that
+          // requires no answer is skipped without advancing the resume point.
+          childInputIds: [ProgressPaths.dataEntry],
         }),
       ],
     }),

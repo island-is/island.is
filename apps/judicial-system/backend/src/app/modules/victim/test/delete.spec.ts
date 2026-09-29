@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
-import { Case, Victim } from '../../repository'
+import { Case, Victim, VictimRepositoryService } from '../../repository'
 import { DeleteVictimResponse } from '../models/deleteVictim.response'
 
 interface Then {
@@ -16,16 +16,18 @@ describe('VictimController - Delete', () => {
   const caseId = uuid()
   const victimId = uuid()
 
-  let mockVictimModel: typeof Victim
+  let mockVictimRepositoryService: VictimRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { victimController, victimModel } = await createTestingVictimModule()
+    const { victimController, victimRepositoryService } =
+      await createTestingVictimModule()
 
-    mockVictimModel = victimModel
+    mockVictimRepositoryService = victimRepositoryService
 
-    const mockDestroy = mockVictimModel.destroy as jest.Mock
-    mockDestroy.mockRejectedValue(new Error('Some error'))
+    const mockDelete =
+      mockVictimRepositoryService.deleteByIdAndCase as jest.Mock
+    mockDelete.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -51,16 +53,17 @@ describe('VictimController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockVictimModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValue(1)
+      const mockDelete =
+        mockVictimRepositoryService.deleteByIdAndCase as jest.Mock
+      mockDelete.mockResolvedValue(1)
 
       then = await givenWhenThen()
     })
 
     it('should delete the victim', () => {
-      expect(mockVictimModel.destroy).toHaveBeenCalledWith({
-        where: { id: victimId, caseId },
-      })
+      expect(
+        mockVictimRepositoryService.deleteByIdAndCase,
+      ).toHaveBeenCalledWith(victimId, caseId)
       expect(then.result).toEqual({ deleted: true })
     })
   })

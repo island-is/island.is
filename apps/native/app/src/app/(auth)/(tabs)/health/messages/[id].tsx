@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { gql, useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
   FlatList,
@@ -8,10 +8,15 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  usePathname,
+} from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -19,6 +24,7 @@ import { OfflineIcon } from '@/components/offline/offline-icon'
 import {
   GetHealthConversationQuery,
   HealthDirectorateHealthConversationDirection,
+  HealthDirectorateHealthConversationReplyBlockedReason,
   useArchiveHealthConversationMutation,
   useGetHealthConversationQuery,
   useMarkHealthConversationAsReadMutation,
@@ -28,11 +34,15 @@ import {
 } from '@/graphql/types/schema'
 import { useAuthStore } from '@/stores/auth-store'
 import { uiStore } from '@/stores/ui-store'
+import { useBrowser } from '@/hooks/use-browser'
+import { useMyPagesLinks } from '@/lib/my-pages-links'
 import {
   Alert,
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
+  Problem,
+  ProblemTemplate,
   theme,
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
@@ -47,24 +57,159 @@ type ConversationMessage = NonNullable<
 
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
 
+// Hermes ships no Intl.PluralRules and the app has no polyfill for it, so ICU
+// `plural` syntax silently falls back to the raw pattern. Pick the form by
+// hand instead: Icelandic takes the singular for numbers ending in 1 except
+// 11 (1, 21, 31 ...), English only for exactly 1.
+const isSingularDayCount = (days: number, locale: string): boolean => {
+  if (locale.startsWith('is')) {
+    return days % 10 === 1 && days % 100 !== 11
+  }
+  return days === 1
+}
+
+// The list and detail queries normalize to separate cache entries, so the list's
+// title survives a failed detail fetch. Read it to fall back on for the header.
+const CONVERSATION_TITLE_FRAGMENT = gql`
+  fragment HealthConversationTitle on HealthDirectorateHealthConversation {
+    title
+  }
+`
+
+// Maps a reply-blocked reason to its explanatory message.
+const replyBlockedMessageId = (
+  reason?: HealthDirectorateHealthConversationReplyBlockedReason | null,
+): string => {
+  switch (reason) {
+    case HealthDirectorateHealthConversationReplyBlockedReason.OutsideMessagingWindow:
+      return 'health.messages.replyBlocked.outsideWindow'
+    case HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired:
+      return 'health.messages.replyBlocked.windowExpired'
+    case HealthDirectorateHealthConversationReplyBlockedReason.AwaitingStaffReply:
+      return 'health.messages.replyBlocked.awaitingStaff'
+    case HealthDirectorateHealthConversationReplyBlockedReason.RepliesDisabled:
+      return 'health.messages.replyBlocked.repliesDisabled'
+    case HealthDirectorateHealthConversationReplyBlockedReason.AwaitingAcknowledgement:
+      return 'health.messages.replyBlocked.awaitingAcknowledgement'
+    default:
+      return 'health.messages.replyBlocked.default'
+  }
+}
+
 export default function HealthMessageDetailScreen() {
   const { id, justCreated } = useLocalSearchParams<{
     id: string
     justCreated?: string
   }>()
   const intl = useIntl()
+  const insets = useSafeAreaInsets()
   const client = useApolloClient()
+  const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
+  // Also re-exported in the notifications modal, so compose has to be pushed
+  // onto whichever stack we are in.
+  const pathname = usePathname()
+  const composeHref = pathname.startsWith('/notifications/')
+    ? '/notifications/message/new'
+    : '/health/messages/new'
 
   const res = useGetHealthConversationQuery({
     variables: { id },
     notifyOnNetworkStatusChange: true,
   })
+  const { refetch } = res
+
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
+  // Clear the pending spinner-delay timeout on unmount so it can't fire
+  // setRefetching after the screen is gone.
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+    }
+  }, [])
+  // Refetch the conversation, keeping the refresh spinner visible a moment after
+  // the (often instant) refetch resolves so it feels real — matches the inbox.
+  const refreshConversation = useCallback(async () => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
+      await refetch()
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch {
+      setRefetching(false)
+    }
+  }, [refetch])
+
+  const { openBrowser } = useBrowser()
+  // openBrowser is a fresh closure each render; read it through a ref so the
+  // pay handler below stays stable.
+  const openBrowserRef = useRef(openBrowser)
+  openBrowserRef.current = openBrowser
+
+  // Open My Pages to pay in the in-app browser. openBrowser resolves when the
+  // browser is dismissed, so refetch right after — a completed payment comes
+  // back as paid: true and the certificate becomes available.
+  const handleCertificatePayPress = useCallback(async () => {
+    await openBrowserRef.current(myPagesLinks.healthMessageDetail(id))
+    // Show the same refresh spinner as pull-to-refresh while we re-fetch, so the
+    // user gets feedback that the certificate is being updated after payment.
+    await refreshConversation()
+  }, [myPagesLinks, id, refreshConversation])
 
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
+  // Only surface the error when we have nothing to show, so a cached
+  // conversation still renders through a failed background refetch.
+  const hasError = !!res.error && !conversation
+  // A bad or stale id (e.g. a notification outliving the thread) is a successful
+  // response carrying null, not a failure, so it needs its own branch.
+  const notFound = !hasError && !isSkeleton && !!res.data && !conversation
+
+  // Falls back to the title the list query cached, so the header still names the
+  // message when the detail fetch fails instead of going blank.
+  const cachedTitle = useMemo(() => {
+    const cacheId = client.cache.identify({
+      __typename: 'HealthDirectorateHealthConversation',
+      id,
+    })
+    if (!cacheId) {
+      return undefined
+    }
+    return (
+      client.readFragment<{ title?: string | null }>({
+        id: cacheId,
+        fragment: CONVERSATION_TITLE_FRAGMENT,
+      })?.title ?? undefined
+    )
+  }, [client, id])
+
+  // An expired reply window is the one reason we can quantify, so name the
+  // number of days when the server sends it. It is nullable, so fall back to
+  // the generic wording rather than rendering a blank count.
+  const replyWindowDays = conversation?.patientReplyWindowDays
+  const replyBlockedMessage =
+    conversation?.replyBlockedReason ===
+      HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired &&
+    replyWindowDays != null
+      ? intl.formatMessage(
+          {
+            id: isSingularDayCount(replyWindowDays, intl.locale)
+              ? 'health.messages.replyBlocked.windowExpiredDay'
+              : 'health.messages.replyBlocked.windowExpiredDays',
+          },
+          { days: replyWindowDays },
+        )
+      : intl.formatMessage({
+          id: replyBlockedMessageId(conversation?.replyBlockedReason),
+        })
 
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     // Fire-and-forget: the server state self-corrects on the next load.
@@ -169,25 +314,6 @@ export default function HealthMessageDetailScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation?.id])
 
-  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  const handleRefresh = async () => {
-    try {
-      if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current)
-      }
-      setRefetching(true)
-      await res.refetch()
-      // Keep the spinner visible a moment after the (often instant) refetch
-      // resolves so the refresh feels real — matches the inbox.
-      loadingTimeout.current = setTimeout(() => {
-        setRefetching(false)
-      }, 1331)
-    } catch (err) {
-      setRefetching(false)
-    }
-  }
-
   const [downloadingAttachmentId, setDownloadingAttachmentId] = useState<
     string | null
   >(null)
@@ -246,6 +372,26 @@ export default function HealthMessageDetailScreen() {
           conversation?.lastSenderGroupName ??
           ''
 
+      // The certificate attached to this message needs paying before it can be
+      // accessed. The app can't take the payment natively, so — matching the
+      // compose flow's certificate notice — we point the user to My Pages.
+      // No certificateId means there is nothing to pay for yet, so offer no
+      // pay affordance — as my-pages' CertificateAction does.
+      const isUnpaidCertificate =
+        !!item.certificateId && !!item.requiresPayment && !item.paid
+      // The download service refuses attachments with 402 while the certificate
+      // is unpaid, so withhold them all, like my-pages.
+      const attachmentsLocked = !!item.requiresPayment && !item.paid
+      const certificatePaymentMessage =
+        item.amountIsk != null
+          ? intl.formatMessage(
+              { id: 'health.messages.certificatePayment.text' },
+              { amount: `${intl.formatNumber(item.amountIsk)} kr.` },
+            )
+          : intl.formatMessage({
+              id: 'health.messages.certificatePayment.textNoAmount',
+            })
+
       const sentAt = new Date(item.messageSentAt)
       const dateTime = item.messageSentAt
         ? `${intl.formatDate(sentAt, {
@@ -269,23 +415,46 @@ export default function HealthMessageDetailScreen() {
           }
           title={senderName}
           bodyContent={
-            item.content ? (
-              <HealthConversationMessageContent content={item.content} />
+            item.content || isUnpaidCertificate ? (
+              <View style={{ rowGap: theme.spacing[2] }}>
+                {item.content ? (
+                  <HealthConversationMessageContent content={item.content} />
+                ) : null}
+                {isUnpaidCertificate ? (
+                  <ProblemTemplate
+                    variant="info"
+                    showIcon
+                    title={intl.formatMessage({
+                      id: 'health.messages.certificatePayment.title',
+                    })}
+                    message={certificatePaymentMessage}
+                    detailLink={{
+                      text: intl.formatMessage({
+                        id: 'health.messages.certificatePayment.link',
+                      }),
+                      url: myPagesLinks.healthMessageDetail(id),
+                      onPress: handleCertificatePayPress,
+                    }}
+                  />
+                ) : null}
+              </View>
             ) : undefined
           }
           date={dateTime}
           hasTopBorder={index !== 0}
-          attachments={item.attachments.map((attachment) => ({
-            id: attachment.id,
-            label: attachment.fileName,
-            loading: downloadingAttachmentId === attachment.id,
-            onPress: () =>
-              handleAttachmentPress({
-                id: attachment.id,
-                fileName: attachment.fileName,
-                url: attachment.downloadServiceURL,
-              }),
-          }))}
+          attachments={(attachmentsLocked ? [] : item.attachments).map(
+            (attachment) => ({
+              id: attachment.id,
+              label: attachment.fileName,
+              loading: downloadingAttachmentId === attachment.id,
+              onPress: () =>
+                handleAttachmentPress({
+                  id: attachment.id,
+                  fileName: attachment.fileName,
+                  url: attachment.downloadServiceURL,
+                }),
+            }),
+          )}
         />
       )
     },
@@ -293,6 +462,9 @@ export default function HealthMessageDetailScreen() {
       messages.length,
       intl,
       userName,
+      id,
+      myPagesLinks,
+      handleCertificatePayPress,
       conversation?.lastSenderGroupName,
       conversation?.organization?.name,
       conversation?.organization?.logoUrl,
@@ -312,7 +484,7 @@ export default function HealthMessageDetailScreen() {
       <StackScreen
         networkStatus={res.networkStatus}
         options={{
-          title: conversation?.title ?? '',
+          title: conversation?.title ?? cachedTitle ?? '',
           // Android centers a long title over the back arrow; left-align there
           // so it truncates next to it instead. iOS reserves the button space.
           headerTitleAlign: Platform.OS === 'android' ? 'left' : 'center',
@@ -365,9 +537,13 @@ export default function HealthMessageDetailScreen() {
           renderItem={renderItem}
           style={{ flex: 1 }}
           refreshControl={
-            <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
+            <RefreshControl
+              refreshing={refetching}
+              onRefresh={refreshConversation}
+            />
           }
-          contentContainerStyle={{ flexGrow: 1 }}
+          // No `flexGrow: 1`: it stretches the content past the visible area
+          // by the header's content inset, so even one message scrolled.
           contentInsetAdjustmentBehavior="automatic"
           automaticallyAdjustContentInsets
           ListHeaderComponent={
@@ -391,17 +567,59 @@ export default function HealthMessageDetailScreen() {
               </View>
             ) : null
           }
-          ListFooterComponent={
-            <SafeAreaView
-              style={{ height: conversation?.patientCanReply ? 160 : 24 }}
-            />
+          ListEmptyComponent={
+            hasError || notFound ? (
+              <View
+                style={{
+                  paddingHorizontal: theme.spacing[2],
+                  paddingTop: theme.spacing[3],
+                }}
+              >
+                {hasError ? (
+                  <Problem
+                    type="error"
+                    error={res.error}
+                    title={intl.formatMessage({ id: 'problem.error.title' })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.errorMessage',
+                    })}
+                  />
+                ) : (
+                  <Problem
+                    type="no_data"
+                    title={intl.formatMessage({ id: 'problem.noData.title' })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.notFoundMessage',
+                    })}
+                  />
+                )}
+              </View>
+            ) : null
           }
+          // Just an end-of-thread gap — the reply drawer below is a flow
+          // sibling, not an overlay, so it needs no space reserved here.
+          ListFooterComponent={<View style={{ height: theme.spacing[3] }} />}
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
-            <SafeAreaView>
+            {/* The home indicator is what lifts the reply button / blocked
+                alert clear of the bottom edge. A device without one (SE,
+                iPhone 8) reports a 0 inset, so a minimum stands in for it
+                there. Android is already padded by ButtonDrawer, and its
+                gesture inset would double up on top of that. */}
+            <View
+              style={{
+                paddingBottom:
+                  (Platform.OS === 'ios'
+                    ? Math.max(insets.bottom, theme.spacing[2])
+                    : 0) + theme.spacing[1],
+              }}
+            >
               {isSkeleton ? (
-                <GeneralCardSkeleton height={48} />
+                // The card skeleton carries a bottom margin of its own, which
+                // would leave the placeholder sitting higher than the button
+                // or alert that replaces it.
+                <GeneralCardSkeleton height={48} style={{ marginBottom: 0 }} />
               ) : conversation?.patientCanReply ? (
                 <Button
                   title={intl.formatMessage({
@@ -413,7 +631,7 @@ export default function HealthMessageDetailScreen() {
                   icon={require('@/assets/icons/reply.png')}
                   onPress={() =>
                     router.push({
-                      pathname: '/health/messages/new',
+                      pathname: composeHref,
                       params: {
                         conversationId: id,
                         recipientName:
@@ -429,13 +647,11 @@ export default function HealthMessageDetailScreen() {
                 <Alert
                   type="info"
                   size="small"
-                  message={intl.formatMessage({
-                    id: 'health.messages.cannotReply',
-                  })}
+                  message={replyBlockedMessage}
                   hasBorder
                 />
               )}
-            </SafeAreaView>
+            </View>
           </ButtonDrawer>
         ) : null}
       </View>

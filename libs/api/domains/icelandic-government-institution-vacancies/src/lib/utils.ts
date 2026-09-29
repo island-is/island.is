@@ -329,8 +329,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms = (
     applicationDeadlineFrom: mapDate(vacancy.applicationDeadlineFrom),
     applicationDeadlineTo: mapDate(vacancy.applicationDeadlineTo),
     fieldOfWork: vacancy.fieldOfWork,
-    institutionName:
-      vacancy.organization?.shortTitle || vacancy.organization?.title,
+    institutionName: vacancy.organization?.title,
     institutionReferenceIdentifier: vacancy.organization?.referenceIdentifier,
     logoUrl: vacancy.organization?.logo?.url,
     locations,

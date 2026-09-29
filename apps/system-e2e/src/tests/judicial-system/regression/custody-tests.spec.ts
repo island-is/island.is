@@ -5,11 +5,11 @@ import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
 import {
   randomPoliceCaseNumber,
-  randomCourtCaseNumber,
   getDaysFromNow,
   chooseDocument,
   verifyUpload,
 } from '../utils/helpers'
+import { judgeSubmitsDecision } from './shared-steps/court-decision'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
@@ -154,79 +154,11 @@ test.describe.serial('Custody tests', () => {
   })
 
   test('court should submit decision in case', async ({ judgePage }) => {
-    const page = judgePage
-    await Promise.all([
-      page.goto(`/domur/mottaka/${caseId}`),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Reception and assignment
-    await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
-    await page.getByTestId('courtCaseNumber').fill(randomCourtCaseNumber())
-    await page.keyboard.press('Tab')
-    await page.getByText('Veldu dómara/aðstoðarmann').click()
-    await page
-      .getByTestId('select-judge')
-      .getByText('Test Dómari')
-      .last()
-      .click()
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Overview
-    await expect(page).toHaveURL(`/domur/krafa/${caseId}`)
-    await page.getByTestId('continueButton').isVisible()
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Hearing arrangements
-    await expect(page).toHaveURL(`/domur/fyrirtokutimi/${caseId}`)
-    await page.locator('input[id=courtDate]').fill(today)
-    await page.keyboard.press('Escape')
-    await page.locator('input[id=courtDate-time]').fill('09:00')
-    await page.keyboard.press('Tab')
-    await page.getByTestId('continueButton').click()
-    await Promise.all([
-      page.getByTestId('modalPrimaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Ruling
-    await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
-    await page.getByText('Krafa um gæsluvarðhald samþykkt').click()
-    await page.locator('input[id=validToDate]').fill(custodyEndDate)
-    await page.keyboard.press('Escape')
-    await page.locator('input[id=validToDate-time]').fill('16:00')
-    await page.keyboard.press('Tab')
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Court record
-    await expect(page).toHaveURL(`/domur/thingbok/${caseId}`)
-    await page.getByText('Varnaraðili tekur sér lögboðinn frest').click()
-    await page.getByText('Sækjandi tekur sér lögboðinn frest').click()
-    await page.locator('input[id=courtEndTime]').fill(today)
-    await page.keyboard.press('Escape')
-    await page.locator('input[id=courtEndTime-time]').fill('10:00')
-    await page.keyboard.press('Tab')
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
-
-    // Confirmation
-    await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
-    ])
-    await page.getByTestId('modalSecondaryButton').click()
+    await judgeSubmitsDecision(judgePage, caseId, {
+      acceptRulingText: 'Krafa um gæsluvarðhald samþykkt',
+      validToDate: custodyEndDate,
+      dismissSignatureModal: true,
+    })
   })
 
   test('judge should amend case', async ({ judgePage }) => {

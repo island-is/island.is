@@ -1,4 +1,8 @@
-import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
+import {
+  JwtAuthUserGuard,
+  RolesGuard,
+  RouteRolesGuard,
+} from '@island.is/judicial-system/auth'
 import {
   CaseType,
   indictmentCases,
@@ -11,6 +15,7 @@ import { DefendantExistsGuard } from '../../../defendant'
 import { CaseController } from '../../case.controller'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseExistsForUpdateGuard } from '../../guards/caseExistsForUpdate.guard'
 import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTransitionGuard } from '../../guards/caseTransition.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
@@ -34,8 +39,16 @@ describe('CaseController - Update guards', () => {
 })
 
 describe('CaseController - Transition guards', () => {
+  // The case-exists guard must stay ahead of RolesGuard: the transition roles
+  // rules read request.case, and prosecutorTransitionRule denies when it is
+  // absent. See the rules spec, which pins that dependency.
+  //
+  // RouteRolesGuard must stay ahead of the case-exists guard, which is where
+  // the write lock is taken: it rejects a role this route has no rule for
+  // without reading the case at all. The guard-chain spec runs that.
   verifyGuards(CaseController, 'transition', [
-    CaseExistsGuard,
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
     RolesGuard,
     CaseWriteGuard,
     CaseTransitionGuard,
@@ -259,12 +272,16 @@ describe('CaseController - Extend guards', () => {
 })
 
 describe('CaseController - Split defendant from case guards', () => {
+  // RolesGuard must stay ahead of the case-exists guard, which is where the
+  // write lock is taken: this route's rules are bare roles, so it can reject a
+  // caller the route has no rule for without reading the case. The rules spec
+  // pins that, and the guard-chain spec runs the chain.
   verifyGuards(
     CaseController,
     'splitDefendantFromCase',
     [
       RolesGuard,
-      CaseExistsGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseWriteGuard,
       DefendantExistsGuard,

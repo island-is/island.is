@@ -25,6 +25,12 @@ const createMyPagesLinks = (baseUrl: string) => ({
   vehicleHistoryReport: `${baseUrl}/umsoknir/okutaekjaferill`,
   // For assets screen
   mortgageCertificate: `${baseUrl}/umsoknir/vedbokarvottord`,
+  // For health messages screen
+  healthMessageNew: `${baseUrl}/minarsidur/heilsa/skilabod/nytt`,
+  // A specific health conversation on My Pages (e.g. to pay for a certificate,
+  // which the app can't do natively). `:id` is the conversation id.
+  healthMessageDetail: (id: string) =>
+    `${baseUrl}/minarsidur/heilsa/skilabod/${id}`,
   // For finance screen
   loans: `${baseUrl}/minarsidur/fjarmal/lan`,
   payments: `${baseUrl}/minarsidur/fjarmal/greidslur/greidslusedlar-og-greidslukvittanir`,

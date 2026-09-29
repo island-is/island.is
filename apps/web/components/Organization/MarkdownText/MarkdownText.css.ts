@@ -16,3 +16,8 @@ globalStyle(`${markdownText} a`, {
 globalStyle(`${markdownText} a:hover`, {
   color: theme.color.blueberry400,
 })
+
+export const newTabIcon = style({
+  marginLeft: 4,
+  verticalAlign: 'text-bottom',
+})

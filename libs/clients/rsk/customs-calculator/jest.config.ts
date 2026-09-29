@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-rsk-customs-calculator',
   preset: './jest.preset.js',

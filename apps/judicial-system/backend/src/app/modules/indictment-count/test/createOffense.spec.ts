@@ -4,7 +4,7 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { Offense } from '../../repository'
+import { Offense, OffenseRepositoryService } from '../../repository'
 
 interface Then {
   result: Offense
@@ -18,14 +18,14 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('IndictmentCountController - Create offense', () => {
-  let mockOffenseModel: typeof Offense
+  let mockOffenseRepositoryService: OffenseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { offenseModel, indictmentCountController } =
+    const { offenseRepositoryService, indictmentCountController } =
       await createTestingIndictmentCountModule()
 
-    mockOffenseModel = offenseModel
+    mockOffenseRepositoryService = offenseRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -56,17 +56,17 @@ describe('IndictmentCountController - Create offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockOffenseModel.create as jest.Mock
+      const mockCreate = mockOffenseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdOffense)
 
       then = await givenWhenThen(caseId, indictmentCountId, offense)
     })
 
     it('should create an offense', () => {
-      expect(mockOffenseModel.create).toHaveBeenCalledWith({
+      expect(mockOffenseRepositoryService.create).toHaveBeenCalledWith(
         indictmentCountId,
         offense,
-      })
+      )
       expect(then.result).toBe(createdOffense)
     })
   })
@@ -79,7 +79,7 @@ describe('IndictmentCountController - Create offense', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockOffenseModel.create as jest.Mock
+      const mockCreate = mockOffenseRepositoryService.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, indictmentCountId, offense)

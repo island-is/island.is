@@ -20,6 +20,7 @@ jest.mock('@island.is/judicial-system-web/src/utils/hooks', () => ({
 
 const renderDefendantInfo = (defendant: Partial<Defendant>) => {
   const workingCase = { id: 'case_id', type: 'CUSTODY' } as Case
+  const onChange = jest.fn()
 
   render(
     <MockedProvider>
@@ -28,12 +29,14 @@ const renderDefendantInfo = (defendant: Partial<Defendant>) => {
           defendant={{ id: 'def_id', ...defendant } as Defendant}
           workingCase={workingCase}
           setWorkingCase={jest.fn()}
-          onChange={jest.fn()}
+          onChange={onChange}
           updateDefendantState={jest.fn()}
         />
       </LocaleProvider>
     </MockedProvider>,
   )
+
+  return { onChange }
 }
 
 const lastSkip = () => {
@@ -88,5 +91,45 @@ describe('DefendantInfo national registry skip behaviour', () => {
     fireEvent.change(input, { target: { value: '0202304499' } })
 
     expect(lastSkip()).toBe(false)
+  })
+})
+
+describe('DefendantInfo address persistence', () => {
+  beforeEach(() => {
+    mockUseNationalRegistry.mockReturnValue({
+      personData: undefined,
+      businessData: undefined,
+      error: undefined,
+      isLoading: false,
+      notFound: false,
+    })
+    mockUseNationalRegistry.mockClear()
+  })
+
+  test('does not persist a whitespace-only address', async () => {
+    const { onChange } = renderDefendantInfo({ address: 'Gata 1' })
+
+    const input = await screen.findByTestId('accusedAddress')
+
+    fireEvent.change(input, { target: { value: '   ' } })
+    fireEvent.blur(input, { target: { value: '   ' } })
+
+    expect(onChange).not.toHaveBeenCalled()
+    expect(screen.getByText('Reitur má ekki vera tómur')).toBeTruthy()
+  })
+
+  test('persists a valid address trimmed', async () => {
+    const { onChange } = renderDefendantInfo({ address: 'Gata 1' })
+
+    const input = await screen.findByTestId('accusedAddress')
+
+    fireEvent.change(input, { target: { value: ' Gata 2 ' } })
+    fireEvent.blur(input, { target: { value: ' Gata 2 ' } })
+
+    expect(onChange).toHaveBeenCalledWith({
+      caseId: 'case_id',
+      defendantId: 'def_id',
+      address: 'Gata 2',
+    })
   })
 })

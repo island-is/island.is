@@ -2,18 +2,19 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
   IndictmentDecision,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { applyUpdateToCase } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateCaseMutation } from './createCase.generated'
 import { useCreateCourtCaseMutation } from './createCourtCase.generated'
 import { useDuplicateIndictmentCaseMutation } from './duplicateIndictmentCase.generated'
@@ -28,7 +29,7 @@ import { useTransitionCaseMutation } from './transitionCase.generated'
 import type { UpdateCaseMutation } from './updateCase.generated'
 import { useUpdateCaseMutation } from './updateCase.generated'
 import type { UpdateCase } from './useCase.logic'
-import { formatUpdates } from './useCase.logic'
+import { createCaseInput, formatUpdates } from './useCase.logic'
 
 const useCase = () => {
   const { limitedAccess } = useContext(UserContext)
@@ -79,37 +80,24 @@ const useCase = () => {
 
   const createCase = useMemo(
     () =>
-      async (theCase: Case): Promise<Case | undefined> => {
+      async (theCase: WorkingCase): Promise<WorkingCase | undefined> => {
         try {
           if (isCreatingCase === false) {
-            if (!theCase.type || !theCase.policeCaseNumbers) {
+            const input = createCaseInput(theCase)
+
+            if (!input) {
               throw new Error('Missing required fields')
             }
 
             const { data } = await createCaseMutation({
-              variables: {
-                input: {
-                  type: theCase.type,
-                  indictmentSubtypes: theCase.indictmentSubtypes,
-                  description: theCase.description,
-                  policeCaseNumbers: theCase.policeCaseNumbers,
-                  defenderName: theCase.defenderName,
-                  defenderNationalId: theCase.defenderNationalId,
-                  defenderEmail: theCase.defenderEmail,
-                  defenderPhoneNumber: theCase.defenderPhoneNumber,
-                  requestSharedWithDefender: theCase.requestSharedWithDefender,
-                  leadInvestigator: theCase.leadInvestigator,
-                  crimeScenes: theCase.crimeScenes,
-                  prosecutorId: theCase.prosecutor?.id,
-                },
-              },
+              variables: { input: normalizeBlankStrings(input) },
             })
 
             if (data) {
-              return data.createCase as Case
+              return data.createCase as WorkingCase
             }
           }
-        } catch (error) {
+        } catch {
           toast.error(formatMessage(errors.createCase))
         }
       },
@@ -129,7 +117,7 @@ const useCase = () => {
               return data.createCourtCase.courtCaseNumber
             }
           }
-        } catch (error) {
+        } catch {
           // Catch all so we can return the empty string
         }
 
@@ -148,13 +136,13 @@ const useCase = () => {
         }
 
         const { data } = await mutation({
-          variables: { input: { id, ...updateCase } },
+          variables: { input: { id, ...normalizeBlankStrings(updateCase) } },
         })
 
         const res = data as LimitedAccessUpdateCaseMutation
 
         return res.limitedAccessUpdateCase
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateCase))
       }
     },
@@ -171,13 +159,13 @@ const useCase = () => {
         }
 
         const { data } = await mutation({
-          variables: { input: { id, ...updateCase } },
+          variables: { input: { id, ...normalizeBlankStrings(updateCase) } },
         })
 
         const res = data as UpdateCaseMutation
 
         return res.updateCase
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateCase))
       }
     },
@@ -198,7 +186,7 @@ const useCase = () => {
       async (
         caseId: string,
         transition: CaseTransition,
-        setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        setWorkingCase?: Dispatch<SetStateAction<WorkingCase>>,
         transitionUpdate?: {
           indictmentDecision?: IndictmentDecision | null
           indictmentRulingDecision?: CaseIndictmentRulingDecision | null
@@ -227,12 +215,12 @@ const useCase = () => {
           if (setWorkingCase) {
             setWorkingCase((prevWorkingCase) => ({
               ...prevWorkingCase,
-              ...(res.transitionCase as Case),
+              ...(res.transitionCase as WorkingCase),
             }))
           }
 
           return true
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(errors.transitionCase))
 
           return false
@@ -257,7 +245,7 @@ const useCase = () => {
             },
           })
           return Boolean(data?.sendNotification?.notificationSent)
-        } catch (e) {
+        } catch {
           return false
         }
       },
@@ -282,7 +270,7 @@ const useCase = () => {
             },
           })
           return Boolean(data?.sendAppealNotification?.notificationSent)
-        } catch (e) {
+        } catch {
           return false
         }
       },
@@ -297,7 +285,7 @@ const useCase = () => {
         })
 
         return data?.extendCase
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.extendCase))
       }
     },
@@ -312,7 +300,7 @@ const useCase = () => {
         })
 
         return data?.duplicateIndictmentCase
-      } catch (error) {
+      } catch {
         toast.error('Ekki tókst að afrita mál í drög')
       }
     },
@@ -327,7 +315,7 @@ const useCase = () => {
         })
 
         return data?.splitDefendantFromCase?.id
-      } catch (error) {
+      } catch {
         toast.error('Ekki tókst að kljúfa varnaraðila frá máli')
       }
     },
@@ -336,8 +324,8 @@ const useCase = () => {
 
   const setAndSendCaseToServer = async (
     updates: UpdateCase[],
-    workingCase: Case,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    workingCase: WorkingCase,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     try {
       const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)
@@ -362,7 +350,7 @@ const useCase = () => {
       }
 
       return true
-    } catch (error) {
+    } catch {
       toast.error(formatMessage(errors.updateCase))
 
       return false

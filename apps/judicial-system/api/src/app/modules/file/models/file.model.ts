@@ -81,6 +81,12 @@ export class CaseFile {
   @Field(() => Boolean, { nullable: true })
   readonly isKeyAccessible?: boolean
 
+  // For ruling orders: the ruling was pronounced orally in the court session it
+  // is linked to. Stays true once the district court has written the ruling up
+  // and uploaded it - an empty key is what says the document is still missing.
+  @Field(() => Boolean, { nullable: true })
+  readonly isPronouncedOrally?: boolean
+
   // Ruling-order appeal info — populated only for files with category
   // COURT_INDICTMENT_RULING_ORDER. Soft deadline; does not gate canBeAppealed.
 

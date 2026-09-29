@@ -43,7 +43,7 @@ import {
   useS3Upload,
   useTargetAppealCaseByAppealCaseId,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isAppealFileCategoryVisible,
   isMatchingAppealCaseFile,
@@ -157,7 +157,7 @@ const AppealCaseFilesOverview = () => {
   return (
     allFiles &&
     allFiles.length > 0 && (
-      <div className={grid({ gap: 3 })}>
+      <div className={stack({ gap: 3 })}>
         <Box>
           <SectionHeading
             title="Skjöl kærumáls"

@@ -45,15 +45,15 @@ import {
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { caseFiles } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { shouldShowPoliceDigitalCaseFilesSection } from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -516,9 +516,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const showDigitalCaseFilesSection =
-    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
-    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+  const showDigitalCaseFilesSection = shouldShowPoliceDigitalCaseFilesSection(
+    user,
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+  )
 
   const hasNoFiles =
     !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection
@@ -534,7 +536,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           }
         />
       )}
-      <div className={grid({ gap: 5 })}>
+      <div className={stack({ gap: 5 })}>
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading

@@ -1,14 +1,15 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import type {
   Case,
   CreateVictimInput,
   UpdateVictimInput,
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateVictimMutation } from './createVictim.generated'
 import { useDeleteVictimMutation } from './deleteVictim.generated'
 import { useUpdateVictimMutation } from './updateVictim.generated'
@@ -25,7 +26,7 @@ const useVictims = () => {
         if (!isCreatingVictim) {
           const { data } = await createVictimMutation({
             variables: {
-              input: victim,
+              input: normalizeBlankStrings(victim),
             },
           })
 
@@ -34,7 +35,7 @@ const useVictims = () => {
           }
         }
         return null
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að bæta við brotaþola')
         return null
       }
@@ -50,7 +51,7 @@ const useVictims = () => {
         })
 
         return Boolean(data?.deleteVictim.deleted)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða brotaþola')
         return false
       }
@@ -63,12 +64,12 @@ const useVictims = () => {
       try {
         const { data } = await updateVictimMutation({
           variables: {
-            input: updateVictim,
+            input: normalizeBlankStrings(updateVictim),
           },
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra brotaþola')
         return false
       }

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-smartsolutions',
   preset: './jest.preset.js',

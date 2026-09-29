@@ -14,8 +14,6 @@ import {
   RadioButton,
   Select,
   Stack,
-  Blockquote,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useContext, useEffect, useState } from 'react'
@@ -33,6 +31,12 @@ const parseZendeskBrandIds = (brandIds?: string | null) =>
     .map((brandId) => brandId.trim())
     .filter(Boolean) ?? []
 
+const formatZendeskInstance = (zendeskInstance?: string | null) =>
+  zendeskInstance ? `${zendeskInstance}.zendesk.com` : ''
+
+const unsupportedZendeskInstanceMessage =
+  'Zendesk instance er ekki gilt. Athugaðu skráningu þína í Contentful.'
+
 export const ListSettings = () => {
   const {
     control,
@@ -48,6 +52,11 @@ export const ListSettings = () => {
     !currentItem.fieldSettings?.listType ||
       currentItem.fieldSettings?.listType === ListTypesEnum.CUSTOM,
   )
+  const [isUnsupportedZendeskInstance, setIsUnsupportedZendeskInstance] =
+    useState(false)
+  const [contentfulZendeskInstance, setContentfulZendeskInstance] = useState<
+    string | undefined
+  >()
   const [getZendeskInstance] = useLazyQuery(GET_ORGANIZATION_ZENDESK_INSTANCE, {
     fetchPolicy: 'no-cache',
   })
@@ -112,6 +121,7 @@ export const ListSettings = () => {
     } catch {
       return
     }
+    setContentfulZendeskInstance(parsed.serviceSystemInstance)
 
     const brandIdOptions = parseZendeskBrandIds(parsed.serviceSystemBrandID)
     const nextZendeskBrandId =
@@ -123,18 +133,7 @@ export const ListSettings = () => {
         ? form.organizationZendeskInstance?.zendeskBrandId ?? ''
         : ''
 
-    if (
-      parsed.serviceSystemInstance !==
-        form.organizationZendeskInstance?.zendeskInstance ||
-      nextZendeskBrandId !== form.organizationZendeskInstance?.zendeskBrandId
-    ) {
-      controlDispatch({
-        type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
-        payload: {
-          zendeskInstance: parsed.serviceSystemInstance,
-          zendeskBrandId: nextZendeskBrandId,
-        },
-      })
+    try {
       await updateOrganizationZendeskInstance({
         variables: {
           input: {
@@ -145,7 +144,28 @@ export const ListSettings = () => {
           },
         },
       })
+    } catch {
+      setIsUnsupportedZendeskInstance(true)
+      return
     }
+
+    setIsUnsupportedZendeskInstance(false)
+
+    if (
+      parsed.serviceSystemInstance ===
+        form.organizationZendeskInstance?.zendeskInstance &&
+      nextZendeskBrandId === form.organizationZendeskInstance?.zendeskBrandId
+    ) {
+      return
+    }
+
+    controlDispatch({
+      type: 'CHANGE_ORGANIZATION_ZENDESK_INSTANCE',
+      payload: {
+        zendeskInstance: parsed.serviceSystemInstance,
+        zendeskBrandId: nextZendeskBrandId,
+      },
+    })
   }
 
   useEffect(() => {
@@ -153,7 +173,26 @@ export const ListSettings = () => {
     setIsCustom(!listType || listType === ListTypesEnum.CUSTOM)
   }, [currentItem.id])
 
+  useEffect(() => {
+    const listType = currentItem.fieldSettings?.listType
+
+    if (
+      listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+      listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+    ) {
+      updateZendeskInstance()
+    }
+  }, [currentItem.fieldSettings?.listType])
+
   const radioName = `listTypeMode-${currentItem.id}`
+  const zendeskInstance = form.organizationZendeskInstance?.zendeskInstance
+  const zendeskInstanceValue = formatZendeskInstance(
+    contentfulZendeskInstance ?? zendeskInstance,
+  )
+  const zendeskInstanceError =
+    isUnsupportedZendeskInstance || !zendeskInstanceValue
+      ? unsupportedZendeskInstanceMessage
+      : undefined
 
   return (
     <Stack space={2}>
@@ -214,12 +253,6 @@ export const ListSettings = () => {
                       update: updateActiveItem,
                     },
                   })
-                  if (
-                    option?.value === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
-                    option?.value === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
-                  ) {
-                    updateZendeskInstance()
-                  }
                 }}
               />
             </Column>
@@ -286,18 +319,16 @@ export const ListSettings = () => {
             currentItem.fieldSettings?.listType ===
               ListTypesEnum.ZENDESK_CUSTOM_OBJECT) && (
             <Row>
-              <Column span="10/10">
-                <Blockquote>
-                  <Text variant="small" whiteSpace="preWrap" lineHeight="sm">
-                    <code>
-                      Zendesk instance:{' '}
-                      {form.organizationZendeskInstance?.zendeskInstance
-                        ? form.organizationZendeskInstance.zendeskInstance
-                        : 'digitaliceland'}
-                      .zendesk.com
-                    </code>
-                  </Text>
-                </Blockquote>
+              <Column span="5/10">
+                <Input
+                  label="Zendesk instance"
+                  name="zendeskInstance"
+                  type="text"
+                  value={zendeskInstanceValue}
+                  backgroundColor="blue"
+                  readOnly
+                  errorMessage={zendeskInstanceError}
+                />
               </Column>
             </Row>
           )}

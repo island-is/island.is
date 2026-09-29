@@ -1,14 +1,18 @@
 import {
   Controller,
   Header,
-  Post,
-  Res,
+  HttpCode,
+  NotFoundException,
   Param,
+  Post,
+  StreamableFile,
   UseGuards,
-  BadRequestException,
 } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { Response } from 'express'
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -18,7 +22,9 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
+import { RentalAgreementParamsDto } from './dto/rentalAgreementParams.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.hms)
@@ -29,44 +35,40 @@ export class RentalAgreementsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/:id')
-  @Header('Content-Type', 'application/pdf')
+  @Post('/:contractId')
+  @HttpCode(200)
+  @Header('X-Content-Type-Options', 'nosniff')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Get a rental agreement pdf from HMSs',
+    description: 'Get the latest rental agreement pdf from HMS',
   })
-  async getRentalAgreementPdf(
-    @Param('id') id: string | undefined,
+  @ApiBadRequestResponse({ type: HttpProblemResponse })
+  @ApiNotFoundResponse({ type: HttpProblemResponse })
+  async getLatestRentalAgreementPdf(
+    @Param() { contractId }: RentalAgreementParamsDto,
     @CurrentUser() user: User,
-    @Res() res: Response,
   ) {
-    if (!id) {
-      throw new BadRequestException('Missing id')
+    const documentResponse = await this.service.getLatestRentalAgreementPdf(
+      user,
+      contractId,
+    )
+
+    if (!documentResponse) {
+      throw new NotFoundException('Rental agreement document not found')
     }
 
-    const documentResponse = await this.service.getRentalAgreementPdf(user, +id)
+    this.auditService.audit({
+      action: 'getLatestRentalAgreementPdf',
+      auth: user,
+      resources: contractId,
+    })
 
-    if (documentResponse && documentResponse.length > 0) {
-      this.auditService.audit({
-        action: 'getRentalAgreementPdf',
-        auth: user,
-        resources: id,
-      })
+    const buffer = Buffer.from(documentResponse.document, 'base64')
 
-      //grab the first one
-      const document = documentResponse[0].document
-
-      const buffer = Buffer.from(document, 'base64')
-
-      const filename = `${user.nationalId}-rental-agreement-${id}.pdf`
-
-      res.header('Content-Disposition', `attachment; filename=${filename}`)
-      res.header('Pragma', 'no-cache')
-      res.header('Cache-Control', 'no-cache')
-      res.header('Cache-Control', 'max-age=0')
-      return res.end(buffer)
-    }
-    res.status(404)
-    return res.end('Rental agreement not found')
+    return new StreamableFile(buffer, {
+      type: 'application/pdf',
+      disposition: `attachment; filename="${user.nationalId}-rental-agreement-${contractId}.pdf"`,
+      length: buffer.length,
+    })
   }
 }

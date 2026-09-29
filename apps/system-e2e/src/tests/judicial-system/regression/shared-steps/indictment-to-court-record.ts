@@ -9,6 +9,7 @@ import {
 export const prosecutorCreatesIndictmentCase = async (
   page: Page,
   accusedName: string,
+  secondAccusedName?: string,
 ): Promise<string> => {
   let caseId = ''
   const today = getDaysFromNow()
@@ -47,10 +48,46 @@ export const prosecutorCreatesIndictmentCase = async (
   await nameInput.fill(accusedName)
   await nameInput.press('Tab')
   await expect(nameInput).toHaveValue(accusedName)
+
+  if (secondAccusedName) {
+    // The case does not exist yet, so this only adds a defendant locally -
+    // it is persisted with a CreateDefendant mutation when the case is
+    // created below. Every defendant in an indictment must have an Icelandic
+    // national id, and the national registry lookup is also what fills in the
+    // gender the step needs to be valid, so the second defendant is looked up
+    // just like the first one.
+    await page.getByTestId('addDefendantButton').click()
+
+    const secondNationalIdInput = page.getByTestId('inputNationalId').last()
+    const secondNameInput = page.getByTestId('inputName').last()
+
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/api/nationalRegistry/getPersonByNationalId') &&
+          resp.request().method() === 'GET',
+      ),
+      // A different Gervimaður than the first defendant - two defendants on
+      // one case must not share a national id.
+      secondNationalIdInput.fill('010130-2399'),
+    ])
+
+    // Let the looked up data land before overwriting the name, otherwise the
+    // lookup overwrites what we type.
+    await expect(secondNameInput).not.toHaveValue('')
+
+    await secondNameInput.fill(secondAccusedName)
+    await secondNameInput.press('Tab')
+    await expect(secondNameInput).toHaveValue(secondAccusedName)
+  }
+
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
       (res) => (caseId = res.data.createCase.id),
     ),
+    ...(secondAccusedName
+      ? [verifyRequestCompletion(page, '/api/graphql', 'CreateDefendant')]
+      : []),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
     page.getByRole('button', { name: 'Stofna mál' }).click(),
   ])
@@ -76,10 +113,16 @@ export const prosecutorCreatesIndictmentCase = async (
 
   await expect(page).toHaveURL(`/akaera/malsmedferd/${caseId}`)
 
-  await Promise.all([
-    verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
-    page.getByText('Játar sök').click(),
-  ])
+  // One plea per defendant
+  const pleaOptions = page.getByText('Játar sök')
+  await expect(pleaOptions.first()).toBeVisible()
+  const pleaCount = await pleaOptions.count()
+  for (let i = 0; i < pleaCount; i++) {
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      pleaOptions.nth(i).click(),
+    ])
+  }
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
@@ -91,6 +134,8 @@ export const prosecutorCreatesIndictmentCase = async (
     page.getByTestId('continueButton').click(),
   ])
 
+  // The auto-created indictment count is expanded by default (open state is
+  // persisted in local storage), so no "Opna alla" toggle is needed.
   await page.getByPlaceholder('AB123').fill('AB123')
 
   await Promise.all([
@@ -165,22 +210,51 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/mottaka/${caseId}`)
 
-  await page
-    .getByTestId('courtCaseNumber')
-    .fill(randomIndictmentCourtCaseNumber())
-  await page.keyboard.press('Tab')
+  // Navigating to a case screen refreshes the case, and the refresh response
+  // replaces the whole form state - so a court case number or judge entered
+  // while that refresh is still in flight is silently wiped, which leaves the
+  // continue button disabled with nothing to refill it. Enter both until they
+  // survive. The heavier the case, the slower the refresh, so this bites with
+  // more than one defendant.
+  const courtCaseNumber = randomIndictmentCourtCaseNumber()
+  const courtCaseNumberInput = page.getByTestId('courtCaseNumber')
+  const judgeSelect = page.getByTestId('select-judge')
+  const receptionContinueButton = page.getByTestId('continueButton')
 
-  await page.getByText('Veldu dómara/aðstoðarmann').click()
-  await page.getByTestId('select-judge').getByText('Test Dómari').last().click()
+  await expect(async () => {
+    if ((await courtCaseNumberInput.inputValue()) !== courtCaseNumber) {
+      await courtCaseNumberInput.fill(courtCaseNumber)
+      await page.keyboard.press('Tab')
+    }
+
+    // 'Veldu héraðsdómara' is the placeholder, shown only until a judge is
+    // selected - unlike the judge's name it cannot be confused with an option
+    // in a menu left open by a failed attempt. 'Veldu dómara/aðstoðarmann' is
+    // the label, and clicking it opens the menu.
+    if (await judgeSelect.getByText('Veldu héraðsdómara').isVisible()) {
+      await judgeSelect.getByText('Veldu dómara/aðstoðarmann').click()
+      await judgeSelect.getByText('Test Dómari').last().click()
+    }
+
+    await expect(receptionContinueButton).toBeEnabled({ timeout: 2000 })
+  }).toPass({ timeout: 30000 })
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    page.getByTestId('continueButton').click(),
+    receptionContinueButton.click(),
   ])
 
   await expect(page).toHaveURL(`domur/akaera/fyrirkall/${caseId}`)
 
-  await page.locator('label').filter({ hasText: 'Útivistarfyrirkall' }).click()
+  // One subpoena type per defendant
+  const subpoenaTypeOptions = page
+    .locator('label')
+    .filter({ hasText: 'Útivistarfyrirkall' })
+  await expect(subpoenaTypeOptions.first()).toBeVisible()
+  const subpoenaTypeCount = await subpoenaTypeOptions.count()
+  for (let i = 0; i < subpoenaTypeCount; i++) {
+    await subpoenaTypeOptions.nth(i).click()
+  }
 
   await page.locator('input[id=courtDate]').fill(nextWeek)
   await page.keyboard.press('Escape')
@@ -196,12 +270,26 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
 
-  await page
+  // One defender choice per defendant
+  const defenderChoiceOptions = page
     .locator('label')
-    .filter({ hasText: 'Ákærði óskar ekki eftir að sé' })
-    .click()
-  await page.getByRole('button', { name: 'Staðfesta val' }).click()
-  await page.getByTestId('modalPrimaryButton').click()
+    .filter({ hasText: 'óskar ekki eftir að sé' })
+  await expect(defenderChoiceOptions.first()).toBeVisible()
+  const defenderChoiceCount = await defenderChoiceOptions.count()
+  for (let i = 0; i < defenderChoiceCount; i++) {
+    await defenderChoiceOptions.nth(i).click()
+  }
+  // One defender choice confirmation per defendant. The confirm button is
+  // removed once the choice is confirmed, so we always act on the first one
+  // still standing and wait for it to disappear before moving on.
+  const confirmDefenderChoiceButtons = page.getByRole('button', {
+    name: 'Staðfesta val',
+  })
+  for (let remaining = defenderChoiceCount; remaining > 0; remaining--) {
+    await confirmDefenderChoiceButtons.first().click()
+    await page.getByTestId('modalPrimaryButton').click()
+    await expect(confirmDefenderChoiceButtons).toHaveCount(remaining - 1)
+  }
 
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),

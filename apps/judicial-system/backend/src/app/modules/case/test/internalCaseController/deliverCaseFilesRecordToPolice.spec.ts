@@ -3,7 +3,12 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -43,6 +48,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     id: caseId,
     type: caseType,
     state: caseState,
+    origin: CaseOrigin.LOKE,
     policeCaseNumbers: [policeCaseNumber],
     defendants: [{ nationalId: uuid() }],
     courtId,
@@ -75,9 +81,9 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
-    const mockFindAll =
-      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
+    const mockFindPoliceDigitalCaseFiles =
+      policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber as jest.Mock
+    mockFindPoliceDigitalCaseFiles.mockResolvedValue([])
     const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
     mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock

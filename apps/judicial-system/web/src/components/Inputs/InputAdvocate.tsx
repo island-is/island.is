@@ -15,7 +15,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   emailLabelStrings,
@@ -93,9 +93,12 @@ const InputAdvocate: FC<Props> = ({
       return []
     }
 
+    // Options are keyed on the registry row id. Emails are neither unique nor
+    // always present, and the registry can list one national id twice, e.g.
+    // under an old and a new name, and each entry must stay selectable.
     return lawyers?.map((l) => ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-      value: l.email,
+      value: l.id,
     }))
   }, [lawyers])
 
@@ -109,9 +112,7 @@ const InputAdvocate: FC<Props> = ({
       if (selectedOption) {
         const { label, value } = selectedOption
 
-        const lawyer = lawyers?.find(
-          (l: Lawyer) => l.email === (value as string),
-        )
+        const lawyer = lawyers?.find((l: Lawyer) => l.id === (value as string))
 
         name = lawyer ? lawyer.name : label
         nationalId = lawyer ? lawyer.nationalId : null
@@ -185,16 +186,14 @@ const InputAdvocate: FC<Props> = ({
   )
 
   return (
-    <div className={grid({ gap: 2 })}>
+    <div className={stack({ gap: 2 })}>
       <Select
         name="advocateName"
         icon="search"
         options={options}
         label={formatMessage(nameLabelStrings[advocateType])}
         placeholder={formatMessage(placeholderStrings.namePlaceholder)}
-        value={
-          lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
-        }
+        value={lawyerName ? { label: lawyerName, value: '' } : null}
         onChange={handleAdvocateChange}
         noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
         isDisabled={Boolean(disabled)}

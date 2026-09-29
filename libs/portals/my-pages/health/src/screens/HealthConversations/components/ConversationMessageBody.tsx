@@ -15,6 +15,7 @@ import {
   HealthConversationVideoContentFragment,
 } from '../HealthConversationDetail.generated'
 import { linkifyText } from '../utils/linkify'
+import * as styles from '../HealthConversations.css'
 import { mapWeekday } from '../../../utils/mappers'
 
 interface Props {
@@ -26,7 +27,7 @@ const TextContent = ({
 }: {
   content: HealthConversationTextContentFragment
 }) => (
-  <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
+  <Box marginBottom={4} className={styles.messageTextContent}>
     <Text fontWeight="light">
       {linkifyText(content.text).map((part, index) =>
         part.type === 'link' && part.href ? (
@@ -46,7 +47,7 @@ const SegmentedContent = ({
 }: {
   content: HealthConversationSegmentedContentFragment
 }) => (
-  <Box marginBottom={4}>
+  <Box marginBottom={4} className={styles.messageSegmentedContent}>
     <Text fontWeight="light">
       {content.segments.map((segment, index) =>
         segment.type === HealthDirectorateHealthConversationSegmentType.LINK &&

@@ -51,8 +51,10 @@ export class Discount implements TDiscount {
   expiresIn: number
 }
 
-interface ExplicitCodeCreationAttributes
-  extends Optional<TExplicitCode, 'id' | 'created' | 'modified' | 'flightId'> {}
+type ExplicitCodeCreationAttributes = Optional<
+  TExplicitCode,
+  'id' | 'created' | 'modified' | 'flightId'
+>
 
 @Table({ tableName: 'explicit_code' })
 export class ExplicitCode

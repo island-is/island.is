@@ -1,7 +1,9 @@
 import {
   Box,
+  Button,
   Checkbox,
   Filter,
+  Icon,
   Input,
   Stack,
   Text,
@@ -11,9 +13,9 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  EmptyState,
   LinkButton,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -24,16 +26,73 @@ import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
+import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
-import { HealthDirectorateHealthConversationStatusFilter } from '@island.is/api/schema'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
+import { ApolloCache } from '@apollo/client'
 import {
+  HealthDirectorateHealthConversation,
+  HealthDirectorateHealthConversationStatusFilter,
+} from '@island.is/api/schema'
+import {
+  GetHealthConversationsDocument,
+  GetHealthConversationsQuery,
+  GetHealthConversationsQueryVariables,
   useGetHealthConversationsQuery,
   useStarHealthConversationMutation,
   useUnstarHealthConversationMutation,
   useArchiveHealthConversationMutation,
   useUnarchiveHealthConversationMutation,
 } from './HealthConversations.generated'
+import { useGetHealthTreatmentQuery } from '../Treatments/TreatmentOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+
+const DEFAULT_PAGE_SIZE = 20
+
+const updateConversation = (
+  cache: ApolloCache<unknown>,
+  id: string,
+  fields: Partial<
+    Pick<HealthDirectorateHealthConversation, 'isStarred' | 'isArchived'>
+  >,
+) => {
+  cache.modify({
+    id: cache.identify({
+      __typename: 'HealthDirectorateHealthConversation',
+      id,
+    }),
+    fields: Object.fromEntries(
+      Object.entries(fields).map(([key, value]) => [key, () => value]),
+    ),
+  })
+}
+
+// Drops the row from the list currently on screen and adjusts its total.
+// Other cached filter variants (other tabs, the overview box) are left
+// untouched; they are replaced by page one from the network when shown.
+const removeConversationFromList = (
+  cache: ApolloCache<unknown>,
+  id: string,
+  variables: GetHealthConversationsQueryVariables,
+) => {
+  cache.updateQuery(
+    { query: GetHealthConversationsDocument, variables },
+    (existing: GetHealthConversationsQuery | null) => {
+      const page = existing?.healthDirectoratePaginatedHealthConversations
+      if (!page) return existing
+      const data = page.data.filter((item) => item.id !== id)
+      if (data.length === page.data.length) return existing
+      return {
+        ...existing,
+        healthDirectoratePaginatedHealthConversations: {
+          ...page,
+          data,
+          totalCount: page.totalCount - 1,
+        },
+      }
+    },
+  )
+}
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -49,26 +108,72 @@ type FilterValues = {
 
 const HealthConversations = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
+  const paths = useTreatmentScopedPaths()
+  const { treatmentId } = paths
 
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
   const [searchInput, setSearchInput] = useState('')
 
-  const { data, loading, error } = useGetHealthConversationsQuery({
-    variables: {
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  const filterInput = useMemo(() => {
+    const search = filterValues.searchQuery.trim()
+    return {
+      ...(filterValues.archived
+        ? {
+            status: HealthDirectorateHealthConversationStatusFilter.ARCHIVED,
+          }
+        : {}),
+      ...(filterValues.starred ? { starred: true } : {}),
+      ...(search ? { search } : {}),
+    }
+  }, [filterValues])
+
+  const listVariables = useMemo(
+    () => ({
       input: {
-        ...(filterValues.archived
-          ? {
-              status: HealthDirectorateHealthConversationStatusFilter.ARCHIVED,
-            }
-          : {}),
-        ...(filterValues.starred ? { starred: true } : {}),
+        ...filterInput,
+        ...(treatmentId ? { treatmentId } : {}),
+        limit: DEFAULT_PAGE_SIZE,
       },
-    },
+    }),
+    [filterInput, treatmentId],
+  )
+
+  const { data: treatmentData } = useGetHealthTreatmentQuery({
+    variables: { id: treatmentId ?? '' },
+    skip: !treatmentId,
+  })
+  // Hidden until the treatment is known, so it never flashes in and out
+  const canCreate =
+    !treatmentId ||
+    !!treatmentData?.healthDirectorateTreatment?.supportsMessaging
+
+  const { data, loading, error, fetchMore } = useGetHealthConversationsQuery({
+    fetchPolicy: 'cache-and-network',
+    variables: listVariables,
   })
 
-  const healthConversations = data?.healthDirectorateHealthConversations
+  const conversationsPage = data?.healthDirectoratePaginatedHealthConversations
+  const healthConversations = conversationsPage?.data ?? []
+
+  const initialLoading = loading && !data
+  const activeSearch = filterValues.searchQuery.trim()
+
+  const loadMore = () => {
+    const cursor = conversationsPage?.pageInfo.endCursor
+    if (loadingMore || !cursor) return
+    setLoadingMore(true)
+    // The field's cache policy appends the page to the current list
+    fetchMore({
+      variables: { input: { ...listVariables.input, after: cursor } },
+    })
+      .catch(() => toast.error(formatMessage(m.errorTitle)))
+      .finally(() => setLoadingMore(false))
+  }
 
   const debouncedSetSearchQuery = useMemo(
     () =>
@@ -94,66 +199,92 @@ const HealthConversations = () => {
 
   const onMutationError = () => toast.error(formatMessage(m.errorTitle))
 
+  // Update the cached rows in place instead of refetching, so loaded pages
+  // stay put. Rows that no longer match the current filter are dropped.
   const [starMessage] = useStarHealthConversationMutation({
-    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
   const [unstarMessage] = useUnstarHealthConversationMutation({
-    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
   const [archiveMessage] = useArchiveHealthConversationMutation({
-    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
   const [unarchiveMessage] = useUnarchiveHealthConversationMutation({
-    refetchQueries: ['GetHealthConversations'],
     onError: onMutationError,
   })
+
+  const toggleStar = (id: string, isStarred: boolean) => {
+    const mutate = isStarred ? unstarMessage : starMessage
+    mutate({
+      variables: { input: { id } },
+      update: (cache) => {
+        updateConversation(cache, id, { isStarred: !isStarred })
+        // Only the starred-filtered view stops matching when unstarring.
+        if (isStarred && filterValues.starred) {
+          removeConversationFromList(cache, id, listVariables)
+        }
+      },
+    })
+  }
+
+  const toggleArchive = (id: string, isArchived: boolean) => {
+    const mutate = isArchived ? unarchiveMessage : archiveMessage
+    mutate({
+      variables: { input: { id } },
+      update: (cache) => {
+        updateConversation(cache, id, { isArchived: !isArchived })
+        // The current view stops matching only when the toggle moves the
+        // item across the boundary this view filters on: unarchiving out
+        // of the archived view, or archiving out of the default view.
+        if (isArchived === filterValues.archived) {
+          removeConversationFromList(cache, id, listVariables)
+        }
+      },
+    })
+  }
 
   const filterCount =
     (filterValues.starred ? 1 : 0) + (filterValues.archived ? 1 : 0)
 
-  const filteredConversations = useMemo(() => {
-    if (!healthConversations) {
-      return []
-    }
-
-    const query = filterValues.searchQuery.trim().toLowerCase()
-    if (!query) return healthConversations
-
-    return healthConversations.filter((message) => {
-      return (
-        message.title?.toLowerCase().includes(query) ||
-        message.organization?.name?.toLowerCase().includes(query)
-      )
-    })
-  }, [filterValues, healthConversations])
-
   return (
     <IntroWrapper
-      title={m.messages}
-      intro={messages.healthConversationsIntro}
+      title={treatmentId ? messages.treatmentMessagesFromTeam : m.messages}
+      intro={
+        treatmentId
+          ? messages.treatmentConversationsIntro
+          : messages.healthConversationsIntro
+      }
+      serviceProvider={
+        treatmentId
+          ? {
+              slug: STAFRAEN_HEILSA_SLUG,
+              tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
+            }
+          : undefined
+      }
       desktopContentSpan="10/12"
     >
-      <Box
-        display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
-        marginBottom={3}
-      >
-        <LinkButton
-          to={HealthPaths.HealthConversationsNew}
-          text={formatMessage(messages.healthConversationsCreate)}
-          variant="primary"
-          size="small"
-        />
-      </Box>
+      {canCreate && (
+        <Box
+          display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
+          marginBottom={3}
+        >
+          <LinkButton
+            to={paths.conversationsNew}
+            text={formatMessage(messages.healthConversationsCreate)}
+            variant="primary"
+            size="small"
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={3}
       >
-        <Box style={{ minWidth: 0 }}>
+        <Box flexGrow={1} style={{ minWidth: 0 }}>
           <Filter
             labelClearAll={formatMessage(m.clearAllFilters)}
             labelClear={formatMessage(m.clearFilter)}
@@ -161,6 +292,7 @@ const HealthConversations = () => {
             reverse
             variant="popover"
             align="left"
+            filterInputFluid
             mobileWrap={false}
             filterCount={filterCount}
             filterInput={
@@ -170,6 +302,8 @@ const HealthConversations = () => {
                   messages.healthConversationsSearchPlaceholder,
                 )}
                 value={searchInput}
+                // Matches the API's limit on `search`
+                maxLength={100}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 icon={{ type: 'outline', name: 'search' }}
                 size="xs"
@@ -219,25 +353,40 @@ const HealthConversations = () => {
             </Box>
           </Filter>
         </Box>
-        <Box
-          display={['none', 'none', 'none', 'block']}
-          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
-          marginLeft={2}
-        >
-          <LinkButton
-            to={HealthPaths.HealthConversationsNew}
-            text={formatMessage(messages.healthConversationsCreate)}
-            variant="primary"
-            size="small"
-          />
-        </Box>
+        {canCreate && (
+          <Box
+            display={['none', 'none', 'none', 'block']}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+            marginLeft={2}
+          >
+            <LinkButton
+              to={paths.conversationsNew}
+              text={formatMessage(messages.healthConversationsCreate)}
+              variant="primary"
+              size="small"
+            />
+          </Box>
+        )}
       </Box>
-      {loading && <CardLoader />}
+      {initialLoading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading &&
+      {!initialLoading &&
         !error &&
-        (filteredConversations?.length === 0 ? (
-          <EmptyState title={messages.noData} />
+        (healthConversations.length === 0 ? (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(
+              activeSearch ? m.noSearchResults : messages.noData,
+            )}
+            message={
+              activeSearch
+                ? formatMessage(m.noSearchResultsText, { arg: activeSearch })
+                : undefined
+            }
+            imgSrc="./assets/images/nodata.svg"
+            imgAlt=""
+          />
         ) : (
           <>
             <Box
@@ -257,9 +406,10 @@ const HealthConversations = () => {
               </Text>
             </Box>
             <Stack space={0}>
-              {filteredConversations?.map((item) => (
+              {healthConversations.map((item) => (
                 <Box
                   key={item.id}
+                  className={styles.conversationRow}
                   display="flex"
                   alignItems="center"
                   justifyContent="spaceBetween"
@@ -271,10 +421,7 @@ const HealthConversations = () => {
                   columnGap={2}
                 >
                   <Link
-                    to={HealthPaths.HealthConversationsDetail.replace(
-                      ':id',
-                      item.id,
-                    )}
+                    to={paths.conversationDetail(item.id)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -287,22 +434,36 @@ const HealthConversations = () => {
                   >
                     <ConversationAvatar
                       variant="organization"
+                      tone={item.isRead ? 'tinted' : 'light'}
                       logoUrl={item.organization?.logoUrl ?? undefined}
                     />
                     <Box minWidth={0}>
-                      <Text variant="medium">{item.organization?.name}</Text>
+                      <Box display="flex" alignItems="center" columnGap={1}>
+                        <Text variant="medium" className={styles.senderName}>
+                          {item.groupName || item.organization?.name}
+                        </Text>
+                        {item.hasAttachment && (
+                          <Icon
+                            icon="attach"
+                            size="small"
+                            color="black"
+                            type="outline"
+                            className={styles.attachmentIcon}
+                          />
+                        )}
+                      </Box>
                       <Text
                         color="blue400"
                         truncate
                         fontWeight={item.isRead ? 'regular' : 'medium'}
                       >
                         {item.title}
-                        {!item.isRead && (
-                          <VisuallyHidden>
-                            {` - ${formatMessage(m.notificationUnread)}`}
-                          </VisuallyHidden>
-                        )}
                       </Text>
+                      {!item.isRead && (
+                        <VisuallyHidden>
+                          {` - ${formatMessage(m.notificationUnread)}`}
+                        </VisuallyHidden>
+                      )}
                     </Box>
                   </Link>
 
@@ -322,28 +483,8 @@ const HealthConversations = () => {
                       colorScheme="negative"
                       bookmarked={item.isStarred}
                       archived={item.isArchived}
-                      onFav={() => {
-                        if (item.isStarred) {
-                          unstarMessage({
-                            variables: { input: { id: item.id } },
-                          })
-                        } else {
-                          starMessage({
-                            variables: { input: { id: item.id } },
-                          })
-                        }
-                      }}
-                      onStash={() => {
-                        if (item.isArchived) {
-                          unarchiveMessage({
-                            variables: { input: { id: item.id } },
-                          })
-                        } else {
-                          archiveMessage({
-                            variables: { input: { id: item.id } },
-                          })
-                        }
-                      }}
+                      onFav={() => toggleStar(item.id, item.isStarred)}
+                      onStash={() => toggleArchive(item.id, item.isArchived)}
                     />
                   </Box>
                 </Box>
@@ -351,6 +492,22 @@ const HealthConversations = () => {
             </Stack>
           </>
         ))}
+      {/* Kept outside the empty/non-empty branch: archiving every loaded row
+          can empty the list while more pages still exist on the server */}
+      {!initialLoading && !error && conversationsPage?.pageInfo.hasNextPage && (
+        <Box display="flex" justifyContent="center" marginTop={3}>
+          <Button
+            onClick={loadMore}
+            loading={loadingMore}
+            variant="ghost"
+            size="small"
+          >
+            {`${formatMessage(m.fetchMore)} ${healthConversations.length}/${
+              conversationsPage.totalCount
+            }`}
+          </Button>
+        </Box>
+      )}
     </IntroWrapper>
   )
 }

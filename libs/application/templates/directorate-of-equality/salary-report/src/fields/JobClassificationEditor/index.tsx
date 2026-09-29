@@ -15,9 +15,10 @@ import type {
   DraftRoleWithStepsDto,
   SyncCommand,
 } from '../../utils/types'
-import { useDraftQuery } from '../../utils/useDraftQuery'
+import { useDraftQueries } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import {
   DraftErrorState,
   DraftLoadingState,
@@ -34,33 +35,22 @@ type FormValues = { roles: RoleFormEntry[] }
 
 export const JobClassificationEditor: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, setBeforeSubmitCallback }) => {
+> = ({ application, setBeforeSubmitCallback, answerQuestions }) => {
   const { formatMessage } = useLocale()
-  const {
-    content: criteriaContent,
-    loading: criteriaLoading,
-    hasError: criteriaHasError,
-    refetch: refetchCriteria,
-  } = useDraftQuery<{ criteria: DraftCriterionWithSubCriteriaDto[] }>(
-    application,
-    draftActionId(ApiActions.getDraftCriteriaTree),
-    'draftCriteriaTree',
-  )
-  const {
-    content: rolesContent,
-    loading: rolesLoading,
-    hasError: rolesHasError,
-    refetch: refetchRoles,
-  } = useDraftQuery<{ roles: DraftRoleWithStepsDto[] }>(
-    application,
-    draftActionId(ApiActions.listDraftRolesWithSteps),
-    'draftRolesWithSteps',
-  )
+  // Both reads in one mutation — see the batching note on useDraftQueries.
+  const { contents, loading, hasError, refetch } = useDraftQueries<{
+    draftCriteriaTree: { criteria: DraftCriterionWithSubCriteriaDto[] }
+    draftRolesWithSteps: { roles: DraftRoleWithStepsDto[] }
+  }>(application, {
+    draftCriteriaTree: draftActionId(ApiActions.getDraftCriteriaTree),
+    draftRolesWithSteps: draftActionId(ApiActions.listDraftRolesWithSteps),
+  })
+  const criteriaContent = contents.draftCriteriaTree
+  const rolesContent = contents.draftRolesWithSteps
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
   const methods = useForm<FormValues>({ defaultValues: { roles: [] } })
 
-  const loading = criteriaLoading || rolesLoading
-  const hasError = criteriaHasError || rolesHasError
   const roles = rolesContent?.roles ?? []
 
   const jobCriteria = useMemo(
@@ -93,21 +83,21 @@ export const JobClassificationEditor: FC<
       try {
         await sync({ roles: roleCommands })
         // Silent: about to navigate away, so don't flash a loading state.
-        await Promise.all([
-          refetchCriteria({ silent: true }),
-          refetchRoles({ silent: true }),
-        ])
+        await Promise.all([refetch({ silent: true })])
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
+      // The step is behind them now, so a later visit should not send them back
+      // to it — see ProgressPaths.
+      await markProgress({ jobClassification: true })
       return [true, null]
     })
   }, [
     setBeforeSubmitCallback,
+    markProgress,
     methods,
     sync,
-    refetchCriteria,
-    refetchRoles,
+    refetch,
     criteriaContent,
     rolesContent,
     jobCriteria,
@@ -115,14 +105,7 @@ export const JobClassificationEditor: FC<
   ])
 
   if (hasError) {
-    return (
-      <DraftErrorState
-        onRetry={() => {
-          refetchCriteria()
-          refetchRoles()
-        }}
-      />
-    )
+    return <DraftErrorState onRetry={() => refetch()} />
   }
 
   if (loading || !criteriaContent || !rolesContent) {
@@ -153,7 +136,6 @@ export const JobClassificationEditor: FC<
               roleIndex={index}
               assignments={buildDisplayAssignments(jobCriteria, role.stepIds)}
               stepMetaBySubCriterionId={stepMetaBySubCriterionId}
-              startExpanded={index === 0}
             />
           ))}
         </Stack>

@@ -11,6 +11,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -115,6 +116,30 @@ describe('AppealCaseController - Transition', () => {
 
       return then
     }
+  })
+
+  // Only withdrawal is written for a verdict appeal so far; the transitions
+  // that carry a ruling appeal through the court of appeals are refused on one
+  // until that work takes them on deliberately.
+  describe('a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const verdictAppealCase = {
+      id: appealCaseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.APPEALED,
+    } as AppealCase
+
+    it.each([
+      AppealCaseTransition.RECEIVE_APPEAL,
+      AppealCaseTransition.COMPLETE_APPEAL,
+      AppealCaseTransition.REOPEN_APPEAL,
+    ])('should refuse %s', async (transition) => {
+      const then = await givenWhenThen(theCase, verdictAppealCase, transition)
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    })
   })
 
   describe('receive appeal', () => {
@@ -320,7 +345,7 @@ describe('AppealCaseController - Transition', () => {
       beforeEach(async () => {
         // After the prosecution withdraws, the defendant's appeal still stands.
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([
           { ...bothAppealed[0], withdrawnDate: now },
           bothAppealed[1],
@@ -339,6 +364,17 @@ describe('AppealCaseController - Transition', () => {
           prosecutorDecisionId,
           { withdrawnDate: now },
           { transaction },
+        )
+      })
+
+      it('should lock every party of the ruling before stamping its own', () => {
+        const lock =
+          mockAppealDecisionRepositoryService.lockAllForRuling as jest.Mock
+        const update = mockAppealDecisionRepositoryService.update as jest.Mock
+
+        expect(lock).toHaveBeenCalledWith(caseId, rulingFileId, { transaction })
+        expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
+          update.mock.invocationCallOrder[0],
         )
       })
 
@@ -367,7 +403,7 @@ describe('AppealCaseController - Transition', () => {
     describe('the last appealing party withdraws', () => {
       beforeEach(async () => {
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([{ ...bothAppealed[0], withdrawnDate: now }])
 
         await givenWhenThen(
@@ -470,7 +506,7 @@ describe('AppealCaseController - Transition', () => {
       beforeEach(async () => {
         // No party is left appealing once the defender withdraws for both.
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([
           { id: defendantDecisionId, withdrawnDate: now },
           { id: defendantDecisionId2, withdrawnDate: now },

@@ -13,6 +13,7 @@ import Animated, {
 import calendarIcon from '../../assets/icons/calendar.png'
 import { blue100 } from '../../utils'
 import { dynamicColor } from '../../utils/dynamic-color'
+import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
 
 const DateInput = styled.Pressable`
@@ -49,7 +50,15 @@ const DateSelected = styled(Typography)<{ empty: boolean }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-weight: ${({ empty }) => (empty ? 300 : 600)};
+  /* Same treatment as a TextField value: the placeholder is light and muted,
+     a picked date is semibold. Goes through font() so the weight picks the
+     matching IBM Plex face - a bare font-weight does nothing on iOS. */
+  ${font({
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: ({ empty }) => (empty ? 400 : 600),
+    color: (props) => (props.empty ? props.theme.color.dark300 : 'foreground'),
+  })}
 `
 
 interface DatePickerProps {

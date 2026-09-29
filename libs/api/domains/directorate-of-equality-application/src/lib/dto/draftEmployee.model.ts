@@ -18,7 +18,7 @@ export class DraftEmployeeModel {
   startDate!: string
 
   @Field(() => Float)
-  workRatio!: number
+  paidHours!: number
 
   @Field(() => Float)
   baseSalary!: number
@@ -30,13 +30,13 @@ export class DraftEmployeeModel {
   additionalFixedCarAllowance?: number | null
 
   @Field(() => Float, { nullable: true })
+  additionalFixedOther?: number | null
+
+  @Field(() => Float, { nullable: true })
   bonusOccasionalCarAllowance?: number | null
 
   @Field(() => Float, { nullable: true })
   bonusOccasionalOvertime?: number | null
-
-  @Field(() => Float, { nullable: true })
-  bonusPayments?: number | null
 
   @Field(() => Float, { nullable: true })
   bonusOther?: number | null

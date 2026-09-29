@@ -7,11 +7,8 @@ import {
   FieldTypes,
   RecordObject,
 } from '@island.is/application/types'
-import {
-  Label,
-  ReviewGroup,
-  formatCurrencyWithoutSuffix,
-} from '@island.is/application/ui-components'
+import { Label, ReviewGroup } from '@island.is/application/ui-components'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import {
   Box,

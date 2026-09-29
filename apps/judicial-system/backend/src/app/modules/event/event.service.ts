@@ -21,6 +21,7 @@ import {
 
 import { type Case, DateLog } from '../repository'
 import { eventModuleConfig } from './event.config'
+import { serializeErrorForSlack } from './event.logic'
 
 const errorEmojis = [
   ':sos:',
@@ -63,9 +64,11 @@ type Event = CaseEvent | AppealCaseEvent
 
 const eventHeading: Record<Event, string> = {
   [CaseTransition.ACCEPT]: ':white_check_mark: Samþykkt',
+  [CaseTransition.ACCEPT_REVIEW]: ':white_check_mark: Yfirlestur samþykktur',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
   [CaseTransition.ASK_FOR_CANCELLATION]: ':interrobang: Beðið um afturköllun',
   [CaseTransition.ASK_FOR_CONFIRMATION]: ':question: Beðið um staðfestingu',
+  [CaseTransition.ASK_FOR_REVIEW]: ':mag: Beðið um yfirlestur',
   [CaseTransition.COMPLETE]: ':white_check_mark: Lokið',
   [AppealCaseTransition.COMPLETE_APPEAL]: ':white_check_mark: Kæru lokið',
   [CaseTransition.CORRECT]: ':construction: Opnað til leiðréttingar',
@@ -75,6 +78,7 @@ const eventHeading: Record<Event, string> = {
   DUPLICATE: ':recycle: Mál afritað í drög',
   [CaseTransition.DELETE]: ':fire: Afturkallað',
   [CaseTransition.DENY_INDICTMENT]: ':no_entry_sign: Ákæru hafnað',
+  [CaseTransition.DENY_REVIEW]: ':x: Yfirlestur hafnað',
   [CaseTransition.DISMISS]: ':woman-shrugging: Vísað frá',
   EXTEND: ':recycle: Mál framlengt',
   [CaseTransition.MOVE]: ':flying_disc: Máli úthlutað á nýjan dómstól',
@@ -356,7 +360,7 @@ export class EventService {
                 type: 'mrkdwn',
                 text: `${
                   errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
-                } *${message}:*\n${infoText}>${JSON.stringify(reason)}`,
+                } *${message}:*\n${infoText}>${serializeErrorForSlack(reason)}`,
               },
             },
           ],

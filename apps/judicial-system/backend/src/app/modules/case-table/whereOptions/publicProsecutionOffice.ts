@@ -24,6 +24,13 @@ const APPEAL_WINDOW_CUTOFF = `((date_trunc('day', NOW() AT TIME ZONE 'UTC') - IN
 
 export const publicProsecutionOfficeIndictmentsNewWhereOptions =
   (): CaseWhereOptions => ({
+    includes: {
+      defendants: {
+        attributes: [],
+        required: true,
+        where: { is_closed_without_enforcement: { [Op.not]: true } },
+      },
+    },
     where: {
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
@@ -39,7 +46,10 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
       defendants: {
         attributes: [],
         required: true,
-        where: { indictment_review_decision: null },
+        where: {
+          indictment_review_decision: null,
+          is_closed_without_enforcement: { [Op.not]: true },
+        },
       },
     },
     where: {
@@ -61,6 +71,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
           [Op.and]: [
             { indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT },
             { is_sent_to_prison_admin: { [Op.not]: true } },
+            { is_closed_without_enforcement: { [Op.not]: true } },
             {
               '$Case.indictment_ruling_decision$':
                 CaseIndictmentRulingDecision.RULING,
@@ -130,6 +141,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
           [Op.and]: [
             { indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT },
             { is_sent_to_prison_admin: { [Op.not]: true } },
+            { is_closed_without_enforcement: { [Op.not]: true } },
             {
               [Op.or]: [
                 {
@@ -225,19 +237,27 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
         attributes: [],
         required: true,
         where: {
-          [Op.or]: [
-            { indictment_review_decision: IndictmentCaseReviewDecision.APPEAL },
-            literal(`EXISTS (
-              SELECT 1
-              FROM verdict
-              WHERE verdict.defendant_id = "defendants".id
-                AND verdict.appeal_date IS NOT NULL
-                AND verdict.created = (
-                  SELECT MAX(v2.created)
-                  FROM verdict v2
-                  WHERE v2.defendant_id = "defendants".id
-                )
-            )`),
+          [Op.and]: [
+            { is_closed_without_enforcement: { [Op.not]: true } },
+            {
+              [Op.or]: [
+                {
+                  indictment_review_decision:
+                    IndictmentCaseReviewDecision.APPEAL,
+                },
+                literal(`EXISTS (
+                  SELECT 1
+                  FROM verdict
+                  WHERE verdict.defendant_id = "defendants".id
+                    AND verdict.appeal_date IS NOT NULL
+                    AND verdict.created = (
+                      SELECT MAX(v2.created)
+                      FROM verdict v2
+                      WHERE v2.defendant_id = "defendants".id
+                    )
+                )`),
+              ],
+            },
           ],
         },
       },
@@ -259,9 +279,10 @@ export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
         required: true,
         where: {
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+          is_closed_without_enforcement: { [Op.not]: true },
           [Op.and]: [
             literal(`EXISTS (
-              SELECT 1 
+              SELECT 1
               FROM verdict
               WHERE verdict.defendant_id = defendants.id
                 AND verdict.is_acquitted_by_public_prosecution_office = TRUE
@@ -285,6 +306,19 @@ export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
     displayCases: expandCasesWithDefendants,
   })
 
+export const publicProsecutionOfficeIndictmentsClosedWithoutEnforcementWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      defendants: {
+        attributes: [],
+        required: true,
+        where: { is_closed_without_enforcement: true },
+      },
+    },
+    where: publicProsecutionOfficeIndictmentsAccessWhereOptions,
+    displayCases: expandCasesWithDefendants,
+  })
+
 export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
@@ -293,8 +327,9 @@ export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
         required: true,
         where: {
           [Op.and]: [
+            { is_closed_without_enforcement: { [Op.not]: true } },
             literal(`EXISTS (
-              SELECT 1 
+              SELECT 1
               FROM verdict
               WHERE verdict.defendant_id = defendants.id
                 AND verdict.defendant_has_requested_appeal = TRUE

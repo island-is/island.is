@@ -15,6 +15,7 @@ type VerdictTagKey =
   | 'appealRequested'
   | 'defaultJudgement'
   | 'verdict'
+  | 'closedWithoutEnforcement'
 
 type DefendantVerdictTagInput = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
@@ -71,11 +72,21 @@ export const getDefendantTagConfig = ({
   verdict,
   isPublicProsecutionOffice,
   indictmentRulingDecision,
+  isClosedWithoutEnforcement,
 }: {
   verdict?: DefendantVerdictTagInput | null
   isPublicProsecutionOffice: boolean
   indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+  isClosedWithoutEnforcement?: boolean | null
 }): DefendantTagConfig | null => {
+  if (isClosedWithoutEnforcement && isPublicProsecutionOffice) {
+    return {
+      key: 'closedWithoutEnforcement',
+      label: 'Lokið',
+      variant: 'rose',
+    }
+  }
+
   if (verdict) {
     if (
       verdict.isAcquittedByPublicProsecutionOffice &&

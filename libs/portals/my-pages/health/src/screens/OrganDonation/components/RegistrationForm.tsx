@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkResolver,
   m as coreMessages,
@@ -24,6 +25,7 @@ import {
 import Limitations from './Limitations'
 import { Loader } from './Loader'
 import { NoAccess } from './NoAccess'
+import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 const OPT_IN = 'opt-in'
 const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
@@ -31,6 +33,7 @@ const OPT_OUT = 'opt-out'
 
 export const OrganRegistrationForm = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 
@@ -109,6 +112,10 @@ export const OrganRegistrationForm = () => {
     <IntroWrapper
       title={formatMessage(messages.organDonation)}
       intro={formatMessage(messages.organDonationDescription)}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirOrganDonationTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       <Text variant="eyebrow" color="purple400" marginBottom={1}>

@@ -91,6 +91,31 @@ export class MileCarService extends BaseTemplateApiService {
     const permno =
       getValueViaPath<string>(application.answers, 'pickVehicle.plate') || ''
 
+    const wanted = permno.trim().toLowerCase()
+
+    const ownVehicle = wanted
+      ? await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          permno: permno,
+          showOwned: true,
+          showCoowned: true,
+          showOperated: true,
+        })
+      : undefined
+
+    if (
+      !ownVehicle?.data?.some((v) => v.permno?.trim().toLowerCase() === wanted)
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehicleNotFoundForPermno,
+          summary: coreErrorMessages.vehicleNotFoundForPermno,
+        },
+        400,
+      )
+    }
+
     return await this.mileageReadingApiWithAuth(auth).setVehicleOdometerAsMiles(
       {
         permno: permno,

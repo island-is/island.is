@@ -33,6 +33,36 @@ export const is15DaysOrMoreFromDate = (
   return diffDays >= 15
 }
 
+export const DAY_RATE_MIN_DAYS = 15
+
+/**
+ * First calendar day on which a vehicle that went on the day rate on
+ * `validFrom` can be moved back to the kilometre rate.
+ *
+ * Derived by probing `is15DaysOrMoreFromDate` rather than by adding days to
+ * `validFrom`: that predicate rounds the elapsed days up, so the cutoff lands
+ * a day earlier than the raw 15 day figure suggests. Each candidate day is
+ * tested at midday so the exact midnight boundary cannot flip the answer.
+ */
+export const getDayRateChangeableFromDate = (
+  date: string | Date,
+  currentDate: Date = new Date(),
+): Date => {
+  const candidate = new Date(currentDate)
+  candidate.setHours(0, 0, 0, 0)
+
+  for (let dayOffset = 0; dayOffset <= DAY_RATE_MIN_DAYS; dayOffset++) {
+    const midday = new Date(candidate)
+    midday.setHours(12, 0, 0, 0)
+
+    if (is15DaysOrMoreFromDate(date, midday)) return candidate
+
+    candidate.setDate(candidate.getDate() + 1)
+  }
+
+  return candidate
+}
+
 export const areLessThan7DaysLeftOfMonth = (): boolean => {
   const now = new Date()
   const daysLeftInMonth =

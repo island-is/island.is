@@ -12,6 +12,11 @@ export type DetailLink = {
   text: string
   url: string
   componentId?: string
+  /**
+   * Custom press handler. When provided it fully handles the press and the
+   * default browser-open is skipped (the caller opens the browser itself).
+   */
+  onPress?: () => void
 }
 
 export type ProblemTemplateBaseProps = {
@@ -21,6 +26,9 @@ export type ProblemTemplateBaseProps = {
   withContainer?: boolean
   size?: 'small' | 'large'
   detailLink?: DetailLink
+  /** Overrides the default padding where a design calls for a roomier card. */
+  paddingHorizontal?: number
+  paddingVertical?: number
 }
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -80,6 +88,8 @@ const Host = styled.View<{
   borderColor: Colors
   noContainer?: boolean
   size: 'small' | 'large'
+  paddingHorizontal?: number
+  paddingVertical?: number
 }>`
   border-color: ${({ borderColor, theme }) => theme.color[borderColor]};
   border-width: 1px;
@@ -91,7 +101,10 @@ const Host = styled.View<{
   row-gap: ${({ theme, size }) =>
     size === 'small' ? theme.spacing[2] : theme.spacing[3]}px;
 
-  padding: ${({ theme }) => theme.spacing[2]}px;
+  padding: ${({ theme, paddingVertical, paddingHorizontal }) =>
+    `${paddingVertical ?? theme.spacing[2]}px ${
+      paddingHorizontal ?? theme.spacing[2]
+    }px`};
   ${({ noContainer, theme }) => noContainer && `margin: ${theme.spacing[2]}px;`}
   min-height: ${({ size }) => (size === 'large' ? '280' : '142')}px;
 `
@@ -129,6 +142,8 @@ export const ProblemTemplate = ({
   withContainer,
   detailLink,
   size = 'large',
+  paddingHorizontal,
+  paddingVertical,
 }: ProblemTemplateProps) => {
   const theme = useTheme()
   const { openBrowser } = useBrowser()
@@ -137,7 +152,13 @@ export const ProblemTemplate = ({
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Host borderColor={borderColor} noContainer={withContainer} size={size}>
+      <Host
+        borderColor={borderColor}
+        noContainer={withContainer}
+        size={size}
+        paddingHorizontal={paddingHorizontal}
+        paddingVertical={paddingVertical}
+      >
         {tag && (
           <Tag backgroundColor={tagBackgroundColor}>
             <TagText variant="eyebrow" color={tagColor}>
@@ -172,7 +193,11 @@ export const ProblemTemplate = ({
                 borderBottomColor: theme.color.blue400,
               }}
               onPress={() => {
-                openBrowser(detailLink.url, detailLink.componentId)
+                if (detailLink.onPress) {
+                  detailLink.onPress()
+                } else {
+                  openBrowser(detailLink.url, detailLink.componentId)
+                }
               }}
             >
               <Typography

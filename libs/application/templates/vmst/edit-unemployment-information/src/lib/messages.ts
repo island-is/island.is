@@ -360,7 +360,7 @@ export const errorMessages = defineMessages({
   cannotApplyErrorSummary: {
     id: 'vmst.eui.application:errorMessages.cannotApplyErrorSummary',
     defaultMessage:
-      'Samkvæmt sóttum gögnum getur viðkomandi ekki breytt upplýsingum um atvinnuleysisbætur, ef þú telur að mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
+      'Samkvæmt sóttum gögnum getur viðkomandi ekki breytt upplýsingum hjá Vinnumálastofnun, ef þú telur að um mistök séu að ræða vinsamlegast hafðu samband við Vinnumálastofnun',
     description: `Error summary when user can not apply`,
   },
   submitError: {

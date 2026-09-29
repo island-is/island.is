@@ -12,7 +12,6 @@ type Props = {
   roleIndex: number
   assignments: DisplayAssignment[]
   stepMetaBySubCriterionId: Record<string, StepMeta>
-  startExpanded?: boolean
 }
 
 export const RolePanel: FC<Props> = ({
@@ -20,7 +19,6 @@ export const RolePanel: FC<Props> = ({
   roleIndex,
   assignments,
   stepMetaBySubCriterionId,
-  startExpanded = false,
 }) => {
   const { formatMessage } = useLocale()
   const m = messages.report.jobClassification
@@ -47,7 +45,6 @@ export const RolePanel: FC<Props> = ({
           {formatMessage(m.roleScore, { score, max })}
         </Text>
       }
-      startExpanded={startExpanded}
     >
       <Stack space={3}>
         {groups.map((group) => (

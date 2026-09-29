@@ -27,9 +27,9 @@ import {
   ExemptionForTransportationClientModule,
 } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import {
-  VehicleServiceFjsV1ClientConfig,
-  VehicleServiceFjsV1ClientModule,
-} from '@island.is/clients/vehicle-service-fjs-v1'
+  TaxiClientConfig,
+  TaxiClientModule,
+} from '@island.is/clients/transport-authority/taxi'
 import {
   VehiclesClientModule,
   VehiclesClientConfig,
@@ -38,6 +38,8 @@ import {
   VehiclesMileageClientConfig,
   VehiclesMileageClientModule,
 } from '@island.is/clients/vehicles-mileage'
+import { TaxiStationsResolver } from './graphql/resolvers/taxiStations.resolver'
+import { TaxiDriversResolver } from './graphql/resolvers/taxiDrivers.resolver'
 
 @Module({
   imports: [
@@ -47,7 +49,7 @@ import {
     VehiclePlateOrderingClientModule,
     VehiclePlateRenewalClientModule,
     ExemptionForTransportationClientModule,
-    VehicleServiceFjsV1ClientModule,
+    TaxiClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
     ConfigModule.forRoot({
@@ -59,13 +61,18 @@ import {
         VehiclePlateOrderingClientConfig,
         VehiclePlateRenewalClientConfig,
         ExemptionForTransportationClientConfig,
-        VehicleServiceFjsV1ClientConfig,
+        TaxiClientConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
       ],
     }),
   ],
-  providers: [MainResolver, TransportAuthorityApi],
+  providers: [
+    MainResolver,
+    TransportAuthorityApi,
+    TaxiStationsResolver,
+    TaxiDriversResolver,
+  ],
   exports: [TransportAuthorityApi],
 })
 export class TransportAuthorityApiModule {}

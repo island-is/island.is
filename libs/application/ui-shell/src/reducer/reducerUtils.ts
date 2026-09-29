@@ -314,7 +314,6 @@ const convertRepeaterToScreens = (
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recursiveMap = (
     field: FormLeaf,
     fn: (l: FormLeaf) => FormLeaf,

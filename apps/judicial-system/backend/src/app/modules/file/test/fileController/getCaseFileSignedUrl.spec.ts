@@ -2,12 +2,12 @@ import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseFileCategory, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { SignedUrl } from '../../models/signedUrl.model'
 
 interface Then {
@@ -24,15 +24,15 @@ type GivenWhenThen = (
 
 describe('FileController - Get case file signed url', () => {
   let mockAwsS3Service: AwsS3Service
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, fileModel, fileController } =
+    const { awsS3Service, caseFileRepositoryService, fileController } =
       await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -100,7 +100,7 @@ describe('FileController - Get case file signed url', () => {
     let then: Then
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
+      mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(false)
 
@@ -108,12 +108,70 @@ describe('FileController - Get case file signed url', () => {
     })
 
     it('should set isKeyAccessible to false and throw', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
-        { isKeyAccessible: false },
-        { where: { id: fileId } },
-      )
+      expect(mockUpdate).toHaveBeenCalledWith(fileId, {
+        isKeyAccessible: false,
+      })
       expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
+    })
+  })
+
+  describe('ruling order pronounced orally has no document', () => {
+    const caseId = uuid()
+    const fileId = uuid()
+    const caseFile = {
+      id: fileId,
+      category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+      isPronouncedOrally: true,
+      key: '',
+      isKeyAccessible: true,
+    } as CaseFile
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    let mockUpdate: jest.Mock
+    let then: Then
+
+    beforeEach(async () => {
+      mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
+    })
+
+    it('should throw without looking the object up or marking the file inaccessible', () => {
+      expect(mockAwsS3Service.objectExists).not.toHaveBeenCalled()
+      expect(mockUpdate).not.toHaveBeenCalled()
+      expect(then.error).toBeInstanceOf(NotFoundException)
+      expect(then.error.message).toBe(
+        `File ${fileId} has no document - the ruling order was pronounced orally and has not been written up`,
+      )
+    })
+  })
+
+  describe('ruling order pronounced orally has been written up', () => {
+    const caseId = uuid()
+    const fileId = uuid()
+    const key = `${uuid()}/${uuid()}/ruling.pdf`
+    const caseFile = {
+      id: fileId,
+      category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+      isPronouncedOrally: true,
+      key,
+      isKeyAccessible: true,
+    } as CaseFile
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const url = `uploads/${key}`
+    let then: Then
+
+    beforeEach(async () => {
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+      const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
+      mockGetSignedUrl.mockResolvedValueOnce(url)
+
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
+    })
+
+    it('should create a signed url', () => {
+      expect(then.result).toEqual({ url })
     })
   })
 
