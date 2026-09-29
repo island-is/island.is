@@ -1,5 +1,6 @@
 import {
   UNSUPPORTED_BANK_CODES,
+  validateActorNationalId,
   validateBankAccountNumber,
 } from './BankTransferPayment.utils'
 
@@ -108,5 +109,30 @@ describe('validateBankAccountNumber', () => {
         true,
       )
     })
+  })
+})
+
+describe('validateActorNationalId', () => {
+  const invalid = 'payments:bankTransfer.actorNationalIdInvalid'
+
+  it('accepts a person as bare digits', () => {
+    expect(validateActorNationalId('0101302129', formatMessage)).toBe(true)
+  })
+
+  it('accepts a person in the masked input value', () => {
+    expect(validateActorNationalId('010130-2129', formatMessage)).toBe(true)
+  })
+
+  it.each([
+    ['a company', '6010100890'],
+    ['a temporary kennitala', '8123456789'],
+    ['an impossible birth date', '3201302129'],
+    ['too few digits', '010130212'],
+    ['too many digits', '01013021290'],
+    ['a misplaced separator', '0101-302129'],
+    ['letters', '010130212a'],
+    ['an empty value', ''],
+  ])('rejects %s', (_, value) => {
+    expect(validateActorNationalId(value, formatMessage)).toBe(invalid)
   })
 })

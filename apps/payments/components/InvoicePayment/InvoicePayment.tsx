@@ -5,22 +5,11 @@ import { useLocale } from '@island.is/localization'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 import { invoice } from '../../messages'
+import { formatNationalId } from '../../utils'
 
 interface InvoicePaymentInput {
   nationalId: string
   reference: string
-}
-
-const formatNationalId = (nationalId?: string) => {
-  if (!nationalId) {
-    return ''
-  }
-
-  if (nationalId.length === 10) {
-    return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  }
-
-  return nationalId
 }
 
 export const InvoicePayment = ({

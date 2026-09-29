@@ -1,3 +1,5 @@
+import { isPerson } from 'kennitala'
+
 import { useLocale } from '@island.is/localization'
 import { bankTransfer } from '../../messages'
 
@@ -37,6 +39,32 @@ export const validateBankAccountNumber = (
   // circles.
   if (UNSUPPORTED_BANK_CODES.includes(digits.slice(0, BANK_CODE_LENGTH))) {
     return formatMessage(bankTransfer.accountNumberBankNotSupported)
+  }
+
+  return true
+}
+
+/** Bare digits, or the 6-4 masked form the input produces. */
+const NATIONAL_ID_PATTERN = /^\d{10}$/
+const MASKED_NATIONAL_ID_PATTERN = /^\d{6}-\d{4}$/
+
+/**
+ * The individual authorising a company's transfer must be a person: it is who authenticates with
+ * their bank, so a company or a temporary kennitala cannot be accepted.
+ */
+export const validateActorNationalId = (
+  value: string,
+  formatMessage: FormatMessage,
+) => {
+  if (
+    !NATIONAL_ID_PATTERN.test(value) &&
+    !MASKED_NATIONAL_ID_PATTERN.test(value)
+  ) {
+    return formatMessage(bankTransfer.actorNationalIdInvalid)
+  }
+
+  if (!isPerson(value.replace(/-/g, ''))) {
+    return formatMessage(bankTransfer.actorNationalIdInvalid)
   }
 
   return true

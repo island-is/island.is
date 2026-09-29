@@ -124,7 +124,8 @@ export class PaymentFlowService {
       const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
 
       // Bank transfer is gated behind the global feature flag and offered to
-      // individuals only — i.e. real persons. Companies and temporary kennitalas
+      // individuals and companies — a company pays with an individual who has the
+      // rights to authorise it, entered on the payment screen. Temporary kennitalas
       // are excluded. The flag is the offer kill-switch: off → never listed, so
       // the FE selector never shows a method whose endpoints the flag also guards.
       let availableMethods = paymentMethods
@@ -133,8 +134,9 @@ export class PaymentFlowService {
           Features.isIslandisBankTransferPaymentEnabled,
           false,
         )
+        const payer = paymentInfo.payerNationalId
 
-        if (!isBankTransferEnabled || !isPerson(paymentInfo.payerNationalId)) {
+        if (!isBankTransferEnabled || !(isPerson(payer) || isCompany(payer))) {
           availableMethods = paymentMethods.filter(
             (m) => m !== PaymentMethod.BANK_TRANSFER,
           )

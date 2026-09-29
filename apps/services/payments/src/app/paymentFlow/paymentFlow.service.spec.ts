@@ -132,10 +132,10 @@ describe('PaymentFlowService', () => {
       expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
     })
 
-    it('should not offer bank transfer to a company payer', async () => {
+    it('should offer bank transfer to a company payer', async () => {
       const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
 
-      expect(methods).toEqual([PaymentMethod.CARD])
+      expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
     })
 
     it('should not offer bank transfer to a temporary kennitala payer', async () => {
