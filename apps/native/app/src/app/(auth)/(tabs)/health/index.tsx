@@ -1,5 +1,5 @@
-import { ApolloError } from '@apollo/client'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { ApolloError, useApolloClient } from '@apollo/client'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Animated,
@@ -16,11 +16,13 @@ import categoriesIcon from '@/assets/icons/categories.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
+import refreshIcon from '@/assets/icons/refresh.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
 import { getConfig } from '@/config'
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import {
+  GetHealthBasicInfoFetchedAtDocument,
   useGetAppointmentsQuery,
   useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
@@ -30,6 +32,7 @@ import {
   useGetMedicineDataQuery,
   useGetOrganDonorStatusQuery,
   useGetPaymentOverviewQuery,
+  useGetHealthBasicInfoFetchedAtQuery,
   useGetPaymentStatusQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
@@ -37,6 +40,7 @@ import { useBrowser } from '@/hooks/use-browser'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import {
   Alert,
+  Button,
   ChevronRight,
   GeneralCardSkeleton,
   Heading,
@@ -70,6 +74,12 @@ const AppointmentsContainer = styled.View`
 
 const AppointmentsSkeletonGroup = styled.View`
   row-gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const RefreshButtonContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
 type HealthCard = {
@@ -201,6 +211,23 @@ export default function HealthOverviewScreen() {
   const theme = useTheme()
   const { openBrowser } = useBrowser()
   const { getSenderLogo } = useOrganizationsStore()
+  const apolloClient = useApolloClient()
+  // Lives in the Apollo cache so it is persisted and cleared with the data it
+  // describes, instead of needing a store of its own.
+  const fetchedAtRes = useGetHealthBasicInfoFetchedAtQuery({
+    fetchPolicy: 'cache-only',
+  })
+  const basicInfoFetchedAt = fetchedAtRes.data?.healthBasicInfoFetchedAt ?? null
+
+  const setBasicInfoFetchedAt = useCallback(
+    (fetchedAt: string) => {
+      apolloClient.writeQuery({
+        query: GetHealthBasicInfoFetchedAtDocument,
+        data: { healthBasicInfoFetchedAt: fetchedAt },
+      })
+    },
+    [apolloClient],
+  )
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
 
@@ -329,24 +356,36 @@ export default function HealthOverviewScreen() {
   const medicinePurchaseRes = useGetMedicineDataQuery({
     skip: !hasBeenFocused,
   })
+  // The four basic-information queries (organ donation, health center, dentist,
+  // blood type) read from the persisted cache and only hit the network on an
+  // explicit refresh. notifyOnNetworkStatusChange is what makes that refetch
+  // show a loading state instead of swapping the values in silently.
   const organDonationRes = useGetOrganDonorStatusQuery({
     variables: {
       locale: useLocale(),
     },
     skip: !hasBeenFocused || !isOrganDonationEnabled,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery({
     skip: !hasBeenFocused,
   })
   const healthCenterRes = useGetHealthCenterQuery({
     skip: !hasBeenFocused,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
   const paymentStatusRes = useGetPaymentStatusQuery({
     skip: !hasBeenFocused,
   })
   const bloodTypeRes = useGetBloodTypeOverviewQuery({
     skip: !hasBeenFocused,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
+  // The as-of date is not part of this query's cache key (keyArgs: false in
+  // client.ts), so a fresh `now` each mount still reads the cached answer.
   const dentistRes = useGetDentistOverviewQuery({
     variables: {
       input: {
@@ -355,6 +394,8 @@ export default function HealthOverviewScreen() {
       },
     },
     skip: !hasBeenFocused,
+    fetchPolicy: 'cache-first',
+    notifyOnNetworkStatusChange: true,
   })
   const paymentOverviewRes = useGetPaymentOverviewQuery({
     variables: {
@@ -406,8 +447,44 @@ export default function HealthOverviewScreen() {
   // fall back to '-' on their own, so only these two need the warning.
   const paymentStatusFailed = !!paymentStatusRes.error && !paymentStatusRes.data
 
+  // On a cleared cache the queries fetch once on their own. Stamp `now`, the
+  // date they actually ran with, so basicInfoAsOf stays put.
+  useEffect(() => {
+    if (basicInfoFetchedAt !== null) {
+      return
+    }
+    if (
+      bloodTypeRes.data ||
+      organDonationRes.data ||
+      healthCenterRes.data ||
+      dentistRes.data
+    ) {
+      setBasicInfoFetchedAt(now)
+    }
+  }, [
+    basicInfoFetchedAt,
+    setBasicInfoFetchedAt,
+    now,
+    bloodTypeRes.data,
+    organDonationRes.data,
+    healthCenterRes.data,
+    dentistRes.data,
+  ])
+
+  const lastUpdatedFormatted = useMemo(
+    () =>
+      basicInfoFetchedAt === null
+        ? null
+        : intl.formatDate(new Date(basicInfoFetchedAt), {
+            dateStyle: 'short',
+            timeStyle: 'short',
+          }),
+    [intl, basicInfoFetchedAt],
+  )
+
   const onRefresh = useCallback(async () => {
     setRefetching(true)
+    const fetchedAt = new Date().toISOString()
 
     try {
       const promises = [
@@ -416,13 +493,17 @@ export default function HealthOverviewScreen() {
         healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
         paymentOverviewRes.refetch(),
-        dentistRes.refetch(),
+        // New as-of date so the refreshed answer is current, not as-of launch.
+        dentistRes.refetch({
+          input: { dateFrom: fetchedAt, dateTo: fetchedAt },
+        }),
         isOrganDonationEnabled && organDonationRes.refetch(),
         bloodTypeRes.refetch(),
         isAppointmentsEnabled && appointmentsRes.refetch(),
         isHealthMessagesEnabled && messagesRes.refetch(),
       ].filter(Boolean)
       await Promise.all(promises)
+      setBasicInfoFetchedAt(fetchedAt)
     } catch (e) {
       // noop
     } finally {
@@ -442,6 +523,7 @@ export default function HealthOverviewScreen() {
     appointmentsRes,
     isHealthMessagesEnabled,
     messagesRes,
+    setBasicInfoFetchedAt,
   ])
 
   const handleAppointmentPress = useCallback(
@@ -998,10 +1080,7 @@ export default function HealthOverviewScreen() {
                         : 'health.organDonation.isNotDonorDescription',
                     }) ?? ''
               }`}
-              loading={
-                !hasBeenFocused ||
-                (organDonationRes.loading && !organDonationRes.data)
-              }
+              loading={!hasBeenFocused || organDonationRes.loading}
               fullWidthWarning
               warningText={
                 organDonationRes.error
@@ -1069,6 +1148,24 @@ export default function HealthOverviewScreen() {
             noBorder
           />
         </InputRow>
+        <RefreshButtonContainer>
+          {lastUpdatedFormatted && (
+            <Typography variant="body3">
+              {intl.formatMessage(
+                { id: 'health.overview.lastUpdated' },
+                { date: lastUpdatedFormatted },
+              )}
+            </Typography>
+          )}
+          <Button
+            onPress={onRefresh}
+            title={intl.formatMessage({ id: 'health.overview.update' })}
+            icon={refreshIcon}
+            isTransparent
+            loading={refetching}
+            disabled={refetching}
+          />
+        </RefreshButtonContainer>
       </Animated.ScrollView>
     </>
   )

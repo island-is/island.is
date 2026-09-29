@@ -780,6 +780,8 @@ export const en: TranslatedMessages = {
   'health.overview.prescriptions': 'Prescriptions',
   'health.overview.medicine': 'Medicine',
   'health.overview.seeAllCategories': 'See all categories',
+  'health.overview.lastUpdated': 'Basic information last updated: {date}',
+  'health.overview.update': 'Update',
 
   // health: categories
   'health.categories.screenTitle': 'Health Categories',
