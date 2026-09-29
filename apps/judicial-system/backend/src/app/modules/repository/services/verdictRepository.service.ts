@@ -18,22 +18,6 @@ import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { Verdict } from '../models/verdict.model'
 
-interface FindVerdictOptions {
-  transaction?: Transaction
-}
-
-interface CreateVerdictOptions {
-  transaction: Transaction
-}
-
-interface UpdateVerdictOptions {
-  transaction: Transaction
-}
-
-interface DeleteVerdictOptions {
-  transaction: Transaction
-}
-
 interface UpdateVerdict {
   externalPoliceDocumentId?: string
   serviceStatus?: VerdictServiceStatus
@@ -60,7 +44,7 @@ export class VerdictRepositoryService {
 
   async findById(
     verdictId: string,
-    options?: FindVerdictOptions,
+    options?: { transaction?: Transaction },
   ): Promise<Verdict | null> {
     try {
       this.logger.debug(`Finding verdict ${verdictId}`)
@@ -103,7 +87,7 @@ export class VerdictRepositoryService {
   // Returns null when the defendant has no verdict yet.
   async findLatestForDefendant(
     defendantId: string,
-    options?: FindVerdictOptions,
+    options?: { transaction?: Transaction },
   ): Promise<Verdict | null> {
     try {
       this.logger.debug(
@@ -127,7 +111,7 @@ export class VerdictRepositoryService {
 
   async create(
     data: Partial<Verdict>,
-    options: CreateVerdictOptions,
+    options: { transaction: Transaction },
   ): Promise<Verdict> {
     try {
       this.logger.debug('Creating a new verdict with data:', {
@@ -154,7 +138,7 @@ export class VerdictRepositoryService {
     defendantId: string,
     verdictId: string,
     data: UpdateVerdict,
-    options: UpdateVerdictOptions,
+    options: { transaction: Transaction },
   ): Promise<Verdict> {
     try {
       this.logger.debug(
@@ -206,7 +190,7 @@ export class VerdictRepositoryService {
     caseId: string,
     defendantId: string,
     verdictId: string,
-    options: DeleteVerdictOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(

@@ -13,7 +13,12 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  addMessagesToQueueAfterCommit,
+  AfterCommitTransaction,
+  Message,
+} from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
@@ -238,6 +243,12 @@ export const createTestingCaseModule = async () => {
     Promise.resolve(theCase.splitCaseId ?? theCase.id),
   )
 
+  const mockFindLiveDescendantCase =
+    caseRepositoryService.findLiveDescendantCase as jest.Mock
+  mockFindLiveDescendantCase.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase),
+  )
+
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
@@ -333,10 +344,26 @@ export const createTestingCaseModule = async () => {
     queuedMessages.push(...msgs)
   })
 
+  // One entry per registration, with the transaction it was made against, so
+  // that a spec can tell a message queued for after the commit from one queued
+  // for the request regardless of its outcome
+  const queuedMessagesAfterCommit: {
+    transaction: AfterCommitTransaction | undefined
+    messages: Message[]
+  }[] = []
+  const mockAddMessagesToQueueAfterCommit =
+    addMessagesToQueueAfterCommit as jest.Mock
+  mockAddMessagesToQueueAfterCommit.mockImplementation(
+    (transaction: AfterCommitTransaction | undefined, ...msgs: Message[]) => {
+      queuedMessagesAfterCommit.push({ transaction, messages: msgs })
+    },
+  )
+
   caseModule.close()
 
   return {
     queuedMessages,
+    queuedMessagesAfterCommit,
     appealCaseRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,

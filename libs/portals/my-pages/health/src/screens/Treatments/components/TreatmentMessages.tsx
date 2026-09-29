@@ -105,12 +105,12 @@ export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
                   >
                     {conversation.title?.trim() ||
                       formatMessage(messages.treatmentMessagesFromTeam)}
-                    {unread && (
-                      <VisuallyHidden>
-                        {` - ${formatMessage(m.notificationUnread)}`}
-                      </VisuallyHidden>
-                    )}
                   </Text>
+                  {unread && (
+                    <VisuallyHidden>
+                      {` - ${formatMessage(m.notificationUnread)}`}
+                    </VisuallyHidden>
+                  )}
                 </Box>
                 {conversation.lastMessageSentAt && (
                   <Text variant="medium" whiteSpace="nowrap">

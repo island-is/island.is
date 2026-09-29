@@ -947,6 +947,9 @@ export const en: TranslatedMessages = {
   'health.messages.compose.selectServicePlaceholder':
     'Select a service from the dropdown',
   'health.messages.compose.to': 'To: {name}',
+  'health.messages.compose.subjectLabel': 'Subject',
+  'health.messages.compose.subjectPlaceholder':
+    'Enter the subject of the message',
   'health.messages.compose.messageLabel': 'Message',
   'health.messages.compose.messagePlaceholder': 'Write your message here',
   'health.messages.compose.termsAccept':

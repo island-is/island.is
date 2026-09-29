@@ -21,9 +21,11 @@ import {
   useGetQuestionnaireWithQuestionsQuery,
   useSubmitQuestionnaireMutation,
 } from './questionnaires.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AnswerQuestionnaire: FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
   const paths = useTreatmentScopedPaths()

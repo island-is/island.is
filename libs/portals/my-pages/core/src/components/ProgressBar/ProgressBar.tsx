@@ -31,6 +31,7 @@ interface Props {
     value: string
   }[]
   required?: boolean
+  labelledBy?: string
 }
 
 export const ProgressBar: FC<Props> = ({
@@ -46,6 +47,7 @@ export const ProgressBar: FC<Props> = ({
   selectedValue,
   onOptionClick,
   required = false,
+  labelledBy,
 }) => {
   const ref = useRef<HTMLElement>(null)
   const textContainerRef = useRef<HTMLDivElement>(null)
@@ -178,7 +180,7 @@ export const ProgressBar: FC<Props> = ({
           className={styles.progressContainer}
           role={options ? 'radiogroup' : 'group'}
           width={vertical ? undefined : 'full'}
-          aria-labelledby={label ? labelId : undefined}
+          aria-labelledby={labelledBy ?? (label ? labelId : undefined)}
           aria-describedby={options ? descriptionId : undefined}
           aria-orientation={vertical ? 'vertical' : 'horizontal'}
           style={

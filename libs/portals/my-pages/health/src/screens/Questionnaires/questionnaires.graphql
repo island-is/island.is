@@ -22,6 +22,7 @@ fragment QuestionnaireListItem on QuestionnairesBaseItem {
   disabled
   organization
   senderGroupName
+  canSubmitAgain
 }
 
 fragment QuestionnaireSubmission on QuestionnaireSubmissionDetail {
