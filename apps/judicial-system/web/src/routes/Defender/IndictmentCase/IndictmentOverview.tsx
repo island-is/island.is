@@ -288,6 +288,7 @@ const IndictmentOverview: FC = () => {
                   >
                     <DefenderVerdictTimelineCard
                       defendant={defendant}
+                      verdictAppealCase={workingCase.verdictAppealCase}
                       contextMenuItems={getVerdictTimelineMenuItems(defendant)}
                     />
                   </Box>

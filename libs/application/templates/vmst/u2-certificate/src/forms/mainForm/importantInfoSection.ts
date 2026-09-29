@@ -26,6 +26,7 @@ export const importantInfoSection = buildSection({
           image: MovingSearching,
           doesNotRequireAnswer: true,
           marginBottom: 2,
+          marginTop: 2,
         }),
         buildCheckboxField({
           id: 'infoCheckbox',

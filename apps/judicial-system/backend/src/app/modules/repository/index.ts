@@ -120,7 +120,6 @@ export {
 } from './services/victimRepository.service'
 
 export {
-  caseInclude,
   CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,

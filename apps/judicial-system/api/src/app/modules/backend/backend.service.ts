@@ -1006,16 +1006,6 @@ export class BackendService {
     })
   }
 
-  findDefenderByNationalId(nationalId: string): Promise<User> {
-    const params = new URLSearchParams()
-    params.append('nationalId', nationalId)
-
-    return this.callBackend<User>(
-      `cases/limitedAccess/defender?${params.toString()}`,
-      { headers: this.secretTokenHeaders },
-    )
-  }
-
   getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {
     let queryString = ''
 

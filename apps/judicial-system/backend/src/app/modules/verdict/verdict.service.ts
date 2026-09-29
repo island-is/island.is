@@ -64,6 +64,11 @@ type UpdateVerdict = {
   | 'hashAlgorithm'
 >
 
+// A verdict is always created for a defendant the caller has already
+// identified; CreateVerdictDto only makes the id optional because it also
+// carries the fields of an update.
+export type CreateVerdict = CreateVerdictDto & { defendantId: string }
+
 export type VerdictServiceCertificateDelivery = {
   delivered: boolean
   caseId: string
@@ -91,8 +96,7 @@ export class VerdictService {
     verdictId: string,
     transaction?: Transaction,
   ): Promise<Verdict> {
-    const verdict = await this.verdictRepositoryService.findOne({
-      where: { id: verdictId },
+    const verdict = await this.verdictRepositoryService.findById(verdictId, {
       transaction,
     })
 
@@ -106,9 +110,10 @@ export class VerdictService {
   async findByExternalPoliceDocumentId(
     externalPoliceDocumentId: string,
   ): Promise<Verdict> {
-    const verdict = await this.verdictRepositoryService.findOne({
-      where: { externalPoliceDocumentId },
-    })
+    const verdict =
+      await this.verdictRepositoryService.findByExternalPoliceDocumentId(
+        externalPoliceDocumentId,
+      )
 
     if (!verdict) {
       throw new NotFoundException(
@@ -121,14 +126,14 @@ export class VerdictService {
 
   async createVerdict(
     caseId: string,
-    verdict: CreateVerdictDto,
+    verdict: CreateVerdict,
     transaction: Transaction,
   ): Promise<Verdict> {
-    const currentVerdict = await this.verdictRepositoryService.findOne({
-      where: { defendantId: verdict.defendantId },
-      order: [['created', 'DESC']],
-      transaction,
-    })
+    const currentVerdict =
+      await this.verdictRepositoryService.findLatestForDefendant(
+        verdict.defendantId,
+        { transaction },
+      )
 
     if (!currentVerdict) {
       return this.verdictRepositoryService.create(
@@ -167,7 +172,13 @@ export class VerdictService {
           const { defendantId, ...update } = verdict
           return this.updateVerdict(currentVerdict, update, transaction)
         } else {
-          return this.createVerdict(caseId, verdict, transaction)
+          // currentDefendant was found by its id, so it carries the very
+          // defendant id the verdict was matched on
+          return this.createVerdict(
+            caseId,
+            { ...verdict, defendantId: currentDefendant.id },
+            transaction,
+          )
         }
       }),
     )
@@ -671,6 +682,20 @@ export class VerdictService {
                 serviceInformationForDefendant:
                   verdict.serviceInformationForDefendant,
                 isDefaultJudgement: verdict.isDefaultJudgement,
+                // These three are the office's record of what became of the
+                // judgment, and they came against the judgment rather than
+                // against the copy of it that was served - so re-serving must
+                // not lose them. Everything that reads them asks the
+                // defendant's latest verdict, so a value left behind on the
+                // superseded row reads as if it had never been recorded: the
+                // appealed case lists and the read access that goes with them
+                // for the appeal date, "Áfrýjunarleyfi" for the leave request,
+                // and "Sýknudómar" for the acquittal.
+                appealDate: verdict.appealDate,
+                defendantHasRequestedAppeal:
+                  verdict.defendantHasRequestedAppeal,
+                isAcquittedByPublicProsecutionOffice:
+                  verdict.isAcquittedByPublicProsecutionOffice,
               },
               { transaction },
             )

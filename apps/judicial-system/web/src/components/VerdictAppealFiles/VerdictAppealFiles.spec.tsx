@@ -90,7 +90,10 @@ describe('VerdictAppealFiles', () => {
 
     expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
     expect(screen.getByText('yfirlysing.pdf')).toBeInTheDocument()
-    expect(screen.getByText(/04\.06\.2026 kl\. \d\d:\d\d/)).toBeInTheDocument()
+    // Date only: an appeal registered on a letter has no time of day, so
+    // showing one here would make the two paths look inconsistent.
+    expect(screen.getByText('04.06.2026')).toBeInTheDocument()
+    expect(screen.queryByText(/kl\./)).not.toBeInTheDocument()
     expect(screen.getByText('Verjandi (LL) sendi inn')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Valmynd fyrir yfirlysing.pdf' }),

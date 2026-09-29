@@ -5,6 +5,7 @@ import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  CancelAppointmentConflictReason,
   DispensationHistoryDto,
   DispensationHistoryItemDto,
   OrganDonorDto,
@@ -25,6 +26,7 @@ import {
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetConversationsV2V2,
   meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
@@ -34,6 +36,7 @@ import {
   meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePregnancyControllerHasActivePregnancyV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -48,6 +51,7 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentQuestionnairesV1,
   meTreatmentControllerGetTreatmentV1,
   meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
@@ -74,7 +78,9 @@ import {
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
   Locale,
+  MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
   PrescriptionCommissionDto,
@@ -91,6 +97,7 @@ import {
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
+import { CancelAppointmentResult } from './dtos/cancelAppointmentResult.dto'
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
 export type AttachmentDownloadResult =
@@ -335,6 +342,15 @@ export class HealthDirectorateHealthService {
     return donationExceptions
   }
 
+  /* Pregnancy */
+  public async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerHasActivePregnancyV1()),
+    )
+
+    return result?.hasActivePregnancy ?? null
+  }
+
   public async getQuestionnaires(
     auth: Auth,
     locale: Locale,
@@ -357,7 +373,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<QuestionnaireDetailDto | null> {
     const questionnaire = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         questionnaireControllerGetQuestionnaireDetailV1({
           path: {
             id: id,
@@ -597,16 +613,67 @@ export class HealthDirectorateHealthService {
     return appointment ?? null
   }
 
-  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
-    await withAuthContext(auth, () =>
-      data(
-        meAppointmentControllerCancelAppointmentV1({
-          path: { id },
-        }),
-      ),
-    )
+  public async cancelAppointment(
+    auth: Auth,
+    id: string,
+  ): Promise<CancelAppointmentResult> {
+    try {
+      await withAuthContext(auth, () =>
+        data(
+          meAppointmentControllerCancelAppointmentV1({
+            path: { id },
+          }),
+        ),
+      )
 
-    return true
+      return 'CANCELLED'
+    } catch (e) {
+      if (e instanceof FetchError) {
+        const mapped = this.mapCancelAppointmentAnswer(e)
+        if (mapped) {
+          return mapped
+        }
+      }
+      throw e
+    }
+  }
+
+  /*
+   * Refusals and timeouts arrive as problem documents with content type
+   * application/json, so FetchError.problem is never set and the parsed
+   * document is on FetchError.body (logErrorResponseBody is enabled).
+   */
+  private mapCancelAppointmentAnswer(
+    e: FetchError,
+  ): CancelAppointmentResult | undefined {
+    const body = e.body as { errorCode?: string } | undefined
+    if (!body || typeof body !== 'object') {
+      return undefined
+    }
+
+    if (e.status === 409) {
+      if (
+        body.errorCode === CancelAppointmentConflictReason.CANCELLATION_REFUSED
+      ) {
+        return 'REFUSED'
+      }
+
+      const blockedReasons: string[] = [
+        CancelAppointmentConflictReason.NOT_CANCELLABLE,
+        CancelAppointmentConflictReason.CANCELLATION_DEADLINE_PASSED,
+        CancelAppointmentConflictReason.UNSUPPORTED_CANCEL_METHOD,
+        CancelAppointmentConflictReason.INVALID_STATUS,
+      ]
+      if (body.errorCode && blockedReasons.includes(body.errorCode)) {
+        return 'BLOCKED'
+      }
+    }
+
+    if (e.status === 504 && body.errorCode === 'ACK_NOT_CONFIRMED') {
+      return 'UNCONFIRMED'
+    }
+
+    return undefined
   }
 
   /* Conversations (Health Messages) */
@@ -622,6 +689,17 @@ export class HealthDirectorateHealthService {
           query: { status, starred },
         }),
       ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getPaginatedConversations(
+    auth: Auth,
+    query?: MeConversationControllerGetConversationsV2V2Data['query'],
+  ): Promise<PaginatedConversationsDto | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(meConversationControllerGetConversationsV2V2({ query })),
     )
 
     return conversations ?? null
@@ -834,6 +912,21 @@ export class HealthDirectorateHealthService {
     )
 
     return treatment ?? null
+  }
+
+  public async getTreatmentQuestionnaires(
+    auth: Auth,
+    id: string,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentQuestionnairesV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return questionnaires ?? null
   }
 
   public async getTreatmentDocuments(

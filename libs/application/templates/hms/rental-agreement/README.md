@@ -4,6 +4,10 @@
 
 This application allows individuals to create a rental agreement between one or more landlords and tenants that ends in a signature of all required parties and is then registered with the rental registry (leiguskrá Húsnæðis- og Mannvirkjastofnunar).
 
+### Earliest rental period start date
+
+`EARLIEST_RENTAL_PERIOD_START_DATE` (`src/utils/utils.ts`) is set to 2023-01-01. This is a floor mandated by HMS: rental agreements, and the dates on fields tied to them (e.g. meter reading dates), cannot be set earlier than this. It is also used as the anchor for how far back the consumer price index (vísitala) is fetched from Hagstofa, so that any agreement back to this date can find a matching index value.
+
 ## URLs
 
 > [!NOTE]

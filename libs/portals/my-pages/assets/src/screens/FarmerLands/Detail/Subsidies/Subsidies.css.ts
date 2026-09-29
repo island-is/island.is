@@ -13,6 +13,15 @@ export const dateFilterSingle = style({
 export const accordionBox = style({})
 export const accordionBoxSingle = style({})
 
+export const statsItem = style({
+  flex: 1,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm - 1}px)`]: {
+      flex: '0 0 50%',
+    },
+  },
+})
+
 globalStyle(
   `${accordionBox} .island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
   {

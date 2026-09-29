@@ -15,6 +15,13 @@ export class HealthDirectorateHealthConversationType {
   description?: string
 
   @Field({
+    nullable: true,
+    description:
+      'Optional guidance to show once this type is selected, before the user composes. May contain markdown links. Sourced from island.is translations, not Hekla.',
+  })
+  instructions?: string
+
+  @Field({
     description:
       'True for certificate-request types (use POST /certificates); false for regular messages.',
   })

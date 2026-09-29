@@ -21,6 +21,7 @@ import {
   LawyerRegistryRepositoryService,
 } from '../repository'
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
+import { testLawyers } from './testLawyers'
 
 @Injectable()
 export class LawyerRegistryService {
@@ -98,9 +99,15 @@ export class LawyerRegistryService {
       isLitigator: litigatorNationalIds.has(lawyer.SSN),
     }))
 
-    await this.validateLawyers(formattedLawyers)
+    // Test environments keep the e2e lawyers across replacements, otherwise
+    // the nightly reset would lock the e2e defender out.
+    const lawyersToStore = this.config.includeTestLawyers
+      ? [...formattedLawyers, ...testLawyers]
+      : formattedLawyers
 
-    await this.lawyerRegistryRepositoryService.replaceAll(formattedLawyers, {
+    await this.validateLawyers(lawyersToStore)
+
+    await this.lawyerRegistryRepositoryService.replaceAll(lawyersToStore, {
       transaction,
     })
 

@@ -122,7 +122,7 @@ export class CoursesService extends BaseTemplateApiService {
         jobTitle,
       )
 
-      const success = await this.zendeskService.submitTicket({
+      const ticket = await this.zendeskService.createTicket({
         message,
         subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
         requester: {
@@ -161,6 +161,9 @@ export class CoursesService extends BaseTemplateApiService {
           course,
           courseInstance,
           participantList,
+          ticket?.id,
+          courseUrl,
+          { nationalId, healthcenter },
           auth.authorization,
         )
       } catch (error) {
@@ -170,7 +173,7 @@ export class CoursesService extends BaseTemplateApiService {
         )
       }
 
-      return { success }
+      return { success: true }
     } catch (error) {
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
@@ -487,9 +490,13 @@ export class CoursesService extends BaseTemplateApiService {
       startDate: string
       startDateTimeDuration?: { startTime?: string; endTime?: string }
       description?: string | null
+      location?: string | null
       chargeItemCode?: string | null
     },
     participantList: ApplicationAnswers['participantList'],
+    ticketId: string | number | undefined,
+    courseUrl: string | null,
+    applicant: { nationalId: string; healthcenter?: string },
     authorization: string,
   ): Promise<void> {
     let priceAmount: number | undefined
@@ -515,22 +522,28 @@ export class CoursesService extends BaseTemplateApiService {
       )
     }
 
+    const { externalIdPrefix, namePrefix } = this.getZendeskEnvPrefixes()
+    const courseExternalId = `${externalIdPrefix}${course.id}`
+    const instanceExternalId = `${externalIdPrefix}${courseInstance.id}`
+
     const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.course,
-      { name: course.title, external_id: course.id },
+      { name: `${namePrefix}${course.title}`, external_id: courseExternalId },
     )
 
     const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
       {
-        name: courseInstance.displayedTitle ?? course.title,
-        external_id: courseInstance.id,
+        name: `${namePrefix}${courseInstance.displayedTitle ?? course.title}`,
+        external_id: instanceExternalId,
         custom_object_fields: {
-          upphafsdagsetning: courseInstance.startDate.split('T')[0],
-          upphafstímasetning:
-            courseInstance.startDateTimeDuration?.startTime ?? '',
-          lýsing: courseInstance.description ?? '',
-          verð_per_skráningu: priceAmount?.toString() ?? '',
+          course_start_date: courseInstance.startDate.split('T')[0],
+          course_start_time: this.formatCourseInstanceTimeRange(courseInstance),
+          course_description: courseInstance.description ?? '',
+          ...(priceAmount !== undefined && { course_price: priceAmount }),
+          course_location: courseInstance.location ?? '',
+          course_url: courseUrl ?? '',
+          course_id: courseRecord.id,
           course: courseRecord.id,
         },
       },
@@ -538,19 +551,73 @@ export class CoursesService extends BaseTemplateApiService {
 
     if (participantList.length === 0) return
 
+    const numericTicketId = this.toZendeskNumber(ticketId)
+    const registrationTime = format(new Date(), 'dd.MM.yyyy HH:mm')
+
     await this.zendeskService.runCustomObjectJob(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
       'create_or_update_by_external_id',
-      participantList.map((p) => ({
-        name: p.nationalIdWithName.name,
-        external_id: `${courseInstance.id}-${p.nationalIdWithName.nationalId}`,
-        custom_object_fields: {
-          kennitala: p.nationalIdWithName.nationalId,
-          email: p.nationalIdWithName.email,
-          course_instance: instanceRecord.id,
-        },
-      })),
+      participantList.map((p) => {
+        const participantPhone = p.nationalIdWithName.phone?.trim()
+        const participantWorkplace = p.workplace?.trim()
+        const participantTitle = p.jobTitle?.trim()
+        // Healthcenter is only collected for the applicant
+        const participantClinic =
+          p.nationalIdWithName.nationalId === applicant.nationalId
+            ? applicant.healthcenter?.trim()
+            : undefined
+
+        return {
+          name: p.nationalIdWithName.name,
+          external_id: `${instanceExternalId}-${p.nationalIdWithName.nationalId}`,
+          custom_object_fields: {
+            kennitala: p.nationalIdWithName.nationalId,
+            email: p.nationalIdWithName.email,
+            ...(participantPhone && { participant_phone: participantPhone }),
+            ...(participantWorkplace && {
+              participant_workplace: participantWorkplace,
+            }),
+            ...(participantTitle && { participant_title: participantTitle }),
+            ...(participantClinic && { participant_clinic: participantClinic }),
+            registration_time: registrationTime,
+            course_instance: instanceRecord.id,
+            ...(numericTicketId !== undefined && {
+              ticket_id: numericTicketId,
+            }),
+          },
+        }
+      }),
     )
+  }
+
+  /**
+   * All environments share the same Zendesk instance, so custom object records
+   * created outside of prod are prefixed to keep them apart.
+   * Records without a prefix are prod records.
+   */
+  private getZendeskEnvPrefixes(): {
+    externalIdPrefix: string
+    namePrefix: string
+  } {
+    // hh_env_dev -> dev
+    const env = this.coursesConfig.zendeskEnvTag.replace(/^hh_env_/, '')
+
+    if (env === 'prod') {
+      return { externalIdPrefix: '', namePrefix: '' }
+    }
+
+    return {
+      externalIdPrefix: `${env}-`,
+      namePrefix: `[${env.toUpperCase()}] `,
+    }
+  }
+
+  private toZendeskNumber(
+    value: string | number | undefined,
+  ): number | undefined {
+    const parsed = Number(value)
+
+    return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : undefined
   }
 
   private async formatApplicationMessage(
@@ -592,18 +659,13 @@ export class CoursesService extends BaseTemplateApiService {
     let message = ''
     message += `Námskeið: ${courseTitle}\n`
     if (courseUrl) message += `Slóð námskeiðs: ${courseUrl}\n`
-    let startDateTimeDuration = ''
-    if (courseInstance.startDateTimeDuration?.startTime) {
-      startDateTimeDuration = courseInstance.startDateTimeDuration.startTime
-      if (courseInstance.startDateTimeDuration.endTime) {
-        startDateTimeDuration += ` - ${courseInstance.startDateTimeDuration.endTime}`
-      }
-    }
+    const startDateTimeDuration =
+      this.formatCourseInstanceTimeRange(courseInstance)
 
     message += `Upphafsdagsetning námskeiðs: ${format(
       new Date(courseInstance.startDate.split('T')[0]),
       'dd.MM.yyyy',
-    )} ${startDateTimeDuration ?? ''}\n`
+    )} ${startDateTimeDuration}\n`
     message += `Staðsetning námskeiðs: ${courseInstance.location ?? ''}\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
@@ -660,13 +722,7 @@ export class CoursesService extends BaseTemplateApiService {
       locale: icelandicLocale,
     })
 
-    let timeRange = ''
-    if (courseInstance.startDateTimeDuration?.startTime) {
-      timeRange = courseInstance.startDateTimeDuration.startTime
-      if (courseInstance.startDateTimeDuration.endTime) {
-        timeRange += ` - ${courseInstance.startDateTimeDuration.endTime}`
-      }
-    }
+    const timeRange = this.formatCourseInstanceTimeRange(courseInstance)
 
     const titleSuffix = courseInstance.displayedTitle?.trim()
       ? courseInstance.displayedTitle.trim()
@@ -675,5 +731,18 @@ export class CoursesService extends BaseTemplateApiService {
     return [formattedDate, timeRange, titleSuffix]
       .filter((part) => part.length > 0)
       .join(' ')
+  }
+
+  private formatCourseInstanceTimeRange(courseInstance: {
+    startDateTimeDuration?: {
+      startTime?: string
+      endTime?: string
+    }
+  }): string {
+    const { startTime, endTime } = courseInstance.startDateTimeDuration ?? {}
+
+    if (!startTime) return ''
+
+    return endTime ? `${startTime} - ${endTime}` : startTime
   }
 }

@@ -25,6 +25,17 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthOverview,
     },
     {
+      name: messages.pregnancy,
+      path: HealthPaths.HealthPregnancy,
+      children: [
+        {
+          name: messages.myPregnancy,
+          path: HealthPaths.HealthPregnancyOverview,
+          searchHide: true,
+        },
+      ],
+    },
+    {
       name: messages.myMedicine,
       path: HealthPaths.HealthMedicine,
       children: [
@@ -100,7 +111,6 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: messages.appointments,
       searchHide: false,
-      breadcrumbHide: true,
       path: HealthPaths.HealthAppointments,
       searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
       children: [
@@ -295,6 +305,11 @@ export const healthNavigation: PortalNavigationItem = {
               navHide: true,
             },
           ],
+        },
+        {
+          name: messages.oldPregnanciesTitle,
+          description: messages.oldPregnanciesIntro,
+          path: HealthPaths.HealthOldPregnancies,
         },
         {
           name: messages.patientDataPermit,
