@@ -1,0 +1,35 @@
+query GetVmstApplicantIncomeRows {
+  vmstApplicantIncomeRows {
+    __typename
+    id
+    type
+    period {
+      from
+      to
+    }
+    estimatedIncome
+    ... on VmstApplicantIrregularJob {
+      employer {
+        name
+        ssn
+      }
+    }
+    ... on VmstApplicantPartTimeJob {
+      employer {
+        name
+        ssn
+      }
+      ratio
+    }
+    ... on VmstApplicantPensionPayment {
+      incomeTypeId
+      pensionFundId
+    }
+    ... on VmstApplicantCapitalIncomePayment {
+      incomeTypeId
+    }
+    ... on VmstApplicantTRPayment {
+      incomeTypeId
+    }
+  }
+}
