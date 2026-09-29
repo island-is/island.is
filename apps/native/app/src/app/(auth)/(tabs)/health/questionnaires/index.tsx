@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FlatList, Image, Pressable, RefreshControl } from 'react-native'
@@ -16,6 +15,7 @@ import { useLocale } from '@/hooks/use-locale'
 import { Problem, QuestionnaireCard, Skeleton } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { getQuestionnaireOrganizationLabelId } from '@/utils/questionnaire-utils'
+import { pushOnce } from '@/utils/push-once'
 
 type Item = NonNullable<
   NonNullable<
@@ -24,8 +24,6 @@ type Item = NonNullable<
 >[number]
 
 export default function QuestionnairesScreen() {
-  const router = useRouter()
-
   const theme = useTheme()
   const intl = useIntl()
   const locale = useLocale()
@@ -57,12 +55,12 @@ export default function QuestionnairesScreen() {
       organization?: QuestionnaireQuestionnairesOrganizationEnum,
       title?: string,
     ) => {
-      router.navigate({
+      pushOnce({
         pathname: '/health/questionnaires/[id]',
         params: { id, organization, title },
       })
     },
-    [router],
+    [],
   )
 
   const renderItem = useCallback(

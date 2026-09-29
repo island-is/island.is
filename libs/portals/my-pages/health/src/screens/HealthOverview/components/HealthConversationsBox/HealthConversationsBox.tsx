@@ -213,12 +213,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                       truncate
                     >
                       {item.title}
-                      {unread && (
-                        <VisuallyHidden>
-                          {` - ${formatMessage(m.notificationUnread)}`}
-                        </VisuallyHidden>
-                      )}
                     </Text>
+                    {unread && (
+                      <VisuallyHidden>
+                        {` - ${formatMessage(m.notificationUnread)}`}
+                      </VisuallyHidden>
+                    )}
                   </Box>
                 </Box>
               </Box>

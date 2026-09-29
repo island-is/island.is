@@ -1,4 +1,5 @@
 import { Field, InputType, ID } from '@nestjs/graphql'
+import { IsString, Matches, MaxLength } from 'class-validator'
 import { AnswerOptionType } from '../../models/question.model'
 import { QuestionnairesOrganizationEnum } from '../../models/questionnaires.model'
 
@@ -54,6 +55,16 @@ export class GetQuestionnaireInput {
 
   @Field(() => Boolean, { nullable: true })
   includeQuestions?: boolean
+}
+
+@InputType()
+export class QuestionnairesTreatmentListInput {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(255)
+  // Dot-only ids would resolve as path segments upstream
+  @Matches(/[^.]/)
+  treatmentId!: string
 }
 
 @InputType()

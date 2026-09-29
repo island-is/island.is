@@ -7,7 +7,6 @@ import {
   ScrollView,
   View,
 } from 'react-native'
-import { useRouter } from 'expo-router'
 import styled from 'styled-components/native'
 
 import illustrationSrc from '@/assets/illustrations/le-company-s3.png'
@@ -16,6 +15,7 @@ import { StackScreen } from '@/components/stack-screen'
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useGetAppointmentsQuery } from '@/graphql/types/schema'
 import { EmptyList, GeneralCardSkeleton, Problem } from '@/ui'
+import { pushOnce } from '@/utils/push-once'
 import { AppointmentCard } from '../../../../../components/appointment-card'
 
 const Host = styled(SafeAreaView)`
@@ -39,7 +39,6 @@ const ErrorWrapper = styled.View`
 
 export default function AppointmentsScreen() {
   const intl = useIntl()
-  const router = useRouter()
   const [refetching, setRefetching] = useState(false)
 
   const appointmentsRes = useGetAppointmentsQuery({
@@ -65,15 +64,12 @@ export default function AppointmentsScreen() {
     }
   }, [appointmentsRes])
 
-  const handleAppointmentPress = useCallback(
-    (appointmentId: string) => {
-      router.navigate({
-        pathname: '/health/appointments/[id]',
-        params: { id: appointmentId },
-      })
-    },
-    [router],
-  )
+  const handleAppointmentPress = useCallback((appointmentId: string) => {
+    pushOnce({
+      pathname: '/health/appointments/[id]',
+      params: { id: appointmentId },
+    })
+  }, [])
 
   return (
     <View style={{ flex: 1 }}>
