@@ -16,7 +16,10 @@ import {
   renderHtml,
 } from '@island.is/island-ui/contentful'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader, useGetServicePortalPageQuery } from '@island.is/portals/core'
+import {
+  IntroHeader,
+  useGetServicePortalPageQuery,
+} from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { isCompany } from '@island.is/shared/utils'
@@ -32,10 +35,6 @@ import {
 } from '../../components/delegationRequests/DelegationRequests.generated'
 import * as styles from '../../components/delegationRequests/DelegationRequests.css'
 
-/**
- * Umboðsbeiðnir — a dedicated page listing delegation requests: incoming
- * ones awaiting the user's decision and outgoing ones the user has sent.
- */
 const DelegationRequests = () => {
   useNamespaces('sp.access-control-delegations')
   const { formatMessage, lang = 'is' } = useLocale()
@@ -52,16 +51,20 @@ const DelegationRequests = () => {
     (isCompany(userInfo) && contentfulData?.faqListCompany) ||
     contentfulData?.faqList
 
-  const { data: incomingData, loading: incomingLoading } =
-    useAuthDelegationRequestsIncomingQuery({
-      fetchPolicy: 'cache-and-network',
-      errorPolicy: 'all',
-    })
-  const { data: outgoingData, loading: outgoingLoading } =
-    useAuthDelegationRequestsOutgoingQuery({
-      fetchPolicy: 'cache-and-network',
-      errorPolicy: 'all',
-    })
+  const {
+    data: incomingData,
+    loading: incomingLoading,
+  } = useAuthDelegationRequestsIncomingQuery({
+    fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
+  })
+  const {
+    data: outgoingData,
+    loading: outgoingLoading,
+  } = useAuthDelegationRequestsOutgoingQuery({
+    fetchPolicy: 'cache-and-network',
+    errorPolicy: 'all',
+  })
 
   const canRequest = !isCompany(userInfo)
   const loading = incomingLoading || outgoingLoading
@@ -153,7 +156,7 @@ const DelegationRequests = () => {
 
       {faqList && faqList.questions.length > 0 && (
         <Box paddingTop={8}>
-          <FaqList {...(faqList as unknown as FaqListProps)} />
+          <FaqList {...((faqList as unknown) as FaqListProps)} />
         </Box>
       )}
     </>

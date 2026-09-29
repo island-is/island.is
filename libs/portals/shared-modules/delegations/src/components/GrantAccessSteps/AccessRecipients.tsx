@@ -23,12 +23,8 @@ export const AccessRecipients = ({
   sameSsnMessage,
 }: {
   methods: UseFormReturn<FormData>
-  // When requesting a delegation the grantor may be a company.
   allowCompany?: boolean
-  // When requesting a delegation there is a single grantor, so hide the
-  // add/remove recipient controls.
   singleRecipient?: boolean
-  // The request flow asks who to request from, not who receives access.
   title?: MessageDescriptor
   nationalIdLabel?: MessageDescriptor
   sameSsnMessage?: MessageDescriptor

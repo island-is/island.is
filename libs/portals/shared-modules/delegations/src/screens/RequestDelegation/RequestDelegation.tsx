@@ -36,9 +36,6 @@ interface RequestDetailsFormData {
 
 type GrantorType = 'company' | 'individual'
 
-// Each relationship is tagged with the grantor type(s) it makes sense for, so
-// personal ties (parent/child/spouse/caregiver) are hidden when requesting from
-// a company, and "employee" is hidden when requesting from an individual.
 const RELATIONSHIP_OPTIONS: {
   value: string
   label: MessageDescriptor
@@ -102,8 +99,6 @@ const RequestDetails = ({
     (o) => !grantorType || o.grantorTypes.includes(grantorType),
   )
 
-  // Clear a previously chosen relationship that no longer fits the grantor type
-  // (e.g. "Foreldri" selected, then the grantor switched to a company).
   const selectedRelationship = methods.watch('relationship')
   useEffect(() => {
     if (
@@ -176,7 +171,6 @@ const RequestDelegation = () => {
 
   const [searchParams] = useSearchParams()
 
-  // clear the shared wizard state on unmount
   useEffect(() => {
     return () => clearForm()
   }, [clearForm])
@@ -207,12 +201,7 @@ const RequestDelegation = () => {
 
   const watchIdentities = recipientMethods.watch('identities')
 
-  // A person and a company can grant different scopes, and every grantor in a
-  // single request shares one scope selection, so all grantors must be the same
-  // type. Derive that shared type (and detect a mix) from the entered ids.
-  // Computed inline rather than memoised: react-hook-form's watch() can return a
-  // mutated (referentially stable) array, which would leave a useMemo keyed on it
-  // stuck on its first (empty) result.
+  // Not memoised: RHF watch() returns a mutated, referentially stable array.
   const grantorTypes = new Set(
     watchIdentities
       .filter((identity) => identity.nationalId.length >= 10)
@@ -226,10 +215,6 @@ const RequestDelegation = () => {
       : undefined
   const hasMixedGrantorTypes = grantorTypes.size > 1
 
-  // Scopes are chosen for one grantor type. If the grantor is later switched to
-  // the other type (e.g. person -> company) while réttindi are already selected,
-  // those selections are no longer grantable, so confirm and clear them. Only
-  // fires on a real change between two defined types with a non-empty selection.
   const prevGrantorTypeRef = useRef<'company' | 'individual' | undefined>(
     requestGrantorType,
   )

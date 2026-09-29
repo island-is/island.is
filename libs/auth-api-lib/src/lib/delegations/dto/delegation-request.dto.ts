@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
+  ArrayMaxSize,
   ArrayNotEmpty,
   IsArray,
   IsBoolean,
@@ -15,7 +16,6 @@ import {
 
 import { DelegationRequestStatus } from '../types/delegationRequestStatus'
 
-/** A single scope asked for as part of a delegation request. */
 export class DelegationRequestScopeDTO {
   @IsString()
   @ApiProperty()
@@ -36,19 +36,16 @@ export class DelegationRequestScopeDTO {
   @ApiPropertyOptional({ nullable: true, type: String })
   domainDisplayName?: string | null
 
-  /** National id of the scope's organisation, used to resolve its logo. */
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ nullable: true, type: String })
   domainNationalId?: string | null
 
-  /** What the scope grants access to, shown as "Lýsing á umboði". */
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ nullable: true, type: String })
   description?: string | null
 
-  /** Whether the scope grants write access ("Skoða og breyta" vs "Skoða"). */
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ nullable: true, type: Boolean })
@@ -60,7 +57,6 @@ export class DelegationRequestScopeDTO {
   validTo?: Date | null
 }
 
-/** Scope reference the requester wants; validTo is optional. */
 export class RequestDelegationScopeDTO {
   @IsString()
   @ApiProperty()
@@ -104,6 +100,7 @@ export class CreateDelegationRequestDTO {
   @ValidateNested({ each: true })
   @IsArray()
   @ArrayNotEmpty()
+  @ArrayMaxSize(100)
   scopes!: RequestDelegationScopeDTO[]
 }
 

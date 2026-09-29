@@ -89,17 +89,17 @@ const AccessControlNew = () => {
     (isCompany(userInfo) && contentfulData?.faqListCompany) ||
     contentfulData?.faqList
 
-  // Pending incoming delegation requests — surface an alert linking to the
-  // Umboðsbeiðnir page. Gated by the same feature flag as the requests flow.
   const { value: delegationRequestsEnabled } = useFeatureFlag(
     Features.isDelegationRequestsEnabled,
     false,
   )
-  const { data: incomingRequestsData } = useAuthDelegationRequestsIncomingQuery({
-    skip: !delegationRequestsEnabled,
-    fetchPolicy: 'cache-and-network',
-    errorPolicy: 'all',
-  })
+  const { data: incomingRequestsData } = useAuthDelegationRequestsIncomingQuery(
+    {
+      skip: !delegationRequestsEnabled,
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    },
+  )
   const hasPendingRequests =
     delegationRequestsEnabled &&
     (incomingRequestsData?.authDelegationRequestsIncoming ?? []).some(
@@ -433,7 +433,7 @@ const AccessControlNew = () => {
 
       {faqList && faqList.questions.length > 0 && (
         <Box paddingTop={8}>
-          <FaqList {...(faqList as unknown as FaqListProps)} />
+          <FaqList {...((faqList as unknown) as FaqListProps)} />
         </Box>
       )}
     </>

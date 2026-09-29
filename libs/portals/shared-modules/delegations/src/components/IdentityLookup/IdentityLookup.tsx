@@ -31,10 +31,7 @@ export const IdentityLookup = ({
   index?: number
   showRemoveButton?: boolean
   onRemove?: () => void
-  // When requesting a delegation you may target a company (its procuration
-  // holders decide), so company national ids are accepted in that flow.
   allowCompany?: boolean
-  // The request flow looks up the grantor, not the access holder.
   nationalIdLabel?: MessageDescriptor
   sameSsnMessage?: MessageDescriptor
 }) => {
@@ -116,7 +113,7 @@ export const IdentityLookup = ({
       <div className={styles.nationalIdRow}>
         <div className={styles.nationalIdInput({ showRemoveButton })}>
           <InputController
-            control={control as unknown as Control}
+            control={(control as unknown) as Control}
             id={`identities.${index}.nationalId`}
             name={`identities.${index}.nationalId`}
             label={formatMessage(nationalIdLabel)}

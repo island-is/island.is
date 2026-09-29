@@ -38,12 +38,9 @@ import {
 } from '../delegationRequests/DelegationRequests.generated'
 import * as styles from './Modals.css'
 
-type IncomingRequest =
-  AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
+type IncomingRequest = AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
 
 const defaultValidity = (request: IncomingRequest): Date => {
-  // The grantor sets one validity for the whole grant. Seed it with the
-  // latest date the requester asked for, falling back to one year out.
   const requested = request.scopes
     .map((scope) => (scope.validTo ? new Date(scope.validTo) : null))
     .filter((date): date is Date => date !== null)
@@ -53,13 +50,6 @@ const defaultValidity = (request: IncomingRequest): Date => {
   return add(new Date(), { years: 1 })
 }
 
-/**
- * Shows a delegation request. Two modes:
- * - actionable (grantor reviewing an incoming request): pick scopes, set a
- *   validity, approve or reject.
- * - read-only (requester viewing a request they sent): details only, with the
- *   option to withdraw (afturkalla) it.
- */
 export const ReviewRequestModal = ({
   request,
   onClose,
@@ -71,15 +61,10 @@ export const ReviewRequestModal = ({
 }: {
   request: IncomingRequest | null
   onClose: () => void
-  // Not needed in read-only mode.
   onReject?: (request: IncomingRequest) => void
-  // Read-only mode only: withdraw (afturkalla) the sent request.
   onCancel?: (request: IncomingRequest) => void
-  // Shown for an approved request to open the resulting delegation.
   onViewDelegation?: (request: IncomingRequest) => void
   readOnly?: boolean
-  // 'incoming' shows the requester (grantor's view); 'outgoing' shows the
-  // grantor (requester's view of a request they sent).
   direction?: 'incoming' | 'outgoing'
 }) => {
   const { formatMessage, lang } = useLocale()
@@ -89,7 +74,6 @@ export const ReviewRequestModal = ({
   const [selected, setSelected] = useState<Record<string, boolean>>({})
   const [validTo, setValidTo] = useState<Date | null>(null)
 
-  // Seed selection (all scopes) and validity when a request opens.
   useEffect(() => {
     if (request) {
       setSelected(
@@ -99,8 +83,10 @@ export const ReviewRequestModal = ({
     }
   }, [request])
 
-  const [createAuthDelegations, { loading: approveLoading }] =
-    useCreateAuthDelegationsMutation()
+  const [
+    createAuthDelegations,
+    { loading: approveLoading },
+  ] = useCreateAuthDelegationsMutation()
   const [fulfillDelegationRequest] = useFulfillAuthDelegationRequestMutation({
     refetchQueries: [
       { query: AuthDelegationRequestsIncomingDocument },
@@ -147,11 +133,13 @@ export const ReviewRequestModal = ({
 
   const hasSelection = request?.scopes.some((s) => selected[s.scopeName])
 
-  const { data: categoriesData, loading: categoriesLoading } =
-    useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-      variables: { lang, direction: AuthDelegationDirection.outgoing },
-      skip: !isGrantorReview || !request,
-    })
+  const {
+    data: categoriesData,
+    loading: categoriesLoading,
+  } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
+    variables: { lang, direction: AuthDelegationDirection.outgoing },
+    skip: !isGrantorReview || !request,
+  })
   const { data: tagsData, loading: tagsLoading } = useQuery<AuthScopeTagsQuery>(
     AuthScopeTagsDocument,
     {
@@ -182,8 +170,6 @@ export const ReviewRequestModal = ({
       : []
   const cannotGrant = ungrantableScopes.length > 0
 
-  // In read-only mode the counterparty is the grantor (request.from); when
-  // acting as the grantor it is the requester (request.to).
   const title = isOutgoing ? m.requestSentTitle : m.requestReviewTitle
 
   return (

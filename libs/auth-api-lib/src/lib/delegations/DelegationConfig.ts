@@ -33,10 +33,7 @@ const schema = z.object({
   customScopeRules: customScopeRuleSchema,
   userInfoUrl: z.string(),
   defaultValidityPeriodInDays: z.number().min(1),
-  // Max number of simultaneously pending delegation requests per requester.
   delegationRequestMaxPending: z.number().min(1),
-  // Number of rejections within the lock window that blocks a requester from
-  // creating new delegation requests, and how long that window is.
   delegationRequestRejectionLockThreshold: z.number().min(1),
   delegationRequestRejectionLockDays: z.number().min(1),
 })

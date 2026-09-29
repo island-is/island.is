@@ -103,8 +103,6 @@ export const ConfirmAccessModal = ({
         },
       })
 
-      // If this grant originated from an approved delegation request,
-      // link the newly created delegation back to that request.
       const createdDelegationId = result.data?.createAuthDelegations?.[0]?.id
       if (pendingRequestId && createdDelegationId) {
         try {
@@ -117,8 +115,7 @@ export const ConfirmAccessModal = ({
             },
           })
         } catch {
-          // The delegation was created successfully; failing to link the
-          // request should not block the user. Surface a soft error.
+          // The delegation exists; failing to link the request should not block.
           toast.error(formatMessage(m.confirmError))
         } finally {
           setPendingRequestId(undefined)

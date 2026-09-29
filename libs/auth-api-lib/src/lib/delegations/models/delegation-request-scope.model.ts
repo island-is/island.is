@@ -20,10 +20,6 @@ import { ApiScope } from '../../resources/models/api-scope.model'
 import { DelegationRequestScopeDTO } from '../dto/delegation-request.dto'
 import { DelegationRequest } from './delegation-request.model'
 
-/**
- * A scope that a delegation request asks for. Mirrors {@link DelegationScope}
- * but hangs off a {@link DelegationRequest} instead of an actual delegation.
- */
 @Table({
   tableName: 'delegation_request_scope',
   timestamps: true,

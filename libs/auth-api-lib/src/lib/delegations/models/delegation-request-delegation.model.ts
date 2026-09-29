@@ -48,8 +48,7 @@ export class DelegationRequestDelegation extends Model<
 
   @ForeignKey(() => Delegation)
   @Column({
-    // delegation.id is a uuid column.
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
   })
   delegationId!: string

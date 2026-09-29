@@ -72,10 +72,6 @@ export const createDelegationsModule = (
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
-    // Requesting a delegation is not available in the company view (§7.2.5) — a
-    // company's procuration holders decide on incoming requests instead. Hide
-    // the "request a delegation" nav item and route for companies (the backend
-    // also rejects it), while keeping the requests overview for reviewing.
     const canRequestDelegation = !isCompany(userInfo)
     const commonProps = {
       name: coreMessages.accessControlDelegations,

@@ -232,10 +232,6 @@ export class DelegationResourcesService {
         [col(prefix, 'isAccessControlled')]: { [Op.ne]: true },
       })
 
-      // A person and a company can grant different scopes, so the request
-      // catalog is narrowed to what the chosen grantor is actually able to
-      // grant: a company grants through its procuration holders, an individual
-      // grants scopes that can be delegated to an authenticated user.
       if (requestGrantorType === 'company') {
         apiScopeFilter.push({
           [col(prefix, 'grantToProcuringHolders')]: true,

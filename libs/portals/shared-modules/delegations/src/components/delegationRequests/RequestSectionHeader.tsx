@@ -1,9 +1,5 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 
-/**
- * The heading row for a requests section: a coloured icon badge (matching the
- * Mín umboð section headers), the title and a short description underneath.
- */
 export const RequestSectionHeader = ({
   direction,
   title,

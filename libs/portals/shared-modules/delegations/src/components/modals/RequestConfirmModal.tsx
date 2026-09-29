@@ -42,9 +42,6 @@ export const RequestConfirmModal = ({
 
     setErrorMessage(null)
 
-    // One request per grantor. Report per-grantor failures rather than a single
-    // opaque error, since guardrails (pending cap, rejection lock, duplicates)
-    // can reject some grantors while others succeed.
     const results = await Promise.allSettled(
       granters.map((granter) =>
         createRequest({
@@ -72,8 +69,6 @@ export const RequestConfirmModal = ({
       return
     }
 
-    // Keep the modal open with a persistent explanation — guardrail errors need
-    // more than a toast, and with multiple grantors the message names each one.
     setErrorMessage(
       failures
         .map(({ result, granter }) => {

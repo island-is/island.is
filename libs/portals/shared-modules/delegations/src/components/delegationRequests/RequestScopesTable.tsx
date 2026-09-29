@@ -13,11 +13,6 @@ interface RequestScope {
   validTo?: string | null
 }
 
-/**
- * The scopes a delegation request asks for, in the same shape the granted
- * delegations tables use — these become those rows once the request is
- * approved.
- */
 export const RequestScopesTable = ({ scopes }: { scopes: RequestScope[] }) => {
   const { formatMessage } = useLocale()
 

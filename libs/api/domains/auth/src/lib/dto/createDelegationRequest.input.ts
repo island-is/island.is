@@ -11,7 +11,6 @@ export class RequestDelegationScopeInput {
 
 @InputType('AuthCreateDelegationRequestInput')
 export class CreateDelegationRequestInput {
-  /** National id of the grantor being asked (individual or company). */
   @Field(() => String)
   toGranterNationalId!: string
 

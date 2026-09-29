@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
@@ -40,8 +40,10 @@ import { DelegationRequest } from './models/delegation-request.model'
 import { NamesService } from './names.service'
 import { DelegationRequestStatus } from './types/delegationRequestStatus'
 
-/** How long a pending request stays actionable before it auto-expires. */
 const REQUEST_TTL_DAYS = 30
+
+const DUPLICATE_PENDING_MESSAGE =
+  'A pending delegation request to this party already exists.'
 
 @Injectable()
 export class DelegationRequestService {
@@ -67,16 +69,10 @@ export class DelegationRequestService {
     private logger: Logger,
   ) {}
 
-  /**
-   * Create a delegation request. Only available when acting as yourself (the
-   * individual view) — you request a delegation *from* another individual or a
-   * company (whose procuration holders decide).
-   */
   async createRequest(
     user: User,
     dto: CreateDelegationRequestDTO,
   ): Promise<DelegationRequestDTO> {
-    // Requesting is only available in the individual view (§7.2.5).
     if (user.actor) {
       throw new ForbiddenException(
         'Delegation requests can only be made when acting as yourself.',
@@ -90,16 +86,17 @@ export class DelegationRequestService {
       throw new BadRequestException('Invalid national id for the grantor.')
     }
     if (granterNationalId === requesterNationalId) {
-      throw new BadRequestException('Cannot request a delegation from yourself.')
+      throw new BadRequestException(
+        'Cannot request a delegation from yourself.',
+      )
     }
 
     const isCompany = kennitala.isCompany(granterNationalId)
 
-    // Validate the requested scopes exist, are explicitly delegatable, are not
-    // access controlled, and can actually be granted by this grantor type: a
-    // company grants through its procuration holders, an individual grants
-    // scopes that can be delegated to an authenticated user.
-    const scopeNames = [...new Set(dto.scopes.map((s) => s.scopeName))]
+    const requestedScopes = [
+      ...new Map(dto.scopes.map((s) => [s.scopeName, s])).values(),
+    ]
+    const scopeNames = requestedScopes.map((s) => s.scopeName)
     const grantableScopes = await this.apiScopeModel.findAll({
       where: {
         name: { [Op.in]: scopeNames },
@@ -117,9 +114,6 @@ export class DelegationRequestService {
       )
     }
 
-    // Guardrails against abuse, checked before the registry lookups: a
-    // rejection-based lock, duplicate live requests, and a cap on how many
-    // requests a single requester can have open at once.
     await this.assertNotRejectionBlocked(requesterNationalId)
     await this.assertNoDuplicatePending(
       granterNationalId,
@@ -128,54 +122,53 @@ export class DelegationRequestService {
     )
     await this.assertUnderPendingCap(requesterNationalId)
 
-    // The grantor is the notification recipient. When the grantor is a company,
-    // the user-notification service resolves its procuration holders from the
-    // delegation records and fans out to them (setting onBehalfOf = the
-    // company), so we do not look them up here. For individuals we still reject
-    // up front if the grantor is deceased, rather than creating a request that
-    // can never be acted on.
     if (!isCompany) {
       await this.namesService.validateRecipientNotDeceased(granterNationalId)
     }
-    const recipients = [granterNationalId]
 
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + REQUEST_TTL_DAYS)
 
-    const request = await this.sequelize.transaction(async (transaction) => {
-      const created = await this.delegationRequestModel.create(
-        {
-          id: uuid(),
-          fromNationalId: granterNationalId,
-          toNationalId: requesterNationalId,
-          domainName: dto.domainName ?? null,
-          relationship: dto.relationship,
-          reason: dto.reason,
-          status: DelegationRequestStatus.Pending,
-          createdByNationalId: requesterNationalId,
-          expiresAt,
-        },
-        { transaction },
-      )
+    const request = await this.sequelize
+      .transaction(async (transaction) => {
+        const created = await this.delegationRequestModel.create(
+          {
+            id: uuid(),
+            fromNationalId: granterNationalId,
+            toNationalId: requesterNationalId,
+            domainName: dto.domainName ?? null,
+            relationship: dto.relationship,
+            reason: dto.reason,
+            status: DelegationRequestStatus.Pending,
+            createdByNationalId: requesterNationalId,
+            expiresAt,
+          },
+          { transaction },
+        )
 
-      await this.delegationRequestScopeModel.bulkCreate(
-        dto.scopes.map((scope) => ({
-          id: uuid(),
-          delegationRequestId: created.id,
-          scopeName: scope.scopeName,
-          validTo: scope.validTo ?? null,
-        })),
-        { transaction },
-      )
+        await this.delegationRequestScopeModel.bulkCreate(
+          requestedScopes.map((scope) => ({
+            id: uuid(),
+            delegationRequestId: created.id,
+            scopeName: scope.scopeName,
+            validTo: scope.validTo ?? null,
+          })),
+          { transaction },
+        )
 
-      return created
-    })
+        return created
+      })
+      .catch((error) => {
+        // A concurrent submission won the race past assertNoDuplicatePending.
+        if (error instanceof UniqueConstraintError) {
+          throw new BadRequestException(DUPLICATE_PENDING_MESSAGE)
+        }
+        throw error
+      })
 
-    const requesterName = await this.namesService.getUserName(user)
     void this.notifyNewRequest(
       user,
-      recipients,
-      requesterName,
+      granterNationalId,
       dto.relationship,
       grantableScopes.map((s) => s.domainName),
     )
@@ -183,7 +176,6 @@ export class DelegationRequestService {
     return this.findById(user, request.id)
   }
 
-  /** Requests the current user has sent (as prospective delegate). */
   async findAllOutgoing(user: User): Promise<DelegationRequestDTO[]> {
     await this.expireStale({ toNationalId: user.nationalId })
     const requests = await this.delegationRequestModel.findAll({
@@ -200,11 +192,6 @@ export class DelegationRequestService {
     return requests.map((r) => r.toDTO())
   }
 
-  /**
-   * Requests addressed to the current subject as prospective grantor. When a
-   * procuration holder is in company view, `user.nationalId` is the company id,
-   * so this naturally returns that company's incoming requests.
-   */
   async findAllIncoming(user: User): Promise<DelegationRequestDTO[]> {
     await this.expireStale({ fromNationalId: user.nationalId })
     const requests = await this.delegationRequestModel.findAll({
@@ -226,7 +213,6 @@ export class DelegationRequestService {
     return request.toDTO()
   }
 
-  /** Grantor declines the request. */
   async reject(user: User, id: string): Promise<DelegationRequestDTO> {
     const request = await this.getGranterRequest(user, id)
     this.assertPending(request)
@@ -236,19 +222,16 @@ export class DelegationRequestService {
       resolvedByNationalId: user.actor?.nationalId ?? user.nationalId,
     })
 
-    const granterName = await this.namesService.getUserName(user)
     void this.notifyRequester(
       user,
       request.toNationalId,
       DELEGATION_REQUEST_REJECTED_TEMPLATE_ID,
-      granterName,
       request.requestScopes?.map((s) => s.apiScope?.domainName) ?? [],
     )
 
     return this.findById(user, id)
   }
 
-  /** Requester withdraws their own request. */
   async cancel(user: User, id: string): Promise<DelegationRequestDTO> {
     const request = await this.delegationRequestModel.findByPk(id)
     if (!request || request.toNationalId !== user.nationalId) {
@@ -260,10 +243,6 @@ export class DelegationRequestService {
     return this.findById(user, id)
   }
 
-  /**
-   * Mark a request approved and link the delegation that fulfilled it. Called
-   * after the grantor confirms the (pre-filled, editable) grant flow.
-   */
   async markFulfilled(
     user: User,
     id: string,
@@ -271,6 +250,20 @@ export class DelegationRequestService {
   ): Promise<DelegationRequestDTO> {
     const request = await this.getGranterRequest(user, id)
     this.assertPending(request)
+
+    const fulfillingDelegation = await this.delegationModel.findOne({
+      where: {
+        id: delegationId,
+        fromNationalId: request.fromNationalId,
+        toNationalId: request.toNationalId,
+      },
+      attributes: ['id'],
+    })
+    if (!fulfillingDelegation) {
+      throw new BadRequestException(
+        'Delegation does not match the parties of this request.',
+      )
+    }
 
     await request.update({
       status: DelegationRequestStatus.Approved,
@@ -284,10 +277,7 @@ export class DelegationRequestService {
           .filter((name): name is string => Boolean(name)) ?? [],
       ),
     ]
-    const delegationIds = new Set<string>()
-    if (delegationId) {
-      delegationIds.add(delegationId)
-    }
+    const delegationIds = new Set<string>([fulfillingDelegation.id])
     if (domainNames.length > 0) {
       const delegations = await this.delegationModel.findAll({
         where: {
@@ -299,23 +289,19 @@ export class DelegationRequestService {
       })
       delegations.forEach((d) => delegationIds.add(d.id))
     }
-    if (delegationIds.size > 0) {
-      await this.delegationRequestDelegationModel.bulkCreate(
-        [...delegationIds].map((linkedId) => ({
-          id: uuid(),
-          delegationRequestId: request.id,
-          delegationId: linkedId,
-        })),
-        { ignoreDuplicates: true },
-      )
-    }
+    await this.delegationRequestDelegationModel.bulkCreate(
+      [...delegationIds].map((linkedId) => ({
+        id: uuid(),
+        delegationRequestId: request.id,
+        delegationId: linkedId,
+      })),
+      { ignoreDuplicates: true },
+    )
 
-    const granterName = await this.namesService.getUserName(user)
     void this.notifyRequester(
       user,
       request.toNationalId,
       DELEGATION_REQUEST_APPROVED_TEMPLATE_ID,
-      granterName,
       request.requestScopes?.map((s) => s.apiScope?.domainName) ?? [],
     )
 
@@ -358,8 +344,7 @@ export class DelegationRequestService {
         { model: DelegationRequestDelegation },
       ],
     })
-    // The grantor side is the current subject (an individual, or a company the
-    // acting procuration holder is currently representing).
+    // In company view user.nationalId is the company.
     if (!request || request.fromNationalId !== user.nationalId) {
       throw new NotFoundException('Delegation request not found.')
     }
@@ -388,9 +373,7 @@ export class DelegationRequestService {
       },
     })
     if (existing) {
-      throw new BadRequestException(
-        'A pending delegation request to this party already exists.',
-      )
+      throw new BadRequestException(DUPLICATE_PENDING_MESSAGE)
     }
   }
 
@@ -408,12 +391,7 @@ export class DelegationRequestService {
     }
   }
 
-  /**
-   * Requesters who collect too many rejections within the lock window are
-   * blocked from creating new requests until rejections age out of it. A
-   * rejection is the terminal write on its row, so `modified` is when it
-   * happened.
-   */
+  // A rejection is the terminal write on its row, so `modified` is when it happened.
   private async assertNotRejectionBlocked(
     requesterNationalId: string,
   ): Promise<void> {
@@ -437,7 +415,6 @@ export class DelegationRequestService {
     }
   }
 
-  /** Flip any past-expiry pending requests to `expired` before listing. */
   private async expireStale(
     scope: { fromNationalId: string } | { toNationalId: string },
   ): Promise<void> {
@@ -455,49 +432,59 @@ export class DelegationRequestService {
 
   private async notifyNewRequest(
     user: User,
-    recipients: string[],
-    requesterName: string,
+    recipient: string,
     relationship: string,
     domainNames: Array<string | null | undefined>,
   ): Promise<void> {
-    if (!(await this.notificationsEnabled(user))) {
-      return
+    try {
+      if (!(await this.notificationsEnabled(user))) {
+        return
+      }
+      const requesterName = await this.namesService.getUserName(user)
+      const { domainNameIs, domainNameEn } = await this.resolveDomainNames(
+        user,
+        domainNames,
+      )
+      await this.sendNotification(recipient, DELEGATION_REQUEST_TEMPLATE_ID, [
+        { key: 'name', value: requesterName },
+        { key: 'relationship', value: relationship },
+        { key: 'domainNameIs', value: domainNameIs },
+        { key: 'domainNameEn', value: domainNameEn },
+      ])
+    } catch {
+      // Do not log the error, it can carry PII from upstream calls.
+      this.logger.error(
+        `Failed to send delegation request notification (template: ${DELEGATION_REQUEST_TEMPLATE_ID})`,
+      )
     }
-    const { domainNameIs, domainNameEn } = await this.resolveDomainNames(
-      user,
-      domainNames,
-    )
-    await Promise.all(
-      recipients.map((recipient) =>
-        this.sendNotification(recipient, DELEGATION_REQUEST_TEMPLATE_ID, [
-          { key: 'name', value: requesterName },
-          { key: 'relationship', value: relationship },
-          { key: 'domainNameIs', value: domainNameIs },
-          { key: 'domainNameEn', value: domainNameEn },
-        ]),
-      ),
-    )
   }
 
   private async notifyRequester(
     user: User,
     recipient: string,
     templateId: string,
-    granterName: string,
     domainNames: Array<string | null | undefined>,
   ): Promise<void> {
-    if (!(await this.notificationsEnabled(user))) {
-      return
+    try {
+      if (!(await this.notificationsEnabled(user))) {
+        return
+      }
+      const granterName = await this.namesService.getUserName(user)
+      const { domainNameIs, domainNameEn } = await this.resolveDomainNames(
+        user,
+        domainNames,
+      )
+      await this.sendNotification(recipient, templateId, [
+        { key: 'name', value: granterName },
+        { key: 'domainNameIs', value: domainNameIs },
+        { key: 'domainNameEn', value: domainNameEn },
+      ])
+    } catch {
+      // Do not log the error, it can carry PII from upstream calls.
+      this.logger.error(
+        `Failed to send delegation request notification (template: ${templateId})`,
+      )
     }
-    const { domainNameIs, domainNameEn } = await this.resolveDomainNames(
-      user,
-      domainNames,
-    )
-    await this.sendNotification(recipient, templateId, [
-      { key: 'name', value: granterName },
-      { key: 'domainNameIs', value: domainNameIs },
-      { key: 'domainNameEn', value: domainNameEn },
-    ])
   }
 
   private async resolveDomainNames(
@@ -543,17 +530,8 @@ export class DelegationRequestService {
     templateId: string,
     args: { key: string; value: string }[],
   ): Promise<void> {
-    try {
-      await this.notificationsApi.notificationsControllerCreateHnippNotification(
-        {
-          createHnippNotificationDto: { recipient, templateId, args },
-        },
-      )
-    } catch (e) {
-      // Do not log PII (recipient national id / names / reason).
-      this.logger.error(
-        `Failed to send delegation request notification (template: ${templateId})`,
-      )
-    }
+    await this.notificationsApi.notificationsControllerCreateHnippNotification({
+      createHnippNotificationDto: { recipient, templateId, args },
+    })
   }
 }

@@ -7,13 +7,17 @@ import {
   DelegationRequest,
   DelegationRequestError,
   DelegationRequestScope,
+  DelegationRequestService,
   DelegationRequestStatus,
   Domain,
   NamesService,
   NotificationsApi,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
-import { createCurrentUser, createNationalId } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { TestApp } from '@island.is/testing/nest'
 import { User } from '@island.is/auth-nest-tools'
@@ -21,6 +25,12 @@ import { User } from '@island.is/auth-nest-tools'
 import { setupWithAuth } from '../../../../test/setup'
 
 const path = '/v1/me/delegation-requests'
+
+const waitForCall = async (spy: jest.SpyInstance, times = 1) => {
+  for (let i = 0; i < 50 && spy.mock.calls.length < times; i++) {
+    await new Promise((resolve) => setTimeout(resolve, 10))
+  }
+}
 
 describe('DelegationRequestsController', () => {
   const requester: User = createCurrentUser({
@@ -54,9 +64,7 @@ describe('DelegationRequestsController', () => {
       .spyOn(namesService, 'validateRecipientNotDeceased')
       .mockResolvedValue(faker.name.findName())
 
-    // Avoid real notification network calls (feature flag mock returns truthy).
-    // NotificationsApi is a scoped provider, so spy on the prototype rather
-    // than a container instance.
+    // NotificationsApi is a scoped provider, so spy on the prototype.
     notifySpy = jest
       .spyOn(
         NotificationsApi.prototype,
@@ -101,7 +109,39 @@ describe('DelegationRequestsController', () => {
     })
     expect(res.body.scopes).toHaveLength(1)
     expect(res.body.scopes[0].scopeName).toEqual(scope.name)
+    await waitForCall(notifySpy)
     expect(notifySpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('stores a repeated scope only once', async () => {
+    const res = await server.post(path).send({
+      ...validBody(),
+      scopes: [{ scopeName: scope.name }, { scopeName: scope.name }],
+    })
+
+    expect(res.status).toEqual(201)
+    expect(res.body.scopes).toHaveLength(1)
+  })
+
+  it('accepts relationship and reason up to the validated length', async () => {
+    const res = await server.post(path).send({
+      ...validBody(),
+      relationship: 'a'.repeat(1024),
+      reason: 'b'.repeat(1024),
+    })
+
+    expect(res.status).toEqual(201)
+  })
+
+  it('still creates the request when the notification fails', async () => {
+    jest
+      .spyOn(app.get(NamesService), 'getUserName')
+      .mockRejectedValueOnce(new Error('userinfo down'))
+
+    const res = await server.post(path).send(validBody())
+
+    expect(res.status).toEqual(201)
+    expect(res.body.status).toEqual(DelegationRequestStatus.Pending)
   })
 
   it('lists outgoing requests for the requester', async () => {
@@ -182,6 +222,48 @@ describe('DelegationRequestsController', () => {
 
     expect(res.status).toEqual(403)
     expect(res.body.detail).toEqual(DelegationRequestError.Blocked)
+  })
+
+  describe('markFulfilled', () => {
+    const granter = createCurrentUser({ nationalId: granterNationalId })
+
+    it('links a delegation between the request parties', async () => {
+      const created = await server.post(path).send(validBody())
+      const delegation = await factory.createCustomDelegation({
+        fromNationalId: granterNationalId,
+        toNationalId: requester.nationalId,
+        domainName: domain.name,
+      })
+
+      const service = await app.resolve(DelegationRequestService)
+      const result = await service.markFulfilled(
+        granter,
+        created.body.id,
+        delegation.id,
+      )
+
+      expect(result.status).toEqual(DelegationRequestStatus.Approved)
+      expect(result.resolvedDelegationId).toEqual(delegation.id)
+    })
+
+    it('rejects a delegation between other parties', async () => {
+      const created = await server.post(path).send(validBody())
+      const otherDelegation = await factory.createCustomDelegation({
+        domainName: domain.name,
+      })
+
+      const service = await app.resolve(DelegationRequestService)
+      await expect(
+        service.markFulfilled(granter, created.body.id, otherDelegation.id),
+      ).rejects.toThrow(
+        'Delegation does not match the parties of this request.',
+      )
+
+      const request = await app
+        .get(getModelToken(DelegationRequest))
+        .findByPk(created.body.id)
+      expect(request.status).toEqual(DelegationRequestStatus.Pending)
+    })
   })
 
   it('lets the requester cancel their own pending request', async () => {

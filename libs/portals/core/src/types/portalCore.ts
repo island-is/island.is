@@ -69,10 +69,7 @@ export interface PortalNavigationItem {
    * Reason why the navigation item is disabled, when enabled is false
    */
   disabledReason?: PortalRouteDisabledReason
-  /**
-   * Scope names gating this item, offered as pre-selected scopes in the
-   * request-a-delegation flow when the item is locked.
-   */
+  /** Pre-selected in the request-a-delegation flow when the item is locked. */
   requiredScopes?: string[]
   /**
    * Subscribes to - get updates from badge context
@@ -166,11 +163,7 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
    * automatically set to 'notAvailableForActors'.
    */
   notAvailableForActors?: boolean
-  /**
-   * Scope names gating this route. When the route is locked because the user
-   * lacks a delegation, these are offered as pre-selected scopes in the
-   * request-a-delegation flow.
-   */
+  /** Pre-selected in the request-a-delegation flow when the route is locked. */
   requiredScopes?: string[]
   /**
    * Hides navigation item from navigation

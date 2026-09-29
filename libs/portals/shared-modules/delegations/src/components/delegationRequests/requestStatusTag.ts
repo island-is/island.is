@@ -3,7 +3,6 @@ import { AuthDelegationRequestStatus } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
 
-/** Status tag shown for a resolved delegation request (both directions). */
 export const requestStatusTag: Partial<
   Record<
     AuthDelegationRequestStatus,

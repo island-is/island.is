@@ -73,12 +73,13 @@ export const AccessScopes = ({
       },
     },
   )
-  const { selectedScopes, setSelectedScopes, requestedScopeNames } =
-    useDelegationForm()
+  const {
+    selectedScopes,
+    setSelectedScopes,
+    requestedScopeNames,
+  } = useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
 
-  // Flat list of every scope the current user is allowed to grant. Used to
-  // pre-select scopes coming from an approved delegation request.
   const allGrantableScopes = useMemo(() => {
     const byName = new Map<string, AuthApiScope>()
     for (const category of categoriesData?.authScopeCategories ?? []) {
@@ -94,8 +95,6 @@ export const AccessScopes = ({
     return byName
   }, [categoriesData, tagsData])
 
-  // Pre-select requested scopes once the grantable scope list has loaded.
-  // Runs once per set of requested scope names.
   const preselectDoneRef = useRef(false)
   useEffect(() => {
     if (
@@ -126,7 +125,6 @@ export const AccessScopes = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestedScopeNames, allGrantableScopes, setSelectedScopes])
 
-  // Requested scope names that the current user cannot grant.
   const notGrantableScopeNames = useMemo(() => {
     if (!requestedScopeNames || allGrantableScopes.size === 0) {
       return []

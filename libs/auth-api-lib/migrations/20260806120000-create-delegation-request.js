@@ -26,11 +26,11 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       relationship: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(1024),
         allowNull: false,
       },
       reason: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
       },
       status: {
@@ -120,7 +120,6 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       delegation_id: {
-        // delegation.id is a uuid column, so the FK column must match.
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -145,15 +144,17 @@ module.exports = {
       name: 'delegation_request_delegation_unique',
     })
 
-    // Only one live (pending) request per grantor/requester/domain triple.
-    await queryInterface.addIndex('delegation_request', {
-      name: 'delegation_request_unique_pending',
-      unique: true,
-      fields: ['from_national_id', 'to_national_id', 'domain_name'],
-      where: { status: 'pending' },
-    })
+    // Unique indexes treat NULLs as distinct, hence the COALESCE.
+    await queryInterface.sequelize.query(`
+      CREATE UNIQUE INDEX "delegation_request_unique_pending"
+      ON "delegation_request" (
+        "from_national_id",
+        "to_national_id",
+        COALESCE("domain_name", '')
+      )
+      WHERE "status" = 'pending';
+    `)
 
-    // Fast lookups for the incoming (grantor) and outgoing (requester) lists.
     await queryInterface.addIndex('delegation_request', {
       name: 'delegation_request_from_status_idx',
       fields: ['from_national_id', 'status'],
@@ -174,7 +175,6 @@ module.exports = {
     await queryInterface.sequelize.query(
       'DROP TABLE IF EXISTS "delegation_request" CASCADE;',
     )
-    // Drop the enum type created for the status column.
     await queryInterface.sequelize.query(
       'DROP TYPE IF EXISTS "enum_delegation_request_status";',
     )

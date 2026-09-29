@@ -199,7 +199,6 @@ export enum Features {
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
 
-  // Request-a-delegation ("Beiðni um umboð")
   isDelegationRequestsEnabled = 'isDelegationRequestsEnabled',
   isDelegationRequestNotificationEnabled = 'isDelegationRequestNotificationEnabled',
 

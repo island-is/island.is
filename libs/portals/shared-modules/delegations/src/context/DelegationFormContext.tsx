@@ -28,14 +28,9 @@ export interface DelegationFormState {
   selectedScopes: ScopeSelection[]
   setSelectedScopes: Dispatch<SetStateAction<ScopeSelection[]>>
 
-  // Set when a grantor approves an incoming delegation request and gets
-  // routed into the grant wizard. Threads the originating request through the
-  // grant flow so the created delegation can be linked back (fulfill).
   pendingRequestId?: string
   setPendingRequestId: Dispatch<SetStateAction<string | undefined>>
 
-  // Scope names requested in the approved delegation request. Used to
-  // pre-select scopes in AccessScopes once the grantable scope list loads.
   requestedScopeNames?: string[]
   setRequestedScopeNames: Dispatch<SetStateAction<string[] | undefined>>
 
