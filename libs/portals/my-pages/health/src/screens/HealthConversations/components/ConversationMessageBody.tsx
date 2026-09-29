@@ -85,6 +85,11 @@ const VideoContent = ({
               {formatMessage(messages.healthConversationVideoCallCanceled)}
             </Tag>
           )}
+          {!content.isCanceled && content.isExpired && (
+            <Tag variant="darkerBlue" outlined disabled>
+              {formatMessage(messages.healthConversationVideoCallExpired)}
+            </Tag>
+          )}
         </Box>
         {content.appointmentDate && (
           <Box display="flex" alignItems="center" columnGap={1}>
@@ -114,7 +119,7 @@ const VideoContent = ({
         </Text>
       )}
 
-      {!content.isCanceled && (
+      {!content.isCanceled && !content.isExpired && (
         <Box marginTop={3}>
           <Text marginBottom={2}>
             {formatMessage(messages.healthConversationVideoCallInstruction)}

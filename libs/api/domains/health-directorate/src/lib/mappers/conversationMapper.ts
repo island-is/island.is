@@ -1,3 +1,5 @@
+import endOfDay from 'date-fns/endOfDay'
+import isAfter from 'date-fns/isAfter'
 import type { FormatMessage } from '@island.is/cms-translations'
 import type { MessageDescriptor } from 'react-intl'
 import {
@@ -69,8 +71,15 @@ export const mapConversationSegments = (
       : { type, text: s.text }
   })
 
+export const isVideoCallExpired = (
+  appointmentDate: Date | undefined,
+  now: Date,
+): boolean =>
+  !!appointmentDate && isAfter(now, endOfDay(new Date(appointmentDate)))
+
 export const mapConversationVideo = (
   video?: VideoConversationDto,
+  now = new Date(),
 ): HealthDirectorateHealthConversationVideoContent | undefined =>
   video
     ? {
@@ -80,6 +89,7 @@ export const mapConversationVideo = (
         appointmentHostName: video.appointmentHostName,
         isCanceled: video.isCanceled,
         isEdited: video.isEdited,
+        isExpired: isVideoCallExpired(video.appointmentDate, now),
       }
     : undefined
 
