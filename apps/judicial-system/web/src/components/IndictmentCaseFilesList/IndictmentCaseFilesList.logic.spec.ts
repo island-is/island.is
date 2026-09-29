@@ -1,7 +1,4 @@
-import {
-  InstitutionType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { shouldShowPoliceDigitalCaseFilesSection } from './IndictmentCaseFilesList.logic'
@@ -11,7 +8,7 @@ const user = (role: UserRole, type?: InstitutionType): User =>
     id: 'user-id',
     role,
     ...(type ? { institution: { id: 'institution-id', type } } : {}),
-  }) as User
+  } as User)
 
 describe('shouldShowPoliceDigitalCaseFilesSection', () => {
   const files = [{ id: '1' }]
