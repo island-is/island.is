@@ -452,7 +452,6 @@ export class DelegationRequestService {
         { key: 'domainNameEn', value: domainNameEn },
       ])
     } catch {
-      // Do not log the error, it can carry PII from upstream calls.
       this.logger.error(
         `Failed to send delegation request notification (template: ${DELEGATION_REQUEST_TEMPLATE_ID})`,
       )
@@ -480,7 +479,6 @@ export class DelegationRequestService {
         { key: 'domainNameEn', value: domainNameEn },
       ])
     } catch {
-      // Do not log the error, it can carry PII from upstream calls.
       this.logger.error(
         `Failed to send delegation request notification (template: ${templateId})`,
       )
