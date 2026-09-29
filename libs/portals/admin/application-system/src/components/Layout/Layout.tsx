@@ -1,5 +1,6 @@
 import type { FC } from 'react'
 import { lazy, Suspense } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import {
   Box,
@@ -11,7 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import Overview from '../../screens/Overview/Overview'
 import { useLocale } from '@island.is/localization'
-import { ApplicationSystemPaths } from '../../lib/paths'
+import {
+  APPLICATION_SYSTEM_TAB_QUERY_PARAM,
+  ApplicationSystemPaths,
+} from '../../lib/paths'
 import { m } from '../../lib/messages'
 import Statistics from '../../screens/Statistics/Statistics'
 import {
@@ -33,6 +37,9 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   isSuperAdmin,
 }) => {
   const { formatMessage } = useLocale()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const selectedTab =
+    searchParams.get(APPLICATION_SYSTEM_TAB_QUERY_PARAM) ?? 'overview'
 
   //These are all organizations in contentful
   const { data: contentfulOrgData, loading: contentfulOrgLoading } =
@@ -105,7 +112,17 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
             <Tabs
               label={formatMessage(m.applicationSystem)}
               contentBackground="white"
-              selected="overview"
+              selected={selectedTab}
+              onChange={(id) =>
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    next.set(APPLICATION_SYSTEM_TAB_QUERY_PARAM, id)
+                    return next
+                  },
+                  { replace: true },
+                )
+              }
               tabs={[
                 {
                   id: 'overview',

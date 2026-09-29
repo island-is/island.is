@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ApplicationSystemPaths } from '../../lib/paths'
+import { buildTranslationsBackPath } from '../../lib/paths'
 import { useViewportMaxWidth } from '../../hooks/useViewportMaxWidth'
 import { useTranslationWorkspaceHeaderBridgeOptional } from '../../context/TranslationWorkspaceHeaderBridge'
 import type { TranslationWorkspacePreviewLocale } from '../../context/TranslationWorkspaceHeaderBridge'
@@ -33,7 +33,7 @@ export const TranslationWorkspaceHeaderBackButton = () => {
           return
         }
       }
-      navigate(ApplicationSystemPaths.Root)
+      navigate(buildTranslationsBackPath())
     } finally {
       setNavigating(false)
     }
