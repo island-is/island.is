@@ -6,11 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueueAfterCommit,
-  type Message,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { type Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseState,
@@ -20,6 +16,7 @@ import {
   StringType,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -257,9 +254,9 @@ export class CaseCloningService {
     }
 
     if (messages.length > 0) {
-      // Queued against the transaction the rows were created in, so that a
-      // rolled back duplication copies nothing
-      addMessagesToQueueAfterCommit(transaction, ...messages)
+      // Queued for after the commit, so that a rolled back duplication copies
+      // nothing
+      queueMessagesAfterCommit(...messages)
     }
   }
 
