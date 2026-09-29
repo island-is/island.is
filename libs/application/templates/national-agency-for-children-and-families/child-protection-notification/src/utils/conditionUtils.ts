@@ -1,0 +1,159 @@
+import { NO, YES } from '@island.is/application/core'
+import { ExternalData, FormValue } from '@island.is/application/types'
+import { info } from 'kennitala'
+import { getSelectedReasonForNotificationCategoryCodes } from './childProtectionNotificationUtils'
+import {
+  ChildNationalIdTypeCode,
+  KnowsNationalId,
+  LanguageEnvironmentOptions,
+  Roles,
+  SCHOOL_TYPES,
+  SHOW_LANGUAGE_SECTION_TYPES,
+} from './constants'
+import { getApplicationAnswers } from './getApplicationAnswers'
+import { getApplicationExternalData } from './getApplicationExternalData'
+import { getApplicantRole } from './roleUtils'
+import { ParentKey } from './types'
+
+export const isChildInPrimarySchoolAge = (nationalId: string): boolean => {
+  const { birthday } = info(nationalId)
+  const currentYear = new Date().getFullYear()
+  const birthYear = birthday.getFullYear()
+  const yearAge = currentYear - birthYear
+  return yearAge >= 6 && yearAge <= 16
+}
+
+export const isChildOver18 = (answers: FormValue): boolean => {
+  const { childNationalId, childName } = getApplicationAnswers(answers)
+  if (!childNationalId || !childName) return false
+  try {
+    const { age } = info(childNationalId)
+    return age >= 18
+  } catch {
+    return false
+  }
+}
+
+export const isKnowsNationalId = (answers: FormValue) =>
+  getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.YES
+
+export const shouldShowNonPrimarySchoolAgeChildInfo = (answers: FormValue) => {
+  const { childNationalId } = getApplicationAnswers(answers)
+  return (
+    isKnowsNationalId(answers) &&
+    !!childNationalId &&
+    !isChildInPrimarySchoolAge(childNationalId)
+  )
+}
+
+export const shouldShowAdultPersonalApplicantChildInfo = (
+  answers: FormValue,
+  userNationalId?: string,
+) =>
+  shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
+  !!userNationalId &&
+  getApplicantRole(userNationalId) === Roles.ADULT_PERSONAL_APPLICANT
+
+export const isUnborn = (answers: FormValue) =>
+  getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.UNBORN
+
+export const isNoNationalId = (answers: FormValue) =>
+  getApplicationAnswers(answers).childKnowsNationalId === KnowsNationalId.NO
+
+export const knowsParentIds = (parentKey: ParentKey) => (answers: FormValue) =>
+  getApplicationAnswers(answers)[parentKey]?.knowsNationalId === YES
+
+export const doesNotKnowParentIds =
+  (parentKey: ParentKey) => (answers: FormValue) =>
+    getApplicationAnswers(answers)[parentKey]?.knowsNationalId === NO
+
+export const isSchoolType = (educationType?: string) =>
+  SCHOOL_TYPES.includes(educationType ?? '')
+
+export const isDayCareProvider = (educationType?: string) =>
+  educationType === 'Dagforeldri'
+
+export const showLanguageSection = (answers: FormValue) =>
+  SHOW_LANGUAGE_SECTION_TYPES.includes(
+    getApplicationAnswers(answers).memmCultureLanguageUsage ??
+      LanguageEnvironmentOptions.ONLY_ICELANDIC,
+  )
+
+export const showPreferredLanguage = (answers: FormValue) => {
+  if (!showLanguageSection(answers)) return false
+  const languages = getApplicationAnswers(answers).memmCultureLanguages
+  return (languages?.length ?? 0) > 0
+}
+
+export const showWellbeingContactAndManagerQuestions = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmWellbeingIntegratedService === YES
+
+export const showWellbeingContactFields = (answers: FormValue) =>
+  showWellbeingContactAndManagerQuestions(answers) &&
+  getApplicationAnswers(answers).memmWellbeingWellbeingContact === YES
+
+export const showWellbeingManagerFields = (answers: FormValue) =>
+  showWellbeingContactAndManagerQuestions(answers) &&
+  getApplicationAnswers(answers).memmWellbeingWellbeingManager === YES
+
+export const showDisabilityService = (answers: FormValue) =>
+  getApplicationAnswers(answers).memmCultureDisability === YES
+
+export const isReasonForNotificationSubCategorySelected = (
+  answers: FormValue,
+  categoryCode: string,
+  subCategoryCode: string,
+) => {
+  const { reasonForNotification } = getApplicationAnswers(answers)
+
+  const selectedSubCategories =
+    reasonForNotification?.[categoryCode]?.[subCategoryCode]?.subCategory ?? []
+
+  return selectedSubCategories.includes(subCategoryCode)
+}
+
+export const shouldShowReasonForNotificationSubCategoryDetails = (
+  answers: FormValue,
+  categoryCode: string,
+  subCategoryCode: string,
+  hasSubSubCategories: boolean,
+) =>
+  hasSubSubCategories &&
+  isReasonForNotificationSubCategorySelected(
+    answers,
+    categoryCode,
+    subCategoryCode,
+  )
+
+export const shouldShowBiggestConcernField = (answers: FormValue) =>
+  !isUnborn(answers) &&
+  getSelectedReasonForNotificationCategoryCodes(answers).length > 1
+
+export const shouldShowProtectiveFactorSubItems = (
+  answers: FormValue,
+  sectionCode: string,
+  subIndex: number,
+) => {
+  const { protectiveFactors } = getApplicationAnswers(answers)
+  return !!protectiveFactors?.[sectionCode]?.[`sub${subIndex}`]?.includes(YES)
+}
+
+export const showEmergencyWarning = (answers: FormValue) => {
+  const { childSafetyUrgencyLevel } = getApplicationAnswers(answers)
+  return (
+    childSafetyUrgencyLevel !== null &&
+    childSafetyUrgencyLevel !== undefined &&
+    Number(childSafetyUrgencyLevel) <= 2
+  )
+}
+
+export const isSystemNationalId = (externalData: ExternalData) =>
+  getApplicationExternalData(externalData).childNationalIdTypeCode ===
+  ChildNationalIdTypeCode.SYSTEM_NATIONAL_ID
+
+// Show the parents section when the child's national ID is not known, the child is unborn,
+// or when the known ID is a system national ID
+export const showParentsSection = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => !isKnowsNationalId(answers) || isSystemNationalId(externalData)

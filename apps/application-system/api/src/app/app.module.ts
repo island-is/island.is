@@ -80,6 +80,7 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
+import { NationalAgencyForChildrenAndFamiliesClientConfig } from '@island.is/clients/national-agency-for-children-and-families'
 
 @Module({
   imports: [
@@ -157,6 +158,7 @@ import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorat
         ZendeskServiceConfig,
         RecyclingFundClientConfig,
         DirectorateOfEqualityClientConfig,
+        NationalAgencyForChildrenAndFamiliesClientConfig,
       ],
     }),
   ],
