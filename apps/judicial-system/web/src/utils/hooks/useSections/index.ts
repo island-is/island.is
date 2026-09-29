@@ -7,6 +7,7 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
   COURT_OF_APPEAL_SUMMARY_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -1524,6 +1525,31 @@ const useSections = (
     }
   }
 
+  /**
+   * The Court of Appeals' side of a verdict appeal.
+   *
+   * Separate from getCourtOfAppealSections, which is built around a ruling
+   * appeal - its steps, its state, and the appeal named in the query string.
+   * A verdict appeal is a different proceeding and will grow steps of its own;
+   * only the overview exists so far, and naming the rest here would offer
+   * links to pages that do not answer yet.
+   */
+  const getCourtOfAppealVerdictAppealSections = (
+    workingCase: Case,
+  ): RouteSection[] => [
+    {
+      name: 'Dómur Landsréttar',
+      isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
+      children: [
+        {
+          name: 'Yfirlit',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
+          href: `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+        },
+      ],
+    },
+  ]
+
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     const isExtensionCase =
       Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
@@ -1584,6 +1610,9 @@ const useSections = (
         !targetAppealCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
+      ...(workingCase.verdictAppealCase
+        ? getCourtOfAppealVerdictAppealSections(workingCase)
+        : []),
     ]
   }
 

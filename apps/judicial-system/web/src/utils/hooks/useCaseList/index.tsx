@@ -5,8 +5,6 @@ import { useRouter } from 'next/router'
 
 import { LoadingDots } from '@island.is/island-ui/core'
 import {
-  COURT_OF_APPEAL_OVERVIEW_ROUTE,
-  COURT_OF_APPEAL_RESULT_ROUTE,
   courtInvestigationCasesRoutes,
   courtRestrictionCasesRoutes,
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -23,6 +21,7 @@ import {
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
+import type { CaseTableType } from '@island.is/judicial-system/types'
 import {
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -41,15 +40,13 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  AppealCaseState,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { resolveTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
+
+import { getCourtOfAppealsRouteForRow } from './useCaseList.logic'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
@@ -78,8 +75,11 @@ const useCaseList = () => {
       caseToOpen: Case,
       openCaseInNewTab?: boolean,
       appealCaseId?: string | null,
+      caseTableType?: CaseTableType | null,
     ) => {
       let routeTo = null
+      // Only the ruling appeal pages need the appeal named in the URL.
+      let nameAppealCaseInUrl = true
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
@@ -91,20 +91,14 @@ const useCaseList = () => {
         // Public prosecutor users can only see completed indictments
         routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        // Court of appeals users see one row per appeal — case-level or
-        // ruling-order. Pick OVERVIEW vs RESULT based on the *target* appeal's
-        // state, falling back to the case-level appeal when no appealCaseId is
-        // supplied.
-        const targetAppealCase = resolveTargetAppealCaseByAppealCaseId(
+        const courtOfAppealsRoute = getCourtOfAppealsRouteForRow(
           caseToOpen,
-          appealCaseId ?? undefined,
+          appealCaseId,
+          caseTableType,
         )
 
-        if (targetAppealCase?.appealState === AppealCaseState.COMPLETED) {
-          routeTo = COURT_OF_APPEAL_RESULT_ROUTE
-        } else {
-          routeTo = COURT_OF_APPEAL_OVERVIEW_ROUTE
-        }
+        routeTo = courtOfAppealsRoute.route
+        nameAppealCaseInUrl = courtOfAppealsRoute.withAppealCaseId
       } else if (isDistrictCourtUser(user)) {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
@@ -187,7 +181,7 @@ const useCaseList = () => {
       }
 
       const url =
-        isCourtOfAppealsUser(user) && appealCaseId
+        isCourtOfAppealsUser(user) && appealCaseId && nameAppealCaseInUrl
           ? `${routeTo}/${caseToOpen.id}?appealCaseId=${appealCaseId}`
           : `${routeTo}/${caseToOpen.id}`
 
@@ -206,6 +200,7 @@ const useCaseList = () => {
       openInNewTab?: boolean,
       defendantIds?: string[] | null,
       appealCaseId?: string | null,
+      caseTableType?: CaseTableType | null,
     ) => {
       const clearTimeouts = () => {
         timeouts.map((timeout) => clearTimeout(timeout))
@@ -238,7 +233,8 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => openCase(caseData, openInNewTab, appealCaseId),
+          (caseData) =>
+            openCase(caseData, openInNewTab, appealCaseId, caseTableType),
           () => {
             setClickedCase((prev) => {
               if (

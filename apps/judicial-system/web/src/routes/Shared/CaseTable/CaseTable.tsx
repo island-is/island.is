@@ -183,10 +183,10 @@ const CaseTable: FC = () => {
                 ? withdrawAppeal(r.caseId, r.appealCaseId)
                 : null
             case ContextMenuCaseActionType.OPEN_APPEAL_CASE_IN_NEW_TAB:
-              return openCaseInNewTab(r.caseId, r.appealCaseId)
+              return openCaseInNewTab(r.caseId, r.appealCaseId, type)
             case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
             default: // Default to opening the case in a new tab
-              return openCaseInNewTab(r.caseId)
+              return openCaseInNewTab(r.caseId, undefined, type)
           }
         })
         .filter((i) => i !== null)
@@ -203,7 +203,13 @@ const CaseTable: FC = () => {
         case CaseActionType.OPEN_APPEAL_CASE:
           return {
             onClick: () =>
-              handleOpenCase(r.caseId, false, r.defendantIds, r.appealCaseId),
+              handleOpenCase(
+                r.caseId,
+                false,
+                r.defendantIds,
+                r.appealCaseId,
+                type,
+              ),
             isDisabled:
               isOpeningCaseId === r.caseId &&
               compareArrays(isOpeningDefendantIds, r.defendantIds) &&
