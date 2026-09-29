@@ -132,9 +132,7 @@ describe('CourtSessionController - Update', () => {
         caseId,
         courtSessionId,
         courtSessionToUpdate,
-        {
-          transaction,
-        },
+        { transaction },
       )
       expect(then.result).toBe(updatedCourtSession)
     })
@@ -292,9 +290,7 @@ describe('CourtSessionController - Update', () => {
         caseId,
         courtSessionId,
         confirmationUpdate,
-        {
-          transaction,
-        },
+        { transaction },
       )
     })
   })

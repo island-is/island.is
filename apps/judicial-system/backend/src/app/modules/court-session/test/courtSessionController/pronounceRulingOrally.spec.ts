@@ -220,10 +220,7 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
       expect(mockCourtSessionRepositoryService.findById).toHaveBeenCalledWith(
         caseId,
         courtSessionId,
-        {
-          transaction,
-          lock: true,
-        },
+        { transaction, lock: true },
       )
     })
   })
