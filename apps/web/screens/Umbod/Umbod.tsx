@@ -197,11 +197,11 @@ export const UmbodContent = ({
                 <Box marginBottom={4}>
                   <FilterInput
                     name="tenant-search"
-                    label={formatMessage(m.searchLabel)}
                     placeholder={formatMessage(m.searchLabel)}
                     value={search}
                     onChange={setSearch}
-                    backgroundColor="blue"
+                    backgroundColor="white"
+                    size="md"
                   />
                 </Box>
                 <Stack space={2}>
@@ -227,7 +227,7 @@ export const UmbodContent = ({
   )
 }
 
-const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
+const Umbod: CustomScreen<UmbodProps> = ({ tenants, loadError }) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -235,7 +235,7 @@ const Umbod: CustomScreen<UmbodProps> = ({ tenants }) => {
       <Head>
         <title>{formatMessage(m.pageTitle)} | Ísland.is</title>
       </Head>
-      <UmbodContent tenants={tenants} />
+      <UmbodContent tenants={tenants} loadError={loadError} />
     </>
   )
 }

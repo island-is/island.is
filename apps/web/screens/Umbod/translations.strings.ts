@@ -13,7 +13,7 @@ export const m = defineMessages({
   },
   searchLabel: {
     id: 'web.electronicMandates:searchLabel',
-    defaultMessage: 'Leita eftir nafni stofnunar eða kennitölu',
+    defaultMessage: 'Leita eftir nafni eða kennitölu stofnunar',
     description: 'Merking og vísbending í leit að þjónustuaðila',
   },
   noServiceProviders: {

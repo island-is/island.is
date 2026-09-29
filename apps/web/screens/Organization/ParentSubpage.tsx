@@ -280,6 +280,7 @@ OrganizationParentSubpage.getProps = async (context) => {
     parentSubpageSlug,
     subpageSlug,
     tenants,
+    mandatesLoadError,
     mandatesMessages,
     ...getThemeConfig(
       props.organizationPage.theme,
