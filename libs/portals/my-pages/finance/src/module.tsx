@@ -39,7 +39,11 @@ export const financeModule: PortalModule = {
         ApiScope.financeSalary,
         ApiScope.financeSchedule,
       ].some((scope) => userInfo.scopes.includes(scope)),
-      requiredScopes: [ApiScope.financeOverview, ApiScope.financeSalary, ApiScope.financeSchedule],
+      requiredScopes: [
+        ApiScope.financeOverview,
+        ApiScope.financeSalary,
+        ApiScope.financeSchedule,
+      ],
       element: <Navigate to={FinancePaths.FinanceStatus} replace />,
     },
     {

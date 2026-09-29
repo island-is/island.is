@@ -252,22 +252,22 @@ export class DelegationRequestService {
     const request = await this.getGranterRequest(user, id)
     this.assertPending(request)
 
-    const scopeNames = [...new Set(dto.scopes.map((scope) => scope.name))]
-    const apiScopes = await this.apiScopeModel.findAll({
-      where: { name: { [Op.in]: scopeNames } },
-      attributes: ['name', 'domainName'],
-    })
-    if (apiScopes.length !== scopeNames.length) {
-      throw new BadRequestException('One or more scopes do not exist.')
+    const requestedDomains = new Map(
+      (request.requestScopes ?? []).map((scope) => [
+        scope.scopeName,
+        scope.apiScope?.domainName,
+      ]),
+    )
+    const scopes = [
+      ...new Map(dto.scopes.map((scope) => [scope.name, scope])).values(),
+    ]
+    if (scopes.some((scope) => !requestedDomains.get(scope.name))) {
+      throw new BadRequestException('Only requested scopes can be approved.')
     }
-    const domainByScope = new Map(apiScopes.map((s) => [s.name, s.domainName]))
 
-    const scopesByDomain = new Map<
-      string,
-      ApproveDelegationRequestDTO['scopes']
-    >()
-    for (const scope of dto.scopes) {
-      const domainName = domainByScope.get(scope.name) as string
+    const scopesByDomain = new Map<string, typeof scopes>()
+    for (const scope of scopes) {
+      const domainName = requestedDomains.get(scope.name) as string
       scopesByDomain.set(domainName, [
         ...(scopesByDomain.get(domainName) ?? []),
         scope,
@@ -289,11 +289,12 @@ export class DelegationRequestService {
       }
       this.assertPending(locked)
 
-      const delegationIds = await this.delegationsOutgoingService.createBatchInTransaction(
-        user,
-        delegations,
-        transaction,
-      )
+      const delegationIds =
+        await this.delegationsOutgoingService.createBatchInTransaction(
+          user,
+          delegations,
+          transaction,
+        )
 
       await locked.update(
         {

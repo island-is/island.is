@@ -441,11 +441,12 @@ export class DelegationsOutgoingService {
         return
       }
 
-      const allowDelegationNotification = await this.featureFlagService.getValue(
-        Features.isDelegationNotificationEnabled,
-        false,
-        user,
-      )
+      const allowDelegationNotification =
+        await this.featureFlagService.getValue(
+          Features.isDelegationNotificationEnabled,
+          false,
+          user,
+        )
       if (!allowDelegationNotification) {
         return
       }
@@ -535,10 +536,11 @@ export class DelegationsOutgoingService {
         return { kind: 'notFound' as const }
       }
 
-      const existingScopes = await this.delegationScopeService.findByDelegationId(
-        delegationId,
-        transaction,
-      )
+      const existingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
 
       if (
         !(await this.delegationResourceService.validateScopeAccess(
@@ -580,10 +582,11 @@ export class DelegationsOutgoingService {
         )
       }
 
-      const remainingScopes = await this.delegationScopeService.findByDelegationId(
-        delegationId,
-        transaction,
-      )
+      const remainingScopes =
+        await this.delegationScopeService.findByDelegationId(
+          delegationId,
+          transaction,
+        )
 
       if (remainingScopes.length === 0) {
         // No scopes remain — delete the delegation row so it doesn't linger

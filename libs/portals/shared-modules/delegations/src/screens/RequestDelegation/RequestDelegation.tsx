@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import { defineMessage, MessageDescriptor } from 'react-intl'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { isCompany } from 'kennitala'
@@ -12,7 +12,10 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { InputController, SelectController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   takeDelegationRequestGrantor,
@@ -42,9 +45,21 @@ const RELATIONSHIP_OPTIONS: {
   label: MessageDescriptor
   grantorTypes: GrantorType[]
 }[] = [
-  { value: 'parent', label: m.relationshipOptionParent, grantorTypes: ['individual'] },
-  { value: 'child', label: m.relationshipOptionChild, grantorTypes: ['individual'] },
-  { value: 'spouse', label: m.relationshipOptionSpouse, grantorTypes: ['individual'] },
+  {
+    value: 'parent',
+    label: m.relationshipOptionParent,
+    grantorTypes: ['individual'],
+  },
+  {
+    value: 'child',
+    label: m.relationshipOptionChild,
+    grantorTypes: ['individual'],
+  },
+  {
+    value: 'spouse',
+    label: m.relationshipOptionSpouse,
+    grantorTypes: ['individual'],
+  },
   {
     value: 'caregiver',
     label: m.relationshipOptionCaregiver,
@@ -65,7 +80,11 @@ const RELATIONSHIP_OPTIONS: {
     label: m.relationshipOptionLawyer,
     grantorTypes: ['individual', 'company'],
   },
-  { value: 'employee', label: m.relationshipOptionEmployee, grantorTypes: ['company'] },
+  {
+    value: 'employee',
+    label: m.relationshipOptionEmployee,
+    grantorTypes: ['company'],
+  },
   {
     value: 'advisor',
     label: m.relationshipOptionAdvisor,
@@ -82,7 +101,9 @@ const resolveRelationship = (
   formatMessage: ReturnType<typeof useLocale>['formatMessage'],
   values: RequestDetailsFormData,
 ): string => {
-  const option = RELATIONSHIP_OPTIONS.find((o) => o.value === values.relationship)
+  const option = RELATIONSHIP_OPTIONS.find(
+    (o) => o.value === values.relationship,
+  )
   return option ? formatMessage(option.label) : values.relationship
 }
 
@@ -90,7 +111,7 @@ const RequestDetails = ({
   methods,
   grantorType,
 }: {
-  methods: ReturnType<typeof useForm<RequestDetailsFormData>>
+  methods: UseFormReturn<RequestDetailsFormData>
   grantorType?: GrantorType
 }) => {
   const { formatMessage } = useLocale()
@@ -235,7 +256,12 @@ const RequestDelegation = () => {
       }
     }
     prevGrantorTypeRef.current = requestGrantorType
-  }, [requestGrantorType, selectedScopes.length, formatMessage, setSelectedScopes])
+  }, [
+    requestGrantorType,
+    selectedScopes.length,
+    formatMessage,
+    setSelectedScopes,
+  ])
 
   useEffect(() => {
     const grantor = takeDelegationRequestGrantor(userInfo)

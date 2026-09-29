@@ -56,7 +56,7 @@ export class ScopeCategoriesResolver {
       lang,
       direction: requestGrantorType
         ? ScopesControllerFindCategoriesDirectionEnum.request
-        : ((direction as unknown) as ScopesControllerFindCategoriesDirectionEnum),
+        : (direction as unknown as ScopesControllerFindCategoriesDirectionEnum),
       requestGrantorType,
     })
 
@@ -88,8 +88,9 @@ export class ScopeCategoriesResolver {
       lang,
       direction: requestGrantorType
         ? ScopesControllerFindTagsDirectionEnum.request
-        : ((direction as unknown) as ScopesControllerFindTagsDirectionEnum),
-      requestGrantorType: (requestGrantorType as unknown) as ScopesControllerFindTagsRequestGrantorTypeEnum,
+        : (direction as unknown as ScopesControllerFindTagsDirectionEnum),
+      requestGrantorType:
+        requestGrantorType as unknown as ScopesControllerFindTagsRequestGrantorTypeEnum,
     })
 
     return tags as ScopeTag[]
@@ -115,7 +116,8 @@ export class ScopeCategoriesResolver {
       user,
     ).scopesControllerFindCategories({
       lang,
-      direction: (direction as unknown) as ScopesControllerFindCategoriesDirectionEnum,
+      direction:
+        direction as unknown as ScopesControllerFindCategoriesDirectionEnum,
     })
 
     return (categories as ScopeCategory[]).find((c) => c.slug === slug) ?? null
@@ -139,7 +141,7 @@ export class ScopeCategoriesResolver {
   ): Promise<ScopeTag | null> {
     const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
       lang,
-      direction: (direction as unknown) as ScopesControllerFindTagsDirectionEnum,
+      direction: direction as unknown as ScopesControllerFindTagsDirectionEnum,
     })
 
     return (tags as ScopeTag[]).find((t) => t.slug === slug) ?? null

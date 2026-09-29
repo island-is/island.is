@@ -433,7 +433,7 @@ const AccessControlNew = () => {
 
       {faqList && faqList.questions.length > 0 && (
         <Box paddingTop={8}>
-          <FaqList {...((faqList as unknown) as FaqListProps)} />
+          <FaqList {...(faqList as unknown as FaqListProps)} />
         </Box>
       )}
     </>

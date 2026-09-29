@@ -51,20 +51,16 @@ const DelegationRequests = () => {
     (isCompany(userInfo) && contentfulData?.faqListCompany) ||
     contentfulData?.faqList
 
-  const {
-    data: incomingData,
-    loading: incomingLoading,
-  } = useAuthDelegationRequestsIncomingQuery({
-    fetchPolicy: 'cache-and-network',
-    errorPolicy: 'all',
-  })
-  const {
-    data: outgoingData,
-    loading: outgoingLoading,
-  } = useAuthDelegationRequestsOutgoingQuery({
-    fetchPolicy: 'cache-and-network',
-    errorPolicy: 'all',
-  })
+  const { data: incomingData, loading: incomingLoading } =
+    useAuthDelegationRequestsIncomingQuery({
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    })
+  const { data: outgoingData, loading: outgoingLoading } =
+    useAuthDelegationRequestsOutgoingQuery({
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    })
 
   const canRequest = !isCompany(userInfo)
   const loading = incomingLoading || outgoingLoading
@@ -156,7 +152,7 @@ const DelegationRequests = () => {
 
       {faqList && faqList.questions.length > 0 && (
         <Box paddingTop={8}>
-          <FaqList {...((faqList as unknown) as FaqListProps)} />
+          <FaqList {...(faqList as unknown as FaqListProps)} />
         </Box>
       )}
     </>

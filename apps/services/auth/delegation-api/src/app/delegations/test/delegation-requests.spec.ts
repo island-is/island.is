@@ -10,6 +10,7 @@ import {
   DelegationRequestService,
   DelegationRequestStatus,
   Delegation,
+  DelegationScope,
   Domain,
   NamesService,
   NotificationsApi,
@@ -300,8 +301,9 @@ describe('DelegationRequestsController', () => {
       const unrelated = await factory.createCustomDelegation({
         fromNationalId: granterNationalId,
         toNationalId: requester.nationalId,
-        domainName: (await factory.createDomain({ name: faker.random.word() }))
-          .name,
+        domainName: (
+          await factory.createDomain({ name: faker.random.word() })
+        ).name,
       })
 
       const result = await svc.approve(granter, created.body.id, {
@@ -328,6 +330,36 @@ describe('DelegationRequestsController', () => {
       await expect(
         svc.approve(granter, created.body.id, input),
       ).rejects.toMatchObject({ status: 400 })
+    })
+
+    it('only approves scopes that were requested', async () => {
+      const created = await server.post(path).send(validBody())
+      const unrequested = await factory.createApiScope({
+        domainName: domain.name,
+        allowExplicitDelegationGrant: true,
+      })
+
+      await expect(
+        svc.approve(granter, created.body.id, {
+          scopes: [{ name: unrequested.name, validTo: inOneYear() }],
+        }),
+      ).rejects.toMatchObject({ status: 400 })
+    })
+
+    it('grants a scope repeated in the approval once', async () => {
+      const created = await server.post(path).send(validBody())
+
+      const result = await svc.approve(granter, created.body.id, {
+        scopes: [
+          { name: scope.name, validTo: inOneYear() },
+          { name: scope.name, validTo: inOneYear() },
+        ],
+      })
+
+      const delegationScopes = await app
+        .get(getModelToken(DelegationScope))
+        .findAll({ where: { delegationId: result.resolvedDelegationId } })
+      expect(delegationScopes).toHaveLength(1)
     })
 
     it('cannot act on an expired request', async () => {

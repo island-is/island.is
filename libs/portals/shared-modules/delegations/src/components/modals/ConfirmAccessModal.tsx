@@ -8,7 +8,6 @@ import { ScopeSelection, useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
-import { useApproveAuthDelegationRequestMutation } from '../delegationRequests/DelegationRequests.generated'
 import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -36,28 +35,14 @@ export const ConfirmAccessModal = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const {
-    identities,
-    selectedScopes,
-    pendingRequestId,
-    setPendingRequestId,
-  } = useDelegationForm()
+  const { identities, selectedScopes } = useDelegationForm()
 
-  const [
-    createAuthDelegations,
-    { loading: createLoading },
-  ] = useCreateAuthDelegationsMutation()
-  const [
-    approveDelegationRequest,
-    { loading: approveLoading },
-  ] = useApproveAuthDelegationRequestMutation()
-  const [
-    patchAuthDelegation,
-    { loading: patchLoading },
-  ] = usePatchAuthDelegationMutation()
+  const [createAuthDelegations, { loading: createLoading }] =
+    useCreateAuthDelegationsMutation()
+  const [patchAuthDelegation, { loading: patchLoading }] =
+    usePatchAuthDelegationMutation()
   const [submitting, setSubmitting] = useState(false)
-  const mutationLoading =
-    submitting || createLoading || patchLoading || approveLoading
+  const mutationLoading = submitting || createLoading || patchLoading
 
   const handleConfirm = async () => {
     if (onConfirm) {
@@ -98,27 +83,14 @@ export const ConfirmAccessModal = ({
         })
       }
 
-      if (pendingRequestId) {
-        await approveDelegationRequest({
-          variables: {
-            input: {
-              requestId: pendingRequestId,
-              scopes: scopes.map(({ name, validTo }) => ({ name, validTo })),
-            },
+      await createAuthDelegations({
+        variables: {
+          input: {
+            toNationalIds: identities.map((identity) => identity.nationalId),
+            scopes,
           },
-        })
-        setPendingRequestId(undefined)
-      } else {
-        await createAuthDelegations({
-          variables: {
-            input: {
-              toNationalIds: identities.map((identity) => identity.nationalId),
-              scopes,
-            },
-          },
-        })
-      }
-
+        },
+      })
       navigate(DelegationPaths.DelegationsNew)
     } catch {
       toast.error(formatMessage(m.confirmError))

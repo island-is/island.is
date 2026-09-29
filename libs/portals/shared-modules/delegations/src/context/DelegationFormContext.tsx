@@ -28,9 +28,6 @@ export interface DelegationFormState {
   selectedScopes: ScopeSelection[]
   setSelectedScopes: Dispatch<SetStateAction<ScopeSelection[]>>
 
-  pendingRequestId?: string
-  setPendingRequestId: Dispatch<SetStateAction<string | undefined>>
-
   requestedScopeNames?: string[]
   setRequestedScopeNames: Dispatch<SetStateAction<string[] | undefined>>
 
@@ -43,8 +40,6 @@ const defaultState: DelegationFormState = {
   setIdentities: () => undefined,
   selectedScopes: [],
   setSelectedScopes: () => undefined,
-  pendingRequestId: undefined,
-  setPendingRequestId: () => undefined,
   requestedScopeNames: undefined,
   setRequestedScopeNames: () => undefined,
   clearForm: () => undefined,
@@ -60,9 +55,6 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
 }) => {
   const [identities, setIdentities] = useState<Identity[]>([])
   const [selectedScopes, setSelectedScopes] = useState<ScopeSelection[]>([])
-  const [pendingRequestId, setPendingRequestId] = useState<string | undefined>(
-    undefined,
-  )
   const [requestedScopeNames, setRequestedScopeNames] = useState<
     string[] | undefined
   >(undefined)
@@ -80,7 +72,6 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
     }
     setIdentities([])
     setSelectedScopes([])
-    setPendingRequestId(undefined)
     setRequestedScopeNames(undefined)
   }, [])
 
@@ -90,21 +81,12 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
       setIdentities,
       selectedScopes,
       setSelectedScopes,
-      pendingRequestId,
-      setPendingRequestId,
       requestedScopeNames,
       setRequestedScopeNames,
       clearForm,
       skipNextClear,
     }),
-    [
-      identities,
-      selectedScopes,
-      pendingRequestId,
-      requestedScopeNames,
-      clearForm,
-      skipNextClear,
-    ],
+    [identities, selectedScopes, requestedScopeNames, clearForm, skipNextClear],
   )
 
   return (

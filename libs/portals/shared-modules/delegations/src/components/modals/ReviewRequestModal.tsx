@@ -37,7 +37,8 @@ import {
 } from '../delegationRequests/DelegationRequests.generated'
 import * as styles from './Modals.css'
 
-type IncomingRequest = AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
+type IncomingRequest =
+  AuthDelegationRequestsIncomingQuery['authDelegationRequestsIncoming'][number]
 
 const defaultValidity = (request: IncomingRequest): Date => {
   const requested = request.scopes
@@ -82,15 +83,13 @@ export const ReviewRequestModal = ({
     }
   }, [request])
 
-  const [
-    approveDelegationRequest,
-    { loading: approveLoading },
-  ] = useApproveAuthDelegationRequestMutation({
-    refetchQueries: [
-      { query: AuthDelegationRequestsIncomingDocument },
-      'AuthDelegationsGroupedByIdentityOutgoing',
-    ],
-  })
+  const [approveDelegationRequest, { loading: approveLoading }] =
+    useApproveAuthDelegationRequestMutation({
+      refetchQueries: [
+        { query: AuthDelegationRequestsIncomingDocument },
+        'AuthDelegationsGroupedByIdentityOutgoing',
+      ],
+    })
 
   const onApprove = async (request: IncomingRequest) => {
     const scopes = request.scopes
@@ -114,13 +113,11 @@ export const ReviewRequestModal = ({
 
   const hasSelection = request?.scopes.some((s) => selected[s.scopeName])
 
-  const {
-    data: categoriesData,
-    loading: categoriesLoading,
-  } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-    variables: { lang, direction: AuthDelegationDirection.outgoing },
-    skip: !isGrantorReview || !request,
-  })
+  const { data: categoriesData, loading: categoriesLoading } =
+    useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
+      variables: { lang, direction: AuthDelegationDirection.outgoing },
+      skip: !isGrantorReview || !request,
+    })
   const { data: tagsData, loading: tagsLoading } = useQuery<AuthScopeTagsQuery>(
     AuthScopeTagsDocument,
     {

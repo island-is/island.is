@@ -4,7 +4,10 @@ import { AvatarImage, LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { RequestDelegationButton } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
-import { hasNotificationScopes, notificationScopes } from '@island.is/auth/scopes'
+import {
+  hasNotificationScopes,
+  notificationScopes,
+} from '@island.is/auth/scopes'
 import {
   useGetUserNotificationsOverviewQuery,
   useMarkUserNotificationAsReadMutation,

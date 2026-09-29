@@ -113,7 +113,7 @@ export const IdentityLookup = ({
       <div className={styles.nationalIdRow}>
         <div className={styles.nationalIdInput({ showRemoveButton })}>
           <InputController
-            control={(control as unknown) as Control}
+            control={control as unknown as Control}
             id={`identities.${index}.nationalId`}
             name={`identities.${index}.nationalId`}
             label={formatMessage(nationalIdLabel)}

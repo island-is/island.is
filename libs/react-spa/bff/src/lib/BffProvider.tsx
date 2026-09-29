@@ -35,10 +35,8 @@ export const BffProvider = ({
   bffGlobalPrefix,
   onSignOut,
 }: BffProviderProps) => {
-  const [
-    sessionExpiredReason,
-    setSessionExpiredReason,
-  ] = useState<SessionExpiredReason | null>(null)
+  const [sessionExpiredReason, setSessionExpiredReason] =
+    useState<SessionExpiredReason | null>(null)
   const bffUrlGenerator = createBffUrlGenerator(bffGlobalPrefix)
   const [state, dispatch] = useReducer(reducer, {
     ...(mockedInitialState ?? initialState),

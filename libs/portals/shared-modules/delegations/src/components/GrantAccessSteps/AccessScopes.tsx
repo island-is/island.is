@@ -69,11 +69,8 @@ export const AccessScopes = ({
       },
     },
   )
-  const {
-    selectedScopes,
-    setSelectedScopes,
-    requestedScopeNames,
-  } = useDelegationForm()
+  const { selectedScopes, setSelectedScopes, requestedScopeNames } =
+    useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
 
   const allGrantableScopes = useMemo(() => {

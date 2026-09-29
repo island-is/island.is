@@ -11,12 +11,12 @@ const grantor = { nationalId: '0101302399', name: 'Grantor' }
 const requesterNationalId = '0101307789'
 
 const userFor = (nationalId: string, actorNationalId?: string) =>
-  (({
+  ({
     profile: {
       nationalId,
       ...(actorNationalId && { actor: { nationalId: actorNationalId } }),
     },
-  } as unknown) as BffUser)
+  } as unknown as BffUser)
 
 describe('delegationRequest grantor storage', () => {
   beforeEach(() => {

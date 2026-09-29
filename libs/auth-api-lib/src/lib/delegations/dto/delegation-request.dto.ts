@@ -102,7 +102,7 @@ export class ApproveDelegationRequestDTO {
   @ApiProperty({
     type: [UpdateDelegationScopeDTO],
     description:
-      'Scopes to grant. May differ from the requested scopes; each must be grantable by the current user.',
+      'Scopes to grant: a subset of the requested scopes that the current user can grant.',
   })
   @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })

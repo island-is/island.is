@@ -137,8 +137,7 @@ export const OutgoingRequests = ({ search = '' }: { search?: string }) => {
                       justifyContent="flexEnd"
                       columnGap={3}
                     >
-                      {request.status !==
-                        AuthDelegationRequestStatus.pending &&
+                      {request.status !== AuthDelegationRequestStatus.pending &&
                         tag && (
                           <Tag variant={tag.variant} outlined disabled>
                             {formatMessage(tag.label)}
