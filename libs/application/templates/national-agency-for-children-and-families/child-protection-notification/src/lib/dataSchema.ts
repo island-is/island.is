@@ -77,6 +77,13 @@ const childSchema = z
         usePronounAndPreferredName: z.array(z.string()).optional(),
         preferredName: z.string().optional(),
         preferredPronoun: z.array(z.string()).nullish(),
+        education: z
+          .object({
+            type: z.string().optional(),
+            schoolName: z.string().optional(),
+            caregiverName: z.string().optional(),
+          })
+          .optional(),
         needsInterpreter: z.string().optional(),
       })
       .optional(),

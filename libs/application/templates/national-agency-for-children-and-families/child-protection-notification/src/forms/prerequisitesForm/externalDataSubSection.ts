@@ -101,6 +101,9 @@ export const personalExternalDataSubSection = buildSubSection({
         buildDataProviderItem({
           provider: ChildUnknownNationalIdStatesApi,
         }),
+        buildDataProviderItem({
+          provider: SchoolTypesApi,
+        }),
       ],
     }),
   ],

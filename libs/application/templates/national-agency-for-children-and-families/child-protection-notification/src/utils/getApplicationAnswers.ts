@@ -130,14 +130,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'child.nationalIdInfo.preferredPronoun',
     ) ?? []
 
-  const childSchoolType = getValueViaPath<string>(
+  const childEducationType = getValueViaPath<string>(
     answers,
-    'child.nationalIdInfo.schoolType',
+    'child.nationalIdInfo.education.type',
   )
 
-  const childSchoolName = getValueViaPath<string>(
+  const childEducationSchoolName = getValueViaPath<string>(
     answers,
-    'child.nationalIdInfo.schoolName',
+    'child.nationalIdInfo.education.schoolName',
+  )
+
+  const childEducationCaregiverName = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.education.caregiverName',
   )
 
   const childLanguage = getValueViaPath<string>(
@@ -383,8 +388,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
-    childSchoolType,
-    childSchoolName,
+    childEducationType,
+    childEducationSchoolName,
+    childEducationCaregiverName,
     childLanguage,
     childNeedsInterpreter,
     childManualName,

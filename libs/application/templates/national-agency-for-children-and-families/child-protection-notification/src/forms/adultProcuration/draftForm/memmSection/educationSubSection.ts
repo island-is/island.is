@@ -1,9 +1,9 @@
 import {
+  buildDescriptionField,
   buildMultiField,
   buildSelectField,
   buildSubSection,
   buildTextField,
-  buildDescriptionField,
   coreMessages,
 } from '@island.is/application/core'
 import { memmMessages } from '../../../../lib/messages'
@@ -11,6 +11,7 @@ import {
   isDayCareProvider,
   isSchoolType,
 } from '../../../../utils/conditionUtils'
+import { getApplicationAnswers } from '../../../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../../../utils/getApplicationExternalData'
 
 export const educationSubSection = buildSubSection({
@@ -45,13 +46,15 @@ export const educationSubSection = buildSubSection({
           id: 'memm.education.schoolName',
           title: memmMessages.education.schoolName,
           doesNotRequireAnswer: true,
-          condition: isSchoolType,
+          condition: (answers) =>
+            isSchoolType(getApplicationAnswers(answers).memmEducationType),
         }),
         buildTextField({
           id: 'memm.education.caregiverName',
           title: coreMessages.name,
           doesNotRequireAnswer: true,
-          condition: isDayCareProvider,
+          condition: (answers) =>
+            isDayCareProvider(getApplicationAnswers(answers).memmEducationType),
         }),
       ],
     }),
