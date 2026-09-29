@@ -186,7 +186,8 @@ export enum Features {
   digitalTachographDriversCardAllowFakeData = 'digitalTachographDriversCardAllowFakeData',
 
   isPortalAirDiscountPageDisabled = 'isPortalAirDiscountPageDisabled',
-  shouldAirDiscountSchemeUseNationalRegistryV3 = 'shouldAirDiscountSchemeUseNationalRegistryV3',
+  // Match the existing ConfigCat key's capitalization.
+  shouldAirDiscountSchemeUseNationalRegistryV3 = 'shouldAirDiscountSchemeUseNationalregistryv3',
 
   isMileCarEnabled = 'isMileCarEnabled',
   isHHCourseApplicationEnabled = 'isHHCourseApplicationEnabled',
