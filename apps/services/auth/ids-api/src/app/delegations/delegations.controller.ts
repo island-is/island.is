@@ -165,11 +165,12 @@ export class DelegationsController {
     @Body()
     request: DelegationVerification,
   ): Promise<DelegationVerificationResult> {
-    const verified = await this.delegationsIncomingService.verifyDelegationAtProvider(
-      user,
-      request.fromNationalId,
-      request.delegationTypes,
-    )
+    const verified =
+      await this.delegationsIncomingService.verifyDelegationAtProvider(
+        user,
+        request.fromNationalId,
+        request.delegationTypes,
+      )
 
     return { verified }
   }
