@@ -1,9 +1,9 @@
-import type { ModelCtor } from 'sequelize-typescript'
-import { Model, Sequelize } from 'sequelize-typescript'
+import { Sequelize } from 'sequelize-typescript'
 
 import { getOptions } from '@island.is/nest/sequelize'
 
 import * as repository from '../repository'
+import { repositoryModels } from '../repository/repositoryModels'
 
 /**
  * Shared setup for the specs that assert the SQL a case table query builds.
@@ -17,7 +17,8 @@ import * as repository from '../repository'
 /**
  * Registers the repository models so queries can be built without a database.
  *
- * Every model is registered, not only the ones a given spec asks about,
+ * The array is the one RepositoryModule registers with Sequelize, not a list
+ * assembled here - every model, not only the ones a given spec asks about,
  * because association resolution fails on an unrelated model otherwise.
  *
  * `define` comes from the app's own options. Without `underscored` an attribute
@@ -26,14 +27,9 @@ import * as repository from '../repository'
  * and passes.
  */
 export const initCaseTableModels = () => {
-  const models = Object.values(repository).filter(
-    (exported) =>
-      typeof exported === 'function' && exported.prototype instanceof Model,
-  ) as ModelCtor[]
-
   new Sequelize({
     dialect: 'postgres',
-    models,
+    models: repositoryModels,
     logging: false,
     define: getOptions().define,
   })
