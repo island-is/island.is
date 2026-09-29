@@ -8,12 +8,15 @@ import {
   buildTextField,
   buildTitleField,
   coreMessages,
+  YES,
 } from '@island.is/application/core'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { prerequisitesMessages, sharedMessages } from '../../lib/messages'
 import {
   getYesNoDoNotKnowOptions,
   getYesNoOptions,
 } from '../../utils/childProtectionNotificationUtils'
+import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
 export const notifierInfoSubSection = buildSubSection({
@@ -76,6 +79,18 @@ export const notifierInfoSubSection = buildSubSection({
           widthWithIllustration: '1/3',
           space: 4,
           options: getYesNoDoNotKnowOptions(),
+        }),
+        buildSelectField({
+          id: 'notifierInfo.preferredLanguage',
+          title: sharedMessages.language,
+          placeholder: sharedMessages.languagePlaceholder,
+          doesNotRequireAnswer: true,
+          options: getAllLanguageCodes().map((l) => ({
+            value: l.code,
+            label: l.name,
+          })),
+          condition: (answers) =>
+            getApplicationAnswers(answers).notifierNeedsInterpreter === YES,
         }),
         buildTitleField({
           title: prerequisitesMessages.notifierInfo.relationshipToChild,
