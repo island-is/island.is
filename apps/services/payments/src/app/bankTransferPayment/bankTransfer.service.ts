@@ -51,6 +51,7 @@ import {
   createLogPrefix,
   deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
+  getBankTransferDebtor,
   isBankTransferFailureStatus,
   isBlikkStatus,
   isOnboardingRequired,
@@ -103,6 +104,20 @@ export class BankTransferService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
+    const debtor = getBankTransferDebtor(
+      paymentFlow.payerNationalId,
+      input.actorNationalId,
+    )
+    if (!debtor) {
+      // The payment screen validates this; reaching here means a missing or non-person actor.
+      this.logger.warn(
+        `[${input.paymentFlowId}] Company bank transfer requested without a valid individual to authorise it`,
+      )
+      throw new BadRequestException(
+        BankTransferErrorCode.InvalidActorNationalId,
+      )
+    }
+
     if (existing) {
       // throws an error if the bank transfer payment is already paid or still pending
       await this.handleExistingActiveBankTransferRow(existing)
@@ -132,7 +147,7 @@ export class BankTransferService {
         partnerRedirectUrl,
         expiresAt: expiresAtSeconds,
         items: catalogItems,
-        debtorExternalId: paymentFlow.payerNationalId,
+        ...debtor,
         bankAccountNumber: input.bankAccountNumber,
       })
     } catch (error) {
@@ -659,6 +674,7 @@ export class BankTransferService {
       expiresAt: input.expiresAt,
       items: input.items?.map(toBlikkItem),
       debtorExternalId: input.debtorExternalId,
+      debtorCorpExternalId: input.debtorCorpExternalId,
       // Blikk expects a debtor name; we send the national id.
       debtorName: input.debtorExternalId,
       debtorBban: input.bankAccountNumber,

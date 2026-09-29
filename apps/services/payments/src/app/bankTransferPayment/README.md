@@ -9,6 +9,7 @@ The feature is gated behind two feature flags (see [Feature flags & access](#fea
 ## Contents
 
 - [Data model](#data-model)
+- [Company payers](#company-payers)
 - [End-to-end flow](#end-to-end-flow)
 - [Blikk status model](#blikk-status-model)
 - [Status → action → screen](#status--action--screen)
@@ -42,6 +43,22 @@ The feature is gated behind two feature flags (see [Feature flags & access](#fea
 `bank_transfer_payment_one_active_per_payment_flow_id ON (payment_flow_id) WHERE is_deleted = false`.
 A `(provider, provider_payment_id)` unique key prevents cross-flow id collisions.
 
+## Company payers
+
+When the flow's `payerNationalId` is a company, the payment screen asks for the national id of an
+individual with the rights to authorise payments from the company account, and shows the company's
+national id read-only. It is sent as `actorNationalId` on `paymentsCreateBankTransfer`, and
+[`getBankTransferDebtor`](./bankTransfer.utils.ts) maps it onto Blikk's debtor fields:
+
+| Payer       | `debtorExternalId` (authenticates with their bank) | `debtorCorpExternalId` (debited) |
+| ----------- | -------------------------------------------------- | -------------------------------- |
+| Company     | the individual (`actorNationalId`)                 | the company                      |
+| Anyone else | the payer (`actorNationalId` is ignored)           | —                                |
+
+A company without a valid individual (missing, a company or a temporary kennitala) is refused with
+`InvalidActorNationalId` before Blikk is called; the screen validates the same rule. The FJS charge's
+payer is always `payerNationalId`.
+
 ## End-to-end flow
 
 ```mermaid
@@ -58,7 +75,7 @@ sequenceDiagram
     FE->>GQL: paymentsCreateBankTransfer
     GQL->>SVC: create()
     SVC->>SVC: isEligibleToBePaid + find active row
-    SVC->>B: POST /ecom/v3/payments/direct-debtor (amount, items, expiresAt, callbackUrl, debtorExternalId, debtorBban)
+    SVC->>B: POST /ecom/v3/payments/direct-debtor (amount, items, expiresAt, callbackUrl, debtorExternalId, debtorCorpExternalId?, debtorBban)
     B-->>SVC: { id, status, scaRedirectUrl? }
     SVC->>SVC: persist row (PENDING), emit payment_started
     SVC-->>FE: { providerPaymentId, scaRedirectUrl, expiresAt, onboardingRequired }
@@ -146,7 +163,8 @@ local hook state.
    [`BankTransferPayment`](../../../../../../apps/payments/components/BankTransferPayment/BankTransferPayment.tsx)
    body renders between the selector and the submit button. It shows an **`info` disclaimer**
    banner normally, swapping to a **`default` waiting** banner while polling is in flight
-   (`isWaiting`). Submit button label is `bankTransfer.confirm`; it is disabled/loading while
+   (`isWaiting`). For a company payer the banner says who is paid for, and the individual's and
+   company's national ids appear above the account number (see [Company payers](#company-payers)). Submit button label is `bankTransfer.confirm`; it is disabled/loading while
    polling so the payer can't double-submit.
 2. **Submit → pending screen (no SCA redirect).** On submit, the FE `router.reload()`s so SSR
    lands on the pending screen — SCA is rendered **inline** there, not via redirect. The single
@@ -375,7 +393,7 @@ Both are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib
 
 - **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
-  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the individuals-only `isPerson` check.
+  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals and companies are offered it, temporary kennitalas are not.
 - **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints.
 
 > The GraphQL mutations (`paymentsCreateBankTransfer` / `…Verify…` / `…Cancel…`) are not guarded by these flags directly — the whole payments resolver sits behind `isIslandisPaymentEnabled`. The bank-transfer global flag bites one layer down, on the `services-payments` REST controller the resolver proxies to.

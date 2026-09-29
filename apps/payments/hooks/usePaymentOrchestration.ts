@@ -24,6 +24,9 @@ interface UsePaymentOrchestrationProps {
     title: string
   }
   isApplePayPaymentEnabledForUser: boolean
+  // The server refused the individual authorising a company's transfer. Shown on its input, so the
+  // payer stays on the form to correct it rather than landing on the error screen.
+  onInvalidActorNationalId: () => void
 }
 
 const deriveInitialBankTransferError = (
@@ -51,6 +54,7 @@ export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
   isApplePayPaymentEnabledForUser,
+  onInvalidActorNationalId,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -114,9 +118,21 @@ export const usePaymentOrchestration = ({
     onPaymentError: commonOnPaymentError,
   })
 
+  const bankTransferOnPaymentError = useCallback(
+    (error: PaymentError) => {
+      if (error.code === BankTransferErrorCode.InvalidActorNationalId) {
+        setIsInitiatingSubmit(false)
+        onInvalidActorNationalId()
+        return
+      }
+      commonOnPaymentError(error)
+    },
+    [commonOnPaymentError, onInvalidActorNationalId],
+  )
+
   const bankTransferPayment = useBankTransferPayment({
     paymentFlowId: paymentFlow?.id,
-    onPaymentError: commonOnPaymentError,
+    onPaymentError: bankTransferOnPaymentError,
   })
 
   const handleFormSubmit: SubmitHandler<Record<string, string>> = useCallback(
@@ -150,7 +166,7 @@ export const usePaymentOrchestration = ({
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
         } else if (selectedPaymentMethod === 'bank_transfer') {
-          const { bankAccountNumber } = data
+          const { bankAccountNumber, actorNationalId } = data
           if (!bankAccountNumber) {
             setPaymentError({
               code: BankTransferErrorCode.MissingBankAccountNumber,
@@ -158,10 +174,12 @@ export const usePaymentOrchestration = ({
             setIsInitiatingSubmit(false)
             return
           }
-          await bankTransferPayment.processBankTransferPayment(
-            // The form stores the masked value; the service needs digits.
-            bankAccountNumber.replace(/\D/g, ''),
-          )
+          // The form stores masked values; the service needs digits. The actor is only rendered
+          // (and so only filled in) when the payer is a company.
+          await bankTransferPayment.processBankTransferPayment({
+            bankAccountNumber: bankAccountNumber.replace(/\D/g, ''),
+            actorNationalId: actorNationalId?.replace(/\D/g, '') || undefined,
+          })
         }
       } catch (e: unknown) {
         if (
