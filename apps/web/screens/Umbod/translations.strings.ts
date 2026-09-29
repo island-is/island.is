@@ -13,13 +13,18 @@ export const m = defineMessages({
   },
   searchLabel: {
     id: 'web.electronicMandates:searchLabel',
-    defaultMessage: 'Leita eftir nafni stofnunar eða kennitölu',
+    defaultMessage: 'Leita eftir nafni eða kennitölu stofnunar',
     description: 'Merking og vísbending í leit að þjónustuaðila',
   },
   noServiceProviders: {
     id: 'web.electronicMandates:noServiceProviders',
     defaultMessage: 'Engir þjónustuaðilar fundust.',
     description: 'Skilaboð þegar leit skilar engum þjónustuaðilum',
+  },
+  loadServiceProvidersError: {
+    id: 'web.electronicMandates:loadServiceProvidersError',
+    defaultMessage: 'Ekki tókst að sækja þjónustuaðila.',
+    description: 'Villuskilaboð þegar ekki tekst að sækja þjónustuaðila',
   },
   loadMandatesError: {
     id: 'web.electronicMandates:loadMandatesError',
