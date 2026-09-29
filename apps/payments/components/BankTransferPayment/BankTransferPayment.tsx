@@ -96,8 +96,15 @@ export const BankTransferPayment = ({
               ? formatMessage(bankTransfer.companyPayerInfo, {
                   // The message adds the sentence's period, so names like "Aranja ehf." don't get two.
                   companyName: companyPayer.name.replace(/\.$/, ''),
+                  // Keyed: the rich text comes back as an array of children, and React warns
+                  // about an unkeyed element in it.
                   b: (chunks: ReactNode) => (
-                    <Text as="span" variant="small" fontWeight="semiBold">
+                    <Text
+                      key="companyName"
+                      as="span"
+                      variant="small"
+                      fontWeight="semiBold"
+                    >
                       {chunks}
                     </Text>
                   ),
