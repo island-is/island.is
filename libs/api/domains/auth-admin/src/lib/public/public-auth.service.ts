@@ -1,0 +1,51 @@
+import { Inject, Injectable } from '@nestjs/common'
+
+import { PublicApi, CurrentPublicApi } from '@island.is/clients/auth/admin-api'
+import { handle204 } from '@island.is/clients/middlewares'
+
+import { PublicAuthScope, PublicAuthTenant } from './public-auth.models'
+
+@Injectable()
+export class PublicAuthService {
+  constructor(
+    @Inject(CurrentPublicApi) private readonly publicApi: PublicApi,
+  ) {}
+
+  async getTenants(): Promise<PublicAuthTenant[]> {
+    const tenants =
+      (await handle204(this.publicApi.publicTenantsControllerFindAllRaw())) ??
+      []
+
+    return tenants
+      .map((tenant) => ({
+        id: tenant.name,
+        displayName: tenant.displayName,
+        nationalId: tenant.nationalId,
+      }))
+      .sort((a, b) => {
+        const nameA =
+          a.displayName.find(({ locale }) => locale === 'is')?.value ??
+          a.displayName[0]?.value ??
+          a.id
+        const nameB =
+          b.displayName.find(({ locale }) => locale === 'is')?.value ??
+          b.displayName[0]?.value ??
+          b.id
+
+        return nameA.localeCompare(nameB, 'is')
+      })
+  }
+
+  async getScopes(tenantId: string): Promise<PublicAuthScope[]> {
+    const scopes =
+      (await handle204(
+        this.publicApi.publicScopesControllerFindAllByTenantIdRaw({ tenantId }),
+      )) ?? []
+
+    return scopes.map((scope) => ({
+      scopeName: scope.name,
+      displayName: scope.displayName,
+      description: scope.description,
+    }))
+  }
+}
