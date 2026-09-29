@@ -13,9 +13,9 @@ import { caseTableWhereOptions } from './caseTable.whereOptions'
  * one: the id the row carries, the context menu, the page the row opens.
  *
  * On a verdict appeal list that appeal is the verdict appeal, so the list puts
- * it there rather than every reader having to know which lists are verdict
- * lists. This is the same move `expandCasesWithAppeals` makes for ruling order
- * appeals.
+ * it there - and takes the old name away - rather than every reader having to
+ * know which lists are verdict lists. This is the same move
+ * `expandCasesWithAppeals` makes for ruling order appeals.
  */
 describe('court of appeals verdict appeal rows', () => {
   const courtOfAppealsUser = {
@@ -65,12 +65,13 @@ describe('court of appeals verdict appeal rows', () => {
     },
   )
 
-  // The columns on these lists read the verdict appeal by name, so it has to
-  // stay where they look as well.
-  it.each(verdictAppealTables)('keeps verdictAppealCase on a %s row', (t) => {
+  // Slotted in and then dropped, as expandCasesWithAppeals drops the ruling
+  // order appeals: one name for the appeal a row is about, so no column has to
+  // know which list it is being rendered for.
+  it.each(verdictAppealTables)('drops verdictAppealCase from a %s row', (t) => {
     const [row] = displayed(t)
 
-    expect(row.verdictAppealCase?.id).toBe('verdict-appeal')
+    expect(row.verdictAppealCase).toBeUndefined()
   })
 
   it.each(verdictAppealTables)('leaves %s with one row per case', (t) => {
