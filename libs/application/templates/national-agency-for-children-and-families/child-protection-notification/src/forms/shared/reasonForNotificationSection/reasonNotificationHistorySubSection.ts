@@ -1,7 +1,7 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   NO,
 } from '@island.is/application/core'
@@ -12,6 +12,7 @@ import {
   getHasReportedBeforeTitle,
   getYesNoOptions,
 } from '../../../utils/childProtectionNotificationUtils'
+import { showAbuseSuspicionWarning } from '../../../utils/conditionUtils'
 import { Roles } from '../../../utils/constants'
 import { getApplicationAnswers } from '../../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
@@ -52,12 +53,10 @@ export const reasonNotificationHistorySubSection = buildSubSection({
           space: 4,
           options: getYesNoOptions(),
         }),
-        buildSelectField({
+        buildRadioField({
           id: 'reasonNotificationHistory.biggestConcern',
           title: reasonForNotificationMessages.notificationHistory.explanation,
-          placeholder:
-            reasonForNotificationMessages.notificationHistory
-              .explanationPlaceholder,
+          space: 4,
           options: ({ externalData }) => {
             const { guardianNotAwareReasons } =
               getApplicationExternalData(externalData)
@@ -70,6 +69,15 @@ export const reasonNotificationHistorySubSection = buildSubSection({
             const { areParentsInformed } = getApplicationAnswers(answers)
             return areParentsInformed === NO
           },
+        }),
+        buildAlertMessageField({
+          id: 'reasonNotificationHistory.abuseSuspicionWarning',
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          message:
+            reasonForNotificationMessages.notificationHistory
+              .abuseSuspicionWarning,
+          condition: showAbuseSuspicionWarning,
         }),
       ],
     }),

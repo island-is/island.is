@@ -2,6 +2,7 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const RISK_TO_UNBORN = 'RiskToUnborn'
 export const IS = 'IS'
+export const GUARDIAN_NOT_AWARE_ABUSE_SUSPICION = 'AbuseSuspicion'
 
 // Client requested this section be temporarily removed from the flow but may
 // want it reinstated later, so it's hidden via this flag rather than deleted.
