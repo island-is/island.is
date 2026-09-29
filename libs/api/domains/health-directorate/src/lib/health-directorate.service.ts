@@ -1,6 +1,7 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
   ConversationAttachmentDto,
+  ConversationBaseDto,
   ConversationDetailDto,
   ConversationMessageDto,
   CreateCertificatePaymentIntentDto,
@@ -69,6 +70,7 @@ import {
   toCertificateTypeCode,
 } from './mappers/certificateMapper'
 import {
+  formatStrength,
   mapDelegationStatus,
   mapDispensationItem,
   mapPrescriptionCategory,
@@ -117,6 +119,8 @@ import { Vaccination, Vaccinations } from './models/vaccinations.model'
 import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import { HealthDirectorateHealthConversation } from './models/healthConversation.model'
+import { HealthDirectoratePaginatedHealthConversations } from './models/paginatedHealthConversations.model'
+import { HealthDirectoratePaginatedHealthConversationsInput } from './dto/paginatedHealthConversations.input'
 import { HealthDirectorateHealthConversationAttachment } from './models/healthConversationAttachment.model'
 import { HealthDirectorateHealthConversationDetail } from './models/healthConversationDetail.model'
 import { HealthDirectorateConversationOrganization } from './models/healthConversationOrganization.model'
@@ -360,7 +364,7 @@ export class HealthDirectorateService {
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           url: item.product.url,
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
@@ -392,7 +396,7 @@ export class HealthDirectorateService {
                 count: item.dispensations.length,
                 itemId: dispensedItem.productId,
                 name: dispensedItem.productName,
-                strength: dispensedItem.productStrength,
+                strength: formatStrength(dispensedItem.productStrength),
                 amount: dispensedItem.dispensedAmountDisplay,
               }
             })
@@ -469,7 +473,7 @@ export class HealthDirectorateService {
         return {
           id: item.product.id,
           name: item.product.name,
-          strength: item.product.strength,
+          strength: formatStrength(item.product.strength),
           atcCode: item.product.atcCode,
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
@@ -858,6 +862,7 @@ export class HealthDirectorateService {
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
       groupName: c.groupName ?? c.lastSenderGroupName,
+      treatmentId: c.treatmentId,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -867,8 +872,6 @@ export class HealthDirectorateService {
         c.replyBlockedReason,
       ),
       replyAvailability: toReplyAvailability(c),
-      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
-      messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
@@ -918,19 +921,45 @@ export class HealthDirectorateService {
     )
     if (!items) return null
 
-    return items.map((c) => ({
+    return items.map((c) => this.mapConversationBase(c))
+  }
+
+  async getPaginatedHealthConversations(
+    auth: Auth,
+    input?: HealthDirectoratePaginatedHealthConversationsInput,
+  ): Promise<HealthDirectoratePaginatedHealthConversations | null> {
+    const page = await this.healthApi.getPaginatedConversations(auth, {
+      ...input,
+      status: input?.status
+        ? toConversationStatusFilter(input.status)
+        : undefined,
+    })
+    if (!page) return null
+
+    return {
+      data: page.data.map((c) => this.mapConversationBase(c)),
+      totalCount: page.totalCount,
+      pageInfo: page.pageInfo,
+    }
+  }
+
+  private mapConversationBase(
+    c: ConversationBaseDto,
+  ): HealthDirectorateHealthConversation {
+    return {
       id: c.id,
       title: c.title,
       messageCount: c.messageCount,
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
       groupName: c.groupName ?? c.lastSenderGroupName,
+      treatmentId: c.treatmentId,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
       isArchived: c.isArchived,
       isRead: !c.unread,
-    }))
+    }
   }
 
   async getHealthConversation(
@@ -959,7 +988,7 @@ export class HealthDirectorateService {
       nodeId: input.nodeId,
       groupId: input.groupId,
       treatmentId: input.treatmentId ?? undefined,
-      patientInitiatedTypeCode: input.patientInitiatedTypeCode,
+      patientInitiatedTypeCode: input.patientInitiatedTypeCode ?? undefined,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
     }

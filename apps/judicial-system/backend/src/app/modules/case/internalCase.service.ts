@@ -80,7 +80,6 @@ import {
   DefendantRepositoryService,
   EventLog,
   IndictmentCount,
-  User,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
@@ -1759,14 +1758,9 @@ export class InternalCaseService {
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
-    return this.caseRepositoryService.count({
-      include: [{ model: User, as: 'creatingProsecutor' }],
-      where: {
-        type: CaseType.INDICTMENT,
-        state: CaseState.WAITING_FOR_CONFIRMATION,
-        '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
-      },
-    })
+    return this.caseRepositoryService.countIndictmentsAwaitingConfirmationForProsecutorsOffice(
+      prosecutorsOfficeId,
+    )
   }
 
   async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(

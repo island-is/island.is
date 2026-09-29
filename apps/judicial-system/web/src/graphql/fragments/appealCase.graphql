@@ -1,0 +1,49 @@
+fragment AppealCaseFields on AppealCase {
+  id
+  appealState
+  appealedByDefendantId
+  appealedByCivilClaimantId
+  appealedByRole
+  appealedDate
+  appealedInCourt
+  appealedOutOfCourt
+  statementDeadline
+  isStatementDeadlineExpired
+  appealCaseNumber
+  appealReceivedByCourtDate
+  appealRulingDate
+  prosecutorStatementDate
+  defendantStatementDate
+  defendantStatementDates {
+    defendantId
+    statementDate
+  }
+  civilClaimantStatementDates {
+    civilClaimantId
+    statementDate
+  }
+  appealAssistant {
+    id
+    name
+  }
+  appealJudge1 {
+    id
+    name
+  }
+  appealJudge2 {
+    id
+    name
+  }
+  appealJudge3 {
+    id
+    name
+  }
+  appealRulingDecision
+  appealConclusion
+  appealRulingModifiedHistory
+  requestAppealRulingNotToBePublished
+  appealValidToDate
+  isAppealCustodyIsolation
+  appealIsolationToDate
+  rulingFileId
+}

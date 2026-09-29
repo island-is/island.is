@@ -84,8 +84,12 @@ describe('CaseController - Get by id', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockCaseRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([connectedCase1, connectedCase2])
+      const mockFindConnectedIndictmentCases =
+        mockCaseRepositoryService.findConnectedIndictmentCases as jest.Mock
+      mockFindConnectedIndictmentCases.mockResolvedValueOnce([
+        connectedCase1,
+        connectedCase2,
+      ])
       then = await givenWhenThen(caseId, user, theCase)
     })
 

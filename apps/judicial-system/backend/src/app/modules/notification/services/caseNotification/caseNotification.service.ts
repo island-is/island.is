@@ -2230,6 +2230,48 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region INDICTMENT_VERDICT_APPEALED notifications
+  // The public prosecution is told when a defender appeals a verdict through
+  // the portal. Only then: an appeal the office registered itself is one it
+  // already knows about, and the prosecution's own appeal needs no telling
+  // (ticket, and owner 2026-09-17).
+  //
+  // Sent every time, with no check for an earlier one. A verdict appeal is per
+  // defendant, so a second defendant appealing the same case is news of its own
+  // - the usual "has this been sent" guard would swallow it (owner 2026-09-17).
+  private async sendIndictmentVerdictAppealedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtCaseNumber = theCase.courtCaseNumber ?? ''
+    const subject = `Áfrýjun í máli ${courtCaseNumber}`
+    const body = `Dómi héraðsdóms í máli ${courtCaseNumber} hefur verið áfrýjað. Sjá nánar á yfirliti málsins í Réttarvörslugátt.`
+
+    const publicProsecutorEmail =
+      await this.institutionContactRepositoryService.getInstitutionContact(
+        this.config.publicProsecutorId,
+        IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
+      )
+
+    if (!publicProsecutorEmail) {
+      return { delivered: false }
+    }
+
+    const recipient = await this.sendEmail({
+      subject,
+      html: body,
+      recipientName: 'Ríkissaksóknari',
+      recipientEmail: publicProsecutorEmail,
+      skipTail: true,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_VERDICT_APPEALED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED notifications
   private async sendPublicProsecutorReviewerAssignedNotifications(
     theCase: Case,
@@ -2583,6 +2625,8 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_REOPENED:
         return this.sendIndictmentReopenedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED:
+        return this.sendIndictmentVerdictAppealedNotifications(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,

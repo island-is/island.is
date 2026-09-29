@@ -2,6 +2,7 @@ import { Box, Hidden, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '@island.is/portals/my-pages/core'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { generatePath } from 'react-router-dom'
 import { messages } from '../../../lib/messages'
 import { HealthPaths } from '../../../lib/paths'
 import { SECTION_GAP } from '../../../utils/constants'
@@ -36,7 +37,9 @@ export const TreatmentsBox = () => {
         {treatments.map((treatment) => (
           <LinkResolver
             key={treatment.id}
-            href={HealthPaths.HealthTreatment.replace(':id', treatment.id)}
+            href={generatePath(HealthPaths.HealthTreatment, {
+              treatmentId: treatment.id,
+            })}
             className={styles.cardLink}
           >
             <Box

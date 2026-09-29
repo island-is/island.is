@@ -31,6 +31,7 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -829,12 +830,11 @@ export class AppealCaseService {
     // appeal rather than a joined one.
     await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
-    const [existingAppealCase] = await this.appealCaseRepositoryService.findAll(
-      {
-        where: { caseId: theCase.id, appealType: AppealCaseType.VERDICT },
-        transaction,
-      },
-    )
+    const existingAppealCase =
+      await this.appealCaseRepositoryService.findVerdictAppealByCaseId(
+        theCase.id,
+        { transaction },
+      )
 
     // The appealDate check above reads the case as it was loaded before the
     // transaction, so it cannot see an appeal filed in the meantime - two
@@ -856,10 +856,10 @@ export class AppealCaseService {
       }
 
       const appealEventLogs =
-        await this.appealEventLogRepositoryService.findAll({
-          where: { appealCaseId: existingAppealCase.id },
-          transaction,
-        })
+        await this.appealEventLogRepositoryService.findAllForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       if (hasStandingVerdictAppeal({ appealEventLogs }, defendantId, side)) {
         throw new ForbiddenException(
@@ -932,8 +932,19 @@ export class AppealCaseService {
       )
     }
 
-    // No notification: the one that tells the public prosecution office about a verdict appeal is
-    // its own story, and the ruling appeal notifications do not apply here.
+    // The public prosecution is told when a defender files an appeal through the
+    // portal, and only then: an appeal the office registered itself is one it
+    // already knows about, and the prosecution's own appeal needs no telling.
+    if (actor === 'DEFENDER') {
+      addMessagesToQueue({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
+        },
+      })
+    }
 
     return appealCase
   }
@@ -1282,12 +1293,11 @@ export class AppealCaseService {
     // then re-read the freshly committed set. The lock must precede the update:
     // taking it after would let each transaction hold a lock on its own updated
     // row and deadlock on the other's.
-    await this.appealDecisionRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      order: [['id', 'ASC']],
-      lock: Transaction.LOCK.UPDATE,
-      transaction,
-    })
+    await this.appealDecisionRepositoryService.lockAllForRuling(
+      theCase.id,
+      rulingFileId,
+      { transaction },
+    )
 
     const withdrawnDate = nowFactory()
 
@@ -1317,10 +1327,12 @@ export class AppealCaseService {
     )
 
     // The appeal stands until every party that appealed in court has withdrawn.
-    const appealDecisions = await this.appealDecisionRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      transaction,
-    })
+    const appealDecisions =
+      await this.appealDecisionRepositoryService.findAllForRuling(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
     const allWithdrawn = appealDecisions
       .filter((d) => d.decision === CaseAppealDecision.APPEAL)
       .every((d) => d.withdrawnDate)
@@ -1410,10 +1422,11 @@ export class AppealCaseService {
       }
     }
 
-    const appealEventLogs = await this.appealEventLogRepositoryService.findAll({
-      where: { appealCaseId: appealCase.id },
-      transaction,
-    })
+    const appealEventLogs =
+      await this.appealEventLogRepositoryService.findAllForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const standingAppellants = standingVerdictAppellants({ appealEventLogs })
     const isWithdrawn = (appellant: {

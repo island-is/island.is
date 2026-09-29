@@ -8,7 +8,7 @@ import {
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { caseInclude, CaseRepositoryService } from '../../../repository'
+import { CaseRepositoryService } from '../../../repository'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'
 
 interface Then {
@@ -53,20 +53,19 @@ describe('Case Has Existed Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: caseInclude,
-        where: {
-          id: caseId,
-          isArchived: false,
-        },
-      })
+      // The route answers for a case that has since been deleted
+      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+        caseId,
+        { allowDeleted: true, transaction: undefined },
+      )
       expect(then.result).toBe(true)
       expect(request.case).toBe(theCase)
     })

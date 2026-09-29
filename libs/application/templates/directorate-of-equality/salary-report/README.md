@@ -16,10 +16,10 @@ criteria before submitting the report.
 
 Only companies (validated via national id) may apply — see
 `mapUserToRole` in `lib/template.ts`. A company DMR will not accept a report
-from is routed to a "not allowed" state instead of the main form, for either
-of the two reasons DMR gives: `MISSING_EQUALITY_REPORT` (no approved
-jafnréttisáætlun) or `RENEWAL_WINDOW_NOT_OPEN` (the current report is due more
-than six months out).
+from is routed to a "not allowed" state instead of the main form, for the one
+reason DMR gives: `MISSING_EQUALITY_REPORT` (no approved jafnréttisáætlun and no
+unexpired certificate). There is no timing restriction — a company may file
+however far out its current deadline is.
 
 ## Organization
 
@@ -30,9 +30,8 @@ Directorate of Equality (Jafnréttisstofa).
 - **`prerequisites`** — collects consent and triggers the external data
   providers (company data, blank Excel template, salary report eligibility
   check, etc.). Branches to either `draft` or `notAllowed` on DMR's
-  eligibility pre-flight (`isSalaryReportEligible`), which answers both
-  preconditions in one read — the equality obligation and the three-year
-  renewal window.
+  eligibility pre-flight (`isSalaryReportEligible`), which checks the
+  equality obligation.
 - **`notAllowed`** — terminal state shown when the applicant isn't eligible.
 - **`draft`** — the main form: company details, criteria/sub-criteria
   weighting, employee data (imported or entered manually), job classification

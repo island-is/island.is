@@ -48,6 +48,7 @@ query GetHealthConversationDetail($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
     title
+    treatmentId
     status
     isStarred
     isArchived

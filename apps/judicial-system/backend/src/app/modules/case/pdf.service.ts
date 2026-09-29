@@ -43,7 +43,6 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import {
   Case,
-  caseInclude,
   CaseRepositoryService,
   Defendant,
   EventLog,
@@ -132,9 +131,10 @@ export class PdfService {
       })
 
     const policeDigitalCaseFiles =
-      await this.policeDigitalCaseFileRepositoryService.findAll({
-        where: { caseId: theCase.id, policeCaseNumber },
-      })
+      await this.policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+      )
 
     const generatedPdf = await createCaseFilesRecord(
       theCase,
@@ -293,10 +293,10 @@ export class PdfService {
     }
 
     const parentCase = theCase.splitCaseId
-      ? await this.caseRepositoryService.findById(theCase.splitCaseId, {
-          include: caseInclude,
-          transaction,
-        })
+      ? await this.caseRepositoryService.findSplitSourceById(
+          theCase.splitCaseId,
+          { transaction },
+        )
       : theCase
 
     if (!parentCase) {
