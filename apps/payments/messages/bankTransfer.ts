@@ -17,27 +17,28 @@ export const bankTransfer = defineMessages({
     defaultMessage: 'Hefja millifærslu',
     description: 'Primary button label that initiates the bank-transfer flow',
   },
-  accountNumber: {
-    id: 'payments:bankTransfer.accountNumber',
-    defaultMessage: 'Úttektarreikningur',
-    description: 'Label for the payer bank account number (BBAN) input',
-  },
-  accountNumberPlaceholder: {
-    id: 'payments:bankTransfer.accountNumberPlaceholder',
-    defaultMessage: '0000-00-000000',
+  bank: {
+    id: 'payments:bankTransfer.bank',
+    defaultMessage: 'Banki',
     description:
-      'Placeholder for the bank account number input (XXXX-XX-XXXXXX)',
+      'Label for the bank part (first 4 digits) of the payer bank account number. EN: "Bank"',
+  },
+  ledger: {
+    id: 'payments:bankTransfer.ledger',
+    defaultMessage: 'Höfuðbók',
+    description:
+      'Label for the ledger part (middle 2 digits) of the payer bank account number. EN: "Ledger"',
+  },
+  account: {
+    id: 'payments:bankTransfer.account',
+    defaultMessage: 'Bankareikningur',
+    description:
+      'Label for the account part (last 6 digits) of the payer bank account number. EN: "Account number"',
   },
   accountNumberRequired: {
     id: 'payments:bankTransfer.accountNumberRequired',
     defaultMessage: 'Úttektarreikningur er nauðsynlegur',
     description: 'Validation error when the bank account number is empty',
-  },
-  accountNumberInvalid: {
-    id: 'payments:bankTransfer.accountNumberInvalid',
-    defaultMessage: 'Sláðu inn gilt reikningsnúmer (0000-00-000000)',
-    description:
-      'Validation error when the bank account number is not 12 digits',
   },
   accountNumberBankNotSupported: {
     id: 'payments:bankTransfer.accountNumberBankNotSupported',

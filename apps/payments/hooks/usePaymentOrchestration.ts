@@ -16,6 +16,7 @@ import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
 import { useApplePay } from './useApplePay'
 import { useBankTransferPayment } from './useBankTransferPayment'
+import { toBankAccountNumber } from '../components/BankTransferPayment/BankTransferPayment.utils'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -166,18 +167,18 @@ export const usePaymentOrchestration = ({
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
         } else if (selectedPaymentMethod === 'bank_transfer') {
-          const { bankAccountNumber, actorNationalId } = data
-          if (!bankAccountNumber) {
+          const { bank, ledger, account, actorNationalId } = data
+          if (!bank || !ledger || !account) {
             setPaymentError({
               code: BankTransferErrorCode.MissingBankAccountNumber,
             })
             setIsInitiatingSubmit(false)
             return
           }
-          // The form stores masked values; the service needs digits. The actor is only rendered
-          // (and so only filled in) when the payer is a company.
+          // The service needs the 12-digit account number and a bare national id. The actor is only
+          // rendered (and so only filled in) when the payer is a company.
           await bankTransferPayment.processBankTransferPayment({
-            bankAccountNumber: bankAccountNumber.replace(/\D/g, ''),
+            bankAccountNumber: toBankAccountNumber({ bank, ledger, account }),
             actorNationalId: actorNationalId?.replace(/\D/g, '') || undefined,
           })
         }

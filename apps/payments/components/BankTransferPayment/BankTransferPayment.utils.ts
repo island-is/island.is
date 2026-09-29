@@ -6,9 +6,18 @@ import { bankTransfer } from '../../messages'
 type FormatMessage = ReturnType<typeof useLocale>['formatMessage']
 
 /**
- * A BBAN is `bbbb-hh-nnnnnn`, where the leading four digits are the institution (first two) plus its
- * branch (last two) — indó is `2200`.
+ * A BBAN is `bbbb-hh-nnnnnn`: the bank (the institution in the first two digits plus its branch in
+ * the last two — indó is `2200`), the ledger (höfuðbók) and the account number. Each is entered in
+ * its own input, and a shorter value is short for one with leading zeros.
  */
+export const BANK_ACCOUNT_PART_LENGTHS = {
+  bank: 4,
+  ledger: 2,
+  account: 6,
+} as const
+
+export type BankAccountPart = keyof typeof BANK_ACCOUNT_PART_LENGTHS
+
 const BANK_CODE_LENGTH = 2
 
 /**
@@ -18,26 +27,27 @@ const BANK_CODE_LENGTH = 2
  */
 export const UNSUPPORTED_BANK_CODES: readonly string[] = ['11', '22']
 
-/** Bare digits, or the 4-2-6 masked form the input produces. Nothing in between. */
-const BBAN_PATTERN = /^\d{12}$/
-const MASKED_BBAN_PATTERN = /^\d{4}-\d{2}-\d{6}$/
+/** Pads a part with leading zeros to its full length, so `123` → `0123`. An empty part stays empty. */
+export const padBankAccountPart = (value: string, part: BankAccountPart) =>
+  value ? value.padStart(BANK_ACCOUNT_PART_LENGTHS[part], '0') : value
 
-export const validateBankAccountNumber = (
-  value: string,
-  formatMessage: FormatMessage,
-) => {
-  // Only the two canonical shapes are a number: repeated, misplaced or trailing separators are
-  // malformed, even though the input mask makes them hard to type.
-  if (!BBAN_PATTERN.test(value) && !MASKED_BBAN_PATTERN.test(value)) {
-    return formatMessage(bankTransfer.accountNumberInvalid)
-  }
+/** The 12-digit BBAN the service expects, e.g. `123`, `2`, `1234` → `012302001234`. */
+export const toBankAccountNumber = (parts: Record<BankAccountPart, string>) =>
+  padBankAccountPart(parts.bank, 'bank') +
+  padBankAccountPart(parts.ledger, 'ledger') +
+  padBankAccountPart(parts.account, 'account')
 
-  const digits = value.replace(/-/g, '')
+/**
+ * A bank the provider cannot reach gets a distinct message, since there is nothing wrong with the
+ * number itself and telling the payer to check their typing would send them in circles.
+ */
+export const validateBank = (value: string, formatMessage: FormatMessage) => {
+  const institution = padBankAccountPart(value, 'bank').slice(
+    0,
+    BANK_CODE_LENGTH,
+  )
 
-  // Well-formed but at a bank the provider cannot reach — a distinct message, since there is nothing
-  // wrong with the number itself and telling the payer to check their typing would send them in
-  // circles.
-  if (UNSUPPORTED_BANK_CODES.includes(digits.slice(0, BANK_CODE_LENGTH))) {
+  if (UNSUPPORTED_BANK_CODES.includes(institution)) {
     return formatMessage(bankTransfer.accountNumberBankNotSupported)
   }
 

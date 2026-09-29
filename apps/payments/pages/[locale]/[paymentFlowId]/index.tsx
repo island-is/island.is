@@ -261,7 +261,9 @@ function PaymentPage({
       card: '',
       cardExpiry: '',
       cardCVC: '',
-      bankAccountNumber: '',
+      bank: '',
+      ledger: '',
+      account: '',
       actorNationalId: '',
     },
   })

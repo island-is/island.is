@@ -1,20 +1,30 @@
 import { ReactNode } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
+import { MessageDescriptor } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
-import { AlertMessage, Box, Input, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Input,
+  InputError,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 import { bankTransfer } from '../../messages'
 import { formatNationalId } from '../../utils'
 import {
+  BANK_ACCOUNT_PART_LENGTHS,
+  BankAccountPart,
+  padBankAccountPart,
   validateActorNationalId,
-  validateBankAccountNumber,
+  validateBank,
 } from './BankTransferPayment.utils'
+import * as styles from './BankTransferPayment.css'
 
-interface BankTransferPaymentInput {
-  bankAccountNumber: string
+type BankTransferPaymentInput = Record<BankAccountPart, string> & {
   actorNationalId: string
 }
 
@@ -28,9 +38,36 @@ interface BankTransferPaymentProps {
   companyPayer?: CompanyPayer
 }
 
-const BANK_ACCOUNT_MASK = '____-__-______'
 const NATIONAL_ID_MASK = '______-____'
 const MASK_REPLACEMENT = { _: /\d/ }
+
+const BANK_ACCOUNT_ERROR_ID = 'bank-account-error'
+
+const BANK_ACCOUNT_PARTS: {
+  name: BankAccountPart
+  label: MessageDescriptor
+  className: string
+  // Focused once this part is full.
+  next?: BankAccountPart
+}[] = [
+  {
+    name: 'bank',
+    label: bankTransfer.bank,
+    className: styles.bankAccountPart,
+    next: 'ledger',
+  },
+  {
+    name: 'ledger',
+    label: bankTransfer.ledger,
+    className: styles.bankAccountPart,
+    next: 'account',
+  },
+  {
+    name: 'account',
+    label: bankTransfer.account,
+    className: styles.bankAccountNumberPart,
+  },
+]
 
 /**
  * The body shown between the {@link PaymentSelector} and the submit button when the user has
@@ -39,8 +76,15 @@ const MASK_REPLACEMENT = { _: /\d/ }
 export const BankTransferPayment = ({
   companyPayer,
 }: BankTransferPaymentProps) => {
-  const { control, formState } = useFormContext<BankTransferPaymentInput>()
+  const { control, formState, setFocus } =
+    useFormContext<BankTransferPaymentInput>()
   const { formatMessage } = useLocale()
+
+  // One message for the whole account number, under the three inputs.
+  const bankAccountError =
+    formState.errors.bank?.message ??
+    formState.errors.ledger?.message ??
+    formState.errors.account?.message
 
   return (
     <PaymentContainer>
@@ -101,31 +145,76 @@ export const BankTransferPayment = ({
               />
             </>
           )}
-          <Controller
-            name="bankAccountNumber"
-            control={control}
-            rules={{
-              required: formatMessage(bankTransfer.accountNumberRequired),
-              validate: (value) =>
-                validateBankAccountNumber(value, formatMessage),
-            }}
-            render={({ field }) => (
-              <InputMask
-                mask={BANK_ACCOUNT_MASK}
-                replacement={MASK_REPLACEMENT}
-                component={Input}
-                {...field}
-                inputMode="numeric"
-                backgroundColor="blue"
-                label={formatMessage(bankTransfer.accountNumber)}
-                placeholder={formatMessage(
-                  bankTransfer.accountNumberPlaceholder,
-                )}
-                size="sm"
-                errorMessage={formState.errors.bankAccountNumber?.message}
+          <Box>
+            <Box display="flex" columnGap={2}>
+              {BANK_ACCOUNT_PARTS.map(({ name, label, className, next }) => {
+                const length = BANK_ACCOUNT_PART_LENGTHS[name]
+
+                return (
+                  <Box key={name} className={className}>
+                    <Controller
+                      name={name}
+                      control={control}
+                      rules={{
+                        required: formatMessage(
+                          bankTransfer.accountNumberRequired,
+                        ),
+                        validate:
+                          name === 'bank'
+                            ? (value) => validateBank(value, formatMessage)
+                            : undefined,
+                      }}
+                      render={({ field, fieldState }) => (
+                        <Input
+                          ref={field.ref}
+                          id={`bank-account-${name}`}
+                          name={field.name}
+                          value={field.value}
+                          onChange={(e) => {
+                            const value = e.target.value
+                              .replace(/\D/g, '')
+                              .slice(0, length)
+                            field.onChange(value)
+
+                            // Move on to the next part once this one is full, selecting anything
+                            // already typed there so it is replaced.
+                            if (next && value.length === length) {
+                              setFocus(next, { shouldSelect: true })
+                            }
+                          }}
+                          // Show the value as it will be sent: `123` becomes `0123`.
+                          onBlur={(e) => {
+                            field.onChange(
+                              padBankAccountPart(e.target.value, name),
+                            )
+                            field.onBlur()
+                          }}
+                          inputMode="numeric"
+                          maxLength={length}
+                          backgroundColor="blue"
+                          label={formatMessage(label)}
+                          placeholder={'0'.repeat(length)}
+                          size="sm"
+                          // Not `hasError`: its warning icon covers the digits in the narrow inputs.
+                          // The message under the row carries the error instead.
+                          aria-invalid={fieldState.error ? true : undefined}
+                          aria-describedby={
+                            bankAccountError ? BANK_ACCOUNT_ERROR_ID : undefined
+                          }
+                        />
+                      )}
+                    />
+                  </Box>
+                )
+              })}
+            </Box>
+            {bankAccountError && (
+              <InputError
+                id={BANK_ACCOUNT_ERROR_ID}
+                errorMessage={bankAccountError}
               />
             )}
-          />
+          </Box>
         </Box>
       </Box>
     </PaymentContainer>
