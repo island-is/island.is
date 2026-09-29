@@ -412,6 +412,18 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
+  medicineCalculatorRemoveLabel: {
+    id: 'sp.health:medicine-calculator-remove-label',
+    defaultMessage: 'Fjarlægja {arg} af lyfjakaupalista',
+  },
+  medicineCalculatorIncreaseLabel: {
+    id: 'sp.health:medicine-calculator-increase-label',
+    defaultMessage: 'Fjölga pakkningum af {arg}',
+  },
+  medicineCalculatorDecreaseLabel: {
+    id: 'sp.health:medicine-calculator-decrease-label',
+    defaultMessage: 'Fækka pakkningum af {arg}',
+  },
   organDonation: {
     id: 'sp.health:organ-donation',
     defaultMessage: 'Líffæragjöf',
@@ -2521,6 +2533,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svara aftur',
     id: 'sp.health:answer-again',
   },
+  canAnswerAgain: {
+    defaultMessage: 'Hægt að svara aftur',
+    id: 'sp.health:can-answer-again',
+  },
   questionnaireNotFound: {
     defaultMessage: 'Spurningalisti fannst ekki',
     id: 'sp.health:questionnaire-not-found',
@@ -2617,10 +2633,6 @@ export const messages = defineMessages({
   seeAllMessages: {
     defaultMessage: 'Sjá öll skilaboð',
     id: 'sp.health:see-all-messages',
-  },
-  allQuestionnaires: {
-    defaultMessage: 'Allir spurningalistar',
-    id: 'sp.health:all-questionnaires',
   },
   treatmentConversationsIntro: {
     defaultMessage:
@@ -3021,6 +3033,10 @@ export const messages = defineMessages({
   awaitingApproval: {
     defaultMessage: 'Bíður gildistöku',
     id: 'sp.health:awaiting-approval',
+  },
+  validFromDate: {
+    defaultMessage: 'Tekur gildi {date}',
+    id: 'sp.health:valid-from-date',
   },
   filterByCountry: {
     defaultMessage: 'Sía eftir landi',
