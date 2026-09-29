@@ -189,9 +189,20 @@ describe('DelegationRequestsController', () => {
   it('rejects a duplicate pending request', async () => {
     const first = await server.post(path).send(validBody())
     expect(first.status).toEqual(201)
+    // Move the first request outside the daily rate-limit window.
+    await app
+      .get(getModelToken(DelegationRequest))
+      .sequelize.query(
+        `UPDATE delegation_request SET created = now() - interval '25 hours' WHERE id = :id`,
+        { replacements: { id: first.body.id } },
+      )
 
     const second = await server.post(path).send(validBody())
+
     expect(second.status).toEqual(400)
+    expect(second.body.detail).toEqual(
+      'A pending delegation request to this party already exists.',
+    )
   })
 
   it('caps the number of simultaneously pending requests', async () => {
