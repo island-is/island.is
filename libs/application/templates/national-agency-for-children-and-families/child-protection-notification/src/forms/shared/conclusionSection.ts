@@ -1,18 +1,28 @@
-import { buildImageField } from '@island.is/application/core'
 import { FamilyIllustration } from '@island.is/application/assets/graphics'
+import { buildImageField } from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { completedMessages } from '../../lib/messages'
+import { conclusionMessages } from '../../lib/messages'
+import { Roles } from '../../utils/constants'
+import { getApplicantRole } from '../../utils/roleUtils'
 
 export const conclusionSection = buildFormConclusionSection({
-  sectionTitle: completedMessages.sectionTitle,
-  multiFieldTitle: completedMessages.multiFieldTitle,
-  alertTitle: completedMessages.alertTitle,
-  alertMessage: completedMessages.alertMessage,
+  sectionTitle: conclusionMessages.sectionTitle,
+  multiFieldTitle: conclusionMessages.multiFieldTitle,
+  alertTitle: conclusionMessages.alertTitle,
+  alertMessage: conclusionMessages.alertMessage,
   accordion: false,
-  descriptionFieldDescription: completedMessages.thankYouDescription,
-  bottomButtonMessage: completedMessages.bottomButtonMessage,
+  descriptionFieldDescription: (application) => {
+    const role = getApplicantRole(application.applicant)
+
+    return role === Roles.ADULT_PROCURATION_APPLICANT
+      ? conclusionMessages.thankYouDescriptionAdultProcuration
+      : role === Roles.ADULT_PERSONAL_APPLICANT
+      ? conclusionMessages.thankYouDescriptionAdultPersonal
+      : conclusionMessages.thankYouDescriptionMinor
+  },
+  bottomButtonMessage: conclusionMessages.bottomButtonMessage,
   image: buildImageField({
-    id: 'completedImage',
+    id: 'conclusionImage',
     image: FamilyIllustration,
     imageWidth: 'auto',
     imagePosition: 'center',

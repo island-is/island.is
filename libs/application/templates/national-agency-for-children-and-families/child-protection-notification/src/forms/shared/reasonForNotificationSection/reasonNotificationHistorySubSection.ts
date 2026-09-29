@@ -38,8 +38,7 @@ export const reasonNotificationHistorySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'reasonNotificationHistory.hasDiscussedWithParents',
-          title: ({ answers, externalData }) =>
-            getHasDiscussedWithParentsTitle(answers, externalData),
+          title: ({ answers }) => getHasDiscussedWithParentsTitle(answers),
           required: true,
           width: 'half',
           space: 4,
@@ -47,8 +46,7 @@ export const reasonNotificationHistorySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'reasonNotificationHistory.areParentsInformed',
-          title: ({ answers, externalData }) =>
-            getAreParentsInformedTitle(answers, externalData),
+          title: ({ answers }) => getAreParentsInformedTitle(answers),
           required: true,
           width: 'half',
           space: 4,

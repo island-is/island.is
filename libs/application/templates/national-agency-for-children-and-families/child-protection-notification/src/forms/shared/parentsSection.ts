@@ -23,7 +23,6 @@ import {
 } from '../../utils/childProtectionNotificationUtils'
 import {
   doesNotKnowParentIds,
-  isKnowsNationalId,
   isUnborn,
   knowsParentIds,
   showParentsSection,
@@ -251,8 +250,6 @@ export const parentsSection = buildSection({
       title: ({ answers }) =>
         isUnborn(answers)
           ? parentsMessages.expectantParents.sectionTitle
-          : isKnowsNationalId(answers)
-          ? parentsMessages.custodians.title
           : parentsMessages.guardians.title,
       description: ({ answers }) => getParentMessages(answers).description,
       children: [

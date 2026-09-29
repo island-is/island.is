@@ -1049,12 +1049,12 @@ export const getReasonNotificationHistoryItems = (
     },
     {
       width: 'full',
-      keyText: getHasDiscussedWithParentsTitle(answers, externalData),
+      keyText: getHasDiscussedWithParentsTitle(answers),
       valueText: getYesNoLabel(hasDiscussedWithParents),
     },
     {
       width: 'full',
-      keyText: getAreParentsInformedTitle(answers, externalData),
+      keyText: getAreParentsInformedTitle(answers),
       valueText: getYesNoLabel(areParentsInformed),
     },
     ...(areParentsInformed === NO

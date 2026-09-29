@@ -1,5 +1,5 @@
 import { NO, YES } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import {
   childMessages,
   memmMessages,
@@ -8,12 +8,10 @@ import {
   sharedMessages,
 } from '../lib/messages'
 import {
-  isKnowsNationalId,
   isReasonForNotificationSubCategorySelected,
-  isSystemNationalId,
   isUnborn,
 } from './conditionUtils'
-import { KnowsNationalId, DO_NOT_KNOW, NOT_APPLICABLE } from './constants'
+import { DO_NOT_KNOW, KnowsNationalId, NOT_APPLICABLE } from './constants'
 import { getApplicationAnswers } from './getApplicationAnswers'
 
 export const getYesNoOptions = () => [
@@ -101,33 +99,20 @@ export const getHasReportedBeforeTitle = (answers: FormValue) =>
         .hasReportedBeforeExpectantParents
     : reasonForNotificationMessages.notificationHistory.hasReportedBefore
 
-export const getHasDiscussedWithParentsTitle = (
-  answers: FormValue,
-  externalData: ExternalData,
-) =>
+export const getHasDiscussedWithParentsTitle = (answers: FormValue) =>
   isUnborn(answers)
     ? reasonForNotificationMessages.notificationHistory
         .hasDiscussedWithExpectantParents
-    : isKnowsNationalId(answers) && isSystemNationalId(externalData)
-    ? reasonForNotificationMessages.notificationHistory
-        .hasDiscussedWithCustodians
     : reasonForNotificationMessages.notificationHistory
         .hasDiscussedWithGuardians
 
-export const getAreParentsInformedTitle = (
-  answers: FormValue,
-  externalData: ExternalData,
-) =>
+export const getAreParentsInformedTitle = (answers: FormValue) =>
   isUnborn(answers)
     ? reasonForNotificationMessages.notificationHistory
         .areExpectantParentsInformed
-    : isKnowsNationalId(answers) && isSystemNationalId(externalData)
-    ? reasonForNotificationMessages.notificationHistory.areCustodiansInformed
     : reasonForNotificationMessages.notificationHistory.areGuardiansInformed
 
 export const getParentMessages = (answers: FormValue) =>
   isUnborn(answers)
     ? parentsMessages.expectantParents
-    : isKnowsNationalId(answers)
-    ? parentsMessages.custodians
     : parentsMessages.guardians
