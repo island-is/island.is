@@ -32,6 +32,13 @@ import {
   userAccessWhereOptions,
 } from './caseTable.whereOptions'
 
+// The court of appeals' verdict appeal lists. Rows from these are about the
+// verdict appeal rather than the case-level ruling appeal.
+const verdictAppealCaseTableTypes: CaseTableType[] = [
+  CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+  CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
+]
+
 @Injectable()
 export class CaseTableService {
   constructor(
@@ -132,7 +139,13 @@ export class CaseTableService {
       rowCount: displayCases.length,
       rows: displayCases.map((c) => ({
         caseId: c.id,
-        appealCaseId: c.appealCase?.id,
+        // Which appeal the row is about. A case can carry a case-level ruling
+        // appeal and a verdict appeal at the same time, so the list decides:
+        // the court of appeals' verdict lists are about the verdict appeal,
+        // everything else about the case-level one.
+        appealCaseId: verdictAppealCaseTableTypes.includes(type)
+          ? c.verdictAppealCase?.id
+          : c.appealCase?.id,
         defendantIds: c.defendants?.map((d: Defendant) => d.id),
         isMyCase: isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),

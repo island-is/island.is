@@ -1,10 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
-import type {
-  AppealCase,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseType,
   UserRole,
@@ -35,13 +32,12 @@ const renderClosedIndictment = (
   theCase: Case,
   userRole: UserRole = UserRole.PROSECUTOR,
   nationalId?: string,
-  appealCase?: AppealCase | null,
 ) =>
   render(
     <IntlProviderWrapper>
       <UserContextWrapper userRole={userRole} nationalId={nationalId}>
         <FormContextWrapper theCase={theCase}>
-          <InfoCardClosedIndictment appealCase={appealCase} />
+          <InfoCardClosedIndictment />
         </FormContextWrapper>
       </UserContextWrapper>
     </IntlProviderWrapper>,
@@ -95,24 +91,23 @@ describe('InfoCardClosedIndictment', () => {
       expect(screen.queryByText('Case Level Judge One')).toBeNull()
     })
 
-    // What a page about a different appeal needs. The verdict appeal overview
-    // sets no appealCaseId, so without naming its appeal the card would fall
-    // back to the case-level ruling appeal and show that proceeding's number
-    // and judges.
-    it('shows the appeal it is given rather than resolving one', async () => {
-      renderClosedIndictment(
-        caseWithBothAppeals(),
-        UserRole.PROSECUTOR,
-        undefined,
-        {
+    // The verdict appeal is a third proceeding the same card can be asked
+    // about, and the URL is what says so - the same mechanism as a ruling
+    // order appeal uses, not a second one beside it.
+    it('shows the verdict appeal when the query string names it', async () => {
+      mockAppealCaseIdQuery = 'verdict-appeal'
+
+      renderClosedIndictment({
+        ...caseWithBothAppeals(),
+        verdictAppealCase: {
           id: 'verdict-appeal',
           appealCaseNumber: 'L-300/2026',
           appealAssistant: { id: 'assistant', name: 'Verdict Assistant' },
           appealJudge1: { id: 'judge-1', name: 'Verdict Judge One' },
           appealJudge2: { id: 'judge-2', name: 'Verdict Judge Two' },
           appealJudge3: { id: 'judge-3', name: 'Verdict Judge Three' },
-        } as AppealCase,
-      )
+        },
+      } as unknown as Case)
 
       await screen.findByText('L-300/2026')
       expect(screen.queryByText('L-100/2026')).toBeNull()
@@ -120,15 +115,15 @@ describe('InfoCardClosedIndictment', () => {
       expect(screen.queryByText('Case Level Assistant')).toBeNull()
     })
 
-    // An appeal with no case number of its own shows no section, rather than
-    // borrowing the case-level appeal's. This is the verdict appeal today.
-    it('shows no section for an appeal that has no case number', async () => {
-      renderClosedIndictment(
-        caseWithBothAppeals(),
-        UserRole.PROSECUTOR,
-        undefined,
-        { id: 'verdict-appeal' } as AppealCase,
-      )
+    // The verdict appeal today: no case number of its own, so no section -
+    // rather than borrowing the case-level appeal's.
+    it('shows no section for a named appeal with no case number', async () => {
+      mockAppealCaseIdQuery = 'verdict-appeal'
+
+      renderClosedIndictment({
+        ...caseWithBothAppeals(),
+        verdictAppealCase: { id: 'verdict-appeal' },
+      } as unknown as Case)
 
       // The card rendered - the police case number is on it - but the Court
       // of Appeals section is not.

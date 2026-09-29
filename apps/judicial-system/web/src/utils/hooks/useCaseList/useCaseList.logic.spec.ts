@@ -28,10 +28,7 @@ describe('getCourtOfAppealsRouteForRow', () => {
   ])('sends a row from %s to the verdict appeal overview', (tableType) => {
     expect(
       getCourtOfAppealsRouteForRow(caseWithBothAppeals, null, tableType),
-    ).toEqual({
-      route: COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
-      withAppealCaseId: false,
-    })
+    ).toBe(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE)
   })
 
   // The case carries a verdict appeal too, so only the list it came from can
@@ -44,10 +41,7 @@ describe('getCourtOfAppealsRouteForRow', () => {
         'ruling-appeal',
         CaseTableType.COURT_OF_APPEALS_CASES_IN_PROGRESS,
       ),
-    ).toEqual({
-      route: COURT_OF_APPEAL_OVERVIEW_ROUTE,
-      withAppealCaseId: true,
-    })
+    ).toBe(COURT_OF_APPEAL_OVERVIEW_ROUTE)
   })
 
   it('still sends a completed ruling appeal to the result page', () => {
@@ -65,18 +59,14 @@ describe('getCourtOfAppealsRouteForRow', () => {
         'ruling-appeal',
         CaseTableType.COURT_OF_APPEALS_CASES_COMPLETED,
       ),
-    ).toEqual({
-      route: COURT_OF_APPEAL_RESULT_ROUTE,
-      withAppealCaseId: true,
-    })
+    ).toBe(COURT_OF_APPEAL_RESULT_ROUTE)
   })
 
   // Deep links and anything that does not know its list keep the behaviour
   // they had before the verdict lists existed.
   it('falls back to the ruling appeal overview with no table type', () => {
-    expect(getCourtOfAppealsRouteForRow(caseWithBothAppeals)).toEqual({
-      route: COURT_OF_APPEAL_OVERVIEW_ROUTE,
-      withAppealCaseId: true,
-    })
+    expect(getCourtOfAppealsRouteForRow(caseWithBothAppeals)).toBe(
+      COURT_OF_APPEAL_OVERVIEW_ROUTE,
+    )
   })
 })

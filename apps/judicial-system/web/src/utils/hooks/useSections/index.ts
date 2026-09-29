@@ -77,6 +77,7 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealCaseType,
   CaseState,
   CaseType,
   Gender,
@@ -1605,13 +1606,11 @@ const useSections = (
             },
           ]
         : []),
-      // One appeal proceeding in the stepper at a time, chosen by the route.
-      // A case can carry a ruling appeal and a verdict appeal at once, and the
-      // verdict route sets no appealCaseId - so targetAppealCase resolves to
-      // the ruling appeal there. Left in, its section sits earlier in this
-      // list and is the one the side panel marks active, which would leave the
-      // verdict step the reader is looking at unhighlighted.
-      ...(isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE)
+      // One appeal proceeding in the stepper at a time, chosen by the appeal
+      // the page is about. A case can carry a ruling appeal and a verdict
+      // appeal at once, and their steps are different; showing both would let
+      // the side panel mark a step from the other proceeding active.
+      ...(targetAppealCase?.appealType === AppealCaseType.VERDICT
         ? getCourtOfAppealVerdictAppealSections(workingCase)
         : !targetAppealCase?.appealState ||
           (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&

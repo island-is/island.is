@@ -17,27 +17,21 @@ const verdictAppealCaseTableTypes: CaseTableType[] = [
 ]
 
 /**
- * Which page a court of appeals row opens, and whether the appeal it refers to
- * has to be named in the query string.
+ * Which page a court of appeals row opens.
  *
  * Which list the row came from is what separates a verdict appeal from a
  * ruling appeal - not the case, which can carry one of each at the same time.
  *
- * A verdict appeal needs no `appealCaseId`: `verdictAppealCase` is a HasOne, so
- * the page has only one appeal to show. The ruling appeal pages do need it,
- * because a case can carry a case-level appeal and an appeal of each ruling
- * order, and the row says which of them it is.
+ * The appeal itself always travels in the query string, whichever page opens,
+ * so every screen answers "which appeal is this about" the same way.
  */
 export const getCourtOfAppealsRouteForRow = (
   caseToOpen: WorkingCase,
   appealCaseId?: string | null,
   caseTableType?: CaseTableType | null,
-): { route: string; withAppealCaseId: boolean } => {
+): string => {
   if (caseTableType && verdictAppealCaseTableTypes.includes(caseTableType)) {
-    return {
-      route: COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
-      withAppealCaseId: false,
-    }
+    return COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
   }
 
   const targetAppealCase = resolveTargetAppealCaseByAppealCaseId(
@@ -45,11 +39,7 @@ export const getCourtOfAppealsRouteForRow = (
     appealCaseId ?? undefined,
   )
 
-  return {
-    route:
-      targetAppealCase?.appealState === AppealCaseState.COMPLETED
-        ? COURT_OF_APPEAL_RESULT_ROUTE
-        : COURT_OF_APPEAL_OVERVIEW_ROUTE,
-    withAppealCaseId: true,
-  }
+  return targetAppealCase?.appealState === AppealCaseState.COMPLETED
+    ? COURT_OF_APPEAL_RESULT_ROUTE
+    : COURT_OF_APPEAL_OVERVIEW_ROUTE
 }

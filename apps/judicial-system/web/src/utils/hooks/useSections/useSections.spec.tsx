@@ -12,6 +12,7 @@ import type {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -23,20 +24,25 @@ import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judici
 
 import useSections from './index'
 
-// Which page the stepper is being built for. Empty matches no route, which is
-// what every test below but the verdict appeal ones wants.
+// Two different questions. The appeal in the query string says which
+// proceeding the stepper is about; the path says which step of it the reader
+// is on. Both default to nothing, which is what every test but the verdict
+// ones wants.
+let mockAppealCaseId: string | undefined
 let mockPathname = ''
 
 jest.mock('next/router', () => ({
   useRouter() {
     return {
       pathname: mockPathname,
+      query: { appealCaseId: mockAppealCaseId },
     }
   },
 }))
 
 describe('useSections getSections', () => {
   beforeEach(() => {
+    mockAppealCaseId = undefined
     mockPathname = ''
   })
 
@@ -108,10 +114,10 @@ describe('useSections getSections', () => {
     }))
   }
 
-  // A verdict appeal is a separate proceeding, and the route is what says which
-  // one the stepper is about: the verdict page sets no appealCaseId, so the
-  // target appeal resolver falls back to the case-level ruling appeal.
-  describe('on the verdict appeal route', () => {
+  // A verdict appeal is a separate proceeding with its own steps. Which one
+  // the stepper is about comes from the appeal named in the URL, the same way
+  // every other Court of Appeals screen decides it.
+  describe('when the url names the verdict appeal', () => {
     const caseWithBothAppeals = {
       origin: CaseOrigin.RVG,
       type: CaseType.INDICTMENT,
@@ -123,8 +129,13 @@ describe('useSections getSections', () => {
       appealCase: {
         id: 'ruling-appeal',
         appealState: AppealCaseState.RECEIVED,
+        appealType: AppealCaseType.RULING,
       },
-      verdictAppealCase: { id: 'verdict-appeal' },
+      verdictAppealCase: {
+        id: 'verdict-appeal',
+        appealState: AppealCaseState.RECEIVED,
+        appealType: AppealCaseType.VERDICT,
+      },
     } as unknown as Case
 
     const coaUser = {
@@ -144,9 +155,10 @@ describe('useSections getSections', () => {
     }
 
     // The ruling appeal section sits earlier in the list and is active while
-    // the appeal is received, so leaving it in means the side panel highlights
-    // it and the verdict step the reader is on stays unmarked.
+    // that appeal is received, so leaving it in means the side panel marks it
+    // and the verdict step the reader is on stays unmarked.
     it('shows the verdict appeal rather than the ruling appeal', () => {
+      mockAppealCaseId = 'verdict-appeal'
       mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
 
       const sections = appealSections(caseWithBothAppeals, coaUser)
@@ -155,7 +167,9 @@ describe('useSections getSections', () => {
       expect(sections[0].isActive).toBe(true)
     })
 
-    it('leaves the ruling appeal sections alone on every other route', () => {
+    it('leaves the ruling appeal sections alone when it names that one', () => {
+      mockAppealCaseId = 'ruling-appeal'
+
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
       expect(sections.map((s) => s.name)).toEqual(['Kærumál'])

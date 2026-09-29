@@ -78,8 +78,6 @@ const useCaseList = () => {
       caseTableType?: CaseTableType | null,
     ) => {
       let routeTo = null
-      // Only the ruling appeal pages need the appeal named in the URL.
-      let nameAppealCaseInUrl = true
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
@@ -91,14 +89,11 @@ const useCaseList = () => {
         // Public prosecutor users can only see completed indictments
         routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        const courtOfAppealsRoute = getCourtOfAppealsRouteForRow(
+        routeTo = getCourtOfAppealsRouteForRow(
           caseToOpen,
           appealCaseId,
           caseTableType,
         )
-
-        routeTo = courtOfAppealsRoute.route
-        nameAppealCaseInUrl = courtOfAppealsRoute.withAppealCaseId
       } else if (isDistrictCourtUser(user)) {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
@@ -181,7 +176,7 @@ const useCaseList = () => {
       }
 
       const url =
-        isCourtOfAppealsUser(user) && appealCaseId && nameAppealCaseInUrl
+        isCourtOfAppealsUser(user) && appealCaseId
           ? `${routeTo}/${caseToOpen.id}?appealCaseId=${appealCaseId}`
           : `${routeTo}/${caseToOpen.id}`
 
