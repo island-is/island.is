@@ -3,15 +3,17 @@ import { useLocale } from '@island.is/localization'
 import { useGetCollectors } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { formatNationalId } from '@island.is/portals/core'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionCollector,
+} from '@island.is/api/schema'
 import { Markdown } from '@island.is/shared/components'
 import {
   createColumnHelper,
   PortalTable,
 } from '@island.is/portals/my-pages/core'
 
-type Collector = ReturnType<typeof useGetCollectors>['collectors'][number]
-const columnHelper = createColumnHelper<Collector>()
+const columnHelper = createColumnHelper<SignatureCollectionCollector>()
 
 const Managers = ({
   collectionType,
