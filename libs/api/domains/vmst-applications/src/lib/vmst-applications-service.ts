@@ -42,10 +42,10 @@ import type { ConfigType } from '@nestjs/config'
 // Galdur sends ISO 8601 local date-times without a timezone (`2026-05-01T00:00:00`);
 // convert to Date so the DateTime scalar can serialize them.
 const buildPeriod = (
-  from: string | null | undefined,
+  from: string,
   to: string | null | undefined,
 ): VmstApplicantPeriod => ({
-  from: new Date(from ?? 0),
+  from: new Date(from),
   to: to == null ? null : new Date(to),
 })
 
@@ -383,66 +383,94 @@ export class VMSTApplicationsService {
       }
 
       const rows: VmstApplicantIncomeRow[] = [
-        ...(dto.irregularJobs ?? []).map(
-          (job): VmstApplicantIrregularJob => ({
-            type: VmstApplicantIncomeRowType.IrregularJob,
-            id: job.id ?? '',
-            period: buildPeriod(job.periodFrom, job.periodTo),
-            estimatedIncome: job.estimatedIncome ?? null,
-            employer: {
-              name: job.employerName ?? '',
-              ssn: job.employerSSN ?? '',
-            },
-          }),
+        ...(dto.irregularJobs ?? []).flatMap(
+          (job): VmstApplicantIrregularJob[] =>
+            job.periodFrom == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.IrregularJob,
+                    id: job.id ?? '',
+                    period: buildPeriod(job.periodFrom, job.periodTo),
+                    estimatedIncome: job.estimatedIncome ?? null,
+                    employer: {
+                      name: job.employerName ?? '',
+                      ssn: job.employerSSN ?? '',
+                    },
+                  },
+                ],
         ),
-        ...(dto.partTimeJobs ?? []).map(
-          (job): VmstApplicantPartTimeJob => ({
-            type: VmstApplicantIncomeRowType.PartTimeJob,
-            id: job.id ?? '',
-            period: buildPeriod(job.periodFrom, job.periodTo),
-            estimatedIncome: job.estimatedIncome ?? null,
-            employer: {
-              name: job.employerName ?? '',
-              ssn: job.employerSSN ?? '',
-            },
-            ratio: job.ratio,
-          }),
+        ...(dto.partTimeJobs ?? []).flatMap((job): VmstApplicantPartTimeJob[] =>
+          job.periodFrom == null
+            ? []
+            : [
+                {
+                  type: VmstApplicantIncomeRowType.PartTimeJob,
+                  id: job.id ?? '',
+                  period: buildPeriod(job.periodFrom, job.periodTo),
+                  estimatedIncome: job.estimatedIncome ?? null,
+                  employer: {
+                    name: job.employerName ?? '',
+                    ssn: job.employerSSN ?? '',
+                  },
+                  ratio: job.ratio,
+                },
+              ],
         ),
-        ...(dto.pensionPayments ?? []).map(
-          (payment): VmstApplicantPensionPayment => ({
-            type: VmstApplicantIncomeRowType.PensionPayment,
-            id: payment.id ?? '',
-            period: buildPeriod(payment.periodFrom, payment.periodTo),
-            estimatedIncome: payment.estimatedIncome ?? null,
-            incomeTypeId: payment.incomeTypeId ?? '',
-            pensionFundId: payment.pensionFundId,
-          }),
+        ...(dto.pensionPayments ?? []).flatMap(
+          (payment): VmstApplicantPensionPayment[] =>
+            payment.periodFrom == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.PensionPayment,
+                    id: payment.id ?? '',
+                    period: buildPeriod(payment.periodFrom, payment.periodTo),
+                    estimatedIncome: payment.estimatedIncome ?? null,
+                    incomeTypeId: payment.incomeTypeId ?? '',
+                    pensionFundId: payment.pensionFundId,
+                  },
+                ],
         ),
-        ...(dto.capitalIncomePayments ?? []).map(
-          (payment): VmstApplicantCapitalIncomePayment => ({
-            type: VmstApplicantIncomeRowType.CapitalIncomePayment,
-            id: payment.id ?? '',
-            period: buildPeriod(payment.periodFrom, payment.periodTo),
-            estimatedIncome: payment.estimatedIncome ?? null,
-            incomeTypeId: payment.incomeTypeId ?? '',
-          }),
+        ...(dto.capitalIncomePayments ?? []).flatMap(
+          (payment): VmstApplicantCapitalIncomePayment[] =>
+            payment.periodFrom == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.CapitalIncomePayment,
+                    id: payment.id ?? '',
+                    period: buildPeriod(payment.periodFrom, payment.periodTo),
+                    estimatedIncome: payment.estimatedIncome ?? null,
+                    incomeTypeId: payment.incomeTypeId ?? '',
+                  },
+                ],
         ),
-        ...(dto.trPayments ?? []).map(
-          (payment): VmstApplicantTRPayment => ({
-            type: VmstApplicantIncomeRowType.TRPayment,
-            id: payment.id ?? '',
-            period: buildPeriod(payment.periodFrom, payment.periodTo),
-            estimatedIncome: payment.estimatedIncome ?? null,
-            incomeTypeId: payment.incomeTypeId ?? '',
-          }),
+        ...(dto.trPayments ?? []).flatMap((payment): VmstApplicantTRPayment[] =>
+          payment.periodFrom == null
+            ? []
+            : [
+                {
+                  type: VmstApplicantIncomeRowType.TRPayment,
+                  id: payment.id ?? '',
+                  period: buildPeriod(payment.periodFrom, payment.periodTo),
+                  estimatedIncome: payment.estimatedIncome ?? null,
+                  incomeTypeId: payment.incomeTypeId ?? '',
+                },
+              ],
         ),
-        ...(dto.contractorJobs ?? []).map(
-          (job): VmstApplicantContractorJob => ({
-            type: VmstApplicantIncomeRowType.ContractorJob,
-            id: job.id ?? '',
-            period: buildPeriod(job.startDate, job.endDate),
-            estimatedIncome: null,
-          }),
+        ...(dto.contractorJobs ?? []).flatMap(
+          (job): VmstApplicantContractorJob[] =>
+            job.startDate == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.ContractorJob,
+                    id: job.id ?? '',
+                    period: buildPeriod(job.startDate, job.endDate),
+                    estimatedIncome: null,
+                  },
+                ],
         ),
       ]
 
