@@ -190,6 +190,27 @@ export const InvolvedPartyScreen = ({
     regulationsEnabled &&
     additionalPartyOptions.length > 0
 
+  // With the controls hidden, saved parties could no longer be cleared, and
+  // they are still added as assignees, so drop them once the options load.
+  useEffect(() => {
+    if (loading || !involvedParties) return
+    if (!isCurrentPartyMinistry || !regulationsEnabled) return
+    if (canAddAdditionalParties || selectedParties.length === 0) return
+
+    setSelectedParties([])
+    updateApplicationV2({
+      path: InputFields.requirements.additionalParties,
+      value: [],
+    })
+  }, [
+    loading,
+    involvedParties,
+    isCurrentPartyMinistry,
+    regulationsEnabled,
+    canAddAdditionalParties,
+    selectedParties.length,
+  ])
+
   const handleAdditionalPartiesToggle = (checked: boolean) => {
     setShowAdditionalParties(checked)
     if (!checked) {
