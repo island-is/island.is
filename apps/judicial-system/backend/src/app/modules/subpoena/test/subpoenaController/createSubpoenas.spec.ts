@@ -229,7 +229,7 @@ describe('SubpoenaController - Create subpoenas', () => {
         ]),
       )
 
-      // Queued against the request transaction, so a rollback sends nothing
+      // Queued against the handler's transaction, so a rollback sends nothing
       expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledTimes(1)
       expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledWith(
         transaction,
@@ -481,7 +481,7 @@ describe('SubpoenaController - Create subpoenas', () => {
       )
       expect(mockQueuedMessages).toHaveLength(3)
 
-      // The delivery messages wait for the request transaction to commit; the
+      // The delivery messages wait for the handler's transaction to commit; the
       // revocation message is queued from an after-commit callback, where the
       // transaction has already committed, so it must not be passed again
       expect(mockAddMessagesToQueueAfterCommit).toHaveBeenCalledTimes(2)

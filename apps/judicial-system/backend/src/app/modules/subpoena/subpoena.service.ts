@@ -221,7 +221,7 @@ export class SubpoenaService {
 
     if (messages.length > 0) {
       // Only buffer after commit so a rollback cannot publish via
-      // MessageMiddleware. The request transaction has already committed when
+      // MessageMiddleware. The handler's transaction has already committed when
       // the callback runs, and Sequelize never runs a function registered on a
       // committed transaction, so the messages are queued without one.
       registerAfterCommit(async () => {
