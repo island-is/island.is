@@ -20,7 +20,6 @@ export const grid = style({
 export const unfiledDocuments = style({
   minWidth: 0,
   maxWidth: '100%',
-  overflow: 'hidden',
 })
 
 export const courtEndTimeContainer = style({
