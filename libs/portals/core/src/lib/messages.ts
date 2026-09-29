@@ -139,7 +139,7 @@ export const m = defineMessages({
   disabledReasonDefault: {
     id: 'portals:disabledReasonDefault',
     defaultMessage:
-      'Þú hefur ekki umboð til að skoða {moduleName}. Þú getur beðið um umboð til að fá aðgang að upplýsingunum.',
+      'Þú ert ekki með réttindi til að sjá þessar upplýsingar. Til að fá aðgang þarf viðkomandi að veita þér rafrænt umboð.',
   },
   disabledReasonNotAvailableForActors: {
     id: 'portals:disabledReasonNotAvailableForActors',

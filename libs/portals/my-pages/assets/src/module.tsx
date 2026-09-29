@@ -165,7 +165,6 @@ export const assetsModule: PortalModule = {
         enabled: internalScopes.some((scope) =>
           userInfo.scopes.includes(scope),
         ),
-        requiredScopes: internalScopes,
         element: <FarmerLandsOverview />,
       },
       {
@@ -175,7 +174,6 @@ export const assetsModule: PortalModule = {
         enabled: internalScopes.some((scope) =>
           userInfo.scopes.includes(scope),
         ),
-        requiredScopes: internalScopes,
         element: <FarmerLandDetail />,
       },
       {

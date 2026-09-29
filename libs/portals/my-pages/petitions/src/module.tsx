@@ -23,21 +23,18 @@ export const petitionsModule: PortalModule = {
         name: m.generalPetitions,
         path: PetitionPaths.Petitions,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        requiredScopes: [EndorsementsScope.main],
         element: <Petitions />,
       },
       {
         name: m.generalPetitions,
         path: PetitionPaths.PetitionList,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        requiredScopes: [EndorsementsScope.main],
         element: <ViewSignedPetition />,
       },
       {
         name: m.generalPetitions,
         path: PetitionPaths.PetitionListOwned,
         enabled: userInfo.scopes.includes(EndorsementsScope.main),
-        requiredScopes: [EndorsementsScope.main],
         element: <ViewOwnedPetition />,
       },
     ]

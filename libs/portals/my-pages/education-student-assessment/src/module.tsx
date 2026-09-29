@@ -16,7 +16,6 @@ export const educationStudentAssessmentModule: PortalModule = {
       name: m.educationStudentAssessment,
       path: EducationStudentAssessmentPaths.EducationStudentAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      requiredScopes: [ApiScope.education],
       element: <EducationStudentAssessment />,
     },
   ],

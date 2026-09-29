@@ -112,16 +112,17 @@ export const createDelegationsModule = (
             enabled: hasAccess && Boolean(delegationRequestsEnabled),
             element: <DelegationRequests />,
           },
-          {
-            name: m.requestDelegationNavTitle,
-            path: DelegationPaths.DelegationRequest,
-            navHide: !delegationRequestsEnabled || !canRequestDelegation,
-            enabled:
-              hasAccess &&
-              Boolean(delegationRequestsEnabled) &&
-              canRequestDelegation,
-            element: <RequestDelegation />,
-          },
+          ...(canRequestDelegation
+            ? [
+                {
+                  name: m.requestDelegationNavTitle,
+                  path: DelegationPaths.DelegationRequest,
+                  navHide: !delegationRequestsEnabled,
+                  enabled: hasAccess && Boolean(delegationRequestsEnabled),
+                  element: <RequestDelegation />,
+                },
+              ]
+            : []),
           {
             name: m.editAccessTitle,
             path: DelegationPaths.DelegationsEdit,
