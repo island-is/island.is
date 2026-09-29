@@ -212,8 +212,7 @@ export default function HealthOverviewScreen() {
   const { openBrowser } = useBrowser()
   const { getSenderLogo } = useOrganizationsStore()
   const apolloClient = useApolloClient()
-  // Lives in the Apollo cache so it is persisted and cleared with the data it
-  // describes, instead of needing a store of its own.
+  // In the Apollo cache so it is persisted and cleared with the data it dates.
   const fetchedAtRes = useGetHealthBasicInfoFetchedAtQuery({
     fetchPolicy: 'cache-only',
   })
@@ -358,8 +357,8 @@ export default function HealthOverviewScreen() {
   })
   // The four basic-information queries (organ donation, health center, dentist,
   // blood type) read from the persisted cache and only hit the network on an
-  // explicit refresh. notifyOnNetworkStatusChange is what makes that refetch
-  // show a loading state instead of swapping the values in silently.
+  // explicit refresh. notifyOnNetworkStatusChange gives that refetch a loading
+  // state instead of swapping the values in silently.
   const organDonationRes = useGetOrganDonorStatusQuery({
     variables: {
       locale: useLocale(),
@@ -384,8 +383,8 @@ export default function HealthOverviewScreen() {
     fetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
   })
-  // The as-of date is not part of this query's cache key (keyArgs: false in
-  // client.ts), so a fresh `now` each mount still reads the cached answer.
+  // keyArgs: false in client.ts keeps the as-of date out of the cache key, so a
+  // fresh `now` each mount still reads the cached answer.
   const dentistRes = useGetDentistOverviewQuery({
     variables: {
       input: {
@@ -447,10 +446,21 @@ export default function HealthOverviewScreen() {
   // fall back to '-' on their own, so only these two need the warning.
   const paymentStatusFailed = !!paymentStatusRes.error && !paymentStatusRes.data
 
-  // On a cleared cache the queries fetch once on their own. Stamp `now`, the
-  // date they actually ran with, so basicInfoAsOf stays put.
+  const basicInfoLoading =
+    bloodTypeRes.loading ||
+    organDonationRes.loading ||
+    healthCenterRes.loading ||
+    dentistRes.loading
+  const wasBasicInfoLoading = useRef(false)
+
+  // The one round-trip no refresh accounts for: the fetch a cleared cache does
+  // on its own. Only loading proves it went to the network, so cached data of
+  // unknown age leaves the timestamp absent rather than claiming now.
   useEffect(() => {
-    if (basicInfoFetchedAt !== null) {
+    const finishedLoading = wasBasicInfoLoading.current && !basicInfoLoading
+    wasBasicInfoLoading.current = basicInfoLoading
+
+    if (basicInfoFetchedAt !== null || !finishedLoading) {
       return
     }
     if (
@@ -459,12 +469,12 @@ export default function HealthOverviewScreen() {
       healthCenterRes.data ||
       dentistRes.data
     ) {
-      setBasicInfoFetchedAt(now)
+      setBasicInfoFetchedAt(new Date().toISOString())
     }
   }, [
+    basicInfoLoading,
     basicInfoFetchedAt,
     setBasicInfoFetchedAt,
-    now,
     bloodTypeRes.data,
     organDonationRes.data,
     healthCenterRes.data,
@@ -487,25 +497,30 @@ export default function HealthOverviewScreen() {
     const fetchedAt = new Date().toISOString()
 
     try {
-      const promises = [
+      // Settled apart so an unrelated failure cannot leave freshly fetched
+      // basic information wearing an old timestamp.
+      const basicInfo = Promise.all(
+        [
+          healthCenterRes.refetch(),
+          // New as-of date, so the answer is current rather than as-of launch.
+          dentistRes.refetch({
+            input: { dateFrom: fetchedAt, dateTo: fetchedAt },
+          }),
+          isOrganDonationEnabled && organDonationRes.refetch(),
+          bloodTypeRes.refetch(),
+        ].filter(Boolean),
+      ).then(() => setBasicInfoFetchedAt(fetchedAt))
+
+      const rest = [
         medicinePurchaseRes.refetch(),
         healthInsuranceRes.refetch(),
-        healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
         paymentOverviewRes.refetch(),
-        // New as-of date so the refreshed answer is current, not as-of launch.
-        dentistRes.refetch({
-          input: { dateFrom: fetchedAt, dateTo: fetchedAt },
-        }),
-        isOrganDonationEnabled && organDonationRes.refetch(),
-        bloodTypeRes.refetch(),
         isAppointmentsEnabled && appointmentsRes.refetch(),
         isHealthMessagesEnabled && messagesRes.refetch(),
       ].filter(Boolean)
-      await Promise.all(promises)
-      setBasicInfoFetchedAt(fetchedAt)
-    } catch (e) {
-      // noop
+
+      await Promise.allSettled([basicInfo, ...rest])
     } finally {
       setRefetching(false)
     }
@@ -1150,7 +1165,7 @@ export default function HealthOverviewScreen() {
         </InputRow>
         <RefreshButtonContainer>
           {lastUpdatedFormatted && (
-            <Typography variant="body3">
+            <Typography variant="body3" textAlign="center">
               {intl.formatMessage(
                 { id: 'health.overview.lastUpdated' },
                 { date: lastUpdatedFormatted },
