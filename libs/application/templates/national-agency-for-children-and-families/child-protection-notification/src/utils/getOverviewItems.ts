@@ -235,6 +235,7 @@ export const getNotifierInfoItems = (
     notifierPhoneNumber,
     notifierNotifierAnonymity,
     notifierNeedsInterpreter,
+    notifierPreferredLanguage,
     notifierRelationshipToChild,
   } = getApplicationAnswers(answers)
 
@@ -272,6 +273,17 @@ export const getNotifierInfoItems = (
       keyText: sharedMessages.needsInterpreter,
       valueText: getYesNoDoNotKnowLabel(notifierNeedsInterpreter),
     },
+    ...(notifierNeedsInterpreter === YES
+      ? [
+          {
+            width: 'half' as const,
+            keyText: sharedMessages.language,
+            valueText:
+              getLanguageByCode(notifierPreferredLanguage ?? '')?.name ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
     {
       width: 'full',
       keyText: prerequisitesMessages.notifierInfo.relationshipToChild,

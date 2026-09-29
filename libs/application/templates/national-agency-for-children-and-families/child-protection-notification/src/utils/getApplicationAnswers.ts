@@ -83,6 +83,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'notifierInfo.needsInterpreter',
   )
 
+  const notifierPreferredLanguage = getValueViaPath<string>(
+    answers,
+    'notifierInfo.preferredLanguage',
+  )
+
   const notifierRelationshipToChild = getValueViaPath<string>(
     answers,
     'notifierInfo.relationshipToChild',
@@ -379,6 +384,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     notifierPhoneNumber,
     notifierNotifierAnonymity,
     notifierNeedsInterpreter,
+    notifierPreferredLanguage,
     notifierRelationshipToChild,
     childKnowsNationalId,
     childNoNationalIdReason,

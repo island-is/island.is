@@ -55,15 +55,26 @@ const serviceProviderSchema = z.object({
   contactPersonWorkPhone: phoneNumberSchema.optional().or(z.literal('')),
 })
 
-const notifierInfoSchema = z.object({
-  name: z.string().optional(),
-  nationalId: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
-  notifierAnonymity: z.enum([YES, NO]),
-  needsInterpreter: z.string(),
-  relationshipToChild: z.string(),
-})
+const notifierInfoSchema = z
+  .object({
+    name: z.string().optional(),
+    nationalId: z.string().optional(),
+    email: z.string().email().optional().or(z.literal('')),
+    phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
+    notifierAnonymity: z.enum([YES, NO]),
+    needsInterpreter: z.string(),
+    preferredLanguage: z.string().optional(),
+    relationshipToChild: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.needsInterpreter === YES && !data.preferredLanguage) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['preferredLanguage'],
+        params: errorMessages.required,
+      })
+    }
+  })
 
 const childSchema = z
   .object({

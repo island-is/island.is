@@ -15,14 +15,16 @@ import {
   YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { getAllLanguageCodes } from '@island.is/shared/utils'
 import {
   childMessages,
   memmMessages,
   prerequisitesMessages,
   sharedMessages,
 } from '../../lib/messages'
-import { getYesNoDoNotKnowOptions } from '../../utils/childProtectionNotificationUtils'
+import {
+  getLanguageOptions,
+  getYesNoDoNotKnowOptions,
+} from '../../utils/childProtectionNotificationUtils'
 import {
   isChildOver18,
   isDayCareProvider,
@@ -210,10 +212,7 @@ export const childSubSection = buildSubSection({
           title: sharedMessages.language,
           placeholder: sharedMessages.languagePlaceholder,
           doesNotRequireAnswer: true,
-          options: getAllLanguageCodes().map((l) => ({
-            value: l.code,
-            label: l.name,
-          })),
+          options: getLanguageOptions(),
           condition: (answers, _, user) =>
             shouldShowAdultPersonalApplicantChildInfo(
               answers,

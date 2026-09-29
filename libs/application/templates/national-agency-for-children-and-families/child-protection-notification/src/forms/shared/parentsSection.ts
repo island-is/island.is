@@ -11,12 +11,10 @@ import {
   buildTextField,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  getAllCountryCodes,
-  getAllLanguageCodes,
-} from '@island.is/shared/utils'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 import { parentsMessages, sharedMessages } from '../../lib/messages'
 import {
+  getLanguageOptions,
   getParentMessages,
   getYesNoDoNotKnowOptions,
   getYesNoOptions,
@@ -226,10 +224,7 @@ const buildParentFields = (parentKey: ParentKey) => {
       title: sharedMessages.language,
       placeholder: sharedMessages.languagePlaceholder,
       doesNotRequireAnswer: true,
-      options: getAllLanguageCodes().map((l) => ({
-        value: l.code,
-        label: l.name,
-      })),
+      options: getLanguageOptions(),
       condition: (answers) => {
         const parent = getApplicationAnswers(answers)[parentKey]
 
