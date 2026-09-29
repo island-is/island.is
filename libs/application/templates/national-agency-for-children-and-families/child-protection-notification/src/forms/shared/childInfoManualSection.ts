@@ -9,12 +9,12 @@ import {
   coreMessages,
   YES,
 } from '@island.is/application/core'
-import {
-  getAllCountryCodes,
-  getAllLanguageCodes,
-} from '@island.is/shared/utils'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 import { childMessages, sharedMessages } from '../../lib/messages'
-import { getYesNoDoNotKnowOptions } from '../../utils/childProtectionNotificationUtils'
+import {
+  getLanguageOptions,
+  getYesNoDoNotKnowOptions,
+} from '../../utils/childProtectionNotificationUtils'
 import { isNoNationalId } from '../../utils/conditionUtils'
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -175,10 +175,7 @@ export const childInfoManualSection = buildSection({
           title: sharedMessages.language,
           placeholder: sharedMessages.languagePlaceholder,
           doesNotRequireAnswer: true,
-          options: getAllLanguageCodes().map((l) => ({
-            value: l.code,
-            label: l.name,
-          })),
+          options: getLanguageOptions(),
         }),
         buildRadioField({
           id: 'child.manualInfo.needsInterpreter',

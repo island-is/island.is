@@ -10,9 +10,9 @@ import {
   coreMessages,
   YES,
 } from '@island.is/application/core'
-import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { prerequisitesMessages, sharedMessages } from '../../lib/messages'
 import {
+  getLanguageOptions,
   getYesNoDoNotKnowOptions,
   getYesNoOptions,
 } from '../../utils/childProtectionNotificationUtils'
@@ -85,10 +85,7 @@ export const notifierInfoSubSection = buildSubSection({
           title: sharedMessages.language,
           placeholder: sharedMessages.languagePlaceholder,
           doesNotRequireAnswer: true,
-          options: getAllLanguageCodes().map((l) => ({
-            value: l.code,
-            label: l.name,
-          })),
+          options: getLanguageOptions(),
           condition: (answers) =>
             getApplicationAnswers(answers).notifierNeedsInterpreter === YES,
         }),

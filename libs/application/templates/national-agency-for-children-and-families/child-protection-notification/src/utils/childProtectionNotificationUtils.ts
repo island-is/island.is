@@ -1,5 +1,6 @@
 import { NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
 import {
   childMessages,
   memmMessages,
@@ -28,6 +29,9 @@ export const getYesNoDoNotKnowNotApplicableOptions = () => [
   ...getYesNoDoNotKnowOptions(),
   { value: NOT_APPLICABLE, label: memmMessages.reception.optionNotApplicable },
 ]
+
+export const getLanguageOptions = () =>
+  getAllLanguageCodes().map((l) => ({ value: l.code, label: l.name }))
 
 export const getYesNoLabel = (value?: string) => {
   if (value === YES) return sharedMessages.radioYes
