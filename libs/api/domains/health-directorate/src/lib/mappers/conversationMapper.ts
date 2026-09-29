@@ -337,6 +337,7 @@ export const mapMessagingRecipient = (
     groupId: r.groupId,
     treatmentId: r.treatmentId,
     name: r.name,
+    allowsCustomTitle: r.allowsCustomTitle ?? false,
     allowsMessaging:
       r.canCreateConversation ||
       r.conversationBlockedReason !==

@@ -2,7 +2,6 @@ import { literal, Op } from 'sequelize'
 
 import {
   AppealCaseState,
-  AppealCaseType,
   CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -19,6 +18,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { CaseAccessOptions, CaseIncludes } from '../caseTable.types'
 import {
   buildEventLogExistsCondition,
   buildHasAppealedVerdictCondition,
@@ -26,6 +26,20 @@ import {
 } from './conditions'
 
 // Court of appeals access
+
+// The associations the court of appeals rules read. Declared on the combined
+// rule rather than on the two it is built from, because that combined rule is
+// the only one anything outside this file uses - the two below are private to
+// it. A rule that is called from a list has to carry its joins; these are not,
+// so they do not.
+//
+// Bare requests: no attributes, no filter, and explicitly not required, so the
+// join can only add columns and never drop a case. A list that joins the same
+// association itself keeps its own version.
+const courtOfAppealsAccessIncludes: CaseIncludes = {
+  appealCase: { attributes: [], required: false },
+  verdictAppealCase: { attributes: [], required: false },
+}
 
 const courtOfAppealsRequestCasesAccessWhereOptions = {
   is_archived: false,
@@ -84,25 +98,22 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
     // 2026-09-17). Every state of one is therefore the court's to see, so this
     // asks only that the appeal exists.
     //
-    // A correlated EXISTS rather than the `$verdictAppealCase.appeal_state$`
-    // alias these options use for the ruling appeal: this predicate is shared
-    // by every court of appeals list, and the ruling appeal lists have no
-    // reason to join the verdict appeal. Referring to an alias a caller has not
-    // joined still compiles - Sequelize emits the reference and Postgres then
-    // rejects the query for a missing FROM-clause entry.
-    literal(`EXISTS (
-      SELECT 1 FROM "appeal_case" ac
-      WHERE ac."case_id" = "Case"."id"
-        AND ac."appeal_type" = '${AppealCaseType.VERDICT}'
-    )`),
+    // The verdictAppealCase association is scoped to appeal_type = VERDICT, so
+    // the join having found a row is the whole of the question. The combined
+    // rule asks for that join, which is why this can be an alias reference
+    // rather than the correlated EXISTS it used to be.
+    { '$verdictAppealCase.id$': { [Op.not]: null } },
   ],
 }
 
-export const courtOfAppealsCasesAccessWhereOptions = () => ({
-  [Op.or]: [
-    courtOfAppealsRequestCasesAccessWhereOptions,
-    courtOfAppealsIndictmentsAccessWhereOptions,
-  ],
+export const courtOfAppealsCasesAccessWhereOptions = (): CaseAccessOptions => ({
+  includes: courtOfAppealsAccessIncludes,
+  where: {
+    [Op.or]: [
+      courtOfAppealsRequestCasesAccessWhereOptions,
+      courtOfAppealsIndictmentsAccessWhereOptions,
+    ],
+  },
 })
 
 // District court access
@@ -131,11 +142,15 @@ export const districtCourtIndictmentsAccessWhereOptions = (user: User) => ({
   court_id: user.institution?.id,
 })
 
-export const districtCourtCasesAccessWhereOptions = (user: User) => ({
-  [Op.or]: [
-    districtCourtRequestCasesAccessWhereOptions(user),
-    districtCourtIndictmentsAccessWhereOptions(user),
-  ],
+export const districtCourtCasesAccessWhereOptions = (
+  user: User,
+): CaseAccessOptions => ({
+  where: {
+    [Op.or]: [
+      districtCourtRequestCasesAccessWhereOptions(user),
+      districtCourtIndictmentsAccessWhereOptions(user),
+    ],
+  },
 })
 
 // Prison staff access
@@ -151,8 +166,9 @@ export const prisonStaffRequestCasesAccessWhereOptions = {
   decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
 }
 
-export const prisonStaffCasesAccessWhereOptions = () =>
-  prisonStaffRequestCasesAccessWhereOptions
+export const prisonStaffCasesAccessWhereOptions = (): CaseAccessOptions => ({
+  where: prisonStaffRequestCasesAccessWhereOptions,
+})
 
 // Prision admin access
 
@@ -173,11 +189,13 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
   [Op.and]: [buildIsSentToPrisonAdminExistsCondition(true)],
 }
 
-export const prisonAdminCasesAccessWhereOptions = () => ({
-  [Op.or]: [
-    prisonAdminRequestCasesAccessWhereOptions,
-    prisonAdminIndictmentsAccessWhereOptions,
-  ],
+export const prisonAdminCasesAccessWhereOptions = (): CaseAccessOptions => ({
+  where: {
+    [Op.or]: [
+      prisonAdminRequestCasesAccessWhereOptions,
+      prisonAdminIndictmentsAccessWhereOptions,
+    ],
+  },
 })
 
 // Public prosecution office access
@@ -198,8 +216,10 @@ export const publicProsecutionOfficeIndictmentsAccessWhereOptions = {
   ],
 }
 
-export const publicProsecutionOfficeCasesAccessWhereOptions = () =>
-  publicProsecutionOfficeIndictmentsAccessWhereOptions
+export const publicProsecutionOfficeCasesAccessWhereOptions =
+  (): CaseAccessOptions => ({
+    where: publicProsecutionOfficeIndictmentsAccessWhereOptions,
+  })
 
 // Prosecution access
 
@@ -245,15 +265,22 @@ export const prosecutionIndictmentsAccessWhereOptions = (user: User) => ({
   prosecutors_office_id: user.institution?.id,
 })
 
-export const prosecutorCasesAccessWhereOptions = (user: User) => ({
-  [Op.or]: [
-    prosecutionRequestCasesAccessWhereOptions(user),
-    prosecutionIndictmentsAccessWhereOptions(user),
-  ],
+export const prosecutorCasesAccessWhereOptions = (
+  user: User,
+): CaseAccessOptions => ({
+  where: {
+    [Op.or]: [
+      prosecutionRequestCasesAccessWhereOptions(user),
+      prosecutionIndictmentsAccessWhereOptions(user),
+    ],
+  },
 })
 
-export const prosecutorRepresentativeCasesAccessWhereOptions = (user: User) =>
-  prosecutionIndictmentsAccessWhereOptions(user)
+export const prosecutorRepresentativeCasesAccessWhereOptions = (
+  user: User,
+): CaseAccessOptions => ({
+  where: prosecutionIndictmentsAccessWhereOptions(user),
+})
 
 // Defence access
 
@@ -371,11 +398,15 @@ export const defenceIndictmentsAccessWhereOptions = (user: User) => {
   }
 }
 
-export const defenceCasesAccessWhereOptions = (user: User) => ({
-  [Op.or]: [
-    defenceRequestCasesAccessWhereOptions(user),
-    defenceIndictmentsAccessWhereOptions(user),
-  ],
+export const defenceCasesAccessWhereOptions = (
+  user: User,
+): CaseAccessOptions => ({
+  where: {
+    [Op.or]: [
+      defenceRequestCasesAccessWhereOptions(user),
+      defenceIndictmentsAccessWhereOptions(user),
+    ],
+  },
 })
 
 // Public prosecution access
@@ -448,9 +479,13 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
   ],
 })
 
-export const publicProsecutionCasesAccessWhereOptions = (user: User) => ({
-  [Op.or]: [
-    prosecutorCasesAccessWhereOptions(user),
-    publicProsecutionIndictmentsAccessWhereOptions(user),
-  ],
+export const publicProsecutionCasesAccessWhereOptions = (
+  user: User,
+): CaseAccessOptions => ({
+  where: {
+    [Op.or]: [
+      prosecutorCasesAccessWhereOptions(user).where,
+      publicProsecutionIndictmentsAccessWhereOptions(user),
+    ],
+  },
 })

@@ -1619,11 +1619,11 @@ export interface UpdateDefendant {
   gender?: Gender
   address?: string
   citizenship?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  defenderChoice?: DefenderChoice
+  defenderName?: string | null
+  defenderNationalId?: string | null
+  defenderEmail?: string | null
+  defenderPhoneNumber?: string | null
+  defenderChoice?: DefenderChoice | null
   defendantPlea?: DefendantPlea
   subpoenaType?: SubpoenaType
   requestedDefenderChoice?: DefenderChoice

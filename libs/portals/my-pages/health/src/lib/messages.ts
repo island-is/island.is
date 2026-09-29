@@ -412,6 +412,18 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
+  medicineCalculatorRemoveLabel: {
+    id: 'sp.health:medicine-calculator-remove-label',
+    defaultMessage: 'Fjarlægja {arg} af lyfjakaupalista',
+  },
+  medicineCalculatorIncreaseLabel: {
+    id: 'sp.health:medicine-calculator-increase-label',
+    defaultMessage: 'Fjölga pakkningum af {arg}',
+  },
+  medicineCalculatorDecreaseLabel: {
+    id: 'sp.health:medicine-calculator-decrease-label',
+    defaultMessage: 'Fækka pakkningum af {arg}',
+  },
   organDonation: {
     id: 'sp.health:organ-donation',
     defaultMessage: 'Líffæragjöf',
@@ -1979,6 +1991,14 @@ export const messages = defineMessages({
     defaultMessage: 'Veldu viðtakanda úr fellilistanum',
     id: 'sp.health:health-messages-new-select-recipient-placeholder',
   },
+  healthConversationsNewSubject: {
+    defaultMessage: 'Efni',
+    id: 'sp.health:health-messages-new-subject',
+  },
+  healthConversationsNewSubjectPlaceholder: {
+    defaultMessage: 'Sláðu inn efni skilaboðanna',
+    id: 'sp.health:health-messages-new-subject-placeholder',
+  },
   healthConversationsNewBodyPlaceholder: {
     defaultMessage: 'Sláðu inn skilaboð',
     id: 'sp.health:health-messages-new-body-placeholder',
@@ -2172,7 +2192,7 @@ export const messages = defineMessages({
   },
   healthConversationReplyBlockedAwaitingAcknowledgementText: {
     defaultMessage:
-      'Ekki er hægt að svara fyrr en fyrri skilaboð hafa borist móttakanda',
+      'Skilaboðin hafa verið send. Hægt verður að svara aftur þegar þau hafa borist móttakanda.',
     id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
   },
   healthConversationReplyBlockedWindowExpiredText: {
@@ -2334,6 +2354,28 @@ export const messages = defineMessages({
     defaultMessage: 'Meðganga',
     id: 'sp.health:pregnancy',
   },
+  pregnancyRedirectIntro: {
+    defaultMessage:
+      'Við erum að vinna að nýrri lausn fyrir meðgöngur á Mínum síðum á Ísland.is. Þar til hún er tilbúin getur þú áfram nálgast gögn um meðgöngu þína á Mínum síðum Heilsuveru.',
+    id: 'sp.health:pregnancy-redirect-intro',
+  },
+  pregnancyOnHeilsuveruTitle: {
+    defaultMessage: 'Meðganga á Heilsuveru',
+    id: 'sp.health:pregnancy-on-heilsuveru-title',
+  },
+  pregnancyOnHeilsuveruText: {
+    defaultMessage:
+      'Í Heilsuveru getur þú áfram skoðað upplýsingar og gögn um meðgönguna þína.',
+    id: 'sp.health:pregnancy-on-heilsuveru-text',
+  },
+  pregnancyHeilsuveruLink: {
+    defaultMessage: 'https://minarsidur.heilsuvera.is/',
+    id: 'sp.health:pregnancy-heilsuveru-link',
+  },
+  landlaeknirPregnancyTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um meðgönguna þína.',
+    id: 'sp.health:landlaeknir-pregnancy-tooltip',
+  },
   readingMaterialPregnancy: {
     defaultMessage: 'Lesefni um meðgöngu',
     id: 'sp.health:reading-material-pregnancy',
@@ -2443,6 +2485,10 @@ export const messages = defineMessages({
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
   },
+  disabledQuestionnaire: {
+    defaultMessage: 'Afturkallaður',
+    id: 'sp.health:disabled-questionnaire',
+  },
   expiredQuestionnaires: {
     defaultMessage: 'Útrunnir',
     id: 'sp.health:expired-questionnaires',
@@ -2486,6 +2532,10 @@ export const messages = defineMessages({
   answerAgain: {
     defaultMessage: 'Svara aftur',
     id: 'sp.health:answer-again',
+  },
+  canAnswerAgain: {
+    defaultMessage: 'Hægt að svara aftur',
+    id: 'sp.health:can-answer-again',
   },
   questionnaireNotFound: {
     defaultMessage: 'Spurningalisti fannst ekki',
@@ -2583,6 +2633,24 @@ export const messages = defineMessages({
   seeAllMessages: {
     defaultMessage: 'Sjá öll skilaboð',
     id: 'sp.health:see-all-messages',
+  },
+  treatmentConversationsIntro: {
+    defaultMessage:
+      'Hér getur þú átt í samskiptum við meðferðarteymi vegna meðferðar þinnar.',
+    id: 'sp.health:treatment-conversations-intro',
+  },
+  treatmentQuestionnaires: {
+    defaultMessage: 'Spurningalistar vegna meðferðar',
+    id: 'sp.health:treatment-questionnaires',
+  },
+  treatmentQuestionnairesIntro: {
+    defaultMessage: 'Hér má finna spurningalista tengda meðferðinni þinni.',
+    id: 'sp.health:treatment-questionnaires-intro',
+  },
+  noTreatmentQuestionnaires: {
+    defaultMessage:
+      'Engir virkir spurningalistar eru vegna meðferðarinnar þinnar.',
+    id: 'sp.health:no-treatment-questionnaires',
   },
   educationalContentIntro: {
     defaultMessage:
@@ -2965,6 +3033,10 @@ export const messages = defineMessages({
   awaitingApproval: {
     defaultMessage: 'Bíður gildistöku',
     id: 'sp.health:awaiting-approval',
+  },
+  validFromDate: {
+    defaultMessage: 'Tekur gildi {date}',
+    id: 'sp.health:valid-from-date',
   },
   filterByCountry: {
     defaultMessage: 'Sía eftir landi',

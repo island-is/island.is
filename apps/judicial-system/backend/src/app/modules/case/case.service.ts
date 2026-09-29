@@ -38,7 +38,6 @@ import {
   AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
-  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -51,6 +50,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   IndictmentDecision,
@@ -1379,17 +1379,19 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<Case> {
+    const { defendants, ...caseFields } = caseToCreate
+
     const theCase = await this.createCase(
       {
-        ...caseToCreate,
+        ...caseFields,
         origin: CaseOrigin.RVG,
         creatingProsecutorId: user.id,
-        prosecutorId: isIndictmentCase(caseToCreate.type)
-          ? caseToCreate.prosecutorId
+        prosecutorId: isIndictmentCase(caseFields.type)
+          ? caseFields.prosecutorId
           : user.role === UserRole.PROSECUTOR
           ? user.id
           : undefined,
-        courtId: isRequestCase(caseToCreate.type)
+        courtId: isRequestCase(caseFields.type)
           ? user.institution?.defaultCourtId
           : undefined,
         prosecutorsOfficeId: user.institution?.id,
@@ -1397,7 +1399,31 @@ export class CaseService {
       transaction,
     )
 
-    await this.defendantService.createForNewCase(theCase.id, {}, transaction)
+    // A case starts with at least one defendant. The indictment flow sends the
+    // defendants entered before the case existed so they are created in the
+    // same transaction as the case, whole or not at all. The other flows enter
+    // their defendant after creation and start from an empty one. Created one
+    // at a time so the order of the form is kept.
+    for (const defendant of defendants?.length ? defendants : [{}]) {
+      await this.defendantService.createForNewCase(
+        theCase.id,
+        defendant,
+        transaction,
+      )
+    }
+
+    if (isRequestCase(caseToCreate.type)) {
+      await this.defendantService.syncDefenderToAllDefendants(
+        theCase.id,
+        {
+          defenderName: caseToCreate.defenderName,
+          defenderNationalId: caseToCreate.defenderNationalId,
+          defenderEmail: caseToCreate.defenderEmail,
+          defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
+        },
+        transaction,
+      )
+    }
 
     return this.findById(theCase.id, false, transaction)
   }
@@ -1520,15 +1546,11 @@ export class CaseService {
     // enforce it rather than rely on that.
     const existingAppealCase = theCase.appealCase
     if (existingAppealCase) {
-      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
-        {
-          where: {
-            appealCaseId: existingAppealCase.id,
-            eventType: AppealEventType.APPEALED,
-          },
-          transaction,
-        },
-      )
+      const appealedEvents =
+        await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       const lock = appealCorrectionLock({
         appealState: existingAppealCase.appealState,
@@ -1578,13 +1600,11 @@ export class CaseService {
     actor: TUser,
     transaction: Transaction,
   ): Promise<void> {
-    const existingEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: appealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const existingEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const hasProsecutionEvent = existingEvents.some((event) =>
       prosecutionRoles.includes(event.userRole),
@@ -2176,13 +2196,10 @@ export class CaseService {
       // nothing about it, and correcting the court record cannot take it away -
       // it must survive both the rejection below and the cleanup further down.
       const appealedEvents = existingAppealCase
-        ? await this.appealEventLogRepositoryService.findAll({
-            where: {
-              appealCaseId: existingAppealCase.id,
-              eventType: AppealEventType.APPEALED,
-            },
-            transaction,
-          })
+        ? await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+            existingAppealCase.id,
+            { transaction },
+          )
         : []
       const appealedOutOfCourt = hasOutOfCourtAppeal(appealedEvents)
 
@@ -2281,6 +2298,52 @@ export class CaseService {
       await this.caseRepositoryService.update(theCase.id, caseUpdate, {
         transaction,
       })
+    }
+
+    // Keep defendant-level defender fields in sync with case-level fields for
+    // request cases. This dual-write is the first step toward per-defendant
+    // defenders — later phases will flip readers to the defendant rows and
+    // eventually drop the case-level columns.
+    if (isRequestCase(theCase.type)) {
+      const defenderFieldChanged =
+        caseUpdate.defenderName !== undefined ||
+        caseUpdate.defenderNationalId !== undefined ||
+        caseUpdate.defenderEmail !== undefined ||
+        caseUpdate.defenderPhoneNumber !== undefined ||
+        caseUpdate.defendantWaivesRightToCounsel !== undefined
+
+      if (defenderFieldChanged) {
+        // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
+        // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
+        const waives =
+          caseUpdate.defendantWaivesRightToCounsel !== undefined
+            ? caseUpdate.defendantWaivesRightToCounsel
+            : theCase.defendantWaivesRightToCounsel
+
+        await this.defendantService.syncDefenderToAllDefendants(
+          theCase.id,
+          {
+            defenderName:
+              caseUpdate.defenderName !== undefined
+                ? caseUpdate.defenderName
+                : theCase.defenderName,
+            defenderNationalId:
+              caseUpdate.defenderNationalId !== undefined
+                ? caseUpdate.defenderNationalId
+                : theCase.defenderNationalId,
+            defenderEmail:
+              caseUpdate.defenderEmail !== undefined
+                ? caseUpdate.defenderEmail
+                : theCase.defenderEmail,
+            defenderPhoneNumber:
+              caseUpdate.defenderPhoneNumber !== undefined
+                ? caseUpdate.defenderPhoneNumber
+                : theCase.defenderPhoneNumber,
+            defenderChoice: waives ? DefenderChoice.WAIVE : null,
+          },
+          transaction,
+        )
+      }
     }
 
     // Update police case numbers of case files if necessary
@@ -2389,19 +2452,13 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
+      // The COMPLETE transition has already checked that the parent case is
+      // received
       const parentCase = theCase.mergeCase
-
-      if (parentCase?.state !== CaseState.RECEIVED) {
-        throw new BadRequestException(
-          `Cannot merge indictment case ${theCase.id} with parent case ${
-            parentCase?.id ?? 'unknown'
-          } in state ${parentCase?.state ?? 'unknown'}`,
-        )
-      }
 
       // Update the latest court session if it is unconfirmed
       if (
-        parentCase.withCourtSessions &&
+        parentCase?.withCourtSessions &&
         parentCase.courtSessions &&
         parentCase.courtSessions.length > 0 &&
         !parentCase.courtSessions[parentCase.courtSessions.length - 1]
@@ -2738,6 +2795,7 @@ export class CaseService {
       'defenderNationalId',
       'defenderEmail',
       'defenderPhoneNumber',
+      'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
       'translator',
@@ -2788,6 +2846,22 @@ export class CaseService {
           ),
         ),
       )
+
+      if (isRequestCase(theCase.type)) {
+        await this.defendantService.syncDefenderToAllDefendants(
+          extendedCase.id,
+          {
+            defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderChoice: theCase.defendantWaivesRightToCounsel
+              ? DefenderChoice.WAIVE
+              : null,
+          },
+          transaction,
+        )
+      }
     }
 
     return extendedCase
