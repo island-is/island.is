@@ -20,6 +20,7 @@ import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
   CaseIncludes,
+  copyIncludeInto,
   mergeAccessIncludes,
   modelMap,
   subModelMap,
@@ -123,6 +124,12 @@ const mergeAttributes = <T>(target: T[], source: T[]) => {
   return [...new Set([...target, ...source])]
 }
 
+// Merges one association's include into the tree being built for a query.
+//
+// Every value that enters the tree is copied first (see copyIncludeInto): the
+// cell generators are module level constants, and the merges below write into
+// whatever object they are handed. Aliasing one in would leave another list's
+// attributes and joins on the generator afterwards.
 const setInclude = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
@@ -133,7 +140,7 @@ const setInclude = <K extends keyof CaseIncludes>(
 
   const targetValue = target[key]
   if (!targetValue) {
-    target[key] = sourceValue
+    copyIncludeInto(target, source, key)
     return
   }
 
@@ -147,8 +154,7 @@ const setInclude = <K extends keyof CaseIncludes>(
   }
 
   if (!targetValue.includes) {
-    targetValue.includes = sourceValue.includes
-    return
+    targetValue.includes = {}
   }
 
   for (const nestedKey of Object.keys(sourceValue.includes) as Array<
@@ -159,7 +165,10 @@ const setInclude = <K extends keyof CaseIncludes>(
 
     const nestedTarget = targetValue.includes[nestedKey]
     if (!nestedTarget) {
-      targetValue.includes[nestedKey] = nestedSource
+      targetValue.includes[nestedKey] = {
+        ...nestedSource,
+        attributes: [...nestedSource.attributes],
+      }
       continue
     }
 
