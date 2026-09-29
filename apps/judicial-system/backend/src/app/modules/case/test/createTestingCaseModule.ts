@@ -238,6 +238,12 @@ export const createTestingCaseModule = async () => {
     Promise.resolve(theCase.splitCaseId ?? theCase.id),
   )
 
+  const mockFindLiveDescendantCase =
+    caseRepositoryService.findLiveDescendantCase as jest.Mock
+  mockFindLiveDescendantCase.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase),
+  )
+
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
