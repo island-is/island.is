@@ -1,5 +1,3 @@
-import endOfDay from 'date-fns/endOfDay'
-import isAfter from 'date-fns/isAfter'
 import type { FormatMessage } from '@island.is/cms-translations'
 import type { MessageDescriptor } from 'react-intl'
 import {
@@ -71,11 +69,16 @@ export const mapConversationSegments = (
       : { type, text: s.text }
   })
 
+// Counted in UTC, which is Icelandic local time all year.
 export const isVideoCallExpired = (
   appointmentDate: Date | undefined,
   now: Date,
-): boolean =>
-  !!appointmentDate && isAfter(now, endOfDay(new Date(appointmentDate)))
+): boolean => {
+  if (!appointmentDate) return false
+  const nextDayStart = new Date(appointmentDate)
+  nextDayStart.setUTCHours(24, 0, 0, 0)
+  return now >= nextDayStart
+}
 
 export const mapConversationVideo = (
   video?: VideoConversationDto,
