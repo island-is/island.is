@@ -48,6 +48,119 @@ describe('InfoCardClosedIndictment', () => {
     mockAppealCaseIdQuery = undefined
   })
 
+  // A closed case does not stop having been merged or split. These sections
+  // were on the active card only, so Landsrettur - which always renders the
+  // closed card - could not see them at all.
+  describe('linked cases', () => {
+    it('shows the cases this one was merged with', async () => {
+      renderClosedIndictment({
+        ...mockCase(CaseType.INDICTMENT),
+        mergedCases: [
+          {
+            id: 'merged-case-id',
+            type: CaseType.INDICTMENT,
+            courtCaseNumber: 'S-77/2026',
+            policeCaseNumbers: ['007-2026-777'],
+            judge: { name: 'Merged Judge' },
+            court: { name: 'Merged Court' },
+            prosecutorsOffice: { name: 'Merged Office' },
+          },
+        ],
+      } as unknown as Case)
+
+      await screen.findByText('S-77/2026')
+      await screen.findByText('007-2026-777')
+      await screen.findByText('Merged Judge')
+    })
+
+    it('shows the cases this one was split into', async () => {
+      renderClosedIndictment({
+        ...mockCase(CaseType.INDICTMENT),
+        splitCases: [
+          {
+            id: 'split-case-id',
+            type: CaseType.INDICTMENT,
+            courtCaseNumber: 'S-88/2026',
+            defendants: [{ id: 'split-defendant', name: 'Split Defendant' }],
+          },
+        ],
+      } as unknown as Case)
+
+      await screen.findByText('Split Defendant')
+      await screen.findByText('S-88/2026')
+    })
+
+    it('shows the case this one was split from', async () => {
+      renderClosedIndictment({
+        ...mockCase(CaseType.INDICTMENT),
+        splitCase: { id: 'parent-case-id', courtCaseNumber: 'S-99/2026' },
+      } as unknown as Case)
+
+      await screen.findByText('S-99/2026')
+    })
+
+    // Shown either way; clickable only where the user could open it.
+    it('does not link a split case a defender is not a party to', async () => {
+      renderClosedIndictment(
+        {
+          ...mockCase(CaseType.INDICTMENT),
+          splitCases: [
+            {
+              id: 'split-case-id',
+              type: CaseType.INDICTMENT,
+              courtCaseNumber: 'S-88/2026',
+              defendants: [
+                {
+                  id: 'split-defendant',
+                  name: 'Split Defendant',
+                  defenderNationalId: '9999999999',
+                  isDefenderChoiceConfirmed: true,
+                },
+              ],
+            },
+          ],
+        } as unknown as Case,
+        UserRole.DEFENDER,
+        DEFENDER_NATIONAL_ID,
+      )
+
+      await screen.findByText('S-88/2026')
+      expect(screen.queryByRole('link', { name: 'S-88/2026' })).toBeNull()
+    })
+
+    it('links a split case the defender is a party to', async () => {
+      renderClosedIndictment(
+        {
+          ...mockCase(CaseType.INDICTMENT),
+          splitCases: [
+            {
+              id: 'split-case-id',
+              type: CaseType.INDICTMENT,
+              courtCaseNumber: 'S-88/2026',
+              defendants: [
+                {
+                  id: 'split-defendant',
+                  name: 'Split Defendant',
+                  defenderNationalId: DEFENDER_NATIONAL_ID,
+                  isDefenderChoiceConfirmed: true,
+                },
+              ],
+            },
+          ],
+        } as unknown as Case,
+        UserRole.DEFENDER,
+        DEFENDER_NATIONAL_ID,
+      )
+
+      const link = await screen.findByRole('link', { name: 'S-88/2026' })
+
+      expect(link).toHaveAttribute(
+        'href',
+        `${ROUTE_HANDLER_ROUTE}/split-case-id`,
+      )
+    })
+  })
+
   // A ruling order appeal is a proceeding of its own: its own case number,
   // assistant and judges. The card used to read all three off the case level
   // appeal, so a case carrying both showed one appeal's number beside the
