@@ -82,7 +82,7 @@ export class ZendeskService {
       contactEmail = 'admin@stafraentisland.is'
     } else if (supportedZendeskInstance === 'haskoliislands') {
       apiKey = this.HASKOLI_ISLANDS_API_KEY
-      contactEmail = 'admin@stafraentisland.is'
+      contactEmail = 'stafraentisland@hi.is'
     }
 
     if (!apiKey) {
