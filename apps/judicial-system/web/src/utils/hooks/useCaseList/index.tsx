@@ -21,7 +21,6 @@ import {
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import type { CaseTableType } from '@island.is/judicial-system/types'
 import {
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -75,7 +74,6 @@ const useCaseList = () => {
       caseToOpen: Case,
       openCaseInNewTab?: boolean,
       appealCaseId?: string | null,
-      caseTableType?: CaseTableType | null,
     ) => {
       let routeTo = null
 
@@ -89,11 +87,7 @@ const useCaseList = () => {
         // Public prosecutor users can only see completed indictments
         routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        routeTo = getCourtOfAppealsRouteForRow(
-          caseToOpen,
-          appealCaseId,
-          caseTableType,
-        )
+        routeTo = getCourtOfAppealsRouteForRow(caseToOpen, appealCaseId)
       } else if (isDistrictCourtUser(user)) {
         if (isRestrictionCase(caseToOpen.type)) {
           if (isCompletedCase(caseToOpen.state)) {
@@ -195,7 +189,6 @@ const useCaseList = () => {
       openInNewTab?: boolean,
       defendantIds?: string[] | null,
       appealCaseId?: string | null,
-      caseTableType?: CaseTableType | null,
     ) => {
       const clearTimeouts = () => {
         timeouts.map((timeout) => clearTimeout(timeout))
@@ -228,8 +221,7 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) =>
-            openCase(caseData, openInNewTab, appealCaseId, caseTableType),
+          (caseData) => openCase(caseData, openInNewTab, appealCaseId),
           () => {
             setClickedCase((prev) => {
               if (

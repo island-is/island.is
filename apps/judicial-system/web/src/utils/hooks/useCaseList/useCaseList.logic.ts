@@ -3,41 +3,36 @@ import {
   COURT_OF_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseTableType } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
-import { AppealCaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealCaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { resolveTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
-
-// The court of appeals' verdict appeal lists. Both open the same page - it is
-// written to read for an appeal that has just arrived and for one that is
-// finished.
-const verdictAppealCaseTableTypes: CaseTableType[] = [
-  CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
-  CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
-]
 
 /**
  * Which page a court of appeals row opens.
  *
- * Which list the row came from is what separates a verdict appeal from a
- * ruling appeal - not the case, which can carry one of each at the same time.
+ * The appeal named in the query string settles it. A case can carry a
+ * case-level ruling appeal, an appeal of each ruling order and a verdict
+ * appeal at once, so the case cannot say which proceeding a row is about -
+ * but the appeal can, because a verdict appeal is one by type.
  *
- * The appeal itself always travels in the query string, whichever page opens,
- * so every screen answers "which appeal is this about" the same way.
+ * The stepper picks its sections by the same test, so a row and the page it
+ * opens cannot disagree about which proceeding the reader is in.
  */
 export const getCourtOfAppealsRouteForRow = (
   caseToOpen: WorkingCase,
   appealCaseId?: string | null,
-  caseTableType?: CaseTableType | null,
 ): string => {
-  if (caseTableType && verdictAppealCaseTableTypes.includes(caseTableType)) {
-    return COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
-  }
-
   const targetAppealCase = resolveTargetAppealCaseByAppealCaseId(
     caseToOpen,
     appealCaseId ?? undefined,
   )
+
+  if (targetAppealCase?.appealType === AppealCaseType.VERDICT) {
+    return COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+  }
 
   return targetAppealCase?.appealState === AppealCaseState.COMPLETED
     ? COURT_OF_APPEAL_RESULT_ROUTE
