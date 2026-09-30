@@ -132,8 +132,6 @@ export const TranslationWorkspace = () => {
   const isWorkspaceReady = Boolean(introspection) && !isLoading && !loadError
 
   useRegisterTranslationWorkspaceHeaderChrome({
-    activeLocale,
-    onLocaleChange: setActiveLocale,
     hasUnsavedChanges,
     unsavedCount,
     saving,
@@ -188,6 +186,7 @@ export const TranslationWorkspace = () => {
         allApplicationMessageDescriptors={allApplicationMessageDescriptors}
         editedValues={editedValues}
         activeLocale={activeLocale}
+        onLocaleChange={setActiveLocale}
         getPersistedForLocale={getPersistedForLocale}
         onValueChange={handleValueChange}
         showValidationErrors={showValidationErrors}

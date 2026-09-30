@@ -1,6 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Navigate, useLocation, useParams } from 'react-router-dom'
-import { Box, Input, AlertMessage } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  AlertMessage,
+  Text,
+  ToggleSwitchButton,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { buildSharedNamespaceTranslationPath } from '../../lib/paths'
@@ -122,8 +128,6 @@ export const SharedNamespaceTranslationWorkspace = () => {
     !(error ?? translationsError)
 
   useRegisterTranslationWorkspaceHeaderChrome({
-    activeLocale,
-    onLocaleChange: setActiveLocale,
     hasUnsavedChanges,
     unsavedCount,
     saving,
@@ -185,6 +189,25 @@ export const SharedNamespaceTranslationWorkspace = () => {
               size="sm"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
+            />
+          </Box>
+
+          <Box
+            marginBottom={3}
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+            columnGap={2}
+          >
+            <Text variant="medium" as="span">
+              {formatMessage(m.translationEditIcelandicToggle)}
+            </Text>
+            <ToggleSwitchButton
+              label={formatMessage(m.translationEditIcelandicToggle)}
+              hiddenLabel
+              checked={activeLocale === 'is'}
+              onChange={(checked) => setActiveLocale(checked ? 'is' : 'en')}
+              className={styles.toggleButton}
             />
           </Box>
 

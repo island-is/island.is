@@ -330,6 +330,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationStringsScopeApplication',
     defaultMessage: 'Texti í allri umsókninni',
   },
+  translationEditIcelandicToggle: {
+    id: 'admin-portal.application-system:translationEditIcelandicToggle',
+    defaultMessage: 'Breyta íslenskum textum',
+  },
   translationStringsAllApplicationHeading: {
     id: 'admin-portal.application-system:translationStringsAllApplicationHeading',
     defaultMessage: 'Allur texti í umsókn',
@@ -567,14 +571,6 @@ export const m = defineMessages({
   translationMoreActions: {
     id: 'admin-portal.application-system:translationMoreActions',
     defaultMessage: 'Fleiri valkostir',
-  },
-  translationLocaleEnglish: {
-    id: 'admin-portal.application-system:translationLocaleEnglish',
-    defaultMessage: 'English',
-  },
-  translationLocaleIcelandic: {
-    id: 'admin-portal.application-system:translationLocaleIcelandic',
-    defaultMessage: 'Íslenska',
   },
   translationPublish: {
     id: 'admin-portal.application-system:translationPublish',

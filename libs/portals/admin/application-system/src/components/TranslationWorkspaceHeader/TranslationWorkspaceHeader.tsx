@@ -6,7 +6,6 @@ import { m } from '../../lib/messages'
 import { buildTranslationsBackPath } from '../../lib/paths'
 import { useViewportMaxWidth } from '../../hooks/useViewportMaxWidth'
 import { useTranslationWorkspaceHeaderBridgeOptional } from '../../context/TranslationWorkspaceHeaderBridge'
-import type { TranslationWorkspacePreviewLocale } from '../../context/TranslationWorkspaceHeaderBridge'
 import * as styles from './TranslationWorkspaceHeader.css'
 
 const useHeaderChrome = () => {
@@ -72,37 +71,6 @@ export const TranslationWorkspaceHeaderBackButton = () => {
         </Button>
       </span>
     </div>
-  )
-}
-
-export const TranslationWorkspaceHeaderLocaleButton = () => {
-  const { chrome, formatMessage } = useHeaderChrome()
-
-  if (!chrome) {
-    return null
-  }
-
-  const nextLocale: TranslationWorkspacePreviewLocale =
-    chrome.activeLocale === 'is' ? 'en' : 'is'
-  const label =
-    nextLocale === 'en'
-      ? formatMessage(m.translationLocaleEnglish)
-      : formatMessage(m.translationLocaleIcelandic)
-  const shortLabel = nextLocale === 'en' ? 'EN' : 'IS'
-
-  return (
-    <span className={styles.locale}>
-      <Button
-        size="small"
-        variant="ghost"
-        onClick={() => chrome.onLocaleChange(nextLocale)}
-        title={label}
-        aria-label={label}
-        lang={nextLocale}
-      >
-        {shortLabel}
-      </Button>
-    </span>
   )
 }
 
@@ -211,7 +179,6 @@ export const TranslationWorkspaceHeaderValidationToggle = () => {
 
 export const TranslationWorkspaceHeaderOverflowMenu = () => {
   const { chrome, formatMessage } = useHeaderChrome()
-  const localeInOverflow = useViewportMaxWidth(styles.overflowMenuMaxPx, true)
   const saveInOverflow = useViewportMaxWidth(styles.compactActionsMaxPx, true)
   const historyInOverflow = useViewportMaxWidth(
     styles.historyCompactMaxPx,
@@ -222,12 +189,6 @@ export const TranslationWorkspaceHeaderOverflowMenu = () => {
     return null
   }
 
-  const nextLocale: TranslationWorkspacePreviewLocale =
-    chrome.activeLocale === 'is' ? 'en' : 'is'
-  const localeTitle =
-    nextLocale === 'en'
-      ? formatMessage(m.translationLocaleEnglish)
-      : formatMessage(m.translationLocaleIcelandic)
   const historyTitle = formatMessage(m.translationPublishHistory)
   const moreActions = formatMessage(m.translationMoreActions)
   const saveTitle = chrome.hasUnsavedChanges
@@ -256,16 +217,6 @@ export const TranslationWorkspaceHeaderOverflowMenu = () => {
             icon: 'upload' as const,
             iconType: 'outline' as const,
             onClick: () => chrome.onPublish(),
-          },
-        ]
-      : []),
-    ...(localeInOverflow
-      ? [
-          {
-            title: localeTitle,
-            icon: 'globe' as const,
-            iconType: 'outline' as const,
-            onClick: () => chrome.onLocaleChange(nextLocale),
           },
         ]
       : []),
@@ -314,7 +265,6 @@ export const TranslationWorkspaceHeaderActions = () => {
 
   return (
     <div className={styles.trailActions}>
-      <TranslationWorkspaceHeaderLocaleButton />
       <TranslationWorkspaceHeaderHistoryButton />
       <TranslationWorkspaceHeaderSaveButton />
       <TranslationWorkspaceHeaderPublishButton />

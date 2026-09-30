@@ -12,11 +12,7 @@ import {
   type SetStateAction,
 } from 'react'
 
-export type TranslationWorkspacePreviewLocale = 'is' | 'en'
-
 export type TranslationWorkspaceHeaderChrome = {
-  activeLocale: TranslationWorkspacePreviewLocale
-  onLocaleChange: (locale: TranslationWorkspacePreviewLocale) => void
   hasUnsavedChanges: boolean
   unsavedCount: number
   saving: boolean
@@ -75,12 +71,10 @@ export const useTranslationWorkspaceHeaderBridgeOptional = ():
   | undefined => useContext(TranslationWorkspaceHeaderBridgeContext)
 
 /**
- * Registers translation workspace chrome (language tabs + save + publish) in the shell header.
+ * Registers translation workspace chrome (save + publish) in the shell header.
  * When `isReady` is false, the shell clears (loading / error / locked route).
  */
 export const useRegisterTranslationWorkspaceHeaderChrome = ({
-  activeLocale,
-  onLocaleChange,
   hasUnsavedChanges,
   unsavedCount,
   saving,
@@ -96,15 +90,10 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
 }: TranslationWorkspaceHeaderChrome & { isReady: boolean }) => {
   const { setWorkspaceChrome } = useTranslationWorkspaceHeaderBridge()
 
-  const onLocaleChangeRef = useRef(onLocaleChange)
   const onSaveAllRef = useRef(onSaveAll)
   const onToggleValidationErrorsRef = useRef(onToggleValidationErrors)
   const onPublishRef = useRef(onPublish)
   const onOpenHistoryRef = useRef(onOpenHistory)
-
-  useEffect(() => {
-    onLocaleChangeRef.current = onLocaleChange
-  }, [onLocaleChange])
 
   useEffect(() => {
     onSaveAllRef.current = onSaveAll
@@ -122,12 +111,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
     onOpenHistoryRef.current = onOpenHistory
   }, [onOpenHistory])
 
-  const stableOnLocaleChange = useCallback(
-    (locale: TranslationWorkspacePreviewLocale) =>
-      onLocaleChangeRef.current(locale),
-    [],
-  )
-
   const stableOnSaveAll = useCallback(() => onSaveAllRef.current(), [])
 
   const stableOnToggleValidationErrors = useCallback(
@@ -141,8 +124,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
 
   const chrome = useMemo<TranslationWorkspaceHeaderChrome>(
     () => ({
-      activeLocale,
-      onLocaleChange: stableOnLocaleChange,
       hasUnsavedChanges,
       unsavedCount,
       saving,
@@ -156,8 +137,6 @@ export const useRegisterTranslationWorkspaceHeaderChrome = ({
       onOpenHistory: stableOnOpenHistory,
     }),
     [
-      activeLocale,
-      stableOnLocaleChange,
       hasUnsavedChanges,
       unsavedCount,
       saving,

@@ -5,3 +5,7 @@ export const sharedNamespaceShell = style({
   flexDirection: 'column',
   width: '100%',
 })
+
+export const toggleButton = style({
+  marginBottom: 0,
+})

@@ -8,7 +8,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
  * so container queries would never match).
  *
  * - 1280: labelled back + history ("Útgáfusaga"); icon-only below
- * - 1140: overflow ("more") appears; IS/EN tabs hide
+ * - 1140: overflow ("more") appears
  * - 1000: Save / Publish move into the overflow menu
  * - 758: history button moves into the overflow menu
  */
@@ -85,18 +85,6 @@ globalStyle(`${backCompact} > button`, {
 globalStyle(`${backCompact} > button svg`, {
   marginLeft: 0,
   marginRight: 0,
-})
-
-/** Language toggle; hidden when the overflow menu takes over. */
-export const locale = style({
-  display: 'flex',
-  alignItems: 'center',
-  flex: '0 0 auto',
-  '@container': {
-    [`adminbar (max-width: ${overflowMenuMaxPx}px)`]: {
-      display: 'none',
-    },
-  },
 })
 
 export const history = style({
@@ -180,17 +168,14 @@ const iconSquareButton = {
 
 /** Square ghost icon/label buttons, same height as the small header actions. */
 globalStyle(
-  `${locale} > button, ${historyCompact} > button, ${overflow} > button`,
+  `${historyCompact} > button, ${overflow} > button`,
   iconSquareButton,
 )
 
-globalStyle(
-  `${locale} > button svg, ${historyCompact} > button svg, ${overflow} > button svg`,
-  {
-    marginLeft: 0,
-    marginRight: 0,
-  },
-)
+globalStyle(`${historyCompact} > button svg, ${overflow} > button svg`, {
+  marginLeft: 0,
+  marginRight: 0,
+})
 
 export const trailActions = style({
   display: 'flex',

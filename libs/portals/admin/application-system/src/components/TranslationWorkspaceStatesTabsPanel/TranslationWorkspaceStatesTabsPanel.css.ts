@@ -83,6 +83,10 @@ export const tabsPanelScroll = style({
   overflowY: 'auto',
 })
 
+export const toggleButton = style({
+  marginBottom: 0,
+})
+
 export const tabsPanelInner = style({
   minWidth: 0,
   maxWidth: '100%',

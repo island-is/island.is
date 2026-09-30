@@ -1,5 +1,10 @@
 import { useMemo } from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  ToggleSwitchButton,
+} from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
@@ -25,6 +30,7 @@ export interface TabsPanelStringsTabProps {
   applicationStringCount: number
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
+  onLocaleChange: (locale: 'is' | 'en') => void
   getPersistedForLocale: (messageKey: string) => string
   onValueChange: (messageKey: string, value: string) => void
   showValidationErrors: boolean
@@ -46,6 +52,7 @@ export const TabsPanelStringsTab = ({
   applicationStringCount,
   editedValues,
   activeLocale,
+  onLocaleChange,
   getPersistedForLocale,
   onValueChange,
   showValidationErrors,
@@ -124,6 +131,25 @@ export const TabsPanelStringsTab = ({
               {formatMessage(m.translationStringsScopeApplication)}
             </Button>
           </Box>
+        </Box>
+
+        <Box
+          marginBottom={3}
+          display="flex"
+          alignItems="center"
+          justifyContent="spaceBetween"
+          columnGap={2}
+        >
+          <Text variant="medium" as="span">
+            {formatMessage(m.translationEditIcelandicToggle)}
+          </Text>
+          <ToggleSwitchButton
+            label={formatMessage(m.translationEditIcelandicToggle)}
+            hiddenLabel
+            checked={activeLocale === 'is'}
+            onChange={(checked) => onLocaleChange(checked ? 'is' : 'en')}
+            className={styles.toggleButton}
+          />
         </Box>
 
         {showMainList && (
