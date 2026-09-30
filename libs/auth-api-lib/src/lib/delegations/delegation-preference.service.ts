@@ -101,7 +101,11 @@ export class DelegationPreferenceService {
     const live = await this.liveParties(toNationalId)
     const sequelize = this.delegationPreferenceModel.sequelize
 
-    await sequelize?.transaction(async (transaction) => {
+    if (!sequelize) {
+      throw new Error('No connection to save the favourite with')
+    }
+
+    await sequelize.transaction(async (transaction) => {
       /**
        * Counting and then writing is two statements, so without this two
        * requests could both see room and both add one. The lock is keyed on the

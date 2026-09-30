@@ -186,6 +186,14 @@ describe('DelegationPreferenceService', () => {
       expect(model.upsert).not.toHaveBeenCalled()
     })
 
+    it('fails loudly rather than reporting success without writing', async () => {
+      // @ts-expect-error deliberately removing what the transaction needs
+      model.sequelize = null
+
+      await expect(service.setFavourite(ACTOR, PARTY, true)).rejects.toThrow()
+      expect(model.upsert).not.toHaveBeenCalled()
+    })
+
     it('takes a lock keyed on the actor, so two stars cannot both see room', async () => {
       await service.setFavourite(ACTOR, PARTY, true)
 
