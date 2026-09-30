@@ -19,10 +19,6 @@ export const computeDisabledReason = (
   const delegationTypes = userInfo.profile.delegationType ?? []
   const isActingAsDelegate = !!userInfo.profile.actor
 
-  if (isActingAsDelegate && route.notAvailableForActors) {
-    return 'notAvailableForActors'
-  }
-
   if (
     delegationTypes.includes(AuthDelegationType.LegalGuardian) &&
     !delegationTypes.includes(AuthDelegationType.LegalGuardianMinor) &&
@@ -30,6 +26,10 @@ export const computeDisabledReason = (
       route.path.includes(LAW_AND_ORDER_ROUTE))
   ) {
     return 'notMinor'
+  }
+
+  if (isActingAsDelegate && route.notAvailableForActors) {
+    return 'notAvailableForActors'
   }
 
   return 'default'
@@ -97,7 +97,9 @@ export const filterNavigationTree = ({
     (routeItem?.enabled === false && userInfo
       ? computeDisabledReason(userInfo, routeItem)
       : undefined)
-  item.requiredScopes = routeItem?.requiredScopes
+  if (routeItem?.requiredScopes) {
+    item.requiredScopes = routeItem.requiredScopes
+  }
 
   // Makes dynamic item visible in navigation after dynamicArray hook is run
   if (routeItem?.dynamic) {
