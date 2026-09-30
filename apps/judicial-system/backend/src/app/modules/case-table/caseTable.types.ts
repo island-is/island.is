@@ -105,11 +105,53 @@ export const subModelMap: {
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
 
+/**
+ * A case as a case table row sees it.
+ *
+ * One appeal, named for what it is: the appeal this row is about. Which appeal
+ * that is belongs to the list, not to whatever reads the row - most rows are
+ * about the case-level appeal, a ruling order list fans one case out into a
+ * row per appeal, and a verdict list substitutes the verdict appeal.
+ *
+ * The three associations are gone from the row on purpose. While `appealCase`
+ * was both "the case-level ruling appeal" and "the appeal this row is about",
+ * every reader had to know which lists rewrote it, and nothing said so; the
+ * shape is now the same whichever list built it.
+ *
+ * What it still claims and should not: `Omit` keeps the model's methods, while
+ * a row is the plain object `toJSON` returns. Nothing reads them - the
+ * generators and the row helpers were checked - so this is the old fiction
+ * left in place rather than a new one.
+ */
+export type CaseTableRowCase = Omit<
+  Case,
+  'appealCase' | 'rulingOrderAppealCases' | 'verdictAppealCase'
+> & {
+  appeal?: AppealCase | null
+}
+
 export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
-  displayCases?: (cases: Case[]) => Case[]
+  displayCases?: (cases: Case[]) => CaseTableRowCase[]
 }
+
+// Every row goes through one of these, so there is no such thing as a row that
+// skipped normalisation. A list that says nothing is about the case-level
+// appeal, which is what all of them meant before any of this existed.
+const toRow = (c: Case): CaseTableRowCase => {
+  const {
+    appealCase,
+    rulingOrderAppealCases: _rulingOrderAppealCases,
+    verdictAppealCase: _verdictAppealCase,
+    ...rest
+  } = c.toJSON()
+
+  return { ...rest, appeal: appealCase } as CaseTableRowCase
+}
+
+export const toRowsWithCaseLevelAppeal = (cs: Case[]): CaseTableRowCase[] =>
+  cs.map(toRow)
 
 /**
  * What a user may reach at all, as opposed to which of those cases belong in a
@@ -217,9 +259,9 @@ export const copyIncludeInto = <K extends keyof CaseIncludes>(
   target[key] = copy
 }
 
-export const expandCasesWithDefendants = (cs: Case[]) =>
+export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
-    const jsonCase = c.toJSON()
+    const jsonCase = toRow(c)
 
     return (c.defendants ?? [])
       .filter(
@@ -255,25 +297,25 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
  * that is what decides the join - and read it back off `appealCase`, exactly
  * as the ruling order columns do.
  */
-export const presentVerdictAppealAsCaseAppeal = (cs: Case[]) =>
-  cs.map((c) => {
-    const { verdictAppealCase, ...rest } = c.toJSON()
-
-    return { ...rest, appealCase: verdictAppealCase }
-  })
+export const presentVerdictAppealAsRowAppeal = (
+  cs: Case[],
+): CaseTableRowCase[] =>
+  cs.map((c) => ({ ...toRow(c), appeal: c.verdictAppealCase }))
 
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
 // emitted case has the relevant appeal slotted into `appealCase`, so cell
 // generators reading `c.appealCase.X` work without modification. The
 // `rulingOrderAppealCases` array is dropped to prevent re-iteration downstream.
-export const expandCasesWithAppeals = (cs: Case[]) =>
+export const expandCasesWithAppeals = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
-    const jsonCase = c.toJSON()
-    const { rulingOrderAppealCases: _drop, ...rest } = jsonCase
+    const row = toRow(c)
     const rulingOrderRows = (c.rulingOrderAppealCases ?? []).map(
-      (roa: AppealCase) => ({ ...rest, appealCase: roa }),
+      (rulingOrderAppeal: AppealCase) => ({
+        ...row,
+        appeal: rulingOrderAppeal,
+      }),
     )
 
-    return rest.appealCase ? [rest, ...rulingOrderRows] : rulingOrderRows
+    return row.appeal ? [row, ...rulingOrderRows] : rulingOrderRows
   })
