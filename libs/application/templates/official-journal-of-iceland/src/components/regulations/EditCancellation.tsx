@@ -8,6 +8,7 @@
  * - Replaced with useRegulationImpacts hook that writes to application answers
  * - Uses RegulationImpactSchema instead of DraftCancelForm
  * - No page reload on save — updates application answers directly
+ * - Only this draft's own impacts are taken into account for the date range
  */
 import {
   Box,
@@ -22,24 +23,50 @@ import { toISODate } from '@island.is/regulations'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
+import { useRegulationFetch } from '../../hooks/useRegulationFetch'
+import { getImpactChain } from '../../utils/getImpactChain'
+import { ImpactHistory } from './ImpactHistory'
 
 // ---------------------------------------------------------------------------
 
 type EditCancellationProps = {
   /** The cancellation impact being edited (from answers.regulation.impacts[]) */
   cancellation: RegulationImpactSchema
+  /** This draft's impacts on the same regulation */
+  impacts?: RegulationImpactSchema[]
   /** Called when the modal should close. If impact was updated, passes the updated impact. */
   onSave: (impact: RegulationImpactSchema) => void | Promise<void>
   onClose: () => void
 }
 
 export const EditCancellation = (props: EditCancellationProps) => {
-  const { cancellation, onSave, onClose } = props
+  const { cancellation, impacts = [], onSave, onClose } = props
   const today = useMemo(() => new Date(), [])
-  const [minDate] = useState(today)
-  const [activeDate, setActiveDate] = useState<Date | undefined>(
-    cancellation.date ? new Date(cancellation.date) : today,
+  const isSelf = cancellation.name === 'self'
+  const { regulation } = useRegulationFetch(
+    isSelf ? undefined : cancellation.name,
   )
+
+  // A repeal can't come before this draft's changes or scheduled changes
+  const { minDate, upcoming } = useMemo(
+    () =>
+      getImpactChain({
+        impact: cancellation,
+        impacts,
+        history: regulation?.history,
+        defaultMinDate: today,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [cancellation.id, cancellation.date, impacts, regulation, today],
+  )
+  const [activeDate, setActiveDate] = useState<Date | undefined>(
+    cancellation.date ? new Date(cancellation.date) : undefined,
+  )
+  const effectiveDate =
+    activeDate && activeDate > minDate ? activeDate : minDate
+  const shownDate =
+    cancellation.date ??
+    (toISODate(minDate) > toISODate(today) ? toISODate(minDate) : undefined)
   const [saving, setSaving] = useState(false)
 
   const changeCancelDate = (newDate: Date | undefined) => {
@@ -52,7 +79,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
     try {
       await onSave({
         ...cancellation,
-        date: toISODate(activeDate ?? today),
+        date: toISODate(effectiveDate),
       })
     } finally {
       setSaving(false)
@@ -60,7 +87,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
   }
 
   const isValidImpact = () => {
-    return !!activeDate
+    return !!effectiveDate
   }
 
   return (
@@ -79,7 +106,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
                   ? 'stofnreglugerð'
                   : cancellation.regTitle || cancellation.name
               }
-              date={cancellation.date}
+              date={shownDate}
               minDate={minDate}
               onChangeDate={changeCancelDate}
               tag={{
@@ -95,6 +122,11 @@ export const EditCancellation = (props: EditCancellationProps) => {
             span={['12/12', '12/12', '12/12', '10/12', '8/12']}
             offset={['0', '0', '0', '1/12', '2/12']}
           >
+            <ImpactHistory
+              impactDate={effectiveDate}
+              upcoming={upcoming}
+              targetName={cancellation.name}
+            />
             <Box paddingY={5}>
               <Divider />
             </Box>

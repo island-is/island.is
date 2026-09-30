@@ -7,10 +7,13 @@
  * - Removed GraphQL mutations (createDraftRegulationChange, updateDraftRegulationChange)
  * - Replaced with callback pattern: onSave/onClose props
  * - Uses RegulationImpactSchema instead of DraftChangeForm
- * - Simplified: no pristine regulation tracking, no ImpactHistory (deferred to Phase 4)
+ * - Simplified: no pristine regulation tracking
+ * - Chains onto this draft's earlier changes of the same regulation only;
+ *   other drafts' unpublished changes aren't taken into account
  * - EditorInput references kept but using existing OJOI editor components
  */
 import {
+  AlertMessage,
   Button,
   Box,
   Divider,
@@ -33,12 +36,17 @@ import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplicationAssetUploader } from '../../hooks/useAssetUpload'
 import { ReferenceText } from './ReferenceText'
 import { getDefaultDate } from '../../lib/utils'
+import { getImpactChain } from '../../utils/getImpactChain'
+import { formatDate } from '../../utils/formatAmendingUtils'
+import { ImpactHistory } from './ImpactHistory'
 
 // ---------------------------------------------------------------------------
 
 type EditChangeProps = {
   /** The amendment impact being edited (from answers.regulation.impacts[]) */
   change: RegulationImpactSchema
+  /** This draft's impacts on the same regulation, for building on earlier changes */
+  impacts?: RegulationImpactSchema[]
   /** The title of the parent regulation/draft */
   draftTitle?: string
   /** HTML body of the draft regulation (shown in reference panel) */
@@ -58,6 +66,7 @@ type EditChangeProps = {
 export const EditChange = (props: EditChangeProps) => {
   const {
     change,
+    impacts = [],
     draftTitle,
     draftHtml,
     isBase,
@@ -75,12 +84,56 @@ export const EditChange = (props: EditChangeProps) => {
   // Minimum date for the impact — MINIMUM_WEEKDAYS workdays from now
   // (consistent with the OJOI publication flow)
   const defaultMinDate = useMemo(() => new Date(getDefaultDate()), [])
-  const [minDate] = useState(defaultMinDate)
+
+  const isNewImpact = !change.title && !change.text
+  const isSelf = change.name === 'self'
+  const { regulation: currentRegulation, loading: currentLoading } =
+    useRegulationFetch(isSelf ? undefined : change.name)
+
+  // Build on this draft's earlier change of the regulation, or on the
+  // regulation as it will be once its scheduled changes are in effect.
+  const { previous, minDate, hasFutureEffects, repealedOn, upcoming } = useMemo(
+    () =>
+      getImpactChain({
+        impact: change,
+        impacts,
+        history: currentRegulation?.history,
+        defaultMinDate,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [change.id, change.date, impacts, currentRegulation, defaultMinDate],
+  )
+  const needsDatedText = !!currentRegulation && !previous && hasFutureEffects
+  const {
+    regulation: datedRegulation,
+    loading: datedLoading,
+    done: datedDone,
+  } = useRegulationFetch(
+    needsDatedText ? change.name : undefined,
+    toISODate(minDate),
+  )
+  const regulationLoading = currentLoading || datedLoading
+
+  // What this change is compared against, and what a new change starts from
+  const baseRegulation = useMemo(() => {
+    if (previous) {
+      return {
+        title: previous.title,
+        text: previous.text,
+        appendixes: previous.appendixes,
+      }
+    }
+    // Fall back to the current text if the dated one can't be fetched
+    if (needsDatedText && datedDone) {
+      return datedRegulation ?? currentRegulation
+    }
+    return needsDatedText ? undefined : currentRegulation
+  }, [previous, needsDatedText, datedDone, datedRegulation, currentRegulation])
 
   const [activeTitle, setActiveTitle] = useState(change.title || '')
   const [activeText, setActiveText] = useState(change.text || '')
   const [activeDate, setActiveDate] = useState<Date | undefined>(
-    change.date ? new Date(change.date) : defaultMinDate,
+    change.date ? new Date(change.date) : undefined,
   )
   const [activeAppendixes, setActiveAppendixes] = useState(
     change.appendixes || [],
@@ -88,22 +141,19 @@ export const EditChange = (props: EditChangeProps) => {
   const [activeComments, setActiveComments] = useState(change.comments || '')
   const [saving, setSaving] = useState(false)
 
-  // Fetch the base regulation so we can pre-populate the form fields
-  // when creating a new amendment impact (i.e. change has no existing text)
-  const isNewImpact = !change.title && !change.text
-  const isSelf = change.name === 'self'
-  const { regulation: baseRegulation, loading: regulationLoading } =
-    useRegulationFetch(isSelf ? undefined : change.name)
+  // A new change after a later one can't take effect "immediately"
+  const shownDate =
+    change.date ?? (minDate > defaultMinDate ? toISODate(minDate) : undefined)
 
   // Track whether form fields have been initialized from the fetched data.
   // The HTMLEditor captures its value at mount time via a ref, so we must
   // NOT render it until the fields contain the correct initial content.
   const [initialized, setInitialized] = useState(!isNewImpact || isSelf)
 
-  // Pre-populate title/text/appendixes from the fetched base regulation
-  // when creating a new impact (fields start empty)
+  // Pre-populate title/text/appendixes from the base when creating a new
+  // impact (fields start empty)
   useEffect(() => {
-    if (!isNewImpact || isSelf || !baseRegulation) return
+    if (!isNewImpact || isSelf || regulationLoading || !baseRegulation) return
 
     if (!activeTitle && baseRegulation.title) {
       setActiveTitle(baseRegulation.title)
@@ -124,7 +174,11 @@ export const EditChange = (props: EditChangeProps) => {
     }
     setInitialized(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseRegulation])
+  }, [baseRegulation, regulationLoading])
+
+  // Not before the impacts this one follows
+  const effectiveDate =
+    activeDate && activeDate > minDate ? activeDate : minDate
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveDate(newDate)
@@ -166,7 +220,7 @@ export const EditChange = (props: EditChangeProps) => {
         title: activeTitle,
         text: activeText,
         diff: getDiffHtml(),
-        date: toISODate(activeDate ?? defaultMinDate),
+        date: toISODate(effectiveDate),
         appendixes: activeAppendixes.map((apx, i) => ({
           ...apx,
           diff: getAppendixDiffHtml(i),
@@ -180,7 +234,7 @@ export const EditChange = (props: EditChangeProps) => {
 
   const isValidImpact = () => {
     // Date always has a value — defaults to today ("takes effect immediately")
-    return !!activeTitle && !!activeText
+    return !!activeTitle && !!activeText && !repealedOn
   }
 
   // The base regulation text to use as the diff reference.
@@ -211,7 +265,7 @@ export const EditChange = (props: EditChangeProps) => {
                   : change.regTitle || change.name
               }
               name={change.name}
-              date={change.date}
+              date={shownDate}
               minDate={
                 readOnly
                   ? change.date
@@ -226,6 +280,30 @@ export const EditChange = (props: EditChangeProps) => {
                 second: isBase ? 'Stofnreglugerð' : 'Breytingareglugerð',
               }}
             />
+          </GridColumn>
+        </GridRow>
+
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+            offset={['0', '0', '0', '1/12', '2/12']}
+          >
+            <ImpactHistory
+              impactDate={effectiveDate}
+              upcoming={upcoming}
+              targetName={change.name}
+            />
+            {repealedOn && !readOnly && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Reglugerðin fellur brott áður"
+                  message={`Reglugerðin fellur brott ${formatDate(
+                    new Date(repealedOn),
+                  )} og því er ekki hægt að breyta henni eftir það. Ef breytingin á að taka gildi fyrr þarf að skrá hana á undan brottfellingunni.`}
+                />
+              </Box>
+            )}
           </GridColumn>
         </GridRow>
 
