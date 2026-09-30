@@ -8,9 +8,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
 import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
-import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
@@ -24,12 +22,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
     ADSNationalRegistryModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        XRoadConfig,
-        NationalRegistryClientConfig,
-        NationalRegistryV3ClientConfig,
-        FeatureFlagConfig,
-      ],
+      load: [XRoadConfig, NationalRegistryV3ClientConfig],
     }),
   ],
 })

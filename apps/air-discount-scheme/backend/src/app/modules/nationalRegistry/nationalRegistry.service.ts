@@ -7,17 +7,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryUser } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
-import {
   EinstaklingurDTOAllt,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { Gender } from '@island.is/air-discount-scheme/types'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import { Features } from '@island.is/feature-flags'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -226,18 +220,8 @@ export class NationalRegistryService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
-    private personApi: NationalRegistryClientService,
     private personApiV3: NationalRegistryV3ClientService,
-    private featureFlagService: FeatureFlagService,
   ) {}
-
-  private useV3(auth: AuthUser): Promise<boolean> {
-    return this.featureFlagService.getValue(
-      Features.shouldAirDiscountSchemeUseNationalRegistryV3,
-      false,
-      auth,
-    )
-  }
 
   // Þjóðskrá API gender keys
   private mapGender(genderId: string): Gender {
@@ -257,23 +241,6 @@ export class NationalRegistryService {
   }
 
   private createNationalRegistryUser(
-    response: IndividualDto,
-  ): NationalRegistryUser {
-    const address = response.legalDomicile ?? response.residence
-    const nameParts = response.fullName?.split(' ') ?? []
-    return {
-      nationalId: response.nationalId,
-      firstName: nameParts[0] ?? '',
-      middleName: nameParts.slice(1, -1).join(' ') ?? '',
-      lastName: nameParts.slice(-1).pop() ?? '',
-      gender: this.mapGender(response.genderCode),
-      address: address?.streetAddress ?? '',
-      postalcode: parseInt(address?.postalCode ?? '0'),
-      city: address?.locality ?? '',
-    }
-  }
-
-  private createNationalRegistryUserV3(
     response: EinstaklingurDTOAllt,
     nationalId: string,
   ): NationalRegistryUser {
@@ -295,15 +262,12 @@ export class NationalRegistryService {
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
     try {
-      if (await this.useV3(authUser)) {
-        const parent = await this.personApiV3.getAllDataIndividual(
-          authUser.nationalId,
-        )
-        return (parent?.forsja?.born ?? [])
-          .map((child) => child.barnKennitala)
-          .filter((nationalId): nationalId is string => Boolean(nationalId))
-      }
-      return await this.personApi.getCustodyChildren(authUser)
+      const parent = await this.personApiV3.getAllDataIndividual(
+        authUser.nationalId,
+      )
+      return (parent?.forsja?.born ?? [])
+        .map((child) => child.barnKennitala)
+        .filter((nationalId): nationalId is string => Boolean(nationalId))
     } catch (e) {
       this.logger.info('getRelations custodychildren not successful', {
         category: 'ads-backend',
@@ -314,33 +278,23 @@ export class NationalRegistryService {
   }
 
   async getCustodians(
-    auth: AuthUser,
     childNationalId: string,
   ): Promise<Array<NationalRegistryUser | null>> {
-    const useV3 = await this.useV3(auth)
-    const response = useV3
-      ? ((await this.personApiV3.getCustodians(childNationalId)) ?? [])
-          .map((custodian) => custodian.forsjaAdiliKennitala)
-          .filter((nationalId): nationalId is string => Boolean(nationalId))
-      : await this.personApi.getOtherCustodyParents(auth, childNationalId)
-
-    if (!useV3) {
-      // The v2 custody relation does not include the calling parent.
-      response.push(auth.nationalId)
-    }
+    const response = (
+      (await this.personApiV3.getCustodians(childNationalId)) ?? []
+    )
+      .map((custodian) => custodian.forsjaAdiliKennitala)
+      .filter((nationalId): nationalId is string => Boolean(nationalId))
 
     const custodians = []
     for (const custodian of response) {
-      const mappedCustodian = await this.getUser(custodian, auth)
+      const mappedCustodian = await this.getUser(custodian)
       custodians.push(mappedCustodian)
     }
     return custodians
   }
 
-  async getUser(
-    nationalId: string,
-    auth: AuthUser,
-  ): Promise<NationalRegistryUser | null> {
+  async getUser(nationalId: string): Promise<NationalRegistryUser | null> {
     if (environment.environment !== 'prod') {
       const testUser = TEST_USERS.find(
         (testUser) => testUser.nationalId === nationalId,
@@ -350,19 +304,7 @@ export class NationalRegistryService {
       }
     }
 
-    if (await this.useV3(auth)) {
-      const response = await this.personApiV3.getAllDataIndividual(nationalId)
-      if (!response) {
-        this.logger.info('getUser individual not found', {
-          category: 'ads-backend',
-        })
-        return null
-      }
-      return this.createNationalRegistryUserV3(response, nationalId)
-    }
-
-    const response = await this.personApi.getIndividual(nationalId)
-
+    const response = await this.personApiV3.getAllDataIndividual(nationalId)
     if (!response) {
       this.logger.info('getUser individual not found', {
         category: 'ads-backend',
@@ -370,6 +312,6 @@ export class NationalRegistryService {
       return null
     }
 
-    return this.createNationalRegistryUser(response)
+    return this.createNationalRegistryUser(response, nationalId)
   }
 }

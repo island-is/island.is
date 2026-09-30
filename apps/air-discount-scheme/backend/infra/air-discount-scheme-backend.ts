@@ -2,7 +2,6 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
-  NationalRegistry,
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -16,19 +15,13 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       MYFLUG_API_KEY: '/k8s/air-discount-scheme/backend/MYFLUG_API_KEY',
       ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY',
       NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY',
-      NATIONAL_REGISTRY_PASSWORD:
-        '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD',
-      NATIONAL_REGISTRY_USERNAME:
-        '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
-      NATIONAL_REGISTRY_URL:
-        '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET',
       NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET',
     })
-    .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C)
     .env({
       ENVIRONMENT: {
         dev: 'dev',
