@@ -49,6 +49,17 @@ export const ZENDESK_CUSTOM_OBJECT_KEYS = {
 // job, which is limited to 100 items
 export const MAX_PARTICIPANTS_PER_APPLICATION = 92
 
+// Bulk jobs are queued by Zendesk and take 3-5s for the participants and
+// 10s+ for the tickets, regardless of size. Direct requests finish in well
+// under a second each, so small applications write directly and only large
+// ones use the bulk jobs
+export const DIRECT_WRITE_MAX_PARTICIPANTS = 10
+
+// Concurrent writes to the same custom object can deadlock in Zendesk, the
+// client retries those but keeping the concurrency low avoids most of them
+export const PARTICIPANT_WRITE_CONCURRENCY = 3
+export const TICKET_CREATE_CONCURRENCY = 5
+
 // Tells participant tickets apart from the registrant ticket
 export const ZENDESK_PARTICIPANT_TICKET_TAG = 'hh_course_participant_ticket'
 

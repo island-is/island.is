@@ -13,6 +13,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import chunk from 'lodash/chunk'
 import {
   type CustomObjectJobItem,
+  type CustomObjectRecord,
   type SubmitTicketInput,
   ZendeskService,
 } from '@island.is/clients/zendesk'
@@ -24,9 +25,12 @@ import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
 import {
   COURSE_LIST_PAGE_SLUG_MAP,
+  DIRECT_WRITE_MAX_PARTICIPANTS,
   GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
   GET_COURSE_BY_ID_QUERY,
   MAX_PARTICIPANTS_PER_APPLICATION,
+  PARTICIPANT_WRITE_CONCURRENCY,
+  TICKET_CREATE_CONCURRENCY,
   ZENDESK_CUSTOM_OBJECT_KEYS,
   ZENDESK_PARTICIPANT_TICKET_TAG,
   ZENDESK_TICKET_IDS,
@@ -522,37 +526,30 @@ export class CoursesService extends BaseTemplateApiService {
     applicant: { nationalId: string; healthcenter?: string },
     authorization: string,
   ): Promise<RegisteredParticipant[]> {
-    let priceAmount: number | undefined
-    try {
-      const chargeItemsResponse = await this.sharedTemplateApiService
-        .makeGraphqlQuery<{
-          getChargeItemCodesByCourseId: {
-            items: Array<{ code: string; priceAmount: number }>
-          }
-        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
-          input: { courseId: course.id },
-        })
-        .then((r) => r.json())
-
-      priceAmount =
-        chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
-          (item) => item.code === courseInstance.chargeItemCode,
-        )?.priceAmount
-    } catch (error) {
-      this.logger.error(
-        'Failed to fetch charge item codes for course, proceeding without price',
-        { error, courseId: course.id },
-      )
-    }
-
     const { externalIdPrefix, namePrefix } = this.getZendeskEnvPrefixes()
     const courseExternalId = `${externalIdPrefix}${course.id}`
     const instanceExternalId = `${externalIdPrefix}${courseInstance.id}`
-
-    const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
-      ZENDESK_CUSTOM_OBJECT_KEYS.course,
-      { name: `${namePrefix}${course.title}`, external_id: courseExternalId },
+    const externalIds = participantList.map((p) =>
+      this.getParticipantExternalId(
+        externalIdPrefix,
+        applicationId,
+        p.nationalIdWithName.nationalId,
+      ),
     )
+
+    // These do not depend on each other. The instance record needs the course
+    // record and the price, so it is written right after
+    const [priceAmount, courseRecord, preexistingRecords] = await Promise.all([
+      this.getPriceAmount(course.id, courseInstance, authorization),
+      this.zendeskService.upsertCustomObjectRecord(
+        ZENDESK_CUSTOM_OBJECT_KEYS.course,
+        { name: `${namePrefix}${course.title}`, external_id: courseExternalId },
+      ),
+      this.zendeskService.listCustomObjectRecordsByExternalIds(
+        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+        externalIds,
+      ),
+    ])
 
     const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
       ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
@@ -590,7 +587,11 @@ export class CoursesService extends BaseTemplateApiService {
         isApplicant,
         record: {
           name: p.nationalIdWithName.name,
-          external_id: `${externalIdPrefix}${applicationId}-${p.nationalIdWithName.nationalId}`,
+          external_id: this.getParticipantExternalId(
+            externalIdPrefix,
+            applicationId,
+            p.nationalIdWithName.nationalId,
+          ),
           custom_object_fields: {
             kennitala: p.nationalIdWithName.nationalId,
             email: p.nationalIdWithName.email,
@@ -608,15 +609,8 @@ export class CoursesService extends BaseTemplateApiService {
       }
     })
 
-    const externalIds = participants.map((p) => p.record.external_id)
-
     // Records from an earlier attempt may already be linked to tickets, so
     // only the records this attempt creates are rolled back on failure
-    const preexistingRecords =
-      await this.zendeskService.listCustomObjectRecordsByExternalIds(
-        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-        externalIds,
-      )
     const preexistingExternalIds = new Set(
       preexistingRecords.map((record) => record.external_id),
     )
@@ -625,16 +619,10 @@ export class CoursesService extends BaseTemplateApiService {
     )
 
     try {
-      await this.zendeskService.upsertCustomObjectRecordsByExternalId(
-        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      const writtenRecords = await this.upsertParticipantRecords(
         participants.map((p) => p.record),
+        externalIds,
       )
-
-      const writtenRecords =
-        await this.zendeskService.listCustomObjectRecordsByExternalIds(
-          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-          externalIds,
-        )
       const writtenRecordsByExternalId = new Map(
         writtenRecords.map((record) => [record.external_id, record]),
       )
@@ -645,7 +633,7 @@ export class CoursesService extends BaseTemplateApiService {
         )
         if (!writtenRecord) {
           throw new Error(
-            `Participant record ${participant.record.external_id} is missing after the upsert job`,
+            `Participant record ${participant.record.external_id} is missing after the upsert`,
           )
         }
         participant.ticketId = this.toZendeskNumber(
@@ -682,6 +670,78 @@ export class CoursesService extends BaseTemplateApiService {
     }
 
     return participants
+  }
+
+  private getParticipantExternalId(
+    externalIdPrefix: string,
+    applicationId: string,
+    nationalId: string,
+  ) {
+    return `${externalIdPrefix}${applicationId}-${nationalId}`
+  }
+
+  private async getPriceAmount(
+    courseId: string,
+    courseInstance: CourseInstance,
+    authorization: string,
+  ): Promise<number | undefined> {
+    try {
+      const chargeItemsResponse = await this.sharedTemplateApiService
+        .makeGraphqlQuery<{
+          getChargeItemCodesByCourseId: {
+            items: Array<{ code: string; priceAmount: number }>
+          }
+        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
+          input: { courseId },
+        })
+        .then((r) => r.json())
+
+      return chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
+        (item) => item.code === courseInstance.chargeItemCode,
+      )?.priceAmount
+    } catch (error) {
+      this.logger.error(
+        'Failed to fetch charge item codes for course, proceeding without price',
+        { error, courseId },
+      )
+      return undefined
+    }
+  }
+
+  /**
+   * Returns the written records. Small applications are written with direct
+   * requests, which return the full record, large ones use a bulk job which
+   * has to be read back afterwards.
+   */
+  private async upsertParticipantRecords(
+    records: CustomObjectJobItem[],
+    externalIds: string[],
+  ): Promise<CustomObjectRecord[]> {
+    if (records.length <= DIRECT_WRITE_MAX_PARTICIPANTS) {
+      const written: CustomObjectRecord[] = []
+      for (const batch of chunk(records, PARTICIPANT_WRITE_CONCURRENCY)) {
+        written.push(
+          ...(await Promise.all(
+            batch.map((record) =>
+              this.zendeskService.upsertCustomObjectRecord(
+                ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+                record,
+              ),
+            ),
+          )),
+        )
+      }
+      return written
+    }
+
+    await this.zendeskService.upsertCustomObjectRecordsByExternalId(
+      ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      records,
+    )
+    return this.zendeskService.listCustomObjectRecordsByExternalIds(
+      ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      externalIds,
+    )
   }
 
   /**
@@ -789,7 +849,7 @@ export class CoursesService extends BaseTemplateApiService {
 
     const missingTickets = tickets.filter((ticket) => !ticket.ticketId)
     if (missingTickets.length > 0) {
-      const createdTicketIds = await this.zendeskService.createManyTickets(
+      const createdTicketIds = await this.createTickets(
         missingTickets.map((ticket) => ticket.input),
       )
       missingTickets.forEach((ticket, index) => {
@@ -803,7 +863,10 @@ export class CoursesService extends BaseTemplateApiService {
         .map((p) => ({ participant: p, ticketId: ticket.ticketId as number })),
     )
 
-    for (const batch of chunk(participantsToLink, TICKET_LOOKUP_CONCURRENCY)) {
+    for (const batch of chunk(
+      participantsToLink,
+      PARTICIPANT_WRITE_CONCURRENCY,
+    )) {
       await Promise.all(
         batch.map(async ({ participant, ticketId }) => {
           await this.zendeskService.upsertCustomObjectRecord(
@@ -831,6 +894,41 @@ export class CoursesService extends BaseTemplateApiService {
           .join(', ')}`,
       )
     }
+  }
+
+  /**
+   * Returns the created ticket id for each input (by index), or undefined
+   * where that ticket could not be created. Small batches are created with
+   * direct requests, large ones with a bulk job.
+   */
+  private async createTickets(
+    inputs: Array<SubmitTicketInput & { externalId: string }>,
+  ): Promise<Array<number | undefined>> {
+    if (inputs.length > DIRECT_WRITE_MAX_PARTICIPANTS) {
+      return this.zendeskService.createManyTickets(inputs)
+    }
+
+    const ticketIds: Array<number | undefined> = []
+    for (const batch of chunk(inputs, TICKET_CREATE_CONCURRENCY)) {
+      const results = await Promise.allSettled(
+        batch.map((input) => this.zendeskService.createTicket(input)),
+      )
+      for (const [position, result] of results.entries()) {
+        if (result.status === 'rejected') {
+          this.logger.error('Failed to create HH courses ticket in Zendesk', {
+            externalId: batch[position].externalId,
+            error: result.reason?.message,
+          })
+        }
+        ticketIds.push(
+          result.status === 'fulfilled'
+            ? this.toZendeskNumber(result.value?.id)
+            : undefined,
+        )
+      }
+    }
+
+    return ticketIds
   }
 
   private getTicketCustomFields(

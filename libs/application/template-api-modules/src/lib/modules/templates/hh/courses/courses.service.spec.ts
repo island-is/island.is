@@ -14,6 +14,17 @@ import {
   ZENDESK_TICKET_IDS,
 } from './constants'
 
+// The threshold decides between direct requests and bulk jobs, the tests
+// pick one per describe block
+let mockDirectWriteMax = 0
+jest.mock('./constants', () => {
+  const constants = { ...jest.requireActual('./constants') }
+  Object.defineProperty(constants, 'DIRECT_WRITE_MAX_PARTICIPANTS', {
+    get: () => mockDirectWriteMax,
+  })
+  return constants
+})
+
 const APPLICANT_NATIONAL_ID = '0101302989'
 const OTHER_NATIONAL_ID = '0101303019'
 
@@ -71,6 +82,7 @@ describe('CoursesService', () => {
   let zendesk: MockProxy<ZendeskService>
 
   beforeEach(() => {
+    mockDirectWriteMax = 0
     zendesk = mock<ZendeskService>()
     const shared = mock<SharedTemplateApiService>()
     shared.makeGraphqlQuery.mockImplementation(
@@ -116,7 +128,7 @@ describe('CoursesService', () => {
     )
   })
 
-  describe('submitApplication', () => {
+  describe('submitApplication (bulk jobs)', () => {
     it('writes every participant and gives the registrant a single ticket', async () => {
       await expect(service.submitApplication(createProps())).resolves.toEqual({
         success: true,
@@ -356,6 +368,183 @@ describe('CoursesService', () => {
       expect(
         zendesk.upsertCustomObjectRecordsByExternalId,
       ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('submitApplication (direct requests)', () => {
+    beforeEach(() => {
+      mockDirectWriteMax = 10
+      zendesk.upsertCustomObjectRecord.mockImplementation(
+        async (key, record) => ({
+          id: `${key}-record`,
+          name: record.name,
+          external_id: record.external_id,
+          custom_object_fields: record.custom_object_fields,
+        }),
+      )
+      let nextTicketId = 100
+      zendesk.createTicket.mockImplementation(
+        async () => ({ id: nextTicketId++ } as never),
+      )
+    })
+
+    const participantWrites = () =>
+      zendesk.upsertCustomObjectRecord.mock.calls.filter(
+        ([key]) => key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      )
+
+    it('uses no bulk jobs and creates a ticket per registrant and other participant', async () => {
+      await expect(service.submitApplication(createProps())).resolves.toEqual({
+        success: true,
+      })
+
+      expect(
+        zendesk.upsertCustomObjectRecordsByExternalId,
+      ).not.toHaveBeenCalled()
+      expect(zendesk.createManyTickets).not.toHaveBeenCalled()
+      expect(
+        zendesk.createTicket.mock.calls.map(([input]) => input.externalId),
+      ).toEqual(['dev-app-1-registrant', externalId(OTHER_NATIONAL_ID)])
+
+      // Written once, then linked to its ticket
+      expect(
+        participantWrites().map(([, record]) => [
+          record.external_id,
+          record.custom_object_fields?.ticket_id,
+        ]),
+      ).toEqual([
+        [externalId(APPLICANT_NATIONAL_ID), undefined],
+        [externalId(OTHER_NATIONAL_ID), undefined],
+        [externalId(APPLICANT_NATIONAL_ID), 100],
+        [externalId(OTHER_NATIONAL_ID), 101],
+      ])
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('does not list the participants a second time', async () => {
+      await service.submitApplication(createProps())
+
+      expect(
+        zendesk.listCustomObjectRecordsByExternalIds,
+      ).toHaveBeenCalledTimes(1)
+    })
+
+    it('rolls back the created participants and creates no tickets when a write fails', async () => {
+      zendesk.listCustomObjectRecordsByExternalIds.mockResolvedValueOnce([])
+      zendesk.upsertCustomObjectRecord.mockImplementation(
+        async (key, record) => {
+          if (
+            key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant &&
+            record.external_id === externalId(OTHER_NATIONAL_ID)
+          ) {
+            throw new Error('write failed')
+          }
+          return {
+            id: `${key}-record`,
+            name: record.name,
+            external_id: record.external_id,
+          }
+        },
+      )
+
+      await expect(service.submitApplication(createProps())).rejects.toThrow(
+        TemplateApiError,
+      )
+
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).toHaveBeenCalledWith(ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant, [
+        externalId(APPLICANT_NATIONAL_ID),
+        externalId(OTHER_NATIONAL_ID),
+      ])
+      expect(zendesk.createTicket).not.toHaveBeenCalled()
+    })
+
+    it('only rolls back participants created by the failed attempt', async () => {
+      zendesk.listCustomObjectRecordsByExternalIds.mockResolvedValueOnce([
+        {
+          id: externalId(APPLICANT_NATIONAL_ID),
+          name: externalId(APPLICANT_NATIONAL_ID),
+          external_id: externalId(APPLICANT_NATIONAL_ID),
+        },
+      ])
+      zendesk.upsertCustomObjectRecord.mockImplementation(
+        async (key, record) => {
+          if (key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant) {
+            throw new Error('write failed')
+          }
+          return {
+            id: `${key}-record`,
+            name: record.name,
+            external_id: record.external_id,
+          }
+        },
+      )
+
+      await expect(service.submitApplication(createProps())).rejects.toThrow(
+        TemplateApiError,
+      )
+
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).toHaveBeenCalledWith(ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant, [
+        externalId(OTHER_NATIONAL_ID),
+      ])
+    })
+
+    it('keeps the participants and links created tickets when a ticket fails', async () => {
+      zendesk.createTicket
+        .mockResolvedValueOnce({ id: 100 } as never)
+        .mockRejectedValueOnce(new Error('ticket failed'))
+
+      await expect(service.submitApplication(createProps())).rejects.toThrow(
+        TemplateApiError,
+      )
+
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).not.toHaveBeenCalled()
+      const links = participantWrites().filter(
+        ([, record]) => record.custom_object_fields?.ticket_id,
+      )
+      expect(links.map(([, record]) => record.external_id)).toEqual([
+        externalId(APPLICANT_NATIONAL_ID),
+      ])
+    })
+
+    it('does not create duplicate tickets when retried', async () => {
+      zendesk.upsertCustomObjectRecord.mockImplementation(
+        async (key, record) => ({
+          id: `${key}-record`,
+          name: record.name,
+          external_id: record.external_id,
+          // The previous attempt linked the applicant's ticket
+          custom_object_fields:
+            record.external_id === externalId(APPLICANT_NATIONAL_ID)
+              ? { ticket_id: '100' }
+              : {},
+        }),
+      )
+      zendesk.getTicketByExternalId.mockImplementation(async (id) =>
+        id === externalId(OTHER_NATIONAL_ID) ? ({ id: '101' } as never) : null,
+      )
+
+      await service.submitApplication(createProps())
+
+      expect(zendesk.createTicket).not.toHaveBeenCalled()
+      expect(zendesk.getTicketByExternalId).toHaveBeenCalledTimes(1)
+    })
+
+    it('falls back to bulk jobs above the direct write limit', async () => {
+      mockDirectWriteMax = 1
+
+      await service.submitApplication(createProps())
+
+      expect(zendesk.upsertCustomObjectRecordsByExternalId).toHaveBeenCalled()
+      expect(zendesk.createManyTickets).toHaveBeenCalled()
+      expect(zendesk.createTicket).not.toHaveBeenCalled()
     })
   })
 

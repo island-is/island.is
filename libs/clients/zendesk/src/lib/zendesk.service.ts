@@ -98,6 +98,24 @@ const isFailedJobResult = (result: JobStatusResult) =>
     ? result.errors.length > 0
     : Boolean(result.errors))
 
+/**
+ * Retry-After is either a number of seconds or an HTTP date. Returns the
+ * delay in milliseconds, or undefined when it is missing, invalid or not in
+ * the future.
+ */
+const parseRetryAfterMs = (retryAfter: unknown): number | undefined => {
+  if (typeof retryAfter !== 'string' && typeof retryAfter !== 'number') {
+    return undefined
+  }
+
+  const seconds = Number(retryAfter)
+  const delayMs = Number.isFinite(seconds)
+    ? seconds * 1000
+    : Date.parse(String(retryAfter)) - Date.now()
+
+  return Number.isFinite(delayMs) && delayMs > 0 ? delayMs : undefined
+}
+
 export interface ZendeskServiceOptions {
   email: string
   token: string
@@ -229,10 +247,9 @@ export class ZendeskService {
     const newTicket = JSON.stringify({ ticket: this.toTicketBody(input) })
 
     try {
-      const response = await axios.post(
-        `${this.api}/tickets.json`,
-        newTicket,
-        this.params,
+      const response = await this.withRetry(
+        () => axios.post(`${this.api}/tickets.json`, newTicket, this.params),
+        { retryDeadlocks: false },
       )
       const ticket = response.data?.ticket
 
@@ -327,20 +344,63 @@ export class ZendeskService {
     return true
   }
 
+  /**
+   * Retries a request that Zendesk rejected without processing it: 429 rate
+   * limits and, when `retryDeadlocks` is set, 503 database deadlocks, which
+   * are rolled back by Zendesk and happen when writes to the same custom
+   * object run concurrently. Never retry a request that may have succeeded.
+   */
+  private async withRetry<T>(
+    request: () => Promise<T>,
+    { retryDeadlocks }: { retryDeadlocks: boolean },
+  ): Promise<T> {
+    const MAX_RETRIES = 4
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await request()
+      } catch (e) {
+        const status = e.response?.status
+        const retryable =
+          status === 429 ||
+          (retryDeadlocks &&
+            status === 503 &&
+            e.response?.data?.error === 'DatabaseDeadlock')
+        if (!retryable || attempt >= MAX_RETRIES) throw e
+
+        const retryAfterMs = parseRetryAfterMs(
+          e.response?.headers?.['retry-after'],
+        )
+        const backoffMs = 250 * 2 ** attempt + Math.random() * 100
+        await new Promise((resolve) =>
+          setTimeout(
+            resolve,
+            retryAfterMs !== undefined
+              ? Math.min(retryAfterMs, 5000)
+              : backoffMs,
+          ),
+        )
+      }
+    }
+  }
+
   async upsertCustomObjectRecord(
     objectKey: string,
     record: CustomObjectJobItem,
   ): Promise<CustomObjectRecord> {
     const body = JSON.stringify({ custom_object_record: record })
     try {
-      const response = await axios.patch(
-        `${
-          this.api
-        }/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(
-          record.external_id,
-        )}`,
-        body,
-        this.params,
+      const response = await this.withRetry(
+        () =>
+          axios.patch(
+            `${
+              this.api
+            }/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(
+              record.external_id,
+            )}`,
+            body,
+            this.params,
+          ),
+        { retryDeadlocks: true },
       )
       return response.data.custom_object_record
     } catch (e) {
