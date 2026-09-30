@@ -1168,7 +1168,6 @@ export const en: TranslatedMessages = {
     'The renewal request has been sent. Please contact your health clinic if further information is needed.',
   'health.prescriptions.renewalModal.error':
     'Could not send the renewal request. Please try again later.',
-  'health.prescriptions.renewalModal.dismissedTitle': 'Attention',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',

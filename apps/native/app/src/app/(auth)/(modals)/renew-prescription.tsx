@@ -233,9 +233,6 @@ export default function RenewPrescriptionScreen() {
                 type="warning"
                 size="small"
                 hasBorder
-                title={intl.formatMessage({
-                  id: 'health.prescriptions.renewalModal.dismissedTitle',
-                })}
                 message={params.renewResponseMessage}
               />
             </View>

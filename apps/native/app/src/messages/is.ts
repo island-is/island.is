@@ -1157,7 +1157,6 @@ export const is = {
     'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
   'health.prescriptions.renewalModal.error':
     'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-  'health.prescriptions.renewalModal.dismissedTitle': 'Athugið',
   'health.prescriptions.issueDate': 'Útgáfudagur',
   'health.prescriptions.expiresAt': 'Gildir til',
   'health.prescriptions.doctor': 'Læknir',
