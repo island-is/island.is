@@ -1110,7 +1110,7 @@ export const en: TranslatedMessages = {
 
   'health.prescriptions.title': 'Prescriptions',
   'health.prescriptions.description':
-    'Here you will find an overview of your prescriptions. You can apply for drug renewal when applicable.',
+    'Here you will find an overview of your prescriptions. You can apply for a prescription renewal when applicable. Please note that notifications for prescription renewals have changed. You can choose how you receive notifications under <link>Settings</link>.',
   'health.prescriptions.drug': 'Medication',
   'health.prescriptions.strength': 'Strength',
   'health.prescriptions.indication': 'Used for',

@@ -1,12 +1,15 @@
 import { StackScreen } from '@/components/stack-screen'
 import React, { useMemo } from 'react'
-import { FlatList, RefreshControl } from 'react-native'
+import { FormattedMessage } from 'react-intl'
+import { FlatList, RefreshControl, View } from 'react-native'
 import { router } from 'expo-router'
+import { useTheme } from 'styled-components/native'
 
 import {
   HealthDirectoratePrescriptionRenewalStatus,
   useGetDrugPrescriptionsQuery,
 } from '@/graphql/types/schema'
+import { Typography } from '@/ui'
 import { NetworkStatus } from '@apollo/client'
 import { useLocale } from '../../hooks/use-locale'
 import { PrescriptionCard } from '../prescription-card'
@@ -14,6 +17,7 @@ import { EmptyComponent } from './shared'
 
 export function PrescriptionsTab({ initial }: { initial?: boolean }) {
   const locale = useLocale()
+  const theme = useTheme()
   const prescriptionsRes = useGetDrugPrescriptionsQuery({
     variables: { locale },
     initialFetchPolicy: initial ? 'network-only' : undefined,
@@ -53,6 +57,28 @@ export function PrescriptionsTab({ initial }: { initial?: boolean }) {
           }
         />
       )}
+      ListHeaderComponent={
+        <View style={{ marginBottom: theme.spacing[2] }}>
+          <Typography>
+            <FormattedMessage
+              id="health.prescriptions.description"
+              values={{
+                link: (chunks: React.ReactNode[]) => (
+                  <Typography
+                    weight="600"
+                    color={theme.color.blue400}
+                    style={{ textDecorationLine: 'underline' }}
+                    accessibilityRole="link"
+                    onPress={() => router.navigate('/settings')}
+                  >
+                    {chunks}
+                  </Typography>
+                ),
+              }}
+            />
+          </Typography>
+        </View>
+      }
       contentContainerStyle={{ flexGrow: 1, paddingTop: 16 }}
       contentInsetAdjustmentBehavior="automatic"
       refreshControl={

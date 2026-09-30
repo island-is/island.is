@@ -1101,7 +1101,7 @@ export const is = {
 
   'health.prescriptions.title': 'Lyfjaávísanir',
   'health.prescriptions.description':
-    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+    'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við. Athugið að breytingar hafa orðið á tilkynningum vegna lyfjaendurnýjana. Þú getur stillt hvernig þú vilt fá tilkynningar undir <link>Stillingar</link>.',
   'health.prescriptions.drug': 'Lyf',
   'health.prescriptions.strength': 'Styrkur',
   'health.prescriptions.indication': 'Notað við',
