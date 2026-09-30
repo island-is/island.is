@@ -124,6 +124,43 @@ describe('Stackable', () => {
     expect(getHiddenItems()).toEqual([])
   })
 
+  test('should observe a replacement when a keyed child is swapped', () => {
+    const observe = jest.fn()
+    const disconnect = jest.fn()
+    const originalResizeObserver = window.ResizeObserver
+    window.ResizeObserver = jest.fn(() => ({
+      observe,
+      disconnect,
+      unobserve: jest.fn(),
+    })) as unknown as typeof ResizeObserver
+
+    try {
+      const { rerender } = render(
+        <Stackable>
+          <div key="first">First</div>
+          <div key="second">Second</div>
+        </Stackable>,
+      )
+
+      observe.mockClear()
+
+      // Same count, but the second wrapper is remounted under a new key.
+      rerender(
+        <Stackable>
+          <div key="first">First</div>
+          <div key="replacement">Replacement</div>
+        </Stackable>,
+      )
+
+      expect(disconnect).toHaveBeenCalled()
+      expect(observe).toHaveBeenCalledWith(
+        screen.getByText('Replacement').parentElement,
+      )
+    } finally {
+      window.ResizeObserver = originalResizeObserver
+    }
+  })
+
   test('should support being controlled', () => {
     const onExpandedChange = jest.fn()
     const renderControlled = (expanded: boolean) => (

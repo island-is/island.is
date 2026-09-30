@@ -88,6 +88,13 @@ const Stackable: FC<Props> = ({
   // Flattens arrays and fragments so each rendered element is its own item.
   const items = flattenChildren(children)
   const count = items.length
+  const itemKeys = items.map((child, index) =>
+    isValidElement(child) ? child.key ?? index : index,
+  )
+  // Replacing a keyed child with another keyed child keeps `count` the same
+  // but mounts a new wrapper, so the keys are tracked too and the measuring
+  // effect can attach to the replacement.
+  const itemKeySignature = itemKeys.join('\u0000')
 
   const isControlled = expandedProp !== undefined
   const [internalExpanded, setInternalExpanded] = useState(defaultExpanded)
@@ -121,7 +128,7 @@ const Stackable: FC<Props> = ({
     elements.forEach((el) => el && observer.observe(el))
 
     return () => observer.disconnect()
-  }, [count])
+  }, [count, itemKeySignature])
 
   if (count === 0) {
     return null
@@ -175,11 +182,10 @@ const Stackable: FC<Props> = ({
           const delay = animate
             ? (expanded ? index : count - 1 - index) * STAGGER
             : 0
-          const key = isValidElement(child) ? child.key ?? index : index
 
           return (
             <motion.div
-              key={key}
+              key={itemKeys[index]}
               className={styles.item}
               aria-hidden={hidden ? true : undefined}
               inert={hidden ? true : undefined}
