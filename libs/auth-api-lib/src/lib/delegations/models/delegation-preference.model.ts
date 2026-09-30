@@ -14,11 +14,6 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-/**
- * Keyed on the two national ids rather than on a delegation row, because
- * procuration and legal guardianship are served from RSK and the national
- * registry and never exist in the delegation table.
- */
 @Table({
   tableName: 'delegation_preference',
   timestamps: true,

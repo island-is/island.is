@@ -5,32 +5,14 @@ import { Op, QueryTypes } from 'sequelize'
 import { DelegationPreferenceDto } from './dto/delegation-preference.dto'
 import { DelegationPreference } from './models/delegation-preference.model'
 
-// More than the picker shows, to cover parties whose delegation has since been
-// revoked and which the screen drops.
 const MAX_RECENT = 10
 
-// The picker shows five, and starring a sixth is refused rather than silently
-// dropping one.
 const MAX_FAVOURITES = 5
 
-// Rows an actor keeps for parties they have switched to but not starred. One
-// row per party, never one per switch, but a party whose delegation is later
-// revoked would otherwise sit here for good.
 const MAX_RECENT_ROWS = 20
 
-// Sequelize drops conflictFields straight into the ON CONFLICT clause without
-// mapping them to column names, so these must be the real columns even though
-// the typings ask for attribute names. Leaving them out is not an option: it
-// then derives the conflict target from the columns being updated, and neither
-// of those belongs to the unique key.
 const CONFLICT_COLUMNS = ['to_national_id', 'from_national_id'] as never[]
 
-/**
- * Deliberately knows nothing about which delegations actually exist: the screen
- * renders these against the delegation list it has already fetched, so a
- * revoked one simply never shows up. That keeps reads to a single indexed query
- * with no cross service calls.
- */
 @Injectable()
 export class DelegationPreferenceService {
   constructor(
@@ -74,8 +56,6 @@ export class DelegationPreferenceService {
     isFavourite: boolean,
   ): Promise<void> {
     if (!isFavourite) {
-      // A row that carries nothing else goes away; one that still records a
-      // use keeps that and only loses the star.
       await this.delegationPreferenceModel.destroy({
         where: { toNationalId, fromNationalId, lastUsedAt: null },
       })
@@ -98,8 +78,6 @@ export class DelegationPreferenceService {
       )
     }
 
-    // Touches isFavourite only, so a concurrent switch cannot lose its
-    // lastUsedAt.
     await this.delegationPreferenceModel.upsert(
       { toNationalId, fromNationalId, isFavourite: true },
       {
@@ -109,10 +87,6 @@ export class DelegationPreferenceService {
     )
   }
 
-  /**
-   * On the login path, so deliberately a single statement: findOrCreate would
-   * open a transaction and then write the timestamp a second time.
-   */
   async recordUsage(
     toNationalId: string,
     fromNationalId: string,
@@ -128,10 +102,6 @@ export class DelegationPreferenceService {
     await this.pruneRecent(toNationalId)
   }
 
-  /**
-   * Drops this actor's oldest unstarred rows. Favourites are left alone; they
-   * have a cap of their own.
-   */
   private async pruneRecent(toNationalId: string): Promise<void> {
     await this.delegationPreferenceModel.sequelize?.query(
       `DELETE FROM delegation_preference

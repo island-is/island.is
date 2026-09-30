@@ -102,7 +102,6 @@ describe('DelegationPreferenceService', () => {
       expect(model.upsert).toHaveBeenCalledWith(
         { toNationalId: ACTOR, fromNationalId: PARTY, isFavourite: true },
         expect.objectContaining({
-          // Real column names — Postgres rejects the attribute ones.
           conflictFields: ['to_national_id', 'from_national_id'],
           fields: ['isFavourite'],
         }),
@@ -161,7 +160,6 @@ describe('DelegationPreferenceService', () => {
 
       const [sql] = model.sequelize.query.mock.calls[0]
 
-      // Both the delete and the subquery that decides what survives.
       expect(sql.match(/is_favourite = false/g)).toHaveLength(2)
     })
 

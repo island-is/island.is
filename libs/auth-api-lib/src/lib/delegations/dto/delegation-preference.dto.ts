@@ -3,7 +3,6 @@ import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator'
 
 import { IsNationalId } from '@island.is/nest/core'
 
-/** What an actor has chosen about one party they can act for. */
 export class DelegationPreferenceDto {
   @ApiProperty()
   @IsString()

@@ -12,10 +12,6 @@ module.exports = {
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
-          // The actor — the person who holds the delegation and does the
-          // switching. Not a foreign key: procuration comes from RSK and legal
-          // guardianship from the national registry, so most delegations a
-          // person can star have no row in the delegation table to point at.
           to_national_id: {
             type: Sequelize.STRING,
             allowNull: false,
@@ -29,7 +25,6 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
-          // Null until the actor has actually switched to this party.
           last_used_at: {
             type: Sequelize.DATE,
             allowNull: true,

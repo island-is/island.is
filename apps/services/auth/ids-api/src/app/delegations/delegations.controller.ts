@@ -53,11 +53,6 @@ export class DelegationsController {
     private readonly delegationPreferenceService: DelegationPreferenceService,
   ) {}
 
-  /**
-   * What the user has chosen about the parties they can act for — which are
-   * starred and when each was last used. Drives the favourites and recently
-   * used lists on the delegation picker.
-   */
   @Scopes('@identityserver.api/authentication')
   @Version([VERSION_NEUTRAL, '1'])
   @Get('preferences')
@@ -86,7 +81,6 @@ export class DelegationsController {
     )
   }
 
-  /** Recorded by the identity server when the user switches to a party. */
   @Scopes('@identityserver.api/authentication')
   @Version([VERSION_NEUTRAL, '1'])
   @Post('preferences/usage')
@@ -165,12 +159,11 @@ export class DelegationsController {
     @Body()
     request: DelegationVerification,
   ): Promise<DelegationVerificationResult> {
-    const verified =
-      await this.delegationsIncomingService.verifyDelegationAtProvider(
-        user,
-        request.fromNationalId,
-        request.delegationTypes,
-      )
+    const verified = await this.delegationsIncomingService.verifyDelegationAtProvider(
+      user,
+      request.fromNationalId,
+      request.delegationTypes,
+    )
 
     return { verified }
   }
