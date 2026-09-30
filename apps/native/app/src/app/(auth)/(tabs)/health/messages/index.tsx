@@ -8,6 +8,7 @@ import {
   ImageSourcePropType,
   Pressable,
   RefreshControl,
+  StyleSheet,
   View,
 } from 'react-native'
 import { router } from 'expo-router'
@@ -102,6 +103,9 @@ export default function HealthMessagesScreen() {
     messagesRes.loading &&
     messagesRes.networkStatus !== NetworkStatus.refetch &&
     conversations.length === 0
+
+  const showEmpty =
+    !showSkeletons && !messagesRes.error && conversations.length === 0
 
   // A filter refetch empties `conversations` mid-flight, so the row count
   // alone would flicker the search bar out and back.
@@ -346,32 +350,37 @@ export default function HealthMessagesScreen() {
                 })}
               />
             </View>
-          ) : (
-            <View
-              style={{
-                marginTop: theme.spacing[15],
-                paddingHorizontal: theme.spacing[2],
-              }}
-            >
-              <EmptyList
-                title={
-                  <FormattedMessage id="health.messages.noMessagesTitle" />
-                }
-                description={
-                  <FormattedMessage id="health.messages.noMessagesText" />
-                }
-                image={
-                  <Image
-                    source={illustrationSrc}
-                    style={{ width: 134, height: 204 }}
-                    resizeMode="contain"
-                  />
-                }
-              />
-            </View>
-          )
+          ) : null
         }
       />
+      {/* Centred on the screen rather than on the list's content box, so the
+          search field and filter chips above it don't push it down. */}
+      {showEmpty && (
+        <View
+          pointerEvents="box-none"
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              justifyContent: 'center',
+              paddingHorizontal: theme.spacing[2],
+            },
+          ]}
+        >
+          <EmptyList
+            title={<FormattedMessage id="health.messages.noMessagesTitle" />}
+            description={
+              <FormattedMessage id="health.messages.noMessagesText" />
+            }
+            image={
+              <Image
+                source={illustrationSrc}
+                style={{ width: 134, height: 204 }}
+                resizeMode="contain"
+              />
+            }
+          />
+        </View>
+      )}
     </View>
   )
 }
