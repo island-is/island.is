@@ -258,7 +258,14 @@ export const PrescriptionCard = ({
   // Renewal presentation, mirroring web (PrescriptionsTable): blocked reason is
   // derived from isRenewable alone (so its description can show alongside a
   // status); the pill prefers renewalStatus, else the blocked reason's label.
-  const canRenew = !!prescription.isRenewable && !prescription.renewalStatus
+  // A dismissed request is finished rather than in flight, so it leaves the
+  // prescription renewable again — every other status is a live request or its
+  // outcome, and those keep the pill instead of the button.
+  const isDismissed =
+    prescription.renewalStatus ===
+    HealthDirectoratePrescriptionRenewalStatus.Dismissed
+  const canRenew =
+    !!prescription.isRenewable && (!prescription.renewalStatus || isDismissed)
   const blocked = !prescription.isRenewable
     ? getBlockedReasonInfo(prescription.renewalBlockedReason, intl)
     : null

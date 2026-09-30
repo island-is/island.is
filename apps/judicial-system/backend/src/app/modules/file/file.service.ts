@@ -921,6 +921,48 @@ export class FileService {
       })
   }
 
+  // Copies the S3 object behind a case file that was created by duplicating an
+  // indictment. The row was created inside the duplication's transaction with
+  // no object behind it, and the copy runs here, from the message queue, once
+  // that transaction has committed - so a rolled back duplication leaves
+  // nothing behind in S3. Safe to repeat: a file whose object is already there
+  // is done. A failed copy leaves the row as it is, inaccessible but visible,
+  // for the message handler to retry.
+  async copyDuplicatedCaseFileObject(
+    theCase: Case,
+    file: CaseFile,
+    sourceKey: string,
+  ): Promise<DeliverResponse> {
+    if (file.isKeyAccessible) {
+      return { delivered: true }
+    }
+
+    try {
+      await this.awsS3Service.copyObject(theCase.type, sourceKey, file.key)
+    } catch (error) {
+      this.logger.error(
+        `Failed to copy the object behind duplicated file ${file.id} of case ${theCase.id}`,
+        { error },
+      )
+
+      return { delivered: false }
+    }
+
+    const numberOfAffectedRows =
+      await this.caseFileRepositoryService.updateById(file.id, {
+        isKeyAccessible: true,
+      })
+
+    if (numberOfAffectedRows !== 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when marking the object behind duplicated file ${file.id} accessible`,
+      )
+    }
+
+    return { delivered: numberOfAffectedRows > 0 }
+  }
+
   async deliverCaseFileToPolice(
     theCase: Case,
     file: CaseFile,

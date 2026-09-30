@@ -31,6 +31,7 @@ import {
   courtSubtypes,
   EventType,
   getIndictmentAppealDeadline,
+  getIndictmentCasePoliceState,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -88,6 +89,7 @@ import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusio
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { ArchiveResponse } from './models/archive.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -1761,6 +1763,16 @@ export class InternalCaseService {
     return this.caseRepositoryService.countIndictmentsAwaitingConfirmationForProsecutorsOffice(
       prosecutorsOfficeId,
     )
+  }
+
+  async getCasePoliceState(theCase: Case): Promise<CasePoliceStateResponse> {
+    const liveCase = await this.caseRepositoryService.findLiveDescendantCase(
+      theCase,
+    )
+
+    return {
+      state: getIndictmentCasePoliceState(liveCase.state),
+    }
   }
 
   async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(
