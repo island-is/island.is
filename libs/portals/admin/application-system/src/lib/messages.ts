@@ -559,11 +559,9 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:noData',
     defaultMessage: 'Engin gögn fundust á tímabilinu...',
   },
-
-  // Translation workspace: draft / publish
   translationSaveDraft: {
     id: 'admin-portal.application-system:translationSaveDraft',
-    defaultMessage: 'Vista drög',
+    defaultMessage: 'Vista breytingar',
   },
   translationMoreActions: {
     id: 'admin-portal.application-system:translationMoreActions',
@@ -571,7 +569,7 @@ export const m = defineMessages({
   },
   translationPublish: {
     id: 'admin-portal.application-system:translationPublish',
-    defaultMessage: 'Birta',
+    defaultMessage: 'Gefa út',
   },
   translationPublishConfirm: {
     id: 'admin-portal.application-system:translationPublishConfirm',
