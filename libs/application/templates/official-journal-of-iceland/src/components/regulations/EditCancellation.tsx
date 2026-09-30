@@ -43,7 +43,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
   const { cancellation, impacts = [], onSave, onClose } = props
   const today = useMemo(() => new Date(), [])
   const isSelf = cancellation.name === 'self'
-  const { regulation } = useRegulationFetch(
+  const { regulation, done } = useRegulationFetch(
     isSelf ? undefined : cancellation.name,
   )
 
@@ -87,7 +87,8 @@ export const EditCancellation = (props: EditCancellationProps) => {
   }
 
   const isValidImpact = () => {
-    return !!effectiveDate
+    // Wait for the scheduled changes, which the date must not come before
+    return !!effectiveDate && (isSelf || done)
   }
 
   return (

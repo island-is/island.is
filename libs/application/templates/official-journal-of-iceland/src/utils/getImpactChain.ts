@@ -20,6 +20,8 @@ type ImpactChainInput = {
   history?: RegulationHistoryItem[]
   /** The earliest date allowed regardless of other changes */
   defaultMinDate: Date
+  /** The date picked for the impact, if it differs from the saved one */
+  selectedDate?: string
   today?: Date
 }
 
@@ -52,6 +54,7 @@ export const getImpactChain = ({
   impacts,
   history = [],
   defaultMinDate,
+  selectedDate,
   today = new Date(),
 }: ImpactChainInput): ImpactChain => {
   // Keep the saved order for impacts on the same day
@@ -86,11 +89,17 @@ export const getImpactChain = ({
     .filter((date): date is string => !!date)
     .reduce((min, date) => laterOf(min, new Date(date)), defaultMinDate)
 
+  // A scheduled repeal blocks an existing change if the picked date is after it
+  const ownDate = selectedDate ?? impact.date
   const repealedOn =
     impact.type === 'amend'
       ? [
           ...earlier.filter((item) => item.type === 'repeal'),
-          ...futureEffects.filter((item) => item.effect === 'repeal'),
+          ...scheduled.filter(
+            (item) =>
+              item.effect === 'repeal' &&
+              (!isExisting || !ownDate || item.date <= ownDate),
+          ),
         ]
           .map((item) => item.date)
           .filter((date): date is string => !!date)

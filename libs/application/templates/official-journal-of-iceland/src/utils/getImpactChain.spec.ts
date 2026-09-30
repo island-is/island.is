@@ -167,4 +167,25 @@ describe('getImpactChain', () => {
       { date: '2027-06-01', effect: 'repeal', origin: 'draft' },
     ])
   })
+
+  it('does not allow moving a change past a scheduled repeal', () => {
+    const change = amend('a', '2026-11-01')
+    const scheduledRepeal = {
+      ...scheduled('2026-12-01'),
+      effect: 'repeal',
+    } as RegulationHistoryItem
+    const moved = (selectedDate?: string) =>
+      getImpactChain({
+        impact: change,
+        impacts: [change],
+        history: [scheduledRepeal],
+        defaultMinDate,
+        selectedDate,
+        today,
+      }).repealedOn
+
+    expect(moved()).toBeUndefined()
+    expect(moved('2026-11-15')).toBeUndefined()
+    expect(moved('2027-01-01')).toBe('2026-12-01')
+  })
 })

@@ -90,6 +90,10 @@ export const EditChange = (props: EditChangeProps) => {
   const { regulation: currentRegulation, loading: currentLoading } =
     useRegulationFetch(isSelf ? undefined : change.name)
 
+  const [activeDate, setActiveDate] = useState<Date | undefined>(
+    change.date ? new Date(change.date) : undefined,
+  )
+
   // Build on this draft's earlier change of the regulation, or on the
   // regulation as it will be once its scheduled changes are in effect.
   const { previous, minDate, hasFutureEffects, repealedOn, upcoming } = useMemo(
@@ -99,9 +103,17 @@ export const EditChange = (props: EditChangeProps) => {
         impacts,
         history: currentRegulation?.history,
         defaultMinDate,
+        selectedDate: activeDate ? toISODate(activeDate) : undefined,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [change.id, change.date, impacts, currentRegulation, defaultMinDate],
+    [
+      change.id,
+      change.date,
+      impacts,
+      currentRegulation,
+      defaultMinDate,
+      activeDate,
+    ],
   )
   const needsDatedText = !!currentRegulation && !previous && hasFutureEffects
   const {
@@ -123,18 +135,13 @@ export const EditChange = (props: EditChangeProps) => {
         appendixes: previous.appendixes,
       }
     }
-    // Fall back to the current text if the dated one can't be fetched
-    if (needsDatedText && datedDone) {
-      return datedRegulation ?? currentRegulation
-    }
-    return needsDatedText ? undefined : currentRegulation
-  }, [previous, needsDatedText, datedDone, datedRegulation, currentRegulation])
+    // Without the dated text a change would drop the scheduled ones
+    return needsDatedText ? datedRegulation : currentRegulation
+  }, [previous, needsDatedText, datedRegulation, currentRegulation])
+  const datedFailed = needsDatedText && datedDone && !datedRegulation
 
   const [activeTitle, setActiveTitle] = useState(change.title || '')
   const [activeText, setActiveText] = useState(change.text || '')
-  const [activeDate, setActiveDate] = useState<Date | undefined>(
-    change.date ? new Date(change.date) : undefined,
-  )
   const [activeAppendixes, setActiveAppendixes] = useState(
     change.appendixes || [],
   )
@@ -237,6 +244,9 @@ export const EditChange = (props: EditChangeProps) => {
     return !!activeTitle && !!activeText && !repealedOn
   }
 
+  // Don't save a diff against a base that hasn't loaded
+  const baseReady = isSelf || (!regulationLoading && !!baseRegulation)
+
   // The base regulation text to use as the diff reference.
   // This is the original text before the user's edits.
   const baseRegText = baseRegulation?.text as HTMLText | undefined
@@ -293,6 +303,17 @@ export const EditChange = (props: EditChangeProps) => {
               upcoming={upcoming}
               targetName={change.name}
             />
+            {datedFailed && !readOnly && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Ekki tókst að sækja reglugerðina"
+                  message={`Ekki tókst að sækja texta reglugerðarinnar eins og hann verður ${formatDate(
+                    minDate,
+                  )}, með þeim breytingum sem þegar hafa verið birtar. Reyndu aftur síðar.`}
+                />
+              </Box>
+            )}
             {repealedOn && !readOnly && (
               <Box marginBottom={4}>
                 <AlertMessage
@@ -316,7 +337,7 @@ export const EditChange = (props: EditChangeProps) => {
                 Wait for both the fetch AND the useEffect that populates the
                 form fields — the HTMLEditor captures its value at mount time
                 via a ref, so it must not render before data is ready. */}
-            {!initialized || regulationLoading ? (
+            {datedFailed ? null : !initialized || regulationLoading ? (
               <Box
                 display="flex"
                 justifyContent="center"
@@ -475,7 +496,9 @@ export const EditChange = (props: EditChangeProps) => {
                   onClick={saveChange}
                   size="small"
                   icon="arrowForward"
-                  disabled={readOnly || !isValidImpact() || saving}
+                  disabled={
+                    readOnly || !isValidImpact() || !baseReady || saving
+                  }
                   loading={saving}
                 >
                   Vista textabreytingu
