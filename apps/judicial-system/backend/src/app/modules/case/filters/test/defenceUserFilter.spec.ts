@@ -39,7 +39,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         const theCase = {
           type,
           state,
-          defenderNationalId: user.nationalId,
+          defendants: [{ defenderNationalId: user.nationalId }],
         } as Case
 
         verifyNoAccess(theCase, user)
@@ -60,7 +60,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             type,
             state: CaseState.SUBMITTED,
             requestSharedWithDefender: share,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -79,11 +79,11 @@ describe.each(defenceRoles)('defence user %s', (role) => {
               verifyNoAccess(theCase, user)
             })
 
-            describe('defender assigned to case', () => {
+            describe('defender assigned to a defendant', () => {
               const theCase = {
                 type,
                 state: CaseState.SUBMITTED,
-                defenderNationalId: user.nationalId,
+                defendants: [{ defenderNationalId: user.nationalId }],
                 requestSharedWithDefender: share,
               } as Case
 
@@ -98,7 +98,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -118,23 +118,23 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           verifyNoAccess(theCase, user)
         })
 
-        describe('court date not set, but request shared with defender on submission and defender assigned to case', () => {
+        describe('court date not set, but request shared with defender on submission and defender assigned to a defendant', () => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
             requestSharedWithDefender:
               RequestSharedWithDefender.READY_FOR_COURT,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
           } as Case
 
           verifyFullAccess(theCase, user)
         })
 
-        describe('court date set and defender assigned to case', () => {
+        describe('court date set and defender assigned to a defendant', () => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
             dateLogs: [
               { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
             ],
@@ -159,14 +159,52 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           verifyNoAccess(theCase, user)
         })
 
-        describe('defender assigned to case', () => {
+        describe('defender assigned to a defendant', () => {
           const theCase = {
             type,
             state,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
           } as Case
 
           verifyFullAccess(theCase, user)
+        })
+      })
+
+      describe('multi-defendant defender assignment', () => {
+        describe('defender of one defendant gets access', () => {
+          const theCase = {
+            type,
+            state: CaseState.ACCEPTED,
+            defendants: [
+              { defenderNationalId: 'other-defender' },
+              { defenderNationalId: user.nationalId },
+            ],
+          } as Case
+
+          verifyFullAccess(theCase, user)
+        })
+
+        describe('unrelated defender does not get access', () => {
+          const theCase = {
+            type,
+            state: CaseState.ACCEPTED,
+            defendants: [
+              { defenderNationalId: 'other-defender' },
+              { defenderNationalId: 'another-defender' },
+            ],
+          } as Case
+
+          verifyNoAccess(theCase, user)
+        })
+
+        describe('case-level defenderNationalId alone does not grant access', () => {
+          const theCase = {
+            type,
+            state: CaseState.ACCEPTED,
+            defenderNationalId: user.nationalId,
+          } as Case
+
+          verifyNoAccess(theCase, user)
         })
       })
     },

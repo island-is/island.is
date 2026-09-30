@@ -15,10 +15,6 @@ interface CreateArchive {
   archiveJson: string
 }
 
-interface CreateCaseArchiveOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class CaseArchiveRepositoryService {
   constructor(
@@ -32,7 +28,7 @@ export class CaseArchiveRepositoryService {
   async create(
     caseId: string,
     data: CreateArchive,
-    options: CreateCaseArchiveOptions,
+    options: { transaction: Transaction },
   ): Promise<CaseArchive> {
     try {
       this.logger.debug(
