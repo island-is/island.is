@@ -343,3 +343,14 @@ globalStyle(`${translationLocaleInputLabel} label`, {
   color: theme.color.blue400,
   marginBottom: theme.spacing[1],
 })
+
+globalStyle(
+  `${translationLocaleInputLabel} input, ${translationLocaleInputLabel} textarea`,
+  {
+    fontFamily: theme.typography.fontFamily,
+    fontWeight: theme.typography.regular,
+    fontSize: 16,
+    lineHeight: '26px',
+    letterSpacing: 0,
+  },
+)
