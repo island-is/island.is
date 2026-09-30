@@ -13,6 +13,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import chunk from 'lodash/chunk'
 import {
   type CustomObjectJobItem,
+  type CustomObjectRecord,
   type SubmitTicketInput,
   ZendeskService,
 } from '@island.is/clients/zendesk'
@@ -24,15 +25,33 @@ import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
 import {
   COURSE_LIST_PAGE_SLUG_MAP,
+  DIRECT_WRITE_MAX_PARTICIPANTS,
   GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
   GET_COURSE_BY_ID_QUERY,
   MAX_PARTICIPANTS_PER_APPLICATION,
+  PARTICIPANT_WRITE_CONCURRENCY,
+  TICKET_CREATE_CONCURRENCY,
   ZENDESK_CUSTOM_OBJECT_KEYS,
   ZENDESK_PARTICIPANT_TICKET_TAG,
   ZENDESK_TICKET_IDS,
 } from './constants'
 
 const TICKET_LOOKUP_CONCURRENCY = 10
+
+type StepTimings = Array<[step: string, ms: number]>
+
+const timed = async <T>(
+  timings: StepTimings,
+  step: string,
+  run: () => Promise<T>,
+): Promise<T> => {
+  const start = Date.now()
+  try {
+    return await run()
+  } finally {
+    timings.push([step, Date.now() - start])
+  }
+}
 
 type CourseInstance = {
   id: string
@@ -99,11 +118,18 @@ export class CoursesService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+    const timings: StepTimings = []
+    const startedAt = Date.now()
     try {
-      const { course, courseInstance } = await this.getCourseById(
-        getValueViaPath<string>(application.answers, 'courseSelect', ''),
-        getValueViaPath<string>(application.answers, 'dateSelect', ''),
-        auth.authorization,
+      const { course, courseInstance } = await timed(
+        timings,
+        'getCourseById',
+        () =>
+          this.getCourseById(
+            getValueViaPath<string>(application.answers, 'courseSelect', ''),
+            getValueViaPath<string>(application.answers, 'dateSelect', ''),
+            auth.authorization,
+          ),
       )
 
       const participantList =
@@ -146,6 +172,7 @@ export class CoursesService extends BaseTemplateApiService {
         courseUrl,
         { nationalId, healthcenter },
         auth.authorization,
+        timings,
       )
 
       const registrantMessage = await this.formatApplicationMessage(
@@ -170,10 +197,25 @@ export class CoursesService extends BaseTemplateApiService {
         courseUrl,
         participants,
         { name, email, message: registrantMessage },
+        timings,
+      )
+
+      this.logSubmitTimings(
+        application.id,
+        participantList.length,
+        startedAt,
+        timings,
       )
 
       return { success: true }
     } catch (error) {
+      this.logSubmitTimings(
+        application.id,
+        undefined,
+        startedAt,
+        timings,
+        true,
+      )
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
         error: error.message,
@@ -191,6 +233,22 @@ export class CoursesService extends BaseTemplateApiService {
         500,
       )
     }
+  }
+
+  private logSubmitTimings(
+    applicationId: string,
+    participantCount: number | undefined,
+    startedAt: number,
+    timings: StepTimings,
+    failed = false,
+  ) {
+    this.logger.info('HH courses submit timings', {
+      applicationId,
+      participantCount,
+      failed,
+      totalMs: Date.now() - startedAt,
+      steps: Object.fromEntries(timings),
+    })
   }
 
   async checkParticipantAvailability({
@@ -521,102 +579,102 @@ export class CoursesService extends BaseTemplateApiService {
     courseUrl: string | null,
     applicant: { nationalId: string; healthcenter?: string },
     authorization: string,
+    timings: StepTimings,
   ): Promise<RegisteredParticipant[]> {
-    let priceAmount: number | undefined
-    try {
-      const chargeItemsResponse = await this.sharedTemplateApiService
-        .makeGraphqlQuery<{
-          getChargeItemCodesByCourseId: {
-            items: Array<{ code: string; priceAmount: number }>
-          }
-        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
-          input: { courseId: course.id },
-        })
-        .then((r) => r.json())
-
-      priceAmount =
-        chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
-          (item) => item.code === courseInstance.chargeItemCode,
-        )?.priceAmount
-    } catch (error) {
-      this.logger.error(
-        'Failed to fetch charge item codes for course, proceeding without price',
-        { error, courseId: course.id },
-      )
-    }
-
     const { externalIdPrefix, namePrefix } = this.getZendeskEnvPrefixes()
     const courseExternalId = `${externalIdPrefix}${course.id}`
     const instanceExternalId = `${externalIdPrefix}${courseInstance.id}`
-
-    const courseRecord = await this.zendeskService.upsertCustomObjectRecord(
-      ZENDESK_CUSTOM_OBJECT_KEYS.course,
-      { name: `${namePrefix}${course.title}`, external_id: courseExternalId },
+    const externalIds = participantList.map(
+      (p) =>
+        `${externalIdPrefix}${applicationId}-${p.nationalIdWithName.nationalId}`,
     )
 
-    const instanceRecord = await this.zendeskService.upsertCustomObjectRecord(
-      ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
-      {
-        name: `${namePrefix}${courseInstance.displayedTitle ?? course.title}`,
-        external_id: instanceExternalId,
-        custom_object_fields: {
-          course_start_date: courseInstance.startDate.split('T')[0],
-          course_start_time: this.formatCourseInstanceTimeRange(courseInstance),
-          course_description: courseInstance.description ?? '',
-          ...(priceAmount !== undefined && { course_price: priceAmount }),
-          course_location: courseInstance.location ?? '',
-          course_url: courseUrl ?? '',
-          course_id: courseRecord.id,
-          course: courseRecord.id,
+    // None of these depend on each other, the instance record needs the
+    // course record and the price, so it is written right after
+    const [priceAmount, courseRecord, preexistingRecords] = await Promise.all([
+      timed(timings, 'chargeItems', () =>
+        this.getPriceAmount(course.id, courseInstance, authorization),
+      ),
+      timed(timings, 'upsertCourse', () =>
+        this.zendeskService.upsertCustomObjectRecord(
+          ZENDESK_CUSTOM_OBJECT_KEYS.course,
+          {
+            name: `${namePrefix}${course.title}`,
+            external_id: courseExternalId,
+          },
+        ),
+      ),
+      timed(timings, 'listExistingParticipants', () =>
+        this.zendeskService.listCustomObjectRecordsByExternalIds(
+          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+          externalIds,
+        ),
+      ),
+    ])
+
+    const instanceRecord = await timed(timings, 'upsertInstance', () =>
+      this.zendeskService.upsertCustomObjectRecord(
+        ZENDESK_CUSTOM_OBJECT_KEYS.courseInstance,
+        {
+          name: `${namePrefix}${courseInstance.displayedTitle ?? course.title}`,
+          external_id: instanceExternalId,
+          custom_object_fields: {
+            course_start_date: courseInstance.startDate.split('T')[0],
+            course_start_time:
+              this.formatCourseInstanceTimeRange(courseInstance),
+            course_description: courseInstance.description ?? '',
+            ...(priceAmount !== undefined && { course_price: priceAmount }),
+            course_location: courseInstance.location ?? '',
+            course_url: courseUrl ?? '',
+            course_id: courseRecord.id,
+            course: courseRecord.id,
+          },
         },
-      },
+      ),
     )
 
     const registrationTime = format(new Date(), 'dd.MM.yyyy HH:mm')
 
-    const participants: RegisteredParticipant[] = participantList.map((p) => {
-      const participantPhone = p.nationalIdWithName.phone?.trim()
-      const participantWorkplace = p.workplace?.trim()
-      const participantTitle = p.jobTitle?.trim()
-      const isApplicant =
-        p.nationalIdWithName.nationalId === applicant.nationalId
-      // Healthcenter is only collected for the applicant
-      const participantClinic = isApplicant
-        ? applicant.healthcenter?.trim()
-        : undefined
+    const participants: RegisteredParticipant[] = participantList.map(
+      (p, index) => {
+        const participantPhone = p.nationalIdWithName.phone?.trim()
+        const participantWorkplace = p.workplace?.trim()
+        const participantTitle = p.jobTitle?.trim()
+        const isApplicant =
+          p.nationalIdWithName.nationalId === applicant.nationalId
+        // Healthcenter is only collected for the applicant
+        const participantClinic = isApplicant
+          ? applicant.healthcenter?.trim()
+          : undefined
 
-      return {
-        participant: p,
-        isApplicant,
-        record: {
-          name: p.nationalIdWithName.name,
-          external_id: `${externalIdPrefix}${applicationId}-${p.nationalIdWithName.nationalId}`,
-          custom_object_fields: {
-            kennitala: p.nationalIdWithName.nationalId,
-            email: p.nationalIdWithName.email,
-            ...(participantPhone && { participant_phone: participantPhone }),
-            ...(participantWorkplace && {
-              participant_workplace: participantWorkplace,
-            }),
-            ...(participantTitle && { participant_title: participantTitle }),
-            ...(participantClinic && { participant_clinic: participantClinic }),
-            registration_time: registrationTime,
-            registration_id: applicationId,
-            course_instance: instanceRecord.id,
+        return {
+          participant: p,
+          isApplicant,
+          record: {
+            name: p.nationalIdWithName.name,
+            external_id: externalIds[index],
+            custom_object_fields: {
+              kennitala: p.nationalIdWithName.nationalId,
+              email: p.nationalIdWithName.email,
+              ...(participantPhone && { participant_phone: participantPhone }),
+              ...(participantWorkplace && {
+                participant_workplace: participantWorkplace,
+              }),
+              ...(participantTitle && { participant_title: participantTitle }),
+              ...(participantClinic && {
+                participant_clinic: participantClinic,
+              }),
+              registration_time: registrationTime,
+              registration_id: applicationId,
+              course_instance: instanceRecord.id,
+            },
           },
-        },
-      }
-    })
-
-    const externalIds = participants.map((p) => p.record.external_id)
+        }
+      },
+    )
 
     // Records from an earlier attempt may already be linked to tickets, so
     // only the records this attempt creates are rolled back on failure
-    const preexistingRecords =
-      await this.zendeskService.listCustomObjectRecordsByExternalIds(
-        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-        externalIds,
-      )
     const preexistingExternalIds = new Set(
       preexistingRecords.map((record) => record.external_id),
     )
@@ -625,16 +683,12 @@ export class CoursesService extends BaseTemplateApiService {
     )
 
     try {
-      await this.zendeskService.upsertCustomObjectRecordsByExternalId(
-        ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-        participants.map((p) => p.record),
-      )
-
-      const writtenRecords =
-        await this.zendeskService.listCustomObjectRecordsByExternalIds(
-          ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      const writtenRecords = await timed(timings, 'writeParticipants', () =>
+        this.upsertParticipantRecords(
+          participants.map((p) => p.record),
           externalIds,
-        )
+        ),
+      )
       const writtenRecordsByExternalId = new Map(
         writtenRecords.map((record) => [record.external_id, record]),
       )
@@ -645,7 +699,7 @@ export class CoursesService extends BaseTemplateApiService {
         )
         if (!writtenRecord) {
           throw new Error(
-            `Participant record ${participant.record.external_id} is missing after the upsert job`,
+            `Participant record ${participant.record.external_id} is missing after the upsert`,
           )
         }
         participant.ticketId = this.toZendeskNumber(
@@ -684,6 +738,70 @@ export class CoursesService extends BaseTemplateApiService {
     return participants
   }
 
+  private async getPriceAmount(
+    courseId: string,
+    courseInstance: CourseInstance,
+    authorization: string,
+  ): Promise<number | undefined> {
+    try {
+      const chargeItemsResponse = await this.sharedTemplateApiService
+        .makeGraphqlQuery<{
+          getChargeItemCodesByCourseId: {
+            items: Array<{ code: string; priceAmount: number }>
+          }
+        }>(authorization, GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY, {
+          input: { courseId },
+        })
+        .then((r) => r.json())
+
+      return chargeItemsResponse.data?.getChargeItemCodesByCourseId?.items?.find(
+        (item) => item.code === courseInstance.chargeItemCode,
+      )?.priceAmount
+    } catch (error) {
+      this.logger.error(
+        'Failed to fetch charge item codes for course, proceeding without price',
+        { error, courseId },
+      )
+      return undefined
+    }
+  }
+
+  /**
+   * Returns the written records. Small applications are written with direct
+   * requests, which return the full record, large ones use a bulk job which
+   * has to be read back afterwards.
+   */
+  private async upsertParticipantRecords(
+    records: CustomObjectJobItem[],
+    externalIds: string[],
+  ): Promise<CustomObjectRecord[]> {
+    if (records.length <= DIRECT_WRITE_MAX_PARTICIPANTS) {
+      const written: CustomObjectRecord[] = []
+      for (const batch of chunk(records, PARTICIPANT_WRITE_CONCURRENCY)) {
+        written.push(
+          ...(await Promise.all(
+            batch.map((record) =>
+              this.zendeskService.upsertCustomObjectRecord(
+                ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+                record,
+              ),
+            ),
+          )),
+        )
+      }
+      return written
+    }
+
+    await this.zendeskService.upsertCustomObjectRecordsByExternalId(
+      ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      records,
+    )
+    return this.zendeskService.listCustomObjectRecordsByExternalIds(
+      ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+      externalIds,
+    )
+  }
+
   /**
    * Creates a ticket for the registrant with the full participant list and a
    * ticket for every other participant. Tickets are looked up by external id
@@ -697,6 +815,7 @@ export class CoursesService extends BaseTemplateApiService {
     courseUrl: string | null,
     participants: RegisteredParticipant[],
     registrant: { name: string; email: string; message: string },
+    timings: StepTimings,
   ): Promise<void> {
     const { externalIdPrefix } = this.getZendeskEnvPrefixes()
     const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`
@@ -772,25 +891,27 @@ export class CoursesService extends BaseTemplateApiService {
       ticket.ticketId = ticket.participants.find((p) => p.ticketId)?.ticketId
     }
 
-    for (const batch of chunk(
-      tickets.filter((ticket) => !ticket.ticketId),
-      TICKET_LOOKUP_CONCURRENCY,
-    )) {
-      await Promise.all(
-        batch.map(async (ticket) => {
-          const existingTicket =
-            await this.zendeskService.getTicketByExternalId(
-              ticket.input.externalId,
-            )
-          ticket.ticketId = this.toZendeskNumber(existingTicket?.id)
-        }),
-      )
-    }
+    await timed(timings, 'lookupTickets', async () => {
+      for (const batch of chunk(
+        tickets.filter((ticket) => !ticket.ticketId),
+        TICKET_LOOKUP_CONCURRENCY,
+      )) {
+        await Promise.all(
+          batch.map(async (ticket) => {
+            const existingTicket =
+              await this.zendeskService.getTicketByExternalId(
+                ticket.input.externalId,
+              )
+            ticket.ticketId = this.toZendeskNumber(existingTicket?.id)
+          }),
+        )
+      }
+    })
 
     const missingTickets = tickets.filter((ticket) => !ticket.ticketId)
     if (missingTickets.length > 0) {
-      const createdTicketIds = await this.zendeskService.createManyTickets(
-        missingTickets.map((ticket) => ticket.input),
+      const createdTicketIds = await timed(timings, 'createTickets', () =>
+        this.createTickets(missingTickets.map((ticket) => ticket.input)),
       )
       missingTickets.forEach((ticket, index) => {
         ticket.ticketId = createdTicketIds[index]
@@ -803,23 +924,28 @@ export class CoursesService extends BaseTemplateApiService {
         .map((p) => ({ participant: p, ticketId: ticket.ticketId as number })),
     )
 
-    for (const batch of chunk(participantsToLink, TICKET_LOOKUP_CONCURRENCY)) {
-      await Promise.all(
-        batch.map(async ({ participant, ticketId }) => {
-          await this.zendeskService.upsertCustomObjectRecord(
-            ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
-            {
-              ...participant.record,
-              custom_object_fields: {
-                ...participant.record.custom_object_fields,
-                ticket_id: ticketId,
+    await timed(timings, 'linkParticipants', async () => {
+      for (const batch of chunk(
+        participantsToLink,
+        PARTICIPANT_WRITE_CONCURRENCY,
+      )) {
+        await Promise.all(
+          batch.map(async ({ participant, ticketId }) => {
+            await this.zendeskService.upsertCustomObjectRecord(
+              ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant,
+              {
+                ...participant.record,
+                custom_object_fields: {
+                  ...participant.record.custom_object_fields,
+                  ticket_id: ticketId,
+                },
               },
-            },
-          )
-          participant.ticketId = ticketId
-        }),
-      )
-    }
+            )
+            participant.ticketId = ticketId
+          }),
+        )
+      }
+    })
 
     const failedTickets = tickets.filter((ticket) => !ticket.ticketId)
     if (failedTickets.length > 0) {
@@ -831,6 +957,41 @@ export class CoursesService extends BaseTemplateApiService {
           .join(', ')}`,
       )
     }
+  }
+
+  /**
+   * Returns the created ticket id for each input (by index), or undefined
+   * where that ticket could not be created. Small batches are created with
+   * direct requests, large ones with a bulk job.
+   */
+  private async createTickets(
+    inputs: Array<SubmitTicketInput & { externalId: string }>,
+  ): Promise<Array<number | undefined>> {
+    if (inputs.length > DIRECT_WRITE_MAX_PARTICIPANTS) {
+      return this.zendeskService.createManyTickets(inputs)
+    }
+
+    const ticketIds: Array<number | undefined> = []
+    for (const batch of chunk(inputs, TICKET_CREATE_CONCURRENCY)) {
+      const results = await Promise.allSettled(
+        batch.map((input) => this.zendeskService.createTicket(input)),
+      )
+      for (const [position, result] of results.entries()) {
+        if (result.status === 'rejected') {
+          this.logger.error('Failed to create HH courses ticket in Zendesk', {
+            externalId: batch[position].externalId,
+            error: result.reason?.message,
+          })
+        }
+        ticketIds.push(
+          result.status === 'fulfilled'
+            ? this.toZendeskNumber(result.value?.id)
+            : undefined,
+        )
+      }
+    }
+
+    return ticketIds
   }
 
   private getTicketCustomFields(

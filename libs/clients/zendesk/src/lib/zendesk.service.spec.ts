@@ -431,4 +431,108 @@ describe('zendeskService', () => {
       zendeskService.getTicketByExternalId('missing'),
     ).resolves.toBeNull()
   })
+
+  describe('retries', () => {
+    const recordUrl = `${api}/custom_objects/participant/records`
+    const deadlock = { error: 'DatabaseDeadlock', description: 'deadlock' }
+
+    beforeEach(() => {
+      jest.useFakeTimers({ advanceTimers: true })
+    })
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('should retry a custom object upsert that hit a database deadlock', async () => {
+      let attempts = 0
+      server.use(
+        rest.patch(recordUrl, (req, res, ctx) => {
+          attempts++
+          return attempts < 3
+            ? res(ctx.status(503), ctx.json(deadlock))
+            : res(
+                ctx.status(200),
+                ctx.json({ custom_object_record: { id: '1', external_id: 'a' } }),
+              )
+        }),
+      )
+
+      const promise = zendeskService.upsertCustomObjectRecord('participant', {
+        name: 'A',
+        external_id: 'a',
+      })
+      await jest.runAllTimersAsync()
+
+      await expect(promise).resolves.toMatchObject({ id: '1' })
+      expect(attempts).toBe(3)
+    })
+
+    it('should not retry other server errors on a custom object upsert', async () => {
+      let attempts = 0
+      server.use(
+        rest.patch(recordUrl, (req, res, ctx) => {
+          attempts++
+          return res(ctx.status(503), ctx.json({ error: 'ServiceUnavailable' }))
+        }),
+      )
+
+      await expect(
+        zendeskService.upsertCustomObjectRecord('participant', {
+          name: 'A',
+          external_id: 'a',
+        }),
+      ).rejects.toThrow('Failed to upsert Zendesk custom object record')
+      expect(attempts).toBe(1)
+    })
+
+    it('should give up after repeated deadlocks', async () => {
+      let attempts = 0
+      server.use(
+        rest.patch(recordUrl, (req, res, ctx) => {
+          attempts++
+          return res(ctx.status(503), ctx.json(deadlock))
+        }),
+      )
+
+      const promise = zendeskService
+        .upsertCustomObjectRecord('participant', { name: 'A', external_id: 'a' })
+        .catch((e) => e)
+      await jest.runAllTimersAsync()
+
+      expect(await promise).toMatchObject({
+        message: expect.stringContaining('Failed to upsert'),
+      })
+      expect(attempts).toBe(5)
+    })
+
+    it('should retry a rate limited ticket but not a 503, which may have succeeded', async () => {
+      let attempts = 0
+      server.use(
+        rest.post(`${api}/tickets.json`, (req, res, ctx) => {
+          attempts++
+          return attempts === 1
+            ? res(ctx.status(429), ctx.set('Retry-After', '1'), ctx.json({}))
+            : res(ctx.status(201), ctx.json({ ticket: { id: 5 } }))
+        }),
+      )
+      const input = { message: 'm', subject: 's', requester: { name: 'n', email: 'e@e.is' } }
+
+      const promise = zendeskService.createTicket(input)
+      await jest.runAllTimersAsync()
+      await expect(promise).resolves.toMatchObject({ id: 5 })
+      expect(attempts).toBe(2)
+
+      attempts = 0
+      server.use(
+        rest.post(`${api}/tickets.json`, (req, res, ctx) => {
+          attempts++
+          return res(ctx.status(503), ctx.json(deadlock))
+        }),
+      )
+      await expect(zendeskService.createTicket(input)).rejects.toThrow(
+        'Failed to submit Zendesk ticket',
+      )
+      expect(attempts).toBe(1)
+    })
+  })
 })

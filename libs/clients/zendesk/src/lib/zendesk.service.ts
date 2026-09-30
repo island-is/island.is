@@ -229,10 +229,10 @@ export class ZendeskService {
     const newTicket = JSON.stringify({ ticket: this.toTicketBody(input) })
 
     try {
-      const response = await axios.post(
-        `${this.api}/tickets.json`,
-        newTicket,
-        this.params,
+      const response = await this.withRetry(
+        () =>
+          axios.post(`${this.api}/tickets.json`, newTicket, this.params),
+        { retryDeadlocks: false },
       )
       const ticket = response.data?.ticket
 
@@ -327,20 +327,61 @@ export class ZendeskService {
     return true
   }
 
+  /**
+   * Retries a request that Zendesk rejected without processing it: 429 rate
+   * limits and, when `retryDeadlocks` is set, 503 database deadlocks, which
+   * are rolled back by Zendesk and happen when writes to the same custom
+   * object run concurrently. Never retry a request that may have succeeded.
+   */
+  private async withRetry<T>(
+    request: () => Promise<T>,
+    { retryDeadlocks }: { retryDeadlocks: boolean },
+  ): Promise<T> {
+    const MAX_RETRIES = 4
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await request()
+      } catch (e) {
+        const status = e.response?.status
+        const retryable =
+          status === 429 ||
+          (retryDeadlocks &&
+            status === 503 &&
+            e.response?.data?.error === 'DatabaseDeadlock')
+        if (!retryable || attempt >= MAX_RETRIES) throw e
+
+        const retryAfterMs = Number(e.response?.headers?.['retry-after']) * 1000
+        const backoffMs = 250 * 2 ** attempt + Math.random() * 100
+        await new Promise((resolve) =>
+          setTimeout(
+            resolve,
+            Number.isFinite(retryAfterMs) && retryAfterMs > 0
+              ? Math.min(retryAfterMs, 5000)
+              : backoffMs,
+          ),
+        )
+      }
+    }
+  }
+
   async upsertCustomObjectRecord(
     objectKey: string,
     record: CustomObjectJobItem,
   ): Promise<CustomObjectRecord> {
     const body = JSON.stringify({ custom_object_record: record })
     try {
-      const response = await axios.patch(
-        `${
-          this.api
-        }/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(
-          record.external_id,
-        )}`,
-        body,
-        this.params,
+      const response = await this.withRetry(
+        () =>
+          axios.patch(
+            `${
+              this.api
+            }/custom_objects/${objectKey}/records?external_id=${encodeURIComponent(
+              record.external_id,
+            )}`,
+            body,
+            this.params,
+          ),
+        { retryDeadlocks: true },
       )
       return response.data.custom_object_record
     } catch (e) {
