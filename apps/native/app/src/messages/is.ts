@@ -778,6 +778,8 @@ export const is = {
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
   'health.overview.medicine': 'Lyf',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
+  'health.overview.lastUpdated': 'Grunnupplýsingar síðast uppfærðar: {date}',
+  'health.overview.update': 'Uppfæra',
 
   // health: categories
   'health.categories.screenTitle': 'Heilsuflokkar',
