@@ -8,9 +8,9 @@ import {
   ImageSourcePropType,
   Pressable,
   RefreshControl,
-  StyleSheet,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -62,6 +62,8 @@ export default function HealthMessagesScreen() {
   const theme = useTheme()
   const [query, setQuery] = useState('')
   const search = useThrottleState(query)
+  const insets = useSafeAreaInsets()
+  const [headerHeight, setHeaderHeight] = useState(0)
   const { starred, archived } = useHealthMessagesFilterStore()
   const { getSenderLogo } = useOrganizationsStore()
   const [loadingMore, setLoadingMore] = useState(false)
@@ -103,9 +105,6 @@ export default function HealthMessagesScreen() {
     messagesRes.loading &&
     messagesRes.networkStatus !== NetworkStatus.refetch &&
     conversations.length === 0
-
-  const showEmpty =
-    !showSkeletons && !messagesRes.error && conversations.length === 0
 
   // A filter refetch empties `conversations` mid-flight, so the row count
   // alone would flicker the search bar out and back.
@@ -242,6 +241,10 @@ export default function HealthMessagesScreen() {
       />
       <FlatList
         style={{ flex: 1 }}
+        // Without this the empty list's content is just the short header, which
+        // leaves too little to start a pull-to-refresh from. Centring is done
+        // by the overlay below, so this only affects scrollability.
+        contentContainerStyle={{ flexGrow: 1 }}
         data={conversations}
         keyExtractor={(item) => item.id}
         contentInsetAdjustmentBehavior="automatic"
@@ -263,7 +266,7 @@ export default function HealthMessagesScreen() {
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         ListHeaderComponent={
-          <>
+          <View onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
             {showSearch ? (
               <View
                 style={{
@@ -307,7 +310,7 @@ export default function HealthMessagesScreen() {
                 )}
               </TagsWrapper>
             ) : null}
-          </>
+          </View>
         }
         renderItem={({ item }) => (
           <Pressable
@@ -350,37 +353,38 @@ export default function HealthMessagesScreen() {
                 })}
               />
             </View>
-          ) : null
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                // Centres on the screen rather than on the box left under the
+                // header: the header above and the tab bar below are both taken
+                // off the centring height. Staying inside the list keeps it
+                // moving with pull-to-refresh.
+                paddingBottom: headerHeight + insets.bottom,
+                paddingHorizontal: theme.spacing[2],
+              }}
+            >
+              <EmptyList
+                title={
+                  <FormattedMessage id="health.messages.noMessagesTitle" />
+                }
+                description={
+                  <FormattedMessage id="health.messages.noMessagesText" />
+                }
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ width: 134, height: 204 }}
+                    resizeMode="contain"
+                  />
+                }
+              />
+            </View>
+          )
         }
       />
-      {/* Centred on the screen rather than on the list's content box, so the
-          search field and filter chips above it don't push it down. */}
-      {showEmpty && (
-        <View
-          pointerEvents="box-none"
-          style={[
-            StyleSheet.absoluteFillObject,
-            {
-              justifyContent: 'center',
-              paddingHorizontal: theme.spacing[2],
-            },
-          ]}
-        >
-          <EmptyList
-            title={<FormattedMessage id="health.messages.noMessagesTitle" />}
-            description={
-              <FormattedMessage id="health.messages.noMessagesText" />
-            }
-            image={
-              <Image
-                source={illustrationSrc}
-                style={{ width: 134, height: 204 }}
-                resizeMode="contain"
-              />
-            }
-          />
-        </View>
-      )}
     </View>
   )
 }
