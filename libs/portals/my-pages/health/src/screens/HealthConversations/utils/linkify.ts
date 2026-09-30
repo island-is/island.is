@@ -7,8 +7,7 @@ export interface LinkifiedTextPart {
   href?: string
 }
 
-const toHref = (url: string) =>
-  url.startsWith('www.') ? `https://${url}` : url
+const toHref = (url: string) => (/^www\./i.test(url) ? `https://${url}` : url)
 
 export const linkifyText = (text: string): LinkifiedTextPart[] => {
   const parts: LinkifiedTextPart[] = []

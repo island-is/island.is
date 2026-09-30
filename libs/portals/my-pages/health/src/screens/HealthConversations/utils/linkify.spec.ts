@@ -19,6 +19,12 @@ describe('linkifyText', () => {
     ])
   })
 
+  it('adds https to an uppercase www url', () => {
+    expect(linkifyText('WWW.island.is')).toEqual([
+      { type: 'link', value: 'WWW.island.is', href: 'https://WWW.island.is' },
+    ])
+  })
+
   it('uses the label of a [label|url] link', () => {
     expect(
       linkifyText(
