@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   ParseEnumPipe,
@@ -8,6 +9,8 @@ import {
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
+  DelegationResourcesService,
+  ScopeDelegationSettingsResponseDTO,
   ScopeService,
   ScopeTreeDTO,
   ScopeCategoryDTO,
@@ -27,6 +30,7 @@ import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth/delegation-api/scopes'
+const MAX_SETTINGS_SCOPES = 200
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiSecurity('ias')
@@ -37,7 +41,44 @@ const namespace = '@island.is/auth/delegation-api/scopes'
 })
 @Audit({ namespace })
 export class ScopesController {
-  constructor(private readonly scopeService: ScopeService) {}
+  constructor(
+    private readonly scopeService: ScopeService,
+    private readonly delegationResourcesService: DelegationResourcesService,
+  ) {}
+
+  @Get('delegation-settings')
+  @Documentation({
+    description:
+      'Returns how the given scopes can be delegated: the delegation types that give access to them and whether they can be requested from an individual or a company. Scopes that do not exist or are disabled are omitted.',
+    request: {
+      query: {
+        scopes: {
+          description: 'Scope names to look up (repeat the key for each).',
+          required: true,
+          type: 'string',
+          isArray: true,
+        },
+      },
+    },
+    response: { status: 200, type: ScopeDelegationSettingsResponseDTO },
+  })
+  async findDelegationSettings(
+    @CurrentUser() user: User,
+    @Query('scopes') scopes?: string | string[],
+  ): Promise<ScopeDelegationSettingsResponseDTO> {
+    const scopeNames = ([] as string[]).concat(scopes ?? []).filter(Boolean)
+    if (scopeNames.length === 0 || scopeNames.length > MAX_SETTINGS_SCOPES) {
+      throw new BadRequestException(
+        `Between 1 and ${MAX_SETTINGS_SCOPES} scopes must be provided.`,
+      )
+    }
+    return {
+      scopes: await this.delegationResourcesService.findScopeDelegationSettings(
+        user,
+        scopeNames,
+      ),
+    }
+  }
 
   @Scopes(AuthScope.consents)
   @Get('scope-tree')

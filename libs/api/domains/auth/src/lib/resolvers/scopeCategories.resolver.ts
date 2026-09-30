@@ -18,6 +18,8 @@ import {
 
 import { ScopeCategory } from '../models/scopeCategory.model'
 import { ScopeTag } from '../models/scopeTag.model'
+import { ScopeDelegationSettings } from '../models/scopeDelegationSettings.model'
+import { ScopeDelegationSettingsInput } from '../dto/scopeDelegationSettings.input'
 import { RequestGrantorType } from '../dto/requestGrantorType'
 
 @UseGuards(IdsUserGuard)
@@ -27,6 +29,22 @@ export class ScopeCategoriesResolver {
 
   private scopesApiWithAuth(auth: Auth) {
     return this.scopesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  @Query(() => [ScopeDelegationSettings], {
+    name: 'authScopeDelegationSettings',
+    description:
+      'How the given scopes can be delegated: delegation types that give access and whether they can be requested.',
+  })
+  async getScopeDelegationSettings(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ScopeDelegationSettingsInput })
+    input: ScopeDelegationSettingsInput,
+  ): Promise<ScopeDelegationSettings[]> {
+    const { scopes } = await this.scopesApiWithAuth(
+      user,
+    ).scopesControllerFindDelegationSettings({ scopes: input.scopes })
+    return scopes
   }
 
   @Query(() => [ScopeCategory], {

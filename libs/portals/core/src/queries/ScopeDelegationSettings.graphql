@@ -1,0 +1,9 @@
+query AuthScopeDelegationSettings($input: AuthScopeDelegationSettingsInput!) {
+  authScopeDelegationSettings(input: $input) {
+    name
+    requestable {
+      individual
+      company
+    }
+  }
+}

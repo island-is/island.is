@@ -14,6 +14,7 @@ import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationDirection } from '../delegations/types/delegationDirection'
 import { ApiScopeListDTO } from './dto/api-scope-list.dto'
+import { ScopeDelegationSettingsDTO } from './dto/scope-delegation-settings.dto'
 import { ScopeTreeDTO } from './dto/scope-tree.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
@@ -33,6 +34,8 @@ export const RequestGrantorType = {
 } as const
 export type RequestGrantorType =
   typeof RequestGrantorType[keyof typeof RequestGrantorType]
+
+const DELEGATION_SETTINGS_TTL_MS = 5 * 60 * 1000
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -56,6 +59,90 @@ export class DelegationResourcesService {
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
+
+  private delegationSettings?: {
+    expiresAt: number
+    byScope: Promise<Map<string, ScopeDelegationSettingsDTO>>
+  }
+
+  async findScopeDelegationSettings(
+    user: User,
+    scopeNames: string[],
+  ): Promise<ScopeDelegationSettingsDTO[]> {
+    if (
+      !this.delegationSettings ||
+      this.delegationSettings.expiresAt <= Date.now()
+    ) {
+      this.delegationSettings = {
+        expiresAt: Date.now() + DELEGATION_SETTINGS_TTL_MS,
+        byScope: this.loadScopeDelegationSettings(user).catch((error) => {
+          this.delegationSettings = undefined
+          throw error
+        }),
+      }
+    }
+    const byScope = await this.delegationSettings.byScope
+    return [...new Set(scopeNames)]
+      .map((name) => byScope.get(name))
+      .filter((settings): settings is ScopeDelegationSettingsDTO =>
+        Boolean(settings),
+      )
+  }
+
+  private async loadScopeDelegationSettings(
+    user: User,
+  ): Promise<Map<string, ScopeDelegationSettingsDTO>> {
+    const requestableNames = async (requestGrantorType: RequestGrantorType) =>
+      new Set(
+        (
+          await this.apiScopeModel.findAll({
+            where: and(
+              ...(await this.apiScopeFilter({
+                user,
+                direction: DelegationDirection.REQUEST,
+                requestGrantorType,
+              })),
+            ),
+            attributes: ['name'],
+          })
+        ).map((scope) => scope.name),
+      )
+
+    const [scopes, individual, company, delegationTypes] = await Promise.all([
+      this.apiScopeModel.findAll({
+        where: { enabled: true },
+        attributes: ['name', 'domainName'],
+      }),
+      requestableNames(RequestGrantorType.individual),
+      requestableNames(RequestGrantorType.company),
+      this.apiScopeDelegationTypeModel.findAll({
+        attributes: ['apiScopeName', 'delegationType'],
+      }),
+    ])
+
+    const typesByScope = new Map<string, string[]>()
+    for (const { apiScopeName, delegationType } of delegationTypes) {
+      typesByScope.set(apiScopeName, [
+        ...(typesByScope.get(apiScopeName) ?? []),
+        delegationType,
+      ])
+    }
+
+    return new Map(
+      scopes.map((scope) => [
+        scope.name,
+        {
+          name: scope.name,
+          domainName: scope.domainName,
+          delegationTypes: typesByScope.get(scope.name) ?? [],
+          requestable: {
+            individual: individual.has(scope.name),
+            company: company.has(scope.name),
+          },
+        },
+      ]),
+    )
+  }
 
   async findAllDomains(
     user: User,
