@@ -1,5 +1,5 @@
 import { ApolloError, useApolloClient } from '@apollo/client'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Animated,
@@ -445,6 +445,35 @@ export default function HealthOverviewScreen() {
   // fields it feeds rather than erroring the whole section. Inneign and Skuld
   // fall back to '-' on their own, so only these two need the warning.
   const paymentStatusFailed = !!paymentStatusRes.error && !paymentStatusRes.data
+
+  const basicInfoLoading =
+    bloodTypeRes.loading ||
+    organDonationRes.loading ||
+    healthCenterRes.loading ||
+    dentistRes.loading
+  const basicInfoAnswered =
+    (!bloodTypeRes.error && !!bloodTypeRes.data) ||
+    (!organDonationRes.error && !!organDonationRes.data) ||
+    (!healthCenterRes.error && !!healthCenterRes.data) ||
+    (!dentistRes.error && !!dentistRes.data)
+  const wasBasicInfoLoading = useRef(false)
+
+  // Dates the fetch a login does on a cleared cache, otherwise the label stays
+  // hidden until a refresh. Cached answers never set loading, so data of
+  // unknown age stays undated.
+  useEffect(() => {
+    const finishedLoading = wasBasicInfoLoading.current && !basicInfoLoading
+    wasBasicInfoLoading.current = basicInfoLoading
+
+    if (finishedLoading && basicInfoFetchedAt === null && basicInfoAnswered) {
+      setBasicInfoFetchedAt(new Date().toISOString())
+    }
+  }, [
+    basicInfoLoading,
+    basicInfoAnswered,
+    basicInfoFetchedAt,
+    setBasicInfoFetchedAt,
+  ])
 
   const lastUpdatedFormatted = useMemo(
     () =>
