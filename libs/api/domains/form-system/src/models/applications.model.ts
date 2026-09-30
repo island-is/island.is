@@ -195,4 +195,7 @@ export class ApplicationResponse {
 
   @Field(() => Boolean, { nullable: true })
   validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 }

@@ -600,6 +600,8 @@ export class ApplicationsService {
       responseDto.isLoginTypeAllowed = true
       responseDto.isInaccessible = form.isInaccessible
       responseDto.validateEligibility = form.validateEligibility
+      responseDto.enableApplicationPdfDownload =
+        form.enableApplicationPdfDownload
 
       return responseDto
     } catch (error) {
