@@ -46,7 +46,7 @@ export const DashboardFeatured = ({ items, isMobile }: Props) => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" rowGap={[1, 2]}>
+    <Box display="flex" flexDirection="column" rowGap={2}>
       {items.map((item, i) => {
         const isDisabled = item.enabled === false
         const title = formatMessage(item.customShortcut?.name ?? item.name)

@@ -61,7 +61,7 @@ export const DashboardModules = ({ items, isMobile }: Props) => {
                     : String(navRoot.name.id ?? index)
                 }
                 span={['12/12', '6/12', '4/12']}
-                paddingBottom={[1, 2, 3]}
+                paddingBottom={[2, 2, 3]}
               >
                 <Box
                   onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
