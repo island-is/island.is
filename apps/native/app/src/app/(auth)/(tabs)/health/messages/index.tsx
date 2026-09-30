@@ -241,9 +241,8 @@ export default function HealthMessagesScreen() {
       />
       <FlatList
         style={{ flex: 1 }}
-        // Without this the empty list's content is just the short header, which
-        // leaves too little to start a pull-to-refresh from. Centring is done
-        // by the overlay below, so this only affects scrollability.
+        // Gives the empty state height to centre in, and an empty list enough
+        // content to pull to refresh from.
         contentContainerStyle={{ flexGrow: 1 }}
         data={conversations}
         keyExtractor={(item) => item.id}
@@ -358,10 +357,7 @@ export default function HealthMessagesScreen() {
               style={{
                 flex: 1,
                 justifyContent: 'center',
-                // Centres on the screen rather than on the box left under the
-                // header: the header above and the tab bar below are both taken
-                // off the centring height. Staying inside the list keeps it
-                // moving with pull-to-refresh.
+                // Centres on the screen, not on the box under the header.
                 paddingBottom: headerHeight + insets.bottom,
                 paddingHorizontal: theme.spacing[2],
               }}
