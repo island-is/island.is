@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 
 import { DelegationPreferenceDto } from './dto/delegation-preference.dto'
 import { DelegationPreference } from './models/delegation-preference.model'
@@ -9,9 +9,14 @@ import { DelegationPreference } from './models/delegation-preference.model'
 // revoked and which the screen drops.
 const MAX_RECENT = 10
 
-// Nothing here checks that a delegation exists, so without a cap an actor could
-// star arbitrarily many parties.
-const MAX_FAVOURITES = 100
+// The picker shows five, and starring a sixth is refused rather than silently
+// dropping one.
+const MAX_FAVOURITES = 5
+
+// Rows an actor keeps for parties they have switched to but not starred. One
+// row per party, never one per switch, but a party whose delegation is later
+// revoked would otherwise sit here for good.
+const MAX_RECENT_ROWS = 20
 
 // Sequelize drops conflictFields straight into the ON CONFLICT clause without
 // mapping them to column names, so these must be the real columns even though
@@ -117,6 +122,31 @@ export class DelegationPreferenceService {
       {
         conflictFields: CONFLICT_COLUMNS,
         fields: ['lastUsedAt'],
+      },
+    )
+
+    await this.pruneRecent(toNationalId)
+  }
+
+  /**
+   * Drops this actor's oldest unstarred rows. Favourites are left alone; they
+   * have a cap of their own.
+   */
+  private async pruneRecent(toNationalId: string): Promise<void> {
+    await this.delegationPreferenceModel.sequelize?.query(
+      `DELETE FROM delegation_preference
+         WHERE to_national_id = :toNationalId
+           AND is_favourite = false
+           AND id NOT IN (
+             SELECT id FROM delegation_preference
+              WHERE to_national_id = :toNationalId
+                AND is_favourite = false
+              ORDER BY last_used_at DESC NULLS LAST
+              LIMIT :keep
+           )`,
+      {
+        replacements: { toNationalId, keep: MAX_RECENT_ROWS },
+        type: QueryTypes.DELETE,
       },
     )
   }

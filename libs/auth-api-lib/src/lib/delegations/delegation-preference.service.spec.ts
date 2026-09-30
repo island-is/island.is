@@ -26,6 +26,7 @@ describe('DelegationPreferenceService', () => {
     update: jest.Mock
     destroy: jest.Mock
     count: jest.Mock
+    sequelize: { query: jest.Mock }
   }
 
   beforeEach(async () => {
@@ -35,6 +36,7 @@ describe('DelegationPreferenceService', () => {
       update: jest.fn().mockResolvedValue([0]),
       destroy: jest.fn().mockResolvedValue(0),
       count: jest.fn().mockResolvedValue(0),
+      sequelize: { query: jest.fn().mockResolvedValue([]) },
     }
 
     const module = await Test.createTestingModule({
@@ -108,7 +110,7 @@ describe('DelegationPreferenceService', () => {
     })
 
     it('refuses to star beyond the cap', async () => {
-      model.count.mockResolvedValue(100)
+      model.count.mockResolvedValue(5)
 
       await expect(service.setFavourite(ACTOR, PARTY, true)).rejects.toThrow(
         BadRequestException,
@@ -140,6 +142,29 @@ describe('DelegationPreferenceService', () => {
   })
 
   describe('recordUsage', () => {
+    it("drops the actor's oldest unstarred rows, so the table cannot grow without end", async () => {
+      await service.recordUsage(ACTOR, PARTY)
+
+      const [sql, options] = model.sequelize.query.mock.calls[0]
+
+      expect(sql).toContain('DELETE FROM delegation_preference')
+      expect(sql).toContain('is_favourite = false')
+      expect(sql).toContain('ORDER BY last_used_at DESC NULLS LAST')
+      expect(options.replacements).toEqual({
+        toNationalId: ACTOR,
+        keep: expect.any(Number),
+      })
+    })
+
+    it('never prunes a favourite', async () => {
+      await service.recordUsage(ACTOR, PARTY)
+
+      const [sql] = model.sequelize.query.mock.calls[0]
+
+      // Both the delete and the subquery that decides what survives.
+      expect(sql.match(/is_favourite = false/g)).toHaveLength(2)
+    })
+
     it('is a single upsert that leaves isFavourite alone', async () => {
       await service.recordUsage(ACTOR, PARTY)
 
