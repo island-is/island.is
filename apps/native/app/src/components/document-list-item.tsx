@@ -279,7 +279,9 @@ export const DocumentListItem = ({
                       accessibilityRole="button"
                       accessibilityLabel={attachment.label}
                     >
-                      <Typography variant="eyebrow">
+                      {/* Shrinks so a long file name wraps inside the chip
+                          instead of pushing it past the message body. */}
+                      <Typography variant="eyebrow" style={{ flexShrink: 1 }}>
                         {attachment.label}
                       </Typography>
                       <AttachmentIcon>
