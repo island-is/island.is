@@ -1,5 +1,5 @@
-const LINK_REGEX =
-  /\[([^\]|\n]+)\|((?:https?:\/\/|www\.)[^\s\]]+)\]|(https?:\/\/[^\s<]+[^\s<.,:;!?'")\]]|www\.[^\s<]+[^\s<.,:;!?'")\]])/gi
+const URL_REGEX =
+  /(https?:\/\/[^\s<]+[^\s<.,:;!?'")\]]|www\.[^\s<]+[^\s<.,:;!?'")\]])/gi
 
 export interface LinkifiedTextPart {
   type: 'text' | 'link'
@@ -7,28 +7,25 @@ export interface LinkifiedTextPart {
   href?: string
 }
 
-const toHref = (url: string) =>
-  url.startsWith('www.') ? `https://${url}` : url
-
 export const linkifyText = (text: string): LinkifiedTextPart[] => {
   const parts: LinkifiedTextPart[] = []
   let lastIndex = 0
   let match: RegExpExecArray | null
 
-  LINK_REGEX.lastIndex = 0
-  while ((match = LINK_REGEX.exec(text))) {
+  URL_REGEX.lastIndex = 0
+  while ((match = URL_REGEX.exec(text))) {
     if (match.index > lastIndex) {
       parts.push({ type: 'text', value: text.slice(lastIndex, match.index) })
     }
 
-    const [fullMatch, label, labelledUrl, url] = match
-    parts.push(
-      labelledUrl
-        ? { type: 'link', value: label, href: toHref(labelledUrl) }
-        : { type: 'link', value: url, href: toHref(url) },
-    )
+    const url = match[0]
+    parts.push({
+      type: 'link',
+      value: url,
+      href: url.startsWith('www.') ? `https://${url}` : url,
+    })
 
-    lastIndex = match.index + fullMatch.length
+    lastIndex = match.index + url.length
   }
 
   if (lastIndex < text.length) {
