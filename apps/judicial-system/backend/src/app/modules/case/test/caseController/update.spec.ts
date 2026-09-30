@@ -1874,6 +1874,12 @@ describe('CaseController - Update', () => {
 
   describe('appeal prosecutor assigned - queues APPEAL_PROSECUTOR_ASSIGNED', () => {
     const appealProsecutorId = uuid()
+    const validAppealProsecutor = {
+      id: appealProsecutorId,
+      role: UserRole.PROSECUTOR,
+      active: true,
+      institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+    }
 
     describe.each([
       CaseIndictmentRulingDecision.RULING,
@@ -1891,6 +1897,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce(
+          validAppealProsecutor,
+        )
         ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
           updatedCase,
         )
@@ -1926,6 +1935,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce(
+          validAppealProsecutor,
+        )
         ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
           updatedCase,
         )
@@ -1961,6 +1973,9 @@ describe('CaseController - Update', () => {
       }
 
       beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce(
+          validAppealProsecutor,
+        )
         ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
           updatedCase,
         )
@@ -1981,6 +1996,66 @@ describe('CaseController - Update', () => {
             }),
           ]),
         )
+      })
+    })
+
+    describe('when assigned user is inactive', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+          ...validAppealProsecutor,
+          active: false,
+        })
+
+        then = await givenWhenThen(caseId, user, theCase, {
+          appealProsecutorId,
+        } as UpdateCaseDto)
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when assigned user is not a prosecutor', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+          ...validAppealProsecutor,
+          role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+        })
+
+        then = await givenWhenThen(caseId, user, theCase, {
+          appealProsecutorId,
+        } as UpdateCaseDto)
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when assigned user is not from Ríkissaksóknari', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+          ...validAppealProsecutor,
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+        })
+
+        then = await givenWhenThen(caseId, user, theCase, {
+          appealProsecutorId,
+        } as UpdateCaseDto)
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
       })
     })
   })
