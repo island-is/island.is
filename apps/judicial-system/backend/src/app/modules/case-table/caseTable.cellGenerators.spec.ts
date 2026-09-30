@@ -9,8 +9,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../repository'
-import type { CaseTableRowCase } from './caseTable.types'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
+import type { CaseTableRowCase } from './caseTable.types'
 
 describe('indictment ruling decision cell generators', () => {
   const user = { role: UserRole.PROSECUTOR } as User
