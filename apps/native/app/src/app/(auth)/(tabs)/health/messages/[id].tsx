@@ -116,7 +116,8 @@ export default function HealthMessageDetailScreen() {
     ? '/notifications/message/new'
     : '/health/messages/new'
   // Only the sheet clears the Android nav bar; in the tabs the tab bar does.
-  const androidSheetInset = isAndroid && inNotificationsSheet ? insets.bottom : 0
+  const androidSheetInset =
+    isAndroid && inNotificationsSheet ? insets.bottom : 0
 
   const res = useGetHealthConversationQuery({
     variables: { id },
