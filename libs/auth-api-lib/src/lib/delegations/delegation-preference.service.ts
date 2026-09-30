@@ -99,28 +99,52 @@ export class DelegationPreferenceService {
     }
 
     const live = await this.liveParties(toNationalId)
+    const sequelize = this.delegationPreferenceModel.sequelize
 
-    const favourites = await this.delegationPreferenceModel.count({
-      where: {
-        toNationalId,
-        isFavourite: true,
-        ...DelegationPreferenceService.scopeTo(live),
-      },
-    })
+    await sequelize?.transaction(async (transaction) => {
+      /**
+       * Counting and then writing is two statements, so without this two
+       * requests could both see room and both add one. The lock is keyed on the
+       * actor, so it only ever serialises one person's own favourites.
+       */
+      await sequelize.query('SELECT pg_advisory_xact_lock(hashtext(:key))', {
+        replacements: { key: `delegation_preference:${toNationalId}` },
+        type: QueryTypes.SELECT,
+        transaction,
+      })
 
-    if (favourites >= MAX_FAVOURITES) {
-      throw new BadRequestException(
-        `Cannot have more than ${MAX_FAVOURITES} favourite delegations`,
+      /**
+       * The party being starred is left out of the count, so re-starring one
+       * that is already a favourite stays idempotent at the cap rather than
+       * being refused.
+       */
+      const others = await this.delegationPreferenceModel.count({
+        where: {
+          toNationalId,
+          isFavourite: true,
+          fromNationalId: {
+            [Op.ne]: fromNationalId,
+            ...(live ? { [Op.in]: [...live] } : {}),
+          },
+        },
+        transaction,
+      })
+
+      if (others >= MAX_FAVOURITES) {
+        throw new BadRequestException(
+          `Cannot have more than ${MAX_FAVOURITES} favourite delegations`,
+        )
+      }
+
+      await this.delegationPreferenceModel.upsert(
+        { toNationalId, fromNationalId, isFavourite: true },
+        {
+          conflictFields: CONFLICT_COLUMNS,
+          fields: ['isFavourite'],
+          transaction,
+        },
       )
-    }
-
-    await this.delegationPreferenceModel.upsert(
-      { toNationalId, fromNationalId, isFavourite: true },
-      {
-        conflictFields: CONFLICT_COLUMNS,
-        fields: ['isFavourite'],
-      },
-    )
+    })
   }
 
   async recordUsage(
@@ -139,16 +163,26 @@ export class DelegationPreferenceService {
   }
 
   private async pruneRecent(toNationalId: string): Promise<void> {
+    /**
+     * Deleting by timestamp rather than by id: under READ COMMITTED the
+     * subquery runs against the snapshot taken when the statement started, so
+     * picking ids to drop could delete a row that a concurrent switch has just
+     * refreshed. A refreshed row carries a new timestamp and so falls outside
+     * the threshold instead.
+     */
     await this.delegationPreferenceModel.sequelize?.query(
       `DELETE FROM delegation_preference
          WHERE to_national_id = :toNationalId
            AND is_favourite = false
-           AND id NOT IN (
-             SELECT id FROM delegation_preference
-              WHERE to_national_id = :toNationalId
-                AND is_favourite = false
-              ORDER BY last_used_at DESC NULLS LAST
-              LIMIT :keep
+           AND last_used_at < (
+             SELECT min(last_used_at) FROM (
+               SELECT last_used_at FROM delegation_preference
+                WHERE to_national_id = :toNationalId
+                  AND is_favourite = false
+                  AND last_used_at IS NOT NULL
+                ORDER BY last_used_at DESC
+                LIMIT :keep
+             ) AS kept
            )`,
       {
         replacements: { toNationalId, keep: MAX_RECENT_ROWS },

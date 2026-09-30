@@ -27,7 +27,7 @@ describe('DelegationPreferenceService', () => {
     update: jest.Mock
     destroy: jest.Mock
     count: jest.Mock
-    sequelize: { query: jest.Mock }
+    sequelize: { query: jest.Mock; transaction: jest.Mock }
   }
   let index: { findAll: jest.Mock }
 
@@ -43,7 +43,10 @@ describe('DelegationPreferenceService', () => {
       update: jest.fn().mockResolvedValue([0]),
       destroy: jest.fn().mockResolvedValue(0),
       count: jest.fn().mockResolvedValue(0),
-      sequelize: { query: jest.fn().mockResolvedValue([]) },
+      sequelize: {
+        query: jest.fn().mockResolvedValue([]),
+        transaction: jest.fn((fn) => fn('tx')),
+      },
     }
     index = { findAll: jest.fn().mockResolvedValue([]) }
 
@@ -81,13 +84,9 @@ describe('DelegationPreferenceService', () => {
         service.setFavourite(ACTOR, PARTY, true),
       ).resolves.toBeUndefined()
 
-      expect(model.count).toHaveBeenCalledWith({
-        where: {
-          toNationalId: ACTOR,
-          isFavourite: true,
-          fromNationalId: { [Op.in]: [PARTY, OTHER_PARTY] },
-        },
-      })
+      expect(model.count.mock.calls[0][0].where.fromNationalId).toEqual(
+        expect.objectContaining({ [Op.in]: [PARTY, OTHER_PARTY] }),
+      )
       expect(model.upsert).toHaveBeenCalled()
     })
 
@@ -187,6 +186,29 @@ describe('DelegationPreferenceService', () => {
       expect(model.upsert).not.toHaveBeenCalled()
     })
 
+    it('takes a lock keyed on the actor, so two stars cannot both see room', async () => {
+      await service.setFavourite(ACTOR, PARTY, true)
+
+      const [sql, options] = model.sequelize.query.mock.calls[0]
+
+      expect(sql).toContain('pg_advisory_xact_lock')
+      expect(options.replacements.key).toContain(ACTOR)
+      expect(options.transaction).toBeDefined()
+      expect(model.count.mock.calls[0][0].transaction).toBeDefined()
+      expect(model.upsert.mock.calls[0][1].transaction).toBeDefined()
+    })
+
+    it('leaves the party being starred out of the count, so re-starring at the cap still works', async () => {
+      model.count.mockResolvedValue(4)
+
+      await service.setFavourite(ACTOR, PARTY, true)
+
+      expect(model.count.mock.calls[0][0].where.fromNationalId).toEqual(
+        expect.objectContaining({ [Op.ne]: PARTY }),
+      )
+      expect(model.upsert).toHaveBeenCalled()
+    })
+
     it('creates no row when unstarring something never starred', async () => {
       await service.setFavourite(ACTOR, OTHER_PARTY, false)
 
@@ -218,7 +240,6 @@ describe('DelegationPreferenceService', () => {
 
       expect(sql).toContain('DELETE FROM delegation_preference')
       expect(sql).toContain('is_favourite = false')
-      expect(sql).toContain('ORDER BY last_used_at DESC NULLS LAST')
       expect(options.replacements).toEqual({
         toNationalId: ACTOR,
         keep: expect.any(Number),
