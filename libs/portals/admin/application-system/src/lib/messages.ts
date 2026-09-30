@@ -339,13 +339,13 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationEditIcelandicToggle',
     defaultMessage: 'Breyta íslenskum textum',
   },
-  translationReferenceLabelDefault: {
-    id: 'admin-portal.application-system:translationReferenceLabelDefault',
-    defaultMessage: 'Sjálfgefið',
-  },
   translationReferenceLabelIcelandic: {
     id: 'admin-portal.application-system:translationReferenceLabelIcelandic',
     defaultMessage: 'Íslenska',
+  },
+  translationValueLabel: {
+    id: 'admin-portal.application-system:translationValueLabel',
+    defaultMessage: 'Þýðing',
   },
   translationStringsEmptyScreen: {
     id: 'admin-portal.application-system:translationStringsEmptyScreen',

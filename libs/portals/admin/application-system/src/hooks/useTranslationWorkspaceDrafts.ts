@@ -126,6 +126,7 @@ export const useTranslationWorkspaceDrafts = (
     editedValues,
     handleValueChange,
     getPersistedForLocale,
+    getPersistedValue,
     resolvePreviewString,
     clearEditedValues,
     clearSavedEditedValues,

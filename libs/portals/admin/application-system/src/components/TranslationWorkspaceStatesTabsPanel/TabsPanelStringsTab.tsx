@@ -28,6 +28,7 @@ export interface TabsPanelStringsTabProps {
   activeLocale: 'is' | 'en'
   onLocaleChange: (locale: 'is' | 'en') => void
   getPersistedForLocale: (messageKey: string) => string
+  getPersistedValue: (messageKey: string, locale: 'is' | 'en') => string
   onValueChange: (messageKey: string, value: string) => void
   showValidationErrors: boolean
   validationDescriptors: ValidationMessageDescriptor[]
@@ -50,6 +51,7 @@ export const TabsPanelStringsTab = ({
   activeLocale,
   onLocaleChange,
   getPersistedForLocale,
+  getPersistedValue,
   onValueChange,
   showValidationErrors,
   validationDescriptors,
@@ -72,20 +74,6 @@ export const TabsPanelStringsTab = ({
     stringsListScope === 'application' && applicationStringCount > 0
 
   const showMainList = canShowScreenList || canShowApplicationList
-
-  const getReferenceForDescriptor = (descriptor: MessageDescriptor) => {
-    if (activeLocale === 'en') {
-      const isEdited = editedValues.is[descriptor.id]
-      const isPersisted = persistedByKey[descriptor.id]?.valueIs
-      return isEdited || isPersisted || descriptor.defaultMessage || null
-    }
-    return descriptor.defaultMessage || null
-  }
-
-  const referenceLabel =
-    activeLocale === 'en'
-      ? formatMessage(m.translationReferenceLabelIcelandic)
-      : formatMessage(m.translationReferenceLabelDefault)
 
   const getSourceText = (descriptor: MessageDescriptor) => {
     return (
@@ -186,6 +174,7 @@ export const TabsPanelStringsTab = ({
               editedValues={editedValues}
               activeLocale={activeLocale}
               getPersistedForLocale={getPersistedForLocale}
+              getPersistedValue={getPersistedValue}
               onValueChange={onValueChange}
               formatMessage={formatMessage}
               persistedByKey={persistedByKey}
@@ -211,16 +200,26 @@ export const TabsPanelStringsTab = ({
                 {visibleValidationDescriptors.map((descriptor) => {
                   const draft = editedValues[activeLocale][descriptor.id]
                   const persisted = getPersistedForLocale(descriptor.id)
-                  const currentValue = draft ?? persisted
                   const isDirty = draft !== undefined && draft !== persisted
                   const sourceText = getSourceText(descriptor)
+                  const icelandicValue =
+                    editedValues.is[descriptor.id] ??
+                    getPersistedValue(descriptor.id, 'is') ??
+                    descriptor.defaultMessage ??
+                    ''
+                  const translationValue =
+                    editedValues.en[descriptor.id] ??
+                    getPersistedValue(descriptor.id, 'en') ??
+                    ''
 
                   return (
                     <TranslationDescriptorCard
                       key={descriptor.id}
                       formatMessage={formatMessage}
                       descriptor={descriptor}
-                      currentValue={currentValue}
+                      icelandicValue={icelandicValue}
+                      translationValue={translationValue}
+                      activeLocale={activeLocale}
                       isDirty={isDirty}
                       onValueChange={(value) =>
                         onValueChange(descriptor.id, value)
@@ -236,8 +235,6 @@ export const TabsPanelStringsTab = ({
                         m.translationValidationFieldSubtitle,
                         { field: descriptor.fieldPath },
                       )}
-                      referenceLabel={referenceLabel}
-                      referenceValue={getReferenceForDescriptor(descriptor)}
                       onGoogleTranslate={
                         showTranslateButtons && sourceText
                           ? () => onGoogleTranslate!(descriptor.id, sourceText)

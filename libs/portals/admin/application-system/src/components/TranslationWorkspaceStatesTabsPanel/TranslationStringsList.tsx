@@ -24,6 +24,7 @@ export interface TranslationStringsListProps {
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
   getPersistedForLocale: (messageKey: string) => string
+  getPersistedValue: (messageKey: string, locale: 'is' | 'en') => string
   onValueChange: (messageKey: string, value: string) => void
   formatMessage: FormatMessage
   persistedByKey: PersistedByKey
@@ -40,6 +41,7 @@ export const TranslationStringsList = ({
   editedValues,
   activeLocale,
   getPersistedForLocale,
+  getPersistedValue,
   onValueChange,
   formatMessage,
   persistedByKey,
@@ -48,20 +50,6 @@ export const TranslationStringsList = ({
   translatingIds,
   emptyMessage,
 }: TranslationStringsListProps) => {
-  const getReferenceForDescriptor = (descriptor: MessageDescriptor) => {
-    if (activeLocale === 'en') {
-      const isEdited = editedValues.is[descriptor.id]
-      const isPersisted = persistedByKey[descriptor.id]?.valueIs
-      return isEdited || isPersisted || descriptor.defaultMessage || null
-    }
-    return descriptor.defaultMessage || null
-  }
-
-  const referenceLabel =
-    activeLocale === 'en'
-      ? formatMessage(m.translationReferenceLabelIcelandic)
-      : formatMessage(m.translationReferenceLabelDefault)
-
   const getSourceText = (descriptor: MessageDescriptor) => {
     return (
       editedValues.is[descriptor.id] ||
@@ -92,8 +80,14 @@ export const TranslationStringsList = ({
 
   return (
     <>
-      {showTranslateButtons && (
-        <Box display="flex" alignItems="center" columnGap={1} marginBottom={1}>
+      {onGoogleTranslate && (
+        <Box
+          display="flex"
+          alignItems="center"
+          columnGap={1}
+          marginBottom={1}
+          style={{ visibility: showTranslateButtons ? 'visible' : 'hidden' }}
+        >
           <Button
             variant="text"
             type="button"
@@ -125,20 +119,28 @@ export const TranslationStringsList = ({
         {descriptors.map((descriptor) => {
           const draft = editedValues[activeLocale][descriptor.id]
           const persisted = getPersistedForLocale(descriptor.id)
-          const currentValue = draft ?? persisted
           const isDirty = draft !== undefined && draft !== persisted
           const sourceText = getSourceText(descriptor)
+          const icelandicValue =
+            editedValues.is[descriptor.id] ??
+            getPersistedValue(descriptor.id, 'is') ??
+            descriptor.defaultMessage ??
+            ''
+          const translationValue =
+            editedValues.en[descriptor.id] ??
+            getPersistedValue(descriptor.id, 'en') ??
+            ''
 
           return (
             <TranslationDescriptorCard
               key={descriptor.id}
               formatMessage={formatMessage}
               descriptor={descriptor}
-              currentValue={currentValue}
+              icelandicValue={icelandicValue}
+              translationValue={translationValue}
+              activeLocale={activeLocale}
               isDirty={isDirty}
               onValueChange={(value) => onValueChange(descriptor.id, value)}
-              referenceLabel={referenceLabel}
-              referenceValue={getReferenceForDescriptor(descriptor)}
               onGoogleTranslate={
                 showTranslateButtons && sourceText && onGoogleTranslate
                   ? () => onGoogleTranslate(descriptor.id, sourceText)

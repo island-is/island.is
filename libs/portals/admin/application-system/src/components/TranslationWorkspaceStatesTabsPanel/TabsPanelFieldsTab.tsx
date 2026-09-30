@@ -33,6 +33,7 @@ export interface TabsPanelFieldsTabProps {
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
   getPersistedForLocale: (messageKey: string) => string
+  getPersistedValue: (messageKey: string, locale: 'is' | 'en') => string
   onValueChange: (messageKey: string, value: string) => void
   validationDescriptorsByPath: Record<string, ValidationMessageDescriptor[]>
   fieldErrorOverrides: Set<string>
@@ -55,6 +56,7 @@ export const TabsPanelFieldsTab = ({
   editedValues,
   activeLocale,
   getPersistedForLocale,
+  getPersistedValue,
   onValueChange,
   validationDescriptorsByPath,
   fieldErrorOverrides,
@@ -68,22 +70,6 @@ export const TabsPanelFieldsTab = ({
   translatingIds,
   ownedNamespaces = [],
 }: TabsPanelFieldsTabProps) => {
-  const getReferenceForDescriptor = (descriptor: {
-    id: string
-    defaultMessage?: string | null
-  }) => {
-    if (activeLocale === 'en') {
-      const isEdited = editedValues.is[descriptor.id]
-      const isPersisted = persistedByKey[descriptor.id]?.valueIs
-      return isEdited || isPersisted || descriptor.defaultMessage || null
-    }
-    return descriptor.defaultMessage || null
-  }
-
-  const referenceLabel =
-    activeLocale === 'en'
-      ? formatMessage(m.translationReferenceLabelIcelandic)
-      : formatMessage(m.translationReferenceLabelDefault)
   const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
 
   const getSourceText = (descriptor: {
@@ -223,16 +209,26 @@ export const TabsPanelFieldsTab = ({
                 const descriptor = prop.descriptor
                 const draft = editedValues[activeLocale][descriptor.id]
                 const persisted = getPersistedForLocale(descriptor.id)
-                const currentValue = draft ?? persisted
                 const isDirty = draft !== undefined && draft !== persisted
                 const sourceText = getSourceText(descriptor)
+                const icelandicValue =
+                  editedValues.is[descriptor.id] ??
+                  getPersistedValue(descriptor.id, 'is') ??
+                  descriptor.defaultMessage ??
+                  ''
+                const translationValue =
+                  editedValues.en[descriptor.id] ??
+                  getPersistedValue(descriptor.id, 'en') ??
+                  ''
 
                 return (
                   <TranslationDescriptorCard
                     key={`${prop.role}-${descriptor.id}`}
                     formatMessage={formatMessage}
                     descriptor={descriptor}
-                    currentValue={currentValue}
+                    icelandicValue={icelandicValue}
+                    translationValue={translationValue}
+                    activeLocale={activeLocale}
                     isDirty={isDirty}
                     onValueChange={(value) =>
                       onValueChange(descriptor.id, value)
@@ -243,8 +239,6 @@ export const TabsPanelFieldsTab = ({
                         variant: prop.role === 'error' ? 'rose' : 'blue',
                       },
                     ]}
-                    referenceLabel={referenceLabel}
-                    referenceValue={getReferenceForDescriptor(descriptor)}
                     onGoogleTranslate={
                       showTranslateButtons && sourceText
                         ? () => onGoogleTranslate(descriptor.id, sourceText)

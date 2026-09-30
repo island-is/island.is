@@ -79,6 +79,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
     editedValues,
     handleValueChange,
     getPersistedForLocale,
+    getPersistedValue,
     clearEditedValues,
     clearSavedEditedValues,
     hasUnsavedChanges,
@@ -216,15 +217,12 @@ export const SharedNamespaceTranslationWorkspace = () => {
             editedValues={editedValues}
             activeLocale={activeLocale}
             getPersistedForLocale={getPersistedForLocale}
+            getPersistedValue={getPersistedValue}
             onValueChange={handleValueChange}
             formatMessage={formatMessage}
             persistedByKey={persistedByKey}
-            onGoogleTranslate={
-              activeLocale === 'en' ? handleGoogleTranslate : undefined
-            }
-            onGoogleTranslateAll={
-              activeLocale === 'en' ? handleGoogleTranslateAll : undefined
-            }
+            onGoogleTranslate={handleGoogleTranslate}
+            onGoogleTranslateAll={handleGoogleTranslateAll}
             translatingIds={translatingIds}
             emptyMessage={formatMessage(m.sharedTranslationNamespaceEmpty)}
           />

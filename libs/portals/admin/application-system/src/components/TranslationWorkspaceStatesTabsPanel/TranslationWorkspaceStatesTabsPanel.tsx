@@ -35,6 +35,7 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
   activeLocale: 'is' | 'en'
   onLocaleChange: (locale: 'is' | 'en') => void
   getPersistedForLocale: (messageKey: string) => string
+  getPersistedValue: (messageKey: string, locale: 'is' | 'en') => string
   onValueChange: (messageKey: string, value: string) => void
   showValidationErrors: boolean
   validationDescriptors: ValidationMessageDescriptor[]
@@ -71,6 +72,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   activeLocale,
   onLocaleChange,
   getPersistedForLocale,
+  getPersistedValue,
   onValueChange,
   showValidationErrors,
   validationDescriptors,
@@ -279,6 +281,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
             activeLocale={activeLocale}
             onLocaleChange={onLocaleChange}
             getPersistedForLocale={getPersistedForLocale}
+            getPersistedValue={getPersistedValue}
             onValueChange={onValueChange}
             showValidationErrors={showValidationErrors}
             validationDescriptors={validationDescriptors}
@@ -296,6 +299,7 @@ export const TranslationWorkspaceStatesTabsPanel = ({
             editedValues={editedValues}
             activeLocale={activeLocale}
             getPersistedForLocale={getPersistedForLocale}
+            getPersistedValue={getPersistedValue}
             onValueChange={onValueChange}
             validationDescriptorsByPath={validationDescriptorsByPath}
             fieldErrorOverrides={fieldErrorOverrides}

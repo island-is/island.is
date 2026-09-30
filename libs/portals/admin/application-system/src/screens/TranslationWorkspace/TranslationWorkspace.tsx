@@ -49,6 +49,7 @@ export const TranslationWorkspace = () => {
     editedValues,
     handleValueChange,
     getPersistedForLocale,
+    getPersistedValue,
     resolvePreviewString,
     clearEditedValues,
     clearSavedEditedValues,
@@ -188,6 +189,7 @@ export const TranslationWorkspace = () => {
         activeLocale={activeLocale}
         onLocaleChange={setActiveLocale}
         getPersistedForLocale={getPersistedForLocale}
+        getPersistedValue={getPersistedValue}
         onValueChange={handleValueChange}
         showValidationErrors={showValidationErrors}
         validationDescriptors={validationDescriptors}
@@ -201,12 +203,8 @@ export const TranslationWorkspace = () => {
         onToggleFieldError={handleToggleFieldError}
         onSetPreviewFieldValue={handleSetPreviewFieldValue}
         onActiveTabChange={handleFieldsTabChange}
-        onGoogleTranslate={
-          activeLocale === 'en' ? handleGoogleTranslate : undefined
-        }
-        onGoogleTranslateAll={
-          activeLocale === 'en' ? handleGoogleTranslateAll : undefined
-        }
+        onGoogleTranslate={handleGoogleTranslate}
+        onGoogleTranslateAll={handleGoogleTranslateAll}
         translatingIds={translatingIds}
         ownedNamespaces={ownedNamespaces}
       />

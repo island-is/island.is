@@ -19,13 +19,13 @@ export interface DescriptorCardTag {
 
 export interface TranslationDescriptorCardProps {
   descriptor: MessageDescriptor
-  currentValue: string
+  icelandicValue: string
+  translationValue: string
+  activeLocale: 'is' | 'en'
   isDirty: boolean
   onValueChange: (value: string) => void
   tags?: DescriptorCardTag[]
   subtitle?: string
-  referenceLabel?: string
-  referenceValue?: string | null
   onGoogleTranslate?: () => void
   isTranslating?: boolean
   formatMessage: FormatMessage
@@ -33,17 +33,18 @@ export interface TranslationDescriptorCardProps {
 
 export const TranslationDescriptorCard = ({
   descriptor,
-  currentValue,
+  icelandicValue,
+  translationValue,
+  activeLocale,
   isDirty,
   onValueChange,
   tags,
   subtitle,
-  referenceLabel,
-  referenceValue,
   onGoogleTranslate,
   isTranslating,
   formatMessage,
 }: TranslationDescriptorCardProps) => {
+  const isTextarea = (descriptor.defaultMessage?.length ?? 0) > 80
   return (
     <Box
       marginBottom={3}
@@ -78,21 +79,36 @@ export const TranslationDescriptorCard = ({
         </Box>
       )}
 
-      <Box marginBottom={1}>
-        <Text variant="small" color="dark400">
-          {referenceLabel ?? 'Default'}:{' '}
-          {referenceValue ?? descriptor.defaultMessage ?? '—'}
-        </Text>
+      <Box
+        marginBottom={2}
+        style={activeLocale !== 'is' ? { pointerEvents: 'none' } : undefined}
+      >
+        <Input
+          name={`translation-${descriptor.id}-is`}
+          label={formatMessage(m.translationReferenceLabelIcelandic)}
+          size="sm"
+          value={icelandicValue}
+          onChange={(e) => onValueChange(e.target.value)}
+          readOnly={activeLocale !== 'is'}
+          textarea={isTextarea}
+          rows={3}
+        />
       </Box>
 
-      <Input
-        name={`translation-${descriptor.id}`}
-        size="sm"
-        value={currentValue}
-        onChange={(e) => onValueChange(e.target.value)}
-        textarea={(descriptor.defaultMessage?.length ?? 0) > 80}
-        rows={3}
-      />
+      <Box
+        style={activeLocale !== 'en' ? { pointerEvents: 'none' } : undefined}
+      >
+        <Input
+          name={`translation-${descriptor.id}-en`}
+          label={formatMessage(m.translationValueLabel)}
+          size="sm"
+          value={translationValue}
+          onChange={(e) => onValueChange(e.target.value)}
+          readOnly={activeLocale !== 'en'}
+          textarea={isTextarea}
+          rows={3}
+        />
+      </Box>
 
       {onGoogleTranslate && (
         <Box marginTop={1}>
