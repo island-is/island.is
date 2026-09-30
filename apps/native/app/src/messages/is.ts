@@ -1148,7 +1148,7 @@ export const is = {
   'health.prescriptions.renewalBlockedOther': 'Óþekkt ástæða',
   'health.prescriptions.renewalModal.title': 'Beiðni um endurnýjun á lyfi',
   'health.prescriptions.renewalModal.description':
-    'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
+    'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112. Þú getur stillt hvernig þú vilt fá tilkynningar undir <link>Stillingar</link>.',
   'health.prescriptions.renewalModal.selectRecipient': 'Sendist til',
   'health.prescriptions.renewalModal.medicineName': 'Heiti lyfs',
   'health.prescriptions.renewalModal.usedFor': 'Notað við',

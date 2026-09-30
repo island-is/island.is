@@ -1160,7 +1160,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalBlockedOther': 'Unknown reason',
   'health.prescriptions.renewalModal.title': 'Prescription renewal request',
   'health.prescriptions.renewalModal.description':
-    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
+    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112. You can choose how you receive notifications under <link>Settings</link>.',
   'health.prescriptions.renewalModal.selectRecipient': 'Send to',
   'health.prescriptions.renewalModal.medicineName': 'Medication name',
   'health.prescriptions.renewalModal.usedFor': 'Used for',

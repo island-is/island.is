@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Alert, Button, Select, Typography } from '@/ui'
+import { SettingsLink } from '@/components/settings-link'
 import { toast, ToastHost } from '@/components/toast'
 import {
   useGetPrescriptionRenewalTargetsQuery,
@@ -169,9 +170,14 @@ export default function RenewPrescriptionScreen() {
             weight="300"
             style={{ marginBottom: theme.spacing[1] }}
           >
-            {intl.formatMessage({
-              id: 'health.prescriptions.renewalModal.description',
-            })}
+            <FormattedMessage
+              id="health.prescriptions.renewalModal.description"
+              values={{
+                link: (chunks: React.ReactNode[]) => (
+                  <SettingsLink variant="body2">{chunks}</SettingsLink>
+                ),
+              }}
+            />
           </Typography>
 
           {/* Nothing stands here while the targets load. Once they are in:

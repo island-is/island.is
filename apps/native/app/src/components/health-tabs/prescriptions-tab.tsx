@@ -13,6 +13,7 @@ import { Typography } from '@/ui'
 import { NetworkStatus } from '@apollo/client'
 import { useLocale } from '../../hooks/use-locale'
 import { PrescriptionCard } from '../prescription-card'
+import { SettingsLink } from '../settings-link'
 import { EmptyComponent } from './shared'
 
 export function PrescriptionsTab({ initial }: { initial?: boolean }) {
@@ -64,15 +65,7 @@ export function PrescriptionsTab({ initial }: { initial?: boolean }) {
               id="health.prescriptions.description"
               values={{
                 link: (chunks: React.ReactNode[]) => (
-                  <Typography
-                    weight="600"
-                    color={theme.color.blue400}
-                    style={{ textDecorationLine: 'underline' }}
-                    accessibilityRole="link"
-                    onPress={() => router.navigate('/settings')}
-                  >
-                    {chunks}
-                  </Typography>
+                  <SettingsLink>{chunks}</SettingsLink>
                 ),
               }}
             />
