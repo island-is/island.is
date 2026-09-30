@@ -329,11 +329,11 @@ export const m = defineMessages({
   },
   translationStringsScopeScreen: {
     id: 'admin-portal.application-system:translationStringsScopeScreen',
-    defaultMessage: 'Texti á þessum skjá',
+    defaultMessage: 'Textar á skjá',
   },
   translationStringsScopeApplication: {
     id: 'admin-portal.application-system:translationStringsScopeApplication',
-    defaultMessage: 'Texti í allri umsókninni',
+    defaultMessage: 'Allir textar í umsókn',
   },
   translationEditIcelandicToggle: {
     id: 'admin-portal.application-system:translationEditIcelandicToggle',

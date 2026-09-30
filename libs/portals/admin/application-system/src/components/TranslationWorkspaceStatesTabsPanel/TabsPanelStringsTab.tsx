@@ -1,10 +1,6 @@
 import { useMemo } from 'react'
-import {
-  Box,
-  Button,
-  Text,
-  ToggleSwitchButton,
-} from '@island.is/island-ui/core'
+import cn from 'classnames'
+import { Box, Text, ToggleSwitchButton } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
@@ -104,25 +100,63 @@ export const TabsPanelStringsTab = ({
     <Box className={styles.tabsPanelScroll}>
       <Box className={styles.tabsPanelInner}>
         <Box marginBottom={3}>
-          <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
-            <Button
+          <Box
+            role="group"
+            background="blue100"
+            borderColor="blue100"
+            borderWidth="large"
+            className={styles.scopeToggleList}
+          >
+            <Box
+              component="button"
               type="button"
-              size="small"
-              variant={stringsListScope === 'screen' ? 'primary' : 'ghost'}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              className={cn(styles.scopeToggleOption, {
+                [styles.scopeToggleOptionSelected]:
+                  stringsListScope === 'screen',
+              })}
               onClick={() => onStringsListScopeChange('screen')}
               aria-pressed={stringsListScope === 'screen'}
             >
-              {formatMessage(m.translationStringsScopeScreen)}
-            </Button>
-            <Button
+              <Text
+                variant="small"
+                fontWeight={
+                  stringsListScope === 'screen' ? 'semiBold' : 'light'
+                }
+                color={stringsListScope === 'screen' ? 'blue400' : 'dark400'}
+                truncate
+              >
+                {formatMessage(m.translationStringsScopeScreen)}
+              </Text>
+            </Box>
+            <Box
+              component="button"
               type="button"
-              size="small"
-              variant={stringsListScope === 'application' ? 'primary' : 'ghost'}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              className={cn(styles.scopeToggleOption, {
+                [styles.scopeToggleOptionSelected]:
+                  stringsListScope === 'application',
+              })}
               onClick={() => onStringsListScopeChange('application')}
               aria-pressed={stringsListScope === 'application'}
             >
-              {formatMessage(m.translationStringsScopeApplication)}
-            </Button>
+              <Text
+                variant="small"
+                fontWeight={
+                  stringsListScope === 'application' ? 'semiBold' : 'light'
+                }
+                color={
+                  stringsListScope === 'application' ? 'blue400' : 'dark400'
+                }
+                truncate
+              >
+                {formatMessage(m.translationStringsScopeApplication)}
+              </Text>
+            </Box>
           </Box>
         </Box>
 

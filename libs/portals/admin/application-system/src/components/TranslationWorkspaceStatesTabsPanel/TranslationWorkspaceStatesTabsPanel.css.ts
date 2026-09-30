@@ -14,6 +14,53 @@ export const tabsPanelRoot = style({
   background: theme.color.white,
 })
 
+export const scopeToggleList = style({
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  width: '100%',
+  height: `${theme.spacing[5]}px`,
+  borderRadius: theme.border.radius.standard,
+})
+
+const scopeToggleBorder = theme.border.width.large
+
+export const scopeToggleOption = style({
+  flex: '1 1 0%',
+  minWidth: 0,
+  height: `calc(100% + ${scopeToggleBorder * 2}px)`,
+  marginTop: -scopeToggleBorder,
+  marginBottom: -scopeToggleBorder,
+  padding: `0 ${theme.spacing[2]}px`,
+  border: `${theme.border.width.standard}px solid ${theme.color.transparent}`,
+  borderRadius: theme.border.radius.standard,
+  cursor: 'pointer',
+  backgroundColor: 'transparent',
+  appearance: 'none',
+  selectors: {
+    '&:first-child': {
+      marginLeft: -scopeToggleBorder,
+    },
+    '&:last-child': {
+      marginRight: -scopeToggleBorder,
+    },
+    '&:hover': {
+      backgroundColor: theme.color.white,
+      borderColor: theme.color.blue100,
+    },
+  },
+})
+
+export const scopeToggleOptionSelected = style({
+  backgroundColor: theme.color.white,
+  borderColor: theme.color.blue200,
+  selectors: {
+    '&:hover': {
+      borderColor: theme.color.blue200,
+    },
+  },
+})
+
 export const tabList = style({
   display: 'flex',
   flexDirection: 'row',
