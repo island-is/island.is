@@ -188,4 +188,23 @@ describe('getImpactChain', () => {
     expect(moved('2026-11-15')).toBeUndefined()
     expect(moved('2027-01-01')).toBe('2026-12-01')
   })
+
+  it('checks a scheduled repeal against the date the change is saved with', () => {
+    // Saved before the earliest date allowed now, so it will be moved to it
+    const change = amend('a', '2026-10-01')
+    const scheduledRepeal = {
+      ...scheduled('2026-10-02'),
+      effect: 'repeal',
+    } as RegulationHistoryItem
+
+    expect(
+      getImpactChain({
+        impact: change,
+        impacts: [change],
+        history: [scheduledRepeal],
+        defaultMinDate,
+        today,
+      }).repealedOn,
+    ).toBe('2026-10-02')
+  })
 })

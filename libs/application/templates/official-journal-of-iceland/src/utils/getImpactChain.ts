@@ -89,8 +89,12 @@ export const getImpactChain = ({
     .filter((date): date is string => !!date)
     .reduce((min, date) => laterOf(min, new Date(date)), defaultMinDate)
 
-  // A scheduled repeal blocks an existing change if the picked date is after it
-  const ownDate = selectedDate ?? impact.date
+  // A scheduled repeal blocks an existing change if the date it will be
+  // saved with is after it: the picked date, but no earlier than minDate
+  const pickedDate = selectedDate ?? impact.date
+  const ownDate = pickedDate
+    ? toISODate(laterOf(new Date(pickedDate), minDate))
+    : undefined
   const repealedOn =
     impact.type === 'amend'
       ? [

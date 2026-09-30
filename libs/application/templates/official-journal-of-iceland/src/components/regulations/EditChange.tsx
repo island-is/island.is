@@ -87,8 +87,11 @@ export const EditChange = (props: EditChangeProps) => {
 
   const isNewImpact = !change.title && !change.text
   const isSelf = change.name === 'self'
-  const { regulation: currentRegulation, loading: currentLoading } =
-    useRegulationFetch(isSelf ? undefined : change.name)
+  const {
+    regulation: currentRegulation,
+    loading: currentLoading,
+    done: currentDone,
+  } = useRegulationFetch(isSelf ? undefined : change.name)
 
   const [activeDate, setActiveDate] = useState<Date | undefined>(
     change.date ? new Date(change.date) : undefined,
@@ -138,7 +141,11 @@ export const EditChange = (props: EditChangeProps) => {
     // Without the dated text a change would drop the scheduled ones
     return needsDatedText ? datedRegulation : currentRegulation
   }, [previous, needsDatedText, datedRegulation, currentRegulation])
+  // Without the regulation's history, scheduled changes and repeals can't be
+  // checked, so a change isn't saved without it
+  const currentFailed = !isSelf && currentDone && !currentRegulation
   const datedFailed = needsDatedText && datedDone && !datedRegulation
+  const fetchFailed = currentFailed || datedFailed
 
   const [activeTitle, setActiveTitle] = useState(change.title || '')
   const [activeText, setActiveText] = useState(change.text || '')
@@ -245,7 +252,8 @@ export const EditChange = (props: EditChangeProps) => {
   }
 
   // Don't save a diff against a base that hasn't loaded
-  const baseReady = isSelf || (!regulationLoading && !!baseRegulation)
+  const baseReady =
+    isSelf || (!regulationLoading && !!currentRegulation && !!baseRegulation)
 
   // The base regulation text to use as the diff reference.
   // This is the original text before the user's edits.
@@ -303,14 +311,18 @@ export const EditChange = (props: EditChangeProps) => {
               upcoming={upcoming}
               targetName={change.name}
             />
-            {datedFailed && !readOnly && (
+            {fetchFailed && !readOnly && (
               <Box marginBottom={4}>
                 <AlertMessage
                   type="error"
                   title="Ekki tókst að sækja reglugerðina"
-                  message={`Ekki tókst að sækja texta reglugerðarinnar eins og hann verður ${formatDate(
-                    minDate,
-                  )}, með þeim breytingum sem þegar hafa verið birtar. Reyndu aftur síðar.`}
+                  message={
+                    datedFailed
+                      ? `Ekki tókst að sækja texta reglugerðarinnar eins og hann verður ${formatDate(
+                          minDate,
+                        )}, með þeim breytingum sem þegar hafa verið birtar. Reyndu aftur síðar.`
+                      : 'Ekki tókst að sækja reglugerðina og væntanlegar breytingar á henni. Reyndu aftur síðar.'
+                  }
                 />
               </Box>
             )}
@@ -337,7 +349,7 @@ export const EditChange = (props: EditChangeProps) => {
                 Wait for both the fetch AND the useEffect that populates the
                 form fields — the HTMLEditor captures its value at mount time
                 via a ref, so it must not render before data is ready. */}
-            {datedFailed ? null : !initialized || regulationLoading ? (
+            {fetchFailed ? null : !initialized || regulationLoading ? (
               <Box
                 display="flex"
                 justifyContent="center"
