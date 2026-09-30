@@ -325,9 +325,7 @@ export const serviceSetup = (services: {
         dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
         staging:
           'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
-        // TODO: Restore the production Elfur URL when invoice data can be exposed in prod.
-        // prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
-        prod: 'https://todo.invalid',
+        prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
       },
       ELFUR_BASE_IDS_URL: {
         dev: 'https://identity-server.staging01.devland.is',
