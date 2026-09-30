@@ -380,26 +380,6 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationStringsListEmpty',
     defaultMessage: 'Engir þýðanlegir textar fundust.',
   },
-  translationFieldPropertyTitle: {
-    id: 'admin-portal.application-system:translationFieldPropertyTitle',
-    defaultMessage: 'Titill',
-  },
-  translationFieldPropertyDescription: {
-    id: 'admin-portal.application-system:translationFieldPropertyDescription',
-    defaultMessage: 'Lýsing',
-  },
-  translationFieldPropertyLabel: {
-    id: 'admin-portal.application-system:translationFieldPropertyLabel',
-    defaultMessage: 'Merking',
-  },
-  translationFieldPropertyError: {
-    id: 'admin-portal.application-system:translationFieldPropertyError',
-    defaultMessage: 'Villuskilaboð',
-  },
-  translationFieldNoProperties: {
-    id: 'admin-portal.application-system:translationFieldNoProperties',
-    defaultMessage: 'Engir þýðanlegir eiginleikar fyrir þennan reit.',
-  },
   translationReview: {
     id: 'admin-portal.application-system:translationReview',
     defaultMessage: 'Samþykkja',
@@ -421,10 +401,6 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationStringsTab',
     defaultMessage: 'Textar',
   },
-  translationFieldsTab: {
-    id: 'admin-portal.application-system:translationFieldsTab',
-    defaultMessage: 'Reitir',
-  },
   translationWorkspaceTabsAriaLabel: {
     id: 'admin-portal.application-system:translationWorkspaceTabsAriaLabel',
     defaultMessage: 'Flokkar þýðingaborðs',
@@ -436,26 +412,6 @@ export const m = defineMessages({
   translationStringsColumn: {
     id: 'admin-portal.application-system:translationStringsColumn',
     defaultMessage: 'Strengir',
-  },
-  translationFieldAutofill: {
-    id: 'admin-portal.application-system:translationFieldAutofill',
-    defaultMessage: 'Sjálfvirk útfylling',
-  },
-  translationFieldShowError: {
-    id: 'admin-portal.application-system:translationFieldShowError',
-    defaultMessage: 'Birta villu',
-  },
-  translationFieldNoFields: {
-    id: 'admin-portal.application-system:translationFieldNoFields',
-    defaultMessage: 'Engir reitir á þessum skjá',
-  },
-  translationFieldPrevious: {
-    id: 'admin-portal.application-system:translationFieldPrevious',
-    defaultMessage: 'Fyrri',
-  },
-  translationFieldNext: {
-    id: 'admin-portal.application-system:translationFieldNext',
-    defaultMessage: 'Næsti',
   },
 
   // Filters

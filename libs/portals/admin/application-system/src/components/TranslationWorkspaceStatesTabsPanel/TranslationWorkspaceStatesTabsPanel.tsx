@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
   MessageDescriptor,
-  ResolvePreviewString,
   ScreenIntrospection,
   SidebarNavLocation,
   TemplateStateNav,
@@ -14,13 +13,10 @@ import type {
 import { m } from '../../lib/messages'
 import { TranslationWorkspaceStatesNav } from '../TranslationWorkspaceStatesNav/TranslationWorkspaceStatesNav'
 import {
-  FIELDS_TAB_ID,
   STATES_TAB_ID,
   STRINGS_TAB_ID,
-  flattenFocusableFields,
 } from '../../utils/translationWorkspaceNavPanel'
 import { TabsPanelStringsTab } from './TabsPanelStringsTab'
-import { TabsPanelFieldsTab } from './TabsPanelFieldsTab'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
 export interface TranslationWorkspaceStatesTabsPanelProps {
@@ -39,14 +35,6 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
   showValidationErrors: boolean
   validationDescriptors: ValidationMessageDescriptor[]
   persistedByKey: Record<string, { valueIs: string; valueEn?: string | null }>
-  previewScreens: ScreenIntrospection[]
-  resolvePreviewString: ResolvePreviewString
-  validationDescriptorsByPath: Record<string, ValidationMessageDescriptor[]>
-  focusedFieldId: string | null
-  onFocusedFieldChange: (fieldId: string | null) => void
-  fieldErrorOverrides: Set<string>
-  onToggleFieldError: (fieldId: string) => void
-  onSetPreviewFieldValue: (fieldId: string, value: string) => void
   onActiveTabChange?: (tab: string) => void
   onGoogleTranslate?: (descriptorId: string, sourceText: string) => void
   onGoogleTranslateAll?: (
@@ -75,13 +63,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
   showValidationErrors,
   validationDescriptors,
   persistedByKey,
-  previewScreens,
-  validationDescriptorsByPath,
-  focusedFieldId,
-  onFocusedFieldChange,
-  fieldErrorOverrides,
-  onToggleFieldError,
-  onSetPreviewFieldValue,
   onActiveTabChange,
   onGoogleTranslate,
   onGoogleTranslateAll,
@@ -115,26 +96,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
     onActiveTabChange?.(tab)
   }
 
-  const focusableFields = useMemo(
-    () => flattenFocusableFields(previewScreens),
-    [previewScreens],
-  )
-
-  const focusedIndex = useMemo(() => {
-    if (!focusedFieldId) return 0
-    const idx = focusableFields.findIndex((f) => f.id === focusedFieldId)
-    return idx >= 0 ? idx : 0
-  }, [focusedFieldId, focusableFields])
-
-  useEffect(() => {
-    if (
-      focusableFields.length > 0 &&
-      (!focusedFieldId || !focusableFields.some((f) => f.id === focusedFieldId))
-    ) {
-      onFocusedFieldChange(focusableFields[0].id)
-    }
-  }, [focusableFields, focusedFieldId, onFocusedFieldChange])
-
   const totalStringCount =
     stringsTabDescriptors.length +
     (showValidationErrors ? validationDescriptors.length : 0)
@@ -149,13 +110,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
       label: withCount(
         formatMessage(m.translationStringsTab),
         totalStringCount,
-      ),
-    },
-    {
-      id: FIELDS_TAB_ID,
-      label: withCount(
-        formatMessage(m.translationFieldsTab),
-        focusableFields.length,
       ),
     },
   ]
@@ -287,27 +241,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
             onGoogleTranslate={onGoogleTranslate}
             onGoogleTranslateAll={onGoogleTranslateAll}
             translatingIds={translatingIds}
-          />
-        )}
-        {activeTab === FIELDS_TAB_ID && (
-          <TabsPanelFieldsTab
-            focusableFields={focusableFields}
-            focusedIndex={focusedIndex}
-            editedValues={editedValues}
-            activeLocale={activeLocale}
-            getPersistedValue={getPersistedValue}
-            onValueChange={onValueChange}
-            validationDescriptorsByPath={validationDescriptorsByPath}
-            fieldErrorOverrides={fieldErrorOverrides}
-            onToggleFieldError={onToggleFieldError}
-            onSetPreviewFieldValue={onSetPreviewFieldValue}
-            onFocusedFieldChange={onFocusedFieldChange}
-            formatMessage={formatMessage}
-            persistedByKey={persistedByKey}
-            onGoogleTranslate={onGoogleTranslate}
-            onGoogleTranslateAll={onGoogleTranslateAll}
-            translatingIds={translatingIds}
-            ownedNamespaces={ownedNamespaces}
           />
         )}
       </Box>

@@ -109,9 +109,6 @@ export const TranslationWorkspace = () => {
     fieldErrorOverrides,
     previewFieldValues,
     handleToggleValidationErrors,
-    handleFocusedFieldChange,
-    handleSetPreviewFieldValue,
-    handleToggleFieldError,
     handleFieldsTabChange,
   } = useTranslationWorkspacePreviewUi()
 
@@ -192,14 +189,6 @@ export const TranslationWorkspace = () => {
         showValidationErrors={showValidationErrors}
         validationDescriptors={validationDescriptors}
         persistedByKey={persistedByKey}
-        previewScreens={previewScreens}
-        resolvePreviewString={resolvePreviewString}
-        validationDescriptorsByPath={validationDescriptorsByPath}
-        focusedFieldId={focusedFieldId}
-        onFocusedFieldChange={handleFocusedFieldChange}
-        fieldErrorOverrides={fieldErrorOverrides}
-        onToggleFieldError={handleToggleFieldError}
-        onSetPreviewFieldValue={handleSetPreviewFieldValue}
         onActiveTabChange={handleFieldsTabChange}
         onGoogleTranslate={handleGoogleTranslate}
         onGoogleTranslateAll={handleGoogleTranslateAll}
