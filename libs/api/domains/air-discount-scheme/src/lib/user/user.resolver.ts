@@ -11,7 +11,9 @@ import { AuditService } from '@island.is/nest/audit'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 
+import { MostFlownRoute } from '../models/mostFlownRoute.model'
 import { User } from '../models/user.model'
+import { UserService } from './user.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @Resolver(() => User)
@@ -19,7 +21,16 @@ export class UserResolver {
   constructor(
     private readonly nationalRegistryV3ClientService: NationalRegistryV3ClientService,
     private readonly auditService: AuditService,
+    private readonly userService: UserService,
   ) {}
+
+  @ResolveField('mostFlownRoute', () => MostFlownRoute, { nullable: true })
+  resolveMostFlownRoute(
+    @Parent() user: User,
+    @CurrentUser() auth: AuthUser,
+  ): Promise<MostFlownRoute | null> {
+    return this.userService.getMostFlownRoute(auth, user.nationalId)
+  }
 
   @ResolveField('address', () => Address, { nullable: true })
   async resolveAddress(

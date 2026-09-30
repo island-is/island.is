@@ -7,11 +7,13 @@ import { AuditService } from '@island.is/nest/audit'
 
 import { User } from '../models/user.model'
 import { UserResolver } from './user.resolver'
+import { UserService } from './user.service'
 
 describe('ApiDomains: UserResolver', () => {
   let resolver: UserResolver
   const getAddress = jest.fn()
   const audit = jest.fn()
+  const getMostFlownRoute = jest.fn()
 
   const auth: AuthUser = {
     authorization: '',
@@ -28,12 +30,14 @@ describe('ApiDomains: UserResolver', () => {
   beforeEach(async () => {
     getAddress.mockReset()
     audit.mockReset()
+    getMostFlownRoute.mockReset()
 
     const module = await Test.createTestingModule({
       providers: [
         UserResolver,
         { provide: NationalRegistryV3ClientService, useValue: { getAddress } },
         { provide: AuditService, useValue: { audit } },
+        { provide: UserService, useValue: { getMostFlownRoute } },
       ],
     }).compile()
 
@@ -92,5 +96,17 @@ describe('ApiDomains: UserResolver', () => {
     )
 
     expect(address).toBeNull()
+  })
+
+  it("delegates mostFlownRoute to the service with the parent's nationalId", async () => {
+    getMostFlownRoute.mockResolvedValue({ route: 'REK - AEY', count: 2 })
+
+    const route = await resolver.resolveMostFlownRoute(
+      fabUser('2222222229'),
+      auth,
+    )
+
+    expect(getMostFlownRoute).toHaveBeenCalledWith(auth, '2222222229')
+    expect(route).toEqual({ route: 'REK - AEY', count: 2 })
   })
 })

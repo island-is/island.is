@@ -14,6 +14,7 @@ import { FlightLegService } from './flight-leg/flight-leg.service'
 import { FlightLegAdminResolver } from './flight-leg-admin/flight-leg-admin.resolver'
 import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.service'
 import { UserResolver } from './user/user.resolver'
+import { UserService } from './user/user.service'
 
 @Module({
   providers: [
@@ -26,6 +27,7 @@ import { UserResolver } from './user/user.resolver'
     DiscountAdminResolver,
     DiscountAdminService,
     UserResolver,
+    UserService,
   ],
   imports: [
     AirDiscountSchemeClientModule,
