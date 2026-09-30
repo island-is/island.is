@@ -230,8 +230,7 @@ export class ZendeskService {
 
     try {
       const response = await this.withRetry(
-        () =>
-          axios.post(`${this.api}/tickets.json`, newTicket, this.params),
+        () => axios.post(`${this.api}/tickets.json`, newTicket, this.params),
         { retryDeadlocks: false },
       )
       const ticket = response.data?.ticket
