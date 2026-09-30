@@ -15,11 +15,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 /**
- * What an actor has chosen about the parties they can act for: which ones they
- * starred, and when they last switched to them. Both feed the "Veldu notanda"
- * screen, which lists favourites and recently used above the full list.
- *
- * Keyed on the two national ids alone rather than on a delegation row, because
+ * Keyed on the two national ids rather than on a delegation row, because
  * procuration and legal guardianship are served from RSK and the national
  * registry and never exist in the delegation table.
  */
@@ -30,7 +26,6 @@ import { ApiProperty } from '@nestjs/swagger'
   updatedAt: 'modified',
   indexes: [
     {
-      // Leading column serves the only read: everything for one actor.
       fields: ['to_national_id', 'from_national_id'],
       unique: true,
     },
@@ -49,7 +44,6 @@ export class DelegationPreference extends Model<
   @ApiProperty()
   id!: CreationOptional<string>
 
-  /** The actor who holds the delegation. */
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -57,7 +51,6 @@ export class DelegationPreference extends Model<
   @ApiProperty()
   toNationalId!: string
 
-  /** The party being represented. */
   @Column({
     type: DataType.STRING,
     allowNull: false,

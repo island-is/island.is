@@ -5,27 +5,19 @@ import { Op } from 'sequelize'
 import { DelegationPreferenceDto } from './dto/delegation-preference.dto'
 import { DelegationPreference } from './models/delegation-preference.model'
 
-/**
- * How many recently used parties a read returns. The picker shows fewer than
- * this; the surplus covers parties whose delegation has since been revoked and
- * which the screen therefore drops.
- */
+// More than the picker shows, to cover parties whose delegation has since been
+// revoked and which the screen drops.
 const MAX_RECENT = 10
 
-/**
- * Nothing here checks that a delegation actually exists (see the class comment),
- * so without a cap an actor could star arbitrarily many parties and grow both
- * the table and every subsequent read. Far above what anyone holds in practice.
- */
+// Nothing here checks that a delegation exists, so without a cap an actor could
+// star arbitrarily many parties.
 const MAX_FAVOURITES = 100
 
 /**
- * Favourites and last used, for the "Veldu notanda" screen.
- *
  * Deliberately knows nothing about which delegations actually exist: the screen
  * renders these against the delegation list it has already fetched, so a
- * preference for a delegation that has since been revoked simply never shows
- * up. That keeps reads to a single indexed query with no cross service calls.
+ * revoked one simply never shows up. That keeps reads to a single indexed query
+ * with no cross service calls.
  */
 @Injectable()
 export class DelegationPreferenceService {
@@ -34,11 +26,6 @@ export class DelegationPreferenceService {
     private readonly delegationPreferenceModel: typeof DelegationPreference,
   ) {}
 
-  /**
-   * Everything the picker can display and nothing more: the starred parties,
-   * and the most recently used ones. An actor who has switched between many
-   * parties over the years still reads a bounded number of rows.
-   */
   async findAll(toNationalId: string): Promise<DelegationPreferenceDto[]> {
     const attributes = ['fromNationalId', 'isFavourite', 'lastUsedAt'] as const
 
@@ -56,7 +43,6 @@ export class DelegationPreferenceService {
       }),
     ])
 
-    // A party can be both starred and recently used, and must appear once.
     const byNationalId = new Map<string, DelegationPreferenceDto>()
 
     for (const preference of [...favourites, ...recent]) {
@@ -76,8 +62,8 @@ export class DelegationPreferenceService {
     isFavourite: boolean,
   ): Promise<void> {
     if (!isFavourite) {
-      // Unstarring is not worth a row of its own. One that carries nothing else
-      // goes away; one that still records a use keeps that and loses the star.
+      // A row that carries nothing else goes away; one that still records a
+      // use keeps that and only loses the star.
       await this.delegationPreferenceModel.destroy({
         where: { toNationalId, fromNationalId, lastUsedAt: null },
       })
@@ -101,7 +87,7 @@ export class DelegationPreferenceService {
     }
 
     // Touches isFavourite only, so a concurrent switch cannot lose its
-    // lastUsedAt, and the whole write is one round trip.
+    // lastUsedAt.
     await this.delegationPreferenceModel.upsert(
       { toNationalId, fromNationalId, isFavourite: true },
       {
@@ -112,11 +98,8 @@ export class DelegationPreferenceService {
   }
 
   /**
-   * Called when the actor actually switches to a party. Leaves isFavourite
-   * alone — a row may already exist because the party is starred.
-   *
-   * On the login path, so it is deliberately a single statement: findOrCreate
-   * would open a transaction and then write the timestamp a second time.
+   * On the login path, so deliberately a single statement: findOrCreate would
+   * open a transaction and then write the timestamp a second time.
    */
   async recordUsage(
     toNationalId: string,
