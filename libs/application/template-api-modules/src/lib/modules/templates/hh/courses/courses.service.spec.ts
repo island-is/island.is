@@ -433,15 +433,21 @@ describe('CoursesService', () => {
 
     it('rolls back the created participants and creates no tickets when a write fails', async () => {
       zendesk.listCustomObjectRecordsByExternalIds.mockResolvedValueOnce([])
-      zendesk.upsertCustomObjectRecord.mockImplementation(async (key, record) => {
-        if (
-          key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant &&
-          record.external_id === externalId(OTHER_NATIONAL_ID)
-        ) {
-          throw new Error('write failed')
-        }
-        return { id: `${key}-record`, name: record.name, external_id: record.external_id }
-      })
+      zendesk.upsertCustomObjectRecord.mockImplementation(
+        async (key, record) => {
+          if (
+            key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant &&
+            record.external_id === externalId(OTHER_NATIONAL_ID)
+          ) {
+            throw new Error('write failed')
+          }
+          return {
+            id: `${key}-record`,
+            name: record.name,
+            external_id: record.external_id,
+          }
+        },
+      )
 
       await expect(service.submitApplication(createProps())).rejects.toThrow(
         TemplateApiError,
@@ -464,12 +470,18 @@ describe('CoursesService', () => {
           external_id: externalId(APPLICANT_NATIONAL_ID),
         },
       ])
-      zendesk.upsertCustomObjectRecord.mockImplementation(async (key, record) => {
-        if (key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant) {
-          throw new Error('write failed')
-        }
-        return { id: `${key}-record`, name: record.name, external_id: record.external_id }
-      })
+      zendesk.upsertCustomObjectRecord.mockImplementation(
+        async (key, record) => {
+          if (key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant) {
+            throw new Error('write failed')
+          }
+          return {
+            id: `${key}-record`,
+            name: record.name,
+            external_id: record.external_id,
+          }
+        },
+      )
 
       await expect(service.submitApplication(createProps())).rejects.toThrow(
         TemplateApiError,

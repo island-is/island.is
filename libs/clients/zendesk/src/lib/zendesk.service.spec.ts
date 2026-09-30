@@ -452,7 +452,9 @@ describe('zendeskService', () => {
             ? res(ctx.status(503), ctx.json(deadlock))
             : res(
                 ctx.status(200),
-                ctx.json({ custom_object_record: { id: '1', external_id: 'a' } }),
+                ctx.json({
+                  custom_object_record: { id: '1', external_id: 'a' },
+                }),
               )
         }),
       )
@@ -495,7 +497,10 @@ describe('zendeskService', () => {
       )
 
       const promise = zendeskService
-        .upsertCustomObjectRecord('participant', { name: 'A', external_id: 'a' })
+        .upsertCustomObjectRecord('participant', {
+          name: 'A',
+          external_id: 'a',
+        })
         .catch((e) => e)
       await jest.runAllTimersAsync()
 
@@ -515,7 +520,11 @@ describe('zendeskService', () => {
             : res(ctx.status(201), ctx.json({ ticket: { id: 5 } }))
         }),
       )
-      const input = { message: 'm', subject: 's', requester: { name: 'n', email: 'e@e.is' } }
+      const input = {
+        message: 'm',
+        subject: 's',
+        requester: { name: 'n', email: 'e@e.is' },
+      }
 
       const promise = zendeskService.createTicket(input)
       await jest.runAllTimersAsync()
