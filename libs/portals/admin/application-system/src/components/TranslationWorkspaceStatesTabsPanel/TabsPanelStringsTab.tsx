@@ -27,7 +27,6 @@ export interface TabsPanelStringsTabProps {
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
   onLocaleChange: (locale: 'is' | 'en') => void
-  getPersistedForLocale: (messageKey: string) => string
   getPersistedValue: (messageKey: string, locale: 'is' | 'en') => string
   onValueChange: (messageKey: string, value: string) => void
   showValidationErrors: boolean
@@ -50,7 +49,6 @@ export const TabsPanelStringsTab = ({
   editedValues,
   activeLocale,
   onLocaleChange,
-  getPersistedForLocale,
   getPersistedValue,
   onValueChange,
   showValidationErrors,
@@ -171,7 +169,6 @@ export const TabsPanelStringsTab = ({
               descriptors={visibleDescriptors}
               editedValues={editedValues}
               activeLocale={activeLocale}
-              getPersistedForLocale={getPersistedForLocale}
               getPersistedValue={getPersistedValue}
               onValueChange={onValueChange}
               formatMessage={formatMessage}
@@ -196,9 +193,6 @@ export const TabsPanelStringsTab = ({
                 </Box>
 
                 {visibleValidationDescriptors.map((descriptor) => {
-                  const draft = editedValues[activeLocale][descriptor.id]
-                  const persisted = getPersistedForLocale(descriptor.id)
-                  const isDirty = draft !== undefined && draft !== persisted
                   const sourceText = getSourceText(descriptor)
                   const icelandicValue =
                     editedValues.is[descriptor.id] ??
@@ -218,7 +212,6 @@ export const TabsPanelStringsTab = ({
                       icelandicValue={icelandicValue}
                       translationValue={translationValue}
                       activeLocale={activeLocale}
-                      isDirty={isDirty}
                       onValueChange={(value) =>
                         onValueChange(descriptor.id, value)
                       }

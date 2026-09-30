@@ -78,7 +78,6 @@ export const SharedNamespaceTranslationWorkspace = () => {
     setActiveLocale,
     editedValues,
     handleValueChange,
-    getPersistedForLocale,
     getPersistedValue,
     clearEditedValues,
     clearSavedEditedValues,
@@ -216,7 +215,6 @@ export const SharedNamespaceTranslationWorkspace = () => {
             descriptors={filteredDescriptors}
             editedValues={editedValues}
             activeLocale={activeLocale}
-            getPersistedForLocale={getPersistedForLocale}
             getPersistedValue={getPersistedValue}
             onValueChange={handleValueChange}
             formatMessage={formatMessage}

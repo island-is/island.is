@@ -27,11 +27,6 @@ export const useTranslationWorkspaceDrafts = (
     [persistedByKey],
   )
 
-  const getPersistedForLocale = useCallback(
-    (messageKey: string) => getPersistedValue(messageKey, activeLocale),
-    [getPersistedValue, activeLocale],
-  )
-
   const resolvePreviewString = useCallback(
     (messageKey: string, defaultMessage?: string | null) => {
       const draft = editedValues[activeLocale][messageKey]
@@ -125,7 +120,6 @@ export const useTranslationWorkspaceDrafts = (
     setActiveLocale,
     editedValues,
     handleValueChange,
-    getPersistedForLocale,
     getPersistedValue,
     resolvePreviewString,
     clearEditedValues,

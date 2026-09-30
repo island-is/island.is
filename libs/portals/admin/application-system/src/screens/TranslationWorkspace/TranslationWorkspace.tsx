@@ -48,7 +48,6 @@ export const TranslationWorkspace = () => {
     setActiveLocale,
     editedValues,
     handleValueChange,
-    getPersistedForLocale,
     getPersistedValue,
     resolvePreviewString,
     clearEditedValues,
@@ -188,7 +187,6 @@ export const TranslationWorkspace = () => {
         editedValues={editedValues}
         activeLocale={activeLocale}
         onLocaleChange={setActiveLocale}
-        getPersistedForLocale={getPersistedForLocale}
         getPersistedValue={getPersistedValue}
         onValueChange={handleValueChange}
         showValidationErrors={showValidationErrors}

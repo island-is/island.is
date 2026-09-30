@@ -23,7 +23,6 @@ export interface TranslationDescriptorCardProps {
   icelandicValue: string
   translationValue: string
   activeLocale: 'is' | 'en'
-  isDirty: boolean
   onValueChange: (value: string) => void
   tags?: DescriptorCardTag[]
   subtitle?: string
@@ -37,7 +36,6 @@ export const TranslationDescriptorCard = ({
   icelandicValue,
   translationValue,
   activeLocale,
-  isDirty,
   onValueChange,
   tags,
   subtitle,
@@ -53,24 +51,21 @@ export const TranslationDescriptorCard = ({
       borderRadius="large"
       style={{ backgroundColor: theme.color.dark100, border: 'none' }}
     >
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        alignItems="center"
-        columnGap={1}
-        marginBottom={1}
-      >
-        {tags?.map((tag, i) => (
-          <Tag key={i} variant={tag.variant} outlined={tag.outlined}>
-            {tag.label}
-          </Tag>
-        ))}
-        {isDirty && (
-          <Tag variant="blueberry" outlined>
-            Unsaved
-          </Tag>
-        )}
-      </Box>
+      {tags && tags.length > 0 && (
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          alignItems="center"
+          columnGap={1}
+          marginBottom={1}
+        >
+          {tags.map((tag, i) => (
+            <Tag key={i} variant={tag.variant} outlined={tag.outlined}>
+              {tag.label}
+            </Tag>
+          ))}
+        </Box>
+      )}
 
       {subtitle && (
         <Box marginBottom={1}>

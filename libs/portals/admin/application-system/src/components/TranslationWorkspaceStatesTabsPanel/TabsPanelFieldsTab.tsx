@@ -32,7 +32,6 @@ export interface TabsPanelFieldsTabProps {
   focusedIndex: number
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
-  getPersistedForLocale: (messageKey: string) => string
   getPersistedValue: (messageKey: string, locale: 'is' | 'en') => string
   onValueChange: (messageKey: string, value: string) => void
   validationDescriptorsByPath: Record<string, ValidationMessageDescriptor[]>
@@ -55,7 +54,6 @@ export const TabsPanelFieldsTab = ({
   focusedIndex,
   editedValues,
   activeLocale,
-  getPersistedForLocale,
   getPersistedValue,
   onValueChange,
   validationDescriptorsByPath,
@@ -216,9 +214,6 @@ export const TabsPanelFieldsTab = ({
               {currentFieldProperties.map((prop) => {
                 if (!prop.descriptor) return null
                 const descriptor = prop.descriptor
-                const draft = editedValues[activeLocale][descriptor.id]
-                const persisted = getPersistedForLocale(descriptor.id)
-                const isDirty = draft !== undefined && draft !== persisted
                 const sourceText = getSourceText(descriptor)
                 const icelandicValue =
                   editedValues.is[descriptor.id] ??
@@ -238,7 +233,6 @@ export const TabsPanelFieldsTab = ({
                     icelandicValue={icelandicValue}
                     translationValue={translationValue}
                     activeLocale={activeLocale}
-                    isDirty={isDirty}
                     onValueChange={(value) =>
                       onValueChange(descriptor.id, value)
                     }
