@@ -111,7 +111,6 @@ export class HousingBenefitsService extends BaseTemplateApiService {
   async notifyAssignees({
     application,
   }: TemplateApiModuleActionProps): Promise<{ notifiedNationalIds: string[] }> {
-    return { notifiedNationalIds: ['2206751499'] }
     const applicantNationalId = normalizeNationalId(application.applicant)
     const applicantName = getApplicantName(application)
     const address = getRentalAddress(application)
