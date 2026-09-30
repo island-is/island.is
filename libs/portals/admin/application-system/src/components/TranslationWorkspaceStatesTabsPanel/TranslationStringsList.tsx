@@ -13,6 +13,7 @@ import type {
 import { m } from '../../lib/messages'
 import { isTranslatingEveryId } from '../../utils/translationWorkspaceEditing'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
+import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
 type PersistedByKey = Record<
   string,
@@ -86,7 +87,9 @@ export const TranslationStringsList = ({
           alignItems="center"
           columnGap={1}
           marginBottom={1}
-          style={{ visibility: showTranslateButtons ? 'visible' : 'hidden' }}
+          className={
+            !showTranslateButtons ? styles.translateActionDisabled : undefined
+          }
         >
           <Button
             variant="text"
@@ -94,7 +97,7 @@ export const TranslationStringsList = ({
             size="small"
             icon="translate"
             onClick={handleTranslateAll}
-            disabled={isTranslatingAll}
+            disabled={!showTranslateButtons || isTranslatingAll}
             loading={isTranslatingAll}
           >
             {formatMessage(m.translationGoogleTranslateAll)}
@@ -142,7 +145,7 @@ export const TranslationStringsList = ({
               isDirty={isDirty}
               onValueChange={(value) => onValueChange(descriptor.id, value)}
               onGoogleTranslate={
-                showTranslateButtons && sourceText && onGoogleTranslate
+                sourceText && onGoogleTranslate
                   ? () => onGoogleTranslate(descriptor.id, sourceText)
                   : undefined
               }

@@ -166,7 +166,7 @@ export const countTranslatedDescriptors = (
   let translated = 0
   for (const d of countable) {
     const edited = editedValues[activeLocale][d.id]
-    if (edited !== undefined && edited !== '') {
+    if (edited !== undefined && edited.trim() !== '') {
       translated++
       continue
     }
@@ -174,7 +174,7 @@ export const countTranslatedDescriptors = (
     if (persisted) {
       const value =
         activeLocale === 'en' ? persisted.valueEn : persisted.valueIs
-      if (value && value !== '') {
+      if (value && value.trim() !== '') {
         translated++
       }
     }

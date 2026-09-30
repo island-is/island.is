@@ -10,6 +10,7 @@ import { theme } from '@island.is/island-ui/theme'
 import type { MessageDescriptor } from '../../types/translationWorkspace'
 import type { FormatMessage } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
 export interface DescriptorCardTag {
   label: string
@@ -81,6 +82,7 @@ export const TranslationDescriptorCard = ({
 
       <Box
         marginBottom={2}
+        className={styles.translationLocaleInputLabel}
         style={activeLocale !== 'is' ? { pointerEvents: 'none' } : undefined}
       >
         <Input
@@ -96,6 +98,7 @@ export const TranslationDescriptorCard = ({
       </Box>
 
       <Box
+        className={styles.translationLocaleInputLabel}
         style={activeLocale !== 'en' ? { pointerEvents: 'none' } : undefined}
       >
         <Input
@@ -111,14 +114,19 @@ export const TranslationDescriptorCard = ({
       </Box>
 
       {onGoogleTranslate && (
-        <Box marginTop={1}>
+        <Box
+          marginTop={1}
+          className={
+            activeLocale !== 'en' ? styles.translateActionDisabled : undefined
+          }
+        >
           <Button
             variant="text"
             type="button"
             size="small"
             icon="translate"
             onClick={onGoogleTranslate}
-            disabled={isTranslating}
+            disabled={activeLocale !== 'en' || isTranslating}
             loading={isTranslating}
           >
             {formatMessage(m.translationGoogleTranslate)}

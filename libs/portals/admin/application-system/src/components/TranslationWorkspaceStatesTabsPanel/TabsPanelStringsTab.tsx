@@ -67,8 +67,6 @@ export const TabsPanelStringsTab = ({
     return validationDescriptors.filter((d) => !ids.has(d.id))
   }, [showValidationErrors, visibleDescriptors, validationDescriptors])
 
-  const showTranslateButtons = activeLocale === 'en' && !!onGoogleTranslate
-
   const canShowScreenList = stringsListScope === 'screen' && selectedScreen
   const canShowApplicationList =
     stringsListScope === 'application' && applicationStringCount > 0
@@ -236,8 +234,8 @@ export const TabsPanelStringsTab = ({
                         { field: descriptor.fieldPath },
                       )}
                       onGoogleTranslate={
-                        showTranslateButtons && sourceText
-                          ? () => onGoogleTranslate!(descriptor.id, sourceText)
+                        onGoogleTranslate && sourceText
+                          ? () => onGoogleTranslate(descriptor.id, sourceText)
                           : undefined
                       }
                       isTranslating={translatingIds?.has(descriptor.id)}

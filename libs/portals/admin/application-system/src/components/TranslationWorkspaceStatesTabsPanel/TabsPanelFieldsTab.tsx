@@ -156,8 +156,17 @@ export const TabsPanelFieldsTab = ({
                 <Text variant="small" color="dark300">
                   {focusedIndex + 1} / {focusableFields.length}
                 </Text>
-                {showTranslateButtons && currentFieldProperties.length > 0 && (
-                  <Box display="flex" alignItems="center" columnGap={1}>
+                {!!onGoogleTranslateAll && currentFieldProperties.length > 0 && (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap={1}
+                    className={
+                      !showTranslateButtons
+                        ? styles.translateActionDisabled
+                        : undefined
+                    }
+                  >
                     <Button
                       variant="text"
                       type="button"
@@ -176,7 +185,7 @@ export const TabsPanelFieldsTab = ({
                           onGoogleTranslateAll(items)
                         }
                       }}
-                      disabled={isTranslatingAll}
+                      disabled={!showTranslateButtons || isTranslatingAll}
                       loading={isTranslatingAll}
                     >
                       {formatMessage(m.translationGoogleTranslateAll)}
@@ -240,7 +249,7 @@ export const TabsPanelFieldsTab = ({
                       },
                     ]}
                     onGoogleTranslate={
-                      showTranslateButtons && sourceText
+                      onGoogleTranslate && sourceText
                         ? () => onGoogleTranslate(descriptor.id, sourceText)
                         : undefined
                     }
