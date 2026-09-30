@@ -1025,6 +1025,7 @@ export const is = {
   'health.medicineDelegation.captionPickupAndLookup':
     'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
   'health.medicineDelegation.listValidTo': 'Gildir til {date}',
+  'health.medicineDelegation.listValidFrom': 'Gildir frá {date}',
   'health.medicineDelegation.showExpiredPermits': 'Sýna óvirkar',
   'health.medicineDelegation.hideExpiredPermits': 'Fela óvirkar',
   'health.medicineDelegation.noActiveTitle': 'Engar virkar heimildir',
@@ -1038,6 +1039,7 @@ export const is = {
   'health.medicineDelegation.detail.status': 'Staða',
   'health.medicineDelegation.detail.statusActive': 'Í gildi',
   'health.medicineDelegation.detail.statusExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.statusAwaitingApproval': 'Bíður gildistöku',
   'health.medicineDelegation.detail.validity': 'Gildistími',
   'health.medicineDelegation.detail.validFor': 'Gildir fyrir',
   'health.medicineDelegation.detail.validForValue':

@@ -1030,6 +1030,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.captionPickupAndLookup':
     'Pick up medicine at the pharmacy and view prescriptions.',
   'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.listValidFrom': 'Valid from {date}',
   'health.medicineDelegation.showExpiredPermits': 'Show inactive',
   'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
   'health.medicineDelegation.noActiveTitle': 'No active authorizations',
@@ -1043,6 +1044,8 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.detail.status': 'Status',
   'health.medicineDelegation.detail.statusActive': 'Active',
   'health.medicineDelegation.detail.statusExpired': 'Expired',
+  'health.medicineDelegation.detail.statusAwaitingApproval':
+    'Awaiting activation',
   'health.medicineDelegation.detail.validity': 'Validity period',
   'health.medicineDelegation.detail.validFor': 'Valid for',
   'health.medicineDelegation.detail.validForValue':
