@@ -2085,6 +2085,10 @@ export const messages = defineMessages({
     defaultMessage: 'Smelltu á hnappinn til að hefja símtalið.',
     id: 'sp.health:health-messages-video-call-instruction',
   },
+  healthConversationVideoCallExpired: {
+    defaultMessage: 'Tími liðinn',
+    id: 'sp.health:health-messages-video-call-expired',
+  },
   healthConversationNotFound: {
     defaultMessage: 'Skilaboð fundust ekki',
     id: 'sp.health:health-message-not-found',
