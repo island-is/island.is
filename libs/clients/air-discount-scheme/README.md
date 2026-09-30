@@ -25,6 +25,25 @@ import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-s
 
 ```ts
 //your.service.ts
+import { AirDiscountSchemeClientService } from '@island.is/clients/air-discount-scheme'
+
+export class YourService {
+  constructor(
+    private airDiscountSchemeClient: AirDiscountSchemeClientService,
+  ) {}
+
+  getRelations(user: User) {
+    return this.airDiscountSchemeClient.getUserRelations(user)
+  }
+}
+```
+
+`AirDiscountSchemeClientService` forwards the user's auth and maps 403/404 responses to `null` (or `[]` for lists). Other errors are rethrown unchanged.
+
+For endpoints the service doesn't wrap, inject the generated API directly:
+
+```ts
+//your.service.ts
 import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
 
 export class YourService {

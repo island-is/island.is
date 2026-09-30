@@ -1,10 +1,17 @@
-import { IdsClientConfig } from '@island.is/nest/config'
 import { Module } from '@nestjs/common'
-import { UsersApiProvider, AdminApiProvider } from './api-providers'
+
+import { IdsClientConfig } from '@island.is/nest/config'
+
+import { AirDiscountSchemeClientService } from './airDiscountSchemeClient.service'
+import { AdminApiProvider,UsersApiProvider } from './api-providers'
 
 @Module({
   imports: [IdsClientConfig.registerOptional()],
-  providers: [UsersApiProvider, AdminApiProvider],
-  exports: [UsersApiProvider, AdminApiProvider],
+  providers: [
+    UsersApiProvider,
+    AdminApiProvider,
+    AirDiscountSchemeClientService,
+  ],
+  exports: [UsersApiProvider, AdminApiProvider, AirDiscountSchemeClientService],
 })
 export class AirDiscountSchemeClientModule {}
