@@ -204,8 +204,9 @@ describe('public prosecution appealed case list', () => {
   // appeal prosecutor through the same check - a case assigned to someone
   // must not then be refused to them.
   it('exempts the reviewer and appeal prosecutor, as the case guard does', () => {
-    const exemptions =
-      notHiddenByHeightenedSecurityWhereOptions(publicProsecutionUser)[Op.or]
+    const exemptions = notHiddenByHeightenedSecurityWhereOptions(
+      publicProsecutionUser,
+    )[Op.or]
 
     expect(exemptions).toContainEqual({
       indictment_reviewer_id: publicProsecutionUser.id,

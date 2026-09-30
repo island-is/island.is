@@ -2317,11 +2317,7 @@ export class CaseNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<DeliverResponse> {
     const subject = `Áfrýjun í máli ${theCase.courtCaseNumber}`
-    const html = `Þér hefur verið úthlutað áfrýjunarmáli vegna dóms í máli nr. ${
-      theCase.courtCaseNumber
-    }.<br/><br/><a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${
-      theCase.id
-    }">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+    const html = `Þér hefur verið úthlutað áfrýjunarmáli vegna dóms í máli nr. ${theCase.courtCaseNumber}.<br/><br/><a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`
 
     const recipient = await this.sendEmail({
       subject,
