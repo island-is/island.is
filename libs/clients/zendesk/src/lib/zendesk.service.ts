@@ -543,8 +543,12 @@ export class ZendeskService {
       throw new Error(`${errMsg}: ${description}`)
     }
 
-    // Jobs are queued, in practice they take around 10 seconds to complete
-    const MAX_POLL_ATTEMPTS = 60
+    // Jobs are queued, in practice they take 3-10 seconds to complete. Poll
+    // quickly at first so a finished job is noticed sooner, then every second.
+    // 20 * 250ms + 55 * 1000ms keeps the overall timeout at 60 seconds.
+    const MAX_POLL_ATTEMPTS = 75
+    const FAST_POLL_ATTEMPTS = 20
+    const FAST_POLL_INTERVAL_MS = 250
     const POLL_INTERVAL_MS = 1000
 
     for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
@@ -553,7 +557,14 @@ export class ZendeskService {
         throw new Error(`${jobName} ${jobStatus.status}: ${jobStatus.id}`)
       }
 
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+      await new Promise((resolve) =>
+        setTimeout(
+          resolve,
+          attempt < FAST_POLL_ATTEMPTS
+            ? FAST_POLL_INTERVAL_MS
+            : POLL_INTERVAL_MS,
+        ),
+      )
 
       try {
         const pollUrl =

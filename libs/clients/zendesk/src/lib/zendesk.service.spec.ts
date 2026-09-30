@@ -197,6 +197,31 @@ describe('zendeskService', () => {
       ).resolves.toBeUndefined()
     })
 
+    it('should notice a completed job within a second of it finishing', async () => {
+      let polls = 0
+      server.use(
+        rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
+          res.once(ctx.status(200), ctx.json(jobStatus([], 'queued'))),
+        ),
+        rest.get(`${api}/job_statuses/job-1.json`, (req, res, ctx) => {
+          polls++
+          return res(
+            ctx.status(200),
+            ctx.json(jobStatus([], polls < 3 ? 'working' : 'completed')),
+          )
+        }),
+      )
+
+      const start = Date.now()
+      await zendeskService.upsertCustomObjectRecordsByExternalId('participant', [
+        { name: 'A', external_id: 'a' },
+      ])
+
+      // Three polls at 250ms, a fixed one second interval would take 3s
+      expect(polls).toBe(3)
+      expect(Date.now() - start).toBeLessThan(1500)
+    })
+
     it('should throw when some upserted items fail although the job completes', async () => {
       server.use(
         rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
