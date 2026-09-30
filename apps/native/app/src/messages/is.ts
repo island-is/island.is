@@ -912,6 +912,7 @@ export const is = {
   'health.messages.unstarError': 'Ekki tókst að fjarlægja stjörnumerkingu',
   'health.messages.videoCall': 'Myndsímtal',
   'health.messages.videoCallCanceled': 'Afboðað',
+  'health.messages.videoCallExpired': 'Tími liðinn',
   'health.messages.startVideoCall': 'Hefja myndsímtal',
   'health.messages.replyBlocked.default':
     'Ekki er hægt að svara þessum skilaboðum.',

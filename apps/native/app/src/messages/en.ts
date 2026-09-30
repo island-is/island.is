@@ -917,6 +917,7 @@ export const en: TranslatedMessages = {
   'health.messages.unstarError': 'Could not remove the star',
   'health.messages.videoCall': 'Video call',
   'health.messages.videoCallCanceled': 'Canceled',
+  'health.messages.videoCallExpired': 'Expired',
   'health.messages.startVideoCall': 'Start video call',
   'health.messages.replyBlocked.default':
     "You can't reply to this conversation.",
