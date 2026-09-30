@@ -86,6 +86,7 @@ const baseSchema = z
       })
       .optional(),
     confirmRead: confirmReadSchema.optional(),
+    confirmMunicipality: z.array(z.literal(YES)).length(1).optional(),
     approveExternalData: z.literal(true).optional(),
     applicant: applicantSchema.optional(),
     rentalAgreement: z
@@ -473,6 +474,22 @@ export const dataSchema = baseSchema
           path: [key, 'assetDeclerationTextField'],
           params: m.assigneeDraft.validationAssetDeclerationTextFieldRequired,
         })
+      }
+
+      if (bucket.incomeDeclarationTextField !== undefined) {
+        const incomeText =
+          typeof bucket.incomeDeclarationTextField === 'string'
+            ? bucket.incomeDeclarationTextField.trim()
+            : ''
+
+        if (!incomeText) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key, 'incomeDeclarationTextField'],
+            params:
+              m.assigneeDraft.validationIncomeDeclarationTextFieldRequired,
+          })
+        }
       }
     }
   })
