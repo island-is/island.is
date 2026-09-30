@@ -286,8 +286,8 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
     return canAppealsCourtUserAccessRequestCase(theCase)
   }
 
-  // Indictment cases - a dismissal or a ruling order is appealed by kaera,
-  // a judgment by afryjun
+  // Indictment cases - a dismissal or a ruling order is appealed by ruling appeal,
+  // a judgment by verdict appeal.
   if (isIndictmentCase(theCase.type)) {
     return canAppealsCourtUserAccessIndictmentCase(theCase)
   }
