@@ -75,6 +75,14 @@ export const TranslationDescriptorCard = ({
         </Box>
       )}
 
+      {descriptor.description && (
+        <Box marginBottom={2}>
+          <Text variant="small" color="dark400">
+            {descriptor.description}
+          </Text>
+        </Box>
+      )}
+
       <Box
         marginBottom={2}
         className={styles.translationLocaleInputLabel}

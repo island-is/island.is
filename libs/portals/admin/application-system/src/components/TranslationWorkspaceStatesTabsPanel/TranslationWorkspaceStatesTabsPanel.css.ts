@@ -343,6 +343,7 @@ export const translationLocaleInputLabel = style({
     '&& label': {
       fontWeight: theme.typography.semiBold,
       color: theme.color.blue400,
+      marginBottom: theme.spacing[1],
     },
   },
 })
