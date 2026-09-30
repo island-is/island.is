@@ -1,8 +1,9 @@
 import {
+  AsyncSearch,
   Box,
   CategoryCard,
+  ColorSchemeContext,
   Icon,
-  Input,
   Stack,
   Text,
   usePreventBodyScroll,
@@ -17,6 +18,7 @@ import { flushSync } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { useDebounce } from 'react-use'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
+import * as searchInputStyles from '../SearchInput/SearchInput.css'
 import * as sidemenuStyles from '../Sidemenu/Sidemenu.css'
 
 export const SEARCH_MENU_ID = 'search-menu-mobile'
@@ -116,32 +118,28 @@ export const SearchMenu = ({
               {formatMessage(m.searchLabel)}
             </Text>
           </Box>
-          <Box marginTop={2}>
-            <Input
-              ref={inputRef}
-              name="search-menu-mobile-input"
-              aria-labelledby={headingId}
-              placeholder={formatMessage(m.searchOnMyPages)}
-              autoComplete="off"
-              backgroundColor="blue"
-              size="sm"
-              icon={{ name: 'search', type: 'outline' }}
-              value={query}
-              onChange={(e) => {
-                const value = e.target.value
-                setQuery(value)
-                if (!inputInitializedRef.current && value) {
-                  onInputInitialized?.()
-                  inputInitializedRef.current = true
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  e.currentTarget.blur()
-                }
-              }}
-            />
+          <Box marginTop={2} className={searchInputStyles.wrapper}>
+            <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+              <AsyncSearch
+                ref={inputRef}
+                id="search-menu-mobile-input"
+                ariaLabel={formatMessage(m.searchOnMyPages)}
+                placeholder={formatMessage(m.searchPlaceholder)}
+                size="semi-large"
+                colored
+                options={[]}
+                inputValue={query}
+                initialInputValue=""
+                onSubmit={() => inputRef.current?.blur()}
+                onInputValueChange={(value) => {
+                  setQuery(value)
+                  if (!inputInitializedRef.current && value) {
+                    onInputInitialized?.()
+                    inputInitializedRef.current = true
+                  }
+                }}
+              />
+            </ColorSchemeContext.Provider>
           </Box>
           <VisuallyHidden>
             <span aria-live="polite">{announcedMessage}</span>
