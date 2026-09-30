@@ -135,8 +135,9 @@ describe('formatDate', () => {
 })
 
 describe('allSameDay', () => {
-  it('ignores missing dates', () => {
-    expect(allSameDay([{ date: new Date(2026, 0, 1) }, {}])).toBe(true)
+  it('treats a missing date as its own value', () => {
+    expect(allSameDay([{ date: new Date(2026, 0, 1) }, {}])).toBe(false)
+    expect(allSameDay([{}, {}])).toBe(true)
     expect(allSameDay([])).toBe(true)
   })
 

@@ -39,6 +39,8 @@ const PREFIX_REPEALING = 'brottfellingu reglugerðar '
 type ImpactBody = {
   /** Amendment text, one entry per article of the amending regulation. */
   articles: HTMLText[]
+  /** Appendix changes, which follow the article changes. */
+  appendixes: HTMLText[]
   /** Authority clauses from the amended regulation's gildistaka. */
   authorities: string[]
 }
@@ -54,32 +56,46 @@ const joinWithOg = (arr: string[]): string =>
     ? arr.join('')
     : `${arr.slice(0, -1).join(', ')} og ${arr[arr.length - 1]}`
 
-const extractArticleNumber = (str: string): number => {
+const extractArticleNumber = (str: string): number | undefined => {
   const match = str.match(/(\d+)\. gr/)
-  return match ? parseInt(match[1], 10) : 0
+  return match ? parseInt(match[1], 10) : undefined
 }
 
 const formatAffectedAndPlaceAffectedAtEnd = (
   groups: ImpactGroup[],
-  hideAffected: boolean,
 ): HTMLText[] => {
   const articles = groups
-    .flatMap((group, groupIndex) =>
-      group.articles.map((text) => ({
-        text,
-        groupIndex,
-        regIndex: group.regIndex,
-      })),
-    )
+    .flatMap((group, groupIndex) => {
+      // Text without an article, like a chapter heading, stays after the
+      // article before it.
+      let articleNumber = 0
+      return [
+        ...group.articles.map((text) => {
+          articleNumber = extractArticleNumber(text) ?? articleNumber
+          return { text, groupIndex, regIndex: group.regIndex, articleNumber }
+        }),
+        ...group.appendixes.map((text) => ({
+          text,
+          groupIndex,
+          regIndex: group.regIndex,
+          articleNumber: Number.MAX_SAFE_INTEGER,
+        })),
+      ]
+    })
     .sort(
-      (a, b) =>
-        a.regIndex - b.regIndex ||
-        extractArticleNumber(a.text) - extractArticleNumber(b.text),
+      (a, b) => a.regIndex - b.regIndex || a.articleNumber - b.articleNumber,
     )
 
   if (articles.length === 0) {
     return []
   }
+
+  // One entry-into-force date for the whole regulation when every change
+  // takes effect on the same day, or none of them has a date.
+  const datedGroups = groups.filter(
+    (group) => group.articles.length > 0 || group.appendixes.length > 0,
+  )
+  const hideAffected = allSameDay(datedGroups)
 
   const affected = hideAffected
     ? []
@@ -104,7 +120,7 @@ const formatAffectedAndPlaceAffectedAtEnd = (
   const authorities = uniq(groups.flatMap((group) => group.authorities))
   const authority =
     authorities.length > 0 ? joinWithOg(authorities) : 'með heimild í []'
-  const date = groups.find((group) => group.date)?.date
+  const date = datedGroups.find((group) => group.date)?.date
   const gildistaka = hideAffected
     ? `<p>Reglugerð þessi er sett ${authority} og öðlast ${
         date ? 'gildi ' + formatDate(date) : 'þegar gildi'
@@ -210,6 +226,35 @@ const getNeighbourTitle = (group: HTMLElement[] | undefined): string => {
   return escapeHtml(titleText('ins') || titleText('del'))
 }
 
+const NEW_PARAGRAPH_COUNT = ['', 'ein', 'tvær', 'þrjár', 'fjórar']
+
+/**
+ * One or more new paragraphs added at the same place. They are written as
+ * one amendment, since separate "Á eftir 2. mgr." amendments would reverse
+ * their order.
+ *
+ * @param paragraph - the base paragraph they follow, 0 before the first one
+ * @param where - "1. gr. reglugerðarinnar"
+ */
+const formatNewParagraphs = (
+  paragraph: number,
+  where: string,
+  texts: string[],
+): HTMLText => {
+  const paragraphs = texts.map((text) => `<p>${text}</p>`).join('')
+  if (texts.length === 1) {
+    return (
+      paragraph > 0
+        ? `<p>Á eftir ${paragraph}. mgr. ${where} kemur ný málsgrein sem orðast svo:</p>${paragraphs}`
+        : `<p>Á undan 1. mgr. ${where} kemur ný málsgrein svohljóðandi: </p>${paragraphs}`
+    ) as HTMLText
+  }
+  const position =
+    paragraph > 0 ? `Á eftir ${paragraph}. mgr.` : 'Á undan 1. mgr.'
+  const count = NEW_PARAGRAPH_COUNT[texts.length] ?? `${texts.length}`
+  return `<p>${position} ${where} koma ${count} nýjar málsgreinar, svohljóðandi:</p>${paragraphs}` as HTMLText
+}
+
 const getTable = (element: Element): Element | null =>
   element.nodeName.toLowerCase() === 'table'
     ? element
@@ -225,11 +270,14 @@ const afterChange = (element: Element): string => {
   return clone.outerHTML
 }
 
-const isRemovedRow = (row: Element): boolean => {
-  const clone = row.cloneNode(true) as Element
-  clone.querySelectorAll('del').forEach((e) => e.remove())
+/** Whether nothing is left once `tag` is removed: all inserted or all deleted. */
+const isEmptyWithout = (element: Element, tag: 'ins' | 'del'): boolean => {
+  const clone = element.cloneNode(true) as Element
+  clone.querySelectorAll(tag).forEach((e) => e.remove())
   return !clone.textContent?.trim()
 }
+
+const isRemovedRow = (row: Element) => isEmptyWithout(row, 'del')
 
 /**
  * A changed table, written the way amending regulations do: the header row
@@ -287,11 +335,11 @@ export const formatAmendingRegBody = (
       /\.$/,
       '',
     )} fellur brott.</p>` as HTMLText
-    return { articles: [text], authorities: [] }
+    return { articles: [text], appendixes: [], authorities: [] }
   }
 
   if (!diff) {
-    return { articles: [], authorities: [] }
+    return { articles: [], appendixes: [], authorities: [] }
   }
 
   const additionArray: HTMLText[][] = []
@@ -332,6 +380,9 @@ export const formatAmendingRegBody = (
       isAddition: undefined,
     }
 
+    // New paragraphs in a row, merged into one amendment
+    let newParagraphs: { index: number; texts: string[] } | undefined
+
     group.forEach((element) => {
       let pushHtml = '' as HTMLText
 
@@ -364,10 +415,14 @@ export const formatAmendingRegBody = (
         isParagraph || isSectionTitle || isNumberList || isLetterList
           ? null
           : getTable(element)
-      const tablesInArticle = group.filter((e) => getTable(e))
+      // Tables are numbered as in the base regulation, which an inserted
+      // table is not part of.
+      const baseTables = group.filter(
+        (e) => getTable(e) && !isEmptyWithout(e, 'ins'),
+      )
       const tableOrdinal =
-        table && tablesInArticle.length > 1
-          ? `${tablesInArticle.indexOf(element) + 1}. `
+        table && baseTables.length > 1 && baseTables.includes(element)
+          ? `${baseTables.indexOf(element) + 1}. `
           : ''
 
       const hasDeletion = !!element.querySelector('del')
@@ -391,8 +446,12 @@ export const formatAmendingRegBody = (
 
       // Paragraphs are numbered as in the base regulation, which a newly
       // inserted paragraph is not part of.
-      if (isParagraph && !(hasInsert && isAddition)) {
+      const isNewParagraph = isParagraph && hasInsert && isAddition
+      if (isParagraph && !isNewParagraph) {
         paragraph++
+      }
+      if (!isNewParagraph) {
+        newParagraphs = undefined
       }
 
       // The base regulation's authority, even if its gildistaka is being
@@ -433,10 +492,18 @@ export const formatAmendingRegBody = (
           }
           if (isParagraph) {
             testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
-            pushHtml =
-              paragraph > 0
-                ? (`<p>Á eftir ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
-                : (`<p>Á undan 1. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein svohljóðandi: </p><p>${newText}</p>` as HTMLText)
+            const where = `${articleTitle} ${regNameDisplay}`
+            if (newParagraphs) {
+              newParagraphs.texts.push(newText)
+              testGroup.arr[newParagraphs.index] = formatNewParagraphs(
+                paragraph,
+                where,
+                newParagraphs.texts,
+              )
+              return
+            }
+            newParagraphs = { index: testGroup.arr.length, texts: [newText] }
+            pushHtml = formatNewParagraphs(paragraph, where, [newText])
           } else if (isSectionTitle) {
             testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
             pushHtml =
@@ -548,6 +615,7 @@ export const formatAmendingRegBody = (
     }
   })
 
+  const appendixArticles: HTMLText[] = []
   appendixes?.forEach((apx, idx) => {
     if (apx.diff) {
       const defaultTitle = escapeHtml(apx.title ?? `Viðauki ${idx + 1}`)
@@ -569,14 +637,18 @@ export const formatAmendingRegBody = (
       )}${regNameChange}:`
 
       if (apx.diff.includes('<div data-diff="new">')) {
-        additionArray.push([`<p>${testAddTitle}</p>` as HTMLText])
+        appendixArticles.push(`<p>${testAddTitle}</p>` as HTMLText)
       } else if (hasAnyChange(apx.diff)) {
-        additionArray.push([`<p>${testChangeTitle}</p><p>[]</p>` as HTMLText])
+        appendixArticles.push(`<p>${testChangeTitle}</p><p>[]</p>` as HTMLText)
       }
     }
   })
 
-  return { articles: additionArray.flat(), authorities }
+  return {
+    articles: additionArray.flat(),
+    appendixes: appendixArticles,
+    authorities,
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -626,10 +698,7 @@ export const formatAmendingBodyWithArticlePrefix = (
       })),
   )
 
-  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(
-    groups,
-    allSameDay(groups),
-  )
+  const htmlForEditor = formatAffectedAndPlaceAffectedAtEnd(groups)
 
   return compact(htmlForEditor).map(
     (item, i) =>

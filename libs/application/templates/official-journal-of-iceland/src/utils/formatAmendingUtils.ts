@@ -195,13 +195,14 @@ export const extractAuthority = (str: string): string | undefined => {
 export const escapeHtml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+/** Whether all dates are the same day. A missing date is its own value. */
 export const allSameDay = (objects: Array<{ date?: Date }>): boolean => {
-  const validObjects = objects.filter((obj) => obj.date !== undefined)
-
-  if (validObjects.length === 0) return true
-  const firstDate = validObjects[0].date as Date
-
-  return validObjects.every((obj) => isSameDay(obj.date as Date, firstDate))
+  const [first, ...rest] = objects
+  return rest.every((obj) =>
+    first.date && obj.date
+      ? isSameDay(obj.date, first.date)
+      : !first.date && !obj.date,
+  )
 }
 
 export const hasAnyChange = (diff: string) => {

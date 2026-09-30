@@ -78,6 +78,39 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
     ])
   })
 
+  it('adds consecutive new paragraphs as one amendment', () => {
+    const after = BASE.replace(
+      '<p>Delta echo foxtrot.</p>',
+      '<p>Delta echo foxtrot.</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p>',
+    )
+    expect(body(amend(after))).toEqual([
+      article(
+        1,
+        '<p>Á eftir 2. mgr. 1. gr. reglugerðarinnar koma tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p>',
+      ),
+      article(2, CLOSING),
+    ])
+  })
+
+  it('adds consecutive new paragraphs before the first one as one amendment', () => {
+    const [first] = body(
+      amend(
+        BASE.replace(
+          title('1. gr.'),
+          `${title(
+            '1. gr.',
+          )}<p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p>`,
+        ),
+      ),
+    )
+    expect(first).toBe(
+      article(
+        1,
+        '<p>Á undan 1. mgr. 1. gr. reglugerðarinnar koma tvær nýjar málsgreinar, svohljóðandi:</p><p>Zulu yankee xray whiskey.</p><p>Kilo lima mike november.</p>',
+      ),
+    )
+  })
+
   it('adds a paragraph before the first one', () => {
     const [first] = body(
       amend(
@@ -209,6 +242,17 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       )
     })
 
+    it('numbers the tables as in the base regulation', () => {
+      const other = table(row('Ríki', 'Afli'), row('Noregur', '50'))
+      const after = WITH_TABLE.replace(
+        TABLE,
+        other + TABLE.replace('100', '150'),
+      )
+      expect(body(amend(after, {}, WITH_TABLE)).join('')).toContain(
+        '<p>Í töflu í 1. gr. reglugerðarinnar er gerð breyting, svohljóðandi:</p>',
+      )
+    })
+
     it('numbers the tables when an article has more than one', () => {
       const other = table(row('Ríki', 'Afli'), row('Noregur', '50'))
       const before = WITH_TABLE.replace(TABLE, TABLE + other)
@@ -220,6 +264,48 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
         ),
       )
     })
+  })
+
+  it('keeps appendix changes after the article changes', () => {
+    const output = body(
+      amend(BASE.replace('Golf hotel', 'Golf kilo'), {
+        appendixes: [
+          {
+            title: 'Viðauki I',
+            diff: getDiff(
+              '<p>Alfa.</p>' as HTMLText,
+              '<p>Bravo.</p>' as HTMLText,
+            ).diff,
+          },
+        ],
+      }),
+    )
+    expect(output.map((a) => a.match(/<p>(.*?):/)?.[1])).toEqual([
+      '3. mgr. 1. gr. reglugerðarinnar breytist og orðast svo',
+      'Eftirfarandi breytingar eru gerðar á Viðauka I',
+      undefined, // gildistaka
+    ])
+  })
+
+  it('keeps a chapter heading change in document order', () => {
+    const chapter = (text: string) => `<h2 class="chapter__title">${text}</h2>`
+    const before = [
+      title('1. gr.'),
+      '<p>Alfa bravo charlie.</p>',
+      chapter('II. KAFLI Úthlutun'),
+      title('2. gr.'),
+      '<p>Delta echo foxtrot.</p>',
+    ].join('')
+    const after = before
+      .replace('Alfa bravo', 'Alfa kilo')
+      .replace('Úthlutun', 'Heildarafli')
+      .replace('Delta echo', 'Delta kilo')
+    const output = body(amend(after, {}, before))
+    expect(output.slice(0, 3).map((a) => a.match(/<p>(.*?):/)?.[1])).toEqual([
+      '1. mgr. 1. gr. reglugerðarinnar breytist og orðast svo',
+      'Fyrirsögn II. KAFLI reglugerðarinnar breytist og orðast svo',
+      '1. mgr. 2. gr. reglugerðarinnar breytist og orðast svo',
+    ])
   })
 
   it('escapes text taken from the regulation', () => {
@@ -253,6 +339,29 @@ describe('formatAmendingBodyWithArticlePrefix', () => {
       article(
         2,
         '<p>Reglugerð þessi er sett með heimild í lögum nr. 1/2000 og öðlast gildi 1. desember 2026.</p>',
+      ),
+    )
+  })
+
+  it('dates each change when only some of them have a date', () => {
+    const output = body(
+      amend(BASE.replace('Alfa bravo', 'Alfa kilo'), {
+        name: '0001/2020',
+        date: '2026-12-01',
+      }),
+      {
+        id: '2',
+        type: 'repeal',
+        name: '0005/2020',
+        regTitle: 'Reglugerð um prufu.',
+      },
+    )
+    expect(output[output.length - 1]).toBe(
+      article(
+        3,
+        '<p>Reglugerð þessi er sett með heimild í lögum nr. 1/2000.</p>' +
+          '<p>Ákvæði 1. gr. reglugerðarinnar öðlast gildi 1. desember 2026.</p>' +
+          '<p>Ákvæði 2. gr. reglugerðarinnar öðlast þegar gildi.</p>',
       ),
     )
   })
