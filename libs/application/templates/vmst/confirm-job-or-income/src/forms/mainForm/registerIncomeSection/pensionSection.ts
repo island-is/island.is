@@ -168,6 +168,7 @@ export const pensionSection = buildSubSection({
               width: 'half',
               required: (_application, activeField) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {

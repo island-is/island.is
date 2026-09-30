@@ -7,16 +7,19 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  addMessagesToQueueAfterCommit,
+  type Message,
+  MessageType,
+} from '@island.is/judicial-system/message'
+import {
   CaseFileCategory,
   CaseState,
-  CaseType,
   DateType,
   EventType,
   IndictmentDecision,
   StringType,
 } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../aws-s3'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -141,8 +144,9 @@ const splitCaseFileCategories = [
 // new case, with variations: a duplicate copies everything the prosecution
 // entered, a split moves one defendant and what hangs off them and copies what
 // the two cases share. The per-model copies and moves live in the repositories;
-// this service owns the order, the id remapping between them and the S3 objects
-// behind the case files.
+// this service owns the order, the id remapping between them and, for the S3
+// objects behind duplicated case files, the messages that copy them once the
+// transaction has committed.
 @Injectable()
 export class CaseCloningService {
   constructor(
@@ -159,7 +163,6 @@ export class CaseCloningService {
     private readonly eventLogRepositoryService: EventLogRepositoryService,
     private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
-    private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -195,8 +198,13 @@ export class CaseCloningService {
   }
 
   // Copies the prosecutor uploaded case files to the new case. The new case is
-  // fully independent, so each S3 object is copied to a new key rather than
-  // shared. A file whose object cannot be copied is skipped, not fatal.
+  // fully independent, so each file gets its own S3 object at a new key rather
+  // than sharing the original's. Only the rows are created here, with their
+  // objects marked inaccessible: the objects are copied by the message handler
+  // once the transaction has committed, so that a duplication which rolls back
+  // leaves nothing behind in S3 and no S3 round trip runs inside the
+  // transaction. Until the handler has copied a file it shows as inaccessible
+  // on the draft.
   private async copyProsecutorCaseFiles(
     caseId: string,
     newCaseId: string,
@@ -211,6 +219,8 @@ export class CaseCloningService {
         { transaction },
       )
 
+    const messages: Message[] = []
+
     for (const file of filesToCopy) {
       // Files without an accessible S3 object cannot be copied
       if (!file.isKeyAccessible || !file.key) {
@@ -222,26 +232,12 @@ export class CaseCloningService {
       const filename = file.key.split('/').slice(2).join('/')
       const newKey = `${newCaseId}/${uuid()}/${filename}`
 
-      try {
-        await this.awsS3Service.copyObject(
-          CaseType.INDICTMENT,
-          file.key,
-          newKey,
-        )
-      } catch (error) {
-        // Tolerate failure of a single file, but log error and skip it
-        this.logger.error(`Failed to copy S3 object for case file ${file.id}`, {
-          error,
-        })
-
-        continue
-      }
-
-      await this.caseFileRepositoryService.copyToCase(
+      const newFile = await this.caseFileRepositoryService.copyToCase(
         file,
         newCaseId,
         {
           key: newKey,
+          isKeyAccessible: false,
           defendantId: file.defendantId
             ? defendantIdMap.get(file.defendantId)
             : undefined,
@@ -251,6 +247,19 @@ export class CaseCloningService {
         },
         { transaction },
       )
+
+      messages.push({
+        type: MessageType.DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE,
+        caseId: newCaseId,
+        elementId: newFile.id,
+        body: { sourceKey: file.key },
+      })
+    }
+
+    if (messages.length > 0) {
+      // Queued against the transaction the rows were created in, so that a
+      // rolled back duplication copies nothing
+      addMessagesToQueueAfterCommit(transaction, ...messages)
     }
   }
 

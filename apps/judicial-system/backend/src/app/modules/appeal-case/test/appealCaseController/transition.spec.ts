@@ -345,7 +345,7 @@ describe('AppealCaseController - Transition', () => {
       beforeEach(async () => {
         // After the prosecution withdraws, the defendant's appeal still stands.
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([
           { ...bothAppealed[0], withdrawnDate: now },
           bothAppealed[1],
@@ -364,6 +364,17 @@ describe('AppealCaseController - Transition', () => {
           prosecutorDecisionId,
           { withdrawnDate: now },
           { transaction },
+        )
+      })
+
+      it('should lock every party of the ruling before stamping its own', () => {
+        const lock =
+          mockAppealDecisionRepositoryService.lockAllForRuling as jest.Mock
+        const update = mockAppealDecisionRepositoryService.update as jest.Mock
+
+        expect(lock).toHaveBeenCalledWith(caseId, rulingFileId, { transaction })
+        expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
+          update.mock.invocationCallOrder[0],
         )
       })
 
@@ -392,7 +403,7 @@ describe('AppealCaseController - Transition', () => {
     describe('the last appealing party withdraws', () => {
       beforeEach(async () => {
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([{ ...bothAppealed[0], withdrawnDate: now }])
 
         await givenWhenThen(
@@ -495,7 +506,7 @@ describe('AppealCaseController - Transition', () => {
       beforeEach(async () => {
         // No party is left appealing once the defender withdraws for both.
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([
           { id: defendantDecisionId, withdrawnDate: now },
           { id: defendantDecisionId2, withdrawnDate: now },

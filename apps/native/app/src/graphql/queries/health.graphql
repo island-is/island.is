@@ -408,6 +408,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
     nodeId
     groupId
     treatmentId
+    allowsCustomTitle
     name
     availability
     closesAt

@@ -45,14 +45,6 @@ const subpoenaInclude: Includeable[] = [
   { model: Defendant, as: 'defendant' },
 ]
 
-interface FindSubpoenaOptions {
-  transaction?: Transaction
-}
-
-interface CreateSubpoenaOptions {
-  transaction: Transaction
-}
-
 interface UpdateSubpoenaOptions {
   transaction: Transaction
   throwOnZeroRows?: boolean
@@ -133,7 +125,7 @@ export class SubpoenaRepositoryService {
 
   async findById(
     subpoenaId: string,
-    options?: FindSubpoenaOptions,
+    options?: { transaction?: Transaction },
   ): Promise<Subpoena | null> {
     try {
       this.logger.debug(`Finding subpoena ${subpoenaId}`)
@@ -269,7 +261,7 @@ export class SubpoenaRepositoryService {
 
   async create(
     data: Partial<Subpoena>,
-    options: CreateSubpoenaOptions,
+    options: { transaction: Transaction },
   ): Promise<Subpoena> {
     try {
       this.logger.debug('Creating a new subpoena with data:', {
