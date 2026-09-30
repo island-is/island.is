@@ -7,7 +7,7 @@
 import isSameDay from 'date-fns/isSameDay'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { HTMLText, asDiv } from '@island.is/regulations'
+import { asDiv } from '@island.is/regulations'
 
 export const groupElementsByArticleTitleFromDiv = (
   div: HTMLDivElement,
@@ -111,18 +111,91 @@ export const removeRegPrefix = (title: string) => {
   return title
 }
 
-export const isGildisTaka = (str: string) => {
-  return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
-    (str || '').toLowerCase(),
-  )
+// Word boundaries are spelled out with \p{L} because `\b` only knows ASCII
+// letters and never matches before "ö" or after "ð".
+
+// "Reglugerð þessi er sett með heimild í …", "Reglugerð þessi, sem sett er
+// samkvæmt …", "Reglugerðin er sett skv. …". The basis phrase is required so
+// that "sett til innleiðingar …" or "sett með hliðsjón af …" don't match.
+const AUTHORITY_RE =
+  /(?:^|[^\p{L}])(?:reglugerð(?:in|\s+þessi)|reglur\s+þessar)\s*,?\s+(?:sem\s+)?(?:er\s+|eru\s+)?sett(?:ar)?(?:\s+(?:er|eru))?\s+(með\s+(?:heimild|stoð)|samkvæmt|skv\.|sbr\.|á\s+grundvelli)(?!\p{L})/iu
+
+// Where the authority clause ends: at the entry into force ("…nr. 1/2000 og
+// öðlast þegar gildi", "…nr. 50/1988, öðlast gildi …"), or at what the base
+// regulation implements ("… og innleiðir …", "… til innleiðingar á …"),
+// which doesn't carry over to an amendment.
+const AUTHORITY_END_RE =
+  /(?:\s*,)?\s+(?:og\s+)?(?:(?:til\s+(?:þess\s+)?að\s+)?öðlast|tekur\s+(?:þegar\s+)?gildi|staðfestist|skal\s+gilda|gildir|innleiðir|til\s+innleiðingar|með\s+hliðsjón\s+af|í\s+samræmi\s+við)(?!\p{L})/iu
+
+// A sentence ends at a period followed by a capitalised word, unless the
+// period ends an abbreviation or an ordinal: "sbr. V. kafla", "13. Gr".
+const SENTENCE_END_RE = /\.(?=\s+\p{Lu}\p{Ll})/gu
+const ABBREVIATIONS = [
+  'nr',
+  'gr',
+  'mgr',
+  'málsl',
+  'tölul',
+  'stafl',
+  'sbr',
+  'skv',
+  'o.fl',
+  'þ.e',
+  'þ.m.t',
+]
+
+/** Whether a period after this text ends an abbreviation or an ordinal. */
+export const endsWithAbbreviation = (textBeforePeriod: string): boolean => {
+  const word = (textBeforePeriod.match(/(\S+)$/)?.[1] ?? '')
+    .replace(/^\(/, '')
+    .toLowerCase()
+  return ABBREVIATIONS.includes(word) || /^(?:\d+|\p{L})$/u.test(word)
 }
 
-export type AdditionObject = {
-  formattedRegBody: HTMLText[]
-  date: Date | undefined
+const findSentenceEnd = (text: string): number => {
+  for (const match of text.matchAll(SENTENCE_END_RE)) {
+    const index = match.index ?? 0
+    if (!endsWithAbbreviation(text.slice(0, index))) {
+      return index
+    }
+  }
+  return text.length
 }
 
-export const allSameDay = (objects: AdditionObject[]): boolean => {
+/**
+ * The authority clause of a gildistaka paragraph, from the basis of the
+ * authority up to the entry into force or the end of the sentence. The
+ * amending regulation usually rests on the same authority as the regulation
+ * it amends, so this is reused in its own gildistaka.
+ *
+ * @example
+ * extractAuthority('Reglugerð þessi er sett með heimild í lögum nr. 1/2000 og öðlast þegar gildi.')
+ * // 'með heimild í lögum nr. 1/2000'
+ */
+export const extractAuthority = (str: string): string | undefined => {
+  const text = (str || '').replace(/\s+/g, ' ').trim()
+  const match = text.match(AUTHORITY_RE)
+  if (!match) {
+    return undefined
+  }
+  const start = (match.index ?? 0) + match[0].length - match[1].length
+  let rest = text.slice(start)
+  rest = rest.slice(0, findSentenceEnd(rest))
+  const end = rest.match(AUTHORITY_END_RE)
+  if (end?.index !== undefined) {
+    rest = rest.slice(0, end.index)
+  }
+  rest = rest.replace(/[\s,]+$/, '')
+  if (rest.endsWith('.') && !endsWithAbbreviation(rest.slice(0, -1))) {
+    rest = rest.slice(0, -1)
+  }
+  return rest || undefined
+}
+
+export const escapeHtml = (text: string) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+export const allSameDay = (objects: Array<{ date?: Date }>): boolean => {
   const validObjects = objects.filter((obj) => obj.date !== undefined)
 
   if (validObjects.length === 0) return true
