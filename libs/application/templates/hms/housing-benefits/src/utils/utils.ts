@@ -381,18 +381,6 @@ export const isTaxReturnFiled = (
   return data.handedInLastYear === true
 }
 
-/**
- * Applicant filed a tax return within the last five years but not last year. They must
- * file last year's return before applying, so we route them to a terminal info state.
- */
-export const mustFileTaxReturnBeforeApplying = (
-  application: Application,
-): boolean => {
-  const data = getPersonalTaxReturnData(application.externalData)
-  if (!data) return false
-  return data.handedInLastFiveYears === true && data.handedInLastYear === false
-}
-
 export const hasHouseholdMembers = (answers: FormValue): boolean =>
   (getValueViaPath<number>(answers, 'householdMembersTableRepeater.length') ??
     0) > 0

@@ -24,10 +24,15 @@ const hasAssigneeCompletedPrereq = (
     !!externalData[
       assigneeExternalDataKey(normalizedNationalId, 'assigneeUserProfile')
     ]?.data
+  const taxReturn = externalData[
+    assigneeExternalDataKey(normalizedNationalId, 'assigneeTaxReturn')
+  ] as { status?: string; data?: unknown } | undefined
   const hasTaxReturn =
-    !!externalData[
-      assigneeExternalDataKey(normalizedNationalId, 'assigneeTaxReturn')
-    ]?.data
+    taxReturn != null &&
+    taxReturn.status !== 'failure' &&
+    taxReturn.data != null &&
+    typeof taxReturn.data === 'object' &&
+    Object.keys(taxReturn.data as object).length > 0
 
   const hasApprovedExternalData =
     getValueViaPath<boolean>(
