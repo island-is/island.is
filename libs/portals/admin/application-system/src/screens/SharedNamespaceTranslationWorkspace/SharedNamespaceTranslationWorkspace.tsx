@@ -212,7 +212,6 @@ export const SharedNamespaceTranslationWorkspace = () => {
           </Box>
 
           <TranslationStringsList
-            heading={namespace}
             descriptors={filteredDescriptors}
             editedValues={editedValues}
             activeLocale={activeLocale}

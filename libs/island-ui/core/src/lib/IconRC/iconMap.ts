@@ -107,6 +107,7 @@ export type Icon =
   | 'hammer'
   | 'hourglass'
   | 'videoCam'
+  | 'translate'
 
 export default {
   filled: {
@@ -217,6 +218,7 @@ export default {
     hammer: 'HammerOutline',
     hourglass: 'HourglassOutline',
     videoCam: 'VideoCam',
+    translate: 'Translate',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -326,5 +328,6 @@ export default {
     hammer: 'HammerOutline',
     hourglass: 'HourglassOutline',
     videoCam: 'VideoCamOutline',
+    translate: 'Translate',
   },
 }

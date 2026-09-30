@@ -53,38 +53,21 @@ export const TranslationDescriptorCard = ({
     >
       <Box
         display="flex"
-        justifyContent="spaceBetween"
+        justifyContent="flexEnd"
         alignItems="center"
+        columnGap={1}
         marginBottom={1}
       >
-        <Box display="flex" alignItems="center" columnGap={1}>
-          {onGoogleTranslate && (
-            <Button
-              variant="ghost"
-              type="button"
-              size="small"
-              preTextIcon="swapHorizontal"
-              preTextIconType="outline"
-              onClick={onGoogleTranslate}
-              disabled={isTranslating}
-              loading={isTranslating}
-            >
-              {formatMessage(m.translationGoogleTranslate)}
-            </Button>
-          )}
-        </Box>
-        <Box display="flex" columnGap={1}>
-          {tags?.map((tag, i) => (
-            <Tag key={i} variant={tag.variant} outlined={tag.outlined}>
-              {tag.label}
-            </Tag>
-          ))}
-          {isDirty && (
-            <Tag variant="blueberry" outlined>
-              Unsaved
-            </Tag>
-          )}
-        </Box>
+        {tags?.map((tag, i) => (
+          <Tag key={i} variant={tag.variant} outlined={tag.outlined}>
+            {tag.label}
+          </Tag>
+        ))}
+        {isDirty && (
+          <Tag variant="blueberry" outlined>
+            Unsaved
+          </Tag>
+        )}
       </Box>
 
       {subtitle && (
@@ -110,6 +93,22 @@ export const TranslationDescriptorCard = ({
         textarea={(descriptor.defaultMessage?.length ?? 0) > 80}
         rows={3}
       />
+
+      {onGoogleTranslate && (
+        <Box marginTop={1}>
+          <Button
+            variant="text"
+            type="button"
+            size="small"
+            icon="translate"
+            onClick={onGoogleTranslate}
+            disabled={isTranslating}
+            loading={isTranslating}
+          >
+            {formatMessage(m.translationGoogleTranslate)}
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }

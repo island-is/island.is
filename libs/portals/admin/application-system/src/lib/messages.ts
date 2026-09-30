@@ -316,11 +316,16 @@ export const m = defineMessages({
   },
   translationGoogleTranslate: {
     id: 'admin-portal.application-system:translationGoogleTranslate',
-    defaultMessage: 'Þýða',
+    defaultMessage: 'Þýða með Google',
   },
   translationGoogleTranslateAll: {
     id: 'admin-portal.application-system:translationGoogleTranslateAll',
-    defaultMessage: 'Þýða allt',
+    defaultMessage: 'Þýða alla texta í einu með Google',
+  },
+  translationGoogleTranslateAllTooltip: {
+    id: 'admin-portal.application-system:translationGoogleTranslateAllTooltip',
+    defaultMessage:
+      'Þýðingar gerðar með Google Translate geta verið ófullkomnar og þarf að yfirfara þær',
   },
   translationStringsScopeScreen: {
     id: 'admin-portal.application-system:translationStringsScopeScreen',
@@ -333,10 +338,6 @@ export const m = defineMessages({
   translationEditIcelandicToggle: {
     id: 'admin-portal.application-system:translationEditIcelandicToggle',
     defaultMessage: 'Breyta íslenskum textum',
-  },
-  translationStringsAllApplicationHeading: {
-    id: 'admin-portal.application-system:translationStringsAllApplicationHeading',
-    defaultMessage: 'Allur texti í umsókn',
   },
   translationReferenceLabelDefault: {
     id: 'admin-portal.application-system:translationReferenceLabelDefault',
@@ -374,10 +375,6 @@ export const m = defineMessages({
   translationStringsApplicationEmptyHint: {
     id: 'admin-portal.application-system:translationStringsApplicationEmptyHint',
     defaultMessage: 'Engir þýðanlegir textar fundust fyrir þetta umsóknarform.',
-  },
-  translationStringsCount: {
-    id: 'admin-portal.application-system:translationStringsCount',
-    defaultMessage: '{count} strengir',
   },
   translationStringsListEmpty: {
     id: 'admin-portal.application-system:translationStringsListEmpty',

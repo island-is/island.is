@@ -1,4 +1,10 @@
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
@@ -14,7 +20,6 @@ type PersistedByKey = Record<
 >
 
 export interface TranslationStringsListProps {
-  heading: string
   descriptors: MessageDescriptor[]
   editedValues: EditedTranslations
   activeLocale: 'is' | 'en'
@@ -31,7 +36,6 @@ export interface TranslationStringsListProps {
 }
 
 export const TranslationStringsList = ({
-  heading,
   descriptors,
   editedValues,
   activeLocale,
@@ -88,44 +92,36 @@ export const TranslationStringsList = ({
 
   return (
     <>
-      <Box
-        display="flex"
-        justifyContent="spaceBetween"
-        alignItems="center"
-        marginBottom={3}
-        columnGap={2}
-      >
-        <Box flexGrow={1} style={{ minWidth: 0 }}>
-          <Text variant="h4" truncate>
-            {heading}
-          </Text>
+      {showTranslateButtons && (
+        <Box display="flex" alignItems="center" columnGap={1} marginBottom={1}>
+          <Button
+            variant="text"
+            type="button"
+            size="small"
+            icon="translate"
+            onClick={handleTranslateAll}
+            disabled={isTranslatingAll}
+            loading={isTranslatingAll}
+          >
+            {formatMessage(m.translationGoogleTranslateAll)}
+          </Button>
+          <Tooltip
+            text={formatMessage(m.translationGoogleTranslateAllTooltip)}
+            placement="top"
+          >
+            <span>
+              <Icon
+                icon="informationCircle"
+                size="small"
+                type="outline"
+                color="dark300"
+              />
+            </span>
+          </Tooltip>
         </Box>
-        <Box display="flex" alignItems="center" columnGap={2}>
-          <Text variant="small" color="dark300">
-            {formatMessage(m.translationStringsCount, {
-              count: descriptors.length,
-            })}
-          </Text>
-          {showTranslateButtons && (
-            <Button
-              variant="ghost"
-              type="button"
-              size="small"
-              preTextIcon="swapHorizontal"
-              preTextIconType="outline"
-              onClick={handleTranslateAll}
-              disabled={isTranslatingAll}
-              loading={isTranslatingAll}
-            >
-              {formatMessage(m.translationGoogleTranslateAll)}
-            </Button>
-          )}
-        </Box>
-      </Box>
+      )}
 
-      <Divider />
-
-      <Box marginTop={6}>
+      <Box marginTop={2}>
         {descriptors.map((descriptor) => {
           const draft = editedValues[activeLocale][descriptor.id]
           const persisted = getPersistedForLocale(descriptor.id)

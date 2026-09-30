@@ -1,5 +1,12 @@
 import { useMemo } from 'react'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  Icon,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
@@ -164,30 +171,46 @@ export const TabsPanelFieldsTab = ({
                   {focusedIndex + 1} / {focusableFields.length}
                 </Text>
                 {showTranslateButtons && currentFieldProperties.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    size="small"
-                    preTextIcon="swapHorizontal"
-                    preTextIconType="outline"
-                    onClick={() => {
-                      if (!onGoogleTranslateAll) return
-                      const items = currentFieldProperties
-                        .filter((p) => p.descriptor)
-                        .map((p) => ({
-                          id: p.descriptor!.id,
-                          sourceText: getSourceText(p.descriptor!),
-                        }))
-                        .filter((item) => item.sourceText)
-                      if (items.length > 0) {
-                        onGoogleTranslateAll(items)
-                      }
-                    }}
-                    disabled={isTranslatingAll}
-                    loading={isTranslatingAll}
-                  >
-                    {formatMessage(m.translationGoogleTranslateAll)}
-                  </Button>
+                  <Box display="flex" alignItems="center" columnGap={1}>
+                    <Button
+                      variant="text"
+                      type="button"
+                      size="small"
+                      icon="translate"
+                      onClick={() => {
+                        if (!onGoogleTranslateAll) return
+                        const items = currentFieldProperties
+                          .filter((p) => p.descriptor)
+                          .map((p) => ({
+                            id: p.descriptor!.id,
+                            sourceText: getSourceText(p.descriptor!),
+                          }))
+                          .filter((item) => item.sourceText)
+                        if (items.length > 0) {
+                          onGoogleTranslateAll(items)
+                        }
+                      }}
+                      disabled={isTranslatingAll}
+                      loading={isTranslatingAll}
+                    >
+                      {formatMessage(m.translationGoogleTranslateAll)}
+                    </Button>
+                    <Tooltip
+                      text={formatMessage(
+                        m.translationGoogleTranslateAllTooltip,
+                      )}
+                      placement="top"
+                    >
+                      <span>
+                        <Icon
+                          icon="informationCircle"
+                          size="small"
+                          type="outline"
+                          color="dark300"
+                        />
+                      </span>
+                    </Tooltip>
+                  </Box>
                 )}
               </Box>
             </Box>

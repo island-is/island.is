@@ -77,13 +77,6 @@ export const TabsPanelStringsTab = ({
 
   const showMainList = canShowScreenList || canShowApplicationList
 
-  const listHeading =
-    stringsListScope === 'application'
-      ? formatMessage(m.translationStringsAllApplicationHeading)
-      : selectedScreen
-      ? selectedScreen.title ?? selectedScreen.id
-      : ''
-
   const getReferenceForDescriptor = (descriptor: MessageDescriptor) => {
     if (activeLocale === 'en') {
       const isEdited = editedValues.is[descriptor.id]
@@ -155,7 +148,6 @@ export const TabsPanelStringsTab = ({
         {showMainList && (
           <>
             <TranslationStringsList
-              heading={listHeading}
               descriptors={visibleDescriptors}
               editedValues={editedValues}
               activeLocale={activeLocale}
