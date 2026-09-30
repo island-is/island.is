@@ -18,6 +18,7 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
+  meAppointmentControllerGetPatientAppointmentsV2V2,
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
   meCertificateControllerCreatePaymentIntentV1,
@@ -80,6 +81,7 @@ import {
   Locale,
   MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedAppointmentsDto,
   PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
@@ -539,7 +541,7 @@ export class HealthDirectorateHealthService {
     // Convert object with numeric keys to array
     if (typeof countries === 'object' && !Array.isArray(countries)) {
       return Object.values(
-        countries as unknown as Record<string, ConsentCountryDto>,
+        (countries as unknown) as Record<string, ConsentCountryDto>,
       )
     }
 
@@ -590,6 +592,33 @@ export class HealthDirectorateHealthService {
           query: {
             fromStartTime: from ?? defaultFrom,
             status: statuses,
+          },
+        }),
+      ),
+    )
+
+    return appointments ?? null
+  }
+
+  public async getPaginatedAppointments(
+    auth: Auth,
+    page: number,
+    pageSize: number,
+    from?: Date,
+    statuses?: UserVisibleAppointmentStatuses[],
+  ): Promise<PaginatedAppointmentsDto | null> {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const defaultFrom = today
+
+    const appointments = await withAuthContext(auth, () =>
+      data(
+        meAppointmentControllerGetPatientAppointmentsV2V2({
+          query: {
+            fromStartTime: from ?? defaultFrom,
+            status: statuses,
+            page,
+            pageSize,
           },
         }),
       ),

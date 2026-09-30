@@ -1,8 +1,15 @@
 query getAppointments(
   $from: DateTime
   $status: [HealthDirectorateAppointmentStatus!]
+  $page: Int
+  $pageSize: Int
 ) {
-  healthDirectorateAppointments(from: $from, status: $status) {
+  healthDirectorateAppointments(
+    from: $from
+    status: $status
+    page: $page
+    pageSize: $pageSize
+  ) {
     data {
       __typename
       id
@@ -26,5 +33,6 @@ query getAppointments(
         longitude
       }
     }
+    totalCount
   }
 }
