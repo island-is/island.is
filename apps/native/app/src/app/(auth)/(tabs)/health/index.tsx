@@ -1,5 +1,5 @@
 import { ApolloError, useApolloClient } from '@apollo/client'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Animated,
@@ -446,41 +446,6 @@ export default function HealthOverviewScreen() {
   // fall back to '-' on their own, so only these two need the warning.
   const paymentStatusFailed = !!paymentStatusRes.error && !paymentStatusRes.data
 
-  const basicInfoLoading =
-    bloodTypeRes.loading ||
-    organDonationRes.loading ||
-    healthCenterRes.loading ||
-    dentistRes.loading
-  const wasBasicInfoLoading = useRef(false)
-
-  // The one round-trip no refresh accounts for: the fetch a cleared cache does
-  // on its own. Only loading proves it went to the network, so cached data of
-  // unknown age leaves the timestamp absent rather than claiming now.
-  useEffect(() => {
-    const finishedLoading = wasBasicInfoLoading.current && !basicInfoLoading
-    wasBasicInfoLoading.current = basicInfoLoading
-
-    if (basicInfoFetchedAt !== null || !finishedLoading) {
-      return
-    }
-    if (
-      bloodTypeRes.data ||
-      organDonationRes.data ||
-      healthCenterRes.data ||
-      dentistRes.data
-    ) {
-      setBasicInfoFetchedAt(new Date().toISOString())
-    }
-  }, [
-    basicInfoLoading,
-    basicInfoFetchedAt,
-    setBasicInfoFetchedAt,
-    bloodTypeRes.data,
-    organDonationRes.data,
-    healthCenterRes.data,
-    dentistRes.data,
-  ])
-
   const lastUpdatedFormatted = useMemo(
     () =>
       basicInfoFetchedAt === null
@@ -492,36 +457,47 @@ export default function HealthOverviewScreen() {
     [intl, basicInfoFetchedAt],
   )
 
+  const refreshInFlight = useRef(false)
+
   const onRefresh = useCallback(async () => {
+    // The button and pull-to-refresh can both fire before `refetching` renders.
+    if (refreshInFlight.current) {
+      return
+    }
+    refreshInFlight.current = true
     setRefetching(true)
-    const fetchedAt = new Date().toISOString()
+    const asOf = new Date().toISOString()
 
     try {
-      // Settled apart so an unrelated failure cannot leave freshly fetched
-      // basic information wearing an old timestamp.
-      const basicInfo = Promise.all(
+      // Settled, not all: one failure should not hide the answers that arrived.
+      const basicInfo = Promise.allSettled(
         [
           healthCenterRes.refetch(),
           // New as-of date, so the answer is current rather than as-of launch.
-          dentistRes.refetch({
-            input: { dateFrom: fetchedAt, dateTo: fetchedAt },
-          }),
+          dentistRes.refetch({ input: { dateFrom: asOf, dateTo: asOf } }),
           isOrganDonationEnabled && organDonationRes.refetch(),
           bloodTypeRes.refetch(),
         ].filter(Boolean),
-      ).then(() => setBasicInfoFetchedAt(fetchedAt))
+      )
+      const rest = Promise.allSettled(
+        [
+          medicinePurchaseRes.refetch(),
+          healthInsuranceRes.refetch(),
+          paymentStatusRes.refetch(),
+          paymentOverviewRes.refetch(),
+          isAppointmentsEnabled && appointmentsRes.refetch(),
+          isHealthMessagesEnabled && messagesRes.refetch(),
+        ].filter(Boolean),
+      )
 
-      const rest = [
-        medicinePurchaseRes.refetch(),
-        healthInsuranceRes.refetch(),
-        paymentStatusRes.refetch(),
-        paymentOverviewRes.refetch(),
-        isAppointmentsEnabled && appointmentsRes.refetch(),
-        isHealthMessagesEnabled && messagesRes.refetch(),
-      ].filter(Boolean)
-
-      await Promise.allSettled([basicInfo, ...rest])
+      const [basicInfoResults] = await Promise.all([basicInfo, rest])
+      // Something came back, so there is something to date. A refresh where all
+      // four failed leaves the old timestamp alone.
+      if (basicInfoResults.some((result) => result.status === 'fulfilled')) {
+        setBasicInfoFetchedAt(asOf)
+      }
     } finally {
+      refreshInFlight.current = false
       setRefetching(false)
     }
   }, [
