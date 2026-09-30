@@ -191,7 +191,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
         role="tablist"
         aria-label={formatMessage(m.translationWorkspaceTabsAriaLabel)}
         background="blue100"
-        borderRadius="standard"
         borderColor="blue100"
         borderWidth="large"
         flexShrink={0}
@@ -199,6 +198,9 @@ export const TranslationWorkspaceStatesTabsPanel = ({
       >
         {tabs.map((tab, index) => {
           const isSelected = tab.id === activeTab
+          const selectedIndex = tabs.findIndex((t) => t.id === activeTab)
+          const isPreviousToSelectedTab = index + 1 === selectedIndex
+          const isNextToSelectedTab = index - 1 === selectedIndex
           return (
             <Box
               key={tab.id}
@@ -212,18 +214,30 @@ export const TranslationWorkspaceStatesTabsPanel = ({
               display="flex"
               alignItems="center"
               justifyContent="center"
-              className={cn(styles.tab, isSelected && styles.tabSelected)}
+              className={cn(styles.tab, {
+                [styles.tabSelected]: isSelected,
+                [styles.tabNotSelected]:
+                  !isSelected &&
+                  !isPreviousToSelectedTab &&
+                  !isNextToSelectedTab,
+                [styles.tabPreviousToSelectedTab]: isPreviousToSelectedTab,
+                [styles.tabNextToSelectedTab]: isNextToSelectedTab,
+              })}
               onClick={() => setActiveTab(tab.id)}
               onKeyDown={(event) => handleTabKeyDown(index, event)}
               ref={(node) => {
                 tabRefs.current[index] = node as HTMLButtonElement | null
               }}
             >
+              <div className={styles.circleElement} />
+              <span className={styles.squareElement} />
               <Text
+                as="span"
                 variant="small"
                 fontWeight={isSelected ? 'semiBold' : 'light'}
-                color={isSelected ? 'blue400' : 'black'}
+                color={isSelected ? 'blue400' : 'dark400'}
                 truncate
+                className={styles.tabText}
               >
                 {tab.label}
               </Text>
