@@ -6,6 +6,7 @@ import {
   IS,
   SHOW_LANGUAGE_SECTION_TYPES,
 } from '../utils/constants'
+import { PARENT_KEYS } from '../utils/types'
 import { errorMessages } from './messages'
 
 const isValidPhone = (value: string) => {
@@ -54,14 +55,26 @@ const serviceProviderSchema = z.object({
   contactPersonWorkPhone: phoneNumberSchema.optional().or(z.literal('')),
 })
 
-const notifierInfoSchema = z.object({
-  name: z.string().optional(),
-  nationalId: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
-  phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
-  notifierAnonymity: z.enum([YES, NO]),
-  relationshipToChild: z.string(),
-})
+const notifierInfoSchema = z
+  .object({
+    name: z.string().optional(),
+    nationalId: z.string().optional(),
+    email: z.string().email().optional().or(z.literal('')),
+    phoneNumber: phoneNumberSchema.optional().or(z.literal('')),
+    notifierAnonymity: z.enum([YES, NO]),
+    needsInterpreter: z.string(),
+    preferredLanguage: z.string().optional(),
+    relationshipToChild: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.needsInterpreter === YES && !data.preferredLanguage) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['preferredLanguage'],
+        params: errorMessages.required,
+      })
+    }
+  })
 
 const childSchema = z
   .object({
@@ -75,6 +88,14 @@ const childSchema = z
         usePronounAndPreferredName: z.array(z.string()).optional(),
         preferredName: z.string().optional(),
         preferredPronoun: z.array(z.string()).nullish(),
+        education: z
+          .object({
+            type: z.string().optional(),
+            schoolName: z.string().optional(),
+            caregiverName: z.string().optional(),
+          })
+          .optional(),
+        needsInterpreter: z.string().optional(),
       })
       .optional(),
     manualInfo: z
@@ -91,7 +112,7 @@ const childSchema = z
         municipality: z.string().optional(),
         municipalityPostalCode: z.string().optional(),
         language: z.string().optional(),
-        needsInterpreter: z.array(z.string()).optional(),
+        needsInterpreter: z.string(),
       })
       .optional(),
   })
@@ -108,6 +129,14 @@ const childSchema = z
           code: z.ZodIssueCode.custom,
           path: ['nationalIdInfo', 'nationalId'],
           params: errorMessages.invalidNationalId,
+        })
+      }
+
+      if (!data.nationalIdInfo?.needsInterpreter) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['nationalIdInfo', 'needsInterpreter'],
+          params: errorMessages.required,
         })
       }
 
@@ -128,6 +157,7 @@ const childSchema = z
   })
 
 const parentSchema = z.object({
+  knowsNationalId: z.enum([YES, NO]).optional(),
   nationalIdInfo: z
     .object({
       nationalId: z.string().optional(),
@@ -145,30 +175,31 @@ const parentSchema = z.object({
   postalCode: z.string().optional(),
   municipality: z.string().optional(),
   municipalityPostalCode: z.string().optional(),
-  needsInterpreter: z.array(z.string()).optional(),
+  needsInterpreter: z.string().optional(),
   preferredLanguage: z.string().optional(),
 })
 
 const parentsSchema = z
   .object({
-    knowsParentNationalIds: z.enum([YES, NO]).optional(),
     parent1: parentSchema.optional(),
     parent2: parentSchema.optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data.knowsParentNationalIds) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['knowsParentNationalIds'],
-        params: errorMessages.required,
-      })
-      return
-    }
+    for (const key of PARENT_KEYS) {
+      const parent = data[key]
 
-    if (data.knowsParentNationalIds === YES) {
-      for (const key of ['parent1', 'parent2'] as const) {
-        const nationalId = data[key]?.nationalIdInfo?.nationalId
-        const name = data[key]?.nationalIdInfo?.name
+      if (!parent?.knowsNationalId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'knowsNationalId'],
+          params: errorMessages.required,
+        })
+        continue
+      }
+
+      if (parent.knowsNationalId === YES) {
+        const nationalId = parent.nationalIdInfo?.nationalId
+        const name = parent.nationalIdInfo?.name
 
         if (!nationalId) {
           ctx.addIssue({
@@ -184,22 +215,21 @@ const parentsSchema = z
           })
         }
       }
-    }
 
-    if (data.knowsParentNationalIds === NO) {
-      for (const key of ['parent1', 'parent2'] as const) {
-        const parent = data[key]
-        const needsPreferredLanguage =
-          parent?.citizenship !== IS && parent?.needsInterpreter?.includes(YES)
+      if (!parent.needsInterpreter) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'needsInterpreter'],
+          params: errorMessages.required,
+        })
+      }
 
-        // If parent is non-Icelandic and interpreter is requested, preferred language is required.
-        if (needsPreferredLanguage && !parent?.preferredLanguage) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [key, 'preferredLanguage'],
-            params: errorMessages.required,
-          })
-        }
+      if (parent.needsInterpreter === YES && !parent.preferredLanguage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key, 'preferredLanguage'],
+          params: errorMessages.required,
+        })
       }
     }
   })
@@ -223,7 +253,8 @@ const memmSchema = z.object({
       languageUsage: z.string(),
       languages: z.array(z.string()).optional(),
       preferredLanguage: z.string().nullish(),
-      needsInterpreter: z.array(z.string()).nullish(),
+      disability: z.string(),
+      disabilityService: z.string().optional(),
     })
     .superRefine((data, ctx) => {
       const showsLanguageSection = SHOW_LANGUAGE_SECTION_TYPES.includes(
@@ -246,59 +277,74 @@ const memmSchema = z.object({
           params: errorMessages.required,
         })
       }
-    })
-    .optional(),
-  wellbeing: z
-    .object({
-      integratedService: z.string(),
-      wellbeingContact: z.string(),
-      wellbeingContactEmail: z.string().email().optional().or(z.literal('')),
-      wellbeingContactName: z.string().optional(),
-      wellbeingManager: z.string(),
-      wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
-      wellbeingManagerName: z.string().optional(),
-      disability: z.string(),
-      disabilityService: z.string().optional(),
-    })
-    .superRefine((data, ctx) => {
-      if (data.wellbeingContact === YES) {
-        if (!data.wellbeingContactEmail) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingContactEmail'],
-            params: errorMessages.required,
-          })
-        }
-        if (!data.wellbeingContactName) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingContactName'],
-            params: errorMessages.required,
-          })
-        }
-      }
-      if (data.wellbeingManager === YES) {
-        if (!data.wellbeingManagerEmail) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingManagerEmail'],
-            params: errorMessages.required,
-          })
-        }
-        if (!data.wellbeingManagerName) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['wellbeingManagerName'],
-            params: errorMessages.required,
-          })
-        }
-      }
+
       if (data.disability === YES && !data.disabilityService) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['disabilityService'],
           params: errorMessages.required,
         })
+      }
+    })
+    .optional(),
+  wellbeing: z
+    .object({
+      integratedService: z.string(),
+      wellbeingContact: z.string().optional(),
+      wellbeingContactEmail: z.string().email().optional().or(z.literal('')),
+      wellbeingContactName: z.string().optional(),
+      wellbeingManager: z.string().optional(),
+      wellbeingManagerEmail: z.string().email().optional().or(z.literal('')),
+      wellbeingManagerName: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.integratedService === YES) {
+        if (!data.wellbeingContact) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingContact'],
+            params: errorMessages.required,
+          })
+        }
+        if (!data.wellbeingManager) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['wellbeingManager'],
+            params: errorMessages.required,
+          })
+        }
+        if (data.wellbeingContact === YES) {
+          if (!data.wellbeingContactEmail) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingContactEmail'],
+              params: errorMessages.required,
+            })
+          }
+          if (!data.wellbeingContactName) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingContactName'],
+              params: errorMessages.required,
+            })
+          }
+        }
+        if (data.wellbeingManager === YES) {
+          if (!data.wellbeingManagerEmail) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingManagerEmail'],
+              params: errorMessages.required,
+            })
+          }
+          if (!data.wellbeingManagerName) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              path: ['wellbeingManagerName'],
+              params: errorMessages.required,
+            })
+          }
+        }
       }
     })
     .optional(),

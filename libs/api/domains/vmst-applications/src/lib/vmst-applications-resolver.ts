@@ -5,6 +5,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
+import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsValidationUnemploymentApplication,
   VmstApplicationsUnemploymentApplicationOverview,
@@ -16,6 +17,7 @@ import {
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
+  VmstApplicationsU2ValidationResponse,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 import type { Locale } from '@island.is/shared/types'
@@ -71,6 +73,20 @@ export class VMSTApplicationsResolver {
     input: VmstApplicationsVacationValidationInput,
   ) {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
+  }
+
+  @Query(() => VmstApplicationsU2ValidationResponse, {
+    name: 'vmstApplicationsU2Validation',
+  })
+  @Audit()
+  async validateU2(
+    @CurrentUser() auth: User,
+    @Args('input', {
+      type: () => VmstApplicationsU2ValidationInput,
+    })
+    input: VmstApplicationsU2ValidationInput,
+  ) {
+    return this.vmstApplicationsService.validateU2(auth, input)
   }
 
   @Query(() => VmstApplicationsUnemploymentApplicationOverview, {

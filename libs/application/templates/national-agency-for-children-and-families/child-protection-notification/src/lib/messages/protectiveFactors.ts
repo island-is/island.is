@@ -9,7 +9,7 @@ export const protectiveFactorsMessages = defineMessages({
   description: {
     id: 'cpn.application:protectiveFactors.description',
     defaultMessage:
-      'Allar fjölskyldur og öll börn hafa yfir að búa sterkum hliðum og verndandi þáttum sem stuðla að velferð þeirra og seiglu og geta dregið úr neikvæðum áhrifum áfalla eða álags. \n\nVeist þú hvaða verndandi þætti, ef einhverja, er hægt að nefna í máli barnsins sem um ræðir? Veldu alla þá þætti sem þú hefur vitneskju um og telur vera lýsandi. \n\nEf þú þekkir ekki til verndandi þátta, þá hakarðu einfaldlega við þann möguleika og heldur svo áfram.',
+      'Verndandi þættir eru eiginleikar, aðstæður í lífi barns sem geta stutt við það og dregið úr líkum á ofbeldi, vanrækslu eða áhættuhegðun.  \n\nHakið við alla þá þætti sem þjónustuveitandi telur að eigi við í tilviki barnsins.',
     description: 'Protective factors page description with instructions',
   },
   itemsLabel: {

@@ -114,7 +114,21 @@ export const getOrCreateTransaction = async (
  * risks claiming an outcome the database never accepted.
  */
 export const registerAfterCommit = (callback: AfterCommitCallback) => {
-  requireTransactionContext().afterCommit.push(callback)
+  const context = requireTransactionContext()
+
+  // Nothing drains the array once the slot has been claimed: the interceptor
+  // settles it before it iterates, and the close handler never drains at all.
+  // A callback registered now would sit there until the request's store is
+  // discarded, losing the side effect without a trace - the exact outcome this
+  // hook exists to prevent. As with reopening a transaction, it is a
+  // programming error rather than a condition the caller can recover from.
+  if (context.settlement !== 'open') {
+    throw new InternalServerErrorException(
+      `The request transaction is already ${context.settlement}; an after commit callback registered now would never run.`,
+    )
+  }
+
+  context.afterCommit.push(callback)
 }
 
 @Injectable()

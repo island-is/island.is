@@ -1,5 +1,6 @@
-import { Extension, Mark } from '@tiptap/core'
+import { Extension, Mark, mergeAttributes } from '@tiptap/core'
 import { ListItem } from '@tiptap/extension-list'
+import { Table, TableCell, TableRow } from '@tiptap/extension-table'
 import { Placeholder } from '@tiptap/extensions'
 import { StarterKit } from '@tiptap/starter-kit'
 
@@ -166,7 +167,10 @@ const BlockIndent = Extension.create({
 // on wrapper items — both used for skipped-level nesting (a level-1 → level-3
 // Word paste).
 const RichTextListItem = ListItem.extend({
-  content: 'block+',
+  // Spelled out rather than 'block+' so a table (which is in the block group)
+  // can never nest inside a list item; the list of node types is otherwise
+  // exactly the block group.
+  content: '(paragraph | bulletList | orderedList)+',
 
   addAttributes() {
     return {
@@ -213,6 +217,86 @@ const RichTextListItem = ListItem.extend({
   },
 })
 
+// Tables serialize as bare <table><tbody><tr><td> with no attributes. The
+// stock extension emits a style attribute (width/min-width) plus a styled
+// <colgroup> on every table, which the WAF would reject. Headers, merged
+// cells and column widths are out of scope, so their attributes are pinned or
+// removed; the PDF renderer lays cells out at equal widths to match.
+const RichTextTable = Table.extend({
+  // The stock renderHTML always injects a colgroup and a style attribute;
+  // emit neither.
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'table',
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      ['tbody', 0],
+    ]
+  },
+
+  // Without the TableView node view the live editor DOM matches the
+  // serialized output (no wrapper div, no colgroup, no inline widths); the
+  // table lays out through the editor CSS instead.
+  addNodeView() {
+    return null
+  },
+
+  addCommands() {
+    const parent = this.parent?.()
+    return {
+      ...parent,
+      // The stock command defaults withHeaderRow to true and would then look
+      // up the header-cell node, which this schema deliberately lacks — force
+      // plain rows no matter how the command is called.
+      insertTable:
+        ({ rows = 3, cols = 3 } = {}) =>
+        (props) =>
+          parent?.insertTable
+            ? parent.insertTable({ rows, cols, withHeaderRow: false })(props)
+            : false,
+    }
+  },
+}).configure({ resizable: false }) // resizing would write colwidth → styles
+
+const RichTextTableRow = TableRow.extend({
+  // The stock expression references tableHeader, which is not in the schema
+  // (building the schema would throw on the unknown node).
+  content: 'tableCell*',
+})
+
+const RichTextTableCell = TableCell.extend({
+  // Paragraphs and lists, but never a nested table: content the schema cannot
+  // fit into a cell is hoisted out behind the table by the parser, so pasted
+  // lists must be representable in place — nested tables are instead
+  // flattened by the paste/load normalization before they reach the parser.
+  content: '(paragraph | bulletList | orderedList)+',
+
+  addAttributes() {
+    // prosemirror-tables reads colspan/rowspan on every cell, so the
+    // attributes must exist — but merges are unsupported, so they are pinned
+    // to 1, never parsed from pasted HTML and never serialized. The stock
+    // colwidth and align attributes are gone entirely: align would render a
+    // style attribute, colwidth a styled colgroup.
+    return {
+      colspan: { default: 1, parseHTML: () => 1, rendered: false },
+      rowspan: { default: 1, parseHTML: () => 1, rendered: false },
+    }
+  },
+
+  parseHTML() {
+    // th parses as a plain cell: header semantics are out of scope, but
+    // pasted header text must survive.
+    return [{ tag: 'td' }, { tag: 'th' }]
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'td',
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      0,
+    ]
+  },
+})
+
 export const buildEditorExtensions = (placeholder: string) => [
   StarterKit.configure({
     // Everything not listed in the toolbar is disabled so the schema cannot
@@ -235,5 +319,8 @@ export const buildEditorExtensions = (placeholder: string) => [
   RichTextListItem,
   ClassHighlight,
   BlockIndent,
+  RichTextTable,
+  RichTextTableRow,
+  RichTextTableCell,
   Placeholder.configure({ placeholder }),
 ]

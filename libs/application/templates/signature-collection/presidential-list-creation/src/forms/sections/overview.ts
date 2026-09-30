@@ -9,10 +9,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { SignatureCollectionArea } from '@island.is/api/schema'
-import {
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const overview = buildSection({

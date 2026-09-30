@@ -245,9 +245,13 @@ export class ApplicationMapper {
     if (field.fieldType === FieldTypesEnum.APPLICANT) {
       settings.applicantType = field.fieldSettings?.applicantType
     }
+    if (field.fieldType === FieldTypesEnum.ASSETS) {
+      settings.assetType = field.fieldSettings?.assetType
+    }
     if (
       settings.isDecimal !== undefined ||
-      settings.applicantType !== undefined
+      settings.applicantType !== undefined ||
+      settings.assetType !== undefined
     ) {
       jsonField.fieldSettings = settings
     }

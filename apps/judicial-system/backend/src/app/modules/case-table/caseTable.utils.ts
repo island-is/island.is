@@ -22,7 +22,7 @@ import { CaseIncludes, modelMap, subModelMap } from './caseTable.types'
 
 const getIsMyCaseAttributes = (user: User): string[] => {
   if (isProsecutionUser(user)) {
-    return ['creatingProsecutorId', 'prosecutorId']
+    return ['creatingProsecutorId', 'prosecutorId', 'indictmentApproverId']
   }
 
   if (isDistrictCourtUser(user)) {
@@ -274,14 +274,19 @@ export const getAllIncludes = (
 export const isMyCase = (
   theCase: Pick<
     Case,
-    'creatingProsecutorId' | 'prosecutorId' | 'judgeId' | 'registrarId'
+    | 'creatingProsecutorId'
+    | 'prosecutorId'
+    | 'indictmentApproverId'
+    | 'judgeId'
+    | 'registrarId'
   >,
   user: User,
 ): boolean => {
   if (isProsecutionUser(user)) {
     return (
       theCase.creatingProsecutorId === user.id ||
-      theCase.prosecutorId === user.id
+      theCase.prosecutorId === user.id ||
+      theCase.indictmentApproverId === user.id
     )
   }
 
@@ -327,6 +332,7 @@ export const canDeleteIndictmentCase = (
 ): boolean => {
   return (
     caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.WAITING_FOR_REVIEW ||
     caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
   )
 }

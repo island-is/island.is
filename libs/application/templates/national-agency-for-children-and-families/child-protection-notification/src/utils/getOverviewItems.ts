@@ -11,9 +11,10 @@ import {
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
+  getCountryByCode,
+  getLanguageByCode,
   removeCountryCode,
-} from '@island.is/application/ui-components'
-import { getCountryByCode, getLanguageByCode } from '@island.is/shared/utils'
+} from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import {
@@ -25,40 +26,35 @@ import {
   sharedMessages,
 } from '../lib/messages'
 import {
-  DO_NOT_KNOW,
   IS,
-  KnowsNationalId,
   LanguageEnvironmentOptions,
-  NOT_APPLICABLE,
   RISK_TO_UNBORN,
-  Roles,
 } from '../utils/constants'
 import {
   getAreParentsInformedTitle,
   getHasDiscussedWithParentsTitle,
+  getHasReportedBeforeTitle,
+  getKnowsNationalIdLabel,
+  getParentMessages,
+  getYesNoDoNotKnowLabel,
+  getYesNoDoNotKnowNotApplicableLabel,
+  getYesNoLabel,
 } from './childProtectionNotificationUtils'
 import {
   isDayCareProvider,
   isKnowsNationalId,
   isNoNationalId,
   isSchoolType,
-  isUnborn,
-  shouldShowNonPrimarySchoolAgeChildInfo,
+  shouldShowAdultPersonalApplicantChildInfo,
   showDisabilityService,
   showPreferredLanguage,
+  showWellbeingContactAndManagerQuestions,
   showWellbeingContactFields,
   showWellbeingManagerFields,
 } from './conditionUtils'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
-import { getApplicantRole } from './roleUtils'
 import { Parent } from './types'
-
-const knowsNationalIdLabelMap = {
-  [KnowsNationalId.YES]: sharedMessages.radioYes,
-  [KnowsNationalId.NO]: sharedMessages.radioNo,
-  [KnowsNationalId.UNBORN]: childMessages.nationalIdLookup.radioOptionUnborn,
-} as const
 
 // TODO: Replace with values from barnaverndargatt API when available.
 const languageUsageLabelMap = {
@@ -68,19 +64,6 @@ const languageUsageLabelMap = {
     memmMessages.culture.languageUsageIcelandicAndOther,
   [LanguageEnvironmentOptions.ONLY_OTHER]:
     memmMessages.culture.languageUsageOnlyOther,
-} as const
-
-const receptionRadioLabelMap = {
-  [YES]: sharedMessages.radioYes,
-  [NO]: sharedMessages.radioNo,
-  [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
-  [NOT_APPLICABLE]: memmMessages.reception.optionNotApplicable,
-} as const
-
-const wellbeingRadioLabelMap = {
-  [YES]: sharedMessages.radioYes,
-  [NO]: sharedMessages.radioNo,
-  [DO_NOT_KNOW]: sharedMessages.radioDoNotKnow,
 } as const
 
 export const getOverviewItems = (answers: FormValue): Array<KeyValueItem> => {
@@ -233,7 +216,7 @@ export const getServiceProviderContactPersonItems = (
     },
     {
       width: 'half',
-      keyText: prerequisitesMessages.serviceProvider.workPhone,
+      keyText: sharedMessages.phone,
       valueText: formatPhoneNumber(
         removeCountryCode(serviceProviderContactPersonWorkPhone ?? ''),
       ),
@@ -251,6 +234,8 @@ export const getNotifierInfoItems = (
     notifierEmail,
     notifierPhoneNumber,
     notifierNotifierAnonymity,
+    notifierNeedsInterpreter,
+    notifierPreferredLanguage,
     notifierRelationshipToChild,
   } = getApplicationAnswers(answers)
 
@@ -281,11 +266,24 @@ export const getNotifierInfoItems = (
     {
       width: 'half',
       keyText: prerequisitesMessages.notifierInfo.wantsAnonymity,
-      valueText:
-        notifierNotifierAnonymity === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      valueText: getYesNoLabel(notifierNotifierAnonymity),
     },
+    {
+      width: 'half',
+      keyText: sharedMessages.needsInterpreter,
+      valueText: getYesNoDoNotKnowLabel(notifierNeedsInterpreter),
+    },
+    ...(notifierNeedsInterpreter === YES
+      ? [
+          {
+            width: 'half' as const,
+            keyText: sharedMessages.language,
+            valueText:
+              getLanguageByCode(notifierPreferredLanguage ?? '')?.name ?? '',
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
     {
       width: 'full',
       keyText: prerequisitesMessages.notifierInfo.relationshipToChild,
@@ -310,23 +308,18 @@ export const getChildWithNationalIdItems = (
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
-    childSchoolType,
-    childSchoolName,
+    childEducationType,
+    childEducationSchoolName,
+    childEducationCaregiverName,
     childLanguage,
     childNeedsInterpreter,
   } = getApplicationAnswers(answers)
-
-  const role = getApplicantRole(userNationalId)
 
   return [
     {
       width: 'half',
       keyText: childMessages.nationalIdLookup.radioLabel,
-      valueText: childKnowsNationalId
-        ? knowsNationalIdLabelMap[
-            childKnowsNationalId as keyof typeof knowsNationalIdLabelMap
-          ] ?? childKnowsNationalId
-        : '',
+      valueText: getKnowsNationalIdLabel(childKnowsNationalId),
     },
     ...(isKnowsNationalId(answers)
       ? [
@@ -372,21 +365,30 @@ export const getChildWithNationalIdItems = (
                 },
               ]
             : []),
-          ...(shouldShowNonPrimarySchoolAgeChildInfo(answers) &&
-          role === Roles.ADULT_PERSONAL_APPLICANT
+          ...(shouldShowAdultPersonalApplicantChildInfo(answers, userNationalId)
             ? [
                 {
                   width: 'half' as const,
-                  keyText: prerequisitesMessages.child.schoolType,
-                  valueText: childSchoolType ?? '',
+                  keyText: prerequisitesMessages.child.educationType,
+                  valueText: childEducationType ?? '',
                   hideIfEmpty: true,
                 },
-                ...(childSchoolType
+                ...(isSchoolType(childEducationType)
                   ? [
                       {
                         width: 'half' as const,
                         keyText: memmMessages.education.schoolName,
-                        valueText: childSchoolName ?? '',
+                        valueText: childEducationSchoolName ?? '',
+                        hideIfEmpty: true,
+                      },
+                    ]
+                  : []),
+                ...(isDayCareProvider(childEducationType)
+                  ? [
+                      {
+                        width: 'half' as const,
+                        keyText: coreMessages.name,
+                        valueText: childEducationCaregiverName ?? '',
                         hideIfEmpty: true,
                       },
                     ]
@@ -397,15 +399,14 @@ export const getChildWithNationalIdItems = (
                   valueText: getLanguageByCode(childLanguage ?? '')?.name,
                   hideIfEmpty: true,
                 },
-                {
-                  width: 'half' as const,
-                  keyText: sharedMessages.needsInterpreter,
-                  valueText: childNeedsInterpreter.includes(YES)
-                    ? sharedMessages.radioYes
-                    : sharedMessages.radioNo,
-                },
               ]
             : []),
+          {
+            width: 'half' as const,
+            keyText: sharedMessages.needsInterpreter,
+            valueText: getYesNoDoNotKnowLabel(childNeedsInterpreter),
+            hideIfEmpty: true,
+          },
         ]
       : []),
     ...(isNoNationalId(answers)
@@ -541,21 +542,47 @@ export const getChildManualItems = (
     {
       width: 'half',
       keyText: sharedMessages.needsInterpreter,
-      valueText: childManualNeedsInterpreter.includes(YES)
-        ? sharedMessages.radioYes
-        : sharedMessages.radioNo,
+      valueText: getYesNoDoNotKnowLabel(childManualNeedsInterpreter),
+      hideIfEmpty: true,
     },
   ]
 }
 
 const buildParentItems = (
+  answers: FormValue,
   parent: Parent | undefined,
-  knowsParentNationalIds: string | undefined,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { genders, postalCodes } = getApplicationExternalData(externalData)
-  if (knowsParentNationalIds === YES) {
+
+  const knowsNationalIdItem: KeyValueItem = {
+    width: 'full',
+    keyText: getParentMessages(answers).radioLabel,
+    valueText: getYesNoLabel(parent?.knowsNationalId),
+  }
+
+  const interpreterItems: Array<KeyValueItem> = [
+    {
+      width: 'half',
+      keyText: sharedMessages.needsInterpreter,
+      valueText: getYesNoDoNotKnowLabel(parent?.needsInterpreter),
+      hideIfEmpty: true,
+    },
+    ...(parent?.needsInterpreter === YES
+      ? [
+          {
+            width: 'half' as const,
+            keyText: sharedMessages.language,
+            valueText: getLanguageByCode(parent.preferredLanguage ?? '')?.name,
+            hideIfEmpty: true,
+          },
+        ]
+      : []),
+  ]
+
+  if (parent?.knowsNationalId === YES) {
     return [
+      knowsNationalIdItem,
       {
         width: 'half',
         keyText: coreMessages.nationalId,
@@ -581,10 +608,12 @@ const buildParentItems = (
         ),
         hideIfEmpty: true,
       },
+      ...interpreterItems,
     ]
   }
 
   return [
+    knowsNationalIdItem,
     {
       width: 'half',
       keyText: coreMessages.name,
@@ -649,47 +678,7 @@ const buildParentItems = (
             hideIfEmpty: true,
           },
         ]),
-    ...(parent?.citizenship && parent.citizenship !== IS
-      ? [
-          {
-            width: 'half' as const,
-            keyText: sharedMessages.needsInterpreter,
-            valueText: parent.needsInterpreter?.includes(YES)
-              ? sharedMessages.radioYes
-              : sharedMessages.radioNo,
-          },
-          ...(parent.needsInterpreter?.includes(YES)
-            ? [
-                {
-                  width: 'half' as const,
-                  keyText: sharedMessages.language,
-                  valueText: getLanguageByCode(parent.preferredLanguage ?? '')
-                    ?.name,
-                  hideIfEmpty: true,
-                },
-              ]
-            : []),
-        ]
-      : []),
-  ]
-}
-
-export const getParentsPreItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { parentsKnowsNationalIds } = getApplicationAnswers(answers)
-
-  return [
-    {
-      width: 'full',
-      keyText: isUnborn(answers)
-        ? parentsMessages.expectantParents.radioLabel
-        : isKnowsNationalId(answers)
-        ? parentsMessages.custodians.radioLabel
-        : parentsMessages.guardians.radioLabel,
-      valueText:
-        parentsKnowsNationalIds === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
-    },
+    ...interpreterItems,
   ]
 }
 
@@ -697,16 +686,16 @@ export const getParent1Items = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { parent1, parentsKnowsNationalIds } = getApplicationAnswers(answers)
-  return buildParentItems(parent1, parentsKnowsNationalIds, externalData)
+  const { parent1 } = getApplicationAnswers(answers)
+  return buildParentItems(answers, parent1, externalData)
 }
 
 export const getParent2Items = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { parent2, parentsKnowsNationalIds } = getApplicationAnswers(answers)
-  return buildParentItems(parent2, parentsKnowsNationalIds, externalData)
+  const { parent2 } = getApplicationAnswers(answers)
+  return buildParentItems(answers, parent2, externalData)
 }
 
 export const getMemmEducationItems = (
@@ -718,7 +707,8 @@ export const getMemmEducationItems = (
     memmEducationCaregiverName,
   } = getApplicationAnswers(answers)
 
-  const hasNameField = isSchoolType(answers) || isDayCareProvider(answers)
+  const hasNameField =
+    isSchoolType(memmEducationType) || isDayCareProvider(memmEducationType)
 
   return [
     {
@@ -727,7 +717,7 @@ export const getMemmEducationItems = (
       valueText: memmEducationType ?? '',
       hideIfEmpty: true,
     },
-    ...(isSchoolType(answers)
+    ...(isSchoolType(memmEducationType)
       ? [
           {
             width: 'half' as const,
@@ -737,7 +727,7 @@ export const getMemmEducationItems = (
           },
         ]
       : []),
-    ...(isDayCareProvider(answers)
+    ...(isDayCareProvider(memmEducationType)
       ? [
           {
             width: 'half' as const,
@@ -760,23 +750,17 @@ export const getMemmReceptionItems = (
     {
       width: 'full',
       keyText: memmMessages.reception.seekingAsylumLabel,
-      valueText:
-        receptionRadioLabelMap[
-          memmReceptionSeekingAsylum as keyof typeof receptionRadioLabelMap
-        ] ??
-        memmReceptionSeekingAsylum ??
-        '',
+      valueText: getYesNoDoNotKnowNotApplicableLabel(
+        memmReceptionSeekingAsylum,
+      ),
       hideIfEmpty: true,
     },
     {
       width: 'full',
       keyText: memmMessages.reception.refugeeStatusLabel,
-      valueText:
-        receptionRadioLabelMap[
-          memmReceptionRefugeeStatus as keyof typeof receptionRadioLabelMap
-        ] ??
-        memmReceptionRefugeeStatus ??
-        '',
+      valueText: getYesNoDoNotKnowNotApplicableLabel(
+        memmReceptionRefugeeStatus,
+      ),
       hideIfEmpty: true,
     },
   ]
@@ -784,12 +768,15 @@ export const getMemmReceptionItems = (
 
 export const getMemmCultureItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { disabilityStatusOptions } = getApplicationExternalData(externalData)
   const {
     memmCultureLanguageUsage,
     memmCultureLanguages,
     memmCulturePreferredLanguage,
-    memmCultureNeedsInterpreter,
+    memmCultureDisability,
+    memmCultureDisabilityService,
   } = getApplicationAnswers(answers)
 
   return [
@@ -821,12 +808,26 @@ export const getMemmCultureItems = (
               getLanguageByCode(memmCulturePreferredLanguage ?? '')?.name ?? '',
             hideIfEmpty: true,
           },
+        ]
+      : []),
+    {
+      width: 'full',
+      keyText: memmMessages.culture.disabilityLabel,
+      valueText: getYesNoDoNotKnowLabel(memmCultureDisability),
+      hideIfEmpty: true,
+    },
+    ...(showDisabilityService(answers)
+      ? [
           {
             width: 'full' as const,
-            keyText: sharedMessages.needsInterpreter,
-            valueText: memmCultureNeedsInterpreter.includes(YES)
-              ? sharedMessages.radioYes
-              : sharedMessages.radioNo,
+            keyText: memmMessages.culture.disabilityServiceLabel,
+            valueText:
+              disabilityStatusOptions.find(
+                (d) => d.value === memmCultureDisabilityService,
+              )?.label ??
+              memmCultureDisabilityService ??
+              '',
+            hideIfEmpty: true,
           },
         ]
       : []),
@@ -835,9 +836,7 @@ export const getMemmCultureItems = (
 
 export const getMemmWellbeingItems = (
   answers: FormValue,
-  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { disabilityStatusOptions } = getApplicationExternalData(externalData)
   const {
     memmWellbeingIntegratedService,
     memmWellbeingWellbeingContact,
@@ -846,100 +845,61 @@ export const getMemmWellbeingItems = (
     memmWellbeingWellbeingManager,
     memmWellbeingWellbeingManagerEmail,
     memmWellbeingWellbeingManagerName,
-    memmWellbeingDisability,
-    memmWellbeingDisabilityService,
   } = getApplicationAnswers(answers)
 
   return [
     {
       width: 'full',
       keyText: memmMessages.wellbeing.integratedServiceLabel,
-      valueText:
-        wellbeingRadioLabelMap[
-          memmWellbeingIntegratedService as keyof typeof wellbeingRadioLabelMap
-        ] ??
-        memmWellbeingIntegratedService ??
-        '',
+      valueText: getYesNoDoNotKnowLabel(memmWellbeingIntegratedService),
       hideIfEmpty: true,
     },
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.wellbeingContactLabel,
-      valueText:
-        wellbeingRadioLabelMap[
-          memmWellbeingWellbeingContact as keyof typeof wellbeingRadioLabelMap
-        ] ??
-        memmWellbeingWellbeingContact ??
-        '',
-      hideIfEmpty: true,
-    },
-    ...(showWellbeingContactFields(answers)
-      ? [
-          {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingContactEmail,
-            valueText: memmWellbeingWellbeingContactEmail ?? '',
-            hideIfEmpty: true,
-          },
-          {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingContactName,
-            valueText: memmWellbeingWellbeingContactName ?? '',
-            hideIfEmpty: true,
-          },
-        ]
-      : []),
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.wellbeingManagerLabel,
-      valueText:
-        wellbeingRadioLabelMap[
-          memmWellbeingWellbeingManager as keyof typeof wellbeingRadioLabelMap
-        ] ??
-        memmWellbeingWellbeingManager ??
-        '',
-      hideIfEmpty: true,
-    },
-    ...(showWellbeingManagerFields(answers)
-      ? [
-          {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingManagerEmail,
-            valueText: memmWellbeingWellbeingManagerEmail ?? '',
-            hideIfEmpty: true,
-          },
-          {
-            width: 'half' as const,
-            keyText: memmMessages.wellbeing.wellbeingManagerName,
-            valueText: memmWellbeingWellbeingManagerName ?? '',
-            hideIfEmpty: true,
-          },
-        ]
-      : []),
-    {
-      width: 'full',
-      keyText: memmMessages.wellbeing.disabilityLabel,
-      valueText:
-        wellbeingRadioLabelMap[
-          memmWellbeingDisability as keyof typeof wellbeingRadioLabelMap
-        ] ??
-        memmWellbeingDisability ??
-        '',
-      hideIfEmpty: true,
-    },
-    ...(showDisabilityService(answers)
+    ...(showWellbeingContactAndManagerQuestions(answers)
       ? [
           {
             width: 'full' as const,
-            keyText: memmMessages.wellbeing.disabilityServiceLabel,
-            valueText:
-              disabilityStatusOptions.find(
-                (d) => d.value === memmWellbeingDisabilityService,
-              )?.label ??
-              memmWellbeingDisabilityService ??
-              '',
+            keyText: memmMessages.wellbeing.wellbeingContactLabel,
+            valueText: getYesNoDoNotKnowLabel(memmWellbeingWellbeingContact),
             hideIfEmpty: true,
           },
+          ...(showWellbeingContactFields(answers)
+            ? [
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingContactEmail,
+                  valueText: memmWellbeingWellbeingContactEmail ?? '',
+                  hideIfEmpty: true,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingContactName,
+                  valueText: memmWellbeingWellbeingContactName ?? '',
+                  hideIfEmpty: true,
+                },
+              ]
+            : []),
+          {
+            width: 'full' as const,
+            keyText: memmMessages.wellbeing.wellbeingManagerLabel,
+            valueText: getYesNoDoNotKnowLabel(memmWellbeingWellbeingManager),
+            hideIfEmpty: true,
+          },
+          ...(showWellbeingManagerFields(answers)
+            ? [
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingManagerEmail,
+                  valueText: memmWellbeingWellbeingManagerEmail ?? '',
+                  hideIfEmpty: true,
+                },
+                {
+                  width: 'half' as const,
+                  keyText: memmMessages.wellbeing.wellbeingManagerName,
+                  valueText: memmWellbeingWellbeingManagerName ?? '',
+                  hideIfEmpty: true,
+                },
+              ]
+            : []),
         ]
       : []),
   ]
@@ -1096,28 +1056,18 @@ export const getReasonNotificationHistoryItems = (
   return [
     {
       width: 'full',
-      keyText:
-        reasonForNotificationMessages.notificationHistory.hasReportedBefore,
-      valueText:
-        hasReportedBefore === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      keyText: getHasReportedBeforeTitle(answers),
+      valueText: getYesNoLabel(hasReportedBefore),
     },
     {
       width: 'full',
-      keyText: getHasDiscussedWithParentsTitle(answers, externalData),
-      valueText:
-        hasDiscussedWithParents === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      keyText: getHasDiscussedWithParentsTitle(answers),
+      valueText: getYesNoLabel(hasDiscussedWithParents),
     },
     {
       width: 'full',
-      keyText: getAreParentsInformedTitle(answers, externalData),
-      valueText:
-        areParentsInformed === YES
-          ? sharedMessages.radioYes
-          : sharedMessages.radioNo,
+      keyText: getAreParentsInformedTitle(answers),
+      valueText: getYesNoLabel(areParentsInformed),
     },
     ...(areParentsInformed === NO
       ? [

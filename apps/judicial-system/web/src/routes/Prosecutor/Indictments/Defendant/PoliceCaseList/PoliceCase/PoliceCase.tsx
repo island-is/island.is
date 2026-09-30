@@ -147,10 +147,12 @@ export const PoliceCase: FC<Props> = ({
             otherPoliceCaseNumber === policeCaseNumberInput,
         )
       ) {
-        setPoliceCaseNumberErrorMessage('')
-        validateAndSetErrorMessage(
+        // Errors are surfaced on blur - here we only clear a message that no
+        // longer applies, so nothing flashes while the user is still typing
+        removeErrorMessageIfValid(
           ['empty', 'police-casenumber-format'],
           policeCaseNumberInput,
+          policeCaseNumberErrorMessage,
           setPoliceCaseNumberErrorMessage,
         )
 
@@ -164,6 +166,7 @@ export const PoliceCase: FC<Props> = ({
     index,
     originalPoliceCaseNumber,
     policeCaseNumber,
+    policeCaseNumberErrorMessage,
     policeCaseNumberInput,
     policeCaseNumbers,
     updatePoliceCase,

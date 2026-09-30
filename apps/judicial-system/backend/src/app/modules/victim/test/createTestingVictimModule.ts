@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,7 +11,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { CaseService } from '../../case'
-import { Victim } from '../../repository'
+import { VictimRepositoryService } from '../../repository'
 import { VictimController } from '../victim.controller'
 import { VictimService } from '../victim.service'
 
@@ -38,14 +37,12 @@ export const createTestingVictimModule = async () => {
         },
       },
       {
-        provide: getModelToken(Victim),
+        provide: VictimRepositoryService,
         useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
+          findById: jest.fn(),
           create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
+          updateByIdAndCase: jest.fn(),
+          deleteByIdAndCase: jest.fn(),
         },
       },
       VictimService,
@@ -53,8 +50,8 @@ export const createTestingVictimModule = async () => {
     ],
   }).compile()
 
-  const victimModel = await victimModule.resolve<typeof Victim>(
-    getModelToken(Victim),
+  const victimRepositoryService = victimModule.get<VictimRepositoryService>(
+    VictimRepositoryService,
   )
 
   const victimController = victimModule.get<VictimController>(VictimController)
@@ -63,6 +60,6 @@ export const createTestingVictimModule = async () => {
 
   return {
     victimController,
-    victimModel,
+    victimRepositoryService,
   }
 }

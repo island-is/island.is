@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkResolver,
   m as coreMessages,
@@ -109,6 +110,10 @@ export const OrganRegistrationForm = () => {
     <IntroWrapper
       title={formatMessage(messages.organDonation)}
       intro={formatMessage(messages.organDonationDescription)}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(messages.landlaeknirOrganDonationTooltip),
+      }}
       desktopContentSpan="10/12"
     >
       <Text variant="eyebrow" color="purple400" marginBottom={1}>

@@ -3,9 +3,9 @@ import { createProxyMiddleware } from 'http-proxy-middleware'
 export const setupProxy = async (
   app: Express,
   proxyConfig: { [context: string]: any } | undefined,
-  dev: boolean,
+  enabled: boolean,
 ) => {
-  if (!proxyConfig || !dev) {
+  if (!proxyConfig || !enabled) {
     return
   }
   Object.keys(proxyConfig).forEach((context) => {

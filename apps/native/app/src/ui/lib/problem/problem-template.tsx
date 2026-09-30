@@ -12,6 +12,11 @@ export type DetailLink = {
   text: string
   url: string
   componentId?: string
+  /**
+   * Custom press handler. When provided it fully handles the press and the
+   * default browser-open is skipped (the caller opens the browser itself).
+   */
+  onPress?: () => void
 }
 
 export type ProblemTemplateBaseProps = {
@@ -172,7 +177,11 @@ export const ProblemTemplate = ({
                 borderBottomColor: theme.color.blue400,
               }}
               onPress={() => {
-                openBrowser(detailLink.url, detailLink.componentId)
+                if (detailLink.onPress) {
+                  detailLink.onPress()
+                } else {
+                  openBrowser(detailLink.url, detailLink.componentId)
+                }
               }}
             >
               <Typography

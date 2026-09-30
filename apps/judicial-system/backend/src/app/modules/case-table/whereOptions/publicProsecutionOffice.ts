@@ -9,7 +9,6 @@ import {
 
 import { CaseWhereOptions, expandCasesWithDefendants } from '../caseTable.types'
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
-import { buildHasEnforceableDefendantNotClosedWithoutEnforcementCondition } from './conditions'
 
 // Public prosecution office indictments
 
@@ -316,16 +315,7 @@ export const publicProsecutionOfficeIndictmentsClosedWithoutEnforcementWhereOpti
         where: { is_closed_without_enforcement: true },
       },
     },
-    where: {
-      [Op.and]: [
-        publicProsecutionOfficeIndictmentsAccessWhereOptions,
-        // Only cases where every defendant that could still enter enforcement
-        // has been closed without enforcement. A case with a defendant that was
-        // sent to the prison admin, or is still in the normal flow, stays in
-        // the other tables.
-        buildHasEnforceableDefendantNotClosedWithoutEnforcementCondition(false),
-      ],
-    },
+    where: publicProsecutionOfficeIndictmentsAccessWhereOptions,
     displayCases: expandCasesWithDefendants,
   })
 

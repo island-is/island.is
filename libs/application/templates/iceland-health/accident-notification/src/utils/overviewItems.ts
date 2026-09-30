@@ -4,7 +4,7 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import kennitala from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   accidentDetails,

@@ -13,6 +13,8 @@ import {
   normalizePastedHtml,
   normalizeRichTextHtml,
 } from './richTextNormalization'
+import type { TableAction } from './TableActionPicker'
+import TableActionPicker from './TableActionPicker'
 import Toolbar from './Toolbar'
 import * as styles from './RichTextEditor.css'
 
@@ -67,8 +69,15 @@ const RichTextEditor = ({
     top: 0,
     left: 0,
   })
+  const [tablePickerOpen, setTablePickerOpen] = useState<boolean>(false)
+  const [tablePickerPos, setTablePickerPos] = useState<{
+    top: number
+    left: number
+  }>({ top: 0, left: 0 })
   const pickerRef = useRef<HTMLDivElement>(null)
   const highlightButtonRef = useRef<HTMLButtonElement | null>(null)
+  const tablePickerRef = useRef<HTMLDivElement>(null)
+  const tableButtonRef = useRef<HTMLButtonElement | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   // Persist while the user types so content isn't lost on a refresh that
@@ -169,6 +178,20 @@ const RichTextEditor = ({
         | undefined) ?? null,
   })
 
+  // The table actions only apply while the caret is inside a table, so the
+  // picker follows the caret out (e.g. after deleting the table or
+  // arrowing past it).
+  const inTable = useEditorState({
+    editor,
+    selector: (ctx) => ctx.editor?.isActive('table') ?? false,
+  })
+
+  useEffect(() => {
+    if (!inTable) {
+      setTablePickerOpen(false)
+    }
+  }, [inTable])
+
   useEffect(() => {
     if (!pickerOpen) return
     const handleMouseDown = (e: MouseEvent) => {
@@ -190,6 +213,26 @@ const RichTextEditor = ({
       document.removeEventListener('mousedown', handleMouseDown)
     }
   }, [pickerOpen])
+
+  useEffect(() => {
+    if (!tablePickerOpen) return
+    const handleMouseDown = (e: MouseEvent) => {
+      const target = e.target as Node
+      // Same button exclusion as the highlight picker: the toggling is left
+      // to the button's own click handler.
+      if (
+        tablePickerRef.current &&
+        !tablePickerRef.current.contains(target) &&
+        !tableButtonRef.current?.contains(target)
+      ) {
+        setTablePickerOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown)
+    }
+  }, [tablePickerOpen])
 
   // Escape leaves fullscreen; the page behind must not scroll while the
   // editor covers it.
@@ -228,6 +271,56 @@ const RichTextEditor = ({
     setPickerOpen((open) => !open)
   }, [])
 
+  const toggleTablePicker = useCallback(() => {
+    const wrapper = wrapperRef.current
+    const button = wrapper?.querySelector<HTMLButtonElement>(
+      '[aria-label="Table"]',
+    )
+    tableButtonRef.current = button ?? null
+    if (wrapper && button) {
+      const wrapperRect = wrapper.getBoundingClientRect()
+      const buttonRect = button.getBoundingClientRect()
+      setTablePickerPos({
+        top: buttonRect.bottom - wrapperRect.top + 4,
+        left: buttonRect.left - wrapperRect.left,
+      })
+    }
+    setTablePickerOpen((open) => !open)
+  }, [])
+
+  const runTableAction = useCallback(
+    (action: TableAction) => {
+      const chain = editor?.chain().focus()
+      switch (action) {
+        case 'addRowBefore':
+          chain?.addRowBefore().run()
+          break
+        case 'addRowAfter':
+          chain?.addRowAfter().run()
+          break
+        case 'deleteRow':
+          chain?.deleteRow().run()
+          break
+        case 'addColumnBefore':
+          chain?.addColumnBefore().run()
+          break
+        case 'addColumnAfter':
+          chain?.addColumnAfter().run()
+          break
+        case 'deleteColumn':
+          chain?.deleteColumn().run()
+          break
+        case 'deleteTable':
+          chain?.deleteTable().run()
+          break
+      }
+      // The panel stays open for repeated row/column edits; deleting the
+      // table moves the caret out of it, which closes the panel through the
+      // inTable effect above.
+    },
+    [editor],
+  )
+
   return (
     <div data-testid={dataTestId}>
       <div
@@ -254,6 +347,8 @@ const RichTextEditor = ({
             editor={editor}
             highlightPickerOpen={pickerOpen}
             onToggleHighlightPicker={toggleHighlightPicker}
+            tablePickerOpen={tablePickerOpen}
+            onToggleTablePicker={toggleTablePicker}
             fullscreen={fullscreen}
             onToggleFullscreen={() => setFullscreen((current) => !current)}
           />
@@ -281,6 +376,15 @@ const RichTextEditor = ({
                 editor?.chain().focus().unsetClassHighlight().run()
                 setPickerOpen(false)
               }}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {tablePickerOpen && (
+            <TableActionPicker
+              ref={tablePickerRef}
+              position={tablePickerPos}
+              onAction={runTableAction}
             />
           )}
         </AnimatePresence>

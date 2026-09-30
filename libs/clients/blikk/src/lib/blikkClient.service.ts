@@ -14,6 +14,7 @@ import {
   BlikkGetPaymentResponse,
   CreateBlikkPaymentRequest,
   blikkCreatePaymentResponseSchema,
+  blikkErrorResponseSchema,
   blikkGetPaymentResponseSchema,
 } from './blikkClient.types'
 
@@ -113,17 +114,29 @@ export class BlikkClientService {
         body: body === undefined ? undefined : JSON.stringify(body),
       })
     } catch (e) {
-      const status = e instanceof FetchError ? e.status : undefined
-      this.logger.error('Blikk request failed', {
-        method,
-        path,
-        status,
-        error: (e as Error)?.message,
-      })
+      // The enhanced fetch has already logged the failure with the full error body; this only
+      // converts to the client's error type. For a non-2xx, Blikk's reason (Problem Details
+      // `detail`) is folded into the message so callers can log it with their own context.
+      const fallbackMessage =
+        (e as Error)?.message ?? `Blikk request failed for ${path}`
+
+      if (!(e instanceof FetchError)) {
+        throw new BlikkClientError(fallbackMessage)
+      }
+
+      const detail = blikkProblemDetail(e.problem ?? e.body)
       throw new BlikkClientError(
-        (e as Error)?.message ?? `Blikk request failed for ${path}`,
-        status,
+        detail
+          ? `Blikk request failed (${e.status}): ${detail}`
+          : fallbackMessage,
+        e.status,
       )
     }
   }
+}
+
+/** Blikk's `detail` when the captured error body is RFC 9457 Problem Details. */
+const blikkProblemDetail = (body: unknown): string | undefined => {
+  const parsed = blikkErrorResponseSchema.safeParse(body)
+  return parsed.success ? parsed.data.detail : undefined
 }

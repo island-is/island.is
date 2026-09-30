@@ -110,6 +110,10 @@ export const createIndictment = async (
   setLineCap(2)
   addNormalPlusText(doc, theCase.indictmentIntroduction ?? '')
 
+  if (theCase.indictmentIntroduction) {
+    addEmptyLines(doc)
+  }
+
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
   sortIndictmentCounts(theCase.indictmentCounts ?? []).forEach(

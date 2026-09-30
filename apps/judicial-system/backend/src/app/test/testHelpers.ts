@@ -33,7 +33,7 @@ export const verifyGuards = (
 
     expectedGuards.forEach((expectedGuard, index) => {
       describe(`${expectedGuard.name}`, () => {
-        // eslint-disable-next-line @typescript-eslint/ban-types
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         let guard: CanActivate | Function
 
         beforeEach(() => {

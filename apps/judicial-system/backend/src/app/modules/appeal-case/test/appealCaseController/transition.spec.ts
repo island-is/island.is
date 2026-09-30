@@ -11,6 +11,7 @@ import {
   AppealCaseNotificationType,
   AppealCaseState,
   AppealCaseTransition,
+  AppealCaseType,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -115,6 +116,30 @@ describe('AppealCaseController - Transition', () => {
 
       return then
     }
+  })
+
+  // Only withdrawal is written for a verdict appeal so far; the transitions
+  // that carry a ruling appeal through the court of appeals are refused on one
+  // until that work takes them on deliberately.
+  describe('a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const verdictAppealCase = {
+      id: appealCaseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.APPEALED,
+    } as AppealCase
+
+    it.each([
+      AppealCaseTransition.RECEIVE_APPEAL,
+      AppealCaseTransition.COMPLETE_APPEAL,
+      AppealCaseTransition.REOPEN_APPEAL,
+    ])('should refuse %s', async (transition) => {
+      const then = await givenWhenThen(theCase, verdictAppealCase, transition)
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    })
   })
 
   describe('receive appeal', () => {

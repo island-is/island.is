@@ -13,7 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import {
   Answers,
   EstateMember,
@@ -354,7 +354,6 @@ export const HeirsRepeater: FC<
     if (!hasHeirWithNationalIdSameAsExecutor) {
       clearErrors(heirNationalIdSameAsExecutorValidation)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,

@@ -32,9 +32,6 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  CaseIndictmentRulingDecision,
-  getDefendantServiceDate,
-  getIndictmentAppealDeadline,
   IndictmentCaseNotificationType,
   indictmentCases,
   isSuccessfulVerdictServiceStatus,
@@ -57,56 +54,11 @@ import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdict
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import { validateVerdictAppealUpdate } from './verdict.helpers'
 import {
   VerdictService,
   VerdictServiceCertificateDelivery,
 } from './verdict.service'
-
-// Deliberately stricter than the web path, which lets the public prosecution
-// office register an appeal date after the deadline has run out. This endpoint
-// is the defendant appealing their own verdict from the app, which is the legal
-// act itself rather than bookkeeping about one, so the deadline is hard. Note
-// that it runs until midnight at the end of its last day - see
-// getIndictmentAppealDeadline.
-const validateVerdictAppealUpdate = ({
-  caseId,
-  indictmentRulingDecision,
-  rulingDate,
-  verdict,
-}: {
-  caseId: string
-  indictmentRulingDecision?: CaseIndictmentRulingDecision
-  rulingDate?: Date
-  verdict: Verdict
-}) => {
-  if (!rulingDate) {
-    throw new BadRequestException(
-      `Cannot register appeal – No ruling date has been set for case ${caseId}`,
-    )
-  }
-
-  const baseDate = getDefendantServiceDate({
-    verdict,
-    fallbackDate: rulingDate,
-  })
-
-  // this can only be thrown if service date is not set
-  if (!baseDate) {
-    throw new BadRequestException(
-      `Cannot register appeal – Service date not set for case ${caseId}`,
-    )
-  }
-  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
-    baseDate: new Date(baseDate),
-    isFine: indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
-  })
-  if (isDeadlineExpired) {
-    throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
-    )
-  }
-}
-
 @Controller('api/internal')
 @ApiTags('internal verdict')
 @UseGuards(TokenGuard)

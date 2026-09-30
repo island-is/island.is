@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'university-gateway',
   preset: '../../jest.preset.js',

@@ -64,17 +64,6 @@ export default function HealthLayout() {
       />
       <Stack.Screen name="messages/new" options={modalScreenOptions} />
       <Stack.Screen
-        name="messages/terms"
-        options={{
-          ...modalScreenOptions,
-          // Empty header title (keeps the close button) — the real title is
-          // rendered in the body so it can't be truncated.
-          title: '',
-          presentation: 'formSheet',
-          sheetAllowedDetents: 'fitToContents',
-        }}
-      />
-      <Stack.Screen
         name="questionnaires/index"
         options={{
           title: intl.formatMessage({
@@ -82,14 +71,7 @@ export default function HealthLayout() {
           }),
         }}
       />
-      <Stack.Screen
-        name="questionnaires/[id]"
-        options={{
-          title: intl.formatMessage({
-            id: 'health.questionnaires.screenTitle',
-          }),
-        }}
-      />
+      <Stack.Screen name="questionnaires/[id]" options={modalScreenOptions} />
       {/* New health screen */}
       <Stack.Screen
         name="medicine/index"
@@ -99,9 +81,11 @@ export default function HealthLayout() {
           }),
         }}
       />
-      {/* Legacy health screen from the old app */}
+      {/* The old app's medicine screen: certificates only, and the
+          destination whenever the medicine feature flags are off. Remove it
+          once those flags are permanently on. */}
       <Stack.Screen
-        name="medicine/legacy"
+        name="medicine/certificates"
         options={{
           title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
         }}
@@ -109,7 +93,7 @@ export default function HealthLayout() {
       <Stack.Screen
         name="medicine/prescriptions/index"
         options={{
-          title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
+          title: intl.formatMessage({ id: 'health.prescriptions.title' }),
         }}
       />
       <Stack.Screen

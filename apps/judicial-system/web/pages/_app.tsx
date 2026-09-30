@@ -5,8 +5,10 @@ import { ApolloProvider } from '@apollo/client'
 
 import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
+import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
 import {
+  ErrorBoundary,
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
@@ -16,6 +18,20 @@ import {
   ViewportProvider,
 } from '@island.is/judicial-system-web/src/components'
 import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
+import { userMonitoring } from '@island.is/user-monitoring'
+
+if (typeof window !== 'undefined') {
+  const { ddLogsClientToken, environment, appVersion } = getPublicRuntimeEnv()
+
+  if (ddLogsClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'judicial-system-web',
+      clientToken: ddLogsClientToken,
+      env: environment || 'local',
+      version: appVersion || 'unknown',
+    })
+  }
+}
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
@@ -65,7 +81,7 @@ class JudicialSystemApplication extends App<Props> {
   }
 
   render() {
-    const { Component, pageProps, translations } = this.props
+    const { Component, pageProps, translations, router } = this.props
 
     return (
       <>
@@ -90,7 +106,12 @@ class JudicialSystemApplication extends App<Props> {
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <Component {...pageProps} />
+                        {/* Keyed by route so a render error on one page
+                            does not keep the fallback up after the user
+                            navigates client-side to a healthy page */}
+                        <ErrorBoundary key={router.asPath}>
+                          <Component {...pageProps} />
+                        </ErrorBoundary>
                       </Box>
                       <ToastContainer />
                     </FormProvider>

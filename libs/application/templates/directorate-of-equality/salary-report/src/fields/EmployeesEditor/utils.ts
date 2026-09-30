@@ -83,17 +83,14 @@ export const getSalaryComponentLabels = (
     additionalFixedCarAllowance: formatMessage(
       m.additionalFixedCarAllowanceLabel,
     ),
+    additionalFixedOther: formatMessage(m.additionalFixedOtherLabel),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
     bonusOccasionalCarAllowance: formatMessage(
       m.bonusOccasionalCarAllowanceLabel,
     ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
     bonusOther: formatMessage(m.bonusOtherLabel),
   }
 }
-
-export const formatCurrency = (value?: number | null): string =>
-  `${(value ?? 0).toLocaleString('is-IS')} kr.`
 
 // Greiddar stundir is an absolute count of hours, not a percentage — there is
 // deliberately no scaling in either direction here. The old workRatio field

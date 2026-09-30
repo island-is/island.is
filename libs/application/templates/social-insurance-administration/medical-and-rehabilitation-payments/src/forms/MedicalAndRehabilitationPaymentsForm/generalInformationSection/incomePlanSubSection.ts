@@ -22,7 +22,7 @@ import {
   shouldShowIncomePlanMonths,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import {
   incomeTypeValueModifier,
   currencyValueModifier,

@@ -1,0 +1,184 @@
+import {
+  buildMultiField,
+  buildSection,
+  buildAlertMessageField,
+  buildDescriptionField,
+  buildFileUploadField,
+  buildHiddenInput,
+  buildRadioField,
+  YES,
+  NO,
+} from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { m } from '../../lib/messages'
+import { hasNoDrivingLicenseInOtherCountry } from '../../utils'
+import {
+  getHealthRemarkDescriptions,
+  hasContactGlassesMismatch,
+  needsHealthCertificateCondition,
+  shouldShowHealthRemarks,
+} from '../../utils/formUtils'
+import { B_FULL_RENEWAL_65 } from '../../utils/constants'
+
+const yesNoOptions = [
+  { value: YES, label: m.yes },
+  { value: NO, label: m.no },
+]
+
+// A plain yes/no radio for one health question. All ten questions are identical
+// apart from their id and label. The text goes in `title` (rendered as a plain
+// h5) rather than `description`: the questions are numbered ("1. …", "2. …") and
+// `description` runs through Markdown, which parses a leading "N." as an
+// ordered-list item and restyles/renumbers it.
+const healthQuestion = (id: string, label: typeof m['healthDeclaration1']) =>
+  buildRadioField({
+    id,
+    title: label,
+    titleVariant: 'h5',
+    width: 'half',
+    largeButtons: false,
+    space: 2,
+    options: yesNoOptions,
+  })
+
+/**
+ * The ten health questions plus the glasses-mismatch alert.
+ *
+ * The glasses-mismatch alert derives its visibility from the vision answers via
+ * `hasContactGlassesMismatch`, so the questions themselves are plain radio
+ * fields with no side effects.
+ *
+ * Note: the 65+ block below deliberately does NOT use this. 65+ has no
+ * questionnaire at all (per product decision it always submits a fresh health
+ * certificate), so there is nothing to share.
+ */
+const healthDeclarationQuestions = () => [
+  buildDescriptionField({
+    id: 'healthDeclarationSubTitle',
+    title: m.healthDeclarationMultiFieldSubTitle,
+    titleVariant: 'h5',
+    marginBottom: 2,
+  }),
+  healthQuestion('healthDeclaration.usesContactGlasses', m.healthDeclaration1),
+  healthQuestion(
+    'healthDeclaration.hasReducedPeripheralVision',
+    m.healthDeclaration2,
+  ),
+  healthQuestion('healthDeclaration.hasEpilepsy', m.healthDeclaration3),
+  healthQuestion('healthDeclaration.hasHeartDisease', m.healthDeclaration4),
+  healthQuestion('healthDeclaration.hasMentalIllness', m.healthDeclaration5),
+  healthQuestion('healthDeclaration.usesMedicalDrugs', m.healthDeclaration6),
+  healthQuestion('healthDeclaration.isAlcoholic', m.healthDeclaration7),
+  healthQuestion('healthDeclaration.hasDiabetes', m.healthDeclaration8),
+  healthQuestion('healthDeclaration.isDisabled', m.healthDeclaration9),
+  healthQuestion('healthDeclaration.hasOtherDiseases', m.healthDeclaration10),
+  buildAlertMessageField({
+    id: 'healthDeclaration.contactGlassesMismatch',
+    message: m.alertHealthDeclarationGlassesMismatch,
+    alertType: 'warning',
+    condition: hasContactGlassesMismatch,
+  }),
+]
+
+/**
+ * The certificate description plus the conditional upload. The upload appears
+ * only once a health condition is triggered (a "yes" answer, a health remark, or
+ * a glasses code on the current license) — see `needsHealthCertificateCondition`.
+ *
+ * The 65+ block deliberately does not use this — its upload is unconditional,
+ * so the shared gate would be wrong.
+ */
+const healthCertificateFields = () => [
+  buildDescriptionField({
+    id: 'healthCertificateDescription',
+    description: m.healthCertificateDescription,
+    condition: needsHealthCertificateCondition(YES),
+  }),
+  buildFileUploadField({
+    id: 'healthCertificate',
+    title: m.healthCertificateTitle,
+    uploadHeader: m.healthCertificateUploadHeader,
+    uploadDescription: m.healthCertificateUploadDescription,
+    uploadButtonLabel: m.healthCertificateUploadButtonLabel,
+    maxSize: 4000000,
+    uploadAccept: '.pdf, .jpg, .jpeg, .png',
+    condition: needsHealthCertificateCondition(YES),
+  }),
+]
+
+// Warning shown when the current license carries a health-related remark. Its
+// own fresh instance per block so two multifields never share a field object.
+const remarksAlert = () =>
+  buildAlertMessageField({
+    id: 'remarks',
+    alertType: 'warning',
+    title: m.healthRemarksTitle,
+    message: (application, _locale, formatMessage) =>
+      `${
+        formatMessage?.(m.healthRemarksDescription) ?? ''
+      } ${getHealthRemarkDescriptions(application.externalData)}`.trim(),
+    condition: shouldShowHealthRemarks,
+  })
+
+// Persists the `hasHealthRemarks` answer that `needsHealthCertificateCondition`
+// and the submission service read.
+const hasHealthRemarksInput = () =>
+  buildHiddenInput({
+    id: 'hasHealthRemarks',
+    defaultValue: (application: Application) =>
+      shouldShowHealthRemarks(application.answers, application.externalData)
+        ? YES
+        : NO,
+  })
+
+export const sectionHealthDeclaration = buildSection({
+  id: 'healthDeclaration',
+  title: m.healthDeclarationSectionTitle,
+  condition: hasNoDrivingLicenseInOtherCountry,
+  children: [
+    // B-temp / B-full — the ten health questions plus the conditional in-app
+    // certificate upload. The summary shows the uploaded file when required.
+    buildMultiField({
+      id: 'overview',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
+      space: 2,
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription',
+          description: m.healthDeclarationSubTitle,
+          marginBottom: 2,
+        }),
+        remarksAlert(),
+        hasHealthRemarksInput(),
+        ...healthDeclarationQuestions(),
+        ...healthCertificateFields(),
+      ],
+    }),
+    // 65+ — description plus a mandatory certificate upload. No health questions
+    // (per product decision: 65+ always submits a fresh health certificate, with
+    // no per-condition questionnaire).
+    buildMultiField({
+      id: 'healthDeclarationAge65',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+      space: 2,
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription65',
+          description: m.healthDeclarationMultiField65DescriptionRedesigned,
+          marginBottom: 2,
+        }),
+        buildFileUploadField({
+          id: 'healthCertificate',
+          title: m.healthCertificateTitle,
+          uploadHeader: m.healthCertificateUploadHeader,
+          uploadDescription: m.healthCertificateUploadDescription,
+          uploadButtonLabel: m.healthCertificateUploadButtonLabel,
+          maxSize: 4000000,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
+        }),
+      ],
+    }),
+  ],
+})

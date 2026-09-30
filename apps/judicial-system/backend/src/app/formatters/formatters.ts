@@ -54,12 +54,30 @@ const legalProvisionsOrder = (p: CaseLegalProvisions) => {
       return 6
     case CaseLegalProvisions._100_1:
       return 7
+    case CaseLegalProvisions._115_1:
+      return 8
+    case CaseLegalProvisions._115_1_A:
+      return 9
+    case CaseLegalProvisions._115_1_B:
+      return 10
+    case CaseLegalProvisions._115_1_C:
+      return 11
+    case CaseLegalProvisions._115_1_D:
+      return 12
+    case CaseLegalProvisions._115_1_E:
+      return 13
+    case CaseLegalProvisions._115_1_F:
+      return 14
+    case CaseLegalProvisions._115_1_G:
+      return 15
+    case CaseLegalProvisions._115_1_H:
+      return 16
     default:
       return 999
   }
 }
 
-const legalProvisionsCompare = (
+export const legalProvisionsCompare = (
   p1: CaseLegalProvisions,
   p2: CaseLegalProvisions,
 ) => {

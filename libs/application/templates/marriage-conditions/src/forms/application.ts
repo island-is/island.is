@@ -40,7 +40,7 @@ import {
 import { UserProfile } from '@island.is/api/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
-import { removeCountryCode } from '@island.is/application/ui-components'
+import { removeCountryCode } from '@island.is/shared/utils'
 import { ManOnThePhone } from '@island.is/application/assets/graphics'
 
 export const getApplication = ({ allowFakeData = false }): Form => {

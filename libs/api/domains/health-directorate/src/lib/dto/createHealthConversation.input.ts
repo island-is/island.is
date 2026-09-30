@@ -18,6 +18,11 @@ export class HealthDirectorateCreateConversationInput {
   @IsInt()
   groupId!: number
 
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  treatmentId?: string
+
   @Field()
   @IsString()
   @IsNotEmpty()

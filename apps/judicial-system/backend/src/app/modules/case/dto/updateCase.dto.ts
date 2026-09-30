@@ -23,7 +23,6 @@ import type {
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -409,6 +408,16 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly indictmentDeniedExplanation?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly indictmentApproverId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly indictmentReviewReturnedExplanation?: string
 
   @IsOptional()
   @IsString()

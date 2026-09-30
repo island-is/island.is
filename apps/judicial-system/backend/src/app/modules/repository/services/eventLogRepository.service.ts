@@ -1,0 +1,211 @@
+import { col, fn, Transaction } from 'sequelize'
+
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { EventType, UserRole } from '@island.is/judicial-system/types'
+
+import { EventLog } from '../models/eventLog.model'
+
+export type CreateEventLog = {
+  eventType: EventType
+  caseId?: string
+  nationalId?: string
+  userRole?: UserRole
+  userName?: string
+  userTitle?: string
+  institutionName?: string
+}
+
+interface EventLogTransactionOptions {
+  transaction?: Transaction
+}
+
+// One row per (national id, user role, institution) group, as counted by
+// countLoginsByNationalIds. The caller decides how to key it.
+export type LoginCount = {
+  nationalId?: string
+  userRole?: UserRole
+  institutionName?: string
+  latest: Date
+  count: number
+}
+
+@Injectable()
+export class EventLogRepositoryService {
+  constructor(
+    @InjectModel(EventLog) private readonly eventLogModel: typeof EventLog,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
+
+  // eventType comes first because every other part of the key is optional: an
+  // event without a case id, or one whose type does not discriminate on user
+  // role, matches on the narrower key.
+  async existsForCaseAndType(
+    eventType: EventType,
+    caseId?: string,
+    userRole?: UserRole,
+    options?: EventLogTransactionOptions,
+  ): Promise<boolean> {
+    try {
+      this.logger.debug(
+        `Checking for a ${eventType} event log for case ${caseId}`,
+      )
+
+      const eventLog = await this.eventLogModel.findOne({
+        where: {
+          eventType,
+          ...(caseId === undefined ? {} : { caseId }),
+          ...(userRole === undefined ? {} : { userRole }),
+        },
+        transaction: options?.transaction,
+      })
+
+      return Boolean(eventLog)
+    } catch (error) {
+      this.logger.error(
+        `Error checking for a ${eventType} event log for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // The most recent event of any of the given types for a case - for
+  // instance, when an indictment was last confirmed or sent to court.
+  async findLatestForCaseAndTypes(
+    caseId: string,
+    eventTypes: EventType[],
+    options?: EventLogTransactionOptions,
+  ): Promise<EventLog | null> {
+    try {
+      this.logger.debug(
+        `Finding the latest ${eventTypes.join(
+          '/',
+        )} event log for case ${caseId}`,
+      )
+
+      return await this.eventLogModel.findOne({
+        where: { caseId, eventType: eventTypes },
+        order: [['created', 'DESC']],
+        transaction: options?.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding the latest ${eventTypes.join(
+          '/',
+        )} event log for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async create(
+    event: CreateEventLog,
+    options?: EventLogTransactionOptions,
+  ): Promise<EventLog> {
+    try {
+      this.logger.debug(
+        `Creating a ${event.eventType} event log for case ${event.caseId}`,
+      )
+
+      return await this.eventLogModel.create(
+        { ...event },
+        { transaction: options?.transaction },
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error creating a ${event.eventType} event log for case ${event.caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async countLoginsByNationalIds(nationalIds: string[]): Promise<LoginCount[]> {
+    try {
+      this.logger.debug(`Counting logins for ${nationalIds.length} user(s)`)
+
+      const logins = await this.eventLogModel.count({
+        group: ['nationalId', 'userRole', 'institutionName'],
+        attributes: [
+          'nationalId',
+          'userRole',
+          'institutionName',
+          [fn('max', col('created')), 'latest'],
+          [fn('count', col('national_id')), 'count'],
+        ],
+        where: {
+          eventType: [EventType.LOGIN, EventType.LOGIN_BYPASS],
+          nationalId: nationalIds,
+        },
+      })
+
+      return logins.map((login) => ({
+        nationalId: login.nationalId as string,
+        userRole: login.userRole as UserRole,
+        institutionName: login.institutionName as string,
+        latest: login.latest as Date,
+        count: login.count,
+      }))
+    } catch (error) {
+      this.logger.error(
+        `Error counting logins for ${nationalIds.length} user(s):`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Copies the event logs of the given types to another case as new rows,
+  // timestamps included - the copy records that the event happened, not that
+  // it was copied. Which types travel is the caller's decision.
+  async copyByTypesToCase(
+    caseId: string,
+    newCaseId: string,
+    eventTypes: EventType[],
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the event logs of types ${eventTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const eventLogs = await this.eventLogModel.findAll({
+        where: { caseId, eventType: eventTypes },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        eventLogs.map((eventLog) =>
+          this.eventLogModel.create(
+            { ...eventLog.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${eventLogs.length} event logs of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the event logs of types ${eventTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+}

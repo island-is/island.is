@@ -1,8 +1,6 @@
 import { Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -18,7 +16,7 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
-import { EventLog } from '../repository'
+import { EventLogRepositoryService } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 
 const allowMultiple: EventType[] = [
@@ -50,8 +48,7 @@ const eventToNotificationMap: Partial<
 @Injectable()
 export class EventLogService {
   constructor(
-    @InjectModel(EventLog)
-    private readonly eventLogModel: typeof EventLog,
+    private readonly eventLogRepositoryService: EventLogRepositoryService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -82,22 +79,15 @@ export class EventLogService {
   ): Promise<boolean> {
     const { eventType, caseId, userName, userRole, institutionName } = event
 
-    if (!allowMultiple.includes(event.eventType)) {
-      const where = Object.fromEntries(
-        // The user name and title do not matter when checking for duplicates
-        Object.entries({
+    if (!allowMultiple.includes(eventType)) {
+      // The user name and title do not matter when checking for duplicates
+      const eventExists =
+        await this.eventLogRepositoryService.existsForCaseAndType(
           eventType,
           caseId,
-          userRole: allowOnePerUserRole.includes(eventType)
-            ? userRole
-            : undefined,
-        }).filter(([_, value]) => value !== undefined),
-      )
-
-      const eventExists = await this.eventLogModel.findOne({
-        where,
-        transaction,
-      })
+          allowOnePerUserRole.includes(eventType) ? userRole : undefined,
+          { transaction },
+        )
 
       if (eventExists) {
         return true
@@ -105,7 +95,7 @@ export class EventLogService {
     }
 
     try {
-      await this.eventLogModel.create({ ...event }, { transaction })
+      await this.eventLogRepositoryService.create({ ...event }, { transaction })
 
       return true
     } catch (error) {
@@ -130,30 +120,15 @@ export class EventLogService {
   async loginMap(
     nationalIds: string[],
   ): Promise<Map<string, { latest: Date; count: number }>> {
-    return this.eventLogModel
-      .count({
-        group: ['nationalId', 'userRole', 'institutionName'],
-        attributes: [
-          'nationalId',
-          'userRole',
-          'institutionName',
-          [Sequelize.fn('max', Sequelize.col('created')), 'latest'],
-          [Sequelize.fn('count', Sequelize.col('national_id')), 'count'],
-        ],
-        where: {
-          eventType: ['LOGIN', 'LOGIN_BYPASS'],
-          nationalId: nationalIds,
-        },
-      })
-      .then(
-        (logs) =>
-          new Map(
-            logs.map((log) => [
-              `${log.nationalId}-${log.userRole}-${log.institutionName}`,
-              { latest: log.latest as Date, count: log.count },
-            ]),
-          ),
-      )
+    const logins =
+      await this.eventLogRepositoryService.countLoginsByNationalIds(nationalIds)
+
+    return new Map(
+      logins.map((login) => [
+        `${login.nationalId}-${login.userRole}-${login.institutionName}`,
+        { latest: login.latest, count: login.count },
+      ]),
+    )
   }
 
   // Sends events to queue for notification dispatch

@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
-import { Case, Victim } from '../../repository'
+import { Case, Victim, VictimRepositoryService } from '../../repository'
 import { UpdateVictimDto } from '../dto/updateVictim.dto'
 
 interface Then {
@@ -21,15 +21,17 @@ describe('VictimController - Update', () => {
     name: 'Jane Doe',
   } as Victim
 
-  let mockVictimModel: typeof Victim
+  let mockVictimRepositoryService: VictimRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { victimController, victimModel } = await createTestingVictimModule()
+    const { victimController, victimRepositoryService } =
+      await createTestingVictimModule()
 
-    mockVictimModel = victimModel
+    mockVictimRepositoryService = victimRepositoryService
 
-    const mockUpdate = mockVictimModel.update as jest.Mock
+    const mockUpdate =
+      mockVictimRepositoryService.updateByIdAndCase as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (victimUpdate) => {
@@ -50,16 +52,19 @@ describe('VictimController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockVictimModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedVictim]])
+      const mockUpdate =
+        mockVictimRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        victims: [updatedVictim],
+      })
       then = await givenWhenThen(victimUpdate)
     })
 
     it('should update the victim ', () => {
-      expect(mockVictimModel.update).toHaveBeenCalledWith(victimUpdate, {
-        where: { id: victimId, caseId },
-        returning: true,
-      })
+      expect(
+        mockVictimRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(victimId, caseId, victimUpdate)
       expect(then.result).toBe(updatedVictim)
     })
   })

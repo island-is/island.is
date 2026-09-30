@@ -12,12 +12,6 @@ export const memmMessages = {
       defaultMessage: 'Menntun, móttaka, menning, farsæld',
       description: 'MEMM page heading',
     },
-    pageDescription: {
-      id: 'cpn.application:memm.shared.pageDescription',
-      defaultMessage:
-        'Stuðningur við börn og fjölskyldur felur í sér að byggja brýr, svo sem á grunni menningarlæsi og farsældar. Mikilvægt er því að virða og vinna með fjölbreyttar hefðir, gildi og samskiptareglur sem einkenna ólíkar kynslóðir og hópa í nærumhverfi barnsins.',
-      description: 'MEMM page intro description',
-    },
   }),
   education: defineMessages({
     subSectionTitle: {
@@ -27,23 +21,22 @@ export const memmMessages = {
     },
     title: {
       id: 'cpn.application:memm.education.title',
-      defaultMessage: 'Menntun eða dagvistun',
+      defaultMessage: 'Menntun eða dagvistun barns',
       description: 'Menntun sub-section heading on the page',
     },
     description: {
       id: 'cpn.application:memm.education.description',
-      defaultMessage:
-        'Öll börn eiga að fá að njóta réttar síns til náms, til að rækta sjálfa sig, eflast og þroskast og auka hæfni sína til að takast á við áskoranir daglegs lífs.',
+      defaultMessage: 'Skólastig eða dagvistun sem við á og heiti.',
       description: 'Menntun sub-section description',
     },
     typeLabel: {
       id: 'cpn.application:memm.education.typeLabel',
-      defaultMessage: 'Menntun eða gæsla',
+      defaultMessage: 'Skólastig eða dagvistun',
       description: 'Label for the education type dropdown',
     },
     typePlaceholder: {
       id: 'cpn.application:memm.education.typePlaceholder',
-      defaultMessage: 'Veldu menntun eða gæslu',
+      defaultMessage: 'Veldu skólastig eða dagvistun',
       description: 'Placeholder for the education type dropdown',
     },
     schoolName: {
@@ -58,21 +51,15 @@ export const memmMessages = {
       defaultMessage: 'Móttaka',
       description: 'Móttaka sub-section title in sidebar',
     },
-    description: {
-      id: 'cpn.application:memm.reception.description',
-      defaultMessage:
-        'Fyrir barn getur falist mikil áskorun í því að fóta sig í breyttum aðstæðum eða nýju landi, þar sem menning, siðir og venjur geta verið ólík því sem þau eiga að venjast. Hjálpaðu okkur að skilja betur stöðu barnsins.',
-      description: 'Móttaka section description',
-    },
     seekingAsylumLabel: {
       id: 'cpn.application:memm.reception.seekingAsylumLabel',
-      defaultMessage: 'Barn er umsækjandi um alþjóðlega vernd',
+      defaultMessage: 'Barnið er umsækjandi um alþjóðlega vernd',
       description: 'Label for seeking asylum radio field',
     },
     seekingAsylumTooltip: {
       id: 'cpn.application:memm.reception.seekingAsylumTooltip',
       defaultMessage:
-        'Er átt við barn sem hefur ekki dvalarleyfi á Íslandi en hefur óskað eftir viðurkenningu á stöðu sinni sem flóttamaður eða ríkisfangslaus einstaklingur hér á landi.',
+        'Barnið hefur ekki dvalarleyfi á Íslandi en hefur óskað eftir viðurkenningu á stöðu sinni sem flóttamaður eða ríkisfangslaus einstaklingur hér á landi.',
       description: 'Tooltip for seeking asylum radio field',
     },
     refugeeStatusLabel: {
@@ -84,7 +71,7 @@ export const memmMessages = {
     refugeeStatusTooltip: {
       id: 'cpn.application:memm.reception.refugeeStatusTooltip',
       defaultMessage:
-        'Er átt við barn sem Íslensk stjórnvöld hafa samþykkt að veita dvalarleyfi á grundvelli alþjóðlegrar verndar.',
+        'Barnið er með dvalarleyfi á grundvelli alþjóðlegrar verndar.',
       description: 'Tooltip for refugee status radio field',
     },
     optionDoNotKnow: {
@@ -100,27 +87,25 @@ export const memmMessages = {
     fetchedDataInfo: {
       id: 'cpn.application:memm.reception.fetchedDataInfo',
       defaultMessage:
-        'Upplýsingar um ríkisfang, fæðingarstað og dagsetningu nýskráningar barns inn í landið eru ekki birtar hér en hafa verið sóttar og verða sendar með tilkynningunni til barnaverndar.',
+        'Upplýsingar t.d. um ríkisfang, fæðingarstað og dagsetningu nýskráningar barns inn í landið eru ekki birtar hér en hafa verið sóttar og verða sendar með tilkynningunni til barnaverndar.',
       description:
         'Info alert shown when child data has been fetched from national registry',
     },
   }),
   culture: defineMessages({
+    title: {
+      id: 'cpn.application:memm.culture.title',
+      defaultMessage: 'Tungumál',
+      description: 'Menning sub-section title on the page',
+    },
     subSectionTitle: {
       id: 'cpn.application:memm.culture.subSectionTitle',
       defaultMessage: 'Menning',
       description: 'Menning sub-section title in sidebar',
     },
-    description: {
-      id: 'cpn.application:memm.culture.description',
-      defaultMessage:
-        'Tungumál eru lykill að menningu þjóðar. Til að hægt sé að skilja betur og koma til móts við þarfir barnsins þurfum við að vita hvaða tungumál eru notuð í samskiptum við barnið í daglegu lífi fjölskyldunnar.',
-      description: 'Menning sub-section description',
-    },
     languageUsageQuestion: {
       id: 'cpn.application:memm.culture.languageUsageQuestion',
-      defaultMessage:
-        'Hvað á best við í tilfelli barnsins og tungumála sem notuð eru í daglegu lífi fjölskyldunnar?',
+      defaultMessage: 'Hvað á best við tungumála notkun á heimili barnsins?',
       description: 'Bold question text above the language usage dropdown',
     },
     languageUsageLabel: {
@@ -150,13 +135,13 @@ export const memmMessages = {
     },
     languagesSectionTitle: {
       id: 'cpn.application:memm.culture.languagesSectionTitle',
-      defaultMessage: 'Hvaða tungumál er töluð í nærumhverfi barnsins?',
+      defaultMessage: 'Hvaða tungumál eru töluð á heimili barnsins?',
       description: 'Title for the language multi-select section',
     },
     languagesSectionDescription: {
       id: 'cpn.application:memm.culture.languagesSectionDescription',
       defaultMessage:
-        'Þú getur valið allt að fjórum tungumálum. Raðaðu tungumálunum eftir því hvaða tungumál er mest notað. Það sem er mest notað er nr. 1 og svo koll af kolli.',
+        'Þú getur valið allt að fjögur tungumál. Raðaðu tungumálunum eftir því hvaða tungumál er mest notað. Það sem er mest notað er nr. 1 og svo koll af kolli.',
       description: 'Description for the language multi-select section',
     },
     languagesPlaceholder: {
@@ -166,9 +151,24 @@ export const memmMessages = {
     },
     preferredLanguageTitle: {
       id: 'cpn.application:memm.culture.preferredLanguageTitle',
-      defaultMessage:
-        'Af þeim tungumálum sem þú hefur valið, á hvaða tungumáli finnst barninu best að tjá sig á?',
+      defaultMessage: 'Á hvaða tungumáli finnst barninu best að tjá sig?',
       description: 'Question text above the preferred language dropdown',
+    },
+    disabilityLabel: {
+      id: 'cpn.application:memm.culture.disabilityLabel',
+      defaultMessage: 'Er grunur um fötlun barns?',
+      description: 'Label for disability suspicion radio field',
+    },
+    disabilityTooltip: {
+      id: 'cpn.application:memm.culture.disabilityTooltip',
+      defaultMessage:
+        'Er átt við fötlun, þroskafrávik eða langtímaveikindi sem geta haft áhrif á líðan og þroska barns, til langtíma.',
+      description: 'Tooltip for disability suspicion radio field',
+    },
+    disabilityServiceLabel: {
+      id: 'cpn.application:memm.culture.disabilityServiceLabel',
+      defaultMessage: 'Lýsing',
+      description: 'Label for disability service dropdown',
     },
   }),
   wellbeing: defineMessages({
@@ -176,12 +176,6 @@ export const memmMessages = {
       id: 'cpn.application:memm.wellbeing.subSectionTitle',
       defaultMessage: 'Farsæld',
       description: 'Farsæld sub-section title in sidebar',
-    },
-    description: {
-      id: 'cpn.application:memm.wellbeing.description',
-      defaultMessage:
-        'Börn eru eins ólík og þau eru mörg og sum þeirra þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína. Ef grunur er um fötlun, þroskafrávik eða langtímaveikindi sem geta haft áhrif á líðan og þroska barns, þá erum við þakklát fyrir þær vísbendingar.',
-      description: 'Farsæld section description',
     },
     integratedServiceLabel: {
       id: 'cpn.application:memm.wellbeing.integratedServiceLabel',
@@ -191,7 +185,7 @@ export const memmMessages = {
     integratedServiceTooltip: {
       id: 'cpn.application:memm.wellbeing.integratedServiceTooltip',
       defaultMessage:
-        'Með samþættri þjónustu er átt við að foreldri hefur óskað formlega eftir og gefið leyfi fyrir því að aðilar sem koma að stuðningi við barnið, tali sama og deili sín á milli upplýsingum sem geti hjálpað barninu',
+        'Með samþættri þjónustu er átt við að foreldri hefur óskað formlega eftir og gefið leyfi fyrir því að aðilar sem koma að stuðningi við barnið, tali saman og deili sín á milli upplýsingum sem hjálpað getað barni.',
       description: 'Tooltip for integrated service radio field',
     },
     wellbeingContactLabel: {
@@ -202,7 +196,7 @@ export const memmMessages = {
     wellbeingContactTooltip: {
       id: 'cpn.application:memm.wellbeing.wellbeingContactTooltip',
       defaultMessage:
-        'Tengiliður farsældar er sá aðili sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
+        'Tengiliður farsældar er sá aðili sem styður við samþættingu fyrsta stigs þjónustu í þágu farsældar barna.',
       description: 'Tooltip for welfare contact radio field',
     },
     wellbeingContactEmail: {
@@ -223,7 +217,7 @@ export const memmMessages = {
     wellbeingManagerTooltip: {
       id: 'cpn.application:memm.wellbeing.wellbeingManagerTooltip',
       defaultMessage:
-        'Málstjóri er sá aðili á vegum sveitarfélags sem tilnefndur hefur verið að stýra stuðningsteymi barns og styðja við fjölskyldu þess.',
+        'Málstjóri er sá aðili á vegum sveitarfélags sem tilnefndur hefur verið til að stýra stuðningsteymi barns og styðja við fjölskyldu þess.',
       description: 'Tooltip for welfare manager radio field',
     },
     wellbeingManagerEmail: {
@@ -235,22 +229,6 @@ export const memmMessages = {
       id: 'cpn.application:memm.wellbeing.wellbeingManagerName',
       defaultMessage: 'Nafn málstjóra farsældar',
       description: 'Label for welfare manager name field',
-    },
-    disabilityLabel: {
-      id: 'cpn.application:memm.wellbeing.disabilityLabel',
-      defaultMessage: 'Er grunur um fötlun barns?',
-      description: 'Label for disability suspicion radio field',
-    },
-    disabilityTooltip: {
-      id: 'cpn.application:memm.wellbeing.disabilityTooltip',
-      defaultMessage:
-        'Er átt við fötlun, þroskafrávik eða langtímaveikindi sem geta haft áhrif á líðan og þroska barns, til langtíma.',
-      description: 'Tooltip for disability suspicion radio field',
-    },
-    disabilityServiceLabel: {
-      id: 'cpn.application:memm.wellbeing.disabilityServiceLabel',
-      defaultMessage: 'Lýsing',
-      description: 'Label for disability service dropdown',
     },
   }),
 }

@@ -164,14 +164,12 @@ const Confirmation: FC = () => {
             elementId={formatMessage(core.pdfButtonRuling)}
           />
         </Box>
-        <Box marginBottom={15}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
-          />
-        </Box>
+        <PdfButton
+          caseId={workingCase.id}
+          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          pdfType="courtRecord"
+          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

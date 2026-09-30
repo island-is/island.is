@@ -219,6 +219,30 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithDefender?: boolean
 
+  // The defender who appealed the verdict, when that is not the defender of
+  // record - typically a defender with rights before the court of appeals,
+  // reaching the public prosecution office by letter. Information only: no
+  // access follows from these until the court of appeals confirms the defender.
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderEmail?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderPhoneNumber?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAppealDefenderConfirmed?: boolean
+
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isSentToPrisonAdmin?: boolean

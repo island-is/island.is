@@ -1,4 +1,5 @@
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { Locale } from '@island.is/shared/types'
 
@@ -28,6 +29,15 @@ export const isDateAfterToday = (date: Date | string | undefined) => {
   }
 
   return argDate > new Date()
+}
+
+// True for date-only strings like "2025-12-01" (no time component)
+export const isDateOnlyString = (value: string): boolean =>
+  /^\d{4}-\d{2}-\d{2}$/.test(value)
+
+export const formatDateOnly = (value: string, dateFormat?: string) => {
+  const parsed = parseISO(value)
+  return isNaN(parsed.getTime()) ? value : formatDate(parsed, dateFormat)
 }
 
 // Takes in date string or date, with optional format

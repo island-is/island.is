@@ -78,6 +78,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'notifierInfo.notifierAnonymity',
   )
 
+  const notifierNeedsInterpreter = getValueViaPath<string>(
+    answers,
+    'notifierInfo.needsInterpreter',
+  )
+
+  const notifierPreferredLanguage = getValueViaPath<string>(
+    answers,
+    'notifierInfo.preferredLanguage',
+  )
+
   const notifierRelationshipToChild = getValueViaPath<string>(
     answers,
     'notifierInfo.relationshipToChild',
@@ -125,14 +135,19 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'child.nationalIdInfo.preferredPronoun',
     ) ?? []
 
-  const childSchoolType = getValueViaPath<string>(
+  const childEducationType = getValueViaPath<string>(
     answers,
-    'child.nationalIdInfo.schoolType',
+    'child.nationalIdInfo.education.type',
   )
 
-  const childSchoolName = getValueViaPath<string>(
+  const childEducationSchoolName = getValueViaPath<string>(
     answers,
-    'child.nationalIdInfo.schoolName',
+    'child.nationalIdInfo.education.schoolName',
+  )
+
+  const childEducationCaregiverName = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.education.caregiverName',
   )
 
   const childLanguage = getValueViaPath<string>(
@@ -140,11 +155,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.nationalIdInfo.language',
   )
 
-  const childNeedsInterpreter =
-    getValueViaPath<string[]>(
-      answers,
-      'child.nationalIdInfo.needsInterpreter',
-    ) ?? []
+  const childNeedsInterpreter = getValueViaPath<string>(
+    answers,
+    'child.nationalIdInfo.needsInterpreter',
+  )
 
   const childManualName = getValueViaPath<string>(
     answers,
@@ -206,13 +220,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'child.manualInfo.language',
   )
 
-  const childManualNeedsInterpreter =
-    getValueViaPath<string[]>(answers, 'child.manualInfo.needsInterpreter') ??
-    []
-
-  const parentsKnowsNationalIds = getValueViaPath<YesOrNo>(
+  const childManualNeedsInterpreter = getValueViaPath<string>(
     answers,
-    'parents.knowsParentNationalIds',
+    'child.manualInfo.needsInterpreter',
   )
 
   const parent1 = getValueViaPath<Parent>(answers, 'parents.parent1')
@@ -306,8 +316,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.culture.preferredLanguage',
   )
 
-  const memmCultureNeedsInterpreter =
-    getValueViaPath<string[]>(answers, 'memm.culture.needsInterpreter') ?? []
+  const memmCultureDisability = getValueViaPath<string>(
+    answers,
+    'memm.culture.disability',
+  )
+
+  const memmCultureDisabilityService = getValueViaPath<string>(
+    answers,
+    'memm.culture.disabilityService',
+  )
 
   const memmWellbeingIntegratedService = getValueViaPath<string>(
     answers,
@@ -344,15 +361,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'memm.wellbeing.wellbeingManagerName',
   )
 
-  const memmWellbeingDisability = getValueViaPath<string>(
-    answers,
-    'memm.wellbeing.disability',
-  )
-
-  const memmWellbeingDisabilityService = getValueViaPath<string>(
-    answers,
-    'memm.wellbeing.disabilityService',
-  )
   const childSafetyUrgencyLevel = getValueViaPath<string>(
     answers,
     'childSafetyUrgencyLevel',
@@ -375,6 +383,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     notifierEmail,
     notifierPhoneNumber,
     notifierNotifierAnonymity,
+    notifierNeedsInterpreter,
+    notifierPreferredLanguage,
     notifierRelationshipToChild,
     childKnowsNationalId,
     childNoNationalIdReason,
@@ -384,8 +394,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childUsePronounAndPreferredName,
     childPreferredName,
     childPreferredPronoun,
-    childSchoolType,
-    childSchoolName,
+    childEducationType,
+    childEducationSchoolName,
+    childEducationCaregiverName,
     childLanguage,
     childNeedsInterpreter,
     childManualName,
@@ -401,7 +412,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childManualMunicipalityPostalCode,
     childManualLanguage,
     childManualNeedsInterpreter,
-    parentsKnowsNationalIds,
     parent1,
     parent2,
     reasonDescription,
@@ -422,7 +432,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmCultureLanguageUsage,
     memmCultureLanguages,
     memmCulturePreferredLanguage,
-    memmCultureNeedsInterpreter,
+    memmCultureDisability,
+    memmCultureDisabilityService,
     memmWellbeingIntegratedService,
     memmWellbeingWellbeingContact,
     memmWellbeingWellbeingContactEmail,
@@ -430,8 +441,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     memmWellbeingWellbeingManager,
     memmWellbeingWellbeingManagerEmail,
     memmWellbeingWellbeingManagerName,
-    memmWellbeingDisability,
-    memmWellbeingDisabilityService,
     childSafetyUrgencyLevel,
   }
 }

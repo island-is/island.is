@@ -95,6 +95,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
+      appealDefenderName
+      appealDefenderNationalId
+      appealDefenderEmail
+      appealDefenderPhoneNumber
+      isAppealDefenderConfirmed
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -251,6 +256,22 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealRulingModifiedHistory
       rulingFileId
     }
+    verdictAppealCase {
+      id
+      appealState
+      appealType
+      appealEventLogs {
+        id
+        created
+        eventType
+        appealOrigin
+        defendantId
+        userRole
+        userName
+        userTitle
+        institutionName
+      }
+    }
     rulingOrderAppealCases {
       id
       appealState
@@ -389,24 +410,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         courtSessionId
         documentType
         documentOrder
+        mergedFromCaseId
         name
         caseFileId
         generatedPdfUri
         submittedBy
-      }
-      mergedFiledDocuments {
-        id
-        created
-        modified
-        caseId
-        courtSessionId
-        documentType
-        documentOrder
-        mergedCourtSessionId
-        mergedDocumentOrder
-        name
-        caseFileId
-        generatedPdfUri
       }
       courtSessionStrings {
         id
@@ -468,24 +476,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
           courtSessionId
           documentType
           documentOrder
+          mergedFromCaseId
           name
           caseFileId
           generatedPdfUri
           submittedBy
-        }
-        mergedFiledDocuments {
-          id
-          created
-          modified
-          caseId
-          courtSessionId
-          documentType
-          documentOrder
-          mergedCourtSessionId
-          mergedDocumentOrder
-          name
-          caseFileId
-          generatedPdfUri
         }
         courtSessionStrings {
           id

@@ -2,17 +2,19 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSelectField,
   buildTextField,
   coreMessages,
   YES,
 } from '@island.is/application/core'
-import {
-  getAllCountryCodes,
-  getAllLanguageCodes,
-} from '@island.is/shared/utils'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 import { childMessages, sharedMessages } from '../../lib/messages'
+import {
+  getLanguageOptions,
+  getYesNoDoNotKnowOptions,
+} from '../../utils/childProtectionNotificationUtils'
 import { isNoNationalId } from '../../utils/conditionUtils'
 import { IS } from '../../utils/constants'
 import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
@@ -29,9 +31,8 @@ export const childInfoManualSection = buildSection({
       description: childMessages.manualInfo.intro,
       children: [
         buildDescriptionField({
-          id: 'childInfoManual.nameAgeGenderTitle',
-          title: childMessages.manualInfo.nameAgeGenderTitle,
-          description: sharedMessages.fillByBestKnowledge,
+          id: 'childInfoManual.basicInfoTitle',
+          title: childMessages.manualInfo.basicInfoTitle,
           titleVariant: 'h4',
           space: 2,
         }),
@@ -70,9 +71,6 @@ export const childInfoManualSection = buildSection({
             {
               value: YES,
               label: childMessages.nationalIdLookup.usePronounAndPreferredName,
-              tooltip:
-                childMessages.nationalIdLookup
-                  .usePronounAndPreferredNameTooltip,
             },
           ],
         }),
@@ -109,7 +107,6 @@ export const childInfoManualSection = buildSection({
         buildDescriptionField({
           id: 'childInfoManual.addressTitle',
           title: childMessages.manualInfo.addressTitle,
-          description: sharedMessages.fillByBestKnowledge,
           titleVariant: 'h4',
           space: 4,
         }),
@@ -178,20 +175,14 @@ export const childInfoManualSection = buildSection({
           title: sharedMessages.language,
           placeholder: sharedMessages.languagePlaceholder,
           doesNotRequireAnswer: true,
-          options: getAllLanguageCodes().map((l) => ({
-            value: l.code,
-            label: l.name,
-          })),
+          options: getLanguageOptions(),
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: 'child.manualInfo.needsInterpreter',
-          spacing: 0,
-          options: [
-            {
-              value: YES,
-              label: sharedMessages.needsInterpreter,
-            },
-          ],
+          title: sharedMessages.needsInterpreter,
+          widthWithIllustration: '1/3',
+          space: 4,
+          options: getYesNoDoNotKnowOptions(),
         }),
       ],
     }),

@@ -57,7 +57,7 @@ import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+type UpdateDefendant = Omit<UpdateDefendantInput, 'caseId'>
 
 interface CivilClaimantAccordionLabelProps {
   label: string
@@ -284,10 +284,14 @@ const Processing: FC = () => {
       return
     }
 
+    // The claimant's civil claim files are deleted with the claimant
     setWorkingCase((prev) => ({
       ...prev,
       civilClaimants: prev.civilClaimants?.filter(
         (civilClaimant) => civilClaimant.id !== civilClaimantId,
+      ),
+      caseFiles: prev.caseFiles?.filter(
+        (caseFile) => caseFile.civilClaimantId !== civilClaimantId,
       ),
     }))
   }
@@ -301,10 +305,14 @@ const Processing: FC = () => {
       return
     }
 
+    // Turning civil claims off deletes every claimant along with their files
     setWorkingCase((prev) => ({
       ...prev,
       hasCivilClaims,
       civilClaimants: res.civilClaimants,
+      caseFiles: hasCivilClaims
+        ? prev.caseFiles
+        : prev.caseFiles?.filter((caseFile) => !caseFile.civilClaimantId),
     }))
 
     if (hasCivilClaims) {
@@ -455,7 +463,7 @@ const Processing: FC = () => {
           </BlueBox>
         </Box>
         {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <CivilClaimantAccordionItem

@@ -15,7 +15,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   emailLabelStrings,
@@ -185,7 +185,7 @@ const InputAdvocate: FC<Props> = ({
   )
 
   return (
-    <div className={grid({ gap: 2 })}>
+    <div className={stack({ gap: 2 })}>
       <Select
         name="advocateName"
         icon="search"

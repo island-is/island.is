@@ -178,7 +178,7 @@ export class DirectorateOfLabourRepository {
   }
 
   async getParentalLeavesEstimatedPaymentPlan(
-    dateOfBirth: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+    dateOfBirth: string,
     period: ParentalLeavePeriod[],
     nationalId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<ParentalLeavePaymentPlan[]> {

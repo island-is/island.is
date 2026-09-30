@@ -11,6 +11,7 @@ import { DayRateRecord } from '../../utils/types'
 import { UploadSelection } from '../../utils/constants'
 import { m } from '../../lib/messages'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from '@island.is/application/types'
 
 export const multiUploadSection = buildSection({
   condition: (answers) => {
@@ -45,8 +46,11 @@ export const multiUploadSection = buildSection({
             component: 'UploadCarDayRateUsage',
           },
           {
-            getFileContent: (dayRateRecords: DayRateRecord[], locale: Locale) =>
-              generateExcelSheet(dayRateRecords, locale),
+            getFileContent: (
+              dayRateRecords: DayRateRecord[],
+              locale: Locale,
+              formatMessage: FormatMessage,
+            ) => generateExcelSheet(dayRateRecords, locale, formatMessage),
           },
         ),
       ],

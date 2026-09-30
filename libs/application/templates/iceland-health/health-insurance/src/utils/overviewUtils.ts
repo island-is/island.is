@@ -2,7 +2,7 @@ import { ExternalData, FormText, FormValue } from '@island.is/application/types'
 import { m } from '../lib/messages/messages'
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { Applicant, FormerInsurance, Status } from './types'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { EmploymentStatus } from './constants'
 import { m as cm, messagesCountries } from '../lib/messages/countries'
 

@@ -1,8 +1,13 @@
-import { useMutation } from '@apollo/client'
-import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
+import { useLazyQuery, useMutation } from '@apollo/client'
+import {
+  FormSystemField,
+  FormSystemSection,
+  PaymentCatalogItem,
+} from '@island.is/api/schema'
 import { NotificationCommands } from '@island.is/form-system/enums'
 import {
   CREATE_PAYMENT,
+  GET_PAYMENT_CATALOG,
   NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
@@ -45,6 +50,18 @@ const submitApplicationError = {
   },
 }
 
+const paymentCatalogError = {
+  hasError: true,
+  title: {
+    is: 'Ekki tókst að sækja greiðsluupplýsingar',
+    en: 'Could not fetch payment information',
+  },
+  message: {
+    is: 'Villa kom upp við að sækja greiðsluupplýsingar. Vinsamlegast reyndu aftur.',
+    en: 'An error occurred while fetching payment information. Please try again.',
+  },
+}
+
 const stripFieldListsFromSections = (
   sections: FormSystemSection[],
 ): FormSystemSection[] =>
@@ -69,9 +86,13 @@ const stripFieldListsFromSections = (
 
 interface Props {
   externalDataAgreement: boolean
+  isValidateEligibilityError: boolean
 }
 
-export const Footer = ({ externalDataAgreement }: Props) => {
+export const Footer = ({
+  externalDataAgreement,
+  isValidateEligibilityError,
+}: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
@@ -86,6 +107,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   )
   const [createPayment, { loading: paymentLoading }] =
     useMutation(CREATE_PAYMENT)
+  const [getPaymentCatalog, { loading: paymentCatalogLoading }] = useLazyQuery(
+    GET_PAYMENT_CATALOG,
+    {
+      fetchPolicy: 'network-only',
+    },
+  )
+  const isPaymentLoading = paymentLoading || paymentCatalogLoading
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -222,7 +250,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   }
 
   const handleIncrement = async () => {
-    if (paymentLoading) return
+    if (isPaymentLoading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
 
@@ -238,6 +266,26 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     }
 
     if (shouldShowPay) {
+      const performingOrganizationID =
+        state.application.organizationNationalId ?? ''
+      let paymentCatalogItems: PaymentCatalogItem[] = []
+      try {
+        const { data } = await getPaymentCatalog({
+          variables: {
+            input: {
+              performingOrganizationID,
+            },
+          },
+        })
+        paymentCatalogItems = data?.paymentCatalog?.items ?? []
+      } catch (error) {
+        console.error('Error fetching payment catalog:', error)
+        dispatch({
+          type: 'SAVE_FAILED',
+          payload: { screenError: paymentCatalogError },
+        })
+        return
+      }
       const chargeItems: {
         performingOrgID: string
         chargeType: string
@@ -260,40 +308,63 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         })
       })
 
-      state.sections?.forEach((section) => {
-        section?.screens?.forEach((screen) => {
-          screen?.fields
-            ?.filter(
-              (field) =>
-                field?.fieldType === FieldTypesEnum.PAYMENT &&
-                field?.isHidden === false,
-            )
-            .forEach((field) => {
-              if (field?.fieldSettings?.chargeItemCode) {
-                const code = field.fieldSettings.chargeItemCode
-                let quantity: number | undefined = 1
-                const amount: number | undefined = field.fieldSettings
-                  .priceAmount as number | undefined
-                if (field.fieldSettings.paymentQuantityId) {
-                  const quantityField = paymentQuantityFields.find(
-                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
-                  )
-                  if (quantityField) {
-                    quantity = getValue(quantityField, 'number')
-                  }
-                }
-                chargeItems.push({
-                  performingOrgID:
-                    state.application.organizationNationalId ?? '',
-                  chargeType: field.fieldSettings.chargeType || 'default',
-                  chargeItemCode: code,
-                  chargeItemName:
-                    field.fieldSettings.chargeItemName || 'Default Name',
-                  priceAmount: amount || 0,
-                  quantity,
-                })
-              }
-            })
+      const visiblePaymentFields =
+        state.sections?.flatMap(
+          (section) =>
+            section?.screens?.flatMap(
+              (screen) =>
+                screen?.fields?.filter(
+                  (field) =>
+                    field?.fieldType === FieldTypesEnum.PAYMENT &&
+                    field?.isHidden === false,
+                ) ?? [],
+            ) ?? [],
+        ) ?? []
+
+      const hasUnresolvedPaymentField = visiblePaymentFields.some((field) => {
+        const code = field?.fieldSettings?.chargeItemCode
+
+        return (
+          !code ||
+          !paymentCatalogItems.some(
+            (item: PaymentCatalogItem) => item.chargeItemCode === code,
+          )
+        )
+      })
+
+      if (hasUnresolvedPaymentField) {
+        dispatch({
+          type: 'SAVE_FAILED',
+          payload: { screenError: paymentCatalogError },
+        })
+        return
+      }
+
+      visiblePaymentFields.forEach((field) => {
+        const code = field?.fieldSettings?.chargeItemCode
+        const paymentCatalogItem = paymentCatalogItems.find(
+          (item: PaymentCatalogItem) => item.chargeItemCode === code,
+        )
+        if (!code || !paymentCatalogItem) return
+
+        let quantity: number | undefined = 1
+        if (field?.fieldSettings?.paymentQuantityId) {
+          const quantityField = paymentQuantityFields.find(
+            (paymentQuantityField) =>
+              paymentQuantityField.id ===
+              field.fieldSettings?.paymentQuantityId,
+          )
+          if (quantityField) {
+            quantity = getValue(quantityField, 'number')
+          }
+        }
+        chargeItems.push({
+          performingOrgID: paymentCatalogItem.performingOrgID,
+          chargeType: paymentCatalogItem.chargeType,
+          chargeItemCode: code,
+          chargeItemName: paymentCatalogItem.chargeItemName,
+          priceAmount: Number(paymentCatalogItem.priceAmount),
+          quantity,
         })
       })
       const { data } = await createPayment({
@@ -301,8 +372,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           input: {
             applicationId: state.application.id,
             createChargeRequestDto: {
-              performingOrganizationID:
-                state.application.organizationNationalId ?? '',
+              performingOrganizationID,
               chargeItems,
             },
           },
@@ -325,6 +395,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             input: {
               applicationId: state.application.id,
               nationalId: '',
+              actorNationalId: '',
               organizationNationalId:
                 state.application.organizationNationalId ?? '',
               slug: state.application.slug,
@@ -434,13 +505,14 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               onClick={handleIncrement}
               disabled={
                 !enableContinueButton ||
-                paymentLoading ||
+                isValidateEligibilityError ||
+                isPaymentLoading ||
                 submitLoading ||
                 saveLoading ||
                 notifyLoading ||
                 (onSubmit && state.isValid === false)
               }
-              loading={submitLoading || notifyLoading || paymentLoading}
+              loading={submitLoading || notifyLoading || isPaymentLoading}
             >
               {shouldShowPay ? formatMessage(m.pay) : continueButtonText}
             </Button>
@@ -454,7 +526,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 disabled={
                   submitLoading ||
                   notifyLoading ||
-                  paymentLoading ||
+                  isPaymentLoading ||
                   saveLoading
                 }
               >

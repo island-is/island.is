@@ -16,12 +16,18 @@ import {
   shouldShowBiggestConcernField,
   shouldShowReasonForNotificationSubCategoryDetails,
 } from '../../../utils/conditionUtils'
-import { RISK_TO_UNBORN } from '../../../utils/constants'
+import {
+  RISK_TO_UNBORN,
+  SHOW_REASON_FOR_NOTIFICATION_SUBSECTION,
+} from '../../../utils/constants'
 import { getApplicationExternalData } from '../../../utils/getApplicationExternalData'
 
 export const reasonForNotificationSubSection = buildSubSection({
   id: 'reasonForNotificationSubSection',
   title: reasonForNotificationMessages.shared.sectionTitle,
+  // Client requested this be temporarily hidden; keeping the implementation
+  // intact in case they want it back.
+  condition: () => SHOW_REASON_FOR_NOTIFICATION_SUBSECTION,
   children: [
     buildMultiField({
       id: 'reasonForNotification',

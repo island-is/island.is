@@ -47,6 +47,9 @@ fragment AnswerOptions on QuestionnaireAnswerOption {
     required
     multiline
     maxLength
+    decimal
+    min
+    max
   }
   options {
     __typename

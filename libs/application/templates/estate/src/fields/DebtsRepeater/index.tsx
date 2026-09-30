@@ -8,7 +8,7 @@ import {
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
 import { getErrorViaPath } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../DoubleColumnRow'

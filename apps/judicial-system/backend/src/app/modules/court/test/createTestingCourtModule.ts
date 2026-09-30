@@ -8,7 +8,10 @@ import { ConfigModule } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
-import { RobotLogRepositoryService } from '../../repository'
+import {
+  CaseRepositoryService,
+  RobotLogRepositoryService,
+} from '../../repository'
 import { courtModuleConfig } from '../court.config'
 import { CourtService } from '../court.service'
 
@@ -27,6 +30,12 @@ export const createTestingCourtModule = async () => {
           info: jest.fn(),
           warn: jest.fn(),
           error: jest.fn(),
+        },
+      },
+      {
+        provide: CaseRepositoryService,
+        useValue: {
+          findById: jest.fn().mockResolvedValue(null),
         },
       },
       {
@@ -54,7 +63,16 @@ export const createTestingCourtModule = async () => {
 
   const courtService = courtModule.get<CourtService>(CourtService)
 
+  const caseRepositoryService = courtModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
   courtModule.close()
 
-  return { courtClientService, emailService, courtService }
+  return {
+    courtClientService,
+    emailService,
+    courtService,
+    caseRepositoryService,
+  }
 }

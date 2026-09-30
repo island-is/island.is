@@ -33,7 +33,7 @@ const formatDateRange = (from?: string | null, to?: string | null): string => {
 const columnHelper = createColumnHelper<FarmerLandBeneficiary>()
 
 export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const columns = useMemo(
     () => [
@@ -54,8 +54,7 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
         header: formatMessage(fm.vatNumber),
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandBeneficiary>) => {

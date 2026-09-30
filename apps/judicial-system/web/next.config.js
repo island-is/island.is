@@ -15,6 +15,12 @@ const nextConfig = {
     // Important: return the modified config
     return config
   },
+  // The prod container's .next/cache is owned by root and the app runs as a
+  // non-root user, so Next 16's on-disk image LRU throws EACCES on mkdir.
+  // This app doesn't use next/image, so the disk cache is not needed.
+  images: {
+    maximumDiskCacheSize: 0,
+  },
   // Runtime configuration lives in environments/runtimeEnvironment.ts
   env: {
     API_MOCKS: process.env.API_MOCKS ?? '',

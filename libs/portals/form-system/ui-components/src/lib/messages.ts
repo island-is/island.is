@@ -1330,6 +1330,11 @@ export const m = defineMessages({
     defaultMessage: 'Samtals',
     description: 'Total',
   },
+  toPay: {
+    id: 'form.system:to-pay',
+    defaultMessage: 'Til greiðslu',
+    description: 'To pay',
+  },
   price: {
     id: 'form.system:price',
     defaultMessage: 'Verð',

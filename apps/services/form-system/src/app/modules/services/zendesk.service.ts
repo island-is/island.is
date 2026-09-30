@@ -9,6 +9,7 @@ import {
   FieldTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
+import { AssetTypes } from '@island.is/form-system/enums'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
@@ -128,7 +129,7 @@ export class ZendeskService {
       missingFilenames,
     )
 
-    return await this.createTicket(
+    const success = await this.createTicket(
       applicationId,
       subject,
       body,
@@ -141,6 +142,23 @@ export class ZendeskService {
       isInternal,
       zendeskBrandId,
     )
+
+    if (success) {
+      this.logger.info('form system application sent to zendesk', {
+        applicationId,
+        formId: applicationDto.formId,
+        formSlug: applicationDto.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: applicationDto.isTest,
+        zendeskInstance: supportedZendeskInstance,
+        zendeskBrandId,
+        attachmentCount: attachmentTokens.length,
+        missingAttachmentCount: missingFilenames.length,
+        datadogEvent: 'form_system_application_sent_zendesk',
+      })
+    }
+
+    return success
   }
 
   private async createTicket(
@@ -191,7 +209,19 @@ export class ZendeskService {
       if (!response.ok) {
         this.logger.error(
           `Failed to create ticket for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
+          {
+            applicationId,
+            zendeskHost: serviceUrl.host,
+            zendeskPath: serviceUrl.pathname,
+            zendeskBrandId,
+            hasBrandId: brandId !== undefined,
+            isInternal,
+            uploadTokenCount: uploadTokens.length,
+            customFieldCount: customFields.length,
+            status: response.status,
+            statusText: response.statusText,
+            datadogEvent: 'form_system_zendesk_error',
+          },
         )
         return false
       }
@@ -201,7 +231,18 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while creating ticket for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          zendeskHost: serviceUrl.host,
+          zendeskPath: serviceUrl.pathname,
+          zendeskBrandId,
+          hasBrandId: brandId !== undefined,
+          isInternal,
+          uploadTokenCount: uploadTokens.length,
+          customFieldCount: customFields.length,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return false
     }
@@ -251,7 +292,13 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while attaching S3 file ${s3Key} for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          s3Key,
+          zendeskHost: new URL(url).host,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return undefined
     }
@@ -283,7 +330,17 @@ export class ZendeskService {
       if (!response.ok) {
         this.logger.error(
           `Failed to upload attachment ${filename} for application ${applicationId}`,
-          { status: response.status, statusText: response.statusText },
+          {
+            applicationId,
+            filename,
+            contentType,
+            contentLength: data.byteLength,
+            zendeskHost: serviceUrl.host,
+            zendeskPath: serviceUrl.pathname,
+            status: response.status,
+            statusText: response.statusText,
+            datadogEvent: 'form_system_zendesk_error',
+          },
         )
         return undefined
       }
@@ -293,7 +350,16 @@ export class ZendeskService {
     } catch (error) {
       this.logger.error(
         `Unexpected error while uploading attachment ${filename} for application ${applicationId}`,
-        { error },
+        {
+          applicationId,
+          filename,
+          contentType,
+          contentLength: data.byteLength,
+          zendeskHost: serviceUrl.host,
+          zendeskPath: serviceUrl.pathname,
+          datadogEvent: 'form_system_zendesk_error',
+          error,
+        },
       )
       return undefined
     }
@@ -496,7 +562,23 @@ export class ZendeskService {
                 continue
               }
 
-              const entries = Object.entries(json)
+              const assetAttributeKeys =
+                field.fieldType === FieldTypesEnum.ASSETS
+                  ? field.fieldSettings?.assetType === AssetTypes.VEHICLE
+                    ? ['color', 'model', 'registrationNumber']
+                    : field.fieldSettings?.assetType === AssetTypes.REAL_ESTATE
+                    ? [
+                        'address',
+                        'postalCode',
+                        'municipality',
+                        'propertyNumber',
+                      ]
+                    : undefined
+                  : undefined
+              const entries = Object.entries(json).filter(
+                ([key]) =>
+                  !assetAttributeKeys || assetAttributeKeys.includes(key),
+              )
               const isMultiAttribute = entries.length > 1
 
               // If multi and json is empty -> just write the itemNo (bold)
@@ -531,7 +613,8 @@ export class ZendeskService {
 
                 const val = this.formatValue(raw, field.fieldType)
                 if (
-                  field.fieldType === FieldTypesEnum.APPLICANT &&
+                  (field.fieldType === FieldTypesEnum.APPLICANT ||
+                    isMultiAttribute) &&
                   val.trim().length === 0
                 ) {
                   continue

@@ -2,13 +2,13 @@ import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import type {
   Case,
   CreateDefendantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateDefendantMutation } from './createDefendant.generated'
@@ -48,7 +48,7 @@ const useDefendants = () => {
             return data.createDefendant?.id
           }
         }
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.createDefendant))
       }
     },
@@ -63,7 +63,7 @@ const useDefendants = () => {
         })
 
         return Boolean(data?.deleteDefendant?.deleted)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.deleteDefendant))
 
         return false
@@ -82,7 +82,7 @@ const useDefendants = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateDefendant))
 
         return false
@@ -101,7 +101,7 @@ const useDefendants = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error(formatMessage(errors.updateDefendant))
 
         return false

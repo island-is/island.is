@@ -27,8 +27,11 @@ export const ConversationAvailabilityAlert = ({
   })
 
   // Messaging-not-allowed keeps its own dedicated message (no window text).
+  // Keyed off canCreateConversation rather than the reason: the reason is
+  // dropped when the server sends one this client doesn't know, and a recipient
+  // that can't be messaged must never fall through to the availability text.
   const isNotAllowed =
-    !!blockedReason &&
+    !recipient.canCreateConversation &&
     blockedReason !==
       HealthDirectorateHealthConversationRecipientBlockedReason.OutsideMessagingWindow
 
@@ -48,10 +51,10 @@ export const ConversationAvailabilityAlert = ({
     )
   }
 
-  // The same availability text is always shown; only the title/colour change to
-  // reflect closed / closing-soon / open. The window sentence embeds the
-  // open/close times, so drop it when the recipient has no messaging window
-  // rather than render "from  to " with blanks.
+  // Closed and closing-soon share the same availability text; only the
+  // title/colour differ. The window sentence embeds the open/close times, so
+  // drop it when the recipient has no messaging window rather than render
+  // "from  to " with blanks.
   const hasWindow =
     !!windowInfo.windowOpenLabel && !!windowInfo.windowCloseLabel
   const availabilityText = [
@@ -102,5 +105,6 @@ export const ConversationAvailabilityAlert = ({
     )
   }
 
-  return <Alert type="info" size="small" hasBorder message={availabilityText} />
+  // Messaging is open and not closing soon: nothing to warn about.
+  return null
 }

@@ -13,7 +13,7 @@ import {
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { AttachRulingOrderDocumentDto } from '../../dto/attachRulingOrderDocument.dto'
 
 interface Then {
@@ -31,7 +31,7 @@ describe('FileController - Attach ruling order document', () => {
   const user = { id: uuid(), name: 'Dómritarinn' } as User
   const key = `${caseId}/${uuid()}/urskurdur.pdf`
 
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let queuedMessages: Message[]
   let transaction: Transaction
   let givenWhenThen: (
@@ -42,13 +42,13 @@ describe('FileController - Attach ruling order document', () => {
 
   beforeEach(async () => {
     const {
-      fileModel,
+      caseFileRepositoryService,
       fileController,
       sequelize,
       queuedMessages: messages,
     } = await createTestingFileModule()
 
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
     queuedMessages = messages
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -60,8 +60,12 @@ describe('FileController - Attach ruling order document', () => {
     givenWhenThen = async (theCase, caseFile, attachDocument) => {
       const then = {} as Then
 
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [{ ...caseFile, key }]])
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        caseFiles: [{ ...caseFile, key }],
+      })
 
       await fileController
         .attachRulingOrderDocument(caseId, fileId, user, theCase, caseFile, {
@@ -103,18 +107,18 @@ describe('FileController - Attach ruling order document', () => {
     })
 
     it('should fill in the document, keeping the pronounced name', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).toHaveBeenCalledWith(
+        fileId,
+        caseId,
         {
           key,
           size: 1234,
           type: 'application/pdf',
           name: 'urskurdur.pdf',
         },
-        {
-          where: { id: fileId, caseId, key: '' },
-          returning: true,
-          transaction,
-        },
+        { transaction },
       )
     })
 
@@ -148,7 +152,11 @@ describe('FileController - Attach ruling order document', () => {
     })
 
     it('should rename the ruling', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).toHaveBeenCalledWith(
+        fileId,
+        caseId,
         expect.objectContaining({
           userGeneratedFilename: 'S-123/2026 Úrskurður um frávísun',
         }),
@@ -163,9 +171,13 @@ describe('FileController - Attach ruling order document', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument as jest.Mock
       mockUpdate.mockReset()
-      mockUpdate.mockResolvedValueOnce([0, []])
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 0,
+        caseFiles: [],
+      })
 
       then = await givenWhenThen(makeCase(), pronouncedOrally)
     })
@@ -194,7 +206,9 @@ describe('FileController - Attach ruling order document', () => {
       expect(then.error.message).toBe(
         'Only a ruling order that was pronounced orally and has not been written up can have a document attached',
       )
-      expect(mockFileModel.update).not.toHaveBeenCalled()
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -210,7 +224,9 @@ describe('FileController - Attach ruling order document', () => {
 
     it('should be rejected', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(mockFileModel.update).not.toHaveBeenCalled()
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -225,7 +241,9 @@ describe('FileController - Attach ruling order document', () => {
 
     it('should be rejected', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(mockFileModel.update).not.toHaveBeenCalled()
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
+      ).not.toHaveBeenCalled()
     })
   })
 })

@@ -286,16 +286,28 @@ query getAppointmentDetail($id: String!) {
     date
     duration
     modality
+    status
+    canCancel
+    canCancelBefore
     practitioners
+    assignees {
+      type
+      name
+    }
     links {
       type
       url
+      activatesAt
+      expiresAt
     }
     location {
       name
       organization
-      directions
       address
+      department
+      wing
+      floor
+      room
       city
       postalCode
       country
@@ -309,6 +321,12 @@ query getAppointmentDetail($id: String!) {
         url
       }
     }
+  }
+}
+
+mutation cancelAppointment($id: String!) {
+  healthDirectorateRequestAppointmentCancellation(id: $id) {
+    outcome
   }
 }
 
@@ -346,6 +364,7 @@ query GetHealthConversation($id: ID!) {
     isRead
     patientCanReply
     replyBlockedReason
+    patientReplyWindowDays
     organization {
       name
       logoUrl
@@ -358,6 +377,11 @@ query GetHealthConversation($id: ID!) {
         ...HealthConversationMessageContent
       }
       senderGroupName
+      certificateId
+      requiresPayment
+      paid
+      amountIsk
+      pendingPaymentId
       attachments {
         id
         fileName
@@ -372,6 +396,7 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
   healthDirectorateHealthConversationRecipients(locale: $locale) {
     nodeId
     groupId
+    treatmentId
     name
     allowsMessaging
     isCurrentlyWithinWindow
@@ -384,7 +409,9 @@ query GetHealthConversationRecipients($locale: LocaleEnum) {
       patientInitiatedTypeCode
       title
       description
+      instructions
       isCertificate
+      externalLinkUrl
     }
   }
 }

@@ -27,19 +27,6 @@ export const strings = {
     description:
       'Body of the notification sent when the defendant delegates the defendant choice to the judge in indictment cases',
   }),
-  defenderAssignedSubject: defineMessage({
-    id: 'judicial.system.backend:defendant_notifications.indictment_defender_assigned_subject',
-    defaultMessage: '{courtName} - aðgangur að máli',
-    description:
-      'Subject of the notification when a defender is assigned a confirmed as a defender in indictment cases',
-  }),
-  defenderAssignedBody: defineMessage({
-    id: 'judicial.system.backend:defendant_notifications.indictment_defender_assigned_body',
-    defaultMessage:
-      '{courtName} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Hægt er að nálgast málið á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá dómstólnum}}.',
-    description:
-      'Body of the notification when a defender is assigned a confirmed as a defender in indictment cases',
-  }),
   indictmentSentToPrisonAdminSubject: defineMessage({
     id: 'judicial.system.backend:defendant_notifications.indictment_sent_to_prison_admin_subject',
     defaultMessage: 'Mál {courtCaseNumber} til fullnustu',

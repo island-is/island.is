@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator'
 
 export class DomainDTO {
   @IsString()
@@ -43,4 +43,16 @@ export class DomainDTO {
     example: 'email@island.is',
   })
   readonly contactEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{4}$/, {
+    message: 'Municipality code must be 4 digits',
+  })
+  @ApiPropertyOptional({
+    example: '0000',
+    description:
+      'Municipality number (sveitarfélagsnúmer), used to match users to their municipality domain.',
+  })
+  readonly municipalityCode?: string
 }

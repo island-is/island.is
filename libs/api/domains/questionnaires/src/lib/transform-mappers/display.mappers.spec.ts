@@ -290,6 +290,28 @@ describe('display mappers', () => {
       )
     })
 
+    it('sets expired status even when answered, when validToDateTime is in the past', () => {
+      const answeredAndExpired = {
+        ...baseLshItem,
+        answerDateTime: new Date('2024-06-01T12:00:00.000Z'),
+        validToDateTime: new Date('2000-01-01T00:00:00.000Z'),
+      } as unknown as LshQuestionnaireType
+
+      const overview = mapLshQuestionnaireOverview(
+        answeredAndExpired,
+        formatMessage,
+      )
+      expect(overview.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
+      // Answers must still be reachable on an expired questionnaire
+      expect(overview.baseInformation.lastSubmissionId).toBe('lsh-guid-h1')
+      expect(overview.submissions).toHaveLength(1)
+      expect(
+        mapLshQuestionnaireListItem(answeredAndExpired, formatMessage).status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+    })
+
     it('sets notAnswered status when validToDateTime is null', () => {
       const noExpiry = {
         ...baseLshItem,
@@ -454,6 +476,53 @@ describe('display mappers', () => {
       expect(mapped.lastSubmissionId).toBe('sub-1')
     })
 
+    it('sets expired status even when answered or drafted, when expiryDate is in the past', () => {
+      const pastExpiry = new Date('2000-01-01T00:00:00.000Z')
+
+      const answeredDetail = {
+        questionnaireId: 'el-q-10',
+        title: 'Answered but expired',
+        message: null,
+        groups: [],
+        triggers: {},
+        submissions: [{ id: 'sub-1', isDraft: false }],
+        replies: [],
+        canSubmit: false,
+        hasDraft: false,
+        expiryDate: pastExpiry,
+      } as unknown as QuestionnaireDetailDto
+
+      expect(
+        mapElQuestionnaireOverview(answeredDetail, formatMessage)
+          .baseInformation.status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+
+      const answeredBase = {
+        questionnaireId: 'el-q-11',
+        title: 'Answered but expired',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        numSubmitted: 1,
+        hasDraft: false,
+        lastSubmitted: new Date('2024-06-01T00:00:00.000Z'),
+        expiryDate: pastExpiry,
+      } as unknown as QuestionnaireBaseDto
+
+      expect(
+        mapElQuestionnaireListItem(answeredBase, formatMessage).status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+
+      const draftBase = {
+        ...answeredBase,
+        numSubmitted: 0,
+        lastSubmitted: null,
+        hasDraft: true,
+      } as unknown as QuestionnaireBaseDto
+
+      expect(mapElQuestionnaireListItem(draftBase, formatMessage).status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
+    })
+
     it('sets dependsOn and visibilityConditions for EL question triggers', () => {
       const elDetail = {
         questionnaireId: 'el-q-2',
@@ -509,6 +578,192 @@ describe('display mappers', () => {
       expect(dependentQuestion?.dependsOn).toEqual(['q1'])
       expect(dependentQuestion?.visibilityConditions).toBeDefined()
       expect(dependentQuestion?.visibilityConditions?.[0].questionId).toBe('q1')
+    })
+
+    it('maps a whole-number 0-10 question to a scale', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-5',
+        title: 'With a 0-10 scale question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q1',
+                type: 'number',
+                label: 'How tired are you?',
+                htmlLabel: '<strong>How tired are you?</strong>',
+                hint: null,
+                required: true,
+                min: 0,
+                max: 10,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.scale)
+    })
+
+    it('maps a whole-number 1-5 question to a scale', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-7',
+        title: 'With a 1-5 scale question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q3',
+                type: 'number',
+                label: 'How much pain are you in?',
+                htmlLabel: '<strong>How much pain are you in?</strong>',
+                hint: null,
+                required: true,
+                min: 1,
+                max: 5,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.scale)
+    })
+
+    it('keeps a question with fractional bounds as a plain number input', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-9',
+        title: 'With fractional bounds',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q5',
+                type: 'number',
+                label: 'Fractional bounds question',
+                htmlLabel: '<strong>Fractional bounds question</strong>',
+                hint: null,
+                required: true,
+                min: 0.5,
+                max: 10,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.number)
+    })
+
+    it('keeps a 0-10 question that allows decimals as a plain number input', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-8',
+        title: 'With a decimal number question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q4',
+                type: 'number',
+                label: 'How many liters of water do you drink?',
+                htmlLabel:
+                  '<strong>How many liters of water do you drink?</strong>',
+                hint: null,
+                required: true,
+                min: 0,
+                max: 10,
+                decimals: true,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.number)
+    })
+
+    it('keeps a large-range number question as a plain number input', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-6',
+        title: 'With a regular number question',
+        message: null,
+        groups: [
+          {
+            id: 'group-1',
+            title: 'Group 1',
+            items: [
+              {
+                id: 'number-q2',
+                type: 'number',
+                label: 'How many cigarettes per day?',
+                htmlLabel: '<strong>How many cigarettes per day?</strong>',
+                hint: null,
+                required: true,
+                min: 0,
+                max: 100,
+                decimals: false,
+              },
+            ],
+          },
+        ],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
+
+      const question = mapped.sections?.[0]?.questions?.[0]
+      expect(question?.answerOptions.type).toBe(AnswerOptionType.number)
     })
   })
 })

@@ -8,9 +8,15 @@ import {
   buildTextField,
   buildTitleField,
   coreMessages,
+  YES,
 } from '@island.is/application/core'
 import { prerequisitesMessages, sharedMessages } from '../../lib/messages'
-import { getYesNoOptions } from '../../utils/childProtectionNotificationUtils'
+import {
+  getLanguageOptions,
+  getYesNoDoNotKnowOptions,
+  getYesNoOptions,
+} from '../../utils/childProtectionNotificationUtils'
+import { getApplicationAnswers } from '../../utils/getApplicationAnswers'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 
 export const notifierInfoSubSection = buildSubSection({
@@ -66,6 +72,22 @@ export const notifierInfoSubSection = buildSubSection({
           width: 'half',
           space: 4,
           options: getYesNoOptions(),
+        }),
+        buildRadioField({
+          id: 'notifierInfo.needsInterpreter',
+          title: sharedMessages.needsInterpreter,
+          widthWithIllustration: '1/3',
+          space: 4,
+          options: getYesNoDoNotKnowOptions(),
+        }),
+        buildSelectField({
+          id: 'notifierInfo.preferredLanguage',
+          title: sharedMessages.language,
+          placeholder: sharedMessages.languagePlaceholder,
+          doesNotRequireAnswer: true,
+          options: getLanguageOptions(),
+          condition: (answers) =>
+            getApplicationAnswers(answers).notifierNeedsInterpreter === YES,
         }),
         buildTitleField({
           title: prerequisitesMessages.notifierInfo.relationshipToChild,

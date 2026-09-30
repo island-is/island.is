@@ -38,7 +38,7 @@ type ProviderState =
   | 'not-found'
   | undefined
 
-interface FormProvider {
+interface FormContextValue {
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
   isLoadingWorkingCase: boolean
@@ -69,7 +69,7 @@ const initialState: Case = {
   defendantWaivesRightToCounsel: false,
 }
 
-export const FormContext = createContext<FormProvider>({
+export const FormContext = createContext<FormContextValue>({
   workingCase: initialState,
   setWorkingCase: () => initialState,
   isLoadingWorkingCase: true,

@@ -61,6 +61,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
   },
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
     slug: InstitutionTypes.SAMGONGUSTOFA,
@@ -212,6 +217,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.SYSLUMENN,
   },
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
+    nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
+    slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
+    contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
+  },
+  [ApplicationTypes.DRIVING_LICENSE_ADDITIONAL]: {
     nationalId: InstitutionNationalIds.RIKISLOGREGLUSTJORI,
     slug: InstitutionTypes.RIKISLOGREGLUSTJORI,
     contentfulId: InstitutionContentfulIds.RIKISLOGREGLUSTJORI,
@@ -546,5 +556,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
     slug: InstitutionTypes.STAFRAENT_ISLAND,
     contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
+  },
+  [ApplicationTypes.U2_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
+    slug: InstitutionTypes.VINNUMALASTOFNUN,
+    contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
 }

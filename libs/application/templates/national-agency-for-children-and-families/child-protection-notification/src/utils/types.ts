@@ -1,4 +1,11 @@
+import { YesOrNo } from '@island.is/application/core'
+
+export type ParentKey = 'parent1' | 'parent2'
+
+export const PARENT_KEYS: ReadonlyArray<ParentKey> = ['parent1', 'parent2']
+
 export interface Parent {
+  knowsNationalId?: YesOrNo
   nationalIdInfo?: {
     nationalId?: string
     name?: string
@@ -14,7 +21,7 @@ export interface Parent {
   postalCode?: string
   municipality?: string
   municipalityPostalCode?: string
-  needsInterpreter?: string[]
+  needsInterpreter?: string
   preferredLanguage?: string
 }
 

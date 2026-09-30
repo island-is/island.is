@@ -1,5 +1,8 @@
+import type { Vacancy } from '@island.is/cms'
 import {
   mapIcelandicGovernmentInstitutionVacanciesFromElfur,
+  mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms,
+  mapVacancyListItemFromCms,
   sortVacancyList,
   VacancyWithCreationDate,
 } from './utils'
@@ -141,5 +144,34 @@ describe('mapIcelandicGovernmentInstitutionVacanciesFromElfur', () => {
     ])
 
     expect(result[0].fieldOfWork).toBeUndefined()
+  })
+})
+
+describe('CMS vacancy institution name', () => {
+  // Organizations may carry an abbreviation in shortTitle (e.g. "DMR" for
+  // Dómsmálaráðuneytið). The vacancy views have room for the full name, so
+  // both the list card and the detail panel must show `title`.
+  const vacancy = {
+    id: '1',
+    title: 'Tvö embætti héraðsdómara laus til umsóknar',
+    organization: {
+      id: 'org-1',
+      title: 'Dómsmálaráðuneytið',
+      shortTitle: 'DMR',
+      slug: 'domsmalaraduneytid',
+    },
+  } as Vacancy
+
+  it('should use the full organization title on the detail page', () => {
+    const result =
+      mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(vacancy)
+
+    expect(result.institutionName).toBe('Dómsmálaráðuneytið')
+  })
+
+  it('should use the full organization title in the list', () => {
+    const result = mapVacancyListItemFromCms(vacancy)
+
+    expect(result.institutionName).toBe('Dómsmálaráðuneytið')
   })
 })

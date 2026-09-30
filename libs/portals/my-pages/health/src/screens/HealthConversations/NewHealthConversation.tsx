@@ -1,6 +1,4 @@
 import {
-  AlertMessage,
-  AlertMessageType,
   Box,
   Checkbox,
   GridColumn,
@@ -13,8 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  ActionCard,
   CardLoader,
-  InlineLink,
   IntroWrapper,
   m,
   useIsPhoneWidth,
@@ -23,20 +21,26 @@ import ConversationAvailabilityAlert from './components/ConversationAvailability
 import ConversationBackButton from './components/ConversationBackButton'
 import ConversationCancelSubmit from './components/ConversationCancelSubmit'
 import ConversationMobileBackHeader from './components/ConversationMobileBackHeader'
-import ConversationTermsModal from './components/ConversationTermsModal'
 import MobileActionFooter from './components/MobileActionFooter'
 import CertificateRequestForm, {
   CertificateFormState,
   toCertificateRequestInput,
 } from './components/CertificateRequestForm'
 import { Problem } from '@island.is/react-spa/shared'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { LocaleEnum } from '@island.is/portals/my-pages/graphql'
-import { getMessagingWindowInfo } from './utils/messagingWindow'
-import { HealthDirectorateHealthConversationRecipientBlockedReason } from '@island.is/api/schema'
+import { getWindowLabels } from './utils/messagingWindow'
+import {
+  getNewConversationPageMode,
+  pickClosedRecipient,
+} from './utils/recipientAvailability'
+import { MAX_MESSAGE_LENGTH } from './utils/constants'
+import { Markdown } from '@island.is/shared/components'
+import { HealthDirectorateHealthConversationRecipientAvailability as Availability } from '@island.is/api/schema'
+import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
 import {
   useGetHealthConversationRecipientsForNewQuery,
@@ -44,16 +48,14 @@ import {
   useCreateHealthCertificateRequestMutation,
 } from './NewHealthConversation.generated'
 
-interface CertificateAlert {
-  type: AlertMessageType
-  title?: string
-  message?: string
-}
-
-const getRecipientKey = (recipient: { nodeId: string; groupId: number }) =>
-  `${recipient.nodeId}-${recipient.groupId}`
-
-const MAX_MESSAGE_LENGTH = 300
+const getRecipientKey = (recipient: {
+  nodeId: string
+  groupId: number
+  treatmentId?: string | null
+}) =>
+  `${recipient.nodeId}-${recipient.groupId}${
+    recipient.treatmentId ? `-${recipient.treatmentId}` : ''
+  }`
 
 const NewHealthConversation = () => {
   useNamespaces('sp.health')
@@ -65,12 +67,12 @@ const NewHealthConversation = () => {
     string | null
   >(null)
   const [selectedTypeCode, setSelectedTypeCode] = useState<string | null>(null)
+  const [searchParams] = useSearchParams()
   const [messageText, setMessageText] = useState('')
   const [certificateForm, setCertificateForm] = useState<CertificateFormState>(
     {},
   )
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   const { data, loading, error } =
     useGetHealthConversationRecipientsForNewQuery({
@@ -91,17 +93,56 @@ const NewHealthConversation = () => {
     })
 
   const recipients = data?.healthDirectorateHealthConversationRecipients
-  const hasRecipients = !!recipients?.length
+  const pageMode = recipients
+    ? getNewConversationPageMode(recipients)
+    : undefined
+  const closedRecipient = recipients
+    ? pickClosedRecipient(recipients)
+    : undefined
   const hasMultipleRecipients = (recipients?.length ?? 0) > 1
 
   const recipientOptions =
-    recipients?.map((r) => ({
-      label: r.name,
-      value: getRecipientKey(r),
-    })) ?? []
+    recipients?.map((r) => {
+      const hours = getWindowLabels(r.todaysWindow)
+      return {
+        label: r.name,
+        value: getRecipientKey(r),
+        description:
+          r.availability === Availability.NEVER
+            ? formatMessage(
+                messages.healthConversationRecipientNotAllowedOption,
+              )
+            : r.availability === Availability.OPEN
+            ? undefined
+            : hours && !hours.isAllDay
+            ? formatMessage(messages.healthConversationRecipientClosedOption, {
+                name: r.name,
+                openTime: hours.openLabel,
+                closeTime: hours.closeLabel,
+              })
+            : formatMessage(
+                messages.healthConversationRecipientClosedTodayOption,
+              ),
+      }
+    }) ?? []
+
+  const preselectedTreatment = searchParams.get('treatment')
+  const treatmentMatch = preselectedTreatment
+    ? recipients?.find((r) => r.treatmentId === preselectedTreatment)
+    : undefined
+  const preselectedNode = searchParams.get('node')
+  const nodeMatches = preselectedNode
+    ? recipients?.filter((r) => r.nodeId === preselectedNode)
+    : undefined
+  const preselectMatchKey = treatmentMatch
+    ? getRecipientKey(treatmentMatch)
+    : nodeMatches?.length === 1
+    ? getRecipientKey(nodeMatches[0])
+    : null
 
   const effectiveRecipientKey =
     selectedRecipientKey ??
+    preselectMatchKey ??
     (recipients?.length === 1 ? getRecipientKey(recipients[0]) : null)
 
   const recipient = recipients?.find(
@@ -115,6 +156,7 @@ const NewHealthConversation = () => {
     recipient?.allowedMessageTypes.map((t) => ({
       label: t.title,
       value: t.patientInitiatedTypeCode,
+      description: t.externalLinkUrl ? t.description ?? undefined : undefined,
     })) ?? []
 
   const selectedOption =
@@ -125,60 +167,8 @@ const NewHealthConversation = () => {
   )
   const isCertificateSelected = !!selectedType?.isCertificate
 
-  const windowInfo = getMessagingWindowInfo({
-    windowOpen: recipient?.messagingWindowOpen,
-    windowClose: recipient?.messagingWindowClose,
-  })
-
-  const hasWindowInfo =
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel &&
-    recipient?.patientReplyWindowDays !== undefined
-
-  const introText = recipient
-    ? hasWindowInfo
-      ? formatMessage(messages.healthConversationsNewIntroWithWindow, {
-          name: recipient.name,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-          days: recipient.patientReplyWindowDays,
-        })
-      : formatMessage(messages.healthConversationsNewIntroWithRecipient, {
-          name: recipient.name,
-        })
-    : formatMessage(messages.healthConversationsNewIntro)
-
-  const isCertificateBlocked =
-    isCertificateSelected && recipient?.canRequestCertificate === false
-
-  const isConversationBlocked = recipient?.canCreateConversation === false
-
-  const certificateBlockedOutsideWindow =
-    recipient?.certificateBlockedReason ===
-      HealthDirectorateHealthConversationRecipientBlockedReason.OUTSIDE_MESSAGING_WINDOW &&
-    !!windowInfo.windowOpenLabel &&
-    !!windowInfo.windowCloseLabel
-
-  const isFormLocked = isConversationBlocked || isCertificateBlocked
-
-  const certificateAlert: CertificateAlert | undefined = !isCertificateBlocked
-    ? undefined
-    : certificateBlockedOutsideWindow
-    ? {
-        type: 'info',
-        title: formatMessage(messages.healthConversationClosedTitle),
-        message: formatMessage(messages.healthConversationClosedText, {
-          currentTime: windowInfo.currentTimeLabel,
-          openTime: windowInfo.windowOpenLabel,
-          closeTime: windowInfo.windowCloseLabel,
-        }),
-      }
-    : {
-        type: 'warning',
-        message: formatMessage(
-          messages.healthConversationsCertificateBlockedText,
-        ),
-      }
+  const isConversationBlocked =
+    !!recipient && recipient.availability !== Availability.OPEN
 
   const certificateInput = toCertificateRequestInput(certificateForm)
 
@@ -188,12 +178,17 @@ const NewHealthConversation = () => {
 
   const sendingAny = sending || sendingCertificate
 
-  const canSubmit = isFormValid && !sendingAny && !isFormLocked
+  const canSubmit = isFormValid && !sendingAny && !isConversationBlocked
 
   const handleTypeChange = (typeCode: string | null) => {
     const newType = recipient?.allowedMessageTypes.find(
       (t) => t.patientInitiatedTypeCode === typeCode,
     )
+
+    if (newType?.externalLinkUrl) {
+      window.open(newType.externalLinkUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
 
     setSelectedTypeCode(typeCode)
     setCertificateForm({})
@@ -238,6 +233,7 @@ const NewHealthConversation = () => {
             input: {
               nodeId: recipient.nodeId,
               groupId: recipient.groupId,
+              treatmentId: recipient.treatmentId,
               ...certificateInput,
             },
           },
@@ -257,6 +253,7 @@ const NewHealthConversation = () => {
           input: {
             nodeId: recipient.nodeId,
             groupId: recipient.groupId,
+            treatmentId: recipient.treatmentId,
             patientInitiatedTypeCode: selectedTypeCode,
             title: selectedType.title,
             messageTextContent: messageText.trim(),
@@ -271,6 +268,39 @@ const NewHealthConversation = () => {
     }
   }
 
+  if (!initialLoading && !error && pageMode === 'contactOnly') {
+    return (
+      <Box marginTop={[1, 0, 0]}>
+        <ConversationMobileBackHeader
+          onClick={() => navigate(HealthPaths.HealthConversations)}
+        />
+        <IntroWrapper
+          title={messages.healthConversationsContactTitle}
+          introComponent={
+            <Markdown>
+              {formatMessage(messages.healthConversationsContactIntro)}
+            </Markdown>
+          }
+          desktopContentSpan="10/12"
+        >
+          <ActionCard
+            heading={formatMessage(
+              messages.healthConversationsContactWebChatTitle,
+            )}
+            text={formatMessage(messages.healthConversationsContactWebChatText)}
+            cta={{
+              url: formatMessage(messages.heilsuveraChatLink),
+              label: formatMessage(
+                messages.healthConversationsContactWebChatCta,
+              ),
+              variant: 'text',
+            }}
+          />
+        </IntroWrapper>
+      </Box>
+    )
+  }
+
   return (
     <Box marginTop={[1, 0, 0]}>
       <ConversationMobileBackHeader
@@ -278,22 +308,32 @@ const NewHealthConversation = () => {
       />
       <IntroWrapper
         title={messages.healthConversationsNewTitle}
-        intro={introText}
+        introComponent={
+          <Markdown>
+            {formatMessage(messages.healthConversationsNewIntro)}
+          </Markdown>
+        }
         desktopContentSpan="10/12"
       >
         {initialLoading && <CardLoader />}
         {error && <Problem error={error} noBorder={false} />}
-        {!initialLoading && !error && !hasRecipients && (
+        {!initialLoading && !error && !recipients && (
           <Problem
             type="no_data"
             noBorder={false}
             title={formatMessage(messages.healthConversationsNoRecipient)}
           />
         )}
-        {!initialLoading && !error && recipient && (
+        {!initialLoading &&
+          !error &&
+          pageMode === 'allClosed' &&
+          closedRecipient && (
+            <ClosedRecipientAlert recipient={closedRecipient} />
+          )}
+        {!initialLoading && !error && pageMode === 'form' && recipient && (
           <ConversationAvailabilityAlert recipient={recipient} />
         )}
-        {!initialLoading && !error && hasRecipients && (
+        {!initialLoading && !error && pageMode === 'form' && (
           <Box className={styles.messageCard} background="white">
             <Hidden below="sm">
               <Box
@@ -375,13 +415,9 @@ const NewHealthConversation = () => {
                 </GridColumn>
               </GridRow>
 
-              {certificateAlert && (
-                <Box marginBottom={3}>
-                  <AlertMessage
-                    type={certificateAlert.type}
-                    title={certificateAlert.title}
-                    message={certificateAlert.message}
-                  />
+              {!isCertificateSelected && selectedType?.instructions && (
+                <Box marginBottom={2} className={styles.typeInstructions}>
+                  <Markdown>{selectedType.instructions}</Markdown>
                 </Box>
               )}
 
@@ -391,8 +427,9 @@ const NewHealthConversation = () => {
                   onChange={(patch) =>
                     setCertificateForm((state) => ({ ...state, ...patch }))
                   }
-                  disabled={isFormLocked}
-                  hidePaymentNotice={isCertificateBlocked}
+                  disabled={isConversationBlocked}
+                  hidePaymentNotice={isConversationBlocked}
+                  instructions={selectedType?.instructions}
                 />
               ) : (
                 <Box>
@@ -410,27 +447,24 @@ const NewHealthConversation = () => {
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     maxLength={MAX_MESSAGE_LENGTH}
-                    disabled={isFormLocked}
+                    disabled={isConversationBlocked}
                   />
                 </Box>
               )}
 
-              <Box marginTop={4} marginBottom={4}>
+              <Box
+                marginTop={3}
+                marginBottom={4}
+                className={styles.termsCheckbox}
+              >
                 <Checkbox
                   id="terms-accept"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                   label={formatMessage(
-                    messages.healthConversationsNewTermsLabel,
-                    {
-                      link: (str: React.ReactNode) => (
-                        <InlineLink onClick={() => setTermsModalOpen(true)}>
-                          {str}
-                        </InlineLink>
-                      ),
-                    },
+                    messages.healthConversationsNewTermsInline,
                   )}
-                  disabled={isFormLocked}
+                  disabled={isConversationBlocked}
                 />
               </Box>
 
@@ -448,10 +482,6 @@ const NewHealthConversation = () => {
             </Box>
           </Box>
         )}
-        <ConversationTermsModal
-          isOpen={termsModalOpen}
-          onClose={() => setTermsModalOpen(false)}
-        />
       </IntroWrapper>
     </Box>
   )

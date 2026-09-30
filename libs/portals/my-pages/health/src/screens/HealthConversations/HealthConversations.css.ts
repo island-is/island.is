@@ -1,5 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 export const messageCard = style(
   themeUtils.responsiveStyle({
@@ -21,6 +21,11 @@ export const attachmentIcon = style({
   height: 20,
 })
 
+export const certificateAvatar = style({
+  width: 64,
+  height: 64,
+})
+
 export const detailHeader = style({
   minHeight: 32,
   ...themeUtils.responsiveStyle({
@@ -36,6 +41,12 @@ export const backButton = style({
   marginLeft: -10,
 })
 
+// Same 10px of empty circle sits below the glyph, so 22 reads as the 32 the
+// design has between the arrow and the page title.
+export const mobileBackHeader = style({
+  marginBottom: 22,
+})
+
 // Keeps the row's white button hover circle on a tinted background
 export const conversationRow = style({
   selectors: {
@@ -43,4 +54,31 @@ export const conversationRow = style({
       backgroundColor: theme.color.blue100,
     },
   },
+})
+
+export const termsCheckbox = style({})
+
+globalStyle(`${termsCheckbox} label`, {
+  alignItems: 'flex-start',
+})
+
+globalStyle(`${termsCheckbox} label > div`, {
+  alignSelf: 'flex-start',
+  marginTop: 2,
+})
+
+export const typeInstructions = style({})
+
+// Out-specifies the shared Markdown component's light-weight p global
+globalStyle(`${typeInstructions} div p`, {
+  fontWeight: theme.typography.semiBold,
+})
+
+export const messageTextContent = style({
+  whiteSpace: 'pre-line',
+  overflowWrap: 'anywhere',
+})
+
+export const messageSegmentedContent = style({
+  overflowWrap: 'anywhere',
 })

@@ -202,6 +202,26 @@ describe('useSections getSections', () => {
     ])
   })
 
+  it('should return the correct sections for indictment cases in WAITING_FOR_REVIEW state', () => {
+    const c: Case = {
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      state: CaseState.WAITING_FOR_REVIEW,
+      policeCaseNumbers: [],
+    }
+    const { result } = renderHook(() => useSections(), {
+      wrapper: makeWrapper(c),
+    })
+
+    expect(result.current.getSections(c, u)).toStrictEqual([
+      { children: [], isActive: true, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+    ])
+  })
+
   it('should not append extension sections for indictment cases copied to draft (with a parentCase)', () => {
     const c: Case = {
       type: CaseType.INDICTMENT,

@@ -51,7 +51,7 @@ import {
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
@@ -534,7 +534,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           }
         />
       )}
-      <div className={grid({ gap: 5 })}>
+      <div className={stack({ gap: 5 })}>
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading

@@ -21,7 +21,7 @@ import {
   SubpoenaType as SubpoenaTypeEnum,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as styles from '@island.is/judicial-system-web/src/routes/Court/Indictments/Subpoena/Subpoena.css'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 interface SubpoenaTypeProps {
   subpoenaItems: {
@@ -52,7 +52,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
           }
         >
           <Box marginBottom={item.children ? 2 : 0}>
-            <BlueBox className={grid({ gap: 2 })}>
+            <BlueBox className={stack({ gap: 2 })}>
               <Text as="h4" variant="h4">
                 {item.defendant.name}
               </Text>

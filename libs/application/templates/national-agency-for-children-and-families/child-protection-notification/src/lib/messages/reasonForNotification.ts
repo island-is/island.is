@@ -25,10 +25,18 @@ export const reasonForNotificationMessages = {
       description: 'Description of the incident or circumstances',
     },
     description: {
+      // TODO: Update text for Adult Personal application
       id: 'cpn.application:reasonForNotification.description.description',
       defaultMessage:
-        'Segðu okkur hvað þú sást, hvenær og hvar atvikið eða aðstæðurnar áttu sér stað og hverjir voru viðstaddir. Ekki hika við að segja okkur frá hverju því öðru sem þér þykir mikilvægt að komi fram í þessu samhengi.',
+        'Lýstu atvikinu eða aðstæðum sem tilkynntar eru með nákvæmum og hnitmiðuðum hætti. Reyndu að gera greinarmun á því sem þjónustuveitandi hefur upplýsingar um, þess sem er frásögn annars aðila og frásögn frá barninu sjálfu.',
       description: 'Description of the incident or circumstances',
+    },
+    descriptionUnborn: {
+      id: 'cpn.application:reasonForNotification.description.descriptionUnborn',
+      defaultMessage:
+        'Lýstu aðstæðum eða áhættuhegðun verðandi foreldra með nákvæmum og hnitmiðuðum hætti. Í hverju þær felast og hversu lengi þær hafa varað. Eða í tilfelli atviks hvað þú sást, hvar og hvernig það átti sér stað, hverjir voru viðstaddir, og hvort sambærilegt atvik hafi átt sér stað áður.',
+      description:
+        'Description of the incident or circumstances for the unborn child flow',
     },
     placeholder: {
       id: 'cpn.application:reasonForNotification.description.placeholder',
@@ -43,7 +51,7 @@ export const reasonForNotificationMessages = {
     additionalDataCheckbox: {
       id: 'cpn.application:reasonForNotification.description.additionalDataCheckbox',
       defaultMessage:
-        'Ef þú óskar eftir því að koma viðbótargögnum á framfæri við barnavernd hakaðu þá við hér. Viðbótargögn geta verið ljósmyndir, einstaklingsáætlanir, skýrslur, eða annað sem varpað getur frekara ljósi á á atvikið eða aðstæðurnar sem þú lýsir.',
+        'Ef þú óskar eftir því að koma viðbótargögnum á framfæri við barnavernd hakaðu þá við hér. Barnavernd mun hafa samband til þess að nálgast þau gögn. Viðbótargögn geta verið ljósmyndir, skjáskot af samskiptum, tölvupóstar eða annað sem varpað geta frekara ljósi á atvikið eða aðstæðurnar sem þú lýsir.',
       description: 'Additional data checkbox',
     },
   }),
@@ -51,7 +59,7 @@ export const reasonForNotificationMessages = {
     description: {
       id: 'cpn.application:reasonForNotification.reason.description',
       defaultMessage:
-        'Vinsamlegast tilgreinið ástæður þessarar tilkynningar. Það aðstoðar okkur við mat á aðstæðum og stuðlar að betri undirbúningi að ákvarðanatöku um mögulega íhlutun eða þjónustu sem mætir þörfum barns og fjölskyldu. \n\nÞú gerir það með því að opna flokkana hér fyrir neðan og haka við allt það sem lýsir þeim aðstæðum eða því atviki sem tilkynnt er. Í næsta skrefi biðjum við þig svo að gera betur grein fyrir þínu vali.',
+        'Opnaðu viðeigandi flokka og hakaðu við þá undirflokka sem eiga við lýsinguna þína.',
       description: 'Reason description',
     },
     unbornQuestion: {
@@ -84,43 +92,35 @@ export const reasonForNotificationMessages = {
     },
     hasReportedBefore: {
       id: 'cpn.application:reasonForNotification.notificationHistory.hasReportedBefore',
-      defaultMessage:
-        'Hefurðu tilkynnt áður um sömu áhyggjur til barnaverndar?',
+      defaultMessage: 'Hefur þjónustuveitandi áður tilkynnt sama barn?',
       description:
         'Have you reported the same concerns to child protection before?',
     },
-    hasDiscussedWithCustodians: {
-      id: 'cpn.application:reasonForNotification.notificationHistory.hasDiscussedWithCustodians',
+    hasReportedBeforeExpectantParents: {
+      id: 'cpn.application:reasonForNotification.notificationHistory.hasReportedBeforeExpectantParents',
       defaultMessage:
-        'Hefurðu rætt núverandi áhyggjur þínar við umsjónaraðila barnsins?',
+        'Hefur þjónustuveitandi áður tilkynnt verðandi foreldra til barnaverndar?',
       description:
-        'Have you discussed your current concerns with the custodians of the child?',
+        'Have you reported the expectant parents to child protection before?',
     },
     hasDiscussedWithGuardians: {
       id: 'cpn.application:reasonForNotification.notificationHistory.hasDiscussedWithGuardians',
       defaultMessage:
-        'Hefurðu rætt núverandi áhyggjur þínar við forsjáraðila barnsins?',
+        'Hefur þjónustuveitandi rætt áhyggjur um barnið við forsjár- eða umsjáraðila þess?',
       description:
         'Have you discussed your current concerns with the guardians of the child?',
     },
     hasDiscussedWithExpectantParents: {
       id: 'cpn.application:reasonForNotification.notificationHistory.hasDiscussedWithExpectantParents',
       defaultMessage:
-        'Hefurðu rætt núverandi áhyggjur þínar við verðandi foreldra barnsins?',
+        'Hefur þjónustuveitandi rætt núverandi áhyggjur við verðandi foreldra barnsins?',
       description:
         'Have you discussed your current concerns with the expectant parents of the child?',
-    },
-    areCustodiansInformed: {
-      id: 'cpn.application:reasonForNotification.notificationHistory.areCustodiansInformed',
-      defaultMessage:
-        'Eru umsjónaraðilar upplýstir um að tilkynning verði send til barnaverndar?',
-      description:
-        'Are the custodians informed that a report will be sent to child protection?',
     },
     areGuardiansInformed: {
       id: 'cpn.application:reasonForNotification.notificationHistory.areGuardiansInformed',
       defaultMessage:
-        'Eru forsjáraðilar upplýstir um að tilkynning verði send til barnaverndar?',
+        'Hefur þjónustuveitandi upplýst forsjár- eða umsjáraðila um að tilkynning verði send til barnaverndar?',
       description:
         'Are the guardians informed that a report will be sent to child protection?',
     },

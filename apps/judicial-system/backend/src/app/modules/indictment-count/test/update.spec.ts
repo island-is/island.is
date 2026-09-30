@@ -1,9 +1,15 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { IndictmentSubtype } from '@island.is/judicial-system/types'
+
 import { createTestingIndictmentCountModule } from './createTestingIndictmentCountModule'
 
-import { IndictmentCount } from '../../repository'
+import {
+  IndictmentCount,
+  IndictmentCountRepositoryService,
+  OffenseRepositoryService,
+} from '../../repository'
 import { UpdateIndictmentCountDto } from '../dto/updateIndictmentCount.dto'
 
 interface Then {
@@ -23,15 +29,21 @@ describe('IndictmentCountController - Update', () => {
   const policeCaseNumber = uuid()
   const indictmentCountToUpdate = { policeCaseNumber }
 
-  let mockIndictmentCountModel: typeof IndictmentCount
+  let mockIndictmentCountRepositoryService: IndictmentCountRepositoryService
+  let mockOffenseRepositoryService: OffenseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { indictmentCountModel, indictmentCountController, sequelize } =
-      await createTestingIndictmentCountModule()
+    const {
+      indictmentCountRepositoryService,
+      offenseRepositoryService,
+      indictmentCountController,
+      sequelize,
+    } = await createTestingIndictmentCountModule()
 
-    mockIndictmentCountModel = indictmentCountModel
+    mockIndictmentCountRepositoryService = indictmentCountRepositoryService
+    mockOffenseRepositoryService = offenseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -69,11 +81,12 @@ describe('IndictmentCountController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockIndictmentCountModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedIndictmentCount]])
-
-      const mockFindOne = mockIndictmentCountModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(updatedIndictmentCount)
+      const mockUpdateByIdAndCase =
+        mockIndictmentCountRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdateByIdAndCase.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        indictmentCounts: [updatedIndictmentCount],
+      })
 
       then = await givenWhenThen(
         caseId,
@@ -83,13 +96,106 @@ describe('IndictmentCountController - Update', () => {
     })
 
     it('should update the indictment count', () => {
-      expect(mockIndictmentCountModel.update).toHaveBeenCalledWith(
+      expect(
+        mockIndictmentCountRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        indictmentCountId,
+        caseId,
         indictmentCountToUpdate,
+        { transaction },
+      )
+      expect(
+        mockOffenseRepositoryService.deleteAllForIndictmentCount,
+      ).not.toHaveBeenCalled()
+      expect(then.result).toBe(updatedIndictmentCount)
+    })
+  })
+
+  describe('indictment count updated to a traffic violation', () => {
+    const trafficViolationUpdate: UpdateIndictmentCountDto = {
+      policeCaseNumberSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      indictmentCountSubtypes: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      vehicleRegistrationNumber: 'AB123',
+    }
+    const updatedIndictmentCount = { id: indictmentCountId, caseId }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdateByIdAndCase =
+        mockIndictmentCountRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdateByIdAndCase.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        indictmentCounts: [updatedIndictmentCount],
+      })
+
+      then = await givenWhenThen(
+        caseId,
+        indictmentCountId,
+        trafficViolationUpdate,
+      )
+    })
+
+    it('should update the indictment count and keep its offenses', () => {
+      expect(
+        mockIndictmentCountRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        indictmentCountId,
+        caseId,
+        trafficViolationUpdate,
+        { transaction },
+      )
+      expect(
+        mockOffenseRepositoryService.deleteAllForIndictmentCount,
+      ).not.toHaveBeenCalled()
+      expect(then.result).toBe(updatedIndictmentCount)
+    })
+  })
+
+  describe('indictment count updated away from a traffic violation', () => {
+    const nonTrafficViolationUpdate: UpdateIndictmentCountDto = {
+      policeCaseNumberSubtypes: [
+        IndictmentSubtype.TRAFFIC_VIOLATION,
+        IndictmentSubtype.THEFT,
+      ],
+      indictmentCountSubtypes: [IndictmentSubtype.THEFT],
+      vehicleRegistrationNumber: 'AB123',
+    }
+    const updatedIndictmentCount = { id: indictmentCountId, caseId }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdateByIdAndCase =
+        mockIndictmentCountRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdateByIdAndCase.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        indictmentCounts: [updatedIndictmentCount],
+      })
+
+      then = await givenWhenThen(
+        caseId,
+        indictmentCountId,
+        nonTrafficViolationUpdate,
+      )
+    })
+
+    it('should clear the traffic violation fields and delete the offenses', () => {
+      expect(
+        mockOffenseRepositoryService.deleteAllForIndictmentCount,
+      ).toHaveBeenCalledWith(indictmentCountId, { transaction })
+      expect(
+        mockIndictmentCountRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        indictmentCountId,
+        caseId,
         {
-          where: { id: indictmentCountId, caseId },
-          returning: true,
-          transaction,
+          ...nonTrafficViolationUpdate,
+          vehicleRegistrationNumber: null,
+          recordedSpeed: null,
+          speedLimit: null,
+          lawsBroken: [],
+          legalArguments: '',
         },
+        { transaction },
       )
       expect(then.result).toBe(updatedIndictmentCount)
     })
@@ -99,8 +205,9 @@ describe('IndictmentCountController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockIndictmentCountModel.update as jest.Mock
-      mockUpdate.mockRejectedValueOnce(new Error('Some error'))
+      const mockUpdateByIdAndCase =
+        mockIndictmentCountRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdateByIdAndCase.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(
         caseId,

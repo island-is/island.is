@@ -106,6 +106,21 @@ export const normalizeAndFormatNationalId = (
   return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
 }
 
+/** Replaces Þjóðskrá/LÖKE placeholder "Ótilgreindu" with clearer wording. */
+export const normalizePersonAddress = <T extends string | null | undefined>(
+  address: T,
+): T | 'ótilgreindu lögheimili' => {
+  if (address === null || address === undefined) {
+    return address
+  }
+
+  if (address.trim().toLowerCase() === 'ótilgreindu') {
+    return 'ótilgreindu lögheimili'
+  }
+
+  return address
+}
+
 export const getInitials = (name?: string | null): string | undefined => {
   if (!name?.trim()) return undefined
 
@@ -150,6 +165,15 @@ export const laws = {
   _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
+  _115_1: '115. gr. útl.',
+  _115_1_A: 'a-lið 115. gr. útl.',
+  _115_1_B: 'b-lið 115. gr. útl.',
+  _115_1_C: 'c-lið 115. gr. útl.',
+  _115_1_D: 'd-lið 115. gr. útl.',
+  _115_1_E: 'e-lið 115. gr. útl.',
+  _115_1_F: 'f-lið 115. gr. útl.',
+  _115_1_G: 'g-lið 115. gr. útl.',
+  _115_1_H: 'h-lið 115. gr. útl.',
 }
 
 export const getHumanReadableCaseIndictmentRulingDecision = (

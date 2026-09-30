@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-financial-statement-individual-election',
   preset: '../../../../jest.preset.js',

@@ -41,6 +41,10 @@ export const blikkGetPaymentResponseSchema = z.object({
   message: z.string().optional(),
 })
 
+export const blikkErrorResponseSchema = z.object({
+  detail: z.string().optional(),
+})
+
 export type BlikkCreatePaymentResponse = z.infer<
   typeof blikkCreatePaymentResponseSchema
 >
@@ -49,9 +53,8 @@ export type BlikkGetPaymentResponse = z.infer<
 >
 
 /**
- * Transport-level error thrown by the Blikk client for any non-2xx response, network/timeout
- * failure, or unparseable response body. `status` carries the HTTP status when one was received
- * (callers use it to distinguish e.g. a 404 from a live-payment conflict).
+ * Transport-level error thrown by the Blikk client for any non-2xx response.
+ *  For a non-2xx the message includes Blikk's Problem Details `detail` when present.
  */
 export class BlikkClientError extends Error {
   readonly status?: number

@@ -18,6 +18,7 @@ import type { SubCriterionCatalogEntryDto } from '@island.is/clients/directorate
 import { useDraftQuery } from '../../utils/useDraftQuery'
 import { useDraftSync } from '../../utils/useDraftSync'
 import { useSeedOnce } from '../../utils/useSeedOnce'
+import { useProgressMarker } from '../../utils/useProgressMarker'
 import { buildUpsertRemoveCommands } from '../../utils/syncCommands'
 import { getPathValue } from '../../utils/answerHelpers'
 import {
@@ -35,6 +36,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   setBeforeSubmitCallback,
   setSubmitButtonDisabled,
+  answerQuestions,
 }) => {
   const { formatMessage } = useLocale()
   const { content, loading, hasError, refetch } = useDraftQuery<{
@@ -45,6 +47,7 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     'draftCriteriaTree',
   )
   const { sync } = useDraftSync(application)
+  const markProgress = useProgressMarker(application.id, answerQuestions)
   const methods = useForm<SubCriteriaFormValues>({ defaultValues: {} })
 
   // Catalog is reference data (Jafnréttisstofa's own list), not draft state —
@@ -205,9 +208,19 @@ export const SubCriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       } catch {
         return [false, formatMessage(messages.errors.draftSyncFailed)]
       }
+      // The step is behind them now, so a later visit should not send them back
+      // to it — see ProgressPaths.
+      await markProgress({ subCriteria: true })
       return [true, null]
     })
-  }, [setBeforeSubmitCallback, methods, sync, refetch, formatMessage])
+  }, [
+    setBeforeSubmitCallback,
+    methods,
+    sync,
+    refetch,
+    formatMessage,
+    markProgress,
+  ])
 
   if (loading) {
     return <DraftLoadingState />
