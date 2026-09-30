@@ -47,10 +47,11 @@ export class CustomFieldErrorBoundary extends Component<Props, State> {
         <Box
           padding={2}
           border="standard"
+          borderColor="yellow400"
           borderRadius="standard"
-          background="red100"
+          background="yellow200"
         >
-          <Text variant="eyebrow" color="red600">
+          <Text variant="eyebrow" color="dark400">
             Forskoðun · {this.props.componentName}
           </Text>
           <Text variant="small" color="dark300">
