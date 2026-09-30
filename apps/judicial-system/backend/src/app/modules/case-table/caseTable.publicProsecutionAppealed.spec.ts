@@ -9,7 +9,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import * as repository from '../repository'
-import { notHiddenByHeightenedSecurityWhereOptions } from './whereOptions/access'
+import {
+  notHiddenByHeightenedSecurityWhereOptions,
+  publicProsecutionIndictmentsAccessWhereOptions,
+} from './whereOptions/access'
 import { captureSql, initCaseTableModels } from './caseTable.sqlProbe'
 import {
   getAllIncludes,
@@ -196,15 +199,40 @@ describe('public prosecution appealed case list', () => {
     ).toBe(1)
   })
 
-  // The exemption that lets the list drop the restriction of its own. It
-  // mirrors canProsecutionUserAccessCase, which lets the reviewer through the
-  // same check - a case assigned to someone for review must not then be
-  // refused to them.
-  it('exempts the reviewer, as the case guard does', () => {
-    expect(
-      notHiddenByHeightenedSecurityWhereOptions(publicProsecutionUser)[Op.or],
-    ).toContainEqual({
+  // The exemptions that let the list drop the restriction of its own. They
+  // mirror canProsecutionUserAccessCase, which lets the reviewer and the
+  // appeal prosecutor through the same check - a case assigned to someone
+  // must not then be refused to them.
+  it('exempts the reviewer and appeal prosecutor, as the case guard does', () => {
+    const exemptions =
+      notHiddenByHeightenedSecurityWhereOptions(publicProsecutionUser)[Op.or]
+
+    expect(exemptions).toContainEqual({
       indictment_reviewer_id: publicProsecutionUser.id,
+    })
+    expect(exemptions).toContainEqual({
+      appeal_prosecutor_id: publicProsecutionUser.id,
+    })
+  })
+
+  // Write-capable reachability: being the appeal prosecutor is an assignment
+  // grant of its own, sibling to being the reviewer - not only an exemption
+  // inside the appealed-verdict branch.
+  it('reaches cases assigned as appeal prosecutor, as it does for the reviewer', () => {
+    const andTerms = (
+      publicProsecutionIndictmentsAccessWhereOptions(
+        publicProsecutionUser,
+      ) as unknown as Record<symbol, unknown[]>
+    )[Op.and]
+    const reachabilityOr = (
+      andTerms[1] as unknown as Record<symbol, unknown[]>
+    )[Op.or]
+
+    expect(reachabilityOr).toContainEqual({
+      indictment_reviewer_id: publicProsecutionUser.id,
+    })
+    expect(reachabilityOr).toContainEqual({
+      appeal_prosecutor_id: publicProsecutionUser.id,
     })
   })
 

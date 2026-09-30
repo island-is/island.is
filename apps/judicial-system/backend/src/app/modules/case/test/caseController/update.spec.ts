@@ -1872,6 +1872,119 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('appeal prosecutor assigned - queues APPEAL_PROSECUTOR_ASSIGNED', () => {
+    const appealProsecutorId = uuid()
+
+    describe.each([
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ])('for indictment ruling decision %s', (indictmentRulingDecision) => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision,
+      } as Case
+      const caseToUpdate = { appealProsecutorId } as UpdateCaseDto
+      const updatedCase = {
+        ...originalCase,
+        appealProsecutorId,
+      }
+
+      beforeEach(async () => {
+        ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
+          updatedCase,
+        )
+        ;(
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        ).mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
+        expect(mockQueuedMessages).toContainEqual({
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+          },
+        })
+      })
+    })
+
+    describe('when appeal prosecutor is unchanged', () => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        appealProsecutorId,
+      } as Case
+      const caseToUpdate = { appealProsecutorId } as UpdateCaseDto
+      const updatedCase = {
+        ...originalCase,
+        appealProsecutorId,
+      }
+
+      beforeEach(async () => {
+        ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
+          updatedCase,
+        )
+        ;(
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        ).mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should not queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
+        expect(mockQueuedMessages).not.toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              body: {
+                type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+              },
+            }),
+          ]),
+        )
+      })
+    })
+
+    describe('when case is not an indictment', () => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.CUSTODY,
+      } as Case
+      const caseToUpdate = { appealProsecutorId } as UpdateCaseDto
+      const updatedCase = {
+        ...originalCase,
+        appealProsecutorId,
+      }
+
+      beforeEach(async () => {
+        ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
+          updatedCase,
+        )
+        ;(
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        ).mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should not queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
+        expect(mockQueuedMessages).not.toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              body: {
+                type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+              },
+            }),
+          ]),
+        )
+      })
+    })
+  })
+
   describe('reopen indictment case - resets verdict data on each verdict', () => {
     const verdict1 = { id: uuid() } as Verdict
     const verdict2 = { id: uuid() } as Verdict
