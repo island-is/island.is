@@ -510,6 +510,39 @@ describe('zendeskService', () => {
       expect(attempts).toBe(5)
     })
 
+    it('should honour a Retry-After given as an HTTP date', async () => {
+      let attempts = 0
+      server.use(
+        rest.post(`${api}/tickets.json`, (req, res, ctx) => {
+          attempts++
+          return attempts === 1
+            ? res(
+                ctx.status(429),
+                // The date has second precision, so 1-2s remain
+                ctx.set(
+                  'Retry-After',
+                  new Date(Date.now() + 2000).toUTCString(),
+                ),
+                ctx.json({}),
+              )
+            : res(ctx.status(201), ctx.json({ ticket: { id: 5 } }))
+        }),
+      )
+
+      const promise = zendeskService.createTicket({
+        message: 'm',
+        subject: 's',
+        requesterId: testUser.id,
+      })
+      // The default backoff for the first retry is at most 350ms
+      await jest.advanceTimersByTimeAsync(700)
+      expect(attempts).toBe(1)
+
+      await jest.advanceTimersByTimeAsync(2500)
+      await expect(promise).resolves.toMatchObject({ id: 5 })
+      expect(attempts).toBe(2)
+    })
+
     it('should retry a rate limited ticket but not a 503, which may have succeeded', async () => {
       let attempts = 0
       server.use(

@@ -98,6 +98,24 @@ const isFailedJobResult = (result: JobStatusResult) =>
     ? result.errors.length > 0
     : Boolean(result.errors))
 
+/**
+ * Retry-After is either a number of seconds or an HTTP date. Returns the
+ * delay in milliseconds, or undefined when it is missing, invalid or not in
+ * the future.
+ */
+const parseRetryAfterMs = (retryAfter: unknown): number | undefined => {
+  if (typeof retryAfter !== 'string' && typeof retryAfter !== 'number') {
+    return undefined
+  }
+
+  const seconds = Number(retryAfter)
+  const delayMs = Number.isFinite(seconds)
+    ? seconds * 1000
+    : Date.parse(String(retryAfter)) - Date.now()
+
+  return Number.isFinite(delayMs) && delayMs > 0 ? delayMs : undefined
+}
+
 export interface ZendeskServiceOptions {
   email: string
   token: string
@@ -349,12 +367,14 @@ export class ZendeskService {
             e.response?.data?.error === 'DatabaseDeadlock')
         if (!retryable || attempt >= MAX_RETRIES) throw e
 
-        const retryAfterMs = Number(e.response?.headers?.['retry-after']) * 1000
+        const retryAfterMs = parseRetryAfterMs(
+          e.response?.headers?.['retry-after'],
+        )
         const backoffMs = 250 * 2 ** attempt + Math.random() * 100
         await new Promise((resolve) =>
           setTimeout(
             resolve,
-            Number.isFinite(retryAfterMs) && retryAfterMs > 0
+            retryAfterMs !== undefined
               ? Math.min(retryAfterMs, 5000)
               : backoffMs,
           ),
