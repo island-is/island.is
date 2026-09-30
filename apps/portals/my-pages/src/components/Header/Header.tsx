@@ -66,6 +66,10 @@ const DocumentsLink = ({
   </Link>
 )
 
+// Ignore scroll deltas below this so the few px a tap nudges the page don't
+// reveal the header over whatever is being tapped
+const SCROLL_DELTA_THRESHOLD = 10
+
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 interface Props {
   position: number
@@ -126,8 +130,18 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
 
       const currentScrollY = -currPos.y
       const lastScrollY = lastScrollYRef.current
-      const scrollingDown = currentScrollY > lastScrollY
-      const scrollingUp = currentScrollY < lastScrollY
+      const delta = currentScrollY - lastScrollY
+
+      // Skip without updating lastScrollY, so slow scrolls still accumulate
+      if (
+        Math.abs(delta) < SCROLL_DELTA_THRESHOLD &&
+        currentScrollY >= SERVICE_PORTAL_HEADER_HEIGHT_SM
+      ) {
+        return
+      }
+
+      const scrollingDown = delta > 0
+      const scrollingUp = delta < 0
       const scrollThreshold = SERVICE_PORTAL_HEADER_HEIGHT_SM
 
       // Show header when scrolling up or at top of page
