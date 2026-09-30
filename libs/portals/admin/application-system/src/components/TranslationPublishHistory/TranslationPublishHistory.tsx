@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Drawer,
+  SkeletonLoader,
   Stack,
   Tag,
   Text,
@@ -76,7 +77,9 @@ export const TranslationPublishHistory = ({
       <Stack space={3}>
         <Text variant="h3">{formatMessage(m.translationPublishHistory)}</Text>
 
-        {loading && <Text>...</Text>}
+        {loading && history.length === 0 && (
+          <SkeletonLoader height={64} repeat={3} space={2} />
+        )}
 
         {!loading && history.length === 0 && (
           <Text>{formatMessage(m.translationNoPublishHistory)}</Text>
