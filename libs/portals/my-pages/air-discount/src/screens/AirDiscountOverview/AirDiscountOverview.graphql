@@ -1,0 +1,33 @@
+query AirDiscount {
+  airDiscountSchemeDiscounts {
+    nationalId
+    discountCode
+    connectionDiscountCodes {
+      code
+      flightId
+      flightDesc
+      validUntil
+    }
+    expiresIn
+    user {
+      name
+      fund {
+        credit
+        used
+        total
+      }
+    }
+  }
+}
+
+query AirDiscountFlightLegs {
+  airDiscountSchemeUserAndRelationsFlights {
+    travel
+    flight {
+      bookingDate
+      user {
+        name
+      }
+    }
+  }
+}

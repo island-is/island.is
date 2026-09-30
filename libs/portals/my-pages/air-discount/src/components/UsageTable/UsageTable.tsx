@@ -1,21 +1,24 @@
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
-import { AirDiscountSchemeFlightLeg } from '@island.is/api/schema'
-import { messages as m } from '../../lib/messages'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   createColumnHelper,
   formatDateWithTime,
   PortalTable,
 } from '@island.is/portals/my-pages/core'
 
+import { messages as m } from '../../lib/messages'
+import { AirDiscountFlightLegsQuery } from '../../screens/AirDiscountOverview/AirDiscountOverview.generated'
+
+type FlightLeg = AirDiscountFlightLegsQuery['airDiscountSchemeUserAndRelationsFlights'][number]
+
 interface PropTypes {
-  data: AirDiscountSchemeFlightLeg[]
+  data: FlightLeg[]
 }
 
 const UsageTable = ({ data }: PropTypes) => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
-  const columnHelper = createColumnHelper<AirDiscountSchemeFlightLeg>()
+  const columnHelper = createColumnHelper<FlightLeg>()
   const columns = [
     columnHelper.accessor((row) => row.flight.user.name, {
       id: 'user',

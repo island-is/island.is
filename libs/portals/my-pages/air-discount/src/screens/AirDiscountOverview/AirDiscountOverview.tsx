@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  m as coreMessage,
-  CardLoader,
-  VEGAGERDIN_SLUG,
-  formatDateWithTime,
-  IntroWrapper,
-} from '@island.is/portals/my-pages/core'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import copyToClipboard from 'copy-to-clipboard'
+
 import {
   ActionCard,
   Box,
@@ -21,53 +13,26 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { messages as m } from '../../lib/messages'
-import copyToClipboard from 'copy-to-clipboard'
-import UsageTable from '../../components/UsageTable/UsageTable'
-import { AirDiscountSchemeDiscount } from '@island.is/portals/my-pages/graphql'
-import { Problem } from '@island.is/react-spa/shared'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  formatDateWithTime,
+  IntroWrapper,
+  m as coreMessage,
+  VEGAGERDIN_SLUG,
+} from '@island.is/portals/my-pages/core'
 import {
   FeatureFlagClient,
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
+import { Problem } from '@island.is/react-spa/shared'
 
-const AirDiscountQuery = gql`
-  query AirDiscountQuery {
-    airDiscountSchemeDiscounts {
-      nationalId
-      discountCode
-      connectionDiscountCodes {
-        code
-        flightId
-        flightDesc
-        validUntil
-      }
-      expiresIn
-      user {
-        name
-        fund {
-          credit
-          used
-          total
-        }
-      }
-    }
-  }
-`
-
-const AirDiscountFlightLegsQuery = gql`
-  query AirDiscountFlightLegsQuery {
-    airDiscountSchemeUserAndRelationsFlights {
-      travel
-      flight {
-        bookingDate
-        user {
-          name
-        }
-      }
-    }
-  }
-`
+import UsageTable from '../../components/UsageTable/UsageTable'
+import { messages as m } from '../../lib/messages'
+import {
+  useAirDiscountFlightLegsQuery,
+  useAirDiscountQuery,
+} from './AirDiscountOverview.generated'
 
 type CopiedCode = {
   code: string
@@ -94,15 +59,15 @@ export const AirDiscountOverview = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
-  const { data: flightLegData } = useQuery<Query>(AirDiscountFlightLegsQuery)
+  const { data, loading, error } = useAirDiscountQuery()
+  const { data: flightLegData } = useAirDiscountFlightLegsQuery()
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
-  const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
-    data?.airDiscountSchemeDiscounts
+  const airDiscounts = data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes: AirDiscountSchemeDiscount[] | undefined =
-    airDiscounts?.filter((x) => x.connectionDiscountCodes.length > 0)
+  const connectionCodes = airDiscounts?.filter(
+    (x) => x.connectionDiscountCodes.length > 0,
+  )
 
   const noRights =
     airDiscounts?.filter(
@@ -112,14 +77,10 @@ export const AirDiscountOverview = () => {
   const copy = (code?: string | null) => {
     if (code) {
       copyToClipboard(code)
-      const newCode: CopiedCode = { code: code, copied: true }
-      setCopiedCodes([...copiedCodes, newCode])
+      setCopiedCodes((prev) => [...prev, { code, copied: true }])
       toast.success(formatMessage(m.codeCopiedSuccess))
       setTimeout(() => {
-        const codes = copiedCodes
-        const currentCodeIndex = codes.findIndex((item) => item.code === code)
-        copiedCodes.slice(currentCodeIndex, 0)
-        setCopiedCodes(copiedCodes)
+        setCopiedCodes((prev) => prev.filter((item) => item.code !== code))
       }, 5000)
     }
   }
@@ -255,9 +216,8 @@ export const AirDiscountOverview = () => {
           <Stack space={2}>
             {connectionCodes?.map((item) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
-                const isCopied = copiedCodes.find(
-                  (x) => x.code === code.code,
-                )?.copied
+                const isCopied = copiedCodes.find((x) => x.code === code.code)
+                  ?.copied
                 return (
                   <ActionCard
                     key={`loftbru-item-connection-code-${codeIndex}`}
