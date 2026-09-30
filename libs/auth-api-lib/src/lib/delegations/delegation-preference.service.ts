@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op, QueryTypes } from 'sequelize'
 
 import { DelegationPreferenceDto } from './dto/delegation-preference.dto'
+import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationPreference } from './models/delegation-preference.model'
 
 const MAX_RECENT = 10
@@ -18,19 +19,48 @@ export class DelegationPreferenceService {
   constructor(
     @InjectModel(DelegationPreference)
     private readonly delegationPreferenceModel: typeof DelegationPreference,
+    @InjectModel(DelegationIndex)
+    private readonly delegationIndexModel: typeof DelegationIndex,
   ) {}
+
+  /**
+   * The parties this actor still holds a delegation for, across every client.
+   * Null when the actor has no index rows at all, which means they have not
+   * been indexed rather than that they hold nothing — the caller then leaves
+   * their preferences alone.
+   */
+  private async liveParties(toNationalId: string): Promise<Set<string> | null> {
+    const rows = await this.delegationIndexModel.findAll({
+      where: {
+        toNationalId,
+        [Op.or]: [{ validTo: null }, { validTo: { [Op.gte]: new Date() } }],
+      },
+      attributes: ['fromNationalId'],
+    })
+
+    return rows.length === 0
+      ? null
+      : new Set(rows.map((row) => row.fromNationalId))
+  }
+
+  private static scopeTo(live: Set<string> | null) {
+    return live ? { fromNationalId: { [Op.in]: [...live] } } : {}
+  }
 
   async findAll(toNationalId: string): Promise<DelegationPreferenceDto[]> {
     const attributes = ['fromNationalId', 'isFavourite', 'lastUsedAt'] as const
+    const live = await this.liveParties(toNationalId)
+    const scope = DelegationPreferenceService.scopeTo(live)
 
     const [favourites, recent] = await Promise.all([
       this.delegationPreferenceModel.findAll({
-        where: { toNationalId, isFavourite: true },
+        where: { toNationalId, isFavourite: true, ...scope },
         attributes: [...attributes],
+        order: [['created', 'ASC']],
         limit: MAX_FAVOURITES,
       }),
       this.delegationPreferenceModel.findAll({
-        where: { toNationalId, lastUsedAt: { [Op.ne]: null } },
+        where: { toNationalId, lastUsedAt: { [Op.ne]: null }, ...scope },
         attributes: [...attributes],
         order: [['lastUsedAt', 'DESC']],
         limit: MAX_RECENT,
@@ -68,8 +98,14 @@ export class DelegationPreferenceService {
       return
     }
 
+    const live = await this.liveParties(toNationalId)
+
     const favourites = await this.delegationPreferenceModel.count({
-      where: { toNationalId, isFavourite: true },
+      where: {
+        toNationalId,
+        isFavourite: true,
+        ...DelegationPreferenceService.scopeTo(live),
+      },
     })
 
     if (favourites >= MAX_FAVOURITES) {

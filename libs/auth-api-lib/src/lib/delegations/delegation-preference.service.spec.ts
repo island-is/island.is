@@ -4,6 +4,7 @@ import { Test } from '@nestjs/testing'
 import { Op } from 'sequelize'
 
 import { DelegationPreferenceService } from './delegation-preference.service'
+import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationPreference } from './models/delegation-preference.model'
 
 const ACTOR = '0101302399'
@@ -28,6 +29,12 @@ describe('DelegationPreferenceService', () => {
     count: jest.Mock
     sequelize: { query: jest.Mock }
   }
+  let index: { findAll: jest.Mock }
+
+  const indexed = (...ids: string[]) =>
+    index.findAll.mockResolvedValue(
+      ids.map((fromNationalId) => ({ fromNationalId })),
+    )
 
   beforeEach(async () => {
     model = {
@@ -38,15 +45,77 @@ describe('DelegationPreferenceService', () => {
       count: jest.fn().mockResolvedValue(0),
       sequelize: { query: jest.fn().mockResolvedValue([]) },
     }
+    index = { findAll: jest.fn().mockResolvedValue([]) }
 
     const module = await Test.createTestingModule({
       providers: [
         DelegationPreferenceService,
         { provide: getModelToken(DelegationPreference), useValue: model },
+        { provide: getModelToken(DelegationIndex), useValue: index },
       ],
     }).compile()
 
     service = module.get(DelegationPreferenceService)
+  })
+
+  describe('reconciling against the delegation index', () => {
+    it('reads only preferences for parties the actor still holds a delegation for', async () => {
+      indexed(PARTY, OTHER_PARTY)
+
+      await service.findAll(ACTOR)
+
+      for (const [args] of model.findAll.mock.calls) {
+        expect(args.where.fromNationalId).toEqual({
+          [Op.in]: [PARTY, OTHER_PARTY],
+        })
+      }
+    })
+
+    it('counts a revoked favourite as gone, so it cannot block starring a new one', async () => {
+      // Five starred, but only two are still delegations — the other three are
+      // parties the actor has since sold or been removed from.
+      indexed(PARTY, OTHER_PARTY)
+      model.count.mockResolvedValue(2)
+
+      await expect(
+        service.setFavourite(ACTOR, PARTY, true),
+      ).resolves.toBeUndefined()
+
+      expect(model.count).toHaveBeenCalledWith({
+        where: {
+          toNationalId: ACTOR,
+          isFavourite: true,
+          fromNationalId: { [Op.in]: [PARTY, OTHER_PARTY] },
+        },
+      })
+      expect(model.upsert).toHaveBeenCalled()
+    })
+
+    it('leaves preferences alone when the actor has no index rows at all', async () => {
+      // Not indexed yet is not the same as holding nothing, and filtering here
+      // would make every favourite vanish.
+      index.findAll.mockResolvedValue([])
+
+      await service.findAll(ACTOR)
+
+      for (const [args] of model.findAll.mock.calls) {
+        expect(args.where.fromNationalId).toBeUndefined()
+      }
+    })
+
+    it('treats an expired delegation as revoked', async () => {
+      indexed(PARTY)
+
+      await service.findAll(ACTOR)
+
+      const [args] = index.findAll.mock.calls[0]
+
+      expect(args.where.toNationalId).toBe(ACTOR)
+      expect(args.where[Op.or]).toEqual([
+        { validTo: null },
+        { validTo: { [Op.gte]: expect.any(Date) } },
+      ])
+    })
   })
 
   describe('findAll', () => {
@@ -60,6 +129,7 @@ describe('DelegationPreferenceService', () => {
       expect(favourites).toEqual(
         expect.objectContaining({
           where: { toNationalId: ACTOR, isFavourite: true },
+          order: [['created', 'ASC']],
           limit: expect.any(Number),
         }),
       )
