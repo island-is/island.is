@@ -99,7 +99,11 @@ describe('DelegationPreferenceService', () => {
 
       expect(model.upsert).toHaveBeenCalledWith(
         { toNationalId: ACTOR, fromNationalId: PARTY, isFavourite: true },
-        expect.objectContaining({ fields: ['isFavourite'] }),
+        expect.objectContaining({
+          // Real column names — Postgres rejects the attribute ones.
+          conflictFields: ['to_national_id', 'from_national_id'],
+          fields: ['isFavourite'],
+        }),
       )
     })
 
@@ -146,7 +150,10 @@ describe('DelegationPreferenceService', () => {
           fromNationalId: PARTY,
           lastUsedAt: expect.any(Date),
         }),
-        expect.objectContaining({ fields: ['lastUsedAt'] }),
+        expect.objectContaining({
+          conflictFields: ['to_national_id', 'from_national_id'],
+          fields: ['lastUsedAt'],
+        }),
       )
     })
   })

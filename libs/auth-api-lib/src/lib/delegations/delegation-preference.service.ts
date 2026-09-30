@@ -13,6 +13,13 @@ const MAX_RECENT = 10
 // star arbitrarily many parties.
 const MAX_FAVOURITES = 100
 
+// Sequelize drops conflictFields straight into the ON CONFLICT clause without
+// mapping them to column names, so these must be the real columns even though
+// the typings ask for attribute names. Leaving them out is not an option: it
+// then derives the conflict target from the columns being updated, and neither
+// of those belongs to the unique key.
+const CONFLICT_COLUMNS = ['to_national_id', 'from_national_id'] as never[]
+
 /**
  * Deliberately knows nothing about which delegations actually exist: the screen
  * renders these against the delegation list it has already fetched, so a
@@ -91,7 +98,7 @@ export class DelegationPreferenceService {
     await this.delegationPreferenceModel.upsert(
       { toNationalId, fromNationalId, isFavourite: true },
       {
-        conflictFields: ['toNationalId', 'fromNationalId'],
+        conflictFields: CONFLICT_COLUMNS,
         fields: ['isFavourite'],
       },
     )
@@ -108,7 +115,7 @@ export class DelegationPreferenceService {
     await this.delegationPreferenceModel.upsert(
       { toNationalId, fromNationalId, lastUsedAt: new Date() },
       {
-        conflictFields: ['toNationalId', 'fromNationalId'],
+        conflictFields: CONFLICT_COLUMNS,
         fields: ['lastUsedAt'],
       },
     )
