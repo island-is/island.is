@@ -137,6 +137,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
     },
+    "test-sdf": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/application-system/api/src/app/modules/sdf/jest.config.ts"
+      }
+    },
     "worker": {
       "executor": "@nx/js:node",
       "options": {
