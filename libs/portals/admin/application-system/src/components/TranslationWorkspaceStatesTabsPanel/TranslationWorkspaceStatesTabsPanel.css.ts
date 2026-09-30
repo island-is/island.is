@@ -330,20 +330,16 @@ export const tabsPanelInner = style({
   },
 })
 
-export const translateActionDisabled = style({
-  selectors: {
-    '&& button:disabled': {
-      cursor: 'not-allowed',
-    },
-  },
+export const translateActionDisabled = style({})
+
+globalStyle(`${translateActionDisabled} button:disabled`, {
+  cursor: 'not-allowed',
 })
 
-export const translationLocaleInputLabel = style({
-  selectors: {
-    '&& label': {
-      fontWeight: theme.typography.semiBold,
-      color: theme.color.blue400,
-      marginBottom: theme.spacing[1],
-    },
-  },
+export const translationLocaleInputLabel = style({})
+
+globalStyle(`${translationLocaleInputLabel} label`, {
+  fontWeight: theme.typography.semiBold,
+  color: theme.color.blue400,
+  marginBottom: theme.spacing[1],
 })
