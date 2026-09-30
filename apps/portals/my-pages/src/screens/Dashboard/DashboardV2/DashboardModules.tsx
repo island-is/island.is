@@ -11,6 +11,7 @@ import {
   m as portalMessages,
   PortalNavigationItem,
 } from '@island.is/portals/core'
+import cn from 'classnames'
 import { Link } from 'react-router-dom'
 import { iconIdMapper, iconTypeToSVG } from '../../../utils/Icons/idMapper'
 import * as styles from '../Dashboard.css'
@@ -66,7 +67,7 @@ export const DashboardModules = ({ items, isMobile }: Props) => {
                   onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
                   height="full"
                   flexGrow={1}
-                  className={styles.svgOutline}
+                  className={cn(styles.svgOutline, styles.cardText)}
                 >
                   {navRoot.enabled === false && (
                     <Tooltip
@@ -92,7 +93,8 @@ export const DashboardModules = ({ items, isMobile }: Props) => {
                     truncateHeading
                     component={Link}
                     to={navRoot.path}
-                    headingVariant="h4"
+                    headingVariant={isMobile ? 'h3' : 'h4'}
+                    textFontWeight="light"
                     headingAs="h2"
                     icon={
                       isMobile && navRoot.icon ? (
