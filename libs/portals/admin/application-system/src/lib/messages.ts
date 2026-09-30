@@ -568,7 +568,7 @@ export const m = defineMessages({
   translationRollbackConfirm: {
     id: 'admin-portal.application-system:translationRollbackConfirm',
     defaultMessage:
-      'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi birtar þýðingar verða yfirskrifaðar.',
+      'Ertu viss um að þú viljir endurheimta þessa útgáfu? Núverandi útgefnar þýðingar verða yfirskrifaðar.',
   },
   translationRollbackSuccess: {
     id: 'admin-portal.application-system:translationRollbackSuccess',

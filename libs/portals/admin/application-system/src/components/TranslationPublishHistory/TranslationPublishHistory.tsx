@@ -120,28 +120,28 @@ export const TranslationPublishHistory = ({
                       {formatMessage(m.translationCurrentVersion)}
                     </Tag>
                   ) : isConfirming ? (
-                    <Stack space={1}>
-                      <Text variant="small">
-                        {formatMessage(m.translationRollbackConfirm)}
-                      </Text>
-                      <Box display="flex" columnGap={1}>
-                        <Button
-                          size="small"
-                          colorScheme="destructive"
-                          loading={rollingBack}
-                          onClick={() => handleRollback(pub.id)}
-                        >
-                          {formatMessage(m.translationRollback)}
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="ghost"
-                          onClick={() => setConfirmingId(null)}
-                        >
-                          &times;
-                        </Button>
+                    <Box display="flex" alignItems="center" columnGap={2}>
+                      <Box flexShrink={1} style={{ maxWidth: 340 }}>
+                        <Text variant="small">
+                          {formatMessage(m.translationRollbackConfirm)}
+                        </Text>
                       </Box>
-                    </Stack>
+                      <Button
+                        size="small"
+                        colorScheme="destructive"
+                        loading={rollingBack}
+                        onClick={() => handleRollback(pub.id)}
+                      >
+                        {formatMessage(m.translationRollback)}
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="ghost"
+                        onClick={() => setConfirmingId(null)}
+                      >
+                        &times;
+                      </Button>
+                    </Box>
                   ) : (
                     <Button
                       size="small"
