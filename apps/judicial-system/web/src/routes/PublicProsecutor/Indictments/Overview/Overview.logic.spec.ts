@@ -80,6 +80,15 @@ describe('getPublicProsecutorOverviewAssignMode', () => {
     ).toBe('none')
   })
 
+  it('returns appealProsecutor when the defence appealed after review accepted', () => {
+    expect(
+      getPublicProsecutorOverviewAssignMode({
+        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+        defendants: [defendantDefenceAppealed],
+      }),
+    ).toBe('appealProsecutor')
+  })
+
   it('returns reviewer for a fine even when a defendant has appeal-like signals', () => {
     expect(
       getPublicProsecutorOverviewAssignMode({
