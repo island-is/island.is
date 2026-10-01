@@ -16,6 +16,14 @@ query AirDiscount {
         used
         total
       }
+      address {
+        municipalityText
+        postalCode
+      }
+      mostFlownRoute {
+        route
+        count
+      }
     }
   }
 }

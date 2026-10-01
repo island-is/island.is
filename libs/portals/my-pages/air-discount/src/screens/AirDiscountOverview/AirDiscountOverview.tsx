@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import copyToClipboard from 'copy-to-clipboard'
 
 import {
@@ -17,6 +17,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDateWithTime,
+  InfoLine,
+  InfoLineStack,
   IntroWrapper,
   m as coreMessage,
   VEGAGERDIN_SLUG,
@@ -79,6 +81,8 @@ export const AirDiscountOverview = () => {
 
   const noRights =
     !!airDiscounts && airDiscounts.length > 0 && airDiscounts.every(hasNoRights)
+
+  const domicile = airDiscounts?.find((x) => x.user.address)?.user.address
 
   useEffect(() => {
     const timers = copyTimers.current
@@ -280,6 +284,36 @@ export const AirDiscountOverview = () => {
             {formatMessage(m.airfaresUsage)}
           </Text>
           <UsageTable data={flightLegs} />
+        </Box>
+      )}
+      {airDiscounts && airDiscounts.length > 0 && (
+        <Box marginBottom={5}>
+          <InfoLineStack label="🧪 Prófun" space={1}>
+            {airDiscounts.map((item, index) => (
+              <Fragment key={`loftbru-test-${index}`}>
+                {item.user.fund && (
+                  <InfoLine
+                    label={`${item.user.name}: flugleggir`}
+                    content={`${item.user.fund.used} notaðir · ${item.user.fund.credit} eftir`}
+                  />
+                )}
+                {item.user.mostFlownRoute && (
+                  <InfoLine
+                    label={`${item.user.name}: algengasta flugleið`}
+                    content={`${item.user.mostFlownRoute.route} (${item.user.mostFlownRoute.count})`}
+                  />
+                )}
+              </Fragment>
+            ))}
+            {domicile && (
+              <InfoLine
+                label="Lögheimili"
+                content={[domicile.municipalityText, domicile.postalCode]
+                  .filter(Boolean)
+                  .join(', ')}
+              />
+            )}
+          </InfoLineStack>
         </Box>
       )}
     </IntroWrapper>
