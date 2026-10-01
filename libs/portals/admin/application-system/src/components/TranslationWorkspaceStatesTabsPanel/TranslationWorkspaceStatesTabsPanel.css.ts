@@ -66,12 +66,21 @@ export const tabList = style({
   flexDirection: 'row',
   flexWrap: 'nowrap',
   flexShrink: 0,
-  width: '100%',
-  height: `${theme.spacing[5]}px`,
+  marginTop: theme.spacing[1],
+  marginLeft: theme.spacing[3],
+  marginRight: theme.spacing[3],
+  height: `${theme.spacing[7]}px`,
   overflow: 'visible',
   position: 'relative',
   zIndex: theme.zIndex.base,
   borderRadius: `${theme.border.radius.large} ${theme.border.radius.large} 0 0`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      marginTop: theme.spacing[3],
+      marginLeft: theme.spacing[6],
+      marginRight: theme.spacing[6],
+    },
+  },
 })
 
 const tabListBorder = theme.border.width.large
