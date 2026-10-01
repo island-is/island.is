@@ -86,7 +86,6 @@ const baseSchema = z
       })
       .optional(),
     confirmRead: confirmReadSchema.optional(),
-    confirmMunicipality: z.array(z.literal(YES)).length(1).optional(),
     approveExternalData: z.literal(true).optional(),
     applicant: applicantSchema.optional(),
     rentalAgreement: z
