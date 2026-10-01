@@ -53,9 +53,9 @@ export const prerequisitesMessages = {
     checkboxProvider: {
       id: 'cpn.application:prerequisites.externalData.checkboxProvider',
       defaultMessage:
-        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
+        'Ég skil að ofangreindra upplýsinga verður aflað í tilkynningaferlinu',
       description:
-        'I understand that the above information will be collected during the application process',
+        'I understand that the above information will be collected during the notification process',
     },
   }),
   serviceProvider: defineMessages({
