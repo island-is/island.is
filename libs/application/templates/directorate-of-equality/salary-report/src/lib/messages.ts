@@ -879,11 +879,9 @@ export const messages = {
         id: 'doe.sr.application:report.employees.occasionalPaymentsGroupLabel',
         defaultMessage: 'Tilfallandi greiðslur',
       },
-      // Based on row 5 of the 2.0 workbook (DMR PR #1482), minus the sheet's
-      // "(kr.)" suffix — the row view formats these with formatCurrency. The
-      // overtime and car labels were reworded at the stakeholders' request and
-      // no longer match the sheet word for word. Declared in workbook column
-      // order J–O, the order SALARY_COMPONENT_GROUPS renders.
+      // Verbatim from row 5 of the 2.0 workbook (DMR PR #1482), minus the sheet's
+      // "(kr.)" suffix — the row view formats these with formatCurrency. Declared
+      // in workbook column order J–O, the order SALARY_COMPONENT_GROUPS renders.
       additionalFixedOvertimeLabel: {
         id: 'doe.sr.application:report.employees.additionalFixedOvertimeLabel',
         defaultMessage: 'Föst yfirvinna / álag',
@@ -921,12 +919,11 @@ export const messages = {
       },
       startDateTooltip: {
         id: 'doe.sr.application:report.employees.startDateTooltip',
-        defaultMessage:
-          'Dagsetning ráðningar. Skildu eftir autt ef á ekki við.',
+        defaultMessage: 'Dagsetning ráðningar.',
       },
       baseSalaryTooltip: {
         id: 'doe.sr.application:report.employees.baseSalaryTooltip',
-        defaultMessage: 'Krónur á tímabilinu. Skildu eftir autt ef á ekki við.',
+        defaultMessage: 'Krónur á tímabilinu.',
       },
       additionalFixedOvertimeTooltip: {
         id: 'doe.sr.application:report.employees.additionalFixedOvertimeTooltip',
