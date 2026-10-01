@@ -74,10 +74,13 @@ export const TranslationDescriptorCard = ({
         </Box>
       )}
 
-      {descriptor.description && (
+      {descriptor.defaultMessage && (
         <Box marginBottom={2}>
           <Text variant="small" color="dark400">
-            {descriptor.description}
+            <Text as="span" variant="small" fontWeight="semiBold">
+              {formatMessage(m.translationDefaultMessageLabel)}:
+            </Text>{' '}
+            {descriptor.defaultMessage}
           </Text>
         </Box>
       )}

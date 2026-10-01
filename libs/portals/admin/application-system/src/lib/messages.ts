@@ -343,6 +343,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationReferenceLabelIcelandic',
     defaultMessage: 'Íslenska',
   },
+  translationDefaultMessageLabel: {
+    id: 'admin-portal.application-system:translationDefaultMessageLabel',
+    defaultMessage: 'Frumtexti',
+  },
   translationValueLabel: {
     id: 'admin-portal.application-system:translationValueLabel',
     defaultMessage: 'Þýðing',
