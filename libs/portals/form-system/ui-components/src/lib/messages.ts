@@ -167,6 +167,17 @@ export const m = defineMessages({
     defaultMessage: 'Leyfa notanda að hlaða niður umsókn sem PDF',
     description: 'Allow the user to download the application as a PDF',
   },
+  downloadApplicationPdf: {
+    id: 'form.system:download-application-pdf',
+    defaultMessage: 'Sækja PDF',
+    description: 'Download PDF',
+  },
+  applicationPdfDownloadDescription: {
+    id: 'form.system:application-pdf-download-description',
+    defaultMessage:
+      'Þú getur sótt umsóknina á PDF með því að smella á hnappinn',
+    description: 'Application PDF download instructions',
+  },
   payment: {
     id: 'form.system:payment',
     defaultMessage: 'Greiðsla',

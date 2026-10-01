@@ -1,5 +1,7 @@
+import { useLazyQuery } from '@apollo/client'
 import { FormSystemSectionInfo } from '@island.is/api/schema'
 import coverImage from '../../../../assets/images/cover.png'
+import { GET_APPLICATION_PDF } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   Accordion,
@@ -8,6 +10,7 @@ import {
   Box,
   Bullet,
   BulletList,
+  Button,
   Hidden,
   Stack,
   Text,
@@ -19,8 +22,10 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 export const Completed = () => {
   const { formatMessage, lang } = useLocale()
   const supportEmail = 'island@island.is'
-  const { slug } = useParams()
-  const { state } = useApplicationContext()
+  const { slug, id } = useParams()
+  const { state, enableApplicationPdfDownload } = useApplicationContext()
+  const [getApplicationPdf, { loading: pdfLoading }] =
+    useLazyQuery(GET_APPLICATION_PDF)
   const completed = state.application.sectionInfo as
     | Partial<FormSystemSectionInfo>
     | undefined
@@ -30,6 +35,53 @@ export const Completed = () => {
   const text =
     completed?.confirmationText?.[lang] ?? formatMessage(m.completedText)
   const infos = completed?.additionalInfo ?? []
+
+  const downloadApplicationPdf = async () => {
+    if (!id || !slug) return
+
+    const { data } = await getApplicationPdf({
+      variables: { input: { id, slug } },
+    })
+    const pdf = data?.formSystemApplicationPdf
+    if (!pdf) return
+
+    const bytes = Uint8Array.from(window.atob(pdf.base64), (character) =>
+      character.charCodeAt(0),
+    )
+    const url = URL.createObjectURL(
+      new Blob([bytes], { type: 'application/pdf' }),
+    )
+    const link = document.createElement('a')
+    link.href = url
+    link.download = pdf.filename
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const applicationPdfDownload = enableApplicationPdfDownload ? (
+    <Box
+      display="flex"
+      flexDirection={['column', 'row']}
+      alignItems={['flexStart', 'center']}
+      border="standard"
+      borderColor="blue200"
+      borderRadius="large"
+      padding={3}
+    >
+      <Box marginRight={[0, 3]} marginBottom={[2, 0]} flexShrink={0}>
+        <Button
+          variant="ghost"
+          loading={pdfLoading}
+          onClick={downloadApplicationPdf}
+        >
+          {formatMessage(m.downloadApplicationPdf)}
+        </Button>
+      </Box>
+      <Box display="flex" alignItems="center">
+        <Text>{formatMessage(m.applicationPdfDownloadDescription)}</Text>
+      </Box>
+    </Box>
+  ) : null
 
   const stafraentIslandForm = () => (
     <Box marginTop={5}>
@@ -82,7 +134,10 @@ export const Completed = () => {
   )
 
   return slug === 'umsokn-um-samstarf-vid-stafraent-island' ? (
-    stafraentIslandForm()
+    <Stack space={3}>
+      {stafraentIslandForm()}
+      {applicationPdfDownload}
+    </Stack>
   ) : (
     <Stack space={3}>
       {t && (
@@ -109,6 +164,7 @@ export const Completed = () => {
           </BulletList>
         </Box>
       )}
+      {applicationPdfDownload}
 
       <Hidden below="md">
         <img

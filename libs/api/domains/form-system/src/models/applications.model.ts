@@ -17,6 +17,15 @@ export class ApplicationEventDto {
   created?: Date
 }
 
+@ObjectType('FormSystemApplicationPdf')
+export class ApplicationPdf {
+  @Field(() => String)
+  base64!: string
+
+  @Field(() => String)
+  filename!: string
+}
+
 @ObjectType('FormSystemApplication')
 export class Application {
   @Field(() => String)

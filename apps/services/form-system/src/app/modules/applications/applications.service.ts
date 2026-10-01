@@ -62,6 +62,8 @@ import { escapeLike } from './utils/escapeLike'
 import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
+import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -664,6 +666,38 @@ export class ApplicationsService {
     responseDto.isLoginTypeAllowed = true
     responseDto.isInaccessible = form.isInaccessible
     return responseDto
+  }
+
+  async getApplicationPdf(
+    applicationId: string,
+    slug: string,
+    user: User,
+  ): Promise<ApplicationPdfResponseDto> {
+    const response = await this.getApplication(applicationId, slug, user)
+
+    if (!response.enableApplicationPdfDownload) {
+      throw new ForbiddenException(
+        'PDF download is not enabled for this application',
+      )
+    }
+
+    if (!response.application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (response.application.status !== ApplicationStatus.COMPLETED) {
+      throw new BadRequestException(
+        'PDF download is only available for completed applications',
+      )
+    }
+
+    const pdf = await buildApplicationPdf(response.application)
+    return {
+      base64: pdf.toString('base64'),
+      filename: `${slug}-${applicationId}.pdf`,
+    }
   }
 
   async findAllByNationalId(

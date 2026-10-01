@@ -33,12 +33,26 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
+import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
+
+  @ApiOperation({ summary: 'Download an application as a PDF' })
+  @ApiOkResponse({ type: ApplicationPdfResponseDto })
+  @ApiParam({ name: 'id', type: String })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug/:id/pdf')
+  async getApplicationPdf(
+    @Param('id') id: string,
+    @Param('slug') slug: string,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationPdfResponseDto> {
+    return this.applicationsService.getApplicationPdf(id, slug, user)
+  }
 
   @ApiOperation({
     summary: 'Get all applications belonging to a user to display on my pages',
