@@ -81,8 +81,8 @@ export const getCartesianGridComponents = ({
 
   const xAxisFormatter = tickFormatter
 
-  // Only free-text category labels are wrapped and all shown - date/number
-  // axes keep Recharts' tick thinning so long series don't overlap
+  // Only free-text category labels are wrapped. Tick thinning stays on by
+  // default; set customStyleConfig.<axis>.interval to 0 to show every label
   const wrapCategoryLabels =
     !!slice.xAxisValueType && !['date', 'number'].includes(slice.xAxisValueType)
   const wrapXAxis = !slice.flipAxis && wrapCategoryLabels
@@ -113,9 +113,7 @@ export const getCartesianGridComponents = ({
         fontFamily: theme.typography.fontFamily,
       }}
       dy={theme.spacing.p2}
-      interval={
-        customStyleConfig.xAxis?.interval ?? (wrapXAxis ? 0 : 'preserveEnd')
-      }
+      interval={customStyleConfig.xAxis?.interval ?? 'preserveEnd'}
       angle={customStyleConfig.xAxis?.angle ?? 0}
       domain={customStyleConfig.xAxis?.domain ?? [0, 'auto']}
       type={slice.flipAxis ? 'number' : 'category'}
@@ -143,9 +141,7 @@ export const getCartesianGridComponents = ({
       tickFormatter={slice.flipAxis ? xAxisFormatter : yAxisFormatter}
       type={slice.flipAxis ? 'category' : 'number'}
       dataKey={slice.flipAxis ? xAxisKey : undefined}
-      interval={
-        customStyleConfig.yAxis?.interval ?? (wrapYAxis ? 0 : 'preserveEnd')
-      }
+      interval={customStyleConfig.yAxis?.interval ?? 'preserveEnd'}
       domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
       width={
         customStyleConfig.yAxis?.width ??
