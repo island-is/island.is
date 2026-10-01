@@ -86,4 +86,24 @@ describe('countTranslationsForScreens', () => {
 
     expect(count).toEqual({ translated: 1, total: 1 })
   })
+
+  it('stops counting a string as translated once its draft is cleared, even though a translated value is still persisted', () => {
+    const count = countTranslationsForScreens(
+      [sharedFieldScreen],
+      {
+        'uiForms.application:applicantInfo.general.title': {
+          valueIs: 'Upplýsingar um þig',
+          valueEn: 'Information about you',
+        },
+        'uiForms.application:applicantInfo.labels.name': {
+          valueIs: 'Fullt nafn',
+          valueEn: 'Full name',
+        },
+      },
+      { is: {}, en: { 'uiForms.application:applicantInfo.general.title': '' } },
+      'en',
+    )
+
+    expect(count).toEqual({ translated: 1, total: 2 })
+  })
 })
