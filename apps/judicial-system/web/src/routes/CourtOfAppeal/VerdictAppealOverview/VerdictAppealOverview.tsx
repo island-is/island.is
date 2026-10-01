@@ -14,6 +14,7 @@ import {
   PageHeader,
   PageLayout,
   UserContext,
+  VerdictAppealFiles,
 } from '@island.is/judicial-system-web/src/components'
 import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -83,6 +84,11 @@ const VerdictAppealOverview = () => {
               that writes one. Nothing does yet, and the case query does not
               select appealConclusion on verdictAppealCase, so it is left to
               the change that makes it reachable. */}
+          {/* The appeal declaration and what came with it, titled
+              "Áfrýjunarferli"; the áfrýjunarstefna joins it with the ticket
+              that creates it. AllIndictmentCaseFiles below carries the
+              district court's own documents. */}
+          <VerdictAppealFiles />
           <AllIndictmentCaseFiles />
         </div>
       </FormContentContainer>
