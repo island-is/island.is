@@ -15,6 +15,7 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -63,6 +64,14 @@ const VerdictAppealOverview = () => {
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
           <InfoCardClosedIndictment />
+          {/* One per defendant: each has their own verdict, their own service
+              and their own deadline, so the court reads them side by side. */}
+          {workingCase.defendants?.map((defendant) => (
+            <CourtOfAppealsVerdictTimelineCard
+              key={defendant.id}
+              defendant={defendant}
+            />
+          ))}
           {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
             <Conclusion
               title={districtCourtConclusionTitle}
