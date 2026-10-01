@@ -12,6 +12,7 @@ import {
 } from '@island.is/clients/national-registry-v3'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { Gender } from '@island.is/air-discount-scheme/types'
+import { isDefined } from '@island.is/shared/utils'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -269,7 +270,7 @@ export class NationalRegistryService {
       )
       return (parent?.forsja?.born ?? [])
         .map((child) => child.barnKennitala)
-        .filter((nationalId): nationalId is string => Boolean(nationalId))
+        .filter(isDefined)
     } catch (e) {
       this.logger.info('getRelations custodychildren not successful', {
         category: 'ads-backend',
@@ -286,7 +287,7 @@ export class NationalRegistryService {
       (await this.personApiV3.getCustodians(childNationalId)) ?? []
     )
       .map((custodian) => custodian.forsjaAdiliKennitala)
-      .filter((nationalId): nationalId is string => Boolean(nationalId))
+      .filter(isDefined)
 
     const custodians = []
     for (const custodian of response) {
