@@ -672,6 +672,7 @@ export class ApplicationsService {
     applicationId: string,
     slug: string,
     user: User,
+    locale: Locale = 'is',
   ): Promise<ApplicationPdfResponseDto> {
     const response = await this.getApplication(applicationId, slug, user)
 
@@ -693,7 +694,7 @@ export class ApplicationsService {
       )
     }
 
-    const pdf = await buildApplicationPdf(response.application)
+    const pdf = await buildApplicationPdf(response.application, locale)
     return {
       base64: pdf.toString('base64'),
       filename: `${slug}-${applicationId}.pdf`,

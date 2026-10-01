@@ -40,7 +40,7 @@ export const Completed = () => {
     if (!id || !slug) return
 
     const { data } = await getApplicationPdf({
-      variables: { input: { id, slug } },
+      variables: { input: { id, slug, locale: lang } },
     })
     const pdf = data?.formSystemApplicationPdf
     if (!pdf) return

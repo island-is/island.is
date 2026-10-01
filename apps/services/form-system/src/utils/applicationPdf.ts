@@ -1,10 +1,81 @@
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
+import type { Locale } from '@island.is/shared/types'
 import PDFDocument from 'pdfkit'
+import { getLanguageTypeForValueTypeAttribute } from '../app/dataTypes/valueTypes/valueType.helper'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 
-const formatValue = (value: unknown, fieldType: string): string => {
+const colors = {
+  ink: '#00003C',
+  muted: '#33335A',
+  accent: '#0061FF',
+  accentSoft: '#CCDFFF',
+  surface: '#FFFFFF',
+  border: '#CCDFFF',
+  white: '#FFFFFF',
+}
+
+const pageMargin = 56
+const contentWidth = 483
+const footerHeight = 28
+const sectionContentReservation = 150
+const screenContentReservation = 90
+const screenIndent = 10
+
+const translations = {
+  application: { is: 'Umsókn', en: 'Application' },
+  applicationNumber: { is: 'Númer umsóknar', en: 'Application number' },
+  received: { is: 'Móttekin', en: 'Received' },
+  page: { is: 'Bls.', en: 'Page' },
+  selected: { is: 'Valið', en: 'Selected' },
+  notSelected: { is: 'Ekki valið', en: 'Not selected' },
+  noAnswer: { is: 'Ekkert svar skráð', en: 'No answer provided' },
+}
+
+const textFor = (
+  value: { is?: string; en?: string } | undefined,
+  locale: Locale,
+) => (locale === 'en' ? value?.en || value?.is : value?.is || value?.en) ?? ''
+
+const formatDate = (
+  value: Date | string | null | undefined,
+  locale: Locale,
+) => {
+  if (!value) return ''
+
+  const date = new Date(value)
+  return Number.isNaN(date.getTime())
+    ? ''
+    : date.toLocaleDateString(locale === 'en' ? 'en-GB' : 'is-IS')
+}
+
+const truncateText = (
+  document: PDFKit.PDFDocument,
+  text: string,
+  maxWidth: number,
+) => {
+  if (document.widthOfString(text) <= maxWidth) return text
+
+  const suffix = '...'
+  let truncated = text
+  while (
+    truncated.length > 0 &&
+    document.widthOfString(`${truncated}${suffix}`) > maxWidth
+  ) {
+    truncated = truncated.slice(0, -1)
+  }
+
+  return `${truncated}${suffix}`
+}
+
+const formatValue = (
+  value: unknown,
+  fieldType: string,
+  locale: Locale,
+): string => {
   if (fieldType === FieldTypesEnum.CHECKBOX) {
-    return value === true ? 'Valið' : 'Ekki valið'
+    return value === true
+      ? textFor(translations.selected, locale)
+      : textFor(translations.notSelected, locale)
   }
 
   if (fieldType === FieldTypesEnum.BANK_ACCOUNT && value === '--') return ''
@@ -15,7 +86,7 @@ const formatValue = (value: unknown, fieldType: string): string => {
     fieldType === FieldTypesEnum.ASSETS
   ) {
     if (typeof value === 'object' && value !== null && 'is' in value) {
-      return String((value as { is?: unknown }).is ?? '')
+      return textFor(value as { is?: string; en?: string }, locale)
     }
   }
 
@@ -44,26 +115,201 @@ const fileNames = (value: unknown): string[] => {
     })
 }
 
+const drawPageChrome = (
+  document: PDFKit.PDFDocument,
+  title: string,
+  locale: Locale,
+  page: number,
+) => {
+  const { width, height } = document.page
+  const footerTop = height - pageMargin - footerHeight
+  const { x, y } = document
+  const pageNumber = `${textFor(translations.page, locale)} ${page}`
+
+  document.save()
+  document.fillColor(colors.accent).rect(0, 0, width, 8).fill()
+  document
+    .fillColor(colors.muted)
+    .font('Helvetica')
+    .fontSize(8)
+    .text(
+      truncateText(
+        document,
+        title,
+        contentWidth - document.widthOfString(pageNumber) - 16,
+      ),
+      pageMargin,
+      footerTop,
+    )
+  document.text(
+    pageNumber,
+    pageMargin + contentWidth - document.widthOfString(pageNumber),
+    footerTop,
+  )
+  document.restore()
+  document.x = x
+  document.y = y
+}
+
+const ensureSpace = (document: PDFKit.PDFDocument, height: number) => {
+  if (document.y + height <= document.page.height - pageMargin - footerHeight) {
+    return
+  }
+  document.addPage()
+}
+
+const fieldLines = (
+  field: {
+    fieldType: string
+    values?: Array<{ json?: unknown }>
+  },
+  locale: Locale,
+): string[] => {
+  const values = field.values ?? []
+
+  return values.flatMap((value, index) => {
+    const prefix = values.length > 1 ? `${index + 1}. ` : ''
+    const json = value?.json
+    if (field.fieldType === FieldTypesEnum.FILE) {
+      return fileNames(json).map((fileName, lineIndex) =>
+        lineIndex === 0 ? `${prefix}${fileName}` : fileName,
+      )
+    }
+
+    if (typeof json !== 'object' || json === null) {
+      const formatted = formatValue(json, field.fieldType, locale)
+      return formatted ? [`${prefix}${formatted}`] : []
+    }
+
+    const entries = Object.entries(json).filter(([key]) => {
+      if (['delegationType', 'isLoggedInUser', 'applicantType'].includes(key)) {
+        return false
+      }
+
+      return !(
+        (field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+          field.fieldType === FieldTypesEnum.RADIO_BUTTONS) &&
+        key === 'value'
+      )
+    })
+    const isMultiAttribute = entries.length > 1
+
+    return entries.flatMap(([key, entry], entryIndex) => {
+      const formatted =
+        field.fieldType === FieldTypesEnum.DATE_PICKER && key === 'date'
+          ? formatDate(entry as Date | string | null | undefined, locale)
+          : formatValue(entry, field.fieldType, locale)
+      if (!formatted) return []
+
+      const itemPrefix = entryIndex === 0 ? prefix : ''
+      return isMultiAttribute
+        ? [
+            `${itemPrefix}${textFor(
+              getLanguageTypeForValueTypeAttribute(key),
+              locale,
+            )}: ${formatted}`,
+          ]
+        : [`${itemPrefix}${formatted}`]
+    })
+  })
+}
+
+const drawField = (
+  document: PDFKit.PDFDocument,
+  field: {
+    name: { is: string }
+    isRequired?: boolean
+    fieldType: string
+    values?: Array<{ json?: unknown }>
+  },
+  showLabel: boolean,
+  locale: Locale,
+) => {
+  const lines = fieldLines(field, locale)
+  const value = lines.join('\n') || textFor(translations.noAnswer, locale)
+  const label = `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`
+  const labelHeight = showLabel
+    ? document
+        .font('Helvetica-Bold')
+        .fontSize(9)
+        .heightOfString(label, {
+          width: contentWidth - 32,
+        }) + 6
+    : 0
+  const valueHeight = document
+    .font('Helvetica')
+    .fontSize(10)
+    .heightOfString(value, {
+      width: contentWidth - 32,
+    })
+  const blockHeight = Math.max(42, labelHeight + valueHeight + 28)
+
+  ensureSpace(document, blockHeight + 8)
+  const top = document.y
+  document
+    .roundedRect(pageMargin, top, contentWidth, blockHeight, 4)
+    .fillAndStroke(colors.surface, colors.border)
+
+  let textTop = top + 14
+  if (showLabel) {
+    document
+      .fillColor(colors.ink)
+      .font('Helvetica-Bold')
+      .fontSize(9)
+      .text(label, pageMargin + 16, textTop, { width: contentWidth - 32 })
+    textTop += labelHeight
+  }
+
+  document
+    .fillColor(lines.length ? colors.ink : colors.muted)
+    .font('Helvetica')
+    .fontSize(10)
+    .text(value, pageMargin + 16, textTop, { width: contentWidth - 32 })
+  document.y = top + blockHeight + 8
+}
+
 export const buildApplicationPdf = (
   application: ApplicationDto,
+  locale: Locale = 'is',
 ): Promise<Buffer> =>
   new Promise((resolve, reject) => {
-    const document = new PDFDocument({ margin: 56, size: 'A4' })
+    const title =
+      textFor(application.formName, locale) ||
+      textFor(translations.application, locale)
+    const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
     const chunks: Buffer[] = []
+    let page = 1
 
     document.on('data', (chunk) => chunks.push(chunk))
     document.on('end', () => resolve(Buffer.concat(chunks)))
     document.on('error', reject)
+    document.on('pageAdded', () => {
+      page += 1
+      drawPageChrome(document, title, locale, page)
+    })
 
-    document.info.Title = application.formName?.is ?? 'Umsókn'
-    document.fontSize(20).text(application.formName?.is ?? 'Umsókn')
-    document.moveDown(0.5)
-    document.fontSize(10).text(`Númer: ${application.id ?? ''}`)
+    document.info.Title = title
+    drawPageChrome(document, title, locale, page)
+    document
+      .fillColor(colors.accent)
+      .font('Helvetica-Bold')
+      .fontSize(20)
+      .text(title)
+    document.moveDown(0.45)
+    document
+      .fillColor(colors.muted)
+      .font('Helvetica')
+      .fontSize(10)
+      .text(
+        `${textFor(translations.applicationNumber, locale)}: ${
+          application.id ?? ''
+        }`,
+      )
     if (application.submittedAt) {
       document.text(
-        `Móttekin: ${new Date(application.submittedAt).toLocaleString(
-          'is-IS',
-        )}`,
+        `${textFor(translations.received, locale)}: ${new Date(
+          application.submittedAt,
+        ).toLocaleString(locale === 'en' ? 'en-GB' : 'is-IS')}`,
       )
     }
 
@@ -77,16 +323,40 @@ export const buildApplicationPdf = (
       ) ?? []
 
     for (const section of sections) {
-      document.moveDown()
+      ensureSpace(document, sectionContentReservation)
+      document.moveDown(1.2)
       if (section.sectionType !== SectionTypes.PARTIES) {
-        document.font('Helvetica-Bold').fontSize(15).text(section.name.is)
+        const top = document.y
+        document
+          .roundedRect(pageMargin, top, contentWidth, 32, 4)
+          .fill(colors.accent)
+          .fillColor(colors.white)
+          .font('Helvetica-Bold')
+          .fontSize(13)
+          .text(textFor(section.name, locale), pageMargin + 14, top + 9, {
+            width: contentWidth - 28,
+          })
+        document.y = top + 40
       }
 
       for (const screen of section.screens ?? []) {
         if (screen.isHidden) continue
-        if (screen.name.is) {
-          document.moveDown(0.5)
-          document.font('Helvetica-Bold').fontSize(12).text(screen.name.is)
+        if (textFor(screen.name, locale)) {
+          ensureSpace(document, screenContentReservation)
+          document.moveDown(0.4)
+          const top = document.y
+          document
+            .fillColor(colors.ink)
+            .font('Helvetica-Bold')
+            .fontSize(11)
+            .text(textFor(screen.name, locale), pageMargin + screenIndent, top)
+          document
+            .moveTo(pageMargin + screenIndent, top + 18)
+            .lineTo(pageMargin + contentWidth, top + 18)
+            .lineWidth(1)
+            .strokeColor(colors.accentSoft)
+            .stroke()
+          document.y = top + 26
         }
 
         for (const field of screen.fields ?? []) {
@@ -94,40 +364,12 @@ export const buildApplicationPdf = (
             continue
           }
 
-          if (section.sectionType !== SectionTypes.PARTIES) {
-            document
-              .moveDown(0.35)
-              .font('Helvetica-Bold')
-              .fontSize(10)
-              .text(`${field.name.is}${field.isRequired ? '*' : ''}`)
-          }
-
-          const values = field.values ?? []
-          values.forEach((value, index) => {
-            const prefix = values.length > 1 ? `${index + 1}. ` : ''
-            const json = value?.json
-            const lines =
-              field.fieldType === FieldTypesEnum.FILE
-                ? fileNames(json)
-                : typeof json === 'object' && json !== null
-                ? Object.entries(json)
-                    .filter(
-                      ([key]) =>
-                        ![
-                          'delegationType',
-                          'isLoggedInUser',
-                          'applicantType',
-                        ].includes(key),
-                    )
-                    .map(([, entry]) => formatValue(entry, field.fieldType))
-                    .filter(Boolean)
-                : [formatValue(json, field.fieldType)].filter(Boolean)
-
-            document
-              .font('Helvetica')
-              .fontSize(10)
-              .text(`${prefix}${lines.join('\n')}`)
-          })
+          drawField(
+            document,
+            field,
+            section.sectionType !== SectionTypes.PARTIES,
+            locale,
+          )
         }
       }
     }

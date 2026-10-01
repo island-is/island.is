@@ -45,13 +45,15 @@ export class ApplicationsController {
   @ApiOkResponse({ type: ApplicationPdfResponseDto })
   @ApiParam({ name: 'id', type: String })
   @ApiParam({ name: 'slug', type: String })
+  @ApiQuery({ name: 'locale', type: String, required: false })
   @Get(':slug/:id/pdf')
   async getApplicationPdf(
     @Param('id') id: string,
     @Param('slug') slug: string,
+    @Query('locale') locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<ApplicationPdfResponseDto> {
-    return this.applicationsService.getApplicationPdf(id, slug, user)
+    return this.applicationsService.getApplicationPdf(id, slug, user, locale)
   }
 
   @ApiOperation({
