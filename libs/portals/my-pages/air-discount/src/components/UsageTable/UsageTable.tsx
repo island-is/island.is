@@ -1,5 +1,7 @@
+import { useMemo } from 'react'
+
 import { Box } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import {
   createColumnHelper,
   formatDateWithTime,
@@ -15,33 +17,36 @@ interface PropTypes {
   data: FlightLeg[]
 }
 
+const columnHelper = createColumnHelper<FlightLeg>()
+
 const UsageTable = ({ data }: PropTypes) => {
-  useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
-  const columnHelper = createColumnHelper<FlightLeg>()
-  const columns = [
-    columnHelper.accessor((row) => row.flight.user.name, {
-      id: 'user',
-      header: formatMessage(m.user),
-      enableSorting: false,
-    }),
-    columnHelper.accessor('travel', {
-      header: formatMessage(m.flight),
-      enableSorting: false,
-    }),
-    columnHelper.accessor((row) => row.flight.bookingDate, {
-      id: 'date',
-      header: formatMessage(m.date),
-      cell: ({ getValue }) =>
-        getValue() ? formatDateWithTime(getValue()) : '',
-      enableSorting: false,
-    }),
-  ]
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor((row) => row.flight.user.name, {
+        id: 'user',
+        header: formatMessage(m.user),
+        enableSorting: false,
+      }),
+      columnHelper.accessor('travel', {
+        header: formatMessage(m.flight),
+        enableSorting: false,
+      }),
+      columnHelper.accessor((row) => row.flight.bookingDate, {
+        id: 'date',
+        header: formatMessage(m.date),
+        cell: ({ getValue }) =>
+          getValue() ? formatDateWithTime(getValue()) : '',
+        enableSorting: false,
+      }),
+    ],
+    [formatMessage],
+  )
   return (
     <Box marginBottom={4}>
       <PortalTable
         columns={columns}
-        data={data ?? []}
+        data={data}
         emptyMessage=""
         mobileTitleKey="user"
       />

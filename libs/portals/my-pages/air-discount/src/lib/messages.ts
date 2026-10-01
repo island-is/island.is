@@ -55,6 +55,14 @@ export const messages = defineMessages({
     id: 'sp.air-discount:copy-code',
     defaultMessage: 'Afrita kóða',
   },
+  copyCodeFor: {
+    id: 'sp.air-discount:copy-code-for',
+    defaultMessage: 'Afrita kóða, {name}',
+  },
+  copyConnectionCodeFor: {
+    id: 'sp.air-discount:copy-connection-code-for',
+    defaultMessage: 'Afrita kóða, {name}, {flight}',
+  },
   codeGenFailed: {
     id: 'sp.air-discount:code-generation-fail',
     defaultMessage: 'Ekki tókst að útbúa kóða',

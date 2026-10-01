@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import copyToClipboard from 'copy-to-clipboard'
 
 import {
@@ -30,6 +30,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import UsageTable from '../../components/UsageTable/UsageTable'
 import { messages as m } from '../../lib/messages'
 import {
+  AirDiscountQuery,
   useAirDiscountFlightLegsQuery,
   useAirDiscountQuery,
 } from './AirDiscountOverview.generated'
@@ -63,23 +64,37 @@ export const AirDiscountOverview = () => {
   const { data: flightLegData } = useAirDiscountFlightLegsQuery()
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
+  const copyTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
   const airDiscounts = data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
   const connectionCodes = airDiscounts?.filter(
     (x) => x.connectionDiscountCodes.length > 0,
   )
 
+  const hasNoRights = (
+    item: AirDiscountQuery['airDiscountSchemeDiscounts'][number],
+  ) =>
+    !item.user.fund ||
+    (item.user.fund.credit === 0 && item.user.fund.used === 0)
+
   const noRights =
-    airDiscounts?.filter(
-      (item) => item.user.fund?.credit === 0 && item.user.fund.used === 0,
-    ).length === airDiscounts?.length
+    !!airDiscounts && airDiscounts.length > 0 && airDiscounts.every(hasNoRights)
+
+  useEffect(() => {
+    const timers = copyTimers.current
+    return () => Object.values(timers).forEach(clearTimeout)
+  }, [])
 
   const copy = (code?: string | null) => {
     if (code) {
       copyToClipboard(code)
-      setCopiedCodes((prev) => [...prev, { code, copied: true }])
+      setCopiedCodes((prev) => [
+        ...prev.filter((item) => item.code !== code),
+        { code, copied: true },
+      ])
       toast.success(formatMessage(m.codeCopiedSuccess))
-      setTimeout(() => {
+      clearTimeout(copyTimers.current[code])
+      copyTimers.current[code] = setTimeout(() => {
         setCopiedCodes((prev) => prev.filter((item) => item.code !== code))
       }, 5000)
     }
@@ -99,7 +114,9 @@ export const AirDiscountOverview = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <Button variant="text">{str}</Button>
+              <Button variant="text" as="span" unfocusable>
+                {str}
+              </Button>
             </a>
           ),
         })}
@@ -129,7 +146,9 @@ export const AirDiscountOverview = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Button variant="text">{str}</Button>
+                    <Button variant="text" as="span" unfocusable>
+                      {str}
+                    </Button>
                   </a>
                 ),
               })}
@@ -166,9 +185,7 @@ export const AirDiscountOverview = () => {
           </Text>
           <Stack space={2}>
             {airDiscounts
-              ?.filter(
-                (x) => !(x.user.fund?.used === 0 && x.user.fund.credit === 0),
-              )
+              ?.filter((x) => !hasNoRights(x))
               .map((item, index) => {
                 const message = [
                   formatMessage(m.remainingAirfares),
@@ -198,6 +215,9 @@ export const AirDiscountOverview = () => {
                         ? undefined
                         : {
                             label: formatMessage(m.copyCode),
+                            ariaLabel: formatMessage(m.copyCodeFor, {
+                              name: item.user.name,
+                            }),
                             onClick: () => copy(item.discountCode),
                             icon: isCopied ? 'checkmark' : 'copy',
                           }
@@ -214,13 +234,13 @@ export const AirDiscountOverview = () => {
             {formatMessage(m.activeConnectionCodes)}
           </Text>
           <Stack space={2}>
-            {connectionCodes?.map((item) => {
+            {connectionCodes?.map((item, itemIndex) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
                 const isCopied = copiedCodes.find((x) => x.code === code.code)
                   ?.copied
                 return (
                   <ActionCard
-                    key={`loftbru-item-connection-code-${codeIndex}`}
+                    key={`loftbru-item-connection-code-${itemIndex}-${codeIndex}`}
                     heading={item.user.name}
                     headingVariant="h4"
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
@@ -233,6 +253,10 @@ export const AirDiscountOverview = () => {
                     }}
                     cta={{
                       label: formatMessage(m.copyCode),
+                      ariaLabel: formatMessage(m.copyConnectionCodeFor, {
+                        name: item.user.name,
+                        flight: code.flightDesc,
+                      }),
                       onClick: () => copy(code.code),
                       icon: isCopied ? 'checkmark' : 'copy',
                     }}
