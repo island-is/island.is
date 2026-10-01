@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
-import type { User } from '@island.is/auth-nest-tools'
+
 import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -9,9 +10,11 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { DiscountService } from './discount.service'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+
 import { Discount } from '../models/discount.model'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { isServiceDisabled } from '../shared/isServiceDisabled'
+import { DiscountService } from './discount.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -26,13 +29,7 @@ export class DiscountResolver {
   @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
   @Audit()
   async getDiscount(@CurrentUser() user: User): Promise<Discount[]> {
-    //check status of feature flag
-    const serviceDisabled = await this.featureFlagService.getValue(
-      Features.isPortalAirDiscountPageDisabled,
-      false,
-      user,
-    )
-    if (serviceDisabled) {
+    if (await isServiceDisabled(this.featureFlagService, user)) {
       return []
     }
 

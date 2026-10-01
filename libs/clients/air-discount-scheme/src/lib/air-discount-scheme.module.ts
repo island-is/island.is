@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common'
 import { IdsClientConfig } from '@island.is/nest/config'
 
 import { AirDiscountSchemeClientService } from './airDiscountSchemeClient.service'
-import { AdminApiProvider,UsersApiProvider } from './api-providers'
+import { AdminApiProvider, UsersApiProvider } from './api-providers'
 
 @Module({
   imports: [IdsClientConfig.registerOptional()],

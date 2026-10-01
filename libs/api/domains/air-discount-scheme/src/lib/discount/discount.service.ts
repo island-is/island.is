@@ -1,34 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { GraphQLError } from 'graphql'
-import { FetchError } from '@island.is/clients/middlewares'
-import { UsersApi } from '@island.is/clients/air-discount-scheme'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth, User } from '@island.is/auth-nest-tools'
+
+import { Discount as TDiscount } from '@island.is/air-discount-scheme/types'
+import type { User } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeClientService } from '@island.is/clients/air-discount-scheme'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  Discount as TDiscount,
-  User as TUser,
-} from '@island.is/air-discount-scheme/types'
+
 import { Discount as DiscountModel } from '../models/discount.model'
+import { handleError } from '../shared/handleError'
 
 @Injectable()
 export class DiscountService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private usersApi: UsersApi,
+    private readonly airDiscountSchemeClientService: AirDiscountSchemeClientService,
   ) {}
-
-  handleError(error: FetchError | GraphQLError): void {
-    this.logger.error(error)
-
-    // Note: the old `error?.response?.message` fallback was dead code —
-    // FetchError.response is a fetch Response which has no `message`.
-    throw new GraphQLError('Failed to resolve request', {
-      extensions: { code: error?.message },
-    })
-  }
 
   discountIsValid(discount: TDiscount): boolean {
     const TWO_HOURS = 7200
@@ -47,109 +34,49 @@ export class DiscountService {
     return discount
   }
 
-  private handleJSONError(e: FetchError) {
-    // Couldn't generate client for Discount | null
-    if (e.message.includes('invalid json')) {
-      return null
-    }
-    this.handle4xx(e)
-  }
-
-  private handle4xx(error: FetchError) {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    this.handleError(error)
-  }
-
-  private getADSWithAuth(auth: Auth) {
-    return this.usersApi.withMiddleware(
-      new AuthMiddleware(auth, { forwardUserInfo: true }),
-    )
-  }
-
   async getCurrentDiscounts(auth: User): Promise<DiscountModel[]> {
-    const relations: TUser[] = await this.getUserRelations(auth)
-
-    const discounts: DiscountModel[] = []
-    for (const relation of relations) {
-      const discount: TDiscount | null = await this.getDiscount(
+    try {
+      const relations = await this.airDiscountSchemeClientService.getUserRelations(
         auth,
-        relation.nationalId,
       )
 
-      if (discount) {
-        this.processDiscount(discount)
-        discounts.push({
-          ...discount,
-          user: {
-            ...relation,
-            name: relation.firstName,
-            fund: discount.user.fund,
-          },
-        })
-        continue
+      const discounts: DiscountModel[] = []
+      for (const relation of relations) {
+        const discount = await this.airDiscountSchemeClientService.getCurrentDiscount(
+          auth,
+          relation.nationalId,
+        )
+
+        if (discount) {
+          this.processDiscount(discount)
+          discounts.push({
+            ...discount,
+            user: {
+              ...relation,
+              name: relation.firstName,
+              fund: discount.user.fund,
+            },
+          })
+          continue
+        }
+
+        const createdDiscount = await this.airDiscountSchemeClientService.createDiscount(
+          auth,
+          relation.nationalId,
+        )
+
+        if (createdDiscount) {
+          this.processDiscount(createdDiscount)
+          discounts.push({
+            ...createdDiscount,
+            user: { ...relation, name: relation.firstName },
+          })
+        }
       }
 
-      const createdDiscount = await this.createDiscount(
-        auth,
-        relation.nationalId,
-      )
-
-      if (createdDiscount) {
-        this.processDiscount(createdDiscount)
-        discounts.push({
-          ...createdDiscount,
-          user: { ...relation, name: relation.firstName },
-        })
-      }
+      return discounts
+    } catch (error) {
+      return handleError(this.logger, error)
     }
-
-    return discounts
-  }
-
-  private async getDiscount(
-    auth: User,
-    nationalId: string,
-  ): Promise<TDiscount | null> {
-    const discountResponse = await this.getADSWithAuth(auth)
-      .privateDiscountControllerGetCurrentDiscountByNationalId({
-        nationalId,
-      })
-      .catch((e) => {
-        this.handleJSONError(e)
-        return null
-      })
-
-    return discountResponse
-  }
-
-  private async createDiscount(
-    auth: User,
-    nationalId: string,
-  ): Promise<TDiscount | null> {
-    const createDiscountResponse = await this.getADSWithAuth(auth)
-      .privateDiscountControllerCreateDiscountCode({
-        nationalId,
-      })
-      .catch((e) => {
-        this.handle4xx(e)
-        return null
-      })
-    return createDiscountResponse
-  }
-
-  private async getUserRelations(auth: User): Promise<TUser[]> {
-    const getRelationsResponse = await this.getADSWithAuth(auth)
-      .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
-      .catch((e) => {
-        this.handle4xx(e)
-      })
-
-    if (!getRelationsResponse) {
-      return []
-    }
-
-    return getRelationsResponse
   }
 }

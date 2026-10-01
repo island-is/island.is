@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
-import type { User } from '@island.is/auth-nest-tools'
+
 import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -9,9 +10,11 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { FlightLegService } from './flight-leg.service'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+
 import { FlightLeg } from '../models/flightLeg.model'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { isServiceDisabled } from '../shared/isServiceDisabled'
+import { FlightLegService } from './flight-leg.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -28,13 +31,7 @@ export class FlightLegResolver {
   })
   @Audit()
   async getFlightLegs(@CurrentUser() user: User): Promise<FlightLeg[]> {
-    //check status of feature flag
-    const serviceDisabled = await this.featureFlagService.getValue(
-      Features.isPortalAirDiscountPageDisabled,
-      false,
-      user,
-    )
-    if (serviceDisabled) {
+    if (await isServiceDisabled(this.featureFlagService, user)) {
       return []
     }
     return this.flightLegService.getThisYearsUserAndRelationsFlightLegs(user)

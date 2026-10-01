@@ -1,59 +1,45 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { GraphQLError } from 'graphql'
-import { FetchError } from '@island.is/clients/middlewares'
-import { UsersApi } from '@island.is/clients/air-discount-scheme'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth, User } from '@island.is/auth-nest-tools'
+
+import type { User } from '@island.is/auth-nest-tools'
+import { AirDiscountSchemeClientService } from '@island.is/clients/air-discount-scheme'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { User as TUser } from '@island.is/air-discount-scheme/types'
-import { FlightLeg } from '../models/flightLeg.model'
+
 import { Flight } from '../models/flight.model'
+import { FlightLeg } from '../models/flightLeg.model'
 import { User as FlightUser } from '../models/user.model'
+import { handleError } from '../shared/handleError'
 
 @Injectable()
 export class FlightLegService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private usersApi: UsersApi,
+    private readonly airDiscountSchemeClientService: AirDiscountSchemeClientService,
   ) {}
-
-  handleError(error: any): any {
-    this.logger.error(error)
-
-    throw new GraphQLError('Failed to resolve request', {
-      extensions: { code: error?.message ?? error?.response?.message },
-    })
-  }
-
-  private handle4xx(error: FetchError) {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    this.handleError(error)
-  }
-
-  private getADSWithAuth(auth: Auth) {
-    return this.usersApi.withMiddleware(
-      new AuthMiddleware(auth, { forwardUserInfo: true }),
-    )
-  }
 
   async getThisYearsUserAndRelationsFlightLegs(
     auth: User,
   ): Promise<FlightLeg[]> {
-    const flights = await this.getADSWithAuth(auth)
-      .privateFlightUserControllerGetUserAndRelationsFlights()
-      .catch((e) => {
-        this.handle4xx(e)
-      })
+    try {
+      return await this.buildFlightLegs(auth)
+    } catch (error) {
+      return handleError(this.logger, error)
+    }
+  }
 
-    if (!flights) {
+  private async buildFlightLegs(auth: User): Promise<FlightLeg[]> {
+    const flights = await this.airDiscountSchemeClientService.getUserAndRelationsFlights(
+      auth,
+    )
+
+    if (flights.length === 0) {
       return []
     }
 
-    const relations: TUser[] = await this.getUserRelations(auth)
+    const relations = await this.airDiscountSchemeClientService.getUserRelations(
+      auth,
+    )
     const flightLegs: FlightLeg[] = []
 
     // The expected return value for the graphql layers has some extra properties
@@ -102,19 +88,5 @@ export class FlightLegService {
     }
 
     return flightLegs
-  }
-
-  private async getUserRelations(auth: User): Promise<TUser[]> {
-    const getRelationsResponse = await this.getADSWithAuth(auth)
-      .privateUserControllerGetUserRelations({ nationalId: auth.nationalId })
-      .catch((e) => {
-        this.handleError(e)
-      })
-
-    if (!getRelationsResponse) {
-      return []
-    }
-
-    return getRelationsResponse
   }
 }
