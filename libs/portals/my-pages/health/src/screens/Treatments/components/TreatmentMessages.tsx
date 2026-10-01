@@ -48,7 +48,7 @@ export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
         alignItems="center"
         columnGap={2}
         marginBottom={3}
-        paddingX={[2, 2, 3]}
+        paddingX={3}
       >
         <Icon icon="chatbubble" type="outline" color="blue400" size="medium" />
         <Text variant="h4" as="h2" color="blue400">
@@ -85,8 +85,7 @@ export const TreatmentMessages = ({ conversations, newMessageHref }: Props) => {
                 alignItems="flexStart"
                 columnGap={2}
                 paddingY={2}
-                paddingLeft={[1, 1, 2]}
-                paddingRight={2}
+                paddingX={[3, 3, 2]}
                 borderTopWidth="standard"
                 borderColor="blue200"
                 className={cn(
