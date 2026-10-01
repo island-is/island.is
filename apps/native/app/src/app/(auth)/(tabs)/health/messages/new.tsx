@@ -570,6 +570,7 @@ export default function HealthMessageComposeScreen() {
                       })}
                       onPress={onSend}
                       disabled={!canSend || sending}
+                      loading={sending}
                     />
                   </View>
                 )}
