@@ -175,6 +175,11 @@ export const caseInclude: Includeable[] = [
   },
   {
     model: User,
+    as: 'appealProsecutor',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
     as: 'indictmentApprover',
     include: [{ model: Institution, as: 'institution' }],
   },
@@ -930,6 +935,7 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'indictmentHash',
   'courtSessionType',
   'indictmentReviewerId',
+  'appealProsecutorId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
   'isArraignmentSummonsSkipped',
@@ -1074,6 +1080,11 @@ export const getLimitedAccessCaseInclude = (
     {
       model: User,
       as: 'indictmentReviewer',
+      include: [{ model: Institution, as: 'institution' }],
+    },
+    {
+      model: User,
+      as: 'appealProsecutor',
       include: [{ model: Institution, as: 'institution' }],
     },
     {
@@ -1564,6 +1575,7 @@ export interface UpdateCase
   courtRecordSignatureDate?: Case['courtRecordSignatureDate'] | null
   parentCaseId?: Case['parentCaseId'] | null
   indictmentReviewerId?: Case['indictmentReviewerId'] | null
+  appealProsecutorId?: Case['appealProsecutorId'] | null
   indictmentApproverId?: Case['indictmentApproverId'] | null
   indictmentDeniedExplanation?: Case['indictmentDeniedExplanation'] | null
   indictmentHash?: Case['indictmentHash'] | null
