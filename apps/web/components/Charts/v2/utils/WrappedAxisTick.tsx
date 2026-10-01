@@ -2,7 +2,8 @@ import { theme } from '@island.is/island-ui/theme'
 
 import { wrapAxisLabel } from './wrapAxisLabel'
 
-const LINE_HEIGHT = 14
+// Relative to the tick's font size so a larger font can't overlap lines
+const LINE_HEIGHT = '1.2em'
 const DEFAULT_MAX_CHARS_PER_LINE = 10
 const DEFAULT_MAX_LINES = 3
 

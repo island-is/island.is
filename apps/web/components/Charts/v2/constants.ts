@@ -92,7 +92,7 @@ export const DEFAULT_XAXIS_HEIGHT = 30
 
 // Taller/wider than the defaults above to fit the multi-line, wrapped
 // category labels rendered by WrappedAxisTick (up to 3 lines).
-export const WRAPPED_XAXIS_HEIGHT = 56
+export const WRAPPED_XAXIS_HEIGHT = 68
 export const WRAPPED_YAXIS_WIDTH = 90
 
 export const DEFAULT_PIE_INNER_RADIUS = 30
