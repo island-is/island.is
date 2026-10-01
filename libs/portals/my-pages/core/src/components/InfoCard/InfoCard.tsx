@@ -24,6 +24,7 @@
  * @param {string | React.ReactNode} props.detail[].value - The value for the detail item.
  * @param {Array<ActionCardProps['tag']>} [props.tags] - An array of tags to display on the card.
  * @param {string} [props.img] - An optional image URL to display on the card.
+ * @param {boolean} [props.showArrow] - Whether to show the trailing arrow. Defaults to showing it whenever the card links somewhere.
  *
  * @returns {React.FC<InfoCardProps>} A React functional component rendering the InfoCard.
  */
@@ -72,6 +73,7 @@ export interface InfoCardProps {
   tooltip?: string
   tags?: Array<ActionCardProps['tag']>
   img?: string
+  showArrow?: boolean
   variant?: 'default' | 'detail' | 'appointment' | 'link'
   /** Grays out the card, e.g. for appointments that have already passed */
   muted?: boolean
@@ -87,6 +89,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   detail,
   tags,
   img,
+  showArrow,
   appointment,
   variant = 'default',
   muted = false,
@@ -98,6 +101,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
 
   const displayBottomBorder = width < theme.breakpoints.xl
   const displayRightBorder = width >= theme.breakpoints.xl
+
+  const hasArrow = showArrow ?? !!to
 
   const detailLength = detail ? detail.length : 0
 
@@ -132,40 +137,32 @@ export const InfoCard: React.FC<InfoCardProps> = ({
       >
         <GridRow direction="row" className={styles.gridRow}>
           <GridColumn
-            span={
-              size === 'large'
-                ? img && !isMobile
-                  ? to
-                    ? '8/12'
-                    : '9/12'
-                  : to
-                  ? '11/12'
-                  : '12/12'
-                : to
-                ? '11/12'
-                : '12/12'
-            }
+            span={size === 'large' && img && !isMobile ? '9/12' : '12/12'}
             className={styles.contentContainer}
           >
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              flexGrow={1}
-              marginBottom={detail ? 3 : 0}
-            >
-              <Box>
-                <Text
-                  variant="h4"
-                  marginBottom={variant === 'link' ? 0 : 1}
-                  color="blue400"
-                >
+            <Box flexGrow={1} marginBottom={detail ? 3 : 0}>
+              {/* Arrow sits on the title line, like TimeCard, rather than in
+                  its own grid column outside the content padding. */}
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="center"
+                columnGap={2}
+                marginBottom={variant === 'link' ? 0 : 1}
+              >
+                <Text variant="h4" color="blue400">
                   {title}
                 </Text>
-                <Inline>
-                  <Text>{description}</Text>
-                  {tooltip && <Tooltip text={tooltip} />}
-                </Inline>
+                {hasArrow && (
+                  <Box flexShrink={0} display="flex">
+                    <Icon icon="arrowForward" type="outline" color="blue400" />
+                  </Box>
+                )}
               </Box>
+              <Inline>
+                <Text>{description}</Text>
+                {tooltip && <Tooltip text={tooltip} />}
+              </Inline>
             </Box>
             {detailData && (
               <Box
@@ -240,17 +237,6 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               />
             </GridColumn>
           )}
-          {to && (
-            <GridColumn span="1/12" className={styles.icon}>
-              <Box
-                display="flex"
-                justifyContent="flexEnd"
-                alignItems="flexStart"
-              >
-                <Icon icon="arrowForward" type="outline" color="blue400" />
-              </Box>
-            </GridColumn>
-          )}
         </GridRow>
         {tags && tags.length > 0 && (
           <GridRow>
@@ -275,7 +261,11 @@ export const InfoCard: React.FC<InfoCardProps> = ({
       width={size === 'large' ? 'full' : undefined}
       className={styles.container}
     >
-      {to ? (
+      {variant === 'appointment' ? (
+        // TimeCard renders its own link, so wrapping it here would nest one
+        // anchor inside another and give the card two tab stops.
+        content
+      ) : to ? (
         <LinkResolver href={to} className={styles.containerLink}>
           {content}
         </LinkResolver>

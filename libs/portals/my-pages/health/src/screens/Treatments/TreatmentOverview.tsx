@@ -11,6 +11,7 @@ import {
   CardLoader,
   formatDate,
   STAFRAEN_HEILSA_SLUG,
+  InfoCard,
   IntroWrapper,
   LinkResolver,
   m,
@@ -24,7 +25,6 @@ import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
 import Appointments from '../HealthOverview/components/Appointments'
-import TreatmentLinkCard from './components/TreatmentLinkCard'
 import TreatmentMessages from './components/TreatmentMessages'
 import { useGetHealthTreatmentQuery } from './TreatmentOverview.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
@@ -163,10 +163,11 @@ const TreatmentOverview = () => {
             <GridRow rowGap={2}>
               {linkCards.map((card) => (
                 <GridColumn key={card.to} span={['12/12', '12/12', '6/12']}>
-                  <TreatmentLinkCard
-                    label={card.label}
+                  <InfoCard
+                    variant="link"
+                    title={card.label}
                     to={card.to}
-                    text={
+                    description={
                       card.lastSentAt
                         ? formatMessage(messages.lastSent, {
                             date: formatDate(card.lastSentAt),

@@ -27,10 +27,6 @@ export const boxContainer = style({
 export const gridRow = style({
   justifyContent: 'space-between',
 })
-export const icon = style({
-  padding: 0,
-})
-
 export const detailDivider = styleVariants({
   large: {
     height: 72,

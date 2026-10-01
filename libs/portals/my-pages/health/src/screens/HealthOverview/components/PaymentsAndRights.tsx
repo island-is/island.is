@@ -50,6 +50,7 @@ const PaymentsAndRights: React.FC<Props> = ({
         {formatMessage(messages.statusOfRightsAndPayments)}
       </Text>
       <InfoCardGrid
+        showArrow={false}
         empty={
           anyLoading
             ? undefined
