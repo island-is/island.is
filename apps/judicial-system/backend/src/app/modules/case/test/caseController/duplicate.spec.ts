@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { type Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -15,7 +16,6 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { AwsS3Service } from '../../../aws-s3'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
@@ -73,7 +73,11 @@ describe('CaseController - Duplicate', () => {
   let mockCaseStringRepositoryService: jest.Mocked<CaseStringRepositoryService>
   let mockCivilClaimantRepositoryService: jest.Mocked<CivilClaimantRepositoryService>
   let mockCaseFileRepositoryService: jest.Mocked<CaseFileRepositoryService>
-  let mockAwsS3Service: jest.Mocked<AwsS3Service>
+  let queuedMessages: Message[]
+  let queuedMessagesAfterCommit: {
+    transaction: unknown
+    messages: Message[]
+  }[]
 
   let givenWhenThen: GivenWhenThen
 
@@ -88,7 +92,8 @@ describe('CaseController - Duplicate', () => {
       caseStringRepositoryService,
       civilClaimantRepositoryService,
       caseFileRepositoryService,
-      awsS3Service,
+      queuedMessages: legacyQueuedMessages,
+      queuedMessagesAfterCommit: afterCommitQueuedMessages,
       caseController,
     } = await createTestingCaseModule()
 
@@ -108,7 +113,8 @@ describe('CaseController - Duplicate', () => {
       civilClaimantRepositoryService as jest.Mocked<CivilClaimantRepositoryService>
     mockCaseFileRepositoryService =
       caseFileRepositoryService as jest.Mocked<CaseFileRepositoryService>
-    mockAwsS3Service = awsS3Service as jest.Mocked<AwsS3Service>
+    queuedMessages = legacyQueuedMessages
+    queuedMessagesAfterCommit = afterCommitQueuedMessages
 
     newCaseId = uuid()
     newCase = { id: newCaseId } as Case
@@ -143,7 +149,10 @@ describe('CaseController - Duplicate', () => {
     mockCaseFileRepositoryService.findAllByCaseAndCategories.mockResolvedValue(
       [],
     )
-    mockCaseFileRepositoryService.copyToCase.mockResolvedValue({} as CaseFile)
+    // Each copy gets its own row
+    mockCaseFileRepositoryService.copyToCase.mockImplementation(async () => {
+      return { id: uuid() } as CaseFile
+    })
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -411,6 +420,7 @@ describe('CaseController - Duplicate', () => {
 
   describe('case files copied', () => {
     const fileId = uuid()
+    const newFileId = uuid()
     const file = {
       id: fileId,
       key: `${caseId}/abc/document.pdf`,
@@ -422,9 +432,13 @@ describe('CaseController - Duplicate', () => {
       mockCaseFileRepositoryService.findAllByCaseAndCategories.mockResolvedValue(
         [file],
       )
+      mockCaseFileRepositoryService.copyToCase.mockResolvedValueOnce({
+        id: newFileId,
+      } as CaseFile)
 
       await givenWhenThen(caseId, user, revokedIndictment)
-      ;[, , destinationKey] = mockAwsS3Service.copyObject.mock.calls[0]
+      ;[, , { key: destinationKey }] =
+        mockCaseFileRepositoryService.copyToCase.mock.calls[0]
     })
 
     it('should look up only the prosecutor uploaded categories', () => {
@@ -448,28 +462,89 @@ describe('CaseController - Duplicate', () => {
       )
     })
 
-    it('should copy the S3 object to a new key under the new case', () => {
-      expect(mockAwsS3Service.copyObject).toHaveBeenCalledTimes(1)
-      const [caseType, sourceKey] = mockAwsS3Service.copyObject.mock.calls[0]
-      expect(caseType).toBe(CaseType.INDICTMENT)
-      expect(sourceKey).toBe(`${caseId}/abc/document.pdf`)
+    it('should create the copy at a new key under the new case, with no object behind it yet', () => {
+      expect(mockCaseFileRepositoryService.copyToCase).toHaveBeenCalledTimes(1)
+      expect(mockCaseFileRepositoryService.copyToCase).toHaveBeenCalledWith(
+        file,
+        newCaseId,
+        {
+          key: destinationKey,
+          isKeyAccessible: false,
+          defendantId: undefined,
+          civilClaimantId: undefined,
+        },
+        { transaction },
+      )
       // The filename is kept, under a fresh uuid on the new case
       expect(destinationKey).toMatch(
         new RegExp(`^${newCaseId}/[0-9a-f-]+/document\\.pdf$`),
       )
     })
 
-    it('should create the copy at the new key with no references to carry over', () => {
-      expect(mockCaseFileRepositoryService.copyToCase).toHaveBeenCalledWith(
-        file,
-        newCaseId,
+    // The object is copied by the message handler once the transaction has
+    // committed - a rolled back duplication must leave nothing behind in S3,
+    // so the message is queued against the transaction rather than the
+    // request, and never through the form that flushes on rollback
+    it('should queue the copy of the object for after the transaction commits', () => {
+      expect(queuedMessagesAfterCommit).toEqual([
         {
-          key: destinationKey,
-          defendantId: undefined,
-          civilClaimantId: undefined,
+          transaction,
+          messages: [
+            {
+              type: MessageType.DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE,
+              caseId: newCaseId,
+              elementId: newFileId,
+              body: { sourceKey: `${caseId}/abc/document.pdf` },
+            },
+          ],
         },
-        { transaction },
+      ])
+      expect(queuedMessages).toEqual([])
+    })
+  })
+
+  describe('several case files copied', () => {
+    const firstNewFileId = uuid()
+    const secondNewFileId = uuid()
+
+    beforeEach(async () => {
+      mockCaseFileRepositoryService.findAllByCaseAndCategories.mockResolvedValue(
+        [
+          {
+            id: uuid(),
+            key: `${caseId}/abc/first.pdf`,
+            isKeyAccessible: true,
+          } as CaseFile,
+          {
+            id: uuid(),
+            key: `${caseId}/def/second.pdf`,
+            isKeyAccessible: true,
+          } as CaseFile,
+        ],
       )
+      mockCaseFileRepositoryService.copyToCase
+        .mockResolvedValueOnce({ id: firstNewFileId } as CaseFile)
+        .mockResolvedValueOnce({ id: secondNewFileId } as CaseFile)
+
+      await givenWhenThen(caseId, user, revokedIndictment)
+    })
+
+    it('should queue one copy per file in a single registration', () => {
+      expect(queuedMessagesAfterCommit).toEqual([
+        {
+          transaction,
+          messages: [
+            expect.objectContaining({
+              elementId: firstNewFileId,
+              body: { sourceKey: `${caseId}/abc/first.pdf` },
+            }),
+            expect.objectContaining({
+              elementId: secondNewFileId,
+              body: { sourceKey: `${caseId}/def/second.pdf` },
+            }),
+          ],
+        },
+      ])
     })
   })
 
@@ -520,18 +595,13 @@ describe('CaseController - Duplicate', () => {
       await givenWhenThen(caseId, user, revokedIndictment)
     })
 
-    it('should skip them', () => {
-      expect(mockAwsS3Service.copyObject).not.toHaveBeenCalled()
+    it('should skip them and queue nothing', () => {
       expect(mockCaseFileRepositoryService.copyToCase).not.toHaveBeenCalled()
+      expect(queuedMessagesAfterCommit).toEqual([])
     })
   })
 
-  describe('case file whose S3 copy fails', () => {
-    const workingFile = {
-      id: uuid(),
-      key: `${caseId}/def/ok.pdf`,
-      isKeyAccessible: true,
-    } as CaseFile
+  describe('case file row creation fails', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -542,30 +612,27 @@ describe('CaseController - Duplicate', () => {
             key: `${caseId}/abc/broken.pdf`,
             isKeyAccessible: true,
           } as CaseFile,
-          workingFile,
+          {
+            id: uuid(),
+            key: `${caseId}/def/ok.pdf`,
+            isKeyAccessible: true,
+          } as CaseFile,
         ],
       )
-      mockAwsS3Service.copyObject
-        .mockRejectedValueOnce(new Error('S3 copy failed'))
-        .mockResolvedValueOnce(undefined)
+      mockCaseFileRepositoryService.copyToCase.mockRejectedValueOnce(
+        new Error('Some error'),
+      )
 
       then = await givenWhenThen(caseId, user, revokedIndictment)
     })
 
-    it('should skip it and still duplicate the rest', () => {
-      expect(then.result).toBe(newCase)
-      expect(mockAwsS3Service.copyObject).toHaveBeenCalledTimes(2)
+    // Unlike an S3 copy, which used to be tolerated per file, a row that
+    // cannot be created fails the transaction - and with it, nothing is queued
+    it('should abort the duplication and queue nothing', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
       expect(mockCaseFileRepositoryService.copyToCase).toHaveBeenCalledTimes(1)
-      expect(mockCaseFileRepositoryService.copyToCase).toHaveBeenCalledWith(
-        workingFile,
-        newCaseId,
-        expect.objectContaining({
-          key: expect.stringMatching(
-            new RegExp(`^${newCaseId}/[0-9a-f-]+/ok\\.pdf$`),
-          ),
-        }),
-        { transaction },
-      )
+      expect(queuedMessagesAfterCommit).toEqual([])
     })
   })
 

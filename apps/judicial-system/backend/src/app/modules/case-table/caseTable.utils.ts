@@ -186,15 +186,20 @@ const getIncludeAndOrder = (
 
   const include = Object.entries(allIncludes).map(([k, v]) => {
     const modelDef = modelMap[k as keyof typeof modelMap]
+    // Named, not spread. `order` is an array, so spreading it would put the
+    // term under "0" and Sequelize would ignore the include's ordering without
+    // saying so.
     const order =
-      modelDef.separate && modelDef.order ? { ...modelDef.order } : undefined
+      modelDef.separate && modelDef.order
+        ? { order: modelDef.order }
+        : undefined
     const include = v.includes
       ? {
           include: Object.entries(v.includes).map(([sk, sv]) => {
             const subModelDef = subModelMap[sk as keyof typeof subModelMap]
             const order =
               subModelDef.separate && subModelDef.order
-                ? { ...subModelDef.order }
+                ? { order: subModelDef.order }
                 : undefined
 
             if (!subModelDef.separate && subModelDef.order) {
