@@ -591,6 +591,16 @@ export class AdminClientsService {
       })
     }
 
+    if (addedDelegationTypes?.length || removedDelegationTypes?.length) {
+      // Serializes concurrent delegation changes, so the booleans derived below
+      // are computed from every committed delegation type.
+      await this.clientModel.findOne({
+        where: { clientId: data.clientId },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+    }
+
     if (addedDelegationTypes && addedDelegationTypes.length > 0) {
       await this.clientsService.addClientDelegationTypes({
         clientId: data.clientId,

@@ -624,11 +624,6 @@ export class ClientsService {
     )
   }
 
-  /**
-   * The deprecated supports_* booleans are derived from the client's delegation
-   * types once all changes are applied, since deriving them per add or remove
-   * call lets one call undo the other.
-   */
   async updateClientDelegationTypeBooleans({
     clientId,
     options = {},
