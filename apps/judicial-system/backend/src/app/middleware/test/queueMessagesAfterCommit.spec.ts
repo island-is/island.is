@@ -8,7 +8,6 @@ import type { CallHandler, ExecutionContext } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 
 import {
-  addMessagesToQueueAfterCommit,
   Message,
   MessageMiddleware,
   MessageService,
@@ -16,6 +15,7 @@ import {
 } from '@island.is/judicial-system/message'
 
 import { TransactionCommitInterceptor } from '../../interceptors'
+import { queueMessagesAfterCommit } from '../queueMessagesAfterCommit'
 import {
   getOrCreateTransaction,
   TransactionContextMiddleware,
@@ -23,10 +23,10 @@ import {
 
 // Drives a real Sequelize 6 transaction, with only its database I/O stubbed,
 // through the two middlewares and the interceptor that the app module wires
-// around every route. What is under test is not the message library's own
-// spec's fake but Sequelize's after commit hook itself: that the interceptor's
-// commit runs it, that the middleware's rollback does not, and that the same
-// holds for a transaction a handler owns.
+// around every route: that a message queued for after the commit is flushed
+// when the interceptor has committed, that nothing is flushed when the
+// middleware rolls back, and that the same holds for a transaction a handler
+// owns and commits itself before returning.
 describe('messages queued after commit', () => {
   const sequelize = new Sequelize({ dialect: 'postgres', logging: false })
   const queryInterface = sequelize.getQueryInterface()
@@ -113,11 +113,9 @@ describe('messages queued after commit', () => {
   describe('on a transaction the request owns', () => {
     it('should flush the messages when the interceptor commits', async () => {
       await givenARequest(async (res) => {
-        const transaction = await getOrCreateTransaction(
-          sequelize as unknown as TypedSequelize,
-        )
+        await getOrCreateTransaction(sequelize as unknown as TypedSequelize)
 
-        addMessagesToQueueAfterCommit(transaction, message)
+        queueMessagesAfterCommit(message)
 
         await lastValueFrom(interceptor.intercept(executionContext, next))
 
@@ -135,11 +133,9 @@ describe('messages queued after commit', () => {
       // No interceptor: the handler failed, so nothing commits and the
       // transaction is still open when the response ends.
       await givenARequest(async (res) => {
-        const transaction = await getOrCreateTransaction(
-          sequelize as unknown as TypedSequelize,
-        )
+        await getOrCreateTransaction(sequelize as unknown as TypedSequelize)
 
-        addMessagesToQueueAfterCommit(transaction, message)
+        queueMessagesAfterCommit(message)
 
         await res.emit('finish')
         await res.emit('close')
@@ -152,11 +148,15 @@ describe('messages queued after commit', () => {
   })
 
   describe('on a transaction the handler owns', () => {
-    it('should flush the messages when it commits', async () => {
+    it('should flush the messages when it commits and the handler returns', async () => {
       await givenARequest(async (res) => {
-        await sequelize.transaction(async (transaction) => {
-          addMessagesToQueueAfterCommit(transaction, message)
+        await sequelize.transaction(async () => {
+          queueMessagesAfterCommit(message)
         })
+
+        // The handler returned, so the interceptor drains the callbacks even
+        // though there is no request transaction to commit.
+        await lastValueFrom(interceptor.intercept(executionContext, next))
 
         await res.emit('finish')
         await res.emit('close')
@@ -168,10 +168,12 @@ describe('messages queued after commit', () => {
     })
 
     it('should flush nothing when it rolls back', async () => {
+      // A managed transaction that rolls back rejects, so the handler fails
+      // and the interceptor never drains the callbacks.
       await givenARequest(async (res) => {
         await expect(
-          sequelize.transaction(async (transaction) => {
-            addMessagesToQueueAfterCommit(transaction, message)
+          sequelize.transaction(async () => {
+            queueMessagesAfterCommit(message)
 
             throw new Error('Some error')
           }),
@@ -184,6 +186,22 @@ describe('messages queued after commit', () => {
       expect(commitTransaction).not.toHaveBeenCalled()
       expect(rollbackTransaction).toHaveBeenCalledTimes(1)
       expect(messageService.addMessagesToQueue).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('on a request that opens no transaction', () => {
+    it('should flush the messages when the handler returns', async () => {
+      await givenARequest(async (res) => {
+        queueMessagesAfterCommit(message)
+
+        await lastValueFrom(interceptor.intercept(executionContext, next))
+
+        await res.emit('finish')
+        await res.emit('close')
+      })
+
+      expect(commitTransaction).not.toHaveBeenCalled()
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
     })
   })
 })

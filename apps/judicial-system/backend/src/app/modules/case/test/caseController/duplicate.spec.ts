@@ -74,10 +74,7 @@ describe('CaseController - Duplicate', () => {
   let mockCivilClaimantRepositoryService: jest.Mocked<CivilClaimantRepositoryService>
   let mockCaseFileRepositoryService: jest.Mocked<CaseFileRepositoryService>
   let queuedMessages: Message[]
-  let queuedMessagesAfterCommit: {
-    transaction: unknown
-    messages: Message[]
-  }[]
+  let queuedMessagesAfterCommit: Message[][]
 
   let givenWhenThen: GivenWhenThen
 
@@ -483,21 +480,18 @@ describe('CaseController - Duplicate', () => {
 
     // The object is copied by the message handler once the transaction has
     // committed - a rolled back duplication must leave nothing behind in S3,
-    // so the message is queued against the transaction rather than the
-    // request, and never through the form that flushes on rollback
+    // so the message is queued for after the commit, and never through the
+    // form that flushes on rollback
     it('should queue the copy of the object for after the transaction commits', () => {
       expect(queuedMessagesAfterCommit).toEqual([
-        {
-          transaction,
-          messages: [
-            {
-              type: MessageType.DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE,
-              caseId: newCaseId,
-              elementId: newFileId,
-              body: { sourceKey: `${caseId}/abc/document.pdf` },
-            },
-          ],
-        },
+        [
+          {
+            type: MessageType.DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE,
+            caseId: newCaseId,
+            elementId: newFileId,
+            body: { sourceKey: `${caseId}/abc/document.pdf` },
+          },
+        ],
       ])
       expect(queuedMessages).toEqual([])
     })
@@ -531,19 +525,16 @@ describe('CaseController - Duplicate', () => {
 
     it('should queue one copy per file in a single registration', () => {
       expect(queuedMessagesAfterCommit).toEqual([
-        {
-          transaction,
-          messages: [
-            expect.objectContaining({
-              elementId: firstNewFileId,
-              body: { sourceKey: `${caseId}/abc/first.pdf` },
-            }),
-            expect.objectContaining({
-              elementId: secondNewFileId,
-              body: { sourceKey: `${caseId}/def/second.pdf` },
-            }),
-          ],
-        },
+        [
+          expect.objectContaining({
+            elementId: firstNewFileId,
+            body: { sourceKey: `${caseId}/abc/first.pdf` },
+          }),
+          expect.objectContaining({
+            elementId: secondNewFileId,
+            body: { sourceKey: `${caseId}/def/second.pdf` },
+          }),
+        ],
       ])
     })
   })
