@@ -144,9 +144,12 @@ export class DefendantService {
         user,
       )
       this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
-    } else if (updatedDefendant.defenderEmail !== oldDefendant.defenderEmail) {
-      // Defender email changed on this defendant — re-deliver defender info to court.
-      // Case-level defenderEmail changes still trigger via case.service (dual-write era).
+    } else if (
+      updatedDefendant.defenderEmail !== oldDefendant.defenderEmail ||
+      updatedDefendant.defenderName !== oldDefendant.defenderName
+    ) {
+      // Defender email or name changed on this defendant — re-deliver defender info to court.
+      // Case-level defender field changes still trigger via case.service (dual-write era).
       this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
     }
   }
