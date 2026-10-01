@@ -2,9 +2,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { AccordionItemTag } from '@island.is/application/types'
 import { editUnemploymentInfoDataSchema } from '../lib/dataSchema'
+import { application as applicationMessages } from '../lib/messages'
 
 const missingTag: AccordionItemTag = {
-  label: 'Vantar upplýsingar',
+  label: applicationMessages.missingDataTag,
   variant: 'red',
 }
 
