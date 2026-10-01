@@ -162,4 +162,273 @@ describe('zendeskService', () => {
 
     expect(ticket).toBeUndefined()
   })
+
+  describe('bulk jobs', () => {
+    const jobStatus = (results: unknown[], status = 'completed') => ({
+      job_status: {
+        id: 'job-1',
+        url: `${api}/job_statuses/job-1.json`,
+        status,
+        results,
+      },
+    })
+
+    it('should resolve when every upserted item succeeds', async () => {
+      server.use(
+        rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
+          res.once(ctx.status(200), ctx.json(jobStatus([], 'queued'))),
+        ),
+        rest.get(`${api}/job_statuses/job-1.json`, (req, res, ctx) =>
+          res.once(
+            ctx.status(200),
+            ctx.json(
+              jobStatus([
+                { external_id: 'a', index: 0, status: 'CreateOrUpdate' },
+              ]),
+            ),
+          ),
+        ),
+      )
+
+      await expect(
+        zendeskService.upsertCustomObjectRecordsByExternalId('participant', [
+          { name: 'A', external_id: 'a' },
+        ]),
+      ).resolves.toBeUndefined()
+    })
+
+    it('should throw when some upserted items fail although the job completes', async () => {
+      server.use(
+        rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
+          res.once(
+            ctx.status(200),
+            ctx.json(
+              jobStatus([
+                { external_id: 'a', index: 0, status: 'CreateOrUpdate' },
+                {
+                  external_id: 'b',
+                  index: 1,
+                  status: 'Failed',
+                  errors: [{ title: 'Record validation errors' }],
+                },
+              ]),
+            ),
+          ),
+        ),
+      )
+
+      await expect(
+        zendeskService.upsertCustomObjectRecordsByExternalId('participant', [
+          { name: 'A', external_id: 'a' },
+          { name: 'B', external_id: 'b' },
+        ]),
+      ).rejects.toThrow('1 Zendesk custom object job item(s) failed: b')
+    })
+
+    it('should treat records that do not exist as deleted', async () => {
+      server.use(
+        rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
+          res.once(
+            ctx.status(200),
+            ctx.json(
+              jobStatus([
+                { external_id: 'a', index: 0, status: 'Deleted' },
+                {
+                  external_id: 'b',
+                  index: 1,
+                  status: 'Failed',
+                  errors: [
+                    {
+                      code: 'CustomObjectRecordDeleteFailed',
+                      title: 'Record not found',
+                    },
+                  ],
+                },
+              ]),
+            ),
+          ),
+        ),
+      )
+
+      await expect(
+        zendeskService.deleteCustomObjectRecordsByExternalId('participant', [
+          'a',
+          'b',
+        ]),
+      ).resolves.toBeUndefined()
+    })
+
+    it('should throw when a delete fails for another reason', async () => {
+      server.use(
+        rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
+          res.once(
+            ctx.status(200),
+            ctx.json(
+              jobStatus([
+                {
+                  external_id: 'a',
+                  index: 0,
+                  status: 'Failed',
+                  errors: [{ title: 'Something else' }],
+                },
+              ]),
+            ),
+          ),
+        ),
+      )
+
+      await expect(
+        zendeskService.deleteCustomObjectRecordsByExternalId('participant', [
+          'a',
+        ]),
+      ).rejects.toThrow('1 Zendesk custom object delete item(s) failed: a')
+    })
+
+    it('should throw when the job itself fails', async () => {
+      server.use(
+        rest.post(`${api}/custom_objects/participant/jobs`, (req, res, ctx) =>
+          res.once(ctx.status(200), ctx.json(jobStatus([], 'failed'))),
+        ),
+      )
+
+      await expect(
+        zendeskService.upsertCustomObjectRecordsByExternalId('participant', [
+          { name: 'A', external_id: 'a' },
+        ]),
+      ).rejects.toThrow('Zendesk custom object upsert job failed: job-1')
+    })
+
+    it('should return the created ticket ids by index', async () => {
+      let body: Record<string, any> | undefined
+      server.use(
+        rest.post(`${api}/tickets/create_many.json`, (req, res, ctx) => {
+          body = req.body as Record<string, any>
+          return res.once(
+            ctx.status(200),
+            ctx.json(
+              jobStatus([
+                { index: 1, id: 456 },
+                { index: 0, error: 'InvalidValue' },
+              ]),
+            ),
+          )
+        }),
+      )
+
+      const ticketIds = await zendeskService.createManyTickets([
+        { message: 'first', externalId: 'first' },
+        { message: 'second', externalId: 'second' },
+      ])
+
+      expect(ticketIds).toEqual([undefined, 456])
+      expect(body?.tickets[0]).toMatchObject({
+        external_id: 'first',
+        comment: { body: 'first' },
+      })
+    })
+  })
+
+  it('should list custom object records by external ids across pages', async () => {
+    server.use(
+      rest.get(`${api}/custom_objects/participant/records`, (req, res, ctx) =>
+        req.url.searchParams.get('page[after]')
+          ? res(
+              ctx.status(200),
+              ctx.json({
+                custom_object_records: [{ id: '2', external_id: 'b' }],
+                meta: { has_more: false },
+                // Zendesk returns a next link on the last page as well
+                links: {
+                  next: `${api}/custom_objects/participant/records?page[after]=end`,
+                },
+              }),
+            )
+          : res(
+              ctx.status(200),
+              ctx.json({
+                custom_object_records: [{ id: '1', external_id: 'a' }],
+                meta: { has_more: true },
+                links: {
+                  next: `${api}/custom_objects/participant/records?page[after]=cursor`,
+                },
+              }),
+            ),
+      ),
+    )
+
+    const records = await zendeskService.listCustomObjectRecordsByExternalIds(
+      'participant',
+      ['a', 'b'],
+    )
+
+    expect(records.map((r) => r.external_id)).toEqual(['a', 'b'])
+  })
+
+  it('should search custom object records across pages', async () => {
+    const filters: unknown[] = []
+    server.use(
+      rest.post(
+        `${api}/custom_objects/participant/records/search`,
+        (req, res, ctx) => {
+          filters.push((req.body as Record<string, unknown>).filter)
+          return req.url.searchParams.get('page[after]') === 'cursor'
+            ? res(
+                ctx.status(200),
+                ctx.json({
+                  custom_object_records: [{ id: '2' }],
+                  meta: { has_more: false, after_cursor: null },
+                }),
+              )
+            : res(
+                ctx.status(200),
+                ctx.json({
+                  custom_object_records: [{ id: '1' }],
+                  meta: { has_more: true, after_cursor: 'cursor' },
+                }),
+              )
+        },
+      ),
+    )
+
+    const filter = { 'custom_object_fields.course_instance': { $eq: '123' } }
+    const records = await zendeskService.searchCustomObjectRecords(
+      'participant',
+      filter,
+    )
+
+    expect(records.map((r) => r.id)).toEqual(['1', '2'])
+    expect(filters).toEqual([filter, filter])
+  })
+
+  it('should get a ticket by external id', async () => {
+    server.use(
+      rest.get(`${api}/tickets.json`, (req, res, ctx) =>
+        res.once(
+          ctx.status(200),
+          ctx.json({
+            tickets:
+              req.url.searchParams.get('external_id') === 'existing'
+                ? [{ id: 789 }]
+                : [],
+          }),
+        ),
+      ),
+    )
+
+    await expect(
+      zendeskService.getTicketByExternalId('existing'),
+    ).resolves.toMatchObject({ id: 789 })
+  })
+
+  it('should return null when no ticket has the external id', async () => {
+    server.use(
+      rest.get(`${api}/tickets.json`, (req, res, ctx) =>
+        res.once(ctx.status(200), ctx.json({ tickets: [] })),
+      ),
+    )
+
+    await expect(
+      zendeskService.getTicketByExternalId('missing'),
+    ).resolves.toBeNull()
+  })
 })
