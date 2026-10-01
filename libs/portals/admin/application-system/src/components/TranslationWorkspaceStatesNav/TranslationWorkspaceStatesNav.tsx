@@ -29,7 +29,6 @@ export interface TranslationWorkspaceStatesNavProps {
   onNavClick: (nav: ScreenIntrospection, location: SidebarNavLocation) => void
   persistedByKey: PersistedByKey
   editedValues: EditedTranslations
-  activeLocale: 'is' | 'en'
   ownedNamespaces?: readonly string[]
   formatMessage: FormatMessage
 }
@@ -66,7 +65,6 @@ export const TranslationWorkspaceStatesNav = ({
   onNavClick,
   persistedByKey,
   editedValues,
-  activeLocale,
   ownedNamespaces = [],
   formatMessage,
 }: TranslationWorkspaceStatesNavProps) => {
@@ -100,19 +98,12 @@ export const TranslationWorkspaceStatesNav = ({
           entry.nav.messageDescriptors,
           persistedByKey,
           editedValues,
-          activeLocale,
+          'en',
           ownedNamespaces,
         ),
       }
     })
-  }, [
-    states,
-    persistedByKey,
-    editedValues,
-    activeLocale,
-    ownedNamespaces,
-    formatMessage,
-  ])
+  }, [states, persistedByKey, editedValues, ownedNamespaces, formatMessage])
 
   return (
     <Box width="full" style={{ minWidth: 0 }}>

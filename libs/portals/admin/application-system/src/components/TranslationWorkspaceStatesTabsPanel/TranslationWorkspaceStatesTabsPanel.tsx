@@ -215,7 +215,6 @@ export const TranslationWorkspaceStatesTabsPanel = ({
                 onNavClick={onNavClick}
                 persistedByKey={persistedByKey}
                 editedValues={editedValues}
-                activeLocale={activeLocale}
                 ownedNamespaces={ownedNamespaces}
                 formatMessage={formatMessage}
               />
