@@ -2194,11 +2194,6 @@ export const messages = defineMessages({
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
   },
-  healthConversationReplyBlockedAwaitingAcknowledgementText: {
-    defaultMessage:
-      'Skilaboðin hafa verið send. Hægt verður að svara aftur þegar þau hafa borist móttakanda.',
-    id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
-  },
   healthConversationReplyBlockedWindowExpiredText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',
     id: 'sp.health:health-messages-reply-blocked-window-expired-text',
