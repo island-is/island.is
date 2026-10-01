@@ -133,6 +133,29 @@ describe('useDefendants', () => {
       expect(toast.error).not.toHaveBeenCalled()
     })
 
+    it('reports an error when the response has no defendant id', async () => {
+      const { result } = renderUseDefendants([
+        {
+          request,
+          result: {
+            data: {
+              createDefendant: { __typename: 'Defendant', id: null },
+            },
+          },
+        },
+      ])
+
+      let createdId: string | undefined
+      await act(async () => {
+        createdId = await result.current.createDefendant({ caseId })
+      })
+
+      expect(createdId).toBeUndefined()
+      expect(toast.error).toHaveBeenCalledWith(
+        'Upp kom villa við að stofna nýjan varnaraðila',
+      )
+    })
+
     it('reports an error and resolves to undefined when the request fails', async () => {
       const { result } = renderUseDefendants([
         { request, result: { errors: [new GraphQLError('Forbidden')] } },
