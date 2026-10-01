@@ -183,14 +183,15 @@ export function useHtmlSource(value: string | undefined | null) {
   const theme = useTheme()
   return useMemo(() => {
     if (!value) return null
+    const text = theme.shade.foreground
     const styles = `<style>
-      body { font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif; margin: ${theme.spacing[3]}px; }
-      h1, h2, h3 { color: ${theme.color.blue400}; }
+      body { font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif; margin: ${theme.spacing[3]}px; color: ${text}; }
+      h1, h2, h3 { color: ${text}; }
       h1 { font-size: 32px; line-height: 38px; }
       h2 { font-size: 26px; line-height: 32px; }
       h3 { font-size: 20px; line-height: 26px; }
-      p { color: ${theme.color.blue400}; font-size: 16px; line-height: 24px; }
-      a { color: ${theme.color.blue400}; text-decoration: none; }
+      p { color: ${text}; font-size: 16px; line-height: 24px; }
+      a { color: ${theme.color.blue400}; text-decoration: none; word-break: break-word; }
       svg, img { max-width: 100%; display: block; }
     </style>
     <meta name="viewport" content="width=device-width">`

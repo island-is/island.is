@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl'
 import {
   Alert as RNAlert,
   Image,
+  Linking,
   SafeAreaView,
   TouchableNativeFeedback,
   Touchable,
@@ -16,6 +17,7 @@ import {
   Pressable,
 } from 'react-native'
 import WebView from 'react-native-webview'
+import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
 import styled from 'styled-components/native'
 import { PdfView } from '@kishannareshpal/expo-pdf'
 
@@ -96,6 +98,28 @@ export default function DocumentScreen() {
     confirmAction,
     refetchDocumentContent,
   } = useDocument(id, isUrgent)
+
+  // Links inside an html document would otherwise navigate the WebView itself,
+  // replacing the document with no way back. Open them the same way the action
+  // buttons do instead, and let the OS handle non-web schemes.
+  // Dispatch on the scheme rather than `isTopFrame`: iOS reports it false for
+  // non-web schemes (their url never matches mainDocumentURL) and Android
+  // leaves it undefined entirely, so it filters out the links we want.
+  const onShouldStartLoadWithRequest = useCallback(
+    ({ url }: ShouldStartLoadRequest) => {
+      if (/^(mailto|tel|sms):/i.test(url)) {
+        Linking.openURL(url).catch(() => undefined)
+        return false
+      }
+      if (/^https?:\/\//i.test(url)) {
+        openBrowser(url)
+        return false
+      }
+      // Lets the initial `about:blank` load and in-page anchors through.
+      return true
+    },
+    [openBrowser],
+  )
 
   // Force PdfView to remount when screen regains focus (Android recycles the native surface)
   const [pdfKey, setPdfKey] = useState(0)
@@ -306,7 +330,14 @@ export default function DocumentScreen() {
         ) : contentType === 'pdf' && pdfUri ? (
           <PdfView key={pdfKey} uri={pdfUri} style={{ flex: 1 }} />
         ) : contentType === 'html' && htmlSource ? (
-          <WebView source={htmlSource} scalesPageToFit />
+          <WebView
+            source={htmlSource}
+            scalesPageToFit
+            // Keeps target="_blank" links on Android from being swallowed by a
+            // popup window instead of hitting onShouldStartLoadWithRequest.
+            setSupportMultipleWindows={false}
+            onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+          />
         ) : contentType === 'url' && document.content?.value ? (
           <WebView source={{ uri: document.content.value }} />
         ) : null}
