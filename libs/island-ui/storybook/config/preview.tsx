@@ -10,6 +10,8 @@ export const parameters: Parameters = {
   previewTabs: { 'storybook/docs/panel': { index: -1 } },
   apolloClient: {
     MockedProvider,
+    // The addon's panel title reads `mocks.length`, so it must always be defined
+    mocks: [],
   },
 }
 
