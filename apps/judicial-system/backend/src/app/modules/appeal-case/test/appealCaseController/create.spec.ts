@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -27,6 +24,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -36,7 +34,7 @@ import {
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -166,7 +164,7 @@ describe('AppealCaseController - Create', () => {
     })
 
     it('should queue the appeal to court of appeals notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -346,7 +344,7 @@ describe('AppealCaseController - Create', () => {
     })
 
     it('should queue delivery of the appeal brief file', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           caseId,
