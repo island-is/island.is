@@ -527,15 +527,16 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
     generateCaseNumber(c, user, c.appealCase?.appealCaseNumber ?? ''),
 }
 
+// The same cell as caseNumber, fed by a different association. The row's own
+// appeal is normalised into appealCase before any of this runs, so all that
+// differs is which join the list has to make.
 const verdictAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: ['policeCaseNumbers', 'courtCaseNumber'],
+  ...caseNumber,
   includes: {
     court: { attributes: ['name'] },
     defendants: { attributes: ['publicProsecutorIsRegisteredInPoliceSystem'] },
     verdictAppealCase: { attributes: ['appealCaseNumber'] },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> =>
-    generateCaseNumber(c, user, c.verdictAppealCase?.appealCaseNumber ?? ''),
 }
 
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
@@ -728,11 +729,11 @@ const verdictAppealAppellant: CaseTableCellGenerator<StringValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
-    if (!c.verdictAppealCase) {
+    if (!c.appealCase) {
       return generateCell()
     }
 
-    const appellants = standingVerdictAppellants(c.verdictAppealCase)
+    const appellants = standingVerdictAppellants(c.appealCase)
 
     if (appellants.length === 0) {
       return generateCell()
@@ -756,7 +757,7 @@ const verdictAppealState: CaseTableCellGenerator<TagValue> = {
     verdictAppealCase: { attributes: ['appealState'] },
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
-    switch (c.verdictAppealCase?.appealState) {
+    switch (c.appealCase?.appealState) {
       case AppealCaseState.APPEALED:
         return generateCell({ color: 'purple', text: 'Nýtt' }, 'A')
       case AppealCaseState.RECEIVED:
@@ -775,7 +776,7 @@ const verdictAppealHead: CaseTableCellGenerator<StringValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
-    const initials = getInitials(c.verdictAppealCase?.appealJudge1?.name)
+    const initials = getInitials(c.appealCase?.appealJudge1?.name)
 
     if (!initials) {
       return generateCell()
@@ -797,7 +798,7 @@ const verdictAppealCompletedDate: CaseTableCellGenerator<StringValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
-    const appealCase = c.verdictAppealCase
+    const appealCase = c.appealCase
 
     if (appealCase?.appealState === AppealCaseState.WITHDRAWN) {
       const withdrawnDates = (appealCase.appealEventLogs ?? [])
@@ -826,7 +827,7 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
-    const appealCase = c.verdictAppealCase
+    const appealCase = c.appealCase
 
     if (appealCase?.appealState === AppealCaseState.WITHDRAWN) {
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'Z')

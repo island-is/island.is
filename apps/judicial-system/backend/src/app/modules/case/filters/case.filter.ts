@@ -261,10 +261,25 @@ const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
   return canAppealsCourtUserAccessCaseAppealCase(theCase)
 }
 
+// An appealed verdict reaches the court earlier than an appealed ruling does.
+// Every clause above waits for receipt; a verdict appeal is filed and then
+// waits for the court to pick it up, so the court has to see it from the
+// moment it is filed or it could never receive it at all. Every state of one
+// is the court's to see, which is what the case table access rule says too -
+// the two have to agree, or the court gets a row in a list that it cannot
+// open.
+//
+// The association is scoped to appeal_type = VERDICT, so its presence is the
+// whole of the question.
+const canAppealsCourtUserAccessCaseVerdictAppealCase = (
+  theCase: Case,
+): boolean => Boolean(theCase.verdictAppealCase)
+
 const canAppealsCourtUserAccessIndictmentCase = (theCase: Case): boolean => {
   return (
     canAppealsCourtUserAccessCaseAppealCase(theCase) ||
-    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase)
+    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase) ||
+    canAppealsCourtUserAccessCaseVerdictAppealCase(theCase)
   )
 }
 
@@ -274,7 +289,8 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
     return canAppealsCourtUserAccessRequestCase(theCase)
   }
 
-  // Indictment cases — only dismissed cases can be appealed
+  // Indictment cases - a dismissal or a ruling order is appealed by ruling appeal,
+  // a judgment by verdict appeal.
   if (isIndictmentCase(theCase.type)) {
     return canAppealsCourtUserAccessIndictmentCase(theCase)
   }

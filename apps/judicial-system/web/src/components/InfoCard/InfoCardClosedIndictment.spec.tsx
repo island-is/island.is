@@ -237,6 +237,47 @@ describe('InfoCardClosedIndictment', () => {
       expect(screen.queryByText('Case Level Judge One')).toBeNull()
     })
 
+    // The verdict appeal is a third proceeding the same card can be asked
+    // about, and the URL is what says so - the same mechanism as a ruling
+    // order appeal uses, not a second one beside it.
+    it('shows the verdict appeal when the query string names it', async () => {
+      mockAppealCaseIdQuery = 'verdict-appeal'
+
+      renderClosedIndictment({
+        ...caseWithBothAppeals(),
+        verdictAppealCase: {
+          id: 'verdict-appeal',
+          appealCaseNumber: 'L-300/2026',
+          appealAssistant: { id: 'assistant', name: 'Verdict Assistant' },
+          appealJudge1: { id: 'judge-1', name: 'Verdict Judge One' },
+          appealJudge2: { id: 'judge-2', name: 'Verdict Judge Two' },
+          appealJudge3: { id: 'judge-3', name: 'Verdict Judge Three' },
+        },
+      } as unknown as Case)
+
+      await screen.findByText('L-300/2026')
+      expect(screen.queryByText('L-100/2026')).toBeNull()
+      await screen.findByText('Verdict Assistant')
+      expect(screen.queryByText('Case Level Assistant')).toBeNull()
+    })
+
+    // The verdict appeal today: no case number of its own, so no section -
+    // rather than borrowing the case-level appeal's.
+    it('shows no section for a named appeal with no case number', async () => {
+      mockAppealCaseIdQuery = 'verdict-appeal'
+
+      renderClosedIndictment({
+        ...caseWithBothAppeals(),
+        verdictAppealCase: { id: 'verdict-appeal' },
+      } as unknown as Case)
+
+      // The card rendered - the police case number is on it - but the Court
+      // of Appeals section is not.
+      await screen.findByText('007-2021-202000')
+      expect(screen.queryByText('L-100/2026')).toBeNull()
+      expect(screen.queryByText('Case Level Assistant')).toBeNull()
+    })
+
     it('still shows the case level appeal when the query string names none', async () => {
       renderClosedIndictment(caseWithBothAppeals())
 
