@@ -5,14 +5,13 @@ import type {
   MessageDescriptor,
 } from '../../types/translationWorkspace'
 import { m } from '../../lib/messages'
-import { isTranslatingEveryId } from '../../utils/translationWorkspaceEditing'
+import {
+  getTranslationSourceText,
+  isTranslatingEveryId,
+  type PersistedByKey,
+} from '../../utils/translationWorkspaceEditing'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
-
-type PersistedByKey = Record<
-  string,
-  { valueIs: string; valueEn?: string | null }
->
 
 export interface TranslationStringsListProps {
   descriptors: MessageDescriptor[]
@@ -43,14 +42,8 @@ export const TranslationStringsList = ({
   translatingIds,
   emptyMessage,
 }: TranslationStringsListProps) => {
-  const getSourceText = (descriptor: MessageDescriptor) => {
-    return (
-      editedValues.is[descriptor.id] ||
-      persistedByKey[descriptor.id]?.valueIs ||
-      descriptor.defaultMessage ||
-      ''
-    )
-  }
+  const getSourceText = (descriptor: MessageDescriptor) =>
+    getTranslationSourceText(descriptor, editedValues, persistedByKey)
 
   const handleTranslateAll = () => {
     if (!onGoogleTranslateAll) return

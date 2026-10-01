@@ -9,14 +9,13 @@ import type {
   ValidationMessageDescriptor,
 } from '../../types/translationWorkspace'
 import { m } from '../../lib/messages'
+import {
+  getTranslationSourceText,
+  type PersistedByKey,
+} from '../../utils/translationWorkspaceEditing'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
 import { TranslationStringsList } from './TranslationStringsList'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
-
-type PersistedByKey = Record<
-  string,
-  { valueIs: string; valueEn?: string | null }
->
 
 export interface TabsPanelStringsTabProps {
   selectedScreen: ScreenIntrospection | null
@@ -70,15 +69,6 @@ export const TabsPanelStringsTab = ({
     stringsListScope === 'application' && applicationStringCount > 0
 
   const showMainList = canShowScreenList || canShowApplicationList
-
-  const getSourceText = (descriptor: MessageDescriptor) => {
-    return (
-      editedValues.is[descriptor.id] ||
-      persistedByKey[descriptor.id]?.valueIs ||
-      descriptor.defaultMessage ||
-      ''
-    )
-  }
 
   return (
     <Box className={styles.tabsPanelScroll}>
@@ -196,7 +186,11 @@ export const TabsPanelStringsTab = ({
                 </Box>
 
                 {visibleValidationDescriptors.map((descriptor) => {
-                  const sourceText = getSourceText(descriptor)
+                  const sourceText = getTranslationSourceText(
+                    descriptor,
+                    editedValues,
+                    persistedByKey,
+                  )
                   const icelandicValue =
                     editedValues.is[descriptor.id] ??
                     getPersistedValue(descriptor.id, 'is') ??

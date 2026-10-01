@@ -72,6 +72,19 @@ export const getPersistedForMessage = (
   return locale === 'en' ? row.valueEn ?? '' : row.valueIs
 }
 
+export const getTranslationSourceText = (
+  descriptor: Pick<MessageDescriptor, 'id' | 'defaultMessage'>,
+  editedValues: EditedTranslations,
+  persistedByKey: PersistedByKey,
+): string => {
+  return (
+    editedValues.is[descriptor.id] ||
+    getPersistedForMessage(persistedByKey, descriptor.id, 'is') ||
+    descriptor.defaultMessage ||
+    ''
+  )
+}
+
 export type TranslationToSave = {
   namespace: string
   messageKey: string
