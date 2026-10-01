@@ -11,6 +11,7 @@
  * - Only this draft's own impacts are taken into account for the date range
  */
 import {
+  AlertMessage,
   Box,
   Button,
   Divider,
@@ -68,6 +69,8 @@ export const EditCancellation = (props: EditCancellationProps) => {
     cancellation.date ??
     (toISODate(minDate) > toISODate(today) ? toISODate(minDate) : undefined)
   const [saving, setSaving] = useState(false)
+  // Without the regulation's history, scheduled changes can't be checked
+  const fetchFailed = !isSelf && done && !regulation
 
   const changeCancelDate = (newDate: Date | undefined) => {
     setActiveDate(newDate)
@@ -88,7 +91,7 @@ export const EditCancellation = (props: EditCancellationProps) => {
 
   const isValidImpact = () => {
     // Wait for the scheduled changes, which the date must not come before
-    return !!effectiveDate && (isSelf || done)
+    return !!effectiveDate && (isSelf || (done && !fetchFailed))
   }
 
   return (
@@ -128,6 +131,15 @@ export const EditCancellation = (props: EditCancellationProps) => {
               upcoming={upcoming}
               targetName={cancellation.name}
             />
+            {fetchFailed && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Ekki tókst að sækja reglugerðina"
+                  message="Ekki tókst að sækja reglugerðina og væntanlegar breytingar á henni. Reyndu aftur síðar."
+                />
+              </Box>
+            )}
             <Box paddingY={5}>
               <Divider />
             </Box>

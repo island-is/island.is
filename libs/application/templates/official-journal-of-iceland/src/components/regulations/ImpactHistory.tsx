@@ -8,7 +8,7 @@
  * - Takes the effects from getImpactChain instead of RegulationHistoryItemAdmin
  * - Only this draft's own impacts are shown, so there is no draft mismatch state
  */
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, VisuallyHidden } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
@@ -81,6 +81,7 @@ const EffectItem = ({
       <Text variant="small" color="blueberry600">
         {effect.effect === 'repeal' ? 'Felld brott með' : 'Breytt með'}{' '}
         {effect.name ? prettyName(effect.name as RegName) : ''}
+        <VisuallyHidden> (opnast í nýjum flipa)</VisuallyHidden>
       </Text>
     </a>
   )
@@ -126,6 +127,7 @@ export const ImpactHistory = ({
         >
           <Text variant="h5" color="blueberry600">
             Sjá núgildandi
+            <VisuallyHidden> (opnast í nýjum flipa)</VisuallyHidden>
           </Text>
         </a>
       </Box>

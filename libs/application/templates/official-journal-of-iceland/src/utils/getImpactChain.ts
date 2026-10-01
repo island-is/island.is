@@ -43,6 +43,12 @@ type ImpactChain = {
   hasFutureEffects: boolean
   /** The date of a repeal before this change, after which it can't apply */
   repealedOn?: string
+  /**
+   * A scheduled change that takes effect between the text this change builds
+   * on and this change's date. This change's text doesn't include it, so it
+   * would undo it.
+   */
+  missedEffect?: { date: string; name: string }
   /** Scheduled changes and this draft's other impacts, by date */
   upcoming: UpcomingEffect[]
 }
@@ -110,6 +116,25 @@ export const getImpactChain = ({
           .sort()[0]
       : undefined
 
+  // The text a change builds on: the previous change's, or for an existing
+  // change without one, the text as of its own saved date. A new change
+  // without one starts from the text after all scheduled changes.
+  const baseDate = previous?.date ?? (isExisting ? impact.date : undefined)
+  const savedDate = toISODate(
+    pickedDate ? laterOf(new Date(pickedDate), minDate) : minDate,
+  )
+  const missed =
+    impact.type === 'amend' && baseDate
+      ? [...scheduled]
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .find(
+            (item) =>
+              item.effect === 'amend' &&
+              item.date > baseDate &&
+              item.date <= savedDate,
+          )
+      : undefined
+
   const upcoming = [
     ...scheduled.map(
       (item): UpcomingEffect => ({
@@ -135,6 +160,7 @@ export const getImpactChain = ({
     minDate,
     hasFutureEffects: futureEffects.length > 0,
     repealedOn,
+    missedEffect: missed ? { date: missed.date, name: missed.name } : undefined,
     upcoming,
   }
 }

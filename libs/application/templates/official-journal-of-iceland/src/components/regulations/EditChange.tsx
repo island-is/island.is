@@ -25,7 +25,13 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useState, useEffect, useMemo } from 'react'
-import { HTMLText, toISODate, getDiff } from '@island.is/regulations'
+import {
+  HTMLText,
+  toISODate,
+  getDiff,
+  prettyName,
+  RegName,
+} from '@island.is/regulations'
 import dirtyClean from '@dmr.is/regulations-tools/dirtyClean-browser'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
@@ -99,7 +105,14 @@ export const EditChange = (props: EditChangeProps) => {
 
   // Build on this draft's earlier change of the regulation, or on the
   // regulation as it will be once its scheduled changes are in effect.
-  const { previous, minDate, hasFutureEffects, repealedOn, upcoming } = useMemo(
+  const {
+    previous,
+    minDate,
+    hasFutureEffects,
+    repealedOn,
+    missedEffect,
+    upcoming,
+  } = useMemo(
     () =>
       getImpactChain({
         impact: change,
@@ -248,7 +261,7 @@ export const EditChange = (props: EditChangeProps) => {
 
   const isValidImpact = () => {
     // Date always has a value — defaults to today ("takes effect immediately")
-    return !!activeTitle && !!activeText && !repealedOn
+    return !!activeTitle && !!activeText && !repealedOn && !missedEffect
   }
 
   // Don't save a diff against a base that hasn't loaded
@@ -323,6 +336,21 @@ export const EditChange = (props: EditChangeProps) => {
                         )}, með þeim breytingum sem þegar hafa verið birtar. Reyndu aftur síðar.`
                       : 'Ekki tókst að sækja reglugerðina og væntanlegar breytingar á henni. Reyndu aftur síðar.'
                   }
+                />
+              </Box>
+            )}
+            {missedEffect && !repealedOn && !readOnly && (
+              <Box marginBottom={4}>
+                <AlertMessage
+                  type="error"
+                  title="Önnur breyting tekur gildi á undan"
+                  message={`Reglugerð ${prettyName(
+                    missedEffect.name as RegName,
+                  )} breytir reglugerðinni ${formatDate(
+                    new Date(missedEffect.date),
+                  )}. Sú breyting er ekki í textanum sem þessi breyting byggir á og myndi falla út ef þessi breyting tæki gildi á eftir henni.${
+                    isNewImpact ? '' : ' Veldu dagsetningu á undan henni.'
+                  }`}
                 />
               </Box>
             )}

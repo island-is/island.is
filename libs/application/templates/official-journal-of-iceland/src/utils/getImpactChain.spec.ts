@@ -207,4 +207,41 @@ describe('getImpactChain', () => {
       }).repealedOn,
     ).toBe('2026-10-02')
   })
+
+  describe('a scheduled change missing from the text', () => {
+    const withHistory = (
+      impact: RegulationImpactSchema,
+      impacts: RegulationImpactSchema[],
+      selectedDate?: string,
+    ) =>
+      getImpactChain({
+        impact,
+        impacts,
+        history: [scheduled('2026-12-01')],
+        defaultMinDate,
+        selectedDate,
+        today,
+      }).missedEffect
+
+    it('blocks moving an existing change past it', () => {
+      const change = amend('a', '2026-11-01')
+
+      expect(withHistory(change, [change])).toBeUndefined()
+      expect(withHistory(change, [change], '2026-11-20')).toBeUndefined()
+      expect(withHistory(change, [change], '2026-12-15')).toEqual({
+        date: '2026-12-01',
+        name: '0200/2026',
+      })
+    })
+
+    it('blocks a new change built on an earlier change before it', () => {
+      const earlier = amend('a', '2026-11-01')
+
+      expect(withHistory(newImpact, [earlier])?.date).toBe('2026-12-01')
+    })
+
+    it('allows a new change that starts from the dated text', () => {
+      expect(withHistory(newImpact, [])).toBeUndefined()
+    })
+  })
 })
