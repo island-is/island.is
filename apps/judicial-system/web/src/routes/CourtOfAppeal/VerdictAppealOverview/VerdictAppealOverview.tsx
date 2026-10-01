@@ -107,8 +107,10 @@ const VerdictAppealOverview = () => {
               the change that makes it reachable. */}
           {/* The appeal declaration and what came with it, titled
               "Áfrýjunarferli"; the áfrýjunarstefna joins it with the ticket
-              that creates it. AllIndictmentCaseFiles below carries the
-              district court's own documents. */}
+              that creates it. Build those cards with the Stackable component -
+              a case carries one per appealing party, and the design piles them
+              rather than running them down the page. AllIndictmentCaseFiles
+              below carries the district court's own documents. */}
           <VerdictAppealFiles />
           <AllIndictmentCaseFiles />
         </div>
