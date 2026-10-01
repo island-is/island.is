@@ -150,8 +150,11 @@ const toRow = (c: Case): CaseTableRowCase => {
   return { ...rest, appeal: appealCase } as CaseTableRowCase
 }
 
-export const toRowsWithCaseLevelAppeal = (cs: Case[]): CaseTableRowCase[] =>
-  cs.map(toRow)
+export const toDisplayCases = (
+  cs: Case[],
+  displayCases: (cases: Case[]) => CaseTableRowCase[] = (cs: Case[]) =>
+    cs.map(toRow),
+): CaseTableRowCase[] => displayCases(cs)
 
 /**
  * What a user may reach at all, as opposed to which of those cases belong in a

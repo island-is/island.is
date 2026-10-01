@@ -18,7 +18,7 @@ import { AppealCase, CaseRepositoryService, Defendant } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
-import { toRowsWithCaseLevelAppeal } from './caseTable.types'
+import { toDisplayCases } from './caseTable.types'
 import {
   getAccessIncludes,
   getActionOnRowClick,
@@ -127,9 +127,7 @@ export class CaseTableService {
 
     // Every list produces rows the same shape - see CaseTableRowCase. A list
     // that says nothing is about the case-level appeal.
-    const rows = whereOptions.displayCases
-      ? whereOptions.displayCases(cases)
-      : toRowsWithCaseLevelAppeal(cases)
+    const rows = toDisplayCases(cases, whereOptions.displayCases)
 
     return {
       rowCount: rows.length,
