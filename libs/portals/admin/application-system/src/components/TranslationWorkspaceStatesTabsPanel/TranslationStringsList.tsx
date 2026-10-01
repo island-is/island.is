@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Icon,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, Tooltip } from '@island.is/island-ui/core'
 import type { FormatMessage } from '@island.is/localization'
 import type {
   EditedTranslations,
