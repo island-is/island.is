@@ -324,6 +324,39 @@ describe('AppealCaseController - Create', () => {
     })
   })
 
+  describe('prosecution user appeals a restriction case already appealed in court', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      caseFiles: [
+        {
+          id: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        },
+      ],
+      appealDecisions: [
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.APPEAL,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, prosecutor)
+    })
+
+    it('should create the appeal case but queue no messages', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.create).toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+    })
+  })
+
   describe('appeal brief case files are delivered to court', () => {
     const rvgFileId = uuid()
     const theCase = {
