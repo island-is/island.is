@@ -5,7 +5,6 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 
@@ -27,20 +26,11 @@ export const getCourtOfAppealsVerdictTimelineItems = (
   const items: VerdictTimelineItem[] = []
   const { verdict } = defendant
 
-  // Served or not: once it has been served the date and the manner say all
-  // there is to say, and until then the requirement itself does.
-  if (
-    verdict?.serviceRequirement === ServiceRequirement.REQUIRED &&
-    verdict.serviceDate
-  ) {
-    const manner = verdict.serviceStatus
-      ? ` – ${getVerdictServiceStatusText(verdict.serviceStatus)}`
-      : ''
-
-    items.push({
-      text: `Dómur birtur ${formatDate(verdict.serviceDate)}${manner}`,
-    })
-  } else if (verdict?.serviceRequirement) {
+  // Every step stays, unlike the cards the parties see. Those are read by
+  // someone deciding what to do next, so a later fact replaces the one it
+  // settles. This is read by a court reconstructing what happened, and each
+  // step is a fact in its own right.
+  if (verdict?.serviceRequirement) {
     const serviceRequirementText = getServiceRequirementText(
       verdict.serviceRequirement,
     )
@@ -48,6 +38,16 @@ export const getCourtOfAppealsVerdictTimelineItems = (
     if (serviceRequirementText) {
       items.push({ text: serviceRequirementText })
     }
+  }
+
+  if (verdict?.serviceDate) {
+    const manner = verdict.serviceStatus
+      ? ` – ${getVerdictServiceStatusText(verdict.serviceStatus)}`
+      : ''
+
+    items.push({
+      text: `Dómur birtur ${formatDate(verdict.serviceDate)}${manner}`,
+    })
   }
 
   // The defendant's own deadline, not the prosecution's. It runs from service
@@ -61,16 +61,19 @@ export const getCourtOfAppealsVerdictTimelineItems = (
     })
   }
 
-  // Where the defendant stands, until they appeal - at which point the appeal
-  // is the stance and takes its place.
-  if (verdict?.appealDate) {
-    items.push({ text: `Dómfelldi áfrýjaði ${formatDate(verdict.appealDate)}` })
-  } else if (verdict?.appealDecision) {
+  // The stance taken at service, and then what was done. Both: taking the
+  // appeal window and then using it are two steps, and the court is reading
+  // the sequence.
+  if (verdict?.appealDecision) {
     items.push({
       text: `Afstaða dómfellda: ${getVerdictAppealDecision(
         verdict.appealDecision,
       )}`,
     })
+  }
+
+  if (verdict?.appealDate) {
+    items.push({ text: `Dómfelldi áfrýjaði ${formatDate(verdict.appealDate)}` })
   }
 
   return items

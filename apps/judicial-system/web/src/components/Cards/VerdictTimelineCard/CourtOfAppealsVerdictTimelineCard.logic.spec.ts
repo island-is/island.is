@@ -29,9 +29,11 @@ describe('getCourtOfAppealsVerdictTimelineItems', () => {
     ).toEqual(['Birta skal dómfellda dóminn'])
   })
 
-  // Once served, the date and the manner replace it - the manner matters
-  // because it is what the appeal window is counted from.
-  it('replaces it with the date and manner once served', () => {
+  // Service does not retire the requirement the way it does on the cards the
+  // parties read: the court is reconstructing what happened, and that the
+  // verdict had to be served is a fact about the case whether or not it since
+  // was. The manner matters because the appeal window is counted from it.
+  it('adds the date and manner to it once served', () => {
     expect(
       texts(
         defendantWith({
@@ -42,7 +44,10 @@ describe('getCourtOfAppealsVerdictTimelineItems', () => {
           },
         } as Partial<Defendant>),
       ),
-    ).toEqual(['Dómur birtur 01.06.2026 – Birt rafrænt'])
+    ).toEqual([
+      'Birta skal dómfellda dóminn',
+      'Dómur birtur 01.06.2026 – Birt rafrænt',
+    ])
   })
 
   it('leaves the manner out when none was recorded', () => {
@@ -55,7 +60,7 @@ describe('getCourtOfAppealsVerdictTimelineItems', () => {
           },
         } as Partial<Defendant>),
       ),
-    ).toEqual(['Dómur birtur 01.06.2026'])
+    ).toEqual(['Birta skal dómfellda dóminn', 'Dómur birtur 01.06.2026'])
   })
 
   // The defendant's own deadline, which runs from service. The reviewer card
@@ -83,9 +88,9 @@ describe('getCourtOfAppealsVerdictTimelineItems', () => {
     ).toEqual(['Afstaða dómfellda: Tekur áfrýjunarfrest'])
   })
 
-  // An appeal is the stance, so it takes the place of one rather than being
-  // listed beside it.
-  it('replaces the stance once the defendant has appealed', () => {
+  // Taking the appeal window and then using it are two steps, and the court
+  // reads the sequence rather than only where it ended.
+  it('keeps the stance beside the appeal that followed it', () => {
     expect(
       texts(
         defendantWith({
@@ -95,11 +100,14 @@ describe('getCourtOfAppealsVerdictTimelineItems', () => {
           },
         } as Partial<Defendant>),
       ),
-    ).toEqual(['Dómfelldi áfrýjaði 04.06.2026'])
+    ).toEqual([
+      'Afstaða dómfellda: Tekur áfrýjunarfrest',
+      'Dómfelldi áfrýjaði 04.06.2026',
+    ])
   })
 
-  // The order the court reads them in: how it was served, how long they had,
-  // what they did.
+  // The order the court reads them in: what was required, how it was served,
+  // how long they had, where they stood, what they did. Nothing drops out.
   it('reads in that order when everything is known', () => {
     expect(
       texts(
@@ -109,13 +117,16 @@ describe('getCourtOfAppealsVerdictTimelineItems', () => {
             serviceRequirement: ServiceRequirement.REQUIRED,
             serviceDate: '2026-06-01T00:00:00.000Z',
             serviceStatus: VerdictServiceStatus.ELECTRONICALLY,
+            appealDecision: VerdictAppealDecision.POSTPONE,
             appealDate: '2026-06-04T00:00:00.000Z',
           },
         } as Partial<Defendant>),
       ),
     ).toEqual([
+      'Birta skal dómfellda dóminn',
       'Dómur birtur 01.06.2026 – Birt rafrænt',
       'Áfrýjunarfrestur ákærða er til 29.06.2026',
+      'Afstaða dómfellda: Tekur áfrýjunarfrest',
       'Dómfelldi áfrýjaði 04.06.2026',
     ])
   })

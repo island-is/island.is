@@ -30,12 +30,14 @@ const CourtOfAppealsVerdictTimelineCard: FC<Props> = ({ defendant }) => {
   return (
     <BlueBox>
       <SectionHeading
-        title={defendant.name ?? ''}
+        title="Dómur"
         heading="h4"
         variant="h4"
         marginBottom={2}
       />
-      <VerdictTimelineBody items={items} />
+      {/* The defendant is the eyebrow rather than the title: the card is about
+          the verdict, and a case can carry one card per defendant. */}
+      <VerdictTimelineBody eyebrow={defendant.name ?? ''} items={items} />
     </BlueBox>
   )
 }
