@@ -264,6 +264,15 @@ export const EditChange = (props: EditChangeProps) => {
     return !!activeTitle && !!activeText && !repealedOn && !missedEffect
   }
 
+  // What the user can do about a scheduled change the text doesn't include
+  const missedEffectAdvice = !missedEffect
+    ? ''
+    : !isNewImpact && missedEffect.date > toISODate(minDate)
+    ? 'Veldu dagsetningu á undan henni.'
+    : previous
+    ? 'Fyrri breyting á reglugerðinni í þessari umsókn tekur gildi á undan henni, svo ekki er hægt að skrá þessa breytingu á eftir henni.'
+    : 'Eyddu breytingunni og skráðu hana aftur, þá byggir hún á textanum með þeirri breytingu.'
+
   // Don't save a diff against a base that hasn't loaded
   const baseReady =
     isSelf || (!regulationLoading && !!currentRegulation && !!baseRegulation)
@@ -348,9 +357,7 @@ export const EditChange = (props: EditChangeProps) => {
                     missedEffect.name as RegName,
                   )} breytir reglugerðinni ${formatDate(
                     new Date(missedEffect.date),
-                  )}. Sú breyting er ekki í textanum sem þessi breyting byggir á og myndi falla út ef þessi breyting tæki gildi á eftir henni.${
-                    isNewImpact ? '' : ' Veldu dagsetningu á undan henni.'
-                  }`}
+                  )}. Sú breyting er ekki í textanum sem þessi breyting byggir á og myndi falla út ef þessi breyting tæki gildi á eftir henni. ${missedEffectAdvice}`}
                 />
               </Box>
             )}
@@ -377,7 +384,8 @@ export const EditChange = (props: EditChangeProps) => {
                 Wait for both the fetch AND the useEffect that populates the
                 form fields — the HTMLEditor captures its value at mount time
                 via a ref, so it must not render before data is ready. */}
-            {fetchFailed ? null : !initialized || regulationLoading ? (
+            {fetchFailed && !readOnly ? null : !initialized ||
+              regulationLoading ? (
               <Box
                 display="flex"
                 justifyContent="center"
