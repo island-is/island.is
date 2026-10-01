@@ -177,6 +177,25 @@ Pure tests þurfa ekki Docker. PostgreSQL-próf eru keyrð þegar
 einstakt schema, sannreyna migrations/trigger/SQL/tímamörk og fjarlægja það á eftir.
 Án breytunnar eru þau merkt skipped; það jafngildir ekki staðfestum DB-prófum.
 
+### Persónuverndarpróf og takmarkanir
+
+`privacy.spec.ts` prófar útleiðandi köll á DogStatsD-client með tilbúnum
+persónuauðkennum í niðurstöðum gagnasafna. Prófin staðfesta nákvæm mæliheiti,
+flokkamerki og tölugildi frá núverandi söfnurum, að aukareitir með auðkennum eða
+innihaldi berist ekki áfram og að óvænt flokkgildi verði ekki að merkjum.
+Þau prófa einnig að villur með persónugögnum berist ekki í stöðumælingar.
+`external.spec.ts` staðfestir að villuloggun ytri safnarans birti aðeins föst
+skilaboð og heimild, ekki innihald upstream-villu.
+
+Þetta eru regression-próf gegn beinum gagnaleka, **ekki staðfesting á nafnleynd**.
+Gagnagrunnur og sendingar eru hermd í þessum prófum; þau staðfesta ekki raunveruleg
+SQL-niðurstöðugögn, agent-merki, tracing eða alla logga keyrsluumhverfisins.
+Sendingarlagið hefur ekki runtime-leyfislista fyrir mæliheiti og merki.
+Engin vörn er enn gegn litlum hópum eða ályktunum út frá mismuni nákvæmra talna
+yfir tíma. Að prófin standist þýðir því ekki að krafan um ópersónugreinanlegar
+mælingar sé uppfyllt. `read_at` er áfram persónutengdur tími í upprunagagnagrunni,
+þótt hann sé ekki sendur sem einstaklingsgildi til Datadog.
+
 ## Innleiðing og mælaborð
 
 1. Keyra DB-próf og prófa migrations í staging. Index-migration notar

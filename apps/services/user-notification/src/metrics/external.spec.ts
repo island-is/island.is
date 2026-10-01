@@ -1,4 +1,10 @@
-import { externalSnapshot, queryAggregates } from './external'
+import { logger } from '@island.is/logging'
+import { DogStatsD } from '@island.is/infra-metrics'
+import { externalMetrics, externalSnapshot, queryAggregates } from './external'
+
+jest.mock('@island.is/logging', () => ({
+  logger: { error: jest.fn() },
+}))
 
 jest.mock('firebase-admin/app', () => ({
   applicationDefault: () => ({
@@ -91,10 +97,12 @@ describe('BigQuery aggregate transport', () => {
     'METRICS_BIGQUERY_PROJECT',
     'METRICS_BIGQUERY_LOCATION',
     'METRICS_GOOGLE_CREDENTIALS',
+    'FIREBASE_METRICS_ENABLED',
   ]
   const original = Object.fromEntries(
     variables.map((name) => [name, process.env[name]]),
   )
+  const originalArgv = process.argv
   beforeEach(() => {
     process.env.FIREBASE_METRICS_VIEW = 'metrics-test.analytics.firebase'
     process.env.METRICS_BIGQUERY_PROJECT = 'metrics-test'
@@ -102,6 +110,8 @@ describe('BigQuery aggregate transport', () => {
     delete process.env.METRICS_GOOGLE_CREDENTIALS
   })
   afterEach(() => {
+    process.argv = originalArgv
+    jest.clearAllMocks()
     jest.restoreAllMocks()
     for (const name of variables) {
       if (original[name] === undefined) delete process.env[name]
@@ -110,6 +120,45 @@ describe('BigQuery aggregate transport', () => {
   })
   const response = (body: unknown) =>
     ({ ok: true, json: async () => body } as Response)
+
+  it('logs only a fixed message and source when upstream errors contain private data', async () => {
+    const failure = new Error(
+      'privacy-canary@example.invalid private-device-token',
+    )
+    process.env.FIREBASE_METRICS_ENABLED = 'true'
+    process.argv = [
+      'node',
+      'main.cjs',
+      '--job=external-metrics',
+      '--source=firebase',
+    ]
+    jest.spyOn(global, 'fetch').mockRejectedValue(failure)
+    // Avoid sending packets; retain the actual collector/publisher/error path.
+    const gauge = jest
+      .spyOn(DogStatsD.prototype, 'gauge')
+      .mockImplementation(((
+        _name: unknown,
+        _value: unknown,
+        _tags: unknown,
+        callback: () => void,
+      ) => callback()) as DogStatsD['gauge'])
+    jest.spyOn(DogStatsD.prototype, 'close').mockImplementation((callback) => {
+      callback?.()
+    })
+    await expect(externalMetrics()).rejects.toBe(failure)
+    expect(logger.error).toHaveBeenCalledTimes(1)
+    expect(logger.error).toHaveBeenCalledWith(
+      'External notification metrics collection failed',
+      { source: 'firebase' },
+    )
+    expect(gauge).toHaveBeenCalledTimes(1)
+    expect(gauge).toHaveBeenCalledWith(
+      'collection.success',
+      0,
+      { source: 'firebase' },
+      expect.any(Function),
+    )
+  })
 
   it('binds the UTC day and bounds the query cost', async () => {
     const fetchMock = jest.spyOn(global, 'fetch').mockResolvedValue(
