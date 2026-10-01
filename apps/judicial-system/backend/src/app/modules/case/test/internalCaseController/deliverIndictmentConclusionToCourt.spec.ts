@@ -1,5 +1,4 @@
 import { mock } from 'jest-mock-extended'
-import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -161,8 +160,9 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
         mockCourtService.updateIndictmentCaseWithConclusion as jest.Mock
       mockUpdateIndictmentCaseWithConclusion.mockResolvedValue(uuid())
 
-      const mockFindOne = mockDefendantRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue({
+      const mockFindByIdInCases =
+        mockDefendantRepositoryService.findByIdInCases as jest.Mock
+      mockFindByIdInCases.mockResolvedValue({
         id: defendantId,
         nationalId: defendantNationalId,
       })
@@ -182,12 +182,9 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
     })
 
     it('should look up the defendant by id and deliver split-off conclusion', () => {
-      expect(mockDefendantRepositoryService.findOne).toHaveBeenCalledWith({
-        where: {
-          id: defendantId,
-          caseId: { [Op.in]: [caseId, splitChildCaseId] },
-        },
-      })
+      expect(
+        mockDefendantRepositoryService.findByIdInCases,
+      ).toHaveBeenCalledWith(defendantId, [caseId, splitChildCaseId])
 
       expect(
         mockCourtService.updateIndictmentCaseWithConclusion,
@@ -248,8 +245,9 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
         mockCourtService.updateIndictmentCaseWithConclusion as jest.Mock
       mockUpdateIndictmentCaseWithConclusion.mockResolvedValue(uuid())
 
-      const mockFindOne = mockDefendantRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue({
+      const mockFindByIdInCases =
+        mockDefendantRepositoryService.findByIdInCases as jest.Mock
+      mockFindByIdInCases.mockResolvedValue({
         id: defendantId,
         nationalId: defendantNationalId,
       })
@@ -313,8 +311,9 @@ describe('InternalCaseController - Deliver indictment conclusion to court', () =
 
       mockCourtService = courtService
 
-      const mockFindOne = defendantRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValue(null)
+      const mockFindByIdInCases =
+        defendantRepositoryService.findByIdInCases as jest.Mock
+      mockFindByIdInCases.mockResolvedValue(null)
 
       then = await internalCaseController
         .deliverIndictmentConclusionToCourt(caseId, parentCase, {

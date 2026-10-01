@@ -4,7 +4,6 @@ import { JobFactor, SalaryComponentKey, SubCriterion } from './types'
 export type Events = {
   type:
     | DefaultEvents.SUBMIT
-    | DefaultEvents.ABORT
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
     | DefaultEvents.EDIT
@@ -38,11 +37,14 @@ export enum ApiActions {
   getDoeCompany = 'getDoeCompany',
   getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
+  getSalaryReportEligibility = 'getSalaryReportEligibility',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
   createSalaryDraft = 'createSalaryDraft',
   importSalaryDraftWorkbook = 'importSalaryDraftWorkbook',
   submitSalaryReport = 'submitSalaryReport',
+  deleteSalaryReportDraft = 'deleteSalaryReportDraft',
+  withdrawSalaryReport = 'withdrawSalaryReport',
   analyzeSalaryReport = 'analyzeSalaryReport',
   editOutliers = 'editOutliers',
   getReportComments = 'getReportComments',
@@ -134,7 +136,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'RESPONSIBILITY',
     title: 'Ábyrgð',
     description:
-      'Metur ábyrgð starfsins á fólki, fjármálum, gæðum og öðrum þáttum.',
+      'Metur þær kröfur sem starfið gerir til ábyrgðar á fólki, fjármálum, gæðum og öðrum þáttum.',
     weight: '25',
   },
   {
@@ -142,7 +144,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'STRAIN',
     title: 'Álag',
     description:
-      'Metur hraða, tímaþrýsting, líkamlegt og tilfinningalegt álag.',
+      'Metur kröfur starfsins til að vinna við áreiti, vera undir líkamlegu- og tilfinningalegu álagi og fleiri þátta.',
     weight: '25',
   },
   {
@@ -150,7 +152,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'CONDITION',
     title: 'Vinnuaðstæður',
     description:
-      'Metur vaktavinnu, ferðalög, áhættu og aðrar aðstæður starfsins.',
+      'Metur kröfur starfsins um vinnuhraða, hávaða í starfsumhverfi, vinnu með gufur og eiturefni og fleiri þætti.',
     weight: '25',
   },
   {
@@ -158,7 +160,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'COMPETENCE',
     title: 'Hæfni',
     description:
-      'Metur menntunarkröfur, reynslukröfur og sérhæfingu starfsins.',
+      'Metur menntunarkröfur starfsins, kröfur um starfsreynslu og ýmis konar færni sem starfið krefst.',
     weight: '25',
   },
 ]

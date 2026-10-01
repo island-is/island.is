@@ -54,7 +54,7 @@ const WaitlistsDetail: React.FC = () => {
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && waitlist != null && (
-        <InfoLineStack space={1}>
+        <InfoLineStack space={[0, 0, 1]}>
           <InfoLine
             loading={loading}
             label={messages.waitlist}

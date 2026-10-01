@@ -107,7 +107,7 @@ export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({
               <Box component="span" display="block">
                 {field.message != null ? (
                   <Box component="div" className={divWithSmallText}>
-                    <Markdown>
+                    <Markdown options={{ openLinksInNewTab: true }}>
                       {formatTextWithLocale(
                         field.message,
                         updatedApplication,

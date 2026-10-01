@@ -82,6 +82,9 @@ export class FormDto {
   isInaccessible!: boolean
 
   @ApiProperty()
+  validateEligibility!: boolean
+
+  @ApiProperty()
   hasSummaryScreen!: boolean
 
   @ApiProperty({ type: OrganizationZendeskInstanceDto })

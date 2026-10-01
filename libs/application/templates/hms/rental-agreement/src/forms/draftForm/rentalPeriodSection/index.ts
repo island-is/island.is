@@ -13,6 +13,7 @@ import {
   isDateMoreThanOneYearInFuture,
   rentalPeriodIsDefinite,
 } from '../../../utils/rentalPeriodUtils'
+import { EARLIEST_RENTAL_PERIOD_START_DATE } from '../../../utils/utils'
 import addMonths from 'date-fns/addMonths'
 import * as m from '../../../lib/messages'
 
@@ -38,7 +39,7 @@ export const rentalPeriodSection = buildSection({
           placeholder: m.rentalPeriod.startDatePlaceholder,
           required: true,
           clearOnChange: ['rentalPeriod.endDate'],
-          minDate: new Date(2023, 0, 1),
+          minDate: EARLIEST_RENTAL_PERIOD_START_DATE,
         }),
         buildDateField({
           id: 'rentalPeriod.endDate',

@@ -234,50 +234,64 @@ export const getJobCareer = (
       'currentSituation.currentSituationRepeater',
     ) || []
   const previousJobCareer =
-    employmentHistory?.lastJobs?.map((job) => {
-      const employerSSN =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
-          : job.employer?.nationalId
-      const employerName =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
-              ?.name
-          : job.employer?.name
-      return {
-        employerSSN: employerSSN,
-        employer: employerName,
-        started: job.startDate,
-        quit: job.endDate,
-        workRatio: parseInt(job.percentage || ''),
-        jobCodeId: job.jobCodeId || '',
-      }
-    }) || []
+    employmentHistory?.lastJobs
+      ?.map((job) => {
+        // filters out stray empty {} objects
+        if (!job || Object.keys(job).length === 0) return null
+        const employerSSN =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.ssn
+            : job.employer?.nationalId
+        const employerName =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.name
+            : job.employer?.name
+        return {
+          employerSSN: employerSSN,
+          employer: employerName,
+          started: job.startDate,
+          quit: job.endDate,
+          workRatio: parseInt(job.percentage || ''),
+          jobCodeId: job.jobCodeId || '',
+        }
+      })
+      .filter((job): job is NonNullable<typeof job> => job !== null) || []
 
   const currentJobCareer =
-    employmentHistory?.currentJobs?.map((job, index) => {
-      let workHours
-      if (currentJob && currentJob.length > index) {
-        workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
-      }
-      const employerSSN =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
-          : job.employer?.nationalId
-      const employerName =
-        job.nationalIdWithName && job.nationalIdWithName !== '-'
-          ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
-              ?.name
-          : job.employer?.name
-      return {
-        employerSSN: employerSSN,
-        employer: employerName,
-        quit: job.endDate,
-        workRatio: parseInt(job.percentage || ''),
-        workHours: workHours || '',
-        jobCodeId: job.jobCodeId || '',
-      }
-    }) || []
+    employmentHistory?.currentJobs
+      ?.map((job, index) => {
+        // filters out stray empty {} objects, index preserved to keep workHours lookup aligned
+        if (!job || Object.keys(job).length === 0) return null
+        let workHours
+        if (currentJob && currentJob.length > index) {
+          workHours = getValueViaPath<string>(
+            currentJob[index],
+            'workHours',
+            '',
+          )
+        }
+        const employerSSN =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.ssn
+            : job.employer?.nationalId
+        const employerName =
+          job.nationalIdWithName && job.nationalIdWithName !== '-'
+            ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)
+                ?.name
+            : job.employer?.name
+        return {
+          employerSSN: employerSSN,
+          employer: employerName,
+          quit: job.endDate,
+          workRatio: parseInt(job.percentage || ''),
+          workHours: workHours || '',
+          jobCodeId: job.jobCodeId || '',
+        }
+      })
+      .filter((job): job is NonNullable<typeof job> => job !== null) || []
 
   return { jobs: [previousJobCareer, currentJobCareer].flat() || [] }
 }
@@ -678,6 +692,9 @@ export const getPreviousOccupationInformation = (
       unemploymentReasons?.agreementConfirmation?.includes(YES),
     bankruptcyConfirmation:
       unemploymentReasons?.bankruptsyReason?.includes(YES),
+    additionalDetails: unemploymentReasons?.additionalDetailsRequired
+      ? unemploymentReasons?.additionalDetails
+      : undefined,
   }
 }
 

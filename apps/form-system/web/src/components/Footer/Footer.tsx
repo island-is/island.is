@@ -86,9 +86,13 @@ const stripFieldListsFromSections = (
 
 interface Props {
   externalDataAgreement: boolean
+  isValidateEligibilityError: boolean
 }
 
-export const Footer = ({ externalDataAgreement }: Props) => {
+export const Footer = ({
+  externalDataAgreement,
+  isValidateEligibilityError,
+}: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
   const { trigger } = useFormContext()
@@ -391,12 +395,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             input: {
               applicationId: state.application.id,
               nationalId: '',
+              actorNationalId: '',
               organizationNationalId:
                 state.application.organizationNationalId ?? '',
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
-              screenDto: state.currentScreen.data,
+              screenDto: removeTypename(state.currentScreen.data),
             },
           },
         })
@@ -500,6 +505,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               onClick={handleIncrement}
               disabled={
                 !enableContinueButton ||
+                isValidateEligibilityError ||
                 isPaymentLoading ||
                 submitLoading ||
                 saveLoading ||

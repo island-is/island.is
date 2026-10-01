@@ -7,6 +7,7 @@ import {
 import type { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { isCourseForProfessionals } from '../../utils/isCourseForProfessionals'
+import { MAX_PARTICIPANTS_PER_APPLICATION } from '../../utils/constants'
 
 export const participantSection = buildSection({
   id: 'participantSection',
@@ -18,6 +19,7 @@ export const participantSection = buildSection({
       children: [
         buildTableRepeaterField({
           id: 'participantList',
+          maxRows: MAX_PARTICIPANTS_PER_APPLICATION,
           defaultValue: (application: Application) => {
             const name = getValueViaPath(
               application.externalData,

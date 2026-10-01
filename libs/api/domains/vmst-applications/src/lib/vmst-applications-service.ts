@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable } from '@nestjs/common'
+import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurXRoadAPIModelsApplicantApplicantOverviewResponse,
@@ -7,10 +7,13 @@ import {
   GaldurExternalDomainModelsAttachmentAttachmentDTO,
   GaldurXRoadAPIModelsAvailableActions,
   GaldurDomainModelsSettingsAttachmentTypesAttachmentTypeListViewModel,
+  GaldurExternalDomainModelsIncomeIncomesDTO,
+  GaldurExternalDomainModelsIncomeIncomesResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { FetchError } from '@island.is/clients/middlewares'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import { VmstApplicationsIncomeValidationInput } from './dto/incomeValidation.input'
 import { VmstApplicationsU2ValidationInput } from './dto/u2Validation.input'
 import {
   VmstApplicationsUnemploymentApplicationOverview,
@@ -19,12 +22,32 @@ import {
   VmstApplicationsApplicantAttachment,
   VmstApplicationsApplicantAttachmentsResponse,
   VmstApplicationsOverview,
+  VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
+  VmstApplicantIncomeRow,
+  VmstApplicantIncomeRowType,
+  VmstApplicantIrregularJob,
+  VmstApplicantPartTimeJob,
+  VmstApplicantPensionPayment,
+  VmstApplicantCapitalIncomePayment,
+  VmstApplicantTRPayment,
+  VmstApplicantContractorJob,
+  VmstApplicantPeriod,
 } from './models'
 import type { Locale } from '@island.is/shared/types'
 import { maskString } from '@island.is/shared/utils'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@nestjs/config'
+
+// Galdur sends ISO 8601 local date-times without a timezone (`2026-05-01T00:00:00`);
+// convert to Date so the DateTime scalar can serialize them.
+const buildPeriod = (
+  from: string,
+  to: string | null | undefined,
+): VmstApplicantPeriod => ({
+  from: new Date(from),
+  to: to == null ? null : new Date(to),
+})
 
 @Injectable()
 export class VMSTApplicationsService {
@@ -112,6 +135,135 @@ export class VMSTApplicationsService {
         payload,
       )
     return { ...response, isValid: response.isValid ?? false }
+  }
+
+  // Generic income validation entrypoint; accepts any subset of the five income
+  // arrays served by the same Galdur endpoint. Service branches per item on
+  // `deleted` to emit either a delete marker or a create-shape payload.
+  async validateIncomes(
+    auth: User,
+    input: VmstApplicationsIncomeValidationInput,
+  ): Promise<VmstApplicationsIncomeValidationResult> {
+    const { applicantId } = await this.resolveApplicant(auth)
+    const request = {
+      applicantId,
+      galdurExternalDomainRequestsIncomeCreateIncomesRequest: {
+        irregularJobs: input.irregularJobs?.map((job) =>
+          job.deleted
+            ? { id: job.id, deleted: true, employerSSN: job.employerSSN }
+            : {
+                referenceId: job.validationId,
+                employerSSN: job.employerSSN,
+                periodFrom: job.periodFrom
+                  ? new Date(job.periodFrom)
+                  : undefined,
+                periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+                estimatedIncome: job.estimatedIncome,
+                workShiftPeriodIds: job.workShiftPeriodIds,
+              },
+        ),
+        contractorJobs: input.contractorJobs?.map((job) =>
+          job.deleted
+            ? { id: job.id, deleted: true }
+            : {
+                referenceId: job.validationId,
+                periodFrom: job.periodFrom
+                  ? new Date(job.periodFrom)
+                  : undefined,
+                periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+              },
+        ),
+        capitalIncomePayments: input.capitalIncomePayments?.map((payment) =>
+          payment.deleted
+            ? { id: payment.id, deleted: true }
+            : {
+                referenceId: payment.validationId,
+                incomeTypeId: payment.incomeTypeId,
+                estimatedIncome: payment.estimatedIncome,
+                periodFrom: payment.periodFrom
+                  ? new Date(payment.periodFrom)
+                  : undefined,
+                periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+              },
+        ),
+        trPayments: input.trPayments?.map((payment) =>
+          payment.deleted
+            ? { id: payment.id, deleted: true }
+            : {
+                referenceId: payment.validationId,
+                incomeTypeId: payment.incomeTypeId,
+                estimatedIncome: payment.estimatedIncome,
+                periodFrom: payment.periodFrom
+                  ? new Date(payment.periodFrom)
+                  : undefined,
+                periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+              },
+        ),
+        pensionPayments: input.pensionPayments?.map((payment) =>
+          payment.deleted
+            ? { id: payment.id, deleted: true }
+            : {
+                referenceId: payment.validationId,
+                incomeTypeId: payment.incomeTypeId,
+                pensionFundId: payment.pensionFundId,
+                estimatedIncome: payment.estimatedIncome,
+                periodFrom: payment.periodFrom
+                  ? new Date(payment.periodFrom)
+                  : undefined,
+                periodTo: payment.periodTo ? new Date(payment.periodTo) : null,
+              },
+        ),
+        partTimeJobs: input.partTimeJobs?.map((job) =>
+          job.deleted
+            ? { id: job.id, deleted: true, employerSSN: job.employerSSN }
+            : {
+                referenceId: job.validationId,
+                employerSSN: job.employerSSN,
+                periodFrom: job.periodFrom
+                  ? new Date(job.periodFrom)
+                  : undefined,
+                periodTo: job.periodTo ? new Date(job.periodTo) : undefined,
+                ratio: job.ratio,
+                estimatedIncome: job.estimatedIncome,
+              },
+        ),
+      },
+    }
+
+    try {
+      const response = await this.vmstUnemploymentService.validatIncome(request)
+      return this.buildIncomeValidationResult(response)
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 400 && e.body) {
+        return this.buildIncomeValidationResult(
+          e.body as GaldurExternalDomainModelsIncomeIncomesResponse,
+        )
+      }
+      throw e
+    }
+  }
+
+  private buildIncomeValidationResult(
+    response: GaldurExternalDomainModelsIncomeIncomesResponse,
+  ): VmstApplicationsIncomeValidationResult {
+    const isValid = response.success ?? false
+    const errors = (response.errors ?? []).flatMap((error) =>
+      error.referenceId
+        ? [
+            {
+              validationId: error.referenceId,
+              reason: error.reason,
+              reasonEN: error.reasonEN,
+            },
+          ]
+        : [],
+    )
+
+    return {
+      isValid,
+      invalidValidationIds: errors.map((error) => error.validationId),
+      errors,
+    }
   }
 
   async validateU2(
@@ -202,6 +354,135 @@ export class VMSTApplicationsService {
     applicantId: string,
   ): Promise<GaldurXRoadAPIModelsAvailableActions> {
     return this.vmstUnemploymentService.getApplicantActions(applicantId)
+  }
+
+  async getApplicantIncomeRows(auth: User): Promise<VmstApplicantIncomeRow[]> {
+    try {
+      const { applicantId } = await this.resolveApplicant(auth)
+      const dto: GaldurExternalDomainModelsIncomeIncomesDTO =
+        await this.vmstUnemploymentService.getIncome({ applicantId })
+
+      const incomeCollectionKeys = [
+        'irregularJobs',
+        'partTimeJobs',
+        'pensionPayments',
+        'capitalIncomePayments',
+        'trPayments',
+        'contractorJobs',
+      ] as const
+
+      const invalidKeys = incomeCollectionKeys.filter(
+        (key) => !Array.isArray(dto[key]),
+      )
+      if (invalidKeys.length > 0) {
+        throw new BadGatewayException(
+          `VMST applicant incomes response has invalid shape for: ${invalidKeys.join(
+            ', ',
+          )}`,
+        )
+      }
+
+      const rows: VmstApplicantIncomeRow[] = [
+        ...(dto.irregularJobs ?? []).flatMap(
+          (job): VmstApplicantIrregularJob[] =>
+            job.periodFrom == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.IrregularJob,
+                    id: job.id ?? '',
+                    period: buildPeriod(job.periodFrom, job.periodTo),
+                    estimatedIncome: job.estimatedIncome ?? null,
+                    employer: {
+                      name: job.employerName ?? '',
+                      ssn: job.employerSSN ?? '',
+                    },
+                  },
+                ],
+        ),
+        ...(dto.partTimeJobs ?? []).flatMap((job): VmstApplicantPartTimeJob[] =>
+          job.periodFrom == null
+            ? []
+            : [
+                {
+                  type: VmstApplicantIncomeRowType.PartTimeJob,
+                  id: job.id ?? '',
+                  period: buildPeriod(job.periodFrom, job.periodTo),
+                  estimatedIncome: job.estimatedIncome ?? null,
+                  employer: {
+                    name: job.employerName ?? '',
+                    ssn: job.employerSSN ?? '',
+                  },
+                  ratio: job.ratio,
+                },
+              ],
+        ),
+        ...(dto.pensionPayments ?? []).flatMap(
+          (payment): VmstApplicantPensionPayment[] =>
+            payment.periodFrom == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.PensionPayment,
+                    id: payment.id ?? '',
+                    period: buildPeriod(payment.periodFrom, payment.periodTo),
+                    estimatedIncome: payment.estimatedIncome ?? null,
+                    incomeTypeId: payment.incomeTypeId ?? '',
+                    pensionFundId: payment.pensionFundId,
+                  },
+                ],
+        ),
+        ...(dto.capitalIncomePayments ?? []).flatMap(
+          (payment): VmstApplicantCapitalIncomePayment[] =>
+            payment.periodFrom == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.CapitalIncomePayment,
+                    id: payment.id ?? '',
+                    period: buildPeriod(payment.periodFrom, payment.periodTo),
+                    estimatedIncome: payment.estimatedIncome ?? null,
+                    incomeTypeId: payment.incomeTypeId ?? '',
+                  },
+                ],
+        ),
+        ...(dto.trPayments ?? []).flatMap((payment): VmstApplicantTRPayment[] =>
+          payment.periodFrom == null
+            ? []
+            : [
+                {
+                  type: VmstApplicantIncomeRowType.TRPayment,
+                  id: payment.id ?? '',
+                  period: buildPeriod(payment.periodFrom, payment.periodTo),
+                  estimatedIncome: payment.estimatedIncome ?? null,
+                  incomeTypeId: payment.incomeTypeId ?? '',
+                },
+              ],
+        ),
+        ...(dto.contractorJobs ?? []).flatMap(
+          (job): VmstApplicantContractorJob[] =>
+            job.startDate == null
+              ? []
+              : [
+                  {
+                    type: VmstApplicantIncomeRowType.ContractorJob,
+                    id: job.id ?? '',
+                    period: buildPeriod(job.startDate, job.endDate),
+                    estimatedIncome: null,
+                  },
+                ],
+        ),
+      ]
+
+      return rows.sort(
+        (a, b) => b.period.from.getTime() - a.period.from.getTime(),
+      )
+    } catch (e) {
+      if (e instanceof FetchError && e.status === 404) {
+        return []
+      }
+      throw e
+    }
   }
 
   async getApplicantAttachments(

@@ -217,7 +217,7 @@ describe('Defender IndictmentOverview', () => {
     renderOverview(completedCase(CaseIndictmentRulingDecision.FINE))
 
     expect(
-      await screen.findByRole('heading', { name: 'Máli lokið' }),
+      await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
     ).toBeInTheDocument()
     expect(screen.queryAllByTestId('defenderVerdictTimelineCard')).toHaveLength(
       0,

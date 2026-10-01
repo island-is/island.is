@@ -16,9 +16,20 @@ export const messageCard = style(
   }),
 )
 
+export const senderName = style({
+  minWidth: 0,
+  overflowWrap: 'anywhere',
+})
+
 export const attachmentIcon = style({
   width: 20,
   height: 20,
+  flexShrink: 0,
+})
+
+export const certificateAvatar = style({
+  width: 64,
+  height: 64,
 })
 
 export const detailHeader = style({
@@ -36,11 +47,21 @@ export const backButton = style({
   marginLeft: -10,
 })
 
+// Same 10px of empty circle sits below the glyph, so 22 reads as the 32 the
+// design has between the arrow and the page title.
+export const mobileBackHeader = style({
+  marginBottom: 22,
+})
+
 // Keeps the row's white button hover circle on a tinted background
 export const conversationRow = style({
-  selectors: {
-    '&:hover': {
-      backgroundColor: theme.color.blue100,
+  '@media': {
+    '(hover: hover)': {
+      selectors: {
+        '&:hover': {
+          backgroundColor: theme.color.blue100,
+        },
+      },
     },
   },
 })

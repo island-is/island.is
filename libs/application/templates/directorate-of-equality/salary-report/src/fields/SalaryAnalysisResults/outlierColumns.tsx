@@ -9,7 +9,10 @@ import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
 import { GENDER_LABELS } from '../../utils/constants'
-import { formatDeviationLabel } from '../../utils/salaryAnalysisLabels'
+import {
+  formatDeviationLabel,
+  formatStig,
+} from '../../utils/salaryAnalysisLabels'
 import { EmployeeOrdinalHeader } from '../../components/EmployeeOrdinalHeader'
 import { formatWageAmount } from '../EmployeesEditor/utils'
 
@@ -202,7 +205,7 @@ const GenderCell = ({ row }: CellProps) =>
   compactCell(GENDER_LABELS[row.original.gender] ?? row.original.gender)
 
 const StigCell = ({ row }: CellProps) =>
-  compactCell(String(row.original.score), 'right')
+  compactCell(formatStig(row.original.score), 'right')
 
 const HourlyWageCell = ({ row }: CellProps) =>
   compactCell(formatWageAmount(row.original.regularHourlyWage), 'right')
@@ -231,6 +234,12 @@ const DeviationCell = ({ row }: CellProps) => {
  *
  * Stig is the one column worth ordering by, so every other column says so
  * explicitly.
+ *
+ * Enabling another one now takes a second step: OutlierEditor sorts the list
+ * itself and puts the table in `manualSorting`, because the table is only ever
+ * handed one page and sorting that page is not sorting the list. So a column
+ * needs a comparator in utils/outlierSorting too, or TanStack renders a header
+ * the reader can click and nothing happens. outlierSorting.spec fails on that.
  */
 const NOT_SORTABLE = { enableSorting: false } as const
 
@@ -262,8 +271,15 @@ export const OUTLIER_COLUMNS = [
   columnHelper.accessor('employeeOrdinal', {
     id: 'employee',
     // Sorting is off for this column (see NOT_SORTABLE), which is what keeps
-    // the shared header's tooltip out of a button.
-    header: EmployeeOrdinalHeader,
+    // the shared header's tooltip out of a button — InteractiveTable wraps a
+    // sortable header WHOLE, tooltip included, and offers no way to leave part
+    // of it outside. The ábendingar table sorts its own ordinal column because
+    // it is a hand-rolled table and can hand the sort button the label alone.
+    //
+    // Rendered rather than passed by reference: TanStack calls a `header`
+    // component with its own HeaderContext, which has nothing in common with
+    // this component's props.
+    header: () => <EmployeeOrdinalHeader />,
     meta: COMPACT_CELL,
     cell: OrdinalCell,
     ...NOT_SORTABLE,

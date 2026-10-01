@@ -9,6 +9,7 @@ import {
   FieldTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
+import { AssetTypes } from '@island.is/form-system/enums'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
@@ -81,7 +82,7 @@ export class ZendeskService {
       contactEmail = 'admin@stafraentisland.is'
     } else if (supportedZendeskInstance === 'haskoliislands') {
       apiKey = this.HASKOLI_ISLANDS_API_KEY
-      contactEmail = 'admin@stafraentisland.is'
+      contactEmail = 'stafraentisland@hi.is'
     }
 
     if (!apiKey) {
@@ -561,7 +562,23 @@ export class ZendeskService {
                 continue
               }
 
-              const entries = Object.entries(json)
+              const assetAttributeKeys =
+                field.fieldType === FieldTypesEnum.ASSETS
+                  ? field.fieldSettings?.assetType === AssetTypes.VEHICLE
+                    ? ['color', 'model', 'registrationNumber']
+                    : field.fieldSettings?.assetType === AssetTypes.REAL_ESTATE
+                    ? [
+                        'address',
+                        'postalCode',
+                        'municipality',
+                        'propertyNumber',
+                      ]
+                    : undefined
+                  : undefined
+              const entries = Object.entries(json).filter(
+                ([key]) =>
+                  !assetAttributeKeys || assetAttributeKeys.includes(key),
+              )
               const isMultiAttribute = entries.length > 1
 
               // If multi and json is empty -> just write the itemNo (bold)
@@ -596,7 +613,8 @@ export class ZendeskService {
 
                 const val = this.formatValue(raw, field.fieldType)
                 if (
-                  field.fieldType === FieldTypesEnum.APPLICANT &&
+                  (field.fieldType === FieldTypesEnum.APPLICANT ||
+                    isMultiAttribute) &&
                   val.trim().length === 0
                 ) {
                   continue

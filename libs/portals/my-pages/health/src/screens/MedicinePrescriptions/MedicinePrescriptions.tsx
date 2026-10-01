@@ -14,6 +14,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   STAFRAEN_HEILSA_SLUG,
+  EmptyTable,
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
@@ -147,6 +148,8 @@ const MedicinePrescriptions = () => {
             variant="popover"
             align="left"
             reverse
+            filterInputFluid
+            mobileWrap={false}
             labelClearAll={formatMessage(m.clearAllFilters)}
             labelClear={formatMessage(m.clearFilter)}
             labelOpen={formatMessage(m.openFilter)}
@@ -156,9 +159,9 @@ const MedicinePrescriptions = () => {
             filterInput={
               <Input
                 placeholder={formatMessage(m.searchPlaceholder)}
+                aria-label={formatMessage(m.searchLabel)}
                 name="rafraen-skjol-input"
                 size="xs"
-                label={formatMessage(m.searchLabel)}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 backgroundColor="blue"
                 icon={{ name: 'search' }}
@@ -208,7 +211,17 @@ const MedicinePrescriptions = () => {
             </Box>
           </Filter>
           <Box marginTop={4}>
-            <PrescriptionsTable data={paginatedData} loading={loading} />
+            {!loading && !filteredMedicines?.length ? (
+              <EmptyTable
+                message={
+                  filteredPrescriptions?.length
+                    ? messages.noSearchResults
+                    : messages.noData
+                }
+              />
+            ) : (
+              <PrescriptionsTable data={paginatedData} loading={loading} />
+            )}
           </Box>
         </>
       )}

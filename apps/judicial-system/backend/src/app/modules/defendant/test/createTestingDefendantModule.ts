@@ -15,11 +15,13 @@ import {
   MessageService,
 } from '@island.is/judicial-system/message'
 
+import { AppealCaseService } from '../../appeal-case/appealCase.service'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CivilClaimantRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -43,6 +45,7 @@ jest.mock(
   '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
 )
 jest.mock('../../event-log/eventLog.service')
+jest.mock('../../appeal-case/appealCase.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -64,6 +67,7 @@ export const createTestingDefendantModule = async () => {
       DefendantEventLogRepositoryService,
       CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
+      AppealCaseService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -80,7 +84,13 @@ export const createTestingDefendantModule = async () => {
           updateByIdAndCase: jest.fn(),
           deleteByIdAndCase: jest.fn(),
           deleteAllForCase: jest.fn(),
-          findLatestBySpokespersonNationalId: jest.fn(),
+        },
+      },
+      {
+        provide: CaseFileRepositoryService,
+        useValue: {
+          deleteAllForCivilClaimant: jest.fn(),
+          deleteAllForCivilClaimantsOfCase: jest.fn(),
         },
       },
       DefendantService,
@@ -93,6 +103,9 @@ export const createTestingDefendantModule = async () => {
   const userService = defendantModule.get<UserService>(UserService)
 
   const courtService = defendantModule.get<CourtService>(CourtService)
+
+  const appealCaseService =
+    defendantModule.get<AppealCaseService>(AppealCaseService)
 
   const sequelize = defendantModule.get<Sequelize>(Sequelize)
 
@@ -130,6 +143,9 @@ export const createTestingDefendantModule = async () => {
       CivilClaimantRepositoryService,
     )
 
+  const caseFileRepositoryService =
+    defendantModule.get<CaseFileRepositoryService>(CaseFileRepositoryService)
+
   const civilClaimantService =
     defendantModule.get<CivilClaimantService>(CivilClaimantService)
 
@@ -155,6 +171,7 @@ export const createTestingDefendantModule = async () => {
     messageService,
     userService,
     courtService,
+    appealCaseService,
     sequelize,
     defendantRepositoryService,
     defendantEventLogRepositoryService,
@@ -167,5 +184,6 @@ export const createTestingDefendantModule = async () => {
     civilClaimantService,
     civilClaimantController,
     civilClaimantRepositoryService,
+    caseFileRepositoryService,
   }
 }

@@ -125,6 +125,7 @@ judicial-system-backend:
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
+    LAWYER_REGISTRY_INCLUDE_TEST_LAWYERS: 'true'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island Staging'

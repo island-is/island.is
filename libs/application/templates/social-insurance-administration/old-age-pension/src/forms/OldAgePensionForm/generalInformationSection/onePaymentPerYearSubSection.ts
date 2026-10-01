@@ -26,6 +26,9 @@ export const onePaymentPerYearSubSection = buildSubSection({
           options: getYesNoOptions(),
           defaultValue: NO,
           width: 'half',
+          // Switching to YES skips the income plan screens, so discard anything
+          // already entered there instead of submitting it to TR.
+          clearOnChange: ['incomePlanTable', 'incomePlan'],
         }),
         buildAlertMessageField({
           id: 'onePaymentPerYear.alert',

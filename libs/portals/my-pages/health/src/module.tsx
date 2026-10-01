@@ -6,6 +6,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
+import TreatmentScopedRoute from './screens/Treatments/components/TreatmentScopedRoute'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -25,6 +26,9 @@ const AidsAndNutrition = lazy(() =>
 )
 const MovementPrescriptions = lazy(() =>
   import('./screens/MovementPrescriptions/MovementPrescriptions'),
+)
+const OldPregnancies = lazy(() =>
+  import('./screens/OldPregnancies/OldPregnancies'),
 )
 const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
@@ -160,6 +164,12 @@ const HealthConversationDetail = lazy(() =>
   import('./screens/HealthConversations/HealthConversationDetail'),
 )
 
+const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
+
+const PregnancyRedirect = lazy(() =>
+  import('./screens/PregnancyRedirect/PregnancyRedirect'),
+)
+
 const Treatments = lazy(() => import('./screens/Treatments/Treatments'))
 
 const TreatmentOverview = lazy(() =>
@@ -168,6 +178,10 @@ const TreatmentOverview = lazy(() =>
 
 const TreatmentEducationalContent = lazy(() =>
   import('./screens/Treatments/TreatmentEducationalContent'),
+)
+
+const TreatmentQuestionnaires = lazy(() =>
+  import('./screens/Treatments/TreatmentQuestionnaires'),
 )
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
@@ -190,6 +204,7 @@ export const healthModule: PortalModule = {
         ApiScope.healthHealthcare,
         ApiScope.healthDentists,
         ApiScope.healthRightsStatus,
+        ApiScope.healthAppointments,
       ].some((scope) => userInfo.scopes.includes(scope)),
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
     },
@@ -201,7 +216,9 @@ export const healthModule: PortalModule = {
     {
       name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
-      enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
+      enabled:
+        userInfo.scopes.includes(ApiScope.healthRightsStatus) ||
+        userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <HealthOverview />,
     },
     {
@@ -359,14 +376,14 @@ export const healthModule: PortalModule = {
       name: hm.medicinePrescriptions,
       path: HealthPaths.HealthMedicinePrescription,
       key: MEDICINE_LANDLAEKNIR_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      enabled: userInfo.scopes.includes(ApiScope.healthPrescription),
       element: <MedicinePrescriptions />,
     },
     {
       name: hm.medicinePrescriptionHistory,
       path: HealthPaths.HealthMedicinePrescriptionHistory,
       key: MEDICINE_LANDLAEKNIR_FLAG,
-      enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
+      enabled: userInfo.scopes.includes(ApiScope.healthDispensations),
       element: <MedicinePrescriptionHistory />,
     },
     {
@@ -447,28 +464,28 @@ export const healthModule: PortalModule = {
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonation,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: <OrganDonation />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationOld,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: <OrganDonationRegistration />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistrationOld,
-      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       notAvailableForActors: true,
       element: (
         <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
@@ -477,7 +494,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.vaccinations,
       path: HealthPaths.HealthVaccinations,
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Vaccinations />,
     },
     {
@@ -511,28 +528,28 @@ export const healthModule: PortalModule = {
       name: hm.referrals,
       path: HealthPaths.HealthReferrals,
       key: 'Referrals',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <Referrals />,
     },
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferralsDetail,
       key: 'Referrals',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <ReferralsDetail />,
     },
     {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlists,
       key: 'HealthWaitlists',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <Waitlist />,
     },
     {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlistsDetail,
       key: 'HealthWaitlists',
-      enabled: userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthLists),
       element: <WaitlistDetail />,
     },
     {
@@ -544,6 +561,13 @@ export const healthModule: PortalModule = {
       name: hm.waitlists,
       path: HealthPaths.HealthWaitlistsDetailOld,
       element: <Navigate to={HealthPaths.HealthWaitlists} replace />,
+    },
+    {
+      name: hm.oldPregnanciesTitle,
+      path: HealthPaths.HealthOldPregnancies,
+      key: 'HealthOldPregnancies',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <OldPregnancies />,
     },
     {
       name: hm.questionnaires,
@@ -642,27 +666,21 @@ export const healthModule: PortalModule = {
       name: hm.appointments,
       path: HealthPaths.HealthAppointments,
       key: 'HealthAppointments',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <Appointments />,
     },
     {
       name: hm.appointmentDetail,
       path: HealthPaths.HealthAppointmentDetail,
       key: 'HealthAppointments',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.healthAppointments),
       element: <AppointmentDetail />,
     },
     {
       name: hm.bookAppointmentTitle,
       path: HealthPaths.HealthBookAppointment,
       key: 'HealthAppointments',
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <BookAppointment />,
     },
     {
@@ -687,6 +705,23 @@ export const healthModule: PortalModule = {
       element: <HealthConversationDetail />,
     },
     {
+      name: hm.pregnancy,
+      path: HealthPaths.HealthPregnancy,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
+      element: <PregnancyRedirect />,
+    },
+    {
+      name: hm.myPregnancy,
+      path: HealthPaths.HealthPregnancyOverview,
+      key: Features.isServicePortalHealthPregnancyPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      dynamic: true,
+      navHide: true,
+      element: <Pregnancy />,
+    },
+    {
       name: m.healthTreatment,
       path: HealthPaths.HealthTreatments,
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
@@ -706,6 +741,97 @@ export const healthModule: PortalModule = {
       key: Features.isServicePortalHealthTreatmentsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <TreatmentEducationalContent />,
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthTreatmentConversations,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthMessagesPageEnabled}
+        >
+          <HealthConversations />
+        </TreatmentScopedRoute>
+      ),
+    },
+    {
+      name: hm.healthConversationsNewTitle,
+      path: HealthPaths.HealthTreatmentConversationsNew,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthMessagesPageEnabled}
+        >
+          <NewHealthConversation />
+        </TreatmentScopedRoute>
+      ),
+    },
+    {
+      name: m.messages,
+      path: HealthPaths.HealthTreatmentConversationsDetail,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthMessagesPageEnabled}
+        >
+          <HealthConversationDetail />
+        </TreatmentScopedRoute>
+      ),
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthTreatmentQuestionnaires,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <TreatmentQuestionnaires />
+        </TreatmentScopedRoute>
+      ),
+    },
+    {
+      name: hm.questionnaires,
+      path: HealthPaths.HealthTreatmentQuestionnairesDetail,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <QuestionnairesDetail />
+        </TreatmentScopedRoute>
+      ),
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthTreatmentQuestionnairesAnswer,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <QuestionnairesAnswer />
+        </TreatmentScopedRoute>
+      ),
+    },
+    {
+      name: hm.questionnaire,
+      path: HealthPaths.HealthTreatmentQuestionnairesAnswered,
+      key: Features.isServicePortalHealthTreatmentsPageEnabled,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: (
+        <TreatmentScopedRoute
+          flag={Features.isServicePortalHealthQuestionnairesPageEnabled}
+        >
+          <QuestionnairesAnswered />
+        </TreatmentScopedRoute>
+      ),
     },
   ],
 }

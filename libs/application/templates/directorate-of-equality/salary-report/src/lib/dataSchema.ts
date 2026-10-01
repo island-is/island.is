@@ -160,6 +160,22 @@ const salaryAnalysis = z
   .object({
     postponed: z.array(z.string()).optional(),
     outlierGroups: z.array(outlierGroup).optional(),
+    // Scratch copy of outlierGroups, written by the per-group "Vista" button so
+    // a half-filled plan survives leaving the screen (see useOutlierPlanBuffer).
+    //
+    // All-optional, and deliberately untouched by the refinement below: it holds
+    // work in progress, while the completeness rules belong to `outlierGroups` —
+    // the value the submit actually validates. Writing the groups themselves
+    // incrementally is not possible, because every PUT re-runs that refinement
+    // over whatever it is handed, and a group still being filled in would fail
+    // it.
+    //
+    // Absent and empty mean different things, and the editor reads them that
+    // way: no key at all is a plan this screen has never persisted, so it seeds
+    // from the committed one (the DMR draft, or the submitted answers), while
+    // `[]` says the applicant removed every group. Collapsing the two would
+    // resurrect the last group anyone deleted.
+    outlierGroupsDraft: z.array(outlierGroup.partial()).optional(),
     hasMinimumSetOutliers: z.boolean().optional(),
     // Mirrored from the analysis result so the overview screen can read it —
     // see the comment on BenchmarkVerdict.

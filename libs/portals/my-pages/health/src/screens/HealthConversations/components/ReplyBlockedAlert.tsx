@@ -1,86 +1,38 @@
-import { MessageDescriptor } from 'react-intl'
-import { AlertMessage, AlertMessageType } from '@island.is/island-ui/core'
+import { AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { HealthDirectorateHealthConversationReplyBlockedReason } from '@island.is/api/schema'
+import { HealthDirectorateHealthConversationReplyAvailability as ReplyAvailability } from '@island.is/api/schema'
 import { messages } from '../../../lib/messages'
 
 interface Props {
-  reason?: HealthDirectorateHealthConversationReplyBlockedReason | null
+  availability: Exclude<ReplyAvailability, ReplyAvailability.CAN_REPLY>
   replyWindowDays?: number | null
 }
 
-interface ReasonAlert {
-  type: AlertMessageType
-  title?: MessageDescriptor
-  text: MessageDescriptor
-}
-
-const reasonMessageMap: Record<
-  HealthDirectorateHealthConversationReplyBlockedReason,
-  ReasonAlert
-> = {
-  [HealthDirectorateHealthConversationReplyBlockedReason.MISSING_RECIPIENT]: {
-    type: 'info',
-    text: messages.healthConversationReplyBlockedMissingRecipientText,
-  },
-  [HealthDirectorateHealthConversationReplyBlockedReason.REPLIES_DISABLED]: {
-    type: 'info',
-    text: messages.healthConversationReplyBlockedRepliesDisabledText,
-  },
-  [HealthDirectorateHealthConversationReplyBlockedReason.NO_REPLY_GROUP]: {
-    type: 'info',
-    text: messages.healthConversationReplyBlockedNoReplyGroupText,
-  },
-  [HealthDirectorateHealthConversationReplyBlockedReason.MESSAGING_NOT_ALLOWED]:
-    {
-      type: 'info',
-      text: messages.healthConversationReplyBlockedMessagingNotAllowedText,
-    },
-  [HealthDirectorateHealthConversationReplyBlockedReason.OUTSIDE_MESSAGING_WINDOW]:
-    {
-      type: 'info',
-      text: messages.healthConversationReplyBlockedOutsideWindowText,
-    },
-  [HealthDirectorateHealthConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED]:
-    {
-      type: 'info',
-      text: messages.healthConversationReplyBlockedWindowExpiredText,
-    },
-  [HealthDirectorateHealthConversationReplyBlockedReason.AWAITING_STAFF_REPLY]:
-    {
-      type: 'success',
-      title: messages.healthConversationReplyBlockedAwaitingStaffReplyTitle,
-      text: messages.healthConversationReplyBlockedAwaitingStaffReplyText,
-    },
-}
-
-const fallbackAlert: ReasonAlert = {
-  type: 'info',
-  text: messages.healthConversationReplyBlockedGenericText,
-}
-
-const ReplyBlockedAlert = ({ reason, replyWindowDays }: Props) => {
+const ReplyBlockedAlert = ({ availability, replyWindowDays }: Props) => {
   const { formatMessage } = useLocale()
 
-  const entry = (reason && reasonMessageMap[reason]) || fallbackAlert
-
-  const message =
-    reason ===
-      HealthDirectorateHealthConversationReplyBlockedReason.REPLY_WINDOW_EXPIRED &&
-    replyWindowDays != null
-      ? formatMessage(
-          messages.healthConversationReplyBlockedWindowExpiredDaysText,
-          { days: replyWindowDays },
+  const message = () => {
+    switch (availability) {
+      case ReplyAvailability.WAITING:
+        return formatMessage(
+          messages.healthConversationReplyBlockedAwaitingAcknowledgementText,
         )
-      : formatMessage(entry.text)
+      case ReplyAvailability.EXPIRED:
+        return replyWindowDays != null
+          ? formatMessage(
+              messages.healthConversationReplyBlockedWindowExpiredDaysText,
+              { days: replyWindowDays },
+            )
+          : formatMessage(
+              messages.healthConversationReplyBlockedWindowExpiredText,
+            )
+      case ReplyAvailability.NEVER:
+      default:
+        return formatMessage(messages.healthConversationReplyBlockedGenericText)
+    }
+  }
 
-  return (
-    <AlertMessage
-      type={entry.type}
-      title={entry.title ? formatMessage(entry.title) : undefined}
-      message={message}
-    />
-  )
+  return <AlertMessage type="info" message={message()} />
 }
 
 export default ReplyBlockedAlert
