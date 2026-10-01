@@ -10,7 +10,6 @@ import { theme } from '@island.is/island-ui/theme'
 import type { MessageDescriptor } from '../../types/translationWorkspace'
 import type { FormatMessage } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { isMarkdownMessageId } from '../../utils/translationWorkspaceStaticText'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
 
 export interface DescriptorCardTag {
@@ -44,9 +43,6 @@ export const TranslationDescriptorCard = ({
   isTranslating,
   formatMessage,
 }: TranslationDescriptorCardProps) => {
-  const isTextarea =
-    (descriptor.defaultMessage?.length ?? 0) > 80 ||
-    isMarkdownMessageId(descriptor.id)
   return (
     <Box
       marginBottom={3}
@@ -98,8 +94,7 @@ export const TranslationDescriptorCard = ({
           value={icelandicValue}
           onChange={(e) => onValueChange(e.target.value)}
           readOnly={activeLocale !== 'is'}
-          textarea={isTextarea}
-          rows={3}
+          textarea
         />
       </Box>
 
@@ -114,8 +109,7 @@ export const TranslationDescriptorCard = ({
           value={translationValue}
           onChange={(e) => onValueChange(e.target.value)}
           readOnly={activeLocale !== 'en'}
-          textarea={isTextarea}
-          rows={3}
+          textarea
         />
       </Box>
 
