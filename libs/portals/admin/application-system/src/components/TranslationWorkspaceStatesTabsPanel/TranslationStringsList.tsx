@@ -66,7 +66,7 @@ export const TranslationStringsList = ({
 
   return (
     <>
-      {onGoogleTranslate && (
+      {descriptors.length > 0 && onGoogleTranslate && (
         <Box
           display="flex"
           alignItems="center"

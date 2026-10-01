@@ -69,6 +69,8 @@ export const TabsPanelStringsTab = ({
     stringsListScope === 'application' && applicationStringCount > 0
 
   const showMainList = canShowScreenList || canShowApplicationList
+  const hasTranslatableContent =
+    visibleDescriptors.length > 0 || visibleValidationDescriptors.length > 0
 
   return (
     <Box className={styles.tabsPanelScroll}>
@@ -134,27 +136,29 @@ export const TabsPanelStringsTab = ({
           </Box>
         </Box>
 
-        <Box
-          position="sticky"
-          top={0}
-          display="flex"
-          alignItems="center"
-          justifyContent="spaceBetween"
-          columnGap={2}
-          marginBottom={3}
-          className={styles.localeStickyHeader}
-        >
-          <Text variant="medium" as="span">
-            {formatMessage(m.translationEditIcelandicToggle)}
-          </Text>
-          <ToggleSwitchButton
-            label={formatMessage(m.translationEditIcelandicToggle)}
-            hiddenLabel
-            checked={activeLocale === 'is'}
-            onChange={(checked) => onLocaleChange(checked ? 'is' : 'en')}
-            className={styles.toggleButton}
-          />
-        </Box>
+        {hasTranslatableContent && (
+          <Box
+            position="sticky"
+            top={0}
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+            columnGap={2}
+            marginBottom={3}
+            className={styles.localeStickyHeader}
+          >
+            <Text variant="medium" as="span">
+              {formatMessage(m.translationEditIcelandicToggle)}
+            </Text>
+            <ToggleSwitchButton
+              label={formatMessage(m.translationEditIcelandicToggle)}
+              hiddenLabel
+              checked={activeLocale === 'is'}
+              onChange={(checked) => onLocaleChange(checked ? 'is' : 'en')}
+              className={styles.toggleButton}
+            />
+          </Box>
+        )}
 
         {showMainList && (
           <>
