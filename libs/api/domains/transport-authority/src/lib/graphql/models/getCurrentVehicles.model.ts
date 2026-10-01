@@ -50,6 +50,7 @@ export class VehicleOwnerchangeChecksByPermno {
 
 @ObjectType()
 export class VehicleOperatorChangeChecksByPermno {
+  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 
   @Field(() => BasicVehicleInformation, { nullable: true })
