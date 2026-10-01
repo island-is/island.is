@@ -14,7 +14,7 @@ export const DirectorateOfEqualityStatisticsClientConfig = defineConfig<
     // Placeholder until DMR registers the statistics service on X-Road.
     xRoadServicePath: env.required(
       'XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH',
-      'IS-DEV/GOV/10014/DMR-Protected/api.tolfraedi-jafnretti',
+      'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
     ),
   }),
 })

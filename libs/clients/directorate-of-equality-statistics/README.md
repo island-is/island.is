@@ -23,8 +23,6 @@ Register `DirectorateOfEqualityStatisticsClientConfig` in the app's `ConfigModul
 | ----------------------------------------------- | ------------------------------------------ |
 | `XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH` | X-Road service path for the statistics API |
 
-⚠️ The service name `api.tolfraedi-jafnretti` is a placeholder until DMR registers it.
-
 ## Updating the client
 
 - `nx run clients-directorate-of-equality-statistics:update-openapi-document` (via X-Road)

@@ -1038,9 +1038,9 @@ export const DirectorateOfEquality = new XroadConf({
 export const DirectorateOfEqualityStatistics = new XroadConf({
   env: {
     XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: {
-      dev: 'IS-DEV/GOV/10014/DMR-Protected/api.tolfraedi-jafnretti',
-      staging: 'IS-TEST/GOV/10014/DMR-Protected/api.tolfraedi-jafnretti',
-      prod: 'IS/GOV/5804170510/DMR-Protected/api.tolfraedi-jafnretti',
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics',
+      prod: 'IS/GOV/5804170510/DMR-Protected/jafnretti-statistics',
     },
   },
 })
