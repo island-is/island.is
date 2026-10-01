@@ -193,11 +193,14 @@ export const SharedNamespaceTranslationWorkspace = () => {
           </Box>
 
           <Box
+            position="sticky"
+            top={0}
             marginBottom={3}
             display="flex"
             alignItems="center"
             justifyContent="spaceBetween"
             columnGap={2}
+            className={styles.localeStickyHeader}
           >
             <Text variant="medium" as="span">
               {formatMessage(m.translationEditIcelandicToggle)}
