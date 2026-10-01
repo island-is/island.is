@@ -399,7 +399,7 @@ export const m = defineMessages({
   },
   translationStatesTab: {
     id: 'admin-portal.application-system:translationStatesTab',
-    defaultMessage: 'Stöður',
+    defaultMessage: 'Skjáir / Stöður',
   },
   translationStringsTab: {
     id: 'admin-portal.application-system:translationStringsTab',
