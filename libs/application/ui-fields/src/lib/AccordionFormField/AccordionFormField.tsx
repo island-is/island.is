@@ -133,17 +133,21 @@ export const AccordionFormField = ({
               <Text variant="h4" as="span">
                 {formatText(item.itemTitle, application, formatMessage)}
               </Text>
-              {resolvedTag && (
-                <Box marginRight={2}>
+              <Box marginRight={2} role="status" aria-live="polite">
+                {resolvedTag && (
                   <Tag
                     variant={resolvedTag.variant ?? 'red'}
                     outlined={resolvedTag.outlined}
                     disabled
                   >
-                    {formatText(resolvedTag.label, application, formatMessage)}
+                    {formatText(
+                      resolvedTag.label,
+                      liveApplication,
+                      formatMessage,
+                    )}
                   </Tag>
-                </Box>
-              )}
+                )}
+              </Box>
             </Box>
           )
           return (
