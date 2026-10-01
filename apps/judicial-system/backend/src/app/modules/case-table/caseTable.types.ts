@@ -136,15 +136,29 @@ export type CaseWhereOptions = {
   displayCases?: (cases: Case[]) => CaseTableRowCase[]
 }
 
-const toRow = (c: Case): CaseTableRowCase => {
+// Which association the row's appeal comes from, named as fields of Case so a
+// rename there breaks here rather than quietly narrowing this to the one that
+// survived. Only the single ones: a ruling order appeal is one of many on a
+// case, so a list about those picks per row rather than per case.
+type RowAppealSource = keyof Pick<Case, 'appealCase' | 'verdictAppealCase'>
+
+// `appeal` is the one the row is about, taken from the association the list
+// names. It defaults to the case-level appeal, which is what a list that says
+// nothing means; a list about another proceeding says which, rather than
+// building a row and overwriting it.
+const toRow = (
+  c: Case,
+  appealFrom: RowAppealSource = 'appealCase',
+): CaseTableRowCase => {
+  const json = c.toJSON()
   const {
-    appealCase,
+    appealCase: _appealCase,
     rulingOrderAppealCases: _rulingOrderAppealCases,
     verdictAppealCase: _verdictAppealCase,
     ...rest
-  } = c.toJSON()
+  } = json
 
-  return { ...rest, appeal: appealCase } as CaseTableRowCase
+  return { ...rest, appeal: json[appealFrom] } as CaseTableRowCase
 }
 
 /**
@@ -161,8 +175,10 @@ const toRow = (c: Case): CaseTableRowCase => {
  */
 export const toDisplayCases = (
   cs: Case[],
+  // Wrapped rather than passed to map directly: map would hand toRow the
+  // array index as the association to take the appeal from.
   displayCases: (cases: Case[]) => CaseTableRowCase[] = (cs: Case[]) =>
-    cs.map(toRow),
+    cs.map((c) => toRow(c)),
 ): CaseTableRowCase[] => displayCases(cs)
 
 /**
@@ -311,8 +327,7 @@ export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
  */
 export const presentVerdictAppealAsRowAppeal = (
   cs: Case[],
-): CaseTableRowCase[] =>
-  cs.map((c) => ({ ...toRow(c), appeal: c.verdictAppealCase }))
+): CaseTableRowCase[] => cs.map((c) => toRow(c, 'verdictAppealCase'))
 
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
@@ -321,6 +336,8 @@ export const presentVerdictAppealAsRowAppeal = (
 // `rulingOrderAppealCases` array is dropped to prevent re-iteration downstream.
 export const expandCasesWithAppeals = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
+    // Spread rather than another toRow per appeal: one case becomes many rows
+    // here, and they share a serialisation.
     const row = toRow(c)
     const rulingOrderRows = (c.rulingOrderAppealCases ?? []).map(
       (rulingOrderAppeal: AppealCase) => ({
