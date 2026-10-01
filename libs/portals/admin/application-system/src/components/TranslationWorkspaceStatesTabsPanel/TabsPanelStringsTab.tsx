@@ -81,8 +81,8 @@ export const TabsPanelStringsTab = ({
   }
 
   return (
-    <Box className={styles.tabPanel}>
-      <Box className={styles.stringsTabHeader}>
+    <Box className={styles.tabsPanelScroll}>
+      <Box className={styles.tabsPanelInner}>
         <Box marginBottom={3}>
           <Box
             role="group"
@@ -145,10 +145,14 @@ export const TabsPanelStringsTab = ({
         </Box>
 
         <Box
+          position="sticky"
+          top={0}
           display="flex"
           alignItems="center"
           justifyContent="spaceBetween"
           columnGap={2}
+          marginBottom={3}
+          className={styles.localeStickyHeader}
         >
           <Text variant="medium" as="span">
             {formatMessage(m.translationEditIcelandicToggle)}
@@ -161,119 +165,111 @@ export const TabsPanelStringsTab = ({
             className={styles.toggleButton}
           />
         </Box>
-      </Box>
 
-      <Box className={styles.tabsPanelScroll}>
-        <Box className={styles.tabsPanelInner}>
-          {showMainList && (
-            <>
-              <TranslationStringsList
-                descriptors={visibleDescriptors}
-                editedValues={editedValues}
-                activeLocale={activeLocale}
-                getPersistedValue={getPersistedValue}
-                onValueChange={onValueChange}
-                formatMessage={formatMessage}
-                persistedByKey={persistedByKey}
-                onGoogleTranslate={onGoogleTranslate}
-                onGoogleTranslateAll={onGoogleTranslateAll}
-                translatingIds={translatingIds}
-                emptyMessage={
-                  stringsListScope === 'application'
-                    ? formatMessage(m.translationStringsEmptyApplication)
-                    : formatMessage(m.translationStringsEmptyScreen)
-                }
-              />
+        {showMainList && (
+          <>
+            <TranslationStringsList
+              descriptors={visibleDescriptors}
+              editedValues={editedValues}
+              activeLocale={activeLocale}
+              getPersistedValue={getPersistedValue}
+              onValueChange={onValueChange}
+              formatMessage={formatMessage}
+              persistedByKey={persistedByKey}
+              onGoogleTranslate={onGoogleTranslate}
+              onGoogleTranslateAll={onGoogleTranslateAll}
+              translatingIds={translatingIds}
+              emptyMessage={
+                stringsListScope === 'application'
+                  ? formatMessage(m.translationStringsEmptyApplication)
+                  : formatMessage(m.translationStringsEmptyScreen)
+              }
+            />
 
-              {visibleValidationDescriptors.length > 0 && (
-                <Box marginTop={4}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">
-                      {formatMessage(m.translationValidationErrors)} (
-                      {visibleValidationDescriptors.length})
-                    </Text>
-                  </Box>
-
-                  {visibleValidationDescriptors.map((descriptor) => {
-                    const sourceText = getSourceText(descriptor)
-                    const icelandicValue =
-                      editedValues.is[descriptor.id] ??
-                      getPersistedValue(descriptor.id, 'is') ??
-                      descriptor.defaultMessage ??
-                      ''
-                    const translationValue =
-                      editedValues.en[descriptor.id] ??
-                      getPersistedValue(descriptor.id, 'en') ??
-                      ''
-
-                    return (
-                      <TranslationDescriptorCard
-                        key={descriptor.id}
-                        formatMessage={formatMessage}
-                        descriptor={descriptor}
-                        icelandicValue={icelandicValue}
-                        translationValue={translationValue}
-                        activeLocale={activeLocale}
-                        onValueChange={(value) =>
-                          onValueChange(descriptor.id, value)
-                        }
-                        tags={[
-                          {
-                            label: formatMessage(
-                              m.translationValidationErrorTag,
-                            ),
-                            variant: 'rose',
-                            outlined: true,
-                          },
-                        ]}
-                        subtitle={formatMessage(
-                          m.translationValidationFieldSubtitle,
-                          { field: descriptor.fieldPath },
-                        )}
-                        onGoogleTranslate={
-                          onGoogleTranslate && sourceText
-                            ? () =>
-                                onGoogleTranslate(descriptor.id, sourceText)
-                            : undefined
-                        }
-                        isTranslating={translatingIds?.has(descriptor.id)}
-                      />
-                    )
-                  })}
-                </Box>
-              )}
-
-              {showValidationErrors && validationDescriptors.length === 0 && (
-                <Box marginTop={3}>
-                  <Text color="dark300">
-                    {formatMessage(m.translationValidationEmpty)}
+            {visibleValidationDescriptors.length > 0 && (
+              <Box marginTop={4}>
+                <Box marginBottom={2}>
+                  <Text variant="h5">
+                    {formatMessage(m.translationValidationErrors)} (
+                    {visibleValidationDescriptors.length})
                   </Text>
                 </Box>
-              )}
-            </>
-          )}
 
-          {stringsListScope === 'screen' && !selectedScreen && (
-            <Box marginTop={3}>
-              <Text color="dark300">
-                {formatMessage(m.translationStringsScreenSelectHint, {
-                  applicationScope: formatMessage(
-                    m.translationStringsScopeApplication,
-                  ),
+                {visibleValidationDescriptors.map((descriptor) => {
+                  const sourceText = getSourceText(descriptor)
+                  const icelandicValue =
+                    editedValues.is[descriptor.id] ??
+                    getPersistedValue(descriptor.id, 'is') ??
+                    descriptor.defaultMessage ??
+                    ''
+                  const translationValue =
+                    editedValues.en[descriptor.id] ??
+                    getPersistedValue(descriptor.id, 'en') ??
+                    ''
+
+                  return (
+                    <TranslationDescriptorCard
+                      key={descriptor.id}
+                      formatMessage={formatMessage}
+                      descriptor={descriptor}
+                      icelandicValue={icelandicValue}
+                      translationValue={translationValue}
+                      activeLocale={activeLocale}
+                      onValueChange={(value) =>
+                        onValueChange(descriptor.id, value)
+                      }
+                      tags={[
+                        {
+                          label: formatMessage(m.translationValidationErrorTag),
+                          variant: 'rose',
+                          outlined: true,
+                        },
+                      ]}
+                      subtitle={formatMessage(
+                        m.translationValidationFieldSubtitle,
+                        { field: descriptor.fieldPath },
+                      )}
+                      onGoogleTranslate={
+                        onGoogleTranslate && sourceText
+                          ? () => onGoogleTranslate(descriptor.id, sourceText)
+                          : undefined
+                      }
+                      isTranslating={translatingIds?.has(descriptor.id)}
+                    />
+                  )
                 })}
-              </Text>
-            </Box>
-          )}
+              </Box>
+            )}
 
-          {stringsListScope === 'application' &&
-            applicationStringCount === 0 && (
+            {showValidationErrors && validationDescriptors.length === 0 && (
               <Box marginTop={3}>
                 <Text color="dark300">
-                  {formatMessage(m.translationStringsApplicationEmptyHint)}
+                  {formatMessage(m.translationValidationEmpty)}
                 </Text>
               </Box>
             )}
-        </Box>
+          </>
+        )}
+
+        {stringsListScope === 'screen' && !selectedScreen && (
+          <Box marginTop={3}>
+            <Text color="dark300">
+              {formatMessage(m.translationStringsScreenSelectHint, {
+                applicationScope: formatMessage(
+                  m.translationStringsScopeApplication,
+                ),
+              })}
+            </Text>
+          </Box>
+        )}
+
+        {stringsListScope === 'application' && applicationStringCount === 0 && (
+          <Box marginTop={3}>
+            <Text color="dark300">
+              {formatMessage(m.translationStringsApplicationEmptyHint)}
+            </Text>
+          </Box>
+        )}
       </Box>
     </Box>
   )
