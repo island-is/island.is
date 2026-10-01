@@ -1,6 +1,7 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import * as FileSystem from 'expo-file-system'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 
 import {
@@ -181,11 +182,13 @@ export function useDocument(id: string, isUrgent?: boolean) {
 
 export function useHtmlSource(value: string | undefined | null) {
   const theme = useTheme()
+  // Pad the page past the floating tab bar it renders under.
+  const { bottom } = useSafeAreaInsets()
   return useMemo(() => {
     if (!value) return null
     const text = theme.shade.foreground
     const styles = `<style>
-      body { font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif; margin: ${theme.spacing[3]}px; color: ${text}; }
+      body { font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif; margin: ${theme.spacing[3]}px; padding-bottom: ${bottom}px; color: ${text}; }
       h1, h2, h3 { color: ${text}; }
       h1 { font-size: 32px; line-height: 38px; }
       h2 { font-size: 26px; line-height: 32px; }
@@ -196,5 +199,5 @@ export function useHtmlSource(value: string | undefined | null) {
     </style>
     <meta name="viewport" content="width=device-width">`
     return { html: `${styles}${value.replace(BR_REGEX, '')}` }
-  }, [value, theme])
+  }, [value, theme, bottom])
 }
