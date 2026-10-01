@@ -302,6 +302,23 @@ export const tabPanel = style({
   overflow: 'hidden',
 })
 
+export const stringsTabHeader = style({
+  flexShrink: 0,
+  paddingTop: theme.spacing[3],
+  paddingLeft: theme.spacing[3],
+  paddingRight: theme.spacing[3],
+  paddingBottom: theme.spacing[2],
+  borderBottom: `1px solid ${theme.color.blue200}`,
+  background: theme.color.white,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      paddingTop: theme.spacing[6],
+      paddingLeft: theme.spacing[6],
+      paddingRight: theme.spacing[6],
+    },
+  },
+})
+
 export const tabsPanelScroll = style({
   flex: 1,
   minHeight: 0,
