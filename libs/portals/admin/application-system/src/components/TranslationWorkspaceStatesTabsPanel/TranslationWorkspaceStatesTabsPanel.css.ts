@@ -326,6 +326,12 @@ export const tabsPanelScroll = style({
   minHeight: 0,
   overflowX: 'hidden',
   overflowY: 'auto',
+  scrollbarWidth: 'none',
+  msOverflowStyle: 'none',
+})
+
+globalStyle(`${tabsPanelScroll}::-webkit-scrollbar`, {
+  display: 'none',
 })
 
 export const toggleButton = style({
