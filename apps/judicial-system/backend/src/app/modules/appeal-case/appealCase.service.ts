@@ -856,10 +856,10 @@ export class AppealCaseService {
       }
 
       const appealEventLogs =
-        await this.appealEventLogRepositoryService.findAll({
-          where: { appealCaseId: existingAppealCase.id },
-          transaction,
-        })
+        await this.appealEventLogRepositoryService.findAllForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       if (hasStandingVerdictAppeal({ appealEventLogs }, defendantId, side)) {
         throw new ForbiddenException(
@@ -1293,12 +1293,11 @@ export class AppealCaseService {
     // then re-read the freshly committed set. The lock must precede the update:
     // taking it after would let each transaction hold a lock on its own updated
     // row and deadlock on the other's.
-    await this.appealDecisionRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      order: [['id', 'ASC']],
-      lock: Transaction.LOCK.UPDATE,
-      transaction,
-    })
+    await this.appealDecisionRepositoryService.lockAllForRuling(
+      theCase.id,
+      rulingFileId,
+      { transaction },
+    )
 
     const withdrawnDate = nowFactory()
 
@@ -1328,10 +1327,12 @@ export class AppealCaseService {
     )
 
     // The appeal stands until every party that appealed in court has withdrawn.
-    const appealDecisions = await this.appealDecisionRepositoryService.findAll({
-      where: { caseId: theCase.id, rulingFileId },
-      transaction,
-    })
+    const appealDecisions =
+      await this.appealDecisionRepositoryService.findAllForRuling(
+        theCase.id,
+        rulingFileId,
+        { transaction },
+      )
     const allWithdrawn = appealDecisions
       .filter((d) => d.decision === CaseAppealDecision.APPEAL)
       .every((d) => d.withdrawnDate)
@@ -1421,10 +1422,11 @@ export class AppealCaseService {
       }
     }
 
-    const appealEventLogs = await this.appealEventLogRepositoryService.findAll({
-      where: { appealCaseId: appealCase.id },
-      transaction,
-    })
+    const appealEventLogs =
+      await this.appealEventLogRepositoryService.findAllForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const standingAppellants = standingVerdictAppellants({ appealEventLogs })
     const isWithdrawn = (appellant: {

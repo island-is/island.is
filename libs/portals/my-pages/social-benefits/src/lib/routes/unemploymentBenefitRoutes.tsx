@@ -4,6 +4,7 @@ import { m, sharedMessages } from '../messages'
 import { UnemploymentBenefitsPaths } from '../paths'
 import Status from '../../screens/unemployment-benefits/Status/Status'
 import MyData from '../../screens/unemployment-benefits/MyData/MyData'
+import Payments from '../../screens/unemployment-benefits/Payments/Payments'
 import { UnemploymentBenefitsRoot } from '../../screens/unemployment-benefits/UnemploymentBenefitsRoot'
 
 export const unemploymentBenefitsRoutes = (
@@ -23,6 +24,14 @@ export const unemploymentBenefitsRoutes = (
     enabled: true,
     dynamic: true,
     element: <Status />,
+  },
+  {
+    name: sharedMessages.myPayments,
+    key: 'UnemploymentBenefits',
+    path: UnemploymentBenefitsPaths.Payments,
+    enabled: true,
+    dynamic: true,
+    element: <Payments />,
   },
   {
     name: sharedMessages.myData,

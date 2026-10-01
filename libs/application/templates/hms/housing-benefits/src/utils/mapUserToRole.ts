@@ -3,6 +3,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import { Roles } from './constants'
 import { getRejectedAssigneeNationalIds } from './assigneeRejectionUtils'
+import { assigneeExternalDataKey } from './assigneeUtils'
 
 const hasAssigneeCompletedPrereq = (
   application: Application,
@@ -11,7 +12,7 @@ const hasAssigneeCompletedPrereq = (
   const { externalData, answers } = application
 
   const assigneeRegistry = externalData[
-    `${normalizedNationalId}.assigneeNationalRegistry`
+    assigneeExternalDataKey(normalizedNationalId, 'assigneeNationalRegistry')
   ] as { status?: string; data?: unknown } | undefined
   const hasNationalRegistry =
     assigneeRegistry != null &&
@@ -20,9 +21,18 @@ const hasAssigneeCompletedPrereq = (
     typeof assigneeRegistry.data === 'object' &&
     Object.keys(assigneeRegistry.data as object).length > 0
   const hasUserProfile =
-    !!externalData[`${normalizedNationalId}.assigneeUserProfile`]?.data
+    !!externalData[
+      assigneeExternalDataKey(normalizedNationalId, 'assigneeUserProfile')
+    ]?.data
+  const taxReturn = externalData[
+    assigneeExternalDataKey(normalizedNationalId, 'assigneeTaxReturn')
+  ] as { status?: string; data?: unknown } | undefined
   const hasTaxReturn =
-    !!externalData[`${normalizedNationalId}.assigneeTaxReturn`]?.data
+    taxReturn != null &&
+    taxReturn.status !== 'failure' &&
+    taxReturn.data != null &&
+    typeof taxReturn.data === 'object' &&
+    Object.keys(taxReturn.data as object).length > 0
 
   const hasApprovedExternalData =
     getValueViaPath<boolean>(
