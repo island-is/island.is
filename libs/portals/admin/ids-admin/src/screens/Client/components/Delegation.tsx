@@ -14,6 +14,7 @@ import { useDelegationProviders } from '../../../context/DelegationProviders/Del
 import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
 import {
   getDelegationTypeFormValues,
+  getEditableDelegationTypes,
   isDelegationProviderVisible,
 } from '../../../utils/getDelegationTypeFormValues'
 
@@ -56,6 +57,16 @@ const Delegation = ({
         provider && isDelegationProviderVisible(provider.id, isSuperAdmin),
     )
 
+  // Delegation types the user cannot edit are left out, since their sync cannot
+  // resolve a difference in them.
+  const editableDelegationTypes = getEditableDelegationTypes(providers)
+  const environmentsWithEditableTypes = client.environments.map((env) => ({
+    ...env,
+    supportedDelegationTypes: (env.supportedDelegationTypes ?? []).filter(
+      (type) => editableDelegationTypes.includes(type),
+    ),
+  }))
+
   const toggleDelegationType = (field: string, checked: boolean) => {
     const type = field.split(FIELD_PREFIX)[1]
 
@@ -80,7 +91,7 @@ const Delegation = ({
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
       headerMarginBottom={3}
-      inSync={checkEnvironmentsSync(client.environments, [
+      inSync={checkEnvironmentsSync(environmentsWithEditableTypes, [
         'supportedDelegationTypes',
         'promptDelegations',
         'requireApiScopes',

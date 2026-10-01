@@ -3,7 +3,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import Base64 from 'crypto-js/enc-base64'
 import sha256 from 'crypto-js/sha256'
-import { BulkCreateOptions, DestroyOptions } from 'sequelize'
+import { BulkCreateOptions, DestroyOptions, Transaction } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NoContentException } from '@island.is/nest/problem'
@@ -580,46 +580,7 @@ export class ClientsService {
     delegationTypes?: string[]
     options: BulkCreateOptions
   }) {
-    const supportsCustomDelegation = delegationTypes.includes(
-      AuthDelegationType.Custom,
-    )
-    const supportsProcuringHolders = delegationTypes.includes(
-      AuthDelegationType.ProcurationHolder,
-    )
-
-    const supportsLegalGuardians = delegationTypes.includes(
-      AuthDelegationType.LegalGuardian,
-    )
-
-    const supportsPersonalRepresentatives = delegationTypes.some((type) =>
-      type.startsWith(AuthDelegationType.PersonalRepresentative),
-    )
-
-    if (
-      supportsCustomDelegation ||
-      supportsLegalGuardians ||
-      supportsProcuringHolders ||
-      supportsPersonalRepresentatives
-    ) {
-      await this.clientModel.update(
-        {
-          ...(supportsLegalGuardians ? { supportsLegalGuardians } : {}),
-          ...(supportsPersonalRepresentatives
-            ? { supportsPersonalRepresentatives }
-            : {}),
-          ...(supportsProcuringHolders ? { supportsProcuringHolders } : {}),
-          ...(supportsCustomDelegation ? { supportsCustomDelegation } : {}),
-        },
-        {
-          ...options,
-          where: {
-            clientId,
-          },
-        },
-      )
-    }
-
-    if (supportsCustomDelegation) {
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
       delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
@@ -646,50 +607,6 @@ export class ClientsService {
     delegationTypes?: string[]
     options: DestroyOptions
   }) {
-    const supportsCustomDelegation = delegationTypes.includes(
-      AuthDelegationType.Custom,
-    )
-      ? false
-      : undefined
-    const supportsProcuringHolders = delegationTypes.includes(
-      AuthDelegationType.ProcurationHolder,
-    )
-      ? false
-      : undefined
-    const supportsLegalGuardians = delegationTypes.includes(
-      AuthDelegationType.LegalGuardian,
-    )
-      ? false
-      : undefined
-    const supportsPersonalRepresentatives = delegationTypes.some((type) =>
-      type.startsWith(AuthDelegationType.PersonalRepresentative),
-    )
-      ? false
-      : undefined
-
-    // Update boolean fields in client table
-    if (
-      supportsCustomDelegation === false ||
-      supportsLegalGuardians === false ||
-      supportsProcuringHolders === false ||
-      supportsPersonalRepresentatives === false
-    ) {
-      await this.clientModel.update(
-        {
-          supportsCustomDelegation,
-          supportsLegalGuardians,
-          supportsProcuringHolders,
-          supportsPersonalRepresentatives,
-        },
-        {
-          ...options,
-          where: {
-            clientId,
-          },
-        },
-      )
-    }
-
     if (delegationTypes.includes(AuthDelegationType.Custom)) {
       delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
@@ -704,6 +621,47 @@ export class ClientsService {
           },
         }),
       ),
+    )
+  }
+
+  /**
+   * The deprecated supports_* booleans are derived from the client's delegation
+   * types once all changes are applied, since deriving them per add or remove
+   * call lets one call undo the other.
+   */
+  async updateClientDelegationTypeBooleans({
+    clientId,
+    options = {},
+  }: {
+    clientId: string
+    options?: { transaction?: Transaction }
+  }) {
+    const delegationTypes = (
+      await this.clientDelegationType.findAll({
+        ...options,
+        where: { clientId },
+      })
+    ).map(({ delegationType }) => delegationType)
+
+    await this.clientModel.update(
+      {
+        supportsCustomDelegation: delegationTypes.includes(
+          AuthDelegationType.Custom,
+        ),
+        supportsLegalGuardians: delegationTypes.includes(
+          AuthDelegationType.LegalGuardian,
+        ),
+        supportsProcuringHolders: delegationTypes.includes(
+          AuthDelegationType.ProcurationHolder,
+        ),
+        supportsPersonalRepresentatives: delegationTypes.some((type) =>
+          type.startsWith(AuthDelegationType.PersonalRepresentative),
+        ),
+      },
+      {
+        ...options,
+        where: { clientId },
+      },
     )
   }
 }

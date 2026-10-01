@@ -1210,6 +1210,47 @@ describe('MeClientsController with auth', () => {
         })
       })
 
+      it('should keep supporting personal representatives when one personal representative type is removed and another kept', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+          dbType: 'postgres',
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, superUser)
+        const postholf = `${AuthDelegationType.PersonalRepresentative}:postholf`
+        await new FixtureFactory(app).createDelegationType({
+          id: postholf,
+          providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        })
+
+        await updateAndAssert({
+          server,
+          body: { addedDelegationTypes: [postholf as AuthDelegationType] },
+          supportedDelegationTypes: [postholf],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: false,
+        })
+
+        // Act
+        await updateAndAssert({
+          server,
+          body: {
+            addedDelegationTypes: [postholf as AuthDelegationType],
+            removedDelegationTypes: [AuthDelegationType.PersonalRepresentative],
+          },
+          supportedDelegationTypes: [postholf],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: false,
+        })
+      })
+
       it.each`
         action
         ${'added'}

@@ -610,6 +610,13 @@ export class AdminClientsService {
         },
       })
     }
+
+    if (addedDelegationTypes?.length || removedDelegationTypes?.length) {
+      await this.clientsService.updateClientDelegationTypeBooleans({
+        clientId: data.clientId,
+        options: { transaction },
+      })
+    }
   }
 
   private defaultClientAttributes(clientType: ClientType) {

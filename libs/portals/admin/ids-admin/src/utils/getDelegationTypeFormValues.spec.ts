@@ -2,6 +2,7 @@ import { AuthDelegationProvider } from '@island.is/shared/types'
 
 import {
   getDelegationTypeFormValues,
+  getEditableDelegationTypes,
   isDelegationProviderVisible,
 } from './getDelegationTypeFormValues'
 
@@ -44,6 +45,19 @@ describe('isDelegationProviderVisible', () => {
   ])('should only show %s to super admins', (provider) => {
     expect(isDelegationProviderVisible(provider, false)).toBe(false)
     expect(isDelegationProviderVisible(provider, true)).toBe(true)
+  })
+})
+
+describe('getEditableDelegationTypes', () => {
+  it('should list the delegation types of the given providers', () => {
+    expect(
+      getEditableDelegationTypes([
+        companyRegistry,
+        null,
+        { id: AuthDelegationProvider.Custom, delegationTypes: [null] },
+        nationalRegistry,
+      ]),
+    ).toEqual(['ProcurationHolder', 'LegalGuardian', 'LegalGuardianMinor'])
   })
 })
 

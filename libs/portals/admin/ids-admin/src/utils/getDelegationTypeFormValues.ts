@@ -15,6 +15,15 @@ export const isDelegationProviderVisible = (
   isSuperAdmin: boolean,
 ) => isSuperAdmin || !superAdminOnlyProviders.includes(providerId)
 
+export const getEditableDelegationTypes = (
+  providers: DelegationProviderLike[],
+) =>
+  providers.flatMap(
+    (provider) =>
+      provider?.delegationTypes.flatMap((type) => (type ? [type.id] : [])) ??
+      [],
+  )
+
 /**
  * Submits the full desired state rather than what changed while the form was
  * open. Adding a delegation type the client already has is an upsert and
@@ -30,11 +39,7 @@ export const getDelegationTypeFormValues = ({
   providers: DelegationProviderLike[]
   supportedDelegationTypes: string[]
 }) => {
-  const editableDelegationTypes = providers.flatMap(
-    (provider) =>
-      provider?.delegationTypes.flatMap((type) => (type ? [type.id] : [])) ??
-      [],
-  )
+  const editableDelegationTypes = getEditableDelegationTypes(providers)
 
   return {
     addedDelegationTypes: editableDelegationTypes.filter((type) =>
