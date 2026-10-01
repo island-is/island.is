@@ -1629,7 +1629,7 @@ export interface UpdateDefendant {
   requestedDefenderChoice?: DefenderChoice
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
-  isDefenderChoiceConfirmed?: boolean | null
+  isDefenderChoiceConfirmed?: boolean
   caseFilesSharedWithDefender?: boolean
   appealDefenderName?: string | null
   appealDefenderNationalId?: string | null
