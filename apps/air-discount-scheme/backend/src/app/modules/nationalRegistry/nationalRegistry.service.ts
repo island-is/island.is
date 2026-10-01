@@ -245,6 +245,7 @@ export class NationalRegistryService {
     nationalId: string,
   ): NationalRegistryUser {
     const address = response.heimilisfang ?? response.itarupplysingar?.adsetur
+    const postnumer = address?.postnumer
     const nameParts = response.nafn?.split(' ') ?? []
     return {
       nationalId: response.kennitala ?? nationalId,
@@ -255,7 +256,8 @@ export class NationalRegistryService {
         response.fulltNafn?.kenniNafn ?? nameParts.slice(-1).pop() ?? '',
       gender: this.mapGender(response.kyn?.kynKodi ?? ''),
       address: address?.husHeiti ?? '',
-      postalcode: parseInt(address?.postnumer ?? '0'),
+      postalcode:
+        postnumer && /^\d+$/.test(postnumer) ? parseInt(postnumer, 10) : 0,
       city: address?.poststod ?? '',
     }
   }

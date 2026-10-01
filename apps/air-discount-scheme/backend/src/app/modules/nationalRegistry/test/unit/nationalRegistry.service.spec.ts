@@ -81,7 +81,12 @@ describe('NationalRegistryService', () => {
     })
   })
 
-  it('reads custodians from v3 without adding the caller', async () => {
+  it.each([
+    ['225', 225],
+    ['225abc', 0],
+    ['abc', 0],
+    [undefined, 0],
+  ])('maps custodian postal code %s to %i', async (postnumer, postalcode) => {
     v3Client.getCustodians.mockResolvedValue([
       { forsjaAdiliKennitala: '1306886513' },
       { forsjaAdiliKennitala: null },
@@ -92,13 +97,13 @@ describe('NationalRegistryService', () => {
       kyn: { kynKodi: '1' },
       heimilisfang: {
         husHeiti: 'Bessastaðir 1',
-        postnumer: '225',
+        postnumer,
         poststod: 'Álftanes',
       },
     })
     await expect(
       nationalRegistryService.getCustodians('0101011234'),
-    ).resolves.toEqual([user])
+    ).resolves.toEqual([{ ...user, postalcode }])
     expect(v3Client.getCustodians).toHaveBeenCalledWith('0101011234')
   })
 
