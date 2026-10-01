@@ -947,6 +947,9 @@ export const en: TranslatedMessages = {
   'health.messages.compose.selectServicePlaceholder':
     'Select a service from the dropdown',
   'health.messages.compose.to': 'To: {name}',
+  'health.messages.compose.subjectLabel': 'Subject',
+  'health.messages.compose.subjectPlaceholder':
+    'Enter the subject of the message',
   'health.messages.compose.messageLabel': 'Message',
   'health.messages.compose.messagePlaceholder': 'Write your message here',
   'health.messages.compose.termsAccept':
@@ -1156,8 +1159,6 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalModal.description':
     'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
   'health.prescriptions.renewalModal.selectRecipient': 'Send to',
-  'health.prescriptions.renewalModal.medicineInformation':
-    'Medicine information',
   'health.prescriptions.renewalModal.medicineName': 'Medication name',
   'health.prescriptions.renewalModal.usedFor': 'Used for',
   'health.prescriptions.renewalModal.cancel': 'Cancel',

@@ -401,7 +401,7 @@ export const Footer = ({
               slug: state.application.slug,
               isTest: state.application.isTest,
               command: NotificationCommands.VALIDATE,
-              screenDto: state.currentScreen.data,
+              screenDto: removeTypename(state.currentScreen.data),
             },
           },
         })

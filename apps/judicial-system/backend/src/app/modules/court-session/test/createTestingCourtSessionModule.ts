@@ -121,7 +121,9 @@ export const createTestingCourtSessionModule = async () => {
 
   // Event convergence reads existing APPEALED events; default to none so tests
   // that don't set it up don't blow up on the returned undefined.
-  ;(appealEventLogRepositoryService.findAll as jest.Mock).mockResolvedValue([])
+  ;(
+    appealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+  ).mockResolvedValue([])
   // Same for the appeals the ruling-order cleanup checks for before deleting a
   // ruling that was only ever pronounced orally.
   ;(

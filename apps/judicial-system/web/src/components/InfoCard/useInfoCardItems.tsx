@@ -34,6 +34,7 @@ import {
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
@@ -57,6 +58,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
+  // Which appeal these details belong to. A case can carry a case level appeal
+  // and an appeal of each ruling order at once, and the Court of Appeals opens
+  // one page per appeal, naming it in the query string. Falls back to the case
+  // level appeal, which is what every page without that query string wants.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const defendants = ({
     caseType,
@@ -383,13 +389,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCase?.appealCaseNumber],
+    values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealCase?.appealAssistant?.name],
+    values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -398,9 +404,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealCase?.appealJudge1?.name || '',
-          workingCase.appealCase?.appealJudge2?.name || '',
-          workingCase.appealCase?.appealJudge3?.name || '',
+          targetAppealCase?.appealJudge1?.name || '',
+          targetAppealCase?.appealJudge2?.name || '',
+          targetAppealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}

@@ -99,12 +99,18 @@ its dates from `new Date()`. A fixed service date passes until the window closes
 and then fails forever, in a spec that has nothing to do with whoever is running
 it that day.
 
-## Run `nx lint`, not only `nx format:check`
+## Lint must be clean before opening a PR
 
-Import ordering is an ESLint rule (`simple-import-sort`), not a prettier one, so
-a file that `format:check` is happy with can still fail linting. CI notices and
-pushes a `chore: lintfix` commit onto the branch, which then has to be merged
-back before the next push.
+Run `yarn nx affected -t lint --base=origin/main` before committing and fix
+everything it reports. Warnings count: every judicial-system lint target runs
+with `maxWarnings: 0`, so an unused import, an unused variable or a
+`naming-convention` warning fails `nx lint` and CI exactly like an error does.
+Do not push or open a PR while lint reports anything.
+
+`nx format:check` is not enough. Import ordering is an ESLint rule
+(`simple-import-sort`), not a prettier one, so a file that `format:check` is
+happy with can still fail linting. CI notices and pushes a `chore: lintfix`
+commit onto the branch, which then has to be merged back before the next push.
 
 ## Derive view data with a function, not `useMemo`
 
