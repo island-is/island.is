@@ -9,6 +9,7 @@ const colors = {
   muted: '#33335A',
   accent: '#0061FF',
   accentSoft: '#CCDFFF',
+  accentMinimal: '#F2F7FF',
   surface: '#FFFFFF',
   border: '#CCDFFF',
   white: '#FFFFFF',
@@ -20,6 +21,7 @@ const footerHeight = 28
 const sectionContentReservation = 150
 const screenContentReservation = 90
 const screenIndent = 10
+const fieldIndent = 20
 
 const translations = {
   application: { is: 'Umsókn', en: 'Application' },
@@ -233,21 +235,27 @@ const drawField = (
         .font('Helvetica-Bold')
         .fontSize(9)
         .heightOfString(label, {
-          width: contentWidth - 32,
+          width: contentWidth - fieldIndent - 32,
         }) + 6
     : 0
   const valueHeight = document
     .font('Helvetica')
     .fontSize(10)
     .heightOfString(value, {
-      width: contentWidth - 32,
+      width: contentWidth - fieldIndent - 32,
     })
   const blockHeight = Math.max(42, labelHeight + valueHeight + 28)
 
   ensureSpace(document, blockHeight + 8)
   const top = document.y
   document
-    .roundedRect(pageMargin, top, contentWidth, blockHeight, 4)
+    .roundedRect(
+      pageMargin + fieldIndent,
+      top,
+      contentWidth - fieldIndent,
+      blockHeight,
+      4,
+    )
     .fillAndStroke(colors.surface, colors.border)
 
   let textTop = top + 14
@@ -256,7 +264,9 @@ const drawField = (
       .fillColor(colors.ink)
       .font('Helvetica-Bold')
       .fontSize(9)
-      .text(label, pageMargin + 16, textTop, { width: contentWidth - 32 })
+      .text(label, pageMargin + fieldIndent + 16, textTop, {
+        width: contentWidth - fieldIndent - 32,
+      })
     textTop += labelHeight
   }
 
@@ -264,7 +274,9 @@ const drawField = (
     .fillColor(lines.length ? colors.ink : colors.muted)
     .font('Helvetica')
     .fontSize(10)
-    .text(value, pageMargin + 16, textTop, { width: contentWidth - 32 })
+    .text(value, pageMargin + fieldIndent + 16, textTop, {
+      width: contentWidth - fieldIndent - 32,
+    })
   document.y = top + blockHeight + 8
 }
 
@@ -346,17 +358,26 @@ export const buildApplicationPdf = (
           document.moveDown(0.4)
           const top = document.y
           document
+            .roundedRect(
+              pageMargin + screenIndent,
+              top,
+              contentWidth - screenIndent,
+              30,
+              4,
+            )
+            .fillAndStroke(colors.accentMinimal, colors.accentSoft)
             .fillColor(colors.ink)
             .font('Helvetica-Bold')
             .fontSize(11)
-            .text(textFor(screen.name, locale), pageMargin + screenIndent, top)
-          document
-            .moveTo(pageMargin + screenIndent, top + 18)
-            .lineTo(pageMargin + contentWidth, top + 18)
-            .lineWidth(1)
-            .strokeColor(colors.accentSoft)
-            .stroke()
-          document.y = top + 26
+            .text(
+              textFor(screen.name, locale),
+              pageMargin + screenIndent + 12,
+              top + 9,
+              {
+                width: contentWidth - screenIndent - 24,
+              },
+            )
+          document.y = top + 38
         }
 
         for (const field of screen.fields ?? []) {
