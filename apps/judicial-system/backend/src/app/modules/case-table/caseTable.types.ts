@@ -136,9 +136,6 @@ export type CaseWhereOptions = {
   displayCases?: (cases: Case[]) => CaseTableRowCase[]
 }
 
-// Every row goes through one of these, so there is no such thing as a row that
-// skipped normalisation. A list that says nothing is about the case-level
-// appeal, which is what all of them meant before any of this existed.
 const toRow = (c: Case): CaseTableRowCase => {
   const {
     appealCase,
@@ -150,6 +147,18 @@ const toRow = (c: Case): CaseTableRowCase => {
   return { ...rest, appeal: appealCase } as CaseTableRowCase
 }
 
+/**
+ * The rows a list is built from, whether or not it asked for anything special.
+ *
+ * Every row comes through here, so there is no such thing as one that skipped
+ * normalisation and nothing downstream has to ask whether a list has its own
+ * `displayCases`.
+ *
+ * The default is the whole rule for a list that says nothing: one row per
+ * case, about the case-level appeal - which is what every list meant before
+ * any of the others existed. The ones that override it either fan a case out
+ * into a row per appeal or name a different appeal.
+ */
 export const toDisplayCases = (
   cs: Case[],
   displayCases: (cases: Case[]) => CaseTableRowCase[] = (cs: Case[]) =>
