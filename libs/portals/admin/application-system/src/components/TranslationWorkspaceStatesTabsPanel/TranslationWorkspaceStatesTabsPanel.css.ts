@@ -77,8 +77,6 @@ export const tabList = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
       marginTop: theme.spacing[3],
-      marginLeft: theme.spacing[6],
-      marginRight: theme.spacing[6],
     },
   },
 })
@@ -321,14 +319,6 @@ export const localeStickyHeader = style({
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
   borderBottom: `1px solid ${theme.color.blue200}`,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      marginLeft: -theme.spacing[6],
-      marginRight: -theme.spacing[6],
-      paddingLeft: theme.spacing[6],
-      paddingRight: theme.spacing[6],
-    },
-  },
 })
 
 export const tabsPanelScroll = style({
@@ -353,8 +343,6 @@ export const tabsPanelInner = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
       paddingTop: theme.spacing[6],
-      paddingLeft: theme.spacing[6],
-      paddingRight: theme.spacing[6],
     },
   },
 })
