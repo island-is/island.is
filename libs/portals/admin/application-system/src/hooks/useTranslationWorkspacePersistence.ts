@@ -93,27 +93,6 @@ export const useTranslationWorkspacePersistence = ({
     [],
   )
 
-  const handleGoogleTranslate = useCallback(
-    async (descriptorId: string, sourceText: string) => {
-      await withTranslatingIds([descriptorId], async () => {
-        try {
-          const result = await applyGoogleTranslateBatches(
-            [{ id: descriptorId, sourceText }],
-            ({ texts }) => translateTexts(texts),
-            onValueChange,
-          )
-          if (result.failedBatches > 0 || result.skippedOversized > 0) {
-            toast.error('Translation failed')
-          }
-        } catch (err) {
-          console.error('Google Translate failed', err)
-          toast.error('Translation failed')
-        }
-      })
-    },
-    [withTranslatingIds, translateTexts, onValueChange],
-  )
-
   const handleGoogleTranslateAll = useCallback(
     async (items: GoogleTranslateItem[]) => {
       await withTranslatingIds(
@@ -129,13 +108,19 @@ export const useTranslationWorkspacePersistence = ({
               toast.error('Translation failed')
             }
           } catch (err) {
-            console.error('Google Translate all failed', err)
+            console.error('Google Translate failed', err)
             toast.error('Translation failed')
           }
         },
       )
     },
     [withTranslatingIds, translateTexts, onValueChange],
+  )
+
+  const handleGoogleTranslate = useCallback(
+    (descriptorId: string, sourceText: string) =>
+      handleGoogleTranslateAll([{ id: descriptorId, sourceText }]),
+    [handleGoogleTranslateAll],
   )
 
   const handleSaveAll = useCallback(async (): Promise<boolean> => {
