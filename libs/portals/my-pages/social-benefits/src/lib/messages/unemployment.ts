@@ -149,7 +149,11 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:paymentsTitle',
     defaultMessage: 'Greiðslur',
   },
-  paymentsIntro: {
+  incomeTitle: {
+    id: 'sp.social-benefits-unemployment:incomeTitle',
+    defaultMessage: 'Tekjur',
+  },
+  incomeIntro: {
     id: 'sp.social-benefits-unemployment:paymentsIntro',
     defaultMessage:
       'Hér fyrir neðan er yfirlit yfir þær tekjur sem þú hefur skráð meðfram atvinnuleysisbótum.',
