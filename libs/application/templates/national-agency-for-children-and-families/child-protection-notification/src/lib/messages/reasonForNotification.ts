@@ -28,7 +28,7 @@ export const reasonForNotificationMessages = {
       // TODO: Update text for Adult Personal application
       id: 'cpn.application:reasonForNotification.description.description',
       defaultMessage:
-        'Lýstu atvikinu eða aðstæðum sem tilkynntar eru með nákvæmum og hnitmiðuðum hætti. Reyndu að gera greinarmun á því sem þjónustuveitandi hefur upplýsingar um, þess sem er frásögn annars aðila og frásögn frá barninu sjálfu.',
+        'Lýstu atvikinu eða aðstæðum sem tilkynntar eru með nákvæmum og hnitmiðuðum hætti. Reyndu að gera greinarmun á því sem þjónustuveitandi hefur upplýsingar um, því sem er frásögn annars aðila og frásögn frá barninu sjálfu.',
       description: 'Description of the incident or circumstances',
     },
     descriptionUnborn: {
@@ -92,7 +92,7 @@ export const reasonForNotificationMessages = {
     },
     hasReportedBefore: {
       id: 'cpn.application:reasonForNotification.notificationHistory.hasReportedBefore',
-      defaultMessage: 'Hefur þjónustuveitandi áður tilkynnt sama barn?',
+      defaultMessage: 'Hefur þjónustuveitandi áður tilkynnt um sama barn?',
       description:
         'Have you reported the same concerns to child protection before?',
     },

@@ -25,13 +25,13 @@ export const conclusionMessages = defineMessages({
   thankYouDescriptionAdultProcuration: {
     id: 'cpn.application:conclusion.thankYouDescriptionAdultProcuration',
     defaultMessage:
-      'Starfsmaður barnaverndar mun hafa samband við tengilið þjónustuveitenda ef þörf er á frekari upplýsingum.\n\nVegna trúnaðar við fjölskyldur er ekki hægt að veita upplýsingar um framvindu mála til þeirra sem tilkynna. Bent er þó á að hægt er að tilkynna að nýju ef aðstæður gefa tilefni til.',
+      'Starfsmaður barnaverndar mun hafa samband við tengilið þjónustuveitenda ef þörf er á frekari upplýsingum.\n\nVegna trúnaðar við fjölskyldur er ekki hægt að veita upplýsingar um framvindu mála til þeirra sem tilkynna. Bent er þó á að rétt er að tilkynna að nýju ef aðstæður gefa tilefni til.',
     description: 'Body text on the conclusion page',
   },
   thankYouDescriptionAdultPersonal: {
-    // TODO: Update text for Adult Personal application
     id: 'cpn.application:conclusion.thankYouDescriptionAdultPersonal',
-    defaultMessage: 'Adult Personal application - Text',
+    defaultMessage:
+      'Starfsmaður barnaverndar mun hafa samband við þig ef þörf er á frekari upplýsingum.\n\nVegna trúnaðar við fjölskyldur er ekki hægt að veita upplýsingar um framvindu mála til þeirra sem tilkynna. Bent er þó á að rétt er að tilkynna að nýju ef aðstæður gefa tilefni til.',
     description: 'Body text on the conclusion page',
   },
   thankYouDescriptionMinor: {
