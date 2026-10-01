@@ -64,7 +64,7 @@ export const m = defineMessages({
     description: 'Label for the second radio option on the main screen',
   },
   mainMarkdownDescription: {
-    id: 'twst.application:mainMarkdownDescription',
+    id: 'twst.application:mainMarkdownDescription#markdown',
     defaultMessage:
       '[TEST] Þetta er **markdown** texti með _skáletrun_ og lista:\n- Fyrsti liður\n- Annar liður\n\nSjá nánar á [island.is](https://island.is).',
     description: 'Markdown text shown on the main screen',
