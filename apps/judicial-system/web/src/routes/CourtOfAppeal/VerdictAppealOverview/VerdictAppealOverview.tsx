@@ -2,22 +2,26 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Text } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import {
-  AllIndictmentCaseFiles,
-  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
+  PageTitle,
   UserContext,
+  VerdictAppealFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+
+import DistrictCourtCaseFiles from './DistrictCourtCaseFiles'
+import VerdictAppealConclusions from './VerdictAppealConclusions'
+import { getVerdictAppealOverviewHeaderLines } from './VerdictAppealOverview.logic'
 
 /**
  * What the Court of Appeals sees when a verdict appeal reaches it.
@@ -42,15 +46,7 @@ const VerdictAppealOverview = () => {
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  // The district court's own words, which for an indictment live on the last
-  // court session rather than on the case. Titled for what was decided, as the
-  // district court's completed view titles it.
-  const districtCourtConclusion = workingCase.courtSessions?.at(-1)?.ruling
-  const districtCourtConclusionTitle = `${
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? 'Dóms'
-      : 'Úrskurðar'
-  }orð héraðsdóms`
+  const headerLines = getVerdictAppealOverviewHeaderLines(workingCase)
 
   return (
     <PageLayout
@@ -62,19 +58,40 @@ const VerdictAppealOverview = () => {
       <PageHeader title={titleForCase(formatMessage, workingCase)} />
       <FormContentContainer>
         <div className={stack({ gap: 5 })}>
-          <InfoCardClosedIndictment />
-          {isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
-            <Conclusion
-              title={districtCourtConclusionTitle}
-              conclusionText={districtCourtConclusion}
-              judgeName={workingCase.judge?.name}
+          {/* The court's own heading for the proceeding, rather than the case
+              state the other overviews title themselves with: by the time a
+              case is here the district court is finished with it, and what the
+              page is about is the appeal. */}
+          <Box>
+            <PageTitle marginBottom={1}>Yfirlit</PageTitle>
+            {headerLines.map((line) => (
+              <Text key={line} as="h5" variant="h5">
+                {line}
+              </Text>
+            ))}
+          </Box>
+          {/* One per defendant: each has their own verdict, their own service
+              and their own deadline, so the court reads them side by side.
+              Above the info card because the verdict and its appeal are what
+              the court came for; the parties and case numbers below are
+              reference. */}
+          {workingCase.defendants?.map((defendant) => (
+            <CourtOfAppealsVerdictTimelineCard
+              key={defendant.id}
+              defendant={defendant}
             />
-          )}
-          {/* The court's own conclusion belongs here once there is a step
-              that writes one. Nothing does yet, and the case query does not
-              select appealConclusion on verdictAppealCase, so it is left to
-              the change that makes it reachable. */}
-          <AllIndictmentCaseFiles />
+          ))}
+          <InfoCardClosedIndictment />
+          {/* Both sets of operative words. This court's own is absent until
+              the step that writes one is built. */}
+          <VerdictAppealConclusions />
+          {/* The appeal declaration and what came with it, titled
+              "Áfrýjunarferli"; the áfrýjunarstefna joins it with the ticket
+              that creates it. Build those cards with the Stackable component -
+              a case carries one per appealing party, and the design piles them
+              rather than running them down the page. */}
+          <VerdictAppealFiles />
+          <DistrictCourtCaseFiles />
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
