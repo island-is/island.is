@@ -26,6 +26,7 @@ import {
   ExtendedPaginationDto,
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
+  NotificationSendersDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -41,7 +42,7 @@ import {
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
 import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
-import { Op } from 'sequelize'
+import { col, fn, Op } from 'sequelize'
 
 /**
  * These are the properties that can be replaced in the template
@@ -77,10 +78,10 @@ export class NotificationsService {
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
 
-    let res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+    let res = ((await this.cmsService.fetchData(GetOrganizationByNationalId, {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
-    })) as unknown as {
+    })) as unknown) as {
       organizationCollection: { items: Array<{ title: string }> }
     }
 
@@ -98,10 +99,10 @@ export class NotificationsService {
           ? sanitizedNationalId
           : `${sanitizedNationalId.slice(0, 6)}-${sanitizedNationalId.slice(6)}`
 
-        res = (await this.cmsService.fetchData(GetOrganizationByNationalId, {
+        res = ((await this.cmsService.fetchData(GetOrganizationByNationalId, {
           nationalId: alternativeFormat,
           locale: mapToContentfulLocale(locale),
-        })) as unknown as {
+        })) as unknown) as {
           organizationCollection: { items: Array<{ title: string }> }
         }
 
@@ -163,10 +164,10 @@ export class NotificationsService {
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
     const queryVariables = { locale: mapToContentfulLocale(locale) }
-    const res = (await this.cmsService.fetchData(
+    const res = ((await this.cmsService.fetchData(
       GetTemplates,
       queryVariables,
-    )) as unknown as {
+    )) as unknown) as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
 
@@ -185,10 +186,10 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = (await this.cmsService.fetchData(
+    const res = ((await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )) as unknown as {
+    )) as unknown) as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
 
@@ -412,14 +413,16 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     locale = mapToLocale(locale as Locale)
-    const [numberOfAffectedRows, [updatedNotification]] =
-      await this.notificationModel.update(updateNotificationDto, {
-        where: {
-          id: id,
-          recipient: user.nationalId,
-        },
-        returning: true,
-      })
+    const [
+      numberOfAffectedRows,
+      [updatedNotification],
+    ] = await this.notificationModel.update(updateNotificationDto, {
+      where: {
+        id: id,
+        recipient: user.nationalId,
+      },
+      returning: true,
+    })
 
     if (numberOfAffectedRows === 0) {
       throw new NoContentException()
@@ -448,6 +451,21 @@ export class NotificationsService {
       throw new InternalServerErrorException(
         'Error getting unread notifications count',
       )
+    }
+  }
+
+  async findSenders(nationalId: string): Promise<NotificationSendersDto> {
+    const rows = ((await this.notificationModel.findAll({
+      attributes: [[fn('DISTINCT', col('sender_id')), 'senderId']],
+      where: { recipient: nationalId },
+      raw: true,
+    })) as unknown) as { senderId: string | null }[]
+
+    return {
+      senders: rows
+        .map((row) => row.senderId)
+        .filter((senderId): senderId is string => !!senderId)
+        .map((senderId) => ({ senderId })),
     }
   }
 

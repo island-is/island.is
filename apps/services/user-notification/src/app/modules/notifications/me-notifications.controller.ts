@@ -29,6 +29,7 @@ import {
   ExtendedPaginationDto,
   UnreadNotificationsCountDto,
   UnseenNotificationsCountDto,
+  NotificationSendersDto,
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -79,6 +80,16 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
   ): Promise<UnseenNotificationsCountDto> {
     return await this.notificationService.getUnseenNotificationsCount(user)
+  }
+
+  @Get('/senders')
+  @Documentation({
+    summary:
+      'Returns the distinct sender ids of notifications the current user has received',
+    response: { status: HttpStatus.OK, type: NotificationSendersDto },
+  })
+  findSenders(@CurrentUser() user: User): Promise<NotificationSendersDto> {
+    return this.notificationService.findSenders(user.nationalId)
   }
 
   @Get(':id')
