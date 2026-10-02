@@ -28,7 +28,7 @@ export class NotificationSettingsService {
     private readonly userNotificationClient: UserNotificationClient,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) { }
+  ) {}
 
   /**
    * Returns the notification settings for the user. The first time this is called for a
