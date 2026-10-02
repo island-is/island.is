@@ -166,6 +166,21 @@ describe('useSections getSections', () => {
       expect(sections[0].isActive).toBe(true)
     })
 
+    // The link has to carry the appeal id. Dropped, the next render resolves
+    // back to the case-level ruling appeal - and on a case that has none, the
+    // whole proceeding disappears from the panel the moment the reader clicks
+    // the step they are already on.
+    it('keeps the appeal id on its own overview link', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].children[0].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
     it('leaves the ruling appeal sections alone when it names that one', () => {
       mockAppealCaseId = 'ruling-appeal'
 

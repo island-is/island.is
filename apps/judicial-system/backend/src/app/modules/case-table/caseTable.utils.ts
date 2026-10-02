@@ -50,10 +50,9 @@ const getAvailableActionsAttributes = (user: User): string[] => {
   }
 
   if (isDefenceUser(user)) {
-    // defenderNationalId resolves the collective request-case appellant to the
-    // case's current registered defender (see userIsAppellant); type selects
-    // that request-case branch.
-    return ['type', 'defenderNationalId']
+    // type selects the request-case vs indictment branch of userIsAppellant;
+    // defendant defenderNationalId is loaded via includes below.
+    return ['type']
   }
 
   return []
@@ -102,8 +101,8 @@ const getAvailableActionsIncludes = (user: User): CaseIncludes => {
           },
         },
       },
-      // Needed to resolve a per-party (dismissed indictment) defence appellant to
-      // the current confirmed defender / spokesperson.
+      // Needed to resolve defence appellants: request-case collective defenders
+      // and per-party (dismissed indictment) confirmed defenders / spokespersons.
       defendants: {
         attributes: ['id', 'isDefenderChoiceConfirmed', 'defenderNationalId'],
       },
@@ -424,7 +423,7 @@ export const canDeleteCase = (
 export const canCancelAppeal = (
   theCase: Pick<
     CaseTableRowCase,
-    'type' | 'appeal' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
+    'type' | 'appeal' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): boolean => {
@@ -445,12 +444,7 @@ export const canCancelAppeal = (
 export const getContextMenuActions = (
   theCase: Pick<
     CaseTableRowCase,
-    | 'type'
-    | 'state'
-    | 'appeal'
-    | 'defenderNationalId'
-    | 'defendants'
-    | 'civilClaimants'
+    'type' | 'state' | 'appeal' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {
