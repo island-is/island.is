@@ -105,11 +105,81 @@ export const subModelMap: {
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
 
+/**
+ * A case as a case table row sees it.
+ *
+ * One appeal, named for what it is: the appeal this row is about. Which appeal
+ * that is belongs to the list, not to whatever reads the row - most rows are
+ * about the case-level appeal, a ruling order list fans one case out into a
+ * row per appeal, and a verdict list substitutes the verdict appeal.
+ *
+ * The three associations are gone from the row on purpose. While `appealCase`
+ * was both "the case-level ruling appeal" and "the appeal this row is about",
+ * every reader had to know which lists rewrote it, and nothing said so; the
+ * shape is now the same whichever list built it.
+ *
+ * What it still claims and should not: `Omit` keeps the model's methods, while
+ * a row is the plain object `toJSON` returns. Nothing reads them - the
+ * generators and the row helpers were checked - so this is the old fiction
+ * left in place rather than a new one.
+ */
+export type CaseTableRowCase = Omit<
+  Case,
+  'appealCase' | 'rulingOrderAppealCases' | 'verdictAppealCase'
+> & {
+  appeal?: AppealCase | null
+}
+
 export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
-  displayCases?: (cases: Case[]) => Case[]
+  displayCases?: (cases: Case[]) => CaseTableRowCase[]
 }
+
+// Which association the row's appeal comes from, named as fields of Case so a
+// rename there breaks here rather than quietly narrowing this to the one that
+// survived. Only the single ones: a ruling order appeal is one of many on a
+// case, so a list about those picks per row rather than per case.
+type RowAppealSource = keyof Pick<Case, 'appealCase' | 'verdictAppealCase'>
+
+// `appeal` is the one the row is about, taken from the association the list
+// names. It defaults to the case-level appeal, which is what a list that says
+// nothing means; a list about another proceeding says which, rather than
+// building a row and overwriting it.
+const toRow = (
+  c: Case,
+  appealFrom: RowAppealSource = 'appealCase',
+): CaseTableRowCase => {
+  const json = c.toJSON()
+  const {
+    appealCase: _appealCase,
+    rulingOrderAppealCases: _rulingOrderAppealCases,
+    verdictAppealCase: _verdictAppealCase,
+    ...rest
+  } = json
+
+  return { ...rest, appeal: json[appealFrom] } as CaseTableRowCase
+}
+
+/**
+ * The rows a list is built from, whether or not it asked for anything special.
+ *
+ * Every row comes through here, so there is no such thing as one that skipped
+ * normalisation and nothing downstream has to ask whether a list has its own
+ * `displayCases`.
+ *
+ * The default is the whole rule for a list that says nothing: one row per
+ * case, about the case-level appeal - which is what every list meant before
+ * any of the others existed. The ones that override it either fan a case out
+ * into a row per appeal or name a different appeal.
+ */
+export const toDisplayCases = (
+  cs: Case[],
+  // Wrapped rather than passed to map directly: map would hand toRow the
+  // array index as the association to take the appeal from.
+  displayCases: (cases: Case[]) => CaseTableRowCase[] = (cs: Case[]) =>
+    cs.map((c) => toRow(c)),
+): CaseTableRowCase[] => displayCases(cs)
 
 /**
  * What a user may reach at all, as opposed to which of those cases belong in a
@@ -217,9 +287,9 @@ export const copyIncludeInto = <K extends keyof CaseIncludes>(
   target[key] = copy
 }
 
-export const expandCasesWithDefendants = (cs: Case[]) =>
+export const expandCasesWithDefendants = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
-    const jsonCase = c.toJSON()
+    const jsonCase = toRow(c)
 
     return (c.defendants ?? [])
       .filter(
@@ -255,25 +325,26 @@ export const expandCasesWithDefendants = (cs: Case[]) =>
  * that is what decides the join - and read it back off `appealCase`, exactly
  * as the ruling order columns do.
  */
-export const presentVerdictAppealAsCaseAppeal = (cs: Case[]) =>
-  cs.map((c) => {
-    const { verdictAppealCase, ...rest } = c.toJSON()
-
-    return { ...rest, appealCase: verdictAppealCase }
-  })
+export const presentVerdictAppealAsRowAppeal = (
+  cs: Case[],
+): CaseTableRowCase[] => cs.map((c) => toRow(c, 'verdictAppealCase'))
 
 // Emits one synthetic case per qualifying appeal — the case-level appeal in
 // `appealCase` (when present) and each entry in `rulingOrderAppealCases`. Each
 // emitted case has the relevant appeal slotted into `appealCase`, so cell
 // generators reading `c.appealCase.X` work without modification. The
 // `rulingOrderAppealCases` array is dropped to prevent re-iteration downstream.
-export const expandCasesWithAppeals = (cs: Case[]) =>
+export const expandCasesWithAppeals = (cs: Case[]): CaseTableRowCase[] =>
   cs.flatMap((c) => {
-    const jsonCase = c.toJSON()
-    const { rulingOrderAppealCases: _drop, ...rest } = jsonCase
+    // Spread rather than another toRow per appeal: one case becomes many rows
+    // here, and they share a serialisation.
+    const row = toRow(c)
     const rulingOrderRows = (c.rulingOrderAppealCases ?? []).map(
-      (roa: AppealCase) => ({ ...rest, appealCase: roa }),
+      (rulingOrderAppeal: AppealCase) => ({
+        ...row,
+        appeal: rulingOrderAppeal,
+      }),
     )
 
-    return rest.appealCase ? [rest, ...rulingOrderRows] : rulingOrderRows
+    return row.appeal ? [row, ...rulingOrderRows] : rulingOrderRows
   })
