@@ -131,6 +131,12 @@ export const Defendant = () => {
             nationalId: workingCase.defendants[0].nationalId || null,
             noNationalId: workingCase.defendants[0].noNationalId,
             citizenship: workingCase.defendants[0].citizenship,
+            defenderName: workingCase.defendants[0].defenderName || null,
+            defenderNationalId:
+              workingCase.defendants[0].defenderNationalId || null,
+            defenderEmail: workingCase.defendants[0].defenderEmail || null,
+            defenderPhoneNumber:
+              workingCase.defendants[0].defenderPhoneNumber || null,
           })
 
           router.push(`${destination}/${createdCase.id}`)
