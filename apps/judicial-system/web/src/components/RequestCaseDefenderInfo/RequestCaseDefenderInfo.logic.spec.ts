@@ -3,6 +3,7 @@ import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/gr
 import {
   anyDefendantHasDefender,
   buildCaseDefenderMirrorUpdate,
+  getRequestCaseDefenderNames,
   shouldClearRequestSharedWithDefender,
 } from './RequestCaseDefenderInfo.logic'
 
@@ -29,6 +30,41 @@ describe('RequestCaseDefenderInfo.logic', () => {
           { id: 'b', defenderName: 'Lögmaður' },
         ]),
       ).toBe(true)
+    })
+  })
+
+  describe('getRequestCaseDefenderNames', () => {
+    test('returns an empty list when defendants are undefined', () => {
+      expect(getRequestCaseDefenderNames(undefined)).toEqual([])
+    })
+
+    test('skips defendants without a defender name', () => {
+      expect(
+        getRequestCaseDefenderNames([
+          { id: 'a', defenderName: null },
+          { id: 'b', defenderName: '' },
+          { id: 'c' },
+        ]),
+      ).toEqual([])
+    })
+
+    test('lists the defender of every defendant that has one, in order', () => {
+      expect(
+        getRequestCaseDefenderNames([
+          { id: 'a', defenderName: 'Lögmaður A' },
+          { id: 'b' },
+          { id: 'c', defenderName: 'Lögmaður C' },
+        ]),
+      ).toEqual(['Lögmaður A', 'Lögmaður C'])
+    })
+
+    test('lists a defender shared by several defendants once', () => {
+      expect(
+        getRequestCaseDefenderNames([
+          { id: 'a', defenderName: 'Lögmaður A' },
+          { id: 'b', defenderName: 'Lögmaður A' },
+        ]),
+      ).toEqual(['Lögmaður A'])
     })
   })
 

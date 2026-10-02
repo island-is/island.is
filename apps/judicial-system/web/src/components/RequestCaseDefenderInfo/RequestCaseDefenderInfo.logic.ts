@@ -10,6 +10,20 @@ export const anyDefendantHasDefender = (
   defendants?: DefendantWithDefender[] | null,
 ) => Boolean(defendants?.some((defendant) => Boolean(defendant.defenderName)))
 
+export const getRequestCaseDefenderNames = (
+  defendants?: DefendantWithDefender[] | null,
+) => {
+  const names: string[] = []
+
+  defendants?.forEach(({ defenderName }) => {
+    if (defenderName && !names.includes(defenderName)) {
+      names.push(defenderName)
+    }
+  })
+
+  return names
+}
+
 export const shouldClearRequestSharedWithDefender = ({
   defendants,
   editedDefendantId,

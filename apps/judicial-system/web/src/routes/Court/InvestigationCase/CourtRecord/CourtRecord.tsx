@@ -34,6 +34,7 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { getRequestCaseDefenderNames } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type {
   Case,
   CaseAppealDecision,
@@ -66,11 +67,13 @@ const getSessionBookingsAutofill = (
 ) => {
   const autofillSessionBookings = []
 
-  if (workingCase.defenderName) {
-    autofillSessionBookings.push(
-      `${workingCase.defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
-    )
-  }
+  getRequestCaseDefenderNames(workingCase.defendants).forEach(
+    (defenderName) => {
+      autofillSessionBookings.push(
+        `${defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
+      )
+    },
+  )
 
   if (workingCase.translator) {
     autofillSessionBookings.push(
@@ -142,17 +145,20 @@ const CourtRecord: FC = () => {
       }
 
       if (
-        workingCase.defenderName &&
         workingCase.sessionArrangements !==
-          SessionArrangements.PROSECUTOR_PRESENT
+        SessionArrangements.PROSECUTOR_PRESENT
       ) {
-        autofillAttendees.push(
-          `\n${workingCase.defenderName} skipaður ${
-            workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? 'talsmaður'
-              : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+        getRequestCaseDefenderNames(workingCase.defendants).forEach(
+          (defenderName) => {
+            autofillAttendees.push(
+              `\n${defenderName} skipaður ${
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmaður'
+                  : 'verjandi'
+              } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+            )
+          },
         )
       }
 
