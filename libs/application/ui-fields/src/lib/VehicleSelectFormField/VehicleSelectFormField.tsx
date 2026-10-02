@@ -47,19 +47,11 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   setFieldLoadingState,
 }) => {
   const {
-    id,
     itemType,
     itemList,
     getDetails,
     shouldValidateErrorMessages,
-    shouldValidateDebtStatus,
     shouldValidateRenewal,
-    alertMessageErrorTitle,
-    validationErrorMessages,
-    validationErrorFallbackMessage,
-    inputErrorMessage,
-    debtStatusErrorMessage,
-    renewalExpiresAtTag,
     validateRenewal,
   } = field
   const { formatMessage, formatDateFns } = useLocale()
@@ -130,16 +122,13 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
         make: vehicle.make || '',
         color: vehicle.color || '',
         role: vehicle.role,
-        isDebtLess: vehicleDetails?.isDebtLess,
         validationErrorMessages: vehicleDetails?.validationErrorMessages,
       })
 
       const hasValidationError =
         shouldValidateErrorMessages &&
         !!vehicleDetails?.validationErrorMessages?.length
-      const hasDebtError =
-        shouldValidateDebtStatus && !vehicleDetails?.isDebtLess
-      const disabled = hasValidationError || hasDebtError
+      const disabled = hasValidationError
 
       const permno = disabled ? '' : vehicle.permno || ''
 
@@ -214,9 +203,7 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     const hasValidationError =
       field.shouldValidateErrorMessages &&
       !!selectedVehicle?.validationErrorMessages?.length
-    const hasDebtError =
-      field.shouldValidateDebtStatus && !selectedVehicle?.isDebtLess
-    const disabled = hasValidationError || hasDebtError
+    const disabled = hasValidationError
 
     selectedItemActionCard = (
       <Box>
@@ -243,16 +230,6 @@ export const VehicleSelectFormField: FC<React.PropsWithChildren<Props>> = ({
               message={
                 <Box>
                   <BulletList>
-                    {hasDebtError && (
-                      <Bullet>
-                        {field.debtStatusErrorMessage &&
-                          formatText(
-                            field.debtStatusErrorMessage,
-                            application,
-                            formatMessage,
-                          )}
-                      </Bullet>
-                    )}
                     {hasValidationError &&
                       selectedVehicle.validationErrorMessages?.map((error) => {
                         const message =
