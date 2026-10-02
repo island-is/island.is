@@ -35,7 +35,7 @@ export const FootNote = ({ notes, serviceProviderSlug }: Props) => {
       })}
       <Hidden above="sm">
         {organization && (
-          <Box paddingY={3}>
+          <Box paddingTop={3}>
             <InstitutionPanel
               loading={loading}
               linkHref={organization?.link ?? ''}
