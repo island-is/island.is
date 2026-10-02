@@ -14,7 +14,12 @@ import {
 import { Op } from 'sequelize'
 import { retry } from '@island.is/shared/utils/server'
 import { paginate } from '@island.is/nest/pagination'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import {
+  FEATURE_FLAG_CLIENT,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
+import type { FeatureFlagClient } from '@island.is/nest/feature-flags'
 import {
   FjsErrorCode,
   InvoiceErrorCode,
@@ -107,7 +112,29 @@ export class PaymentFlowService {
     @Inject(JwksConfig.KEY)
     private readonly jwksConfig: ConfigType<typeof JwksConfig>,
     private readonly featureFlagService: FeatureFlagService,
+    @Inject(FEATURE_FLAG_CLIENT)
+    private readonly featureFlagClient: FeatureFlagClient,
   ) {}
+
+  /**
+   * Company bank transfers are rolled out per company. Evaluated with the company as the flag user
+   * (there is no signed-in user here), with the attributes island.is sends for a company elsewhere.
+   */
+  async isBankTransferAllowedForCompany(
+    companyNationalId: string,
+  ): Promise<boolean> {
+    return this.featureFlagClient.getValue(
+      Features.isIslandisBankTransferPaymentAllowedForCompany,
+      false,
+      {
+        id: companyNationalId,
+        attributes: {
+          nationalId: companyNationalId,
+          subjectType: 'legalEntity',
+        },
+      },
+    )
+  }
 
   async createPaymentUrl(
     paymentInfo: CreatePaymentFlowInput,
@@ -124,17 +151,24 @@ export class PaymentFlowService {
       const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
 
       // Bank transfer is gated behind the global feature flag and offered to
-      // individuals only — i.e. real persons. Companies and temporary kennitalas
-      // are excluded. The flag is the offer kill-switch: off → never listed, so
-      // the FE selector never shows a method whose endpoints the flag also guards.
+      // individuals, and to companies the company flag allows — a company pays with
+      // an individual who has the rights to authorise it, entered on the payment
+      // screen. Temporary kennitalas are excluded. The global flag is the offer
+      // kill-switch: off → never listed, so the FE selector never shows a method
+      // whose endpoints the flag also guards.
       let availableMethods = paymentMethods
       if (paymentMethods.includes(PaymentMethod.BANK_TRANSFER)) {
         const isBankTransferEnabled = await this.featureFlagService.getValue(
           Features.isIslandisBankTransferPaymentEnabled,
           false,
         )
+        const payer = paymentInfo.payerNationalId
+        const isPayerAllowed =
+          isPerson(payer) ||
+          (isCompany(payer) &&
+            (await this.isBankTransferAllowedForCompany(payer)))
 
-        if (!isBankTransferEnabled || !isPerson(paymentInfo.payerNationalId)) {
+        if (!isBankTransferEnabled || !isPayerAllowed) {
           availableMethods = paymentMethods.filter(
             (m) => m !== PaymentMethod.BANK_TRANSFER,
           )

@@ -26,7 +26,15 @@ export enum BankTransferPendingStatus {
   PROCESSING = 'processing',
 }
 
-export interface CreateBankTransferPaymentInput {
+/** Who the provider debits for a bank transfer. */
+export interface BankTransferDebtor {
+  // The individual who authenticates the payment (SCA) with their bank.
+  debtorExternalId: string
+  // The company being debited, when the individual pays on its behalf (Blikk's Corporate-PSU).
+  debtorCorpExternalId?: string
+}
+
+export interface CreateBankTransferPaymentInput extends BankTransferDebtor {
   amount: number
   currency: string
   paymentFlowId: string
@@ -37,8 +45,7 @@ export interface CreateBankTransferPaymentInput {
   items?: CatalogItemWithQuantity[]
   // Unix seconds.
   expiresAt?: number
-  debtorExternalId?: string
-  bankAccountNumber?: string
+  bankAccountNumber: string
 }
 
 export interface BankTransferPaymentResult {

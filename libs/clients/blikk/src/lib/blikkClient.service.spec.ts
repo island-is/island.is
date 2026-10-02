@@ -1,13 +1,19 @@
 import type { ConfigType } from '@island.is/nest/config'
-import type { Logger } from '@island.is/logging'
-import { EnhancedFetchAPI, FetchError } from '@island.is/clients/middlewares'
+import { createEnhancedFetch, FetchError } from '@island.is/clients/middlewares'
 
+import type { CreateDirectDebtorPaymentReqBody } from '../../gen/fetch'
 import { BlikkClientConfig } from './blikkClient.config'
+import { BlikkClientModule } from './blikkClient.module'
 import { BlikkClientService } from './blikkClient.service'
-import {
-  BlikkClientError,
-  CreateBlikkPaymentRequest,
-} from './blikkClient.types'
+import { BlikkClientError } from './blikkClient.types'
+
+// The module wires the generated client to the enhanced fetch; swap that for a mock so the tests
+// observe the exact Request the generated client sends.
+const mockFetch = jest.fn()
+jest.mock('@island.is/clients/middlewares', () => ({
+  ...jest.requireActual('@island.is/clients/middlewares'),
+  createEnhancedFetch: jest.fn(() => mockFetch),
+}))
 
 const config: ConfigType<typeof BlikkClientConfig> = {
   apiKey: 'test-key',
@@ -16,17 +22,13 @@ const config: ConfigType<typeof BlikkClientConfig> = {
   isConfigured: true,
 }
 
-const createMockLogger = (): jest.Mocked<Logger> =>
-  ({
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-    verbose: jest.fn(),
-  } as unknown as jest.Mocked<Logger>)
-
 const okResponse = (json: unknown) =>
-  ({ json: jest.fn().mockResolvedValue(json) } as unknown as Response)
+  new Response(JSON.stringify(json), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  })
+
+const sentRequest = (): Request => mockFetch.mock.calls[0][0]
 
 // A FetchError carrying a status, as the enhanced fetch raises for non-2xx responses. The enhanced
 // fetch captures the error body into `body` (parsed JSON, or text for non-JSON responses).
@@ -46,55 +48,70 @@ const fetchErrorWithStatus = (
 }
 
 describe('BlikkClientService', () => {
-  let fetchMock: jest.Mock
-  let logger: jest.Mocked<Logger>
   let service: BlikkClientService
 
+  beforeAll(() => {
+    new BlikkClientModule(config)
+  })
+
   beforeEach(() => {
-    fetchMock = jest.fn()
-    logger = createMockLogger()
-    service = new BlikkClientService(
-      config,
-      fetchMock as unknown as EnhancedFetchAPI,
-      logger,
+    mockFetch.mockReset()
+    service = new BlikkClientService()
+  })
+
+  it('configures the enhanced fetch with the client name and timeout', () => {
+    expect(createEnhancedFetch).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'clients-blikk', timeout: 10000 }),
     )
   })
 
   describe('createPayment', () => {
-    const body: CreateBlikkPaymentRequest = {
+    const body: CreateDirectDebtorPaymentReqBody = {
       amount: 14000,
       currency: 'ISK',
       sourceReferenceId: 'corr-1',
       callbackUrl: 'https://island.is/greida/api/bank-transfer/callback',
       expiresAt: 1700000000,
       items: [{ name: 'Vegabréf', quantity: 1, unitPrice: '14000' }],
+      debtorExternalId: '1234567890',
+      debtorName: '1234567890',
+      debtorBban: '0133-26-012345',
     }
 
-    it('POSTs to /ecom/v3/payments/direct-debtor with the API-Key header and returns the parsed response', async () => {
-      fetchMock.mockResolvedValue(
+    it('POSTs to /ecom/v3/payments/direct-debtor with the API-Key header and returns the response', async () => {
+      mockFetch.mockResolvedValue(
         okResponse({ id: 'prov-1', status: 'PENDING' }),
       )
 
       const result = await service.createPayment(body)
 
-      expect(fetchMock).toHaveBeenCalledTimes(1)
-      const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe(
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      const request = sentRequest()
+      expect(request.url).toBe(
         'https://stage.blikk.tech/ecom/v3/payments/direct-debtor',
       )
-      expect(options.method).toBe('POST')
-      expect(options.headers['API-Key']).toBe('test-key')
-      expect(options.headers['Content-Type']).toBe('application/json')
-      expect(JSON.parse(options.body)).toMatchObject({
-        amount: 14000,
-        currency: 'ISK',
-        sourceReferenceId: 'corr-1',
-      })
+      expect(request.method).toBe('POST')
+      expect(request.headers.get('API-Key')).toBe('test-key')
+      expect(request.headers.get('Content-Type')).toBe('application/json')
+      expect(await request.json()).toEqual(body)
       expect(result).toEqual({ id: 'prov-1', status: 'PENDING' })
     })
 
+    it('sends integer amounts and timestamps as JSON numbers', async () => {
+      mockFetch.mockResolvedValue(
+        okResponse({ id: 'prov-1', status: 'PENDING' }),
+      )
+
+      await service.createPayment(body)
+
+      const sent = await sentRequest().json()
+      expect(sent.amount).toBe(14000)
+      expect(sent.expiresAt).toBe(1700000000)
+      expect(sent.items[0].quantity).toBe(1)
+    })
+
     it('throws BlikkClientError carrying the HTTP status on a non-2xx', async () => {
-      fetchMock.mockRejectedValue(fetchErrorWithStatus(400))
+      mockFetch.mockRejectedValue(fetchErrorWithStatus(400))
 
       await expect(service.createPayment(body)).rejects.toMatchObject({
         name: 'BlikkClientError',
@@ -105,7 +122,7 @@ describe('BlikkClientService', () => {
     // The enhanced fetch logs the failure and full body itself; the client only converts the error
     // and folds Blikk's Problem Details `detail` into the message for callers to log with context.
     it('puts Blikk’s Problem Details detail into the error message on a non-2xx JSON body', async () => {
-      fetchMock.mockRejectedValue(
+      mockFetch.mockRejectedValue(
         fetchErrorWithStatus(403, {
           type: 'about:blank',
           title: 'Forbidden',
@@ -120,7 +137,6 @@ describe('BlikkClientService', () => {
         message:
           'Blikk request failed (403): sales channel does not allow direct debtor payments',
       })
-      expect(logger.error).not.toHaveBeenCalled()
     })
 
     it('reads detail from the problem the enhanced fetch parsed for application/problem+json', async () => {
@@ -130,7 +146,7 @@ describe('BlikkClientService', () => {
         title: 'Bad Request',
         detail: 'debtor bban is required',
       } as FetchError['problem']
-      fetchMock.mockRejectedValue(fetchError)
+      mockFetch.mockRejectedValue(fetchError)
 
       await expect(service.createPayment(body)).rejects.toMatchObject({
         status: 400,
@@ -139,7 +155,7 @@ describe('BlikkClientService', () => {
     })
 
     it('keeps the generic message when the error body is not Problem Details', async () => {
-      fetchMock.mockRejectedValue(
+      mockFetch.mockRejectedValue(
         fetchErrorWithStatus(404, '404 page not found'),
       )
 
@@ -151,7 +167,7 @@ describe('BlikkClientService', () => {
     })
 
     it('keeps the generic message when no body was captured', async () => {
-      fetchMock.mockRejectedValue(fetchErrorWithStatus(502))
+      mockFetch.mockRejectedValue(fetchErrorWithStatus(502))
 
       await expect(service.createPayment(body)).rejects.toMatchObject({
         name: 'BlikkClientError',
@@ -160,42 +176,35 @@ describe('BlikkClientService', () => {
       })
     })
 
-    it('throws BlikkClientError (no status) on a network failure without logging again', async () => {
-      fetchMock.mockRejectedValue(new Error('socket hang up'))
+    it('throws BlikkClientError (no status) on a network failure', async () => {
+      mockFetch.mockRejectedValue(new Error('socket hang up'))
 
       const error = await service.createPayment(body).catch((e) => e)
       expect(error).toBeInstanceOf(BlikkClientError)
       expect(error.status).toBeUndefined()
       expect(error.message).toBe('socket hang up')
-      expect(logger.error).not.toHaveBeenCalled()
-    })
-
-    it('throws BlikkClientError when the response body fails schema validation', async () => {
-      fetchMock.mockResolvedValue(okResponse({ unexpected: true }))
-
-      await expect(service.createPayment(body)).rejects.toBeInstanceOf(
-        BlikkClientError,
-      )
     })
   })
 
   describe('getPayment', () => {
-    it('GETs /ecom/v3/payments/{id} (URL-encoded) and returns the parsed response', async () => {
-      fetchMock.mockResolvedValue(
+    it('GETs /ecom/v3/payments/{id} (URL-encoded) and returns the response', async () => {
+      mockFetch.mockResolvedValue(
         okResponse({ id: 'prov 1', status: 'SUCCESS' }),
       )
 
       const result = await service.getPayment('prov 1')
 
-      const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe('https://stage.blikk.tech/ecom/v3/payments/prov%201')
-      expect(options.method).toBe('GET')
-      expect(options.headers['API-Key']).toBe('test-key')
+      const request = sentRequest()
+      expect(request.url).toBe(
+        'https://stage.blikk.tech/ecom/v3/payments/prov%201',
+      )
+      expect(request.method).toBe('GET')
+      expect(request.headers.get('API-Key')).toBe('test-key')
       expect(result).toEqual({ id: 'prov 1', status: 'SUCCESS' })
     })
 
     it('throws BlikkClientError with status on a non-2xx', async () => {
-      fetchMock.mockRejectedValue(fetchErrorWithStatus(404))
+      mockFetch.mockRejectedValue(fetchErrorWithStatus(404))
 
       await expect(service.getPayment('prov-1')).rejects.toMatchObject({
         name: 'BlikkClientError',
@@ -206,23 +215,23 @@ describe('BlikkClientService', () => {
 
   describe('cancelPayment', () => {
     it('POSTs /ecom/v3/payments/cancel/{id} with the required body and resolves on success', async () => {
-      fetchMock.mockResolvedValue(okResponse({ message: 'cancelled' }))
+      mockFetch.mockResolvedValue(okResponse({ message: 'cancelled' }))
 
       await expect(service.cancelPayment('prov-1')).resolves.toBeUndefined()
 
-      const [url, options] = fetchMock.mock.calls[0]
-      expect(url).toBe(
+      const request = sentRequest()
+      expect(request.url).toBe(
         'https://stage.blikk.tech/ecom/v3/payments/cancel/prov-1',
       )
-      expect(options.method).toBe('POST')
+      expect(request.method).toBe('POST')
       // Blikk declares the request body as required.
-      expect(JSON.parse(options.body)).toEqual({
+      expect(await request.json()).toEqual({
         cancelMessage: 'Cancelled by payer',
       })
     })
 
     it('throws BlikkClientError carrying the HTTP status (e.g. 409 for a live payment)', async () => {
-      fetchMock.mockRejectedValue(fetchErrorWithStatus(409))
+      mockFetch.mockRejectedValue(fetchErrorWithStatus(409))
 
       await expect(service.cancelPayment('prov-1')).rejects.toMatchObject({
         name: 'BlikkClientError',

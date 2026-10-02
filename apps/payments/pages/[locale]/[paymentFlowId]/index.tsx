@@ -2,7 +2,8 @@ import type { ApolloError } from '@apollo/client'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { isCompany } from 'kennitala'
 
 import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
 import {
@@ -30,9 +31,17 @@ import {
 } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
-import { BankTransferPayment } from '../../../components/BankTransferPayment/BankTransferPayment'
+import {
+  BankTransferPayment,
+  CompanyPayer,
+} from '../../../components/BankTransferPayment/BankTransferPayment'
 import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
-import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
+import {
+  ALLOWED_LOCALES,
+  Locale,
+  getAvailablePaymentMethods,
+  isHttpsUrl,
+} from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
   bankTransfer,
@@ -257,10 +266,29 @@ function PaymentPage({
       card: '',
       cardExpiry: '',
       cardCVC: '',
-      bankAccountNumber: '',
+      bank: '',
+      ledger: '',
+      account: '',
+      actorNationalId: '',
     },
   })
   const { formatMessage } = useLocale()
+
+  // Same message as the input's own check, which the server repeats.
+  const { setError } = methods
+  const onInvalidActorNationalId = useCallback(
+    () =>
+      setError(
+        'actorNationalId',
+        {
+          type: 'server',
+          message: formatMessage(bankTransfer.actorNationalIdInvalid),
+        },
+        { shouldFocus: true },
+      ),
+    [setError, formatMessage],
+  )
+
   const {
     selectedPaymentMethod,
     changePaymentMethod,
@@ -277,6 +305,7 @@ function PaymentPage({
     paymentFlow,
     productInformation,
     isApplePayPaymentEnabledForUser,
+    onInvalidActorNationalId,
   })
   const router = useRouter()
 
@@ -339,26 +368,28 @@ function PaymentPage({
     }
   }
 
-  const availablePaymentMethods = useMemo(() => {
-    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
+  // A company pays by bank transfer with an individual who has the rights to authorise it.
+  const companyPayer: CompanyPayer | undefined =
+    paymentFlow && isCompany(paymentFlow.payerNationalId)
+      ? { nationalId: paymentFlow.payerNationalId, name: paymentFlow.payerName }
+      : undefined
+  const isCompanyPayer = companyPayer !== undefined
 
-    if (isInvoicePaymentEnabledForUser) {
-      methods.push('invoice')
-    }
-
-    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
-    // Once testing is done this flag is removed and the backend controls
-    // availability via availablePaymentMethods.
-    if (isBankTransferPaymentEnabledForUser) {
-      methods.push('bank_transfer')
-    }
-
-    return Array.from(new Set(methods)) as PaymentMethod[]
-  }, [
-    paymentFlow?.availablePaymentMethods,
-    isInvoicePaymentEnabledForUser,
-    isBankTransferPaymentEnabledForUser,
-  ])
+  const availablePaymentMethods = useMemo(
+    () =>
+      getAvailablePaymentMethods({
+        flowMethods: paymentFlow?.availablePaymentMethods ?? [],
+        isInvoicePaymentEnabledForUser,
+        isBankTransferPaymentEnabledForUser,
+        isCompanyPayer,
+      }),
+    [
+      paymentFlow?.availablePaymentMethods,
+      isInvoicePaymentEnabledForUser,
+      isBankTransferPaymentEnabledForUser,
+      isCompanyPayer,
+    ],
+  )
 
   // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
@@ -513,7 +544,7 @@ function PaymentPage({
                     />
                   )}
                   {selectedPaymentMethod === 'bank_transfer' && (
-                    <BankTransferPayment />
+                    <BankTransferPayment companyPayer={companyPayer} />
                   )}
                   <Button
                     type="submit"
