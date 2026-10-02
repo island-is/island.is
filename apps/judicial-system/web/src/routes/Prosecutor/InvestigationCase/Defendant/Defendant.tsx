@@ -24,10 +24,10 @@ import {
   PageTitle,
   ProsecutorCaseInfo,
   RequestCaseDefenderInfo,
+  RequestCaseDefenderSharing,
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { RequestCaseDefenderSharing } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo'
 import type {
   Case,
   Defendant as TDefendant,

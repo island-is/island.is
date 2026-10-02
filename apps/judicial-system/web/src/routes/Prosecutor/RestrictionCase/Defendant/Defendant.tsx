@@ -13,13 +13,13 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -193,12 +193,16 @@ export const Defendant = () => {
                   />
                 </Box>
               )}
-              <Box component="section">
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </Box>
+              {workingCase.defendants && workingCase.defendants.length > 0 && (
+                <Box component="section">
+                  <RequestCaseDefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    defendant={workingCase.defendants[0]}
+                    showRequestSharedWithDefender
+                  />
+                </Box>
+              )}
               {workingCase.type !== CaseType.TRAVEL_BAN && (
                 <Box component="section">
                   <SectionHeading
