@@ -40,6 +40,7 @@ import {
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
+import { EstatesModule } from '@island.is/api/domains/estates'
 import { FarmersModule } from '@island.is/api/domains/farmers'
 import { FeatureFlagsApiModule } from '@island.is/api/domains/feature-flags'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
@@ -208,6 +209,7 @@ import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
+import { EstatesClientConfig } from '@island.is/clients/estates'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import {
   SocialInsuranceAdministrationClientConfig,
@@ -386,6 +388,7 @@ const environment = getConfig
     }),
     RegulationsModule,
     RegulationsAdminModule,
+    EstatesModule,
     FarmersModule,
     FinanceModule,
     FinancialStatementsInaoModule,
@@ -444,6 +447,7 @@ const environment = getConfig
         PCardClientConfig,
         DirectorateOfEqualityClientConfig,
         DistrictCommissionersLicensesClientConfig,
+        EstatesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,
         ShipRegistryClientConfig,
