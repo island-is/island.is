@@ -34,9 +34,15 @@ import type {
   Case,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseType,
+  InstitutionType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useSections,
+  useTargetAppealCaseByAppealCaseId,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './PageLayout.css'
 
@@ -135,6 +141,7 @@ const SidePanel: FC<SidePanelProps> = ({
 }) => {
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
 
   const activeSection = sections.findIndex((s) => s.isActive)
@@ -164,20 +171,27 @@ const SidePanel: FC<SidePanelProps> = ({
             marginTop={[2, 2, 0]}
           >
             <Text variant="h3" as="h3" id="case-steps-heading">
-              {formatMessage(
-                user?.institution?.type === InstitutionType.COURT_OF_APPEALS
-                  ? formStepperSections.appealedCaseTitle
-                  : isIndictmentCase(workingCase.type)
-                  ? formStepperSections.indictmentTitle
-                  : formStepperSections.title,
-                { caseType: workingCase.type },
-              )}
+              {/* A verdict appeal is an áfrýjun, not a kæra - two different
+                  proceedings that the court of appeals runs side by side, and
+                  the panel names the one the page is about. */}
+              {user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+              targetAppealCase?.appealType === AppealCaseType.VERDICT
+                ? 'Áfrýjun'
+                : formatMessage(
+                    user?.institution?.type === InstitutionType.COURT_OF_APPEALS
+                      ? formStepperSections.appealedCaseTitle
+                      : isIndictmentCase(workingCase.type)
+                      ? formStepperSections.indictmentTitle
+                      : formStepperSections.title,
+                    { caseType: workingCase.type },
+                  )}
             </Text>
-            <Text>
-              {showCourtCaseNumber && courtCaseNumber.current
-                ? courtCaseNumber.current
-                : '\u00A0'}
-            </Text>
+            {/* Only when there is a number to show. The margin above already
+                stands in for this line when there is not, so rendering a
+                blank one spaced the heading twice over. */}
+            {showCourtCaseNumber && courtCaseNumber.current && (
+              <Text>{courtCaseNumber.current}</Text>
+            )}
           </Box>
           <FormStepperV2
             sections={sections.map((section, index) => (
