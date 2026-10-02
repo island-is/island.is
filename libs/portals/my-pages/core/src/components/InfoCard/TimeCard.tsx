@@ -19,6 +19,7 @@ interface AppointmentCardProps {
   }
   size?: 'small' | 'large'
   to?: string
+  showArrow?: boolean
   /** Grays out the card, e.g. for appointments that have already passed */
   muted?: boolean
 }
@@ -41,6 +42,7 @@ export const TimeCard = ({
   description,
   data,
   to,
+  showArrow = !!to,
   muted = false,
 }: AppointmentCardProps) => {
   const { width } = useWindowSize()
@@ -64,7 +66,9 @@ export const TimeCard = ({
           >
             {title}
           </Text>
-          {to && <Icon icon="arrowForward" type="outline" color="blue400" />}
+          {showArrow && (
+            <Icon icon="arrowForward" type="outline" color="blue400" />
+          )}
         </Box>
         <Box
           display="flex"

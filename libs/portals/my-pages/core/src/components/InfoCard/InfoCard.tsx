@@ -123,6 +123,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
         data={appointment}
         description={description}
         to={to}
+        showArrow={hasArrow}
         muted={muted}
       />
     ) : (

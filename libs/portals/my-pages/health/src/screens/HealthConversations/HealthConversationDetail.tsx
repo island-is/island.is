@@ -210,6 +210,16 @@ const HealthConversationDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item?.id, item?.isRead])
 
+  // Arriving from a new conversation, the sent alert only mounts once the
+  // thread has loaded, so focus it then to have it announced
+  const focusSentAlertOnLoadRef = useRef(justSent)
+  useEffect(() => {
+    if (focusSentAlertOnLoadRef.current && sentAlertRef.current) {
+      focusSentAlertOnLoadRef.current = false
+      sentAlertRef.current.focus()
+    }
+  }, [item?.id])
+
   if (loading && !data) {
     return (
       <ConversationDetailLayout>
