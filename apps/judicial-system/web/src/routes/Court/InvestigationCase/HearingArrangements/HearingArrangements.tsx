@@ -31,12 +31,12 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   SessionArrangements,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
