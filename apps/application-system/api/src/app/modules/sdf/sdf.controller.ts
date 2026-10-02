@@ -148,10 +148,11 @@ export class SdfController {
         )
 
       case SdfActionType.GO_TO_PAGE:
-        // The destination page id rides on `event` (see SdfActionType).
+        // The destination page id rides on `event` (see SdfActionType). Without
+        // it no page can match, and the request would silently be a no-op.
         return this.sdfScreenService.goToPage(
           applicationId,
-          dto.event ?? '',
+          this.requireEvent(dto, applicationId),
           locale,
           user!,
         )
@@ -166,9 +167,12 @@ export class SdfController {
         )
 
       case SdfActionType.SUBMIT:
+        // Like legacy `UpdateApplicationStateDto.event` (@IsNotEmpty): a state
+        // transition needs an explicit event. Never guess one — a SUBMIT
+        // fallback would fire a transition the client never asked for.
         return this.sdfScreenService.handleSubmit(
           applicationId,
-          dto.event ?? 'SUBMIT',
+          this.requireEvent(dto, applicationId),
           dto.answers,
           locale,
           user!,
@@ -185,5 +189,22 @@ export class SdfController {
           }),
         )
     }
+  }
+
+  // `event` is optional on the DTO because only some action types use it;
+  // the ones that do must reject a missing or empty value.
+  private requireEvent(dto: ExecuteActionDto, applicationId: string): string {
+    if (!dto.event) {
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/bad-request',
+          title: 'Bad request',
+          status: 400,
+          detail: `event is required for ${dto.actionType}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
+    return dto.event
   }
 }

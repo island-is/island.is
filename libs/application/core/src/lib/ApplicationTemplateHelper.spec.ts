@@ -202,9 +202,53 @@ describe('ApplicationTemplate', () => {
 
   describe('changeState', () => {
     it('should be able to change from draft to inReview on SUBMIT', () => {
-      const [hasChanged, newState] = templateHelper.changeState('SUBMIT')
+      const [hasChanged, newState, , hasMatchedTransition] =
+        templateHelper.changeState('SUBMIT')
       expect(newState).toBe('inReview')
       expect(hasChanged).toBe(true)
+      expect(hasMatchedTransition).toBe(true)
+    })
+
+    const helperWithDraftTransitions = (
+      on: Record<string, unknown>,
+    ): ApplicationTemplateHelper<
+      ApplicationContext,
+      ApplicationStateSchema<TestEvents>,
+      TestEvents
+    > => {
+      const base = createTestApplicationTemplate()
+      return new ApplicationTemplateHelper(createMockApplication(), {
+        ...base,
+        stateMachineConfig: {
+          ...base.stateMachineConfig,
+          states: {
+            ...base.stateMachineConfig.states,
+            draft: { ...base.stateMachineConfig.states.draft, on },
+          },
+        },
+      } as typeof base)
+    }
+
+    it('reports no matched transition when every guard on the event fails', () => {
+      const helper = helperWithDraftTransitions({
+        SUBMIT: [{ target: 'inReview', cond: () => false }],
+      })
+      const [hasChanged, newState, , hasMatchedTransition] =
+        helper.changeState('SUBMIT')
+      expect(newState).toBe('draft')
+      expect(hasChanged).toBe(false)
+      expect(hasMatchedTransition).toBe(false)
+    })
+
+    it('reports a matched transition for a no-op self-transition', () => {
+      const helper = helperWithDraftTransitions({
+        SUBMIT: { target: 'draft' },
+      })
+      const [hasChanged, newState, , hasMatchedTransition] =
+        helper.changeState('SUBMIT')
+      expect(newState).toBe('draft')
+      expect(hasChanged).toBe(false)
+      expect(hasMatchedTransition).toBe(true)
     })
     it('should throw an error if passing an invalid event that cannot progress the application to any other state', () => {
       // Arrange

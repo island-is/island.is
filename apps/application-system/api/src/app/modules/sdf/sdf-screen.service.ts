@@ -63,6 +63,7 @@ import {
   ValidateResponseDto,
 } from './dto/screen.dto'
 import { SdfActionType } from './dto/action.dto'
+import { createSdfProblem } from './problem-details'
 import { type ZodIssue, ZodIssueCode } from 'zod'
 
 try {
@@ -1208,16 +1209,14 @@ export class SdfScreenService {
         user,
         apisFromRole,
         locale,
-        event || 'SUBMIT',
+        event,
       )
     }
-
-    const eventStr = event || 'SUBMIT'
 
     const result = await this.applicationActionService.changeState(
       applicationSnapshot,
       template,
-      eventStr,
+      event,
       user,
       locale,
     )
@@ -1228,10 +1227,28 @@ export class SdfScreenService {
           ? result.error
           : JSON.stringify(result.error ?? {})
       this.logger.error(
-        `SDF SUBMIT failed to transition application ${applicationId} on event "${eventStr}": ${reason}`,
+        `SDF SUBMIT failed to transition application ${applicationId} on event "${event}": ${reason}`,
       )
-      throw new Error(
-        `State transition failed for event "${eventStr}": ${reason}`,
+      throw new Error(`State transition failed for event "${event}": ${reason}`)
+    }
+
+    // No transition matched this event (e.g. every guard failed). Legacy
+    // returns the unchanged application silently; here we reject instead of
+    // resetting the page cursor as if it had succeeded. The state's onExit
+    // actions have already run (as in legacy): guards may depend on data they
+    // fetch, so this can't be checked before them.
+    if (!result.hasChanged && !result.hasMatchedTransition) {
+      this.logger.warn(
+        `SDF SUBMIT: no transition for event "${event}" from state "${application.state}" (application ${applicationId})`,
+      )
+      throw new ConflictException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/event-not-handled',
+          title: 'Event not handled',
+          status: 409,
+          detail: `Event "${event}" does not lead to a new state from "${application.state}"`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
       )
     }
 

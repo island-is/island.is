@@ -290,5 +290,57 @@ describe('ApplicationActionService', () => {
         error: 'Could not update application',
       })
     })
+
+    // The fixture template with only draft's transitions replaced, so the real
+    // ApplicationTemplateHelper decides whether the event matched.
+    const templateWithDraftTransitions = (
+      on: Record<string, unknown>,
+    ): ReturnType<typeof createApplicationTemplate> => {
+      const base = createApplicationTemplate()
+      return {
+        ...base,
+        stateMachineConfig: {
+          ...base.stateMachineConfig,
+          states: {
+            ...base.stateMachineConfig.states,
+            draft: { ...base.stateMachineConfig.states.draft, on },
+          },
+        },
+      } as typeof base
+    }
+
+    it.each([
+      [
+        'no transition matched (every guard failed)',
+        { SUBMIT: [{ target: 'inReview', cond: () => false }] },
+        false,
+      ],
+      [
+        'a no-op self-transition matched',
+        { SUBMIT: { target: 'draft' } },
+        true,
+      ],
+    ])(
+      'passes hasMatchedTransition through and persists nothing when %s',
+      async (_label, on, expectedMatch) => {
+        const result = await service.changeState(
+          createApplication({ state: 'draft' }),
+          templateWithDraftTransitions(on),
+          'SUBMIT',
+          auth,
+          'en',
+        )
+
+        expect(result).toMatchObject({
+          hasChanged: false,
+          hasMatchedTransition: expectedMatch,
+          hasError: false,
+        })
+        expect(
+          mockApplicationService.updateApplicationState,
+        ).not.toHaveBeenCalled()
+        expect(mockHistoryService.saveStateTransition).not.toHaveBeenCalled()
+      },
+    )
   })
 })

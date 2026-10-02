@@ -141,9 +141,15 @@ export class ApplicationTemplateHelper<
   /**
    * Changes the application state
    * @param event A state machine event
-   * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
+   * returns [hasChanged, newState, newApplication, hasMatchedTransition] where
+   * newApplication has the updated state value. `hasMatchedTransition` tells a
+   * no-op apart from an unhandled event: a matched self-transition that XState
+   * reports as unchanged (no XState actions or context updates, such as an
+   * `assign` in `entry`; meta.onEntry/onExit don't count) reports
+   * `hasChanged: false` but `hasMatchedTransition: true`, while an event whose
+   * guards all fail reports both as false.
    */
-  changeState(event: Event<TEvents>): [boolean, string, Application] {
+  changeState(event: Event<TEvents>): [boolean, string, Application, boolean] {
     this.initializeStateMachine(undefined)
 
     const service = interpret(
@@ -174,6 +180,7 @@ export class ApplicationTemplateHelper<
         ...state.context.application,
         state: stateValue,
       },
+      state.transitions.length > 0,
     ]
   }
 

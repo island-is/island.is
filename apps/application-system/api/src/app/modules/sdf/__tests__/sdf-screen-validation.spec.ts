@@ -14,6 +14,7 @@ import {
 import type { ApplicationWithAttachments } from '@island.is/application/types'
 import { createApplicationTemplate } from '@island.is/application/testing'
 import { z } from 'zod'
+import { ConflictException } from '@nestjs/common'
 
 import { SdfScreenService } from '../sdf-screen.service'
 
@@ -150,7 +151,12 @@ const buildService = (
   applicationActionService: Record<string, jest.Mock>,
 ) =>
   new SdfScreenService(
-    { debug: jest.fn(), error: jest.fn(), info: jest.fn() } as never,
+    {
+      debug: jest.fn(),
+      error: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+    } as never,
     applicationService as never,
     {
       findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
@@ -172,7 +178,9 @@ describe('SdfScreenService validation gates', () => {
     const applicationService = { update: jest.fn() }
     const applicationActionService = {
       performActionOnApplication: jest.fn(),
-      changeState: jest.fn().mockResolvedValue({ hasError: false }),
+      changeState: jest
+        .fn()
+        .mockResolvedValue({ hasError: false, hasChanged: true }),
     }
     const service = buildService(
       application,
@@ -204,7 +212,9 @@ describe('SdfScreenService validation gates', () => {
     const applicationService = { update: jest.fn() }
     const applicationActionService = {
       performActionOnApplication: jest.fn(),
-      changeState: jest.fn().mockResolvedValue({ hasError: false }),
+      changeState: jest
+        .fn()
+        .mockResolvedValue({ hasError: false, hasChanged: true }),
     }
     const service = buildService(
       application,
@@ -222,6 +232,77 @@ describe('SdfScreenService validation gates', () => {
 
     expect(screen.page.errors ?? []).toEqual([])
     expect(applicationActionService.changeState).toHaveBeenCalled()
+  })
+
+  it('handleSubmit rejects with 409, and keeps the page cursor, when no transition handles the event', async () => {
+    const application = createApplication({ pageIndex: 0 })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      createTemplate(() => Promise.resolve(createExternalDataForm())),
+    )
+
+    const applicationService = { update: jest.fn() }
+    const applicationActionService = {
+      performActionOnApplication: jest.fn(),
+      // e.g. every guard on the event failed
+      changeState: jest.fn().mockResolvedValue({
+        hasError: false,
+        hasChanged: false,
+        hasMatchedTransition: false,
+      }),
+    }
+    const service = buildService(
+      application,
+      applicationService,
+      applicationActionService,
+    )
+
+    await expect(
+      service.handleSubmit(
+        application.id,
+        DefaultEvents.SUBMIT,
+        { approveExternalData: true },
+        'is',
+        { nationalId: application.applicant } as never,
+      ),
+    ).rejects.toBeInstanceOf(ConflictException)
+
+    expect(applicationService.update).not.toHaveBeenCalledWith(
+      application.id,
+      expect.objectContaining({ pageIndex: 0 }),
+    )
+  })
+
+  it('handleSubmit accepts a matched no-op self-transition', async () => {
+    const application = createApplication({ pageIndex: 0 })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      createTemplate(() => Promise.resolve(createExternalDataForm())),
+    )
+
+    const applicationService = { update: jest.fn() }
+    const applicationActionService = {
+      performActionOnApplication: jest.fn(),
+      // e.g. `draft: { on: { SUBMIT: { target: 'draft' } } }` with no actions
+      changeState: jest.fn().mockResolvedValue({
+        hasError: false,
+        hasChanged: false,
+        hasMatchedTransition: true,
+      }),
+    }
+    const service = buildService(
+      application,
+      applicationService,
+      applicationActionService,
+    )
+
+    await expect(
+      service.handleSubmit(
+        application.id,
+        DefaultEvents.SUBMIT,
+        { approveExternalData: true },
+        'is',
+        { nationalId: application.applicant } as never,
+      ),
+    ).resolves.toBeDefined()
   })
 
   it('persistAnswersAndAdvance still blocks a missing required field on NEXT_PAGE', async () => {

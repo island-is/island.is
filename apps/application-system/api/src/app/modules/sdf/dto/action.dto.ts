@@ -52,7 +52,11 @@ export class ExecuteActionDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ description: 'Event name for SUBMIT transitions.' })
+  @ApiPropertyOptional({
+    description:
+      'For SUBMIT (required): the state-machine event name to fire. For ' +
+      'GO_TO_PAGE: the destination page id.',
+  })
   readonly event?: string
 
   @IsOptional()

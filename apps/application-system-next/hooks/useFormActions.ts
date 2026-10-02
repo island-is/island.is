@@ -189,7 +189,7 @@ export const useFormActions = (
   const prevPage = useCallback(() => dispatch('PREV_PAGE'), [dispatch])
 
   const submit = useCallback(
-    (event?: string) => dispatch('SUBMIT', undefined, undefined, event),
+    (event: string) => dispatch('SUBMIT', undefined, undefined, event),
     [dispatch],
   )
 

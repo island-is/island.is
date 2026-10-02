@@ -282,7 +282,9 @@ describe('SdfScreenService — write-permission check on persisting action-run p
       const applicationService = { update: jest.fn() }
       const applicationActionService = {
         performActionOnApplication: jest.fn(),
-        changeState: jest.fn().mockResolvedValue({ hasError: false }),
+        changeState: jest
+          .fn()
+          .mockResolvedValue({ hasError: false, hasChanged: true }),
       }
       const service = buildService(
         application,
@@ -315,7 +317,9 @@ describe('SdfScreenService — write-permission check on persisting action-run p
       const applicationService = { update: jest.fn() }
       const applicationActionService = {
         performActionOnApplication: jest.fn().mockResolvedValue({}),
-        changeState: jest.fn().mockResolvedValue({ hasError: false }),
+        changeState: jest
+          .fn()
+          .mockResolvedValue({ hasError: false, hasChanged: true }),
       }
       const service = buildService(
         application,
