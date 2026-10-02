@@ -1,4 +1,4 @@
-import { Box, Hidden } from '@island.is/island-ui/core'
+import { Box, Hidden, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   IntroWrapper,
@@ -18,6 +18,7 @@ export const MedicinePaymentParticipationWrapper = ({
   pathname?: string
 }) => {
   const { formatMessage } = useLocale()
+  const { md } = useBreakpoint()
 
   const medicineChildren = healthNavigation.children?.find(
     (itm) => itm.path === HealthPaths.HealthMedicine,
@@ -27,6 +28,14 @@ export const MedicinePaymentParticipationWrapper = ({
     medicineChildren?.children?.find(
       (item) => item.path === HealthPaths.HealthMedicinePaymentParticipation,
     )?.children ?? []
+
+  const tabItems = md
+    ? paymentParticipationChildren
+    : paymentParticipationChildren.map((item) =>
+        item.path === HealthPaths.HealthMedicinePurchase
+          ? { ...item, name: m.medicinePurchaseTitleShort }
+          : item,
+      )
 
   return (
     <IntroWrapper
@@ -41,7 +50,7 @@ export const MedicinePaymentParticipationWrapper = ({
         <TabNavigation
           label={formatMessage(m.medicineTitle)}
           pathname={pathname}
-          items={paymentParticipationChildren}
+          items={tabItems}
         />
       </Hidden>
       <Box paddingY={SECTION_GAP}>{children}</Box>

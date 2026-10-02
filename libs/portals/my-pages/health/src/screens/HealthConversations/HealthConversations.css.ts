@@ -66,6 +66,10 @@ export const conversationRow = style({
   },
 })
 
+export const sentAlert = style({
+  outline: 'none',
+})
+
 export const termsCheckbox = style({})
 
 globalStyle(`${termsCheckbox} label`, {

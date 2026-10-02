@@ -416,7 +416,7 @@ const HealthConversations = () => {
                   background={item.isRead ? undefined : 'blueberry100'}
                   borderColor="blue200"
                   borderBottomWidth="standard"
-                  paddingX={2}
+                  paddingX={[1, 1, 2]}
                   paddingY="p2"
                   columnGap={2}
                 >

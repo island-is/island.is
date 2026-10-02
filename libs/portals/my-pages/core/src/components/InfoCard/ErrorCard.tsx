@@ -53,7 +53,7 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({
           </Box>
         </GridColumn>
 
-        <GridColumn span="1/12" className={styles.icon}>
+        <GridColumn span="1/12">
           <Box display="flex" justifyContent="flexEnd" alignItems="flexStart">
             <Icon icon="reload" type="outline" color="blue400" />
           </Box>

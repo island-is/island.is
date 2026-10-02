@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import cn from 'classnames'
 import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
@@ -179,9 +180,11 @@ const RenewPrescriptionModal: React.FC<Props> = ({
             {formatMessage(messages.renewalMedicineRequest)}
           </Text>
         </Box>
-        <Text marginBottom={3}>
-          {formatMessage(messages.renewalMedicineRequestText)}
-        </Text>
+        <Box marginBottom={3}>
+          <Markdown>
+            {formatMessage(messages.renewalMedicineRequestTextWithLink)}
+          </Markdown>
+        </Box>
         {targetOptions.length > 1 && (
           <Box marginBottom={3}>
             <Select

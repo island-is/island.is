@@ -196,6 +196,10 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-purchase-title',
     defaultMessage: 'Lyfjakaup þrepstaða',
   },
+  medicinePurchaseTitleShort: {
+    id: 'sp.health:medicine-purchase-title-short',
+    defaultMessage: 'Þrepstaða',
+  },
   medicinePurchaseIntroTitle: {
     id: 'sp.health:medicine-purchase-intro-title',
     defaultMessage: 'Þrepastaða þín',
@@ -1087,10 +1091,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hér finnur þú yfirlit yfir þína lyfjasögu.',
     id: 'sp.health:medicine-prescription-history-intro-text',
   },
-  medicinePrescriptionIntroText: {
+  medicinePrescriptionIntroWithLink: {
     defaultMessage:
-      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við.',
-    id: 'sp.health:medicine-prescription-intro-text',
+      'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við. Athugið að breytingar hafa orðið á tilkynningum vegna lyfjaendurnýjana. Þú getur stillt hvernig þú vilt fá tilkynningar undir **[Stillingar](/minarsidur/min-gogn/stillingar/tilkynningar)**.',
+    id: 'sp.health:medicine-prescription-intro-with-link#markdown',
   },
   medicinePrescriptions: {
     defaultMessage: 'Lyfjaávísanir',
@@ -1552,10 +1556,10 @@ export const messages = defineMessages({
     defaultMessage: 'Beiðni um endurnýjun á lyfi',
     id: 'sp.health:renewal-medicine-request',
   },
-  renewalMedicineRequestText: {
+  renewalMedicineRequestTextWithLink: {
     defaultMessage:
-      'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
-    id: 'sp.health:renewal-medicine-request-text',
+      'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112. Athugið að breytingar hafa orðið á tilkynningum vegna lyfjaendurnýjana. Þú getur stillt hvernig þú vilt fá tilkynningar undir **[Stillingar](/minarsidur/min-gogn/stillingar/tilkynningar)**.',
+    id: 'sp.health:renewal-medicine-request-text-with-link#markdown',
   },
   repaid: {
     defaultMessage: 'Endurgreitt',
@@ -2193,11 +2197,6 @@ export const messages = defineMessages({
     defaultMessage:
       'Þessi þjónustuaðili býður ekki upp á skilaboð á Ísland.is.',
     id: 'sp.health:health-messages-messaging-not-allowed-text',
-  },
-  healthConversationReplyBlockedAwaitingAcknowledgementText: {
-    defaultMessage:
-      'Skilaboðin hafa verið send. Hægt verður að svara aftur þegar þau hafa borist móttakanda.',
-    id: 'sp.health:health-messages-reply-blocked-awaiting-acknowledgement-text',
   },
   healthConversationReplyBlockedWindowExpiredText: {
     defaultMessage: 'Ekki er hægt að svara þessum skilaboðum',

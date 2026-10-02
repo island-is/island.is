@@ -46,6 +46,7 @@ const BasicInformation: React.FC<Props> = ({
         {formatMessage(messages.basicInformation)}
       </Text>
       <InfoCardGrid
+        showArrow={false}
         cards={[
           {
             title: healthCenter.error

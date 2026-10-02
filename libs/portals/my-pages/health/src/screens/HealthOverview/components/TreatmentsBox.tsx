@@ -51,6 +51,7 @@ export const TreatmentsBox = () => {
               display="flex"
               justifyContent="spaceBetween"
               columnGap={3}
+              className={styles.card}
             >
               <Box
                 display="flex"
