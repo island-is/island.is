@@ -34,6 +34,35 @@ interface CategoryNode {
   children?: CategoryNode[]
 }
 
+const normalizeSearchInput = (searchInput: string) =>
+  searchInput.replace('´', '').toLowerCase()
+
+const HighlightedKeyword = ({
+  keyword,
+  searchInput,
+}: {
+  keyword: string
+  searchInput: string
+}) => {
+  const lowerCaseKeyword = keyword.toLowerCase()
+  // Indices into the lowercased string only line up with the original when
+  // lowercasing doesn't change its length (it can for e.g. 'İ').
+  const index =
+    searchInput && lowerCaseKeyword.length === keyword.length
+      ? lowerCaseKeyword.indexOf(searchInput)
+      : -1
+  if (index < 0) return <>{keyword}</>
+  return (
+    <>
+      {keyword.slice(0, index)}
+      <Text as="span" variant="small" fontWeight="semiBold">
+        {keyword.slice(index, index + searchInput.length)}
+      </Text>
+      {keyword.slice(index + searchInput.length)}
+    </>
+  )
+}
+
 const findCategoryPath = (
   categories: CategoryNode[],
   targetId: string,
@@ -151,6 +180,8 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     selectedCategory,
   ])
 
+  const normalizedSearchInput = normalizeSearchInput(inputState.searchInput)
+
   const searchOptions = useMemo<AsyncSearchOption[]>(() => {
     const options: AsyncSearchOption[] = []
     for (const category of productCategoriesResponse.data
@@ -190,6 +221,20 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               <Text variant="h5" color="blue600">
                 {category.label}
               </Text>
+              {category.keywords.length > 0 && (
+                <Text variant="small">
+                  {formatMessage(translationStrings.keywordsLabel)}:{' '}
+                  {category.keywords.map((keyword, index) => (
+                    <span key={index}>
+                      <HighlightedKeyword
+                        keyword={keyword}
+                        searchInput={normalizedSearchInput}
+                      />
+                      {index < category.keywords.length - 1 && ', '}
+                    </span>
+                  ))}
+                </Text>
+              )}
             </Stack>
           </Box>
         ),
@@ -199,6 +244,8 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   }, [
     productCategoriesResponse.data?.customsCalculatorProductCategories
       ?.bottomLevel,
+    normalizedSearchInput,
+    formatMessage,
   ])
 
   const keywordsByCategoryId = useMemo(() => {
@@ -288,17 +335,12 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
         <AsyncSearch
           options={searchOptions}
-          filter={(option) => {
-            const searchInput = inputState.searchInput
-              .replace('´', '')
-              .toLowerCase()
-            return (
-              option.label.toLowerCase().includes(searchInput) ||
-              (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
-                keyword.includes(searchInput),
-              )
+          filter={(option) =>
+            option.label.toLowerCase().includes(normalizedSearchInput) ||
+            (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
+              keyword.includes(normalizedSearchInput),
             )
-          }}
+          }
           size="large"
           placeholder={formatMessage(
             translationStrings.productSearchInputPlaceholder,
