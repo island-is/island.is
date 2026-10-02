@@ -10,6 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
 import { Emails } from '../models/emails.model'
+import { NotificationSenderSetting } from './notificationSenderSetting.model'
 @Table({
   tableName: 'user_profile',
   timestamps: true,
@@ -124,6 +125,13 @@ export class UserProfile extends Model {
   })
   emails?: Emails[]
 
+  @HasMany(() => NotificationSenderSetting, {
+    foreignKey: 'nationalId',
+    sourceKey: 'nationalId',
+    as: 'notificationSenderSettings',
+  })
+  notificationSenderSettings?: NotificationSenderSetting[]
+
   @Column({
     type: DataType.BOOLEAN,
     defaultValue: false,
@@ -131,4 +139,11 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   onlyActionablePriorityNotifications!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  notificationSendersInitializedAt?: Date
 }
