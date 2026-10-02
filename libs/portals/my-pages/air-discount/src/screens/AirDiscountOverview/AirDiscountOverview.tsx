@@ -1,14 +1,6 @@
-import { useEffect, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  m as coreMessage,
-  CardLoader,
-  VEGAGERDIN_SLUG,
-  formatDateWithTime,
-  IntroWrapper,
-} from '@island.is/portals/my-pages/core'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import copyToClipboard from 'copy-to-clipboard'
+
 import {
   ActionCard,
   Box,
@@ -21,53 +13,29 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { messages as m } from '../../lib/messages'
-import copyToClipboard from 'copy-to-clipboard'
-import UsageTable from '../../components/UsageTable/UsageTable'
-import { AirDiscountSchemeDiscount } from '@island.is/portals/my-pages/graphql'
-import { Problem } from '@island.is/react-spa/shared'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  formatDateWithTime,
+  InfoLine,
+  InfoLineStack,
+  IntroWrapper,
+  m as coreMessage,
+  VEGAGERDIN_SLUG,
+} from '@island.is/portals/my-pages/core'
 import {
   FeatureFlagClient,
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
+import { Problem } from '@island.is/react-spa/shared'
 
-const AirDiscountQuery = gql`
-  query AirDiscountQuery {
-    airDiscountSchemeDiscounts {
-      nationalId
-      discountCode
-      connectionDiscountCodes {
-        code
-        flightId
-        flightDesc
-        validUntil
-      }
-      expiresIn
-      user {
-        name
-        fund {
-          credit
-          used
-          total
-        }
-      }
-    }
-  }
-`
-
-const AirDiscountFlightLegsQuery = gql`
-  query AirDiscountFlightLegsQuery {
-    airDiscountSchemeUserAndRelationsFlights {
-      travel
-      flight {
-        bookingDate
-        user {
-          name
-        }
-      }
-    }
-  }
-`
+import UsageTable from '../../components/UsageTable/UsageTable'
+import { messages as m } from '../../lib/messages'
+import {
+  AirDiscountQuery,
+  useAirDiscountFlightLegsQuery,
+  useAirDiscountQuery,
+} from './AirDiscountOverview.generated'
 
 type CopiedCode = {
   code: string
@@ -94,32 +62,44 @@ export const AirDiscountOverview = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data, loading, error } = useQuery<Query>(AirDiscountQuery)
-  const { data: flightLegData } = useQuery<Query>(AirDiscountFlightLegsQuery)
+  const { data, loading, error } = useAirDiscountQuery()
+  const { data: flightLegData } = useAirDiscountFlightLegsQuery()
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
-  const airDiscounts: AirDiscountSchemeDiscount[] | undefined =
-    data?.airDiscountSchemeDiscounts
+  const copyTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
+  const airDiscounts = data?.airDiscountSchemeDiscounts
   const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes: AirDiscountSchemeDiscount[] | undefined =
-    airDiscounts?.filter((x) => x.connectionDiscountCodes.length > 0)
+  const connectionCodes = airDiscounts?.filter(
+    (x) => x.connectionDiscountCodes.length > 0,
+  )
+
+  const hasNoRights = (
+    item: AirDiscountQuery['airDiscountSchemeDiscounts'][number],
+  ) =>
+    !item.user.fund ||
+    (item.user.fund.credit === 0 && item.user.fund.used === 0)
 
   const noRights =
-    airDiscounts?.filter(
-      (item) => item.user.fund?.credit === 0 && item.user.fund.used === 0,
-    ).length === airDiscounts?.length
+    !!airDiscounts && airDiscounts.length > 0 && airDiscounts.every(hasNoRights)
+
+  const domicile = airDiscounts?.find((x) => x.user.address)?.user.address
+
+  useEffect(() => {
+    const timers = copyTimers.current
+    return () => Object.values(timers).forEach(clearTimeout)
+  }, [])
 
   const copy = (code?: string | null) => {
     if (code) {
       copyToClipboard(code)
-      const newCode: CopiedCode = { code: code, copied: true }
-      setCopiedCodes([...copiedCodes, newCode])
+      setCopiedCodes((prev) => [
+        ...prev.filter((item) => item.code !== code),
+        { code, copied: true },
+      ])
       toast.success(formatMessage(m.codeCopiedSuccess))
-      setTimeout(() => {
-        const codes = copiedCodes
-        const currentCodeIndex = codes.findIndex((item) => item.code === code)
-        copiedCodes.slice(currentCodeIndex, 0)
-        setCopiedCodes(copiedCodes)
+      clearTimeout(copyTimers.current[code])
+      copyTimers.current[code] = setTimeout(() => {
+        setCopiedCodes((prev) => prev.filter((item) => item.code !== code))
       }, 5000)
     }
   }
@@ -138,7 +118,9 @@ export const AirDiscountOverview = () => {
               target="_blank"
               rel="noreferrer"
             >
-              <Button variant="text">{str}</Button>
+              <Button variant="text" as="span" unfocusable>
+                {str}
+              </Button>
             </a>
           ),
         })}
@@ -168,7 +150,9 @@ export const AirDiscountOverview = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <Button variant="text">{str}</Button>
+                    <Button variant="text" as="span" unfocusable>
+                      {str}
+                    </Button>
                   </a>
                 ),
               })}
@@ -205,9 +189,7 @@ export const AirDiscountOverview = () => {
           </Text>
           <Stack space={2}>
             {airDiscounts
-              ?.filter(
-                (x) => !(x.user.fund?.used === 0 && x.user.fund.credit === 0),
-              )
+              ?.filter((x) => !hasNoRights(x))
               .map((item, index) => {
                 const message = [
                   formatMessage(m.remainingAirfares),
@@ -237,6 +219,9 @@ export const AirDiscountOverview = () => {
                         ? undefined
                         : {
                             label: formatMessage(m.copyCode),
+                            ariaLabel: formatMessage(m.copyCodeFor, {
+                              name: item.user.name,
+                            }),
                             onClick: () => copy(item.discountCode),
                             icon: isCopied ? 'checkmark' : 'copy',
                           }
@@ -253,14 +238,14 @@ export const AirDiscountOverview = () => {
             {formatMessage(m.activeConnectionCodes)}
           </Text>
           <Stack space={2}>
-            {connectionCodes?.map((item) => {
+            {connectionCodes?.map((item, itemIndex) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
                 const isCopied = copiedCodes.find(
                   (x) => x.code === code.code,
                 )?.copied
                 return (
                   <ActionCard
-                    key={`loftbru-item-connection-code-${codeIndex}`}
+                    key={`loftbru-item-connection-code-${itemIndex}-${codeIndex}`}
                     heading={item.user.name}
                     headingVariant="h4"
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
@@ -273,6 +258,10 @@ export const AirDiscountOverview = () => {
                     }}
                     cta={{
                       label: formatMessage(m.copyCode),
+                      ariaLabel: formatMessage(m.copyConnectionCodeFor, {
+                        name: item.user.name,
+                        flight: code.flightDesc,
+                      }),
                       onClick: () => copy(code.code),
                       icon: isCopied ? 'checkmark' : 'copy',
                     }}
@@ -296,6 +285,36 @@ export const AirDiscountOverview = () => {
             {formatMessage(m.airfaresUsage)}
           </Text>
           <UsageTable data={flightLegs} />
+        </Box>
+      )}
+      {airDiscounts && airDiscounts.length > 0 && (
+        <Box marginBottom={5}>
+          <InfoLineStack label="🧪 Prófun" space={1}>
+            {airDiscounts.map((item, index) => (
+              <Fragment key={`loftbru-test-${index}`}>
+                {item.user.fund && (
+                  <InfoLine
+                    label={`${item.user.name}: flugleggir`}
+                    content={`${item.user.fund.used} notaðir · ${item.user.fund.credit} eftir`}
+                  />
+                )}
+                {item.user.mostFlownRoute && (
+                  <InfoLine
+                    label={`${item.user.name}: algengasta flugleið`}
+                    content={`${item.user.mostFlownRoute.route} (${item.user.mostFlownRoute.count})`}
+                  />
+                )}
+              </Fragment>
+            ))}
+            {domicile && (
+              <InfoLine
+                label="Lögheimili"
+                content={[domicile.municipalityText, domicile.postalCode]
+                  .filter(Boolean)
+                  .join(', ')}
+              />
+            )}
+          </InfoLineStack>
         </Box>
       )}
     </IntroWrapper>
