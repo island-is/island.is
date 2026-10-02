@@ -27,7 +27,6 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
-  addMessagesToQueue,
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -37,6 +36,7 @@ import {
   isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import {
   CaseCompletedGuard,
   CaseExistsGuard,
@@ -192,7 +192,7 @@ export class InternalVerdictController {
         isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
         hasDrivingLicenseSuspension
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId: theCase.id,
           body: {
