@@ -54,25 +54,30 @@ describe('court of appeals verdict appeal rows', () => {
     return displayCases([caseWithBothAppeals()])
   }
 
-  // The case carries a ruling appeal too, so reading `appealCase` straight off
-  // it would name the wrong proceeding on every row of these lists.
+  // The case carries a ruling appeal too, so a row that took the case-level
+  // appeal would name the wrong proceeding on every row of these lists.
   it.each(verdictAppealTables)(
     'presents the verdict appeal as the appeal of a %s row',
     (tableType) => {
       const [row] = displayed(tableType)
 
-      expect(row.appealCase?.id).toBe('verdict-appeal')
+      expect(row.appeal?.id).toBe('verdict-appeal')
     },
   )
 
-  // Slotted in and then dropped, as expandCasesWithAppeals drops the ruling
-  // order appeals: one name for the appeal a row is about, so no column has to
-  // know which list it is being rendered for.
-  it.each(verdictAppealTables)('drops verdictAppealCase from a %s row', (t) => {
-    const [row] = displayed(t)
+  // A row carries one appeal under one name, whichever association the list
+  // fetched it from - see CaseTableRowCase. The source associations are not
+  // part of a row at all, which is what stops a column reaching past the
+  // list's choice.
+  it.each(verdictAppealTables)(
+    'leaves no source association on a %s row',
+    (t) => {
+      const [row] = displayed(t) as unknown as Record<string, unknown>[]
 
-    expect(row.verdictAppealCase).toBeUndefined()
-  })
+      expect(row.verdictAppealCase).toBeUndefined()
+      expect(row.appealCase).toBeUndefined()
+    },
+  )
 
   it.each(verdictAppealTables)('leaves %s with one row per case', (t) => {
     expect(displayed(t)).toHaveLength(1)
