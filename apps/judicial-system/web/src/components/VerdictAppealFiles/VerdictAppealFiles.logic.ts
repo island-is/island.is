@@ -1,4 +1,5 @@
 import {
+  isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
@@ -12,17 +13,21 @@ import type {
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
 // Whether this user may open a verdict appeal file of one of the given
-// categories. The public prosecution office sees every declaration - it acts on
-// the appeal, and registers the ones that arrive by letter - and is not a
-// prosecution user in the sense the shared appeal-file rule knows; everyone else
-// is governed by that rule (prosecution sees all, a defender their own clients').
+// categories.
+//
+// Two roles see every declaration and are named here because the shared
+// appeal-file rule does not know them: the public prosecution office, which
+// acts on the appeal and registers the ones arriving by letter, and the court
+// of appeals, to which the declaration is one of the documents the appeal
+// arrives with. Everyone else is governed by that rule - prosecution sees all,
+// a defender their own clients'.
 export const canViewVerdictAppealFile = (
   workingCase: Case,
   categories: CaseFileCategory[],
   file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
   user: User | undefined,
 ): boolean =>
-  (isPublicProsecutionOfficeUser(user) &&
+  ((isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) &&
     Boolean(file.category && categories.includes(file.category))) ||
   isMatchingAppealCaseFile(workingCase, categories, file, user)
 

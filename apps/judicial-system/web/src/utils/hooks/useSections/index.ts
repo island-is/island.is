@@ -1545,7 +1545,14 @@ const useSections = (
         {
           name: 'Yfirlit',
           isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
-          href: `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+          // Carrying the appeal id is what keeps the page about this appeal.
+          // Without it the next render resolves back to the case-level ruling
+          // appeal, and on a case that has none the whole proceeding drops out
+          // of the panel.
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
         },
       ],
     },

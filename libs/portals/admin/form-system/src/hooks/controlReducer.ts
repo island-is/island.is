@@ -183,6 +183,10 @@ type ChangeActions =
       type: 'CHANGE_HAS_PAYMENT'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
+  | {
+      type: 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
       type: 'TOGGLE_DEPENDENCY'
@@ -959,6 +963,17 @@ export const controlReducer = (
         form: {
           ...form,
           hasPayment: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          enableApplicationPdfDownload: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })

@@ -54,6 +54,9 @@ export const Application = () => {
     <ApplicationProvider
       application={application}
       validateEligibility={formSystemApp?.validateEligibility ?? false}
+      enableApplicationPdfDownload={
+        formSystemApp?.enableApplicationPdfDownload ?? false
+      }
     />
   )
 }
