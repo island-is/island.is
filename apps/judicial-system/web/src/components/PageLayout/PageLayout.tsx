@@ -166,7 +166,7 @@ const SidePanel: FC<SidePanelProps> = ({
             </Box>
           )}
           <Box
-            marginBottom={[1, 1, showCourtCaseNumber ? 4 : 6]}
+            marginBottom={[1, 1, 4]}
             marginLeft={[3, 3, 0]}
             marginTop={[2, 2, 0]}
           >
@@ -186,9 +186,9 @@ const SidePanel: FC<SidePanelProps> = ({
                     { caseType: workingCase.type },
                   )}
             </Text>
-            {/* Only when there is a number to show. The margin above already
-                stands in for this line when there is not, so rendering a
-                blank one spaced the heading twice over. */}
+            {/* Only when there is a number to show. The wider margin this
+                block used to carry when there was none, plus the blank line it
+                rendered to hold the space, spaced the heading twice over. */}
             {showCourtCaseNumber && courtCaseNumber.current && (
               <Text>{courtCaseNumber.current}</Text>
             )}
