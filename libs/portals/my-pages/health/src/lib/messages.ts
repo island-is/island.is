@@ -196,6 +196,10 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-purchase-title',
     defaultMessage: 'Lyfjakaup þrepstaða',
   },
+  medicinePurchaseTitleShort: {
+    id: 'sp.health:medicine-purchase-title-short',
+    defaultMessage: 'Þrepstaða',
+  },
   medicinePurchaseIntroTitle: {
     id: 'sp.health:medicine-purchase-intro-title',
     defaultMessage: 'Þrepastaða þín',
