@@ -12,6 +12,10 @@ interface TableRow {
   cells: { sortValue?: string | null }[]
 }
 
+// Cancelled cases open a modal instead of a case screen.
+const opensCase = (row: TableRow) =>
+  row.actionOnRowClick !== 'COMPLETE_CANCELLED_CASE'
+
 const tableRows = (page: Page) => page.locator('tbody tr')
 const openRowButtons = (page: Page) =>
   page.getByRole('button', { name: /^Opna mál/ })
@@ -48,9 +52,10 @@ const loadCaseList = async (page: Page, href: string): Promise<TableRow[]> => {
   return body.data.caseTable.rows
 }
 
-// The dashboard links to every list the role may open. The first one with
-// cases in it is where the checks run - which list that is depends on the
-// data in the environment, not on the role.
+// The dashboard links to every list the role may open. The first one with a
+// case that opens is where the checks run - which list that is depends on the
+// data in the environment, not on the role. A list holding only cancelled
+// cases is passed over, since the navigation check needs a row to open.
 const findCaseListWithRows = async (page: Page) => {
   await page.goto('/malalistar')
   await expect(page).toHaveURL('/malalistar')
@@ -64,7 +69,7 @@ const findCaseListWithRows = async (page: Page) => {
   for (const href of hrefs) {
     const rows = await loadCaseList(page, href)
 
-    if (rows.length > 0) {
+    if (rows.some(opensCase)) {
       return { href, rows, listCount: hrefs.length }
     }
   }
@@ -92,12 +97,12 @@ const findSortableColumn = (rows: TableRow[]) => {
 const smokeTestCaseLists = async (page: Page, caseScreen: RegExp) => {
   const { href, rows, listCount } = await findCaseListWithRows(page)
 
-  // Every list answered, but all of them empty. That is a fact about the data
-  // in this environment, not about the lists, so the role is skipped rather
-  // than failed - visibly, so a run that never checked a role says so.
+  // Every list answered, but none has a case that opens. That is a fact about
+  // the data in this environment, not about the lists, so the role is skipped
+  // rather than failed - visibly, so a run that never checked a role says so.
   test.skip(
     href === undefined,
-    `none of the ${listCount} case lists this role can open has any cases`,
+    `none of the ${listCount} case lists this role can open has a case that opens`,
   )
   if (href === undefined) {
     return
@@ -107,18 +112,11 @@ const smokeTestCaseLists = async (page: Page, caseScreen: RegExp) => {
   await expect(tableRows(page)).toHaveCount(rows.length)
   await expect(openRowButtons(page)).toHaveCount(rows.length)
 
-  // A row opens the right screen for the role. Cancelled cases open a modal
-  // instead of a case, so the first row that opens a case is the one clicked.
-  // Nothing has been sorted yet, so the table shows the rows in the order the
-  // backend returned them.
-  const openable = rows.findIndex(
-    (r) => r.actionOnRowClick !== 'COMPLETE_CANCELLED_CASE',
-  )
-  expect(
-    openable,
-    'the list has no row that opens a case',
-  ).toBeGreaterThanOrEqual(0)
-  await tableRows(page).nth(openable).click()
+  // A row opens the right screen for the role. The list was picked for having
+  // a row that opens a case, so the first such row is the one clicked. Nothing
+  // has been sorted yet, so the table shows the rows in the order the backend
+  // returned them.
+  await tableRows(page).nth(rows.findIndex(opensCase)).click()
   await expect(page).toHaveURL(caseScreen)
 
   // Sorting: reload the list and sort by a column that can change the order.
