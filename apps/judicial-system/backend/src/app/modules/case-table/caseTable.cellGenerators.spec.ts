@@ -10,6 +10,7 @@ import {
 
 import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
+import type { CaseTableRowCase } from './caseTable.types'
 
 describe('indictment ruling decision cell generators', () => {
   const user = { role: UserRole.PROSECUTOR } as User
@@ -17,8 +18,8 @@ describe('indictment ruling decision cell generators', () => {
   const dismissedAppealedCase = {
     state: CaseState.COMPLETED,
     indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
-    appealCase: { appealState: AppealCaseState.APPEALED },
-  } as Case
+    appeal: { appealState: AppealCaseState.APPEALED },
+  } as CaseTableRowCase
 
   it('appends the appeal state tag to dismissals', () => {
     const cell = caseTableCellGenerators.indictmentRulingDecision.generate(
@@ -45,7 +46,7 @@ describe('indictment ruling decision cell generators', () => {
   it('leaves the cell empty for cases that are not completed', () => {
     const cell =
       caseTableCellGenerators.indictmentRulingDecisionWithoutAppealState.generate(
-        { state: CaseState.RECEIVED } as Case,
+        { state: CaseState.RECEIVED } as CaseTableRowCase,
         user,
       )
 
@@ -66,7 +67,7 @@ describe('verdict appeal cell generators', () => {
   // already put the verdict appeal where every column looks for the appeal a
   // row is about.
   const caseWithVerdictAppeal = (verdictAppealCase: unknown): Case =>
-    ({ appealCase: verdictAppealCase } as Case)
+    ({ appeal: verdictAppealCase } as CaseTableRowCase)
 
   describe('who appealed', () => {
     it('names the prosecution when it appealed', () => {
@@ -231,8 +232,8 @@ describe('the case number on a verdict appeal list', () => {
   const rulingAppealRow = {
     policeCaseNumbers: ['007-2022-45678'],
     courtCaseNumber: 'S-301/2022',
-    appealCase: { appealCaseNumber: '1111/2022' },
-  } as Case
+    appeal: { appealCaseNumber: '1111/2022' },
+  } as CaseTableRowCase
 
   // Which appeal a row is about is settled before a column sees it - see
   // caseTable.verdictAppealRows.spec.ts. What is left to check here is that
@@ -240,8 +241,8 @@ describe('the case number on a verdict appeal list', () => {
   const verdictAppealRow = {
     policeCaseNumbers: ['007-2022-45678'],
     courtCaseNumber: 'S-301/2022',
-    appealCase: { appealCaseNumber: '2041/2022' },
-  } as Case
+    appeal: { appealCaseNumber: '2041/2022' },
+  } as CaseTableRowCase
 
   it('labels the row with the appeal it is about', () => {
     const cell = caseTableCellGenerators.verdictAppealCaseNumber.generate(
@@ -264,7 +265,7 @@ describe('the case number on a verdict appeal list', () => {
   // Landsréttur has not numbered the appeal yet - that is what "Nýtt" is.
   it('leaves the appeal number out until one is given', () => {
     const cell = caseTableCellGenerators.verdictAppealCaseNumber.generate(
-      { ...verdictAppealRow, appealCase: {} } as Case,
+      { ...verdictAppealRow, appeal: {} } as CaseTableRowCase,
       user,
     )
 
