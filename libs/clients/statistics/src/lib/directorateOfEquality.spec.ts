@@ -120,7 +120,7 @@ describe('toDirectorateOfEqualitySourceData', () => {
     expect(data['roundBySector.unknown'].map((p) => p.value)).toEqual([
       1, 0, 0, 0,
     ])
-    expect(data['roundBySector.3']).toBeUndefined()
+    expect(data['roundBySector.3'].map((p) => p.value)).toEqual([0, 0, 0, 0])
   })
 
   it('splits the 25+ population by size', () => {
@@ -165,6 +165,19 @@ describe('DoE keys through the chart pipeline', () => {
     expect(result[0].statisticsForHeader).toEqual([
       { key: 'doe.bySector.legacy', value: 6 },
       { key: 'doe.bySector.none', value: 5 },
+    ])
+  })
+
+  it('keeps a round chart populated when one requested round has no obliged companies', async () => {
+    const result = await getMultipleStatistics(
+      { sourceDataKeys: ['doe.roundBySector.1', 'doe.roundBySector.3'] },
+      sourceData,
+    )
+
+    expect(result).toHaveLength(4)
+    expect(result[0].statisticsForHeader).toEqual([
+      { key: 'doe.roundBySector.1', value: 4 },
+      { key: 'doe.roundBySector.3', value: 0 },
     ])
   })
 

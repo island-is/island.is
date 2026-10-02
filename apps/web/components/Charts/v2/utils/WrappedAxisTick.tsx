@@ -8,6 +8,8 @@ import { wrapAxisLabel } from './wrapAxisLabel'
 // Relative to the tick's font size so a larger font can't overlap lines
 const LINE_HEIGHT_EM = 1.2
 const LINE_HEIGHT = `${LINE_HEIGHT_EM}em`
+// Matches Recharts' Text default for a start-anchored label
+const CAP_HEIGHT = '0.71em'
 const DEFAULT_MAX_CHARS_PER_LINE = 10
 const DEFAULT_MAX_LINES = 3
 
@@ -53,10 +55,13 @@ export const WrappedAxisTick = ({
   )
   const isTruncated = lines[lines.length - 1]?.endsWith('…') ?? false
 
-  // Recharts sets a middle anchor on Y-axis ticks; center the block on the bar
+  // Recharts sets a middle anchor on Y-axis ticks; center the block on the bar.
+  // A start anchor gets Recharts' cap height so wrapped and unwrapped labels align
   const firstLineOffset =
     verticalAnchor === 'middle'
       ? `${(-(lines.length - 1) * LINE_HEIGHT_EM) / 2}em`
+      : verticalAnchor === 'start'
+      ? CAP_HEIGHT
       : 0
 
   return (

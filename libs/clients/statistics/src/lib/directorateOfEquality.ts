@@ -149,20 +149,21 @@ export const toDirectorateOfEqualitySourceData = (
   }
 
   const obligedRounds = statistics.rounds.filter(isObliged)
-  const roundKeys = [
-    ...new Set(
-      obligedRounds.map((cell) =>
-        cell.round === null ? UNKNOWN_ROUND_KEY : String(cell.round),
-      ),
-    ),
-  ]
+  const roundKeyOf = (cell: { round: number | null }) =>
+    cell.round === null ? UNKNOWN_ROUND_KEY : String(cell.round)
+  const highestRound = statistics.rounds.reduce(
+    (max, cell) => Math.max(max, cell.round ?? 0),
+    0,
+  )
+  // Every round up to the highest gets a key, since a chart missing one key drops every row
+  const roundKeys = new Set([
+    ...Array.from({ length: highestRound }, (_, i) => String(i + 1)),
+    ...obligedRounds.map(roundKeyOf),
+    UNKNOWN_ROUND_KEY,
+  ])
   for (const roundKey of roundKeys) {
     data[`roundBySector.${roundKey}`] = bySector(
-      obligedRounds.filter(
-        (cell) =>
-          (cell.round === null ? UNKNOWN_ROUND_KEY : String(cell.round)) ===
-          roundKey,
-      ),
+      obligedRounds.filter((cell) => roundKeyOf(cell) === roundKey),
     )
   }
 
