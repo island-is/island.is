@@ -43,7 +43,7 @@ import {
 import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
 import kennitala from 'kennitala'
-
+// TODO: Remove this - this is a hack to get the feature deployment to deploy user-profile service
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
 
