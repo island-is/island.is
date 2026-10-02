@@ -22,6 +22,7 @@ import {
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
 import {
   periodToByFrequency,
   toRequiredNumber,
@@ -91,6 +92,10 @@ export const socialInsuranceSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getSocialInsuranceDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            socialInsuranceValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             socialPaymentType: {
