@@ -85,7 +85,9 @@ export const getCartesianGridComponents = ({
   // default; set customStyleConfig.<axis>.interval to 0 to show every label
   const wrapCategoryLabels =
     !!slice.xAxisValueType && !['date', 'number'].includes(slice.xAxisValueType)
-  const wrapXAxis = !slice.flipAxis && wrapCategoryLabels
+  // An editor-set angle keeps Recharts' rotated default tick
+  const wrapXAxis =
+    !slice.flipAxis && wrapCategoryLabels && !customStyleConfig.xAxis?.angle
   const wrapYAxis = !!slice.flipAxis && wrapCategoryLabels
 
   const yAxisFormatter = (v: string | number) =>

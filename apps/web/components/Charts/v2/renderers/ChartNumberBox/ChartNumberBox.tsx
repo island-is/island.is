@@ -90,10 +90,8 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     return <SkeletonLoader width="100%" height={130} borderRadius="lg" />
   }
 
-  if (!queryResult.data || queryResult.data.length === 0) {
-    return <p>{messages[activeLocale].noDataForChart}</p>
-  }
-
+  // Empty data (e.g. a withheld value) still renders the titled box with "–"
+  const chartData = queryResult.data ?? []
   const reduceAndRoundValue = slice.reduceAndRoundValue ?? true
 
   return (
@@ -108,17 +106,20 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     >
       {boxData.map((data, index) => {
         const comparisonValue =
-          queryResult.data?.[data.sourceDataIndex]?.[data.sourceDataKey]
+          chartData[data.sourceDataIndex]?.[data.sourceDataKey]
         const mostRecentValue =
-          queryResult.data[queryResult.data.length - 1][data.sourceDataKey]
+          chartData[chartData.length - 1]?.[data.sourceDataKey]
 
-        // A null value is withheld or missing and must not be shown as 0
+        // A null value is withheld or missing and must not be shown as 0.
+        // A zero baseline has no meaningful change, so it can't show Infinity%
         const hasValue =
           typeof mostRecentValue === 'number' &&
-          (index === 0 || typeof comparisonValue === 'number')
+          (index === 0 ||
+            (typeof comparisonValue === 'number' && comparisonValue !== 0))
 
         const change =
           index > 0 &&
+          hasValue &&
           typeof mostRecentValue === 'number' &&
           typeof comparisonValue === 'number'
             ? mostRecentValue / comparisonValue

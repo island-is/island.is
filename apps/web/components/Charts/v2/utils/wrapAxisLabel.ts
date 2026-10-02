@@ -1,4 +1,5 @@
 import { hyphenateText } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 
 const SOFT_HYPHEN = '­'
 
@@ -15,23 +16,18 @@ const splitToLength = (text: string, length: number): string[] => {
   return chunks
 }
 
-/**
- * Wraps a chart axis label into multiple lines instead of Recharts either
- * overflowing it or (with interval="preserveEnd") dropping every other tick
- * to avoid the overflow. Uses Icelandic hyphenation so a single long word
- * (or a word that doesn't fit after the greedy word-wrap) breaks at a
- * linguistically correct syllable boundary rather than an arbitrary point.
- */
+// Wraps an axis label into lines, breaking long words at syllable boundaries
 export const wrapAxisLabel = (
   label: string,
   maxCharsPerLine: number,
   maxLines: number,
+  locale: Locale = 'is',
 ): string[] => {
   if (!label) {
     return []
   }
 
-  const hyphenated = hyphenateText(label, { locale: 'is' }).trim()
+  const hyphenated = hyphenateText(label, { locale }).trim()
   const words = hyphenated.split(' ').filter(Boolean)
 
   const lines: string[] = []

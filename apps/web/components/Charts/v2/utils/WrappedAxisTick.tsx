@@ -1,9 +1,11 @@
 import { theme } from '@island.is/island-ui/theme'
+import { useI18n } from '@island.is/web/i18n'
 
 import { wrapAxisLabel } from './wrapAxisLabel'
 
 // Relative to the tick's font size so a larger font can't overlap lines
-const LINE_HEIGHT = '1.2em'
+const LINE_HEIGHT_EM = 1.2
+const LINE_HEIGHT = `${LINE_HEIGHT_EM}em`
 const DEFAULT_MAX_CHARS_PER_LINE = 10
 const DEFAULT_MAX_LINES = 3
 
@@ -15,6 +17,7 @@ interface WrappedAxisTickProps {
   // Injected by Recharts when cloning a custom tick element
   tickFormatter?: (value: unknown, index: number) => string
   textAnchor?: 'start' | 'middle' | 'end'
+  verticalAnchor?: 'start' | 'middle' | 'end'
   fontSize?: number
   style?: { fontSize?: number | string }
   dy?: number
@@ -29,30 +32,44 @@ export const WrappedAxisTick = ({
   index = 0,
   tickFormatter,
   textAnchor = 'middle',
+  verticalAnchor,
   fontSize = theme.typography.baseFontSize,
   style,
   dy = 16,
   maxCharsPerLine = DEFAULT_MAX_CHARS_PER_LINE,
   maxLines = DEFAULT_MAX_LINES,
 }: WrappedAxisTickProps) => {
+  const { activeLocale } = useI18n()
   const label = String(
     (tickFormatter ? tickFormatter(payload?.value, index) : payload?.value) ??
       '',
   )
-  const lines = wrapAxisLabel(label, maxCharsPerLine, maxLines)
+  const lines = wrapAxisLabel(label, maxCharsPerLine, maxLines, activeLocale)
+  const isTruncated = lines[lines.length - 1]?.endsWith('…') ?? false
+
+  // Recharts sets a middle anchor on Y-axis ticks; center the block on the bar
+  const firstLineOffset =
+    verticalAnchor === 'middle'
+      ? `${(-(lines.length - 1) * LINE_HEIGHT_EM) / 2}em`
+      : 0
 
   return (
     <text
       x={x}
-      y={y}
+      y={y + dy}
       textAnchor={textAnchor}
       // The axis forwards customStyleConfig's font size through `style`
       fontSize={style?.fontSize ?? fontSize}
       fontFamily={theme.typography.fontFamily}
       fill={theme.color.dark400}
     >
+      {isTruncated && <title>{label}</title>}
       {lines.map((line, i) => (
-        <tspan key={line + i} x={x} dy={i === 0 ? dy : LINE_HEIGHT}>
+        <tspan
+          key={line + i}
+          x={x}
+          dy={i === 0 ? firstLineOffset : LINE_HEIGHT}
+        >
           {line}
         </tspan>
       ))}

@@ -9,10 +9,7 @@ import { ChartNumberBox } from '../ChartNumberBox'
 import * as styles from './ChartNumberBoxGroup.css'
 
 type ChartNumberBoxGroupRendererProps = {
-  // `components` comes back with each item's `id` aliased to
-  // `chartNumberBoxId` (per ChartNumberBoxFields in fragments.ts) - the
-  // generated schema type doesn't know about that query-level alias, so it's
-  // patched here the same way richText.tsx does for a standalone ChartNumberBox.
+  // The query aliases each item's `id` to `chartNumberBoxId`, which the schema type lacks
   slice: Omit<IChartNumberBoxGroup, 'components'> & {
     components: (IChartNumberBox & { chartNumberBoxId: string })[]
   }
