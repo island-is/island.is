@@ -3,8 +3,8 @@ import { v4 as uuid } from 'uuid'
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   InstitutionNotificationType,
+  InstitutionType,
   NotificationDispatchType,
-  prosecutorsOfficeTypes,
 } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -19,9 +19,9 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('InternalNotificationController - Dispatch indictments waiting for confirmation notifications', () => {
-  const prosecutorsOfficeId1 = uuid()
-  const prosecutorsOfficeId2 = uuid()
+describe('InternalNotificationController - Dispatch public prosecutor verdict appeal deadline reminder notifications', () => {
+  const publicProsecutorsOfficeId1 = uuid()
+  const publicProsecutorsOfficeId2 = uuid()
 
   let mockQueuedMessages: Message[]
   let mockInstitutionService: InstitutionService
@@ -39,8 +39,8 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
 
     const mockGetAll = mockInstitutionService.getAll as jest.Mock
     mockGetAll.mockResolvedValueOnce([
-      { id: prosecutorsOfficeId1 },
-      { id: prosecutorsOfficeId2 },
+      { id: publicProsecutorsOfficeId1 },
+      { id: publicProsecutorsOfficeId2 },
     ])
 
     givenWhenThen = async () => {
@@ -48,7 +48,7 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
 
       await internalNotificationController
         .dispatchNotification({
-          type: NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          type: NotificationDispatchType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -64,23 +64,23 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
       then = await givenWhenThen()
     })
 
-    it('should send message to queue', () => {
-      expect(mockInstitutionService.getAll).toHaveBeenCalledWith(
-        prosecutorsOfficeTypes,
-      )
+    it('should send a message to queue per public prosecutors office', () => {
+      expect(mockInstitutionService.getAll).toHaveBeenCalledWith([
+        InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+      ])
       expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.INSTITUTION_NOTIFICATION,
           body: {
-            type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
-            prosecutorsOfficeId: prosecutorsOfficeId1,
+            type: InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
+            prosecutorsOfficeId: publicProsecutorsOfficeId1,
           },
         },
         {
           type: MessageType.INSTITUTION_NOTIFICATION,
           body: {
-            type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
-            prosecutorsOfficeId: prosecutorsOfficeId2,
+            type: InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
+            prosecutorsOfficeId: publicProsecutorsOfficeId2,
           },
         },
       ])
