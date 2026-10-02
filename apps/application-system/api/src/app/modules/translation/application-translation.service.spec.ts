@@ -477,6 +477,14 @@ describe('ApplicationTranslationService', () => {
         { entryId: 'good.ns' },
         expect.anything(),
       )
+
+      const error = await resultPromise.catch((e) => e)
+      expect(error.getResponse()).toEqual(
+        expect.objectContaining({
+          failedNamespaces: ['bad.ns'],
+          rows: [expect.objectContaining({ messageKey: 'good.ns:key.one' })],
+        }),
+      )
     })
   })
 

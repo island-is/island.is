@@ -55,7 +55,10 @@ export class ApplicationTranslationService {
 
   private readonly pendingWrites = new Map<
     string,
-    { inputs: UpsertTranslationInput[]; flush: Promise<void> }
+    {
+      inputs: UpsertTranslationInput[]
+      flush: Promise<EntryProps<NamespaceEntryFields>>
+    }
   >()
 
   private async assertWritesEnabled(user: User): Promise<void> {
@@ -83,26 +86,31 @@ export class ApplicationTranslationService {
   private coalescedMerge(
     namespace: string,
     inputs: UpsertTranslationInput[],
-  ): Promise<void> {
+  ): Promise<EntryProps<NamespaceEntryFields>> {
     const existing = this.pendingWrites.get(namespace)
     if (existing) {
       existing.inputs.push(...inputs)
       return existing.flush
     }
 
-    const bucket: { inputs: UpsertTranslationInput[]; flush: Promise<void> } = {
+    const bucket: {
+      inputs: UpsertTranslationInput[]
+      flush: Promise<EntryProps<NamespaceEntryFields>>
+    } = {
       inputs: [...inputs],
-      flush: undefined as unknown as Promise<void>,
+      flush: undefined as unknown as Promise<EntryProps<NamespaceEntryFields>>,
     }
 
-    bucket.flush = new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        this.pendingWrites.delete(namespace)
-        this.withConflictRetry(() =>
-          this.mergeTranslationsIntoEntry(namespace, bucket.inputs),
-        ).then(resolve, reject)
-      }, WRITE_COALESCE_MS)
-    })
+    bucket.flush = new Promise<EntryProps<NamespaceEntryFields>>(
+      (resolve, reject) => {
+        setTimeout(() => {
+          this.pendingWrites.delete(namespace)
+          this.withConflictRetry(() =>
+            this.mergeTranslationsIntoEntry(namespace, bucket.inputs),
+          ).then(resolve, reject)
+        }, WRITE_COALESCE_MS)
+      },
+    )
 
     this.pendingWrites.set(namespace, bucket)
     return bucket.flush
@@ -283,7 +291,13 @@ export class ApplicationTranslationService {
     namespace: string,
   ): Promise<ContentfulTranslationRow[]> {
     const draftEntry = await this.getVerifiedNamespaceEntry(namespace)
+    return this.buildRowsForEntry(namespace, draftEntry)
+  }
 
+  private async buildRowsForEntry(
+    namespace: string,
+    draftEntry: EntryProps<NamespaceEntryFields>,
+  ): Promise<ContentfulTranslationRow[]> {
     const publishedFields = await this.getPublishedNamespaceFields(
       namespace,
       draftEntry,
@@ -303,7 +317,7 @@ export class ApplicationTranslationService {
   private async mergeTranslationsIntoEntry(
     namespace: string,
     inputs: UpsertTranslationInput[],
-  ): Promise<void> {
+  ): Promise<EntryProps<NamespaceEntryFields>> {
     const entry = await this.getVerifiedNamespaceEntry(namespace)
 
     const stringsIs = { ...(entry.fields.strings?.[DEFAULT_LOCALE] ?? {}) }
@@ -328,10 +342,10 @@ export class ApplicationTranslationService {
     }
 
     if (!changed) {
-      return
+      return entry
     }
 
-    await this.managementClient.entry.update<NamespaceEntryFields>(
+    return this.managementClient.entry.update<NamespaceEntryFields>(
       { entryId: namespace },
       {
         ...entry,
@@ -364,33 +378,44 @@ export class ApplicationTranslationService {
       inputsByNamespace.set(input.namespace, group)
     }
 
+    const namespaceEntries = Array.from(inputsByNamespace.entries())
+    const results = await Promise.allSettled(
+      namespaceEntries.map(async ([namespace, inputs]) => {
+        const draftEntry = await this.coalescedMerge(namespace, inputs)
+        const namespaceRows = await this.buildRowsForEntry(
+          namespace,
+          draftEntry,
+        )
+        const requestedKeys = new Set(inputs.map((i) => i.messageKey))
+        return namespaceRows.filter((row) => requestedKeys.has(row.messageKey))
+      }),
+    )
+
     const rows: ContentfulTranslationRow[] = []
     const failedNamespaces: string[] = []
 
-    for (const [namespace, inputs] of inputsByNamespace) {
-      try {
-        await this.coalescedMerge(namespace, inputs)
-
-        const namespaceRows = await this.getTranslationsByNamespace(namespace)
-        const requestedKeys = new Set(inputs.map((i) => i.messageKey))
-        rows.push(
-          ...namespaceRows.filter((row) => requestedKeys.has(row.messageKey)),
-        )
-      } catch (error) {
+    results.forEach((result, index) => {
+      const [namespace] = namespaceEntries[index]
+      if (result.status === 'fulfilled') {
+        rows.push(...result.value)
+      } else {
         logger.error(
           `Failed to save translations for namespace "${namespace}"`,
-          error as Error,
+          result.reason as Error,
         )
         failedNamespaces.push(namespace)
       }
-    }
+    })
 
     if (failedNamespaces.length > 0) {
-      throw new BadRequestException(
-        `Failed to save translations for namespace(s): ${failedNamespaces.join(
+      throw new BadRequestException({
+        statusCode: 400,
+        message: `Failed to save translations for namespace(s): ${failedNamespaces.join(
           ', ',
         )}`,
-      )
+        rows,
+        failedNamespaces,
+      })
     }
 
     return rows
