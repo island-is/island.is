@@ -51,11 +51,10 @@ export const useTranslationWorkspacePersistence = ({
 }: UseTranslationWorkspacePersistenceArgs) => {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [publishConfirmVisible, setPublishConfirmVisible] = useState(false)
-
-  const [bulkUpdate, { loading: saving }] =
-    useBulkUpdateApplicationTranslationsMutation()
-  const [publishMutation, { loading: publishing }] =
-    usePublishApplicationTranslationsMutation()
+  const [bulkUpdate] = useBulkUpdateApplicationTranslationsMutation()
+  const [publishMutation] = usePublishApplicationTranslationsMutation()
+  const [saving, setSaving] = useState(false)
+  const [publishing, setPublishing] = useState(false)
   const [googleTranslate] = useGoogleTranslateStringsMutation()
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(
     () => new Set(),
@@ -132,6 +131,7 @@ export const useTranslationWorkspacePersistence = ({
 
     if (translationsToSave.length === 0) return true
 
+    setSaving(true)
     try {
       const { data: mutationData } = await bulkUpdate({
         variables: { input: { translations: translationsToSave } },
@@ -158,6 +158,8 @@ export const useTranslationWorkspacePersistence = ({
       console.error('bulkUpdateApplicationTranslations failed', err)
       toast.error(formatMessage(m.translationSaveFailed, { detail }))
       return false
+    } finally {
+      setSaving(false)
     }
   }, [
     editedValues,
@@ -205,6 +207,7 @@ export const useTranslationWorkspacePersistence = ({
 
     setPublishConfirmVisible(false)
 
+    setPublishing(true)
     try {
       await publishMutation({
         variables: { input: { namespace } },
@@ -215,6 +218,8 @@ export const useTranslationWorkspacePersistence = ({
       const detail = err instanceof Error ? err.message : 'Unknown error'
       console.error('publishApplicationTranslations failed', err)
       toast.error(formatMessage(m.translationPublishFailed, { detail }))
+    } finally {
+      setPublishing(false)
     }
   }, [
     hasUnsavedChanges,
