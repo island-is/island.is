@@ -16,6 +16,7 @@ import {
   TouchableWithoutFeedback,
   Pressable,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
 import styled from 'styled-components/native'
@@ -120,6 +121,9 @@ export default function DocumentScreen() {
     },
     [openBrowser],
   )
+
+  // Keep the pdf viewer clear of the floating tab bar it renders under.
+  const { bottom } = useSafeAreaInsets()
 
   // Force PdfView to remount when screen regains focus (Android recycles the native surface)
   const [pdfKey, setPdfKey] = useState(0)
@@ -328,7 +332,11 @@ export default function DocumentScreen() {
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
           />
         ) : contentType === 'pdf' && pdfUri ? (
-          <PdfView key={pdfKey} uri={pdfUri} style={{ flex: 1 }} />
+          <PdfView
+            key={pdfKey}
+            uri={pdfUri}
+            style={{ flex: 1, marginBottom: bottom }}
+          />
         ) : contentType === 'html' && htmlSource ? (
           <WebView
             source={htmlSource}
