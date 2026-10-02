@@ -13,13 +13,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  addMessagesToQueueAfterCommit,
-  AfterCommitTransaction,
-  Message,
-} from '@island.is/judicial-system/message'
+import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
 import { CourtSessionService } from '../../court-session'
@@ -65,6 +61,7 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { PdfService } from '../pdf.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service', () => {
   const actual = jest.requireActual('../../court/court.service')
@@ -344,20 +341,13 @@ export const createTestingCaseModule = async () => {
     queuedMessages.push(...msgs)
   })
 
-  // One entry per registration, with the transaction it was made against, so
-  // that a spec can tell a message queued for after the commit from one queued
-  // for the request regardless of its outcome
-  const queuedMessagesAfterCommit: {
-    transaction: AfterCommitTransaction | undefined
-    messages: Message[]
-  }[] = []
-  const mockAddMessagesToQueueAfterCommit =
-    addMessagesToQueueAfterCommit as jest.Mock
-  mockAddMessagesToQueueAfterCommit.mockImplementation(
-    (transaction: AfterCommitTransaction | undefined, ...msgs: Message[]) => {
-      queuedMessagesAfterCommit.push({ transaction, messages: msgs })
-    },
-  )
+  // One entry per call, so that a spec can tell a message queued for after
+  // the commit from one queued for the request regardless of its outcome
+  const queuedMessagesAfterCommit: Message[][] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(msgs)
+  })
 
   caseModule.close()
 

@@ -50,6 +50,7 @@ import {
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   isCompletedCase,
   isDistrictCourtUser,
@@ -193,6 +194,31 @@ export class CaseController {
     }
   }
 
+  private async validateAppealProsecutor(appealProsecutorId: string) {
+    const appealProsecutor = await this.userService.findById(appealProsecutorId)
+
+    if (!appealProsecutor.active) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} is not an active prosecutor`,
+      )
+    }
+
+    if (appealProsecutor.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} does not have an acceptable role ${UserRole.PROSECUTOR}`,
+      )
+    }
+
+    if (
+      appealProsecutor.institution?.type !==
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE
+    ) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} belongs to the wrong institution`,
+      )
+    }
+  }
+
   private assertIndictmentWaitingForReviewUpdateAllowed(
     theCase: Case,
     update: UpdateCase,
@@ -304,6 +330,10 @@ export class CaseController {
           theCase,
           user,
         )
+      }
+
+      if (update.appealProsecutorId) {
+        await this.validateAppealProsecutor(update.appealProsecutorId)
       }
 
       if (update.rulingModifiedHistory) {
