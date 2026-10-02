@@ -6,7 +6,10 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { AssigneeNationalRegistryApi } from '../../../dataProviders'
-import { nationalIdPreface } from '../../../utils/assigneeUtils'
+import {
+  assigneeExternalDataKey,
+  nationalIdPreface,
+} from '../../../utils/assigneeUtils'
 import { buildDataProviderItem } from '@island.is/application/core'
 import * as m from '../../../lib/messages'
 import { shouldShowRefetchNationalRegistrySection } from '../../../utils/conditions'
@@ -23,8 +26,11 @@ export const refetchNationalRegistrySection = buildSection({
       subTitle: m.assigneeDraft.refetchSubTitle,
       dataProviders: [
         buildDataProviderItem({
-          id: (application, user) =>
-            nationalIdPreface(application, user, 'assigneeNationalRegistry'),
+          id: (_application, user) =>
+            assigneeExternalDataKey(
+              user.profile.nationalId,
+              'assigneeNationalRegistry',
+            ),
           provider: AssigneeNationalRegistryApi,
           title: m.assigneeApproval.nationalRegistryTitle,
           subTitle: m.assigneeApproval.nationalRegistrySubTitle,

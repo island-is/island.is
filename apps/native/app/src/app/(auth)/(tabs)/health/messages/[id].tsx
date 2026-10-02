@@ -45,6 +45,7 @@ import {
   ProblemTemplate,
   theme,
 } from '@/ui'
+import { isAndroid } from '@/utils/devices'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { downloadHealthAttachment } from '@/utils/download-health-attachment'
 import { HealthConversationMessageContent } from '@/components/health-conversation-message-content'
@@ -110,9 +111,13 @@ export default function HealthMessageDetailScreen() {
   // Also re-exported in the notifications modal, so compose has to be pushed
   // onto whichever stack we are in.
   const pathname = usePathname()
-  const composeHref = pathname.startsWith('/notifications/')
+  const inNotificationsSheet = pathname.startsWith('/notifications/')
+  const composeHref = inNotificationsSheet
     ? '/notifications/message/new'
     : '/health/messages/new'
+  // Only the sheet clears the Android nav bar; in the tabs the tab bar does.
+  const androidSheetInset =
+    isAndroid && inNotificationsSheet ? insets.bottom : 0
 
   const res = useGetHealthConversationQuery({
     variables: { id },
@@ -602,17 +607,14 @@ export default function HealthMessageDetailScreen() {
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
-            {/* The home indicator is what lifts the reply button / blocked
-                alert clear of the bottom edge. A device without one (SE,
-                iPhone 8) reports a 0 inset, so a minimum stands in for it
-                there. Android is already padded by ButtonDrawer, and its
-                gesture inset would double up on top of that. */}
+            {/* Clears the home indicator; a device without one reports 0,
+                so a minimum stands in. */}
             <View
               style={{
                 paddingBottom:
                   (Platform.OS === 'ios'
                     ? Math.max(insets.bottom, theme.spacing[2])
-                    : 0) + theme.spacing[1],
+                    : androidSheetInset) + theme.spacing[1],
               }}
             >
               {isSkeleton ? (
