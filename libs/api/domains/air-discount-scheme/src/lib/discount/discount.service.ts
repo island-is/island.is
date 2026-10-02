@@ -36,16 +36,16 @@ export class DiscountService {
 
   async getCurrentDiscounts(auth: User): Promise<DiscountModel[]> {
     try {
-      const relations = await this.airDiscountSchemeClientService.getUserRelations(
-        auth,
-      )
+      const relations =
+        await this.airDiscountSchemeClientService.getUserRelations(auth)
 
       const discounts: DiscountModel[] = []
       for (const relation of relations) {
-        const discount = await this.airDiscountSchemeClientService.getCurrentDiscount(
-          auth,
-          relation.nationalId,
-        )
+        const discount =
+          await this.airDiscountSchemeClientService.getCurrentDiscount(
+            auth,
+            relation.nationalId,
+          )
 
         if (discount) {
           this.processDiscount(discount)
@@ -60,10 +60,11 @@ export class DiscountService {
           continue
         }
 
-        const createdDiscount = await this.airDiscountSchemeClientService.createDiscount(
-          auth,
-          relation.nationalId,
-        )
+        const createdDiscount =
+          await this.airDiscountSchemeClientService.createDiscount(
+            auth,
+            relation.nationalId,
+          )
 
         if (createdDiscount) {
           this.processDiscount(createdDiscount)

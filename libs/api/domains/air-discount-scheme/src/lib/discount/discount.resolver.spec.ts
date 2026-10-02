@@ -97,15 +97,13 @@ describe('ApiDomains: DiscountResolver', () => {
               }
               return fabInvalidDiscount(nationalId)
             }),
-            getUserRelations: jest.fn(
-              async (user: User): Promise<TUser[]> => {
-                const userRelationsResponse = [fabTUser(user.nationalId)]
-                if (idsForGetUserRelations.includes(user.nationalId)) {
-                  userRelationsResponse.push(...userRelationsWardResponse)
-                }
-                return userRelationsResponse
-              },
-            ),
+            getUserRelations: jest.fn(async (user: User): Promise<TUser[]> => {
+              const userRelationsResponse = [fabTUser(user.nationalId)]
+              if (idsForGetUserRelations.includes(user.nationalId)) {
+                userRelationsResponse.push(...userRelationsWardResponse)
+              }
+              return userRelationsResponse
+            }),
           }),
         },
         {

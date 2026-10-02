@@ -29,9 +29,9 @@ describe('AirDiscountSchemeClientService', () => {
       privateUserControllerGetUserRelations: jest.fn(),
       privateFlightUserControllerGetUserAndRelationsFlights: jest.fn(),
     }
-    usersApi.withMiddleware.mockReturnValue((usersApi as unknown) as UsersApi)
+    usersApi.withMiddleware.mockReturnValue(usersApi as unknown as UsersApi)
     service = new AirDiscountSchemeClientService(
-      (usersApi as unknown) as UsersApi,
+      usersApi as unknown as UsersApi,
     )
   })
 

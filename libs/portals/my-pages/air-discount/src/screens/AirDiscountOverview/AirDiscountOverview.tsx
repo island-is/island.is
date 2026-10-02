@@ -240,8 +240,9 @@ export const AirDiscountOverview = () => {
           <Stack space={2}>
             {connectionCodes?.map((item, itemIndex) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
-                const isCopied = copiedCodes.find((x) => x.code === code.code)
-                  ?.copied
+                const isCopied = copiedCodes.find(
+                  (x) => x.code === code.code,
+                )?.copied
                 return (
                   <ActionCard
                     key={`loftbru-item-connection-code-${itemIndex}-${codeIndex}`}

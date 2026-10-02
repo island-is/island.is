@@ -29,17 +29,15 @@ export class FlightLegService {
   }
 
   private async buildFlightLegs(auth: User): Promise<FlightLeg[]> {
-    const flights = await this.airDiscountSchemeClientService.getUserAndRelationsFlights(
-      auth,
-    )
+    const flights =
+      await this.airDiscountSchemeClientService.getUserAndRelationsFlights(auth)
 
     if (flights.length === 0) {
       return []
     }
 
-    const relations = await this.airDiscountSchemeClientService.getUserRelations(
-      auth,
-    )
+    const relations =
+      await this.airDiscountSchemeClientService.getUserRelations(auth)
     const flightLegs: FlightLeg[] = []
 
     // The expected return value for the graphql layers has some extra properties

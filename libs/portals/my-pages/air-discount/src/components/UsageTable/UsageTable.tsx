@@ -11,7 +11,8 @@ import {
 import { messages as m } from '../../lib/messages'
 import { AirDiscountFlightLegsQuery } from '../../screens/AirDiscountOverview/AirDiscountOverview.generated'
 
-type FlightLeg = AirDiscountFlightLegsQuery['airDiscountSchemeUserAndRelationsFlights'][number]
+type FlightLeg =
+  AirDiscountFlightLegsQuery['airDiscountSchemeUserAndRelationsFlights'][number]
 
 interface PropTypes {
   data: FlightLeg[]
