@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { theme } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -44,7 +46,11 @@ export const WrappedAxisTick = ({
     (tickFormatter ? tickFormatter(payload?.value, index) : payload?.value) ??
       '',
   )
-  const lines = wrapAxisLabel(label, maxCharsPerLine, maxLines, activeLocale)
+  // hyphenateText builds a new pattern table per call, so skip it on re-renders
+  const lines = useMemo(
+    () => wrapAxisLabel(label, maxCharsPerLine, maxLines, activeLocale),
+    [label, maxCharsPerLine, maxLines, activeLocale],
+  )
   const isTruncated = lines[lines.length - 1]?.endsWith('…') ?? false
 
   // Recharts sets a middle anchor on Y-axis ticks; center the block on the bar
