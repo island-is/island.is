@@ -5,10 +5,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   EventNotificationType,
   EventType,
@@ -16,6 +13,7 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { EventLogRepositoryService } from '../repository'
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 
@@ -99,6 +97,10 @@ export class EventLogService {
 
       return true
     } catch (error) {
+      // TODO: Decide if tolerating failure is the right approach here.
+      // If we don't log the event, we might not be able to send notifications to users about important events.
+      // This could lead to users missing important information about their cases.
+
       // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
 
@@ -144,7 +146,7 @@ export class EventLogService {
     const notificationType = eventToNotificationMap[eventType]
 
     if (notificationType) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.EVENT_NOTIFICATION_DISPATCH,
         caseId: caseId,
         // There is a user property defined in the Message type definition, but

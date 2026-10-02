@@ -73,6 +73,11 @@ export const payoutInformationSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           condition: doesNotpayToUnion,
         }),
+        buildDescriptionField({
+          id: 'payout.unionSelectDescription',
+          description: payoutMessages.payoutInformation.unionSelectDescription,
+          condition: payToUnion,
+        }),
         buildSelectField({
           id: 'payout.union',
           title: payoutMessages.payoutInformation.unionLabel,

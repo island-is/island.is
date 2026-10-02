@@ -27,10 +27,10 @@ describe('NotificationController - Send ready for court notification', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, notificationController } =
+    const { queuedMessagesAfterCommit, notificationController } =
       await createTestingNotificationModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
 
     givenWhenThen = async (theCase) => {
       const then = {} as Then

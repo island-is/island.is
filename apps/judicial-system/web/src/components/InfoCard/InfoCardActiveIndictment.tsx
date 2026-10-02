@@ -35,15 +35,9 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     offenses,
     registrar,
     judge,
-    mergedCasePoliceCaseNumbers,
-    mergedCaseCourtCaseNumber,
-    mergedCaseProsecutor,
-    mergedCaseJudge,
-    mergedCaseCourt,
     civilClaimants,
     courtCaseNumber,
-    splitCases,
-    splitCase,
+    linkedCaseSections,
   } = useInfoCardItems()
 
   const excludedDefendants =
@@ -92,25 +86,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           ],
           columns: 2,
         },
-        ...(isNonEmptyArray(workingCase.mergedCases)
-          ? workingCase.mergedCases.map((mergedCase) => ({
-              id: mergedCase.id,
-              items: [
-                mergedCasePoliceCaseNumbers(mergedCase),
-                mergedCaseCourtCaseNumber(mergedCase),
-                mergedCaseProsecutor(mergedCase),
-                mergedCaseJudge(mergedCase),
-                mergedCaseCourt(mergedCase),
-              ],
-              columns: 2,
-            }))
-          : []),
-        ...(isNonEmptyArray(workingCase.splitCases)
-          ? [{ id: 'split-cases-section', items: [splitCases], columns: 2 }]
-          : []),
-        ...(workingCase.splitCase
-          ? [{ id: 'split-case-section', items: [splitCase], columns: 2 }]
-          : []),
+        ...linkedCaseSections,
         ...(isNonEmptyArray(excludedDefendants)
           ? [
               {

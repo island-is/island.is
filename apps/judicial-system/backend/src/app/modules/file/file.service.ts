@@ -15,10 +15,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -36,6 +33,7 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
+import { queueMessagesAfterCommit } from '../../middleware'
 import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
@@ -435,7 +433,7 @@ export class FileService {
       const appealCase = findAppealCaseOfCaseFile(theCase, file)
 
       if (appealCase) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -478,7 +476,7 @@ export class FileService {
     }
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
         user,
         caseId: theCase.id,
@@ -487,7 +485,7 @@ export class FileService {
     }
 
     if (theCase.courtCaseNumber) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
         user,
         caseId: theCase.id,

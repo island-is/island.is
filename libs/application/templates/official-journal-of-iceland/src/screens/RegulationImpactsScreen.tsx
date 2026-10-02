@@ -489,6 +489,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                       ? (selRegOption.title as string)
                       : '',
                 }}
+                impacts={groupedImpacts[selRegOption.value as string]}
                 onSave={handleSaveNewImpact}
                 onClose={closeModal}
               />
@@ -505,6 +506,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                       ? (selRegOption.title as string)
                       : '',
                 }}
+                impacts={groupedImpacts[selRegOption.value as string]}
                 draftTitle={application.answers?.advert?.title}
                 draftHtml={application.answers?.advert?.html as string}
                 isBase={applicationType === 'base_regulation'}
