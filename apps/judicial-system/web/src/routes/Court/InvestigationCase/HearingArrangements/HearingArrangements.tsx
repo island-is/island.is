@@ -36,6 +36,7 @@ import {
   SessionArrangements,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -100,7 +101,7 @@ const HearingArrangements = () => {
     setAndSendCaseToServer(
       [
         {
-          sessionArrangements: workingCase.defenderName
+          sessionArrangements: anyDefendantHasDefender(workingCase.defendants)
             ? SessionArrangements.ALL_PRESENT
             : undefined,
         },
