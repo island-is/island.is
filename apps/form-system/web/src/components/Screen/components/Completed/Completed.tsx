@@ -16,7 +16,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
@@ -30,12 +30,6 @@ export const Completed = () => {
     { fetchPolicy: 'no-cache' },
   )
   const [pdfDownloadError, setPdfDownloadError] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState<string>()
-  useEffect(() => {
-    return () => {
-      if (pdfUrl) URL.revokeObjectURL(pdfUrl)
-    }
-  }, [pdfUrl])
   const completed = state.application.sectionInfo as
     | Partial<FormSystemSectionInfo>
     | undefined
@@ -66,7 +60,6 @@ export const Completed = () => {
       const url = URL.createObjectURL(
         new Blob([bytes], { type: 'application/pdf' }),
       )
-      setPdfUrl(url)
       const link = document.createElement('a')
       link.href = url
       link.download = pdf.filename
@@ -75,6 +68,7 @@ export const Completed = () => {
       document.body.appendChild(link)
       link.click()
       link.remove()
+      URL.revokeObjectURL(url)
     } catch {
       setPdfDownloadError(true)
     }
@@ -104,18 +98,6 @@ export const Completed = () => {
           <Text>{formatMessage(m.applicationPdfDownloadDescription)}</Text>
         </Box>
       </Box>
-      {pdfUrl && (
-        <Text>
-          <a
-            href={pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'underline' }}
-          >
-            {formatMessage(m.openApplicationPdf)}
-          </a>
-        </Text>
-      )}
       {pdfDownloadError && (
         <AlertMessage
           type="error"

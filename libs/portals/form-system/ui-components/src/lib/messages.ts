@@ -183,11 +183,6 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að sækja PDF. Vinsamlegast reyndu aftur.',
     description: 'Failed to download the application PDF. Please try again.',
   },
-  openApplicationPdf: {
-    id: 'form.system:open-application-pdf',
-    defaultMessage: 'Opna PDF',
-    description: 'Open the application PDF',
-  },
   payment: {
     id: 'form.system:payment',
     defaultMessage: 'Greiðsla',
