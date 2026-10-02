@@ -166,7 +166,7 @@ const SidePanel: FC<SidePanelProps> = ({
             </Box>
           )}
           <Box
-            marginBottom={[1, 1, 4]}
+            marginBottom={[1, 1, 2]}
             marginLeft={[3, 3, 0]}
             marginTop={[2, 2, 0]}
           >
