@@ -21,6 +21,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { smsModuleConfig } from '@island.is/nova-sms'
 import { emailModuleConfig } from '@island.is/email-service'
 import { UserProfileConfig } from '../config'
+import { UserProfileUserNotificationConfig } from './user-notification/user-notification.config'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserProfileConfig } from '../config'
         FeatureFlagConfig,
         IdsClientConfig,
         AuthDelegationApiClientConfig,
+        UserProfileUserNotificationConfig,
         UserProfileConfig,
         smsModuleConfig,
         emailModuleConfig,
