@@ -141,6 +141,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
                     <Button
                       variant="text"
                       size="small"
+                      icon="arrowForward"
                       onClick={() =>
                         navigate(
                           buildSharedNamespaceTranslationPath(entry.namespace),
@@ -223,6 +224,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
                 <Button
                   variant="text"
                   size="small"
+                  icon="arrowForward"
                   onClick={() =>
                     navigate(`/umsoknakerfi/thydingar/${template.typeId}`)
                   }
