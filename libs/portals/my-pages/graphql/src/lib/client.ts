@@ -46,7 +46,8 @@ export const client = new ApolloClient({
         keyFields: ['from', ['nationalId']],
       },
       AuthDelegationsGroupedByIdentity: {
-        keyFields: ['nationalId', 'type'],
+        // The same counterparty can appear in both incoming and outgoing lists.
+        keyFields: ['nationalId', 'type', 'direction'],
       },
       // Health Questionnaire Question: composite key because
       // questions from different sections can share the same id

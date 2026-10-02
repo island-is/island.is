@@ -652,4 +652,476 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:no-delegations-found',
     defaultMessage: 'Engin rafræn umboð fundust',
   },
+
+  // Request a delegation ("Beiðni um umboð")
+  requestDelegationNavTitle: {
+    id: 'sp.access-control-delegations:request-delegation-nav-title',
+    defaultMessage: 'Biðja um umboð',
+  },
+  delegationRequestsNavTitle: {
+    id: 'sp.access-control-delegations:delegation-requests-nav-title',
+    defaultMessage: 'Umboðsbeiðnir',
+  },
+  delegationRequestsPageTitle: {
+    id: 'sp.access-control-delegations:delegation-requests-page-title',
+    defaultMessage: 'Umboðsbeiðnir',
+  },
+  delegationRequestsPageIntro: {
+    id: 'sp.access-control-delegations:delegation-requests-page-intro',
+    defaultMessage:
+      'Yfirlit yfir rafræn umboð sem þú hefur veitt öðrum og aðrir hafa veitt þér.',
+  },
+  noRequestsFound: {
+    id: 'sp.access-control-delegations:no-requests-found',
+    defaultMessage: 'Engar umboðsbeiðnir',
+  },
+  noRequestsFoundMessage: {
+    id: 'sp.access-control-delegations:no-requests-found-message',
+    defaultMessage:
+      'Hér birtast umboðsbeiðnir sem þú sendir öðrum og beiðnir sem aðrir senda þér.',
+  },
+  searchAllRequestsPlaceholder: {
+    id: 'sp.access-control-delegations:search-all-requests-placeholder',
+    defaultMessage: 'Leita í öllum beiðnum',
+  },
+  requestsAlertTitle: {
+    id: 'sp.access-control-delegations:requests-alert-title',
+    defaultMessage: 'Beiðni um umboð',
+  },
+  requestsAlertMessage: {
+    id: 'sp.access-control-delegations:requests-alert-message',
+    defaultMessage:
+      'Þú átt óskoðaða beiðni um umboð. Smelltu á hlekkinn til að skoða.',
+  },
+  requestsAlertLink: {
+    id: 'sp.access-control-delegations:requests-alert-link',
+    defaultMessage: 'Skoða umboðsbeiðnir',
+  },
+  incomingRequestsSectionTitle: {
+    id: 'sp.access-control-delegations:incoming-requests-section-title',
+    defaultMessage: 'Beiðnir um umboð',
+  },
+  incomingRequestsSectionSubtitle: {
+    id: 'sp.access-control-delegations:incoming-requests-section-subtitle',
+    defaultMessage:
+      'Eftirfarandi aðilar hafa beðið um rafrænt umboð fyrir þína hönd.',
+  },
+  outgoingRequestsSectionTitle: {
+    id: 'sp.access-control-delegations:outgoing-requests-section-title',
+    defaultMessage: 'Sendar beiðnir',
+  },
+  outgoingRequestsSectionSubtitle: {
+    id: 'sp.access-control-delegations:outgoing-requests-section-subtitle',
+    defaultMessage:
+      'Beiðnir til aðila sem þú hefur sent um rafrænt umboð fyrir.',
+  },
+  colDateReceived: {
+    id: 'sp.access-control-delegations:col-date-received',
+    defaultMessage: 'Dags. móttekin',
+  },
+  colDateSent: {
+    id: 'sp.access-control-delegations:col-date-sent',
+    defaultMessage: 'Dags. sent',
+  },
+  reviewBeidniButton: {
+    id: 'sp.access-control-delegations:review-beidni-button',
+    defaultMessage: 'Skoða beiðni',
+  },
+  requestTagApproved: {
+    id: 'sp.access-control-delegations:request-tag-approved',
+    defaultMessage: 'Beiðni samþykkt',
+  },
+  requestTagRejected: {
+    id: 'sp.access-control-delegations:request-tag-rejected',
+    defaultMessage: 'Beiðni hafnað',
+  },
+  requestTagExpired: {
+    id: 'sp.access-control-delegations:request-tag-expired',
+    defaultMessage: 'Beiðni útrunnin',
+  },
+  requestTagCancelled: {
+    id: 'sp.access-control-delegations:request-tag-cancelled',
+    defaultMessage: 'Beiðni afturkölluð',
+  },
+  requestDelegationTitle: {
+    id: 'sp.access-control-delegations:request-delegation-title',
+    defaultMessage: 'Biðja um umboð',
+  },
+  requestDelegationIntro: {
+    id: 'sp.access-control-delegations:request-delegation-intro',
+    defaultMessage:
+      'Hérna getur þú beðið einstakling eða fyrirtæki um umboð til að sinna erindum fyrir þeirra hönd á Ísland.is.',
+  },
+  requestChooseGranterTitle: {
+    id: 'sp.access-control-delegations:request-choose-granter-title',
+    defaultMessage: 'Hvern viltu biðja um umboð?',
+  },
+  requestChooseGranterLabel: {
+    id: 'sp.access-control-delegations:request-choose-granter-label',
+    defaultMessage: 'Velja umboðsgjafa',
+  },
+  requestGranterNationalIdLabel: {
+    id: 'sp.access-control-delegations:request-granter-national-id-label',
+    defaultMessage: 'Kennitala umboðsveitanda',
+  },
+  requestSameSsnError: {
+    id: 'sp.access-control-delegations:request-same-ssn-error',
+    defaultMessage: 'Ekki er hægt að biðja sjálfan sig um umboð',
+  },
+  requestMixedGranterTypesTitle: {
+    id: 'sp.access-control-delegations:request-mixed-granter-types-title',
+    defaultMessage: 'Ekki hægt að blanda saman einstaklingum og fyrirtækjum',
+  },
+  requestMixedGranterTypesMessage: {
+    id: 'sp.access-control-delegations:request-mixed-granter-types-message',
+    defaultMessage:
+      'Umboðsveitendur í sömu beiðni þurfa allir að vera annaðhvort einstaklingar eða fyrirtæki, því réttindin sem hægt er að biðja um eru ekki þau sömu.',
+  },
+  requestChangeGranterTypeClearScopes: {
+    id: 'sp.access-control-delegations:request-change-granter-type-clear-scopes',
+    defaultMessage:
+      'Þú hefur valið réttindi fyrir annars konar umboðsveitanda. Ef þú breytir umboðsveitanda úr einstaklingi í fyrirtæki (eða öfugt) þarf að hreinsa valin réttindi. Viltu halda áfram?',
+  },
+  requestChooseScopesTitle: {
+    id: 'sp.access-control-delegations:request-choose-scopes-title',
+    defaultMessage: 'Hvaða réttindi viltu biðja um?',
+  },
+  requestChooseGranterButtonLabel: {
+    id: 'sp.access-control-delegations:request-choose-granter-button-label',
+    defaultMessage: 'Velja réttindi',
+  },
+  requestChooseScopesButtonLabel: {
+    id: 'sp.access-control-delegations:request-choose-scopes-button-label',
+    defaultMessage: 'Velja gildistíma',
+  },
+  requestDetailsTitle: {
+    id: 'sp.access-control-delegations:request-details-title',
+    defaultMessage: 'Tengsl og tilgangur',
+  },
+  requestRelationshipLabel: {
+    id: 'sp.access-control-delegations:request-relationship-label',
+    defaultMessage: 'Tengsl þín við umboðsveitanda',
+  },
+  requestRelationshipPlaceholder: {
+    id: 'sp.access-control-delegations:request-relationship-placeholder',
+    defaultMessage: 'Veldu tengsl',
+  },
+  requestRelationshipRequired: {
+    id: 'sp.access-control-delegations:request-relationship-required',
+    defaultMessage: 'Nauðsynlegt er að skrá tengsl',
+  },
+  relationshipOptionParent: {
+    id: 'sp.access-control-delegations:relationship-option-parent',
+    defaultMessage: 'Foreldri',
+  },
+  relationshipOptionChild: {
+    id: 'sp.access-control-delegations:relationship-option-child',
+    defaultMessage: 'Barn',
+  },
+  relationshipOptionSpouse: {
+    id: 'sp.access-control-delegations:relationship-option-spouse',
+    defaultMessage: 'Maki eða sambúðaraðili',
+  },
+  relationshipOptionCaregiver: {
+    id: 'sp.access-control-delegations:relationship-option-caregiver',
+    defaultMessage: 'Umönnunaraðili',
+  },
+  relationshipOptionAccountant: {
+    id: 'sp.access-control-delegations:relationship-option-accountant',
+    defaultMessage: 'Endurskoðandi',
+  },
+  relationshipOptionBookkeeper: {
+    id: 'sp.access-control-delegations:relationship-option-bookkeeper',
+    defaultMessage: 'Bókari',
+  },
+  relationshipOptionLawyer: {
+    id: 'sp.access-control-delegations:relationship-option-lawyer',
+    defaultMessage: 'Lögmaður',
+  },
+  relationshipOptionEmployee: {
+    id: 'sp.access-control-delegations:relationship-option-employee',
+    defaultMessage: 'Starfsmaður',
+  },
+  relationshipOptionAdvisor: {
+    id: 'sp.access-control-delegations:relationship-option-advisor',
+    defaultMessage: 'Ráðgjafi',
+  },
+  relationshipOptionOther: {
+    id: 'sp.access-control-delegations:relationship-option-other',
+    defaultMessage: 'Annað',
+  },
+  requestReasonLabel: {
+    id: 'sp.access-control-delegations:request-reason-label',
+    defaultMessage: 'Tilgangur umboðsins',
+  },
+  requestReasonPlaceholder: {
+    id: 'sp.access-control-delegations:request-reason-placeholder',
+    defaultMessage: 'Lýstu því af hverju þú biður um umboðið',
+  },
+  requestReasonRequired: {
+    id: 'sp.access-control-delegations:request-reason-required',
+    defaultMessage: 'Nauðsynlegt er að skrá tilgang',
+  },
+  requestDetailsButtonLabel: {
+    id: 'sp.access-control-delegations:request-details-button-label',
+    defaultMessage: 'Yfirlit',
+  },
+  requestConfirmButtonLabel: {
+    id: 'sp.access-control-delegations:request-confirm-button-label',
+    defaultMessage: 'Senda beiðni',
+  },
+  requestConfirmTitle: {
+    id: 'sp.access-control-delegations:request-confirm-title',
+    defaultMessage: 'Yfirfarðu beiðnina',
+  },
+  requestSuccess: {
+    id: 'sp.access-control-delegations:request-success',
+    defaultMessage: 'Beiðni um umboð hefur verið send',
+  },
+  requestError: {
+    id: 'sp.access-control-delegations:request-error',
+    defaultMessage:
+      'Ekki tókst að senda beiðni um umboð. Vinsamlegast reyndu aftur síðar.',
+  },
+  requestTooManyPendingError: {
+    id: 'sp.access-control-delegations:request-too-many-pending-error',
+    defaultMessage:
+      'Þú ert með of margar opnar beiðnir. Afturkallaðu beiðni eða bíddu eftir svari áður en þú sendir nýja.',
+  },
+  requestBlockedError: {
+    id: 'sp.access-control-delegations:request-blocked-error',
+    defaultMessage:
+      'Ekki er hægt að senda beiðni um umboð. Lokað hefur verið á nýjar beiðnir vegna ítrekaðra hafnana.',
+  },
+  requestRateLimitedError: {
+    id: 'sp.access-control-delegations:request-rate-limited-error',
+    defaultMessage:
+      'Þú hefur sent of margar beiðnir um umboð í dag. Reyndu aftur á morgun.',
+  },
+  requestRelationshipHeader: {
+    id: 'sp.access-control-delegations:request-relationship-header',
+    defaultMessage: 'Tengsl',
+  },
+  requestReasonHeader: {
+    id: 'sp.access-control-delegations:request-reason-header',
+    defaultMessage: 'Tilgangur',
+  },
+
+  // Incoming requests (grantor side)
+  incomingRequestsHeader: {
+    id: 'sp.access-control-delegations:incoming-requests-header',
+    defaultMessage: 'Beiðnir um umboð',
+  },
+  incomingRequestsTitle: {
+    id: 'sp.access-control-delegations:incoming-requests-title',
+    defaultMessage: 'Beiðnir sem bíða svara',
+  },
+  requestFrom: {
+    id: 'sp.access-control-delegations:request-from',
+    defaultMessage: 'Sendandi beiðni',
+  },
+  requestApprove: {
+    id: 'sp.access-control-delegations:request-approve',
+    defaultMessage: 'Samþykkja',
+  },
+  requestReviewButton: {
+    id: 'sp.access-control-delegations:request-review-button',
+    defaultMessage: 'Skoða',
+  },
+  requestApproveSuccess: {
+    id: 'sp.access-control-delegations:request-approve-success',
+    defaultMessage: 'Umboð veitt',
+  },
+  requestApproveError: {
+    id: 'sp.access-control-delegations:request-approve-error',
+    defaultMessage:
+      'Ekki tókst að samþykkja beiðnina. Vinsamlegast reyndu aftur.',
+  },
+  requestReviewTitle: {
+    id: 'sp.access-control-delegations:request-review-title',
+    defaultMessage: 'Beiðni um umboð',
+  },
+  requestReviewIntro: {
+    id: 'sp.access-control-delegations:request-review-intro',
+    defaultMessage:
+      'Vinsamlegast farðu vel yfir upplýsingar í beiðninni og taktu ákvörðun hvort þú viljir staðfesta eða hafna beiðninni.',
+  },
+  requestReceivedBadge: {
+    id: 'sp.access-control-delegations:request-received-badge',
+    defaultMessage: 'Barst {date}',
+  },
+  requestRequesterSectionTitle: {
+    id: 'sp.access-control-delegations:request-requester-section-title',
+    defaultMessage: 'Einstaklingur sem beðið hefur um umboð fyrir þína hönd:',
+  },
+  requestAskingSectionTitle: {
+    id: 'sp.access-control-delegations:request-asking-section-title',
+    defaultMessage: 'Einstaklingur sem er verið að biðja umboð',
+  },
+  requestSentTitle: {
+    id: 'sp.access-control-delegations:request-sent-title',
+    defaultMessage: 'Send beiðni um umboð',
+  },
+  requestSentBadge: {
+    id: 'sp.access-control-delegations:request-sent-badge',
+    defaultMessage: 'Send {date}',
+  },
+  requestCancelBeidniButton: {
+    id: 'sp.access-control-delegations:request-cancel-beidni-button',
+    defaultMessage: 'Afturkalla beiðni',
+  },
+  requestViewDelegation: {
+    id: 'sp.access-control-delegations:request-view-delegation',
+    defaultMessage: 'Skoða umboð',
+  },
+  requestScopesSectionTitle: {
+    id: 'sp.access-control-delegations:request-scopes-section-title',
+    defaultMessage: 'Umboð sem eru valin ásamt gildistíma og ástæðu:',
+  },
+  requestExplanationTitle: {
+    id: 'sp.access-control-delegations:request-explanation-title',
+    defaultMessage: 'Skýring fyrir beiðninni',
+  },
+  reviewScopeSelect: {
+    id: 'sp.access-control-delegations:review-scope-select',
+    defaultMessage: 'Velja',
+  },
+  reviewScopeName: {
+    id: 'sp.access-control-delegations:review-scope-name',
+    defaultMessage: 'Nafn',
+  },
+  reviewScopeRettindi: {
+    id: 'sp.access-control-delegations:review-scope-rettindi',
+    defaultMessage: 'Réttindi',
+  },
+  reviewScopeDescription: {
+    id: 'sp.access-control-delegations:review-scope-description',
+    defaultMessage: 'Lýsing á umboði',
+  },
+  reviewScopeType: {
+    id: 'sp.access-control-delegations:review-scope-type',
+    defaultMessage: 'Tegund',
+  },
+  accessTypeRead: {
+    id: 'sp.access-control-delegations:access-type-read',
+    defaultMessage: 'Skoða',
+  },
+  accessTypeReadWrite: {
+    id: 'sp.access-control-delegations:access-type-read-write',
+    defaultMessage: 'Skoða og breyta',
+  },
+  requestConfirmReviewButton: {
+    id: 'sp.access-control-delegations:request-confirm-review-button',
+    defaultMessage: 'Staðfesta beiðni',
+  },
+  requestRejectReviewButton: {
+    id: 'sp.access-control-delegations:request-reject-review-button',
+    defaultMessage: 'Hafna beiðni',
+  },
+  requestCannotGrantTitle: {
+    id: 'sp.access-control-delegations:request-cannot-grant-title',
+    defaultMessage: 'Þú getur ekki samþykkt þessa beiðni',
+  },
+  requestCannotGrantMessage: {
+    id: 'sp.access-control-delegations:request-cannot-grant-message',
+    defaultMessage:
+      'Þú hefur ekki réttindi til að veita eftirfarandi umboð: {scopes}. Aðili með viðeigandi réttindi þarf að afgreiða beiðnina.',
+  },
+  requestExpiresAt: {
+    id: 'sp.access-control-delegations:request-expires-at',
+    defaultMessage: 'Beiðnin fellur úr gildi',
+  },
+  requestReject: {
+    id: 'sp.access-control-delegations:request-reject',
+    defaultMessage: 'Hafna',
+  },
+  requestRejectSuccess: {
+    id: 'sp.access-control-delegations:request-reject-success',
+    defaultMessage: 'Beiðni hafnað',
+  },
+  requestRejectConfirmTitle: {
+    id: 'sp.access-control-delegations:request-reject-confirm-title',
+    defaultMessage: 'Hafna beiðni um umboð',
+  },
+  requestRejectConfirmText: {
+    id: 'sp.access-control-delegations:request-reject-confirm-text',
+    defaultMessage: 'Ertu viss um að þú viljir hafna beiðni frá {name}?',
+  },
+  requestRejectConfirmTracking: {
+    id: 'sp.access-control-delegations:request-reject-confirm-tracking',
+    defaultMessage:
+      'Hafnanir eru skráðar. Aðili sem fær ítrekaðar hafnanir verður tilkynntur og lokað verður á frekari beiðnir frá viðkomandi.',
+  },
+  requestRejectConfirmButton: {
+    id: 'sp.access-control-delegations:request-reject-confirm-button',
+    defaultMessage: 'Hafna beiðni',
+  },
+  requestRejectError: {
+    id: 'sp.access-control-delegations:request-reject-error',
+    defaultMessage: 'Ekki tókst að hafna beiðni. Vinsamlegast reyndu aftur.',
+  },
+  requestScopesNotGrantable: {
+    id: 'sp.access-control-delegations:request-scopes-not-grantable',
+    defaultMessage:
+      'Eftirfarandi umbeðin réttindi er ekki hægt að veita: {scopes}',
+  },
+
+  // Outgoing requests (requester side)
+  outgoingRequestsHeader: {
+    id: 'sp.access-control-delegations:outgoing-requests-header',
+    defaultMessage: 'Beiðnir sem þú hefur sent',
+  },
+  outgoingRequestsTitle: {
+    id: 'sp.access-control-delegations:outgoing-requests-title',
+    defaultMessage: 'Sendar beiðnir um umboð',
+  },
+  requestTo: {
+    id: 'sp.access-control-delegations:request-to',
+    defaultMessage: 'Umboðsveitandi',
+  },
+  requestStatus: {
+    id: 'sp.access-control-delegations:request-status',
+    defaultMessage: 'Staða',
+  },
+  requestDateSent: {
+    id: 'sp.access-control-delegations:request-date-sent',
+    defaultMessage: 'Sent dags',
+  },
+  requestScopeCount: {
+    id: 'sp.access-control-delegations:request-scope-count',
+    defaultMessage: 'Fjöldi réttinda',
+  },
+  requestCancel: {
+    id: 'sp.access-control-delegations:request-cancel',
+    defaultMessage: 'Afturkalla',
+  },
+  requestCancelSuccess: {
+    id: 'sp.access-control-delegations:request-cancel-success',
+    defaultMessage: 'Beiðni afturkölluð',
+  },
+  requestCancelError: {
+    id: 'sp.access-control-delegations:request-cancel-error',
+    defaultMessage:
+      'Ekki tókst að afturkalla beiðni. Vinsamlegast reyndu aftur.',
+  },
+  requestStatusPending: {
+    id: 'sp.access-control-delegations:request-status-pending',
+    defaultMessage: 'Bíður svars',
+  },
+  requestStatusApproved: {
+    id: 'sp.access-control-delegations:request-status-approved',
+    defaultMessage: 'Samþykkt',
+  },
+  requestStatusRejected: {
+    id: 'sp.access-control-delegations:request-status-rejected',
+    defaultMessage: 'Hafnað',
+  },
+  requestStatusCancelled: {
+    id: 'sp.access-control-delegations:request-status-cancelled',
+    defaultMessage: 'Afturkölluð',
+  },
+  requestStatusExpired: {
+    id: 'sp.access-control-delegations:request-status-expired',
+    defaultMessage: 'Útrunnin',
+  },
 })

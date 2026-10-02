@@ -57,6 +57,7 @@ export const useDeleteDelegationsByPerson = ({ direction }: Options) => {
         __typename: 'AuthDelegationsGroupedByIdentity',
         nationalId: person.nationalId,
         type: person.type,
+        direction,
       })
       if (cacheId) {
         client.cache.evict({ id: cacheId })
@@ -104,6 +105,7 @@ export const useDeleteDelegationsByPerson = ({ direction }: Options) => {
         __typename: 'AuthDelegationsGroupedByIdentity',
         nationalId: person.nationalId,
         type: person.type,
+        direction,
       })
       if (!personCacheId) return
 

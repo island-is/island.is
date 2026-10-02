@@ -97,6 +97,7 @@ export const filterNavigationTree = ({
     (routeItem?.enabled === false && userInfo
       ? computeDisabledReason(userInfo, routeItem)
       : undefined)
+  item.requiredScopes = routeItem?.requiredScopes
 
   // Makes dynamic item visible in navigation after dynamicArray hook is run
   if (routeItem?.dynamic) {

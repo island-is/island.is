@@ -1,4 +1,10 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  ParseEnumPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -7,6 +13,7 @@ import {
   ScopeCategoryDTO,
   ScopeTagDTO,
   DelegationDirection,
+  RequestGrantorType,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -81,7 +88,15 @@ export class ScopesController {
             'The direction of delegations to filter scopes by. Use OUTGOING to see scopes the user can delegate to others.',
           required: false,
           schema: {
-            enum: [DelegationDirection.OUTGOING],
+            enum: [DelegationDirection.OUTGOING, DelegationDirection.REQUEST],
+          },
+        },
+        requestGrantorType: {
+          description:
+            'When requesting a delegation (direction REQUEST), narrows the catalog to what the chosen grantor can grant: "company" or "individual".',
+          required: false,
+          schema: {
+            enum: ['company', 'individual'],
           },
         },
       },
@@ -95,11 +110,17 @@ export class ScopesController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
+    @Query(
+      'requestGrantorType',
+      new ParseEnumPipe(RequestGrantorType, { optional: true }),
+    )
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeCategoryDTO[]> {
     return this.scopeService.findScopeCategories(
       user,
       language || 'is',
       direction,
+      requestGrantorType,
     )
   }
 
@@ -120,7 +141,15 @@ export class ScopesController {
             'The direction of delegations to filter scopes by. Use OUTGOING to see scopes the user can delegate to others.',
           required: false,
           schema: {
-            enum: [DelegationDirection.OUTGOING],
+            enum: [DelegationDirection.OUTGOING, DelegationDirection.REQUEST],
+          },
+        },
+        requestGrantorType: {
+          description:
+            'When requesting a delegation (direction REQUEST), narrows the catalog to what the chosen grantor can grant: "company" or "individual".',
+          required: false,
+          schema: {
+            enum: ['company', 'individual'],
           },
         },
       },
@@ -134,7 +163,17 @@ export class ScopesController {
     @CurrentUser() user: User,
     @Query('lang') language?: string,
     @Query('direction') direction?: DelegationDirection,
+    @Query(
+      'requestGrantorType',
+      new ParseEnumPipe(RequestGrantorType, { optional: true }),
+    )
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeTagDTO[]> {
-    return this.scopeService.findScopeTags(user, language || 'is', direction)
+    return this.scopeService.findScopeTags(
+      user,
+      language || 'is',
+      direction,
+      requestGrantorType,
+    )
   }
 }

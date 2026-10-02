@@ -30,8 +30,12 @@ import { DelegationsIncomingWardService } from './delegations-incoming-ward.serv
 import { DelegationsIncomingService } from './delegations-incoming.service'
 import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationsOutgoingService } from './delegations-outgoing.service'
+import { DelegationRequestService } from './delegation-request.service'
 import { DelegationsService } from './delegations.service'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
+import { DelegationRequest } from './models/delegation-request.model'
+import { DelegationRequestDelegation } from './models/delegation-request-delegation.model'
+import { DelegationRequestScope } from './models/delegation-request-scope.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationProviderModel } from './models/delegation-provider.model'
@@ -66,6 +70,9 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
       DelegationTypeModel,
       DelegationProviderModel,
       DelegationDelegationType,
+      DelegationRequest,
+      DelegationRequestScope,
+      DelegationRequestDelegation,
     ]),
     UserSystemNotificationModule,
     SyslumennClientModule,
@@ -73,6 +80,7 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
   providers: [
     DelegationsService,
     DelegationsOutgoingService,
+    DelegationRequestService,
     DelegationsIncomingService,
     DelegationScopeService,
     NamesService,
@@ -89,6 +97,7 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
   exports: [
     DelegationsService,
     DelegationsOutgoingService,
+    DelegationRequestService,
     DelegationsIncomingService,
     DelegationScopeService,
     DelegationsIndexService,
