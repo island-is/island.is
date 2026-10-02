@@ -1,11 +1,12 @@
 import { Transaction } from 'sequelize'
 
-import { CaseType, User } from '@island.is/judicial-system/types'
+import { CaseType, RequestSharedWithDefender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
 import {
   Case,
+  CaseRepositoryService,
   Defendant,
   DefendantRepositoryService,
 } from '../../../repository'
@@ -161,6 +162,73 @@ describe('DefendantService - update', () => {
         { transaction },
       )
       expect(then.result).toEqual(updatedDefendant)
+    })
+  })
+
+  describe('when requestSharedWithDefender changes on a request case', () => {
+    const defendant = {
+      id: 'defendant-id',
+      caseId: theCase.id,
+      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+    } as Defendant
+    const otherDefendant = {
+      id: 'other-defendant-id',
+      caseId: theCase.id,
+      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+    } as Defendant
+    const caseWithDefendants = {
+      ...theCase,
+      defendants: [defendant, otherDefendant],
+      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+    } as Case
+    const update = {
+      requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+    } as UpdateDefendantDto
+    const updatedDefendant = {
+      ...defendant,
+      requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+    } as Defendant
+    let mockCaseRepositoryService: CaseRepositoryService
+
+    beforeEach(async () => {
+      const { defendantRepositoryService, caseRepositoryService, defendantService } =
+        await createTestingDefendantModule()
+
+      mockDefendantRepositoryService = defendantRepositoryService
+      mockCaseRepositoryService = caseRepositoryService
+      ;(
+        mockDefendantRepositoryService.update as jest.Mock
+      ).mockResolvedValueOnce(updatedDefendant)
+
+      givenWhenThen = async (defendantArg, updateArg) => {
+        const then: Then = {}
+
+        try {
+          then.result = await defendantService.update(
+            caseWithDefendants,
+            defendantArg,
+            updateArg,
+            user,
+            transaction,
+          )
+        } catch (error) {
+          then.error = error as Error
+        }
+
+        return then
+      }
+
+      await givenWhenThen(defendant, update)
+    })
+
+    it('should mirror the most permissive sharing timing onto the case', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        theCase.id,
+        {
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        },
+        { transaction },
+      )
     })
   })
 })
