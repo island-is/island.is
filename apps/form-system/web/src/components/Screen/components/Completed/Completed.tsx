@@ -68,7 +68,7 @@ export const Completed = () => {
       document.body.appendChild(link)
       link.click()
       link.remove()
-      URL.revokeObjectURL(url)
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000)
     } catch {
       setPdfDownloadError(true)
     }
