@@ -10,6 +10,15 @@ const MAX_RECENT = 10
 
 const MAX_FAVOURITES = 5
 
+/**
+ * Favourites can briefly sit above the cap — star a replacement while one is
+ * revoked, then have the revoked delegation come back. Reading only MAX
+ * would hide the overflow and leave it starred in the database, drawn as
+ * unstarred, and refused by the cap. Returning them all keeps it visible and
+ * lets the actor unstar their way back down.
+ */
+const MAX_FAVOURITE_ROWS = 25
+
 const MAX_RECENT_ROWS = 20
 
 const CONFLICT_COLUMNS = ['to_national_id', 'from_national_id'] as never[]
@@ -57,7 +66,7 @@ export class DelegationPreferenceService {
         where: { toNationalId, isFavourite: true, ...scope },
         attributes: [...attributes],
         order: [['created', 'ASC']],
-        limit: MAX_FAVOURITES,
+        limit: MAX_FAVOURITE_ROWS,
       }),
       this.delegationPreferenceModel.findAll({
         where: { toNationalId, lastUsedAt: { [Op.ne]: null }, ...scope },

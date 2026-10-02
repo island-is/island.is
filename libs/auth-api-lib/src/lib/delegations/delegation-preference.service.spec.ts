@@ -164,6 +164,69 @@ describe('DelegationPreferenceService', () => {
     })
   })
 
+  describe('a party held through more than one delegation type', () => {
+    it('is still live when one type goes and another remains', async () => {
+      // The picker merges a party into one card with its types listed, and a
+      // preference is keyed on the party, so losing the procuration while
+      // keeping the custom delegation must leave the favourite alone.
+      index.findAll.mockResolvedValue([
+        { fromNationalId: PARTY },
+        { fromNationalId: PARTY },
+      ])
+
+      await service.findAll(ACTOR)
+
+      for (const [args] of model.findAll.mock.calls) {
+        expect(args.where.fromNationalId).toEqual({ [Op.in]: [PARTY] })
+      }
+    })
+
+    it('asks the index about the party, never about the type', async () => {
+      indexed(PARTY)
+
+      await service.findAll(ACTOR)
+
+      const [args] = index.findAll.mock.calls[0]
+
+      expect(args.where.type).toBeUndefined()
+      expect(args.where.provider).toBeUndefined()
+      expect(args.attributes).toEqual(['fromNationalId'])
+    })
+  })
+
+  describe('when a revoked delegation comes back', () => {
+    it('returns every live favourite, even above the cap, so none is stranded', async () => {
+      indexed(PARTY, OTHER_PARTY)
+
+      await service.findAll(ACTOR)
+
+      const [favourites] = model.findAll.mock.calls[0]
+
+      // Reading only five would hide the one starred most recently: starred in
+      // the database, drawn as unstarred, and refused by the cap.
+      expect(favourites.limit).toBeGreaterThan(5)
+    })
+
+    it('still refuses to add another while over the cap', async () => {
+      indexed(PARTY, OTHER_PARTY)
+      model.count.mockResolvedValue(6)
+
+      await expect(service.setFavourite(ACTOR, PARTY, true)).rejects.toThrow(
+        BadRequestException,
+      )
+    })
+
+    it('lets the actor unstar their way back down', async () => {
+      await service.setFavourite(ACTOR, PARTY, false)
+
+      expect(model.update).toHaveBeenCalledWith(
+        { isFavourite: false },
+        { where: { toNationalId: ACTOR, fromNationalId: PARTY } },
+      )
+      expect(model.count).not.toHaveBeenCalled()
+    })
+  })
+
   describe('setFavourite', () => {
     it('writes only isFavourite, so a concurrent switch cannot lose its timestamp', async () => {
       await service.setFavourite(ACTOR, PARTY, true)
