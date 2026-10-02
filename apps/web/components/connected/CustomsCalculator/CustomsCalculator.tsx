@@ -201,6 +201,21 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       ?.bottomLevel,
   ])
 
+  const keywordsByCategoryId = useMemo(() => {
+    const keywordsByCategoryId = new Map<string, string[]>()
+    for (const category of productCategoriesResponse.data
+      ?.customsCalculatorProductCategories?.bottomLevel ?? []) {
+      keywordsByCategoryId.set(
+        category.id,
+        (category.keywords ?? []).map((keyword) => keyword.toLowerCase()),
+      )
+    }
+    return keywordsByCategoryId
+  }, [
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.bottomLevel,
+  ])
+
   const [selectedBottomLevelCategory, setSelectedBottomLevelCategory] =
     useState<{
       label: string
@@ -273,11 +288,17 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
         <AsyncSearch
           options={searchOptions}
-          filter={(option) =>
-            option.label
+          filter={(option) => {
+            const searchInput = inputState.searchInput
+              .replace('´', '')
               .toLowerCase()
-              .includes(inputState.searchInput.replace('´', '').toLowerCase())
-          }
+            return (
+              option.label.toLowerCase().includes(searchInput) ||
+              (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
+                keyword.includes(searchInput),
+              )
+            )
+          }}
           size="large"
           placeholder={formatMessage(
             translationStrings.productSearchInputPlaceholder,
