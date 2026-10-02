@@ -3,6 +3,7 @@ import {
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type {
   AppealCase,
   Case,
@@ -172,6 +173,21 @@ const firstDefendantIsInvalid = (workingCase: Case): boolean => {
   return Boolean(first && isDefendantInvalid(first))
 }
 
+const areDefenderContactsValid = (workingCase: Case): boolean =>
+  validate([
+    [workingCase.defenderEmail, ['email-format']],
+    [workingCase.defenderPhoneNumber, ['phonenumber']],
+    ...(workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
+      [defendant.defenderEmail, ['email-format']],
+      [defendant.defenderPhoneNumber, ['phonenumber']],
+    ]),
+  ]).isValid
+
+const isRequestSharingDecided = (workingCase: Case): boolean =>
+  anyDefendantHasDefender(workingCase.defendants)
+    ? Boolean(workingCase.requestSharedWithDefender)
+    : true
+
 const someDefendantIsInvalid = (workingCase: Case): boolean => {
   return Boolean(
     workingCase.defendants &&
@@ -226,15 +242,12 @@ export const isDefendantStepValidRC = (
       policeCaseNumbers.length > 0 &&
       (workingCase.defendants?.length ?? 0) > 0 &&
       !firstDefendantIsInvalid(workingCase) &&
-      (workingCase.defenderName
-        ? Boolean(workingCase.requestSharedWithDefender)
-        : true) &&
+      isRequestSharingDecided(workingCase) &&
+      areDefenderContactsValid(workingCase) &&
       validate([
         ...policeCaseNumbers.map(
           (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
         ),
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
         workingCase.type === CaseType.TRAVEL_BAN
           ? 'valid'
           : [workingCase.leadInvestigator, ['empty']],
@@ -247,13 +260,8 @@ export const isDefendantStepValidIC = (workingCase: Case): boolean => {
     (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
-      (workingCase.defenderName
-        ? Boolean(workingCase.requestSharedWithDefender)
-        : true) &&
-      validate([
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
-      ]).isValid,
+      isRequestSharingDecided(workingCase) &&
+      areDefenderContactsValid(workingCase),
   )
 }
 
@@ -511,16 +519,17 @@ export const isCourtHearingArrangemenstStepValidRC = (
   workingCase: Case,
   arraignmentDate?: DateLog,
 ): boolean => {
-  return validate([
-    [workingCase.defenderEmail, ['email-format']],
-    [workingCase.defenderPhoneNumber, ['phonenumber']],
-    [
-      arraignmentDate
-        ? arraignmentDate.date
-        : workingCase.arraignmentDate?.date,
-      ['empty', 'date-format'],
-    ],
-  ]).isValid
+  return (
+    areDefenderContactsValid(workingCase) &&
+    validate([
+      [
+        arraignmentDate
+          ? arraignmentDate.date
+          : workingCase.arraignmentDate?.date,
+        ['empty', 'date-format'],
+      ],
+    ]).isValid
+  )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (
@@ -529,9 +538,8 @@ export const isCourtHearingArrangementsStepValidIC = (
 ): boolean => {
   return Boolean(
     workingCase.sessionArrangements &&
+      areDefenderContactsValid(workingCase) &&
       validate([
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
         [
           arraignmentDate
             ? arraignmentDate.date

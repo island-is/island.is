@@ -40,6 +40,7 @@ import {
   PageTitle,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
+import { getRequestCaseDefenderNames } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
@@ -95,6 +96,7 @@ export const CourtRecord: FC = () => {
     const autofillAttendees = []
     const autofillSessionBookings = []
     const endOfSessionBookings: string[] = []
+    const defenderNames = getRequestCaseDefenderNames(workingCase.defendants)
 
     if (workingCase.courtAttendees !== '') {
       if (workingCase.prosecutor) {
@@ -105,16 +107,13 @@ export const CourtRecord: FC = () => {
         )
       }
 
-      if (workingCase.defenderName) {
+      defenderNames.forEach((defenderName) => {
         autofillAttendees.push(
-          `\n${workingCase.defenderName} skipaður verjandi ${formatMessage(
-            core.defendant,
-            {
-              suffix: 'a',
-            },
-          )}`,
+          `\n${defenderName} skipaður verjandi ${formatMessage(core.defendant, {
+            suffix: 'a',
+          })}`,
         )
-      }
+      })
 
       if (workingCase.translator) {
         autofillAttendees.push(`\n${workingCase.translator} túlkur`)
@@ -129,11 +128,11 @@ export const CourtRecord: FC = () => {
       }
     }
 
-    if (workingCase.defenderName) {
+    defenderNames.forEach((defenderName) => {
       autofillSessionBookings.push(
-        `${workingCase.defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
+        `${defenderName} lögmaður er skipaður verjandi varnaraðila að hans ósk, sbr. 3. mgr. 33. gr. laga nr. 88/2008.\n\n`,
       )
-    }
+    })
 
     if (workingCase.translator) {
       autofillSessionBookings.push(

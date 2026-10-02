@@ -13,13 +13,13 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -113,7 +113,14 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
-        const createdCase = await createCase(workingCase)
+        const defendant = workingCase.defendants?.[0]
+        const createdCase = await createCase({
+          ...workingCase,
+          defenderName: defendant?.defenderName,
+          defenderNationalId: defendant?.defenderNationalId,
+          defenderEmail: defendant?.defenderEmail,
+          defenderPhoneNumber: defendant?.defenderPhoneNumber,
+        })
 
         if (
           createdCase &&
@@ -131,6 +138,12 @@ export const Defendant = () => {
             nationalId: workingCase.defendants[0].nationalId || null,
             noNationalId: workingCase.defendants[0].noNationalId,
             citizenship: workingCase.defendants[0].citizenship,
+            defenderName: workingCase.defendants[0].defenderName || null,
+            defenderNationalId:
+              workingCase.defendants[0].defenderNationalId || null,
+            defenderEmail: workingCase.defendants[0].defenderEmail || null,
+            defenderPhoneNumber:
+              workingCase.defendants[0].defenderPhoneNumber || null,
           })
 
           router.push(`${destination}/${createdCase.id}`)
@@ -193,12 +206,16 @@ export const Defendant = () => {
                   />
                 </Box>
               )}
-              <Box component="section">
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </Box>
+              {workingCase.defendants && workingCase.defendants.length > 0 && (
+                <Box component="section">
+                  <RequestCaseDefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    defendant={workingCase.defendants[0]}
+                    showRequestSharedWithDefender
+                  />
+                </Box>
+              )}
               {workingCase.type !== CaseType.TRAVEL_BAN && (
                 <Box component="section">
                   <SectionHeading
