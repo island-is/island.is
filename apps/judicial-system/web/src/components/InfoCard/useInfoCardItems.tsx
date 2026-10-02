@@ -357,9 +357,17 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
-                  {splitCase.courtCaseNumber}
-                </LinkComponent>
+                {/* A defence user is shown every case this one was split into,
+                    but can only follow the ones they are a party to. */}
+                {canDefenceUserOpenLinkedCase(user, splitCase) ? (
+                  <LinkComponent
+                    href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+                  >
+                    {splitCase.courtCaseNumber}
+                  </LinkComponent>
+                ) : (
+                  <Text>{splitCase.courtCaseNumber}</Text>
+                )}
               </div>
             ))}
           </div>,
@@ -531,7 +539,39 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       : [],
   }
 
+  // The cases this one is linked to, as sections rather than items: both
+  // indictment cards render exactly this, and building it twice is how they
+  // came to disagree about whether to show it at all.
+  const linkedCaseSections = [
+    ...(isNonEmptyArray(workingCase.mergedCases)
+      ? workingCase.mergedCases.map((mergedCase) => ({
+          id: mergedCase.id,
+          items: [
+            mergedCasePoliceCaseNumbers(mergedCase),
+            mergedCaseCourtCaseNumber(mergedCase),
+            mergedCaseProsecutor(mergedCase),
+            mergedCaseJudge(mergedCase),
+            mergedCaseCourt(mergedCase),
+          ],
+          columns: 2 as const,
+        }))
+      : []),
+    ...(isNonEmptyArray(splitCaseEntries)
+      ? [
+          {
+            id: 'split-cases-section',
+            items: [splitCases],
+            columns: 2 as const,
+          },
+        ]
+      : []),
+    ...(workingCase.splitCase
+      ? [{ id: 'split-case-section', items: [splitCase], columns: 2 as const }]
+      : []),
+  ]
+
   return {
+    linkedCaseSections,
     defendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,

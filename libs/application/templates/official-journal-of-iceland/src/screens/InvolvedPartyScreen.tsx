@@ -11,7 +11,6 @@ import {
   Checkbox,
   Select,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { useFormContext } from 'react-hook-form'
@@ -184,6 +183,34 @@ export const InvolvedPartyScreen = ({
     [selectedParties, currentInvolvedPartyId],
   )
 
+  // Only ministries can add parties, and only from the other ministries the
+  // user has access to, so hide the option when there is nothing to pick.
+  const canAddAdditionalParties =
+    isCurrentPartyMinistry &&
+    regulationsEnabled &&
+    additionalPartyOptions.length > 0
+
+  // With the controls hidden, saved parties could no longer be cleared, and
+  // they are still added as assignees, so drop them once the options load.
+  useEffect(() => {
+    if (loading || !involvedParties) return
+    if (!isCurrentPartyMinistry || !regulationsEnabled) return
+    if (canAddAdditionalParties || selectedParties.length === 0) return
+
+    setSelectedParties([])
+    updateApplicationV2({
+      path: InputFields.requirements.additionalParties,
+      value: [],
+    })
+  }, [
+    loading,
+    involvedParties,
+    isCurrentPartyMinistry,
+    regulationsEnabled,
+    canAddAdditionalParties,
+    selectedParties.length,
+  ])
+
   const handleAdditionalPartiesToggle = (checked: boolean) => {
     setShowAdditionalParties(checked)
     if (!checked) {
@@ -198,7 +225,13 @@ export const InvolvedPartyScreen = ({
   return (
     <FormScreen
       title={f(involvedParty.general.title)}
-      intro={f(involvedParty.general.intro)}
+      intro={
+        involvedParties?.length === 1
+          ? f(involvedParty.general.introSingle, {
+              party: involvedParties[0].title,
+            })
+          : f(involvedParty.general.intro)
+      }
       loading={loading}
     >
       <Box>
@@ -285,7 +318,7 @@ export const InvolvedPartyScreen = ({
             setSubmitButtonDisabled && setSubmitButtonDisabled(false)
           }}
         />
-        {isCurrentPartyMinistry && regulationsEnabled && (
+        {canAddAdditionalParties && (
           <Box marginTop={3}>
             <Checkbox
               id="showAdditionalParties"
@@ -298,31 +331,27 @@ export const InvolvedPartyScreen = ({
             />
           </Box>
         )}
-        {isCurrentPartyMinistry && regulationsEnabled && showAdditionalParties && (
+        {canAddAdditionalParties && showAdditionalParties && (
           <Box marginTop={3}>
-            {additionalPartyOptions.length > 0 ? (
-              <Select<AdditionalParty, true>
-                size="sm"
-                name={InputFields.requirements.additionalParties}
-                label={f(requirements.additionalParties.label)}
-                placeholder={f(requirements.additionalParties.placeholder)}
-                backgroundColor="blue"
-                isMulti
-                isClearable
-                options={additionalPartyOptions}
-                value={selectedPartyOptions}
-                onChange={(selectedOptions) => {
-                  const parties = selectedOptions.map((option) => option.value)
-                  setSelectedParties(parties)
-                  updateApplicationV2({
-                    path: InputFields.requirements.additionalParties,
-                    value: parties,
-                  })
-                }}
-              />
-            ) : (
-              <Text>{f(requirements.additionalParties.empty)}</Text>
-            )}
+            <Select<AdditionalParty, true>
+              size="sm"
+              name={InputFields.requirements.additionalParties}
+              label={f(requirements.additionalParties.label)}
+              placeholder={f(requirements.additionalParties.placeholder)}
+              backgroundColor="blue"
+              isMulti
+              isClearable
+              options={additionalPartyOptions}
+              value={selectedPartyOptions}
+              onChange={(selectedOptions) => {
+                const parties = selectedOptions.map((option) => option.value)
+                setSelectedParties(parties)
+                updateApplicationV2({
+                  path: InputFields.requirements.additionalParties,
+                  value: parties,
+                })
+              }}
+            />
           </Box>
         )}
       </Box>
