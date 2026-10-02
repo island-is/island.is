@@ -319,6 +319,10 @@ query Case($input: CaseQueryInput!) {
       id
       name
     }
+    appealProsecutor {
+      id
+      name
+    }
     indictmentApprover {
       id
       name

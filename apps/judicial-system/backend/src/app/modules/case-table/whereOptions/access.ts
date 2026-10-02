@@ -298,8 +298,16 @@ export const defenceRequestCasesAccessWhereOptions = (user: User) => {
     type: [...restrictionCases, ...investigationCases],
     [Op.or]: [
       {
-        // defender assigned to the case
-        defender_national_id: userNationalId,
+        // Defender assigned to any defendant on the case. nationalId is
+        // digits-only via sanitizeNationalId above, so embedding it in the
+        // literal is safe.
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE defender_national_id = '${userNationalId}')
+          `),
+        },
         [Op.or]: [
           {
             state: [CaseState.SUBMITTED, CaseState.RECEIVED],
@@ -413,7 +421,7 @@ export const defenceCasesAccessWhereOptions = (
 
 // The cases heightened security does not hide from this user: the ones not at a
 // heightened level at all, and the ones it reserves them - as creator, as
-// assigned prosecutor, or as reviewer. The same rule
+// assigned prosecutor, as reviewer, or as appeal prosecutor. The same rule
 // canProsecutionUserAccessCase applies, named from the side it selects rather
 // than the side it restricts, because it matches what a user may see.
 //
@@ -424,17 +432,19 @@ export const notHiddenByHeightenedSecurityWhereOptions = (user: User) => ({
     { is_heightened_security_level: { [Op.not]: true } },
     { creating_prosecutor_id: user.id },
     { prosecutor_id: user.id },
-    // The reviewer keeps the case the assignment gave them - the same exemption
-    // canProsecutionUserAccessCase makes, so a list cannot hide a case the
-    // guard would open.
+    // The reviewer and appeal prosecutor keep the case the assignment gave
+    // them - the same exemptions canProsecutionUserAccessCase makes, so a
+    // list cannot hide a case the guard would open.
     { indictment_reviewer_id: user.id },
+    { appeal_prosecutor_id: user.id },
   ],
 })
 
-// A prosecutor at the public prosecution office reaches an indictment two ways:
-// the cases they were given to review, and every appealed verdict, whoever
-// reviewed it. The second is why the appealed case list exists at all - an
-// appeal can land with a prosecutor who had nothing to do with the review.
+// A prosecutor at the public prosecution office reaches an indictment three
+// ways: the cases they were given to review, the cases they were assigned as
+// appeal prosecutor, and every appealed verdict, whoever reviewed it. The
+// third is why the appealed case list exists at all - an appeal can land with
+// a prosecutor who had nothing to do with the review.
 //
 // Being reachable is all this says. Which of these cases belongs in which list
 // is the table where options' business, and the two review lists narrow it back
@@ -459,6 +469,7 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
     {
       [Op.or]: [
         { indictment_reviewer_id: user.id },
+        { appeal_prosecutor_id: user.id },
         {
           indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
           [Op.and]: [
@@ -466,11 +477,11 @@ export const publicProsecutionIndictmentsAccessWhereOptions = (user: User) => ({
             // Heightened security narrows the appeal route the same way it
             // narrows every other prosecution route - an appeal is not a way
             // around it. Scoped to this branch rather than hoisted to a term of
-            // its own, because the reviewer branch above has never carried the
-            // restriction and this is not the change that should give it one.
-            // So far, heightened security has not been applied to indictment
-            // cases, but this condition future proofs access to appealed
-            // verdicts in case it is.
+            // its own, because the assignment branches above have never
+            // carried the restriction and this is not the change that should
+            // give them one. So far, heightened security has not been applied
+            // to indictment cases, but this condition future proofs access to
+            // appealed verdicts in case it is.
             notHiddenByHeightenedSecurityWhereOptions(user),
           ],
         },

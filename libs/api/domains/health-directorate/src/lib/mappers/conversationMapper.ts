@@ -69,8 +69,20 @@ export const mapConversationSegments = (
       : { type, text: s.text }
   })
 
+// Counted in UTC, which is Icelandic local time all year.
+export const isVideoCallExpired = (
+  appointmentDate: Date | undefined,
+  now: Date,
+): boolean => {
+  if (!appointmentDate) return false
+  const nextDayStart = new Date(appointmentDate)
+  nextDayStart.setUTCHours(24, 0, 0, 0)
+  return now >= nextDayStart
+}
+
 export const mapConversationVideo = (
   video?: VideoConversationDto,
+  now = new Date(),
 ): HealthDirectorateHealthConversationVideoContent | undefined =>
   video
     ? {
@@ -80,6 +92,7 @@ export const mapConversationVideo = (
         appointmentHostName: video.appointmentHostName,
         isCanceled: video.isCanceled,
         isEdited: video.isEdited,
+        isExpired: isVideoCallExpired(video.appointmentDate, now),
       }
     : undefined
 
