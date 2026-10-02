@@ -64,7 +64,7 @@ describe('DefendantController - Update', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
       defendantEventLogRepositoryService,
@@ -72,7 +72,7 @@ describe('DefendantController - Update', () => {
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockAppealCaseService = appealCaseService
