@@ -19,14 +19,22 @@ export const getRequestCaseDefenderRecipients = (
   const seen = new Set<string>()
 
   for (const defendant of theCase.defendants ?? []) {
-    if (!defendant.defenderEmail || seen.has(defendant.defenderEmail)) {
+    const trimmedEmail = defendant.defenderEmail?.trim()
+
+    if (!trimmedEmail) {
       continue
     }
 
-    seen.add(defendant.defenderEmail)
+    const emailKey = trimmedEmail.toLowerCase()
+
+    if (seen.has(emailKey)) {
+      continue
+    }
+
+    seen.add(emailKey)
     recipients.push({
       name: defendant.defenderName ?? undefined,
-      email: defendant.defenderEmail,
+      email: trimmedEmail,
       nationalId: defendant.defenderNationalId ?? undefined,
     })
   }

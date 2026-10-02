@@ -6,10 +6,7 @@ import {
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -25,6 +22,7 @@ import {
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { InstitutionService } from '../../institution'
 import { Case } from '../../repository'
 import { DeliverResponse } from '../models/deliver.response'
@@ -42,7 +40,7 @@ export class NotificationDispatchService {
     )
 
     for (const prosecutorsOffice of prosecutorsOffices) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INSTITUTION_NOTIFICATION,
         body: {
           type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
@@ -58,7 +56,7 @@ export class NotificationDispatchService {
     ])
 
     for (const prosecutorsOffice of publicProsecutorOffices) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INSTITUTION_NOTIFICATION,
         body: {
           type: InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
@@ -99,7 +97,7 @@ export class NotificationDispatchService {
     )
 
     if (hasCriminalRecordFiles) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -152,7 +150,7 @@ export class NotificationDispatchService {
       ) ?? []
 
     if (readySuspendedDefendants.length > 0) {
-      addMessagesToQueue(
+      queueMessagesAfterCommit(
         ...readySuspendedDefendants.map(() => ({
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId: theCase.id,
@@ -171,7 +169,7 @@ export class NotificationDispatchService {
     userDescriptor?: UserDescriptor,
   ): void {
     if (isIndictmentCase(theCase.type)) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -180,7 +178,7 @@ export class NotificationDispatchService {
         },
       })
     } else {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.NOTIFICATION,
         caseId: theCase.id,
         body: {

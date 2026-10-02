@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseRulingDecision,
@@ -22,6 +19,7 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCaseRepositoryService,
   AppealDecision,
@@ -34,10 +32,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -198,7 +193,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     })
 
     it('should queue the appeal to court of appeals notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.APPEAL_CASE_NOTIFICATION,
         user: {},
         caseId,
@@ -358,7 +353,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
     it('should confirm without creating an appeal case', () => {
       expect(then.error).toBeUndefined()
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
         }),
@@ -377,7 +372,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
 
     it('should not create another appeal case', () => {
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
         }),
@@ -426,7 +421,7 @@ describe('CourtSessionController - Confirm ruling order appeal', () => {
         expect.objectContaining({ appealState: AppealCaseState.WITHDRAWN }),
         { transaction },
       )
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
         }),

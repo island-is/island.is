@@ -2363,6 +2363,28 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region APPEAL_PROSECUTOR_ASSIGNED notifications
+  private async sendAppealProsecutorAssignedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const subject = `Áfrýjun í máli ${theCase.courtCaseNumber}`
+    const html = `Þér hefur verið úthlutað áfrýjunarmáli vegna dóms í máli nr. ${theCase.courtCaseNumber}.<br/><br/><a href="${this.config.clientUrl}${PROSECUTION_INDICTMENT_CASE_OVERVIEW_ROUTE}/${theCase.id}">Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.</a>`
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: theCase.appealProsecutor?.name,
+      recipientEmail: theCase.appealProsecutor?.email,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region CASE_FILES_UPDATED notifications
   private sendCaseFilesUpdatedNotification(
     courtCaseNumber?: string,
@@ -2674,6 +2696,8 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendRulingOrderAddedNotifications(theCase)
       case IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED:
         return this.sendPublicProsecutorReviewerAssignedNotifications(theCase)
+      case IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED:
+        return this.sendAppealProsecutorAssignedNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_REOPENED:
         return this.sendIndictmentReopenedNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED:

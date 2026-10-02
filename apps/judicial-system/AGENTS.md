@@ -154,6 +154,22 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 - Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
   route and the production build fails.
 
+## Queue messages after commit
+
+A request queues messages for the message handler with
+`queueMessagesAfterCommit` from `app/middleware`, never with the message
+library's `addMessagesToQueue` directly. The helper registers the push with the
+request's transaction context, so a request whose transaction rolls back sends
+nothing; the library function is flushed when the response ends whatever
+happened, and remains only at call sites not yet moved. A handler that commits
+a transaction of its own must return right after the commit: the callbacks run
+on the success path, so work that can fail after a commit would drop them.
+
+In a spec, mock the helper's module
+(`jest.mock('<path to>/middleware/queueMessagesAfterCommit')`) and assert on
+the messages it was called with. Registering real callbacks needs the request
+context and the commit interceptor, which controller specs do not run.
+
 ## Codegen
 
 Regenerate after changing GraphQL schema/resolvers, REST controllers/DTOs, or
