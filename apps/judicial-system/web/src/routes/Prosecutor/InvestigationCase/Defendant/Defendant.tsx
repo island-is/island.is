@@ -51,17 +51,11 @@ const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
 const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
-  const {
-    loading: policeDefendantsLoading,
-    error: policeDefendantsError,
-  } = useSyncDefendantsFromPolice()
+  const { loading: policeDefendantsLoading, error: policeDefendantsError } =
+    useSyncDefendantsFromPolice()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
 
