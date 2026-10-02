@@ -17,10 +17,13 @@ import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from './models/userDeviceTokens.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { UserProfileUserNotificationModule } from '../user-notification/user-notification.module'
 import { Emails } from './models/emails.model'
+import { NotificationSenderSetting } from './models/notificationSenderSetting.model'
 import { EmailsController } from './emails.controller'
 import { EmailsService } from './emails.service'
 import { ActorUserProfileController } from './actor-user-profile.controller'
+import { NotificationSettingsService } from './notification-settings.service'
 
 @Module({
   imports: [
@@ -31,10 +34,12 @@ import { ActorUserProfileController } from './actor-user-profile.controller'
       UserDeviceTokens,
       ActorProfile,
       Emails,
+      NotificationSenderSetting,
     ]),
     EmailModule,
     SmsModule,
     AuthDelegationApiClientModule,
+    UserProfileUserNotificationModule,
     FeatureFlagModule,
   ],
   controllers: [
@@ -49,6 +54,7 @@ import { ActorUserProfileController } from './actor-user-profile.controller'
     VerificationService,
     UserTokenService,
     EmailsService,
+    NotificationSettingsService,
   ],
 })
 export class UserProfileModule {}

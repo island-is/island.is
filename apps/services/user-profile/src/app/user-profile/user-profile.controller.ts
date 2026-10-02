@@ -8,7 +8,10 @@ import {
   Headers,
   Param,
   ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -17,8 +20,9 @@ import * as kennitala from 'kennitala'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 import {
+  CurrentAuth,
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
@@ -34,6 +38,8 @@ import { ActorProfileDto } from './dto/actor-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { EmailsService } from './emails.service'
 import { EmailsDto } from './dto/emails.dto'
+import { CreateNotificationSenderSettingDto } from './dto/notification-sender-setting.dto'
+import { NotificationSettingsService } from './notification-settings.service'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -51,6 +57,7 @@ export class UserProfileController {
     private readonly userProfileService: UserProfileService,
     private readonly emailsService: EmailsService,
     private readonly auditService: AuditService,
+    private readonly notificationSettingsService: NotificationSettingsService,
   ) {}
 
   @Get('/')
@@ -263,6 +270,45 @@ export class UserProfileController {
         resources: [nationalId, emailId],
       },
       this.emailsService.deleteEmail(nationalId, emailId),
+    )
+  }
+
+  @Post('/.national-id/notification-settings/senders')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Documentation({
+    description:
+      'Ensure a notification sender setting exists for the user with the given nationalId. Idempotent.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user',
+        },
+      },
+    },
+    response: { status: 204 },
+  })
+  @Scopes(UserProfileScope.system)
+  ensureNotificationSenderSetting(
+    @CurrentAuth() auth: Auth,
+    @Headers('X-Param-National-Id') nationalId: string,
+    @Body() input: CreateNotificationSenderSettingDto,
+  ): Promise<void> {
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.auditService.auditPromise(
+      {
+        auth,
+        namespace,
+        action: 'ensureNotificationSenderSetting',
+        resources: nationalId,
+        meta: {
+          senderId: input.senderId,
+        },
+      },
+      this.notificationSettingsService.ensureSender(nationalId, input.senderId),
     )
   }
 }

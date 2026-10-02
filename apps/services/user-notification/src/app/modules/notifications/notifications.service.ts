@@ -26,6 +26,7 @@ import {
   ExtendedPaginationDto,
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
+  NotificationSendersDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -41,7 +42,7 @@ import {
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
 import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
-import { Op } from 'sequelize'
+import { col, fn, Op } from 'sequelize'
 
 /**
  * These are the properties that can be replaced in the template
@@ -448,6 +449,21 @@ export class NotificationsService {
       throw new InternalServerErrorException(
         'Error getting unread notifications count',
       )
+    }
+  }
+
+  async findSenders(nationalId: string): Promise<NotificationSendersDto> {
+    const rows = (await this.notificationModel.findAll({
+      attributes: [[fn('DISTINCT', col('sender_id')), 'senderId']],
+      where: { recipient: nationalId },
+      raw: true,
+    })) as unknown as { senderId: string | null }[]
+
+    return {
+      senders: rows
+        .map((row) => row.senderId)
+        .filter((senderId): senderId is string => !!senderId)
+        .map((senderId) => ({ senderId })),
     }
   }
 

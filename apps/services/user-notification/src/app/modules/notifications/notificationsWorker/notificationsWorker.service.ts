@@ -351,6 +351,14 @@ export class NotificationsWorkerService {
         return
       }
 
+      if (message.senderId) {
+        await this.recordNotificationSender(
+          nationalId,
+          message.senderId,
+          messageId,
+        )
+      }
+
       locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
     } else {
       if (await this.isCompanyInactive(nationalId, messageId)) {
@@ -781,6 +789,26 @@ export class NotificationsWorkerService {
         { messageId },
       )
       return false
+    }
+  }
+
+  private async recordNotificationSender(
+    nationalId: string,
+    senderId: string,
+    messageId: string,
+  ): Promise<void> {
+    try {
+      await this.userProfileApi.userProfileControllerEnsureNotificationSenderSetting(
+        {
+          xParamNationalId: nationalId,
+          createNotificationSenderSettingDto: { senderId },
+        },
+      )
+    } catch (error) {
+      this.logger.warn(
+        'Failed to record notification sender setting, proceeding with notification',
+        { messageId, error },
+      )
     }
   }
 
