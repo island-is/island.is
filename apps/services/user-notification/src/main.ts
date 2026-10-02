@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import { bootstrap, processJob } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
@@ -10,7 +11,25 @@ import { birthdayFlag } from './utils'
 const job = processJob()
 const birthday = birthdayFlag()
 
-if (job === 'cleanup') {
+if (job === 'metrics') {
+  import('./metrics')
+    .then((app) => app.metrics())
+    .catch(() => {
+      logger.error(
+        'Metrics job failed; check collector configuration and database availability',
+      )
+      process.exitCode = 1
+    })
+} else if (job === 'external-metrics') {
+  import('./metrics/external')
+    .then((app) => app.externalMetrics())
+    .catch(() => {
+      logger.error(
+        'Metrics job failed; check collector configuration and database availability',
+      )
+      process.exitCode = 1
+    })
+} else if (job === 'cleanup') {
   import('./cleanup').then((app) => app.cleanup())
 } else if (birthday && job === 'worker') {
   import('./birthday').then((app) => app.birthday())
