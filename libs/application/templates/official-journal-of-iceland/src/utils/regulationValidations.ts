@@ -9,9 +9,14 @@
  * (signature.regular.records[].institution), not from a separate
  * regulation.signatureText field.
  */
+import isBefore from 'date-fns/isBefore'
+import startOfDay from 'date-fns/startOfDay'
+import { MessageDescriptor } from 'react-intl'
 import { MinistryList } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import { Routes } from '../lib/constants'
+import { regulation } from '../lib/messages'
+import { getNextWorkday } from '../lib/utils'
 
 // ---------------------------------------------------------------------------
 
@@ -332,6 +337,102 @@ export const collectRegulationWarnings = (answers: {
         }
       }
     })
+  }
+
+  return warnings
+}
+
+// ---------------------------------------------------------------------------
+
+/**
+ * Impacts on other regulations dated after the regulation's effective date.
+ * Allowed, but uncommon enough that the advertiser should be warned.
+ * Self-impacts are left out, since scheduling later changes to the
+ * regulation itself is the normal case.
+ */
+export const getImpactsAfterEffectiveDate = (
+  effectiveDate?: string,
+  impacts?: RegulationImpactSchema[],
+): RegulationImpactSchema[] => {
+  if (!effectiveDate || !impacts) {
+    return []
+  }
+
+  const effective = effectiveDate.slice(0, 10)
+
+  return impacts.filter(
+    (impact) =>
+      impact.name !== 'self' &&
+      !!impact.date &&
+      impact.date.slice(0, 10) > effective,
+  )
+}
+
+/**
+ * Ported from: libs/portals/admin/regulations-admin/src/utils/index.ts
+ * (hasPublishEffectiveWarning)
+ *
+ * Whether the effective date comes before the requested publish date.
+ * Allowed, but a regulation normally takes effect after it is published.
+ */
+export const hasPublishEffectiveWarning = (
+  effective?: Date,
+  publish?: Date,
+  fastTrack?: boolean,
+): boolean => {
+  if (!publish) {
+    return false
+  }
+
+  const nextWorkdayToday = startOfDay(getNextWorkday(new Date()))
+  const startPublish = startOfDay(publish)
+
+  if (effective) {
+    const nextWorkdayEffective = startOfDay(getNextWorkday(effective))
+
+    // Warning if effective date is before publish date
+    if (isBefore(nextWorkdayEffective, startPublish)) {
+      return true
+    }
+
+    // Warning if effective date is before next workday and fastTrack is active
+    if (fastTrack && isBefore(nextWorkdayEffective, nextWorkdayToday)) {
+      return true
+    }
+  } else {
+    // Warning if no effective date is set and fastTrack is active or publish date is after next workday
+    if (fastTrack || isBefore(nextWorkdayToday, startPublish)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * Ported from: libs/portals/admin/regulations-admin/src/utils/index.ts
+ * (getDateOverviewWarning)
+ *
+ * Advisory effective-date warnings for the summary screen. They don't block
+ * submission. The publish-date warnings from regulations-admin are left out
+ * because the OJOI date picker already prevents past dates and flags
+ * fast-track.
+ */
+export const getEffectiveDateWarnings = (
+  effectiveDate?: string,
+  requestedDate?: string,
+  fastTrack?: boolean,
+): MessageDescriptor[] => {
+  const effective = effectiveDate ? new Date(effectiveDate) : undefined
+  const publish = requestedDate ? new Date(requestedDate) : undefined
+  const warnings: MessageDescriptor[] = []
+
+  if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {
+    warnings.push(regulation.summary.dateWarnings.effectiveBeforePublish)
+  }
+
+  if (effective && isBefore(startOfDay(effective), startOfDay(new Date()))) {
+    warnings.push(regulation.summary.dateWarnings.effectiveDateEarly)
   }
 
   return warnings
