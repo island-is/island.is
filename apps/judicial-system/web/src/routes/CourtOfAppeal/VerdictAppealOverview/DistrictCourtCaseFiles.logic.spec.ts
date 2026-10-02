@@ -43,7 +43,8 @@ describe('getDistrictCourtCaseFiles', () => {
   it('leaves the rest of the case file out', () => {
     expect(
       names([
-        file('indictment', CaseFileCategory.INDICTMENT),
+        file('appealRuling', CaseFileCategory.APPEAL_RULING),
+        file('caseFileRecord', CaseFileCategory.CASE_FILE_RECORD),
         file('criminalRecord', CaseFileCategory.CRIMINAL_RECORD),
         file('costBreakdown', CaseFileCategory.COST_BREAKDOWN),
         file('caseFile', CaseFileCategory.CASE_FILE),
