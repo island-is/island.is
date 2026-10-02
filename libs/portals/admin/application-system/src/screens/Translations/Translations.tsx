@@ -79,7 +79,7 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
       <Box marginTop={3}>
         <Text color="red600">
           {isForbidden
-            ? 'You do not have access to view application translations.'
+            ? formatMessage(m.translationsAccessForbidden)
             : detail || listError.message}
         </Text>
       </Box>
@@ -131,8 +131,10 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
                   <T.Data>
                     <Text variant="small">
                       {entry.usedByCount > 0
-                        ? `${entry.usedByCount} applications`
-                        : 'All applications'}
+                        ? formatMessage(m.translationsUsedByCount, {
+                            count: entry.usedByCount,
+                          })
+                        : formatMessage(m.translationsUsedByAllApplications)}
                     </Text>
                   </T.Data>
                   <T.Data>
@@ -188,12 +190,12 @@ const Translations = ({ isSuperAdmin }: TranslationsProps) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="small" fontWeight="semiBold">
-                Slug
+                {formatMessage(m.translationsSlugColumn)}
               </Text>
             </T.HeadData>
             <T.HeadData>
               <Text variant="small" fontWeight="semiBold">
-                Namespaces
+                {formatMessage(m.sharedTranslationNamespace)}
               </Text>
             </T.HeadData>
             <T.HeadData />

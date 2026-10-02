@@ -619,4 +619,20 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewStubValue',
     defaultMessage: 'Gildi',
   },
+  translationsAccessForbidden: {
+    id: 'admin-portal.application-system:translationsAccessForbidden',
+    defaultMessage: 'Þú hefur ekki aðgang að því að skoða þýðingar umsókna.',
+  },
+  translationsSlugColumn: {
+    id: 'admin-portal.application-system:translationsSlugColumn',
+    defaultMessage: 'Heiti slóðar',
+  },
+  translationsUsedByCount: {
+    id: 'admin-portal.application-system:translationsUsedByCount',
+    defaultMessage: '{count, plural, one {# umsókn} other {# umsóknir}}',
+  },
+  translationsUsedByAllApplications: {
+    id: 'admin-portal.application-system:translationsUsedByAllApplications',
+    defaultMessage: 'Allar umsóknir',
+  },
 })
