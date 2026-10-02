@@ -676,15 +676,20 @@ export class ApplicationsService {
   ): Promise<ApplicationPdfResponseDto> {
     const response = await this.getApplication(applicationId, slug, user)
 
-    if (!response.enableApplicationPdfDownload) {
-      throw new ForbiddenException(
-        'PDF download is not enabled for this application',
+    if (
+      response.isInaccessible ||
+      response.isLoginTypeAllowed === false ||
+      response.hasRequiredDelegation === false ||
+      !response.application
+    ) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
       )
     }
 
-    if (!response.application) {
-      throw new NotFoundException(
-        `Application with id '${applicationId}' not found`,
+    if (!response.enableApplicationPdfDownload) {
+      throw new ForbiddenException(
+        'PDF download is not enabled for this application',
       )
     }
 

@@ -83,11 +83,14 @@ export class ApplicationsService {
     auth: User,
     input: GetApplicationInput,
   ): Promise<ApplicationPdf> {
-    return this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerGetApplicationPdf(
-      input as ApplicationsControllerGetApplicationPdfRequest,
-    )
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerGetApplicationPdf(
+        input as ApplicationsControllerGetApplicationPdfRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get application pdf'),
+      )
+    return response as ApplicationPdf
   }
 
   async getAllApplications(

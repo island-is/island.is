@@ -178,6 +178,11 @@ export const m = defineMessages({
       'Þú getur sótt umsóknina á PDF með því að smella á hnappinn',
     description: 'Application PDF download instructions',
   },
+  applicationPdfDownloadError: {
+    id: 'form.system:application-pdf-download-error',
+    defaultMessage: 'Ekki tókst að sækja PDF. Vinsamlegast reyndu aftur.',
+    description: 'Failed to download the application PDF. Please try again.',
+  },
   payment: {
     id: 'form.system:payment',
     defaultMessage: 'Greiðsla',
