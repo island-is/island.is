@@ -15,11 +15,7 @@ import {
   formatDate,
   formatRulingOrderPronouncedOrallyName,
 } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  type Message,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { type Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -38,6 +34,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { queueMessagesAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -126,7 +123,7 @@ export class CourtSessionService {
       })
     }
 
-    addMessagesToQueue(...messages)
+    queueMessagesAfterCommit(...messages)
   }
 
   // Records a merged case in a court session: its court documents are copied
@@ -998,7 +995,7 @@ export class CourtSessionService {
         ))
 
       if (!existingAppealCase) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,
@@ -1051,7 +1048,7 @@ export class CourtSessionService {
           { transaction },
         )
 
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,

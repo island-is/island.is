@@ -82,6 +82,10 @@ export const assigneeMockDataSection = buildSection({
               value: 'emptySuccess',
               label: m.prereqMessages.devMockTaxVariantEmpty,
             },
+            {
+              value: 'filedWithinFiveYears',
+              label: m.prereqMessages.devMockTaxVariantFiveYears,
+            },
           ],
           marginBottom: 2,
         }),

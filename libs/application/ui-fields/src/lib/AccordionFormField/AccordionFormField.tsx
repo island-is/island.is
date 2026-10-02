@@ -11,6 +11,7 @@ import {
   Box,
   GridColumn,
   GridRow,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -111,11 +112,49 @@ export const AccordionFormField = ({
         {items.map((item, index) => {
           const hasContent = !!item.itemContent
           const hasChildren = item.children && item.children.length > 0
+          const liveApplication = {
+            ...application,
+            answers: {
+              ...application.answers,
+              ...formValues,
+            } as FormValue,
+          }
+          const resolvedTag =
+            typeof item.tag === 'function'
+              ? item.tag(liveApplication)
+              : item.tag
+          const label = (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="spaceBetween"
+              width="full"
+            >
+              <Text variant="h4" as="span">
+                {formatText(item.itemTitle, application, formatMessage)}
+              </Text>
+              <Box marginRight={2} role="status" aria-live="polite">
+                {resolvedTag && (
+                  <Tag
+                    variant={resolvedTag.variant ?? 'red'}
+                    outlined={resolvedTag.outlined}
+                    disabled
+                  >
+                    {formatText(
+                      resolvedTag.label,
+                      liveApplication,
+                      formatMessage,
+                    )}
+                  </Tag>
+                )}
+              </Box>
+            </Box>
+          )
           return (
             <AccordionItem
               key={`accordion-item-${index}`}
               id={`accordion-item-${index}`}
-              label={formatText(item.itemTitle, application, formatMessage)}
+              label={label}
               startExpanded={item.startExpanded}
             >
               {hasContent && (

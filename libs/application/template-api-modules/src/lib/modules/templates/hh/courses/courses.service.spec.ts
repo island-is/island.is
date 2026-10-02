@@ -178,6 +178,42 @@ describe('CoursesService', () => {
       ).not.toHaveBeenCalled()
     })
 
+    it('skips the bulk jobs when the applicant is the only participant', async () => {
+      zendesk.createTicket.mockResolvedValue({ id: '100' } as never)
+
+      await expect(
+        service.submitApplication(
+          createProps([participant(APPLICANT_NATIONAL_ID, 'Umsækjandi')]),
+        ),
+      ).resolves.toEqual({ success: true })
+
+      expect(
+        zendesk.upsertCustomObjectRecordsByExternalId,
+      ).not.toHaveBeenCalled()
+      expect(zendesk.createManyTickets).not.toHaveBeenCalled()
+      expect(zendesk.createTicket).toHaveBeenCalledWith(
+        expect.objectContaining({ externalId: 'dev-app-1-registrant' }),
+      )
+      const participantWrites = zendesk.upsertCustomObjectRecord.mock.calls
+        .filter(([key]) => key === ZENDESK_CUSTOM_OBJECT_KEYS.courseParticipant)
+        .map(([, record]) => record.custom_object_fields?.ticket_id)
+      expect(participantWrites).toEqual([undefined, 100])
+    })
+
+    it('fails the submission when the single ticket cannot be created', async () => {
+      zendesk.createTicket.mockRejectedValue(new Error('ticket failed'))
+
+      await expect(
+        service.submitApplication(
+          createProps([participant(APPLICANT_NATIONAL_ID, 'Umsækjandi')]),
+        ),
+      ).rejects.toThrow(TemplateApiError)
+
+      expect(
+        zendesk.deleteCustomObjectRecordsByExternalId,
+      ).not.toHaveBeenCalled()
+    })
+
     it('gives the registrant a ticket when they are not a participant', async () => {
       await service.submitApplication(
         createProps([participant(OTHER_NATIONAL_ID, 'Annar')]),

@@ -42,13 +42,13 @@ describe('CivilClaimantController - Update', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       civilClaimantRepositoryService,
       caseDefendantPoliceCaseNumberRepositoryService,
       civilClaimantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockCivilClaimantRepositoryService = civilClaimantRepositoryService
     mockCaseDefendantPoliceCaseNumberRepositoryService =
       caseDefendantPoliceCaseNumberRepositoryService

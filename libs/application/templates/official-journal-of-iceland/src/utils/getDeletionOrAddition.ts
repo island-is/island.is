@@ -6,6 +6,7 @@
  */
 import qq from '@hugsmidjan/qj/qq'
 import { HTMLText } from '@island.is/regulations'
+import { escapeHtml } from './formatAmendingUtils'
 
 export const getLiPoint = (num: number, isStaflidur: boolean) => {
   const charNum = num > 22 ? 23 : num - 1
@@ -33,7 +34,7 @@ export const formatListItemDiff = (item: Element) => {
 
       const newLiElement = liItem.cloneNode(true) as Element
       newLiElement.querySelectorAll('del').forEach((e) => e.remove())
-      newLiText = newLiElement.textContent || ''
+      newLiText = escapeHtml(newLiElement.textContent || '')
 
       const directArray = Array.from(liItem.children)
       const containsDirect = directArray.find((e) => {
@@ -98,7 +99,7 @@ export const formatListItemDiff = (item: Element) => {
           `Á eftir ${getLiPoint(
             lidur - 1,
             isStaflidur,
-          )}${liLidurPassive} kemur nýr liður svohljóðandi, og breytist númer annarra lið til samræmis: ${newLiText}`) as HTMLText
+          )}${liLidurPassive} kemur nýr liður svohljóðandi, og breytist númer annarra liða til samræmis: ${newLiText}`) as HTMLText
 
         returningArray.push(liItemHtml)
         liItemHtml = '' as HTMLText
@@ -136,12 +137,8 @@ export const getDeletionOrAddition = (
   let liHtml = '' as HTMLText
   if (type === 'lidur') {
     liHtml = `<p>${formatListItemDiff(item).join('</p><p>')}</p>` as HTMLText
+    newText = escapeHtml(newText)
   } else {
-    oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
-    oldText = oldTextElement.textContent || ''
-
-    newTextElement.querySelectorAll('del').forEach((e) => e.remove())
-
     if (type === 'greinTitle') {
       const tempElement = newTextElement
 
@@ -154,7 +151,11 @@ export const getDeletionOrAddition = (
 
       const modifiedTextContent = tempElement?.textContent?.trim()
 
-      const modContent = modifiedTextContent ?? ''
+      // Escape the text but keep the <br /> added above.
+      const modContent = escapeHtml(modifiedTextContent ?? '').replace(
+        /&lt;br \/&gt;/g,
+        '<br />',
+      )
       const match = modContent.match(/^\d+\.\s*gr\.\s*(<br\s*\/?>)?$/)
       if (match) {
         newText = modContent
@@ -163,9 +164,10 @@ export const getDeletionOrAddition = (
         newText = parts[1] ? parts[1] : modContent
       }
     } else {
-      newText = newTextElement.textContent || ''
+      newText = escapeHtml(newTextElement.textContent || '')
     }
   }
+  oldText = escapeHtml(oldText)
 
   const isDeleted = newText === '' || newText === null || newText === '<br />'
   const isAddition = oldText === '' || oldText === null

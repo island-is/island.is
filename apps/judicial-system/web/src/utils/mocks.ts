@@ -237,7 +237,6 @@ export const mockUser = (userRole: UserRole): User => {
       created: '',
       modified: '',
       type:
-        // TODO: Add more institutions if we use more user roles
         userRole === UserRole.PROSECUTOR
           ? InstitutionType.POLICE_PROSECUTORS_OFFICE
           : userRole === UserRole.PUBLIC_PROSECUTOR_STAFF

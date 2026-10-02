@@ -247,6 +247,24 @@ describe('TransactionContextMiddleware', () => {
       })
     })
 
+    it('should accept an after commit callback while the slot is committed', async () => {
+      const callback = async () => undefined
+
+      await givenARequest(() => {
+        const context = getTransactionContext()
+
+        // The interceptor drains the callbacks while the slot is committed, so
+        // one registered now - by another callback, say - still runs
+        if (context) {
+          context.settlement = 'committed'
+        }
+
+        registerAfterCommit(callback)
+
+        expect(context?.afterCommit).toEqual([callback])
+      })
+    })
+
     it('should refuse to register an after commit callback while the slot is being settled', async () => {
       await givenARequest(() => {
         const context = getTransactionContext()
@@ -266,9 +284,9 @@ describe('TransactionContextMiddleware', () => {
       await givenARequest(() => {
         const context = getTransactionContext()
 
-        // The interceptor settles the slot before it drains the callbacks, and
-        // the close handler never drains them at all, so a callback registered
-        // now would be one nothing ever runs.
+        // The interceptor settles the slot once it has drained the callbacks,
+        // and the close handler never drains them at all, so a callback
+        // registered now would be one nothing ever runs.
         if (context) {
           context.settlement = 'settled'
         }

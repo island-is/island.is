@@ -780,6 +780,8 @@ export const en: TranslatedMessages = {
   'health.overview.prescriptions': 'Prescriptions',
   'health.overview.medicine': 'Medicine',
   'health.overview.seeAllCategories': 'See all categories',
+  'health.overview.lastUpdated': 'Basic information last updated: {date}',
+  'health.overview.update': 'Update',
 
   // health: categories
   'health.categories.screenTitle': 'Health Categories',
@@ -917,6 +919,7 @@ export const en: TranslatedMessages = {
   'health.messages.unstarError': 'Could not remove the star',
   'health.messages.videoCall': 'Video call',
   'health.messages.videoCallCanceled': 'Canceled',
+  'health.messages.videoCallExpired': 'Expired',
   'health.messages.startVideoCall': 'Start video call',
   'health.messages.replyBlocked.default':
     "You can't reply to this conversation.",
@@ -1030,6 +1033,7 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.captionPickupAndLookup':
     'Pick up medicine at the pharmacy and view prescriptions.',
   'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.listValidFrom': 'Valid from {date}',
   'health.medicineDelegation.showExpiredPermits': 'Show inactive',
   'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
   'health.medicineDelegation.noActiveTitle': 'No active authorizations',
@@ -1043,6 +1047,8 @@ export const en: TranslatedMessages = {
   'health.medicineDelegation.detail.status': 'Status',
   'health.medicineDelegation.detail.statusActive': 'Active',
   'health.medicineDelegation.detail.statusExpired': 'Expired',
+  'health.medicineDelegation.detail.statusAwaitingApproval':
+    'Awaiting activation',
   'health.medicineDelegation.detail.validity': 'Validity period',
   'health.medicineDelegation.detail.validFor': 'Valid for',
   'health.medicineDelegation.detail.validForValue':
@@ -1107,7 +1113,7 @@ export const en: TranslatedMessages = {
 
   'health.prescriptions.title': 'Prescriptions',
   'health.prescriptions.description':
-    'Here you will find an overview of your prescriptions. You can apply for drug renewal when applicable.',
+    'Here you will find an overview of your prescriptions. You can apply for a prescription renewal when applicable. Please note that notifications for prescription renewals have changed. You can choose how you receive notifications under <link>Settings</link>.',
   'health.prescriptions.drug': 'Medication',
   'health.prescriptions.strength': 'Strength',
   'health.prescriptions.indication': 'Used for',
@@ -1157,7 +1163,7 @@ export const en: TranslatedMessages = {
   'health.prescriptions.renewalBlockedOther': 'Unknown reason',
   'health.prescriptions.renewalModal.title': 'Prescription renewal request',
   'health.prescriptions.renewalModal.description':
-    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112.',
+    'Prescription renewals will be processed as soon as possible. It is not guaranteed that they will be completed the same day. In case of an emergency, contact 112. You can choose how you receive notifications under <link>Settings</link>.',
   'health.prescriptions.renewalModal.selectRecipient': 'Send to',
   'health.prescriptions.renewalModal.medicineName': 'Medication name',
   'health.prescriptions.renewalModal.usedFor': 'Used for',
@@ -1168,6 +1174,7 @@ export const en: TranslatedMessages = {
     'The renewal request has been sent. Please contact your health clinic if further information is needed.',
   'health.prescriptions.renewalModal.error':
     'Could not send the renewal request. Please try again later.',
+  'health.prescriptions.renewalModal.dismissedTitle': 'Attention',
   'health.prescriptions.issueDate': 'Issue date',
   'health.prescriptions.expiresAt': 'Expires at',
   'health.prescriptions.doctor': 'Doctors',
