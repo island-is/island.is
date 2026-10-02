@@ -1,0 +1,168 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+  type SetStateAction,
+} from 'react'
+
+export type TranslationWorkspaceHeaderChrome = {
+  hasUnsavedChanges: boolean
+  unsavedCount: number
+  saving: boolean
+  onSaveAll: () => void | Promise<boolean>
+  showValidationErrors: boolean
+  onToggleValidationErrors: () => void
+  showValidationToggle?: boolean
+  hasDraftChanges: boolean
+  publishing: boolean
+  onPublish: () => void
+  onOpenHistory: () => void
+}
+
+type TranslationWorkspaceHeaderBridgeContextValue = {
+  workspaceChrome: TranslationWorkspaceHeaderChrome | null
+  setWorkspaceChrome: Dispatch<
+    SetStateAction<TranslationWorkspaceHeaderChrome | null>
+  >
+}
+
+const TranslationWorkspaceHeaderBridgeContext = createContext<
+  TranslationWorkspaceHeaderBridgeContextValue | undefined
+>(undefined)
+
+export const TranslationWorkspaceHeaderBridgeProvider: FC<{
+  children: ReactNode
+}> = ({ children }) => {
+  const [workspaceChrome, setWorkspaceChrome] =
+    useState<TranslationWorkspaceHeaderChrome | null>(null)
+
+  const value = useMemo(
+    () => ({ workspaceChrome, setWorkspaceChrome }),
+    [workspaceChrome],
+  )
+
+  return (
+    <TranslationWorkspaceHeaderBridgeContext.Provider value={value}>
+      {children}
+    </TranslationWorkspaceHeaderBridgeContext.Provider>
+  )
+}
+
+export const useTranslationWorkspaceHeaderBridge =
+  (): TranslationWorkspaceHeaderBridgeContextValue => {
+    const ctx = useContext(TranslationWorkspaceHeaderBridgeContext)
+    if (!ctx) {
+      throw new Error(
+        'useTranslationWorkspaceHeaderBridge must be used within TranslationWorkspaceHeaderBridgeProvider',
+      )
+    }
+    return ctx
+  }
+
+export const useTranslationWorkspaceHeaderBridgeOptional = ():
+  | TranslationWorkspaceHeaderBridgeContextValue
+  | undefined => useContext(TranslationWorkspaceHeaderBridgeContext)
+
+/**
+ * Registers translation workspace chrome (save + publish) in the shell header.
+ * When `isReady` is false, the shell clears (loading / error / locked route).
+ */
+export const useRegisterTranslationWorkspaceHeaderChrome = ({
+  hasUnsavedChanges,
+  unsavedCount,
+  saving,
+  onSaveAll,
+  showValidationErrors,
+  onToggleValidationErrors,
+  showValidationToggle = true,
+  hasDraftChanges,
+  publishing,
+  onPublish,
+  onOpenHistory,
+  isReady,
+}: TranslationWorkspaceHeaderChrome & { isReady: boolean }) => {
+  const { setWorkspaceChrome } = useTranslationWorkspaceHeaderBridge()
+
+  const onSaveAllRef = useRef(onSaveAll)
+  const onToggleValidationErrorsRef = useRef(onToggleValidationErrors)
+  const onPublishRef = useRef(onPublish)
+  const onOpenHistoryRef = useRef(onOpenHistory)
+
+  useEffect(() => {
+    onSaveAllRef.current = onSaveAll
+  }, [onSaveAll])
+
+  useEffect(() => {
+    onToggleValidationErrorsRef.current = onToggleValidationErrors
+  }, [onToggleValidationErrors])
+
+  useEffect(() => {
+    onPublishRef.current = onPublish
+  }, [onPublish])
+
+  useEffect(() => {
+    onOpenHistoryRef.current = onOpenHistory
+  }, [onOpenHistory])
+
+  const stableOnSaveAll = useCallback(() => onSaveAllRef.current(), [])
+
+  const stableOnToggleValidationErrors = useCallback(
+    () => onToggleValidationErrorsRef.current(),
+    [],
+  )
+
+  const stableOnPublish = useCallback(() => onPublishRef.current(), [])
+
+  const stableOnOpenHistory = useCallback(() => onOpenHistoryRef.current(), [])
+
+  const chrome = useMemo<TranslationWorkspaceHeaderChrome>(
+    () => ({
+      hasUnsavedChanges,
+      unsavedCount,
+      saving,
+      onSaveAll: stableOnSaveAll,
+      showValidationErrors,
+      onToggleValidationErrors: stableOnToggleValidationErrors,
+      showValidationToggle,
+      hasDraftChanges,
+      publishing,
+      onPublish: stableOnPublish,
+      onOpenHistory: stableOnOpenHistory,
+    }),
+    [
+      hasUnsavedChanges,
+      unsavedCount,
+      saving,
+      stableOnSaveAll,
+      showValidationErrors,
+      stableOnToggleValidationErrors,
+      showValidationToggle,
+      hasDraftChanges,
+      publishing,
+      stableOnPublish,
+      stableOnOpenHistory,
+    ],
+  )
+
+  useEffect(() => {
+    return () => {
+      setWorkspaceChrome(null)
+    }
+  }, [setWorkspaceChrome])
+
+  useEffect(() => {
+    if (!isReady) {
+      setWorkspaceChrome(null)
+      return undefined
+    }
+    setWorkspaceChrome(chrome)
+    return undefined
+  }, [isReady, chrome, setWorkspaceChrome])
+}
