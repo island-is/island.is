@@ -335,4 +335,61 @@ describe('SdfScreenService validation gates', () => {
     ])
     expect(applicationService.update).not.toHaveBeenCalled()
   })
+
+  it('validateFields only returns errors for the requested fields', async () => {
+    const application = createApplication({ pageIndex: 0 })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      createTemplate(() => Promise.resolve(createTwoPageForm())),
+    )
+    const service = buildService(application, {}, {})
+    const user = { nationalId: application.applicant } as never
+
+    // Both schema fields are invalid when nothing is answered.
+    const both = await service.validateFields(
+      application.id,
+      {},
+      ['someRequiredField', 'approveExternalData'],
+      'is',
+      user,
+    )
+    const one = await service.validateFields(
+      application.id,
+      {},
+      ['someRequiredField'],
+      'is',
+      user,
+    )
+
+    expect(both.errors.map((e) => e.componentId).sort()).toEqual([
+      'approveExternalData',
+      'someRequiredField',
+    ])
+    expect(one.errors).toEqual([
+      expect.objectContaining({ componentId: 'someRequiredField' }),
+    ])
+  })
+
+  it('validateFields skips validation when no fields are requested', async () => {
+    const application = createApplication({ pageIndex: 0 })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      createTemplate(() => Promise.resolve(createTwoPageForm())),
+    )
+    const service = buildService(application, {}, {})
+    const safeParse = jest.spyOn(dataSchema, 'safeParse')
+
+    try {
+      const result = await service.validateFields(
+        application.id,
+        {},
+        [],
+        'is',
+        { nationalId: application.applicant } as never,
+      )
+
+      expect(result.errors).toEqual([])
+      expect(safeParse).not.toHaveBeenCalled()
+    } finally {
+      safeParse.mockRestore()
+    }
+  })
 })

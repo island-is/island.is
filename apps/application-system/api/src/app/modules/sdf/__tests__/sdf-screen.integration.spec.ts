@@ -5,7 +5,6 @@ import {
   ExternalData,
 } from '@island.is/application/types'
 import type { ApplicationWithAttachments } from '@island.is/application/types'
-import { SdfActionType } from '../dto/action.dto'
 import { extractClientCondition } from '../condition-hint'
 import { SdfComparators } from '@island.is/application/sdf-types'
 import { Comparators, AllOrAny } from '@island.is/application/types'
@@ -127,13 +126,6 @@ function filterDataByRole(
 
   return { answers: filteredAnswers, externalData: filteredExternalData }
 }
-
-describe('Phase 2 Gate #1: REFETCH', () => {
-  it('REFETCH action type is defined for inline data fetch', () => {
-    expect(SdfActionType.REFETCH).toBe('REFETCH')
-    // Controller routes REFETCH to handleRefetch: merge answers, optional template APIs, then getScreen.
-  })
-})
 
 describe('Phase 2 Gate #2: Role-based data filtering', () => {
   it('assignee Screen must NOT contain applicant-only answer fields', () => {
@@ -266,95 +258,6 @@ describe('Phase 2 Gate #2: Role-based data filtering', () => {
 
     expect(application.answers).not.toHaveProperty('injected')
     expect(Object.keys(application.answers)).toEqual(originalAnswersKeys)
-  })
-})
-
-describe('Phase 2 Gate #3: VALIDATE returns errors, not Screen', () => {
-  it('ValidateResponseDto shape has errors array, not Screen properties', () => {
-    const response = {
-      errors: [{ componentId: 'applicantName', message: 'Required field' }],
-    }
-
-    expect(response).toHaveProperty('errors')
-    expect(Array.isArray(response.errors)).toBe(true)
-    expect(response.errors[0]).toHaveProperty('componentId')
-    expect(response.errors[0]).toHaveProperty('message')
-
-    // MUST NOT have Screen properties
-    expect(response).not.toHaveProperty('applicationId')
-    expect(response).not.toHaveProperty('header')
-    expect(response).not.toHaveProperty('stepper')
-    expect(response).not.toHaveProperty('page')
-    expect(response).not.toHaveProperty('footer')
-    expect(response).not.toHaveProperty('locale')
-  })
-
-  it('VALIDATE actionType requires fieldIds', () => {
-    // The controller throws BadRequestException when fieldIds is missing
-    const dto = {
-      actionType: SdfActionType.VALIDATE,
-      answers: {},
-      locale: 'is',
-      lastKnownPageIndex: 0,
-    }
-
-    expect(dto.actionType).toBe('VALIDATE')
-    expect(dto).not.toHaveProperty('fieldIds')
-  })
-
-  it('VALIDATE scopes validation to specific field IDs', () => {
-    const allErrors = [
-      { componentId: 'applicantName', message: 'Required' },
-      { componentId: 'email', message: 'Invalid email' },
-      { componentId: 'phone', message: 'Required' },
-    ]
-    const requestedFieldIds = ['applicantName', 'phone']
-
-    const scopedErrors = allErrors.filter((e) =>
-      requestedFieldIds.includes(e.componentId),
-    )
-
-    expect(scopedErrors).toHaveLength(2)
-    expect(scopedErrors.map((e) => e.componentId)).toEqual([
-      'applicantName',
-      'phone',
-    ])
-  })
-})
-
-describe('Phase 2 Gate #4: Idempotency', () => {
-  it('rejects NEXT_PAGE when lastKnownPageIndex does not match persisted', () => {
-    const persistedPageIndex = 2
-    const lastKnownPageIndex = 0
-
-    const shouldReject =
-      persistedPageIndex !== undefined &&
-      persistedPageIndex !== lastKnownPageIndex
-
-    expect(shouldReject).toBe(true)
-  })
-
-  it('accepts NEXT_PAGE when lastKnownPageIndex matches persisted', () => {
-    const persistedPageIndex = 0
-    const lastKnownPageIndex = 0
-
-    const shouldReject =
-      persistedPageIndex !== undefined &&
-      persistedPageIndex !== lastKnownPageIndex
-
-    expect(shouldReject).toBe(false)
-  })
-
-  it('ConflictException is thrown for stale page index', () => {
-    const createIdempotencyError = (persisted: number, received: number) =>
-      new Error(
-        `Idempotency check failed: lastKnownPageIndex ${received} does not match persisted ${persisted}`,
-      )
-
-    const error = createIdempotencyError(2, 0)
-    expect(error.message).toContain('Idempotency check failed')
-    expect(error.message).toContain('lastKnownPageIndex 0')
-    expect(error.message).toContain('persisted 2')
   })
 })
 
