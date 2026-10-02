@@ -20,6 +20,7 @@ import {
 import { CourtSessionController } from '../courtSession.controller'
 import { CourtSessionService } from '../courtSession.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../repository/services/courtSessionRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealCaseRepository.service')

@@ -20,6 +20,7 @@ import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
   CaseIncludes,
+  CaseTableRowCase,
   copyIncludeInto,
   mergeAccessIncludes,
   modelMap,
@@ -414,7 +415,7 @@ export const canDeleteCase = (
 
 // Mirrors the appeal-case module's withdrawal authorization
 // (userAppealedAppealCase in appeal-case/guards/rolesRules.ts) for the appeals
-// shown in the case tables. The tables' appealCase slot only ever holds the
+// shown in the case tables. The row's appeal slot only ever holds the
 // case-level appeal (request case and dismissed indictment appeals) -
 // ruling-order appeals are withdrawn from the ruling order's context menu on the
 // case screen instead. So it shares the guard's case-level eligibility check
@@ -422,16 +423,12 @@ export const canDeleteCase = (
 // log, with request-case prosecution precedence.
 export const canCancelAppeal = (
   theCase: Pick<
-    Case,
-    | 'type'
-    | 'appealCase'
-    | 'defenderNationalId'
-    | 'defendants'
-    | 'civilClaimants'
+    CaseTableRowCase,
+    'type' | 'appeal' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): boolean => {
-  const appealCase = theCase.appealCase
+  const appealCase = theCase.appeal
 
   // An appeal can only be withdrawn before the court of appeals has ruled
   if (
@@ -447,10 +444,10 @@ export const canCancelAppeal = (
 
 export const getContextMenuActions = (
   theCase: Pick<
-    Case,
+    CaseTableRowCase,
     | 'type'
     | 'state'
-    | 'appealCase'
+    | 'appeal'
     | 'defenderNationalId'
     | 'defendants'
     | 'civilClaimants'

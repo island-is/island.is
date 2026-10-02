@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealDecisionPartyRole,
   CaseAppealDecision,
@@ -17,6 +14,7 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealDecisionRepositoryService,
   Case,
@@ -26,10 +24,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -176,7 +171,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should add a working document delivery message to the queue', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -220,7 +215,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should also notify the parties about the ruling order', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         {
           type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
           user: {},
@@ -283,7 +278,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not notify the parties about the ruling order again', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -346,7 +341,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should notify the parties about the new ruling order', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         {
           type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
           user: {},
@@ -391,7 +386,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should add a working document delivery message to the queue', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -415,7 +410,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not add a message to the queue', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 
@@ -430,7 +425,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not add a message to the queue', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 
