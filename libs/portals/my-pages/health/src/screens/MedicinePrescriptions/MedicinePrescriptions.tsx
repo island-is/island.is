@@ -134,7 +134,7 @@ const MedicinePrescriptions = () => {
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptions)}
       introComponent={
-        <Markdown>
+        <Markdown options={{ openLinksInNewTab: false }}>
           {formatMessage(messages.medicinePrescriptionIntroWithLink)}
         </Markdown>
       }
