@@ -9,9 +9,23 @@ import { wrapAxisLabel } from './wrapAxisLabel'
 const LINE_HEIGHT_EM = 1.2
 const LINE_HEIGHT = `${LINE_HEIGHT_EM}em`
 // Matches Recharts' Text default for a start-anchored label
-const CAP_HEIGHT = '0.71em'
+const CAP_HEIGHT_EM = 0.71
+const CAP_HEIGHT = `${CAP_HEIGHT_EM}em`
+// Room below the last baseline for descenders such as g, j and þ
+const DESCENT_EM = 0.3
+// Recharts' default tickSize (6) plus tickMargin (2)
+const TICK_OFFSET = 8
 const DEFAULT_MAX_CHARS_PER_LINE = 10
 const DEFAULT_MAX_LINES = 3
+
+// X-axis height that fits a label wrapped to the maximum number of lines
+export const getWrappedXAxisHeight = (fontSize: number, dy: number) =>
+  Math.ceil(
+    TICK_OFFSET +
+      dy +
+      (CAP_HEIGHT_EM + (DEFAULT_MAX_LINES - 1) * LINE_HEIGHT_EM + DESCENT_EM) *
+        fontSize,
+  )
 
 interface WrappedAxisTickProps {
   x?: number

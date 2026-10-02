@@ -90,9 +90,8 @@ export const FILL_BACKGROUND_MAIN_COLOR_OPACITY = 0
 export const DEFAULT_YAXIS_WIDTH = 60
 export const DEFAULT_XAXIS_HEIGHT = 30
 
-// Taller/wider than the defaults above to fit the multi-line, wrapped
-// category labels rendered by WrappedAxisTick (up to 3 lines).
-export const WRAPPED_XAXIS_HEIGHT = 68
+// Wider than the default to fit the wrapped labels rendered by WrappedAxisTick.
+// The wrapped X-axis height is computed from the font size in getWrappedXAxisHeight
 export const WRAPPED_YAXIS_WIDTH = 90
 
 export const DEFAULT_PIE_INNER_RADIUS = 30

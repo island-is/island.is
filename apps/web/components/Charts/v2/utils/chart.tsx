@@ -10,12 +10,11 @@ import {
   DEFAULT_XAXIS_HEIGHT,
   DEFAULT_XAXIS_KEY,
   DEFAULT_YAXIS_WIDTH,
-  WRAPPED_XAXIS_HEIGHT,
   WRAPPED_YAXIS_WIDTH,
 } from '../constants'
 import { ChartComponentType, ChartType, CustomStyleConfig } from '../types'
 import { formatValueForPresentation } from './format'
-import { WrappedAxisTick } from './WrappedAxisTick'
+import { getWrappedXAxisHeight, WrappedAxisTick } from './WrappedAxisTick'
 
 const KNOWN_COMPONENT_TYPES: ChartComponentType[] = [
   ChartComponentType.line,
@@ -89,6 +88,8 @@ export const getCartesianGridComponents = ({
   const wrapXAxis =
     !slice.flipAxis && wrapCategoryLabels && !customStyleConfig.xAxis?.angle
   const wrapYAxis = !!slice.flipAxis && wrapCategoryLabels
+  const xAxisFontSize =
+    customStyleConfig.xAxis?.fontSize ?? theme.typography.baseFontSize
 
   const yAxisFormatter = (v: string | number) =>
     formatValueForPresentation(
@@ -110,8 +111,7 @@ export const getCartesianGridComponents = ({
       dataKey={slice.flipAxis ? undefined : dataKey}
       tickFormatter={slice.flipAxis ? yAxisFormatter : xAxisFormatter}
       style={{
-        fontSize:
-          customStyleConfig.xAxis?.fontSize ?? theme.typography.baseFontSize,
+        fontSize: xAxisFontSize,
         fontFamily: theme.typography.fontFamily,
       }}
       dy={theme.spacing.p2}
@@ -121,7 +121,9 @@ export const getCartesianGridComponents = ({
       type={slice.flipAxis ? 'number' : 'category'}
       height={
         customStyleConfig.xAxis?.height ??
-        (wrapXAxis ? WRAPPED_XAXIS_HEIGHT : DEFAULT_XAXIS_HEIGHT)
+        (wrapXAxis
+          ? getWrappedXAxisHeight(xAxisFontSize, theme.spacing.p2)
+          : DEFAULT_XAXIS_HEIGHT)
       }
       tick={
         customStyleConfig.xAxis?.tick ??
