@@ -1,6 +1,10 @@
 import { TestingModuleBuilder } from '@nestjs/testing'
 
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import {
+  FEATURE_FLAG_CLIENT,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 import { AppModule } from '../src/app/app.module'
 import { SequelizeConfigService } from '../src/sequelizeConfig.service'
@@ -15,11 +19,22 @@ const enabledFeatureFlags = new Set<Features>([
 ])
 
 export const overrideFeatureFlags = (builder: TestingModuleBuilder) =>
-  builder.overrideProvider(FeatureFlagService).useValue({
-    getValue: jest.fn((feature: Features) =>
-      Promise.resolve(enabledFeatureFlags.has(feature)),
-    ),
-  })
+  builder
+    .overrideProvider(FeatureFlagService)
+    .useValue({
+      getValue: jest.fn((feature: Features) =>
+        Promise.resolve(enabledFeatureFlags.has(feature)),
+      ),
+    })
+    // Per-company flags are read from the client directly, with the company as the flag user.
+    .overrideProvider(FEATURE_FLAG_CLIENT)
+    .useValue({
+      getValue: jest.fn((feature: Features) =>
+        Promise.resolve(enabledFeatureFlags.has(feature)),
+      ),
+      getAllValues: jest.fn(() => Promise.resolve({})),
+      dispose: jest.fn(),
+    })
 
 export const setupTestApp = async (): Promise<TestApp> => {
   const app = await testServer({
