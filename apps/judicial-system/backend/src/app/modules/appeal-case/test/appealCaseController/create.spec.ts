@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -27,6 +24,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -36,7 +34,7 @@ import {
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -166,7 +164,7 @@ describe('AppealCaseController - Create', () => {
     })
 
     it('should queue the appeal to court of appeals notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -326,6 +324,39 @@ describe('AppealCaseController - Create', () => {
     })
   })
 
+  describe('prosecution user appeals a restriction case already appealed in court', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      caseFiles: [
+        {
+          id: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        },
+      ],
+      appealDecisions: [
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.APPEAL,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, prosecutor)
+    })
+
+    it('should create the appeal case but queue no messages', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.create).toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+    })
+  })
+
   describe('appeal brief case files are delivered to court', () => {
     const rvgFileId = uuid()
     const theCase = {
@@ -346,7 +377,7 @@ describe('AppealCaseController - Create', () => {
     })
 
     it('should queue delivery of the appeal brief file', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           caseId,
