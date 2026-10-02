@@ -9,9 +9,9 @@ export const sharedMessages = defineMessages({
     id: 'sp.social-benefits-shared:myData',
     defaultMessage: 'Mín gögn',
   },
-  myPayments: {
-    id: 'sp.social-benefits-shared:myPayments',
-    defaultMessage: 'Greiðslur',
+  myIncome: {
+    id: 'sp.social-benefits-shared:myIncome',
+    defaultMessage: 'Tekjur',
   },
   overviewTitle: {
     id: 'sp.social-benefits-shared:overviewTitle',
