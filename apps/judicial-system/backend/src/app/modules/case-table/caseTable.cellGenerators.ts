@@ -51,19 +51,23 @@ import {
   TagGroupValue,
   TagValue,
 } from './dto/caseTable.response'
-import { CaseIncludes } from './caseTable.types'
+import { CaseIncludes, CaseTableRowCase } from './caseTable.types'
 
 interface CaseTableCell<T> {
   value?: T
   sortValue?: string
 }
 interface CaseTableCellGenerator<T> {
+  // `attributes` and `includes` are the query's vocabulary - the columns and
+  // associations the list has to fetch. `generate` reads the row's, where the
+  // appeal a row is about is simply `appeal`, whichever association the list
+  // fetched it from.
   attributes?: (keyof Case)[]
   includes?: CaseIncludes
-  generate: (caseModel: Case, user: TUser) => CaseTableCell<T>
+  generate: (caseModel: CaseTableRowCase, user: TUser) => CaseTableCell<T>
 }
 
-const getIndictmentCourtDate = (c: Case): Date | undefined => {
+const getIndictmentCourtDate = (c: CaseTableRowCase): Date | undefined => {
   if (c.indictmentDecision) {
     return c.indictmentDecision === IndictmentDecision.SCHEDULING
       ? DateLog.courtDate(c.dateLogs)?.date
@@ -73,7 +77,9 @@ const getIndictmentCourtDate = (c: Case): Date | undefined => {
   return DateLog.arraignmentDate(c.dateLogs)?.date
 }
 
-const getRequestCaseArraignmentDate = (c: Case): Date | undefined => {
+const getRequestCaseArraignmentDate = (
+  c: CaseTableRowCase,
+): Date | undefined => {
   return DateLog.arraignmentDate(c.dateLogs)?.date
 }
 
@@ -92,7 +98,9 @@ const generateDate = (date: Date | undefined): CaseTableCell<StringValue> => {
   return generateCell({ str: dateValue }, sortValue)
 }
 
-const generateDefaultJudgementTag = (c: Case): TagValue | undefined => {
+const generateDefaultJudgementTag = (
+  c: CaseTableRowCase,
+): TagValue | undefined => {
   // TODO: this will be fixed when we have considered ruling decision per defendant
   if (
     c.defendants &&
@@ -109,11 +117,11 @@ const generateDefaultJudgementTag = (c: Case): TagValue | undefined => {
 }
 
 const generateAppealStateTag = (
-  c: Case,
+  c: CaseTableRowCase,
   user: TUser,
 ): CaseTableCell<TagValue> => {
   const getCompletedColor = (): string => {
-    switch (c.appealCase?.appealRulingDecision) {
+    switch (c.appeal?.appealRulingDecision) {
       case AppealCaseRulingDecision.ACCEPTING:
         return 'mint'
       case AppealCaseRulingDecision.CHANGED:
@@ -127,7 +135,7 @@ const generateAppealStateTag = (
   }
 
   const getCompletedOrder = (): string => {
-    switch (c.appealCase?.appealRulingDecision) {
+    switch (c.appeal?.appealRulingDecision) {
       case AppealCaseRulingDecision.ACCEPTING:
         return 'E'
       case AppealCaseRulingDecision.REPEAL:
@@ -147,21 +155,21 @@ const generateAppealStateTag = (
     }
   }
 
-  switch (c.appealCase?.appealState) {
+  switch (c.appeal?.appealState) {
     case AppealCaseState.WITHDRAWN:
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'L')
     case AppealCaseState.APPEALED:
       return generateCell({ color: 'red', text: 'Kært' }, 'A')
     case AppealCaseState.RECEIVED:
       if (isCourtOfAppealsUser(user)) {
-        if (!c.appealCase?.appealCaseNumber) {
+        if (!c.appeal?.appealCaseNumber) {
           return generateCell({ color: 'purple', text: 'Nýtt' }, 'B')
         }
 
         if (
-          c.appealCase?.appealReceivedByCourtDate &&
+          c.appeal?.appealReceivedByCourtDate &&
           Date.now() >=
-            c.appealCase?.appealReceivedByCourtDate.getTime() +
+            c.appeal?.appealReceivedByCourtDate.getTime() +
               getMillisecondsFromDays(1)
         ) {
           return generateCell({ color: 'mint', text: 'Frestir liðnir' }, 'D')
@@ -173,7 +181,7 @@ const generateAppealStateTag = (
       return generateCell(
         {
           color: getCompletedColor(),
-          text: getAppealResultTextByValue(c.appealCase?.appealRulingDecision),
+          text: getAppealResultTextByValue(c.appeal?.appealRulingDecision),
         },
         getCompletedOrder(),
       )
@@ -523,8 +531,11 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
     appealCase: { attributes: ['appealCaseNumber'] },
     rulingOrderAppealCases: { attributes: ['appealCaseNumber'] },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> =>
-    generateCaseNumber(c, user, c.appealCase?.appealCaseNumber ?? ''),
+  generate: (
+    c: CaseTableRowCase,
+    user: TUser,
+  ): CaseTableCell<StringGroupValue> =>
+    generateCaseNumber(c, user, c.appeal?.appealCaseNumber ?? ''),
 }
 
 // The same cell as caseNumber, fed by a different association. The row's own
@@ -546,7 +557,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
     if (!c.defendants || c.defendants.length === 0) {
       return generateCell()
     }
@@ -583,7 +594,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
 
 export const caseType: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
-  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
     if (isRequestCase(c.type)) {
       const requestType = generateRequestCaseType(
         c.type,
@@ -614,7 +625,7 @@ const appealCaseType: CaseTableCellGenerator<StringGroupValue> = {
       includes: { rulingFile: { attributes: ['userGeneratedFilename'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
     if (isRequestCase(c.type)) {
       const requestType = generateRequestCaseType(
         c.type,
@@ -627,8 +638,8 @@ const appealCaseType: CaseTableCellGenerator<StringGroupValue> = {
 
     const indictmentType = generateIndictmentCaseType(c.indictmentSubtypes)
 
-    if (c.appealCase?.rulingFile?.userGeneratedFilename) {
-      const fileName = c.appealCase.rulingFile.userGeneratedFilename
+    if (c.appeal?.rulingFile?.userGeneratedFilename) {
+      const fileName = c.appeal.rulingFile.userGeneratedFilename
       const prefix = `${c.courtCaseNumber ?? ''} `
       indictmentType.push(
         fileName.startsWith(prefix) ? fileName.slice(prefix.length) : fileName,
@@ -658,7 +669,7 @@ const appealState: CaseTableCellGenerator<TagValue> = {
       ],
     },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue> =>
+  generate: (c: CaseTableRowCase, user: TUser): CaseTableCell<TagValue> =>
     generateAppealStateTag(c, user),
 }
 
@@ -668,7 +679,7 @@ const appealCaseState = appealState
 const requestCaseState: CaseTableCellGenerator<TagValue> = {
   attributes: ['state', 'validToDate', 'type'],
   includes: { dateLogs: { attributes: ['date', 'dateType'] } },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue> =>
+  generate: (c: CaseTableRowCase, user: TUser): CaseTableCell<TagValue> =>
     generateRequestCaseStateTag(c, user),
 }
 
@@ -684,7 +695,10 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagGroupValue> = {
     },
     dateLogs: { attributes: ['date', 'dateType'] },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagGroupValue> =>
+  generate: (
+    c: CaseTableRowCase,
+    user: TUser,
+  ): CaseTableCell<TagValue | TagGroupValue> =>
     generateIndictmentCaseStateTag(c, user),
 }
 
@@ -699,8 +713,8 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
       includes: { appealJudge1: { attributes: ['name'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    const initials = getInitials(c.appealCase?.appealJudge1?.name)
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.appeal?.appealJudge1?.name)
 
     if (!initials) {
       return generateCell()
@@ -728,12 +742,12 @@ const verdictAppealAppellant: CaseTableCellGenerator<StringValue> = {
       },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    if (!c.appealCase) {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
+    if (!c.appeal) {
       return generateCell()
     }
 
-    const appellants = standingVerdictAppellants(c.appealCase)
+    const appellants = standingVerdictAppellants(c.appeal)
 
     if (appellants.length === 0) {
       return generateCell()
@@ -756,8 +770,8 @@ const verdictAppealState: CaseTableCellGenerator<TagValue> = {
   includes: {
     verdictAppealCase: { attributes: ['appealState'] },
   },
-  generate: (c: Case): CaseTableCell<TagValue> => {
-    switch (c.appealCase?.appealState) {
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
+    switch (c.appeal?.appealState) {
       case AppealCaseState.APPEALED:
         return generateCell({ color: 'purple', text: 'Nýtt' }, 'A')
       case AppealCaseState.RECEIVED:
@@ -775,8 +789,8 @@ const verdictAppealHead: CaseTableCellGenerator<StringValue> = {
       includes: { appealJudge1: { attributes: ['name'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    const initials = getInitials(c.appealCase?.appealJudge1?.name)
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
+    const initials = getInitials(c.appeal?.appealJudge1?.name)
 
     if (!initials) {
       return generateCell()
@@ -797,8 +811,8 @@ const verdictAppealCompletedDate: CaseTableCellGenerator<StringValue> = {
       },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    const appealCase = c.appealCase
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
+    const appealCase = c.appeal
 
     if (appealCase?.appealState === AppealCaseState.WITHDRAWN) {
       const withdrawnDates = (appealCase.appealEventLogs ?? [])
@@ -826,8 +840,8 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
       attributes: ['appealState', 'appealRulingDecision'],
     },
   },
-  generate: (c: Case): CaseTableCell<TagValue> => {
-    const appealCase = c.appealCase
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
+    const appealCase = c.appeal
 
     if (appealCase?.appealState === AppealCaseState.WITHDRAWN) {
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'Z')
@@ -854,12 +868,13 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
 
 const created: CaseTableCellGenerator<StringValue> = {
   attributes: ['created'],
-  generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.created),
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> =>
+    generateDate(c.created),
 }
 
 const prosecutor: CaseTableCellGenerator<StringValue> = {
   includes: { prosecutor: { attributes: ['name'] } },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     const prosecutor = c.prosecutor
     if (!prosecutor) {
       return generateCell()
@@ -871,7 +886,7 @@ const prosecutor: CaseTableCellGenerator<StringValue> = {
 
 const prosecutorInitials: CaseTableCellGenerator<StringValue> = {
   includes: { prosecutor: { attributes: ['name'] } },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     const prosecutor = c.prosecutor
     if (!prosecutor) {
       return generateCell()
@@ -894,7 +909,7 @@ const validFromTo: CaseTableCellGenerator<StringValue> = {
     'rulingDate',
     'validToDate',
   ],
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     if (!isRestrictionCase(c.type) || c.state !== CaseState.ACCEPTED) {
       return generateCell()
     }
@@ -920,7 +935,7 @@ const validFromTo: CaseTableCellGenerator<StringValue> = {
 
 const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
   includes: { eventLogs: { attributes: ['created', 'eventType'] } },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     const caseSentToCourtDate = EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       c.eventLogs,
@@ -932,13 +947,17 @@ const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
 
 const rulingDate: CaseTableCellGenerator<StringValue> = {
   attributes: ['rulingDate'],
-  generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.rulingDate),
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> =>
+    generateDate(c.rulingDate),
 }
 
 const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['requestedCourtDate'],
   includes: { dateLogs: { attributes: ['date', 'dateType'] } },
-  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+  generate: (
+    c: CaseTableRowCase,
+    user: TUser,
+  ): CaseTableCell<StringGroupValue> => {
     let courtDate = getRequestCaseArraignmentDate(c)
     let prefix = ''
 
@@ -975,7 +994,7 @@ const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['courtSessionType', 'indictmentDecision'],
   includes: { dateLogs: { attributes: ['date', 'dateType'] } },
-  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
     if (c.indictmentDecision === IndictmentDecision.POSTPONING) {
       return generateCell({ strList: ['Frestað'] }, '999999999999')
     }
@@ -1025,7 +1044,7 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
       },
     },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue> => {
+  generate: (c: CaseTableRowCase, user: TUser): CaseTableCell<TagValue> => {
     switch (c.indictmentRulingDecision) {
       case CaseIndictmentRulingDecision.FINE:
         return generateCell(
@@ -1059,7 +1078,7 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
 
 const punishmentType: CaseTableCellGenerator<TagValue> = {
   includes: { defendants: { attributes: ['punishmentType'] } },
-  generate: (c: Case): CaseTableCell<TagValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
     if (
       !c.defendants ||
       c.defendants.length === 0 ||
@@ -1102,7 +1121,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
       includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     if (!c.defendants || c.defendants.length === 0) {
       return generateCell()
     }
@@ -1123,7 +1142,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
       includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<TagValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
     if (!c.defendants || c.defendants.length === 0) {
       return generateCell({ color: 'red', text: 'Óþekkt' }, 'C') // This should never happen
     }
@@ -1143,7 +1162,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
 
 const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
   attributes: ['rulingDate', 'indictmentRulingDecision'],
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     if (!c.rulingDate) {
       return generateCell()
     }
@@ -1167,7 +1186,7 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
       },
     },
   },
-  generate: (c: Case): CaseTableCell<TagValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
     if (c.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING) {
       return generateCell()
     }
@@ -1203,7 +1222,7 @@ const indictmentReviewer: CaseTableCellGenerator<StringValue> = {
     defendants: { attributes: [] },
     indictmentReviewer: { attributes: ['name'] },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     const indictmentReviewerName = c.indictmentReviewer?.name.trim()
 
     if (!indictmentReviewerName) {
@@ -1221,7 +1240,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
       includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     if (!c.defendants) {
       return generateCell()
     }
@@ -1250,7 +1269,7 @@ const closedWithoutEnforcementDate: CaseTableCellGenerator<StringValue> = {
       includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
     if (!c.defendants) {
       return generateCell()
     }
@@ -1301,7 +1320,10 @@ const indictmentRulingDecision: CaseTableCellGenerator<
       ],
     },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagGroupValue> =>
+  generate: (
+    c: CaseTableRowCase,
+    user: TUser,
+  ): CaseTableCell<TagValue | TagGroupValue> =>
     completedIndictmentCaseStates.includes(c.state)
       ? generateIndictmentRulingDecisionTag(c, user)
       : generateCell(),
@@ -1319,7 +1341,10 @@ const indictmentRulingDecisionWithoutAppealState: CaseTableCellGenerator<
       includes: { verdicts: { attributes: ['isDefaultJudgement'] } },
     },
   },
-  generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagGroupValue> =>
+  generate: (
+    c: CaseTableRowCase,
+    user: TUser,
+  ): CaseTableCell<TagValue | TagGroupValue> =>
     completedIndictmentCaseStates.includes(c.state)
       ? generateIndictmentRulingDecisionTag(c, user, false)
       : generateCell(),
@@ -1333,7 +1358,7 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagGroupValue> = {
       includes: { verdicts: { attributes: ['appealDate'] } },
     },
   },
-  generate: (c: Case): CaseTableCell<TagGroupValue> => {
+  generate: (c: CaseTableRowCase): CaseTableCell<TagGroupValue> => {
     const hasIndictmentReviewDecision = c.defendants?.some(
       (d) => d.indictmentReviewDecision,
     )
