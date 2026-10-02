@@ -62,8 +62,11 @@ describe('verdict appeal cell generators', () => {
     created = new Date('2026-06-10T09:00:00.000Z'),
   ) => ({ eventType, userRole, defendantId: 'defendant_id', created })
 
+  // As the row reaches a cell generator: presentVerdictAppealAsCaseAppeal has
+  // already put the verdict appeal where every column looks for the appeal a
+  // row is about.
   const caseWithVerdictAppeal = (verdictAppealCase: unknown): Case =>
-    ({ verdictAppealCase } as Case)
+    ({ appealCase: verdictAppealCase } as Case)
 
   describe('who appealed', () => {
     it('names the prosecution when it appealed', () => {
@@ -225,16 +228,24 @@ describe('verdict appeal cell generators', () => {
 describe('the case number on a verdict appeal list', () => {
   const user = { role: UserRole.COURT_OF_APPEALS_JUDGE } as User
 
-  const caseWithBothAppeals = {
+  const rulingAppealRow = {
     policeCaseNumbers: ['007-2022-45678'],
     courtCaseNumber: 'S-301/2022',
     appealCase: { appealCaseNumber: '1111/2022' },
-    verdictAppealCase: { appealCaseNumber: '2041/2022' },
   } as Case
 
-  it('labels the row with the verdict appeal, not the ruling appeal', () => {
+  // Which appeal a row is about is settled before a column sees it - see
+  // caseTable.verdictAppealRows.spec.ts. What is left to check here is that
+  // the column reads the appeal it is handed.
+  const verdictAppealRow = {
+    policeCaseNumbers: ['007-2022-45678'],
+    courtCaseNumber: 'S-301/2022',
+    appealCase: { appealCaseNumber: '2041/2022' },
+  } as Case
+
+  it('labels the row with the appeal it is about', () => {
     const cell = caseTableCellGenerators.verdictAppealCaseNumber.generate(
-      caseWithBothAppeals,
+      verdictAppealRow,
       user,
     )
 
@@ -243,7 +254,7 @@ describe('the case number on a verdict appeal list', () => {
 
   it('still labels a ruling appeal row with the ruling appeal', () => {
     const cell = caseTableCellGenerators.caseNumber.generate(
-      caseWithBothAppeals,
+      rulingAppealRow,
       user,
     )
 
@@ -253,7 +264,7 @@ describe('the case number on a verdict appeal list', () => {
   // Landsréttur has not numbered the appeal yet - that is what "Nýtt" is.
   it('leaves the appeal number out until one is given', () => {
     const cell = caseTableCellGenerators.verdictAppealCaseNumber.generate(
-      { ...caseWithBothAppeals, verdictAppealCase: {} } as Case,
+      { ...verdictAppealRow, appealCase: {} } as Case,
       user,
     )
 

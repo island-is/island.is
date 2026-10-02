@@ -56,7 +56,13 @@ export const SidebarLayout: FC<React.PropsWithChildren<SidebarLayoutProps>> = ({
           >
             {sidebarContent}
           </Box>
-          <GridContainer className={styles.contentWrapper}>
+          <GridContainer
+            className={
+              hiddenOnTablet
+                ? styles.contentWrapperHiddenOnTablet
+                : styles.contentWrapper
+            }
+          >
             <GridRow>
               <GridColumn
                 offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}

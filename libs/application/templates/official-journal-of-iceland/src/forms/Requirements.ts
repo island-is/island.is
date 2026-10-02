@@ -50,6 +50,7 @@ export const Requirements: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
   title: general.applicationName,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: Routes.REQUIREMENTS,

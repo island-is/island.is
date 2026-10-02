@@ -508,6 +508,20 @@ export class CaseService {
     })
   }
 
+  private addMessagesForAppealProsecutorAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    addMessagesToQueue({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+      },
+    })
+  }
+
   private addMessagesForReceivedCaseToQueue(theCase: Case, user: TUser): void {
     addMessagesToQueue({
       type: MessageType.NOTIFICATION,
@@ -1315,6 +1329,14 @@ export class CaseService {
         updatedCase,
         user,
       )
+    }
+
+    if (
+      updatedCase.appealProsecutorId &&
+      updatedCase.appealProsecutorId !== theCase.appealProsecutorId &&
+      isIndictment
+    ) {
+      this.addMessagesForAppealProsecutorAssignedToQueue(updatedCase, user)
     }
   }
 
