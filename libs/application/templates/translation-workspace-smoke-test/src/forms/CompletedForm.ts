@@ -28,5 +28,21 @@ export const CompletedForm: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'sharedStringEchoSection',
+      title: m.mainSectionTitle,
+      children: [
+        buildMultiField({
+          id: 'sharedStringEchoMultiField',
+          title: m.mainSectionTitle,
+          children: [
+            buildDescriptionField({
+              id: 'sharedStringEchoDescription',
+              description: m.mainMarkdownDescription,
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 })
