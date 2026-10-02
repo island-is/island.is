@@ -1872,6 +1872,194 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('appeal prosecutor assigned - queues APPEAL_PROSECUTOR_ASSIGNED', () => {
+    const appealProsecutorId = uuid()
+    const validAppealProsecutor = {
+      id: appealProsecutorId,
+      role: UserRole.PROSECUTOR,
+      active: true,
+      institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+    }
+
+    describe.each([
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ])('for indictment ruling decision %s', (indictmentRulingDecision) => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        indictmentRulingDecision,
+      } as Case
+      const caseToUpdate = { appealProsecutorId } as UpdateCaseDto
+      const updatedCase = {
+        ...originalCase,
+        appealProsecutorId,
+      }
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce(
+          validAppealProsecutor,
+        )
+        ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
+          updatedCase,
+        )
+        ;(
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        ).mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
+        expect(mockQueuedMessages).toContainEqual({
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+          },
+        })
+      })
+    })
+
+    describe('when appeal prosecutor is unchanged', () => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        appealProsecutorId,
+      } as Case
+      const caseToUpdate = { appealProsecutorId } as UpdateCaseDto
+      const updatedCase = {
+        ...originalCase,
+        appealProsecutorId,
+      }
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce(
+          validAppealProsecutor,
+        )
+        ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
+          updatedCase,
+        )
+        ;(
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        ).mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should not queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
+        expect(mockQueuedMessages).not.toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              body: {
+                type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+              },
+            }),
+          ]),
+        )
+      })
+    })
+
+    describe('when case is not an indictment', () => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.CUSTODY,
+      } as Case
+      const caseToUpdate = { appealProsecutorId } as UpdateCaseDto
+      const updatedCase = {
+        ...originalCase,
+        appealProsecutorId,
+      }
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce(
+          validAppealProsecutor,
+        )
+        ;(mockCaseRepositoryService.update as jest.Mock).mockResolvedValueOnce(
+          updatedCase,
+        )
+        ;(
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        ).mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should not queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
+        expect(mockQueuedMessages).not.toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              body: {
+                type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+              },
+            }),
+          ]),
+        )
+      })
+    })
+
+    describe('when assigned user is inactive', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+          ...validAppealProsecutor,
+          active: false,
+        })
+
+        then = await givenWhenThen(caseId, user, theCase, {
+          appealProsecutorId,
+        } as UpdateCaseDto)
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when assigned user is not a prosecutor', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+          ...validAppealProsecutor,
+          role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+        })
+
+        then = await givenWhenThen(caseId, user, theCase, {
+          appealProsecutorId,
+        } as UpdateCaseDto)
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('when assigned user is not from Ríkissaksóknari', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+          ...validAppealProsecutor,
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+        })
+
+        then = await givenWhenThen(caseId, user, theCase, {
+          appealProsecutorId,
+        } as UpdateCaseDto)
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('reopen indictment case - resets verdict data on each verdict', () => {
     const verdict1 = { id: uuid() } as Verdict
     const verdict2 = { id: uuid() } as Verdict
