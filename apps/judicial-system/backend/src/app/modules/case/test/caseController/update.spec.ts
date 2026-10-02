@@ -2313,6 +2313,83 @@ describe('CaseController - Update', () => {
     },
   )
 
+  describe('district court judge and registrar assigned together to a received indictment case', () => {
+    const judge = {
+      id: uuid(),
+      nationalId: '0101017890',
+      email: 'judge@court.is',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+    }
+    const registrar = {
+      id: uuid(),
+      nationalId: '0202027890',
+      email: 'registrar@court.is',
+      role: UserRole.DISTRICT_COURT_REGISTRAR,
+    }
+    const caseToUpdate = {
+      judgeId: judge.id,
+      registrarId: registrar.id,
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        state: CaseState.RECEIVED,
+      } as Case
+      const updatedCase = {
+        ...originalCase,
+        ...caseToUpdate,
+        judge,
+        registrar,
+      } as Case
+
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce(judge).mockResolvedValueOnce(registrar)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    // The delivery resolves one role per message, so both assignments must be
+    // delivered - the judge first, matching the notifications above and the
+    // order the controller validates the two assignees in
+    it('should deliver both court roles to the court', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+          },
+        },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+          },
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: judge.nationalId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+          user,
+          caseId,
+          elementId: registrar.nationalId,
+        },
+      ])
+    })
+  })
+
   describe('public prosecutor reviewer assigned', () => {
     const indictmentReviewerId = uuid()
     const caseToUpdate = { indictmentReviewerId } as UpdateCaseDto
