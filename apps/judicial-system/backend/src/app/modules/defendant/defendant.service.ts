@@ -23,6 +23,7 @@ import {
   isIndictmentCase,
   isPrisonAdminUser,
   RequestCaseNotificationType,
+  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { queueMessagesAfterCommit } from '../../middleware'
@@ -31,6 +32,7 @@ import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
   Case,
+  CaseRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
@@ -41,12 +43,14 @@ import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { DeliverResponse } from './models/deliver.response'
+import { getMostPermissiveRequestSharedWithDefender } from './requestSharedWithDefender.logic'
 
 @Injectable()
 export class DefendantService {
   constructor(
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly caseRepositoryService: CaseRepositoryService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => AppealCaseService))
     private readonly appealCaseService: AppealCaseService,
@@ -267,6 +271,14 @@ export class DefendantService {
       transaction,
     )
 
+    if (update.requestSharedWithDefender !== undefined) {
+      await this.mirrorMostPermissiveRequestSharedWithDefenderToCase(
+        theCase,
+        updatedDefendant,
+        transaction,
+      )
+    }
+
     this.addMessagesForRequestCaseUpdateDefendantToQueue(
       theCase,
       updatedDefendant,
@@ -275,6 +287,37 @@ export class DefendantService {
     )
 
     return updatedDefendant
+  }
+
+  /**
+   * Dual-write: when a defendant's sharing timing changes, keep the case
+   * column as the most permissive value across defendants so existing case
+   * readers stay correct until they flip to the defendant column. Uses the
+   * case repository directly so we do not re-enter case.service.update and
+   * sync the mirror back onto every defendant.
+   */
+  private async mirrorMostPermissiveRequestSharedWithDefenderToCase(
+    theCase: Case,
+    updatedDefendant: Defendant,
+    transaction: Transaction,
+  ): Promise<void> {
+    const defendants = (theCase.defendants ?? []).map((d) =>
+      d.id === updatedDefendant.id ? updatedDefendant : d,
+    )
+
+    const mostPermissive = getMostPermissiveRequestSharedWithDefender(
+      defendants.map((d) => d.requestSharedWithDefender),
+    )
+
+    if (mostPermissive === (theCase.requestSharedWithDefender ?? null)) {
+      return
+    }
+
+    await this.caseRepositoryService.update(
+      theCase.id,
+      { requestSharedWithDefender: mostPermissive },
+      { transaction },
+    )
   }
 
   async createDefendantEvent(
@@ -673,6 +716,7 @@ export class DefendantService {
       defenderEmail?: string | null
       defenderPhoneNumber?: string | null
       defenderChoice?: DefenderChoice | null
+      requestSharedWithDefender?: RequestSharedWithDefender | null
     },
     transaction: Transaction,
   ): Promise<void> {
@@ -692,6 +736,10 @@ export class DefendantService {
     }
     if (defenderFields.defenderChoice !== undefined) {
       update.defenderChoice = defenderFields.defenderChoice
+    }
+    if (defenderFields.requestSharedWithDefender !== undefined) {
+      update.requestSharedWithDefender =
+        defenderFields.requestSharedWithDefender
     }
 
     if (Object.keys(update).length === 0) {

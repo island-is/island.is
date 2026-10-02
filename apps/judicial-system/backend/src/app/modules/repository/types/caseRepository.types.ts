@@ -19,6 +19,7 @@ import {
   IndictmentCaseReviewDecision,
   investigationCases,
   PunishmentType,
+  RequestSharedWithDefender,
   restrictionCases,
   stringTypes,
   SubpoenaType,
@@ -1583,7 +1584,6 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
-    | 'requestSharedWithDefender'
     | 'indictmentRulingDecision'
     | 'indictmentDecision'
     | 'courtSessionType'
@@ -1597,6 +1597,7 @@ export interface UpdateCase
   type?: Case['type']
   state?: Case['state']
   policeCaseNumbers?: Case['policeCaseNumbers']
+  requestSharedWithDefender?: Case['requestSharedWithDefender'] | null
   defendantWaivesRightToCounsel?: Case['defendantWaivesRightToCounsel'] | null
   courtEndTime?: Case['courtEndTime'] | null
   rulingDate?: Case['rulingDate'] | null
@@ -1667,6 +1668,7 @@ export interface UpdateDefendant {
   defenderNationalId?: string | null
   defenderEmail?: string | null
   defenderPhoneNumber?: string | null
+  requestSharedWithDefender?: RequestSharedWithDefender | null
   defenderChoice?: DefenderChoice | null
   defendantPlea?: DefendantPlea
   subpoenaType?: SubpoenaType
