@@ -2,7 +2,11 @@ import { Op } from 'sequelize'
 
 import { AppealCaseState } from '@island.is/judicial-system/types'
 
-import { CaseWhereOptions, expandCasesWithAppeals } from '../caseTable.types'
+import {
+  CaseWhereOptions,
+  expandCasesWithAppeals,
+  presentVerdictAppealAsCaseAppeal,
+} from '../caseTable.types'
 import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
 // Court of appeals cases
@@ -112,6 +116,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
         },
       ],
     },
+    displayCases: presentVerdictAppealAsCaseAppeal,
   })
 
 export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
@@ -137,4 +142,5 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
         },
       ],
     },
+    displayCases: presentVerdictAppealAsCaseAppeal,
   })

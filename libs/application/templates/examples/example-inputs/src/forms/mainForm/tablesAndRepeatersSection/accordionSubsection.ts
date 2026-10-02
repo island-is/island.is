@@ -9,7 +9,19 @@ import {
   buildSubSection,
   buildTableRepeaterField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { TagVariant } from '@island.is/application/types'
+
+const semanticVariants: Array<{
+  key: 'success' | 'info' | 'error'
+  variant: TagVariant
+  label: string
+}> = [
+  { key: 'success', variant: 'mint', label: 'Success' },
+  { key: 'info', variant: 'blue', label: 'Info' },
+  { key: 'error', variant: 'red', label: 'Error' },
+]
 
 export const accordionSubsection = buildSubSection({
   id: 'accordionSection',
@@ -163,6 +175,46 @@ export const accordionSubsection = buildSubSection({
                       width: 'half',
                     },
                   },
+                }),
+              ],
+            },
+          ],
+        }),
+        buildDescriptionField({
+          id: 'accordionTagVariantsDescription',
+          title: 'Tag variants',
+          titleVariant: 'h3',
+          marginTop: 6,
+          description:
+            'Accordion items can show a status tag next to the title. Pass a static `{ label, variant, outlined? }` object, or a function `(application) => tag | undefined` that reads live answers.',
+          marginBottom: 4,
+        }),
+        buildAccordionField({
+          id: 'accordionTagVariants',
+          accordionItems: [
+            ...semanticVariants.map(({ key, variant, label }) => ({
+              itemTitle: `${label} (${key})`,
+              itemContent: `Static tag with \`variant: '${variant}'\`.`,
+              tag: { label, variant },
+            })),
+            {
+              itemTitle: 'Function-based tag',
+              itemContent:
+                'Fill the field below to flip the tag. The tag function reads current answers via `application.answers`.',
+              tag: (application) => {
+                const name = getValueViaPath<string>(
+                  application.answers,
+                  'accordionTagDemoName',
+                )
+                return name
+                  ? { label: 'Success', variant: 'mint' as const }
+                  : { label: 'Error', variant: 'red' as const }
+              },
+              children: [
+                buildTextField({
+                  id: 'accordionTagDemoName',
+                  title: 'Full name',
+                  placeholder: 'Type anything to flip the tag',
                 }),
               ],
             },

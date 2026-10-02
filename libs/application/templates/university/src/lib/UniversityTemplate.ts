@@ -17,7 +17,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { UniversitySchema } from './dataSchema'
 import {
@@ -41,7 +40,6 @@ const template: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.University.translation,
   initialQueryParameter: 'program',
   dataSchema: UniversitySchema,
-  featureFlag: Features.university,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
