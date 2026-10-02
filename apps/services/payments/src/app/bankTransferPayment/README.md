@@ -4,7 +4,7 @@ The bank-transfer method lets a payer settle a payment flow by initiating a dire
 bank-to-bank transfer, authenticated with their bank's Strong Customer Authentication (SCA).
 **[Blikk](https://blikk.tech) is the current (v1) provider**.
 
-The feature is gated behind two feature flags (see [Feature flags & access](#feature-flags--access)).
+The feature is gated behind feature flags (see [Feature flags & access](#feature-flags--access)).
 
 ## Contents
 
@@ -55,8 +55,11 @@ national id read-only. It is sent as `actorNationalId` on `paymentsCreateBankTra
 | Company     | the individual (`actorNationalId`)                 | the company                      |
 | Anyone else | the payer (`actorNationalId` is ignored)           | —                                |
 
-A company without a valid individual (missing, a company or a temporary kennitala) is refused with
-`InvalidActorNationalId` before Blikk is called; the screen validates the same rule. The FJS charge's
+Company payers are rolled out per company behind `isIslandisBankTransferPaymentAllowedForCompany`
+(see [Feature flags & access](#feature-flags--access)). A company it does not allow is refused with
+`FailedToCreateBankTransfer`, and a company without a valid individual (missing, a company or a
+temporary kennitala) with `InvalidActorNationalId`, both before Blikk is called; the screen
+validates the individual with the same rule and shows a refusal on that input. The FJS charge's
 payer is always `payerNationalId`.
 
 ## End-to-end flow
@@ -384,17 +387,21 @@ Bank-transfer refunds reuse the FJS-charge deletion mechanism, orchestrated by t
 
 ## Feature flags & access
 
-| Flag                                          | Scope                |
-| --------------------------------------------- | -------------------- |
-| `isIslandisBankTransferPaymentEnabled`        | Global               |
-| `isIslandisBankTransferPaymentAllowedForUser` | Per-user (ConfigCat) |
+| Flag                                             | Scope                   |
+| ------------------------------------------------ | ----------------------- |
+| `isIslandisBankTransferPaymentEnabled`           | Global                  |
+| `isIslandisBankTransferPaymentAllowedForUser`    | Per-user (ConfigCat)    |
+| `isIslandisBankTransferPaymentAllowedForCompany` | Per-company (ConfigCat) |
 
-Both are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
+All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
 
 - **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
-  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals and companies are offered it, temporary kennitalas are not.
-- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints.
+  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals are offered it, companies only when `isIslandisBankTransferPaymentAllowedForCompany` allows them, temporary kennitalas never.
+- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints. Never applies to company payers, which only `isIslandisBankTransferPaymentAllowedForCompany` controls.
+- **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated with the company as the ConfigCat user (`identifier` and `nationalId` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
+  1. Flow creation lists `bank_transfer` for a company payer only when it is on for that company.
+  2. `create` refuses a company payer when it is off for that company, so neither a flow created while it was on nor a direct call can start a company transfer once it is turned off.
 
 > The GraphQL mutations (`paymentsCreateBankTransfer` / `…Verify…` / `…Cancel…`) are not guarded by these flags directly — the whole payments resolver sits behind `isIslandisPaymentEnabled`. The bank-transfer global flag bites one layer down, on the `services-payments` REST controller the resolver proxies to.
 

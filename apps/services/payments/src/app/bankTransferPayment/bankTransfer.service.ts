@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+import { isCompany } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -102,6 +103,22 @@ export class BankTransferService {
     // already paid
     if (!isEligible) {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
+    // Normally unreachable — a company the flag does not allow is never offered the method — but a
+    // flow created while it was on still lists it, and the endpoint can be called directly.
+    if (
+      isCompany(paymentFlow.payerNationalId) &&
+      !(await this.paymentFlowService.isBankTransferAllowedForCompany(
+        paymentFlow.payerNationalId,
+      ))
+    ) {
+      this.logger.warn(
+        `[${input.paymentFlowId}] Bank transfer requested for a company it is not enabled for`,
+      )
+      throw new BadRequestException(
+        BankTransferErrorCode.FailedToCreateBankTransfer,
+      )
     }
 
     const debtor = getBankTransferDebtor(

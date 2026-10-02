@@ -66,6 +66,7 @@ describe('BankTransferService', () => {
     getPaymentFlowDetails: jest.Mock
     getPaymentFlowChargeDetails: jest.Mock
     isEligibleToBePaid: jest.Mock
+    isBankTransferAllowedForCompany: jest.Mock
     logPaymentFlowUpdate: jest.Mock
   }
 
@@ -103,6 +104,7 @@ describe('BankTransferService', () => {
         totalPrice: 14000,
       }),
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
+      isBankTransferAllowedForCompany: jest.fn().mockResolvedValue(true),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
     }
     blikkClient = {
@@ -605,6 +607,23 @@ describe('BankTransferService', () => {
         paymentFlowService.getPaymentFlowDetails.mockResolvedValue(companyFlow)
       })
 
+      it('refuses a company the company flag does not allow, without calling Blikk', async () => {
+        paymentFlowService.isBankTransferAllowedForCompany.mockResolvedValue(
+          false,
+        )
+        const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
+
+        await expect(
+          service.create({ ...createInput, actorNationalId: '0101302129' }),
+        ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
+        expect(
+          paymentFlowService.isBankTransferAllowedForCompany,
+        ).toHaveBeenCalledWith('6010100890')
+        expect(blikkSpy).not.toHaveBeenCalled()
+        expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+        expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      })
+
       it('debits the company with the entered individual authorising it', async () => {
         const blikkSpy = mockBlikkCreate()
 
@@ -639,6 +658,11 @@ describe('BankTransferService', () => {
       const blikkSpy = mockBlikkCreate()
 
       await service.create({ ...createInput, actorNationalId: '0101302129' })
+
+      // The company flag only applies to companies.
+      expect(
+        paymentFlowService.isBankTransferAllowedForCompany,
+      ).not.toHaveBeenCalled()
 
       expect(blikkSpy.mock.calls[0][0]).toMatchObject({
         debtorExternalId: '1234567890',

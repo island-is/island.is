@@ -36,7 +36,12 @@ import {
   CompanyPayer,
 } from '../../../components/BankTransferPayment/BankTransferPayment'
 import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
-import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
+import {
+  ALLOWED_LOCALES,
+  Locale,
+  getAvailablePaymentMethods,
+  isHttpsUrl,
+} from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
   bankTransfer,
@@ -363,26 +368,28 @@ function PaymentPage({
     }
   }
 
-  const availablePaymentMethods = useMemo(() => {
-    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
+  // A company pays by bank transfer with an individual who has the rights to authorise it.
+  const companyPayer: CompanyPayer | undefined =
+    paymentFlow && isCompany(paymentFlow.payerNationalId)
+      ? { nationalId: paymentFlow.payerNationalId, name: paymentFlow.payerName }
+      : undefined
+  const isCompanyPayer = companyPayer !== undefined
 
-    if (isInvoicePaymentEnabledForUser) {
-      methods.push('invoice')
-    }
-
-    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
-    // Once testing is done this flag is removed and the backend controls
-    // availability via availablePaymentMethods.
-    if (isBankTransferPaymentEnabledForUser) {
-      methods.push('bank_transfer')
-    }
-
-    return Array.from(new Set(methods)) as PaymentMethod[]
-  }, [
-    paymentFlow?.availablePaymentMethods,
-    isInvoicePaymentEnabledForUser,
-    isBankTransferPaymentEnabledForUser,
-  ])
+  const availablePaymentMethods = useMemo(
+    () =>
+      getAvailablePaymentMethods({
+        flowMethods: paymentFlow?.availablePaymentMethods ?? [],
+        isInvoicePaymentEnabledForUser,
+        isBankTransferPaymentEnabledForUser,
+        isCompanyPayer,
+      }),
+    [
+      paymentFlow?.availablePaymentMethods,
+      isInvoicePaymentEnabledForUser,
+      isBankTransferPaymentEnabledForUser,
+      isCompanyPayer,
+    ],
+  )
 
   // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
@@ -390,12 +397,6 @@ function PaymentPage({
 
   const isBankTransferPaymentInvalid =
     selectedPaymentMethod === 'bank_transfer' && !methods.formState.isValid
-
-  // A company pays by bank transfer with an individual who has the rights to authorise it.
-  const companyPayer: CompanyPayer | undefined =
-    paymentFlow && isCompany(paymentFlow.payerNationalId)
-      ? { nationalId: paymentFlow.payerNationalId, name: paymentFlow.payerName }
-      : undefined
 
   const invalidFlowSetup =
     !organization ||
