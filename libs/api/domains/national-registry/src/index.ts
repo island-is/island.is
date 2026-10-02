@@ -1,5 +1,3 @@
 export { NationalRegistryModule } from './lib/nationalRegistry.module'
 export { NationalRegistryService } from './lib/nationalRegistry.service'
 export { NationalRegistryUser } from './lib/shared/models/user.model'
-export { Address } from './lib/shared/models/address.model'
-export { formatAddress } from './lib/v3/mapper'

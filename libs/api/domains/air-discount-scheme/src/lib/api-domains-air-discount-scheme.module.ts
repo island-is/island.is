@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AirDiscountSchemeClientModule } from '@island.is/clients/air-discount-scheme'
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { DiscountResolver } from './discount/discount.resolver'
@@ -13,7 +12,6 @@ import { FlightLegResolver } from './flight-leg/flight-leg.resolver'
 import { FlightLegService } from './flight-leg/flight-leg.service'
 import { FlightLegAdminResolver } from './flight-leg-admin/flight-leg-admin.resolver'
 import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.service'
-import { UserResolver } from './user/user.resolver'
 
 @Module({
   providers: [
@@ -25,14 +23,8 @@ import { UserResolver } from './user/user.resolver'
     FlightLegService,
     DiscountAdminResolver,
     DiscountAdminService,
-    UserResolver,
   ],
-  imports: [
-    AirDiscountSchemeClientModule,
-    AuthModule,
-    FeatureFlagModule,
-    NationalRegistryV3ClientModule,
-  ],
+  imports: [AirDiscountSchemeClientModule, AuthModule, FeatureFlagModule],
   exports: [],
 })
 export class AirDiscountSchemeModule {}
