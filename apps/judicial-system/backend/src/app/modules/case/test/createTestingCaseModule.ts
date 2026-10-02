@@ -13,7 +13,7 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
+import { Message } from '@island.is/judicial-system/message'
 
 import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
@@ -335,17 +335,13 @@ export const createTestingCaseModule = async () => {
   const limitedAccessCaseController =
     caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
 
+  // Every message the request queued, in order, and the same messages one
+  // entry per call, for a spec that cares what was registered together
   const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
-  })
-
-  // One entry per call, so that a spec can tell a message queued for after
-  // the commit from one queued for the request regardless of its outcome
   const queuedMessagesAfterCommit: Message[][] = []
   const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
   mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
     queuedMessagesAfterCommit.push(msgs)
   })
 
