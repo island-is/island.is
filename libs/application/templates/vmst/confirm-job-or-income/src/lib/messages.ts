@@ -204,6 +204,12 @@ export const application = defineMessages({
     defaultMessage: 'Bæta við línu',
     description: 'Add line button text for repeater',
   },
+  removeLineLocked: {
+    id: 'vmst.cjoi.application:removeLineLocked',
+    defaultMessage: 'Ekki hægt að eyða eftir 26. hvers mánaðar',
+    description:
+      'Tooltip shown on the disabled delete button during the lock period',
+  },
   entryTitle: {
     id: 'vmst.cjoi.application:entryTitle',
     defaultMessage: 'Lína',

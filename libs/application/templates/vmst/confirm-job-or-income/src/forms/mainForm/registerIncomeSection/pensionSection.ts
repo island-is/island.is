@@ -22,6 +22,7 @@ import {
   formatIsDateLongOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
 import {
   periodToByFrequency,
   toOptionalString,
@@ -94,6 +95,8 @@ export const pensionSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPensionDefaults,
+          canRemoveRow: buildCanRemoveRow(pensionValidationProps.persistedPath),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             pensionType: {

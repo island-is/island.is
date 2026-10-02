@@ -18,6 +18,7 @@ import {
 } from '../../../utils/date'
 import { formatIsDateLong } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
 import { toOptionalString, toRequiredString } from '../../../utils/rowCoercions'
 
 const getContractWorkDefaults = (application: Application) => {
@@ -84,6 +85,10 @@ export const contractWorkSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getContractWorkDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            contractWorkValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             contractJobStart: {
