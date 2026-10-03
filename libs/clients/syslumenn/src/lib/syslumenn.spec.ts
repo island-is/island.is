@@ -40,7 +40,7 @@ import {
   BROKERS,
   ALCOHOL_LICENCES,
 } from './__mock-data__/responses'
-import { PersonType } from './syslumennClient.types'
+import { PersonType, SignatoryEstateTypes } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
 import {
@@ -215,6 +215,35 @@ describe('SyslumennService', () => {
         ESTATE_REGISTRANT_RESPONSE.map(mapEstateRegistrant),
       )
     })
+  })
+
+  describe('getInheritanceReportSignatories', () => {
+    it('should return mapped signatories from array response', async () => {
+      const response = await service.getInheritanceReportSignatories(
+        VALID_DEPARTED_PERSON,
+        SignatoryEstateTypes.Einkaskipti,
+      )
+
+      expect(response).toStrictEqual([
+        { name: 'Heir A', nationalId: '0101302209', signed: false },
+      ])
+    })
+
+    it.each([
+      SignatoryEstateTypes.OskiptBu,
+      SignatoryEstateTypes.ErfdafjarSkyrsla,
+      SignatoryEstateTypes.FyrirFramGreiddur,
+    ])(
+      'should return no signatories for empty non-array %s response',
+      async (estateType) => {
+        const response = await service.getInheritanceReportSignatories(
+          VALID_DEPARTED_PERSON,
+          estateType,
+        )
+
+        expect(response).toStrictEqual([])
+      },
+    )
   })
 
   describe('getRegistryPerson', () => {

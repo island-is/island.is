@@ -5,33 +5,9 @@ import {
   buildCustomField,
   buildDividerField,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { InheritanceSignatory } from '@island.is/clients/syslumenn'
-
-const allSignatoriesSigned = (
-  externalData: Record<string, unknown>,
-): boolean => {
-  // Only show the finish button once signatories have been fetched
-  // successfully. A successful fetch with no signatories is a valid
-  // completion case (every() is vacuously true); a failed fetch keeps the
-  // read-only status view.
-  const fetchSucceeded = getValueViaPath<boolean>(
-    externalData,
-    'getSignatories.data.success',
-  )
-  if (!fetchSucceeded) {
-    return false
-  }
-  const signatories =
-    getValueViaPath<InheritanceSignatory[]>(
-      externalData,
-      'getSignatories.data.signatories',
-    ) ?? []
-  return signatories.every((s) => s.signed)
-}
 
 export const signatoryStatusSection = buildSection({
   id: 'signatoryStatus',
@@ -57,15 +33,14 @@ export const signatoryStatusSection = buildSection({
           space: 6,
           marginTop: 7,
         }),
-        // Read-only signature-status view: the finish button only appears once
-        // all parties have signed at syslumenn, finalizing the application on
-        // the applicant's next visit.
+        // SignatoryStatus owns the live lookup and disables this action until
+        // the latest successful response has no pending signers. Keeping the
+        // action visible lets a successful in-screen refresh recover
+        // applications that entered signing after a transient lookup failure.
         buildSubmitField({
           id: 'reviewActions.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
-          condition: (_answers, externalData) =>
-            allSignatoriesSigned(externalData),
           actions: [
             {
               event: DefaultEvents.SUBMIT,
