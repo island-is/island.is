@@ -33,6 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> =>
       },
     })
     .secrets({
+      DD_CSP_REPORT_CLIENT_TOKEN: '/k8s/DD_CSP_REPORT_CLIENT_TOKEN',
       IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET',
       NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET',
     })
