@@ -297,7 +297,7 @@ export const Control = <
   const { size = 'md' } = props.selectProps
   const label = (
     <label
-      htmlFor={props.selectProps.name}
+      htmlFor={props.selectProps.inputId ?? props.selectProps.name}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       className={cn(styles.label, styles.labelSizes[size], {
