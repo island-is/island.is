@@ -1,41 +1,23 @@
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { User } from '../types/interfaces'
 
 export const useUser = () => {
-  const [user, setUser] = useState<User>()
   const { data: session, status } = useSession()
-  const loading = status === 'loading'
 
-  const timeNow = Math.floor(Date.now() / 1000)
-  const expiryStr = new Date(session?.expires ?? 0).getTime()
-  const expiry = Math.floor(expiryStr / 1000)
-
-  const hasNotExpired = timeNow < expiry
-
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(hasNotExpired),
-  )
+  const expiresAt = session?.expires ? Date.parse(session.expires) : 0
+  const isAuthenticated = status === 'authenticated' && Date.now() < expiresAt
 
   useEffect(() => {
-    if (!hasNotExpired) {
-      setUser(undefined)
-      setIsAuthenticated(false)
+    if (status === 'unauthenticated') {
       sessionStorage.clear()
-    } else {
-      if (!user && session?.user) {
-        setUser(session?.user)
-        setIsAuthenticated(true)
-      }
     }
-  }, [setUser, session, user])
+  }, [status])
 
   return {
     isAuthenticated,
-    setIsAuthenticated,
-    user,
-    setUser,
-    userLoading: loading,
+    user: isAuthenticated ? (session?.user as User) : undefined,
+    userLoading: status === 'loading',
   }
 }
 

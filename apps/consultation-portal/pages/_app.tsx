@@ -104,7 +104,7 @@ ConsultationPortalApplication.getInitialProps = async (
 
   return {
     pageProps: {
-      session: session,
+      session: session ?? undefined,
       apolloState: apolloState,
       isMobile: isMobile,
     },
