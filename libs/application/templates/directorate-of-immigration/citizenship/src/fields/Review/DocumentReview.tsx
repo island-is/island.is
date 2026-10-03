@@ -12,6 +12,7 @@ import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
 import { useLocale } from '@island.is/localization'
 import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { NO } from '@island.is/application/core'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -109,11 +110,13 @@ export const DocumentReview: FC<Props> = ({
                         children: undefined,
                       },
                     })}
-                    {answers.childrenPassport?.map((passportFiles) => {
-                      return passportFiles?.attachment?.map((file) => {
-                        return <Text>{file.name}</Text>
-                      })
-                    })}
+                    {answers.childrenPassport
+                      ?.filter((p) => p?.hasPassport !== NO)
+                      .map((passportFiles) => {
+                        return passportFiles?.attachment?.map((file) => {
+                          return <Text>{file.name}</Text>
+                        })
+                      })}
                     {answers.childrenSupportingDocuments
                       ?.filter(
                         (document) => document?.nationalId === child.nationalId,
