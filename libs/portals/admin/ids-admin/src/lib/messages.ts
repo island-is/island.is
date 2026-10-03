@@ -1532,9 +1532,30 @@ export const m = defineMessages({
     defaultMessage: 'Archive client',
   },
   deleteClientAlertMessage: {
-    id: 'ap.ids-admin:delete-client-alert-message',
+    id: 'ap.ids-admin:delete-client-alert-message-environments',
     defaultMessage:
-      'The client ID will be archived from all available environments and cannot be reused. Authentications will stop working immediately for your client.',
+      'The client will be archived in the selected environments and authentications will stop working there immediately. An archived client ID cannot be reused.',
+  },
+  deleteClientSelectEnvironments: {
+    id: 'ap.ids-admin:delete-client-select-environments',
+    defaultMessage: 'Select environments to archive from',
+  },
+  deleteClientEnvironmentRequired: {
+    id: 'ap.ids-admin:delete-client-environment-required',
+    defaultMessage: 'Select at least one environment to archive from',
+  },
+  clientArchivedInEnvironment: {
+    id: 'ap.ids-admin:client-archived-in-environment',
+    defaultMessage: 'This client is archived in {environment}',
+  },
+  clientArchivedInEnvironmentDescription: {
+    id: 'ap.ids-admin:client-archived-in-environment-description',
+    defaultMessage:
+      'Authentications do not work in this environment until the client is restored.',
+  },
+  restoreInEnvironment: {
+    id: 'ap.ids-admin:restore-in-environment',
+    defaultMessage: 'Restore in {environment}',
   },
   partiallyCreatedClient: {
     id: 'ap.ids-admin:partially-created-client',
