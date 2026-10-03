@@ -1,0 +1,26 @@
+{
+  "name": "clients-rvk-financial-aid",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/rvk-financial-aid/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/rvk-financial-aid"],
+      "options": {
+        "jestConfig": "libs/clients/rvk-financial-aid/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/rvk-financial-aid/gen/fetch -i libs/clients/rvk-financial-aid/src/clientConfig.json --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

@@ -17,11 +17,13 @@ import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/n
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
+import { RvkFinancialAidConfig } from '@island.is/clients/rvk-financial-aid'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { ApplicationFilesConfig } from '@island.is/application/api/files'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { PersonalTaxReturnConfig } from '@island.is/clients/rsk/personal-tax-return'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { PaymentModuleConfig } from '@island.is/application/api/payment'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
@@ -100,11 +102,13 @@ import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorat
         NationalRegistryV3ApplicationsClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
+        RvkFinancialAidConfig,
         FishingLicenseClientConfig,
         signingModuleConfig,
         ApplicationFilesConfig,
         FileStorageConfig,
         CompanyRegistryConfig,
+        PersonalTaxReturnConfig,
         FinancialStatementsInaoClientConfig,
         PaymentModuleConfig,
         ChargeFjsV2ClientConfig,
