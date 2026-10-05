@@ -9,15 +9,13 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CivilClaimantNotificationType,
   type User,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { CourtService } from '../court'
 import {
   Case,
@@ -59,7 +57,7 @@ export class CivilClaimantService {
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
       if (theCase.courtCaseNumber) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
           user,
           caseId: theCase.id,
@@ -67,14 +65,14 @@ export class CivilClaimantService {
         })
       }
 
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
         elementId: updatedCivilClaimant.id,
       })
       // send a notification to follow-up on scheduled court date
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         user,

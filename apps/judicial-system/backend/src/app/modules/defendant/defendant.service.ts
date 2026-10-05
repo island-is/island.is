@@ -10,10 +10,7 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
@@ -28,6 +25,7 @@ import {
   RequestCaseNotificationType,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { hasStandingVerdictAppeal } from '../appeal-case/appealCase.helpers'
 import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
@@ -59,7 +57,7 @@ export class DefendantService {
     theCase: Case,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -87,7 +85,7 @@ export class DefendantService {
     defendant: Defendant,
     user: User,
   ): void {
-    addMessagesToQueue(
+    queueMessagesAfterCommit(
       {
         type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
         user,
@@ -112,7 +110,7 @@ export class DefendantService {
         ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
         : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DEFENDANT_NOTIFICATION,
       caseId,
       elementId: defendant.id,
@@ -144,6 +142,13 @@ export class DefendantService {
         user,
       )
       this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
+    } else if (
+      updatedDefendant.defenderEmail !== oldDefendant.defenderEmail ||
+      updatedDefendant.defenderName !== oldDefendant.defenderName
+    ) {
+      // Defender email or name changed on this defendant — re-deliver defender info to court.
+      // Case-level defender field changes still trigger via case.service (dual-write era).
+      this.addMessagesForDeliverDefendantToCourtToQueue(updatedDefendant, user)
     }
   }
 
@@ -162,7 +167,7 @@ export class DefendantService {
       !oldDefendant.isDefenderChoiceConfirmed
     ) {
       // Defender choice was just confirmed by the court
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDANT,
         user,
         caseId: theCase.id,
@@ -176,14 +181,14 @@ export class DefendantService {
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
           // send general defender assignment email
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
             elementId: updatedDefendant.id,
           })
           // send a notification to follow-up on scheduled court date
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
             user,
@@ -611,7 +616,7 @@ export class DefendantService {
     )
 
     if (updatedDefendant.defenderChoice === DefenderChoice.DELEGATE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DEFENDANT_NOTIFICATION,
         caseId: theCase.id,
         elementId: updatedDefendant.id,
@@ -626,7 +631,7 @@ export class DefendantService {
         updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
     ) {
       // Notify the court if the defendant has changed the defender choice
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DEFENDANT_NOTIFICATION,
         caseId: theCase.id,
         elementId: updatedDefendant.id,
@@ -733,7 +738,7 @@ export class DefendantService {
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
         defendant.nationalId.replace('-', ''),
-        theCase.defenderEmail,
+        defendant.defenderEmail,
       )
       .then(() => {
         return { delivered: true }
@@ -761,8 +766,8 @@ export class DefendantService {
         theCase.court?.name,
         theCase.courtCaseNumber,
         defendant.nationalId,
-        theCase.defenderName,
-        theCase.defenderEmail,
+        defendant.defenderName,
+        defendant.defenderEmail,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {

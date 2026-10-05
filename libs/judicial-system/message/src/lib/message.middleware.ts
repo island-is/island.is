@@ -29,72 +29,18 @@ const requireMessageStore = (): Message[] => {
 }
 
 /**
- * A Sequelize `Transaction`, seen through the one method this library needs.
- * Named structurally so that the library does not depend on sequelize for a
- * type. Sequelize 6 runs the registered functions when `commit()` completes
- * (whether or not the COMMIT itself succeeded) and never when the transaction
- * is rolled back. A savepoint runs its own functions when its own `commit()`
- * runs, not when the outer transaction commits, so pass the outer transaction
- * rather than a savepoint.
- */
-export interface AfterCommitTransaction {
-  afterCommit(fn: () => void): void
-}
-
-/**
- * Queues messages for the request regardless of what happens to the database
- * work they announce: `MessageMiddleware` flushes the request's messages when
- * the response ends, and it ends for a rolled-back request too. Messages queued
- * inside a transaction that then rolls back are therefore still sent, and the
- * message handler retries a delivery whose subject was never committed.
+ * Queues messages for the request. `MessageMiddleware` flushes them when the
+ * response ends, whatever happened to the database work in between: a request
+ * whose transaction rolled back still sends them, and the message handler then
+ * retries a delivery whose subject was never committed.
  *
- * Prefer `addMessagesToQueueAfterCommit`, which sends nothing for a
- * transaction that is rolled back. This form remains for the call sites that
- * have not yet been migrated to it, so that they keep the behaviour they have
- * today.
+ * The backend queues from a request through `queueMessagesAfterCommit` in its
+ * middleware, which registers the push with the request's transaction context
+ * so that it happens only once the work is durable. Call this directly only
+ * from there, or from a call site not yet moved to it.
  */
 export const addMessagesToQueue = (...messages: Message[]) => {
   requireMessageStore().push(...messages)
-}
-
-/**
- * Queues messages for the request once `transaction` has committed, so that a
- * transaction which rolls back sends nothing.
- *
- * The transaction is required rather than optional: a call site must either
- * pass the transaction its database work runs in, or state `undefined` to say
- * that it has none. Without a transaction the writes are autocommitted and
- * already durable, so the messages are queued immediately and flushed when the
- * response ends, exactly as `addMessagesToQueue` does. Omitting the argument is
- * a type error, so a transaction that was not threaded through to the call site
- * cannot silently fall through to the unconditional behaviour.
- *
- * Call it while the transaction is still open. Sequelize accepts a function
- * registered on a transaction that has already committed but never runs it,
- * so the messages would be lost without a trace. Inside a `registerAfterCommit`
- * callback the work is already committed: pass `undefined` there.
- *
- * The request's message store is looked up when this is called, so calling it
- * outside a request throws right away rather than when the transaction commits.
- */
-export const addMessagesToQueueAfterCommit = (
-  transaction: AfterCommitTransaction | undefined,
-  ...messages: Message[]
-) => {
-  const store = requireMessageStore()
-
-  if (!transaction) {
-    store.push(...messages)
-
-    return
-  }
-
-  // The store is captured here rather than read back inside the hook, so that
-  // the messages reach this request's store even if the transaction is
-  // committed from outside the request's async context.
-  transaction.afterCommit(() => {
-    store.push(...messages)
-  })
 }
 
 @Injectable()

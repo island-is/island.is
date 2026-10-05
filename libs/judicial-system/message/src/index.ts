@@ -2,12 +2,7 @@ export { MessageType, messageEndpoint } from './lib/message'
 export { type Message } from './lib/message'
 export { MessageModule } from './lib/message.module'
 export { MessageService } from './lib/message.service'
-export {
-  MessageMiddleware,
-  addMessagesToQueue,
-  addMessagesToQueueAfterCommit,
-  type AfterCommitTransaction,
-} from './lib/message.middleware'
+export { MessageMiddleware, addMessagesToQueue } from './lib/message.middleware'
 export { messageModuleConfig } from './lib/message.config'
 export {
   messageTypeToSuspensionCategory,

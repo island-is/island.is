@@ -45,6 +45,7 @@ export const updateFormFn = async (
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             isInaccessible: newForm.isInaccessible,
             validateEligibility: newForm.validateEligibility,
+            enableApplicationPdfDownload: newForm.enableApplicationPdfDownload,
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,
             useValidate: newForm.useValidate,

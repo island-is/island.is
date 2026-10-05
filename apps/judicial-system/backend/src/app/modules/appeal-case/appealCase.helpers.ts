@@ -353,15 +353,12 @@ export const hasOutOfCourtAppeal = (events: AppealEventLog[]): boolean =>
 //     spokesperson of a party (defendant / civil claimant) that has an APPEALED
 //     event;
 //   - request-case defence is collective (no party on the event), so it resolves
-//     to the case's *current* registered defender.
+//     to any current defender registered on a defendant of the case.
 // This does not cover in-court ruling-order appeals - their live per-party
 // withdrawal state is on the decision row (see userHasActiveInCourtAppeal), which
 // the event log only catches up to on session confirmation.
 export const userIsAppellant = (
-  theCase: Pick<
-    Case,
-    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
-  >,
+  theCase: Pick<Case, 'type' | 'defendants' | 'civilClaimants'>,
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {
@@ -388,12 +385,15 @@ export const userIsAppellant = (
   )
 
   if (isRequestCase(theCase.type)) {
-    // Collective defence: no party on the event, so authorize the case's current
-    // registered defender.
+    // Collective defence: no party on the event, so authorize any current
+    // defender registered on a defendant of the case.
     return (
       defenceAppealed &&
-      Boolean(theCase.defenderNationalId) &&
-      theCase.defenderNationalId === user.nationalId
+      Boolean(
+        theCase.defendants?.some(
+          (defendant) => defendant.defenderNationalId === user.nationalId,
+        ),
+      )
     )
   }
 
@@ -485,10 +485,7 @@ export const appellantRepresentativeNationalIds = (
 // here rather than in userIsAppellant, and is used by both the withdrawal guard
 // and the case tables' cancel-appeal action so they stay in sync.
 export const canWithdrawCaseLevelAppeal = (
-  theCase: Pick<
-    Case,
-    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
-  >,
+  theCase: Pick<Case, 'type' | 'defendants' | 'civilClaimants'>,
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {
