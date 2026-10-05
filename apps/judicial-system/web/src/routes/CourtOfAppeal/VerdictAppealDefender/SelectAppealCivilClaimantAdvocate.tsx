@@ -68,6 +68,15 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
       setWorkingCase,
     )
 
+  // See SelectAppealDefender: a contact detail edited on an advocate still
+  // being read off the district court record has to bring the name and
+  // national id with it, or the appeal would name somebody with no name.
+  const withIdentity = (update: UpdateCivilClaimant): UpdateCivilClaimant => ({
+    ...update,
+    appealSpokespersonName: advocate.name ?? null,
+    appealSpokespersonNationalId: advocate.nationalId ?? null,
+  })
+
   const setHasSpokesperson = (hasAppealSpokesperson: boolean) =>
     send({
       hasAppealSpokesperson,
@@ -169,7 +178,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                   {
                     caseId: workingCase.id,
                     civilClaimantId: civilClaimant.id,
-                    appealSpokespersonEmail,
+                    ...withIdentity({ appealSpokespersonEmail }),
                   },
                   setWorkingCase,
                 )
@@ -178,7 +187,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                 updateCivilClaimant({
                   caseId: workingCase.id,
                   civilClaimantId: civilClaimant.id,
-                  appealSpokespersonEmail,
+                  ...withIdentity({ appealSpokespersonEmail }),
                 })
               }
               onPhoneNumberChange={(appealSpokespersonPhoneNumber) =>
@@ -186,7 +195,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                   {
                     caseId: workingCase.id,
                     civilClaimantId: civilClaimant.id,
-                    appealSpokespersonPhoneNumber,
+                    ...withIdentity({ appealSpokespersonPhoneNumber }),
                   },
                   setWorkingCase,
                 )
@@ -195,7 +204,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                 updateCivilClaimant({
                   caseId: workingCase.id,
                   civilClaimantId: civilClaimant.id,
-                  appealSpokespersonPhoneNumber,
+                  ...withIdentity({ appealSpokespersonPhoneNumber }),
                 })
               }
               disabled={

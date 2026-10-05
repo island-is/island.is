@@ -55,6 +55,17 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
       setWorkingCase,
     )
 
+  // A contact detail edited on a defender still being read off the district
+  // court record has to bring the name and national id with it. Writing the
+  // email alone would make the appeal name somebody with no name: the screen
+  // would lose the defender it was showing, and confirming would be refused.
+  // Once the appeal names someone these are the values already there.
+  const withIdentity = (update: UpdateDefendant): UpdateDefendant => ({
+    ...update,
+    appealDefenderName: appealDefender.name ?? null,
+    appealDefenderNationalId: appealDefender.nationalId ?? null,
+  })
+
   const toggleWaived = (appealDefenderWaived: boolean) =>
     send({
       defendantId: defendant.id,
@@ -148,8 +159,10 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
             updateDefendantState(
               {
                 caseId: workingCase.id,
-                defendantId: defendant.id,
-                appealDefenderEmail,
+                ...withIdentity({
+                  defendantId: defendant.id,
+                  appealDefenderEmail,
+                }),
               },
               setWorkingCase,
             )
@@ -157,16 +170,20 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
           onEmailSave={(appealDefenderEmail) =>
             updateDefendant({
               caseId: workingCase.id,
-              defendantId: defendant.id,
-              appealDefenderEmail,
+              ...withIdentity({
+                defendantId: defendant.id,
+                appealDefenderEmail,
+              }),
             })
           }
           onPhoneNumberChange={(appealDefenderPhoneNumber) =>
             updateDefendantState(
               {
                 caseId: workingCase.id,
-                defendantId: defendant.id,
-                appealDefenderPhoneNumber,
+                ...withIdentity({
+                  defendantId: defendant.id,
+                  appealDefenderPhoneNumber,
+                }),
               },
               setWorkingCase,
             )
@@ -174,8 +191,10 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
           onPhoneNumberSave={(appealDefenderPhoneNumber) =>
             updateDefendant({
               caseId: workingCase.id,
-              defendantId: defendant.id,
-              appealDefenderPhoneNumber,
+              ...withIdentity({
+                defendantId: defendant.id,
+                appealDefenderPhoneNumber,
+              }),
             })
           }
           disabled={hasWaived || isConfirmed}
