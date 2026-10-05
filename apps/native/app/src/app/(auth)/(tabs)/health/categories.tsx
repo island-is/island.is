@@ -12,6 +12,7 @@ import { LinkRowButton } from '@/components/link-row-button/link-row-button'
 import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
 import { getConfig } from '@/config'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
+import { useGetHealthTreatmentsQuery } from '@/graphql/types/schema'
 import { Href } from 'expo-router'
 
 const ContentContainer = styled.View`
@@ -73,6 +74,17 @@ export default function HealthCategoriesScreen() {
     false,
     null,
   )
+  const isTreatmentsEnabled = useFeatureFlag(
+    'isServicePortalHealthTreatmentsPageEnabled',
+    false,
+    null,
+  )
+
+  // The resolver is behind the same flag, so querying while it is off 403s.
+  const { data: treatmentsData } = useGetHealthTreatmentsQuery({
+    skip: !isTreatmentsEnabled,
+  })
+  const treatments = treatmentsData?.healthDirectorateTreatments ?? []
 
   const healthCardRows = useMemo(() => {
     // Build the medicine subLinks based on feature flags
@@ -164,34 +176,49 @@ export default function HealthCategoriesScreen() {
   const externalLinks = [
     {
       id: 'referrals',
-      titleId: 'health.categories.referrals',
+      title: intl.formatMessage({ id: 'health.categories.referrals' }),
       url: `${origin}/minarsidur/heilsa/tilvisanir`,
     },
     {
       id: 'paymentsAndRights',
-      titleId: 'health.categories.paymentsAndRights',
+      title: intl.formatMessage({ id: 'health.categories.paymentsAndRights' }),
       url: `${origin}/minarsidur/heilsa/greidslur`,
     },
     {
       id: 'aidsAndNutrition',
-      titleId: 'health.overview.aidsAndNutrition',
+      title: intl.formatMessage({ id: 'health.overview.aidsAndNutrition' }),
       url: `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
     },
     {
       id: 'therapy',
-      titleId: 'health.overview.therapy',
+      title: intl.formatMessage({ id: 'health.overview.therapy' }),
       url: `${origin}/minarsidur/heilsa/thjalfun`,
     },
     {
       id: 'waitingLists',
-      titleId: 'health.categories.waitingLists',
+      title: intl.formatMessage({ id: 'health.categories.waitingLists' }),
       url: `${origin}/minarsidur/heilsa/bidlistar`,
     },
     {
       id: 'medicalRecords',
-      titleId: 'health.categories.medicalRecords',
+      title: intl.formatMessage({ id: 'health.categories.medicalRecords' }),
       url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,
     },
+    // One row per treatment, mirroring the treatment navigation on my pages.
+    // Names can repeat across providers, so the id carries the render key.
+    ...treatments.map((treatment) => {
+      const name = treatment.name.trim()
+      return {
+        id: `treatment-${treatment.id}`,
+        title: name
+          ? intl.formatMessage(
+              { id: 'health.categories.treatmentWithName' },
+              { name },
+            )
+          : intl.formatMessage({ id: 'health.categories.treatment' }),
+        url: `${origin}/minarsidur/heilsa/medferd/${treatment.id}`,
+      }
+    }),
   ]
 
   return (
@@ -217,8 +244,9 @@ export default function HealthCategoriesScreen() {
         </CategoriesContainer>
         <MoreInfoContiner
           externalLinks={externalLinks.map((link) => ({
+            id: link.id,
             link: link.url,
-            title: intl.formatMessage({ id: link.titleId }),
+            title: link.title,
             isExternal: true,
           }))}
         />
