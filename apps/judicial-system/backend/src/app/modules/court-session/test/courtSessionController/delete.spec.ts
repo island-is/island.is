@@ -10,6 +10,7 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import { FileService } from '../../../file'
 import {
   AppealCaseRepositoryService,
@@ -64,9 +65,7 @@ describe('CourtSessionController - Delete', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
@@ -100,12 +99,18 @@ describe('CourtSessionController - Delete', () => {
       const then = {} as Then
 
       try {
-        then.result = await courtSessionController.delete(
-          caseId,
-          courtSession.id,
-          theCase,
-          courtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.delete(
+            caseId,
+            courtSession.id,
+            theCase,
+            courtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
