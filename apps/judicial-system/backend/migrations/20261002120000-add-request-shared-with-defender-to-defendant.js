@@ -14,11 +14,7 @@ module.exports = {
         'defendant',
         'request_shared_with_defender',
         {
-          type: Sequelize.ENUM(
-            'READY_FOR_COURT',
-            'COURT_DATE',
-            'NOT_SHARED',
-          ),
+          type: Sequelize.ENUM('READY_FOR_COURT', 'COURT_DATE', 'NOT_SHARED'),
           allowNull: true,
         },
         { transaction },

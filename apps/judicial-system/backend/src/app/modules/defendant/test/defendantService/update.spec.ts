@@ -1,6 +1,10 @@
 import { Transaction } from 'sequelize'
 
-import { CaseType, RequestSharedWithDefender, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  RequestSharedWithDefender,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -191,8 +195,11 @@ describe('DefendantService - update', () => {
     let mockCaseRepositoryService: CaseRepositoryService
 
     beforeEach(async () => {
-      const { defendantRepositoryService, caseRepositoryService, defendantService } =
-        await createTestingDefendantModule()
+      const {
+        defendantRepositoryService,
+        caseRepositoryService,
+        defendantService,
+      } = await createTestingDefendantModule()
 
       mockDefendantRepositoryService = defendantRepositoryService
       mockCaseRepositoryService = caseRepositoryService
