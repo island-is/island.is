@@ -1,13 +1,11 @@
 import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 
-const REQUEST_SHARED_PERMISSIVENESS: Record<
-  RequestSharedWithDefender,
-  number
-> = {
-  [RequestSharedWithDefender.READY_FOR_COURT]: 3,
-  [RequestSharedWithDefender.COURT_DATE]: 2,
-  [RequestSharedWithDefender.NOT_SHARED]: 1,
-}
+const REQUEST_SHARED_PERMISSIVENESS: Record<RequestSharedWithDefender, number> =
+  {
+    [RequestSharedWithDefender.READY_FOR_COURT]: 3,
+    [RequestSharedWithDefender.COURT_DATE]: 2,
+    [RequestSharedWithDefender.NOT_SHARED]: 1,
+  }
 
 /**
  * Most permissive request-sharing timing among defendants that share a

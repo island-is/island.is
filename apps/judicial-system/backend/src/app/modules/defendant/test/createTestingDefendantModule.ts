@@ -113,8 +113,9 @@ export const createTestingDefendantModule = async () => {
   const defendantRepositoryService =
     defendantModule.get<DefendantRepositoryService>(DefendantRepositoryService)
 
-  const caseRepositoryService =
-    defendantModule.get<CaseRepositoryService>(CaseRepositoryService)
+  const caseRepositoryService = defendantModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
 
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
