@@ -93,6 +93,7 @@ export const Completed = () => {
           label={formatMessage(m.enableApplicationPdfDownload)}
           checked={control.form.enableApplicationPdfDownload ?? false}
           disabled={isReadOnly}
+          large={true}
           onChange={(event) => {
             controlDispatch({
               type: 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD',
