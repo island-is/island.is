@@ -750,6 +750,8 @@ export const en: TranslatedMessages = {
   'stepUp.waitingApp':
     'Open the Auðkenni app and approve if the security code matches.',
   'stepUp.waitingSim': 'Approve on your phone if the security code matches.',
+  'stepUp.useApp': 'Use the Auðkenni app instead',
+  'stepUp.useSim': 'Use electronic ID on your phone instead',
   'stepUp.timeLeft': 'Time left: {minutes}:{seconds}',
   'stepUp.denied': 'The authentication was cancelled. Try again.',
   'stepUp.timedOut': 'The authentication timed out. Try again.',

@@ -28,6 +28,7 @@ type State =
       method: StepUpMethod
       code?: string | null
       deadline: number
+      availableMethods: StepUpMethod[]
     }
 
 const Host = styled(SafeAreaView)`
@@ -64,9 +65,10 @@ const notices: Record<Notice, { type: 'warning' | 'error'; id: string }> = {
 
 /**
  * Shown in place of a locked area. One button, a code, and the person approves
- * on their own phone; the server decides how to reach them (the Auðkenni app,
- * or the SIM number they last logged in with). There is deliberately no way to
- * send it anywhere else.
+ * on their own phone. The server decides how to reach them from the way they
+ * logged in (the Auðkenni app, or their own SIM); they can switch to the other
+ * one if the server offers it. There is deliberately no way to send it anywhere
+ * else.
  */
 export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
   const intl = useIntl()
@@ -126,43 +128,47 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
     [checkStepUp, onUnlocked],
   )
 
-  const begin = useCallback(async () => {
-    clearTimeout(pollTimer.current)
-    setState({ name: 'starting' })
+  const begin = useCallback(
+    async (method?: StepUpMethod) => {
+      clearTimeout(pollTimer.current)
+      setState({ name: 'starting' })
 
-    try {
-      const res = await startStepUp()
-      const started = res.data?.stepUpStart
-      if (!started) {
-        throw new Error('No step-up started')
+      try {
+        const res = await startStepUp({ variables: { method } })
+        const started = res.data?.stepUpStart
+        if (!started) {
+          throw new Error('No step-up started')
+        }
+        if (unmounted.current) {
+          return
+        }
+
+        // The person may switch to the Auðkenni app on this phone to approve;
+        // coming back shouldn't ask for the PIN on top of it.
+        suppressLockScreen()
+
+        setState({
+          name: 'waiting',
+          method: started.method,
+          code: started.verificationCode,
+          deadline: Date.now() + started.expiresIn * 1000,
+          availableMethods: started.availableMethods,
+        })
+        poll(started.stepUpId, started.interval)
+      } catch (error) {
+        const tooMany =
+          error instanceof ApolloError &&
+          error.graphQLErrors.some(
+            (e) => e.extensions?.code === TOO_MANY_ATTEMPTS,
+          )
+        setState({
+          name: 'idle',
+          notice: tooMany ? 'too_many_attempts' : 'failed',
+        })
       }
-      if (unmounted.current) {
-        return
-      }
-
-      // The person may switch to the Auðkenni app on this phone to approve;
-      // coming back shouldn't ask for the PIN on top of it.
-      suppressLockScreen()
-
-      setState({
-        name: 'waiting',
-        method: started.method,
-        code: started.verificationCode,
-        deadline: Date.now() + started.expiresIn * 1000,
-      })
-      poll(started.stepUpId, started.interval)
-    } catch (error) {
-      const tooMany =
-        error instanceof ApolloError &&
-        error.graphQLErrors.some(
-          (e) => e.extensions?.code === TOO_MANY_ATTEMPTS,
-        )
-      setState({
-        name: 'idle',
-        notice: tooMany ? 'too_many_attempts' : 'failed',
-      })
-    }
-  }, [startStepUp, poll])
+    },
+    [startStepUp, poll],
+  )
 
   // Countdown shown while waiting. The server decides when it has expired;
   // this is only for the person's benefit.
@@ -181,6 +187,13 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
 
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
+
+  // The other way of reaching the person, if the server offers one: e.g. their
+  // SIM isn't at hand.
+  const otherMethod =
+    state.name === 'waiting'
+      ? state.availableMethods.find((method) => method !== state.method)
+      : undefined
 
   return (
     <Host>
@@ -241,6 +254,19 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
                   },
                 )}
               </Typography>
+              {otherMethod && (
+                <Button
+                  isOutlined
+                  style={{ marginTop: 24 }}
+                  title={intl.formatMessage({
+                    id:
+                      otherMethod === StepUpMethod.App
+                        ? 'stepUp.useApp'
+                        : 'stepUp.useSim',
+                  })}
+                  onPress={() => void begin(otherMethod)}
+                />
+              )}
             </Full>
           )}
 
