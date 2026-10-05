@@ -46,9 +46,9 @@ const paste = (target: HTMLInputElement, text: string) =>
 describe('BankTransferPayment', () => {
   describe('pasting an account number', () => {
     it.each([
-      ['separated and short', '1-26-1234'],
-      ['separated and full', '0001-26-001234'],
-      ['bare digits', '000126001234'],
+      ['separated and short', '1-12-1234'],
+      ['separated and full', '0001-12-001234'],
+      ['bare digits', '000112001234'],
     ])('splits %s across the inputs from the bank input', async (_, text) => {
       const { bank, ledger, account } = renderInputs()
       bank.focus()
@@ -59,7 +59,7 @@ describe('BankTransferPayment', () => {
       // at that moment, so focusing before the pasted value has rendered wiped it.
       await waitFor(() => expect(account).toBe(document.activeElement))
       expect(bank.value).toBe('0001')
-      expect(ledger.value).toBe('26')
+      expect(ledger.value).toBe('12')
       expect(account.value).toBe('001234')
     })
 
@@ -67,11 +67,11 @@ describe('BankTransferPayment', () => {
       const { bank, ledger, account } = renderInputs()
       ledger.focus()
 
-      paste(ledger, '26-1234')
+      paste(ledger, '12-1234')
 
       await waitFor(() => expect(account).toBe(document.activeElement))
       expect(bank.value).toBe('')
-      expect(ledger.value).toBe('26')
+      expect(ledger.value).toBe('12')
       expect(account.value).toBe('001234')
     })
 
