@@ -28,6 +28,7 @@ export class FlightLegResolver {
 
   @Query(() => [FlightLeg], {
     name: 'airDiscountSchemeUserAndRelationsFlights',
+    deprecationReason: 'Use airDiscountSchemeMembers',
   })
   @Audit()
   async getFlightLegs(@CurrentUser() user: User): Promise<FlightLeg[]> {

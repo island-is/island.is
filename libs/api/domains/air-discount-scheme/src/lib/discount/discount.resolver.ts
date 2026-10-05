@@ -26,7 +26,10 @@ export class DiscountResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
+  @Query(() => [Discount], {
+    name: 'airDiscountSchemeDiscounts',
+    deprecationReason: 'Use airDiscountSchemeMembers',
+  })
   @Audit()
   async getDiscount(@CurrentUser() user: User): Promise<Discount[]> {
     if (await isServiceDisabled(this.featureFlagService, user)) {

@@ -12,6 +12,9 @@ import { FlightLegResolver } from './flight-leg/flight-leg.resolver'
 import { FlightLegService } from './flight-leg/flight-leg.service'
 import { FlightLegAdminResolver } from './flight-leg-admin/flight-leg-admin.resolver'
 import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.service'
+import { MemberResolver } from './member/member.resolver'
+import { MemberService } from './member/member.service'
+import { UsedFlightLegsLoader } from './member/usedFlightLegs.loader'
 
 @Module({
   providers: [
@@ -23,8 +26,10 @@ import { FlightLegAdminService } from './flight-leg-admin/flight-leg-admin.servi
     FlightLegService,
     DiscountAdminResolver,
     DiscountAdminService,
+    MemberResolver,
+    MemberService,
+    UsedFlightLegsLoader,
   ],
   imports: [AirDiscountSchemeClientModule, AuthModule, FeatureFlagModule],
-  exports: [],
 })
 export class AirDiscountSchemeModule {}
