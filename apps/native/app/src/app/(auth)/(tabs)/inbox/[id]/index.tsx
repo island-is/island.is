@@ -100,12 +100,8 @@ export default function DocumentScreen() {
     refetchDocumentContent,
   } = useDocument(id, isUrgent)
 
-  // Links inside an html document would otherwise navigate the WebView itself,
-  // replacing the document with no way back. Open them the same way the action
-  // buttons do instead, and let the OS handle non-web schemes.
-  // Dispatch on the scheme rather than `isTopFrame`: iOS reports it false for
-  // non-web schemes (their url never matches mainDocumentURL) and Android
-  // leaves it undefined entirely, so it filters out the links we want.
+  // Open links externally instead of letting them replace the document. Keyed on
+  // scheme, not `isTopFrame` - iOS reports it false for mailto/tel, Android omits it.
   const onShouldStartLoadWithRequest = useCallback(
     ({ url }: ShouldStartLoadRequest) => {
       if (/^(mailto|tel|sms):/i.test(url)) {
@@ -122,8 +118,16 @@ export default function DocumentScreen() {
     [openBrowser],
   )
 
-  // Keep the pdf viewer clear of the floating tab bar it renders under.
+  // Clears the floating tab bar the viewer renders under.
   const { bottom } = useSafeAreaInsets()
+
+  // Wait for the chrome above to land, so the viewer's first layout is its last.
+  const [querySettled, setQuerySettled] = useState(false)
+  useEffect(() => {
+    if (!loading) {
+      setQuerySettled(true)
+    }
+  }, [loading])
 
   // Force PdfView to remount when screen regains focus (Android recycles the native surface)
   const [pdfKey, setPdfKey] = useState(0)
@@ -132,6 +136,16 @@ export default function DocumentScreen() {
       setPdfKey((k) => k + 1)
     }, []),
   )
+
+  // PdfView scales on uri, before layout, so it paints once at 100%. Hide it
+  // until the real fit lands a frame later.
+  const [pdfScaled, setPdfScaled] = useState(false)
+  useEffect(() => {
+    setPdfScaled(false)
+    // Never leave the document invisible if the callback is missed.
+    const timeout = setTimeout(() => setPdfScaled(true), 1000)
+    return () => clearTimeout(timeout)
+  }, [pdfUri, pdfKey])
 
   // Show confirmation alert when an urgent document requires user acknowledgement
   useEffect(() => {
@@ -327,7 +341,7 @@ export default function DocumentScreen() {
       <ContentArea>
         {error ? (
           <Problem type="error" withContainer />
-        ) : !ready ? (
+        ) : !ready || !querySettled ? (
           <Loader
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
           />
@@ -335,7 +349,16 @@ export default function DocumentScreen() {
           <PdfView
             key={pdfKey}
             uri={pdfUri}
-            style={{ flex: 1, marginBottom: bottom }}
+            style={{
+              flex: 1,
+              marginBottom: bottom,
+              opacity: pdfScaled ? 1 : 0,
+            }}
+            onLoadComplete={() =>
+              requestAnimationFrame(() => setPdfScaled(true))
+            }
+            // Fit width so the bottom inset can't affect the scale.
+            fitMode="width"
           />
         ) : contentType === 'html' && htmlSource ? (
           <WebView
