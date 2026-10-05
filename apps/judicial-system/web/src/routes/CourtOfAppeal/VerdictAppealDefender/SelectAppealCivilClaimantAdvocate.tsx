@@ -198,7 +198,9 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                   appealSpokespersonPhoneNumber,
                 })
               }
-              disabled={isLawyer === null || isLawyer === undefined || isConfirmed}
+              disabled={
+                isLawyer === null || isLawyer === undefined || isConfirmed
+              }
             />
           </>
         ) : (
@@ -218,7 +220,9 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           <Box display="flex" justifyContent="flexEnd">
             <Button
               variant="text"
-              disabled={!advocate.name || isLawyer === null || isLawyer === undefined}
+              disabled={
+                !advocate.name || isLawyer === null || isLawyer === undefined
+              }
               onClick={() => setDisplayModal(true)}
             >
               {`Staðfesta ${advocateTitle.toLowerCase()}`}
@@ -235,11 +239,17 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
       </BlueBox>
       {displayModal && (
         <Modal
-          title={isConfirmed ? `Breyta ${advocateTitle.toLowerCase()}` : `Staðfesta ${advocateTitle.toLowerCase()}`}
+          title={
+            isConfirmed
+              ? `Breyta ${advocateTitle.toLowerCase()}`
+              : `Staðfesta ${advocateTitle.toLowerCase()}`
+          }
           text={
             isConfirmed
               ? 'Ef þú breytir skráningunni þarf að staðfesta hana að nýju.'
-              : `Með því að staðfesta skráir þú ${advocate.name} sem ${advocateTitle.toLowerCase()} ${
+              : `Með því að staðfesta skráir þú ${
+                  advocate.name
+                } sem ${advocateTitle.toLowerCase()} ${
                   civilClaimant.name
                 } fyrir Landsrétti.`
           }

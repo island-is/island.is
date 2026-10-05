@@ -1,7 +1,13 @@
 import type { ChangeEvent, FC } from 'react'
 import { useContext, useState } from 'react'
 
-import { AlertMessage, Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Checkbox,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContext,

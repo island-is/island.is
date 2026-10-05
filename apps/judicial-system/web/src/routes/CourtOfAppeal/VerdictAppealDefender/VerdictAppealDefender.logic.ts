@@ -50,9 +50,7 @@ export const getAppealDefender = (defendant: Defendant): Advocate =>
  * an appeal for the defendant, never for a claimant, so it is this court's own
  * record or the district court's.
  */
-export const getAppealSpokesperson = (
-  civilClaimant: CivilClaimant,
-): Advocate =>
+export const getAppealSpokesperson = (civilClaimant: CivilClaimant): Advocate =>
   civilClaimant.appealSpokespersonName ||
   civilClaimant.appealSpokespersonNationalId ||
   civilClaimant.appealSpokespersonEmail ||
@@ -82,14 +80,12 @@ export const getAppealSpokesperson = (
 export const getHasAppealSpokesperson = (
   civilClaimant: CivilClaimant,
 ): boolean =>
-  civilClaimant.hasAppealSpokesperson ??
-  Boolean(civilClaimant.hasSpokesperson)
+  civilClaimant.hasAppealSpokesperson ?? Boolean(civilClaimant.hasSpokesperson)
 
 export const getAppealSpokespersonIsLawyer = (
   civilClaimant: CivilClaimant,
 ): boolean | null | undefined =>
-  civilClaimant.appealSpokespersonIsLawyer ??
-  civilClaimant.spokespersonIsLawyer
+  civilClaimant.appealSpokespersonIsLawyer ?? civilClaimant.spokespersonIsLawyer
 
 /**
  * Whether every party's advocate has been settled, which is what the step
