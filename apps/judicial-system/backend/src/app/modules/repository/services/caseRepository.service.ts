@@ -294,7 +294,7 @@ export class CaseRepositoryService {
     let current: Pick<Case, 'id' | 'state'> = theCase
     const visited = new Set<string>([theCase.id])
 
-    while (true) {
+    for (;;) {
       const child = await this.caseModel.findOne({
         where: {
           parentCaseId: current.id,
