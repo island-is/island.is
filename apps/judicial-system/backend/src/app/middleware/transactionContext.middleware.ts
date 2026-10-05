@@ -181,7 +181,11 @@ export class TransactionContextMiddleware implements NestMiddleware {
         // failed without one never reaches the interceptor, and nothing drains
         // the callbacks from here on: a slot left open would accept a late
         // registration and lose it without a trace, where a settled one
-        // refuses it.
+        // refuses it. Callbacks already registered are another matter: the
+        // interceptor skips a slot that is not open, so a request that opened
+        // no transaction and was aborted after its handler returned but
+        // before the interceptor got to it drops them - its work is durable,
+        // its announcements are not made.
         context.settlement = 'settled'
 
         if (!context.transaction) {

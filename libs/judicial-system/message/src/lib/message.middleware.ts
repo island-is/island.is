@@ -18,9 +18,9 @@ interface MessageStore {
   /** Messages pushed since the store was last flushed. */
   messages: Message[]
   /**
-   * Whether the response has ended and the store has been flushed. Nothing
-   * flushes it again after that, so a message pushed from then on is sent
-   * right away rather than left in the store.
+   * Whether the response has ended and the flush that goes with it has begun.
+   * Nothing flushes the store again after that, so a message pushed from then
+   * on is sent right away rather than left in the store.
    */
   flushed: boolean
   /** Sends what is in the store to the queue and empties it. */

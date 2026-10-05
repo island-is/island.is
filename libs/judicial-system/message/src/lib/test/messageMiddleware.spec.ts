@@ -114,6 +114,41 @@ describe('MessageMiddleware', () => {
       expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
     })
 
+    it('should send a message pushed while the flush is in flight, once', async () => {
+      // The flush takes what is in the store before it goes to the queue, so
+      // a message pushed while that round trip is still running is not
+      // picked up by it, and is not left behind either: it is sent on its
+      // own.
+      const first = createMessage(MessageType.NOTIFICATION)
+      const second = createMessage(MessageType.DELIVERY_TO_COURT_CASE_FILE)
+      let finishSending: () => void = () => undefined
+      messageService.addMessagesToQueue.mockReturnValueOnce(
+        new Promise<void>((resolve) => {
+          finishSending = resolve
+        }),
+      )
+
+      await givenARequest(async (res) => {
+        pushMessagesToRequestStore(first)
+
+        const closing = res.emit('close')
+
+        pushMessagesToRequestStore(second)
+
+        finishSending()
+
+        await closing
+      })
+
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledTimes(2)
+      expect(messageService.addMessagesToQueue).toHaveBeenNthCalledWith(1, [
+        first,
+      ])
+      expect(messageService.addMessagesToQueue).toHaveBeenNthCalledWith(2, [
+        second,
+      ])
+    })
+
     it('should send each push after the response ended once', async () => {
       const first = createMessage(MessageType.NOTIFICATION)
       const second = createMessage(MessageType.DELIVERY_TO_COURT_CASE_FILE)
