@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { MessageDescriptor } from 'react-intl'
 import { InputMask } from '@react-input/mask'
@@ -80,6 +80,16 @@ export const BankTransferPayment = ({
   const { control, formState, setFocus, setValue } =
     useFormContext<BankTransferPaymentInput>()
   const { formatMessage } = useLocale()
+
+  // Focus the last part filled by a paste only once its values have rendered. Moving focus in the
+  // paste handler blurs the pasted-into input while its DOM value is still the old one, and
+  // `onBlur` below writes that stale value back.
+  const [pendingFocus, setPendingFocus] = useState<BankAccountPart | null>(null)
+  useEffect(() => {
+    if (!pendingFocus) return
+    setFocus(pendingFocus)
+    setPendingFocus(null)
+  }, [pendingFocus, setFocus])
 
   // One message for the whole account number, under the three inputs.
   const bankAccountError =
@@ -210,7 +220,7 @@ export const BankTransferPayment = ({
                               })
                               lastPart = part
                             }
-                            setFocus(lastPart)
+                            setPendingFocus(lastPart)
                           }}
                           // Show the value as it will be sent: `123` becomes `0123`.
                           onBlur={(e) => {
