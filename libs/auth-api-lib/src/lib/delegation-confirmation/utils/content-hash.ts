@@ -83,5 +83,5 @@ export const hashConfirmationContent = (
   snapshot: ConfirmationContentSnapshot,
 ): string =>
   createHash(CONTENT_HASH_ALG)
-    .update(canonicalize((snapshot as unknown) as JsonValue), 'utf8')
+    .update(canonicalize(snapshot as unknown as JsonValue), 'utf8')
     .digest('hex')

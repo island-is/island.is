@@ -117,12 +117,7 @@ export const ConfirmDelegation = () => {
       )}
 
       {confirmation && (
-        <Box
-          marginBottom={4}
-          display="flex"
-          flexDirection="column"
-          rowGap={2}
-        >
+        <Box marginBottom={4} display="flex" flexDirection="column" rowGap={2}>
           <Box>
             <Text variant="eyebrow" color="purple400">
               {formatMessage(m.confirmDelegationRecipient)}

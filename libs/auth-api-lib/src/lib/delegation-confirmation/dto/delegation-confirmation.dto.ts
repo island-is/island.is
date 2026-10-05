@@ -16,7 +16,7 @@ const authenticationStatuses = [
 
 export class StartedDelegationConfirmationAuthenticationDTO {
   @ApiProperty({ enum: stepUpMethods })
-  method!: (typeof stepUpMethods)[number]
+  method!: typeof stepUpMethods[number]
 
   @ApiPropertyOptional({
     description:
@@ -221,7 +221,7 @@ export class DelegationConfirmationReceiptDTO {
 /** Where the confirming authentication stands. */
 export class DelegationConfirmationAuthenticationDTO {
   constructor(
-    status: (typeof authenticationStatuses)[number],
+    status: typeof authenticationStatuses[number],
     model: DelegationConfirmation,
   ) {
     this.status = status
@@ -233,7 +233,7 @@ export class DelegationConfirmationAuthenticationDTO {
     description:
       'not_started: start one. pending: keep polling. confirmed: the scopes are granted. denied / timed_out: start again. expired: the confirmation itself is over; grant again.',
   })
-  status: (typeof authenticationStatuses)[number]
+  status: typeof authenticationStatuses[number]
 
   @ApiProperty({ type: () => DelegationConfirmationDTO })
   confirmation: DelegationConfirmationDTO

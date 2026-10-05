@@ -21,12 +21,10 @@ export const useDelegationConfirmationStepUp = (
   confirmationId: string | undefined,
   { onExpired }: { onExpired?: () => void } = {},
 ) => {
-  const [
-    startMutation,
-  ] = useAuthStartDelegationConfirmationAuthenticationMutation()
-  const [
-    checkMutation,
-  ] = useAuthCheckDelegationConfirmationAuthenticationMutation()
+  const [startMutation] =
+    useAuthStartDelegationConfirmationAuthenticationMutation()
+  const [checkMutation] =
+    useAuthCheckDelegationConfirmationAuthenticationMutation()
 
   const start = useCallback(async (): Promise<StepUpStart> => {
     try {

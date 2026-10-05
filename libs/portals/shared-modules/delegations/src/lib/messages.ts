@@ -39,13 +39,11 @@ export const m = defineMessages({
     defaultMessage: 'Allsherjarumboð',
   },
   delegationTypeGeneralMandateOutgoing: {
-    id:
-      'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
+    id: 'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
     defaultMessage: 'Allsherjarumboð þú hefur veitt öðrum',
   },
   delegationTypeGeneralMandateIncoming: {
-    id:
-      'sp.access-control-delegations:delegation-type-general-mandate-incoming',
+    id: 'sp.access-control-delegations:delegation-type-general-mandate-incoming',
     defaultMessage: 'Allsherjarumboð sem þú hefur fengið',
   },
   delegationTypeProcurationHolder: {
@@ -69,8 +67,7 @@ export const m = defineMessages({
     defaultMessage: 'Eru sótt úr fyrirtækjaskrá Skattsins',
   },
   delegationTypePersonalRepresentativeDesc: {
-    id:
-      'sp.access-control-delegations:delegation-type-personal-representative-desc',
+    id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
   outgoingDelegationsHeader: {
@@ -750,8 +747,7 @@ export const m = defineMessages({
     defaultMessage: 'Umboðið þarf tvöfalt samþykki',
   },
   confirmAccessSensitiveStepUpMessage: {
-    id:
-      'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
+    id: 'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
     defaultMessage:
       'Þegar þú staðfestir færðu beiðni í símann þinn um að staðfesta með rafrænum skilríkjum. Umboðið tekur ekki gildi fyrr en þú hefur gert það.',
   },

@@ -467,9 +467,8 @@ export class DelegationScopeService {
   ): Promise<string[]> {
     const scopePromises = []
 
-    const providers: string[] = await this.delegationProviderService.findProviders(
-      delegationTypes,
-    )
+    const providers: string[] =
+      await this.delegationProviderService.findProviders(delegationTypes)
 
     if (providers.includes(AuthDelegationProvider.NationalRegistry)) {
       scopePromises.push(this.findAllNationalRegistryScopes(delegationTypes))
@@ -493,11 +492,9 @@ export class DelegationScopeService {
 
     if (delegationTypes?.includes(AuthDelegationType.Custom)) {
       scopePromises.push(
-        this.findValidCustomScopesTo(
-          user.nationalId,
-          fromNationalId,
-        ).then((delegationScopes: DelegationScope[]) =>
-          delegationScopes.map((ds) => ds.scopeName),
+        this.findValidCustomScopesTo(user.nationalId, fromNationalId).then(
+          (delegationScopes: DelegationScope[]) =>
+            delegationScopes.map((ds) => ds.scopeName),
         ),
       )
     }

@@ -33,10 +33,8 @@ export const ISLAND_IS_CATEGORY = {
   slug: 'thjonusta-island-is',
   title: { is: 'Þjónusta ísland.is', en: 'island.is services' },
   description: {
-    is:
-      'Ráðgjöf, vörur og þjónusta sem Stafrænt Ísland veitir fyrirtækjum og stofnunum',
-    en:
-      'Consulting, products and services provided by Digital Iceland to companies and institutions',
+    is: 'Ráðgjöf, vörur og þjónusta sem Stafrænt Ísland veitir fyrirtækjum og stofnunum',
+    en: 'Consulting, products and services provided by Digital Iceland to companies and institutions',
   },
 } as const
 

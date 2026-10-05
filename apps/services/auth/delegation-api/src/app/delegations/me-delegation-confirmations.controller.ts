@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -70,9 +64,8 @@ export class MeDelegationConfirmationsController {
   async findAll(
     @CurrentUser() user: User,
   ): Promise<DelegationConfirmationDTO[]> {
-    const confirmations = await this.delegationConfirmationService.findAllForUser(
-      user,
-    )
+    const confirmations =
+      await this.delegationConfirmationService.findAllForUser(user)
 
     return confirmations.map(
       (confirmation) => new DelegationConfirmationDTO(confirmation),
@@ -92,10 +85,8 @@ export class MeDelegationConfirmationsController {
     @CurrentUser() user: User,
     @Param('confirmationId') id: string,
   ): Promise<DelegationConfirmationDTO> {
-    const confirmation = await this.delegationConfirmationService.findByIdForUser(
-      user,
-      id,
-    )
+    const confirmation =
+      await this.delegationConfirmationService.findByIdForUser(user, id)
 
     return new DelegationConfirmationDTO(confirmation)
   }
@@ -113,10 +104,8 @@ export class MeDelegationConfirmationsController {
     @CurrentUser() user: User,
     @Param('confirmationId') id: string,
   ): Promise<DelegationConfirmationReceiptDTO> {
-    const confirmation = await this.delegationConfirmationService.findConfirmedForReceipt(
-      user,
-      id,
-    )
+    const confirmation =
+      await this.delegationConfirmationService.findConfirmedForReceipt(user, id)
 
     return new DelegationConfirmationReceiptDTO(confirmation)
   }
@@ -129,17 +118,18 @@ export class MeDelegationConfirmationsController {
   @Post(':confirmationId/authentication')
   @Documentation({
     includeNoContentResponse: true,
-    response: { status: 200, type: StartedDelegationConfirmationAuthenticationDTO },
+    response: {
+      status: 200,
+      type: StartedDelegationConfirmationAuthenticationDTO,
+    },
     request: { params: { confirmationId } },
   })
   async startAuthentication(
     @CurrentUser() user: User,
     @Param('confirmationId') id: string,
   ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
-    const started = await this.delegationConfirmationService.startAuthentication(
-      user,
-      id,
-    )
+    const started =
+      await this.delegationConfirmationService.startAuthentication(user, id)
 
     this.auditService.audit({
       auth: user,
