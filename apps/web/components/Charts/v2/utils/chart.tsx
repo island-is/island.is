@@ -80,8 +80,8 @@ export const getCartesianGridComponents = ({
 
   const xAxisFormatter = tickFormatter
 
-  // Only free-text category labels are wrapped. Tick thinning stays on by
-  // default; set customStyleConfig.<axis>.interval to 0 to show every label
+  // Only free-text category labels are wrapped. Recharts thins ticks by their
+  // unwrapped width, which hides wrapped X labels, so that axis shows every label
   const wrapCategoryLabels =
     !!slice.xAxisValueType && !['date', 'number'].includes(slice.xAxisValueType)
   // An editor-set angle keeps Recharts' rotated default tick
@@ -115,7 +115,9 @@ export const getCartesianGridComponents = ({
         fontFamily: theme.typography.fontFamily,
       }}
       dy={theme.spacing.p2}
-      interval={customStyleConfig.xAxis?.interval ?? 'preserveEnd'}
+      interval={
+        customStyleConfig.xAxis?.interval ?? (wrapXAxis ? 0 : 'preserveEnd')
+      }
       angle={customStyleConfig.xAxis?.angle ?? 0}
       domain={customStyleConfig.xAxis?.domain ?? [0, 'auto']}
       type={slice.flipAxis ? 'number' : 'category'}

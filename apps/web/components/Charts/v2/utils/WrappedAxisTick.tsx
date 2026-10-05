@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/web/i18n'
 
-import { wrapAxisLabel } from './wrapAxisLabel'
+import { AVG_CHAR_WIDTH_EM, wrapAxisLabel } from './wrapAxisLabel'
 
 // Relative to the tick's font size so a larger font can't overlap lines
 const LINE_HEIGHT_EM = 1.2
@@ -17,6 +17,8 @@ const DESCENT_EM = 0.3
 const TICK_OFFSET = 8
 const DEFAULT_MAX_CHARS_PER_LINE = 10
 const DEFAULT_MAX_LINES = 3
+const BAND_GAP = 2
+const MIN_CHARS_PER_LINE = 4
 
 // X-axis height that fits a label wrapped to the maximum number of lines
 export const getWrappedXAxisHeight = (fontSize: number, dy: number) =>
@@ -34,6 +36,9 @@ interface WrappedAxisTickProps {
   index?: number
   // Injected by Recharts when cloning a custom tick element
   tickFormatter?: (value: unknown, index: number) => string
+  width?: number
+  visibleTicksCount?: number
+  orientation?: 'top' | 'bottom' | 'left' | 'right'
   textAnchor?: 'start' | 'middle' | 'end'
   verticalAnchor?: 'start' | 'middle' | 'end'
   fontSize?: number
@@ -49,6 +54,9 @@ export const WrappedAxisTick = ({
   payload,
   index = 0,
   tickFormatter,
+  width,
+  visibleTicksCount,
+  orientation,
   textAnchor = 'middle',
   verticalAnchor,
   fontSize = theme.typography.baseFontSize,
@@ -58,14 +66,31 @@ export const WrappedAxisTick = ({
   maxLines = DEFAULT_MAX_LINES,
 }: WrappedAxisTickProps) => {
   const { activeLocale } = useI18n()
+  // The axis forwards customStyleConfig's font size through `style`
+  const resolvedFontSize = parseFloat(String(style?.fontSize ?? fontSize))
+  // A horizontal axis shows every label, so each must fit its band on narrow screens
+  const isHorizontal = orientation === 'top' || orientation === 'bottom'
+  const charsPerLine =
+    isHorizontal && width && visibleTicksCount
+      ? Math.min(
+          maxCharsPerLine,
+          Math.max(
+            MIN_CHARS_PER_LINE,
+            Math.floor(
+              (width / visibleTicksCount - BAND_GAP) /
+                (resolvedFontSize * AVG_CHAR_WIDTH_EM),
+            ),
+          ),
+        )
+      : maxCharsPerLine
   const label = String(
     (tickFormatter ? tickFormatter(payload?.value, index) : payload?.value) ??
       '',
   )
   // hyphenateText builds a new pattern table per call, so skip it on re-renders
   const lines = useMemo(
-    () => wrapAxisLabel(label, maxCharsPerLine, maxLines, activeLocale),
-    [label, maxCharsPerLine, maxLines, activeLocale],
+    () => wrapAxisLabel(label, charsPerLine, maxLines, activeLocale),
+    [label, charsPerLine, maxLines, activeLocale],
   )
   const isTruncated = lines[lines.length - 1]?.endsWith('…') ?? false
 
@@ -83,8 +108,7 @@ export const WrappedAxisTick = ({
       x={x}
       y={y + dy}
       textAnchor={textAnchor}
-      // The axis forwards customStyleConfig's font size through `style`
-      fontSize={style?.fontSize ?? fontSize}
+      fontSize={resolvedFontSize}
       fontFamily={theme.typography.fontFamily}
       fill={theme.color.dark400}
     >

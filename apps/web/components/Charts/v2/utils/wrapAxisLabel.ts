@@ -3,6 +3,9 @@ import type { Locale } from '@island.is/shared/types'
 
 const SOFT_HYPHEN = '­'
 
+// Average glyph width of the UI font, for estimating how many characters fit
+export const AVG_CHAR_WIDTH_EM = 0.5
+
 // Last resort for a syllable that is still too long, e.g. a foreign word
 // hyphenateText has no pattern for
 const splitToLength = (text: string, length: number): string[] => {
