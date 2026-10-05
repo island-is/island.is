@@ -140,12 +140,15 @@ export default function DocumentScreen() {
   // PdfView scales on uri, before layout, so it paints once at 100%. Hide it
   // until the real fit lands a frame later.
   const [pdfScaled, setPdfScaled] = useState(false)
+  const showPdf = ready && querySettled && contentType === 'pdf' && !!pdfUri
   useEffect(() => {
+    if (!showPdf) return
     setPdfScaled(false)
-    // Never leave the document invisible if the callback is missed.
+    // Never leave the document invisible if the callback is missed. Timed from
+    // the render, not from pdfUri, which can land well before the loader lifts.
     const timeout = setTimeout(() => setPdfScaled(true), 1000)
     return () => clearTimeout(timeout)
-  }, [pdfUri, pdfKey])
+  }, [showPdf, pdfUri, pdfKey])
 
   // Show confirmation alert when an urgent document requires user acknowledgement
   useEffect(() => {
@@ -345,7 +348,7 @@ export default function DocumentScreen() {
           <Loader
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
           />
-        ) : contentType === 'pdf' && pdfUri ? (
+        ) : showPdf ? (
           <PdfView
             key={pdfKey}
             uri={pdfUri}
@@ -357,8 +360,6 @@ export default function DocumentScreen() {
             onLoadComplete={() =>
               requestAnimationFrame(() => setPdfScaled(true))
             }
-            // Fit width so the bottom inset can't affect the scale.
-            fitMode="width"
           />
         ) : contentType === 'html' && htmlSource ? (
           <WebView
