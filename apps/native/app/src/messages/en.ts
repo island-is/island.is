@@ -742,6 +742,20 @@ export const en: TranslatedMessages = {
   'updateApp.buttonSkip': 'Skip',
 
   // health - overview
+  // step up (locked screens)
+  'stepUp.title': 'Confirm it is you',
+  'stepUp.intro':
+    'Health information is locked when the app has not been used for a while. Confirm with electronic ID to open it.',
+  'stepUp.start': 'Confirm with electronic ID',
+  'stepUp.waitingApp':
+    'Open the Auðkenni app and approve if the security code matches.',
+  'stepUp.waitingSim': 'Approve on your phone if the security code matches.',
+  'stepUp.timeLeft': 'Time left: {minutes}:{seconds}',
+  'stepUp.denied': 'The authentication was cancelled. Try again.',
+  'stepUp.timedOut': 'The authentication timed out. Try again.',
+  'stepUp.tooManyAttempts': 'Too many attempts. Try again in a little while.',
+  'stepUp.failed': 'The authentication could not be started. Try again.',
+
   'health.overview.screenTitle': 'Health',
   'health.overview.title': 'My health',
   'health.overview.description':
