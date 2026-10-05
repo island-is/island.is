@@ -10,6 +10,7 @@
  * regulation.signatureText field.
  */
 import isBefore from 'date-fns/isBefore'
+import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
 import { MessageDescriptor } from 'react-intl'
 import { MinistryList } from '@island.is/regulations'
@@ -423,8 +424,9 @@ export const getEffectiveDateWarnings = (
   requestedDate?: string,
   fastTrack?: boolean,
 ): MessageDescriptor[] => {
-  const effective = effectiveDate ? new Date(effectiveDate) : undefined
-  const publish = requestedDate ? new Date(requestedDate) : undefined
+  // parseISO reads date-only strings as local dates, new Date() as UTC
+  const effective = effectiveDate ? parseISO(effectiveDate) : undefined
+  const publish = requestedDate ? parseISO(requestedDate) : undefined
   const warnings: MessageDescriptor[] = []
 
   if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {

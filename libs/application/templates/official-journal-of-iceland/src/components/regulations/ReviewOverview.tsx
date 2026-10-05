@@ -9,6 +9,7 @@
  * - Simplified to show regulation summary in a clean format
  */
 import { useMemo, ReactNode } from 'react'
+import parseISO from 'date-fns/parseISO'
 import {
   AlertMessage,
   Box,
@@ -124,7 +125,7 @@ export const ReviewOverview = ({
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '—'
     try {
-      return formatDateFns(new Date(dateStr), 'd. MMMM yyyy')
+      return formatDateFns(parseISO(dateStr), 'd. MMMM yyyy')
     } catch {
       return dateStr
     }

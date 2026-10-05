@@ -111,5 +111,8 @@ describe('getEffectiveDateWarnings', () => {
 
   it('does not warn without a publish date unless the effective date is past', () => {
     expect(getEffectiveDateWarnings('2026-10-20', undefined)).toEqual([])
+    expect(getEffectiveDateWarnings('2026-10-01', undefined)).toEqual([
+      effectiveDateEarly,
+    ])
   })
 })
