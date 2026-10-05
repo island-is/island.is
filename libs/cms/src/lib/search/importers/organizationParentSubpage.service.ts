@@ -13,10 +13,13 @@ export class OrganizationParentSubpageSyncService
   implements CmsSyncProvider<IOrganizationParentSubpage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationParentSubpage>) {
+    // Only non-default locales can be turned off
     const isTranslationActive = (entry: Entry<any>) =>
-      entry.fields.organizationPage?.fields?.activeTranslations?.[
+      entry.sys.locale === 'is-IS' ||
+      (entry.fields.organizationPage?.fields?.activeTranslations?.[
         entry.sys.locale
-      ] ?? true
+      ] ??
+        true)
 
     const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IOrganizationParentSubpage =>

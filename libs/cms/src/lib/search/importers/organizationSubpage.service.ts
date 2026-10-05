@@ -36,10 +36,11 @@ export class OrganizationSubpageSyncService
           entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
           true) &&
         // Subpage should not be searchable if the organization page has turned off this locale
-        (entry.fields.organizationPage.fields.activeTranslations?.[
-          entry.sys.locale
-        ] ??
-          true) &&
+        (entry.sys.locale === 'is-IS' ||
+          (entry.fields.organizationPage.fields.activeTranslations?.[
+            entry.sys.locale
+          ] ??
+            true)) &&
         // Subpages should not be searchable if they belong to a parent subpage
         !entry.fields.organizationParentSubpage
       )
