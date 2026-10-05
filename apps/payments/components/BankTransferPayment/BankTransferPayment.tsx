@@ -84,10 +84,13 @@ export const BankTransferPayment = ({
   // Move focus on from a paste only once its values have rendered. Moving it in the paste handler
   // blurs the pasted-into input while its DOM value is still the old one, and `onBlur` below writes
   // that stale value back. A pasted account number is assumed complete, so the next step is the
-  // submit button; a part the paste left empty is focused instead.
+  // submit button; a part the paste left empty, or another field still keeping the form invalid
+  // (the approver's national id for a company payer), is focused instead.
   const [pendingFocus, setPendingFocus] = useState<{
     form: HTMLFormElement | null
+    isFormValid: boolean
   } | null>(null)
+  const { errors } = formState
   useEffect(() => {
     if (!pendingFocus) return
     setPendingFocus(null)
@@ -98,11 +101,20 @@ export const BankTransferPayment = ({
       return
     }
 
-    // Disabled until the form is valid, in which case focus stays where it is.
-    pendingFocus.form
-      ?.querySelector<HTMLButtonElement>('button[type="submit"]')
-      ?.focus()
-  }, [pendingFocus, getValues, setFocus])
+    if (pendingFocus.isFormValid) {
+      pendingFocus.form
+        ?.querySelector<HTMLButtonElement>('button[type="submit"]')
+        ?.focus()
+      return
+    }
+
+    const invalidField = (
+      Object.keys(errors) as (keyof BankTransferPaymentInput)[]
+    )[0]
+    if (invalidField) {
+      setFocus(invalidField)
+    }
+  }, [pendingFocus, errors, getValues, setFocus])
 
   // One message for the whole account number, under the three inputs.
   const bankAccountError =
@@ -230,10 +242,11 @@ export const BankTransferPayment = ({
                                 setValue(part, value, { shouldDirty: true })
                               }
                             }
-                            // Validate first: the submit button is disabled until the form is valid.
-                            trigger(
-                              BANK_ACCOUNT_PARTS.map((part) => part.name),
-                            ).then(() => setPendingFocus({ form }))
+                            // The whole form: the submit button is disabled until it is valid, and
+                            // only a full validation settles `isValid` before resolving.
+                            trigger().then((isFormValid) =>
+                              setPendingFocus({ form, isFormValid }),
+                            )
                           }}
                           // Show the value as it will be sent: `123` becomes `0123`.
                           onBlur={(e) => {

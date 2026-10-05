@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 
-import { BankTransferPayment } from './BankTransferPayment'
+import { BankTransferPayment, CompanyPayer } from './BankTransferPayment'
 
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({
@@ -31,10 +31,10 @@ const Form = ({ children }: { children: ReactNode }) => {
   )
 }
 
-const renderInputs = () => {
+const renderInputs = (companyPayer?: CompanyPayer) => {
   const { container } = render(
     <Form>
-      <BankTransferPayment />
+      <BankTransferPayment companyPayer={companyPayer} />
     </Form>,
   )
   const input = (part: string) =>
@@ -102,6 +102,25 @@ describe('BankTransferPayment', () => {
       expect(bank.value).toBe('0001')
       expect(ledger.value).toBe('12')
       expect(account.value).toBe('001234')
+    })
+
+    it('focuses the approver national id a company payer still has to fill', async () => {
+      const { bank, ledger, account, submit } = renderInputs({
+        nationalId: '6010100890',
+        name: 'Aranja ehf.',
+      })
+      bank.focus()
+
+      paste(bank, '0001-12-001234')
+
+      const actor = document.querySelector<HTMLInputElement>(
+        'input[name="actorNationalId"]',
+      ) as HTMLInputElement
+      await waitFor(() => expect(actor).toBe(document.activeElement))
+      expect(bank.value).toBe('0001')
+      expect(ledger.value).toBe('12')
+      expect(account.value).toBe('001234')
+      expect(submit.disabled).toBe(true)
     })
 
     it('leaves a short paste to the browser', () => {
