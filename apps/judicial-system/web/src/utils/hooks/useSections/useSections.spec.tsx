@@ -146,8 +146,12 @@ describe('useSections getSections', () => {
       institution: { type: InstitutionType.COURT_OF_APPEALS },
     } as unknown as User
 
+    // A step the court has not reached yet is offered through onClick, which
+    // the hook only builds when it is given somewhere to navigate to.
+    const onNavigationTo = jest.fn()
+
     const appealSections = (c: Case, user: User) => {
-      const { result } = renderHook(() => useSections(), {
+      const { result } = renderHook(() => useSections(true, onNavigationTo), {
         wrapper: makeWrapper(c),
       })
 
@@ -242,6 +246,30 @@ describe('useSections getSections', () => {
             activeSubSection > 0,
         ),
       ).toBe(true)
+    })
+
+    // Reaching a step the court has not been to yet goes through onClick -
+    // the href branch only lights up for steps already passed. Nothing bars
+    // the way here, because the overview asks nothing of the court.
+    it('lets the defender step be reached from the overview', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+      const defenderStep = sections[0].children[1]
+
+      expect(defenderStep.name).toBe('Verjandi')
+      expect(defenderStep.onClick).toBeDefined()
+    })
+
+    // Standing on it, there is nowhere forward to go.
+    it('offers no way on to the step the court is already on', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].children[1].onClick).toBeUndefined()
     })
 
     it('leaves the ruling appeal sections alone when it names that one', () => {

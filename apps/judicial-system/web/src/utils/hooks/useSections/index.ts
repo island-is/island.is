@@ -1564,6 +1564,18 @@ const useSections = (
             `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
+          // The href alone only reaches a step the court has already passed.
+          // Going forward to one needs this, and nothing stands in the way:
+          // the overview before it asks nothing of the court.
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                  )
+              : undefined,
         },
       ],
     },
