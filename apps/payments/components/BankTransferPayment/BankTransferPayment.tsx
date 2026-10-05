@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { MessageDescriptor } from 'react-intl'
 import { InputMask } from '@react-input/mask'
+import { format as formatKennitala } from 'kennitala'
 
 import {
   AlertMessage,
@@ -14,7 +15,6 @@ import { useLocale } from '@island.is/localization'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 import { bankTransfer } from '../../messages'
-import { formatNationalId } from '../../utils'
 import {
   BANK_ACCOUNT_PART_LENGTHS,
   BankAccountPart,
@@ -147,7 +147,7 @@ export const BankTransferPayment = ({
                 label={formatMessage(bankTransfer.companyNationalId, {
                   companyName: companyPayer.name,
                 })}
-                value={formatNationalId(companyPayer.nationalId)}
+                value={formatKennitala(companyPayer.nationalId)}
                 size="sm"
                 readOnly
               />

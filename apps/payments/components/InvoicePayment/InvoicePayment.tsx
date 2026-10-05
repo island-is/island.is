@@ -1,11 +1,11 @@
 import { useFormContext } from 'react-hook-form'
+import { format as formatKennitala } from 'kennitala'
 
 import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 import { invoice } from '../../messages'
-import { formatNationalId } from '../../utils'
 
 interface InvoicePaymentInput {
   nationalId: string
@@ -29,7 +29,7 @@ export const InvoicePayment = ({
             required: true,
           })}
           size="sm"
-          value={formatNationalId(nationalId)}
+          value={formatKennitala(nationalId)}
           readOnly
         />
         <Input
