@@ -151,6 +151,11 @@ export const EmployeeForm: FC<Props> = ({
               placeholder={formatMessage(m.paidHoursPlaceholder)}
               tooltip={formatMessage(m.paidHoursTooltip)}
               type="number"
+              // Without it NumberFormat keeps '.' as the decimal separator and
+              // drops a typed comma, so 173,33 becomes 17333.
+              thousandSeparator
+              decimalScale={2}
+              inputMode="decimal"
               backgroundColor="white"
               size="sm"
               required

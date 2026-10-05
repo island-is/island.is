@@ -4,8 +4,6 @@ import {
   Box,
   Button,
   DialogPrompt,
-  GridColumn,
-  GridRow,
   Stack,
   Table as T,
   Text,
@@ -20,7 +18,7 @@ import type { Employee } from '../../utils/types'
 import {
   formatPaidHours,
   getSalaryComponentLabels,
-  getSalaryComponentTooltips,
+  getSalaryComponentDetailTooltips,
 } from './utils'
 import * as styles from './EmployeesEditor.css'
 
@@ -48,7 +46,7 @@ const DetailItem: FC<{
     borderRadius="large"
     background={highlight ? 'white' : 'transparent'}
   >
-    <Box style={{ flex: 1 }}>
+    <Box style={{ flex: 2 }}>
       <Text variant="medium" fontWeight="semiBold">
         {label}
         {tooltip && (
@@ -76,7 +74,7 @@ export const EmployeeRow: FC<Props> = ({
 
   const background = expanded ? 'blue100' : 'transparent'
 
-  const leftItems = [
+  const employeeItems = [
     { label: formatMessage(m.ordinalLabel), value: String(employee.ordinal) },
     { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
@@ -86,14 +84,13 @@ export const EmployeeRow: FC<Props> = ({
     {
       label: formatMessage(m.startDateLabel),
       value: formatDateValue(employee.startDate),
-      tooltip: formatMessage(m.startDateTooltip),
     },
   ]
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
-  const componentTooltips = getSalaryComponentTooltips(formatMessage)
+  const componentTooltips = getSalaryComponentDetailTooltips(formatMessage)
 
-  const rightItems = [
+  const salaryItems = [
     {
       label: formatMessage(m.paidHoursLabel),
       value: formatPaidHours(employee.paidHours),
@@ -109,6 +106,11 @@ export const EmployeeRow: FC<Props> = ({
       value: formatCurrency(employee[key] ?? 0),
       tooltip: componentTooltips[key],
     })),
+  ]
+
+  const detailItems: { label: string; value: string; tooltip?: string }[] = [
+    ...employeeItems,
+    ...salaryItems,
   ]
 
   return (
@@ -184,34 +186,17 @@ export const EmployeeRow: FC<Props> = ({
           <AnimateHeight duration={300} height={expanded ? 'auto' : 0}>
             {expanded && <div className={styles.line} />}
             <Box paddingX={3} paddingTop={3} paddingBottom={3}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Stack space={0} dividers={false}>
-                    {leftItems.map((item, i) => (
-                      <DetailItem
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        tooltip={item.tooltip}
-                        highlight={i % 2 === 0}
-                      />
-                    ))}
-                  </Stack>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Stack space={0} dividers={false}>
-                    {rightItems.map((item, i) => (
-                      <DetailItem
-                        key={item.label}
-                        label={item.label}
-                        value={item.value}
-                        tooltip={item.tooltip}
-                        highlight={i % 2 === 0}
-                      />
-                    ))}
-                  </Stack>
-                </GridColumn>
-              </GridRow>
+              <Stack space={0} dividers={false}>
+                {detailItems.map((item, i) => (
+                  <DetailItem
+                    key={item.label}
+                    label={item.label}
+                    value={item.value}
+                    tooltip={item.tooltip}
+                    highlight={i % 2 === 0}
+                  />
+                ))}
+              </Stack>
             </Box>
           </AnimateHeight>
         </T.Data>

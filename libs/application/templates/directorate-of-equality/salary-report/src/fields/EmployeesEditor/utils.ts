@@ -110,6 +110,28 @@ export const getSalaryComponentTooltips = (
   }
 }
 
+export const getSalaryComponentDetailTooltips = (
+  formatMessage: FormatMessage,
+): Record<SalaryComponentKey, string> => {
+  const m = messages.report.employees
+  return {
+    additionalFixedOvertime: formatMessage(
+      m.additionalFixedOvertimeDetailTooltip,
+    ),
+    additionalFixedCarAllowance: formatMessage(
+      m.additionalFixedCarAllowanceDetailTooltip,
+    ),
+    additionalFixedOther: formatMessage(m.additionalFixedOtherDetailTooltip),
+    bonusOccasionalOvertime: formatMessage(
+      m.bonusOccasionalOvertimeDetailTooltip,
+    ),
+    bonusOccasionalCarAllowance: formatMessage(
+      m.bonusOccasionalCarAllowanceDetailTooltip,
+    ),
+    bonusOther: formatMessage(m.bonusOtherDetailTooltip),
+  }
+}
+
 // Greiddar stundir is an absolute count of hours, not a percentage — there is
 // deliberately no scaling in either direction here. The old workRatio field
 // stored a fraction and multiplied by 100 for display; carrying that over would
