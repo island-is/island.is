@@ -22,6 +22,7 @@ import {
   IndictmentCaseReviewDecision,
   isIndictmentCase,
   isPrisonAdminUser,
+  isRequestCase,
   RequestCaseNotificationType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
@@ -231,8 +232,19 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    // Seed sharing timing from the case for request cases so a defendant
+    // added mid-lifecycle starts aligned. Does not touch other defendants —
+    // case→all sync still only writes this field when the case update sets it.
     const defendant = await this.defendantRepositoryService.create(
-      { ...defendantToCreate, caseId: theCase.id },
+      {
+        ...defendantToCreate,
+        caseId: theCase.id,
+        ...(isRequestCase(theCase.type)
+          ? {
+              requestSharedWithDefender: theCase.requestSharedWithDefender,
+            }
+          : {}),
+      },
       { transaction },
     )
 
