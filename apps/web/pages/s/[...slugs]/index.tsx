@@ -245,12 +245,12 @@ Component.getProps = async (context) => {
     throw new CustomNextError(404, 'Organization page was not found')
   }
 
-  // Any locale of the organization can be turned off in the CMS,
+  // The English version of the organization can be turned off in the CMS,
   // in that case every page under the organization 404s
-  // (the Icelandic key is the Contentful locale code, same as in the CMS field)
   if (
+    locale !== 'is' &&
     (organizationPage.activeTranslations as Record<string, boolean> | null)?.[
-      locale === 'is' ? 'is-IS' : locale
+      locale
     ] === false
   ) {
     throw new CustomNextError(404, 'Organization page translation is inactive')

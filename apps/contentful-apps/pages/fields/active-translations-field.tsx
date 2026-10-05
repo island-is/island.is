@@ -4,12 +4,8 @@ import { Checkbox } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
 const localeMap = {
-  'is-IS': 'Icelandic',
   en: 'English',
 }
-
-// Content types where the default locale (Icelandic) can also be turned off
-const contentTypesWithDefaultLocaleToggle = ['organizationPage']
 
 const ActiveTranslationsField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -22,13 +18,7 @@ const ActiveTranslationsField = () => {
   return (
     <div>
       {Object.keys(sdk.locales.names)
-        .filter(
-          (locale) =>
-            locale !== sdk.locales.default ||
-            contentTypesWithDefaultLocaleToggle.includes(
-              sdk.contentType.sys.id,
-            ),
-        )
+        .filter((locale) => locale !== sdk.locales.default)
         .map((locale) => {
           const isChecked = state?.[locale] ?? true
           return (
