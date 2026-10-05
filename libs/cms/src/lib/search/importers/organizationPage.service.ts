@@ -16,7 +16,9 @@ export class OrganizationPageSyncService
       (entry: Entry<any>): entry is IOrganizationPage =>
         entry.sys.contentType.sys.id === 'organizationPage' &&
         !!entry.fields.title &&
-        (entry.fields.canBeFoundInSearchResults ?? true),
+        (entry.fields.canBeFoundInSearchResults ?? true) &&
+        (entry.sys.locale === 'is-IS' ||
+          (entry.fields.activeTranslations?.[entry.sys.locale] ?? true)),
     )
     return {
       entriesToUpdate,

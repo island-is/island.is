@@ -108,7 +108,7 @@ export default {
     'fund',
   ],
   // Content types that have the 'activeTranslations' JSON field
-  localizedContentTypes: ['article'],
+  localizedContentTypes: ['article', 'organizationPage'],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test',
