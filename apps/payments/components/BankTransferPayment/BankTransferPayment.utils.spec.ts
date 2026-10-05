@@ -1,6 +1,7 @@
 import {
   UNSUPPORTED_BANK_CODES,
   padBankAccountPart,
+  parsePastedBankAccount,
   toBankAccountNumber,
   validateActorNationalId,
   validateBank,
@@ -42,31 +43,101 @@ describe('toBankAccountNumber', () => {
   })
 })
 
+describe('parsePastedBankAccount', () => {
+  it.each([
+    [
+      'a 12-digit number into bank',
+      '013326123456',
+      'bank',
+      { bank: '0133', ledger: '26', account: '123456' },
+    ],
+    [
+      'separated groups into bank',
+      '0133-26-123456',
+      'bank',
+      { bank: '0133', ledger: '26', account: '123456' },
+    ],
+    [
+      'short groups, padded',
+      '133-26-1234',
+      'bank',
+      { bank: '0133', ledger: '26', account: '001234' },
+    ],
+    [
+      'groups separated by spaces',
+      '0133 26 123456',
+      'bank',
+      { bank: '0133', ledger: '26', account: '123456' },
+    ],
+    [
+      'separated groups into ledger',
+      '26-123456',
+      'ledger',
+      { ledger: '26', account: '123456' },
+    ],
+    [
+      'bare digits into ledger',
+      '26123456',
+      'ledger',
+      { ledger: '26', account: '123456' },
+    ],
+    [
+      'surrounding whitespace',
+      ' 013326123456\n',
+      'bank',
+      { bank: '0133', ledger: '26', account: '123456' },
+    ],
+    [
+      'digits that stop partway through a part',
+      '01332612',
+      'bank',
+      { bank: '0133', ledger: '26', account: '12' },
+    ],
+  ] as const)('splits %s', (_, text, startPart, expected) => {
+    expect(parsePastedBankAccount(text, startPart)).toEqual(expected)
+  })
+
+  it.each([
+    ['a paste that fits the one input', '0133', 'bank'],
+    ['a shorter paste', '13', 'bank'],
+    ['too many digits', '0133261234567', 'bank'],
+    ['too many digits for the remaining parts', '013326123456', 'ledger'],
+    ['more groups than remaining parts', '26-123456-1', 'ledger'],
+    ['a group too long for its part', '01335-26-123456', 'bank'],
+    ['letters', '0133-ab-123456', 'bank'],
+    ['letters only', 'abc', 'bank'],
+    ['an empty value', '', 'bank'],
+    ['whitespace only', '  ', 'bank'],
+  ] as const)('leaves %s to the default paste', (_, text, startPart) => {
+    expect(parsePastedBankAccount(text, startPart)).toBeNull()
+  })
+})
+
 describe('validateBank', () => {
   const NOT_SUPPORTED = 'payments:bankTransfer.accountNumberBankNotSupported'
 
-  // A real indó bank number — the bank the check exists for. Kept as a literal rather than derived
+  // The real indó bank number — the bank the check exists for. Kept as a literal rather than derived
   // from the constant, so a wrong constant can't make the test pass vacuously.
-  it('rejects indó (2200)', () => {
-    expect(validateBank('2200', formatMessage)).toBe(NOT_SUPPORTED)
+  it('rejects indó (0022)', () => {
+    expect(validateBank('0022', formatMessage)).toBe(NOT_SUPPORTED)
   })
 
-  it('rejects every branch of every unsupported institution', () => {
-    // The institution is the leading two digits and the next two are its branch, so every branch
-    // has to be caught — not just `xx00`.
+  it('rejects every unsupported bank', () => {
     for (const code of UNSUPPORTED_BANK_CODES) {
-      for (const branch of ['00', '01', '99']) {
-        expect(validateBank(`${code}${branch}`, formatMessage)).toBe(
-          NOT_SUPPORTED,
-        )
-      }
+      expect(validateBank(code, formatMessage)).toBe(NOT_SUPPORTED)
     }
   })
 
   it('checks the padded bank number, so a short value is read with leading zeros', () => {
-    // `22` is bank 0022, not indó.
-    expect(validateBank('22', formatMessage)).toBe(true)
+    // `22` is bank 0022: indó.
+    expect(validateBank('22', formatMessage)).toBe(NOT_SUPPORTED)
+    expect(validateBank('11', formatMessage)).toBe(NOT_SUPPORTED)
     expect(validateBank('515', formatMessage)).toBe(true)
+  })
+
+  it('does not treat a bank that merely starts with an unsupported number as unsupported', () => {
+    expect(validateBank('2200', formatMessage)).toBe(true)
+    expect(validateBank('1100', formatMessage)).toBe(true)
   })
 
   it('accepts supported banks', () => {

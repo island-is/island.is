@@ -6,9 +6,8 @@ import { bankTransfer } from '../../messages'
 type FormatMessage = ReturnType<typeof useLocale>['formatMessage']
 
 /**
- * A BBAN is `bbbb-hh-nnnnnn`: the bank (the institution in the first two digits plus its branch in
- * the last two — indó is `2200`), the ledger (höfuðbók) and the account number. Each is entered in
- * its own input, and a shorter value is short for one with leading zeros.
+ * A BBAN is `bbbb-hh-nnnnnn`: the bank (indó is `0022`), the ledger (höfuðbók) and the account
+ * number. Each is entered in its own input, and a shorter value is short for one with leading zeros.
  */
 export const BANK_ACCOUNT_PART_LENGTHS = {
   bank: 4,
@@ -18,14 +17,12 @@ export const BANK_ACCOUNT_PART_LENGTHS = {
 
 export type BankAccountPart = keyof typeof BANK_ACCOUNT_PART_LENGTHS
 
-const BANK_CODE_LENGTH = 2
-
 /**
- * Institutions the payment provider cannot process, as the leading two digits of a BBAN. Caught here
- * so the payer is told their bank is unsupported, rather than submitting and getting a generic
- * provider failure back. `22` is indó.
+ * Banks the payment provider cannot process, as the four-digit bank part of a BBAN. Caught here so
+ * the payer is told their bank is unsupported, rather than submitting and getting a generic provider
+ * failure back. `0022` is indó.
  */
-export const UNSUPPORTED_BANK_CODES: readonly string[] = ['11', '22']
+export const UNSUPPORTED_BANK_CODES: readonly string[] = ['0011', '0022']
 
 /** Pads a part with leading zeros to its full length, so `123` → `0123`. An empty part stays empty. */
 export const padBankAccountPart = (value: string, part: BankAccountPart) =>
@@ -37,17 +34,80 @@ export const toBankAccountNumber = (parts: Record<BankAccountPart, string>) =>
   padBankAccountPart(parts.ledger, 'ledger') +
   padBankAccountPart(parts.account, 'account')
 
+const BANK_ACCOUNT_PART_ORDER: readonly BankAccountPart[] = [
+  'bank',
+  'ledger',
+  'account',
+]
+
+/** What may sit between the digit groups of a pasted number, e.g. `0133-26-123456` or `0133 26 123456`. */
+const PASTE_SEPARATORS_PATTERN = /^[\s\-\u2010-\u2015./]*$/
+
+/**
+ * Splits a pasted account number across the parts, starting at the part it was pasted into, so the
+ * payer can paste the whole number into any input. Returns `null` when the default paste should
+ * apply instead: the text is not an account number, does not fit, or is no more than the one input
+ * can hold anyway.
+ */
+export const parsePastedBankAccount = (
+  text: string,
+  startPart: BankAccountPart,
+): Partial<Record<BankAccountPart, string>> | null => {
+  const trimmed = text.trim()
+  const groups = trimmed.match(/\d+/g)
+  // Letters and the like are not an account number, however many digits they surround.
+  if (!groups || !PASTE_SEPARATORS_PATTERN.test(trimmed.replace(/\d+/g, ''))) {
+    return null
+  }
+
+  const parts = BANK_ACCOUNT_PART_ORDER.slice(
+    BANK_ACCOUNT_PART_ORDER.indexOf(startPart),
+  )
+  const result: Partial<Record<BankAccountPart, string>> = {}
+
+  if (groups.length > 1) {
+    if (groups.length > parts.length) return null
+
+    for (const [index, group] of groups.entries()) {
+      const part = parts[index]
+      if (group.length > BANK_ACCOUNT_PART_LENGTHS[part]) return null
+      result[part] = padBankAccountPart(group, part)
+    }
+
+    return result
+  }
+
+  // Bare digits are split by length. A last part left short is padded on blur, like typed input.
+  const digits = groups[0]
+  const capacity = parts.reduce(
+    (sum, part) => sum + BANK_ACCOUNT_PART_LENGTHS[part],
+    0,
+  )
+  if (
+    digits.length <= BANK_ACCOUNT_PART_LENGTHS[startPart] ||
+    digits.length > capacity
+  ) {
+    return null
+  }
+
+  let offset = 0
+  for (const part of parts) {
+    if (offset >= digits.length) break
+    const length = BANK_ACCOUNT_PART_LENGTHS[part]
+    result[part] = digits.slice(offset, offset + length)
+    offset += length
+  }
+
+  return result
+}
+
 /**
  * A bank the provider cannot reach gets a distinct message, since there is nothing wrong with the
  * number itself and telling the payer to check their typing would send them in circles.
  */
 export const validateBank = (value: string, formatMessage: FormatMessage) => {
-  const institution = padBankAccountPart(value, 'bank').slice(
-    0,
-    BANK_CODE_LENGTH,
-  )
-
-  if (UNSUPPORTED_BANK_CODES.includes(institution)) {
+  // Compared padded, so a typed `22` is bank 0022.
+  if (UNSUPPORTED_BANK_CODES.includes(padBankAccountPart(value, 'bank'))) {
     return formatMessage(bankTransfer.accountNumberBankNotSupported)
   }
 
