@@ -1,3 +1,7 @@
+import { getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { isIncomeDeletionLocked } from './date'
+
 export type ReconcileEntry = Record<string, unknown> & { isRemoved?: boolean }
 
 // Delete marker always carries `id` + `deleted: true`; some Galdur endpoints
@@ -103,3 +107,27 @@ export const reconcile = <
   )
   return [...creates.map(buildCreate), ...deletes]
 }
+
+// canRemoveRow predicate for buildTableRepeaterField: during the lock window
+// rows mirroring a persisted BE record cannot be deleted, while rows the user
+// added in this session always can.
+export const buildCanRemoveRow =
+  (persistedPath: string, idKey = 'validationId') =>
+  (application: Application, row: Record<string, unknown>): boolean => {
+    if (!isIncomeDeletionLocked()) {
+      return true
+    }
+
+    const rowId = getPersistedIdFromEntry(row, idKey)
+    if (!rowId) {
+      return true
+    }
+
+    const persistedRecords =
+      getValueViaPath<PersistedRecord[]>(
+        application.externalData,
+        persistedPath,
+      ) ?? []
+
+    return !persistedRecords.some((record) => record.id === rowId)
+  }
