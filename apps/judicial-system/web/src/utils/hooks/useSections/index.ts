@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -60,7 +59,6 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
-  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -72,7 +70,6 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import type {
@@ -107,14 +104,6 @@ const useSections = (
   // router query; in production the FormContext working case matches the
   // working case passed to `getSections`, so closure capture is fine.
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
-  // The steps of a verdict appeal past the overview belong to a feature that
-  // is still hidden. The overview itself is not gated - the court reaches it
-  // from a case list that is - but a step that leads to a page which turns
-  // the reader straight back must not be offered.
-  const { features } = useContext(FeatureContext)
-  const isVerdictAppealStepsEnabled = features.includes(
-    Feature.INDICTMENT_APPEAL,
-  )
 
   const validateFormStepper = (
     isActiveSubSectionValid: boolean,
@@ -1568,20 +1557,14 @@ const useSections = (
             targetAppealCase?.id,
           ),
         },
-        ...(isVerdictAppealStepsEnabled
-          ? [
-              {
-                name: 'Verjandi',
-                isActive: isActive(
-                  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
-                ),
-                href: appendAppealCaseIdQuery(
-                  `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
-                  targetAppealCase?.id,
-                ),
-              },
-            ]
-          : []),
+        {
+          name: 'Verjandi',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+        },
       ],
     },
   ]

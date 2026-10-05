@@ -1,12 +1,10 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
 import {
-  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -35,11 +33,16 @@ import { areAllAppealAdvocatesConfirmed } from './VerdictAppealDefender.logic'
  * Nothing follows from confirming yet - no access, no notification. The letter
  * of appointment and what a confirmed advocate may open are the slices after
  * this one.
+ *
+ * Not gated behind the feature flag, and deliberately so. The stepper section
+ * this page belongs to only renders for a verdict appeal, and no verdict
+ * appeal can exist while the feature is hidden, so neither this page nor the
+ * step that leads to it is reachable. A direct link is the only way in, and
+ * the write path refuses one at the API layer.
  */
 const VerdictAppealDefender = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { features, isLoading: isLoadingFeatures } = useContext(FeatureContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -48,28 +51,6 @@ const VerdictAppealDefender = () => {
     `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
     targetAppealCase?.id,
   )
-
-  // The route resolves whether or not the feature is on, as every other route
-  // of this work does, so the page turns itself away rather than rendering a
-  // step that does not exist yet.
-  const isFeatureEnabled = features.includes(Feature.INDICTMENT_APPEAL)
-
-  useEffect(() => {
-    if (isLoadingWorkingCase || isLoadingFeatures || caseNotFound) {
-      return
-    }
-
-    if (!isFeatureEnabled) {
-      router.replace(overviewUrl)
-    }
-  }, [
-    isLoadingWorkingCase,
-    isLoadingFeatures,
-    caseNotFound,
-    isFeatureEnabled,
-    router,
-    overviewUrl,
-  ])
 
   const stepIsValid = areAllAppealAdvocatesConfirmed(workingCase)
   const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0

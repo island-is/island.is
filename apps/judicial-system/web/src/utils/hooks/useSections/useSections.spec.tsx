@@ -7,9 +7,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Feature } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
   Case,
@@ -54,7 +52,7 @@ describe('useSections getSections', () => {
   // hook). Each test injects its own `c` here so the resolved target appeal
   // matches what `getSections(c, u)` is called with.
   const makeWrapper =
-    (workingCase: Case, features: Feature[] = []) =>
+    (workingCase: Case) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ({ children }: any) =>
       (
@@ -77,9 +75,7 @@ describe('useSections getSections', () => {
                 } as any
               }
             >
-              <FeatureContext.Provider value={{ features, isLoading: false }}>
-                <UserProvider authenticated={true}>{children}</UserProvider>
-              </FeatureContext.Provider>
+              <UserProvider authenticated={true}>{children}</UserProvider>
             </FormContext.Provider>
           </ApolloProvider>
         </IntlProvider>
@@ -150,9 +146,9 @@ describe('useSections getSections', () => {
       institution: { type: InstitutionType.COURT_OF_APPEALS },
     } as unknown as User
 
-    const appealSections = (c: Case, user: User, features: Feature[] = []) => {
+    const appealSections = (c: Case, user: User) => {
       const { result } = renderHook(() => useSections(), {
-        wrapper: makeWrapper(c, features),
+        wrapper: makeWrapper(c),
       })
 
       return result.current
@@ -188,30 +184,18 @@ describe('useSections getSections', () => {
       )
     })
 
-    // The overview is reachable on its own - the court arrives from a case
-    // list - but the steps after it belong to a feature that is still hidden,
-    // and each of those pages turns the reader straight back.
-    it('offers only the overview while the feature is hidden', () => {
+    it('names the steps of the verdict appeal', () => {
       mockAppealCaseId = 'verdict-appeal'
       mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
 
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
-      expect(sections[0].children.map((c) => c.name)).toEqual(['Yfirlit'])
-    })
-
-    it('offers the defender step once the feature is shown', () => {
-      mockAppealCaseId = 'verdict-appeal'
-      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
-
-      const sections = appealSections(caseWithBothAppeals, coaUser, [
-        Feature.INDICTMENT_APPEAL,
-      ])
-
       expect(sections[0].children.map((c) => c.name)).toEqual([
         'Yfirlit',
         'Verjandi',
       ])
+      // Every step carries the appeal id for the same reason the overview
+      // does: without it the next render resolves back to the ruling appeal.
       expect(sections[0].children[1].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
