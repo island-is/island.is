@@ -143,9 +143,11 @@ export class FieldsService {
     }
 
     if (
-      currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
-      currentFieldType === FieldTypesEnum.RADIO_BUTTONS ||
-      currentFieldType === FieldTypesEnum.CHECKBOX
+      newFieldType != null &&
+      newFieldType !== currentFieldType &&
+      (currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
+        currentFieldType === FieldTypesEnum.RADIO_BUTTONS ||
+        currentFieldType === FieldTypesEnum.CHECKBOX)
     ) {
       let listItemIds: string[] = []
 
