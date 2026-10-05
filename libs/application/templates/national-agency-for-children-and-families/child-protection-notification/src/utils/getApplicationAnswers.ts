@@ -73,7 +73,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'notifierInfo.phoneNumber',
   )
 
-  const notifierNotifierAnonymity = getValueViaPath<string>(
+  const notifierNotifierAnonymity = getValueViaPath<YesOrNo>(
     answers,
     'notifierInfo.notifierAnonymity',
   )

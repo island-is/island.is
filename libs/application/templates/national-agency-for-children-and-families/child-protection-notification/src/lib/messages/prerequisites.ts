@@ -121,7 +121,7 @@ export const prerequisitesMessages = {
     description: {
       id: 'cpn.application:prerequisites.notifierInfo.description',
       defaultMessage:
-        'Þegar þú tilkynnir til barnaverndar þá þarftu að gefa upp nafn þitt, netfang og símanúmer svo Barnavernd geti haft samband við þig ef þörf krefur. Um leið getur þú óskað eftir nafnleynd þannig að sá sem þú tilkynnir fái ekki upplýsingar um þig.',
+        'Þegar þú tilkynnir til barnaverndar þá þarftu að gefa upp nafn þitt, netfang og símanúmer svo barnavernd geti haft samband við þig ef þörf krefur. Um leið getur þú óskað eftir nafnleynd þannig að sá sem þú tilkynnir fái ekki upplýsingar um þig.',
       description: 'Notifier information description',
     },
     wantsAnonymity: {

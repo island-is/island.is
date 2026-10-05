@@ -133,12 +133,12 @@ export const reasonForNotificationMessages = {
     },
     explanation: {
       id: 'cpn.application:reasonForNotification.notificationHistory.explanation',
-      defaultMessage: 'Skýring',
+      defaultMessage: 'Ástæða',
       description: 'Explanation label',
     },
     explanationPlaceholder: {
       id: 'cpn.application:reasonForNotification.notificationHistory.explanationPlaceholder',
-      defaultMessage: 'Veldu skýringu',
+      defaultMessage: 'Veldu ástæðu',
       description: 'Select explanation placeholder',
     },
   }),
