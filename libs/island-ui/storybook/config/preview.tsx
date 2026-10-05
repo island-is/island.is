@@ -4,6 +4,9 @@ import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ApolloClient, ApolloProvider } from '@apollo/client'
 import { MockedProvider } from '@apollo/client/testing'
+// Stories import components directly (deep imports), so the global resets
+// (button, body, etc.) must be loaded explicitly, as the apps do.
+import '../../core/src/styles/global.css'
 
 export const parameters: Parameters = {
   viewMode: 'docs',
