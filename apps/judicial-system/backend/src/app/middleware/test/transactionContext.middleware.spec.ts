@@ -378,10 +378,43 @@ describe('TransactionContextMiddleware', () => {
       expect(transaction.rollback).toHaveBeenCalledTimes(1)
     })
 
-    it('should do nothing when no transaction was opened', async () => {
-      const res = await givenARequest(() => undefined)
+    it('should settle the slot when no transaction was opened', async () => {
+      // A request that fails without a transaction never reaches the
+      // interceptor, so the close handler is the only settler left. The slot
+      // is read from inside the request because the handler settles the slot
+      // it captured, not one read back from the store.
+      await givenARequest(async (res) => {
+        await expect(res.emit('close')).resolves.toBeUndefined()
 
-      await expect(res.emit('close')).resolves.toBeUndefined()
+        expect(getTransactionContext()?.settlement).toBe('settled')
+      })
+    })
+
+    it('should refuse a late after commit callback on a failed request that opened no transaction', async () => {
+      // Nothing drains the callbacks once the response has ended, so a
+      // callback registered now would be lost without a trace; the settled
+      // slot refuses it instead.
+      await givenARequest(async (res) => {
+        await res.emit('close')
+
+        expect(() => registerAfterCommit(async () => undefined)).toThrow(
+          InternalServerErrorException,
+        )
+        expect(getTransactionContext()?.afterCommit).toEqual([])
+      })
+    })
+
+    it('should refuse to open a transaction on a request that ended without one', async () => {
+      const sequelize = { transaction: jest.fn() } as unknown as Sequelize
+
+      await givenARequest(async (res) => {
+        await res.emit('close')
+
+        await expect(getOrCreateTransaction(sequelize)).rejects.toBeInstanceOf(
+          InternalServerErrorException,
+        )
+        expect(sequelize.transaction).not.toHaveBeenCalled()
+      })
     })
 
     it('should roll back a transaction that is still opening', async () => {

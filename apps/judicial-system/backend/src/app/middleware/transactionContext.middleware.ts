@@ -173,11 +173,20 @@ export class TransactionContextMiddleware implements NestMiddleware {
         // right now, in which case rolling back would race its COMMIT on the
         // same transaction, it is running the after commit callbacks, or it
         // has already finished.
-        if (!context.transaction || context.settlement !== 'open') {
+        if (context.settlement !== 'open') {
           return
         }
 
+        // Settled whether or not a transaction was opened. A request that
+        // failed without one never reaches the interceptor, and nothing drains
+        // the callbacks from here on: a slot left open would accept a late
+        // registration and lose it without a trace, where a settled one
+        // refuses it.
         context.settlement = 'settled'
+
+        if (!context.transaction) {
+          return
+        }
 
         // The slot holds the opening call, which may still be in flight: a
         // request that ends while its transaction is opening is exactly the
