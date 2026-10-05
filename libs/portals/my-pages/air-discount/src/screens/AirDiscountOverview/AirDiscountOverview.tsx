@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import copyToClipboard from 'copy-to-clipboard'
 
 import {
@@ -6,7 +6,6 @@ import {
   Box,
   Bullet,
   BulletList,
-  Button,
   GridColumn,
   GridRow,
   Stack,
@@ -16,9 +15,12 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  createColumnHelper,
   formatDateWithTime,
+  InlineLink,
   IntroWrapper,
   m as coreMessage,
+  PortalTable,
   VEGAGERDIN_SLUG,
 } from '@island.is/portals/my-pages/core'
 import {
@@ -26,19 +28,23 @@ import {
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
 import { Problem } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
-import UsageTable from '../../components/UsageTable/UsageTable'
 import { messages as m } from '../../lib/messages'
 import {
-  AirDiscountQuery,
-  useAirDiscountFlightLegsQuery,
-  useAirDiscountQuery,
+  AirDiscountMembersQuery,
+  useAirDiscountMembersQuery,
 } from './AirDiscountOverview.generated'
 
 type CopiedCode = {
   code: string
   copied: boolean
 }
+
+type Member = AirDiscountMembersQuery['airDiscountSchemeMembers'][number]
+type UsageRow = Member['usedFlightLegsThisPeriod'][number] & { name: string }
+
+const columnHelper = createColumnHelper<UsageRow>()
 
 export const AirDiscountOverview = () => {
   useNamespaces('sp.air-discount')
@@ -48,37 +54,59 @@ export const AirDiscountOverview = () => {
 
   useEffect(() => {
     const isFlagEnabled = async () => {
-      const isPageDisabled = await featureFlagClient.getValue(
+      const isPageDisabled = await featureFlagClient.getValue<boolean>(
         'isPortalAirDiscountPageDisabled',
         false,
       )
       if (isPageDisabled) {
-        setIsDisabled(isPageDisabled as boolean)
+        setIsDisabled(isPageDisabled)
       }
     }
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { data, loading, error } = useAirDiscountQuery()
-  const { data: flightLegData } = useAirDiscountFlightLegsQuery()
+  const { data, loading, error } = useAirDiscountMembersQuery()
+  const members = data?.airDiscountSchemeMembers
+  const benefits =
+    members
+      ?.map(({ name, benefit }) => (benefit ? { name, ...benefit } : null))
+      .filter(isDefined) ?? []
+  const withConnectionCodes = benefits.filter(
+    (benefit) => benefit.connectionDiscountCodes.length > 0,
+  )
+  const usageRows: UsageRow[] =
+    members?.flatMap((member) =>
+      member.usedFlightLegsThisPeriod.map((leg) => ({
+        ...leg,
+        name: member.name,
+      })),
+    ) ?? []
+  const noRights = !!members?.length && benefits.length === 0
 
   const [copiedCodes, setCopiedCodes] = useState<CopiedCode[]>([])
   const copyTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
-  const airDiscounts = data?.airDiscountSchemeDiscounts
-  const flightLegs = flightLegData?.airDiscountSchemeUserAndRelationsFlights
-  const connectionCodes = airDiscounts?.filter(
-    (x) => x.connectionDiscountCodes.length > 0,
+
+  const usageColumns = useMemo(
+    () => [
+      columnHelper.accessor('name', {
+        id: 'user',
+        header: formatMessage(m.user),
+        enableSorting: false,
+      }),
+      columnHelper.accessor('travel', {
+        header: formatMessage(m.flight),
+        enableSorting: false,
+      }),
+      columnHelper.accessor('bookingDate', {
+        id: 'date',
+        header: formatMessage(m.date),
+        cell: ({ getValue }) => formatDateWithTime(getValue()),
+        enableSorting: false,
+      }),
+    ],
+    [formatMessage],
   )
-
-  const hasNoRights = (
-    item: AirDiscountQuery['airDiscountSchemeDiscounts'][number],
-  ) =>
-    !item.user.fund ||
-    (item.user.fund.credit === 0 && item.user.fund.used === 0)
-
-  const noRights =
-    !!airDiscounts && airDiscounts.length > 0 && airDiscounts.every(hasNoRights)
 
   useEffect(() => {
     const timers = copyTimers.current
@@ -107,17 +135,10 @@ export const AirDiscountOverview = () => {
         noBorder={false}
         title={formatMessage(m.noFundingTitle)}
         message={formatMessage(m.noFunding, {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          link: (str: any) => (
-            <a
-              href={formatMessage(m.noFundingMoreInfoLink)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button variant="text" as="span" unfocusable>
-                {str}
-              </Button>
-            </a>
+          link: (str: ReactNode) => (
+            <InlineLink to={formatMessage(m.noFundingMoreInfoLink)}>
+              {str}
+            </InlineLink>
           ),
         })}
         imgSrc="./assets/images/coffee.svg"
@@ -139,17 +160,8 @@ export const AirDiscountOverview = () => {
           <GridColumn span={['8/8', '8/8']} order={1}>
             <Text variant="default" paddingTop={2}>
               {formatMessage(m.introLink, {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                link: (str: any) => (
-                  <a
-                    href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button variant="text" as="span" unfocusable>
-                      {str}
-                    </Button>
-                  </a>
+                link: (str: ReactNode) => (
+                  <InlineLink to={formatMessage(m.termsLink)}>{str}</InlineLink>
                 ),
               })}
             </Text>
@@ -167,9 +179,16 @@ export const AirDiscountOverview = () => {
         </GridRow>
       </Box>
 
-      {loading && !error && <CardLoader />}
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && !loading && noRights && (
+      {loading && <CardLoader />}
+      {!loading && error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && members?.length === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!loading && !error && noRights && (
         <Problem
           type="no_data"
           noBorder={false}
@@ -178,63 +197,61 @@ export const AirDiscountOverview = () => {
           imgSrc="./assets/images/coffee.svg"
         />
       )}
-      {data && !noRights && (
+      {!loading && !error && benefits.length > 0 && (
         <Box marginBottom={5}>
-          <Text paddingBottom={3} fontWeight="medium">
+          <Text as="h2" paddingBottom={3} fontWeight="medium">
             {formatMessage(m.myRights)}
           </Text>
           <Stack space={2}>
-            {airDiscounts
-              ?.filter((x) => !hasNoRights(x))
-              .map((item, index) => {
-                const message = [
-                  formatMessage(m.remainingAirfares),
-                  item.user.fund?.credit,
-                  formatMessage(m.of),
-                  item.user.fund?.total,
-                ]
-                  .filter((x) => x !== null)
-                  .join(' ')
-                const isCopied = copiedCodes.find(
-                  (x) => x.code === item.discountCode,
-                )?.copied
-                return (
-                  <ActionCard
-                    key={`loftbru-item-${index}`}
-                    heading={item.user.name}
-                    text={message}
-                    subText={
-                      item.user.fund?.credit === 0
-                        ? undefined
-                        : item.discountCode
-                        ? item.discountCode
-                        : formatMessage(m.codeGenFailed)
-                    }
-                    cta={
-                      item.user.fund?.credit === 0 || !item.discountCode
-                        ? undefined
-                        : {
-                            label: formatMessage(m.copyCode),
-                            ariaLabel: formatMessage(m.copyCodeFor, {
-                              name: item.user.name,
-                            }),
-                            onClick: () => copy(item.discountCode),
-                            icon: isCopied ? 'checkmark' : 'copy',
-                          }
-                    }
-                  />
-                )
-              })}
+            {benefits.map((item, index) => {
+              const message = [
+                formatMessage(m.remainingAirfares),
+                item.fund.credit,
+                formatMessage(m.of),
+                item.fund.total,
+              ]
+                .filter((x) => x !== null)
+                .join(' ')
+              const isCopied = copiedCodes.find(
+                (x) => x.code === item.discountCode,
+              )?.copied
+              return (
+                <ActionCard
+                  key={`loftbru-item-${index}`}
+                  heading={item.name}
+                  text={message}
+                  subText={
+                    item.fund.credit === 0
+                      ? undefined
+                      : item.discountCode
+                      ? item.discountCode
+                      : formatMessage(m.codeGenFailed)
+                  }
+                  cta={
+                    item.fund.credit === 0 || !item.discountCode
+                      ? undefined
+                      : {
+                          label: formatMessage(m.copyCode),
+                          ariaLabel: formatMessage(m.copyCodeFor, {
+                            name: item.name,
+                          }),
+                          onClick: () => copy(item.discountCode),
+                          icon: isCopied ? 'checkmark' : 'copy',
+                        }
+                  }
+                />
+              )
+            })}
           </Stack>
         </Box>
       )}
-      {connectionCodes && connectionCodes?.length > 0 && (
+      {!loading && !error && withConnectionCodes.length > 0 && (
         <Box marginBottom={5}>
-          <Text paddingBottom={3} fontWeight="medium">
+          <Text as="h2" paddingBottom={3} fontWeight="medium">
             {formatMessage(m.activeConnectionCodes)}
           </Text>
           <Stack space={2}>
-            {connectionCodes?.map((item, itemIndex) => {
+            {withConnectionCodes.map((item, itemIndex) => {
               return item.connectionDiscountCodes.map((code, codeIndex) => {
                 const isCopied = copiedCodes.find(
                   (x) => x.code === code.code,
@@ -242,7 +259,7 @@ export const AirDiscountOverview = () => {
                 return (
                   <ActionCard
                     key={`loftbru-item-connection-code-${itemIndex}-${codeIndex}`}
-                    heading={item.user.name}
+                    heading={item.name}
                     headingVariant="h4"
                     text={formatMessage(m.flight) + ': ' + code.flightDesc}
                     subText={code.code}
@@ -255,7 +272,7 @@ export const AirDiscountOverview = () => {
                     cta={{
                       label: formatMessage(m.copyCode),
                       ariaLabel: formatMessage(m.copyConnectionCodeFor, {
-                        name: item.user.name,
+                        name: item.name,
                         flight: code.flightDesc,
                       }),
                       onClick: () => copy(code.code),
@@ -268,19 +285,20 @@ export const AirDiscountOverview = () => {
           </Stack>
         </Box>
       )}
-      {!loading && !error && airDiscounts?.length === 0 && (
-        <Problem
-          type="no_data"
-          noBorder={false}
-          imgSrc="./assets/images/sofa.svg"
-        />
-      )}
-      {flightLegs && flightLegs.length > 0 && (
+      {!loading && !error && usageRows.length > 0 && (
         <Box marginBottom={5}>
-          <Text paddingBottom={3} fontWeight="medium">
+          <Text as="h2" paddingBottom={3} fontWeight="medium">
             {formatMessage(m.airfaresUsage)}
           </Text>
-          <UsageTable data={flightLegs} />
+          <Box marginBottom={4}>
+            <PortalTable
+              columns={usageColumns}
+              data={usageRows}
+              emptyMessage=""
+              mobileTitleKey="user"
+              srCaption={formatMessage(m.airfaresUsage)}
+            />
+          </Box>
         </Box>
       )}
     </IntroWrapper>

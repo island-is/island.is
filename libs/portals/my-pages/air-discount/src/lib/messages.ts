@@ -23,6 +23,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári, með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið <link>notendaskilmála</link> Loftbrúar.',
   },
+  termsLink: {
+    id: 'sp.air-discount:terms-link',
+    defaultMessage:
+      'https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru',
+  },
   discountTextFirst: {
     id: 'sp.air-discount:discount-text',
     defaultMessage: 'Hver afsláttur nemur 40% af flugfargjaldi.',
