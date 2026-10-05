@@ -5,7 +5,7 @@ import { AppealCaseState } from '@island.is/judicial-system/types'
 import {
   CaseWhereOptions,
   expandCasesWithAppeals,
-  presentVerdictAppealAsCaseAppeal,
+  presentVerdictAppealAsRowAppeal,
 } from '../caseTable.types'
 import { courtOfAppealsCasesAccessWhereOptions } from './access'
 
@@ -116,7 +116,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
         },
       ],
     },
-    displayCases: presentVerdictAppealAsCaseAppeal,
+    displayCases: presentVerdictAppealAsRowAppeal,
   })
 
 export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
@@ -142,5 +142,5 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
         },
       ],
     },
-    displayCases: presentVerdictAppealAsCaseAppeal,
+    displayCases: presentVerdictAppealAsRowAppeal,
   })

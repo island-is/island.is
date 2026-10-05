@@ -359,8 +359,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
+      // The court of appeals needs it for the same reason the others do: the
+      // certificate is what dates the appeal window the appeal depends on.
       canViewVerdictServiceCertificate:
-        isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
+        isPublicProsecutionOfficeUser(user) ||
+        isPrisonAdminUser(user) ||
+        isCourtOfAppealsUser(user),
     }),
     [user, workingCase.hasCivilClaims, workingCase.state],
   )

@@ -52,10 +52,12 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
   let internalNotificationController: InternalNotificationController
 
   beforeEach(async () => {
-    const { queuedMessages, internalNotificationController: controller } =
-      await createTestingNotificationModule()
+    const {
+      queuedMessagesAfterCommit,
+      internalNotificationController: controller,
+    } = await createTestingNotificationModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     internalNotificationController = controller
   })
 

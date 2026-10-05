@@ -29,6 +29,7 @@ import { AppealCaseService } from '../appealCase.service'
 import { LimitedAccessAppealCaseController } from '../limitedAccessAppealCase.controller'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../case/limitedAccessCase.service')
 jest.mock('../../event/event.service')
