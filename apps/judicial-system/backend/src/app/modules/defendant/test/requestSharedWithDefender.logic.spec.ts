@@ -61,7 +61,8 @@ describe('getMostPermissiveRequestSharedWithDefenderForNationalId', () => {
           },
           {
             defenderNationalId: nationalId,
-            requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
           },
           {
             defenderNationalId: '9999999999',

@@ -502,8 +502,7 @@ export class CaseNotificationService extends BaseNotificationService {
           }),
         )
       } else if (
-        requestSharedWithDefender ===
-        RequestSharedWithDefender.READY_FOR_COURT
+        requestSharedWithDefender === RequestSharedWithDefender.READY_FOR_COURT
       ) {
         promises.push(
           this.sendReadyForCourtEmailNotificationToDefender({
@@ -767,13 +766,12 @@ export class CaseNotificationService extends BaseNotificationService {
         defenderNationalId,
       )
     const isRequestShared =
-      requestSharedWithDefender ===
-        RequestSharedWithDefender.READY_FOR_COURT ||
+      requestSharedWithDefender === RequestSharedWithDefender.READY_FOR_COURT ||
       requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
 
-    const linkSubject = `${
-      isRequestShared ? 'Krafa í máli' : 'Yfirlit máls'
-    } ${theCase.courtCaseNumber}`
+    const linkSubject = `${isRequestShared ? 'Krafa í máli' : 'Yfirlit máls'} ${
+      theCase.courtCaseNumber
+    }`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification({
       formatMessage: this.formatMessage,

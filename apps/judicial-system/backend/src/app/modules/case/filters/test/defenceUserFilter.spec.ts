@@ -186,7 +186,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         })
       })
 
-          describe('multi-defendant defender assignment', () => {
+      describe('multi-defendant defender assignment', () => {
         describe('defender of one defendant gets access', () => {
           const theCase = {
             type,
@@ -230,8 +230,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             defendants: [
               {
                 defenderNationalId: user.nationalId,
-                requestSharedWithDefender:
-                  RequestSharedWithDefender.NOT_SHARED,
+                requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
               },
               {
                 defenderNationalId: user.nationalId,
