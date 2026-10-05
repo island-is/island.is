@@ -39,6 +39,7 @@ import {
 } from './utils/recipientAvailability'
 import { MAX_MESSAGE_LENGTH, MAX_TITLE_LENGTH } from './utils/constants'
 import { Markdown } from '@island.is/shared/components'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { HealthDirectorateHealthConversationRecipientAvailability as Availability } from '@island.is/api/schema'
 import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
@@ -394,7 +395,7 @@ const NewHealthConversation = () => {
               paddingBottom={[10, 5, 5]}
             >
               {(hasMultipleRecipients || !usesCustomTitle) && (
-                <GridRow marginBottom={3}>
+                <GridRow marginBottom={[2, 2, 3]}>
                   {hasMultipleRecipients && (
                     <GridColumn
                       span={['12/12', '6/12']}
@@ -473,7 +474,9 @@ const NewHealthConversation = () => {
                 !isCertificateSelected &&
                 selectedType?.instructions && (
                   <Box marginBottom={2}>
-                    <Markdown>{selectedType.instructions}</Markdown>
+                    <TextMarkdown openLinksInNewTab>
+                      {selectedType.instructions}
+                    </TextMarkdown>
                   </Box>
                 )}
 
