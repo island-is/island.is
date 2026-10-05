@@ -6,7 +6,10 @@ import { InternalServerErrorException } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 
 import { Message, MessageType } from '../message'
-import { addMessagesToQueue, MessageMiddleware } from '../message.middleware'
+import {
+  MessageMiddleware,
+  pushMessagesToRequestStore,
+} from '../message.middleware'
 import { MessageService } from '../message.service'
 
 const createResponse = () => {
@@ -25,7 +28,7 @@ const createMessage = (type: MessageType): Message => ({
   caseId: uuid(),
 })
 
-describe('addMessagesToQueue', () => {
+describe('pushMessagesToRequestStore', () => {
   const messageService = {
     addMessagesToQueue: jest.fn().mockResolvedValue(undefined),
   } as unknown as MessageService & { addMessagesToQueue: jest.Mock }
@@ -63,14 +66,14 @@ describe('addMessagesToQueue', () => {
     jest.clearAllMocks()
   })
 
-  // Pins the behaviour the call sites not yet moved to the backend's after
-  // commit form keep: the messages are flushed when the response ends,
-  // whatever happened to the database work in between.
+  // The store knows nothing of the database work: whatever was pushed is
+  // flushed when the response ends. Holding the push back until the work is
+  // durable is the backend's queueMessagesAfterCommit's job.
   it('should flush the messages when the response ends', async () => {
     const message = createMessage(MessageType.NOTIFICATION)
 
     await givenARequest(async (res) => {
-      addMessagesToQueue(message)
+      pushMessagesToRequestStore(message)
 
       await res.emit('finish')
     })
@@ -81,7 +84,7 @@ describe('addMessagesToQueue', () => {
 
   it('should throw outside a request', () => {
     expect(() =>
-      addMessagesToQueue(createMessage(MessageType.NOTIFICATION)),
+      pushMessagesToRequestStore(createMessage(MessageType.NOTIFICATION)),
     ).toThrow(InternalServerErrorException)
   })
 })
