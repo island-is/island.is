@@ -118,37 +118,35 @@ export class FieldsService {
     const currentFieldType = field.fieldType
     const newFieldType = updateFieldDto.fieldType
 
+    const screen = await this.screenModel.findByPk(field.screenId)
+    if (!screen) {
+      throw new NotFoundException(
+        `Screen with id '${field.screenId}' not found`,
+      )
+    }
+    const section = await this.sectionModel.findByPk(screen.sectionId)
+    if (!section) {
+      throw new NotFoundException(
+        `Section with id '${screen.sectionId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(section.formId)
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to update field with id '${id}'`,
+      )
+    }
+
     if (
       currentFieldType === FieldTypesEnum.DROPDOWN_LIST ||
       currentFieldType === FieldTypesEnum.RADIO_BUTTONS ||
       currentFieldType === FieldTypesEnum.CHECKBOX
     ) {
-      const screen = await this.screenModel.findByPk(field.screenId)
-      if (!screen) {
-        throw new NotFoundException(
-          `Screen with id '${field.screenId}' not found`,
-        )
-      }
-      const section = await this.sectionModel.findByPk(screen.sectionId)
-      if (!section) {
-        throw new NotFoundException(
-          `Section with id '${screen.sectionId}' not found`,
-        )
-      }
-      const form = await this.formModel.findByPk(section.formId)
-      if (!form) {
-        throw new NotFoundException(
-          `Form with id '${section.formId}' not found`,
-        )
-      }
-
-      const formOwnerNationalId = form.organizationNationalId
-      if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-        throw new UnauthorizedException(
-          `User does not have permission to update field with id '${id}'`,
-        )
-      }
-
       let listItemIds: string[] = []
 
       if (
