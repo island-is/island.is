@@ -20,9 +20,12 @@ module.exports = {
         { transaction },
       )
 
+      // Case and defendant each get their own Postgres enum type with the
+      // same labels; cast via text so the backfill type-checks.
       await queryInterface.sequelize.query(
         `UPDATE defendant d
-         SET request_shared_with_defender = c.request_shared_with_defender
+         SET request_shared_with_defender =
+           c.request_shared_with_defender::text::enum_defendant_request_shared_with_defender
          FROM "case" c
          WHERE d.case_id = c.id
            AND c.type <> 'INDICTMENT'
