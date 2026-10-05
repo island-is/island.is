@@ -2366,10 +2366,9 @@ export class CaseService {
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
             defenderChoice: waives ? DefenderChoice.WAIVE : null,
-            requestSharedWithDefender:
-              caseUpdate.requestSharedWithDefender !== undefined
-                ? caseUpdate.requestSharedWithDefender
-                : theCase.requestSharedWithDefender,
+            // undefined → sync skips; avoids clobbering per-defendant values
+            // on contact-only edits
+            requestSharedWithDefender: caseUpdate.requestSharedWithDefender,
           },
           transaction,
         )
