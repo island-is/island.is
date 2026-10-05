@@ -71,6 +71,39 @@ describe('getAppealDefender', () => {
     })
   })
 
+  // Waiving counsel clears the appeal fields, and reading the district court
+  // through after that would show a defender beside a checked "wants no
+  // counsel" box - and hand the court that name to confirm.
+  it('names nobody once the defendant has waived counsel', () => {
+    expect(
+      getAppealDefender(
+        defendantWith({
+          defenderName: 'Lára Lögmann',
+          defenderEmail: 'lara@lawyers.is',
+          appealDefenderWaived: true,
+        }),
+      ),
+    ).toEqual({
+      name: undefined,
+      nationalId: undefined,
+      email: undefined,
+      phoneNumber: undefined,
+    })
+  })
+
+  // Unchecking the box is an answer too. The court has engaged with the
+  // question, so it names the defender rather than being handed a guess.
+  it('stops reading through once the question has been answered either way', () => {
+    expect(
+      getAppealDefender(
+        defendantWith({
+          defenderName: 'Lára Lögmann',
+          appealDefenderWaived: false,
+        }),
+      ).name,
+    ).toBeUndefined()
+  })
+
   // A half-filled appeal record is still the appeal's answer - reading the
   // missing half off the district court would blend two people into one.
   it('does not mix the two records', () => {
@@ -108,6 +141,33 @@ describe('getAppealSpokesperson', () => {
       ).name,
     ).toBe('Brynjar Sveinsson')
   })
+
+  // Removing the advocate and adding one again is the trap: the fields are
+  // cleared both times, so reading through would put the district court's
+  // advocate back on screen for the court to confirm by accident.
+  it('names nobody after this court has cleared the advocate', () => {
+    expect(
+      getAppealSpokesperson(
+        claimantWith({
+          hasSpokesperson: true,
+          spokespersonName: 'Lára Lögmann',
+          hasAppealSpokesperson: false,
+        }),
+      ).name,
+    ).toBeUndefined()
+  })
+
+  it('still names nobody when one is added again', () => {
+    expect(
+      getAppealSpokesperson(
+        claimantWith({
+          hasSpokesperson: true,
+          spokespersonName: 'Lára Lögmann',
+          hasAppealSpokesperson: true,
+        }),
+      ).name,
+    ).toBeUndefined()
+  })
 })
 
 describe('getHasAppealSpokesperson', () => {
@@ -141,6 +201,19 @@ describe('getHasAppealSpokesperson', () => {
 })
 
 describe('getAppealSpokespersonIsLawyer', () => {
+  // The kind of advocate is cleared alongside the name, and has to stay
+  // cleared for the same reason.
+  it('forgets the district court kind once the advocate is cleared', () => {
+    expect(
+      getAppealSpokespersonIsLawyer(
+        claimantWith({
+          spokespersonIsLawyer: true,
+          hasAppealSpokesperson: true,
+        }),
+      ),
+    ).toBeUndefined()
+  })
+
   it('starts from the district court answer and lets this court reverse it', () => {
     expect(
       getAppealSpokespersonIsLawyer(
