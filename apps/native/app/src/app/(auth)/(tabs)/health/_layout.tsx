@@ -1,5 +1,10 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
+import { View } from 'react-native'
+
+import { StepUpLock } from '@/components/step-up/step-up-lock'
+import { useStepUpLock } from '@/hooks/use-step-up-lock'
+import { Loader } from '@/ui'
 import {
   modalScreenOptions,
   tabScreenOptions,
@@ -7,6 +12,22 @@ import {
 
 export default function HealthLayout() {
   const intl = useIntl()
+  // The whole area locks at once: while locked no health screen mounts, so
+  // nothing is fetched or shown — not even from the cache.
+  const { state, onUnlocked } = useStepUpLock('isAppHealthStepUpRequired')
+
+  if (state === 'loading') {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Loader />
+      </View>
+    )
+  }
+
+  if (state === 'locked') {
+    return <StepUpLock onUnlocked={onUnlocked} />
+  }
+
   return (
     <Stack
       initialRouteName="index"

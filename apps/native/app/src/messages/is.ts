@@ -739,6 +739,21 @@ export const is = {
   'updateApp.buttonSkip': 'Sleppa',
 
   // health - overview
+  // step up (locked screens)
+  'stepUp.title': 'Staðfestu að þetta sért þú',
+  'stepUp.intro':
+    'Heilsuupplýsingar eru læstar þegar appið hefur ekki verið notað um stund. Staðfestu með rafrænum skilríkjum til að opna þær.',
+  'stepUp.start': 'Staðfesta með rafrænum skilríkjum',
+  'stepUp.waitingApp':
+    'Opnaðu Auðkennisappið og staðfestu ef öryggistalan er sú sama.',
+  'stepUp.waitingSim': 'Staðfestu í símanum ef öryggistalan er sú sama.',
+  'stepUp.timeLeft': 'Tími eftir: {minutes}:{seconds}',
+  'stepUp.denied': 'Hætt var við auðkenninguna. Reyndu aftur.',
+  'stepUp.timedOut': 'Auðkenningin rann út á tíma. Reyndu aftur.',
+  'stepUp.tooManyAttempts':
+    'Of margar tilraunir. Reyndu aftur eftir smá stund.',
+  'stepUp.failed': 'Ekki tókst að hefja auðkenningu. Reyndu aftur.',
+
   'health.overview.screenTitle': 'Heilsa',
   'health.overview.title': 'Heilsan mín',
   'health.overview.description':
