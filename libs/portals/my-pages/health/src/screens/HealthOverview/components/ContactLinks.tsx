@@ -115,6 +115,7 @@ const ContactLinks = () => {
       borderColor="blue200"
       borderRadius="large"
       background="white"
+      overflow="hidden"
     >
       {links.map((link, index) => (
         <Box
