@@ -2,12 +2,7 @@ import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import {
-  FEATURE_FLAG_CLIENT,
-  FeatureFlagService,
-  Features,
-} from '@island.is/nest/feature-flags'
-import type { FeatureFlagClient } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
@@ -33,7 +28,6 @@ describe('PaymentFlowService', () => {
   let app: TestApp
   let service: PaymentFlowService
   let featureFlagService: FeatureFlagService
-  let featureFlagClient: FeatureFlagClient
 
   beforeAll(async () => {
     app = await setupTestApp()
@@ -53,9 +47,11 @@ describe('PaymentFlowService', () => {
     // flag-off case is asserted explicitly below.
     featureFlagService = app.get<FeatureFlagService>(FeatureFlagService)
     jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
+  })
 
-    // Company bank transfers are allowed per company; off unless a test turns it on.
-    featureFlagClient = app.get<FeatureFlagClient>(FEATURE_FLAG_CLIENT)
+  afterEach(() => {
+    // Tests may override the flag; restore the default of every flag on.
+    jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
   })
 
   afterAll(() => {
@@ -142,28 +138,28 @@ describe('PaymentFlowService', () => {
     })
 
     it('should offer bank transfer to a company payer the company flag allows', async () => {
-      const getValue = jest
-        .spyOn(featureFlagClient, 'getValue')
-        .mockResolvedValueOnce(true as never)
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
 
       const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
 
       expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
-      // Evaluated for this company, with the attributes sent for companies elsewhere.
+      // Evaluated for this company.
       expect(getValue).toHaveBeenCalledWith(
         Features.isIslandisBankTransferPaymentAllowedForCompany,
         false,
-        {
-          id: '6010100890',
-          attributes: { nationalId: '6010100890', subjectType: 'legalEntity' },
-        },
+        expect.objectContaining({ nationalId: '6010100890' }),
       )
     })
 
     it('should not offer bank transfer to a company payer the company flag does not allow', async () => {
       jest
-        .spyOn(featureFlagClient, 'getValue')
-        .mockResolvedValueOnce(false as never)
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation(
+          (async (feature: Features) =>
+            feature !==
+            Features.isIslandisBankTransferPaymentAllowedForCompany) as never,
+        )
 
       const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
 
@@ -171,7 +167,7 @@ describe('PaymentFlowService', () => {
     })
 
     it('should not consult the company flag for an individual payer', async () => {
-      const getValue = jest.spyOn(featureFlagClient, 'getValue')
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
       getValue.mockClear()
 
       const methods = await createFlowAndReadMethods('0101302129') // valid person kennitala

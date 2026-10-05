@@ -207,10 +207,10 @@ local hook state.
    [`useBankTransferStatusPolling`](../../../../../../apps/payments/hooks/useBankTransferStatusPolling.ts)'s
    500ms→5s ladder:
 
-   | Bank | Reached `SCA_REQUIRED` | URL at `SCA_REQUIRED` |
-   | --- | --- | --- |
-   | Landsbankinn (redirect) | 5th poll, ~6.5 s | `app.landsbankinn.is/connect/authorize?…` |
-   | Íslandsbanki (back-channel) | 1st poll, < 1 s | none — bank pushes to the banking app |
+   | Bank                        | Reached `SCA_REQUIRED` | URL at `SCA_REQUIRED`                     |
+   | --------------------------- | ---------------------- | ----------------------------------------- |
+   | Landsbankinn (redirect)     | 5th poll, ~6.5 s       | `app.landsbankinn.is/connect/authorize?…` |
+   | Íslandsbanki (back-channel) | 1st poll, < 1 s        | none — bank pushes to the banking app     |
 
    Note the redirect URL Blikk reports at `SCA_REQUIRED` is the **bank's own** authorisation page,
    not the `payment.blikk.tech` hosted page returned by `create`. They are different URLs; only the
@@ -399,7 +399,7 @@ All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
   2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals are offered it, companies only when `isIslandisBankTransferPaymentAllowedForCompany` allows them, temporary kennitalas never.
 - **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints. Never applies to company payers, which only `isIslandisBankTransferPaymentAllowedForCompany` controls.
-- **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated with the company as the ConfigCat user (`identifier` and `nationalId` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
+- **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated through `FeatureFlagService` with the company as the ConfigCat user (`identifier` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
   1. Flow creation lists `bank_transfer` for a company payer only when it is on for that company.
   2. `create` refuses a company payer when it is off for that company, so neither a flow created while it was on nor a direct call can start a company transfer once it is turned off.
 
@@ -411,9 +411,9 @@ Env vars (values from [`infra/payments.ts`](../../../infra/payments.ts), schemas
 [`bankTransfer.config.ts`](./bankTransfer.config.ts) and
 [`blikkClient.config.ts`](../../../../../../libs/clients/blikk/src/lib/blikkClient.config.ts)):
 
-| Env var                     | Default / per-env                                                         | Description                                                           |
-| --------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `BLIKK_API_KEY`             | secret (`/k8s/services-payments/BLIKK_API_KEY`)                           | Provider API key. Read by the Blikk client.                           |
-| `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                    |
-| `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row.    |
-| `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.             |
+| Env var                     | Default / per-env                                                         | Description                                                        |
+| --------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `BLIKK_API_KEY`             | secret (`/k8s/services-payments/BLIKK_API_KEY`)                           | Provider API key. Read by the Blikk client.                        |
+| `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                 |
+| `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row. |
+| `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.          |

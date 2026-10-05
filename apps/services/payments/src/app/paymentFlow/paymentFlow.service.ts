@@ -5,6 +5,7 @@ import { ConfigType } from '@nestjs/config'
 import { isCompany, isPerson, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
+import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -14,12 +15,7 @@ import {
 import { Op } from 'sequelize'
 import { retry } from '@island.is/shared/utils/server'
 import { paginate } from '@island.is/nest/pagination'
-import {
-  FEATURE_FLAG_CLIENT,
-  FeatureFlagService,
-  Features,
-} from '@island.is/nest/feature-flags'
-import type { FeatureFlagClient } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   FjsErrorCode,
   InvoiceErrorCode,
@@ -112,27 +108,20 @@ export class PaymentFlowService {
     @Inject(JwksConfig.KEY)
     private readonly jwksConfig: ConfigType<typeof JwksConfig>,
     private readonly featureFlagService: FeatureFlagService,
-    @Inject(FEATURE_FLAG_CLIENT)
-    private readonly featureFlagClient: FeatureFlagClient,
   ) {}
 
   /**
    * Company bank transfers are rolled out per company. Evaluated with the company as the flag user
-   * (there is no signed-in user here), with the attributes island.is sends for a company elsewhere.
+   * (there is no signed-in user here); the service maps it to `subjectType: 'legalEntity'`.
    */
   async isBankTransferAllowedForCompany(
     companyNationalId: string,
   ): Promise<boolean> {
-    return this.featureFlagClient.getValue(
+    return this.featureFlagService.getValue(
       Features.isIslandisBankTransferPaymentAllowedForCompany,
       false,
-      {
-        id: companyNationalId,
-        attributes: {
-          nationalId: companyNationalId,
-          subjectType: 'legalEntity',
-        },
-      },
+      // Only `nationalId` is read by the service's user mapping.
+      { nationalId: companyNationalId } as User,
     )
   }
 
