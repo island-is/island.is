@@ -92,6 +92,7 @@ describe('TransactionContextMiddleware', () => {
         expect(getTransactionContext()).toEqual({
           transaction: null,
           settlement: 'open',
+          responseClosed: false,
           afterCommit: [],
         })
       })
@@ -378,33 +379,40 @@ describe('TransactionContextMiddleware', () => {
       expect(transaction.rollback).toHaveBeenCalledTimes(1)
     })
 
-    it('should settle the slot when no transaction was opened', async () => {
-      // A request that fails without a transaction never reaches the
-      // interceptor, so the close handler is the only settler left. The slot
-      // is read from inside the request because the handler settles the slot
-      // it captured, not one read back from the store.
+    it('should record the end of the response and leave the slot open when no transaction was opened', async () => {
+      // The interceptor may still be on its way - a client abort between the
+      // handler returning and the interceptor running - and it skips a slot
+      // that is not open, so settling here would drop the callbacks of
+      // durable work. The slot is read from inside the request because the
+      // handler marks the slot it captured, not one read back from the store.
       await givenARequest(async (res) => {
         await expect(res.emit('close')).resolves.toBeUndefined()
 
-        expect(getTransactionContext()?.settlement).toBe('settled')
+        expect(getTransactionContext()).toMatchObject({
+          settlement: 'open',
+          responseClosed: true,
+        })
       })
     })
 
-    it('should refuse a late after commit callback on a failed request that opened no transaction', async () => {
-      // Nothing drains the callbacks once the response has ended, so a
-      // callback registered now would be lost without a trace; the settled
-      // slot refuses it instead.
+    it('should still accept an after commit callback after the response ended without a transaction', async () => {
+      // A route-level interceptor registers callbacks after the handler has
+      // returned, and the interceptor still runs them if the request
+      // succeeds; refusing here would fail that work for an aborted client.
+      const callback = async () => undefined
+
       await givenARequest(async (res) => {
         await res.emit('close')
 
-        expect(() => registerAfterCommit(async () => undefined)).toThrow(
-          InternalServerErrorException,
-        )
-        expect(getTransactionContext()?.afterCommit).toEqual([])
+        registerAfterCommit(callback)
+
+        expect(getTransactionContext()?.afterCommit).toEqual([callback])
       })
     })
 
     it('should refuse to open a transaction on a request that ended without one', async () => {
+      // The close handler has fired, so a transaction opened now would be one
+      // nothing ever rolls back.
       const sequelize = { transaction: jest.fn() } as unknown as Sequelize
 
       await givenARequest(async (res) => {

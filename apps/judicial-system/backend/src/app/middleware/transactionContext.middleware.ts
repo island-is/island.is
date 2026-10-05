@@ -50,6 +50,13 @@ export interface TransactionContext {
   transaction: Promise<Transaction> | null
   /** Whether the transaction is open, being settled, or finished. */
   settlement: TransactionSettlement
+  /**
+   * Whether the response has ended. The close handler is the request's last
+   * settler and has fired by then, so a transaction opened from here on would
+   * be one nothing ever rolls back; `getOrCreateTransaction` refuses to open
+   * it.
+   */
+  responseClosed: boolean
   /** Callbacks to run after a successful commit, in registration order. */
   afterCommit: AfterCommitCallback[]
 }
@@ -98,6 +105,17 @@ export const getOrCreateTransaction = async (
   if (context.settlement !== 'open') {
     throw new InternalServerErrorException(
       `The request transaction is already ${context.settlement} and cannot be reopened.`,
+    )
+  }
+
+  // The same leak from the other side: a request that opened no transaction
+  // keeps its slot open after the response has ended, so that the interceptor
+  // can still run the callbacks of a request the client aborted late, but the
+  // close handler that would roll back a transaction opened now has already
+  // fired.
+  if (context.responseClosed) {
+    throw new InternalServerErrorException(
+      'The response has already ended and a transaction opened now would never be settled.',
     )
   }
 
@@ -155,6 +173,7 @@ export class TransactionContextMiddleware implements NestMiddleware {
     const context: TransactionContext = {
       transaction: null,
       settlement: 'open',
+      responseClosed: false,
       afterCommit: [],
     }
 
@@ -169,6 +188,10 @@ export class TransactionContextMiddleware implements NestMiddleware {
       // 'close' can be emitted from the socket rather than from the request's
       // own async context.
       res.on('close', async () => {
+        // Recorded first, whatever the slot's state: a transaction opened
+        // after this point would have no settler.
+        context.responseClosed = true
+
         // Anything but 'open' means the interceptor has this: it is committing
         // right now, in which case rolling back would race its COMMIT on the
         // same transaction, it is running the after commit callbacks, or it
@@ -177,20 +200,19 @@ export class TransactionContextMiddleware implements NestMiddleware {
           return
         }
 
-        // Settled whether or not a transaction was opened. A request that
-        // failed without one never reaches the interceptor, and nothing drains
-        // the callbacks from here on: a slot left open would accept a late
-        // registration and lose it without a trace, where a settled one
-        // refuses it. Callbacks already registered are another matter: the
-        // interceptor skips a slot that is not open, so a request that opened
-        // no transaction and was aborted after its handler returned but
-        // before the interceptor got to it drops them - its work is durable,
-        // its announcements are not made.
-        context.settlement = 'settled'
-
+        // A request that opened no transaction keeps its slot open. Its
+        // handler may have committed a transaction of its own and returned,
+        // with the interceptor still on its way - a route-level interceptor's
+        // work runs first - when the client aborted. The work is durable, so
+        // the interceptor still runs the callbacks, which is where the
+        // announcements of that work are made; settling the slot here would
+        // drop them silently. A request that failed instead never reaches the
+        // interceptor, and its callbacks are dropped as on any failed request.
         if (!context.transaction) {
           return
         }
+
+        context.settlement = 'settled'
 
         // The slot holds the opening call, which may still be in flight: a
         // request that ends while its transaction is opening is exactly the

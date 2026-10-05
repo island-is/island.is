@@ -265,5 +265,28 @@ describe('messages queued after commit', () => {
       expect(commitTransaction).not.toHaveBeenCalled()
       expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
     })
+
+    it('should flush the messages when the client aborts before the interceptor runs', async () => {
+      // The handler committed a transaction of its own and returned, and the
+      // client aborted while a route-level interceptor was still at work, so
+      // the response closed before the commit interceptor got to the
+      // callbacks. The work is durable, so the message is still sent, once.
+      await givenARequest(async (res) => {
+        await sequelize.transaction(async () => {
+          queueMessagesAfterCommit(message)
+        })
+
+        await res.emit('close')
+
+        expect(messageService.addMessagesToQueue).not.toHaveBeenCalled()
+
+        await lastValueFrom(interceptor.intercept(executionContext, next))
+      })
+
+      expect(commitTransaction).toHaveBeenCalledTimes(1)
+      expect(rollbackTransaction).not.toHaveBeenCalled()
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledTimes(1)
+      expect(messageService.addMessagesToQueue).toHaveBeenCalledWith([message])
+    })
   })
 })
