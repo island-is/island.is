@@ -10,7 +10,10 @@ import type {
   StartedDelegationConfirmationAuthenticationDTO,
 } from '@island.is/clients/auth/delegation-api'
 
-import { DelegationConfirmationInput } from '../dto'
+import {
+  DelegationConfirmationInput,
+  StartDelegationConfirmationAuthenticationInput,
+} from '../dto'
 import {
   DelegationConfirmation,
   DelegationConfirmationAuthentication,
@@ -68,12 +71,14 @@ export class DelegationConfirmationResolver {
   @Mutation(() => DelegationConfirmationAuthenticationStart, {
     name: 'authStartDelegationConfirmationAuthentication',
     description:
-      'Asks Auðkenni to authenticate the grantor on their own phone — the way they last logged in — showing what they are confirming. Then poll authCheckDelegationConfirmationAuthentication.',
+      'Asks Auðkenni to authenticate the grantor on their own phone — by default the way they logged in to this session, or the method they ask for — showing what they are confirming. Then poll authCheckDelegationConfirmationAuthentication.',
   })
   startAuthentication(
     @CurrentUser() user: User,
-    @Args('input', { type: () => DelegationConfirmationInput })
-    input: DelegationConfirmationInput,
+    @Args('input', {
+      type: () => StartDelegationConfirmationAuthenticationInput,
+    })
+    input: StartDelegationConfirmationAuthenticationInput,
   ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
     return this.meDelegationConfirmationsService.startAuthentication(
       user,

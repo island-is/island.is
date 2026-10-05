@@ -702,6 +702,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-up-waiting-sim',
     defaultMessage: 'Staðfestu í símanum þínum að talan sé sú sama',
   },
+  stepUpUseApp: {
+    id: 'sp.access-control-delegations:step-up-use-app',
+    defaultMessage: 'Nota Auðkennisappið í staðinn',
+  },
+  stepUpUseSim: {
+    id: 'sp.access-control-delegations:step-up-use-sim',
+    defaultMessage: 'Nota rafræn skilríki í síma í staðinn',
+  },
   stepUpTimeLeft: {
     id: 'sp.access-control-delegations:step-up-time-left',
     defaultMessage: 'Tími eftir: {minutes}:{seconds}',

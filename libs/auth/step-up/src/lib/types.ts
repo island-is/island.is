@@ -18,12 +18,13 @@ export interface CibaStartRequest {
   /** Shown on the screen and on the phone, so the person knows what they approve. */
   bindingMessage: string
   /**
-   * How the person logged in to the session asking: "app" or "sim". Only a hint
-   * — the identity server uses it to choose between the Auðkenni app and the
-   * number saved from the person's own last SIM login. It can't send the request
-   * anywhere else.
+   * The person's own choice, when they ask to use the other method. Without it
+   * the identity server goes by how the session behind userToken was logged in.
+   * "sim" only ever reaches the number saved from the person's own last SIM
+   * login (and falls back to the app without one), so this can't send the
+   * request anywhere else.
    */
-  methodHint?: StepUpMethod
+  method?: StepUpMethod
   /**
    * A hash of exactly what is being approved. The identity server mixes it into
    * what the person's key signs and puts it back on the token, so the result can
@@ -44,6 +45,8 @@ export interface CibaStartResult {
   interval: number
   /** The code shown in the Auðkenni app, for the person to compare. */
   verificationCode?: string
+  /** Every method the person could use, so they can be offered the other one. */
+  availableMethods: StepUpMethod[]
 }
 
 /** What the identity server vouches for once the person has approved. */

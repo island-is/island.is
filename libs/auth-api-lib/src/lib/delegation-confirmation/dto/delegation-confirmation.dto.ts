@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsIn, IsOptional } from 'class-validator'
 
 import type { DelegationConfirmation } from '../models/delegation-confirmation.model'
 import type { ConfirmationScope } from '../types/delegation-confirmation-content'
@@ -14,9 +15,32 @@ const authenticationStatuses = [
   'expired',
 ] as const
 
+/**
+ * Optional body for starting the confirming authentication: the grantor's own
+ * choice of method, when they ask to use the other one. Never where it goes.
+ */
+export class StartDelegationConfirmationAuthenticationDTO {
+  @IsOptional()
+  @IsIn(stepUpMethods)
+  @ApiPropertyOptional({
+    enum: stepUpMethods,
+    description:
+      'Use this method instead of the one the identity server would choose. "sim" only reaches the number from the grantor\'s own last SIM login.',
+  })
+  method?: typeof stepUpMethods[number]
+}
+
 export class StartedDelegationConfirmationAuthenticationDTO {
   @ApiProperty({ enum: stepUpMethods })
   method!: typeof stepUpMethods[number]
+
+  @ApiProperty({
+    enum: stepUpMethods,
+    isArray: true,
+    description:
+      'Every method the grantor could use, so they can be offered the other one.',
+  })
+  availableMethods!: Array<typeof stepUpMethods[number]>
 
   @ApiPropertyOptional({
     description:

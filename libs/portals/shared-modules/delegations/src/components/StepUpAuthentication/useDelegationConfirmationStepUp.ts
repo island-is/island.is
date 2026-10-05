@@ -2,6 +2,8 @@ import { useCallback } from 'react'
 
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
+import { AuthDelegationConfirmationStepUpMethod } from '@island.is/api/schema'
+
 import {
   useAuthCheckDelegationConfirmationAuthenticationMutation,
   useAuthStartDelegationConfirmationAuthenticationMutation,
@@ -26,26 +28,41 @@ export const useDelegationConfirmationStepUp = (
   const [checkMutation] =
     useAuthCheckDelegationConfirmationAuthenticationMutation()
 
-  const start = useCallback(async (): Promise<StepUpStart> => {
-    try {
-      const result = await startMutation({
-        variables: { input: { confirmationId: confirmationId as string } },
-      })
-      const started = result.data?.authStartDelegationConfirmationAuthentication
-      if (!started) {
-        throw new Error('No response')
+  const start = useCallback(
+    async (method?: StepUpMethod): Promise<StepUpStart> => {
+      try {
+        const result = await startMutation({
+          variables: {
+            input: {
+              confirmationId: confirmationId as string,
+              ...(method && {
+                method: method as AuthDelegationConfirmationStepUpMethod,
+              }),
+            },
+          },
+        })
+        const started =
+          result.data?.authStartDelegationConfirmationAuthentication
+        if (!started) {
+          throw new Error('No response')
+        }
+        return {
+          ...started,
+          method: started.method as StepUpMethod,
+          availableMethods: started.availableMethods as StepUpMethod[],
+        }
+      } catch (error) {
+        const status = findProblemInApolloError(error as never)?.status
+        if (status === 410) {
+          onExpired?.()
+        }
+        const reason: StepUpStartError =
+          status === 429 ? 'too_many_attempts' : 'failed'
+        throw reason
       }
-      return { ...started, method: started.method as StepUpMethod }
-    } catch (error) {
-      const status = findProblemInApolloError(error as never)?.status
-      if (status === 410) {
-        onExpired?.()
-      }
-      const reason: StepUpStartError =
-        status === 429 ? 'too_many_attempts' : 'failed'
-      throw reason
-    }
-  }, [confirmationId, startMutation, onExpired])
+    },
+    [confirmationId, startMutation, onExpired],
+  )
 
   const check = useCallback(async (): Promise<StepUpStatus> => {
     const result = await checkMutation({

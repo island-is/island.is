@@ -4,6 +4,7 @@ export { DelegationInput } from './delegation.input'
 export {
   DelegationConfirmationInput,
   DelegationConfirmationStepUpMethod,
+  StartDelegationConfirmationAuthenticationInput,
 } from './delegationConfirmation.input'
 export { DelegationsInput } from './delegations.input'
 export { UpdateDelegationInput } from './updateDelegation.input'

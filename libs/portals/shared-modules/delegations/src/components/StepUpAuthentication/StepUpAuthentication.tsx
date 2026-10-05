@@ -29,6 +29,8 @@ export interface StepUpStart {
   interval: number
   /** Seconds until the step-up gives up. */
   expiresIn: number
+  /** Every method the person could use, so they can be offered the other one. */
+  availableMethods: StepUpMethod[]
 }
 
 /** Why starting failed, so the right thing can be said about it. */
@@ -36,11 +38,12 @@ export type StepUpStartError = 'too_many_attempts' | 'failed'
 
 interface StepUpAuthenticationProps {
   /**
-   * Asks the server to start the authentication. The server decides how to
-   * reach the person — the way they last logged in — so it only ever reaches
+   * Asks the server to start the authentication. By default the server decides
+   * how to reach the person — the way they logged in to this session. They may
+   * ask for the other method, never for where it goes, so it only ever reaches
    * their own phone. Reject with a StepUpStartError.
    */
-  start: () => Promise<StepUpStart>
+  start: (method?: StepUpMethod) => Promise<StepUpStart>
   /** Asks the server where the authentication stands. */
   check: () => Promise<StepUpStatus>
   onConfirmed: () => void
@@ -60,13 +63,15 @@ type State =
       method: StepUpMethod
       code?: string | null
       deadline: number
+      availableMethods: StepUpMethod[]
     }
 
 /**
  * Authenticates the person again with electronic ID without leaving the page —
  * one button, a code, and they approve on their own phone. The server decides
- * how: the SIM number they last logged in with, or else the Auðkenni app. There
- * is deliberately no way to send it anywhere else.
+ * how, from the way they logged in: the Auðkenni app, or their own SIM. They can
+ * switch to the other one if the server offers it. There is deliberately no way
+ * to send it anywhere else.
  *
  * Generic on purpose — it only knows how to start and how to check. Confirming
  * a sensitive delegation is the first use; locking a sensitive screen is meant
@@ -136,30 +141,35 @@ export const StepUpAuthentication = ({
     [check, onConfirmed, onExpired],
   )
 
-  const begin = useCallback(async () => {
-    clearTimeout(pollTimer.current)
-    setState({ name: 'starting' })
+  const begin = useCallback(
+    async (method?: StepUpMethod) => {
+      clearTimeout(pollTimer.current)
+      setState({ name: 'starting' })
 
-    try {
-      const started = await start()
-      if (unmounted.current) {
-        return
+      try {
+        const started = await start(method)
+        if (unmounted.current) {
+          return
+        }
+
+        setState({
+          name: 'waiting',
+          method: started.method,
+          code: started.verificationCode,
+          deadline: Date.now() + started.expiresIn * 1000,
+          availableMethods: started.availableMethods,
+        })
+        poll(started.interval)
+      } catch (error) {
+        setState({
+          name: 'idle',
+          notice:
+            error === 'too_many_attempts' ? 'too_many_attempts' : 'failed',
+        })
       }
-
-      setState({
-        name: 'waiting',
-        method: started.method,
-        code: started.verificationCode,
-        deadline: Date.now() + started.expiresIn * 1000,
-      })
-      poll(started.interval)
-    } catch (error) {
-      setState({
-        name: 'idle',
-        notice: error === 'too_many_attempts' ? 'too_many_attempts' : 'failed',
-      })
-    }
-  }, [start, poll])
+    },
+    [start, poll],
+  )
 
   // Kept to exactly one start, however many times React mounts this.
   useEffect(() => {
@@ -201,6 +211,13 @@ export const StepUpAuthentication = ({
 
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
+
+  // The other way of reaching the person, if the server offers one: e.g. their
+  // SIM isn't at hand.
+  const otherMethod =
+    state.name === 'waiting'
+      ? state.availableMethods.find((method) => method !== state.method)
+      : undefined
 
   return (
     <Box
@@ -251,6 +268,19 @@ export const StepUpAuthentication = ({
               seconds: String(secondsLeft % 60).padStart(2, '0'),
             })}
           </Text>
+          {otherMethod && (
+            <Box>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => begin(otherMethod)}
+              >
+                {formatMessage(
+                  otherMethod === 'app' ? m.stepUpUseApp : m.stepUpUseSim,
+                )}
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
 

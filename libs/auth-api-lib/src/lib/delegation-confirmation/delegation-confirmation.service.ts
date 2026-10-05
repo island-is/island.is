@@ -15,7 +15,6 @@ import { Sequelize } from 'sequelize-typescript'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CibaClient,
-  sessionLoginMethod,
   type StepUpClaims,
   type StepUpMethod,
 } from '@island.is/auth/step-up'
@@ -53,6 +52,8 @@ export interface RequestConfirmationOptions {
 
 export interface StartAuthenticationResult {
   method: StepUpMethod
+  /** Every method the grantor could use, so they can be offered the other one. */
+  availableMethods: StepUpMethod[]
   /** The code shown in the Auðkenni app, for the grantor to compare. */
   verificationCode?: string
   /** Seconds to wait between polls. */
@@ -248,6 +249,7 @@ export class DelegationConfirmationService {
   async startAuthentication(
     user: User,
     id: string,
+    method?: StepUpMethod,
   ): Promise<StartAuthenticationResult> {
     const confirmation = await this.findByIdForUser(user, id)
 
@@ -281,15 +283,16 @@ export class DelegationConfirmationService {
 
     // The identity server authenticates the person behind this token — the
     // actor when acting for a company — which assertConfirmingUser has just
-    // checked is who this confirmation is for.
-    const methodHint = sessionLoginMethod(user.amr)
+    // checked is who this confirmation is for. It also reads from the token how
+    // that session was logged in, to choose the method, unless the grantor
+    // asked for the other one.
     const started = await this.cibaClient.start({
       userToken: user.authorization,
       bindingMessage: confirmation.contentSnapshot.bindingMessage,
       // Bound into what the grantor's key signs and echoed on the token, so the
       // approval can only complete this exact content.
       contextHash: confirmation.contentHash,
-      ...(methodHint && { methodHint }),
+      ...(method && { method }),
     })
 
     await confirmation.update({
@@ -305,6 +308,7 @@ export class DelegationConfirmationService {
 
     return {
       method: started.method,
+      availableMethods: started.availableMethods,
       verificationCode: started.verificationCode,
       interval: started.interval,
       expiresIn: Math.min(started.expiresIn, secondsLeft),

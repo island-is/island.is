@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -7,6 +7,7 @@ import {
   DelegationConfirmationReceiptDTO,
   DelegationConfirmationService,
   DelegationsOutgoingService,
+  StartDelegationConfirmationAuthenticationDTO,
   StartedDelegationConfirmationAuthenticationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -113,7 +114,8 @@ export class MeDelegationConfirmationsController {
   /**
    * Starts the confirming authentication: the identity server asks Auðkenni to
    * authenticate the grantor on their phone, showing the confirmation's binding
-   * message. Poll the GET endpoint for the result.
+   * message. Poll the GET endpoint for the result. The grantor may ask for the
+   * other method (app or SIM); never for where it goes.
    */
   @Post(':confirmationId/authentication')
   @Documentation({
@@ -127,16 +129,21 @@ export class MeDelegationConfirmationsController {
   async startAuthentication(
     @CurrentUser() user: User,
     @Param('confirmationId') id: string,
+    @Body() body?: StartDelegationConfirmationAuthenticationDTO,
   ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
     const started =
-      await this.delegationConfirmationService.startAuthentication(user, id)
+      await this.delegationConfirmationService.startAuthentication(
+        user,
+        id,
+        body?.method,
+      )
 
     this.auditService.audit({
       auth: user,
       action: 'startAuthentication',
       namespace,
       resources: id,
-      meta: { method: started.method },
+      meta: { method: started.method, requested: body?.method },
     })
 
     return started

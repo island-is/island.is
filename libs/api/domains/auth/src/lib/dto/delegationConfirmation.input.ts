@@ -16,3 +16,13 @@ export class DelegationConfirmationInput {
   @Field(() => String)
   confirmationId!: string
 }
+
+@InputType('AuthStartDelegationConfirmationAuthenticationInput')
+export class StartDelegationConfirmationAuthenticationInput extends DelegationConfirmationInput {
+  @Field(() => DelegationConfirmationStepUpMethod, {
+    nullable: true,
+    description:
+      'The grantor asks to use this method instead. "sim" only reaches the number from their own last SIM login.',
+  })
+  method?: DelegationConfirmationStepUpMethod
+}

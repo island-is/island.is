@@ -129,6 +129,7 @@ describe('MeDelegationConfirmationsController', () => {
           expiresIn: 300,
           interval: 5,
           verificationCode: '4821',
+          availableMethods: ['app', 'sim'],
         }
       })
     ciba.poll.mockReset().mockResolvedValue({ status: 'pending' })
@@ -333,39 +334,47 @@ describe('MeDelegationConfirmationsController', () => {
       })
     })
 
-    it.each([
-      [['swk', 'pin'], 'app'],
-      [['hwk', 'pin'], 'sim'],
-    ])(
-      'tells the identity server how this session was logged in (amr %j → %s)',
-      async (amr, methodHint) => {
-        // Arrange
-        await setup({ amr })
-        await requestConfirmation()
-
-        // Act
-        await start()
-
-        // Assert — a hint only; the number never leaves the identity server.
-        expect(ciba.start).toHaveBeenCalledWith(
-          expect.objectContaining({ methodHint }),
-        )
-        expect(ciba.start.mock.calls[0][0]).not.toHaveProperty('phoneNumber')
-      },
-    )
-
-    it('lets no one choose where the request goes', async () => {
-      // Act — a client trying to name a method or a number.
+    it('lets the grantor ask for the other method', async () => {
+      // Act — e.g. the SIM isn't at hand.
       const res = await server
         .post(
           `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
         )
-        .send({ method: 'app', phoneNumber: '699-1234' })
+        .send({ method: 'app' })
 
-      // Assert — ignored: nothing but who and what reaches the identity server
-      // (this session has no amr, so there is no hint either).
+      // Assert — the choice reaches the identity server, which still decides
+      // where "sim" goes.
       expect(res.status).toEqual(200)
-      expect(ciba.start).toHaveBeenCalledTimes(1)
+      expect(ciba.start).toHaveBeenCalledWith(
+        expect.objectContaining({ method: 'app' }),
+      )
+      expect(res.body.availableMethods).toEqual(['app', 'sim'])
+    })
+
+    it.each([
+      [{ method: 'card' }],
+      [{ phoneNumber: '699-1234' }],
+      [{ method: 'sim', phoneNumber: '699-1234' }],
+    ])('lets no one choose where the request goes (%j)', async (body) => {
+      // Act — a client trying to name a number, or a method we don't offer.
+      const res = await server
+        .post(
+          `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
+        )
+        .send(body)
+
+      // Assert — refused before anything reaches the identity server.
+      expect(res.status).toEqual(400)
+      expect(ciba.start).not.toHaveBeenCalled()
+    })
+
+    it('leaves the default method to the identity server', async () => {
+      // Act — no choice made: the identity server goes by how the session
+      // behind the grantor's token was logged in.
+      const res = await start()
+
+      // Assert
+      expect(res.status).toEqual(200)
       expect(Object.keys(ciba.start.mock.calls[0][0]).sort()).toEqual([
         'bindingMessage',
         'contextHash',

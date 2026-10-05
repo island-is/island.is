@@ -10,6 +10,7 @@ import type {
   CibaStartRequest,
   CibaStartResult,
   StepUpClaims,
+  StepUpMethod,
 } from './types'
 
 export interface CibaClientOptions {
@@ -62,8 +63,8 @@ export class CibaClient {
     body.set('login_hint_token', stripBearer(request.userToken))
     body.set('binding_message', request.bindingMessage)
     body.set('acr_values', this.options.requiredAcr)
-    if (request.methodHint) {
-      body.set('login_method_hint', request.methodHint)
+    if (request.method) {
+      body.set('login_method', request.method)
     }
     if (request.contextHash) {
       body.set('context_hash', request.contextHash)
@@ -81,6 +82,7 @@ export class CibaClient {
           typeof json['verification_code'] === 'string'
             ? json['verification_code']
             : undefined,
+        availableMethods: parseMethods(json['available_login_methods']),
       }
     }
 
@@ -224,6 +226,14 @@ export class CibaClient {
 
     return { status: response.status, json }
   }
+}
+
+const parseMethods = (value: unknown): StepUpMethod[] => {
+  const methods = Array.isArray(value)
+    ? value.filter((m): m is StepUpMethod => m === 'app' || m === 'sim')
+    : []
+  // The app is always possible: it needs nothing but the national id.
+  return methods.length > 0 ? methods : ['app']
 }
 
 /** User.authorization carries the scheme; the identity server wants the token. */
