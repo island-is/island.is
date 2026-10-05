@@ -201,6 +201,49 @@ describe('useSections getSections', () => {
       )
     })
 
+    // The side panel works out which step you are on by finding the first
+    // active section and then the active child inside it. A second active
+    // section earlier in the list sends it looking in the wrong place: the
+    // child index comes back -1 and every link in the panel goes dead.
+    it('leaves the verdict appeal as the only active section', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(caseWithBothAppeals),
+      })
+      const sections = result.current.getSections(caseWithBothAppeals, coaUser)
+      const active = sections.filter((s) => s.isActive)
+
+      expect(active.map((s) => s.name)).toEqual(['Dómur Landsréttar'])
+    })
+
+    // What the panel does with that: the step you are on is index 1, so the
+    // one before it is reachable. This is the condition DisplaySection uses.
+    it('leaves the overview reachable from the defender step', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(caseWithBothAppeals),
+      })
+      const sections = result.current.getSections(caseWithBothAppeals, coaUser)
+
+      const activeSection = sections.findIndex((s) => s.isActive)
+      const activeSubSection = sections[activeSection]?.children.findIndex(
+        (c) => c.isActive,
+      )
+
+      expect(activeSubSection).toBe(1)
+      expect(
+        Boolean(
+          sections[activeSection].children[0].href &&
+            activeSubSection &&
+            activeSubSection > 0,
+        ),
+      ).toBe(true)
+    })
+
     it('leaves the ruling appeal sections alone when it names that one', () => {
       mockAppealCaseId = 'ruling-appeal'
 

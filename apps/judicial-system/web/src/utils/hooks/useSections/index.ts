@@ -1572,6 +1572,8 @@ const useSections = (
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     const isExtensionCase =
       Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
+    const isVerdictAppealProceeding =
+      targetAppealCase?.appealType === AppealCaseType.VERDICT
 
     return [
       isRestrictionCase(workingCase.type)
@@ -1593,12 +1595,14 @@ const useSections = (
             : workingCase.state,
         ),
         isActive:
-          (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+          !isVerdictAppealProceeding &&
+          ((workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
-          (!isExtensionCase &&
-            isCompletedCase(workingCase.state) &&
-            !workingCase.hasBeenAppealed &&
-            workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
+            (!isExtensionCase &&
+              isCompletedCase(workingCase.state) &&
+              !workingCase.hasBeenAppealed &&
+              workingCase.appealCase?.appealState !==
+                AppealCaseState.COMPLETED)),
         children: [],
       },
       ...(isExtensionCase
@@ -1616,6 +1620,7 @@ const useSections = (
                 workingCase.state,
               ),
               isActive:
+                !isVerdictAppealProceeding &&
                 isCompletedCase(workingCase.state) &&
                 !workingCase.hasBeenAppealed &&
                 workingCase.appealCase?.appealState !==
@@ -1628,7 +1633,7 @@ const useSections = (
       // the page is about. A case can carry a ruling appeal and a verdict
       // appeal at once, and their steps are different; showing both would let
       // the side panel mark a step from the other proceeding active.
-      ...(targetAppealCase?.appealType === AppealCaseType.VERDICT
+      ...(isVerdictAppealProceeding
         ? getCourtOfAppealVerdictAppealSections(workingCase)
         : !targetAppealCase?.appealState ||
           (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
