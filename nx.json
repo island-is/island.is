@@ -104,11 +104,11 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "inputs": ["production", "^production"]
     },
     "e2e": {
       "dependsOn": [],
-      "inputs": ["production", "^production", "DevOps"],
+      "inputs": ["production", "^production"],
       "outputs": [],
       "cache": true
     },
@@ -164,12 +164,12 @@
     "@nx/next:build": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "inputs": ["production", "^production"]
     },
     "@nx/webpack:webpack": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production", "DevOps"]
+      "inputs": ["production", "^production"]
     },
     "@nx/expo:build": {
       "cache": true,
@@ -189,17 +189,31 @@
         "runtime": "node --version"
       }
     ],
-    "DevOps": ["CI", "Dockerfiles", "{workspaceRoot}/scripts/**/*"],
-    "CI": [
-      "{workspaceRoot}/.github/actions/",
-      "{workspaceRoot}/.github/workflows/",
-      "{workspaceRoot}/**/.dockerignore"
-    ],
     "Dockerfiles": [
       "{workspaceRoot}/**/Dockerfile",
-      "{workspaceRoot}/**/Dockerfile.*"
+      "{workspaceRoot}/**/Dockerfile.*",
+      "{workspaceRoot}/**/.dockerignore"
+    ],
+    "DockerBuild": [
+      "Dockerfiles",
+      "{workspaceRoot}/scripts/ci/_docker.sh",
+      "{workspaceRoot}/scripts/ci/_common.sh",
+      "{workspaceRoot}/scripts/ci/09_load-buildkit-driver.sh",
+      "{workspaceRoot}/scripts/ci/90_docker-*.sh",
+      "{workspaceRoot}/scripts/ci/nx-agents/docker-build.sh",
+      "{workspaceRoot}/scripts/dockerfile-assets/**/*",
+      "{workspaceRoot}/package.json",
+      "{workspaceRoot}/yarn.lock",
+      "{workspaceRoot}/.yarnrc.yml",
+      "{workspaceRoot}/.yarn/patches/**/*",
+      {
+        "env": "NODE_IMAGE_VERSION"
+      }
     ],
     "sharedGlobals": [
+      {
+        "env": "CI_CONFIG_HASH"
+      },
       "{workspaceRoot}/infra/src/dsl/**/*",
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
@@ -212,6 +226,8 @@
       "forceRebuild",
       "nodeVersion",
       "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/**/Dockerfile?(.*)",
+      "!{projectRoot}/**/*-compose.y?(a)ml",
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
@@ -239,6 +255,7 @@
   "useInferencePlugins": false,
   "defaultBase": "main",
   "plugins": [
+    "./tools/nx-plugins/docker-build.js",
     {
       "plugin": "@nx/playwright/plugin",
       "options": {

@@ -48,6 +48,15 @@ env:
 
 jobs:
   pre-checks:
+    # A pull request is only built and deployed with the `deploy-feature` label (same rules as the
+    # `should-run` step of `pre-checks.yml`). Checking it here, and not only in that job, means
+    # that every other pull request is skipped without starting a runner
+    if: >-
+      ${{
+        github.event_name != 'pull_request' ||
+        (github.event.action == 'labeled' && github.event.label.name == 'deploy-feature') ||
+        (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'deploy-feature'))
+      }}
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
 
@@ -71,6 +80,15 @@ jobs:
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      CI_CONFIG_HASH: ${{ steps.ci_config.outputs.CI_CONFIG_HASH }}
+      USE_AGENTS: ${{ steps.docker_agents.outputs.use-agents }}
+      DOCKER_AGENTS: ${{ steps.docker_agents.outputs.agents }}
+      DOCKER_AGENT_COUNT: ${{ steps.docker_agents.outputs.agent-count }}
+      CHECK_NX_ARGS: ${{ steps.docker_agents.outputs.nx-args }}
+      DOCKER_NX_ARGS: ${{ steps.docker_agents.outputs.image-nx-args }}
+      DOCKER_PROJECTS: ${{ steps.docker_agents.outputs.image-projects }}
+      AGENT_TARGETS: ${{ steps.docker_agents.outputs.targets }}
+      UNICORN_PROJECTS: ${{ steps.docker_agents.outputs.unicorn-projects }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
 
     steps:
@@ -215,6 +233,16 @@ jobs:
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
+      # An input of every Nx task, which the CI configuration itself is not. A pull request that
+      # changes it builds every image without Nx cache hits, and the results don't end up in the
+      # Nx cache of anything else. See `scripts/ci/ci-config-hash.mjs`
+      - name: Check if the CI configuration is changed
+        id: ci_config
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          set -euo pipefail
+          echo "CI_CONFIG_HASH=$(node scripts/ci/ci-config-hash.mjs "$BASE" "$HEAD")" | tee -a "$GITHUB_OUTPUT" "$GITHUB_ENV"
+
       - name: Prepare docker build targets
         id: build_map
         run: |
@@ -233,6 +261,19 @@ jobs:
             echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
+
+      # The images of a feature deployment are built by Nx Agents (the `docker-agents` and
+      # `docker-main` jobs), everything else by the `docker-build` matrix. The pull request pipeline
+      # does not run with the `deploy-feature` label, so its checks (lint, test, ...) run here too
+      - name: Plan the Nx Agents that build the images and run the checks
+        id: docker_agents
+        if: ${{ needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false' && steps.build_map.outputs.BUILD_CHUNKS }}
+        env:
+          PLAN_MODE: deploy
+          BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+        run: |
+          node scripts/ci/nx-agents/plan.mjs
+          echo "use-agents=true" >> "$GITHUB_OUTPUT"
 
       - name: Check if cached buildx image exists
         id: cache-check
@@ -276,7 +317,7 @@ jobs:
       - prepare
     runs-on: arc-shared
     timeout-minutes: 45
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.USE_AGENTS != 'true'
     permissions:
       actions: read
       contents: read
@@ -287,6 +328,8 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
+      # Passed on to the Nx build in the Docker build, see `scripts/ci/_docker.sh`
+      CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
       PUBLISH: true
       DISABLE_CHUNKS: true
       MAX_JOBS: 3
@@ -416,6 +459,198 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
+  # The images of a feature deployment as one distributed Nx Cloud CI run, like the checks of a
+  # pull request: every image is a `docker-build` task, see `scripts/ci/nx-agents/README.md`
+  docker-agents:
+    name: Nx agent ${{ matrix.agent }}
+    needs:
+      - pre-checks
+      - prepare
+    if: needs.prepare.outputs.USE_AGENTS == 'true' && needs.prepare.outputs.DOCKER_AGENT_COUNT != '0'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # agent (name), type (shared/judicial), runner, test and e2e (does the agent run such tasks)
+        include: ${{ fromJson(needs.prepare.outputs.DOCKER_AGENTS) }}
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agent-${{ matrix.agent }}-setup
+      # The environment of the `docker-build` tasks, see `scripts/ci/nx-agents/docker-build.sh`
+      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION}}
+      CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
+      PUBLISH: true
+      NX_PARALLEL: 1
+      S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for deploy-feature label
+        uses: ./.github/actions/check-label
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure Datadog Test Optimization
+        if: ${{ matrix.test }}
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: 'js'
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
+
+      - name: Setup Playwright
+        if: ${{ matrix.e2e }}
+        uses: ./.github/actions/setup-playwright
+
+      - name: Prepare Docker build arguments
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: |
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          echo "EXTRA_DOCKER_BUILD_ARGS=${build_args[*]}" >> "${GITHUB_ENV}"
+          # The secret of the Docker builds, see `scripts/ci/_docker.sh`
+          echo "$NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT" > nx_cloud_access_token.txt
+
+      # The agents run the checks and the builds the images depend on as well, `start-agent.sh`
+      # sets up the environment of those
+      - name: Start Nx agent
+        run: ./scripts/ci/nx-agents/start-agent.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+          NX_AGENT_NAME: ${{ matrix.agent }}
+          # To see what the main job does in this attempt, for "Re-run failed jobs" (see `start-agent.sh`)
+          GH_TOKEN: ${{ github.token }}
+          # The agent type in `scripts/ci/nx-agents/assignment-rules.yaml`
+          NX_AGENT_LAUNCH_TEMPLATE: ${{ matrix.type }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          CYPRESS_PROJECT_ID: 4q7jz8
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload coverage reports to Datadog
+        if: ${{ !cancelled() && matrix.test }}
+        run: |
+          if [[ -d coverage ]]; then
+            yarn datadog-ci coverage upload .
+          else
+            echo "No tests with coverage ran on this agent"
+          fi
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: datadoghq.eu
+
+      # What the tasks wrote about the images they built, for the `deploy-feature` job
+      - name: Upload image data
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+        with:
+          name: docker-build-data-${{ matrix.agent }}
+          path: dist/docker-build-data/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  docker-main:
+    name: Nx main job
+    needs:
+      - prepare
+    if: needs.prepare.outputs.USE_AGENTS == 'true'
+    runs-on: arc-shared
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: read
+    env:
+      NX_BRANCH: ${{ github.event.pull_request.number || github.ref_name }}
+      NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT }}
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-main-setup
+      CI_CONFIG_HASH: ${{ needs.prepare.outputs.CI_CONFIG_HASH }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      # For the check that the unicorn projects have tests
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      # "Re-run failed jobs" only re-runs the agents that failed, the run continues with those
+      - name: Check which agents are part of this attempt
+        if: ${{ github.run_attempt > 1 && needs.prepare.outputs.DOCKER_AGENT_COUNT != '0' }}
+        run: ./scripts/ci/nx-agents/check-agents.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_AGENTS: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT }}
+
+      # Completion is explicit (see the last step), like in the pull request pipeline
+      - name: Start distributed CI run
+        if: ${{ needs.prepare.outputs.DOCKER_AGENT_COUNT != '0' }}
+        run: >-
+          npx nx-cloud start-ci-run
+          --distribute-on="manual"
+          --assignment-rules="scripts/ci/nx-agents/assignment-rules.yaml"
+          --stop-agents-after="$TARGETS"
+          --require-explicit-completion
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+          TARGETS: ${{ needs.prepare.outputs.AGENT_TARGETS }}
+
+      # Two Nx commands at the same time, on the same agents: the checks of the pull request
+      # pipeline (which does not run with the `deploy-feature` label) and the images.
+      # The feature is only deployed when both succeed
+      - name: Run the checks and build the Docker images on the agents
+        id: run
+        run: ./scripts/ci/nx-agents/run.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+          NX_AGENTS_ARGS: ${{ needs.prepare.outputs.CHECK_NX_ARGS }}
+          GH_TOKEN: ${{ github.token }}
+          NX_IMAGE_ARGS: ${{ needs.prepare.outputs.DOCKER_NX_ARGS }}
+          UNICORN_PROJECTS: ${{ needs.prepare.outputs.UNICORN_PROJECTS }}
+
+      # Agents wait for work until the run is completed, also when this job fails or is cancelled
+      - name: Complete CI run
+        if: ${{ always() && needs.prepare.outputs.DOCKER_AGENT_COUNT != '0' }}
+        run: npx nx-cloud complete-ci-run
+        env:
+          NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-docker-agents
+
   helm-docker-build:
     needs:
       - prepare
@@ -489,7 +724,7 @@ jobs:
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
       && needs.helm-docker-build.result != 'failure'
       && needs.prepare.outputs.IMAGES != ''
-      && needs.docker-build.result == 'success' }}
+      && (needs.docker-build.result == 'success' || needs.docker-main.result == 'success') }}
     permissions:
       id-token: write
       contents: write
@@ -497,6 +732,8 @@ jobs:
       - pre-checks
       - prepare
       - docker-build
+      - docker-agents
+      - docker-main
       - helm-docker-build
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
@@ -520,10 +757,19 @@ jobs:
         continue-on-error: false
 
       - name: Get docker-build output
+        if: ${{ needs.prepare.outputs.USE_AGENTS != 'true' }}
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
         with:
           matrix-step-name: docker-build
+
+      - name: Get the image data of the Nx agents
+        if: ${{ needs.prepare.outputs.USE_AGENTS == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: docker-build-data-*
+          path: docker-build-data
+          merge-multiple: true
 
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
@@ -546,11 +792,21 @@ jobs:
           ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
 
       - name: Prepare artifact to be uploaded
+        if: ${{ needs.prepare.outputs.USE_AGENTS != 'true' }}
         working-directory: monorepo
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
         run: |
           node scripts/ci/docker/write-data.mjs
+
+      # Fails if an image is missing, the agents only upload what was built
+      - name: Prepare artifact to be uploaded (Nx agents)
+        if: ${{ needs.prepare.outputs.USE_AGENTS == 'true' }}
+        working-directory: monorepo
+        env:
+          PROJECTS: ${{ needs.prepare.outputs.DOCKER_PROJECTS }}
+        run: |
+          node scripts/ci/nx-agents/merge-docker-build-data.mjs "$GITHUB_WORKSPACE/docker-build-data" "$PROJECTS"
 
       - name: Get manifest data
         id: manifest
@@ -596,10 +852,12 @@ jobs:
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
     runs-on: arc-shared
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.pre-checks.result != 'skipped' }}
     needs:
       - pre-checks
       - docker-build
+      - docker-agents
+      - docker-main
       - deploy-feature
     steps:
       - name: Announce success
