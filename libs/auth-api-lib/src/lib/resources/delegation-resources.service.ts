@@ -196,6 +196,39 @@ export class DelegationResourcesService {
     return scopesToCheck.every((scopeName) => userScopes.includes(scopeName))
   }
 
+  /**
+   * Returns the subset of `scopeNames` that are marked sensitive and therefore
+   * require a separate high-assurance confirmation before they can be granted.
+   *
+   * Built on `findScopesInternal` so it reuses `apiScopeFilter` — a scope the
+   * user cannot see can never be reported as non-sensitive.
+   */
+  async findSensitiveScopeNames(
+    user: User,
+    domainName: string | null,
+    direction: DelegationDirection,
+    scopeNames: Array<string>,
+  ): Promise<Array<string>> {
+    if (scopeNames.length === 0) {
+      return []
+    }
+
+    const scopes = await this.findScopesInternal({
+      user,
+      domainName,
+      direction,
+      attributes: ['name', 'requiresConfirmation'],
+    })
+
+    const requested = new Set(scopeNames)
+
+    return scopes
+      .filter(
+        (scope) => requested.has(scope.name) && scope.requiresConfirmation,
+      )
+      .map((scope) => scope.name)
+  }
+
   async apiScopeFilter({
     user,
     prefix,

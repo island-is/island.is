@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { CibaClient } from '@island.is/auth/step-up'
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { ZendeskModule } from '@island.is/clients/zendesk'
+import type { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
@@ -21,6 +23,7 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 import { UserSystemNotificationModule } from '../user-notification'
 import { DelegationAdminCustomService } from './admin/delegation-admin-custom.service'
 import { AliveStatusService } from './alive-status.service'
+import { DelegationConfig } from './DelegationConfig'
 import { DelegationProviderService } from './delegation-provider.service'
 import { DelegationScopeService } from './delegation-scope.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
@@ -37,6 +40,9 @@ import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
+import { DelegationConfirmationService } from '../delegation-confirmation/delegation-confirmation.service'
+import { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
+import { Domain } from '../resources/models/domain.model'
 import { Delegation } from './models/delegation.model'
 import { NamesService } from './names.service'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
@@ -66,6 +72,8 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
       DelegationTypeModel,
       DelegationProviderModel,
       DelegationDelegationType,
+      DelegationConfirmation,
+      Domain,
     ]),
     UserSystemNotificationModule,
     SyslumennClientModule,
@@ -85,6 +93,19 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
     DelegationAdminCustomService,
     AliveStatusService,
     NationalRegistryV3FeatureService,
+    DelegationConfirmationService,
+    {
+      provide: CibaClient,
+      useFactory: (config: ConfigType<typeof DelegationConfig>) =>
+        new CibaClient({
+          issuer: config.confirmationCibaIssuerUrl,
+          clientId: config.confirmationCibaClientId,
+          clientSecret: config.confirmationCibaClientSecret,
+          scope: config.confirmationCibaScope,
+          requiredAcr: config.confirmationRequiredAcr,
+        }),
+      inject: [DelegationConfig.KEY],
+    },
   ],
   exports: [
     DelegationsService,
@@ -94,6 +115,8 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
     DelegationsIndexService,
     DelegationProviderService,
     DelegationAdminCustomService,
+    DelegationConfirmationService,
+    CibaClient,
   ],
 })
 export class DelegationsModule {}

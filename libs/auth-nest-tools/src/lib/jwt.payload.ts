@@ -23,4 +23,10 @@ export interface JwtPayload {
   }
   audkenni_sim_number?: string
   client_delegation_provider?: AuthDelegationProvider
+  /** Authentication Context Class Reference, e.g. `eidas-loa-high`. */
+  acr?: string
+  /** Authentication Methods References, e.g. `['hwk', 'pin']`. */
+  amr?: string | string[]
+  /** Time of the end-user authentication, in seconds since the epoch. */
+  auth_time?: number
 }

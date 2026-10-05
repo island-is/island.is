@@ -34,6 +34,15 @@ import { getScopeValidityWhereClause } from './utils/scopes'
 import { validateDistrictCommissionersDelegations } from './utils/delegations'
 
 import type { User } from '@island.is/auth-nest-tools'
+
+export interface CreateScopesOptions {
+  /**
+   * The confirmation these scopes were redeemed under. Required when any of
+   * them is marked `requiresConfirmation`.
+   */
+  confirmationId?: string
+}
+
 @Injectable()
 export class DelegationScopeService {
   constructor(
@@ -57,6 +66,7 @@ export class DelegationScopeService {
     delegationId: string,
     scopes?: UpdateDelegationScopeDTO[],
     transaction?: Transaction,
+    options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
     if (scopes && scopes.length > 0) {
       await this.delete(
@@ -64,17 +74,54 @@ export class DelegationScopeService {
         scopes.map((s) => s.name),
         transaction,
       )
-      return this.createMany(delegationId, scopes, transaction)
+      return this.createMany(delegationId, scopes, transaction, options)
     }
 
     return []
+  }
+
+  /**
+   * Refuses to write a scope marked `requiresConfirmation` unless the caller
+   * presents the confirmation it was redeemed under.
+   *
+   * This sits below every write path — create, patch, and anything added later
+   * — so the rule cannot be bypassed by forgetting to check it higher up. It is
+   * the last line of defence behind the reserve-don't-write design, not the
+   * primary one.
+   */
+  private async assertScopesMayBeGranted(
+    scopes: UpdateDelegationScopeDTO[],
+    options?: CreateScopesOptions,
+  ): Promise<void> {
+    if (options?.confirmationId) {
+      return
+    }
+
+    const sensitiveScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
+      where: {
+        name: scopes.map((scope) => scope.name),
+        requiresConfirmation: true,
+      },
+    })
+
+    if (sensitiveScopes.length > 0) {
+      throw new Error(
+        `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveScopes
+          .map((scope) => scope.name)
+          .join(', ')}`,
+      )
+    }
   }
 
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
     transaction?: Transaction,
+    options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
+    await this.assertScopesMayBeGranted(scopes, options)
+
     const validFrom = startOfDay(new Date())
     const defaultValidTo = addDays(
       validFrom,
@@ -420,8 +467,9 @@ export class DelegationScopeService {
   ): Promise<string[]> {
     const scopePromises = []
 
-    const providers: string[] =
-      await this.delegationProviderService.findProviders(delegationTypes)
+    const providers: string[] = await this.delegationProviderService.findProviders(
+      delegationTypes,
+    )
 
     if (providers.includes(AuthDelegationProvider.NationalRegistry)) {
       scopePromises.push(this.findAllNationalRegistryScopes(delegationTypes))
@@ -445,9 +493,11 @@ export class DelegationScopeService {
 
     if (delegationTypes?.includes(AuthDelegationType.Custom)) {
       scopePromises.push(
-        this.findValidCustomScopesTo(user.nationalId, fromNationalId).then(
-          (delegationScopes: DelegationScope[]) =>
-            delegationScopes.map((ds) => ds.scopeName),
+        this.findValidCustomScopesTo(
+          user.nationalId,
+          fromNationalId,
+        ).then((delegationScopes: DelegationScope[]) =>
+          delegationScopes.map((ds) => ds.scopeName),
         ),
       )
     }

@@ -22,6 +22,16 @@ interface UserOptions {
   }
   audkenniSimNumber?: string
   delegationProvider?: AuthDelegationProvider
+  /** Authentication Context Class Reference, e.g. `eidas-loa-high`. */
+  acr?: string
+  /** Authentication Methods References, e.g. `['hwk', 'pin']`. */
+  amr?: string[]
+  /** When the user authenticated. */
+  authTime?: Date
+  sub?: string
+  sid?: string
+  ip?: string
+  userAgent?: string
 }
 
 export const createCurrentUser = (user: UserOptions = {}): User => {
@@ -45,5 +55,12 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
     actor,
     audkenniSimNumber: user.audkenniSimNumber,
     delegationProvider: user.delegationProvider,
+    acr: user.acr,
+    amr: user.amr,
+    authTime: user.authTime,
+    sub: user.sub,
+    sid: user.sid,
+    ip: user.ip,
+    userAgent: user.userAgent,
   }
 }

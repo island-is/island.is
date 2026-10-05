@@ -288,6 +288,7 @@ export class FixtureFactory {
       grantToPersonalRepresentatives:
         apiScope.grantToPersonalRepresentatives ?? false,
       isAccessControlled: apiScope.isAccessControlled ?? false,
+      requiresConfirmation: apiScope.requiresConfirmation ?? false,
       groupId: apiScope.groupId,
       domainName,
     })

@@ -92,14 +92,14 @@ describe('JwtStrategy#validate', () => {
         },
       },
     }
-    const request = {
+    const request = ({
       headers: {
         authorization: 'authorization',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
       ip: '1.1.1.1',
-    } as unknown as Request
+    } as unknown) as Request
 
     // Act
     const user = await jwtStrategy.validate(request, payload)
@@ -116,6 +116,49 @@ describe('JwtStrategy#validate', () => {
     expect(user.act).toEqual(payload.act)
   })
 
+  it('picks up the authentication event claims', async () => {
+    // Arrange
+    const authTime = 1755600000
+    const payload: JwtPayload = {
+      ...fakePayload,
+      acr: 'eidas-loa-high',
+      amr: ['hwk', 'pin'],
+      auth_time: authTime,
+    }
+
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, payload)
+
+    // Assert
+    expect(user.acr).toEqual('eidas-loa-high')
+    expect(user.amr).toEqual(['hwk', 'pin'])
+    expect(user.authTime).toEqual(new Date(authTime * 1000))
+  })
+
+  it('supports amr as a space separated string', async () => {
+    // Arrange
+    const payload: JwtPayload = {
+      ...fakePayload,
+      amr: 'hwk pin',
+    }
+
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, payload)
+
+    // Assert
+    expect(user.amr).toEqual(['hwk', 'pin'])
+  })
+
+  it('leaves the authentication event claims undefined when absent', async () => {
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, fakePayload)
+
+    // Assert
+    expect(user.acr).toBeUndefined()
+    expect(user.amr).toBeUndefined()
+    expect(user.authTime).toBeUndefined()
+  })
+
   it('picks up __accessToken field in request body', async () => {
     // Arrange
     const payload: JwtPayload = {
@@ -123,7 +166,7 @@ describe('JwtStrategy#validate', () => {
       scope: ['test-scope-1'],
       client_id: 'test-client',
     }
-    const request = {
+    const request = ({
       headers: {
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
@@ -131,7 +174,7 @@ describe('JwtStrategy#validate', () => {
       body: {
         __accessToken: 'some-token',
       },
-    } as unknown as Request
+    } as unknown) as Request
 
     // Act
     const user = await jwtStrategy.validate(request, payload)

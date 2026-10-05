@@ -33,8 +33,10 @@ export const ISLAND_IS_CATEGORY = {
   slug: 'thjonusta-island-is',
   title: { is: 'Þjónusta ísland.is', en: 'island.is services' },
   description: {
-    is: 'Ráðgjöf, vörur og þjónusta sem Stafrænt Ísland veitir fyrirtækjum og stofnunum',
-    en: 'Consulting, products and services provided by Digital Iceland to companies and institutions',
+    is:
+      'Ráðgjöf, vörur og þjónusta sem Stafrænt Ísland veitir fyrirtækjum og stofnunum',
+    en:
+      'Consulting, products and services provided by Digital Iceland to companies and institutions',
   },
 } as const
 
@@ -115,6 +117,7 @@ export class ScopeService {
         'order',
         'domainName',
         'allowsWrite',
+        'requiresConfirmation',
       ],
       where: {
         name: {
@@ -160,6 +163,7 @@ export class ScopeService {
         order: 0,
         domainName: DEFAULT_DOMAIN,
         allowsWrite: false,
+        requiresConfirmation: false,
       })),
     ]
   }
@@ -191,6 +195,7 @@ export class ScopeService {
         'domainName',
         'order',
         'allowsWrite',
+        'requiresConfirmation',
       ],
       additionalIncludes: [
         {
@@ -218,6 +223,7 @@ export class ScopeService {
         domainName: scope.domainName,
         order: scope.order || 0,
         allowsWrite: scope.allowsWrite ?? false,
+        requiresConfirmation: scope.requiresConfirmation ?? false,
       } as ScopeDTO
 
       if (categoryIds.length === 0) {
@@ -318,6 +324,7 @@ export class ScopeService {
           'domainName',
           'order',
           'allowsWrite',
+          'requiresConfirmation',
         ],
         additionalIncludes: [
           {
@@ -347,6 +354,7 @@ export class ScopeService {
           domainName: scope.domainName,
           order: scope.order || 0,
           allowsWrite: scope.allowsWrite ?? false,
+          requiresConfirmation: scope.requiresConfirmation ?? false,
         } as ScopeDTO)
       }
     }
