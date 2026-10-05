@@ -1,5 +1,5 @@
-import { createElement, forwardRef } from 'react'
-import type { AnchorHTMLAttributes, ReactNode } from 'react'
+import { cloneElement, createElement, forwardRef, isValidElement } from 'react'
+import type { AnchorHTMLAttributes, ReactNode, RefAttributes } from 'react'
 
 /**
  * Stand-in for `next/link` for the SPAs, where island-ui's Link components
@@ -12,6 +12,7 @@ const Link = forwardRef<
     href?: string | { pathname?: string }
     children?: ReactNode
     legacyBehavior?: boolean
+    passHref?: boolean
     prefetch?: boolean
     shallow?: boolean
     scroll?: boolean
@@ -24,6 +25,7 @@ const Link = forwardRef<
     href,
     children,
     legacyBehavior,
+    passHref,
     prefetch,
     shallow,
     scroll,
@@ -35,6 +37,16 @@ const Link = forwardRef<
   ref,
 ) {
   const resolvedHref = typeof href === 'string' ? href : href?.pathname
+  // Like real next/link: inject href into the child anchor rather than wrap
+  // it, which would nest anchors and drop the child's target and class.
+  if (
+    legacyBehavior &&
+    isValidElement<
+      AnchorHTMLAttributes<HTMLAnchorElement> & RefAttributes<HTMLAnchorElement>
+    >(children)
+  ) {
+    return cloneElement(children, { href: resolvedHref, ref })
+  }
   return createElement('a', { href: resolvedHref, ref, ...rest }, children)
 })
 
