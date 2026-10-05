@@ -24,6 +24,12 @@ export interface CibaStartRequest {
    * anywhere else.
    */
   methodHint?: StepUpMethod
+  /**
+   * A hash of exactly what is being approved. The identity server mixes it into
+   * what the person's key signs and puts it back on the token, so the result can
+   * be checked to be for this content and nothing else.
+   */
+  contextHash?: string
 }
 
 export interface CibaStartResult {
@@ -48,6 +54,8 @@ export interface StepUpClaims {
   amr: string[]
   authTime: Date
   certificateThumbprint?: string
+  /** The contextHash the step-up was started with, as the identity server vouches. */
+  contextHash?: string
 }
 
 export type CibaPollResult =

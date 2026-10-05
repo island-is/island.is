@@ -28,6 +28,8 @@ import { DelegationScopeService } from '../delegations/delegation-scope.service'
 import { DelegationsIndexService } from '../delegations/delegations-index.service'
 import { UpdateDelegationScopeDTO } from '../delegations/dto/delegation-scope.dto'
 import { Delegation } from '../delegations/models/delegation.model'
+import { DelegationDirection } from '../delegations/types/delegationDirection'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { DelegationConfirmation } from './models/delegation-confirmation.model'
 import type {
   ConfirmationContentSnapshot,
@@ -104,6 +106,7 @@ export class DelegationConfirmationService {
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private readonly cibaClient: CibaClient,
+    private readonly delegationResourcesService: DelegationResourcesService,
   ) {}
 
   /**
@@ -251,10 +254,21 @@ export class DelegationConfirmationService {
     this.assertConfirmingUser(user, confirmation)
     await this.assertPending(confirmation)
 
-    if (
-      confirmation.authStartCount >=
-      this.delegationConfig.confirmationMaxAuthStarts
-    ) {
+    // Counted before anything goes out, with a conditional increment, so
+    // concurrent starts can't slip past the cap.
+    const [counted] = await this.delegationConfirmationModel.update(
+      { authStartCount: Sequelize.literal('auth_start_count + 1') },
+      {
+        where: {
+          id: confirmation.id,
+          status: DelegationConfirmationStatus.Pending,
+          authStartCount: {
+            [Op.lt]: this.delegationConfig.confirmationMaxAuthStarts,
+          },
+        },
+      },
+    )
+    if (counted !== 1) {
       throw new HttpException(
         'Too many authentication attempts for this confirmation.',
         HttpStatus.TOO_MANY_REQUESTS,
@@ -272,6 +286,9 @@ export class DelegationConfirmationService {
     const started = await this.cibaClient.start({
       userToken: user.authorization,
       bindingMessage: confirmation.contentSnapshot.bindingMessage,
+      // Bound into what the grantor's key signs and echoed on the token, so the
+      // approval can only complete this exact content.
+      contextHash: confirmation.contentHash,
       ...(methodHint && { methodHint }),
     })
 
@@ -279,7 +296,6 @@ export class DelegationConfirmationService {
       authReqId: started.authReqId,
       authMethod: started.method,
       authStartedAt: startedAt,
-      authStartCount: confirmation.authStartCount + 1,
     })
 
     const secondsLeft = Math.max(
@@ -310,6 +326,14 @@ export class DelegationConfirmationService {
     id: string,
   ): Promise<AuthenticationStatusResult> {
     const confirmation = await this.findByIdForUser(user, id)
+
+    // Only the person who confirms may follow it. Not counted as an attempt:
+    // reading is not trying.
+    if (!this.isConfirmingUser(user, confirmation)) {
+      throw new ForbiddenException(
+        'This confirmation can only be followed by the delegation grantor.',
+      )
+    }
 
     if (confirmation.status === DelegationConfirmationStatus.Confirmed) {
       return { status: 'confirmed', confirmation }
@@ -382,6 +406,21 @@ export class DelegationConfirmationService {
     if (!delegation) {
       throw new BadRequestException(
         'The delegation this confirmation belongs to no longer exists.',
+      )
+    }
+
+    // The one place a held scope becomes real, up to the confirmation's lifetime
+    // after it was requested: check again that the grantor may still give it.
+    if (
+      !(await this.delegationResourcesService.validateScopeAccess(
+        user,
+        delegation.domainName ?? null,
+        DelegationDirection.OUTGOING,
+        confirmation.scopes.map((scope) => scope.name),
+      ))
+    ) {
+      throw new ForbiddenException(
+        'The grantor no longer has access to the scopes being confirmed.',
       )
     }
 
@@ -463,19 +502,25 @@ export class DelegationConfirmationService {
    * identity server re-verifies procuration whenever it issues a token in
    * company context, so a token in that shape is itself the proof.
    */
-  private assertConfirmingUser(
+  private isConfirmingUser(
     user: User,
     confirmation: DelegationConfirmation,
-  ): void {
-    const mismatch =
+  ): boolean {
+    return !(
       user.nationalId !== confirmation.fromNationalId ||
       (confirmation.actorNationalId
         ? user.actor?.nationalId !== confirmation.actorNationalId ||
           !user.delegationType?.includes(AuthDelegationType.ProcurationHolder)
         : // A personal grant must not be confirmed while acting for someone else.
           user.actor != null)
+    )
+  }
 
-    if (mismatch) {
+  private assertConfirmingUser(
+    user: User,
+    confirmation: DelegationConfirmation,
+  ): void {
+    if (!this.isConfirmingUser(user, confirmation)) {
       void this.delegationConfirmationModel.increment('attemptCount', {
         where: { id: confirmation.id },
       })
@@ -533,6 +578,15 @@ export class DelegationConfirmationService {
     if (!acrSatisfied) {
       throw new ForbiddenException(
         `Insufficient authentication: ${confirmation.requestedAcr} is required.`,
+      )
+    }
+
+    // What the grantor's key signed was bound to this content hash; the token
+    // says so. Anything else was approved for something else.
+    if (claims.contextHash !== confirmation.contentHash) {
+      await confirmation.update({ authReqId: null })
+      throw new ForbiddenException(
+        'The authentication was not made for this confirmation.',
       )
     }
 

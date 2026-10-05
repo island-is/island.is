@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import addYears from 'date-fns/addYears'
 import subMinutes from 'date-fns/subMinutes'
@@ -9,6 +10,7 @@ import {
   DelegationConfirmation,
   DelegationConfirmationService,
   DelegationConfirmationStatus,
+  DelegationResourcesService,
   DelegationScope,
   DelegationsIndexService,
   DelegationsOutgoingService,
@@ -18,6 +20,8 @@ import {
 } from '@island.is/auth-api-lib'
 import { delegationScopes } from '@island.is/auth/scopes'
 import { CibaClient } from '@island.is/auth/step-up'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
@@ -43,12 +47,15 @@ const ciba = {
   poll: jest.fn(),
 }
 
+/** The context hash the last step-up was started with, as the identity server keeps it. */
+let startedContextHash: string | undefined
+
 /** What the identity server vouches for once someone approves on their phone. */
 const approvedBy = (
   nationalId: string,
-  overrides: Partial<{ acr: string; authTime: Date }> = {},
+  overrides: Partial<{ acr: string; authTime: Date; contextHash: string }> = {},
 ) =>
-  ciba.poll.mockResolvedValue({
+  ciba.poll.mockImplementation(async () => ({
     status: 'authenticated',
     claims: {
       sub: faker.datatype.uuid(),
@@ -57,9 +64,10 @@ const approvedBy = (
       amr: ['swk', 'pin'],
       authTime: new Date(),
       certificateThumbprint: 'AB12CD',
+      contextHash: startedContextHash,
       ...overrides,
     },
-  })
+  }))
 
 const grantorToken = 'Bearer grantor-access-token'
 
@@ -110,13 +118,19 @@ describe('MeDelegationConfirmationsController', () => {
       .spyOn(delegationIndexService, 'indexCustomDelegations')
       .mockImplementation()
 
-    ciba.start.mockReset().mockResolvedValue({
-      authReqId: 'auth-req-1',
-      method: 'sim',
-      expiresIn: 300,
-      interval: 5,
-      verificationCode: '4821',
-    })
+    startedContextHash = undefined
+    ciba.start
+      .mockReset()
+      .mockImplementation(async (request: { contextHash?: string }) => {
+        startedContextHash = request.contextHash
+        return {
+          authReqId: 'auth-req-1',
+          method: 'sim',
+          expiresIn: 300,
+          interval: 5,
+          verificationCode: '4821',
+        }
+      })
     ciba.poll.mockReset().mockResolvedValue({ status: 'pending' })
 
     factory = new FixtureFactory(app)
@@ -162,7 +176,12 @@ describe('MeDelegationConfirmationsController', () => {
       getModelToken(DelegationConfirmation),
     )
 
-  afterEach(() => app?.cleanUp())
+  afterEach(async () => {
+    // Some spies sit on shared mocks (the feature flag service), so they must
+    // not outlive their test.
+    jest.restoreAllMocks()
+    await app?.cleanUp()
+  })
 
   describe('holding sensitive scopes', () => {
     beforeEach(() => setup())
@@ -191,6 +210,23 @@ describe('MeDelegationConfirmationsController', () => {
       })
       // The whole point of reserve-don't-write: no row exists to leak.
       expect(await scopeNamesInDb()).toEqual([])
+    })
+
+    it('grants a sensitive scope as before when the grantor does not have the feature', async () => {
+      // Arrange — the flag off for this grantor; the scope is still marked.
+      jest
+        .spyOn(app.get(FeatureFlagService), 'getValue')
+        .mockImplementation(async (feature) =>
+          feature === Features.isDelegationConfirmationEnabled ? false : '*',
+        )
+
+      // Act
+      const res = await grant([SENSITIVE_SCOPE])
+
+      // Assert — no 500, no confirmation: exactly what happened before.
+      expect(res.status).toEqual(201)
+      expect(res.body.pendingConfirmations).toBeUndefined()
+      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
     })
 
     it('grants the ordinary scopes of a mixed grant and holds only the sensitive one', async () => {
@@ -284,6 +320,8 @@ describe('MeDelegationConfirmationsController', () => {
       expect(ciba.start).toHaveBeenCalledWith({
         userToken: grantorToken,
         bindingMessage: row?.contentSnapshot.bindingMessage,
+        // Bound into what the grantor's key signs.
+        contextHash: row?.contentHash,
       })
       expect(row?.contentSnapshot.bindingMessage).toMatch(
         /^Umboð til .+ · 1 heimild$/,
@@ -330,6 +368,7 @@ describe('MeDelegationConfirmationsController', () => {
       expect(ciba.start).toHaveBeenCalledTimes(1)
       expect(Object.keys(ciba.start.mock.calls[0][0]).sort()).toEqual([
         'bindingMessage',
+        'contextHash',
         'userToken',
       ])
     })
@@ -434,6 +473,99 @@ describe('MeDelegationConfirmationsController', () => {
         authReqId: null,
       })
       expect(await scopeNamesInDb()).toEqual([])
+    })
+
+    it('refuses an approval made for other content', async () => {
+      // Arrange — the person approved, but what their key signed was bound to
+      // something else.
+      await start()
+      approvedBy(grantorNationalId, { contextHash: 'f'.repeat(64) })
+
+      // Act
+      const res = await status()
+
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([])
+    })
+
+    it('refuses to grant what the grantor can no longer give', async () => {
+      // Arrange — access lost between requesting and approving.
+      await start()
+      approvedBy(grantorNationalId)
+      jest
+        .spyOn(app.get(DelegationResourcesService), 'validateScopeAccess')
+        .mockResolvedValue(false)
+
+      // Act
+      const res = await status()
+
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([])
+      expect((await confirmations().findByPk(confirmationId))?.status).toEqual(
+        DelegationConfirmationStatus.Pending,
+      )
+    })
+
+    it('lets the procuration holder who granted for a company confirm it', async () => {
+      // Arrange — the grant was made by a procuration holder for the company.
+      const actorNationalId = createNationalId('person')
+      await confirmations().update(
+        { actorNationalId },
+        { where: { id: confirmationId } },
+      )
+      const procurationHolder = createCurrentUser({
+        nationalId: grantorNationalId,
+        scope: [...delegationScopes],
+        authorization: 'Bearer procuration-holder-token',
+        actor: { nationalId: actorNationalId, scope: [...delegationScopes] },
+        delegationType: [AuthDelegationType.ProcurationHolder],
+      })
+      jest
+        .spyOn(app.get(DelegationResourcesService), 'validateScopeAccess')
+        .mockResolvedValue(true)
+      const service = app.get(DelegationConfirmationService)
+
+      // Act
+      await service.startAuthentication(procurationHolder, confirmationId)
+      approvedBy(actorNationalId)
+      const result = await service.getAuthenticationStatus(
+        procurationHolder,
+        confirmationId,
+      )
+
+      // Assert — the holder's own token named the person to reach.
+      expect(ciba.start).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userToken: 'Bearer procuration-holder-token',
+        }),
+      )
+      expect(result.status).toEqual('confirmed')
+      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
+    })
+
+    it('refuses someone acting for the grantor under a custom delegation', async () => {
+      // Arrange
+      const customActor = createCurrentUser({
+        nationalId: grantorNationalId,
+        scope: [...delegationScopes],
+        actor: {
+          nationalId: createNationalId('person'),
+          scope: [...delegationScopes],
+        },
+        delegationType: [AuthDelegationType.Custom],
+      })
+      const service = app.get(DelegationConfirmationService)
+
+      // Act / Assert — neither start nor follow it.
+      await expect(
+        service.startAuthentication(customActor, confirmationId),
+      ).rejects.toThrow(ForbiddenException)
+      await expect(
+        service.getAuthenticationStatus(customActor, confirmationId),
+      ).rejects.toThrow(ForbiddenException)
+      expect(ciba.start).not.toHaveBeenCalled()
     })
 
     it('refuses a weaker authentication than required', async () => {

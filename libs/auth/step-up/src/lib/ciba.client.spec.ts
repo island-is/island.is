@@ -69,6 +69,7 @@ describe('CibaClient', () => {
         userToken: 'Bearer user-access-token',
         bindingMessage: 'Opna heilsu í appinu',
         methodHint: 'app',
+        contextHash: 'abc123',
       })
 
       // Assert
@@ -79,6 +80,7 @@ describe('CibaClient', () => {
       expect(form.get('binding_message')).toBe('Opna heilsu í appinu')
       expect(form.get('acr_values')).toBe('eidas-loa-high')
       expect(form.get('login_method_hint')).toBe('app')
+      expect(form.get('context_hash')).toBe('abc123')
       expect(form.get('client_id')).toBe(clientId)
       expect(started).toEqual({
         authReqId: 'req-1',
@@ -123,7 +125,9 @@ describe('CibaClient', () => {
     })
 
     it('returns what the verified token vouches for', async () => {
-      respond(200, { access_token: issueToken() })
+      respond(200, {
+        access_token: issueToken({ step_up_context_hash: 'abc123' }),
+      })
 
       const result = await new CibaClient(options).poll('req-1')
 
@@ -136,6 +140,7 @@ describe('CibaClient', () => {
           amr: ['swk', 'pin'],
           authTime: new Date(1_800_000_000 * 1000),
           certificateThumbprint: undefined,
+          contextHash: 'abc123',
         },
       })
     })

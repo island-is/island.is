@@ -29,19 +29,26 @@ import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
+import { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
+import { DelegationConfirmationStatus } from '../delegation-confirmation/types/delegation-confirmation-status'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { validateDistrictCommissionersDelegations } from './utils/delegations'
 
 import type { User } from '@island.is/auth-nest-tools'
 
-export interface CreateScopesOptions {
+/**
+ * How a write may include scopes marked `requiresConfirmation`. Without either,
+ * it may not include any.
+ */
+export type CreateScopesOptions =
+  /** The confirmed confirmation these scopes were redeemed under. */
+  | { confirmationId: string }
   /**
-   * The confirmation these scopes were redeemed under. Required when any of
-   * them is marked `requiresConfirmation`.
+   * The grantor does not have delegation confirmation (the feature flag is off
+   * for them), so a marked scope is granted as it always was.
    */
-  confirmationId?: string
-}
+  | { confirmationNotRequired: true }
 
 @Injectable()
 export class DelegationScopeService {
@@ -54,6 +61,8 @@ export class DelegationScopeService {
     private identityResourceModel: typeof IdentityResource,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(DelegationConfirmation)
+    private delegationConfirmationModel: typeof DelegationConfirmation,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private delegationProviderService: DelegationProviderService,
@@ -90,10 +99,12 @@ export class DelegationScopeService {
    * primary one.
    */
   private async assertScopesMayBeGranted(
+    delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
     options?: CreateScopesOptions,
   ): Promise<void> {
-    if (options?.confirmationId) {
+    if (options && 'confirmationNotRequired' in options) {
       return
     }
 
@@ -103,13 +114,43 @@ export class DelegationScopeService {
         name: scopes.map((scope) => scope.name),
         requiresConfirmation: true,
       },
+      transaction,
     })
 
-    if (sensitiveScopes.length > 0) {
+    if (sensitiveScopes.length === 0) {
+      return
+    }
+
+    const sensitiveNames = sensitiveScopes.map((scope) => scope.name)
+
+    if (!options) {
       throw new Error(
-        `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveScopes
-          .map((scope) => scope.name)
-          .join(', ')}`,
+        `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveNames.join(
+          ', ',
+        )}`,
+      )
+    }
+
+    // The confirmation must exist, be confirmed, belong to this delegation and
+    // cover every sensitive scope written — not just be named.
+    const confirmation = await this.delegationConfirmationModel.findOne({
+      where: {
+        id: options.confirmationId,
+        delegationId,
+        status: DelegationConfirmationStatus.Confirmed,
+      },
+      transaction,
+    })
+    const confirmed = new Set(
+      confirmation?.scopes.map((scope) => scope.name) ?? [],
+    )
+    const uncovered = sensitiveNames.filter((name) => !confirmed.has(name))
+
+    if (uncovered.length > 0) {
+      throw new Error(
+        `Refusing to grant scopes not covered by confirmation ${
+          options.confirmationId
+        }: ${uncovered.join(', ')}`,
       )
     }
   }
@@ -120,7 +161,12 @@ export class DelegationScopeService {
     transaction?: Transaction,
     options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
-    await this.assertScopesMayBeGranted(scopes, options)
+    await this.assertScopesMayBeGranted(
+      delegationId,
+      scopes,
+      transaction,
+      options,
+    )
 
     const validFrom = startOfDay(new Date())
     const defaultValidTo = addDays(

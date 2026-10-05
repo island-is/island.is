@@ -48,6 +48,7 @@ import { DelegationConfirmationService } from '../delegation-confirmation/delega
 import type { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
 import { PendingConfirmationDTO } from '../delegation-confirmation/dto/delegation-confirmation.dto'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import type { CreateScopesOptions } from './delegation-scope.service'
 import { Domain } from '../resources/models/domain.model'
 
 /**
@@ -389,18 +390,20 @@ export class DelegationsOutgoingService {
 
     // Sensitive scopes are held for confirmation in the same transaction, so a
     // rolled-back grant never leaves a confirmation behind.
-    const { grantable, pendingConfirmation } = await this.splitSensitiveScopes({
-      user,
-      delegation,
-      domainName: createDelegation.domainName ?? null,
-      scopes: createDelegation.scopes ?? [],
-      transaction,
-    })
+    const { grantable, writeOptions, pendingConfirmation } =
+      await this.splitSensitiveScopes({
+        user,
+        delegation,
+        domainName: createDelegation.domainName ?? null,
+        scopes: createDelegation.scopes ?? [],
+        transaction,
+      })
 
     await this.delegationScopeService.createOrUpdate(
       delegation.id,
       grantable,
       transaction,
+      writeOptions,
     )
 
     return {
@@ -437,6 +440,8 @@ export class DelegationsOutgoingService {
     transaction?: Transaction
   }): Promise<{
     grantable: UpdateDelegationScopeDTO[]
+    /** How the grantable scopes may be written; see CreateScopesOptions. */
+    writeOptions?: CreateScopesOptions
     pendingConfirmation?: Awaited<
       ReturnType<DelegationConfirmationService['request']>
     >
@@ -451,8 +456,13 @@ export class DelegationsOutgoingService {
       user,
     )
 
+    // Without the feature, a scope marked for confirmation is granted as it
+    // always was. Said explicitly, so the guard below every write knows.
     if (!confirmationEnabled) {
-      return { grantable: scopes }
+      return {
+        grantable: scopes,
+        writeOptions: { confirmationNotRequired: true },
+      }
     }
 
     const sensitiveScopeNames =
@@ -675,7 +685,7 @@ export class DelegationsOutgoingService {
         patchedDelegation.updateScopes &&
         patchedDelegation.updateScopes.length > 0
       ) {
-        const { grantable, pendingConfirmation } =
+        const { grantable, writeOptions, pendingConfirmation } =
           await this.splitSensitiveScopes({
             user,
             delegation: currentDelegation,
@@ -691,6 +701,7 @@ export class DelegationsOutgoingService {
             delegationId,
             grantable,
             transaction,
+            writeOptions,
           )
         }
       }

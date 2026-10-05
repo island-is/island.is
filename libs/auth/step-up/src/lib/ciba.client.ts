@@ -65,6 +65,9 @@ export class CibaClient {
     if (request.methodHint) {
       body.set('login_method_hint', request.methodHint)
     }
+    if (request.contextHash) {
+      body.set('context_hash', request.contextHash)
+    }
 
     const { status, json } = await this.post('/connect/ciba', body)
 
@@ -176,6 +179,10 @@ export class CibaClient {
       certificateThumbprint:
         typeof payload['audkenni_certificate_sha256'] === 'string'
           ? payload['audkenni_certificate_sha256']
+          : undefined,
+      contextHash:
+        typeof payload['step_up_context_hash'] === 'string'
+          ? payload['step_up_context_hash']
           : undefined,
     }
   }
