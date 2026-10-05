@@ -277,8 +277,17 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
                                 .identifier ?? ''
                             }
                             backgroundColor="blue"
+                            onChange={(e) =>
+                              controlDispatch({
+                                type: 'CHANGE_IDENTIFIER',
+                                payload: { newValue: e.target.value },
+                              })
+                            }
                             onFocus={(e) => setFocus(e.target.value)}
-                            readOnly
+                            onBlur={(e) =>
+                              e.target.value !== focus && updateActiveItem()
+                            }
+                            readOnly={isReadOnly}
                           />
                         </Box>
                       )}
