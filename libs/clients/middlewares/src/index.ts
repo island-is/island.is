@@ -15,3 +15,8 @@ export { buildFetch } from './lib/buildFetch'
 export { handle404 } from './lib/handle404'
 export { handle204 } from './lib/handle204'
 export * from './lib/openapi-ts/utils'
+export {
+  EmptyResponseBodyError,
+  requireResponseBodies,
+} from './lib/openapi-ts/responseBodies'
+export type { ResponseBodies } from './lib/openapi-ts/responseBodies'
