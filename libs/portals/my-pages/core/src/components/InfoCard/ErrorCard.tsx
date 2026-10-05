@@ -29,34 +29,30 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({
       border="standard"
       borderColor="blue200"
       borderRadius="large"
-      padding={3}
-      className={styles.boxContainer}
+      padding={[2, 2, 3]}
+      className={to ? styles.boxContainer : undefined}
       height="full"
       background="white"
     >
       <GridRow direction="row" className={styles.gridRow}>
-        <GridColumn span={'11/12'} className={styles.contentContainer}>
+        <GridColumn span="12/12" className={styles.contentContainer}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
-            flexGrow={1}
-            marginBottom={0}
+            alignItems="center"
+            columnGap={2}
+            marginBottom={1}
           >
-            <Box>
-              <Text variant="h4" marginBottom={1} color="blue400">
-                {title ?? formatMessage(m.errorFetch)}
-              </Text>
-              <Inline>
-                <Text>{description ?? formatMessage(m.errorFetch)}</Text>
-              </Inline>
+            <Text variant="h4" color="blue400">
+              {title ?? formatMessage(m.errorFetch)}
+            </Text>
+            <Box flexShrink={0} display="flex">
+              <Icon icon="reload" type="outline" color="blue400" />
             </Box>
           </Box>
-        </GridColumn>
-
-        <GridColumn span="1/12">
-          <Box display="flex" justifyContent="flexEnd" alignItems="flexStart">
-            <Icon icon="reload" type="outline" color="blue400" />
-          </Box>
+          <Inline>
+            <Text>{description ?? formatMessage(m.errorFetch)}</Text>
+          </Inline>
         </GridColumn>
       </GridRow>
     </Box>

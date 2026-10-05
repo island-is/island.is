@@ -102,7 +102,10 @@ export const NotificationsBox = ({
         marginBottom={2}
         paddingX={[2, 2, 0]}
       >
-        <LinkResolver href={InformationPaths.Notifications}>
+        <LinkResolver
+          href={InformationPaths.Notifications}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
@@ -124,6 +127,7 @@ export const NotificationsBox = ({
           <LinkResolver
             href={InformationPaths.Notifications}
             aria-label={formatMessage(m.notificationsViewAll)}
+            className={styles.headerLink}
           >
             <Icon
               icon="arrowForward"

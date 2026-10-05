@@ -47,7 +47,7 @@ export const TreatmentsBox = () => {
               border="standard"
               borderColor="blue200"
               borderRadius="large"
-              padding={3}
+              padding={[2, 2, 3]}
               display="flex"
               justifyContent="spaceBetween"
               columnGap={3}

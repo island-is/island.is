@@ -24,7 +24,7 @@
  * @param {string | React.ReactNode} props.detail[].value - The value for the detail item.
  * @param {Array<ActionCardProps['tag']>} [props.tags] - An array of tags to display on the card.
  * @param {string} [props.img] - An optional image URL to display on the card.
- * @param {boolean} [props.showArrow] - Whether to show the trailing arrow. Defaults to showing it whenever the card links somewhere.
+ * @param {boolean | 'hover'} [props.showArrow] - Whether to show the trailing arrow. Defaults to showing it whenever the card links somewhere. 'hover' shows it on hover/focus on desktop and always on mobile.
  *
  * @returns {React.FC<InfoCardProps>} A React functional component rendering the InfoCard.
  */
@@ -73,7 +73,7 @@ export interface InfoCardProps {
   tooltip?: string
   tags?: Array<ActionCardProps['tag']>
   img?: string
-  showArrow?: boolean
+  showArrow?: boolean | 'hover'
   variant?: 'default' | 'detail' | 'appointment' | 'link'
   /** Grays out the card, e.g. for appointments that have already passed */
   muted?: boolean
@@ -102,7 +102,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   const displayBottomBorder = width < theme.breakpoints.xl
   const displayRightBorder = width >= theme.breakpoints.xl
 
-  const hasArrow = showArrow ?? !!to
+  const hasArrow = typeof showArrow === 'boolean' ? showArrow : !!to
 
   const detailLength = detail ? detail.length : 0
 
@@ -131,8 +131,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
         border="standard"
         borderColor="blue200"
         borderRadius="large"
-        padding={[2, 2, 2, 3]}
-        className={styles.boxContainer}
+        padding={[2, 2, 3]}
+        className={to ? styles.boxContainer : undefined}
         height="full"
         background="white"
       >
@@ -155,7 +155,13 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   {title}
                 </Text>
                 {hasArrow && (
-                  <Box flexShrink={0} display="flex">
+                  <Box
+                    flexShrink={0}
+                    display="flex"
+                    className={
+                      showArrow === 'hover' ? styles.arrowOnHover : undefined
+                    }
+                  >
                     <Icon icon="arrowForward" type="outline" color="blue400" />
                   </Box>
                 )}

@@ -14,9 +14,23 @@ export const containerLink = style({
   display: 'block',
   height: '100%',
   borderRadius: theme.border.radius.large,
-  ':focus': {
+  ':focus-visible': {
     outline: `3px solid ${theme.color.mint400}`,
     outlineOffset: 0,
+  },
+})
+
+export const arrowOnHover = style({
+  transition: 'opacity 150ms ease',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px) and (hover: hover)`]: {
+      opacity: 0,
+      selectors: {
+        [`${containerLink}:hover &, ${containerLink}:focus-visible &`]: {
+          opacity: 1,
+        },
+      },
+    },
   },
 })
 

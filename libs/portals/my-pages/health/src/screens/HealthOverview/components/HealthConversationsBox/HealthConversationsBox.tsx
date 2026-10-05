@@ -90,7 +90,10 @@ export const HealthConversationsBox = ({ limit }: Props) => {
         marginBottom={2}
         paddingX={[2, 2, 3]}
       >
-        <LinkResolver href={HealthPaths.HealthConversations}>
+        <LinkResolver
+          href={HealthPaths.HealthConversations}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
@@ -112,6 +115,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
           <LinkResolver
             href={HealthPaths.HealthConversations}
             aria-label={formatMessage(messages.seeAllMessages)}
+            className={styles.headerLink}
           >
             <Icon
               icon="arrowForward"

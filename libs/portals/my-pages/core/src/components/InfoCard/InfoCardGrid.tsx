@@ -17,7 +17,7 @@ interface InfoCardGridProps {
   }
   variant?: 'default' | 'detail' | 'appointment' | 'link'
   /** Applies to every card unless a card sets its own. */
-  showArrow?: boolean
+  showArrow?: boolean | 'hover'
   error?: boolean
 }
 
