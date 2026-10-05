@@ -76,6 +76,7 @@ import {
 import { notifications } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { DefendantService } from '../../../defendant'
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../../defendant/requestSharedWithDefender.logic'
 import { EventService } from '../../../event'
 import {
   type Case,
@@ -465,44 +466,53 @@ export class CaseNotificationService extends BaseNotificationService {
       this.eventService.postEvent('RESUBMIT', theCase)
     }
 
-    // DEFENDER
-    if (
-      theCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.READY_FOR_COURT ||
-      theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
-    ) {
-      for (const recipient of getRequestCaseDefenderRecipients(theCase)) {
-        const hasDefenderBeenNotified = this.hasReceivedNotification(
-          [
-            TrackedNotificationType.READY_FOR_COURT,
-            TrackedNotificationType.COURT_DATE,
-          ],
-          recipient.email,
-          theCase.notifications,
+    // DEFENDER — share timing is per recipient (most permissive among the
+    // defendants that defender represents).
+    for (const recipient of getRequestCaseDefenderRecipients(theCase)) {
+      const requestSharedWithDefender =
+        getMostPermissiveRequestSharedWithDefenderForNationalId(
+          theCase.defendants,
+          recipient.nationalId,
         )
 
-        if (hasDefenderBeenNotified) {
-          promises.push(
-            this.sendResubmittedToCourtEmailNotificationToDefender({
-              theCase,
-              defenderEmail: recipient.email,
-              defenderName: recipient.name,
-              defenderNationalId: recipient.nationalId,
-            }),
-          )
-        } else if (
-          theCase.requestSharedWithDefender ===
-          RequestSharedWithDefender.READY_FOR_COURT
-        ) {
-          promises.push(
-            this.sendReadyForCourtEmailNotificationToDefender({
-              theCase,
-              defenderName: recipient.name,
-              defenderEmail: recipient.email,
-              defenderNationalId: recipient.nationalId,
-            }),
-          )
-        }
+      if (
+        requestSharedWithDefender !==
+          RequestSharedWithDefender.READY_FOR_COURT &&
+        requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE
+      ) {
+        continue
+      }
+
+      const hasDefenderBeenNotified = this.hasReceivedNotification(
+        [
+          TrackedNotificationType.READY_FOR_COURT,
+          TrackedNotificationType.COURT_DATE,
+        ],
+        recipient.email,
+        theCase.notifications,
+      )
+
+      if (hasDefenderBeenNotified) {
+        promises.push(
+          this.sendResubmittedToCourtEmailNotificationToDefender({
+            theCase,
+            defenderEmail: recipient.email,
+            defenderName: recipient.name,
+            defenderNationalId: recipient.nationalId,
+          }),
+        )
+      } else if (
+        requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT
+      ) {
+        promises.push(
+          this.sendReadyForCourtEmailNotificationToDefender({
+            theCase,
+            defenderName: recipient.name,
+            defenderEmail: recipient.email,
+            defenderNationalId: recipient.nationalId,
+          }),
+        )
       }
     }
 
@@ -751,12 +761,18 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderEmail?: string
     defenderNationalId?: string
   }): Promise<Recipient> {
-    const linkSubject = `${
-      theCase.requestSharedWithDefender ===
+    const requestSharedWithDefender =
+      getMostPermissiveRequestSharedWithDefenderForNationalId(
+        theCase.defendants,
+        defenderNationalId,
+      )
+    const isRequestShared =
+      requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT ||
-      theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
-        ? 'Krafa í máli'
-        : 'Yfirlit máls'
+      requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
+
+    const linkSubject = `${
+      isRequestShared ? 'Krafa í máli' : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification({
@@ -766,11 +782,7 @@ export class CaseNotificationService extends BaseNotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       court: theCase.court?.name,
       courtCaseNumber: theCase.courtCaseNumber,
-      requestSharedWithDefender:
-        theCase.requestSharedWithDefender ===
-          RequestSharedWithDefender.READY_FOR_COURT ||
-        theCase.requestSharedWithDefender ===
-          RequestSharedWithDefender.COURT_DATE,
+      requestSharedWithDefender: isRequestShared,
       defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
     })
 

@@ -40,6 +40,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { hasOutOfCourtAppeal } from '../../appeal-case'
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
@@ -480,8 +481,16 @@ const RequestSharedWithDefenderAllowedStates: {
   [RequestSharedWithDefender.NOT_SHARED]: completedRequestCaseStates,
 }
 
-export const canDefenderViewRequest = (theCase: Case) => {
-  const { requestSharedWithDefender, state } = theCase
+export const canDefenderViewRequest = (
+  theCase: Case,
+  nationalId?: string | null,
+) => {
+  const requestSharedWithDefender =
+    getMostPermissiveRequestSharedWithDefenderForNationalId(
+      theCase.defendants,
+      nationalId,
+    )
+  const { state } = theCase
 
   if (!requestSharedWithDefender) {
     return false
@@ -917,7 +926,7 @@ const transformCase = (
     caseResentExplanation:
       isRequestCase(theCase.type) &&
       isLimitedAccess &&
-      !canDefenderViewRequest(theCase)
+      !canDefenderViewRequest(theCase, user?.nationalId)
         ? undefined
         : theCase.caseResentExplanation,
     parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),

@@ -1,6 +1,9 @@
 import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 
-import { getMostPermissiveRequestSharedWithDefender } from '../requestSharedWithDefender.logic'
+import {
+  getMostPermissiveRequestSharedWithDefender,
+  getMostPermissiveRequestSharedWithDefenderForNationalId,
+} from '../requestSharedWithDefender.logic'
 
 describe('getMostPermissiveRequestSharedWithDefender', () => {
   test('returns null when every value is null or undefined', () => {
@@ -35,6 +38,56 @@ describe('getMostPermissiveRequestSharedWithDefender', () => {
         RequestSharedWithDefender.NOT_SHARED,
         RequestSharedWithDefender.COURT_DATE,
       ]),
+    ).toBe(RequestSharedWithDefender.COURT_DATE)
+  })
+})
+
+describe('getMostPermissiveRequestSharedWithDefenderForNationalId', () => {
+  const nationalId = '0101010101'
+
+  test('returns null when there are no defendants', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForNationalId([], nationalId),
+    ).toBeNull()
+  })
+
+  test('aggregates only defendants that match the national id', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForNationalId(
+        [
+          {
+            defenderNationalId: nationalId,
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+          {
+            defenderNationalId: nationalId,
+            requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          },
+          {
+            defenderNationalId: '9999999999',
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+        ],
+        nationalId,
+      ),
+    ).toBe(RequestSharedWithDefender.READY_FOR_COURT)
+  })
+
+  test('falls back to all defendants when the national id matches nobody', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForNationalId(
+        [
+          {
+            defenderNationalId: '1111111111',
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+          {
+            defenderNationalId: '2222222222',
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+        ],
+        nationalId,
+      ),
     ).toBe(RequestSharedWithDefender.COURT_DATE)
   })
 })

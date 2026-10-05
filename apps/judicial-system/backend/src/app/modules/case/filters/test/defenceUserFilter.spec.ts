@@ -59,8 +59,12 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.SUBMITTED,
-            requestSharedWithDefender: share,
-            defendants: [{ defenderNationalId: user.nationalId }],
+            defendants: [
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender: share,
+              },
+            ],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -73,7 +77,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
               const theCase = {
                 type,
                 state: CaseState.SUBMITTED,
-                requestSharedWithDefender: share,
+                defendants: [{ requestSharedWithDefender: share }],
               } as Case
 
               verifyNoAccess(theCase, user)
@@ -83,8 +87,12 @@ describe.each(defenceRoles)('defence user %s', (role) => {
               const theCase = {
                 type,
                 state: CaseState.SUBMITTED,
-                defendants: [{ defenderNationalId: user.nationalId }],
-                requestSharedWithDefender: share,
+                defendants: [
+                  {
+                    defenderNationalId: user.nationalId,
+                    requestSharedWithDefender: share,
+                  },
+                ],
               } as Case
 
               verifyFullAccess(theCase, user)
@@ -108,8 +116,12 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
+            defendants: [
+              {
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.READY_FOR_COURT,
+              },
+            ],
             dateLogs: [
               { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
             ],
@@ -122,9 +134,13 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
-            defendants: [{ defenderNationalId: user.nationalId }],
+            defendants: [
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.READY_FOR_COURT,
+              },
+            ],
           } as Case
 
           verifyFullAccess(theCase, user)
@@ -170,7 +186,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         })
       })
 
-      describe('multi-defendant defender assignment', () => {
+          describe('multi-defendant defender assignment', () => {
         describe('defender of one defendant gets access', () => {
           const theCase = {
             type,
@@ -205,6 +221,27 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           } as Case
 
           verifyNoAccess(theCase, user)
+        })
+
+        describe('most permissive sharing wins for the same defender national id', () => {
+          const theCase = {
+            type,
+            state: CaseState.SUBMITTED,
+            defendants: [
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.NOT_SHARED,
+              },
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.READY_FOR_COURT,
+              },
+            ],
+          } as Case
+
+          verifyFullAccess(theCase, user)
         })
       })
     },
