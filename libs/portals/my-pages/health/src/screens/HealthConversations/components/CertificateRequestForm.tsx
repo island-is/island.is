@@ -13,7 +13,6 @@ import { HealthDirectorateCertificateType } from '@island.is/api/schema'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import { Markdown } from '@island.is/shared/components'
 import { messages } from '../../../lib/messages'
-import * as styles from '../HealthConversations.css'
 
 export interface CertificateFormState {
   certificateType?: HealthDirectorateCertificateType
@@ -85,7 +84,7 @@ const CertificateRequestForm = ({
       )}
 
       {instructions ? (
-        <Box marginBottom={2} className={styles.typeInstructions}>
+        <Box marginBottom={2}>
           <Markdown>{instructions}</Markdown>
         </Box>
       ) : (

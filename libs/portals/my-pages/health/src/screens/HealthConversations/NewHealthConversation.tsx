@@ -472,7 +472,7 @@ const NewHealthConversation = () => {
               {!usesCustomTitle &&
                 !isCertificateSelected &&
                 selectedType?.instructions && (
-                  <Box marginBottom={2} className={styles.typeInstructions}>
+                  <Box marginBottom={2}>
                     <Markdown>{selectedType.instructions}</Markdown>
                   </Box>
                 )}
