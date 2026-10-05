@@ -78,7 +78,12 @@ export const TranslationPublishHistory = ({
         <Text variant="h3">{formatMessage(m.translationPublishHistory)}</Text>
 
         {loading && history.length === 0 && (
-          <SkeletonLoader height={64} repeat={3} space={2} />
+          <SkeletonLoader
+            height={64}
+            repeat={3}
+            space={2}
+            borderRadius="large"
+          />
         )}
 
         {!loading && history.length === 0 && (
