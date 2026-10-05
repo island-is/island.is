@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ResponsiveContainer } from 'recharts'
 import { useWindowSize } from 'react-use'
+import { ResponsiveContainer } from 'recharts'
 
 import {
   AccordionCard,
