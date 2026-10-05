@@ -34,11 +34,7 @@ export class MemberResolver {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Query(() => [Member], {
-    name: 'airDiscountSchemeMembers',
-    description:
-      'The signed-in user and the people whose Loftbrú benefits they can see',
-  })
+  @Query(() => [Member], { name: 'airDiscountSchemeMembers' })
   @Audit()
   async members(@CurrentUser() user: User): Promise<Member[]> {
     if (await isServiceDisabled(this.featureFlagService, user)) {
@@ -47,11 +43,7 @@ export class MemberResolver {
     return this.memberService.getMembers(user)
   }
 
-  @ResolveField('benefit', () => Benefit, {
-    nullable: true,
-    description:
-      'Null when the member has no rights (no fund, or none used and none left)',
-  })
+  @ResolveField('benefit', () => Benefit, { nullable: true })
   benefit(
     @Parent() member: Member,
     @CurrentUser() user: User,
@@ -59,10 +51,7 @@ export class MemberResolver {
     return this.memberService.getBenefit(user, member.nationalId)
   }
 
-  @ResolveField('usedFlightLegsThisPeriod', () => [UsedFlightLeg], {
-    description:
-      "Flight legs booked with a Loftbrú discount in the current period (today: the calendar year, by booking date). Includes connecting legs, which don't count towards fund.used",
-  })
+  @ResolveField('usedFlightLegsThisPeriod', () => [UsedFlightLeg])
   usedFlightLegsThisPeriod(
     @Parent() member: Member,
     @Loader(UsedFlightLegsLoader) loader: UsedFlightLegsDataLoader,
