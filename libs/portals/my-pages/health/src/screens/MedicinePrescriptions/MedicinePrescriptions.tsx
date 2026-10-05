@@ -19,7 +19,7 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { Markdown } from '@island.is/shared/components'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
@@ -134,9 +134,9 @@ const MedicinePrescriptions = () => {
     <IntroWrapper
       title={formatMessage(messages.medicinePrescriptions)}
       introComponent={
-        <Markdown options={{ openLinksInNewTab: false }}>
+        <TextMarkdown>
           {formatMessage(messages.medicinePrescriptionIntroWithLink)}
-        </Markdown>
+        </TextMarkdown>
       }
       serviceProvider={{
         slug: STAFRAEN_HEILSA_SLUG,

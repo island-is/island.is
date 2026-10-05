@@ -1954,6 +1954,11 @@ export const messages = defineMessages({
       'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana.',
     id: 'sp.health:health-messages-intro',
   },
+  healthConversationsIntroWithLink: {
+    defaultMessage:
+      'Hér getur þú séð skilaboð milli þín og heilbrigðisstofnana. Þegar þú sækir um endurnýjun lyfseðils færðu tilkynningu um afgreiðslu málsins en ekki skilaboð hér. Þú getur skoðað lyfjasögu þína undir **[Lyf og endurnýjanir](/minarsidur/heilsa/lyf/lyfjaavisanir)**.',
+    id: 'sp.health:health-messages-intro-with-link#markdown',
+  },
   healthConversationsSearchPlaceholder: {
     defaultMessage: 'Sía eftir leitarorði',
     id: 'sp.health:health-messages-search-placeholder',

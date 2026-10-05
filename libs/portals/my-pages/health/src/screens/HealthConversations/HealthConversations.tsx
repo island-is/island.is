@@ -21,6 +21,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import { Problem } from '@island.is/react-spa/shared'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
@@ -250,11 +251,15 @@ const HealthConversations = () => {
   return (
     <IntroWrapper
       title={treatmentId ? messages.treatmentMessagesFromTeam : m.messages}
-      intro={
-        treatmentId
-          ? messages.treatmentConversationsIntro
-          : messages.healthConversationsIntro
-      }
+      {...(treatmentId
+        ? { intro: messages.treatmentConversationsIntro }
+        : {
+            introComponent: (
+              <TextMarkdown>
+                {formatMessage(messages.healthConversationsIntroWithLink)}
+              </TextMarkdown>
+            ),
+          })}
       serviceProvider={
         treatmentId
           ? {
