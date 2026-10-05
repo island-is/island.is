@@ -288,7 +288,7 @@ export class UserProfileController {
     },
     response: { status: 204 },
   })
-  @Scopes(UserProfileScope.system)
+  @Scopes(UserProfileScope.system, UserProfileScope.admin)
   ensureNotificationSenderSetting(
     @CurrentAuth() auth: Auth,
     @Headers('X-Param-National-Id') nationalId: string,
