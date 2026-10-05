@@ -88,10 +88,10 @@ describe('parsePastedBankAccount', () => {
       { bank: '0133', ledger: '26', account: '123456' },
     ],
     [
-      'digits that stop partway through a part',
+      'digits that stop partway through a part, padded',
       '01332612',
       'bank',
-      { bank: '0133', ledger: '26', account: '12' },
+      { bank: '0133', ledger: '26', account: '000012' },
     ],
   ] as const)('splits %s', (_, text, startPart, expected) => {
     expect(parsePastedBankAccount(text, startPart)).toEqual(expected)

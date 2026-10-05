@@ -77,7 +77,8 @@ export const parsePastedBankAccount = (
     return result
   }
 
-  // Bare digits are split by length. A last part left short is padded on blur, like typed input.
+  // Bare digits are split by length. A whole account number is assumed, so a short last part is
+  // padded like the others rather than left for more typing.
   const digits = groups[0]
   const capacity = parts.reduce(
     (sum, part) => sum + BANK_ACCOUNT_PART_LENGTHS[part],
@@ -94,7 +95,10 @@ export const parsePastedBankAccount = (
   for (const part of parts) {
     if (offset >= digits.length) break
     const length = BANK_ACCOUNT_PART_LENGTHS[part]
-    result[part] = digits.slice(offset, offset + length)
+    result[part] = padBankAccountPart(
+      digits.slice(offset, offset + length),
+      part,
+    )
     offset += length
   }
 

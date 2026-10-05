@@ -12,14 +12,23 @@ jest.mock('@island.is/localization', () => ({
   }),
 }))
 
-// Same form setup as the payment page.
+// Same form setup as the payment page, with its submit button disabled until the form is valid.
 const Form = ({ children }: { children: ReactNode }) => {
   const methods = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
     defaultValues: { bank: '', ledger: '', account: '', actorNationalId: '' },
   })
-  return <FormProvider {...methods}>{children}</FormProvider>
+  return (
+    <FormProvider {...methods}>
+      <form>
+        {children}
+        <button type="submit" disabled={!methods.formState.isValid}>
+          Hefja millifærslu
+        </button>
+      </form>
+    </FormProvider>
+  )
 }
 
 const renderInputs = () => {
@@ -37,6 +46,9 @@ const renderInputs = () => {
     bank: input('bank'),
     ledger: input('ledger'),
     account: input('account'),
+    submit: container.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement,
   }
 }
 
@@ -49,45 +61,45 @@ describe('BankTransferPayment', () => {
       ['separated and short', '1-12-1234'],
       ['separated and full', '0001-12-001234'],
       ['bare digits', '000112001234'],
-    ])('splits %s across the inputs from the bank input', async (_, text) => {
-      const { bank, ledger, account } = renderInputs()
-      bank.focus()
+      ['bare digits and short', '0001121234'],
+    ])(
+      'splits %s across the inputs, padded, and moves on to the submit button',
+      async (_, text) => {
+        const { bank, ledger, account, submit } = renderInputs()
+        bank.focus()
 
-      paste(bank, text)
+        paste(bank, text)
 
-      // The bank part must survive the focus moving off it: `onBlur` pads whatever the input holds
-      // at that moment, so focusing before the pasted value has rendered wiped it.
-      await waitFor(() => expect(account).toBe(document.activeElement))
-      expect(bank.value).toBe('0001')
-      expect(ledger.value).toBe('12')
-      expect(account.value).toBe('001234')
-    })
+        // The bank part must survive the focus moving off it: `onBlur` pads whatever the input
+        // holds at that moment, so focusing before the pasted value had rendered wiped it.
+        await waitFor(() => expect(submit).toBe(document.activeElement))
+        expect(bank.value).toBe('0001')
+        expect(ledger.value).toBe('12')
+        expect(account.value).toBe('001234')
+      },
+    )
 
-    it('splits short bare digits by length, padding the account on blur', async () => {
-      const { bank, ledger, account } = renderInputs()
-      bank.focus()
-
-      paste(bank, '0001121234')
-
-      await waitFor(() => expect(account).toBe(document.activeElement))
-      expect(bank.value).toBe('0001')
-      expect(ledger.value).toBe('12')
-      // The last part is left short, as if typed, so more digits can follow.
-      expect(account.value).toBe('1234')
-
-      fireEvent.blur(account)
-
-      await waitFor(() => expect(account.value).toBe('001234'))
-    })
-
-    it('fills from the ledger input onwards', async () => {
+    it('fills from the ledger input onwards and focuses the part left empty', async () => {
       const { bank, ledger, account } = renderInputs()
       ledger.focus()
 
       paste(ledger, '12-1234')
 
-      await waitFor(() => expect(account).toBe(document.activeElement))
+      await waitFor(() => expect(bank).toBe(document.activeElement))
       expect(bank.value).toBe('')
+      expect(ledger.value).toBe('12')
+      expect(account.value).toBe('001234')
+    })
+
+    it('moves on to the submit button when a paste completes a typed bank', async () => {
+      const { bank, ledger, account, submit } = renderInputs()
+      fireEvent.change(bank, { target: { value: '0001' } })
+      ledger.focus()
+
+      paste(ledger, '12-1234')
+
+      await waitFor(() => expect(submit).toBe(document.activeElement))
+      expect(bank.value).toBe('0001')
       expect(ledger.value).toBe('12')
       expect(account.value).toBe('001234')
     })

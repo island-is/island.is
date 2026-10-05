@@ -77,19 +77,32 @@ const BANK_ACCOUNT_PARTS: {
 export const BankTransferPayment = ({
   companyPayer,
 }: BankTransferPaymentProps) => {
-  const { control, formState, setFocus, setValue } =
+  const { control, formState, setFocus, setValue, getValues, trigger } =
     useFormContext<BankTransferPaymentInput>()
   const { formatMessage } = useLocale()
 
-  // Focus the last part filled by a paste only once its values have rendered. Moving focus in the
-  // paste handler blurs the pasted-into input while its DOM value is still the old one, and
-  // `onBlur` below writes that stale value back.
-  const [pendingFocus, setPendingFocus] = useState<BankAccountPart | null>(null)
+  // Move focus on from a paste only once its values have rendered. Moving it in the paste handler
+  // blurs the pasted-into input while its DOM value is still the old one, and `onBlur` below writes
+  // that stale value back. A pasted account number is assumed complete, so the next step is the
+  // submit button; a part the paste left empty is focused instead.
+  const [pendingFocus, setPendingFocus] = useState<{
+    form: HTMLFormElement | null
+  } | null>(null)
   useEffect(() => {
     if (!pendingFocus) return
-    setFocus(pendingFocus)
     setPendingFocus(null)
-  }, [pendingFocus, setFocus])
+
+    const emptyPart = BANK_ACCOUNT_PARTS.find(({ name }) => !getValues(name))
+    if (emptyPart) {
+      setFocus(emptyPart.name)
+      return
+    }
+
+    // Disabled until the form is valid, in which case focus stays where it is.
+    pendingFocus.form
+      ?.querySelector<HTMLButtonElement>('button[type="submit"]')
+      ?.focus()
+  }, [pendingFocus, getValues, setFocus])
 
   // One message for the whole account number, under the three inputs.
   const bankAccountError =
@@ -210,17 +223,17 @@ export const BankTransferPayment = ({
                             if (!parsed) return
 
                             e.preventDefault()
-                            let lastPart = name
+                            const form = e.currentTarget.form
                             for (const { name: part } of BANK_ACCOUNT_PARTS) {
                               const value = parsed[part]
-                              if (value === undefined) continue
-                              setValue(part, value, {
-                                shouldDirty: true,
-                                shouldValidate: true,
-                              })
-                              lastPart = part
+                              if (value !== undefined) {
+                                setValue(part, value, { shouldDirty: true })
+                              }
                             }
-                            setPendingFocus(lastPart)
+                            // Validate first: the submit button is disabled until the form is valid.
+                            trigger(
+                              BANK_ACCOUNT_PARTS.map((part) => part.name),
+                            ).then(() => setPendingFocus({ form }))
                           }}
                           // Show the value as it will be sent: `123` becomes `0123`.
                           onBlur={(e) => {
