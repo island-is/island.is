@@ -6,7 +6,7 @@ import { LinkRowButton } from '../link-row-button/link-row-button'
 
 export interface MoreInfoConteinerProps {
   externalLinks: {
-    /** Overrides the render key, for lists where titles can repeat. */
+    /** Render key, for lists where titles repeat. */
     id?: string
     link: string
     title: string

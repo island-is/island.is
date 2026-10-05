@@ -80,7 +80,7 @@ export default function HealthCategoriesScreen() {
     null,
   )
 
-  // The resolver is behind the same flag, so querying while it is off 403s.
+  // The resolver is behind the same flag; querying with it off 403s.
   const { data: treatmentsData } = useGetHealthTreatmentsQuery({
     skip: !isTreatmentsEnabled,
   })
@@ -173,49 +173,51 @@ export default function HealthCategoriesScreen() {
     isHealthMessagesEnabled,
   ])
 
-  const externalLinks = [
+  const externalLinks: Array<{
+    id: string
+    titleId: string
+    titleValues?: Record<string, string>
+    url: string
+  }> = [
     {
       id: 'referrals',
-      title: intl.formatMessage({ id: 'health.categories.referrals' }),
+      titleId: 'health.categories.referrals',
       url: `${origin}/minarsidur/heilsa/tilvisanir`,
     },
     {
       id: 'paymentsAndRights',
-      title: intl.formatMessage({ id: 'health.categories.paymentsAndRights' }),
+      titleId: 'health.categories.paymentsAndRights',
       url: `${origin}/minarsidur/heilsa/greidslur`,
     },
     {
       id: 'aidsAndNutrition',
-      title: intl.formatMessage({ id: 'health.overview.aidsAndNutrition' }),
+      titleId: 'health.overview.aidsAndNutrition',
       url: `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
     },
     {
       id: 'therapy',
-      title: intl.formatMessage({ id: 'health.overview.therapy' }),
+      titleId: 'health.overview.therapy',
       url: `${origin}/minarsidur/heilsa/thjalfun`,
     },
     {
       id: 'waitingLists',
-      title: intl.formatMessage({ id: 'health.categories.waitingLists' }),
+      titleId: 'health.categories.waitingLists',
       url: `${origin}/minarsidur/heilsa/bidlistar`,
     },
     {
       id: 'medicalRecords',
-      title: intl.formatMessage({ id: 'health.categories.medicalRecords' }),
+      titleId: 'health.categories.medicalRecords',
       url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,
     },
-    // One row per treatment, mirroring the treatment navigation on my pages.
-    // Names can repeat across providers, so the id carries the render key.
+    // One row per treatment, as on my pages. Names repeat, so key by id.
     ...treatments.map((treatment) => {
       const name = treatment.name.trim()
       return {
         id: `treatment-${treatment.id}`,
-        title: name
-          ? intl.formatMessage(
-              { id: 'health.categories.treatmentWithName' },
-              { name },
-            )
-          : intl.formatMessage({ id: 'health.categories.treatment' }),
+        titleId: name
+          ? 'health.categories.treatmentWithName'
+          : 'health.categories.treatment',
+        titleValues: name ? { name } : undefined,
         url: `${origin}/minarsidur/heilsa/medferd/${treatment.id}`,
       }
     }),
@@ -246,7 +248,7 @@ export default function HealthCategoriesScreen() {
           externalLinks={externalLinks.map((link) => ({
             id: link.id,
             link: link.url,
-            title: link.title,
+            title: intl.formatMessage({ id: link.titleId }, link.titleValues),
             isExternal: true,
           }))}
         />
