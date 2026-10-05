@@ -45,10 +45,12 @@ const EditAccess = () => {
     ?.nationalId
 
   const navigate = useNavigate()
-  const [isConfirmModalVisible, setIsConfirmModalVisible] =
-    useState<boolean>(false)
-  const [isDeleteModalVisible, setIsDeleteModalVisible] =
-    useState<boolean>(false)
+  const [isConfirmModalVisible, setIsConfirmModalVisible] = useState<boolean>(
+    false,
+  )
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(
+    false,
+  )
   const [initialScopes, setInitialScopes] = useState<ScopeSelection[]>([])
   const [personType, setPersonType] = useState<string | null | undefined>(
     undefined,
@@ -68,14 +70,18 @@ const EditAccess = () => {
 
   const needsFetch = !hasHydratedRef.current && !!nationalIdParam
 
-  const { data: delegationsData, loading: delegationsLoading } =
-    useAuthDelegationsGroupedByIdentityOutgoingQuery({
-      variables: { lang },
-      skip: !needsFetch,
-    })
+  const {
+    data: delegationsData,
+    loading: delegationsLoading,
+  } = useAuthDelegationsGroupedByIdentityOutgoingQuery({
+    variables: { lang },
+    skip: !needsFetch,
+  })
 
-  const [getIdentity, { data: identityData, loading: identityLoading }] =
-    useIdentityLazyQuery()
+  const [
+    getIdentity,
+    { data: identityData, loading: identityLoading },
+  ] = useIdentityLazyQuery()
 
   // if the state gets cleared (for example after a refresh),
   // we need to fetch users' identity info and current delegations for the initial state
@@ -130,6 +136,7 @@ const EditAccess = () => {
       validTo: scope.validTo ? new Date(scope.validTo) : undefined,
       validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
       allowsWrite: scope.apiScope?.allowsWrite ?? false,
+      requiresConfirmation: scope.apiScope?.requiresConfirmation ?? false,
     })) as ScopeSelection[]
     setSelectedScopes(scopes)
     setInitialScopes(scopes)
@@ -284,7 +291,7 @@ const EditAccess = () => {
 
         {faqList && faqList.questions.length > 0 && (
           <Box paddingTop={8}>
-            <FaqList {...(faqList as unknown as FaqListProps)} />
+            <FaqList {...((faqList as unknown) as FaqListProps)} />
           </Box>
         )}
       </div>

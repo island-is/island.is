@@ -39,11 +39,13 @@ export const m = defineMessages({
     defaultMessage: 'Allsherjarumboð',
   },
   delegationTypeGeneralMandateOutgoing: {
-    id: 'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
+    id:
+      'sp.access-control-delegations:delegation-type-general-mandate-outgoing',
     defaultMessage: 'Allsherjarumboð þú hefur veitt öðrum',
   },
   delegationTypeGeneralMandateIncoming: {
-    id: 'sp.access-control-delegations:delegation-type-general-mandate-incoming',
+    id:
+      'sp.access-control-delegations:delegation-type-general-mandate-incoming',
     defaultMessage: 'Allsherjarumboð sem þú hefur fengið',
   },
   delegationTypeProcurationHolder: {
@@ -67,7 +69,8 @@ export const m = defineMessages({
     defaultMessage: 'Eru sótt úr fyrirtækjaskrá Skattsins',
   },
   delegationTypePersonalRepresentativeDesc: {
-    id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
+    id:
+      'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
   outgoingDelegationsHeader: {
@@ -607,6 +610,155 @@ export const m = defineMessages({
   readAndWrite: {
     id: 'sp.access-control-delegations:read-and-write',
     defaultMessage: 'Skoða og breyta',
+  },
+  confirmDelegationTitle: {
+    id: 'sp.access-control-delegations:confirm-delegation-title',
+    defaultMessage: 'Staðfesting umboðs',
+  },
+  confirmDelegationSuccessTitle: {
+    id: 'sp.access-control-delegations:confirm-delegation-success-title',
+    defaultMessage: 'Umboðið er í gildi',
+  },
+  confirmDelegationSuccessMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-success-message',
+    defaultMessage:
+      'Þú hefur staðfest umboðið með rafrænum skilríkjum og aðgangurinn er kominn í gildi.',
+  },
+  confirmDelegationAlreadyDoneTitle: {
+    id: 'sp.access-control-delegations:confirm-delegation-already-done-title',
+    defaultMessage: 'Umboðið hefur þegar verið staðfest',
+  },
+  confirmDelegationAlreadyDoneMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-already-done-message',
+    defaultMessage: 'Ekkert fleira þarf að gera.',
+  },
+  confirmDelegationExpiredTitle: {
+    id: 'sp.access-control-delegations:confirm-delegation-expired-title',
+    defaultMessage: 'Staðfestingin er útrunnin',
+  },
+  confirmDelegationExpiredMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-expired-message',
+    defaultMessage:
+      'Umboðið var ekki staðfest í tæka tíð og tók því ekki gildi. Þú getur veitt það aftur.',
+  },
+  confirmDelegationNotFoundTitle: {
+    id: 'sp.access-control-delegations:confirm-delegation-not-found-title',
+    defaultMessage: 'Staðfestingin fannst ekki',
+  },
+  confirmDelegationNotFoundMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-not-found-message',
+    defaultMessage:
+      'Þetta getur gerst ef annar einstaklingur er skráður inn eða ef staðfestingin er útrunnin.',
+  },
+  confirmDelegationFailedMessage: {
+    id: 'sp.access-control-delegations:confirm-delegation-failed-message',
+    defaultMessage:
+      'Ekki tókst að staðfesta umboðið. Reyndu að veita það aftur.',
+  },
+  confirmDelegationIntro: {
+    id: 'sp.access-control-delegations:confirm-delegation-intro',
+    defaultMessage:
+      'Farðu yfir umboðið og staðfestu það með rafrænum skilríkjum. Aðgangurinn tekur gildi um leið og þú hefur staðfest.',
+  },
+  confirmDelegationRecipient: {
+    id: 'sp.access-control-delegations:confirm-delegation-recipient',
+    defaultMessage: 'Umboðshafi',
+  },
+  confirmDelegationPermissions: {
+    id: 'sp.access-control-delegations:confirm-delegation-permissions',
+    defaultMessage: 'Réttindi',
+  },
+  confirmDelegationValidTo: {
+    id: 'sp.access-control-delegations:confirm-delegation-valid-to',
+    defaultMessage: 'gildir til {date}',
+  },
+  confirmDelegationPhoneShows: {
+    id: 'sp.access-control-delegations:confirm-delegation-phone-shows',
+    defaultMessage: 'Í símanum þínum birtist',
+  },
+  stepUpTitle: {
+    id: 'sp.access-control-delegations:step-up-title',
+    defaultMessage: 'Rafræn auðkenning',
+  },
+  stepUpIntro: {
+    id: 'sp.access-control-delegations:step-up-intro',
+    defaultMessage:
+      'Staðfestu umboðið með rafrænum skilríkjum. Það tekur gildi um leið og þú hefur staðfest.',
+  },
+  stepUpProgress: {
+    id: 'sp.access-control-delegations:step-up-progress',
+    defaultMessage: 'Staðfesting {current} af {total}',
+  },
+  stepUpConfirmed: {
+    id: 'sp.access-control-delegations:step-up-confirmed',
+    defaultMessage: 'Umboðið er komið í gildi',
+  },
+  stepUpStart: {
+    id: 'sp.access-control-delegations:step-up-start',
+    defaultMessage: 'Auðkenna',
+  },
+  stepUpWaitingApp: {
+    id: 'sp.access-control-delegations:step-up-waiting-app',
+    defaultMessage: 'Opnaðu Auðkennisappið og staðfestu að talan sé sú sama',
+  },
+  stepUpWaitingSim: {
+    id: 'sp.access-control-delegations:step-up-waiting-sim',
+    defaultMessage: 'Staðfestu í símanum þínum að talan sé sú sama',
+  },
+  stepUpTimeLeft: {
+    id: 'sp.access-control-delegations:step-up-time-left',
+    defaultMessage: 'Tími eftir: {minutes}:{seconds}',
+  },
+  stepUpDenied: {
+    id: 'sp.access-control-delegations:step-up-denied',
+    defaultMessage:
+      'Staðfestingin tókst ekki. Hætt var við í símanum eða annar aðili svaraði. Þú getur reynt aftur.',
+  },
+  stepUpTimedOut: {
+    id: 'sp.access-control-delegations:step-up-timed-out',
+    defaultMessage: 'Ekki var svarað í tæka tíð. Þú getur reynt aftur.',
+  },
+  stepUpTooManyAttempts: {
+    id: 'sp.access-control-delegations:step-up-too-many-attempts',
+    defaultMessage:
+      'Of margar tilraunir. Veittu umboðið aftur til að hefja nýja staðfestingu.',
+  },
+  stepUpStartFailed: {
+    id: 'sp.access-control-delegations:step-up-start-failed',
+    defaultMessage:
+      'Ekki tókst að hefja staðfestingu. Reyndu aftur eftir smá stund.',
+  },
+  confirmDelegationRetry: {
+    id: 'sp.access-control-delegations:confirm-delegation-retry',
+    defaultMessage: 'Reyna aftur',
+  },
+  confirmDelegationBackToDelegations: {
+    id: 'sp.access-control-delegations:confirm-delegation-back',
+    defaultMessage: 'Til baka í mín umboð',
+  },
+  sensitiveScopeTag: {
+    id: 'sp.access-control-delegations:sensitive-scope-tag',
+    defaultMessage: 'Viðkvæmt',
+  },
+  sensitiveScopeTooltip: {
+    id: 'sp.access-control-delegations:sensitive-scope-tooltip',
+    defaultMessage:
+      'Þessi réttindi veita aðgang að viðkvæmum upplýsingum. Þú þarft að staðfesta umboðið með rafrænum skilríkjum.',
+  },
+  sensitiveScopesSelectedTitle: {
+    id: 'sp.access-control-delegations:sensitive-scopes-selected-title',
+    defaultMessage: 'Umboðið þarf tvöfalt samþykki',
+  },
+  confirmAccessSensitiveStepUpMessage: {
+    id:
+      'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
+    defaultMessage:
+      'Þegar þú staðfestir færðu beiðni í símann þinn um að staðfesta með rafrænum skilríkjum. Umboðið tekur ekki gildi fyrr en þú hefur gert það.',
+  },
+  sensitiveScopesSelectedMessage: {
+    id: 'sp.access-control-delegations:sensitive-scopes-selected-message',
+    defaultMessage:
+      'Þú hefur valið réttindi sem veita aðgang að viðkvæmum upplýsingum. Til að ljúka veitingu umboðsins þarft þú að staðfesta það með rafrænum skilríkjum.',
   },
   headerName: {
     id: 'sp.access-control-delegations:header-name',

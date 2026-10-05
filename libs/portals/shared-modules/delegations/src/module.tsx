@@ -30,6 +30,9 @@ const ServiceCategories = lazy(() =>
   import('./screens/ServiceCategories/ServiceCategories'),
 )
 const Faq = lazy(() => import('./screens/Faq/Faq'))
+const ConfirmDelegation = lazy(() =>
+  import('./screens/ConfirmDelegation/ConfirmDelegation'),
+)
 
 export const createDelegationsModule = (
   portalType: PortalType,
@@ -94,6 +97,17 @@ export const createDelegationsModule = (
             navHide: true,
             enabled: hasAccess,
             element: <EditAccess />,
+          },
+          {
+            // Landing route after a step-up authentication. Registered
+            // unconditionally on the new routes so a confirmation already in
+            // flight can always be completed, even if the feature flag that
+            // creates them is switched off.
+            name: m.confirmDelegationTitle,
+            path: DelegationPaths.DelegationConfirm,
+            navHide: true,
+            enabled: hasAccess,
+            element: <ConfirmDelegation />,
           },
           {
             name: m.serviceCategories,

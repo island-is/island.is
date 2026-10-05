@@ -13,6 +13,7 @@ import * as styles from './GrantAccessSteps.css'
 
 import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Filter,
   FilterMultiChoice,
@@ -54,6 +55,10 @@ export const AccessScopes = () => {
     },
   )
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
+
+  const hasSensitiveScopeSelected = selectedScopes.some(
+    (scope) => scope.requiresConfirmation,
+  )
   const defaultDate = add(new Date(), { years: 1 })
 
   const { data: domainsData } = useAuthDomainsQuery({
@@ -174,6 +179,15 @@ export const AccessScopes = () => {
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <RecipientsTag />
+      {hasSensitiveScopeSelected && (
+        <Box marginBottom={2} width="full">
+          <AlertMessage
+            type="warning"
+            title={formatMessage(m.sensitiveScopesSelectedTitle)}
+            message={formatMessage(m.sensitiveScopesSelectedMessage)}
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         columnGap={[0, 2]}

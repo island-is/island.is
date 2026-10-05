@@ -6,6 +6,7 @@ import {
   DatePicker,
   Divider,
   Table as T,
+  Tag,
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
@@ -122,9 +123,21 @@ export const ScopesTable = ({
                         alignItems="center"
                         columnGap={2}
                       >
-                        <Text variant="h5" fontWeight="semiBold">
-                          {scope.displayName}
-                        </Text>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          columnGap={1}
+                          flexWrap="wrap"
+                        >
+                          <Text variant="h5" fontWeight="semiBold">
+                            {scope.displayName}
+                          </Text>
+                          {scope.requiresConfirmation && (
+                            <Tag variant="warn" outlined disabled>
+                              {formatMessage(m.sensitiveScopeTag)}
+                            </Tag>
+                          )}
+                        </Box>
                         <Box
                           display="flex"
                           alignItems="center"
@@ -350,7 +363,19 @@ export const ScopesTable = ({
                       {scope.domain?.displayName || scope.domain?.name || '-'}
                     </Text>
                   </Box>
-                  <Text variant="medium">{scope.displayName}</Text>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap={1}
+                    flexWrap="wrap"
+                  >
+                    <Text variant="medium">{scope.displayName}</Text>
+                    {scope.requiresConfirmation && (
+                      <Tag variant="warn" outlined disabled>
+                        {formatMessage(m.sensitiveScopeTag)}
+                      </Tag>
+                    )}
+                  </Box>
                 </Box>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
