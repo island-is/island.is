@@ -2,7 +2,6 @@ import React from 'react'
 import { Preview, Parameters } from '@storybook/react-webpack5'
 import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
-import { ApolloClient, ApolloProvider } from '@apollo/client'
 import { MockedProvider } from '@apollo/client/testing'
 // Stories import components directly (deep imports), so the global resets
 // (button, body, etc.) must be loaded explicitly, as the apps do.
@@ -42,11 +41,11 @@ const preview: Preview = {
           onError={() => undefined}
         >
           <FormProvider {...hookFormData}>
-            <ApolloProvider client={{} as ApolloClient<any>}>
+            <MockedProvider mocks={[]}>
               <BffContext.Provider value={mockBffContext}>
                 {Story()}
               </BffContext.Provider>
-            </ApolloProvider>
+            </MockedProvider>
           </FormProvider>
         </IntlProvider>
       )
