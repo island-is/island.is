@@ -1,6 +1,7 @@
 import type { ApplicationWithAttachments } from '@island.is/application/types'
 import type { User } from '@island.is/auth-nest-tools'
 import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
+import type { AuditService } from '@island.is/nest/audit'
 import { PayDebtsService } from './pay-debts.service'
 
 describe('PayDebtsService', () => {
@@ -32,18 +33,31 @@ describe('PayDebtsService', () => {
       baseUrl: 'http://localhost:3377',
       isConfigured: true,
     }
-    const service = new PayDebtsService(financeClient, downloadServiceConfig)
+    const audit = jest.fn()
+    const auditService = { audit } as unknown as AuditService
+    const service = new PayDebtsService(
+      financeClient,
+      downloadServiceConfig,
+      auditService,
+    )
     const nationalId = '0101307789'
     const auth = { nationalId } as User
+    const application = { id: 'application-id' } as ApplicationWithAttachments
 
     const result = await service.getCustomerDebts({
-      application: {} as ApplicationWithAttachments,
+      application,
       auth,
       currentUserLocale: 'is',
     })
 
     expect(getCustomerDebts).toHaveBeenCalledWith(auth, {
       nationalID: nationalId,
+    })
+    expect(audit).toHaveBeenCalledWith({
+      auth,
+      action: 'getCustomerDebts',
+      resources: application.id,
+      meta: { debtCount: 1 },
     })
     expect(result).toEqual({
       message: 'Success',

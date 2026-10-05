@@ -4,6 +4,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FinanceClientV3Service } from '@island.is/clients/finance-v3'
 import { DownloadServiceConfig } from '@island.is/nest/config'
+import { AuditService } from '@island.is/nest/audit'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -25,13 +26,24 @@ export class PayDebtsService extends BaseTemplateApiService {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    private readonly auditService: AuditService,
   ) {
     super(ApplicationTypes.PAY_DEBTS)
   }
 
-  async getCustomerDebts({ auth }: TemplateApiModuleActionProps) {
+  async getCustomerDebts({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
     const result = await this.financeClientV3Service.getCustomerDebts(auth, {
       nationalID: auth.nationalId,
+    })
+
+    this.auditService.audit({
+      auth,
+      action: 'getCustomerDebts',
+      resources: application.id,
+      meta: { debtCount: result?.debts?.length ?? 0 },
     })
 
     return {
