@@ -13,9 +13,15 @@ export class OrganizationParentSubpageSyncService
   implements CmsSyncProvider<IOrganizationParentSubpage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationParentSubpage>) {
+    const isTranslationActive = (entry: Entry<any>) =>
+      entry.fields.organizationPage?.fields?.activeTranslations?.[
+        entry.sys.locale
+      ] ?? true
+
     const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IOrganizationParentSubpage =>
         entry.sys.contentType.sys.id === 'organizationParentSubpage' &&
+        isTranslationActive(entry) &&
         !!entry.fields.title &&
         !!entry.fields.slug &&
         (entry.fields.pages ?? []).length > 0 &&
@@ -26,9 +32,19 @@ export class OrganizationParentSubpageSyncService
           entry.fields.organizationPage?.fields?.canBeFoundInSearchResults ??
           true),
     )
+
+    // Remove already indexed parent subpages whose organization has turned off the locale
+    const entriesToDelete = entries
+      .filter(
+        (entry: Entry<any>) =>
+          entry.sys.contentType.sys.id === 'organizationParentSubpage' &&
+          !isTranslationActive(entry),
+      )
+      .map((entry) => entry.sys.id)
+
     return {
       entriesToUpdate,
-      entriesToDelete: [],
+      entriesToDelete,
     }
   }
 
