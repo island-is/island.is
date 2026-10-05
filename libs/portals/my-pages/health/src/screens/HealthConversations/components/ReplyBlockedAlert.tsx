@@ -11,12 +11,22 @@ interface Props {
 const ReplyBlockedAlert = ({ availability, replyWindowDays }: Props) => {
   const { formatMessage } = useLocale()
 
+  if (availability === ReplyAvailability.WAITING) {
+    return (
+      <AlertMessage
+        type="success"
+        title={formatMessage(
+          messages.healthConversationReplyBlockedAwaitingStaffReplyTitle,
+        )}
+        message={formatMessage(
+          messages.healthConversationReplyBlockedAwaitingStaffReplyText,
+        )}
+      />
+    )
+  }
+
   const message = () => {
     switch (availability) {
-      case ReplyAvailability.WAITING:
-        return formatMessage(
-          messages.healthConversationReplyBlockedAwaitingAcknowledgementText,
-        )
       case ReplyAvailability.EXPIRED:
         return replyWindowDays != null
           ? formatMessage(
