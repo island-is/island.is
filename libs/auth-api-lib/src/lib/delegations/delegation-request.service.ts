@@ -26,7 +26,6 @@ import { DelegationsOutgoingService } from './delegations-outgoing.service'
 import { NotificationsApi } from '../user-notification'
 import { DelegationRequestError } from './constants/delegation-request-errors'
 import {
-  DELEGATION_REQUEST_APPROVED_TEMPLATE_ID,
   DELEGATION_REQUEST_REJECTED_TEMPLATE_ID,
   DELEGATION_REQUEST_TEMPLATE_ID,
 } from './constants/hnipp'
@@ -312,13 +311,6 @@ export class DelegationRequestService {
         { transaction },
       )
     })
-
-    void this.notifyRequester(
-      user,
-      request.toNationalId,
-      DELEGATION_REQUEST_APPROVED_TEMPLATE_ID,
-      [...scopesByDomain.keys()],
-    )
 
     return this.findById(user, id)
   }
