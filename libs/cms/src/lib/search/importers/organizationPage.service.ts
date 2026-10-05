@@ -12,17 +12,31 @@ export class OrganizationPageSyncService
   implements CmsSyncProvider<IOrganizationPage>
 {
   processSyncData(entries: processSyncDataInput<IOrganizationPage>) {
+    // Only non-default locales can be turned off
+    const isTranslationActive = (entry: Entry<any>) =>
+      entry.sys.locale === 'is-IS' ||
+      (entry.fields.activeTranslations?.[entry.sys.locale] ?? true)
+
     const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IOrganizationPage =>
         entry.sys.contentType.sys.id === 'organizationPage' &&
         !!entry.fields.title &&
         (entry.fields.canBeFoundInSearchResults ?? true) &&
-        (entry.sys.locale === 'is-IS' ||
-          (entry.fields.activeTranslations?.[entry.sys.locale] ?? true)),
+        isTranslationActive(entry),
     )
+
+    // Remove already indexed organization pages whose locale has been turned off
+    const entriesToDelete = entries
+      .filter(
+        (entry: Entry<any>) =>
+          entry.sys.contentType.sys.id === 'organizationPage' &&
+          !isTranslationActive(entry),
+      )
+      .map((entry) => entry.sys.id)
+
     return {
       entriesToUpdate,
-      entriesToDelete: [],
+      entriesToDelete,
     }
   }
 
