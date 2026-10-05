@@ -407,7 +407,7 @@ export class ContentfulService {
     // In case someone in the CMS triggers a sync by setting the translation of an entry to an inactive state we'd like to remove that entry
     const entriesThatHadTheirTranslationTurnedOff = new Set<string>()
 
-    if (isDeltaUpdate && locale !== 'is') {
+    if (isDeltaUpdate) {
       const localizedEntries = entries.filter((entry) =>
         environment.localizedContentTypes.includes(
           entry.sys.contentType.sys.id,
@@ -417,7 +417,7 @@ export class ContentfulService {
         const translationIsActive =
           localizedEntry.fields.activeTranslations?.[
             this.contentfulLocaleMap.is
-          ]?.[locale] ?? true
+          ]?.[this.contentfulLocaleMap[locale]] ?? true
 
         if (!translationIsActive) {
           entriesThatHadTheirTranslationTurnedOff.add(localizedEntry.sys.id)
