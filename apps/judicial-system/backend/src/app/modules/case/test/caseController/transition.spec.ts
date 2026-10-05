@@ -42,6 +42,7 @@ import {
 import { randomDate, runInRequestContext } from '../../../../test'
 import { EventService } from '../../../event'
 import { Case, CaseRepositoryService } from '../../../repository'
+import { UserService } from '../../../user'
 import { VerdictService } from '../../../verdict'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
@@ -74,6 +75,7 @@ describe('CaseController - Transition', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockVerdictService: VerdictService
   let mockEventService: EventService
+  let mockUserService: UserService
   let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
@@ -84,6 +86,7 @@ describe('CaseController - Transition', () => {
       caseRepositoryService,
       verdictService,
       eventService,
+      userService,
       caseController,
     } = await createTestingCaseModule()
 
@@ -92,6 +95,7 @@ describe('CaseController - Transition', () => {
     mockCaseRepositoryService = caseRepositoryService
     mockVerdictService = verdictService
     mockEventService = eventService
+    mockUserService = userService
     transactionContext = undefined
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -749,4 +753,73 @@ describe('CaseController - Transition', () => {
       )
     })
   })
+
+  // Each review transition notifies through its own helper in the case
+  // service; none of them is covered by the state table above
+  each`
+    transition                       | oldState                        | newState                              | notificationType
+    ${CaseTransition.ASK_FOR_REVIEW} | ${CaseState.DRAFT}              | ${CaseState.WAITING_FOR_REVIEW}       | ${IndictmentCaseNotificationType.INDICTMENT_SENT_FOR_REVIEW}
+    ${CaseTransition.ACCEPT_REVIEW}  | ${CaseState.WAITING_FOR_REVIEW} | ${CaseState.WAITING_FOR_CONFIRMATION} | ${IndictmentCaseNotificationType.INDICTMENT_REVIEW_ACCEPTED}
+    ${CaseTransition.DENY_REVIEW}    | ${CaseState.WAITING_FOR_REVIEW} | ${CaseState.DRAFT}                    | ${IndictmentCaseNotificationType.INDICTMENT_REVIEW_DENIED}
+  `.describe(
+    '$transition indictment case transitioning from $oldState to $newState',
+    ({ transition, oldState, newState, notificationType }) => {
+      const caseId = uuid()
+      const prosecutorsOfficeId = uuid()
+      // The asker may not be the approver, while accepting and denying are
+      // the approver's own transitions - and only the approver's denial
+      // notifies
+      const indictmentApproverId =
+        transition === CaseTransition.ASK_FOR_REVIEW ? uuid() : userId
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        policeCaseNumbers: [uuid()],
+        state: oldState,
+        defendants: [{ id: uuid() }],
+        indictmentApproverId,
+        prosecutorsOfficeId,
+      } as Case
+      const updatedCase = { ...theCase, state: newState } as Case
+      let then: Then
+
+      beforeEach(async () => {
+        if (transition === CaseTransition.ASK_FOR_REVIEW) {
+          // The route validates the approver before asking for review
+          const mockFindById = mockUserService.findById as jest.Mock
+          mockFindById.mockResolvedValueOnce({
+            id: indictmentApproverId,
+            active: true,
+            role: UserRole.PROSECUTOR,
+            institutionId: prosecutorsOfficeId,
+          })
+        }
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+        then = await givenWhenThen(caseId, theCase, { transition })
+      })
+
+      it('should transition the case', () => {
+        expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+          caseId,
+          expect.objectContaining({ state: newState }),
+          { transaction },
+        )
+        expect(then.result).toBe(updatedCase)
+      })
+
+      it(`should queue the ${notificationType} notification and nothing else`, () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.NOTIFICATION,
+            user: { ...defaultUser, canConfirmIndictment: true },
+            caseId,
+            body: { type: notificationType },
+          },
+        ])
+      })
+    },
+  )
 })

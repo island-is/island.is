@@ -157,13 +157,15 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 ## Queue messages after commit
 
 A request queues messages for the message handler with
-`queueMessagesAfterCommit` from `app/middleware`, never with the message
-library's `addMessagesToQueue` directly. The helper registers the push with the
-request's transaction context, so a request whose transaction rolls back sends
-nothing; the library function is flushed when the response ends whatever
-happened, and remains only at call sites not yet moved. A handler that commits
-a transaction of its own must return right after the commit: the callbacks run
-on the success path, so work that can fail after a commit would drop them.
+`queueMessagesAfterCommit` from `app/middleware`, and with nothing else. The
+helper registers the push with the request's transaction context, so a request
+whose transaction rolls back sends nothing. The message library's
+`pushMessagesToRequestStore` is the plumbing behind the helper: it pushes into
+a store that is flushed when the response ends whatever happened to the
+database work, so the helper is its only production caller and must stay so. A
+handler that commits a transaction of its own must
+return right after the commit: the callbacks run on the success path, so work
+that can fail after a commit would drop them.
 
 In a spec, mock the helper's module
 (`jest.mock('<path to>/middleware/queueMessagesAfterCommit')`) and assert on
