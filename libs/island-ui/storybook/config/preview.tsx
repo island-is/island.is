@@ -7,6 +7,15 @@ import { MockedProvider } from '@apollo/client/testing'
 // Stories import components directly (deep imports), so the global resets
 // (button, body, etc.) must be loaded explicitly, as the apps do.
 import '../../core/src/styles/global.css'
+import { BffContext, createMockedInitialState } from '@island.is/react-spa/bff'
+
+const mockBffContext = {
+  ...createMockedInitialState(),
+  signIn: () => undefined,
+  signOut: () => undefined,
+  switchUser: () => undefined,
+  bffUrlGenerator: (relativePath = '') => `/bff${relativePath}`,
+}
 
 export const parameters: Parameters = {
   viewMode: 'docs',
@@ -34,7 +43,9 @@ const preview: Preview = {
         >
           <FormProvider {...hookFormData}>
             <ApolloProvider client={{} as ApolloClient<any>}>
-              {Story()}
+              <BffContext.Provider value={mockBffContext}>
+                {Story()}
+              </BffContext.Provider>
             </ApolloProvider>
           </FormProvider>
         </IntlProvider>
