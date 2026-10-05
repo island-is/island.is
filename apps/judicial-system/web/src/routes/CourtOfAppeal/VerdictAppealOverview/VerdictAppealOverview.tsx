@@ -3,8 +3,14 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  getStandardUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+import {
+  FeatureContext,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -16,8 +22,10 @@ import {
   VerdictAppealFiles,
 } from '@island.is/judicial-system-web/src/components'
 import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
+import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import DistrictCourtCaseFiles from './DistrictCourtCaseFiles'
 import VerdictAppealConclusions from './VerdictAppealConclusions'
@@ -40,11 +48,18 @@ const VerdictAppealOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
   const router = useRouter()
 
   const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+    router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        targetAppealCase?.id,
+      ),
+    )
 
   const headerLines = getVerdictAppealOverviewHeaderLines(workingCase)
 
@@ -95,7 +110,28 @@ const VerdictAppealOverview = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
+        <FormFooter
+          previousUrl={getStandardUserDashboardRoute(user)}
+          // The step this leads to is still hidden, and it turns the reader
+          // straight back when it is. This page is not hidden - the court
+          // reaches it from a case list that is - so the button has to carry
+          // the gate itself.
+          actions={
+            features.includes(Feature.INDICTMENT_APPEAL)
+              ? [
+                  {
+                    text: formatMessage(core.continue),
+                    icon: 'arrowForward',
+                    onClick: () =>
+                      handleNavigationTo(
+                        COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                      ),
+                    testId: 'continueButton',
+                  },
+                ]
+              : undefined
+          }
+        />
       </FormContentContainer>
     </PageLayout>
   )

@@ -3,8 +3,13 @@ import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
-import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
   Case,
@@ -49,7 +54,7 @@ describe('useSections getSections', () => {
   // hook). Each test injects its own `c` here so the resolved target appeal
   // matches what `getSections(c, u)` is called with.
   const makeWrapper =
-    (workingCase: Case) =>
+    (workingCase: Case, features: Feature[] = []) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ({ children }: any) =>
       (
@@ -72,7 +77,9 @@ describe('useSections getSections', () => {
                 } as any
               }
             >
-              <UserProvider authenticated={true}>{children}</UserProvider>
+              <FeatureContext.Provider value={{ features, isLoading: false }}>
+                <UserProvider authenticated={true}>{children}</UserProvider>
+              </FeatureContext.Provider>
             </FormContext.Provider>
           </ApolloProvider>
         </IntlProvider>
@@ -143,9 +150,9 @@ describe('useSections getSections', () => {
       institution: { type: InstitutionType.COURT_OF_APPEALS },
     } as unknown as User
 
-    const appealSections = (c: Case, user: User) => {
+    const appealSections = (c: Case, user: User, features: Feature[] = []) => {
       const { result } = renderHook(() => useSections(), {
-        wrapper: makeWrapper(c),
+        wrapper: makeWrapper(c, features),
       })
 
       return result.current
@@ -178,6 +185,35 @@ describe('useSections getSections', () => {
 
       expect(sections[0].children[0].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
+    // The overview is reachable on its own - the court arrives from a case
+    // list - but the steps after it belong to a feature that is still hidden,
+    // and each of those pages turns the reader straight back.
+    it('offers only the overview while the feature is hidden', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].children.map((c) => c.name)).toEqual(['Yfirlit'])
+    })
+
+    it('offers the defender step once the feature is shown', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser, [
+        Feature.INDICTMENT_APPEAL,
+      ])
+
+      expect(sections[0].children.map((c) => c.name)).toEqual([
+        'Yfirlit',
+        'Verjandi',
+      ])
+      expect(sections[0].children[1].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
     })
 
