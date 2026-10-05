@@ -226,7 +226,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
         RequestSharedWithDefender.READY_FOR_COURT
       theCase.defendants = [
         {
-          ...theCase.defendants![0],
+          ...(theCase.defendants?.[0] ?? {}),
           requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
         },
       ]
