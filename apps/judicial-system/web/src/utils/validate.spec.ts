@@ -1036,7 +1036,10 @@ describe('isDefendantStepValidRC', () => {
   })
 
   test('requires a decision on sharing the request when a defender is named', () => {
-    const withDefender = { ...validCase, defenderName: 'Verjandi' } as Case
+    const withDefender = {
+      ...validCase,
+      defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
+    } as Case
 
     expect(isDefendantStepValidRC(withDefender, [POLICE_CASE_NUMBER])).toBe(
       false,
@@ -1052,6 +1055,32 @@ describe('isDefendantStepValidRC', () => {
     ).toBe(true)
   })
 
+  test('requires a sharing decision when a later defendant has a defender', () => {
+    const workingCase = {
+      ...validCase,
+      defendants: [validDefendant, { id: 'd2', defenderName: 'Verjandi' }],
+    } as Case
+
+    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
+      false,
+    )
+    expect(
+      isDefendantStepValidRC(
+        {
+          ...workingCase,
+          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        } as Case,
+        [POLICE_CASE_NUMBER],
+      ),
+    ).toBe(true)
+  })
+
+  test('does not rely on the case-level defender name', () => {
+    const workingCase = { ...validCase, defenderName: 'Verjandi' } as Case
+
+    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(true)
+  })
+
   test('is false when the defender email is malformed', () => {
     const workingCase = { ...validCase, defenderEmail: 'not-an-email' } as Case
 
@@ -1062,6 +1091,20 @@ describe('isDefendantStepValidRC', () => {
 
   test('is false when the defender phone number is malformed', () => {
     const workingCase = { ...validCase, defenderPhoneNumber: '12345' } as Case
+
+    expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
+      false,
+    )
+  })
+
+  test.each([
+    ['defenderEmail', 'not-an-email'],
+    ['defenderPhoneNumber', '12345'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
+    const workingCase = {
+      ...validCase,
+      defendants: [validDefendant, { id: 'd2', [field]: value }],
+    } as Case
 
     expect(isDefendantStepValidRC(workingCase, [POLICE_CASE_NUMBER])).toBe(
       false,
@@ -1177,7 +1220,10 @@ describe('isDefendantStepValidIC', () => {
   })
 
   test('requires a decision on sharing the request when a defender is named', () => {
-    const withDefender = { ...validCase, defenderName: 'Verjandi' } as Case
+    const withDefender = {
+      ...validCase,
+      defendants: [{ ...validDefendant, defenderName: 'Verjandi' }],
+    } as Case
 
     expect(isDefendantStepValidIC(withDefender)).toBe(false)
     expect(
@@ -1186,6 +1232,48 @@ describe('isDefendantStepValidIC', () => {
         requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
       } as Case),
     ).toBe(true)
+  })
+
+  test('requires a sharing decision when only a later defendant has a defender', () => {
+    const workingCase = {
+      ...validCase,
+      defendants: [
+        validDefendant,
+        { ...validDefendant, id: 'd2', defenderName: 'Verjandi' },
+      ],
+    } as Case
+
+    expect(isDefendantStepValidIC(workingCase)).toBe(false)
+    expect(
+      isDefendantStepValidIC({
+        ...workingCase,
+        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      } as Case),
+    ).toBe(true)
+  })
+
+  test('does not rely on the case-level defender name', () => {
+    expect(
+      isDefendantStepValidIC({
+        ...validCase,
+        defenderName: 'Verjandi',
+      } as Case),
+    ).toBe(true)
+  })
+
+  test.each([
+    ['defenderEmail', 'nope'],
+    ['defenderPhoneNumber', '1'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
+    const workingCase = {
+      ...validCase,
+      defendants: [
+        validDefendant,
+        { ...validDefendant, id: 'd2', [field]: value },
+      ],
+    } as Case
+
+    expect(isDefendantStepValidIC(workingCase)).toBe(false)
   })
 
   test('is false when the defender contact details are malformed', () => {
@@ -1785,6 +1873,34 @@ describe('isCourtHearingArrangemenstStepValidRC', () => {
       } as Case),
     ).toBe(false)
   })
+
+  test.each([
+    ['defenderEmail', 'nope'],
+    ['defenderPhoneNumber', '1'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
+    expect(
+      isCourtHearingArrangemenstStepValidRC({
+        arraignmentDate,
+        defendants: [{ id: 'd1' }, { id: 'd2', [field]: value }],
+      } as Case),
+    ).toBe(false)
+  })
+
+  test('is true when every defendant has valid defender details', () => {
+    expect(
+      isCourtHearingArrangemenstStepValidRC({
+        arraignmentDate,
+        defendants: [
+          {
+            id: 'd1',
+            defenderName: 'Verjandi',
+            defenderEmail: 'verjandi@dummy.dd',
+          },
+          { id: 'd2' },
+        ],
+      } as Case),
+    ).toBe(true)
+  })
 })
 
 describe('isCourtHearingArrangementsStepValidIC', () => {
@@ -1835,6 +1951,18 @@ describe('isCourtHearingArrangementsStepValidIC', () => {
       isCourtHearingArrangementsStepValidIC({
         ...validCase,
         defenderEmail: 'nope',
+      } as Case),
+    ).toBe(false)
+  })
+
+  test.each([
+    ['defenderEmail', 'nope'],
+    ['defenderPhoneNumber', '1'],
+  ])('is false when any defendant has a malformed %s', (field, value) => {
+    expect(
+      isCourtHearingArrangementsStepValidIC({
+        ...validCase,
+        defendants: [{ id: 'd1' }, { id: 'd2', [field]: value }],
       } as Case),
     ).toBe(false)
   })

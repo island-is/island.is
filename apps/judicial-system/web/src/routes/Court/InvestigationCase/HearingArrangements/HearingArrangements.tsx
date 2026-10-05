@@ -19,7 +19,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -27,10 +26,12 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   SectionHeading,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { anyDefendantHasDefender } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import { LegalRightsProtectorInputFields } from '@island.is/judicial-system-web/src/components/VictimInfo/LegalRightsProtectorInputFields'
 import {
   SessionArrangements,
@@ -100,7 +101,7 @@ const HearingArrangements = () => {
     setAndSendCaseToServer(
       [
         {
-          sessionArrangements: workingCase.defenderName
+          sessionArrangements: anyDefendantHasDefender(workingCase.defendants)
             ? SessionArrangements.ALL_PRESENT
             : undefined,
         },
@@ -312,12 +313,17 @@ const HearingArrangements = () => {
             SessionArrangements.ALL_PRESENT ||
             workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-            <Box component="section">
-              <DefenderInfo
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-              />
-            </Box>
+            <section className={stack({ gap: 5 })}>
+              {workingCase.defendants?.map((defendant) => (
+                <Box key={defendant.id} component="div">
+                  <RequestCaseDefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    defendant={defendant}
+                  />
+                </Box>
+              ))}
+            </section>
           )}
           {workingCase.sessionArrangements ===
             SessionArrangements.ALL_PRESENT &&

@@ -15,7 +15,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  DefenderInfo,
+  BlueBox,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -23,6 +23,8 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  RequestCaseDefenderInfo,
+  RequestCaseDefenderSharing,
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
@@ -231,6 +233,13 @@ const Defendant = () => {
                       onChange={handleUpdateDefendant}
                       updateDefendantState={updateDefendantState}
                     />
+                    <Box marginTop={5}>
+                      <RequestCaseDefenderInfo
+                        workingCase={workingCase}
+                        setWorkingCase={setWorkingCase}
+                        defendant={defendant}
+                      />
+                    </Box>
                   </motion.div>
                 ))}
             </AnimatePresence>
@@ -253,18 +262,14 @@ const Defendant = () => {
               </Button>
             </Box>
           </Box>
-          <AnimatePresence>
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-            >
-              <DefenderInfo
+          <Box component="section">
+            <BlueBox>
+              <RequestCaseDefenderSharing
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
               />
-            </motion.section>
-          </AnimatePresence>
+            </BlueBox>
+          </Box>
           {workingCase.id &&
             (workingCase.victims && workingCase.victims?.length === 0 ? (
               <Box component="section" display="flex" justifyContent="flexEnd">

@@ -12,7 +12,6 @@ import {
   ArraignmentAlert,
   CourtArrangements,
   CourtCaseInfo,
-  DefenderInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -20,6 +19,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RequestCaseDefenderInfo,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -173,12 +173,15 @@ export const HearingArrangements = () => {
             />
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
-          <DefenderInfo
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
+        {workingCase.defendants?.map((defendant) => (
+          <Box key={defendant.id} component="section" marginBottom={8}>
+            <RequestCaseDefenderInfo
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              defendant={defendant}
+            />
+          </Box>
+        ))}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
