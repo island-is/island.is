@@ -144,6 +144,10 @@ export enum Features {
   // that contains scopes marked `requiresConfirmation` (tvöfalt samþykki).
   isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
 
+  // Health screens in the app are locked until the person unlocks with
+  // Auðkenni, and lock again after a while unused. Read by the app and the API.
+  isAppHealthStepUpRequired = 'isAppHealthStepUpRequired',
+
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
   shouldSendEmailNotificationsToCompanyUserProfiles = 'shouldSendEmailNotificationsToCompanyUserProfiles',

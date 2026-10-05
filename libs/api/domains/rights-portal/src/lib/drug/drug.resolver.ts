@@ -1,3 +1,5 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
+import { Features } from '@island.is/feature-flags'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
@@ -23,6 +25,7 @@ import { DrugCertificate } from './models/drugCertificate.model'
 import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 @Resolver()
+@StepUpRequired(Features.isAppHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/drug' })
 export class DrugResolver {
