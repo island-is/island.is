@@ -390,5 +390,34 @@ export const regulation = {
         description: 'No label',
       },
     }),
+    dateWarnings: defineMessages({
+      effectiveBeforePublish: {
+        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveBeforePublish',
+        defaultMessage:
+          'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+        description:
+          'Warning when the effective date is before the requested publish date',
+      },
+      effectiveDateEarly: {
+        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveDateEarly',
+        defaultMessage: 'Valinn gildistökudagur er á undan deginum í dag.',
+        description: 'Warning when the effective date is in the past',
+      },
+    }),
+    impactsAfterEffectiveDate: defineMessages({
+      title: {
+        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.title',
+        defaultMessage: 'Gildistökudagur er á undan dagsetningu áhrifa',
+        description:
+          'Title of the warning when the effective date is before an impact date',
+      },
+      message: {
+        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.message',
+        defaultMessage:
+          'Reglugerðin tekur gildi {effectiveDate} en áhrif hennar á {regulations} eru dagsett síðar. Slíkt tíðkast aðeins í undantekningartilvikum. Gakktu úr skugga um að dagsetningarnar séu réttar.',
+        description:
+          'Message of the warning when the effective date is before an impact date',
+      },
+    }),
   },
 }

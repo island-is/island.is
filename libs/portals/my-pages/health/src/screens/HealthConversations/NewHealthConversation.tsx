@@ -211,9 +211,14 @@ const NewHealthConversation = () => {
     }
   }
 
-  const goToConversation = (conversationId?: string | null) => {
+  const goToConversation = (
+    conversationId?: string | null,
+    justSent = false,
+  ) => {
     if (conversationId) {
-      navigate(paths.conversationDetail(conversationId))
+      navigate(paths.conversationDetail(conversationId), {
+        state: justSent ? { justSent } : undefined,
+      })
     } else {
       navigate(paths.conversations)
     }
@@ -237,6 +242,7 @@ const NewHealthConversation = () => {
         })
         goToConversation(
           result.data?.healthDirectorateCreateHealthConversation?.id,
+          true,
         )
         return
       }
@@ -279,6 +285,7 @@ const NewHealthConversation = () => {
       })
       goToConversation(
         result.data?.healthDirectorateCreateHealthConversation?.id,
+        true,
       )
     } catch {
       toast.error(formatMessage(m.errorTitle))

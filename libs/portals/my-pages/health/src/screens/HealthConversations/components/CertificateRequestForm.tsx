@@ -69,7 +69,7 @@ const CertificateRequestForm = ({
   hidePaymentNotice,
   instructions,
 }: CertificateRequestFormProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   return (
     <Box marginBottom={3}>
@@ -154,6 +154,7 @@ const CertificateRequestForm = ({
             }
             label={formatMessage(messages.period)}
             placeholderText={formatMessage(messages.choosePeriod)}
+            locale={lang}
             disabled={disabled}
             required
           />

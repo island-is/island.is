@@ -4,9 +4,7 @@ export { MessageModule } from './lib/message.module'
 export { MessageService } from './lib/message.service'
 export {
   MessageMiddleware,
-  addMessagesToQueue,
-  addMessagesToQueueAfterCommit,
-  type AfterCommitTransaction,
+  pushMessagesToRequestStore,
 } from './lib/message.middleware'
 export { messageModuleConfig } from './lib/message.config'
 export {

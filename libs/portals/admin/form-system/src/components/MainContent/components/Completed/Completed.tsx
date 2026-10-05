@@ -4,6 +4,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  Checkbox,
   Divider,
   Input,
   Stack,
@@ -87,6 +88,22 @@ export const Completed = () => {
           <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
         </Box>
       </Row>
+      <Box marginTop={3}>
+        <Checkbox
+          label={formatMessage(m.enableApplicationPdfDownload)}
+          checked={control.form.enableApplicationPdfDownload ?? false}
+          disabled={isReadOnly}
+          onChange={(event) => {
+            controlDispatch({
+              type: 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD',
+              payload: {
+                value: event.target.checked,
+                update: formUpdate,
+              },
+            })
+          }}
+        />
+      </Box>
       <Box marginTop={5}></Box>
       <Stack space={3}>
         <Input
