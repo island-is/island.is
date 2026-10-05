@@ -171,6 +171,23 @@ const KNOWN_ANSWERS_DEFAULTS_BY_TYPE: Partial<
 const isPlainProviderKey = (prop: string): boolean =>
   /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(prop) && !(prop in {})
 
+const createUnknownProviderDataStub = (): unknown =>
+  new Proxy(() => undefined, {
+    get(_target, prop) {
+      if (
+        prop === Symbol.toPrimitive ||
+        prop === 'toString' ||
+        prop === 'valueOf'
+      ) {
+        return () => ''
+      }
+      if (typeof prop === 'symbol') {
+        return undefined
+      }
+      return createUnknownProviderDataStub()
+    },
+  })
+
 const withExternalDataFallback = (externalData: ExternalData): ExternalData =>
   new Proxy(externalData, {
     get(target, prop, receiver) {
@@ -182,7 +199,8 @@ const withExternalDataFallback = (externalData: ExternalData): ExternalData =>
         return value
       }
       return {
-        data: KNOWN_PROVIDER_DATA_DEFAULTS[prop] ?? {},
+        data:
+          KNOWN_PROVIDER_DATA_DEFAULTS[prop] ?? createUnknownProviderDataStub(),
         date: PREVIEW_DATE,
         status: 'success',
       } as DataProviderResult
