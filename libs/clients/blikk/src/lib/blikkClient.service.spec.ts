@@ -28,6 +28,17 @@ const okResponse = (json: unknown) =>
     headers: { 'Content-Type': 'application/json' },
   })
 
+// 2xx responses without a body, which the generated client returns as `{}` without validating.
+// Blikk's document declares a body for 200 and, through `default`, for any other status.
+const emptyResponses: [string, number, () => Response][] = [
+  ['204', 204, () => new Response(null, { status: 204 })],
+  [
+    '200 with Content-Length: 0',
+    200,
+    () => new Response('', { status: 200, headers: { 'Content-Length': '0' } }),
+  ],
+]
+
 const sentRequest = (): Request => mockFetch.mock.calls[0][0]
 
 // A FetchError carrying a status, as the enhanced fetch raises for non-2xx responses. The enhanced
@@ -78,10 +89,19 @@ describe('BlikkClientService', () => {
       debtorBban: '0133-26-012345',
     }
 
+    const created = {
+      id: 'prov-1',
+      status: 'DRAFT',
+      scaRedirectUrl: '',
+      message: '',
+      partnerRedirectUrl: '',
+      endToEndIdentification: 'e2e-1',
+      amount: 14000,
+      currency: 'ISK',
+    }
+
     it('POSTs to /ecom/v3/payments/direct-debtor with the API-Key header and returns the response', async () => {
-      mockFetch.mockResolvedValue(
-        okResponse({ id: 'prov-1', status: 'PENDING' }),
-      )
+      mockFetch.mockResolvedValue(okResponse(created))
 
       const result = await service.createPayment(body)
 
@@ -94,13 +114,35 @@ describe('BlikkClientService', () => {
       expect(request.headers.get('API-Key')).toBe('test-key')
       expect(request.headers.get('Content-Type')).toBe('application/json')
       expect(await request.json()).toEqual(body)
-      expect(result).toEqual({ id: 'prov-1', status: 'PENDING' })
+      // The validator coerces int64 to BigInt, but the generated client returns the body as
+      // received, so `amount` stays a number.
+      expect(result).toEqual(created)
     })
 
+    it('throws BlikkClientError (no status) on a 2xx body that does not match the schema', async () => {
+      mockFetch.mockResolvedValue(okResponse({ id: 'prov-1', status: 'DRAFT' }))
+
+      const error = await service.createPayment(body).catch((e) => e)
+      expect(error).toBeInstanceOf(BlikkClientError)
+      expect(error.status).toBeUndefined()
+    })
+
+    it.each(emptyResponses)(
+      'throws BlikkClientError (no status) on an empty %s',
+      async (_, status, response) => {
+        mockFetch.mockResolvedValue(response())
+
+        const error = await service.createPayment(body).catch((e) => e)
+        expect(error).toBeInstanceOf(BlikkClientError)
+        expect(error.status).toBeUndefined()
+        expect(error.message).toBe(
+          `Empty ${status} response for POST /v3/payments/direct-debtor, which the OpenAPI document says has a JSON body`,
+        )
+      },
+    )
+
     it('sends integer amounts and timestamps as JSON numbers', async () => {
-      mockFetch.mockResolvedValue(
-        okResponse({ id: 'prov-1', status: 'PENDING' }),
-      )
+      mockFetch.mockResolvedValue(okResponse(created))
 
       await service.createPayment(body)
 
@@ -187,10 +229,18 @@ describe('BlikkClientService', () => {
   })
 
   describe('getPayment', () => {
+    const payment = {
+      id: 'prov 1',
+      status: 'SUCCESS',
+      scaRedirectUrl: '',
+      message: '',
+      endToEndIdentification: 'e2e-1',
+      amount: 14000,
+      currency: 'ISK',
+    }
+
     it('GETs /ecom/v3/payments/{id} (URL-encoded) and returns the response', async () => {
-      mockFetch.mockResolvedValue(
-        okResponse({ id: 'prov 1', status: 'SUCCESS' }),
-      )
+      mockFetch.mockResolvedValue(okResponse(payment))
 
       const result = await service.getPayment('prov 1')
 
@@ -200,8 +250,30 @@ describe('BlikkClientService', () => {
       )
       expect(request.method).toBe('GET')
       expect(request.headers.get('API-Key')).toBe('test-key')
-      expect(result).toEqual({ id: 'prov 1', status: 'SUCCESS' })
+      expect(result).toEqual(payment)
     })
+
+    it('throws BlikkClientError (no status) on a 2xx body that does not match the schema', async () => {
+      mockFetch.mockResolvedValue(okResponse({ ...payment, status: undefined }))
+
+      const error = await service.getPayment('prov 1').catch((e) => e)
+      expect(error).toBeInstanceOf(BlikkClientError)
+      expect(error.status).toBeUndefined()
+    })
+
+    it.each(emptyResponses)(
+      'throws BlikkClientError (no status) on an empty %s',
+      async (_, status, response) => {
+        mockFetch.mockResolvedValue(response())
+
+        const error = await service.getPayment('prov 1').catch((e) => e)
+        expect(error).toBeInstanceOf(BlikkClientError)
+        expect(error.status).toBeUndefined()
+        expect(error.message).toBe(
+          `Empty ${status} response for GET /v3/payments/{id}, which the OpenAPI document says has a JSON body`,
+        )
+      },
+    )
 
     it('throws BlikkClientError with status on a non-2xx', async () => {
       mockFetch.mockRejectedValue(fetchErrorWithStatus(404))
@@ -229,6 +301,21 @@ describe('BlikkClientService', () => {
         cancelMessage: 'Cancelled by payer',
       })
     })
+
+    it('resolves on a 2xx whatever the shape of the body', async () => {
+      mockFetch.mockResolvedValue(okResponse({ unexpected: true }))
+
+      await expect(service.cancelPayment('prov-1')).resolves.toBeUndefined()
+    })
+
+    it.each(emptyResponses)(
+      'resolves on an empty %s although the document declares a body',
+      async (_, _status, response) => {
+        mockFetch.mockResolvedValue(response())
+
+        await expect(service.cancelPayment('prov-1')).resolves.toBeUndefined()
+      },
+    )
 
     it('throws BlikkClientError carrying the HTTP status (e.g. 409 for a live payment)', async () => {
       mockFetch.mockRejectedValue(fetchErrorWithStatus(409))

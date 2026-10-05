@@ -33,6 +33,8 @@ yarn nx run clients-blikk:codegen/backend-client
 
 BigInt transformation is turned off in `openapi-ts.config.ts`: Blikk marks amounts and timestamps as `int64`, and a BigInt would be serialised as a JSON string, which Blikk rejects for integer fields.
 
+Responses are validated against the document's schemas with the generated Zod schemas (`zod.gen.ts`, targeting Zod 3). The validator coerces `int64` fields to BigInt, but the generated client returns the body as received, so they stay numbers. The generated client returns `{}` for an empty body without validating it, so the `response-bodies` plugin from `@island.is/clients/middlewares` also generates `responseBodies.gen.ts`, and `BlikkClientModule` registers an interceptor that rejects an empty 2xx where the document declares a JSON body for that status. `cancelPayment` opts out of both checks because its response body is never read.
+
 ## Configuration
 
 - `BLIKK_API_KEY`: sales channel API key, sent in the `API-Key` header

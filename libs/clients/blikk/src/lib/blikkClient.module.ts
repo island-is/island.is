@@ -1,11 +1,18 @@
 import { Inject, Module } from '@nestjs/common'
 
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  createEnhancedFetch,
+  requireResponseBodies,
+} from '@island.is/clients/middlewares'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { client } from '../../gen/fetch/client.gen'
+import { responseBodies } from '../../gen/fetch/responseBodies.gen'
 import { BlikkClientConfig } from './blikkClient.config'
 import { BlikkClientService } from './blikkClient.service'
+
+// Created once, so that constructing the module again does not register it twice.
+const checkResponseBodies = requireResponseBodies(responseBodies)
 
 @Module({
   providers: [BlikkClientService],
@@ -30,5 +37,9 @@ export class BlikkClientModule {
         // numbers, which our logging redacts / does not treat as sensitive — no names are sent.
       }),
     })
+
+    if (!client.interceptors.response.exists(checkResponseBodies)) {
+      client.interceptors.response.use(checkResponseBodies)
+    }
   }
 }

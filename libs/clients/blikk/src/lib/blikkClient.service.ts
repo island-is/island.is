@@ -19,8 +19,10 @@ import { BlikkClientError } from './blikkClient.types'
  * Transport client for the Blikk e-commerce payments API, built on the client generated from
  * Blikk's OpenAPI document. The base URL, the `API-Key` header, timeouts, circuit breaking, metrics
  * and logging are configured in {@link BlikkClientModule} (via the enhanced fetch). It is
- * provider-specific but domain-agnostic: it returns raw Blikk responses and throws
- * {@link BlikkClientError} on any failure — mapping to domain error codes is the caller's job.
+ * provider-specific but domain-agnostic: it returns raw Blikk responses, validated against the
+ * document's schemas by the generated client, and throws {@link BlikkClientError} on any failure
+ * (an invalid 2xx body included, without a `status`) — mapping to domain error codes is the
+ * caller's job.
  */
 @Injectable()
 export class BlikkClientService {
@@ -57,6 +59,11 @@ export class BlikkClientService {
         path: { id: providerPaymentId },
         body: { cancelMessage: 'Cancelled by payer' },
         throwOnError: true,
+        // The response body is never read, and a 2xx means the payment is cancelled. Failing on its
+        // shape, or on it being empty, would surface as a status-less error, which the caller
+        // treats as Blikk being unreachable and so keeps the cancelled attempt live.
+        responseValidator: undefined,
+        meta: { allowEmptyResponseBody: true },
       }),
     )
   }
