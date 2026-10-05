@@ -3792,6 +3792,9 @@ export interface IOrganizationPageFields {
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
 
+  /** Active translations */
+  activeTranslations?: Record<string, any> | undefined
+
   /** Show past events option */
   showPastEventsOption?: boolean | undefined
 
