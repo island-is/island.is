@@ -1,3 +1,4 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 import {
   Args,
   Mutation,
@@ -47,6 +48,7 @@ import {
   HealthDirectorateAppointmentsInput,
 } from '../dto/appointments.input'
 
+@StepUpRequired(Features.isAppHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)

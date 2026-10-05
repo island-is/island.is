@@ -262,6 +262,7 @@
       "@island.is/api/domains/social-insurance": [
         "libs/api/domains/social-insurance/src/index.ts"
       ],
+      "@island.is/api/domains/step-up": ["libs/api/domains/step-up/src/index.ts"],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],

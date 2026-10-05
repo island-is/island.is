@@ -80,6 +80,7 @@ import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { RightsPortalModule } from '@island.is/api/domains/rights-portal'
 import { SessionsModule } from '@island.is/api/domains/sessions'
+import { StepUpConfig, StepUpModule } from '@island.is/api/domains/step-up'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
 import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
@@ -417,6 +418,7 @@ const environment = getConfig
     OpenDataModule,
     OneSystemsRulingsModule,
     SessionsModule,
+    StepUpModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
@@ -514,6 +516,7 @@ const environment = getConfig
         LegalGazetteClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
+        StepUpConfig,
         PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
         PowerBiConfig,

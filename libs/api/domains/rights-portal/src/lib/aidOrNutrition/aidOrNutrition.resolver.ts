@@ -1,3 +1,4 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import {
   IdsUserGuard,
@@ -20,6 +21,7 @@ import {
 } from '@island.is/nest/feature-flags'
 
 @Resolver()
+@StepUpRequired(Features.isAppHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/aid-and-nutrition' })
 export class AidOrNutritionResolver {

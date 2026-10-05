@@ -271,6 +271,17 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      STEP_UP_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
       LICENSE_SERVICE_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -466,6 +477,7 @@ export const serviceSetup = (services: {
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
+      STEP_UP_CIBA_CLIENT_SECRET: '/k8s/api/STEP_UP_CIBA_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
