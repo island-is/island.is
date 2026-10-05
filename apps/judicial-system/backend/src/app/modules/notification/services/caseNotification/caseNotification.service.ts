@@ -76,7 +76,7 @@ import {
 import { notifications } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { DefendantService } from '../../../defendant'
-import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../../defendant/requestSharedWithDefender.logic'
+import { getMostPermissiveRequestSharedWithDefenderForRecipient } from '../../../defendant/requestSharedWithDefender.logic'
 import { EventService } from '../../../event'
 import {
   type Case,
@@ -470,9 +470,12 @@ export class CaseNotificationService extends BaseNotificationService {
     // defendants that defender represents).
     for (const recipient of getRequestCaseDefenderRecipients(theCase)) {
       const requestSharedWithDefender =
-        getMostPermissiveRequestSharedWithDefenderForNationalId(
+        getMostPermissiveRequestSharedWithDefenderForRecipient(
           theCase.defendants,
-          recipient.nationalId,
+          {
+            email: recipient.email,
+            nationalId: recipient.nationalId,
+          },
         )
 
       if (
@@ -761,9 +764,12 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderNationalId?: string
   }): Promise<Recipient> {
     const requestSharedWithDefender =
-      getMostPermissiveRequestSharedWithDefenderForNationalId(
+      getMostPermissiveRequestSharedWithDefenderForRecipient(
         theCase.defendants,
-        defenderNationalId,
+        {
+          email: defenderEmail,
+          nationalId: defenderNationalId,
+        },
       )
     const isRequestShared =
       requestSharedWithDefender === RequestSharedWithDefender.READY_FOR_COURT ||

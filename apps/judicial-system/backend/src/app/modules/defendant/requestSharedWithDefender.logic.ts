@@ -9,7 +9,18 @@ const REQUEST_SHARED_PERMISSIVENESS: Record<RequestSharedWithDefender, number> =
 
 type DefendantWithRequestSharing = {
   defenderNationalId?: string | null
+  defenderEmail?: string | null
   requestSharedWithDefender?: RequestSharedWithDefender | null
+}
+
+const normalizeDefenderEmail = (email?: string | null): string | null => {
+  const trimmed = email?.trim()
+
+  if (!trimmed) {
+    return null
+  }
+
+  return trimmed.toLowerCase()
 }
 
 /**
@@ -64,5 +75,53 @@ export const getMostPermissiveRequestSharedWithDefenderForNationalId = (
 
   return getMostPermissiveRequestSharedWithDefender(
     source.map((defendant) => defendant.requestSharedWithDefender),
+  )
+}
+
+/**
+ * Sharing timing for a notification recipient: most permissive among
+ * defendants whose defender email matches (case-insensitive). When the
+ * recipient has a national id, only those defendants are included. Unlike
+ * the national-id helper, this never falls back to every defendant on the
+ * case — no match means not shared for that recipient.
+ */
+export const getMostPermissiveRequestSharedWithDefenderForRecipient = (
+  defendants: DefendantWithRequestSharing[] | null | undefined,
+  recipient: { email?: string | null; nationalId?: string | null },
+): RequestSharedWithDefender | null => {
+  if (!defendants?.length) {
+    return null
+  }
+
+  const normalizedEmail = normalizeDefenderEmail(recipient.email)
+
+  if (normalizedEmail === null) {
+    return null
+  }
+
+  const nationalId =
+    recipient.nationalId !== null &&
+    recipient.nationalId !== undefined &&
+    recipient.nationalId !== ''
+      ? recipient.nationalId
+      : undefined
+
+  const matching = defendants.filter((defendant) => {
+    if (normalizeDefenderEmail(defendant.defenderEmail) !== normalizedEmail) {
+      return false
+    }
+
+    if (
+      nationalId !== undefined &&
+      defendant.defenderNationalId !== nationalId
+    ) {
+      return false
+    }
+
+    return true
+  })
+
+  return getMostPermissiveRequestSharedWithDefender(
+    matching.map((defendant) => defendant.requestSharedWithDefender),
   )
 }

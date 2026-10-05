@@ -3,6 +3,7 @@ import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
 import {
   getMostPermissiveRequestSharedWithDefender,
   getMostPermissiveRequestSharedWithDefenderForNationalId,
+  getMostPermissiveRequestSharedWithDefenderForRecipient,
 } from '../requestSharedWithDefender.logic'
 
 describe('getMostPermissiveRequestSharedWithDefender', () => {
@@ -88,6 +89,93 @@ describe('getMostPermissiveRequestSharedWithDefenderForNationalId', () => {
           },
         ],
         nationalId,
+      ),
+    ).toBe(RequestSharedWithDefender.COURT_DATE)
+  })
+})
+
+describe('getMostPermissiveRequestSharedWithDefenderForRecipient', () => {
+  const email = 'defender@example.com'
+  const nationalId = '0101010101'
+
+  test('returns null when there are no defendants', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForRecipient([], {
+        email,
+        nationalId,
+      }),
+    ).toBeNull()
+  })
+
+  test('returns null when the recipient email is missing', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForRecipient(
+        [
+          {
+            defenderEmail: email,
+            defenderNationalId: nationalId,
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+        ],
+        { nationalId },
+      ),
+    ).toBeNull()
+  })
+
+  test('aggregates by normalized email when national id is absent', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForRecipient(
+        [
+          {
+            defenderEmail: '  Defender@Example.com ',
+            requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+          },
+          {
+            defenderEmail: email,
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+          {
+            defenderEmail: 'other@example.com',
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+        ],
+        { email },
+      ),
+    ).toBe(RequestSharedWithDefender.READY_FOR_COURT)
+  })
+
+  test('does not fall back to all defendants when email matches nobody', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForRecipient(
+        [
+          {
+            defenderEmail: 'other@example.com',
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+        ],
+        { email },
+      ),
+    ).toBeNull()
+  })
+
+  test('when national id is present, requires both email and national id', () => {
+    expect(
+      getMostPermissiveRequestSharedWithDefenderForRecipient(
+        [
+          {
+            defenderEmail: email,
+            defenderNationalId: nationalId,
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          },
+          {
+            defenderEmail: email,
+            defenderNationalId: '9999999999',
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+        ],
+        { email, nationalId },
       ),
     ).toBe(RequestSharedWithDefender.COURT_DATE)
   })
