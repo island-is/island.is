@@ -19,6 +19,7 @@ import {
   BANK_ACCOUNT_PART_LENGTHS,
   BankAccountPart,
   padBankAccountPart,
+  parsePastedBankAccount,
   validateActorNationalId,
   validateBank,
 } from './BankTransferPayment.utils'
@@ -76,7 +77,7 @@ const BANK_ACCOUNT_PARTS: {
 export const BankTransferPayment = ({
   companyPayer,
 }: BankTransferPaymentProps) => {
-  const { control, formState, setFocus } =
+  const { control, formState, setFocus, setValue } =
     useFormContext<BankTransferPaymentInput>()
   const { formatMessage } = useLocale()
 
@@ -188,6 +189,28 @@ export const BankTransferPayment = ({
                             if (next && value.length === length) {
                               setFocus(next, { shouldSelect: true })
                             }
+                          }}
+                          // Split a pasted whole account number across the inputs. Anything else
+                          // falls through to the browser, and `onChange` above.
+                          onPaste={(e) => {
+                            const parsed = parsePastedBankAccount(
+                              e.clipboardData.getData('text'),
+                              name,
+                            )
+                            if (!parsed) return
+
+                            e.preventDefault()
+                            let lastPart = name
+                            for (const { name: part } of BANK_ACCOUNT_PARTS) {
+                              const value = parsed[part]
+                              if (value === undefined) continue
+                              setValue(part, value, {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              })
+                              lastPart = part
+                            }
+                            setFocus(lastPart)
                           }}
                           // Show the value as it will be sent: `123` becomes `0123`.
                           onBlur={(e) => {
