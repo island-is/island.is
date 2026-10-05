@@ -5,7 +5,7 @@ import { GraphQLError } from 'graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CibaClient,
-  sessionLoginMethod,
+  type StepUpMethod as CibaStepUpMethod,
   type StepUpClaims,
   type StepUpStatus,
 } from '@island.is/auth/step-up'
@@ -32,6 +32,8 @@ export const StepUpErrorCode = {
 export interface StartedStepUp {
   stepUpId: string
   method: PendingStepUp['method']
+  /** Every method the person could use, so they can be offered the other one. */
+  availableMethods: PendingStepUp['method'][]
   verificationCode?: string
   interval: number
   expiresIn: number
@@ -69,7 +71,11 @@ export class StepUpService {
     return this.config.clients.includes(user.client)
   }
 
-  async start(user: User): Promise<StartedStepUp> {
+  /**
+   * @param method The person asking for the other method (app or SIM). Without
+   * it the identity server goes by how this session was logged in.
+   */
+  async start(user: User, method?: CibaStepUpMethod): Promise<StartedStepUp> {
     if (!this.appliesTo(user)) {
       throw new GraphQLError('Unlocking is not available for this client.', {
         extensions: { code: StepUpErrorCode.NotAvailable },
@@ -91,11 +97,10 @@ export class StepUpService {
     // back can be required to be no older than this.
     const startedAt = Date.now()
 
-    const methodHint = sessionLoginMethod(user.amr)
     const started = await this.ciba.start({
       userToken: user.authorization,
       bindingMessage: this.config.bindingMessage,
-      ...(methodHint && { methodHint }),
+      ...(method && { method }),
     })
 
     const stepUpId = randomUUID()
@@ -114,6 +119,7 @@ export class StepUpService {
     return {
       stepUpId,
       method: started.method,
+      availableMethods: started.availableMethods,
       verificationCode: started.verificationCode,
       interval: started.interval,
       expiresIn: started.expiresIn,

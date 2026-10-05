@@ -30,9 +30,22 @@ export class StepUpResolver {
 
   @Mutation(() => StepUpStart, { name: 'stepUpStart' })
   @Audit()
-  async start(@CurrentUser() user: User): Promise<StepUpStart> {
-    const started = await this.stepUpService.start(user)
-    return { ...started, method: started.method as StepUpMethod }
+  async start(
+    @CurrentUser() user: User,
+    @Args('method', {
+      type: () => StepUpMethod,
+      nullable: true,
+      description:
+        'Use this method instead, e.g. when the SIM is not at hand. "sim" only reaches the number from the person\'s own last SIM login.',
+    })
+    method?: StepUpMethod,
+  ): Promise<StepUpStart> {
+    const started = await this.stepUpService.start(user, method)
+    return {
+      ...started,
+      method: started.method as StepUpMethod,
+      availableMethods: started.availableMethods as StepUpMethod[],
+    }
   }
 
   @Mutation(() => StepUpStatus, { name: 'stepUpStatus' })

@@ -83,6 +83,7 @@ describe('StepUpService', () => {
         expiresIn: 300,
         interval: 5,
         verificationCode: '4821',
+        availableMethods: ['app', 'sim'],
       }),
       poll: jest.fn().mockResolvedValue({ status: 'pending' }),
     }
@@ -96,17 +97,27 @@ describe('StepUpService', () => {
   it("asks the identity server to authenticate the person behind the session's own token", async () => {
     const started = await service.start(appUser())
 
+    // No method named: the identity server goes by how the session behind the
+    // token was logged in.
     expect(ciba.start).toHaveBeenCalledWith({
       userToken: 'Bearer app-token',
       bindingMessage: config.bindingMessage,
-      methodHint: 'app',
     })
     expect(started).toMatchObject({
       method: 'app',
+      availableMethods: ['app', 'sim'],
       verificationCode: '4821',
       interval: 5,
       expiresIn: 300,
     })
+  })
+
+  it('passes on the person asking for the other method', async () => {
+    await service.start(appUser(), 'sim')
+
+    expect(ciba.start).toHaveBeenCalledWith(
+      expect.objectContaining({ method: 'sim' }),
+    )
   })
 
   it('is locked until the person approves, then unlocked', async () => {
