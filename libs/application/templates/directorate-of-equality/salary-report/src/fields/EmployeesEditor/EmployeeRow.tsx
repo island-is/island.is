@@ -9,6 +9,7 @@ import {
   Stack,
   Table as T,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '@island.is/shared/utils'
@@ -16,7 +17,11 @@ import { messages } from '../../lib/messages'
 import { GENDER_LABELS, SALARY_COMPONENT_KEYS } from '../../utils/constants'
 import { formatDateValue } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
-import { formatPaidHours, getSalaryComponentLabels } from './utils'
+import {
+  formatPaidHours,
+  getSalaryComponentLabels,
+  getSalaryComponentTooltips,
+} from './utils'
 import * as styles from './EmployeesEditor.css'
 
 type Props = {
@@ -27,13 +32,17 @@ type Props = {
 }
 
 // Alternating white / transparent (blue container shows through) rows.
-const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
-  label,
-  value,
-  highlight,
-}) => (
+// The column gap keeps a label that fills its half ("Númer starfsmanns") from
+// running straight into its value.
+const DetailItem: FC<{
+  label: string
+  value: string
+  highlight: boolean
+  tooltip?: string
+}> = ({ label, value, highlight, tooltip }) => (
   <Box
     display="flex"
+    columnGap={2}
     paddingX={3}
     paddingY={2}
     borderRadius="large"
@@ -42,6 +51,11 @@ const DetailItem: FC<{ label: string; value: string; highlight: boolean }> = ({
     <Box style={{ flex: 1 }}>
       <Text variant="medium" fontWeight="semiBold">
         {label}
+        {tooltip && (
+          <Box component="span" marginLeft={1}>
+            <Tooltip placement="top" text={tooltip} />
+          </Box>
+        )}
       </Text>
     </Box>
     <Box style={{ flex: 1 }}>
@@ -72,23 +86,28 @@ export const EmployeeRow: FC<Props> = ({
     {
       label: formatMessage(m.startDateLabel),
       value: formatDateValue(employee.startDate),
+      tooltip: formatMessage(m.startDateTooltip),
     },
   ]
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentTooltips(formatMessage)
 
   const rightItems = [
     {
       label: formatMessage(m.paidHoursLabel),
       value: formatPaidHours(employee.paidHours),
+      tooltip: formatMessage(m.paidHoursTooltip),
     },
     {
       label: formatMessage(m.baseSalaryLabel),
       value: formatCurrency(employee.baseSalary),
+      tooltip: formatMessage(m.baseSalaryTooltip),
     },
     ...SALARY_COMPONENT_KEYS.map((key) => ({
       label: componentLabels[key],
       value: formatCurrency(employee[key] ?? 0),
+      tooltip: componentTooltips[key],
     })),
   ]
 
@@ -173,6 +192,7 @@ export const EmployeeRow: FC<Props> = ({
                         key={item.label}
                         label={item.label}
                         value={item.value}
+                        tooltip={item.tooltip}
                         highlight={i % 2 === 0}
                       />
                     ))}
@@ -185,6 +205,7 @@ export const EmployeeRow: FC<Props> = ({
                         key={item.label}
                         label={item.label}
                         value={item.value}
+                        tooltip={item.tooltip}
                         highlight={i % 2 === 0}
                       />
                     ))}

@@ -30,7 +30,9 @@ import {
   InstitutionType,
   investigationCases,
   RequestCaseNotificationType,
+  RequestSharedWithDefender,
   restrictionCases,
+  ServiceStatus,
   StringType,
   User,
   UserRole,
@@ -2131,6 +2133,7 @@ describe('CaseController - Update', () => {
             defenderEmail,
             defenderPhoneNumber,
             defenderChoice: null,
+            requestSharedWithDefender: undefined,
           },
           transaction,
         )
@@ -2155,6 +2158,7 @@ describe('CaseController - Update', () => {
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
             defenderChoice: null,
+            requestSharedWithDefender: undefined,
           },
           transaction,
         )
@@ -2179,6 +2183,7 @@ describe('CaseController - Update', () => {
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
             defenderChoice: DefenderChoice.WAIVE,
+            requestSharedWithDefender: undefined,
           },
           transaction,
         )
@@ -2215,6 +2220,268 @@ describe('CaseController - Update', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('syncs when requestSharedWithDefender changes on a request case', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, requestCase, {
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        } as UpdateCaseDto)
+      })
+
+      it('should call syncDefenderToAllDefendants with sharing and contact fields', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).toHaveBeenCalledWith(
+          caseId,
+          {
+            defenderName: 'Old Name',
+            defenderNationalId: '0000000000',
+            defenderEmail: 'old@example.is',
+            defenderPhoneNumber: '0000000',
+            defenderChoice: null,
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+          transaction,
+        )
+      })
+    })
+  })
+
+  describe.each([
+    {
+      role: 'judge',
+      userRole: UserRole.DISTRICT_COURT_JUDGE,
+      notificationType:
+        IndictmentCaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED,
+    },
+    {
+      role: 'registrar',
+      userRole: UserRole.DISTRICT_COURT_REGISTRAR,
+      notificationType:
+        IndictmentCaseNotificationType.DISTRICT_COURT_REGISTRAR_ASSIGNED,
+    },
+  ])(
+    'district court $role assigned to an indictment case',
+    ({ role, userRole, notificationType }) => {
+      const assignee = {
+        id: uuid(),
+        nationalId: '0101017890',
+        email: `${role}@court.is`,
+        role: userRole,
+      }
+      const caseToUpdate = { [`${role}Id`]: assignee.id } as UpdateCaseDto
+
+      const givenAssignment = async (state: CaseState) => {
+        const originalCase = {
+          ...theCase,
+          type: CaseType.INDICTMENT,
+          state,
+        } as Case
+        const updatedCase = {
+          ...originalCase,
+          ...caseToUpdate,
+          [role]: assignee,
+        } as Case
+
+        const mockFindById = mockUserService.findById as jest.Mock
+        mockFindById.mockResolvedValueOnce(assignee)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      }
+
+      describe('while the case is submitted', () => {
+        beforeEach(() => givenAssignment(CaseState.SUBMITTED))
+
+        it(`should queue the ${notificationType} notification and nothing else`, () => {
+          expect(mockQueuedMessages).toEqual([
+            {
+              type: MessageType.NOTIFICATION,
+              user,
+              caseId,
+              body: { type: notificationType },
+            },
+          ])
+        })
+      })
+
+      describe('after the case has been received', () => {
+        beforeEach(() => givenAssignment(CaseState.RECEIVED))
+
+        it('should queue the notification and deliver the court role to the court', () => {
+          expect(mockQueuedMessages).toEqual([
+            {
+              type: MessageType.NOTIFICATION,
+              user,
+              caseId,
+              body: { type: notificationType },
+            },
+            {
+              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+              user,
+              caseId,
+              elementId: assignee.nationalId,
+            },
+          ])
+        })
+      })
+
+      // Pins the state filter: court users never see a draft indictment, so
+      // this is not a path a request takes
+      describe('before the case has been submitted', () => {
+        beforeEach(() => givenAssignment(CaseState.DRAFT))
+
+        it('should queue nothing', () => {
+          expect(mockQueuedMessages).toEqual([])
+        })
+      })
+    },
+  )
+
+  describe('public prosecutor reviewer assigned', () => {
+    const indictmentReviewerId = uuid()
+    const caseToUpdate = { indictmentReviewerId } as UpdateCaseDto
+
+    const givenAssignment = async (
+      indictmentRulingDecision: CaseIndictmentRulingDecision,
+    ) => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+        indictmentRulingDecision,
+      } as Case
+      const updatedCase = { ...originalCase, indictmentReviewerId } as Case
+
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    }
+
+    describe('on a fine', () => {
+      beforeEach(() => givenAssignment(CaseIndictmentRulingDecision.FINE))
+
+      it('should queue the PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED notification and nothing else', () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.NOTIFICATION,
+            user,
+            caseId,
+            body: {
+              type: IndictmentCaseNotificationType.PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED,
+            },
+          },
+        ])
+      })
+    })
+
+    describe('on a ruling', () => {
+      beforeEach(() => givenAssignment(CaseIndictmentRulingDecision.RULING))
+
+      it('should queue nothing', () => {
+        expect(mockQueuedMessages).toEqual([])
+      })
+    })
+  })
+
+  describe('indictment arraignment completed', () => {
+    const servedSubpoenaId1 = uuid()
+    const servedSubpoenaId2 = uuid()
+    const defendants = [
+      {
+        id: defendantId1,
+        subpoenas: [
+          { id: servedSubpoenaId1, serviceStatus: ServiceStatus.IN_PERSON },
+          { id: uuid(), serviceStatus: ServiceStatus.FAILED },
+        ],
+      },
+      {
+        id: defendantId2,
+        subpoenas: [
+          { id: servedSubpoenaId2, serviceStatus: ServiceStatus.DEFENDER },
+          { id: uuid() },
+        ],
+      },
+    ]
+    const caseToUpdate = {
+      indictmentDecision: IndictmentDecision.POSTPONING,
+    } as UpdateCaseDto
+
+    const givenCompletion = async (origin: CaseOrigin) => {
+      const originalCase = {
+        ...theCase,
+        type: CaseType.INDICTMENT,
+        state: CaseState.RECEIVED,
+        origin,
+        defendants,
+      } as Case
+      const updatedCase = { ...originalCase, ...caseToUpdate } as Case
+
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    }
+
+    describe('for a LÖKE case', () => {
+      beforeEach(() => givenCompletion(CaseOrigin.LOKE))
+
+      it('should deliver a service certificate to the court and the police for each served subpoena', () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId,
+            elementId: [defendantId1, servedSubpoenaId1],
+          },
+          {
+            type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+            user,
+            caseId,
+            elementId: [defendantId1, servedSubpoenaId1],
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId,
+            elementId: [defendantId2, servedSubpoenaId2],
+          },
+          {
+            type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+            user,
+            caseId,
+            elementId: [defendantId2, servedSubpoenaId2],
+          },
+        ])
+      })
+    })
+
+    describe('for a case not from LÖKE', () => {
+      beforeEach(() => givenCompletion(CaseOrigin.RVG))
+
+      it('should deliver the service certificates to the court only', () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId,
+            elementId: [defendantId1, servedSubpoenaId1],
+          },
+          {
+            type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
+            user,
+            caseId,
+            elementId: [defendantId2, servedSubpoenaId2],
+          },
+        ])
       })
     })
   })

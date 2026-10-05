@@ -1352,9 +1352,7 @@ export class ApplicationsService {
       dataFromUrlRequestDto.actorNationalId =
         user.actor?.nationalId || user.nationalId
 
-      dataFromUrlRequestDto.nationalId = user.actor?.nationalId
-        ? user.nationalId
-        : undefined
+      dataFromUrlRequestDto.nationalId = user.nationalId
 
       dataFromUrlRequestDto.fieldType = fieldType
       dataFromUrlRequestDto.identifier = field.identifier

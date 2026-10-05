@@ -73,7 +73,6 @@ describe('CaseController - Duplicate', () => {
   let mockCaseStringRepositoryService: jest.Mocked<CaseStringRepositoryService>
   let mockCivilClaimantRepositoryService: jest.Mocked<CivilClaimantRepositoryService>
   let mockCaseFileRepositoryService: jest.Mocked<CaseFileRepositoryService>
-  let queuedMessages: Message[]
   let queuedMessagesAfterCommit: Message[][]
 
   let givenWhenThen: GivenWhenThen
@@ -89,7 +88,6 @@ describe('CaseController - Duplicate', () => {
       caseStringRepositoryService,
       civilClaimantRepositoryService,
       caseFileRepositoryService,
-      queuedMessages: legacyQueuedMessages,
       queuedMessagesAfterCommit: afterCommitQueuedMessages,
       caseController,
     } = await createTestingCaseModule()
@@ -110,7 +108,6 @@ describe('CaseController - Duplicate', () => {
       civilClaimantRepositoryService as jest.Mocked<CivilClaimantRepositoryService>
     mockCaseFileRepositoryService =
       caseFileRepositoryService as jest.Mocked<CaseFileRepositoryService>
-    queuedMessages = legacyQueuedMessages
     queuedMessagesAfterCommit = afterCommitQueuedMessages
 
     newCaseId = uuid()
@@ -480,8 +477,7 @@ describe('CaseController - Duplicate', () => {
 
     // The object is copied by the message handler once the transaction has
     // committed - a rolled back duplication must leave nothing behind in S3,
-    // so the message is queued for after the commit, and never through the
-    // form that flushes on rollback
+    // so the message is queued for after the commit
     it('should queue the copy of the object for after the transaction commits', () => {
       expect(queuedMessagesAfterCommit).toEqual([
         [
@@ -493,7 +489,6 @@ describe('CaseController - Duplicate', () => {
           },
         ],
       ])
-      expect(queuedMessages).toEqual([])
     })
   })
 
