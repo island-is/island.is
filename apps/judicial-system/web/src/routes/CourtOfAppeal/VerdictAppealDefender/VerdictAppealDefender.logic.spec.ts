@@ -12,7 +12,11 @@ import {
 } from './VerdictAppealDefender.logic'
 
 const defendantWith = (overrides: Partial<Defendant>): Defendant =>
-  ({ id: 'defendant-id', name: 'Jón Sigurður Jónsson', ...overrides } as Defendant)
+  ({
+    id: 'defendant-id',
+    name: 'Jón Sigurður Jónsson',
+    ...overrides,
+  } as Defendant)
 
 const claimantWith = (overrides: Partial<CivilClaimant>): CivilClaimant =>
   ({ id: 'claimant-id', name: 'Bótakröfuhafi', ...overrides } as CivilClaimant)
@@ -108,9 +112,9 @@ describe('getAppealSpokesperson', () => {
 
 describe('getHasAppealSpokesperson', () => {
   it('starts from the district court answer', () => {
-    expect(getHasAppealSpokesperson(claimantWith({ hasSpokesperson: true }))).toBe(
-      true,
-    )
+    expect(
+      getHasAppealSpokesperson(claimantWith({ hasSpokesperson: true })),
+    ).toBe(true)
     expect(
       getHasAppealSpokesperson(claimantWith({ hasSpokesperson: false })),
     ).toBe(false)
