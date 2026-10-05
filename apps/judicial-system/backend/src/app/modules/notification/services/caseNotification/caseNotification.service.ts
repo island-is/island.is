@@ -469,13 +469,11 @@ export class CaseNotificationService extends BaseNotificationService {
     // DEFENDER — share timing is per recipient (most permissive among the
     // defendants that defender represents).
     for (const recipient of getRequestCaseDefenderRecipients(theCase)) {
+      // Recipients are keyed by email; do not also filter by national id.
       const requestSharedWithDefender =
         getMostPermissiveRequestSharedWithDefenderForRecipient(
           theCase.defendants,
-          {
-            email: recipient.email,
-            nationalId: recipient.nationalId,
-          },
+          { email: recipient.email },
         )
 
       if (
@@ -763,13 +761,11 @@ export class CaseNotificationService extends BaseNotificationService {
     defenderEmail?: string
     defenderNationalId?: string
   }): Promise<Recipient> {
+    // Aggregate by email only; national id is still used for link/skipTail.
     const requestSharedWithDefender =
       getMostPermissiveRequestSharedWithDefenderForRecipient(
         theCase.defendants,
-        {
-          email: defenderEmail,
-          nationalId: defenderNationalId,
-        },
+        { email: defenderEmail },
       )
     const isRequestShared =
       requestSharedWithDefender === RequestSharedWithDefender.READY_FOR_COURT ||
