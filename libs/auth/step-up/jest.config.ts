@@ -1,4 +1,3 @@
- 
 module.exports = {
   displayName: 'auth-step-up',
   preset: './jest.preset.js',
