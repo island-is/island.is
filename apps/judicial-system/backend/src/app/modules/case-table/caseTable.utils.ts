@@ -20,6 +20,8 @@ import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
   CaseIncludes,
+  CaseTableRowCase,
+  copyIncludeInto,
   mergeAccessIncludes,
   modelMap,
   subModelMap,
@@ -48,10 +50,9 @@ const getAvailableActionsAttributes = (user: User): string[] => {
   }
 
   if (isDefenceUser(user)) {
-    // defenderNationalId resolves the collective request-case appellant to the
-    // case's current registered defender (see userIsAppellant); type selects
-    // that request-case branch.
-    return ['type', 'defenderNationalId']
+    // type selects the request-case vs indictment branch of userIsAppellant;
+    // defendant defenderNationalId is loaded via includes below.
+    return ['type']
   }
 
   return []
@@ -100,8 +101,8 @@ const getAvailableActionsIncludes = (user: User): CaseIncludes => {
           },
         },
       },
-      // Needed to resolve a per-party (dismissed indictment) defence appellant to
-      // the current confirmed defender / spokesperson.
+      // Needed to resolve defence appellants: request-case collective defenders
+      // and per-party (dismissed indictment) confirmed defenders / spokespersons.
       defendants: {
         attributes: ['id', 'isDefenderChoiceConfirmed', 'defenderNationalId'],
       },
@@ -123,6 +124,12 @@ const mergeAttributes = <T>(target: T[], source: T[]) => {
   return [...new Set([...target, ...source])]
 }
 
+// Merges one association's include into the tree being built for a query.
+//
+// Every value that enters the tree is copied first (see copyIncludeInto): the
+// cell generators are module level constants, and the merges below write into
+// whatever object they are handed. Aliasing one in would leave another list's
+// attributes and joins on the generator afterwards.
 const setInclude = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
@@ -133,7 +140,7 @@ const setInclude = <K extends keyof CaseIncludes>(
 
   const targetValue = target[key]
   if (!targetValue) {
-    target[key] = sourceValue
+    copyIncludeInto(target, source, key)
     return
   }
 
@@ -147,8 +154,7 @@ const setInclude = <K extends keyof CaseIncludes>(
   }
 
   if (!targetValue.includes) {
-    targetValue.includes = sourceValue.includes
-    return
+    targetValue.includes = {}
   }
 
   for (const nestedKey of Object.keys(sourceValue.includes) as Array<
@@ -159,7 +165,10 @@ const setInclude = <K extends keyof CaseIncludes>(
 
     const nestedTarget = targetValue.includes[nestedKey]
     if (!nestedTarget) {
-      targetValue.includes[nestedKey] = nestedSource
+      targetValue.includes[nestedKey] = {
+        ...nestedSource,
+        attributes: [...nestedSource.attributes],
+      }
       continue
     }
 
@@ -177,15 +186,20 @@ const getIncludeAndOrder = (
 
   const include = Object.entries(allIncludes).map(([k, v]) => {
     const modelDef = modelMap[k as keyof typeof modelMap]
+    // Named, not spread. `order` is an array, so spreading it would put the
+    // term under "0" and Sequelize would ignore the include's ordering without
+    // saying so.
     const order =
-      modelDef.separate && modelDef.order ? { ...modelDef.order } : undefined
+      modelDef.separate && modelDef.order
+        ? { order: modelDef.order }
+        : undefined
     const include = v.includes
       ? {
           include: Object.entries(v.includes).map(([sk, sv]) => {
             const subModelDef = subModelMap[sk as keyof typeof subModelMap]
             const order =
               subModelDef.separate && subModelDef.order
-                ? { ...subModelDef.order }
+                ? { order: subModelDef.order }
                 : undefined
 
             if (!subModelDef.separate && subModelDef.order) {
@@ -400,7 +414,7 @@ export const canDeleteCase = (
 
 // Mirrors the appeal-case module's withdrawal authorization
 // (userAppealedAppealCase in appeal-case/guards/rolesRules.ts) for the appeals
-// shown in the case tables. The tables' appealCase slot only ever holds the
+// shown in the case tables. The row's appeal slot only ever holds the
 // case-level appeal (request case and dismissed indictment appeals) -
 // ruling-order appeals are withdrawn from the ruling order's context menu on the
 // case screen instead. So it shares the guard's case-level eligibility check
@@ -408,16 +422,12 @@ export const canDeleteCase = (
 // log, with request-case prosecution precedence.
 export const canCancelAppeal = (
   theCase: Pick<
-    Case,
-    | 'type'
-    | 'appealCase'
-    | 'defenderNationalId'
-    | 'defendants'
-    | 'civilClaimants'
+    CaseTableRowCase,
+    'type' | 'appeal' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): boolean => {
-  const appealCase = theCase.appealCase
+  const appealCase = theCase.appeal
 
   // An appeal can only be withdrawn before the court of appeals has ruled
   if (
@@ -433,13 +443,8 @@ export const canCancelAppeal = (
 
 export const getContextMenuActions = (
   theCase: Pick<
-    Case,
-    | 'type'
-    | 'state'
-    | 'appealCase'
-    | 'defenderNationalId'
-    | 'defendants'
-    | 'civilClaimants'
+    CaseTableRowCase,
+    'type' | 'state' | 'appeal' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {

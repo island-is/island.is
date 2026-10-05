@@ -99,6 +99,9 @@ export class Form {
   validateEligibility!: boolean
 
   @Field(() => Boolean)
+  enableApplicationPdfDownload!: boolean
+
+  @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
   @Field(() => OrganizationZendeskInstance, { nullable: true })

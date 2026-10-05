@@ -11,9 +11,11 @@ import { Navigate, generatePath, useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetHealthTreatmentsOverviewQuery } from './TreatmentOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Treatments = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
 
   const { formatMessage } = useLocale()
   const navigate = useNavigate()

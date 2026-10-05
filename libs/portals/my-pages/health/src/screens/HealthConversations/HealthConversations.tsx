@@ -21,6 +21,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import { Problem } from '@island.is/react-spa/shared'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
@@ -45,6 +46,7 @@ import {
   useUnarchiveHealthConversationMutation,
 } from './HealthConversations.generated'
 import { useGetHealthTreatmentQuery } from '../Treatments/TreatmentOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_PAGE_SIZE = 20
 
@@ -107,6 +109,7 @@ type FilterValues = {
 
 const HealthConversations = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const paths = useTreatmentScopedPaths()
   const { treatmentId } = paths
@@ -248,11 +251,15 @@ const HealthConversations = () => {
   return (
     <IntroWrapper
       title={treatmentId ? messages.treatmentMessagesFromTeam : m.messages}
-      intro={
-        treatmentId
-          ? messages.treatmentConversationsIntro
-          : messages.healthConversationsIntro
-      }
+      {...(treatmentId
+        ? { intro: messages.treatmentConversationsIntro }
+        : {
+            introComponent: (
+              <TextMarkdown>
+                {formatMessage(messages.healthConversationsIntroWithLink)}
+              </TextMarkdown>
+            ),
+          })}
       serviceProvider={
         treatmentId
           ? {
@@ -282,7 +289,7 @@ const HealthConversations = () => {
         alignItems="center"
         marginBottom={3}
       >
-        <Box style={{ minWidth: 0 }}>
+        <Box flexGrow={1} style={{ minWidth: 0 }}>
           <Filter
             labelClearAll={formatMessage(m.clearAllFilters)}
             labelClear={formatMessage(m.clearFilter)}
@@ -290,6 +297,7 @@ const HealthConversations = () => {
             reverse
             variant="popover"
             align="left"
+            filterInputFluid
             mobileWrap={false}
             filterCount={filterCount}
             filterInput={
@@ -413,7 +421,7 @@ const HealthConversations = () => {
                   background={item.isRead ? undefined : 'blueberry100'}
                   borderColor="blue200"
                   borderBottomWidth="standard"
-                  paddingX={2}
+                  paddingX={[1, 1, 2]}
                   paddingY="p2"
                   columnGap={2}
                 >
@@ -436,7 +444,7 @@ const HealthConversations = () => {
                     />
                     <Box minWidth={0}>
                       <Box display="flex" alignItems="center" columnGap={1}>
-                        <Text variant="medium">
+                        <Text variant="medium" className={styles.senderName}>
                           {item.groupName || item.organization?.name}
                         </Text>
                         {item.hasAttachment && (
@@ -455,12 +463,12 @@ const HealthConversations = () => {
                         fontWeight={item.isRead ? 'regular' : 'medium'}
                       >
                         {item.title}
-                        {!item.isRead && (
-                          <VisuallyHidden>
-                            {` - ${formatMessage(m.notificationUnread)}`}
-                          </VisuallyHidden>
-                        )}
                       </Text>
+                      {!item.isRead && (
+                        <VisuallyHidden>
+                          {` - ${formatMessage(m.notificationUnread)}`}
+                        </VisuallyHidden>
+                      )}
                     </Box>
                   </Link>
 

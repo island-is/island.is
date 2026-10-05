@@ -12,9 +12,11 @@ import { HealthPaths } from '../../lib/paths'
 import { DEFAULT_APPOINTMENTS_STATUS } from '../../utils/constants'
 import Appointments from '../HealthOverview/components/Appointments'
 import { useGetAppointmentsOverviewQuery } from '../HealthOverview/HealthOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Pregnancy = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
 
   const { value: showAppointments } = useFeatureFlag(

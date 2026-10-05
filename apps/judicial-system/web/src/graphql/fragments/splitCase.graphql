@@ -2,12 +2,29 @@ fragment SplitCaseFields on Case {
   id
   created
   courtCaseNumber
+  # What decides whether a defence user may open this case - see
+  # canDefenceUserOpenLinkedCase. Sending these identifiers to the parties of a
+  # case they are not on was weighed and accepted: they are not treated as
+  # sensitive here, and the alternative was a list of case numbers nobody on
+  # the defence could follow.
+  #
+  # Both parties, not only the defendants shown in the list: a split case takes
+  # the civil claimants that applied to the defendant who left with it, so a
+  # spokesperson can be a confirmed party here and should reach it too.
+  type
   defendants {
     id
     name
+    defenderNationalId
+    isDefenderChoiceConfirmed
     subpoenas {
       ...SubpoenaFields
     }
+  }
+  civilClaimants {
+    id
+    isSpokespersonConfirmed
+    spokespersonNationalId
   }
   caseFiles {
     ...CaseFileFields

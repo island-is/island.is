@@ -928,11 +928,20 @@ export type FieldsRepeaterField = BaseField & {
   maxRows?: MaybeWithAnswersAndExternalData<number>
 }
 
+export type AccordionItemTag = {
+  label: FormText
+  variant?: TagVariant
+  outlined?: boolean
+}
+
 export type AccordionItem = {
   itemTitle: FormText
   itemContent?: FormText
   children?: Field[]
   startExpanded?: boolean
+  tag?:
+    | AccordionItemTag
+    | ((application: Application) => AccordionItemTag | undefined)
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
