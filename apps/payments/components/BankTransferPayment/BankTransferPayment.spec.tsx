@@ -63,6 +63,23 @@ describe('BankTransferPayment', () => {
       expect(account.value).toBe('001234')
     })
 
+    it('splits short bare digits by length, padding the account on blur', async () => {
+      const { bank, ledger, account } = renderInputs()
+      bank.focus()
+
+      paste(bank, '0001121234')
+
+      await waitFor(() => expect(account).toBe(document.activeElement))
+      expect(bank.value).toBe('0001')
+      expect(ledger.value).toBe('12')
+      // The last part is left short, as if typed, so more digits can follow.
+      expect(account.value).toBe('1234')
+
+      fireEvent.blur(account)
+
+      await waitFor(() => expect(account.value).toBe('001234'))
+    })
+
     it('fills from the ledger input onwards', async () => {
       const { bank, ledger, account } = renderInputs()
       ledger.focus()
