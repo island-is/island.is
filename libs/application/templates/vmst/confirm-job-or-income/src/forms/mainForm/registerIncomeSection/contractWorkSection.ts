@@ -16,7 +16,7 @@ import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsDateLong } from '../../../utils/formatters'
+import { formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildCanRemoveRow } from '../../../utils/reconcile'
 import { toOptionalString, toRequiredString } from '../../../utils/rowCoercions'
@@ -134,8 +134,8 @@ export const contractWorkSection = buildSubSection({
             ],
             rows: ['contractJobStart', 'workEnds'],
             format: {
-              contractJobStart: formatIsDateLong,
-              workEnds: formatIsDateLong,
+              contractJobStart: formatIsDate,
+              workEnds: formatIsDate,
             },
           },
         }),

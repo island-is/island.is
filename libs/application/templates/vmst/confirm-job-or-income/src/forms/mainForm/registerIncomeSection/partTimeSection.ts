@@ -16,7 +16,7 @@ import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import {
   buildCanRemoveRow,
@@ -186,9 +186,9 @@ export const partTimeSection = buildSubSection({
               nationalId: (value) => {
                 if (!value) return ''
                 const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+                return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
               },
-              jobStart: formatIsDateLong,
+              jobStart: formatIsDate,
               workPercentage: (value) => {
                 if (!value) return ''
                 return `${value}%`

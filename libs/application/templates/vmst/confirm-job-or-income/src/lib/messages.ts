@@ -309,7 +309,7 @@ export const application = defineMessages({
   },
   tableHeaderEstimatedIncome: {
     id: 'vmst.cjoi.application:tableHeaderEstimatedIncome',
-    defaultMessage: 'Áætlaðar upphæð',
+    defaultMessage: 'Áætlaðuð upphæð',
     description: 'Table header for estimated income',
   },
   tableHeaderJobStart: {

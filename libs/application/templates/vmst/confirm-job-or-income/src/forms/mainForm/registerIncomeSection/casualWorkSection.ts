@@ -16,7 +16,7 @@ import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import {
   buildCanRemoveRow,
@@ -208,8 +208,8 @@ export const casualWorkSection = buildSubSection({
                 const clean = value.replace('-', '')
                 return `${clean.slice(0, 6)}-${clean.slice(6)}`
               },
-              dateFrom: formatIsDateLong,
-              dateTo: formatIsDateLong,
+              dateFrom: formatIsDate,
+              dateTo: formatIsDate,
               workshiftPeriod: (value, _displayIndex, application) => {
                 if (!value || !application) return ''
                 const workshiftPeriods =
