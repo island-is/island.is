@@ -144,6 +144,7 @@ const MedicinePrescriptions = () => {
           messages.stafraenHeilsaMedicinePrescriptionsTooltip,
         ),
       }}
+      marginBottom={[3, 3, 3, 4]}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
 

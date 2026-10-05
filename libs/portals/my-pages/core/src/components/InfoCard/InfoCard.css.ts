@@ -13,12 +13,14 @@ export const container = style({
 export const containerLink = style({
   display: 'block',
   height: '100%',
+  borderRadius: theme.border.radius.large,
+  ':focus': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 0,
+  },
 })
 
 export const boxContainer = style({
-  ':focus': {
-    borderColor: theme.color.mint400,
-  },
   ':hover': {
     borderColor: theme.color.blue400,
   },
