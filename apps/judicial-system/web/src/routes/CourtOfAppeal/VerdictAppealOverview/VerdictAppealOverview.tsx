@@ -20,7 +20,6 @@ import {
   VerdictAppealFiles,
 } from '@island.is/judicial-system-web/src/components'
 import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
-import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
@@ -46,7 +45,13 @@ const VerdictAppealOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  // Not the shared resolver here. This page is only ever about the verdict
+  // appeal, and a case can carry a ruling appeal as well - the resolver falls
+  // back to that one when the URL names no appeal, which a legacy link does,
+  // and the step that follows would then be opened for the wrong proceeding.
+  // When the URL does name the verdict appeal the resolver returns this very
+  // object, so nothing is lost by reading it directly.
+  const verdictAppealCase = workingCase.verdictAppealCase
   const { formatMessage } = useIntl()
   const router = useRouter()
 
@@ -54,7 +59,7 @@ const VerdictAppealOverview = () => {
     router.push(
       appendAppealCaseIdQuery(
         `${destination}/${workingCase.id}`,
-        targetAppealCase?.id,
+        verdictAppealCase?.id,
       ),
     )
 

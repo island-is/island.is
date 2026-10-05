@@ -13,7 +13,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { useTargetAppealCaseByAppealCaseId } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
@@ -43,13 +42,17 @@ import { areAllAppealAdvocatesConfirmed } from './VerdictAppealDefender.logic'
 const VerdictAppealDefender = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  // Read directly rather than through the shared resolver, for the reason
+  // given on the overview: the resolver falls back to the case-level ruling
+  // appeal when the URL names no appeal, and this page is never about that
+  // one.
+  const verdictAppealCase = workingCase.verdictAppealCase
   const { formatMessage } = useIntl()
   const router = useRouter()
 
   const overviewUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
-    targetAppealCase?.id,
+    verdictAppealCase?.id,
   )
 
   const stepIsValid = areAllAppealAdvocatesConfirmed(workingCase)
@@ -59,7 +62,7 @@ const VerdictAppealDefender = () => {
     router.push(
       appendAppealCaseIdQuery(
         `${destination}/${workingCase.id}`,
-        targetAppealCase?.id,
+        verdictAppealCase?.id,
       ),
     )
 
