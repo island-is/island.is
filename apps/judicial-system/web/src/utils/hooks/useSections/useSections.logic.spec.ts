@@ -56,7 +56,11 @@ describe('showsPublicProsecutorVerdictAppealStep', () => {
     UserRole.COURT_OF_APPEALS_JUDGE,
   ])('hides the step from %s', (role) => {
     expect(
-      showsPublicProsecutorVerdictAppealStep(theCase(), mockUser(role), enabled),
+      showsPublicProsecutorVerdictAppealStep(
+        theCase(),
+        mockUser(role),
+        enabled,
+      ),
     ).toBe(false)
   })
 
