@@ -2,7 +2,9 @@ import faker from 'faker'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { NationalRegistryResponsePerson } from '../../../../src/types'
+import { authenticateApiRequest } from '../../../../src/utils/apiAuthentication'
 import { shouldMockNationalRegistry } from '../../../../src/utils/nationalRegistryMock'
+import { readNationalIdQueryParameter } from '../../../../src/utils/nationalRegistryQuery'
 import { fakePerson } from '../constants'
 
 const getPersonByNationalId = async (
@@ -40,7 +42,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const nationalId = (req.query.nationalId as string).replace('-', '')
+  if (!authenticateApiRequest(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+
+  const nationalId = readNationalIdQueryParameter(req.query)
+
+  if (!nationalId) {
+    return res.status(400).json({ message: 'Invalid national id' })
+  }
 
   const people: NationalRegistryResponsePerson = shouldMockNationalRegistry()
     ? { items: [createFakePerson()] }

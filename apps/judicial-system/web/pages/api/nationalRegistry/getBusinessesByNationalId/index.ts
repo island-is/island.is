@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import type { NationalRegistryResponseBusiness } from '../../../../src/types'
+import { authenticateApiRequest } from '../../../../src/utils/apiAuthentication'
 import { shouldMockNationalRegistry } from '../../../../src/utils/nationalRegistryMock'
+import { readNationalIdQueryParameter } from '../../../../src/utils/nationalRegistryQuery'
 import { fakeBusiness } from '../constants'
 
 const getBusinessesByNationalId = async (
@@ -23,7 +25,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const nationalId = (req.query.nationalId as string).replace('-', '')
+  if (!authenticateApiRequest(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+
+  const nationalId = readNationalIdQueryParameter(req.query)
+
+  if (!nationalId) {
+    return res.status(400).json({ message: 'Invalid national id' })
+  }
 
   const businesses = shouldMockNationalRegistry()
     ? { items: [fakeBusiness] }
