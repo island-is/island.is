@@ -160,4 +160,33 @@ describe('BankTransferPayment', () => {
       expect(bank).toBe(document.activeElement)
     })
   })
+  describe('approver national id', () => {
+    const company = { nationalId: '5005101370', name: '65 ARTIC ehf.' }
+    const actorInput = () =>
+      document.querySelector<HTMLInputElement>(
+        'input[name="actorNationalId"]',
+      ) as HTMLInputElement
+
+    it('flags an approver edited from valid to invalid and disables submit', async () => {
+      const edited = '010130-2389' // Gervimaður Útlönd with the checksum digit wrong
+      const { bank, ledger, account, submit } = renderInputs(company)
+      const actor = actorInput()
+
+      fireEvent.change(actor, { target: { value: '010130-2399' } })
+      fireEvent.blur(actor)
+      fireEvent.change(bank, { target: { value: '0001' } })
+      fireEvent.change(ledger, { target: { value: '12' } })
+      fireEvent.change(account, { target: { value: '001234' } })
+      fireEvent.blur(account)
+      await waitFor(() => expect(submit.disabled).toBe(false))
+
+      fireEvent.change(actor, { target: { value: edited } })
+      fireEvent.blur(actor)
+
+      await waitFor(() => expect(submit.disabled).toBe(true))
+      expect(
+        screen.queryByText('Sláðu inn gilda kennitölu einstaklings.'),
+      ).not.toBeNull()
+    })
+  })
 })
