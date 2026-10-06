@@ -106,15 +106,14 @@ const BREAKDOWN_COLUMN_SPANS: [SpanType, SpanType, SpanType] = [
 interface BreakdownRowProps {
   columns: [string, string, string]
   heading?: boolean
-  fontWeight?: 'light' | 'regular'
 }
 
-const BreakdownRow = ({ columns, heading, fontWeight }: BreakdownRowProps) => (
+const BreakdownRow = ({ columns, heading }: BreakdownRowProps) => (
   <GridRow alignItems="center">
     {columns.map((column, index) => (
       <GridColumn key={index} span={BREAKDOWN_COLUMN_SPANS[index]}>
         <Box textAlign={index === columns.length - 1 ? 'right' : 'left'}>
-          <Text variant={heading ? 'h5' : 'default'} fontWeight={fontWeight}>
+          <Text variant={heading ? 'h5' : index === 1 ? 'small' : 'default'}>
             {column}
           </Text>
         </Box>
@@ -178,8 +177,9 @@ export const Units = ({
   // Charge names (e.g. "Verðtollur") are shown as the explanation of each
   // charge in the breakdown, they come from the same endpoint as the customs
   // charges list
+  // Rounded to the start of the day so the response is cached between products
   const [chargesDate] = useState(
-    () => `${new Date().toISOString().split('.')[0]}Z`,
+    () => `${new Date().toISOString().split('T')[0]}T00:00:00Z`,
   )
   const chargesResponse = useQuery<CustomsGeneralChargesQuery>(
     GET_CUSTOMS_GENERAL_CHARGES,
@@ -271,6 +271,17 @@ export const Units = ({
                 </Text>
               </Stack>
               <Divider thickness="thick" weight="purple300" />
+              <BreakdownRow
+                heading={true}
+                columns={[
+                  formatMessage(translationStrings.totalAmountLabel),
+                  formatCurrency(
+                    Number(data.customsCalculatorCalculate.totalAmount),
+                  ),
+                  '',
+                ]}
+              />
+              <Divider thickness="thick" weight="purple300" />
               <Stack space={2}>
                 <BreakdownRow
                   heading={true}
@@ -281,6 +292,19 @@ export const Units = ({
                   ]}
                 />
                 <Stack space={1}>
+                  <BreakdownRow
+                    columns={[
+                      formatMessage(translationStrings.startAmountLabel),
+                      submittedPrice
+                        ? `${submittedPrice.currency} ${formatCurrencyWithoutSuffix(
+                            submittedPrice.amount,
+                          )}`
+                        : '',
+                      formatCurrencyWithoutSuffix(
+                        Number(data.customsCalculatorCalculate.startAmount),
+                      ),
+                    ]}
+                  />
                   {data.customsCalculatorCalculate.charges?.map(
                     (charge, index) => (
                       <BreakdownRow
@@ -297,31 +321,6 @@ export const Units = ({
                   )}
                 </Stack>
               </Stack>
-              <Divider thickness="thick" weight="purple300" />
-              <BreakdownRow
-                columns={[
-                  formatMessage(translationStrings.startAmountLabel),
-                  submittedPrice
-                    ? `${submittedPrice.currency} ${formatCurrencyWithoutSuffix(
-                        submittedPrice.amount,
-                      )}`
-                    : '',
-                  formatCurrencyWithoutSuffix(
-                    Number(data.customsCalculatorCalculate.startAmount),
-                  ),
-                ]}
-              />
-              <Divider weight="purple300" />
-              <BreakdownRow
-                fontWeight="regular"
-                columns={[
-                  formatMessage(translationStrings.totalAmountLabel),
-                  '',
-                  formatCurrencyWithoutSuffix(
-                    Number(data.customsCalculatorCalculate.totalAmount),
-                  ),
-                ]}
-              />
             </Stack>
           </Box>
           <Stack space={2}>

@@ -47,7 +47,7 @@ export const translation = defineMessages({
   },
   totalAmountLabel: {
     id: 'web.customsCalculator:totalAmountLabel',
-    defaultMessage: 'Áætlað heildarverð, samtals',
+    defaultMessage: 'Áætlað heildarverð',
     description: 'Label for the total amount',
   },
   nedcDescription: {
