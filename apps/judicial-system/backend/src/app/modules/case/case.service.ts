@@ -2538,11 +2538,15 @@ export class CaseService {
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     // Each of these events asserts that a transition happened, so they wait
-    // for the commit - which TransactionCommitInterceptor does after the
-    // handler that called us has returned. Every caller runs inside the
-    // request transaction its guard opened, so an update that rolls back
-    // announces nothing. Still fire and forget: a failed announcement is
-    // logged, not returned to the caller.
+    // for the commit: TransactionCommitInterceptor drains the callbacks after
+    // the handler has returned and the request transaction, if there is one,
+    // has committed. The update and transition routes run inside the request
+    // transaction their guard opened; createCourtCase and the two signature
+    // confirmations call this inside a transaction their handler owns and
+    // return right after it commits, which is what keeps the drain behind the
+    // commit there too. Either way an update that rolls back announces
+    // nothing. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
     if (isReceivingCase) {
       registerAfterCommit(() =>
         this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase),
