@@ -49,6 +49,7 @@ export const CategoryModal = ({
         icon="filter"
         size="small"
         variant="utility"
+        colorScheme="white"
         onClick={() => setIsVisible((v) => !v)}
         disabled={isVisible}
       >

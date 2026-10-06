@@ -31,6 +31,7 @@ import * as styles from './CustomsCalculator.css'
 interface CategoryNode {
   id: string
   label: string
+  description?: string | null
   children?: CategoryNode[]
 }
 
@@ -63,23 +64,29 @@ const HighlightedKeyword = ({
   )
 }
 
-const findCategoryPath = (
+const findCategoryNodePath = (
   categories: CategoryNode[],
   targetId: string,
-  path: { label: string; value: string }[] = [],
-): { label: string; value: string }[] | null => {
+  path: CategoryNode[] = [],
+): CategoryNode[] | null => {
   for (const category of categories) {
     if (category.id === targetId) return path
     if (category.children?.length) {
-      const result = findCategoryPath(category.children, targetId, [
+      const result = findCategoryNodePath(category.children, targetId, [
         ...path,
-        { label: category.label, value: category.id },
+        category,
       ])
       if (result !== null) return result
     }
   }
   return null
 }
+
+const findCategoryPath = (categories: CategoryNode[], targetId: string) =>
+  findCategoryNodePath(categories, targetId)?.map((category) => ({
+    label: category.label,
+    value: category.id,
+  })) ?? null
 
 interface CustomsCalculatorProps {
   slice: ConnectedComponent
@@ -271,6 +278,27 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
       description: string
     } | null>(null)
 
+  // Descriptions of the selected category and all of its ancestors, ordered
+  // from the top level category down to the bottom level one
+  const categoryDescriptions = useMemo(() => {
+    if (!selectedBottomLevelCategory) return []
+    const topLevel = (productCategoriesResponse.data
+      ?.customsCalculatorProductCategories?.topLevel ?? []) as CategoryNode[]
+    const ancestors =
+      findCategoryNodePath(topLevel, selectedBottomLevelCategory.id) ?? []
+    return [
+      ...ancestors.map((category) => category.description),
+      selectedBottomLevelCategory.description,
+    ].filter((description): description is string => Boolean(description))
+  }, [
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.topLevel,
+    selectedBottomLevelCategory,
+  ])
+
+  const [resultsContainer, setResultsContainer] =
+    useState<HTMLDivElement | null>(null)
+
   const unitsResponse = useQuery(GET_CUSTOMS_CALCULATOR_UNITS, {
     variables: { tariffNumber: selectedBottomLevelCategory?.tariffNumber },
     skip: !selectedBottomLevelCategory?.tariffNumber,
@@ -287,211 +315,229 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
   }
 
   return (
-    <Stack space={3}>
-      {shortcuts.length > 0 && (
-        <Stack space={2}>
-          <Text variant="h5">
-            {formatMessage(translationStrings.shortcutsTitle)}
-          </Text>
-          <Inline space={1}>
-            {shortcuts.map((shortcut) => (
-              <Tag
-                key={shortcut.value}
-                onClick={() => {
-                  setInputState({ ...inputState, searchInput: shortcut.label })
-                  const bottomLevelCategory =
-                    productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                      (category) => category.id === shortcut.value,
-                    )
-                  if (bottomLevelCategory)
-                    setSelectedBottomLevelCategory(bottomLevelCategory)
-                  else setSelectedBottomLevelCategory(null)
+    <div>
+      <Box background="blue100" padding={[3, 3, 6]}>
+        <Stack space={6}>
+          {shortcuts.length > 0 && (
+            <Stack space={3}>
+              <Text variant="h5">
+                {formatMessage(translationStrings.shortcutsTitle)}
+              </Text>
+              <Inline space={1}>
+                {shortcuts.map((shortcut) => (
+                  <Tag
+                    key={shortcut.value}
+                    variant="darkerBlue"
+                    onClick={() => {
+                      setInputState({
+                        ...inputState,
+                        searchInput: shortcut.label,
+                      })
+                      const bottomLevelCategory =
+                        productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                          (category) => category.id === shortcut.value,
+                        )
+                      if (bottomLevelCategory)
+                        setSelectedBottomLevelCategory(bottomLevelCategory)
+                      else setSelectedBottomLevelCategory(null)
 
+                      const topLevel =
+                        productCategoriesResponse.data
+                          ?.customsCalculatorProductCategories?.topLevel ?? []
+                      const path =
+                        findCategoryPath(
+                          topLevel as CategoryNode[],
+                          bottomLevelCategory?.id ?? '',
+                        ) ?? []
+                      setSelectedCategory({
+                        current: path.length > 0 ? path[path.length - 1] : null,
+                        breadcrumbs: path.slice(0, -1),
+                      })
+                    }}
+                  >
+                    {shortcut.label}
+                  </Tag>
+                ))}
+              </Inline>
+            </Stack>
+          )}
+
+          <Stack space={3}>
+            <Text variant="h5">
+              {formatMessage(translationStrings.productSearchInputLabel)}
+            </Text>
+
+            <AsyncSearch
+              options={searchOptions}
+              filter={(option) =>
+                option.label.toLowerCase().includes(normalizedSearchInput) ||
+                (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
+                  keyword.includes(normalizedSearchInput),
+                )
+              }
+              size="large"
+              placeholder={formatMessage(
+                translationStrings.productSearchInputPlaceholder,
+              )}
+              inputValue={inputState.searchInput}
+              clearAriaLabel={formatMessage(
+                translationStrings.clearProductSearchInputLabel,
+              )}
+              onClear={() => {
+                setInputState({ ...inputState, searchInput: '' })
+                setSelectedBottomLevelCategory(null)
+                setSelectedCategory({ current: null, breadcrumbs: [] })
+              }}
+              onInputValueChange={(value) => {
+                setInputState({ ...inputState, searchInput: value })
+                if (!value) {
+                  setSelectedBottomLevelCategory(null)
+                  return
+                }
+                // Multiple categories can share a display label (e.g. "Annað").
+                // Matching free-typed text by label alone would silently bind the
+                // wrong tariff, so only auto-select when the label is unambiguous;
+                // otherwise force an explicit pick (onChange resolves by id).
+                const matches =
+                  productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.filter(
+                    (category) => category.label === value,
+                  ) ?? []
+                setSelectedBottomLevelCategory(
+                  matches.length === 1 ? matches[0] : null,
+                )
+              }}
+              onChange={(option) => {
+                setInputState({
+                  ...inputState,
+                  searchInput: option?.label ?? '',
+                })
+                const bottomLevelCategory =
+                  productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                    (category) => category.id === option?.value,
+                  )
+                if (bottomLevelCategory) {
+                  setSelectedBottomLevelCategory(bottomLevelCategory)
                   const topLevel =
                     productCategoriesResponse.data
                       ?.customsCalculatorProductCategories?.topLevel ?? []
                   const path =
                     findCategoryPath(
                       topLevel as CategoryNode[],
-                      bottomLevelCategory?.id ?? '',
+                      bottomLevelCategory.id,
                     ) ?? []
                   setSelectedCategory({
                     current: path.length > 0 ? path[path.length - 1] : null,
                     breadcrumbs: path.slice(0, -1),
                   })
-                }}
-              >
-                {shortcut.label}
-              </Tag>
-            ))}
-          </Inline>
-        </Stack>
-      )}
-
-      <Stack space={1}>
-        <Text variant="h5">
-          {formatMessage(translationStrings.productSearchInputLabel)}
-        </Text>
-
-        <AsyncSearch
-          options={searchOptions}
-          filter={(option) =>
-            option.label.toLowerCase().includes(normalizedSearchInput) ||
-            (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
-              keyword.includes(normalizedSearchInput),
-            )
-          }
-          size="large"
-          placeholder={formatMessage(
-            translationStrings.productSearchInputPlaceholder,
-          )}
-          colored={true}
-          inputValue={inputState.searchInput}
-          clearAriaLabel={formatMessage(
-            translationStrings.clearProductSearchInputLabel,
-          )}
-          onClear={() => {
-            setInputState({ ...inputState, searchInput: '' })
-            setSelectedBottomLevelCategory(null)
-            setSelectedCategory({ current: null, breadcrumbs: [] })
-          }}
-          onInputValueChange={(value) => {
-            setInputState({ ...inputState, searchInput: value })
-            if (!value) {
-              setSelectedBottomLevelCategory(null)
-              return
-            }
-            // Multiple categories can share a display label (e.g. "Annað").
-            // Matching free-typed text by label alone would silently bind the
-            // wrong tariff, so only auto-select when the label is unambiguous;
-            // otherwise force an explicit pick (onChange resolves by id).
-            const matches =
-              productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.filter(
-                (category) => category.label === value,
-              ) ?? []
-            setSelectedBottomLevelCategory(
-              matches.length === 1 ? matches[0] : null,
-            )
-          }}
-          onChange={(option) => {
-            setInputState({
-              ...inputState,
-              searchInput: option?.label ?? '',
-            })
-            const bottomLevelCategory =
-              productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                (category) => category.id === option?.value,
-              )
-            if (bottomLevelCategory) {
-              setSelectedBottomLevelCategory(bottomLevelCategory)
-              const topLevel =
-                productCategoriesResponse.data
-                  ?.customsCalculatorProductCategories?.topLevel ?? []
-              const path =
-                findCategoryPath(
-                  topLevel as CategoryNode[],
-                  bottomLevelCategory.id,
-                ) ?? []
-              setSelectedCategory({
-                current: path.length > 0 ? path[path.length - 1] : null,
-                breadcrumbs: path.slice(0, -1),
-              })
-            }
-          }}
-        />
-        <Box paddingX={1}>
-          <Text variant="small">
-            <span
-              className={styles.description}
-              dangerouslySetInnerHTML={{
-                __html: selectedBottomLevelCategory?.description ?? '',
-              }}
-            />
-          </Text>
-        </Box>
-      </Stack>
-
-      <CategoryModal
-        title={formatMessage(translationStrings.searchForCategory)}
-        onOptionSelect={(option) => {
-          if (!option.hasChildren) {
-            const bottomLevelCategory =
-              productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                (category) => category.id === option.value,
-              )
-            if (bottomLevelCategory) {
-              setSelectedBottomLevelCategory(bottomLevelCategory)
-              setInputState({
-                ...inputState,
-                searchInput: bottomLevelCategory.label,
-              })
-            }
-            return
-          }
-          setSelectedCategory((prev) => {
-            const updatedBreadcrumbs = [...prev.breadcrumbs]
-            if (prev.current) updatedBreadcrumbs.push(prev.current)
-            return {
-              current: option,
-              breadcrumbs: updatedBreadcrumbs,
-            }
-          })
-        }}
-        options={categoryOptions}
-        topComponent={
-          !!selectedCategory.current?.label && (
-            <Box
-              background="purple100"
-              paddingX={1}
-              paddingY={2}
-              tabIndex={0}
-              display="flex"
-              justifyContent="flexStart"
-              alignItems="center"
-              columnGap={1}
-              role="button"
-              cursor="pointer"
-              onClick={() =>
-                setSelectedCategory((prev) => {
-                  if (prev.breadcrumbs.length > 0)
-                    return {
-                      current: prev.breadcrumbs[prev.breadcrumbs.length - 1],
-                      breadcrumbs: prev.breadcrumbs.slice(0, -1),
-                    }
-                  return { current: null, breadcrumbs: [] }
-                })
-              }
-              onKeyDown={(ev) => {
-                if (ev.key === 'Enter' || ev.key === ' ') {
-                  ev.preventDefault()
-                  setSelectedCategory((prev) => {
-                    if (prev.breadcrumbs.length > 0)
-                      return {
-                        current: prev.breadcrumbs[prev.breadcrumbs.length - 1],
-                        breadcrumbs: prev.breadcrumbs.slice(0, -1),
-                      }
-                    return { current: null, breadcrumbs: [] }
-                  })
                 }
               }}
-            >
-              <Icon icon="chevronBack" color="blue400" size="medium" />
-              <Text variant="h5">{selectedCategory.current.label}</Text>
-            </Box>
-          )
-        }
-      />
+            />
 
-      {Boolean(unitsResponse.data?.customsCalculatorUnits?.units) && (
-        <Units
-          key={selectedBottomLevelCategory?.tariffNumber ?? ''}
-          unitStrings={unitsResponse.data?.customsCalculatorUnits?.units ?? []}
-          currencyOptions={currencyOptions}
-          tariffNumber={selectedBottomLevelCategory?.tariffNumber ?? ''}
-          allowCalculation={!!selectedBottomLevelCategory}
-        />
-      )}
-    </Stack>
+            <CategoryModal
+              title={formatMessage(translationStrings.searchForCategory)}
+              onOptionSelect={(option) => {
+                if (!option.hasChildren) {
+                  const bottomLevelCategory =
+                    productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+                      (category) => category.id === option.value,
+                    )
+                  if (bottomLevelCategory) {
+                    setSelectedBottomLevelCategory(bottomLevelCategory)
+                    setInputState({
+                      ...inputState,
+                      searchInput: bottomLevelCategory.label,
+                    })
+                  }
+                  return
+                }
+                setSelectedCategory((prev) => {
+                  const updatedBreadcrumbs = [...prev.breadcrumbs]
+                  if (prev.current) updatedBreadcrumbs.push(prev.current)
+                  return {
+                    current: option,
+                    breadcrumbs: updatedBreadcrumbs,
+                  }
+                })
+              }}
+              options={categoryOptions}
+              topComponent={
+                !!selectedCategory.current?.label && (
+                  <Box
+                    background="purple100"
+                    paddingX={1}
+                    paddingY={2}
+                    tabIndex={0}
+                    display="flex"
+                    justifyContent="flexStart"
+                    alignItems="center"
+                    columnGap={1}
+                    role="button"
+                    cursor="pointer"
+                    onClick={() =>
+                      setSelectedCategory((prev) => {
+                        if (prev.breadcrumbs.length > 0)
+                          return {
+                            current:
+                              prev.breadcrumbs[prev.breadcrumbs.length - 1],
+                            breadcrumbs: prev.breadcrumbs.slice(0, -1),
+                          }
+                        return { current: null, breadcrumbs: [] }
+                      })
+                    }
+                    onKeyDown={(ev) => {
+                      if (ev.key === 'Enter' || ev.key === ' ') {
+                        ev.preventDefault()
+                        setSelectedCategory((prev) => {
+                          if (prev.breadcrumbs.length > 0)
+                            return {
+                              current:
+                                prev.breadcrumbs[prev.breadcrumbs.length - 1],
+                              breadcrumbs: prev.breadcrumbs.slice(0, -1),
+                            }
+                          return { current: null, breadcrumbs: [] }
+                        })
+                      }
+                    }}
+                  >
+                    <Icon icon="chevronBack" color="blue400" size="medium" />
+                    <Text variant="h5">{selectedCategory.current.label}</Text>
+                  </Box>
+                )
+              }
+            />
+
+            {categoryDescriptions.length > 0 && (
+              <Text variant="small" as="div">
+                <ul className={styles.descriptionList}>
+                  {categoryDescriptions.map((description, index) => (
+                    <li key={index}>
+                      <span
+                        className={styles.description}
+                        dangerouslySetInnerHTML={{ __html: description }}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </Text>
+            )}
+          </Stack>
+
+          {Boolean(unitsResponse.data?.customsCalculatorUnits?.units) && (
+            <Units
+              key={selectedBottomLevelCategory?.tariffNumber ?? ''}
+              unitStrings={
+                unitsResponse.data?.customsCalculatorUnits?.units ?? []
+              }
+              currencyOptions={currencyOptions}
+              tariffNumber={selectedBottomLevelCategory?.tariffNumber ?? ''}
+              allowCalculation={!!selectedBottomLevelCategory}
+              resultsContainer={resultsContainer}
+            />
+          )}
+        </Stack>
+      </Box>
+      <div ref={setResultsContainer} />
+    </div>
   )
 }
 
