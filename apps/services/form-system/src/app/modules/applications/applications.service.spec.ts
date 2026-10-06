@@ -25,12 +25,12 @@ describe('ApplicationsService fake user access', () => {
 
   const setup = (status: string, idp?: string) => {
     const form = { id: 'form-id', status } as Form
-    const user = {
+    const user: User = {
       nationalId: 'user',
       scope: [],
       client: 'form-system',
       authorization: authorization(idp),
-    } satisfies User
+    }
     const applicationModel = {
       findOne: jest.fn().mockResolvedValue({ formId: form.id }),
       create: jest.fn(),
@@ -72,7 +72,11 @@ describe('ApplicationsService fake user access', () => {
     }
   }
 
-  const operations = ['create', 'getApplication', 'findAllBySlugAndUser'] as const
+  const operations = [
+    'create',
+    'getApplication',
+    'findAllBySlugAndUser',
+  ] as const
 
   describe.each(operations)('%s', (operation) => {
     const invoke = (service: ApplicationsService, user: User | null) =>
