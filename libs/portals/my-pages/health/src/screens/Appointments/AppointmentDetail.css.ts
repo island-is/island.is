@@ -22,6 +22,14 @@ export const cancelInfoText = style({
   },
 })
 
+export const cancelInfoIcon = style({
+  display: 'flex',
+  alignItems: 'center',
+  flexShrink: 0,
+  fontSize: 14,
+  height: '1.5em',
+})
+
 export const pastTitle = style({
   selectors: {
     '&&': {

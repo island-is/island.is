@@ -260,6 +260,19 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealConclusion
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
       appealEventLogs {
         id
         created
@@ -378,6 +391,7 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         defenderEmail
         defenderPhoneNumber
+        requestSharedWithDefender
         defenderChoice
         defendantPlea
         requestedDefenderChoice

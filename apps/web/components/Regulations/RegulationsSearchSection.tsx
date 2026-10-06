@@ -253,22 +253,24 @@ export const RegulationsSearchSection = (
                 paddingTop={0}
                 paddingBottom={[2, 2, 0]}
               >
-                <Input
-                  id="q"
-                  name="q"
-                  placeholder={txt('searchQueryLabel')}
-                  backgroundColor={['blue', 'blue', 'white']}
-                  size="md"
-                  icon={{ name: 'search', type: 'outline' }}
-                  value={filterValue}
-                  onChange={(event) => setFilterValue(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      doSearch('q', filterValue)
-                    }
-                  }}
-                  onBlur={() => doSearch('q', filterValue)}
-                />
+                <div className={s.searchInput}>
+                  <Input
+                    id="q"
+                    name="q"
+                    placeholder={txt('searchQueryLabel')}
+                    backgroundColor={['blue', 'blue', 'white']}
+                    size="md"
+                    icon={{ name: 'search', type: 'outline' }}
+                    value={filterValue}
+                    onChange={(event) => setFilterValue(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        doSearch('q', filterValue)
+                      }
+                    }}
+                    onBlur={() => doSearch('q', filterValue)}
+                  />
+                </div>
               </GridColumn>
               <GridColumn
                 span={['1/1', '1/1', '2/12', '2/12', '2/10']}

@@ -29,17 +29,15 @@ const requireMessageStore = (): Message[] => {
 }
 
 /**
- * Queues messages for the request. `MessageMiddleware` flushes them when the
- * response ends, whatever happened to the database work in between: a request
- * whose transaction rolled back still sends them, and the message handler then
- * retries a delivery whose subject was never committed.
- *
- * The backend queues from a request through `queueMessagesAfterCommit` in its
- * middleware, which registers the push with the request's transaction context
- * so that it happens only once the work is durable. Call this directly only
- * from there, or from a call site not yet moved to it.
+ * Pushes messages into the request's store. `MessageMiddleware` flushes the
+ * store when the response ends, whatever happened to the database work in
+ * between, so this is plumbing rather than a way to queue a message: the
+ * backend queues from a request through `queueMessagesAfterCommit` in its
+ * middleware, which registers this push with the request's transaction
+ * context so that it happens only once the work is durable. Call it from
+ * there and nowhere else.
  */
-export const addMessagesToQueue = (...messages: Message[]) => {
+export const pushMessagesToRequestStore = (...messages: Message[]) => {
   requireMessageStore().push(...messages)
 }
 
