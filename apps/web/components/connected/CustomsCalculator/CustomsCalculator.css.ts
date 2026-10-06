@@ -10,7 +10,7 @@ export const description = style({})
 
 export const descriptionList = style({
   listStyleType: 'disc',
-  paddingLeft: '1.5em',
+  paddingLeft: '24px',
 })
 
 globalStyle(`${description} a`, {
