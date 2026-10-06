@@ -62,7 +62,7 @@ export class MainResolver {
         action: 'legacyDrivingLicense',
         resources: user.nationalId,
       },
-      this.drivingLicenseService.legacyGetDrivingLicense(user.nationalId),
+      this.drivingLicenseService.legacyGetDrivingLicense(user.nationalId, user),
     )
   }
 

@@ -348,14 +348,12 @@ export class DrivingLicenseApi {
 
         // Add disqualification to current license. getDeprivation is a v6
         // caller-identity endpoint, so it can only be consulted when the caller
-        // supplied their own auth; the token-less instructor-lookup path skips
-        // the enrichment. On v5 that path called it anyway with `jwttoken: ''`.
-        // We never probed what RLS returned for an empty token, so treat this
-        // as a deliberate behaviour change rather than a proven no-op: if it
-        // used to error, the throw escaped from inside this catch block and
-        // rejected the whole method, where now the caller gets the licence.
-        // The only consumer of that path reads `.name`, so nothing downstream
-        // reads the disqualification it no longer fetches.
+        // supplied their own auth — callers looking up their own licence must
+        // pass it. The token-less callers are the instructor-name lookups
+        // (a different person than the caller), which skip the enrichment and
+        // read only `.name`. On v5 those called it anyway with `jwttoken: ''`;
+        // we never probed what RLS returned for an empty token, so treat this
+        // as a deliberate behaviour change rather than a proven no-op.
         const deprivation = input.auth
           ? await this.getDeprivation({
               nationalId: input.nationalId,
