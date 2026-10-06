@@ -3,9 +3,15 @@ import { Preview, Parameters } from '@storybook/react-webpack5'
 import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
 import { MockedProvider } from '@apollo/client/testing'
+// The buildable/non-buildable boundary rule is disabled below because this is
+// Storybook config, not shipped code.
 // Stories import components directly (deep imports), so the global resets
-// (button, body, etc.) must be loaded explicitly, as the apps do.
-import '../../core/src/styles/global.css'
+// (button, body, etc.) must be loaded explicitly, as the apps do. The core
+// index re-exports them first.
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import '@island.is/island-ui/core'
+// Application stories need the real BffContext.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { BffContext, createMockedInitialState } from '@island.is/react-spa/bff'
 
 const mockBffContext = {
