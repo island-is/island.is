@@ -576,6 +576,19 @@ export const errorMessages = defineMessages({
     description:
       'Alert message body shown when part time entries have overlapping periods for the same company',
   },
+  partTimeCasualWorkOverlappingPeriods: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeCasualWorkOverlappingPeriods',
+    defaultMessage: 'Tímabil mega ekki skarast við tilfallandi vinnu',
+    description:
+      'Error shown when a part time entry overlaps a casual work entry for the same company',
+  },
+  partTimeCasualWorkOverlappingPeriodsAlertMessage: {
+    id: 'vmst.cjoi.application:errorMessages.partTimeCasualWorkOverlappingPeriodsAlertMessage',
+    defaultMessage:
+      'Tímabil hlutastarfs skarast við skráða tilfallandi vinnu hjá sama fyrirtæki. Þú getur breytt tímabilum hér eða breytt skráningu tilfallandi vinnu til að geta haldið áfram. Ef starfslok eru ekki skráð telst starfið vera ótímabundið.',
+    description:
+      'Alert message body shown when a part time entry overlaps a casual work entry for the same company',
+  },
   partTimeValidationErrorMessage: {
     id: 'vmst.cjoi.application:errorMessages.partTimeValidationErrorMessage',
     defaultMessage:

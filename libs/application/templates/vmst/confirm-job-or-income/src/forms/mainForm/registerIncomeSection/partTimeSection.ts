@@ -11,7 +11,11 @@ import { Application } from '@island.is/application/types'
 import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
-import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
+import {
+  hasPartTimeCasualWorkOverlap,
+  hasPartTimeOverlap,
+  isPartTime,
+} from '../../../utils/conditions'
 import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
@@ -206,6 +210,15 @@ export const partTimeSection = buildSubSection({
           alertType: 'warning',
           marginTop: 6,
           condition: hasPartTimeOverlap,
+        }),
+        buildAlertMessageField({
+          id: 'partTimeCasualWorkOverlapAlert',
+          title: m.errorMessages.partTimeCasualWorkOverlappingPeriods,
+          message:
+            m.errorMessages.partTimeCasualWorkOverlappingPeriodsAlertMessage,
+          alertType: 'warning',
+          marginTop: 6,
+          condition: hasPartTimeCasualWorkOverlap,
         }),
         buildCustomField(
           {
