@@ -58,6 +58,12 @@ export const rentalPeriod = defineMessages({
     defaultMessage: 'Veldu upphafsdag samnings',
     description: 'Error message when start date is not filled',
   },
+  errorStartDateTooFarInFuture: {
+    id: 'ra.application:dataSchema.errorStartDateMoreThanOneMonthInFuture',
+    defaultMessage:
+      'Upphafsdagur samnings má ekki vera lengra en 1 mánuð fram í tímann',
+    description: 'Error message when start date is too far in the future',
+  },
   errorAgreementEndDateNotFilled: {
     id: 'ra.application:dataSchema.errorEndDateNotFilled',
     defaultMessage: 'Veldu síðasta dag samnings',

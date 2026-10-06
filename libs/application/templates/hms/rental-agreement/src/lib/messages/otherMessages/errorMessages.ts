@@ -33,15 +33,4 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Leigusamningur með þetta númer er þegar til í kerfinu',
     description: 'Rental agreement already exists summary',
   },
-  startDateTooFarInFuture: {
-    id: 'ra.application:errorMessages.startDateTooFarInFuture',
-    defaultMessage: 'Upphafsdagur samnings er of langt fram í tímann',
-    description: 'Start date is too far in the future',
-  },
-  startDateTooFarInFutureSummary: {
-    id: 'ra.application:errorMessages.startDateTooFarInFutureSummary',
-    defaultMessage:
-      'Upphafsdagur samnings má ekki vera lengra en 1 mánuð fram í tímann. Farðu til baka og breyttu upphafsdegi samningsins.',
-    description: 'Start date is too far in the future summary',
-  },
 })

@@ -5,10 +5,7 @@ import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import {
   applicationAnswers,
   draftAnswers,
-  isRentalPeriodStartDateTooFarAhead,
-  messages,
 } from '@island.is/application/templates/hms/rental-agreement'
-import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
@@ -61,16 +58,6 @@ export class RentalAgreementService extends BaseTemplateApiService {
     const { id, applicant, answers } = application
 
     const mappedAnswers = applicationAnswers(answers)
-
-    if (isRentalPeriodStartDateTooFarAhead(mappedAnswers.startDate)) {
-      throw new TemplateApiError(
-        {
-          title: messages.errorMessages.startDateTooFarInFuture,
-          summary: messages.errorMessages.startDateTooFarInFutureSummary,
-        },
-        400,
-      )
-    }
 
     const leaseApplication = mapRentalApplicationData(
       id,
