@@ -187,7 +187,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                   borderTopWidth="standard"
                   borderColor="blue200"
                   paddingY={2}
-                  paddingLeft={[1, 1, 2]}
+                  paddingLeft={2}
                   paddingRight={2}
                   className={cn(
                     listStyles.conversationRow,
