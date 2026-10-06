@@ -158,6 +158,7 @@ export enum Features {
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForUser = 'isIslandisBankTransferPaymentAllowedForUser',
+  isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
