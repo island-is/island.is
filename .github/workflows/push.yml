@@ -601,6 +601,32 @@ jobs:
           -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
+      - name: Get token for identity-server.web
+        id: get-ids-token
+        shell: bash
+        working-directory: monorepo
+        env:
+          APP_ID: ${{ secrets.IDS_FEATURE_DEPLOYMENT_ID }} # App Feature Deployment
+          PRIVATE_KEY: ${{ secrets.IDS_FEATURE_DEPLOYMENT_PK }}
+        run: |
+          node ./scripts/ci/docker/get-github-token.mjs
+
+      - name: Dispatch feature-branch creation to identity-server.web
+        env:
+          IDS_WEB_TOKEN: ${{ steps.get-ids-token.outputs.token }}
+          FEATURE_NAME: ${{ env.FEATURE_NAME }}
+          # Full branch ref as created in island.is, e.g. "feature/my-thing"
+          SOURCE_BRANCH: ${{ env.GIT_BRANCH_DEPLOY }}
+        run: |
+          set -euo pipefail
+          repo_owner="island-is"
+          repository="identity-server.web"
+          echo "Dispatching feature-branch creation for: $SOURCE_BRANCH (feature: $FEATURE_NAME)"
+          curl -fsS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $IDS_WEB_TOKEN" \
+            "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
+            -d "{\"event_type\":\"create-feature-branch\",\"client_payload\":{\"feature_name\":\"$FEATURE_NAME\",\"source_branch\":\"$SOURCE_BRANCH\"}}"
   push-success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
