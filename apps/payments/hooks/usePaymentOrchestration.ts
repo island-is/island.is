@@ -16,6 +16,7 @@ import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
 import { useApplePay } from './useApplePay'
 import { useBankTransferPayment } from './useBankTransferPayment'
+import { toBankAccountNumber } from '../components/BankTransferPayment/BankTransferPayment.utils'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -24,6 +25,9 @@ interface UsePaymentOrchestrationProps {
     title: string
   }
   isApplePayPaymentEnabledForUser: boolean
+  // The server refused the individual authorising a company's transfer. Shown on its input, so the
+  // payer stays on the form to correct it rather than landing on the error screen.
+  onInvalidActorNationalId: () => void
 }
 
 const deriveInitialBankTransferError = (
@@ -51,6 +55,7 @@ export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
   isApplePayPaymentEnabledForUser,
+  onInvalidActorNationalId,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -114,9 +119,21 @@ export const usePaymentOrchestration = ({
     onPaymentError: commonOnPaymentError,
   })
 
+  const bankTransferOnPaymentError = useCallback(
+    (error: PaymentError) => {
+      if (error.code === BankTransferErrorCode.InvalidActorNationalId) {
+        setIsInitiatingSubmit(false)
+        onInvalidActorNationalId()
+        return
+      }
+      commonOnPaymentError(error)
+    },
+    [commonOnPaymentError, onInvalidActorNationalId],
+  )
+
   const bankTransferPayment = useBankTransferPayment({
     paymentFlowId: paymentFlow?.id,
-    onPaymentError: commonOnPaymentError,
+    onPaymentError: bankTransferOnPaymentError,
   })
 
   const handleFormSubmit: SubmitHandler<Record<string, string>> = useCallback(
@@ -150,18 +167,20 @@ export const usePaymentOrchestration = ({
         } else if (selectedPaymentMethod === 'invoice') {
           await invoicePayment.processInvoicePayment()
         } else if (selectedPaymentMethod === 'bank_transfer') {
-          const { bankAccountNumber } = data
-          if (!bankAccountNumber) {
+          const { bank, ledger, account, actorNationalId } = data
+          if (!bank || !ledger || !account) {
             setPaymentError({
               code: BankTransferErrorCode.MissingBankAccountNumber,
             })
             setIsInitiatingSubmit(false)
             return
           }
-          await bankTransferPayment.processBankTransferPayment(
-            // The form stores the masked value; the service needs digits.
-            bankAccountNumber.replace(/\D/g, ''),
-          )
+          // The service needs the 12-digit account number and a bare national id. The actor is only
+          // rendered (and so only filled in) when the payer is a company.
+          await bankTransferPayment.processBankTransferPayment({
+            bankAccountNumber: toBankAccountNumber({ bank, ledger, account }),
+            actorNationalId: actorNationalId?.replace(/\D/g, '') || undefined,
+          })
         }
       } catch (e: unknown) {
         if (
