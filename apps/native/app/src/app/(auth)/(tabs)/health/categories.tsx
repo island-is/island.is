@@ -187,11 +187,6 @@ export default function HealthCategoriesScreen() {
       titleId: 'health.categories.waitingLists',
       url: `${origin}/minarsidur/heilsa/bidlistar`,
     },
-    {
-      id: 'medicalRecords',
-      titleId: 'health.categories.medicalRecords',
-      url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,
-    },
   ]
 
   return (
