@@ -26,6 +26,18 @@ export const MAX_RENTAL_PERIOD_START_MONTHS_AHEAD = 1
 export const getLatestRentalPeriodStartDate = (now: Date = new Date()) =>
   startOfDay(addMonths(now, MAX_RENTAL_PERIOD_START_MONTHS_AHEAD))
 
+export const isRentalPeriodStartDateTooFarAhead = (
+  startDate: string | undefined,
+  now: Date = new Date(),
+) => {
+  if (!startDate) return false
+  const start = new Date(startDate)
+  return (
+    isFinite(start.getTime()) &&
+    startOfDay(start) > getLatestRentalPeriodStartDate(now)
+  )
+}
+
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
   return {
     shouldBeListed: false,

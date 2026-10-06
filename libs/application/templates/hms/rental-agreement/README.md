@@ -10,7 +10,7 @@ This application allows individuals to create a rental agreement between one or 
 
 ### Latest rental period start date
 
-`getLatestRentalPeriodStartDate` (`src/utils/utils.ts`) caps the start date at `MAX_RENTAL_PERIOD_START_MONTHS_AHEAD` (1) month from today, enforced both by the date picker and the data schema. Requested by HMS: index-linked agreements need the consumer price index (vísitala) value for the start month, and Hagstofa only publishes it shortly beforehand. Agreements starting further ahead fail when registered in the rental registry (leiguskrá).
+`getLatestRentalPeriodStartDate` (`src/utils/utils.ts`) caps the start date at `MAX_RENTAL_PERIOD_START_MONTHS_AHEAD` (1) month from today. The date picker enforces it in the draft form, and `submitApplicationToHmsRentalService` (template-api-modules) rejects agreements over the limit before sending them to HMS, so the user stays in review and can go back to edit. The check is intentionally not in the data schema: the application system validates all answers on every state transition, which would also block the edit event that lets users fix the date. Requested by HMS: index-linked agreements need the consumer price index (vísitala) value for the start month, and Hagstofa only publishes it shortly beforehand. Agreements starting further ahead fail when registered in the rental registry (leiguskrá).
 
 ## URLs
 
