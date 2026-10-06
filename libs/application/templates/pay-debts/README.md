@@ -40,9 +40,7 @@ stateDiagram-v2
 The only state the applicant actively fills in. Data fetching from:
 
 - **Finance v3 (FJS)** — `getCustomerDebts` fetches the applicant's
-  outstanding debts via X-Road. Local dev needs the X-Road proxy on
-  `localhost:8081` running; without it the call fails with
-  `ECONNREFUSED` (not a code bug).
+  outstanding debts via X-Road. See [Setup § X-Road](#x-road) below.
 - **Mock payment catalog** — `MockPaymentCatalog`, dev/local only, lets
   developers pay without a real charge.
 
@@ -69,6 +67,52 @@ already sends). See the `TODO` in `src/lib/template.ts`.
 Terminal state. Shows a conclusion screen only — nothing here confirms
 what was actually paid.
 
+## Setup
+
+See [application-system](https://github.com/island-is/island.is/tree/main/apps/application-system/README.md) for the full guide. `application-system-form`'s `dev` target already chains in everything else (`application-system-api:dev`, which itself chains in `api:dev` and `services-user-profile:dev`), so one command is enough:
+
+```bash
+# first time only
+yarn get-secrets api
+yarn dev-init application-system-api
+
+# every time
+yarn dev application-system-form
+```
+
+If you only need the backend (e.g. hitting `localhost:3333/swagger`
+directly), `yarn dev application-system-api` on its own is enough — it
+chains the same `api` + X-Road proxy.
+
+Once everything is running, open [http://localhost:4242/umsoknir/greidum-rikinu](http://localhost:4242/umsoknir/greidum-rikinu).
+
+### X-Road
+
+Fetching debts (`getCustomerDebts`) goes through X-Road. `api`'s `dev`
+target already runs `./scripts/run-xroad-proxy.sh` for you (`apps/api/project.json`),
+which binds the dev X-Road security server to `localhost:8081` — so as
+long as you start things via `yarn dev application-system-form` (or
+`yarn dev application-system-api`), there's nothing extra to run. You do
+need AWS access to the dev account for that script to connect — see
+[AWS secrets](https://docs.devland.is/repository/aws-secrets).
+
+If you don't need real FJS data at all, use the `shouldUseMockPayment`
+hidden input in the Draft form instead — it routes around the real charge
+creation in the Payment state.
+
+### Download service
+
+Each debt row has an invoice link, built client-side from
+`downloadServiceURL + debt.documentID` (`debtsSection.ts`). To exercise
+that link locally, also run:
+
+```bash
+yarn start download-service
+```
+
+Without it, the rest of the flow (fetching debts, paying) still works —
+only the per-debt invoice download link will fail.
+
 ## Lifecycle & Notifications
 
 - **Draft / Payment**: `EphemeralStateLifeCycle` — not listed, pruned
@@ -90,11 +134,9 @@ Used to fetch the applicant's debts and to create the payment charge.
 - **Gervimaður 010-2989 and 010-2129**
   - Use as the applicant on dev. Both have dummy debt data seeded at FJS,
     so `getCustomerDebts` returns a non-empty debt list for them.
-  - Requires the X-Road proxy (`localhost:8081`) running locally to reach
-    FJS.
-- For local development without X-Road access, use the
+- If you'd rather not create a real FJS charge, use the
   `shouldUseMockPayment` hidden input (dev/local only) to skip to a mock
-  payment instead of a real FJS charge.
+  payment instead.
 
 ## Localization
 
