@@ -1,6 +1,8 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
+import { Feature } from '@island.is/judicial-system/types'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
@@ -67,18 +69,21 @@ describe('VerdictAppealFiles', () => {
   const renderSection = (
     theCase: Case,
     userRole: UserRole = UserRole.DEFENDER,
+    features: Feature[] = [Feature.INDICTMENT_APPEAL],
   ) =>
     render(
       <MockedProvider mocks={[]} addTypename={false}>
         <IntlProviderWrapper>
-          <UserContextWrapper
-            userRole={userRole}
-            nationalId={defenderNationalId}
-          >
-            <FormContextWrapper theCase={theCase}>
-              <VerdictAppealFiles />
-            </FormContextWrapper>
-          </UserContextWrapper>
+          <FeatureContext.Provider value={{ features, isLoading: false }}>
+            <UserContextWrapper
+              userRole={userRole}
+              nationalId={defenderNationalId}
+            >
+              <FormContextWrapper theCase={theCase}>
+                <VerdictAppealFiles />
+              </FormContextWrapper>
+            </UserContextWrapper>
+          </FeatureContext.Provider>
         </IntlProviderWrapper>
       </MockedProvider>,
     )
@@ -152,6 +157,18 @@ describe('VerdictAppealFiles', () => {
       expect(
         screen.getByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
       ).toBeInTheDocument()
+    })
+
+    it('should hide the summons subsection while the feature is off', async () => {
+      renderSection(appealed([declaration]), UserRole.PUBLIC_PROSECUTOR_STAFF, [])
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
     })
 
     it('should list a draft summons above the declarations', async () => {

@@ -240,8 +240,19 @@ describe('showsAppealSummonses', () => {
       showsAppealSummonses(
         appealed,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        true,
       ),
     ).toBe(true)
+  })
+
+  it('shows nothing while the indictment appeal feature is hidden', () => {
+    expect(
+      showsAppealSummonses(
+        appealed,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        false,
+      ),
+    ).toBe(false)
   })
 
   it('shows nothing before the verdict is appealed', () => {
@@ -249,6 +260,7 @@ describe('showsAppealSummonses', () => {
       showsAppealSummonses(
         { verdictAppealCase: null } as Case,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        true,
       ),
     ).toBe(false)
   })
@@ -275,7 +287,7 @@ describe('showsAppealSummonses', () => {
     UserRole.PROSECUTOR,
     UserRole.COURT_OF_APPEALS_JUDGE,
   ])('shows nothing to %s', (role) => {
-    expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+    expect(showsAppealSummonses(appealed, mockUser(role), true)).toBe(false)
   })
 })
 

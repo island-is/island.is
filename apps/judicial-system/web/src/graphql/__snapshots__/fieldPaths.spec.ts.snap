@@ -94,6 +94,7 @@ Array [
   "case.appealSummonses.defendants.appellantSide",
   "case.appealSummonses.defendants.claims",
   "case.appealSummonses.defendants.defendantId",
+  "case.appealSummonses.defendants.id",
   "case.appealSummonses.id",
   "case.appealSummonses.sentToCourtOfAppealsDate",
   "case.arraignmentDate.date",

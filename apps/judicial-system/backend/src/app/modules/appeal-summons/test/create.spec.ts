@@ -14,7 +14,6 @@ import {
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
 import {
-  AppealCase,
   AppealEventLog,
   AppealEventLogRepositoryService,
   AppealSummons,
@@ -59,16 +58,14 @@ describe('AppealSummonsController - Create', () => {
     created: new Date(),
   } as AppealEventLog
 
-  const verdictAppealCase = {
-    id: appealCaseId,
-    appealEventLogs: [appealedLog],
-  } as AppealCase
+  const caseWithAppeal = (appealEventLogs: AppealEventLog[]): Case =>
+    ({
+      id: caseId,
+      defendants: [defendant],
+      verdictAppealCase: { id: appealCaseId, appealEventLogs },
+    } as Case)
 
-  const theCase = {
-    id: caseId,
-    defendants: [defendant],
-    verdictAppealCase,
-  } as Case
+  const theCase = caseWithAppeal([appealedLog])
 
   const dto: CreateAppealSummonsDto = {
     defendants: [
@@ -193,19 +190,13 @@ describe('AppealSummonsController - Create', () => {
   })
 
   it('rejects a defendant with no standing appeal', async () => {
-    const then = await givenWhenThen(
-      {
-        ...theCase,
-        verdictAppealCase: { id: appealCaseId, appealEventLogs: [] },
-      } as Case,
-      dto,
-    )
+    const then = await givenWhenThen(caseWithAppeal([]), dto)
 
     expect(then.error).toBeInstanceOf(BadRequestException)
     expect(then.error.message).toContain('no standing verdict appeal')
   })
 
-  it('uses the prosecution side when both sides stand and the client asks for it', async () => {
+  it('uses the prosecution side when both sides stand, even if the client sends defence', async () => {
     const prosecutionLog = {
       id: uuid(),
       defendantId,
@@ -215,18 +206,12 @@ describe('AppealSummonsController - Create', () => {
     } as AppealEventLog
 
     await givenWhenThen(
-      {
-        ...theCase,
-        verdictAppealCase: {
-          id: appealCaseId,
-          appealEventLogs: [appealedLog, prosecutionLog],
-        },
-      } as Case,
+      caseWithAppeal([appealedLog, prosecutionLog]),
       {
         defendants: [
           {
             defendantId,
-            appellantSide: AppealSummonsAppellantSide.PROSECUTION,
+            appellantSide: AppealSummonsAppellantSide.DEFENCE,
             claims: 'Kröfur',
           },
         ],
@@ -241,5 +226,26 @@ describe('AppealSummonsController - Create', () => {
       }),
       { transaction },
     )
+  })
+
+  it('rejects a duplicate defendant', async () => {
+    const then = await givenWhenThen(theCase, {
+      defendants: [
+        {
+          defendantId,
+          appellantSide: AppealSummonsAppellantSide.DEFENCE,
+          claims: 'Kröfur',
+        },
+        {
+          defendantId,
+          appellantSide: AppealSummonsAppellantSide.DEFENCE,
+          claims: 'Aðrar kröfur',
+        },
+      ],
+    })
+
+    expect(then.error).toBeInstanceOf(BadRequestException)
+    expect(then.error.message).toContain('same defendant twice')
+    expect(mockAppealSummonsRepositoryService.create).not.toHaveBeenCalled()
   })
 })

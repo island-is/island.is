@@ -6,6 +6,8 @@ import { useRouter } from 'next/router'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
+import { Feature } from '@island.is/judicial-system/types'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Modals/FileNotFoundModal/FileNotFoundModal'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
@@ -44,14 +46,21 @@ const formatSentInBy = (defenderName?: string | null): string => {
 const VerdictAppealFiles: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const router = useRouter()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
-  const showSummonses = showsAppealSummonses(workingCase, user)
-  const showIssueButton = canShowIssueAppealSummons(workingCase, user)
+  const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
+  const showSummonses = showsAppealSummonses(
+    workingCase,
+    user,
+    isIndictmentAppealEnabled,
+  )
+  const showIssueButton =
+    isIndictmentAppealEnabled && canShowIssueAppealSummons(workingCase, user)
   const summonses = workingCase.appealSummonses ?? []
 
   if (groups.length === 0 && !showSummonses) {

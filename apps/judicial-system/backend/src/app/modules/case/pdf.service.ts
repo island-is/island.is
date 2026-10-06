@@ -59,7 +59,7 @@ import { SubpoenaService } from '../subpoena'
 
 @Injectable()
 export class PdfService {
-  private throttle = Promise.resolve(Buffer.from(''))
+  private throttle: Promise<Buffer> = Promise.resolve(Buffer.from(''))
 
   constructor(
     private readonly awsS3Service: AwsS3Service,
@@ -597,6 +597,15 @@ export class PdfService {
     theCase: Case,
     defendantId: string,
   ): Date | undefined {
+    const defendant = theCase.defendants?.find(
+      (item) => item.id === defendantId,
+    )
+    const verdictAppealDate = defendant?.verdicts?.[0]?.appealDate
+
+    if (verdictAppealDate) {
+      return verdictAppealDate
+    }
+
     const logs = (theCase.verdictAppealCase?.appealEventLogs ?? [])
       .filter(
         (eventLog) =>
@@ -606,11 +615,6 @@ export class PdfService {
       )
       .sort((a, b) => b.created.getTime() - a.created.getTime())
 
-    if (logs[0]) {
-      return logs[0].created
-    }
-
-    return theCase.defendants?.find((defendant) => defendant.id === defendantId)
-      ?.verdicts?.[0]?.appealDate
+    return logs[0]?.created
   }
 }

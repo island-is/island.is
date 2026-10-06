@@ -18,7 +18,11 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import { Feature, type User } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  isPublicProsecutionOfficeUser,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { Case } from '../case'
@@ -99,8 +103,14 @@ export class CaseAppealSummonsResolver {
   constructor(private readonly featureService: FeatureService) {}
 
   @ResolveField('appealSummonses', () => [AppealSummons], { nullable: true })
-  appealSummonses(@Parent() theCase: Case): AppealSummons[] {
-    if (this.featureService.isHidden(Feature.INDICTMENT_APPEAL)) {
+  appealSummonses(
+    @Parent() theCase: Case,
+    @CurrentGraphQlUser() user: User,
+  ): AppealSummons[] {
+    if (
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL) ||
+      !isPublicProsecutionOfficeUser(user)
+    ) {
       return []
     }
 

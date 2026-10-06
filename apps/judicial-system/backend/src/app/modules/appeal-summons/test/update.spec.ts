@@ -186,4 +186,26 @@ describe('AppealSummonsController - Update', () => {
       mockAppealSummonsRepositoryService.deleteDefendants,
     ).not.toHaveBeenCalled()
   })
+
+  it('rejects an edit once the summons has been sent for service', async () => {
+    const summons = {
+      id: summonsId,
+      services: [{ id: uuid() }],
+    } as unknown as AppealSummons
+
+    await expect(
+      appealSummonsController.update(
+        caseId,
+        summonsId,
+        theCase,
+        summons,
+        dto,
+        user,
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException)
+
+    expect(
+      mockAppealSummonsRepositoryService.deleteDefendants,
+    ).not.toHaveBeenCalled()
+  })
 })

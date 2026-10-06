@@ -184,6 +184,15 @@ export class AppealSummonsService {
     }
 
     const standing = standingVerdictAppellants(appealCase)
+    const defendantIds = dto.defendants.map(
+      (defendant) => defendant.defendantId,
+    )
+
+    if (new Set(defendantIds).size !== defendantIds.length) {
+      throw new BadRequestException(
+        'An appeal summons cannot include the same defendant twice',
+      )
+    }
 
     return dto.defendants.map((defendant) => {
       const onCase = theCase.defendants?.some(
@@ -206,13 +215,11 @@ export class AppealSummonsService {
         )
       }
 
-      const requested = defendant.appellantSide
       const appellantSide =
-        sides.length === 1
-          ? (sides[0] as AppealSummonsAppellantSide)
-          : sides.includes(requested)
-          ? requested
-          : AppealSummonsAppellantSide.PROSECUTION
+        sides.length > 1 ||
+        sides.includes(AppealSummonsAppellantSide.PROSECUTION)
+          ? AppealSummonsAppellantSide.PROSECUTION
+          : AppealSummonsAppellantSide.DEFENCE
 
       return {
         defendantId: defendant.defendantId,

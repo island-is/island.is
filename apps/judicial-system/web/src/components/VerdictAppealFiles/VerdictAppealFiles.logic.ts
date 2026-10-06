@@ -91,7 +91,9 @@ export const hasStandingVerdictAppeal = (
 export const showsAppealSummonses = (
   workingCase: Pick<Case, 'verdictAppealCase'>,
   user: User | undefined,
+  isIndictmentAppealEnabled: boolean,
 ): boolean =>
+  isIndictmentAppealEnabled &&
   isPublicProsecutionOfficeUser(user) &&
   hasStandingVerdictAppeal(workingCase.verdictAppealCase)
 

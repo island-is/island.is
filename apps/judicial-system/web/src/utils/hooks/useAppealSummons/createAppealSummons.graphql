@@ -7,6 +7,7 @@ mutation CreateAppealSummons(
     confirmedDate
     sentToCourtOfAppealsDate
     defendants {
+      id
       defendantId
       appellantSide
       claims

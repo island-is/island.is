@@ -290,6 +290,7 @@ query Case($input: CaseQueryInput!) {
       confirmedDate
       sentToCourtOfAppealsDate
       defendants {
+        id
         defendantId
         appellantSide
         claims
