@@ -1,4 +1,6 @@
 import format from 'date-fns/format'
+import addMonths from 'date-fns/addMonths'
+import startOfDay from 'date-fns/startOfDay'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -19,6 +21,10 @@ export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
 export const EARLIEST_RENTAL_PERIOD_START_DATE = new Date(2023, 0, 1)
+export const MAX_RENTAL_PERIOD_START_MONTHS_AHEAD = 1
+
+export const getLatestRentalPeriodStartDate = (now: Date = new Date()) =>
+  startOfDay(addMonths(now, MAX_RENTAL_PERIOD_START_MONTHS_AHEAD))
 
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
   return {
