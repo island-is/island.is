@@ -56,7 +56,9 @@ const combineDescriptions = (descriptions: string[], conjunction: string) => {
     ),
   ]
   const last = parts.pop()
-  return `${parts.length > 0 ? `${parts.join(', ')} ${conjunction} ` : ''}${last}.`
+  return `${
+    parts.length > 0 ? `${parts.join(', ')} ${conjunction} ` : ''
+  }${last}.`
 }
 
 interface UnitInputProps {
@@ -296,7 +298,9 @@ export const Units = ({
                     columns={[
                       formatMessage(translationStrings.startAmountLabel),
                       submittedPrice
-                        ? `${submittedPrice.currency} ${formatCurrencyWithoutSuffix(
+                        ? `${
+                            submittedPrice.currency
+                          } ${formatCurrencyWithoutSuffix(
                             submittedPrice.amount,
                           )}`
                         : '',
@@ -312,7 +316,7 @@ export const Units = ({
                         columns={[
                           charge.code
                             ? `${charge.description ?? ''} (${charge.code})`
-                            : (charge.description ?? ''),
+                            : charge.description ?? '',
                           chargeNameByCode.get(charge.code ?? '') ?? '',
                           formatCurrencyWithoutSuffix(Number(charge.amount)),
                         ]}
