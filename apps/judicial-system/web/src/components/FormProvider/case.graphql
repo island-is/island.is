@@ -391,6 +391,7 @@ query Case($input: CaseQueryInput!) {
         defenderNationalId
         defenderEmail
         defenderPhoneNumber
+        requestSharedWithDefender
         defenderChoice
         defendantPlea
         requestedDefenderChoice

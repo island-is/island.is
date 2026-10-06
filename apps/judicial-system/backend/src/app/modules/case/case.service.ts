@@ -1440,6 +1440,7 @@ export class CaseService {
           defenderNationalId: caseToCreate.defenderNationalId,
           defenderEmail: caseToCreate.defenderEmail,
           defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
+          requestSharedWithDefender: caseToCreate.requestSharedWithDefender,
         },
         transaction,
       )
@@ -2330,11 +2331,14 @@ export class CaseService {
         caseUpdate.defenderNationalId !== undefined ||
         caseUpdate.defenderEmail !== undefined ||
         caseUpdate.defenderPhoneNumber !== undefined ||
-        caseUpdate.defendantWaivesRightToCounsel !== undefined
+        caseUpdate.defendantWaivesRightToCounsel !== undefined ||
+        caseUpdate.requestSharedWithDefender !== undefined
 
       if (defenderFieldChanged) {
         // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
         // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
+        // requestSharedWithDefender is dual-written so defendant rows stay
+        // aligned until readers flip to the defendant column.
         const waives =
           caseUpdate.defendantWaivesRightToCounsel !== undefined
             ? caseUpdate.defendantWaivesRightToCounsel
@@ -2360,6 +2364,9 @@ export class CaseService {
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
             defenderChoice: waives ? DefenderChoice.WAIVE : null,
+            // undefined → sync skips; avoids clobbering per-defendant values
+            // on contact-only edits
+            requestSharedWithDefender: caseUpdate.requestSharedWithDefender,
           },
           transaction,
         )
@@ -2878,6 +2885,7 @@ export class CaseService {
             defenderChoice: theCase.defendantWaivesRightToCounsel
               ? DefenderChoice.WAIVE
               : null,
+            requestSharedWithDefender: theCase.requestSharedWithDefender,
           },
           transaction,
         )

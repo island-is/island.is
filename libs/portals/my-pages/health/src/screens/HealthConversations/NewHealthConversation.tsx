@@ -39,6 +39,7 @@ import {
 } from './utils/recipientAvailability'
 import { MAX_MESSAGE_LENGTH, MAX_TITLE_LENGTH } from './utils/constants'
 import { Markdown } from '@island.is/shared/components'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { HealthDirectorateHealthConversationRecipientAvailability as Availability } from '@island.is/api/schema'
 import ClosedRecipientAlert from './components/ClosedRecipientAlert'
 import * as styles from './HealthConversations.css'
@@ -211,9 +212,14 @@ const NewHealthConversation = () => {
     }
   }
 
-  const goToConversation = (conversationId?: string | null) => {
+  const goToConversation = (
+    conversationId?: string | null,
+    justSent = false,
+  ) => {
     if (conversationId) {
-      navigate(paths.conversationDetail(conversationId))
+      navigate(paths.conversationDetail(conversationId), {
+        state: justSent ? { justSent } : undefined,
+      })
     } else {
       navigate(paths.conversations)
     }
@@ -237,6 +243,7 @@ const NewHealthConversation = () => {
         })
         goToConversation(
           result.data?.healthDirectorateCreateHealthConversation?.id,
+          true,
         )
         return
       }
@@ -279,6 +286,7 @@ const NewHealthConversation = () => {
       })
       goToConversation(
         result.data?.healthDirectorateCreateHealthConversation?.id,
+        true,
       )
     } catch {
       toast.error(formatMessage(m.errorTitle))
@@ -387,7 +395,7 @@ const NewHealthConversation = () => {
               paddingBottom={[10, 5, 5]}
             >
               {(hasMultipleRecipients || !usesCustomTitle) && (
-                <GridRow marginBottom={3}>
+                <GridRow marginBottom={[2, 2, 3]}>
                   {hasMultipleRecipients && (
                     <GridColumn
                       span={['12/12', '6/12']}
@@ -465,8 +473,10 @@ const NewHealthConversation = () => {
               {!usesCustomTitle &&
                 !isCertificateSelected &&
                 selectedType?.instructions && (
-                  <Box marginBottom={2} className={styles.typeInstructions}>
-                    <Markdown>{selectedType.instructions}</Markdown>
+                  <Box marginBottom={2}>
+                    <TextMarkdown openLinksInNewTab>
+                      {selectedType.instructions}
+                    </TextMarkdown>
                   </Box>
                 )}
 
