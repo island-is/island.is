@@ -36,6 +36,16 @@ import * as styles from './Units.css'
 const CURRENCY_COLUMN_SPAN: SpanType = ['12/12', '4/12', '4/12', '4/12', '3/12']
 const UNIT_COLUMN_SPAN: SpanType = ['12/12', '6/12']
 
+// Formats an amount with "." as the thousand separator and "," as the decimal
+// separator, e.g. "1234.5" becomes "1.234,5"
+const formatAmount = (value: number | string) => {
+  const [integerPart, decimalPart] = String(value).split('.')
+  const formattedIntegerPart = formatCurrencyWithoutSuffix(integerPart)
+  return decimalPart
+    ? `${formattedIntegerPart},${decimalPart}`
+    : formattedIntegerPart
+}
+
 const PRODUCT_INFO_UNITS = ['STK', 'NET', 'LIT', 'PRO', 'UT*']
 
 // Combines the descriptions into a single sentence, e.g. "Skráið
@@ -131,7 +141,7 @@ interface UnitsProps {
   allowCalculation: boolean
   // Element the calculation results are rendered into, so they can be placed
   // outside of the calculator box
-  resultsContainer?: HTMLElement | null
+  resultsContainer: HTMLElement | null
 }
 
 interface UnitsFormValues {
@@ -236,7 +246,7 @@ export const Units = ({
   } | null>(null)
 
   const results = (
-    <Box ref={breakdownRef} paddingTop={resultsContainer && called ? 8 : 0}>
+    <Box ref={breakdownRef} paddingTop={called ? 8 : 0}>
       {called && loading && <SkeletonLoader height={480} />}
       {!loading && error && (
         <AlertMessage
@@ -298,13 +308,11 @@ export const Units = ({
                     columns={[
                       formatMessage(translationStrings.startAmountLabel),
                       submittedPrice
-                        ? `${
-                            submittedPrice.currency
-                          } ${formatCurrencyWithoutSuffix(
+                        ? `${submittedPrice.currency} ${formatAmount(
                             submittedPrice.amount,
                           )}`
                         : '',
-                      formatCurrencyWithoutSuffix(
+                      formatAmount(
                         Number(data.customsCalculatorCalculate.startAmount),
                       ),
                     ]}
@@ -318,7 +326,7 @@ export const Units = ({
                             ? `${charge.description ?? ''} (${charge.code})`
                             : charge.description ?? '',
                           chargeNameByCode.get(charge.code ?? '') ?? '',
-                          formatCurrencyWithoutSuffix(Number(charge.amount)),
+                          formatAmount(Number(charge.amount)),
                         ]}
                       />
                     ),
@@ -521,17 +529,13 @@ export const Units = ({
           {formatMessage(translationStrings.runCalculation)}
         </Button>
       </Box>
-
-      {!resultsContainer && results}
     </Stack>
   )
 
-  return resultsContainer ? (
+  return (
     <>
       {form}
-      {createPortal(results, resultsContainer)}
+      {resultsContainer && createPortal(results, resultsContainer)}
     </>
-  ) : (
-    form
   )
 }

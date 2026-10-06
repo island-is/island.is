@@ -304,6 +304,25 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     skip: !selectedBottomLevelCategory?.tariffNumber,
   })
 
+  const findBottomLevelCategory = (id?: string) =>
+    productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
+      (category) => category.id === id,
+    )
+
+  // Selects the bottom level category and opens its parent in the category modal
+  const selectBottomLevelCategory = (
+    bottomLevelCategory: typeof selectedBottomLevelCategory,
+  ) => {
+    setSelectedBottomLevelCategory(bottomLevelCategory)
+    const topLevel = (productCategoriesResponse.data
+      ?.customsCalculatorProductCategories?.topLevel ?? []) as CategoryNode[]
+    const path = findCategoryPath(topLevel, bottomLevelCategory?.id ?? '') ?? []
+    setSelectedCategory({
+      current: path.length > 0 ? path[path.length - 1] : null,
+      breadcrumbs: path.slice(0, -1),
+    })
+  }
+
   if (productCategoriesResponse.error) {
     return (
       <AlertMessage
@@ -333,26 +352,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
                         ...inputState,
                         searchInput: shortcut.label,
                       })
-                      const bottomLevelCategory =
-                        productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                          (category) => category.id === shortcut.value,
-                        )
-                      if (bottomLevelCategory)
-                        setSelectedBottomLevelCategory(bottomLevelCategory)
-                      else setSelectedBottomLevelCategory(null)
-
-                      const topLevel =
-                        productCategoriesResponse.data
-                          ?.customsCalculatorProductCategories?.topLevel ?? []
-                      const path =
-                        findCategoryPath(
-                          topLevel as CategoryNode[],
-                          bottomLevelCategory?.id ?? '',
-                        ) ?? []
-                      setSelectedCategory({
-                        current: path.length > 0 ? path[path.length - 1] : null,
-                        breadcrumbs: path.slice(0, -1),
-                      })
+                      selectBottomLevelCategory(
+                        findBottomLevelCategory(shortcut.value) ?? null,
+                      )
                     }}
                   >
                     {shortcut.label}
@@ -411,25 +413,11 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
                   ...inputState,
                   searchInput: option?.label ?? '',
                 })
-                const bottomLevelCategory =
-                  productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                    (category) => category.id === option?.value,
-                  )
-                if (bottomLevelCategory) {
-                  setSelectedBottomLevelCategory(bottomLevelCategory)
-                  const topLevel =
-                    productCategoriesResponse.data
-                      ?.customsCalculatorProductCategories?.topLevel ?? []
-                  const path =
-                    findCategoryPath(
-                      topLevel as CategoryNode[],
-                      bottomLevelCategory.id,
-                    ) ?? []
-                  setSelectedCategory({
-                    current: path.length > 0 ? path[path.length - 1] : null,
-                    breadcrumbs: path.slice(0, -1),
-                  })
-                }
+                const bottomLevelCategory = findBottomLevelCategory(
+                  option?.value,
+                )
+                if (bottomLevelCategory)
+                  selectBottomLevelCategory(bottomLevelCategory)
               }}
             />
 
@@ -437,10 +425,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               title={formatMessage(translationStrings.searchForCategory)}
               onOptionSelect={(option) => {
                 if (!option.hasChildren) {
-                  const bottomLevelCategory =
-                    productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.find(
-                      (category) => category.id === option.value,
-                    )
+                  const bottomLevelCategory = findBottomLevelCategory(
+                    option.value,
+                  )
                   if (bottomLevelCategory) {
                     setSelectedBottomLevelCategory(bottomLevelCategory)
                     setInputState({
