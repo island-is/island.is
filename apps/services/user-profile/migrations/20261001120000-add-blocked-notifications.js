@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.createTable(
-        'notification_sender_setting',
+        'blocked_notifications',
         {
           id: {
             type: Sequelize.UUID,
@@ -26,16 +26,6 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          enabled: {
-            type: Sequelize.BOOLEAN,
-            defaultValue: true,
-            allowNull: false,
-          },
-          seen: {
-            type: Sequelize.BOOLEAN,
-            defaultValue: false,
-            allowNull: false,
-          },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
@@ -50,39 +40,22 @@ module.exports = {
         { transaction },
       )
 
-      // Avoid duplicate entries per sender
+      // A sender can only be blocked once per user
       await queryInterface.addIndex(
-        'notification_sender_setting',
+        'blocked_notifications',
         ['national_id', 'sender_id'],
         {
-          name: 'notification_sender_setting_national_id_sender_id_unique',
+          name: 'blocked_notifications_national_id_sender_id_unique',
           unique: true,
           transaction,
         },
-      )
-
-      await queryInterface.addColumn(
-        'user_profile',
-        'notification_senders_initialized_at',
-        {
-          type: Sequelize.DATE,
-          allowNull: true,
-        },
-        { transaction },
       )
     })
   },
 
   async down(queryInterface) {
     await queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.dropTable('notification_sender_setting', {
-        transaction,
-      })
-      await queryInterface.removeColumn(
-        'user_profile',
-        'notification_senders_initialized_at',
-        { transaction },
-      )
+      await queryInterface.dropTable('blocked_notifications', { transaction })
     })
   },
 }

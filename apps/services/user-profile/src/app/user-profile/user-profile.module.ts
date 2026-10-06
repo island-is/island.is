@@ -17,9 +17,8 @@ import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from './models/userDeviceTokens.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
-import { UserProfileUserNotificationModule } from '../user-notification/user-notification.module'
 import { Emails } from './models/emails.model'
-import { NotificationSenderSetting } from './models/notificationSenderSetting.model'
+import { BlockedNotification } from './models/blockedNotification.model'
 import { EmailsController } from './emails.controller'
 import { EmailsService } from './emails.service'
 import { ActorUserProfileController } from './actor-user-profile.controller'
@@ -34,12 +33,11 @@ import { NotificationSettingsService } from './notification-settings.service'
       UserDeviceTokens,
       ActorProfile,
       Emails,
-      NotificationSenderSetting,
+      BlockedNotification,
     ]),
     EmailModule,
     SmsModule,
     AuthDelegationApiClientModule,
-    UserProfileUserNotificationModule,
     FeatureFlagModule,
   ],
   controllers: [
