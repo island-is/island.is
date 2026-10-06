@@ -6,7 +6,12 @@ import {
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
+import {
+  formatDate,
+  LinkResolver,
+  m,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -55,6 +60,7 @@ const StateMessage = ({
 
 export const HealthConversationsBox = ({ limit }: Props) => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
   const userInfo = useUserInfo()
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
 
@@ -74,7 +80,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
+      paddingTop={[2, 2, 3]}
+      paddingBottom={3}
       height="full"
     >
       {!loading && !hasHealthScope && (
@@ -121,7 +128,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
               icon="arrowForward"
               type="filled"
               color="blue400"
-              size="medium"
+              size={isMobile ? 'small' : 'medium'}
             />
           </LinkResolver>
         )}
@@ -161,7 +168,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       {!loading &&
         hasHealthScope &&
         !error &&
-        conversations.map((item) => {
+        conversations.map((item, index) => {
           const unread = !item.isRead
           return (
             <LinkResolver
@@ -185,6 +192,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                   className={cn(
                     listStyles.conversationRow,
                     unread && styles.unreadRow,
+                    index === 0 && styles.firstRow,
                   )}
                 >
                   <ConversationAvatar

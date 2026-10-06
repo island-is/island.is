@@ -67,7 +67,12 @@ export const TimeCard = ({
             {title}
           </Text>
           {showArrow && (
-            <Icon icon="arrowForward" type="outline" color="blue400" />
+            <Icon
+              icon="arrowForward"
+              type="outline"
+              color="blue400"
+              size={isMobile ? 'small' : 'medium'}
+            />
           )}
         </Box>
         <Box
