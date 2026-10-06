@@ -16,24 +16,18 @@ export interface InvoiceDto {
 export const mapInvoiceDto = (
   data: InvoicePaymentDetailResponseDto,
 ): InvoiceDto | null => {
-  if (
-    data.erpInvoiceId == null ||
-    (!data.invoiceNum && !data.invoiceNumRedacted)
-  ) {
+  if (!data.invoiceGuid || (!data.invoiceNum && !data.invoiceNumRedacted)) {
     return null
   }
 
   return {
-    id: String(data.erpInvoiceId),
+    id: data.invoiceGuid,
     number: data.invoiceNum ?? null,
     numberRedacted: data.invoiceNumRedacted ?? false,
     totalAmount: data.invoiceTotalBaseAmountISK ?? null,
     itemization: (data.glLines ?? [])
       .map((line, index) =>
-        mapInvoiceGroupInvoiceItemization(
-          line,
-          `${data.erpInvoiceId}-${index}`,
-        ),
+        mapInvoiceGroupInvoiceItemization(line, `${data.invoiceGuid}-${index}`),
       )
       .filter(isDefined),
   }
