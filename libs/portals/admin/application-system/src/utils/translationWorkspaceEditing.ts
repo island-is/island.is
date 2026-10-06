@@ -92,11 +92,10 @@ export type TranslationToSave = {
   valueEn?: string
 }
 
-export const buildTranslationsToSave = (
+const collectDirtyEntries = (
   editedValues: EditedTranslations,
   persistedByKey: PersistedByKey,
-  namespace: string,
-): TranslationToSave[] => {
+): Map<string, { valueIs?: string; valueEn?: string }> => {
   const dirtyByKey = new Map<string, { valueIs?: string; valueEn?: string }>()
 
   for (const locale of ['is', 'en'] as const) {
@@ -113,7 +112,15 @@ export const buildTranslationsToSave = (
     }
   }
 
-  return Array.from(dirtyByKey.entries())
+  return dirtyByKey
+}
+
+export const buildTranslationsToSave = (
+  editedValues: EditedTranslations,
+  persistedByKey: PersistedByKey,
+  namespace: string,
+): TranslationToSave[] => {
+  return Array.from(collectDirtyEntries(editedValues, persistedByKey).entries())
     .filter(([messageKey]) =>
       isOwnedTranslationMessageId(messageKey, [namespace]),
     )
@@ -127,31 +134,12 @@ export const buildTranslationsToSave = (
 export const hasUnsavedTranslationChanges = (
   editedValues: EditedTranslations,
   persistedByKey: PersistedByKey,
-): boolean => {
-  return (['is', 'en'] as const).some((locale) =>
-    Object.entries(editedValues[locale]).some(
-      ([key, value]) =>
-        value !== getPersistedForMessage(persistedByKey, key, locale),
-    ),
-  )
-}
+): boolean => collectDirtyEntries(editedValues, persistedByKey).size > 0
 
 export const countUnsavedTranslationKeys = (
   editedValues: EditedTranslations,
   persistedByKey: PersistedByKey,
-): number => {
-  const keysWithPending = new Set<string>()
-  for (const locale of ['is', 'en'] as const) {
-    for (const [messageKey, value] of Object.entries(editedValues[locale])) {
-      if (
-        value !== getPersistedForMessage(persistedByKey, messageKey, locale)
-      ) {
-        keysWithPending.add(messageKey)
-      }
-    }
-  }
-  return keysWithPending.size
-}
+): number => collectDirtyEntries(editedValues, persistedByKey).size
 
 export type GoogleTranslateItem = { id: string; sourceText: string }
 

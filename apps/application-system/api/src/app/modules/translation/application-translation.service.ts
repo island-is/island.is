@@ -314,6 +314,21 @@ export class ApplicationTranslationService {
     )
   }
 
+  private buildUpdatedFields(
+    entry: EntryProps<NamespaceEntryFields>,
+    stringsIs: Record<string, string>,
+    stringsEn: Record<string, string>,
+  ): NamespaceEntryFields {
+    return {
+      ...entry.fields,
+      strings: {
+        ...entry.fields.strings,
+        [DEFAULT_LOCALE]: stringsIs,
+        [ENGLISH_LOCALE]: stringsEn,
+      },
+    }
+  }
+
   private async mergeTranslationsIntoEntry(
     namespace: string,
     inputs: UpsertTranslationInput[],
@@ -347,17 +362,7 @@ export class ApplicationTranslationService {
 
     return this.managementClient.entry.update<NamespaceEntryFields>(
       { entryId: namespace },
-      {
-        ...entry,
-        fields: {
-          ...entry.fields,
-          strings: {
-            ...entry.fields.strings,
-            [DEFAULT_LOCALE]: stringsIs,
-            [ENGLISH_LOCALE]: stringsEn,
-          },
-        },
-      },
+      { ...entry, fields: this.buildUpdatedFields(entry, stringsIs, stringsEn) },
     )
   }
 
@@ -570,14 +575,7 @@ export class ApplicationTranslationService {
           { entryId: namespace },
           {
             ...entry,
-            fields: {
-              ...entry.fields,
-              strings: {
-                ...entry.fields.strings,
-                [DEFAULT_LOCALE]: mergedIs,
-                [ENGLISH_LOCALE]: mergedEn,
-              },
-            },
+            fields: this.buildUpdatedFields(entry, mergedIs, mergedEn),
           },
         )
 

@@ -74,17 +74,18 @@ export const descriptorsForSectionNavigation = (
   )
 }
 
-/** One sidebar entry for a whole section (matches stepper when there are no subsections). */
-export const buildSectionNavigationScreen = (
-  sectionId: string,
+const buildNavigationScreen = (
+  kind: 'section' | 'subsection',
+  navType: 'SECTION_NAV_GROUP' | 'SUBSECTION_NAV_GROUP',
+  id: string,
   title: string | null | undefined,
   titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
 ): ScreenIntrospection => {
   return {
-    id: `__navigation:section:${sectionId}`,
-    type: 'SECTION_NAV_GROUP',
-    title: title ?? sectionId,
+    id: `__navigation:${kind}:${id}`,
+    type: navType,
+    title: title ?? id,
     description: null,
     pageTitle: null,
     subTitle: null,
@@ -99,30 +100,37 @@ export const buildSectionNavigationScreen = (
   }
 }
 
+/** One sidebar entry for a whole section (matches stepper when there are no subsections). */
+export const buildSectionNavigationScreen = (
+  sectionId: string,
+  title: string | null | undefined,
+  titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
+  screens: ScreenIntrospection[],
+): ScreenIntrospection =>
+  buildNavigationScreen(
+    'section',
+    'SECTION_NAV_GROUP',
+    sectionId,
+    title,
+    titleMessageDescriptor,
+    screens,
+  )
+
 /** One sidebar entry per subsection (matches stepper subsection tabs). */
 export const buildSubSectionNavigationScreen = (
   subSectionId: string,
   title: string | null | undefined,
   titleMessageDescriptor: GraphqlMessageDescriptor | null | undefined,
   screens: ScreenIntrospection[],
-): ScreenIntrospection => {
-  return {
-    id: `__navigation:subsection:${subSectionId}`,
-    type: 'SUBSECTION_NAV_GROUP',
-    title: title ?? subSectionId,
-    description: null,
-    pageTitle: null,
-    subTitle: null,
-    subDescription: null,
-    checkboxLabel: null,
-    width: null,
-    space: null,
-    messageDescriptors: descriptorsForSectionNavigation(
-      titleMessageDescriptor,
-      screens,
-    ),
-  }
-}
+): ScreenIntrospection =>
+  buildNavigationScreen(
+    'subsection',
+    'SUBSECTION_NAV_GROUP',
+    subSectionId,
+    title,
+    titleMessageDescriptor,
+    screens,
+  )
 
 /**
  * Section-level leaf not under a subsection (uncommon). Keeps translations for that leaf only,
