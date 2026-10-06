@@ -1,8 +1,8 @@
-import { type ReactNode, useRef, useState } from 'react'
+import { type ReactNode, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Control, Controller, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -23,8 +23,12 @@ import {
   formatCurrency,
   formatCurrencyWithoutSuffix,
 } from '@island.is/shared/utils'
-import type { CustomsCalculatorCalculateQuery } from '@island.is/web/graphql/schema'
+import type {
+  CustomsCalculatorCalculateQuery,
+  CustomsGeneralChargesQuery,
+} from '@island.is/web/graphql/schema'
 import { GET_CUSTOMS_CALCULATOR_CALCULATE } from '@island.is/web/screens/queries/CustomsCalculator'
+import { GET_CUSTOMS_GENERAL_CHARGES } from '@island.is/web/screens/queries/CustomsGeneral'
 
 import { translation as translationStrings } from './translation.strings'
 import * as styles from './Units.css'
@@ -171,6 +175,28 @@ export const Units = ({
       GET_CUSTOMS_CALCULATOR_CALCULATE,
     )
 
+  // Charge names (e.g. "Verðtollur") are shown as the explanation of each
+  // charge in the breakdown, they come from the same endpoint as the customs
+  // charges list
+  const [chargesDate] = useState(
+    () => `${new Date().toISOString().split('.')[0]}Z`,
+  )
+  const chargesResponse = useQuery<CustomsGeneralChargesQuery>(
+    GET_CUSTOMS_GENERAL_CHARGES,
+    {
+      variables: { input: { date: chargesDate, system: 'I' } },
+      skip: !called,
+    },
+  )
+  const chargeNameByCode = useMemo(() => {
+    const chargeNameByCode = new Map<string, string>()
+    for (const charge of chargesResponse.data?.customsGeneralCharges ?? []) {
+      if (charge.code && charge.name)
+        chargeNameByCode.set(charge.code, charge.name)
+    }
+    return chargeNameByCode
+  }, [chargesResponse.data?.customsGeneralCharges])
+
   const hasProductInfoInputs = PRODUCT_INFO_UNITS.some((unit) =>
     unitStrings.includes(unit),
   )
@@ -263,7 +289,7 @@ export const Units = ({
                           charge.code
                             ? `${charge.description ?? ''} (${charge.code})`
                             : (charge.description ?? ''),
-                          '',
+                          chargeNameByCode.get(charge.code ?? '') ?? '',
                           formatCurrencyWithoutSuffix(Number(charge.amount)),
                         ]}
                       />
