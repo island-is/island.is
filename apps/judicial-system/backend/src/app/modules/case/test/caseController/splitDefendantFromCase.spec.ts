@@ -1,4 +1,4 @@
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
@@ -24,7 +24,6 @@ import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
-  caseInclude,
   CaseRepositoryService,
   CaseString,
   CaseStringRepositoryService,
@@ -190,7 +189,7 @@ describe('CaseController - Split defendant from case', () => {
       ['007-2026-2'],
     )
     mockCaseRepositoryService.create.mockResolvedValue(splitCase)
-    mockCaseRepositoryService.findOne.mockResolvedValue(fullSplitCase)
+    mockCaseRepositoryService.findLiveById.mockResolvedValue(fullSplitCase)
     mockDefendantRepositoryService.moveToCase.mockResolvedValue()
     mockSubpoenaRepositoryService.moveAllForDefendantToCase.mockResolvedValue(1)
     mockVerdictRepositoryService.moveAllForDefendantToCase.mockResolvedValue(1)
@@ -408,15 +407,10 @@ describe('CaseController - Split defendant from case', () => {
     })
 
     it('should read the full split case for the initial court documents and return the split case', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: caseInclude,
-        where: {
-          id: splitCaseId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-        transaction,
-      })
+      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+        splitCaseId,
+        { allowDeleted: false, transaction },
+      )
       expect(then.result).toBe(splitCase)
     })
   })
@@ -452,7 +446,7 @@ describe('CaseController - Split defendant from case', () => {
       expect(
         mockPoliceCaseNumberRepositoryService.moveAssignedRowsToCaseForDefendant,
       ).not.toHaveBeenCalled()
-      expect(mockCaseRepositoryService.findOne).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.findLiveById).not.toHaveBeenCalled()
     })
   })
 })

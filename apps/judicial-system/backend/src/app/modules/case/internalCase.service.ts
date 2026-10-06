@@ -31,6 +31,7 @@ import {
   courtSubtypes,
   EventType,
   getIndictmentAppealDeadline,
+  getIndictmentCasePoliceState,
   isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
@@ -80,7 +81,6 @@ import {
   DefendantRepositoryService,
   EventLog,
   IndictmentCount,
-  User,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
@@ -89,6 +89,7 @@ import { DeliverIndictmentConclusionDto } from './dto/deliverIndictmentConclusio
 import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { ArchiveResponse } from './models/archive.response'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PdfService } from './pdf.service'
@@ -1759,14 +1760,19 @@ export class InternalCaseService {
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
-    return this.caseRepositoryService.count({
-      include: [{ model: User, as: 'creatingProsecutor' }],
-      where: {
-        type: CaseType.INDICTMENT,
-        state: CaseState.WAITING_FOR_CONFIRMATION,
-        '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
-      },
-    })
+    return this.caseRepositoryService.countIndictmentsAwaitingConfirmationForProsecutorsOffice(
+      prosecutorsOfficeId,
+    )
+  }
+
+  async getCasePoliceState(theCase: Case): Promise<CasePoliceStateResponse> {
+    const liveCase = await this.caseRepositoryService.findLiveDescendantCase(
+      theCase,
+    )
+
+    return {
+      state: getIndictmentCasePoliceState(liveCase.state),
+    }
   }
 
   async getIndictmentCasesWithVerdictAppealDeadlineOnTargetDate(

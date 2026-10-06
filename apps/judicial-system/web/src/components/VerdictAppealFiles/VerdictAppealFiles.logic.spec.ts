@@ -138,6 +138,35 @@ describe('getVerdictAppealFileGroups', () => {
     ])
   })
 
+  // The declaration is one of the documents an appeal arrives at the court of
+  // appeals with, so the court sees every defendant's - it is neither a
+  // prosecution nor a defence user, so without naming it the shared rule
+  // leaves it with nothing.
+  it('should show the court of appeals every defendant', () => {
+    const groups = getVerdictAppealFileGroups(
+      theCase([
+        file(
+          'other',
+          'other_client_id',
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          '2026-06-03T13:34:00.000Z',
+        ),
+        file(
+          'own',
+          'own_client_id',
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          '2026-06-04T13:34:00.000Z',
+        ),
+      ]),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups.map((g) => g.defendant.id)).toEqual([
+      'own_client_id',
+      'other_client_id',
+    ])
+  })
+
   // The public prosecution office acts on every appeal, and registers the ones
   // that arrive by letter, so it sees every defendant's declaration too.
   it('should show the public prosecution office every defendant', () => {

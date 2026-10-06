@@ -57,6 +57,26 @@
               "format": "guid"
             },
             "x-position": 1
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "",
+              "nullable": true
+            },
+            "x-position": 3
           }
         ],
         "responses": {
@@ -111,7 +131,55 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_CreateIncomesResponse"
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IncomesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/applicants/{applicantId}/incomes/validate": {
+      "post": {
+        "tags": ["Income"],
+        "summary": "Validate income and uncompensated period information for an applicant without saving anything.",
+        "operationId": "Income_Validate",
+        "parameters": [
+          {
+            "name": "applicantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_External_Domain_Requests_Income_CreateIncomesRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IncomesResponse"
                 }
               }
             }
@@ -2730,18 +2798,34 @@
           }
         }
       },
-      "Galdur_External_Domain_Models_Income_CreateIncomesResponse": {
+      "Galdur_External_Domain_Models_Income_IncomesResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
           "success": {
             "type": "boolean"
           },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Galdur_External_Domain_Models_Income_IncomeError"
+            }
+          }
+        }
+      },
+      "Galdur_External_Domain_Models_Income_IncomeError": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
           "reason": {
             "type": "string",
             "nullable": true
           },
           "reasonEN": {
+            "type": "string",
+            "nullable": true
+          },
+          "referenceId": {
             "type": "string",
             "nullable": true
           }
@@ -2793,6 +2877,18 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "referenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
           "employerSSN": {
             "type": "string"
           },
@@ -2821,6 +2917,18 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "referenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
           "employerSSN": {
             "type": "string"
           },
@@ -2847,6 +2955,18 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "referenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
           "incomeTypeId": {
             "type": "string",
             "format": "guid"
@@ -2874,6 +2994,18 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "referenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
           "incomeTypeId": {
             "type": "string",
             "format": "guid"
@@ -2897,6 +3029,18 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "referenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
           "incomeTypeId": {
             "type": "string",
             "format": "guid"
@@ -2920,6 +3064,18 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "referenceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          },
           "periodFrom": {
             "type": "string",
             "format": "date-time"
@@ -6459,6 +6615,10 @@
           "errorMessage": {
             "type": "string",
             "nullable": true
+          },
+          "taskId": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -9201,6 +9361,11 @@
             "type": "string",
             "description": "Id",
             "format": "guid"
+          },
+          "referenceId": {
+            "type": "string",
+            "description": "Auðkenni færslu frá ytri þjónustu",
+            "nullable": true
           },
           "incomeTypeId": {
             "type": "string",

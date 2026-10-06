@@ -12,6 +12,7 @@ import {
 
 import { CaseRepositoryService } from '../repository'
 import { CaseTableService } from './caseTable.service'
+import { userAccessIncludes } from './caseTable.whereOptions'
 
 const prosecutionUser = (id: string): User =>
   ({
@@ -201,6 +202,7 @@ describe('CaseTableService', () => {
       id?: string
       appealCase?: ReturnType<typeof buildAppeal> | null
       rulingOrderAppealCases?: ReturnType<typeof buildAppeal>[]
+      verdictAppealCase?: ReturnType<typeof buildAppeal> | null
       defendants?: { nationalId: string; name: string }[]
       matchedValue?: string
       matchedField?: string
@@ -212,12 +214,38 @@ describe('CaseTableService', () => {
       courtCaseNumber: null,
       appealCase: overrides.appealCase ?? null,
       rulingOrderAppealCases: overrides.rulingOrderAppealCases ?? [],
+      verdictAppealCase: overrides.verdictAppealCase ?? null,
       defendants: overrides.defendants ?? [],
       get: (key: string) =>
         ({
           matchedValue: overrides.matchedValue ?? '001-2024',
           matchedField: overrides.matchedField ?? 'policeCaseNumbers',
         }[key]),
+    })
+
+    // searchCases builds its own include list rather than going through
+    // getGlobalIncludes, so it is the one query that has to ask for the access
+    // rule's joins itself. Asserted at the caller, because a spec that only
+    // exercises the helper stays green when the call site drops it - and the
+    // query then names an alias it never joined, which Postgres rejects.
+    //
+    // Driven off the rule rather than a hard coded alias, so it keeps up if the
+    // rule starts reading another association.
+    it('joins whatever the access rule reads', async () => {
+      mockFindAll.mockResolvedValue([])
+      const user = courtOfAppealsUser('user-1')
+
+      await service.searchCases('test', user)
+
+      const call = mockFindAll.mock.calls[0][0]
+      const joined = call.include.map((include: { as: string }) => include.as)
+      const required = Object.keys(userAccessIncludes(user) ?? {})
+
+      // Guards against the assertion below quietly becoming vacuous.
+      expect(required).not.toEqual([])
+      for (const alias of required) {
+        expect(joined).toContain(alias)
+      }
     })
 
     it('requests rulingOrderAppealCases and extra appealCase fields for COA users', async () => {
@@ -279,6 +307,53 @@ describe('CaseTableService', () => {
         'L-12/2024',
       ])
       result.rows.forEach((r) => expect(r.caseId).toBe('case-1'))
+    })
+
+    // A verdict appeal is a proceeding of its own with its own page, so search
+    // has to offer it as its own row. Without this the court finds the case,
+    // opens it, and lands on the ruling appeal overview - the list it came
+    // from was the only thing that ever knew better.
+    it('emits a row for the verdict appeal', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: buildAppeal('appeal-cl', 'L-10/2024'),
+        verdictAppealCase: buildAppeal('appeal-verdict', 'L-99/2024'),
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rows.map((r) => r.appealCaseId)).toEqual([
+        'appeal-cl',
+        'appeal-verdict',
+      ])
+      expect(result.rows.map((r) => r.appealCaseNumber)).toEqual([
+        'L-10/2024',
+        'L-99/2024',
+      ])
+    })
+
+    // The court sees a verdict appeal from the moment it is filed - that is
+    // what the access rule says and what its own list shows. The ruling appeal
+    // rule would hold a newly filed one back until the court received it.
+    it('emits a row for a verdict appeal that has only just been filed', async () => {
+      const user = courtOfAppealsUser('user-1')
+      const mockCase = buildSearchCase({
+        appealCase: null,
+        verdictAppealCase: buildAppeal(
+          'appeal-verdict',
+          '',
+          AppealCaseState.APPEALED,
+        ),
+      })
+      mockFindAll.mockResolvedValueOnce([mockCase])
+      mockFindAll.mockResolvedValue([])
+
+      const result = await service.searchCases('001', user)
+
+      expect(result.rowCount).toBe(1)
+      expect(result.rows[0].appealCaseId).toBe('appeal-verdict')
     })
 
     it('emits ruling-order rows when case-level appeal is missing', async () => {

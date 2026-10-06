@@ -11,7 +11,14 @@ import { PaymentField } from './components/PaymentField/PaymentField'
 import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 
 export const FieldContent = () => {
-  const { control, inListBuilder, setFocus } = useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    inListBuilder,
+    setFocus,
+    focus,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
   const { fieldType } = currentItem
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
@@ -37,8 +44,15 @@ export const FieldContent = () => {
               name="identifier"
               value={currentItem.identifier ?? ''}
               backgroundColor="blue"
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'CHANGE_IDENTIFIER',
+                  payload: { newValue: e.target.value },
+                })
+              }
               onFocus={(e) => setFocus(e.target.value)}
-              readOnly
+              onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+              readOnly={control.isReadOnly}
             />
           </Box>
         )}

@@ -34,8 +34,12 @@ uploads has to be named in all three of:
 - the visibility list for that user group in `file/guards/caseFileCategory.ts`,
 - the upload allowlist of the guard that accepts it, e.g.
   `file/guards/limitedAccessCreateDefendantCaseFile.guard.ts`,
-- the `caseFiles` category allowlist inside the include in
-  `case/limitedAccessCase.service.ts`.
+- the `caseFiles` category allowlists inside the limited access include,
+  `getLimitedAccessCaseInclude` in
+  `repository/types/caseRepository.types.ts`. There are **three** of them: the
+  case's own `caseFiles`, the narrower one under `mergedCases` and the one
+  under `splitCases` — a category that belongs in a linked case has to be
+  named there too.
 
 The third is the one that gets missed, and the symptom is confusing: the upload
 succeeds, the file is stored, and it is simply absent from every case payload,
@@ -95,12 +99,18 @@ its dates from `new Date()`. A fixed service date passes until the window closes
 and then fails forever, in a spec that has nothing to do with whoever is running
 it that day.
 
-## Run `nx lint`, not only `nx format:check`
+## Lint must be clean before opening a PR
 
-Import ordering is an ESLint rule (`simple-import-sort`), not a prettier one, so
-a file that `format:check` is happy with can still fail linting. CI notices and
-pushes a `chore: lintfix` commit onto the branch, which then has to be merged
-back before the next push.
+Run `yarn nx affected -t lint --base=origin/main` before committing and fix
+everything it reports. Warnings count: every judicial-system lint target runs
+with `maxWarnings: 0`, so an unused import, an unused variable or a
+`naming-convention` warning fails `nx lint` and CI exactly like an error does.
+Do not push or open a PR while lint reports anything.
+
+`nx format:check` is not enough. Import ordering is an ESLint rule
+(`simple-import-sort`), not a prettier one, so a file that `format:check` is
+happy with can still fail linting. CI notices and pushes a `chore: lintfix`
+commit onto the branch, which then has to be merged back before the next push.
 
 ## Derive view data with a function, not `useMemo`
 
@@ -143,6 +153,24 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
   that was already in flight.
 - Never put a `.spec.ts` under `pages/` in the web app - Next compiles it as a
   route and the production build fails.
+
+## Queue messages after commit
+
+A request queues messages for the message handler with
+`queueMessagesAfterCommit` from `app/middleware`, and with nothing else. The
+helper registers the push with the request's transaction context, so a request
+whose transaction rolls back sends nothing. The message library's
+`pushMessagesToRequestStore` is the plumbing behind the helper: it pushes into
+a store that is flushed when the response ends whatever happened to the
+database work, so the helper is its only production caller and must stay so. A
+handler that commits a transaction of its own must
+return right after the commit: the callbacks run on the success path, so work
+that can fail after a commit would drop them.
+
+In a spec, mock the helper's module
+(`jest.mock('<path to>/middleware/queueMessagesAfterCommit')`) and assert on
+the messages it was called with. Registering real callbacks needs the request
+context and the commit interceptor, which controller specs do not run.
 
 ## Codegen
 

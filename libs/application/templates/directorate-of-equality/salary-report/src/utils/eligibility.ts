@@ -1,4 +1,4 @@
-import { Application, ApplicationContext } from '@island.is/application/types'
+import { ApplicationContext } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   isPostponeRequested,
@@ -8,18 +8,10 @@ import {
 /**
  * DMR's machine-readable reason for refusing a salary report, shared by the
  * pre-flight check (`GET reports/salary/eligibility`) and the submit itself.
- *
- * The order is the server's: a company that owes an equality plan is told about
- * that first, whatever its renewal window says.
+ * It is the only reason left since DMR dropped the six-month renewal window.
  */
 export const SALARY_INELIGIBILITY_MISSING_EQUALITY_REPORT =
   'MISSING_EQUALITY_REPORT'
-export const SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN =
-  'RENEWAL_WINDOW_NOT_OPEN'
-
-export type SalaryIneligibilityReason =
-  | typeof SALARY_INELIGIBILITY_MISSING_EQUALITY_REPORT
-  | typeof SALARY_INELIGIBILITY_RENEWAL_WINDOW_NOT_OPEN
 
 // The guard out of PREREQUISITES. Defaults to false, but the provider it reads
 // throws rather than answering on an outage, so the transition is never
@@ -31,24 +23,6 @@ export const isSalaryReportEligible = (ctx: ApplicationContext): boolean =>
     'salaryReportEligibility.data.eligible',
     false,
   ) === true
-
-export const getSalaryIneligibilityReason = (
-  application: Application,
-): SalaryIneligibilityReason | undefined =>
-  getValueViaPath<SalaryIneligibilityReason>(
-    application.externalData,
-    'salaryReportEligibility.data.reason',
-  )
-
-// Documented nullable on the DTO — there is no window to anchor on until DMR
-// has a due date for the company — so the screen needs a variant without it.
-export const getEarliestSubmissionDate = (
-  application: Application,
-): string | undefined =>
-  getValueViaPath<string>(
-    application.externalData,
-    'salaryReportEligibility.data.earliestSubmissionDate',
-  )
 
 // Both halves, not just the postpone answer: nothing clears that answer in
 // DRAFT, so an applicant who ticks "fresta" and then edits the data until the

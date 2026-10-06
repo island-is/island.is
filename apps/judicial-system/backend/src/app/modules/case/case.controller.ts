@@ -50,6 +50,7 @@ import {
   CaseType,
   hasGeneratedCourtRecordPdf,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   isCompletedCase,
   isDistrictCourtUser,
@@ -193,6 +194,31 @@ export class CaseController {
     }
   }
 
+  private async validateAppealProsecutor(appealProsecutorId: string) {
+    const appealProsecutor = await this.userService.findById(appealProsecutorId)
+
+    if (!appealProsecutor.active) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} is not an active prosecutor`,
+      )
+    }
+
+    if (appealProsecutor.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} does not have an acceptable role ${UserRole.PROSECUTOR}`,
+      )
+    }
+
+    if (
+      appealProsecutor.institution?.type !==
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE
+    ) {
+      throw new ForbiddenException(
+        `User ${appealProsecutorId} belongs to the wrong institution`,
+      )
+    }
+  }
+
   private assertIndictmentWaitingForReviewUpdateAllowed(
     theCase: Case,
     update: UpdateCase,
@@ -306,6 +332,10 @@ export class CaseController {
         )
       }
 
+      if (update.appealProsecutorId) {
+        await this.validateAppealProsecutor(update.appealProsecutorId)
+      }
+
       if (update.rulingModifiedHistory) {
         const history = theCase.rulingModifiedHistory
           ? `${theCase.rulingModifiedHistory}\n\n`
@@ -328,7 +358,13 @@ export class CaseController {
         }
       }
 
-      if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
+      // A case being corrected sends its existing parent back unchanged, so
+      // only a change of parent is refused outside the received state.
+      if (
+        update.mergeCaseId &&
+        update.mergeCaseId !== theCase.mergeCaseId &&
+        theCase.state !== CaseState.RECEIVED
+      ) {
         throw new BadRequestException(
           'Cannot merge case that is not in a received state',
         )

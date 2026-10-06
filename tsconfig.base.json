@@ -154,6 +154,9 @@
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-institutions": [
+        "libs/api/domains/icelandic-government-institutions/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-medicines-agency": [
         "libs/api/domains/icelandic-medicines-agency/src/index.ts"
       ],
@@ -264,6 +267,9 @@
       ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
+      ],
+      "@island.is/api/domains/tax-calculators": [
+        "libs/api/domains/tax-calculators/src/index.ts"
       ],
       "@island.is/api/domains/temporary-voter-registry": [
         "libs/api/domains/temporary-voter-registry/src/index.ts"
@@ -690,6 +696,9 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/confirm-job-or-income": [
+        "libs/application/templates/vmst/confirm-job-or-income/src/index.ts"
+      ],
       "@island.is/application/templates/vmst/confirm-job-search": [
         "libs/application/templates/vmst/confirm-job-search/src/index.ts"
       ],
@@ -787,6 +796,9 @@
       "@island.is/clients/directorate-of-equality": [
         "libs/clients/directorate-of-equality/src/index.ts"
       ],
+      "@island.is/clients/directorate-of-equality-statistics": [
+        "libs/clients/directorate-of-equality-statistics/src/index.ts"
+      ],
       "@island.is/clients/directorate-of-immigration": [
         "libs/clients/directorate-of-immigration/src/index.ts"
       ],
@@ -844,6 +856,9 @@
       ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
+      ],
+      "@island.is/clients/government-invoices": [
+        "libs/clients/government-invoices/src/index.ts"
       ],
       "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
@@ -952,6 +967,9 @@
       "@island.is/clients/regulations-admin": [
         "libs/clients/regulations-admin/src/index.ts"
       ],
+      "@island.is/clients/rsk/calculators": [
+        "libs/clients/rsk/calculators/src/index.ts"
+      ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
@@ -993,6 +1011,9 @@
       ],
       "@island.is/clients/transport-authority/exemption-for-transportation": [
         "libs/clients/transport-authority/exemption-for-transportation/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/taxi": [
+        "libs/clients/transport-authority/taxi/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
@@ -1366,6 +1387,7 @@
         "libs/skilavottord/consts/src/index.ts"
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/tax-calculators": ["libs/tax-calculators/src/index.ts"],
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],

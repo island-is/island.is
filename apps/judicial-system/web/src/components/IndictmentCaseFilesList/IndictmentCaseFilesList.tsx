@@ -45,7 +45,6 @@ import {
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { caseFiles } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
@@ -54,6 +53,7 @@ import {
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { shouldShowPoliceDigitalCaseFilesSection } from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -359,8 +359,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
+      // The court of appeals needs it for the same reason the others do: the
+      // certificate is what dates the appeal window the appeal depends on.
       canViewVerdictServiceCertificate:
-        isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
+        isPublicProsecutionOfficeUser(user) ||
+        isPrisonAdminUser(user) ||
+        isCourtOfAppealsUser(user),
     }),
     [user, workingCase.hasCivilClaims, workingCase.state],
   )
@@ -516,9 +520,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const showDigitalCaseFilesSection =
-    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
-    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+  const showDigitalCaseFilesSection = shouldShowPoliceDigitalCaseFilesSection(
+    user,
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+  )
 
   const hasNoFiles =
     !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection

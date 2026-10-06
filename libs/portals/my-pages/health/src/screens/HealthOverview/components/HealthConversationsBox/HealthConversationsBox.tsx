@@ -60,13 +60,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
 
   const { data, loading, error } = useGetHealthConversationsQuery({
     fetchPolicy: 'network-only',
-    variables: { input: {} },
+    variables: { input: { limit } },
     skip: !hasHealthScope,
   })
 
-  const conversations = (
-    data?.healthDirectorateHealthConversations ?? []
-  ).slice(0, limit)
+  const conversations =
+    data?.healthDirectoratePaginatedHealthConversations?.data ?? []
 
   return (
     <Box
@@ -89,9 +88,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={3}
+        paddingX={[2, 2, 3]}
       >
-        <LinkResolver href={HealthPaths.HealthConversations}>
+        <LinkResolver
+          href={HealthPaths.HealthConversations}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
@@ -113,6 +115,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
           <LinkResolver
             href={HealthPaths.HealthConversations}
             aria-label={formatMessage(messages.seeAllMessages)}
+            className={styles.headerLink}
           >
             <Icon
               icon="arrowForward"
@@ -125,7 +128,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       </Box>
 
       {loading && (
-        <Box marginTop={4} paddingX={3}>
+        <Box marginTop={4} paddingX={[2, 2, 3]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -177,7 +180,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                   borderTopWidth="standard"
                   borderColor="blue200"
                   paddingY={2}
-                  paddingX={[3, 3, 2]}
+                  paddingLeft={[1, 1, 2]}
+                  paddingRight={2}
                   className={cn(
                     listStyles.conversationRow,
                     unread && styles.unreadRow,
@@ -197,8 +201,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                     >
                       <Box overflow="hidden">
                         <Text variant="medium" truncate>
-                          {item.organization?.name?.trim() ||
-                            item.lastSenderGroupName}
+                          {item.groupName?.trim() || item.organization?.name}
                         </Text>
                       </Box>
                       {item.lastMessageSentAt && (
@@ -215,12 +218,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                       truncate
                     >
                       {item.title}
-                      {unread && (
-                        <VisuallyHidden>
-                          {` - ${formatMessage(m.notificationUnread)}`}
-                        </VisuallyHidden>
-                      )}
                     </Text>
+                    {unread && (
+                      <VisuallyHidden>
+                        {` - ${formatMessage(m.notificationUnread)}`}
+                      </VisuallyHidden>
+                    )}
                   </Box>
                 </Box>
               </Box>

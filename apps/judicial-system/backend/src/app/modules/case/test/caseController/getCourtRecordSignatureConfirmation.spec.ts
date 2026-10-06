@@ -1,7 +1,10 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseOrigin,
+  CaseType,
   InstitutionType,
   User,
   UserRole,
@@ -27,15 +30,22 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get court record signature confirmation', () => {
+  let mockQueuedMessages: Message[]
   let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, sequelize, caseRepositoryService, caseController } =
-      await createTestingCaseModule()
+    const {
+      queuedMessages,
+      awsS3Service,
+      sequelize,
+      caseRepositoryService,
+      caseController,
+    } = await createTestingCaseModule()
 
+    mockQueuedMessages = queuedMessages
     mockAwsS3Service = awsS3Service
     mockCaseRepositoryService = caseRepositoryService
 
@@ -44,8 +54,8 @@ describe('CaseController - Get court record signature confirmation', () => {
     mockPutGeneratedObject.mockRejectedValue(new Error('Some error'))
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockRejectedValue(new Error('Some error'))
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockRejectedValue(new Error('Some error'))
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -95,8 +105,9 @@ describe('CaseController - Get court record signature confirmation', () => {
     const documentToken = uuid()
 
     beforeEach(() => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
     })
 
     describe('successful completion', () => {
@@ -108,8 +119,9 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseRepositoryService.update as jest.Mock
         mockUpdate.mockResolvedValueOnce(theCase)
-        const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(theCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(theCase)
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })
@@ -125,6 +137,66 @@ describe('CaseController - Get court record signature confirmation', () => {
         )
         expect(then.result).toEqual({
           documentSigned: true,
+        })
+      })
+
+      it('should queue the signed court record for the court', () => {
+        expect(mockQueuedMessages).toEqual([
+          {
+            type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+            user,
+            caseId,
+          },
+        ])
+      })
+    })
+
+    describe('successful completion of LÖKE case', () => {
+      const givenSignedLokeCase = async (type: CaseType) => {
+        const lokeCase = { ...theCase, origin: CaseOrigin.LOKE, type } as Case
+
+        const mockPutGeneratedObject =
+          mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
+        mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
+        const mockUpdate = mockCaseRepositoryService.update as jest.Mock
+        mockUpdate.mockResolvedValueOnce(lokeCase)
+        const mockFindLiveById =
+          mockCaseRepositoryService.findLiveById as jest.Mock
+        mockFindLiveById.mockResolvedValueOnce(lokeCase)
+
+        await givenWhenThen(caseId, user, lokeCase, documentToken)
+      }
+
+      describe('investigation case', () => {
+        beforeEach(() => givenSignedLokeCase(CaseType.SEARCH_WARRANT))
+
+        it('should queue the signed court record for the police as well', () => {
+          expect(mockQueuedMessages).toEqual([
+            {
+              type: MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD,
+              user,
+              caseId,
+            },
+            {
+              type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+              user,
+              caseId,
+            },
+          ])
+        })
+      })
+
+      describe('restriction case', () => {
+        beforeEach(() => givenSignedLokeCase(CaseType.CUSTODY))
+
+        it('should queue the signed court record for the court only', () => {
+          expect(mockQueuedMessages).toEqual([
+            {
+              type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+              user,
+              caseId,
+            },
+          ])
         })
       })
     })

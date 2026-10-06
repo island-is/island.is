@@ -20,6 +20,7 @@ export interface TextInputProps {
   min?: string
   max?: string
   backgroundColor?: 'white' | 'blue'
+  labelledBy?: string
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -39,6 +40,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   min,
   max,
   backgroundColor = 'blue',
+  labelledBy,
 }) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -61,14 +63,8 @@ export const TextInput: React.FC<TextInputProps> = ({
       // the input renders the stored value back with a comma
       newValue = newValue.replace(',', '.')
 
-      const numValue = parseFloat(newValue)
-      if (!isNaN(numValue)) {
-        if (min !== undefined && numValue < parseFloat(min)) {
-          newValue = min.toString()
-        } else if (max !== undefined && numValue > parseFloat(max)) {
-          newValue = max.toString()
-        }
-      }
+      // Range is enforced on blur: clamping per keystroke makes every value
+      // between min and max unreachable, the first digit is always below min
     }
 
     onChange(newValue)
@@ -100,6 +96,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         backgroundColor={backgroundColor}
         id={id}
         name={id}
+        aria-labelledby={labelledBy}
         placeholder={placeholder}
         value={type === 'decimal' ? value.replace('.', ',') : value}
         onChange={handleChange}

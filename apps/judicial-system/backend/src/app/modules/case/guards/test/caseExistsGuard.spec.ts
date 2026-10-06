@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -7,11 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
-
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { caseInclude, CaseRepositoryService } from '../../../repository'
+import { CaseRepositoryService } from '../../../repository'
 import { CaseExistsGuard } from '../caseExists.guard'
 
 interface Then {
@@ -56,21 +53,18 @@ describe('Case Exists Guard', () => {
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: caseInclude,
-        where: {
-          id: caseId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
-      })
+      expect(mockCaseRepositoryService.findLiveById).toHaveBeenCalledWith(
+        caseId,
+        { allowDeleted: false, transaction: undefined },
+      )
       expect(then.result).toBe(true)
       expect(request.case).toBe(theCase)
     })

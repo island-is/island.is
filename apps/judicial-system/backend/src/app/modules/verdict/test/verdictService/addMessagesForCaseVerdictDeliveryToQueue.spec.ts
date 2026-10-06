@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import * as MessageModule from '@island.is/judicial-system/message'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   ServiceRequirement,
@@ -10,6 +9,7 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   Case,
   Defendant,
@@ -27,7 +27,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
   let verdictService: VerdictService
   let mockVerdictRepositoryService: VerdictRepositoryService
-  let mockAddMessagesToQueue: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
 
   beforeEach(async () => {
     jest.resetAllMocks()
@@ -37,11 +37,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
     verdictService = service
     mockVerdictRepositoryService = verdictRepositoryService
-    mockAddMessagesToQueue = (
-      jest.requireMock(
-        '@island.is/judicial-system/message',
-      ) as typeof MessageModule
-    ).addMessagesToQueue as jest.Mock
+    mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
 
     const mockCreate = mockVerdictRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue({ id: uuid() } as Verdict)
@@ -55,7 +51,7 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
       serviceRequirement: ServiceRequirement.REQUIRED,
       serviceInformationForDefendant: [],
       isDefaultJudgement: false,
-    } as Verdict
+    } as unknown as Verdict
 
     const theCase = {
       id: caseId,
@@ -82,10 +78,14 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
         serviceRequirement: ServiceRequirement.REQUIRED,
         serviceInformationForDefendant: [],
         isDefaultJudgement: false,
+        appealDate: undefined,
+        defendantHasRequestedAppeal: undefined,
+        isAcquittedByPublicProsecutionOffice: undefined,
       },
       { transaction },
     )
-    expect(mockAddMessagesToQueue).toHaveBeenCalledWith({
+    // Queued for after the commit, so a rollback sends nothing
+    expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
       type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
       user,
       caseId,
@@ -119,6 +119,52 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
 
     expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
     expect(mockVerdictRepositoryService.create).not.toHaveBeenCalled()
-    expect(mockAddMessagesToQueue).toHaveBeenCalled()
+    expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+      }),
+    )
+  })
+
+  // Everything that asks what became of a judgment reads the defendant's latest
+  // verdict - the appealed case lists and the read access that goes with them,
+  // "Áfrýjunarleyfi", "Sýknudómar". A replacement that dropped these would
+  // therefore read as if nothing had been recorded, silently, while the appeal,
+  // the leave request and the acquittal all still stand.
+  it('carries the office record of the judgment onto the replacement verdict', async () => {
+    const appealDate = new Date('2026-02-03')
+    const existingVerdict = {
+      id: existingVerdictId,
+      created: new Date('2026-01-01'),
+      externalPoliceDocumentId: uuid(),
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceInformationForDefendant: [],
+      isDefaultJudgement: false,
+      appealDate,
+      defendantHasRequestedAppeal: true,
+      isAcquittedByPublicProsecutionOffice: true,
+    } as unknown as Verdict
+
+    const theCase = {
+      id: caseId,
+      defendants: [
+        { id: defendantId, verdicts: [existingVerdict] } as Defendant,
+      ],
+    } as Case
+
+    await verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+      theCase,
+      user,
+      transaction,
+    )
+
+    expect(mockVerdictRepositoryService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        appealDate,
+        defendantHasRequestedAppeal: true,
+        isAcquittedByPublicProsecutionOffice: true,
+      }),
+      { transaction },
+    )
   })
 })

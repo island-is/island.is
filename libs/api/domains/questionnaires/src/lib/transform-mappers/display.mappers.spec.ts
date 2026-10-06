@@ -476,6 +476,32 @@ describe('display mappers', () => {
       expect(mapped.lastSubmissionId).toBe('sub-1')
     })
 
+    it('sets canSubmitAgain on answered EL list items with submissions left', () => {
+      const answered = {
+        questionnaireId: 'el-q-5',
+        title: 'Repeatable',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        numSubmitted: 1,
+        numSubmissionsAllowed: null,
+        hasDraft: false,
+        lastSubmitted: new Date('2024-06-01T00:00:00.000Z'),
+      } as unknown as QuestionnaireBaseDto
+
+      const map = (overrides: Partial<QuestionnaireBaseDto>) =>
+        mapElQuestionnaireListItem(
+          { ...answered, ...overrides } as QuestionnaireBaseDto,
+          formatMessage,
+        ).canSubmitAgain
+
+      expect(map({})).toBe(true)
+      expect(map({ numSubmissionsAllowed: 3 })).toBe(true)
+      expect(map({ numSubmissionsAllowed: 1 })).toBe(false)
+      expect(map({ nextSubmissionDate: new Date('2999-01-01') })).toBe(false)
+      expect(map({ nextSubmissionDate: new Date('2000-01-01') })).toBe(true)
+      expect(map({ hasDraft: true })).toBe(false)
+      expect(map({ expiryDate: new Date('2000-01-01') })).toBe(false)
+    })
+
     it('sets expired status even when answered or drafted, when expiryDate is in the past', () => {
       const pastExpiry = new Date('2000-01-01T00:00:00.000Z')
 
@@ -521,6 +547,45 @@ describe('display mappers', () => {
       expect(mapElQuestionnaireListItem(draftBase, formatMessage).status).toBe(
         QuestionnairesStatusEnum.expired,
       )
+    })
+
+    it('reports a withdrawn questionnaire as expired, disabled and not submittable', () => {
+      const withdrawnDetail = {
+        questionnaireId: 'el-q-12',
+        title: 'Withdrawn',
+        message: null,
+        groups: [],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        hasDraft: false,
+        disabled: true,
+      } as unknown as QuestionnaireDetailDto
+
+      const overview = mapElQuestionnaireOverview(
+        withdrawnDetail,
+        formatMessage,
+      )
+      expect(overview.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
+      expect(overview.baseInformation.disabled).toBe(true)
+      expect(overview.canSubmit).toBe(false)
+
+      const withdrawnBase = {
+        questionnaireId: 'el-q-13',
+        title: 'Withdrawn',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        numSubmitted: 0,
+        hasDraft: false,
+        lastSubmitted: null,
+        disabled: true,
+      } as unknown as QuestionnaireBaseDto
+
+      const listItem = mapElQuestionnaireListItem(withdrawnBase, formatMessage)
+      expect(listItem.status).toBe(QuestionnairesStatusEnum.expired)
+      expect(listItem.disabled).toBe(true)
     })
 
     it('sets dependsOn and visibilityConditions for EL question triggers', () => {

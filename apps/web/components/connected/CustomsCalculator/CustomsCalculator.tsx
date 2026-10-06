@@ -34,6 +34,35 @@ interface CategoryNode {
   children?: CategoryNode[]
 }
 
+const normalizeSearchInput = (searchInput: string) =>
+  searchInput.replace('´', '').toLowerCase()
+
+const HighlightedKeyword = ({
+  keyword,
+  searchInput,
+}: {
+  keyword: string
+  searchInput: string
+}) => {
+  const lowerCaseKeyword = keyword.toLowerCase()
+  // Indices into the lowercased string only line up with the original when
+  // lowercasing doesn't change its length (it can for e.g. 'İ').
+  const index =
+    searchInput && lowerCaseKeyword.length === keyword.length
+      ? lowerCaseKeyword.indexOf(searchInput)
+      : -1
+  if (index < 0) return <>{keyword}</>
+  return (
+    <>
+      {keyword.slice(0, index)}
+      <Text as="span" variant="small" fontWeight="semiBold">
+        {keyword.slice(index, index + searchInput.length)}
+      </Text>
+      {keyword.slice(index + searchInput.length)}
+    </>
+  )
+}
+
 const findCategoryPath = (
   categories: CategoryNode[],
   targetId: string,
@@ -61,14 +90,16 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
 
   const currencyOptions = useMemo<StringOption[]>(() => {
     return (
-      slice.configJson?.currencyOptions ?? [
+      slice.json?.currencyOptions ?? [
+        // Most commonly used currencies first, the rest alphabetically
         { label: 'ISK', value: 'ISK', description: 'Íslensk króna' },
+        { label: 'EUR', value: 'EUR', description: 'Evra' },
+        { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
+        { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
         { label: 'AUD', value: 'AUD', description: 'Ástralíudalur' },
         { label: 'CAD', value: 'CAD', description: 'Kanadadalur' },
         { label: 'CHF', value: 'CHF', description: 'Svissneskur franki' },
         { label: 'DKK', value: 'DKK', description: 'Dönsk króna' },
-        { label: 'EUR', value: 'EUR', description: 'Evra' },
-        { label: 'GBP', value: 'GBP', description: 'Sterlingspund' },
         { label: 'HKD', value: 'HKD', description: 'Hong Kong dalur' },
         { label: 'INR', value: 'INR', description: 'Indversk Rúpía' },
         { label: 'JPY', value: 'JPY', description: 'Japanskt jen' },
@@ -79,10 +110,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         { label: 'SGD', value: 'SGD', description: 'Singapúrskur dalur' },
         { label: 'THB', value: 'THB', description: 'Taílenskt bat' },
         { label: 'TWD', value: 'TWD', description: 'Tævanskur dalur' },
-        { label: 'USD', value: 'USD', description: 'Bandaríkjadalur' },
       ]
     )
-  }, [slice.configJson?.currencyOptions])
+  }, [slice.json?.currencyOptions])
 
   const [inputState, setInputState] = useState({
     searchInput: '',
@@ -150,6 +180,8 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     selectedCategory,
   ])
 
+  const normalizedSearchInput = normalizeSearchInput(inputState.searchInput)
+
   const searchOptions = useMemo<AsyncSearchOption[]>(() => {
     const options: AsyncSearchOption[] = []
     for (const category of productCategoriesResponse.data
@@ -189,12 +221,43 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               <Text variant="h5" color="blue600">
                 {category.label}
               </Text>
+              {category.keywords.length > 0 && (
+                <Text variant="small">
+                  {formatMessage(translationStrings.keywordsLabel)}:{' '}
+                  {category.keywords.map((keyword, index) => (
+                    <span key={index}>
+                      <HighlightedKeyword
+                        keyword={keyword}
+                        searchInput={normalizedSearchInput}
+                      />
+                      {index < category.keywords.length - 1 && ', '}
+                    </span>
+                  ))}
+                </Text>
+              )}
             </Stack>
           </Box>
         ),
       })
     }
     return options
+  }, [
+    productCategoriesResponse.data?.customsCalculatorProductCategories
+      ?.bottomLevel,
+    normalizedSearchInput,
+    formatMessage,
+  ])
+
+  const keywordsByCategoryId = useMemo(() => {
+    const keywordsByCategoryId = new Map<string, string[]>()
+    for (const category of productCategoriesResponse.data
+      ?.customsCalculatorProductCategories?.bottomLevel ?? []) {
+      keywordsByCategoryId.set(
+        category.id,
+        (category.keywords ?? []).map((keyword) => keyword.toLowerCase()),
+      )
+    }
+    return keywordsByCategoryId
   }, [
     productCategoriesResponse.data?.customsCalculatorProductCategories
       ?.bottomLevel,
@@ -273,9 +336,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
         <AsyncSearch
           options={searchOptions}
           filter={(option) =>
-            option.label
-              .toLowerCase()
-              .includes(inputState.searchInput.replace('´', '').toLowerCase())
+            option.label.toLowerCase().includes(normalizedSearchInput) ||
+            (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
+              keyword.includes(normalizedSearchInput),
+            )
           }
           size="large"
           placeholder={formatMessage(
@@ -283,6 +347,14 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
           )}
           colored={true}
           inputValue={inputState.searchInput}
+          clearAriaLabel={formatMessage(
+            translationStrings.clearProductSearchInputLabel,
+          )}
+          onClear={() => {
+            setInputState({ ...inputState, searchInput: '' })
+            setSelectedBottomLevelCategory(null)
+            setSelectedCategory({ current: null, breadcrumbs: [] })
+          }}
           onInputValueChange={(value) => {
             setInputState({ ...inputState, searchInput: value })
             if (!value) {

@@ -16,7 +16,7 @@ import { MessageService } from './message.service'
 
 const messageStorage = new AsyncLocalStorage<Message[]>()
 
-export const addMessagesToQueue = (...messages: Message[]) => {
+const requireMessageStore = (): Message[] => {
   const store = messageStorage.getStore()
 
   if (!store) {
@@ -25,7 +25,20 @@ export const addMessagesToQueue = (...messages: Message[]) => {
     )
   }
 
-  store.push(...messages)
+  return store
+}
+
+/**
+ * Pushes messages into the request's store. `MessageMiddleware` flushes the
+ * store when the response ends, whatever happened to the database work in
+ * between, so this is plumbing rather than a way to queue a message: the
+ * backend queues from a request through `queueMessagesAfterCommit` in its
+ * middleware, which registers this push with the request's transaction
+ * context so that it happens only once the work is durable. Call it from
+ * there and nowhere else.
+ */
+export const pushMessagesToRequestStore = (...messages: Message[]) => {
+  requireMessageStore().push(...messages)
 }
 
 @Injectable()

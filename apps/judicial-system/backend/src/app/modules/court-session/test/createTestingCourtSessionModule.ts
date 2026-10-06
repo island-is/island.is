@@ -20,6 +20,7 @@ import {
 import { CourtSessionController } from '../courtSession.controller'
 import { CourtSessionService } from '../courtSession.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../repository/services/courtSessionRepository.service')
 jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealCaseRepository.service')
@@ -121,10 +122,14 @@ export const createTestingCourtSessionModule = async () => {
 
   // Event convergence reads existing APPEALED events; default to none so tests
   // that don't set it up don't blow up on the returned undefined.
-  ;(appealEventLogRepositoryService.findAll as jest.Mock).mockResolvedValue([])
-  // Same for the appeal cases the ruling-order cleanup checks before deleting a
+  ;(
+    appealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+  ).mockResolvedValue([])
+  // Same for the appeals the ruling-order cleanup checks for before deleting a
   // ruling that was only ever pronounced orally.
-  ;(appealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue([])
+  ;(
+    appealCaseRepositoryService.existsForRulingFile as jest.Mock
+  ).mockResolvedValue(false)
   // A new session records the cases merged into the case; default to none.
   ;(caseRepositoryService.findAllMergedToCase as jest.Mock).mockResolvedValue(
     [],

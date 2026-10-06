@@ -166,7 +166,7 @@ codemagic.yaml                                                                  
 /apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                                    @island-is/hugsmidjan
 /apps/services/user-profile/                                                                                                 @island-is/hugsmidjan @island-is/juni @island-is/aranja
-/apps/web/components/Grants/                                                                                                 @island-is/hugsmidjan
+/apps/web/components/CustomPageLayout/                                                                                       @island-is/hugsmidjan
 /apps/web/components/GrantCardsList/                                                                                         @island-is/hugsmidjan
 /apps/web/screens/Grants/                                                                                                    @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                                               @island-is/hugsmidjan
@@ -192,8 +192,11 @@ codemagic.yaml                                                                  
 /libs/api/domains/regulations-admin/                                                                                         @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                                              @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                                           @island-is/hugsmidjan @island-is/stefna
+/libs/api/domains/tax-calculators/                                                                                           @island-is/hugsmidjan
+/libs/tax-calculators/                                                                                                       @island-is/hugsmidjan
 /libs/api/domains/occupational-licenses/                                                                                     @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                                                   @island-is/hugsmidjan
+/libs/api/domains/icelandic-government-institutions/                                                                         @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                                               @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland-application/                                                                   @island-is/hugsmidjan
 /libs/api/domains/farmers/                                                                                                   @island-is/hugsmidjan
@@ -231,6 +234,7 @@ codemagic.yaml                                                                  
 /libs/clients/university-careers/                                                                                            @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                                             @island-is/hugsmidjan
 /libs/clients/inna/                                                                                                          @island-is/hugsmidjan
+/libs/clients/government-invoices/                                                                                           @island-is/hugsmidjan
 /libs/clients/grants/                                                                                                        @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                                     @island-is/hugsmidjan
 /libs/clients/official-journal-of-iceland/                                                                                   @island-is/hugsmidjan
@@ -314,6 +318,8 @@ codemagic.yaml                                                                  
 /libs/clients/rsk/company-registry                                                                                           @island-is/origo
 /libs/clients/rsk/rental-day-rate                                                                                            @island-is/origo
 /libs/clients/rsk/customs                                                                                                    @island-is/stefna
+/libs/clients/rsk/customs-calculator/                                                                                        @island-is/stefna
+/libs/clients/rsk/calculators/                                                                                               @island-is/hugsmidjan
 
 /libs/api/domains/company-registry                                                                                           @island-is/origo
 /libs/api/domains/financial-statements-inao/                                                                                 @island-is/origo
@@ -436,6 +442,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/activation-allowance                                                                             @island-is/origo
 /libs/application/templates/vmst/confirm-job-search                                                                          @island-is/origo
 /libs/application/templates/vmst/confirm-travel                                                                              @island-is/origo
+/libs/application/templates/vmst/confirm-job-or-income                                                                       @island-is/origo
 /libs/application/templates/vmst/de-register-unemployment-benefits                                                           @island-is/origo
 /libs/application/templates/vmst/edit-unemployment-information                                                               @island-is/origo
 /libs/application/templates/vmst/submit-documents                                                                            @island-is/origo
@@ -496,6 +503,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/directorate-of-equality/                                                                         @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-equality/                                    @island-is/hugsmidjan
 /libs/clients/directorate-of-equality/                                                                                       @island-is/hugsmidjan
+/libs/clients/directorate-of-equality-statistics/                                                                            @island-is/hugsmidjan
 /libs/api/domains/directorate-of-equality-application/                                                                       @island-is/hugsmidjan
 /libs/clients/directorate-of-immigration/                                                                                    @island-is/origo
 
@@ -540,6 +548,7 @@ codemagic.yaml                                                                  
 
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-job-search                                     @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-travel                                         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/vmst/confirm-job-or-income                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/de-register-unemployment-benefits                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/edit-unemployment-information                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/vmst/submit-documents                                       @island-is/origo
