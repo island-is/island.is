@@ -58,7 +58,7 @@ export const Default = {
 
             variables: {
               input: {
-                nationalId: '1111223333',
+                nationalId: '0101302989',
               },
             },
           },
@@ -67,7 +67,7 @@ export const Default = {
             data: {
               identity: {
                 name: 'Prufa1',
-                nationalId: '1111223333',
+                nationalId: '0101302989',
               },
             },
           },
