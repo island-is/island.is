@@ -75,6 +75,10 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
   const theme = useTheme()
   const [state, setState] = useState<State>({ name: 'idle' })
   const [secondsLeft, setSecondsLeft] = useState(0)
+  // The last attempt, so a person whose attempt failed can try the other way.
+  const [lastAttempt, setLastAttempt] = useState<
+    { method: StepUpMethod; availableMethods: StepUpMethod[] } | undefined
+  >()
   const pollTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const unmounted = useRef(false)
 
@@ -147,6 +151,10 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
         // coming back shouldn't ask for the PIN on top of it.
         suppressLockScreen()
 
+        setLastAttempt({
+          method: started.method,
+          availableMethods: started.availableMethods,
+        })
         setState({
           name: 'waiting',
           method: started.method,
@@ -188,12 +196,28 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
 
-  // The other way of reaching the person, if the server offers one: e.g. their
-  // SIM isn't at hand.
+  // The other way of reaching the person, if the server offers one: while
+  // waiting (e.g. their SIM isn't at hand), and after an attempt that failed.
   const otherMethod =
     state.name === 'waiting'
       ? state.availableMethods.find((method) => method !== state.method)
+      : state.name === 'idle' && state.notice && lastAttempt
+      ? lastAttempt.availableMethods.find(
+          (method) => method !== lastAttempt.method,
+        )
       : undefined
+
+  const switchMethod = otherMethod && (
+    <Button
+      isOutlined
+      style={{ marginTop: 16 }}
+      title={intl.formatMessage({
+        id:
+          otherMethod === StepUpMethod.App ? 'stepUp.useApp' : 'stepUp.useSim',
+      })}
+      onPress={() => void begin(otherMethod)}
+    />
+  )
 
   return (
     <Host>
@@ -254,19 +278,7 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
                   },
                 )}
               </Typography>
-              {otherMethod && (
-                <Button
-                  isOutlined
-                  style={{ marginTop: 24 }}
-                  title={intl.formatMessage({
-                    id:
-                      otherMethod === StepUpMethod.App
-                        ? 'stepUp.useApp'
-                        : 'stepUp.useSim',
-                  })}
-                  onPress={() => void begin(otherMethod)}
-                />
-              )}
+              {switchMethod}
             </Full>
           )}
 
@@ -278,6 +290,7 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
                 loading={state.name === 'starting'}
                 disabled={state.name === 'starting'}
               />
+              {state.name === 'idle' && switchMethod}
             </Full>
           )}
         </Content>
