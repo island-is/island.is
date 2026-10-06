@@ -36,12 +36,7 @@ import {
   CompanyPayer,
 } from '../../../components/BankTransferPayment/BankTransferPayment'
 import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
-import {
-  ALLOWED_LOCALES,
-  Locale,
-  getAvailablePaymentMethods,
-  isHttpsUrl,
-} from '../../../utils'
+import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
 import {
   bankTransfer,
@@ -375,21 +370,29 @@ function PaymentPage({
       : undefined
   const isCompanyPayer = companyPayer !== undefined
 
-  const availablePaymentMethods = useMemo(
-    () =>
-      getAvailablePaymentMethods({
-        flowMethods: paymentFlow?.availablePaymentMethods ?? [],
-        isInvoicePaymentEnabledForUser,
-        isBankTransferPaymentEnabledForUser,
-        isCompanyPayer,
-      }),
-    [
-      paymentFlow?.availablePaymentMethods,
-      isInvoicePaymentEnabledForUser,
-      isBankTransferPaymentEnabledForUser,
-      isCompanyPayer,
-    ],
-  )
+  const availablePaymentMethods = useMemo(() => {
+    const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
+
+    if (isInvoicePaymentEnabledForUser) {
+      methods.push('invoice')
+    }
+
+    // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
+    // Once testing is done this flag is removed and the backend controls
+    // availability via availablePaymentMethods. Never for a company: company bank
+    // transfers are controlled by the per-company flag in the payments service,
+    // which would refuse the transfer anyway.
+    if (isBankTransferPaymentEnabledForUser && !isCompanyPayer) {
+      methods.push('bank_transfer')
+    }
+
+    return Array.from(new Set(methods)) as PaymentMethod[]
+  }, [
+    paymentFlow?.availablePaymentMethods,
+    isInvoicePaymentEnabledForUser,
+    isBankTransferPaymentEnabledForUser,
+    isCompanyPayer,
+  ])
 
   // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
   const isCardPaymentInvalid =
