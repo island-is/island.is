@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
@@ -305,6 +305,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     selectedBottomLevelCategory,
   ])
 
+  // AsyncSearch doesn't forward its ref to the input, so the input is found
+  // through a wrapping element instead
+  const searchContainerRef = useRef<HTMLDivElement>(null)
+
   const [resultsContainer, setResultsContainer] =
     useState<HTMLDivElement | null>(null)
 
@@ -378,57 +382,64 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
               {formatMessage(translationStrings.productSearchInputLabel)}
             </Text>
 
-            <AsyncSearch
-              options={searchOptions}
-              filter={(option) =>
-                option.label.toLowerCase().includes(normalizedSearchInput) ||
-                (keywordsByCategoryId.get(option.value) ?? []).some((keyword) =>
-                  keyword.includes(normalizedSearchInput),
-                )
-              }
-              size="large"
-              placeholder={formatMessage(
-                translationStrings.productSearchInputPlaceholder,
-              )}
-              inputValue={inputState.searchInput}
-              clearAriaLabel={formatMessage(
-                translationStrings.clearProductSearchInputLabel,
-              )}
-              onClear={() => {
-                setInputState({ ...inputState, searchInput: '' })
-                setSelectedBottomLevelCategory(null)
-                setSelectedCategory({ current: null, breadcrumbs: [] })
-              }}
-              onInputValueChange={(value) => {
-                setInputState({ ...inputState, searchInput: value })
-                if (!value) {
-                  setSelectedBottomLevelCategory(null)
-                  return
+            <div ref={searchContainerRef}>
+              <AsyncSearch
+                options={searchOptions}
+                filter={(option) =>
+                  option.label.toLowerCase().includes(normalizedSearchInput) ||
+                  (keywordsByCategoryId.get(option.value) ?? []).some(
+                    (keyword) => keyword.includes(normalizedSearchInput),
+                  )
                 }
-                // Multiple categories can share a display label (e.g. "Annað").
-                // Matching free-typed text by label alone would silently bind the
-                // wrong tariff, so only auto-select when the label is unambiguous;
-                // otherwise force an explicit pick (onChange resolves by id).
-                const matches =
-                  productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.filter(
-                    (category) => category.label === value,
-                  ) ?? []
-                setSelectedBottomLevelCategory(
-                  matches.length === 1 ? matches[0] : null,
-                )
-              }}
-              onChange={(option) => {
-                setInputState({
-                  ...inputState,
-                  searchInput: option?.label ?? '',
-                })
-                const bottomLevelCategory = findBottomLevelCategory(
-                  option?.value,
-                )
-                if (bottomLevelCategory)
-                  selectBottomLevelCategory(bottomLevelCategory)
-              }}
-            />
+                size="large"
+                placeholder={formatMessage(
+                  translationStrings.productSearchInputPlaceholder,
+                )}
+                inputValue={inputState.searchInput}
+                clearAriaLabel={formatMessage(
+                  translationStrings.clearProductSearchInputLabel,
+                )}
+                onClear={() => {
+                  setInputState({ ...inputState, searchInput: '' })
+                  setSelectedBottomLevelCategory(null)
+                  setSelectedCategory({ current: null, breadcrumbs: [] })
+                }}
+                onInputValueChange={(value) => {
+                  setInputState({ ...inputState, searchInput: value })
+                  if (!value) {
+                    setSelectedBottomLevelCategory(null)
+                    return
+                  }
+                  // Multiple categories can share a display label (e.g.
+                  // "Annað"). Matching free-typed text by label alone would
+                  // silently bind the wrong tariff, so only auto-select when
+                  // the label is unambiguous; otherwise force an explicit pick
+                  // (onChange resolves by id).
+                  const matches =
+                    productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.filter(
+                      (category) => category.label === value,
+                    ) ?? []
+                  setSelectedBottomLevelCategory(
+                    matches.length === 1 ? matches[0] : null,
+                  )
+                }}
+                onChange={(option) => {
+                  setInputState({
+                    ...inputState,
+                    searchInput: option?.label ?? '',
+                  })
+                  const bottomLevelCategory = findBottomLevelCategory(
+                    option?.value,
+                  )
+                  if (bottomLevelCategory)
+                    selectBottomLevelCategory(bottomLevelCategory)
+                  // Unfocus the search input once a product is picked, which
+                  // also closes the on-screen keyboard on mobile
+                  if (option)
+                    searchContainerRef.current?.querySelector('input')?.blur()
+                }}
+              />
+            </div>
 
             <CategoryModal
               title={formatMessage(translationStrings.searchForCategory)}

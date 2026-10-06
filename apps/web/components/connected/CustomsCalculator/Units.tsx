@@ -74,20 +74,20 @@ const combineDescriptions = (descriptions: string[], conjunction: string) => {
 interface UnitInputProps {
   name: string
   label: string
-  inputMode?: 'decimal' | 'numeric'
-  // Render as a decimal field that accepts a comma decimal separator (e.g. the
-  // alcohol strength percentage). Unlike currency mode this treats the bound
-  // value as a numeric string, so a typed "5,5" round-trips correctly instead
-  // of the stored "5.5" being re-read as "55".
-  allowDecimal?: boolean
+  // Maximum number of decimals, where 0 only allows whole numbers and shows a
+  // digits only keyboard on mobile devices
+  decimalScale?: number
   control: Control<UnitsFormValues>
 }
 
+// The value is stored as a numeric string (e.g. "0.75") and shown with a
+// comma decimal separator and dot thousand separators (e.g. "0,75"). The
+// currency mode of InputController isn't used since it re-reads the stored
+// "0.75" as "075", which drops the decimal separator while typing.
 export const UnitInput = ({
   name,
   label,
-  inputMode,
-  allowDecimal,
+  decimalScale = 3,
   control,
 }: UnitInputProps) => {
   return (
@@ -98,10 +98,9 @@ export const UnitInput = ({
       size="sm"
       backgroundColor="white"
       type="number"
-      inputMode={allowDecimal ? 'decimal' : inputMode}
-      currency={!allowDecimal}
-      thousandSeparator={allowDecimal ? true : undefined}
-      decimalScale={allowDecimal ? 2 : undefined}
+      inputMode={decimalScale > 0 ? 'decimal' : 'numeric'}
+      thousandSeparator={true}
+      decimalScale={decimalScale}
       suffix=""
       control={control}
       allowNegative={false}
@@ -109,28 +108,48 @@ export const UnitInput = ({
   )
 }
 
-const BREAKDOWN_COLUMN_SPANS: [SpanType, SpanType, SpanType] = [
-  '5/12',
+// Below the xl breakpoint there isn't room for three columns, so each row
+// shows the label and amount side by side with the explanation underneath
+const BREAKDOWN_LABEL_SPAN: SpanType = ['8/12', '8/12', '8/12', '8/12', '5/12']
+const BREAKDOWN_EXPLANATION_SPAN: SpanType = [
+  '12/12',
+  '12/12',
+  '12/12',
+  '12/12',
   '4/12',
-  '3/12',
 ]
+const BREAKDOWN_AMOUNT_SPAN: SpanType = ['4/12', '4/12', '4/12', '4/12', '3/12']
 
 interface BreakdownRowProps {
-  columns: [string, string, string]
+  label: string
+  explanation: string
+  amount: string
   heading?: boolean
 }
 
-const BreakdownRow = ({ columns, heading }: BreakdownRowProps) => (
+const BreakdownRow = ({
+  label,
+  explanation,
+  amount,
+  heading,
+}: BreakdownRowProps) => (
   <GridRow alignItems="center">
-    {columns.map((column, index) => (
-      <GridColumn key={index} span={BREAKDOWN_COLUMN_SPANS[index]}>
-        <Box textAlign={index === columns.length - 1 ? 'right' : 'left'}>
-          <Text variant={heading ? 'h5' : index === 1 ? 'small' : 'default'}>
-            {column}
-          </Text>
-        </Box>
-      </GridColumn>
-    ))}
+    <GridColumn span={BREAKDOWN_LABEL_SPAN}>
+      <Text variant={heading ? 'h5' : 'default'}>{label}</Text>
+    </GridColumn>
+    <GridColumn
+      span={BREAKDOWN_EXPLANATION_SPAN}
+      order={[3, 3, 3, 3, 2]}
+      // The explanation column title is only needed in the three column layout
+      hiddenBelow={heading ? 'xl' : undefined}
+    >
+      <Text variant={heading ? 'h5' : 'small'}>{explanation}</Text>
+    </GridColumn>
+    <GridColumn span={BREAKDOWN_AMOUNT_SPAN} order={[2, 2, 2, 2, 3]}>
+      <Box textAlign="right">
+        <Text variant={heading ? 'h5' : 'default'}>{amount}</Text>
+      </Box>
+    </GridColumn>
   </GridRow>
 )
 
@@ -270,7 +289,11 @@ export const Units = ({
         )}
       {data?.customsCalculatorCalculate && !loading && !error && (
         <Stack space={8}>
-          <Box background="purple100" borderRadius="large" padding={[3, 3, 6]}>
+          <Box
+            background="purple100"
+            borderRadius="large"
+            padding={[3, 3, 4, 6]}
+          >
             <Stack space={3}>
               <Stack space={1}>
                 <Text variant="h5">
@@ -283,51 +306,59 @@ export const Units = ({
                 </Text>
               </Stack>
               <Divider thickness="thick" weight="purple300" />
-              <BreakdownRow
-                heading={true}
-                columns={[
-                  formatMessage(translationStrings.totalAmountLabel),
-                  formatCurrency(
-                    Number(data.customsCalculatorCalculate.totalAmount),
-                  ),
-                  '',
-                ]}
-              />
+              <GridRow alignItems="center">
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '5/12']}>
+                  <Text variant="h5">
+                    {formatMessage(translationStrings.totalAmountLabel)}
+                  </Text>
+                </GridColumn>
+                <GridColumn span={['6/12', '6/12', '6/12', '6/12', '7/12']}>
+                  <Box textAlign={['right', 'right', 'right', 'right', 'left']}>
+                    <Text variant="h5">
+                      {formatCurrency(
+                        Number(data.customsCalculatorCalculate.totalAmount),
+                      )}
+                    </Text>
+                  </Box>
+                </GridColumn>
+              </GridRow>
               <Divider thickness="thick" weight="purple300" />
               <Stack space={2}>
                 <BreakdownRow
                   heading={true}
-                  columns={[
-                    formatMessage(translationStrings.breakdownLabel),
-                    formatMessage(translationStrings.explanationLabel),
-                    formatMessage(translationStrings.amountLabel),
-                  ]}
+                  label={formatMessage(translationStrings.breakdownLabel)}
+                  explanation={formatMessage(
+                    translationStrings.explanationLabel,
+                  )}
+                  amount={formatMessage(translationStrings.amountLabel)}
                 />
-                <Stack space={1}>
+                <Stack space={[2, 2, 2, 2, 1]}>
                   <BreakdownRow
-                    columns={[
-                      formatMessage(translationStrings.startAmountLabel),
+                    label={formatMessage(translationStrings.startAmountLabel)}
+                    explanation={
                       submittedPrice
                         ? `${submittedPrice.currency} ${formatAmount(
                             submittedPrice.amount,
                           )}`
-                        : '',
-                      formatAmount(
-                        Number(data.customsCalculatorCalculate.startAmount),
-                      ),
-                    ]}
+                        : ''
+                    }
+                    amount={formatAmount(
+                      Number(data.customsCalculatorCalculate.startAmount),
+                    )}
                   />
                   {data.customsCalculatorCalculate.charges?.map(
                     (charge, index) => (
                       <BreakdownRow
                         key={`${charge.code}-${index}`}
-                        columns={[
+                        label={
                           charge.code
                             ? `${charge.description ?? ''} (${charge.code})`
-                            : charge.description ?? '',
-                          chargeNameByCode.get(charge.code ?? '') ?? '',
-                          formatAmount(Number(charge.amount)),
-                        ]}
+                            : charge.description ?? ''
+                        }
+                        explanation={
+                          chargeNameByCode.get(charge.code ?? '') ?? ''
+                        }
+                        amount={formatAmount(Number(charge.amount))}
                       />
                     ),
                   )}
@@ -392,6 +423,7 @@ export const Units = ({
               <UnitInput
                 name="priceWithShipping"
                 label={formatMessage(translationStrings.priceWithShippingLabel)}
+                decimalScale={0}
                 control={control}
               />
             </GridColumn>
@@ -413,6 +445,7 @@ export const Units = ({
                 <UnitInput
                   name="unitCount"
                   label={formatMessage(translationStrings.unitCountLabel)}
+                  decimalScale={0}
                   control={control}
                 />
               </GridColumn>
@@ -441,7 +474,7 @@ export const Units = ({
                   name="percentage"
                   label={formatMessage(translationStrings.percentageLabel)}
                   control={control}
-                  allowDecimal={true}
+                  decimalScale={2}
                 />
               </GridColumn>
             )}
