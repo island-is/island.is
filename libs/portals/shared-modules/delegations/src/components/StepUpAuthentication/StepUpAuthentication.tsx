@@ -4,12 +4,13 @@ import {
   AlertMessage,
   Box,
   Button,
-  Icon,
+  LoadingDots,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
+import * as styles from './StepUpAuthentication.css'
 
 export type StepUpMethod = 'app' | 'sim'
 
@@ -68,7 +69,10 @@ type State =
 
 /**
  * Authenticates the person again with electronic ID without leaving the page —
- * one button, a code, and they approve on their own phone. The server decides
+ * one button, a code, and they approve on their own phone. Looks like the
+ * identity server's own login: the code in a blue box while waiting, and the
+ * other methods under "Eða staðfestu með". Unlike that screen there is no phone
+ * number field: it only ever reaches the person's own phone. The server decides
  * how, from the way they logged in: the Auðkenni app, or their own SIM. They can
  * switch to the other one if the server offers it. There is deliberately no way
  * to send it anywhere else.
@@ -220,37 +224,19 @@ export const StepUpAuthentication = ({
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
 
-  // The other way of reaching the person, if the server offers one: while
+  // The other ways of reaching the person, if the server offers them: while
   // waiting (e.g. their SIM isn't at hand), and after an attempt that failed.
-  const otherMethod =
+  const otherMethods =
     state.name === 'waiting'
-      ? state.availableMethods.find((method) => method !== state.method)
+      ? state.availableMethods.filter((method) => method !== state.method)
       : state.name === 'idle' && state.notice && lastAttempt
-      ? lastAttempt.availableMethods.find(
+      ? lastAttempt.availableMethods.filter(
           (method) => method !== lastAttempt.method,
         )
-      : undefined
-
-  const switchMethod = otherMethod && (
-    <Box>
-      <Button variant="text" size="small" onClick={() => begin(otherMethod)}>
-        {formatMessage(otherMethod === 'app' ? m.stepUpUseApp : m.stepUpUseSim)}
-      </Button>
-    </Box>
-  )
+      : []
 
   return (
-    <Box
-      border="standard"
-      borderRadius="large"
-      padding={[3, 3, 4]}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      rowGap={3}
-      textAlign="center"
-    >
-      <Icon icon="lockClosed" type="outline" size="large" color="dark400" />
+    <Box display="flex" flexDirection="column" rowGap={[4, 4, 5]} width="full">
       <Box>
         <Text variant="h3" as="h2" marginBottom={1}>
           {formatMessage(m.stepUpTitle)}
@@ -258,38 +244,49 @@ export const StepUpAuthentication = ({
         <Text>{formatMessage(m.stepUpIntro)}</Text>
       </Box>
 
-      {notice && (
-        <Box width="full" textAlign="left">
-          <AlertMessage type={notice.type} message={notice.message} />
-        </Box>
-      )}
+      {notice && <AlertMessage type={notice.type} message={notice.message} />}
 
       {state.name === 'waiting' && (
-        <Box
-          width="full"
-          display="flex"
-          flexDirection="column"
-          rowGap={2}
-          aria-live="polite"
-        >
-          <Box background="blue100" borderRadius="large" paddingY={3}>
-            <Text variant="h1" as="p" color="blue600">
-              {state.code}
+        <>
+          {/* The same as the identity server's own verification screen. */}
+          <Box
+            width="full"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            rowGap="smallGutter"
+            paddingY={3}
+            background="blue100"
+            borderRadius="large"
+            role="alert"
+          >
+            <Text>{formatMessage(m.stepUpYourSecurityCode)}</Text>
+            <Text variant="h1">{state.code}</Text>
+          </Box>
+          <Box display="flex" justifyContent="center">
+            <LoadingDots />
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            rowGap={2}
+          >
+            <Text textAlign="center">
+              {formatMessage(m.stepUpSecurityCodeConfirmMessage)}
+            </Text>
+            <Text textAlign="center">
+              {formatMessage(m.stepUpSecurityCodeConfirmSubtitle)}
+            </Text>
+            <Text variant="small" color="dark300">
+              {formatMessage(m.stepUpTimeLeft, {
+                minutes: Math.floor(secondsLeft / 60),
+                seconds: String(secondsLeft % 60).padStart(2, '0'),
+              })}
             </Text>
           </Box>
-          <Text fontWeight="semiBold">
-            {formatMessage(
-              state.method === 'app' ? m.stepUpWaitingApp : m.stepUpWaitingSim,
-            )}
-          </Text>
-          <Text variant="small" color="dark300">
-            {formatMessage(m.stepUpTimeLeft, {
-              minutes: Math.floor(secondsLeft / 60),
-              seconds: String(secondsLeft % 60).padStart(2, '0'),
-            })}
-          </Text>
-          {switchMethod}
-        </Box>
+        </>
       )}
 
       {(state.name === 'idle' || state.name === 'starting') && (
@@ -302,7 +299,32 @@ export const StepUpAuthentication = ({
         </Button>
       )}
 
-      {state.name === 'idle' && switchMethod}
+      {otherMethods.length > 0 && (
+        <Box width="full" display="flex" flexDirection="column" rowGap={3}>
+          <Box position="relative" width="full" textAlign="center">
+            <span className={styles.textBackgroundLine} />
+            <span className={styles.textWrapper}>
+              <Text variant="small">{formatMessage(m.stepUpOtherMethods)}</Text>
+            </span>
+          </Box>
+          <Box display="flex" flexDirection="column" rowGap={2} width="full">
+            {otherMethods.map((method) => (
+              <Button
+                key={method}
+                type="button"
+                variant="ghost"
+                fluid
+                size="small"
+                onClick={() => begin(method)}
+              >
+                {formatMessage(
+                  method === 'sim' ? m.stepUpMethodSim : m.stepUpMethodApp,
+                )}
+              </Button>
+            ))}
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }

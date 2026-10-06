@@ -230,16 +230,30 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
     })
 
-    it('grants the ordinary scopes of a mixed grant and holds only the sensitive one', async () => {
-      // Act
+    it('holds the whole grant when any of it is sensitive, and writes it all at once when confirmed', async () => {
+      // Act — one ordinary and one sensitive scope in the same grant.
       const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
 
-      // Assert
+      // Assert — nothing takes effect yet, not even the ordinary scope, so a
+      // grantor who stops at the step-up hasn't half-granted anything.
       expect(res.status).toEqual(201)
-      expect(res.body.pendingConfirmations[0].scopeNames).toEqual([
-        SENSITIVE_SCOPE,
-      ])
-      expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
+      expect(res.body.pendingConfirmations[0].scopeNames).toEqual(
+        [SENSITIVE_SCOPE, ORDINARY_SCOPE].sort(),
+      )
+      expect(await scopeNamesInDb()).toEqual([])
+
+      // Act — the grantor confirms.
+      const confirmationId = res.body.pendingConfirmations[0].id
+      const path = `/v1/me/delegation-confirmations/${confirmationId}/authentication`
+      await server.post(path)
+      approvedBy(grantorNationalId)
+      const confirmed = await server.get(path)
+
+      // Assert — all of it, together.
+      expect(confirmed.body.status).toEqual('confirmed')
+      expect(await scopeNamesInDb()).toEqual(
+        [ORDINARY_SCOPE, SENSITIVE_SCOPE].sort(),
+      )
     })
 
     it('supersedes an earlier pending confirmation instead of duplicating it', async () => {

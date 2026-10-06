@@ -694,21 +694,31 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-up-start',
     defaultMessage: 'Auðkenna',
   },
-  stepUpWaitingApp: {
-    id: 'sp.access-control-delegations:step-up-waiting-app',
-    defaultMessage: 'Opnaðu Auðkennisappið og staðfestu að talan sé sú sama',
+  stepUpYourSecurityCode: {
+    id: 'sp.access-control-delegations:step-up-your-security-code',
+    defaultMessage: 'Öryggistalan þín er:',
   },
-  stepUpWaitingSim: {
-    id: 'sp.access-control-delegations:step-up-waiting-sim',
-    defaultMessage: 'Staðfestu í símanum þínum að talan sé sú sama',
+  stepUpSecurityCodeConfirmMessage: {
+    id: 'sp.access-control-delegations:step-up-security-code-confirm-message',
+    defaultMessage:
+      'Staðfestu auðkenninguna ef öryggistalan er sú sama og birtist á símanum þínum.',
   },
-  stepUpUseApp: {
-    id: 'sp.access-control-delegations:step-up-use-app',
-    defaultMessage: 'Nota Auðkennisappið í staðinn',
+  stepUpSecurityCodeConfirmSubtitle: {
+    id: 'sp.access-control-delegations:step-up-security-code-confirm-subtitle',
+    defaultMessage:
+      'Ath. að öryggistalan er ekki PIN-númerið á skilríkjunum þínum.',
   },
-  stepUpUseSim: {
-    id: 'sp.access-control-delegations:step-up-use-sim',
-    defaultMessage: 'Nota rafræn skilríki í síma í staðinn',
+  stepUpOtherMethods: {
+    id: 'sp.access-control-delegations:step-up-other-methods',
+    defaultMessage: 'Eða staðfestu með',
+  },
+  stepUpMethodSim: {
+    id: 'sp.access-control-delegations:step-up-method-sim',
+    defaultMessage: 'Skilríki í síma',
+  },
+  stepUpMethodApp: {
+    id: 'sp.access-control-delegations:step-up-method-app',
+    defaultMessage: 'Auðkennisappinu',
   },
   stepUpTimeLeft: {
     id: 'sp.access-control-delegations:step-up-time-left',
@@ -758,11 +768,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
     defaultMessage:
       'Þegar þú staðfestir færðu beiðni í símann þinn um að staðfesta með rafrænum skilríkjum. Umboðið tekur ekki gildi fyrr en þú hefur gert það.',
-  },
-  sensitiveScopesSelectedMessage: {
-    id: 'sp.access-control-delegations:sensitive-scopes-selected-message',
-    defaultMessage:
-      'Þú hefur valið réttindi sem veita aðgang að viðkvæmum upplýsingum. Til að ljúka veitingu umboðsins þarft þú að staðfesta það með rafrænum skilríkjum.',
   },
   headerName: {
     id: 'sp.access-control-delegations:header-name',

@@ -415,16 +415,19 @@ export class DelegationsOutgoingService {
   }
 
   /**
-   * Splits requested scopes into those that can be granted immediately and
-   * those that need a second, high-assurance confirmation first.
+   * Decides whether a grant can be written now or must wait for a second,
+   * high-assurance confirmation.
    *
-   * The sensitive ones are deliberately not written anywhere in the delegation
-   * tables — they are held on the confirmation record until it is redeemed.
-   * That is what makes an unconfirmed sensitive scope unusable by construction
-   * rather than by remembering to filter it out of every read path.
+   * If any requested scope is sensitive, the whole grant waits: every scope in
+   * it is held on the confirmation record and nothing is written to the
+   * delegation tables until the grantor confirms, when all of it is written
+   * at once. Granting part of it now would leave a grantor who stops at the
+   * step-up thinking nothing happened while some of it already took effect.
+   * Held scopes being absent from the tables is also what makes them unusable
+   * by construction rather than by filtering every read path.
    *
-   * Only the sensitive scopes are held: a grantor adding one sensitive scope to
-   * an existing delegation must not lose access that already worked.
+   * Scopes the delegation already has are untouched: only what this grant
+   * requests waits.
    */
   private async splitSensitiveScopes({
     user,
@@ -477,12 +480,11 @@ export class DelegationsOutgoingService {
       return { grantable: scopes }
     }
 
-    const sensitive = new Set(sensitiveScopeNames)
-    const grantable = scopes.filter((scope) => !sensitive.has(scope.name))
-    const held = scopes.filter((scope) => sensitive.has(scope.name))
+    // All of it waits for the confirmation, sensitive or not.
+    const held = scopes
 
     const [scopeDisplayNames, domain] = await Promise.all([
-      this.findScopeDisplayNames(sensitiveScopeNames),
+      this.findScopeDisplayNames(held.map((scope) => scope.name)),
       this.domainModel.findOne({ where: { name: domainName } }),
     ])
 
@@ -497,7 +499,7 @@ export class DelegationsOutgoingService {
         transaction,
       })
 
-    return { grantable, pendingConfirmation }
+    return { grantable: [], pendingConfirmation }
   }
 
   private async findScopeDisplayNames(
