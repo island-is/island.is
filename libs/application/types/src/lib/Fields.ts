@@ -836,9 +836,18 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
+  removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
+  /** Per row gate for the delete button. Defaults to every row being removable. */
+  canRemoveRow?: (
+    application: Application,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    row: Record<string, any>,
+    index: number,
+  ) => boolean
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
