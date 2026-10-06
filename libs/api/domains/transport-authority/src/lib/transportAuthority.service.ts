@@ -140,7 +140,6 @@ export class TransportAuthorityApi {
     permno: string,
   ): Promise<VehicleOwnerchangeChecksByPermno | null | GraphQLError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
-    // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
       await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
@@ -296,7 +295,6 @@ export class TransportAuthorityApi {
     permno: string,
   ): Promise<VehicleOperatorChangeChecksByPermno | null | GraphQLError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
-    // (mainly debt status info that is sensitive)
     const { vehicle, mileageReadings } =
       await this.fetchVehicleDataAndMileageForOwnerCoOwner(auth, permno)
 
