@@ -55,7 +55,12 @@ describe.each(routes)('$name', ({ handler }) => {
     process.env = { ...originalEnv, AUTH_JWT_SECRET: secret }
     delete process.env.ENVIRONMENT
 
-    fetchMock.mockResolvedValue({ json: async () => ({ items: [] }) })
+    // The path endpoint answers with a bare record, which the route wraps.
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ kennitala: '0101010101' }),
+    })
     global.fetch = fetchMock as unknown as typeof global.fetch
   })
 
@@ -114,13 +119,57 @@ describe.each(routes)('$name', ({ handler }) => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('should look up an authenticated, valid national id', async () => {
+  it('should look up an authenticated, valid national id by the path endpoint', async () => {
     const res = buildResponse()
 
     await handler(buildRequest('010101-0101', session()), res)
 
     expect(res.status).toHaveBeenCalledWith(200)
     expect(fetchMock).toHaveBeenCalledTimes(1)
-    expect(fetchMock.mock.calls[0][0]).toMatch(/[?&]kennitala=0101010101$/)
+    // The national id is in the path, not a query parameter, so it cannot carry
+    // a query of its own.
+    expect(fetchMock.mock.calls[0][0]).toMatch(/\/0101010101$/)
+    expect(fetchMock.mock.calls[0][0]).not.toContain('?')
+  })
+
+  it('should wrap the single record the path endpoint returns in a list', async () => {
+    const res = buildResponse()
+
+    await handler(buildRequest('0101010101', session()), res)
+
+    expect(res.json).toHaveBeenCalledWith({
+      items: [{ kennitala: '0101010101' }],
+    })
+  })
+
+  it('should report nobody found as an empty list, not an error', async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({ error: 'Not found' }),
+    })
+    const res = buildResponse()
+
+    await handler(buildRequest('0101010101', session()), res)
+
+    expect(res.status).toHaveBeenCalledWith(200)
+    expect(res.json).toHaveBeenCalledWith({ items: [] })
+  })
+
+  it('should answer a failed lookup with an error rather than an empty result', async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'Internal server error' }),
+    })
+    const res = buildResponse()
+
+    await handler(buildRequest('0101010101', session()), res)
+
+    expect(res.status).toHaveBeenCalledWith(502)
+    // The upstream error body must not reach the client as if it were a record.
+    expect(res.json).not.toHaveBeenCalledWith(
+      expect.objectContaining({ items: expect.anything() }),
+    )
   })
 })
