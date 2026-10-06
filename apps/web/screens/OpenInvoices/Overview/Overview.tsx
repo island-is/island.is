@@ -40,7 +40,10 @@ import { linkResolver, useLinkResolver } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { CustomNextRedirect } from '@island.is/web/units/errors'
+import {
+  CustomNextError,
+  CustomNextRedirect,
+} from '@island.is/web/units/errors'
 
 import { CustomScreen, withCustomPageWrapper } from '../../CustomPage'
 import SidebarLayout from '../../Layouts/SidebarLayout'
@@ -647,7 +650,16 @@ interface OpenInvoicesOverviewProps {
   today: string
 }
 
-OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
+OpenInvoicesOverviewPage.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  customPageData,
+}) => {
+  if (!customPageData) {
+    throw new CustomNextError(404, 'Open invoices page not found')
+  }
+
   const today = new Date()
   const todayIso = today.toISOString()
 
