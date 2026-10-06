@@ -135,12 +135,6 @@ describe('getBankTransferDebtor', () => {
       { debtorExternalId: person },
     ],
     [
-      'a temporary-kennitala payer',
-      temporary,
-      undefined,
-      { debtorExternalId: temporary },
-    ],
-    [
       'a company payer with an individual',
       company,
       person,
@@ -149,6 +143,7 @@ describe('getBankTransferDebtor', () => {
     ['a company payer without an individual', company, undefined, null],
     ['a company payer with a company', company, company, null],
     ['a company payer with a temporary kennitala', company, temporary, null],
+    ['a temporary-kennitala payer', temporary, undefined, null],
   ])('resolves %s', (_, payerNationalId, actorNationalId, expected) => {
     expect(getBankTransferDebtor(payerNationalId, actorNationalId)).toEqual(
       expected,

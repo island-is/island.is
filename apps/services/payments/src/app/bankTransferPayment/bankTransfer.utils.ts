@@ -83,19 +83,24 @@ export const mapRawStatusToBankTransferPendingStatus = (
     : BankTransferPendingStatus.PROCESSING
 
 /**
- * Resolves who Blikk debits. A company pays from its own account, authorised by an individual with
- * the rights to do so (entered on the payment screen), who is the one authenticating with their
- * bank. Any other payer pays as themselves. Returns `null` for a company without a valid individual.
+ * Resolves who Blikk debits. A person pays as themselves. A company pays from its own account,
+ * authorised by an individual with the rights to do so (entered on the payment screen), who is the
+ * one authenticating with their bank. Returns `null` for a company without a valid individual, and
+ * for any other payer, such as a temporary kennitala.
  */
 export const getBankTransferDebtor = (
   payerNationalId: string,
   actorNationalId?: string,
 ): BankTransferDebtor | null => {
-  if (!isCompany(payerNationalId)) {
+  if (isPerson(payerNationalId)) {
     return { debtorExternalId: payerNationalId }
   }
 
-  if (actorNationalId && isPerson(actorNationalId)) {
+  if (
+    isCompany(payerNationalId) &&
+    actorNationalId &&
+    isPerson(actorNationalId)
+  ) {
     return {
       debtorExternalId: actorNationalId,
       debtorCorpExternalId: payerNationalId,

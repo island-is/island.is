@@ -28,7 +28,7 @@ export class CreateBankTransferInput {
   @Matches(/^\d{10}$/)
   @ApiPropertyOptional({
     description:
-      'National id of the individual with the rights to authorise payments from the company account. Required when the payer is a company; ignored otherwise.',
+      'National id of the individual with the rights to authorise payments from the company account, as 10 digits with no separator. Required when the payer is a company; ignored otherwise.',
   })
   readonly actorNationalId?: string
 }

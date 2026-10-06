@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { BankTransferPayment, CompanyPayer } from './BankTransferPayment'
 
@@ -79,6 +79,21 @@ describe('BankTransferPayment', () => {
       },
     )
 
+    it.each(['ledger', 'account'] as const)(
+      'splits a whole number pasted into the %s input from the bank onwards',
+      async (part) => {
+        const inputs = renderInputs()
+        inputs[part].focus()
+
+        paste(inputs[part], '0001-12-001234')
+
+        await waitFor(() => expect(inputs.submit).toBe(document.activeElement))
+        expect(inputs.bank.value).toBe('0001')
+        expect(inputs.ledger.value).toBe('12')
+        expect(inputs.account.value).toBe('001234')
+      },
+    )
+
     it('fills from the ledger input onwards and focuses the part left empty', async () => {
       const { bank, ledger, account } = renderInputs()
       ledger.focus()
@@ -89,6 +104,10 @@ describe('BankTransferPayment', () => {
       expect(bank.value).toBe('')
       expect(ledger.value).toBe('12')
       expect(account.value).toBe('001234')
+      // Only the pasted parts are validated, so the empty bank is not flagged yet.
+      expect(
+        screen.queryByText('Úttektarreikningur er nauðsynlegur'),
+      ).toBeNull()
     })
 
     it('moves on to the submit button when a paste completes a typed bank', async () => {
@@ -121,6 +140,10 @@ describe('BankTransferPayment', () => {
       expect(ledger.value).toBe('12')
       expect(account.value).toBe('001234')
       expect(submit.disabled).toBe(true)
+      // Not flagged before the payer has had a chance to fill it in.
+      expect(
+        screen.queryByText('Kennitala samþykktaraðila er nauðsynleg.'),
+      ).toBeNull()
     })
 
     it('leaves a short paste to the browser', () => {

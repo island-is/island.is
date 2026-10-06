@@ -12,10 +12,15 @@ interface InvoicePaymentInput {
   reference: string
 }
 
+interface InvoicePaymentProps {
+  nationalId?: string
+  reference?: string
+}
+
 export const InvoicePayment = ({
   nationalId,
   reference,
-}: InvoicePaymentInput) => {
+}: InvoicePaymentProps) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext<InvoicePaymentInput>()
 
@@ -29,7 +34,8 @@ export const InvoicePayment = ({
             required: true,
           })}
           size="sm"
-          value={formatKennitala(nationalId)}
+          // `format` throws on a missing value, so one is shown empty instead.
+          value={nationalId ? formatKennitala(nationalId) : ''}
           readOnly
         />
         <Input

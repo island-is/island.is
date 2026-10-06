@@ -125,6 +125,24 @@ export class PaymentFlowService {
     )
   }
 
+  /**
+   * Who may pay by bank transfer: a person, or a company the company flag allows. A temporary
+   * kennitala is neither, so it is never allowed.
+   */
+  async isBankTransferAllowedForPayer(
+    payerNationalId: string,
+  ): Promise<boolean> {
+    if (isPerson(payerNationalId)) {
+      return true
+    }
+
+    if (!isCompany(payerNationalId)) {
+      return false
+    }
+
+    return this.isBankTransferAllowedForCompany(payerNationalId)
+  }
+
   async createPaymentUrl(
     paymentInfo: CreatePaymentFlowInput,
   ): Promise<CreatePaymentFlowDTO> {
@@ -139,25 +157,25 @@ export class PaymentFlowService {
 
       const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
 
-      // Bank transfer is gated behind the global feature flag and offered to
-      // individuals, and to companies the company flag allows — a company pays with
-      // an individual who has the rights to authorise it, entered on the payment
-      // screen. Temporary kennitalas are excluded. The global flag is the offer
-      // kill-switch: off → never listed, so the FE selector never shows a method
-      // whose endpoints the flag also guards.
+      // Bank transfer is gated behind the global feature flag and offered to the
+      // payers `isBankTransferAllowedForPayer` allows — a company pays with an
+      // individual who has the rights to authorise it, entered on the payment
+      // screen. The global flag is the offer kill-switch: off → never listed, so the
+      // FE selector never shows a method whose endpoints the flag also guards.
       let availableMethods = paymentMethods
       if (paymentMethods.includes(PaymentMethod.BANK_TRANSFER)) {
         const isBankTransferEnabled = await this.featureFlagService.getValue(
           Features.isIslandisBankTransferPaymentEnabled,
           false,
         )
-        const payer = paymentInfo.payerNationalId
-        const isPayerAllowed =
-          isPerson(payer) ||
-          (isCompany(payer) &&
-            (await this.isBankTransferAllowedForCompany(payer)))
+        // With the flag off the payer does not matter, so the company flag is not evaluated.
+        const isBankTransferOffered =
+          isBankTransferEnabled &&
+          (await this.isBankTransferAllowedForPayer(
+            paymentInfo.payerNationalId,
+          ))
 
-        if (!isBankTransferEnabled || !isPayerAllowed) {
+        if (!isBankTransferOffered) {
           availableMethods = paymentMethods.filter(
             (m) => m !== PaymentMethod.BANK_TRANSFER,
           )

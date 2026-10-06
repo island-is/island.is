@@ -180,6 +180,21 @@ describe('PaymentFlowService', () => {
       )
     })
 
+    it('should not consult the company flag when the feature flag is off', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+      getValue.mockResolvedValueOnce(false as never)
+
+      const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD])
+      expect(getValue).not.toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        expect.anything(),
+        expect.anything(),
+      )
+    })
+
     it('should not offer bank transfer to a temporary kennitala payer', async () => {
       const methods = await createFlowAndReadMethods('8123456789') // temporary kennitala (starts with 8)
 

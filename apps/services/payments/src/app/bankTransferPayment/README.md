@@ -50,14 +50,15 @@ individual with the rights to authorise payments from the company account, and s
 national id read-only. It is sent as `actorNationalId` on `paymentsCreateBankTransfer`, and
 [`getBankTransferDebtor`](./bankTransfer.utils.ts) maps it onto Blikk's debtor fields:
 
-| Payer       | `debtorExternalId` (authenticates with their bank) | `debtorCorpExternalId` (debited) |
-| ----------- | -------------------------------------------------- | -------------------------------- |
-| Company     | the individual (`actorNationalId`)                 | the company                      |
-| Anyone else | the payer (`actorNationalId` is ignored)           | —                                |
+| Payer   | `debtorExternalId` (authenticates with their bank) | `debtorCorpExternalId` (debited) |
+| ------- | -------------------------------------------------- | -------------------------------- |
+| Company | the individual (`actorNationalId`)                 | the company                      |
+| Person  | the payer (`actorNationalId` is ignored)           | —                                |
 
 Company payers are rolled out per company behind `isIslandisBankTransferPaymentAllowedForCompany`
-(see [Feature flags & access](#feature-flags--access)). A company it does not allow is refused with
-`FailedToCreateBankTransfer`, and a company without a valid individual (missing, a company or a
+(see [Feature flags & access](#feature-flags--access)). A payer that is not allowed is refused with
+`FailedToCreateBankTransfer`. That covers a company the flag does not allow, and a temporary
+kennitala, which is never allowed. A company without a valid individual (missing, a company or a
 temporary kennitala) with `InvalidActorNationalId`, both before Blikk is called; the screen
 validates the individual with the same rule and shows a refusal on that input. The FJS charge's
 payer is always `payerNationalId`.

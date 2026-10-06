@@ -17,6 +17,7 @@ import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 import { bankTransfer } from '../../messages'
 import {
   BANK_ACCOUNT_PART_LENGTHS,
+  BANK_ACCOUNT_PART_ORDER,
   BankAccountPart,
   padBankAccountPart,
   parsePastedBankAccount,
@@ -44,31 +45,20 @@ const MASK_REPLACEMENT = { _: /\d/ }
 
 const BANK_ACCOUNT_ERROR_ID = 'bank-account-error'
 
-const BANK_ACCOUNT_PARTS: {
-  name: BankAccountPart
-  label: MessageDescriptor
-  className: string
-  // Focused once this part is full.
-  next?: BankAccountPart
-}[] = [
-  {
-    name: 'bank',
-    label: bankTransfer.bank,
-    className: styles.bankAccountPart,
-    next: 'ledger',
-  },
-  {
-    name: 'ledger',
-    label: bankTransfer.ledger,
-    className: styles.bankAccountPart,
-    next: 'account',
-  },
-  {
-    name: 'account',
+const BANK_ACCOUNT_PART_FIELDS: Record<
+  BankAccountPart,
+  { label: MessageDescriptor; className: string }
+> = {
+  bank: { label: bankTransfer.bank, className: styles.bankAccountPart },
+  ledger: { label: bankTransfer.ledger, className: styles.bankAccountPart },
+  account: {
     label: bankTransfer.account,
     className: styles.bankAccountNumberPart,
   },
-]
+}
+
+// Where focus goes after a paste: a field, or the submit button.
+type PasteFocusTarget = keyof BankTransferPaymentInput | 'submit'
 
 /**
  * The body shown between the {@link PaymentSelector} and the submit button when the user has
@@ -77,44 +67,66 @@ const BANK_ACCOUNT_PARTS: {
 export const BankTransferPayment = ({
   companyPayer,
 }: BankTransferPaymentProps) => {
-  const { control, formState, setFocus, setValue, getValues, trigger } =
-    useFormContext<BankTransferPaymentInput>()
+  const {
+    control,
+    formState,
+    setFocus,
+    setValue,
+    getValues,
+    getFieldState,
+    trigger,
+  } = useFormContext<BankTransferPaymentInput>()
   const { formatMessage } = useLocale()
 
   // Move focus on from a paste only once its values have rendered. Moving it in the paste handler
   // blurs the pasted-into input while its DOM value is still the old one, and `onBlur` below writes
-  // that stale value back. A pasted account number is assumed complete, so the next step is the
-  // submit button; a part the paste left empty, or another field still keeping the form invalid
-  // (the approver's national id for a company payer), is focused instead.
+  // that stale value back.
   const [pendingFocus, setPendingFocus] = useState<{
     form: HTMLFormElement | null
-    isFormValid: boolean
+    target: PasteFocusTarget
   } | null>(null)
-  const { errors } = formState
   useEffect(() => {
     if (!pendingFocus) return
     setPendingFocus(null)
 
-    const emptyPart = BANK_ACCOUNT_PARTS.find(({ name }) => !getValues(name))
-    if (emptyPart) {
-      setFocus(emptyPart.name)
-      return
-    }
-
-    if (pendingFocus.isFormValid) {
+    if (pendingFocus.target === 'submit') {
       pendingFocus.form
         ?.querySelector<HTMLButtonElement>('button[type="submit"]')
         ?.focus()
-      return
+    } else {
+      setFocus(pendingFocus.target)
+    }
+  }, [pendingFocus, setFocus])
+
+  // A pasted account number is assumed complete, so the next step is the submit button. A part the
+  // paste got wrong or left empty, or the approver's national id a company payer has yet to enter,
+  // comes first. Fields are validated only once the payer has reached them, so the approver's is not
+  // flagged before they have had a chance to fill it in.
+  const findPasteFocusTarget = async (
+    pastedParts: BankAccountPart[],
+  ): Promise<PasteFocusTarget> => {
+    if (!(await trigger(pastedParts))) {
+      return (
+        pastedParts.find((part) => getFieldState(part).invalid) ??
+        pastedParts[0]
+      )
     }
 
-    const invalidField = (
-      Object.keys(errors) as (keyof BankTransferPaymentInput)[]
-    )[0]
-    if (invalidField) {
-      setFocus(invalidField)
-    }
-  }, [pendingFocus, errors, getValues, setFocus])
+    const emptyPart = BANK_ACCOUNT_PART_ORDER.find((part) => !getValues(part))
+    if (emptyPart) return emptyPart
+
+    if (companyPayer && !getValues('actorNationalId')) return 'actorNationalId'
+
+    // Everything is filled in. Validating the whole form also settles `isValid`, which the submit
+    // button is disabled on.
+    if (await trigger()) return 'submit'
+
+    return (
+      (['actorNationalId', ...BANK_ACCOUNT_PART_ORDER] as const).find(
+        (name) => getFieldState(name).invalid,
+      ) ?? 'submit'
+    )
+  }
 
   // One message for the whole account number, under the three inputs.
   const bankAccountError =
@@ -190,8 +202,11 @@ export const BankTransferPayment = ({
           )}
           <Box>
             <Box display="flex" columnGap={2}>
-              {BANK_ACCOUNT_PARTS.map(({ name, label, className, next }) => {
+              {BANK_ACCOUNT_PART_ORDER.map((name, index) => {
+                const { label, className } = BANK_ACCOUNT_PART_FIELDS[name]
                 const length = BANK_ACCOUNT_PART_LENGTHS[name]
+                // Focused once this part is full.
+                const next = BANK_ACCOUNT_PART_ORDER[index + 1]
 
                 return (
                   <Box key={name} className={className}>
@@ -236,16 +251,16 @@ export const BankTransferPayment = ({
 
                             e.preventDefault()
                             const form = e.currentTarget.form
-                            for (const { name: part } of BANK_ACCOUNT_PARTS) {
+                            const pastedParts: BankAccountPart[] = []
+                            for (const part of BANK_ACCOUNT_PART_ORDER) {
                               const value = parsed[part]
                               if (value !== undefined) {
                                 setValue(part, value, { shouldDirty: true })
+                                pastedParts.push(part)
                               }
                             }
-                            // The whole form: the submit button is disabled until it is valid, and
-                            // only a full validation settles `isValid` before resolving.
-                            trigger().then((isFormValid) =>
-                              setPendingFocus({ form, isFormValid }),
+                            findPasteFocusTarget(pastedParts).then((target) =>
+                              setPendingFocus({ form, target }),
                             )
                           }}
                           // Show the value as it will be sent: `123` becomes `0123`.

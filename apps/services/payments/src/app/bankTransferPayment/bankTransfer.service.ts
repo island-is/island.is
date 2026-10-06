@@ -1,5 +1,4 @@
 import { Op } from 'sequelize'
-import { isCompany } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -105,16 +104,15 @@ export class BankTransferService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
-    // Normally unreachable — a company the flag does not allow is never offered the method — but a
-    // flow created while it was on still lists it, and the endpoint can be called directly.
+    // Normally unreachable — a payer it does not allow is never offered the method — but a flow
+    // created while the company flag was on still lists it, and the endpoint can be called directly.
     if (
-      isCompany(paymentFlow.payerNationalId) &&
-      !(await this.paymentFlowService.isBankTransferAllowedForCompany(
+      !(await this.paymentFlowService.isBankTransferAllowedForPayer(
         paymentFlow.payerNationalId,
       ))
     ) {
       this.logger.warn(
-        `[${input.paymentFlowId}] Bank transfer requested for a company it is not enabled for`,
+        `[${input.paymentFlowId}] Bank transfer requested for a payer it is not enabled for`,
       )
       throw new BadRequestException(
         BankTransferErrorCode.FailedToCreateBankTransfer,
