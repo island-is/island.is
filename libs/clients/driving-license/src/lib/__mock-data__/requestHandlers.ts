@@ -48,6 +48,26 @@ export const XROAD_DRIVING_LICENSE_PATH_V6 =
 export const XROAD_DRIVING_LICENSE_PATH_V1 =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1/api'
 
+const MOCK_HAS_QUALITY_PHOTO = {
+  [MOCK_TOKEN.STUDENT]: true,
+  [MOCK_TOKEN.TEACHER]: true,
+  [MOCK_TOKEN.DEPRIVED]: false,
+  [MOCK_TOKEN.NO_LICENSE]: false,
+  [MOCK_TOKEN.MANY_CATEGORIES]: true,
+  [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
+  [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
+}
+
+const MOCK_HAS_SIGNATURE = {
+  [MOCK_TOKEN.STUDENT]: true,
+  [MOCK_TOKEN.TEACHER]: true,
+  [MOCK_TOKEN.DEPRIVED]: false,
+  [MOCK_TOKEN.NO_LICENSE]: false,
+  [MOCK_TOKEN.MANY_CATEGORIES]: true,
+  [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
+  [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
+}
+
 export const requestHandlers = [
   rest.post(
     /api\/applications\/v6\/temporarywithhealthdeclaration/,
@@ -100,11 +120,42 @@ export const requestHandlers = [
     )
   }),
 
-  // v6 identity travels in the `jwttoken` header (see apiConfiguration.ts); this
-  // handler does not need to inspect it, so it just returns success. Per-person
-  // quality-photo/signature scenarios are covered by spying on the v6 ImageApi
-  // directly in the service spec.
-  rest.post(/api\/applications\/v6\/applyfor\/renewal65/, (_req, res, ctx) => {
+  // v6 resolves the caller from the `jwttoken` header that apiConfiguration.ts
+  // injects; without it RLS cannot tell who is applying, so answer 401 and let
+  // the wire, not just the wrapper, prove the header was sent.
+  rest.get(/api\/imagecontroller\/v6\/hasqualityphoto$/, (req, res, ctx) => {
+    const jwttoken = req.headers.get('jwttoken')
+    if (!jwttoken) {
+      return res(ctx.status(401))
+    }
+
+    return res(
+      ctx.status(200),
+      ctx.json(MOCK_HAS_QUALITY_PHOTO[jwttoken as MOCK_TOKEN] ? 1 : 0),
+    )
+  }),
+
+  rest.get(
+    /api\/imagecontroller\/v6\/hasqualitysignature$/,
+    (req, res, ctx) => {
+      const jwttoken = req.headers.get('jwttoken')
+      if (!jwttoken) {
+        return res(ctx.status(401))
+      }
+
+      return res(
+        ctx.status(200),
+        ctx.json(MOCK_HAS_SIGNATURE[jwttoken as MOCK_TOKEN] ? 1 : 0),
+      )
+    },
+  ),
+
+  // Same 401 guard as the image handlers above: a renewal submit that reaches
+  // RLS without `jwttoken` has no applicant.
+  rest.post(/api\/applications\/v6\/applyfor\/renewal65/, (req, res, ctx) => {
+    if (!req.headers.get('jwttoken')) {
+      return res(ctx.status(401))
+    }
     return res(
       ctx.status(200),
       ctx.json({

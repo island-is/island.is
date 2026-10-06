@@ -7,7 +7,7 @@ import { startMocking } from '@island.is/shared/mocking'
 import { LoggingModule } from '@island.is/logging'
 import { DrivingLicenseApiModule } from './drivingLicenseApi.module'
 import { exportedApis } from './apiConfiguration'
-import { ApplicationApiV6, CodeTableV6, ImageApiV6 } from '../v6'
+import { ApplicationApiV6, CodeTableV6 } from '../v6'
 
 import {
   lastNewCategoryRequest,
@@ -27,7 +27,6 @@ startMocking(requestHandlers)
 describe('DrivingLicenseDuplicateService', () => {
   let service: DrivingLicenseApi
   let codeTable: CodeTableV6
-  let imageApi: ImageApiV6
   let applicationV6: ApplicationApiV6
 
   beforeEach(async () => {
@@ -45,7 +44,6 @@ describe('DrivingLicenseDuplicateService', () => {
 
     service = module.get(DrivingLicenseApi)
     codeTable = module.get(CodeTableV6)
-    imageApi = module.get(ImageApiV6)
     applicationV6 = module.get(ApplicationApiV6)
   })
 
@@ -56,17 +54,9 @@ describe('DrivingLicenseDuplicateService', () => {
   })
 
   describe('Photo And Signature', () => {
-    // v6 sends no per-person token on the request (identity comes from the
-    // forwarded X-Road token), so these scenarios spy on the v6 ImageApi
-    // directly rather than routing by a jwttoken header.
-    afterEach(() => {
-      jest.restoreAllMocks()
-    })
-
+    // The msw handlers route on the `jwttoken` header (401 without it), so these
+    // cover the token forwarding in apiConfiguration.ts, not just the mapping.
     it('GetHasQualityPhoto for a person with no photo', async () => {
-      jest
-        .spyOn(imageApi, 'apiImagecontrollerV6HasqualityphotoGet')
-        .mockResolvedValue(0)
       const response = await service.getHasQualityPhoto({
         auth: mockAuth(MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE),
       })
@@ -74,9 +64,6 @@ describe('DrivingLicenseDuplicateService', () => {
     })
 
     it('GetHasQualityPhoto for a person with photo', async () => {
-      jest
-        .spyOn(imageApi, 'apiImagecontrollerV6HasqualityphotoGet')
-        .mockResolvedValue(1)
       const response = await service.getHasQualityPhoto({
         auth: mockAuth(MOCK_TOKEN.LICENSE_B_CATEGORY),
       })
@@ -84,9 +71,6 @@ describe('DrivingLicenseDuplicateService', () => {
     })
 
     it('GetHasQualitySignature for a person with no signature', async () => {
-      jest
-        .spyOn(imageApi, 'apiImagecontrollerV6HasqualitysignatureGet')
-        .mockResolvedValue(0)
       const response = await service.getHasQualitySignature({
         auth: mockAuth(MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE),
       })
@@ -94,9 +78,6 @@ describe('DrivingLicenseDuplicateService', () => {
     })
 
     it('GetHasQualitySignature for a person with signature', async () => {
-      jest
-        .spyOn(imageApi, 'apiImagecontrollerV6HasqualitysignatureGet')
-        .mockResolvedValue(1)
       const response = await service.getHasQualitySignature({
         auth: mockAuth(MOCK_TOKEN.LICENSE_B_CATEGORY),
       })
