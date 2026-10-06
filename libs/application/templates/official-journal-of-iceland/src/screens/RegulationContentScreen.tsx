@@ -38,8 +38,14 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
 
   const regenerateText = async () => {
     if (!(await generateText(impacts))) return
-    await refetchApplication()
-    setAdvertKey((key) => key + 1)
+    try {
+      await refetchApplication()
+    } catch (error) {
+      console.error('Failed to refetch application:', error)
+    } finally {
+      // The text is saved either way, so the editor must not keep the old one
+      setAdvertKey((key) => key + 1)
+    }
   }
 
   // Load regulation-specific fields from the DB on first render.

@@ -64,8 +64,12 @@ export const UpdateTextModal = ({
               <Button
                 onClick={async () => {
                   setSaving(true)
-                  const saved = await onConfirm()
-                  setSaving(false)
+                  let saved = false
+                  try {
+                    saved = await onConfirm()
+                  } finally {
+                    setSaving(false)
+                  }
                   if (saved) closeModal()
                 }}
                 size="small"

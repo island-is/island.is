@@ -45,7 +45,7 @@ export const useAmendingText = ({
   const { updateApplicationV2 } = useApplication({ applicationId })
 
   // The text and title as last generated, to tell them apart from edits
-  const lastGeneratedRef = useRef<AmendingText>()
+  const lastGeneratedRef = useRef<AmendingText | undefined>(undefined)
 
   const getCurrent = useCallback(
     (): AmendingText => ({
