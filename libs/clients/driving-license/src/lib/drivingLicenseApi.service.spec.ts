@@ -12,6 +12,7 @@ import { ApplicationApiV6, CodeTableV6 } from '../v6'
 import {
   lastNewCategoryRequest,
   lastV6BeRequest,
+  lastV6Renewal65Request,
   lastV6TemporaryRequest,
   MOCK_TOKEN,
   requestHandlers,
@@ -169,6 +170,9 @@ describe('DrivingLicenseDuplicateService', () => {
       // The v6 apply-for endpoint returns the review guid; capture it so a
       // tester can deny the created application.
       expect(result.applicationGuid).toBe('renewal65-guid-0001')
+      // Required since RLS's 2026-10-06 release. Sent empty: the 65+ flow
+      // asks no health questions, so there are no answers to forward.
+      expect(lastV6Renewal65Request.body?.healthDeclaration).toEqual({})
     })
 
     it('resolves with a null guid — never throws — when RLS omits applicationGuid', async () => {

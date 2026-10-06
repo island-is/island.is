@@ -723,6 +723,12 @@ export class DrivingLicenseApi {
           photoBiometricsId: params.photoBiometricsId,
           signatureBiometricsId: params.signatureBiometricsId,
           userId: v6.DRIVING_LICENSE_API_USER_ID,
+          // RLS made `healthDeclaration` required on this model in its 2026-10-06
+          // release. The 65+ flow asks no health questions (the certificate travels
+          // in `contentList`), so send an empty declaration — never all-false, which
+          // would assert answers the applicant was never asked. The model has no
+          // required fields, so `{}` is valid.
+          healthDeclaration: {},
         },
       }),
     )

@@ -39,6 +39,12 @@ export const lastV6BeRequest: {
   body?: Record<string, unknown>
 } = {}
 
+// Same capture for the v6 65+ submit, whose model gained a required
+// `healthDeclaration` that the 65+ flow has no answers for.
+export const lastV6Renewal65Request: {
+  body?: Record<string, unknown>
+} = {}
+
 export const VALID_AUTH = 'Bearer OKIDOKE'
 export const INVALID_AUTH = 'Bearer NOPEDEDOPE'
 
@@ -152,17 +158,21 @@ export const requestHandlers = [
 
   // Same 401 guard as the image handlers above: a renewal submit that reaches
   // RLS without `jwttoken` has no applicant.
-  rest.post(/api\/applications\/v6\/applyfor\/renewal65/, (req, res, ctx) => {
-    if (!req.headers.get('jwttoken')) {
-      return res(ctx.status(401))
-    }
-    return res(
-      ctx.status(200),
-      ctx.json({
-        category: 'B',
-        result: true,
-        applicationGuid: 'renewal65-guid-0001',
-      }),
-    )
-  }),
+  rest.post(
+    /api\/applications\/v6\/applyfor\/renewal65/,
+    async (req, res, ctx) => {
+      if (!req.headers.get('jwttoken')) {
+        return res(ctx.status(401))
+      }
+      lastV6Renewal65Request.body = await req.json()
+      return res(
+        ctx.status(200),
+        ctx.json({
+          category: 'B',
+          result: true,
+          applicationGuid: 'renewal65-guid-0001',
+        }),
+      )
+    },
+  ),
 ]
