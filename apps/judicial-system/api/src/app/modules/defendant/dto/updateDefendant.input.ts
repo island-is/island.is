@@ -119,7 +119,7 @@ export class UpdateDefendantInput {
   @Allow()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
-  readonly appealDefenderWaived?: boolean
+  readonly isAppealDefenderWaived?: boolean
 
   @Allow()
   @IsOptional()

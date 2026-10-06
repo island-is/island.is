@@ -36,7 +36,7 @@ describe('assertAppealAdvocatesAvailable', () => {
     'appealDefenderName',
     'appealDefenderEmail',
     'appealDefenderPhoneNumber',
-    'appealDefenderWaived',
+    'isAppealDefenderWaived',
     'isAppealDefenderConfirmed',
     'hasAppealSpokesperson',
     'appealSpokespersonIsLawyer',

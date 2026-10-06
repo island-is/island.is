@@ -157,7 +157,7 @@ export class UpdateDefendantDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  readonly appealDefenderWaived?: boolean
+  readonly isAppealDefenderWaived?: boolean
 
   @IsOptional()
   @IsBoolean()

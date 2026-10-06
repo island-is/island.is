@@ -43,7 +43,7 @@ describe('court of appeals appeal advocate rules', () => {
         'appealDefenderName',
         'appealDefenderEmail',
         'appealDefenderPhoneNumber',
-        'appealDefenderWaived',
+        'isAppealDefenderWaived',
         'isAppealDefenderConfirmed',
       ])
     })

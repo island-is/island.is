@@ -248,7 +248,7 @@ export class Defendant extends Model {
   // one that declined counsel do not look alike.
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
-  appealDefenderWaived?: boolean
+  isAppealDefenderWaived?: boolean
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

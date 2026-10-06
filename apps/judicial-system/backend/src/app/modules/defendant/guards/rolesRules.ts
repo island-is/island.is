@@ -25,7 +25,7 @@ const courtOfAppealsDefendantFields: (keyof UpdateDefendantDto)[] = [
   'appealDefenderName',
   'appealDefenderEmail',
   'appealDefenderPhoneNumber',
-  'appealDefenderWaived',
+  'isAppealDefenderWaived',
   'isAppealDefenderConfirmed',
 ]
 
