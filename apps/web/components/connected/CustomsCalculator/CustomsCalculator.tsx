@@ -88,6 +88,13 @@ const findCategoryPath = (categories: CategoryNode[], targetId: string) =>
     value: category.id,
   })) ?? null
 
+// Description HTML can contain bold markup, either as tags or inline styles,
+// which should not be shown as bold
+const removeBoldMarkup = (html: string) =>
+  html
+    .replace(/<\/?(b|strong)(\s[^>]*)?>/gi, '')
+    .replace(/font-weight\s*:\s*[^;"']*;?/gi, '')
+
 interface CustomsCalculatorProps {
   slice: ConnectedComponent
 }
@@ -289,7 +296,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
     return [
       ...ancestors.map((category) => category.description),
       selectedBottomLevelCategory.description,
-    ].filter((description): description is string => Boolean(description))
+    ]
+      .filter((description): description is string => Boolean(description))
+      .map(removeBoldMarkup)
   }, [
     productCategoriesResponse.data?.customsCalculatorProductCategories
       ?.topLevel,

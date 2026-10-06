@@ -13,11 +13,6 @@ export const descriptionList = style({
   paddingLeft: '1.5em',
 })
 
-// Description HTML can contain bold markup (tags or inline styles)
-globalStyle(`${description} *`, {
-  fontWeight: 'inherit !important',
-})
-
 globalStyle(`${description} a`, {
   color: theme.color.blue400,
   textDecoration: 'underline',
