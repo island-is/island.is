@@ -410,6 +410,10 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
                     setSelectedBottomLevelCategory(null)
                     return
                   }
+                  // Downshift also reports the selected option's label when the
+                  // input loses focus (e.g. the blur after picking an option),
+                  // which must not undo a pick with an ambiguous label
+                  if (value === selectedBottomLevelCategory?.label) return
                   // Multiple categories can share a display label (e.g.
                   // "Annað"). Matching free-typed text by label alone would
                   // silently bind the wrong tariff, so only auto-select when
