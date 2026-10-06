@@ -117,11 +117,14 @@ export class CivilClaimantController {
     this.logger.debug(
       `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
-    return this.civilClaimantService.update(
-      theCase,
-      civilClaimant,
-      updateCivilClaimantDto,
-      user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.civilClaimantService.update(
+        theCase,
+        civilClaimant,
+        updateCivilClaimantDto,
+        user,
+        transaction,
+      ),
     )
   }
 

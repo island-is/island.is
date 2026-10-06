@@ -17,6 +17,7 @@ import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { EventLogService } from '../../event-log'
 import {
+  AppealEventLogRepositoryService,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
   CivilClaimantRepositoryService,
@@ -39,6 +40,7 @@ jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock(
   '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
 )
@@ -63,6 +65,7 @@ export const createTestingDefendantModule = async () => {
       CaseService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      AppealEventLogRepositoryService,
       CaseDefendantPoliceCaseNumberRepositoryService,
       EventLogService,
       AppealCaseService,
@@ -113,6 +116,11 @@ export const createTestingDefendantModule = async () => {
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
       DefendantEventLogRepositoryService,
+    )
+
+  const appealEventLogRepositoryService =
+    defendantModule.get<AppealEventLogRepositoryService>(
+      AppealEventLogRepositoryService,
     )
 
   const caseDefendantPoliceCaseNumberRepositoryService =
@@ -175,6 +183,7 @@ export const createTestingDefendantModule = async () => {
     sequelize,
     defendantRepositoryService,
     defendantEventLogRepositoryService,
+    appealEventLogRepositoryService,
     caseDefendantPoliceCaseNumberRepositoryService,
     defendantService,
     defendantController,

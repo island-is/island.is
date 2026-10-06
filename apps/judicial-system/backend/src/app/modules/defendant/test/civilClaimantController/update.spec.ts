@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
@@ -38,15 +39,25 @@ describe('CivilClaimantController - Update', () => {
   let mockQueuedMessages: Message[]
   let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
   let mockCaseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       queuedMessagesAfterCommit,
+      sequelize,
       civilClaimantRepositoryService,
       caseDefendantPoliceCaseNumberRepositoryService,
       civilClaimantController,
     } = await createTestingDefendantModule()
+
+    // The update now runs in a transaction, so the confirmation and the
+    // appeal event recording it land together or not at all.
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementation(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCivilClaimantRepositoryService = civilClaimantRepositoryService
@@ -100,7 +111,9 @@ describe('CivilClaimantController - Update', () => {
     it('should update the civil claimant', () => {
       expect(
         mockCivilClaimantRepositoryService.updateByIdAndCase,
-      ).toHaveBeenCalledWith(civilClaimantId, caseId, civilClaimantUpdate)
+      ).toHaveBeenCalledWith(civilClaimantId, caseId, civilClaimantUpdate, {
+        transaction,
+      })
       expect(mockQueuedMessages).toEqual([])
     })
 
@@ -141,10 +154,15 @@ describe('CivilClaimantController - Update', () => {
       ).toHaveBeenCalledWith(caseId, ['007-1', '007-2'], ['def-a', 'def-b'])
       expect(
         mockCivilClaimantRepositoryService.updateByIdAndCase,
-      ).toHaveBeenCalledWith(civilClaimantId, caseId, {
-        policeCaseNumbers: ['007-1', '007-2'],
-        defendantIds: ['def-b'],
-      })
+      ).toHaveBeenCalledWith(
+        civilClaimantId,
+        caseId,
+        {
+          policeCaseNumbers: ['007-1', '007-2'],
+          defendantIds: ['def-b'],
+        },
+        { transaction },
+      )
     })
   })
 
