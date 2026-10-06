@@ -21,6 +21,7 @@ import {
 
 import {
   AppealCaseModule,
+  AppealSummonsModule,
   AuthModule,
   authModuleConfig,
   BackendModule,
@@ -74,6 +75,7 @@ const autoSchemaFile = production
     DefendantModule,
     DefenderModule,
     SubpoenaModule,
+    AppealSummonsModule,
     IndictmentCountModule,
     CourtSessionModule,
     FileModule,

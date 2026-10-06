@@ -16,6 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
@@ -648,6 +649,24 @@ export class BackendService {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {

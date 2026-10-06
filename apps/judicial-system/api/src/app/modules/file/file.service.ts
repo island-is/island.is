@@ -54,6 +54,45 @@ export class FileService {
     return stream.pipe(res)
   }
 
+  private async postFile(
+    id: string,
+    route: string,
+    body: unknown,
+    req: Request,
+    res: Response,
+    contentType: 'pdf' | 'zip',
+  ): Promise<Response> {
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    headers.set('Accept', `application/${contentType}`)
+    headers.set('authorization', req.headers.authorization as string)
+    headers.set('cookie', req.headers.cookie as string)
+
+    const result = await fetch(
+      `${this.config.backendUrl}/api/case/${id}/${route}`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      },
+    ).then(async (res) => {
+      if (res.ok) {
+        return res
+      }
+
+      const response = await res.json()
+
+      throw new ProblemError(response)
+    })
+
+    const stream = result.body
+
+    res.header('Content-Type', `application/${contentType}`)
+    res.header('Content-length', result.headers.get('Content-Length') as string)
+
+    return stream.pipe(res)
+  }
+
   async tryGetFile(
     userId: string,
     auditAction: AuditedAction,
@@ -68,6 +107,32 @@ export class FileService {
         userId,
         auditAction,
         this.getFile(id, route, req, res, contentType),
+        id,
+      )
+    } catch (error) {
+      if (error instanceof FileExeption) {
+        return res.status(error.status).json(error.message)
+      }
+
+      throw error
+    }
+  }
+
+  async tryPostFile(
+    userId: string,
+    auditAction: AuditedAction,
+    id: string,
+    route: string,
+    body: unknown,
+    req: Request,
+    res: Response,
+    contentType: 'pdf' | 'zip',
+  ): Promise<Response> {
+    try {
+      return this.auditTrailService.audit(
+        userId,
+        auditAction,
+        this.postFile(id, route, body, req, res, contentType),
         id,
       )
     } catch (error) {

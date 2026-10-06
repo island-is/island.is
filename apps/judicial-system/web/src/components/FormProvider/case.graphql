@@ -285,6 +285,16 @@ query Case($input: CaseQueryInput!) {
         institutionName
       }
     }
+    appealSummonses {
+      id
+      confirmedDate
+      sentToCourtOfAppealsDate
+      defendants {
+        defendantId
+        appellantSide
+        claims
+      }
+    }
     rulingOrderAppealCases {
       ...AppealCaseFields
     }

@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../../appeal-case'
+import { AppealSummons } from '../../appeal-summons'
 import {
   AppealDecisionResponse,
   CourtDocumentResponse,
@@ -451,6 +452,9 @@ export class Case {
   // event log.
   @Field(() => AppealCase, { nullable: true })
   readonly verdictAppealCase?: AppealCase
+
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly appealSummonses?: AppealSummons[]
 
   @Field(() => [AppealDecisionResponse], { nullable: true })
   readonly appealDecisions?: AppealDecisionResponse[]

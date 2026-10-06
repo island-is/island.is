@@ -121,6 +121,8 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE 
   '/rikissaksoknari/akaera/senda-til-fmst'
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE =
   '/rikissaksoknari/akaera/afryjun'
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE =
+  '/rikissaksoknari/akaera/afryjunarstefna'
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes

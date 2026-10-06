@@ -13,6 +13,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  AppealEventType,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -24,8 +25,10 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import type { AppealSummonsPdfDefendant } from '../../formatters'
 import {
   Confirmation,
+  createAppealSummons,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
@@ -40,8 +43,10 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { verdictAppellantSide } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import {
+  AppealSummons,
   Case,
   CaseRepositoryService,
   Defendant,
@@ -569,5 +574,43 @@ export class PdfService {
     } else {
       return await createRulingSentToPrisonAdminPdf(theCase)
     }
+  }
+
+  async getAppealSummonsPdf(
+    theCase: Case,
+    summons?: AppealSummons,
+    previewDefendants?: AppealSummonsPdfDefendant[],
+  ): Promise<Buffer> {
+    const rows = summons?.defendants ?? previewDefendants ?? []
+
+    const defendants: AppealSummonsPdfDefendant[] = rows.map((row) => ({
+      defendantId: row.defendantId,
+      appellantSide: row.appellantSide,
+      claims: row.claims,
+      appealDate: this.getDefenceAppealDate(theCase, row.defendantId),
+    }))
+
+    return createAppealSummons(theCase, defendants, summons?.confirmedDate)
+  }
+
+  private getDefenceAppealDate(
+    theCase: Case,
+    defendantId: string,
+  ): Date | undefined {
+    const logs = (theCase.verdictAppealCase?.appealEventLogs ?? [])
+      .filter(
+        (eventLog) =>
+          eventLog.defendantId === defendantId &&
+          eventLog.eventType === AppealEventType.APPEALED &&
+          verdictAppellantSide(eventLog.userRole) === 'DEFENCE',
+      )
+      .sort((a, b) => b.created.getTime() - a.created.getTime())
+
+    if (logs[0]) {
+      return logs[0].created
+    }
+
+    return theCase.defendants?.find((defendant) => defendant.id === defendantId)
+      ?.verdicts?.[0]?.appealDate
   }
 }

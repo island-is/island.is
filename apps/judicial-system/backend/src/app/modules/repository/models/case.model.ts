@@ -36,6 +36,7 @@ import {
 
 import { AppealCase } from './appealCase.model'
 import { AppealDecision } from './appealDecision.model'
+import { AppealSummons } from './appealSummons.model'
 import { CaseDefendantPoliceCaseNumber } from './caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
@@ -1041,4 +1042,8 @@ export class Case extends Model {
   @HasMany(() => AppealDecision, 'caseId')
   @ApiPropertyOptional({ type: () => AppealDecision, isArray: true })
   appealDecisions?: AppealDecision[]
+
+  @HasMany(() => AppealSummons, 'caseId')
+  @ApiPropertyOptional({ type: () => AppealSummons, isArray: true })
+  appealSummonses?: AppealSummons[]
 }
