@@ -294,7 +294,7 @@ export const application = defineMessages({
   },
   tableHeaderDateFrom: {
     id: 'vmst.cjoi.application:tableHeaderDateFrom',
-    defaultMessage: 'Dag. frá',
+    defaultMessage: 'Dags. frá',
     description: 'Table header for date from',
   },
   tableHeaderDateTo: {
@@ -309,7 +309,7 @@ export const application = defineMessages({
   },
   tableHeaderEstimatedIncome: {
     id: 'vmst.cjoi.application:tableHeaderEstimatedIncome',
-    defaultMessage: 'Áætlaðuð upphæð',
+    defaultMessage: 'Áætluð upphæð',
     description: 'Table header for estimated income',
   },
   tableHeaderJobStart: {

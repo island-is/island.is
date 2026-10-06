@@ -130,6 +130,7 @@ export const socialInsuranceSection = buildSubSection({
               required: true,
               largeButtons: false,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerSocialInsurance[${index}].dateTo`,
               ],

@@ -114,6 +114,8 @@ export const partTimeSection = buildSubSection({
               searchCompanies: true,
               searchPersons: false,
               required: true,
+              customNationalIdLabel: m.application.companyNationalId,
+              customNameLabel: m.application.companyName,
             },
             jobStart: {
               component: 'date',

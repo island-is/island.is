@@ -118,6 +118,8 @@ export const casualWorkSection = buildSubSection({
               searchCompanies: true,
               searchPersons: false,
               required: true,
+              customNationalIdLabel: m.application.companyNationalId,
+              customNameLabel: m.application.companyName,
             },
             dateFrom: {
               component: 'date',

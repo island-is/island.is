@@ -130,6 +130,7 @@ export const capitalIncomeSection = buildSubSection({
               required: true,
               largeButtons: false,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerCapitalIncome[${index}].dateTo`,
               ],

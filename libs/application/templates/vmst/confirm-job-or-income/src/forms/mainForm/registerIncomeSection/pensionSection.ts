@@ -140,6 +140,7 @@ export const pensionSection = buildSubSection({
               largeButtons: false,
               required: true,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerPension[${index}].dateTo`,
               ],
