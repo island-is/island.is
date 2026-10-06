@@ -66,18 +66,8 @@ export const Default = {
           result: {
             data: {
               identity: {
-                data: [
-                  {
-                    __typename: 'IdentityPerson',
-                    name: 'Prufa1',
-                    nationalId: '1111223333',
-                  },
-                  {
-                    __typename: 'IdentityPerson',
-                    name: 'Prufa2',
-                    nationalId: '1122223333',
-                  },
-                ],
+                name: 'Prufa1',
+                nationalId: '1111223333',
               },
             },
           },

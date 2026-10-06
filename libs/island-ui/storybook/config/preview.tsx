@@ -29,8 +29,12 @@ export const parameters: Parameters = {
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
-    (Story) => {
+    (Story, context) => {
       const hookFormData = useForm({ defaultValues: {} })
+      // The apollo addon ships no decorator, so apply each story's
+      // `parameters.apolloClient` settings (mocks, addTypename, ...) here
+      const { MockedProvider: _, ...apolloMockOptions } =
+        context.parameters.apolloClient ?? {}
 
       return (
         <IntlProvider
@@ -41,7 +45,7 @@ const preview: Preview = {
           onError={() => undefined}
         >
           <FormProvider {...hookFormData}>
-            <MockedProvider mocks={[]}>
+            <MockedProvider {...apolloMockOptions}>
               <BffContext.Provider value={mockBffContext}>
                 {Story()}
               </BffContext.Provider>
