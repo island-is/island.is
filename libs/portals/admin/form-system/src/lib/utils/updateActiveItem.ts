@@ -64,7 +64,7 @@ export const updateActiveItemFn = async (
           input: {
             id,
             updateScreenDto: {
-              identifier,
+              identifier: identifier ?? '',
               name,
               multiMax: multiMax ? multiMax : 0,
               isMulti: isMulti ? isMulti : false,
@@ -92,7 +92,7 @@ export const updateActiveItemFn = async (
           input: {
             id: id,
             updateFieldDto: {
-              identifier,
+              identifier: identifier ?? '',
               name,
               description,
               isPartOfMultiset,

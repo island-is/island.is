@@ -92,7 +92,7 @@ export class ApplicationsService {
 
   private isFakeUserAllowed(form: Form, user: User | null): boolean {
     if (
-      process.env.name !== 'production' ||
+      process.env.name !== 'prod' ||
       form.status !== FormStatus.PUBLISHED ||
       !user
     ) {
