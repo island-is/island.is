@@ -31,10 +31,7 @@ export class PayDebtsService extends BaseTemplateApiService {
     super(ApplicationTypes.PAY_DEBTS)
   }
 
-  async getCustomerDebts({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
+  async getCustomerDebts({ auth, application }: TemplateApiModuleActionProps) {
     const result = await this.financeClientV3Service.getCustomerDebts(auth, {
       nationalID: auth.nationalId,
     })
