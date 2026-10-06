@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, ForbiddenException } from '@nestjs/common'
@@ -41,7 +42,12 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { randomDate } from '../../../../test'
+import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  TransactionContext,
+} from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
 import { CourtSessionService } from '../../../court-session'
 import { DefendantService } from '../../../defendant'
 import { EventService } from '../../../event'
@@ -102,6 +108,8 @@ describe('CaseController - Update', () => {
   let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
+  let mockSequelize: Sequelize
+  let transactionContext: TransactionContext | undefined
   let mockCaseRepositoryService: CaseRepositoryService
   let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let mockDefendantService: DefendantService
@@ -134,6 +142,8 @@ describe('CaseController - Update', () => {
     mockEventService = eventService
     mockUserService = userService
     mockFileService = fileService
+    mockSequelize = sequelize
+    transactionContext = undefined
     mockCaseRepositoryService = caseRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockDefendantService = defendantService
@@ -143,10 +153,7 @@ describe('CaseController - Update', () => {
     mockCourtSessionService = courtSessionService
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    transaction = {
-      commit: jest.fn(),
-      rollback: jest.fn(),
-    } as unknown as Transaction
+    transaction = {} as Transaction
     mockTransaction.mockResolvedValueOnce(transaction)
 
     const mockToday = nowFactory as jest.Mock
@@ -165,12 +172,23 @@ describe('CaseController - Update', () => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.update(
-          caseId,
-          user,
-          theCase,
-          caseToUpdate,
-        )
+        // The route is guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open - and holding a lock on this case row -
+        // by the time the handler runs. Guards do not execute in controller
+        // unit tests, so the request context and that transaction are set up
+        // here instead.
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await caseController.update(
+            caseId,
+            user,
+            theCase,
+            caseToUpdate,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -1866,10 +1884,119 @@ describe('CaseController - Update', () => {
       )
     })
 
-    it('should post a REOPEN Slack event', () => {
+    it('should register the REOPEN event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the REOPEN event once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
       expect(mockEventService.postEvent).toHaveBeenCalledWith(
         CaseTransition.REOPEN,
         expect.objectContaining({ id: caseId, state: CaseState.RECEIVED }),
+      )
+    })
+  })
+
+  describe('the request transaction and the receive event', () => {
+    const submittedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.SUBMITTED,
+    } as Case
+    const caseToUpdate = { courtCaseNumber: 'R-2026-1234' } as UpdateCaseDto
+    const receivedCase = {
+      ...submittedCase,
+      ...caseToUpdate,
+      state: CaseState.RECEIVED,
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(receivedCase)
+
+      then = await givenWhenThen(caseId, user, submittedCase, caseToUpdate)
+    })
+
+    it('should write in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second call
+      // would be the handler opening a transaction of its own, which would
+      // block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        expect.objectContaining({
+          courtCaseNumber: caseToUpdate.courtCaseNumber,
+          state: CaseState.RECEIVED,
+        }),
+        { transaction },
+      )
+      expect(then.result).toBe(receivedCase)
+    })
+
+    it('should register the RECEIVE event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the RECEIVE event once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        CaseTransition.RECEIVE,
+        receivedCase,
+      )
+    })
+  })
+
+  // MOVE is the one event whose callback closes over a second value, the
+  // court names, so it is where a closure mistake would show.
+  describe('the move event', () => {
+    const newCourtId = uuid()
+    const receivedCase = {
+      ...theCase,
+      type: CaseType.CUSTODY,
+      state: CaseState.RECEIVED,
+      courtId: uuid(),
+      court: { name: 'Héraðsdómur Reykjavíkur' },
+    } as Case
+    const caseToUpdate = { courtId: newCourtId } as UpdateCaseDto
+    const movedCase = {
+      ...receivedCase,
+      state: CaseState.SUBMITTED,
+      courtId: newCourtId,
+      court: { name: 'Héraðsdómur Reykjaness' },
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(movedCase)
+
+      await givenWhenThen(caseId, user, receivedCase, caseToUpdate)
+    })
+
+    it('should register the MOVE event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the MOVE event with both court names once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        CaseTransition.MOVE,
+        movedCase,
+        { from: 'Héraðsdómur Reykjavíkur', to: 'Héraðsdómur Reykjaness' },
       )
     })
   })

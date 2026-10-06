@@ -69,7 +69,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -2537,19 +2537,31 @@ export class CaseService {
 
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
+    // Each of these events asserts that a transition happened, so they wait
+    // for the commit - which TransactionCommitInterceptor does after the
+    // handler that called us has returned. Every caller runs inside the
+    // request transaction its guard opened, so an update that rolls back
+    // announces nothing. Still fire and forget: a failed announcement is
+    // logged, not returned to the caller.
     if (isReceivingCase) {
-      this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase),
+      )
     }
 
     if (requiresCourtTransition) {
-      this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
-        from: theCase.court?.name,
-        to: updatedCase?.court?.name,
-      })
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
+          from: theCase.court?.name,
+          to: updatedCase?.court?.name,
+        }),
+      )
     }
 
     if (isReopeningCase) {
-      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.REOPEN, updatedCase),
+      )
     }
 
     if (returnUpdatedCase) {
