@@ -10,7 +10,7 @@ export const description = style({})
 
 export const descriptionList = style({
   listStyleType: 'disc',
-  paddingLeft: '24px',
+  paddingLeft: theme.spacing[3],
 })
 
 globalStyle(`${description} a`, {
