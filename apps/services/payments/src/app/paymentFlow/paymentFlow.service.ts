@@ -517,10 +517,12 @@ export class PaymentFlowService {
        * upstream. Lets the caller skip logging a second line of its own. Message text unchanged.
        */
       logContext?: LogContextFields
+      /** Defaults to `info`. `warn` for outcomes that need attention, e.g. a provider-side fault. */
+      logLevel?: 'info' | 'warn'
     },
     config: PaymentFlowUpdateConfig = { useRetry: false, throwOnError: false },
   ) {
-    this.logger.info(
+    this.logger[update.logLevel ?? 'info'](
       `[${update.paymentFlowId}] ${update.type}: ${update.message}`,
       // Spread, not passed through: an empty object contributes no fields, so callers that pass
       // no context are unaffected.

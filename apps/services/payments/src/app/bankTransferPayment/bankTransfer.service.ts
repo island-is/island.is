@@ -50,7 +50,6 @@ import { BankTransferPayment } from './models/bankTransferPayment.model'
 import {
   bankTransferLogContext,
   deriveBankTransferFailureReason,
-  formatBankTransferLogContext,
   generateBankTransferChargeFJSPayload,
   isBankTransferFailureStatus,
   isBlikkStatus,
@@ -663,10 +662,7 @@ export class BankTransferService {
           maxRetries: 3,
           retryDelayMs: 1000,
           logger: this.logger,
-          // `retry`'s Logger takes no metadata, so the ids go in the prefix here.
-          logPrefix: `${formatBankTransferLogContext(
-            logContext,
-          )}Create bank transfer FJS charge`,
+          logPrefix: `[${paymentFlowId}] Create bank transfer FJS charge`,
           shouldRetryOnError: (error) =>
             error.message !== FjsErrorCode.AlreadyCreatedCharge,
         },
@@ -951,7 +947,8 @@ export class BankTransferService {
 
     // One line per transition: this used to log here *and* via `logPaymentFlowUpdate`. The ids and
     // Blikk's reason now ride on that single line — the reason separates a payer decline from a
-    // provider-side fault failing every payment.
+    // provider-side fault failing every payment. Only ERROR is a provider-side fault, so only it
+    // logs at `warn`; REJECTED and CANCELLED are ordinary payer outcomes.
     await this.paymentFlowService.logPaymentFlowUpdate(
       {
         paymentFlowId: row.paymentFlowId,
@@ -970,6 +967,7 @@ export class BankTransferService {
           rawStatus: result.rawStatus,
           providerMessage: result.message,
         },
+        logLevel: result.status === BankTransferStatus.ERROR ? 'warn' : 'info',
       },
       { useRetry: true, throwOnError: false },
     )

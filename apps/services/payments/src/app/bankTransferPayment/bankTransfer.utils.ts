@@ -116,15 +116,6 @@ export const rowLogContext = (
 ): BankTransferLogContext =>
   bankTransferLogContext(row.paymentFlowId, row.id, row.providerPaymentId)
 
-/**
- * String rendering of {@link BankTransferLogContext}, for the one sink that accepts no structured
- * metadata: the shared `retry` helper, whose Logger interface is `(message: string) => void`.
- */
-export const formatBankTransferLogContext = (
-  ctx: BankTransferLogContext,
-): string =>
-  `[${ctx.paymentFlowId}][correlationId: ${ctx.correlationId}][rrn: ${ctx.rrn}]`
-
 /** True for any status that won't change again (SUCCESS and the three failure values). */
 export const isTerminalBankTransferStatus = (
   status: BankTransferStatus,
