@@ -13,7 +13,7 @@ const appealAdvocateFields = [
   'appealDefenderName',
   'appealDefenderEmail',
   'appealDefenderPhoneNumber',
-  'appealDefenderWaived',
+  'isAppealDefenderWaived',
   'isAppealDefenderConfirmed',
   'hasAppealSpokesperson',
   'appealSpokespersonIsLawyer',

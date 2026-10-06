@@ -7,6 +7,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -22,6 +23,7 @@ registerEnumType(PunishmentType, { name: 'PunishmentType' })
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
+// RequestSharedWithDefender is registered on the Case GraphQL model.
 
 @ObjectType()
 export class IndictmentCancelledOrDismissedState {
@@ -75,6 +77,9 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
+
+  @Field(() => RequestSharedWithDefender, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
@@ -133,7 +138,7 @@ export class Defendant {
   readonly isAppealDefenderConfirmed?: boolean
 
   @Field(() => Boolean, { nullable: true })
-  readonly appealDefenderWaived?: boolean
+  readonly isAppealDefenderWaived?: boolean
 
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean

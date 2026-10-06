@@ -19,4 +19,17 @@ export const stateImage = style({
 export const conversationLink = style({
   display: 'block',
   textDecoration: 'none',
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: -3,
+  },
+})
+
+export const headerLink = style({
+  display: 'flex',
+  borderRadius: theme.border.radius.standard,
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: 2,
+  },
 })

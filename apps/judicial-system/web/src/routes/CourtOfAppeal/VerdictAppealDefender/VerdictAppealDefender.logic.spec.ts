@@ -80,7 +80,7 @@ describe('getAppealDefender', () => {
         defendantWith({
           defenderName: 'Lára Lögmann',
           defenderEmail: 'lara@lawyers.is',
-          appealDefenderWaived: true,
+          isAppealDefenderWaived: true,
         }),
       ),
     ).toEqual({
@@ -98,7 +98,7 @@ describe('getAppealDefender', () => {
       getAppealDefender(
         defendantWith({
           defenderName: 'Lára Lögmann',
-          appealDefenderWaived: false,
+          isAppealDefenderWaived: false,
         }),
       ).name,
     ).toBeUndefined()
@@ -274,7 +274,7 @@ describe('areAllAppealAdvocatesConfirmed', () => {
   it('still waits for a defendant who wants no counsel', () => {
     expect(
       areAllAppealAdvocatesConfirmed({
-        defendants: [defendantWith({ appealDefenderWaived: true })],
+        defendants: [defendantWith({ isAppealDefenderWaived: true })],
       }),
     ).toBe(false)
   })

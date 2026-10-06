@@ -43,10 +43,10 @@ describe('IndictmentCaseFilesList', () => {
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
           <UserContext.Provider
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             value={
               {
                 user: { role, institution: { type: institutionFor(role) } },
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any
             }
           >

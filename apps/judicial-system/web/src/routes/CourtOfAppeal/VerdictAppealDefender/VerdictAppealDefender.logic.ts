@@ -56,7 +56,7 @@ export const getAppealDefender = (defendant: Defendant): Advocate => {
   // cleared back onto the screen for it to confirm by accident.
   if (
     namesSomeone(appealDefender) ||
-    isAnswered(defendant.appealDefenderWaived)
+    isAnswered(defendant.isAppealDefenderWaived)
   ) {
     return appealDefender
   }

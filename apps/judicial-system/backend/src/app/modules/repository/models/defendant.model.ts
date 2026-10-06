@@ -18,6 +18,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -146,6 +147,19 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
 
+  /**********
+   * When the prosecutor's request should become accessible to this
+   * defendant's defender - optional. Dual-written with case.requestSharedWithDefender
+   * until request-case readers flip to the defendant column.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(RequestSharedWithDefender),
+  })
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -248,7 +262,7 @@ export class Defendant extends Model {
   // one that declined counsel do not look alike.
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
-  appealDefenderWaived?: boolean
+  isAppealDefenderWaived?: boolean
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

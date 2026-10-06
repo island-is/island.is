@@ -27,7 +27,7 @@ export class Field extends Model<Field> {
   id!: string
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })

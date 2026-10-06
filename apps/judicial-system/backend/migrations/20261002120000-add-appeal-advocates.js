@@ -26,7 +26,7 @@ module.exports = {
         // yet" and "wants no counsel" stay apart.
         queryInterface.addColumn(
           'defendant',
-          'appeal_defender_waived',
+          'is_appeal_defender_waived',
           { type: Sequelize.BOOLEAN, allowNull: true },
           { transaction: t },
         ),
@@ -45,7 +45,7 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('defendant', 'appeal_defender_waived', {
+        queryInterface.removeColumn('defendant', 'is_appeal_defender_waived', {
           transaction: t,
         }),
         ...civilClaimantColumns.map(([name]) =>

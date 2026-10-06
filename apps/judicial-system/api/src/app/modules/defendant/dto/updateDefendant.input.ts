@@ -8,6 +8,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -73,6 +74,11 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => RequestSharedWithDefender, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
+
+  @Allow()
+  @IsOptional()
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
@@ -119,7 +125,7 @@ export class UpdateDefendantInput {
   @Allow()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
-  readonly appealDefenderWaived?: boolean
+  readonly isAppealDefenderWaived?: boolean
 
   @Allow()
   @IsOptional()

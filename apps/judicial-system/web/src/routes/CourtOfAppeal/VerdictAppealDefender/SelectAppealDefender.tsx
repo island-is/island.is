@@ -46,7 +46,7 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
   const [displayModal, setDisplayModal] = useState(false)
 
   const isConfirmed = Boolean(defendant.isAppealDefenderConfirmed)
-  const hasWaived = Boolean(defendant.appealDefenderWaived)
+  const hasWaived = Boolean(defendant.isAppealDefenderWaived)
   const appealDefender = getAppealDefender(defendant)
 
   const send = (update: UpdateDefendant) =>
@@ -66,13 +66,13 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
     appealDefenderNationalId: appealDefender.nationalId ?? null,
   })
 
-  const toggleWaived = (appealDefenderWaived: boolean) =>
+  const toggleWaived = (isAppealDefenderWaived: boolean) =>
     send({
       defendantId: defendant.id,
-      appealDefenderWaived,
+      isAppealDefenderWaived,
       // Wanting no counsel and naming one are mutually exclusive, so the
       // fields are cleared rather than left to contradict the checkbox.
-      ...(appealDefenderWaived
+      ...(isAppealDefenderWaived
         ? {
             appealDefenderName: null,
             appealDefenderNationalId: null,
@@ -125,8 +125,8 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
           </Text>
         )}
         <Checkbox
-          dataTestId={`appealDefenderWaived-${defendant.id}`}
-          name={`appealDefenderWaived-${defendant.id}`}
+          dataTestId={`isAppealDefenderWaived-${defendant.id}`}
+          name={`isAppealDefenderWaived-${defendant.id}`}
           label="Ákærði óskar ekki eftir verjanda"
           checked={hasWaived}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>

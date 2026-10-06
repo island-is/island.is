@@ -1276,18 +1276,27 @@ export class CaseService {
         CaseState.WAITING_FOR_CONFIRMATION,
       ].includes(updatedCase.state)
     ) {
-      const updatedRole =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-          ? updatedCase.judge
-          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
-          ? updatedCase.registrar
-          : null
-
-      if (updatedRole?.nationalId) {
+      // The delivery resolves one role per message, so a judge and a registrar
+      // assigned in the same update are delivered as two messages
+      if (
+        updatedCase.judge?.nationalId &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+      ) {
         this.addMessagesForIndictmentCourtRoleAssigned(
           updatedCase,
           user,
-          updatedRole.nationalId,
+          updatedCase.judge.nationalId,
+        )
+      }
+
+      if (
+        updatedCase.registrar?.nationalId &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+      ) {
+        this.addMessagesForIndictmentCourtRoleAssigned(
+          updatedCase,
+          user,
+          updatedCase.registrar.nationalId,
         )
       }
     }
@@ -1440,6 +1449,7 @@ export class CaseService {
           defenderNationalId: caseToCreate.defenderNationalId,
           defenderEmail: caseToCreate.defenderEmail,
           defenderPhoneNumber: caseToCreate.defenderPhoneNumber,
+          requestSharedWithDefender: caseToCreate.requestSharedWithDefender,
         },
         transaction,
       )
@@ -2330,11 +2340,14 @@ export class CaseService {
         caseUpdate.defenderNationalId !== undefined ||
         caseUpdate.defenderEmail !== undefined ||
         caseUpdate.defenderPhoneNumber !== undefined ||
-        caseUpdate.defendantWaivesRightToCounsel !== undefined
+        caseUpdate.defendantWaivesRightToCounsel !== undefined ||
+        caseUpdate.requestSharedWithDefender !== undefined
 
       if (defenderFieldChanged) {
         // Contact fields + waive → defenderChoice.WAIVE. R-cases do not use
         // CHOOSE or isDefenderChoiceConfirmed (indictment confirmation).
+        // requestSharedWithDefender is dual-written so defendant rows stay
+        // aligned until readers flip to the defendant column.
         const waives =
           caseUpdate.defendantWaivesRightToCounsel !== undefined
             ? caseUpdate.defendantWaivesRightToCounsel
@@ -2360,6 +2373,9 @@ export class CaseService {
                 ? caseUpdate.defenderPhoneNumber
                 : theCase.defenderPhoneNumber,
             defenderChoice: waives ? DefenderChoice.WAIVE : null,
+            // undefined → sync skips; avoids clobbering per-defendant values
+            // on contact-only edits
+            requestSharedWithDefender: caseUpdate.requestSharedWithDefender,
           },
           transaction,
         )
@@ -2878,6 +2894,7 @@ export class CaseService {
             defenderChoice: theCase.defendantWaivesRightToCounsel
               ? DefenderChoice.WAIVE
               : null,
+            requestSharedWithDefender: theCase.requestSharedWithDefender,
           },
           transaction,
         )
