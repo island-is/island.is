@@ -90,6 +90,12 @@ Array [
   "case.appealDecisions.withdrawnDate",
   "case.appealProsecutor.id",
   "case.appealProsecutor.name",
+  "case.appealSummonses.confirmedDate",
+  "case.appealSummonses.defendants.appellantSide",
+  "case.appealSummonses.defendants.claims",
+  "case.appealSummonses.defendants.defendantId",
+  "case.appealSummonses.id",
+  "case.appealSummonses.sentToCourtOfAppealsDate",
   "case.arraignmentDate.date",
   "case.arraignmentDate.location",
   "case.arrestDate",
@@ -781,6 +787,17 @@ Array [
 exports[`GraphQL operations select these field paths CreateAppealEventLog 1`] = `
 Array [
   "createAppealEventLog.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealSummons 1`] = `
+Array [
+  "createAppealSummons.confirmedDate",
+  "createAppealSummons.defendants.appellantSide",
+  "createAppealSummons.defendants.claims",
+  "createAppealSummons.defendants.defendantId",
+  "createAppealSummons.id",
+  "createAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 
@@ -1952,6 +1969,17 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealSummons 1`] = `
+Array [
+  "updateAppealSummons.confirmedDate",
+  "updateAppealSummons.defendants.appellantSide",
+  "updateAppealSummons.defendants.claims",
+  "updateAppealSummons.defendants.defendantId",
+  "updateAppealSummons.id",
+  "updateAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 

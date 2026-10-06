@@ -1,19 +1,22 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
 import { AnimatePresence } from 'motion/react'
+import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
-import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Modals/FileNotFoundModal/FileNotFoundModal'
-import PdfButton from '@island.is/judicial-system-web/src/components/PdfButton/PdfButton'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { api } from '@island.is/judicial-system-web/src/services'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import AppealProcessFileRow from './AppealProcessFileRow'
 import {
+  canShowIssueAppealSummons,
+  getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -41,15 +44,25 @@ const formatSentInBy = (defenderName?: string | null): string => {
 const VerdictAppealFiles: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const router = useRouter()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const showSummonses = showsAppealSummonses(workingCase, user)
+  const showIssueButton = canShowIssueAppealSummons(workingCase, user)
+  const summonses = workingCase.appealSummonses ?? []
 
   if (groups.length === 0 && !showSummonses) {
     return null
+  }
+
+  const openAppealSummonsPdf = (appealSummonsId: string) => {
+    window.open(
+      `${api.apiUrl}/api/case/${workingCase.id}/appealSummons/${appealSummonsId}`,
+      '_blank',
+    )
   }
 
   return (
@@ -63,7 +76,48 @@ const VerdictAppealFiles: FC = () => {
           borderBottomWidth="standard"
           borderColor="blue200"
         >
-          <Text variant="small">Áfrýjunarstefna hefur ekki verið gefin út</Text>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            marginBottom={summonses.length > 0 ? 2 : 0}
+          >
+            <Text variant="small">
+              {summonses.length === 0
+                ? 'Áfrýjunarstefna hefur ekki verið gefin út'
+                : ''}
+            </Text>
+            {showIssueButton && (
+              <Button
+                variant="text"
+                size="small"
+                onClick={() =>
+                  router.push(
+                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}`,
+                  )
+                }
+              >
+                Gefa út áfrýjunarstefnu
+              </Button>
+            )}
+          </Box>
+          {summonses.map((summons) => (
+            <AppealProcessFileRow
+              key={summons.id}
+              title="Áfrýjunarstefna.pdf"
+              onOpen={() => openAppealSummonsPdf(summons.id)}
+              menuAriaLabel="Valmynd fyrir Áfrýjunarstefna.pdf"
+              menuItems={getAppealSummonsMenuItems(
+                summons,
+                user,
+                () =>
+                  router.push(
+                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
+                  ),
+                () => openAppealSummonsPdf(summons.id),
+              )}
+            />
+          ))}
         </Box>
       )}
       {groups.map(({ defendant, files }) => (
@@ -74,20 +128,21 @@ const VerdictAppealFiles: FC = () => {
             </Text>
           )}
           {files.map((file) => (
-            <PdfButton
+            <AppealProcessFileRow
               key={file.id}
-              renderAs="row"
-              title={file.name}
+              title={file.name ?? ''}
               disabled={!file.isKeyAccessible}
-              handleClick={() => onOpen(file.id)}
-            >
-              <Box display="flex" alignItems="center" justifyContent="flexEnd">
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="flexEnd"
-                  textAlign="right"
-                >
+              onOpen={() => onOpen(file.id)}
+              menuAriaLabel={`Valmynd fyrir ${file.name}`}
+              menuItems={[
+                {
+                  title: 'Opna',
+                  onClick: () => onOpen(file.id),
+                  icon: 'open',
+                },
+              ]}
+              meta={
+                <>
                   {/* Date only, no time of day. An appeal the public
                   prosecution office registers on a letter has only the date the
                   letter was filed, so showing the upload time for appeals filed
@@ -101,31 +156,9 @@ const VerdictAppealFiles: FC = () => {
                       defendant.appealDefenderName ?? defendant.defenderName,
                     )}
                   </Text>
-                </Box>
-                <Box marginLeft={3}>
-                  <ContextMenu
-                    items={[
-                      {
-                        title: 'Opna',
-                        onClick: () => onOpen(file.id),
-                        icon: 'open',
-                      },
-                    ]}
-                    render={
-                      <IconButton
-                        icon="ellipsisVertical"
-                        colorScheme="transparent"
-                        ariaLabel={`Valmynd fyrir ${file.name}`}
-                        disabled={!file.isKeyAccessible}
-                        onClick={(evt) => {
-                          evt.stopPropagation()
-                        }}
-                      />
-                    }
-                  />
-                </Box>
-              </Box>
-            </PdfButton>
+                </>
+              }
+            />
           ))}
         </Box>
       ))}

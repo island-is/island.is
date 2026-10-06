@@ -1,0 +1,15 @@
+mutation CreateAppealSummons(
+  $caseId: String!
+  $input: CreateAppealSummonsInput!
+) {
+  createAppealSummons(caseId: $caseId, input: $input) {
+    id
+    confirmedDate
+    sentToCourtOfAppealsDate
+    defendants {
+      defendantId
+      appellantSide
+      claims
+    }
+  }
+}

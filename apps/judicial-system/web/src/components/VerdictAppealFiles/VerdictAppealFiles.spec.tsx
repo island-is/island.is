@@ -18,6 +18,16 @@ import {
 
 import VerdictAppealFiles from './VerdictAppealFiles'
 
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+      pathname: '',
+      query: {},
+    }
+  },
+}))
+
 /**
  * Which files reach the section, and for whom, is covered in
  * VerdictAppealFiles.logic.spec.ts. What is left for the rendered section is
@@ -117,13 +127,17 @@ describe('VerdictAppealFiles', () => {
   })
 
   describe('the appeal summons', () => {
-    const appealed = (caseFiles: Case['caseFiles']): Case => ({
+    const appealed = (
+      caseFiles: Case['caseFiles'],
+      appealSummonses: Case['appealSummonses'] = [],
+    ): Case => ({
       ...theCase(caseFiles),
       verdictAppealCase: {
         id: 'verdict_appeal_id',
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.APPEALED,
       },
+      appealSummonses,
     })
 
     // The prosecution can appeal without filing a declaration, and the office
@@ -135,17 +149,47 @@ describe('VerdictAppealFiles', () => {
       expect(
         screen.getByText('Áfrýjunarstefna hefur ekki verið gefin út'),
       ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).toBeInTheDocument()
     })
 
-    it('should list it above the declarations', async () => {
+    it('should list a draft summons above the declarations', async () => {
+      renderSection(
+        appealed([declaration], [
+          {
+            id: 'summons_id',
+            defendants: [],
+          },
+        ]),
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+      )
+
+      const summons = await screen.findByText('Áfrýjunarstefna.pdf')
+
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+      expect(
+        screen.getByRole('button', {
+          name: 'Valmynd fyrir Áfrýjunarstefna.pdf',
+        }),
+      ).toBeInTheDocument()
+    })
+
+    it('should list the empty summons line above the declarations', async () => {
       renderSection(appealed([declaration]), UserRole.PUBLIC_PROSECUTOR_STAFF)
 
-      const summons = await screen.findByText(
+      const empty = await screen.findByText(
         'Áfrýjunarstefna hefur ekki verið gefin út',
       )
 
       expect(
-        summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+        empty.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
           Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy()
     })
@@ -157,6 +201,9 @@ describe('VerdictAppealFiles', () => {
       expect(
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
       ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
     })
 
     it('should not show it to the court of appeals', async () => {
@@ -165,6 +212,9 @@ describe('VerdictAppealFiles', () => {
       expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
       expect(
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
       ).not.toBeInTheDocument()
     })
   })

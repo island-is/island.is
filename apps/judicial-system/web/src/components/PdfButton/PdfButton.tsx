@@ -31,6 +31,7 @@ interface Props {
     | 'subpoenaServiceCertificate'
     | 'verdictServiceCertificate'
     | 'rulingSentToPrisonAdmin'
+    | 'appealSummons'
 
   disabled?: boolean
   renderAs?: 'button' | 'row'

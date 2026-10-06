@@ -13,6 +13,8 @@ import {
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
+  canShowIssueAppealSummons,
+  getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
@@ -274,5 +276,64 @@ describe('showsAppealSummonses', () => {
     UserRole.COURT_OF_APPEALS_JUDGE,
   ])('shows nothing to %s', (role) => {
     expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+  })
+})
+
+describe('canShowIssueAppealSummons', () => {
+  it('offers the button to public prosecution office staff on a verdict appeal', () => {
+    expect(
+      canShowIssueAppealSummons(
+        {
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.APPEALED,
+          },
+        } as Case,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(true)
+  })
+
+  it.each([UserRole.DEFENDER, UserRole.COURT_OF_APPEALS_JUDGE])(
+    'hides the button from %s',
+    (role) => {
+      expect(
+        canShowIssueAppealSummons(
+          {
+            verdictAppealCase: {
+              id: 'verdict_appeal_id',
+              appealType: AppealCaseType.VERDICT,
+              appealState: AppealCaseState.APPEALED,
+            },
+          } as Case,
+          mockUser(role),
+        ),
+      ).toBe(false)
+    },
+  )
+})
+
+describe('getAppealSummonsMenuItems', () => {
+  it('offers edit and open on a draft for staff', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        {},
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Breyta', 'Opna í nýjum flipa'])
+  })
+
+  it('hides edit once the summons has been sent to the court of appeals', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        { sentToCourtOfAppealsDate: '2026-06-10T10:00:00.000Z' },
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Opna í nýjum flipa'])
   })
 })

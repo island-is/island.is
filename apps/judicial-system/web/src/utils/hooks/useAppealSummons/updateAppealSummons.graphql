@@ -1,0 +1,15 @@
+mutation UpdateAppealSummons(
+  $caseId: String!
+  $input: UpdateAppealSummonsInput!
+) {
+  updateAppealSummons(caseId: $caseId, input: $input) {
+    id
+    confirmedDate
+    sentToCourtOfAppealsDate
+    defendants {
+      defendantId
+      appellantSide
+      claims
+    }
+  }
+}

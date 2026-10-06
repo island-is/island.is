@@ -1,11 +1,16 @@
 import {
+  AppealSummonsAction,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
-  type AppealCase,
   AppealCaseState,
+  type AppealCase,
+  type AppealSummons,
   type Case,
   type CaseFile,
   type CaseFileCategory,
@@ -89,3 +94,38 @@ export const showsAppealSummonses = (
 ): boolean =>
   isPublicProsecutionOfficeUser(user) &&
   hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+export const canShowIssueAppealSummons = (
+  workingCase: Pick<Case, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  canIssueAppealSummons(
+    user,
+    hasStandingVerdictAppeal(workingCase.verdictAppealCase),
+  )
+
+export const getAppealSummonsMenuItems = (
+  summons: Pick<
+    AppealSummons,
+    'confirmedDate' | 'sentToCourtOfAppealsDate'
+  >,
+  user: User | undefined,
+  onEdit: () => void,
+  onOpen: () => void,
+): ContextMenuItem[] => {
+  const items: ContextMenuItem[] = []
+
+  if (
+    canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)
+  ) {
+    items.push({ title: 'Breyta', onClick: onEdit, icon: 'pencil' })
+  }
+
+  if (
+    canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)
+  ) {
+    items.push({ title: 'Opna í nýjum flipa', onClick: onOpen, icon: 'open' })
+  }
+
+  return items
+}
