@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { NotificationSenderSettingDto } from './notification-sender-setting.dto'
+import { BlockedSenderDto } from './blocked-sender.dto'
 
 export class NotificationSettingsDto {
-  @ApiProperty({ type: [NotificationSenderSettingDto] })
-  senders!: NotificationSenderSettingDto[]
+  @ApiProperty({ type: [BlockedSenderDto] })
+  blockedSenders!: BlockedSenderDto[]
 }

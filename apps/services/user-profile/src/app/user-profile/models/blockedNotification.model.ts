@@ -17,7 +17,7 @@ import type {
 import { UserProfile } from './userProfile.model'
 
 @Table({
-  tableName: 'notification_sender_setting',
+  tableName: 'blocked_notifications',
   timestamps: true,
   indexes: [
     {
@@ -26,9 +26,9 @@ import { UserProfile } from './userProfile.model'
     },
   ],
 })
-export class NotificationSenderSetting extends Model<
-  InferAttributes<NotificationSenderSetting>,
-  InferCreationAttributes<NotificationSenderSetting>
+export class BlockedNotification extends Model<
+  InferAttributes<BlockedNotification>,
+  InferCreationAttributes<BlockedNotification>
 > {
   @Column({
     type: DataType.UUID,
@@ -53,22 +53,6 @@ export class NotificationSenderSetting extends Model<
   })
   @ApiProperty()
   senderId!: string
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-    allowNull: false,
-  })
-  @ApiProperty()
-  enabled!: CreationOptional<boolean>
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  })
-  @ApiProperty()
-  seen!: CreationOptional<boolean>
 
   @CreatedAt
   @ApiProperty()
