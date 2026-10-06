@@ -75,8 +75,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     cancelButtonText = coreMessages.buttonCancel,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    removeButtonDisabledTooltipText,
     editButtonTooltipText = coreMessages.editFieldText,
     editField = false,
+    canRemoveRow,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
@@ -364,29 +366,55 @@ export const TableRepeaterFormField: FC<Props> = ({
                       .filter((f) => !f.isUnsaved && !f.isRemoved)
                       .findIndex((f) => f.id === field.id)
 
+                    const canRemove = canRemoveRow
+                      ? canRemoveRow(
+                          watchedApplication,
+                          values[index] ?? {},
+                          index,
+                        )
+                      : true
+
+                    const removeTooltipText = canRemove
+                      ? removeButtonTooltipText
+                      : removeButtonDisabledTooltipText
+
+                    // aria-disabled rather than disabled so the tooltip still
+                    // receives hover events on locked rows
+                    const removeButton = (
+                      <button
+                        type="button"
+                        aria-disabled={!canRemove}
+                        style={canRemove ? undefined : { cursor: 'default' }}
+                        onClick={
+                          canRemove ? () => handleRemoveItem(index) : undefined
+                        }
+                      >
+                        <Icon
+                          icon="trash"
+                          type="outline"
+                          color={canRemove ? 'blue400' : 'dark300'}
+                        />
+                      </button>
+                    )
+
                     return (
                       <T.Row key={field.id}>
                         <T.Data>
                           <Box display="flex" alignItems="center">
-                            <Tooltip
-                              placement="left"
-                              text={formatText(
-                                removeButtonTooltipText,
-                                application,
-                                formatMessage,
-                              )}
-                            >
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveItem(index)}
+                            {removeTooltipText ? (
+                              <Tooltip
+                                placement="left"
+                                text={formatText(
+                                  removeTooltipText,
+                                  application,
+                                  formatMessage,
+                                )}
                               >
-                                <Icon
-                                  icon="trash"
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </button>
-                            </Tooltip>
+                                {removeButton}
+                              </Tooltip>
+                            ) : (
+                              removeButton
+                            )}
                             &nbsp;&nbsp;
                             {editField && (
                               <Tooltip

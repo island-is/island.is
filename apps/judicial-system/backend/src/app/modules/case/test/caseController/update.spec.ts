@@ -30,6 +30,7 @@ import {
   InstitutionType,
   investigationCases,
   RequestCaseNotificationType,
+  RequestSharedWithDefender,
   restrictionCases,
   ServiceStatus,
   StringType,
@@ -2132,6 +2133,7 @@ describe('CaseController - Update', () => {
             defenderEmail,
             defenderPhoneNumber,
             defenderChoice: null,
+            requestSharedWithDefender: undefined,
           },
           transaction,
         )
@@ -2156,6 +2158,7 @@ describe('CaseController - Update', () => {
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
             defenderChoice: null,
+            requestSharedWithDefender: undefined,
           },
           transaction,
         )
@@ -2180,6 +2183,7 @@ describe('CaseController - Update', () => {
             defenderEmail: 'old@example.is',
             defenderPhoneNumber: '0000000',
             defenderChoice: DefenderChoice.WAIVE,
+            requestSharedWithDefender: undefined,
           },
           transaction,
         )
@@ -2216,6 +2220,32 @@ describe('CaseController - Update', () => {
         expect(
           mockDefendantService.syncDefenderToAllDefendants,
         ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('syncs when requestSharedWithDefender changes on a request case', () => {
+      beforeEach(async () => {
+        await givenWhenThen(caseId, user, requestCase, {
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        } as UpdateCaseDto)
+      })
+
+      it('should call syncDefenderToAllDefendants with sharing and contact fields', () => {
+        expect(
+          mockDefendantService.syncDefenderToAllDefendants,
+        ).toHaveBeenCalledWith(
+          caseId,
+          {
+            defenderName: 'Old Name',
+            defenderNationalId: '0000000000',
+            defenderEmail: 'old@example.is',
+            defenderPhoneNumber: '0000000',
+            defenderChoice: null,
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+          transaction,
+        )
       })
     })
   })

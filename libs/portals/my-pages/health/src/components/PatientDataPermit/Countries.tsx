@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Inline,
   Input,
   SkeletonLoader,
   Text,
@@ -56,15 +55,13 @@ const Countries: FC<CountriesProps> = ({
       <Text variant="eyebrow" color="purple400">
         {formatMessage(messages.step, { first: '1', second: '3' })}
       </Text>
-      <Inline>
-        <Text variant="h5" marginTop={1} marginBottom={3}>
-          {formatMessage(messages.whatCountriesShouldPermitApply)}
-        </Text>
+      <Text variant="h5" marginTop={1} marginBottom={3}>
+        {formatMessage(messages.whatCountriesShouldPermitApply)}{' '}
         <Tooltip
           text={formatMessage(messages.countriesTooltip)}
           placement={isMobile ? 'bottom' : 'right'}
         />
-      </Inline>
+      </Text>
       {loading && !error && (
         <Box className={styles.countryCheckboxContainer}>
           <Box marginBottom={3} marginRight={3}>

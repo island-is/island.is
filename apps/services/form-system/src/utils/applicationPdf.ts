@@ -163,6 +163,7 @@ const ensureSpace = (document: PDFKit.PDFDocument, height: number) => {
 const fieldLines = (
   field: {
     fieldType: string
+    fieldSettings?: { isAddressRequired?: boolean }
     values?: Array<{ json?: unknown }>
   },
   locale: Locale,
@@ -185,6 +186,15 @@ const fieldLines = (
 
     const entries = Object.entries(json).filter(([key]) => {
       if (['delegationType', 'isLoggedInUser', 'applicantType'].includes(key)) {
+        return false
+      }
+
+      if (
+        field.fieldType === FieldTypesEnum.APPLICANT &&
+        (key === 'municipality' ||
+          ((key === 'address' || key === 'postalCode') &&
+            field.fieldSettings?.isAddressRequired !== true))
+      ) {
         return false
       }
 
@@ -222,6 +232,7 @@ const drawField = (
     name: { is: string }
     isRequired?: boolean
     fieldType: string
+    fieldSettings?: { isAddressRequired?: boolean }
     values?: Array<{ json?: unknown }>
   },
   showLabel: boolean,
