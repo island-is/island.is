@@ -34,8 +34,6 @@ import { mapMinistryDto } from './dtos/ministry.dto'
 import { SearchRequestDto } from './dtos/searchRequest.dto'
 import { mapSupplierDto } from './dtos/supplier.dto'
 import { SuppliersDto } from './dtos/suppliers.dto'
-import { dedupeById } from './utils/dedupe.util'
-import { groupIdentity } from './utils/groupIdentity.util'
 import { mapPageInfo } from './utils/pageInfo.util'
 
 @Injectable()
@@ -108,10 +106,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      suppliers: dedupeById(
-        (data.suppliers ?? []).map(mapSupplierDto).filter(isDefined),
-        (supplier) => supplier.legalId,
-      ),
+      suppliers: (data.suppliers ?? []).map(mapSupplierDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -129,10 +124,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      debtors: dedupeById(
-        (data.debtors ?? []).map(mapDebtorDto).filter(isDefined),
-        (debtor) => debtor.debtorGuid,
-      ),
+      debtors: (data.debtors ?? []).map(mapDebtorDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -150,10 +142,7 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      ministries: dedupeById(
-        (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
-        (ministry) => ministry.code,
-      ),
+      ministries: (data.ministries ?? []).map(mapMinistryDto).filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -171,12 +160,9 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      invoicePaymentTypes: dedupeById(
-        (data.paymentTypes ?? [])
-          .map(mapInvoicePaymentTypeDto)
-          .filter(isDefined),
-        (paymentType) => paymentType.code,
-      ),
+      invoicePaymentTypes: (data.paymentTypes ?? [])
+        .map(mapInvoicePaymentTypeDto)
+        .filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }
@@ -194,12 +180,9 @@ export class GovernmentInvoicesClientService {
     }
 
     return {
-      invoicePaymentTypeGroups: dedupeById(
-        (data.paymentTypeGroups ?? [])
-          .map(mapInvoicePaymentTypeGroupDto)
-          .filter(isDefined),
-        groupIdentity,
-      ),
+      invoicePaymentTypeGroups: (data.paymentTypeGroups ?? [])
+        .map(mapInvoicePaymentTypeGroupDto)
+        .filter(isDefined),
       pageInfo: mapPageInfo(data.pageInfo),
       totalCount: data.totalCount,
     }

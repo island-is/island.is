@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Elfur API - Open Invoices",
-    "description": "<h2>Open Invoices</h2><p>Status: Available — Stable and supported for production use.</p><p>Open invoices, payment types and payment groups.</p><h3>Authentication</h3>\n<ul>\n <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\n <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\n \n</ul>",
+    "description": "<h2>Open Invoices</h2><p>Status: Available — Stable and supported for production use.</p><p>Open invoices, payment types and payment groups.</p><h3>Authentication</h3>\n<ul>\n  <li><strong>Authorization:</strong> <code>Bearer &lt;access_token&gt;</code> is required.</li>\n  <li><strong>Required scopes:</strong> <code>@fjs.is/elfur_openinvoices_read</code></li>\n  \n</ul>",
     "version": "1.0"
   },
   "paths": {
@@ -27,8 +27,11 @@
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by supplier legal ID (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "description": "Optional exact lookup by supplier legal ID (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": {
+              "type": "array",
+              "items": { "maxLength": 15, "type": "string" }
+            }
           },
           {
             "name": "after",
@@ -117,8 +120,11 @@
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by debtor `debtorGuid` (36 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "description": "Optional exact lookup by debtor `debtorGuid` (36 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": {
+              "type": "array",
+              "items": { "maxLength": 36, "type": "string" }
+            }
           },
           {
             "name": "after",
@@ -207,8 +213,11 @@
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by ministry code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "description": "Optional exact lookup by ministry code (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": {
+              "type": "array",
+              "items": { "maxLength": 15, "type": "string" }
+            }
           },
           {
             "name": "after",
@@ -297,8 +306,11 @@
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by payment type code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "description": "Optional exact lookup by payment type code (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y` (e.g. to resolve labels for previously selected filter values).",
+            "schema": {
+              "type": "array",
+              "items": { "maxLength": 15, "type": "string" }
+            }
           },
           {
             "name": "after",
@@ -387,8 +399,11 @@
           {
             "name": "lookup",
             "in": "query",
-            "description": "Optional exact lookup by an underlying payment type code (max 15 characters each). Repeat for multiple values: `?lookup=x&lookup=y`.",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "description": "Optional exact lookup by an underlying payment type code (max 15 characters each). Over-length values are ignored. Repeat for multiple values: `?lookup=x&lookup=y`.",
+            "schema": {
+              "type": "array",
+              "items": { "maxLength": 15, "type": "string" }
+            }
           },
           {
             "name": "after",
@@ -772,7 +787,7 @@
             "description": "Gets or sets the GL Date.",
             "format": "date",
             "nullable": true,
-            "example": "2026-10-05"
+            "example": "2026-10-06"
           },
           "accountedAmount": {
             "type": "number",
