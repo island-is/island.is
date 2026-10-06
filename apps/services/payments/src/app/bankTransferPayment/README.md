@@ -25,7 +25,7 @@ The feature is gated behind feature flags (see [Feature flags & access](#feature
 
 ## Data model
 
-`bank_transfer_payment` ([model](./models/bankTransferPayment.model.ts), [migration](../../../migrations/20260527000000-create-bank-transfer-payment.js)):
+`bank_transfer_payment` ([model](./models/bankTransferPayment.model.ts), [migrations](../../../migrations/20260527000000-create-bank-transfer-payment.js), [actor](../../../migrations/20261006000000-add-bank-transfer-payment-actor-national-id.js)):
 
 | Column                 | Notes                                                                                                                                                                                                       |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,6 +36,7 @@ The feature is gated behind feature flags (see [Feature flags & access](#feature
 | `amount`               | Amount sent to the provider (ISK).                                                                                                                                                                          |
 | `last_known_status`    | **Raw** provider status string (e.g. `SCA_REQUIRED`), persisted verbatim. Normalized on read.                                                                                                               |
 | `sca_redirect_url`     | Interactive-SCA URL. Empty/null = back-channel SCA (no redirect).                                                                                                                                           |
+| `actor_national_id`    | The individual who authorised a company payer's transfer, for disputes and reconciliation. Null when the payer is a person. Kept off flow events, which are delivered to the organisation.                  |
 | `expires_at`           | TTL; mirrors the `expiresAt` we sent the provider. Drives expiry + the FE polling hard timeout.                                                                                                             |
 | `is_deleted`           | Soft-delete flag.                                                                                                                                                                                           |
 

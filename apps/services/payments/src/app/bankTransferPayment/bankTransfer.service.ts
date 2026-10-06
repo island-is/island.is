@@ -205,6 +205,11 @@ export class BankTransferService {
         provider: 'blikk',
         providerPaymentId: providerResult.providerPaymentId,
         scaRedirectUrl: providerResult.scaRedirectUrl,
+        // Kept on the row only: flow events are delivered to the organisation, and this is a
+        // person's national id.
+        actorNationalId: debtor.debtorCorpExternalId
+          ? debtor.debtorExternalId
+          : null,
         amount: totalPrice,
         lastKnownStatus: providerResult.rawStatus,
         expiresAt,

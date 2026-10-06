@@ -633,6 +633,13 @@ describe('BankTransferService', () => {
           debtorExternalId: '0101302129',
           debtorCorpExternalId: '6010100890',
         })
+        // Kept for disputes and reconciliation, but not on the flow event the organisation gets.
+        expect(
+          bankTransferPaymentModel.create.mock.calls[0][0].actorNationalId,
+        ).toBe('0101302129')
+        expect(
+          JSON.stringify(paymentFlowService.logPaymentFlowUpdate.mock.calls),
+        ).not.toContain('0101302129')
       })
 
       it.each<[string, string | undefined]>([
@@ -685,6 +692,10 @@ describe('BankTransferService', () => {
         debtorExternalId: '0101307789',
       })
       expect(blikkSpy.mock.calls[0][0].debtorCorpExternalId).toBeUndefined()
+      // A person authorises their own transfer, so there is no one else to record.
+      expect(
+        bankTransferPaymentModel.create.mock.calls[0][0].actorNationalId,
+      ).toBeNull()
     })
 
     // The one case that still needs the URL from `create`: the FE redirects to it immediately,
