@@ -419,9 +419,9 @@ const CustomsCalculator = ({ slice }: CustomsCalculatorProps) => {
                     productCategoriesResponse.data?.customsCalculatorProductCategories?.bottomLevel?.filter(
                       (category) => category.label === value,
                     ) ?? []
-                  setSelectedBottomLevelCategory(
-                    matches.length === 1 ? matches[0] : null,
-                  )
+                  if (matches.length === 1)
+                    selectBottomLevelCategory(matches[0])
+                  else setSelectedBottomLevelCategory(null)
                 }}
                 onChange={(option) => {
                   setInputState({
