@@ -396,7 +396,11 @@ function PaymentPage({
     selectedPaymentMethod === 'card' && !methods.formState.isValid
 
   const isBankTransferPaymentInvalid =
-    selectedPaymentMethod === 'bank_transfer' && !methods.formState.isValid
+    selectedPaymentMethod === 'bank_transfer' &&
+    (!methods.formState.isValid ||
+      // A server refusal of the approver is set with `setError`, which `isValid` does not reflect.
+      // Resubmitting the same value would only be refused again, so wait for it to be corrected.
+      !!methods.formState.errors.actorNationalId)
 
   const invalidFlowSetup =
     !organization ||

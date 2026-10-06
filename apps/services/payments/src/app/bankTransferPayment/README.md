@@ -60,9 +60,9 @@ Company payers are rolled out per company behind `isIslandisBankTransferPaymentA
 (see [Feature flags & access](#feature-flags--access)). A payer that is not allowed is refused with
 `FailedToCreateBankTransfer`. That covers a company the flag does not allow, and a temporary
 kennitala, which is never allowed. A company without a valid individual (missing, a company or a
-temporary kennitala) with `InvalidActorNationalId`, both before Blikk is called; the screen
-validates the individual with the same rule and shows a refusal on that input. The FJS charge's
-payer is always `payerNationalId`.
+temporary kennitala) is refused with `InvalidActorNationalId`. Both refusals happen before Blikk is
+called; the screen validates the individual with the same rule and shows a refusal on that input.
+The FJS charge's payer is always `payerNationalId`.
 
 ## End-to-end flow
 
