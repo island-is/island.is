@@ -197,7 +197,7 @@ export class UnseenNotificationsCountDto {
 
 export class NotificationSenderDto {
   @ApiProperty({
-    example: '5402696029',
+    example: '1234567890',
     description:
       'National id of a sender the current user has received notifications from',
   })
