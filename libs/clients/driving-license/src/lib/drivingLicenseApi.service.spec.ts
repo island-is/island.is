@@ -146,6 +146,10 @@ describe('DrivingLicenseDuplicateService', () => {
   })
 
   describe('postApplyForRenewal65', () => {
+    beforeEach(() => {
+      lastV6Renewal65Request.body = undefined
+    })
+
     it('returns true when the apply-for endpoint succeeds', async () => {
       const result = await service.postApplyForRenewal65({
         auth: mockAuth(MOCK_TOKEN.STUDENT),
@@ -170,8 +174,8 @@ describe('DrivingLicenseDuplicateService', () => {
       // The v6 apply-for endpoint returns the review guid; capture it so a
       // tester can deny the created application.
       expect(result.applicationGuid).toBe('renewal65-guid-0001')
-      // Required since RLS's 2026-10-06 release. Sent empty: the 65+ flow
-      // asks no health questions, so there are no answers to forward.
+      // Required by v6. Sent empty: the 65+ flow asks no health questions, so
+      // there are no answers to forward.
       expect(lastV6Renewal65Request.body?.healthDeclaration).toEqual({})
     })
 

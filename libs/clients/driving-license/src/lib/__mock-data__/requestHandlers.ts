@@ -45,15 +45,6 @@ export const lastV6Renewal65Request: {
   body?: Record<string, unknown>
 } = {}
 
-export const VALID_AUTH = 'Bearer OKIDOKE'
-export const INVALID_AUTH = 'Bearer NOPEDEDOPE'
-
-export const XROAD_BASE_PATH = 'http://localhost:8081'
-export const XROAD_DRIVING_LICENSE_PATH_V6 =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v6/api/drivinglicense/v6'
-export const XROAD_DRIVING_LICENSE_PATH_V1 =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1/api'
-
 const MOCK_HAS_QUALITY_PHOTO = {
   [MOCK_TOKEN.STUDENT]: true,
   [MOCK_TOKEN.TEACHER]: true,

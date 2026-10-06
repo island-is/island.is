@@ -39,11 +39,11 @@ const daysOfResidency = 365
 // set it up: `asUser` is a pure pass-through whose only job is to document which
 // caller a case is about, keeping the call sites readable.
 //
-// It asserts nothing. The v6 mock handlers identify the caller from the
-// `jwttoken` header (see requestHandlers.ts and apiConfiguration.ts) and most do
-// not inspect it at all, so these tests would still pass if the production
-// wrapper stopped wrapping. The auth wiring is pinned in the client spec
-// instead, which asserts the outgoing `jwttoken` on the v6 request itself.
+// It asserts nothing itself. The coverage comes from the v6 mock handlers,
+// several of which route on the `jwttoken` header (see requestHandlers.ts and
+// apiConfiguration.ts), so cases here fail if the production wrapper stops
+// forwarding the token. The client spec additionally asserts the outgoing
+// `jwttoken` on the v6 request itself.
 const asUser = <T>(_authorization: string, fn: () => Promise<T>): Promise<T> =>
   fn()
 

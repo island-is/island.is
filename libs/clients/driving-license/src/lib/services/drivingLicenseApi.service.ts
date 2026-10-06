@@ -44,8 +44,9 @@ export class DrivingLicenseApi {
   // v5 is KEPT for the four legacy submits that the redesign flags still route
   // to and that v6 either removed or reshaped: the B-temp and B-full submits,
   // the B-temp submit that carries a health declaration, and the legacy 65+
-  // submit. Each dies with its flag; drop v5 when the last one is permanently
-  // ON in prod.
+  // submit (which RLS has since removed from v5 too — see
+  // `postRenewLicenseOver65`). Each dies with its flag; drop the v5 injection
+  // here when the last one is permanently ON in prod.
   constructor(
     private readonly v4: v4.ApiV4,
     private readonly v6: v6.ApiV6,
@@ -116,15 +117,12 @@ export class DrivingLicenseApi {
     category: string
     model: v6.ModelsV6PostFullLicenseWithHealthDeclaration
   }): Promise<string | null> {
-    // Enhanced fetch throws on 4xx, so reaching the return is success. RLS
-    // documents an int32 here but actually sends the new application's guid as
-    // the text body; surface it (never gate on it) for logging and so a tester
-    // can deny the created application.
     // Enhanced fetch throws on 4xx, so reaching the return is success; every
     // error propagates. RLS documents an int32 here but actually sends the new
-    // application's guid as the text body; surface it (never gate on it). The
-    // duplicate-on-retry policy lives in the submission service (see the temporary
-    // method above for why).
+    // application's guid as the text body; surface it (never gate on it) for
+    // logging and so a tester can deny the created application. The
+    // duplicate-on-retry policy lives in the submission service (see the
+    // temporary method above for why).
     const created = await withAuthContext(input.auth, () =>
       this.applicationV6.apiApplicationsV6CategoryWithhealthdeclarationPost({
         apiVersion: v6.DRIVING_LICENSE_API_VERSION_V6,
@@ -591,12 +589,12 @@ export class DrivingLicenseApi {
     })
   }
 
-  // KEPT on v5: RLS reshaped the v6 request model so that the
-  // "will bring photo / will bring health certificate" flags no longer exist —
-  // v6 expects the health certificate itself (base64, `healthCertificate`),
-  // approved by an employee via `.../confirmdone/{applicationId}`. Until that
-  // flow is built and RLS confirms what the flags default to, this stays on v5
-  // so behaviour is unchanged. Same reasoning as `postRenewLicenseOver65`.
+  // KEPT on v5: this is the flag-OFF B-temp path. Its v6 replacement is
+  // `postTemporaryLicenseWithHealthDeclarationV6` (behind
+  // `isBTempRedesignEnabled`), whose model drops the "will bring photo / will
+  // bring health certificate" flags in favour of the certificate itself.
+  // Flags are frozen into application answers, so in-flight drafts keep using
+  // this method until the flag is permanently ON.
   public async postCreateDrivingLicenseTemporary(params: {
     nationalIdApplicant: string
     nationalIdTeacher: string
@@ -652,12 +650,12 @@ export class DrivingLicenseApi {
     }
   }
 
-  // KEPT on v5: RLS reshaped the v6 request model so that the
-  // "will bring photo / will bring health certificate" flags no longer exist —
-  // v6 expects the health certificate itself (base64, `healthCertificate`),
-  // approved by an employee via `.../confirmdone/{applicationId}`. Until that
-  // flow is built and RLS confirms what the flags default to, this stays on v5
-  // so behaviour is unchanged. Same reasoning as `postRenewLicenseOver65`.
+  // KEPT on v5: this is the flag-OFF B-full path. Its v6 replacement is
+  // `postFullLicenseWithHealthDeclarationV6` (behind `isBFullRedesignEnabled`),
+  // whose model drops the "will bring photo / will bring health certificate"
+  // flags in favour of the certificate itself. Flags are frozen into
+  // application answers, so in-flight drafts keep using this method until the
+  // flag is permanently ON.
   async postCreateDrivingLicenseFull(params: {
     nationalIdApplicant: string
     willBringHealthCertificate: boolean
@@ -723,11 +721,11 @@ export class DrivingLicenseApi {
           photoBiometricsId: params.photoBiometricsId,
           signatureBiometricsId: params.signatureBiometricsId,
           userId: v6.DRIVING_LICENSE_API_USER_ID,
-          // RLS made `healthDeclaration` required on this model in its 2026-10-06
-          // release. The 65+ flow asks no health questions (the certificate travels
-          // in `contentList`), so send an empty declaration — never all-false, which
-          // would assert answers the applicant was never asked. The model has no
-          // required fields, so `{}` is valid.
+          // v6 requires `healthDeclaration` on this model. The 65+ flow asks no
+          // health questions (the certificate travels in `contentList`), so send
+          // an empty declaration — never all-false, which would assert answers the
+          // applicant was never asked. The model has no required fields, so `{}`
+          // is valid.
           healthDeclaration: {},
         },
       }),
@@ -741,10 +739,10 @@ export class DrivingLicenseApi {
   }
 
   // Legacy 65+ submit endpoint, used when `is65RenewalRedesignEnabled` is OFF.
-  // The v6 API removed this endpoint (and the PostRenewal65AndOver model), so
-  // this method stays on the v5 client until the redesign flag has been fully
-  // ON in prod long enough that no flag-OFF 65+ submissions reach this branch,
-  // at which point this method and the v5 injection can be deleted.
+  // RLS removed it from v6 and has now removed it from v5 too (already gone on
+  // IS-DEV; gone from prod with RLS's next release), so this path cannot be
+  // relied on. Don't offer 65+ in prod with the redesign flag OFF; delete this
+  // method, and the flag-OFF branch that calls it, in a follow-up.
   async postRenewLicenseOver65(params: {
     token: string
     districtId: number

@@ -608,9 +608,9 @@ export class DrivingLicenseService {
     }
   }
 
-  // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF.
-  // Removed alongside `postRenewLicenseOver65` in the wrapper once the flag
-  // has been ON in prod long enough to retire the legacy submit path.
+  // Legacy 65+ submit, used when `is65RenewalRedesignEnabled` flag is OFF. RLS
+  // has removed the endpoint behind it (see `postRenewLicenseOver65` in the
+  // wrapper), so delete this together with that method in a follow-up.
   // Note: unlike the redesigned `applyForRenewal65` (v6 `postApplyForRenewal65`,
   // which dropped `pickupPlasticAtDistrict` in favor of the single
   // `sendPlasticToPerson` flag), the legacy `postRenewLicenseOver65` endpoint's
@@ -669,8 +669,9 @@ export class DrivingLicenseService {
    * header. Passing the string would leave that header unset and every request
    * would come back 400, while unit tests carried on passing.
    *
-   * Every method here now takes `Auth` except `renewDrivingLicense65AndOver`,
-   * which still calls the v5 endpoint and so still takes the bare token.
+   * Every method here that forwards the caller's token now takes `Auth`, except
+   * the two that still call v5 with a bare token: `renewDrivingLicense65AndOver`
+   * and `postHealthDeclaration`.
    */
   async newDrivingLicenseWithHealthDeclaration(
     auth: Auth,
