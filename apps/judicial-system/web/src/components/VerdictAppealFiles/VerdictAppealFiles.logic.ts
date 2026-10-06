@@ -69,3 +69,9 @@ export const getVerdictAppealFileGroups = (
     return files.length > 0 ? [{ defendant, files }] : []
   })
 }
+
+export const showsAppealSummonses = (
+  workingCase: Pick<Case, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  isPublicProsecutionOfficeUser(user) && Boolean(workingCase.verdictAppealCase)
