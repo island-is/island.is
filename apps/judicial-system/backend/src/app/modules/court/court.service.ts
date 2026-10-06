@@ -499,7 +499,7 @@ export class CourtService {
           return ''
         }
 
-        // Temporarily limiting noic in the error channel.
+        // Temporarily limiting noise in the error channel.
         // Commenting out rather than deleting so we can easily revert
         // this change if we want to see the full error in Slack again.
         this.eventService.postErrorEvent(
@@ -554,7 +554,7 @@ export class CourtService {
             'defendant with IdNumber = **********',
           )
 
-        // Temporarily limiting noic in the error channel.
+        // Temporarily limiting noise in the error channel.
         // Commenting out rather than deleting so we can easily revert
         // this change if we want to see the full error in Slack again.
         this.eventService.postErrorEvent(
