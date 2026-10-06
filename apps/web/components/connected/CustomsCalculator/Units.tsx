@@ -336,7 +336,8 @@ export const Units = ({
                   <BreakdownRow
                     label={formatMessage(translationStrings.startAmountLabel)}
                     explanation={
-                      submittedPrice
+                      // An ISK price would just repeat the amount column
+                      submittedPrice && submittedPrice.currency !== 'ISK'
                         ? `${submittedPrice.currency} ${formatAmount(
                             submittedPrice.amount,
                           )}`
