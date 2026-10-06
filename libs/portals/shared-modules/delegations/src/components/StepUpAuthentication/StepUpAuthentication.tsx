@@ -87,6 +87,10 @@ export const StepUpAuthentication = ({
   const { formatMessage } = useLocale()
   const [state, setState] = useState<State>({ name: 'idle' })
   const [secondsLeft, setSecondsLeft] = useState(0)
+  // The last attempt, so a person whose attempt failed can try the other way.
+  const [lastAttempt, setLastAttempt] = useState<
+    { method: StepUpMethod; availableMethods: StepUpMethod[] } | undefined
+  >()
   const pollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const unmounted = useRef(false)
   const autoStarted = useRef(false)
@@ -152,6 +156,10 @@ export const StepUpAuthentication = ({
           return
         }
 
+        setLastAttempt({
+          method: started.method,
+          availableMethods: started.availableMethods,
+        })
         setState({
           name: 'waiting',
           method: started.method,
@@ -212,12 +220,24 @@ export const StepUpAuthentication = ({
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
 
-  // The other way of reaching the person, if the server offers one: e.g. their
-  // SIM isn't at hand.
+  // The other way of reaching the person, if the server offers one: while
+  // waiting (e.g. their SIM isn't at hand), and after an attempt that failed.
   const otherMethod =
     state.name === 'waiting'
       ? state.availableMethods.find((method) => method !== state.method)
+      : state.name === 'idle' && state.notice && lastAttempt
+      ? lastAttempt.availableMethods.find(
+          (method) => method !== lastAttempt.method,
+        )
       : undefined
+
+  const switchMethod = otherMethod && (
+    <Box>
+      <Button variant="text" size="small" onClick={() => begin(otherMethod)}>
+        {formatMessage(otherMethod === 'app' ? m.stepUpUseApp : m.stepUpUseSim)}
+      </Button>
+    </Box>
+  )
 
   return (
     <Box
@@ -268,19 +288,7 @@ export const StepUpAuthentication = ({
               seconds: String(secondsLeft % 60).padStart(2, '0'),
             })}
           </Text>
-          {otherMethod && (
-            <Box>
-              <Button
-                variant="text"
-                size="small"
-                onClick={() => begin(otherMethod)}
-              >
-                {formatMessage(
-                  otherMethod === 'app' ? m.stepUpUseApp : m.stepUpUseSim,
-                )}
-              </Button>
-            </Box>
-          )}
+          {switchMethod}
         </Box>
       )}
 
@@ -293,6 +301,8 @@ export const StepUpAuthentication = ({
           {formatMessage(m.stepUpStart)}
         </Button>
       )}
+
+      {state.name === 'idle' && switchMethod}
     </Box>
   )
 }
