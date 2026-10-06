@@ -12,15 +12,10 @@ interface InvoicePaymentInput {
   reference: string
 }
 
-interface InvoicePaymentProps {
-  nationalId?: string
-  reference?: string
-}
-
 export const InvoicePayment = ({
   nationalId,
   reference,
-}: InvoicePaymentProps) => {
+}: InvoicePaymentInput) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext<InvoicePaymentInput>()
 
