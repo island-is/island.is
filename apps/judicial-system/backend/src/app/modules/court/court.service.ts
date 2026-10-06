@@ -499,18 +499,21 @@ export class CourtService {
           return ''
         }
 
+        // Temporarily limiting noic in the error channel.
+        // Commenting out rather than deleting so we can easily revert
+        // this change if we want to see the full error in Slack again.
         this.eventService.postErrorEvent(
           'Failed to update court case with prosecutor',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            prosecutorNationalId,
-            prosecutorsOfficeNationalId,
+            // actor: user.name,
+            // institution: user.institution?.name,
+            // courtId,
+            // courtCaseNumber,
+            // prosecutorNationalId,
+            // prosecutorsOfficeNationalId,
           },
-          reason,
+          // reason,
         )
 
         throw reason
@@ -551,17 +554,20 @@ export class CourtService {
             'defendant with IdNumber = **********',
           )
 
+        // Temporarily limiting noic in the error channel.
+        // Commenting out rather than deleting so we can easily revert
+        // this change if we want to see the full error in Slack again.
         this.eventService.postErrorEvent(
           'Failed to update court case with defendant',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            defenderEmail,
+            // actor: user.name,
+            // institution: user.institution?.name,
+            // courtId,
+            // courtCaseNumber,
+            // defenderEmail,
           },
-          JSON.parse(sanitizedReason),
+          // JSON.parse(sanitizedReason),
         )
 
         throw JSON.parse(sanitizedReason)
