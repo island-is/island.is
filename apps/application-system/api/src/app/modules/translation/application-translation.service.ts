@@ -362,7 +362,10 @@ export class ApplicationTranslationService {
 
     return this.managementClient.entry.update<NamespaceEntryFields>(
       { entryId: namespace },
-      { ...entry, fields: this.buildUpdatedFields(entry, stringsIs, stringsEn) },
+      {
+        ...entry,
+        fields: this.buildUpdatedFields(entry, stringsIs, stringsEn),
+      },
     )
   }
 
