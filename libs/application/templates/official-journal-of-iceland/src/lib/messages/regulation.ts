@@ -130,6 +130,12 @@ export const regulation = {
         defaultMessage: 'Reglugerðin fellur brott.',
         description: 'Shown for a base regulation that the impact repeals',
       },
+      newTitle: {
+        id: 'ojoi.application:regulation.content.baseChanges.newTitle',
+        defaultMessage: 'Titill reglugerðarinnar verður: {title}',
+        description:
+          'Shown when an amend impact changes the base regulation title',
+      },
       noTextChange: {
         id: 'ojoi.application:regulation.content.baseChanges.noTextChange',
         defaultMessage: 'Engar breytingar á texta.',

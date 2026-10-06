@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useRegulationSearch } from '../hooks/useRegulationSearch'
@@ -62,9 +62,17 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     generateImpactId,
   } = useRegulationImpacts({ draftId })
 
-  const { hasText, generateText } = useAmendingText({
+  const { isEdited, rememberIfGenerated, generateText } = useAmendingText({
     applicationId: application.id,
   })
+
+  // Text that is still exactly as generated is updated without asking
+  const textCheckedRef = useRef(false)
+  useEffect(() => {
+    if (!isAmending || !impactsLoaded || textCheckedRef.current) return
+    textCheckedRef.current = true
+    rememberIfGenerated(impacts)
+  }, [isAmending, impactsLoaded, impacts, rememberIfGenerated])
 
   // Impacts to regenerate the text from, waiting on the user's answer
   const [pendingTextImpacts, setPendingTextImpacts] =
@@ -72,12 +80,12 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
 
   /**
    * Regenerate the amending regulation text after the impacts change.
-   * Once the text has content the user has likely edited it, and what
-   * they submit is what gets published, so ask before overwriting it.
+   * What the user submits is what gets published, so ask before
+   * overwriting a text they have edited.
    */
   const refreshAdvertText = async (allImpacts: RegulationImpactSchema[]) => {
     if (!isAmending) return
-    if (hasText()) {
+    if (isEdited()) {
       setPendingTextImpacts(allImpacts)
     } else {
       await generateText(allImpacts)
@@ -496,9 +504,11 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
 
         <UpdateTextModal
           isVisible={!!pendingTextImpacts}
-          onConfirm={() => {
-            if (pendingTextImpacts) generateText(pendingTextImpacts)
-          }}
+          onConfirm={() =>
+            pendingTextImpacts
+              ? generateText(pendingTextImpacts)
+              : Promise.resolve(true)
+          }
           onClose={() => setPendingTextImpacts(undefined)}
         />
 

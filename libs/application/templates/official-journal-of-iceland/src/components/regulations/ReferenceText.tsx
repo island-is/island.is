@@ -4,7 +4,8 @@
  * Slide-in side panel showing the draft regulation text as a reference
  * while editing an amendment impact, or any other reference (`children`)
  * such as the base regulation changes next to the amending text editor.
- * The panel is fixed to the left edge and slides into full view on hover.
+ * The panel is fixed to the left edge and slides into full view on hover
+ * or keyboard focus.
  */
 import type { ReactNode } from 'react'
 import { HTMLText, HTMLDump } from '@island.is/regulations'
@@ -29,17 +30,20 @@ type ReferenceTextProps = {
 
 export const ReferenceText = (props: ReferenceTextProps) => {
   const { title, text, appendixes, asBase, legend, children } = props
+  const legendText =
+    legend ??
+    (asBase ? 'Texti stofnreglugerðarinnar' : 'Texti breytingareglugerðar')
 
   return (
     <div className={s.referenceTextContainer}>
       <div className={s.referenceText}>
-        <h2 className={s.referenceTextLegend}>
-          {legend ??
-            (asBase
-              ? 'Texti stofnreglugerðarinnar'
-              : 'Texti breytingareglugerðar')}
-        </h2>
-        <div className={s.referenceTextInner}>
+        <h2 className={s.referenceTextLegend}>{legendText}</h2>
+        {/* Focusable so keyboard users can open the panel and scroll it */}
+        <div
+          className={s.referenceTextInner}
+          tabIndex={0}
+          aria-label={legendText}
+        >
           {title && <h3 className={s.referenceTextTitle}>{title}</h3>}
           {text && <HTMLDump className={s.referenceTextBody} html={text} />}
           {appendixes?.map(({ title: apxTitle, text: apxText }, i) => (

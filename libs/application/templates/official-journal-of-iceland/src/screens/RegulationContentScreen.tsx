@@ -37,7 +37,7 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
   const [advertKey, setAdvertKey] = useState(0)
 
   const regenerateText = async () => {
-    await generateText(impacts)
+    if (!(await generateText(impacts))) return
     await refetchApplication()
     setAdvertKey((key) => key + 1)
   }
