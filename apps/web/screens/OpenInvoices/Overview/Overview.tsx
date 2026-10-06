@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { isUUID } from 'class-validator'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import {
@@ -27,10 +28,14 @@ import {
 } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
+  IcelandicGovernmentInstitutionsDebtorsQuery,
   IcelandicGovernmentInstitutionsInvoicePaymentsGroup,
   IcelandicGovernmentInstitutionsInvoicePaymentsGroups,
+  IcelandicGovernmentInstitutionsInvoicePaymentTypeGroupsQuery,
+  IcelandicGovernmentInstitutionsMinistriesQuery,
   IcelandicGovernmentInstitutionsOpenInvoiceSortField,
   IcelandicGovernmentInstitutionsSortDirection,
+  IcelandicGovernmentInstitutionsSuppliersQuery,
   Organization,
   Query,
   QueryGetOrganizationArgs,
@@ -51,6 +56,7 @@ import { GET_ORGANIZATION_QUERY } from '../../queries'
 import {
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+  GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
   GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
 } from '../../queries/OpenInvoices'
@@ -68,6 +74,7 @@ import {
 import { useAsyncFilterSource } from '../hooks/useAsyncFilterSource'
 import { useInvoicePaymentTypeGroupFilter } from '../hooks/useInvoicePaymentTypeGroupFilter'
 import { m } from '../messages'
+import { resolveExisting } from '../utils'
 import { OverviewTable } from './OverviewTable'
 import * as styles from './Overview.css'
 
@@ -105,9 +112,6 @@ const sortIdParser = parseAsStringLiteral(SORT_IDS).withDefault(DEFAULT_SORT_ID)
 const sortDirectionParser = parseAsStringLiteral(SORT_DIRECTIONS).withDefault(
   DEFAULT_SORT_DIRECTION,
 )
-
-const toDebtorIds = (debtors?: string[] | null) =>
-  debtors?.map(Number).filter((id): id is number => Number.isInteger(id))
 
 interface AppliedFilters {
   dateFrom: Date
@@ -276,7 +280,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
 
   const buildInput = useCallback(
     (filters: AppliedFilters, page: number) => ({
-      debtors: toDebtorIds(filters.debtors),
+      debtors: filters.debtors,
       suppliers: filters.suppliers,
       ministries: filters.ministries,
       paymentTypeIds: filters.paymentTypeIds,
@@ -698,10 +702,10 @@ OpenInvoicesOverviewPage.getProps = async ({
     filterArray<string>(arrayParser.parseServerSide(query?.[resource])),
   )
 
-  const debtorsInput = debtorsFilter?.filter(isDefined)
-  const suppliersInput = suppliersFilter?.filter(isDefined)
-  const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
-  const ministriesInput = ministriesFilter?.filter(isDefined)
+  const requestedDebtors = debtorsFilter?.filter(isDefined)
+  const requestedSuppliers = suppliersFilter?.filter(isDefined)
+  const requestedPaymentTypes = invoicePaymentTypesFilter?.filter(isDefined)
+  const requestedMinistries = ministriesFilter?.filter(isDefined)
 
   /*
     Rebuilds the current URL with `omit` dropped and `overrides` applied, so a
@@ -727,16 +731,6 @@ OpenInvoicesOverviewPage.getProps = async ({
     const path = linkResolver('openinvoices', [], locale as Locale).href
     const search = params.toString()
     return search ? `${path}?${search}` : path
-  }
-
-  /*
-    Buyers (debtors) and ministries are mutually exclusive — if both are in the
-    URL, buyers wins and ministries is redirected away rather than silently
-    dropped from the query, so the URL stays a true reflection of the applied
-    filters.
-  */
-  if (debtorsInput && ministriesInput) {
-    throw new CustomNextRedirect(buildUrl(['ministries']))
   }
 
   const parsedDateTo = parseAsIsoDateTime.parseServerSide(
@@ -779,31 +773,148 @@ OpenInvoicesOverviewPage.getProps = async ({
   let invoiceGroups: IcelandicGovernmentInstitutionsInvoicePaymentsGroups | null =
     null
   let initialError = false
+
+  let debtorsInput: string[] | undefined
+  let suppliersInput: string[] | undefined
+  let ministriesInput: string[] | undefined
+  let invoicePaymentTypesInput: string[] | undefined
+
   try {
-    const { data } = await apolloClient.query<
-      Query,
-      QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
-    >({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
-      variables: {
-        input: {
-          dateFrom: dateFromInput,
-          dateTo: dateToInput,
-          debtors: toDebtorIds(debtorsInput),
-          suppliers: suppliersInput,
-          ministries: ministriesInput,
-          paymentTypeIds: invoicePaymentTypesInput,
-          sortBy: SORT_FIELD_MAP[sortIdInput],
-          sortDirection: toSortDirection(sortDirectionInput),
-          limit: PAGE_SIZE,
-          page: pageInput,
-        },
-      },
-    })
-    invoiceGroups =
-      data.icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? null
-  } catch {
+    const [
+      debtorsResolved,
+      suppliersResolved,
+      ministriesResolved,
+      paymentTypesResolved,
+    ] = await Promise.all([
+      resolveExisting<IcelandicGovernmentInstitutionsDebtorsQuery>(
+        apolloClient,
+        GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_DEBTORS,
+        requestedDebtors?.filter((id) => isUUID(id)),
+        (data) =>
+          (data.icelandicGovernmentInstitutionsDebtors?.data ?? []).map(
+            (d) => d.id,
+          ),
+      ),
+      resolveExisting<IcelandicGovernmentInstitutionsSuppliersQuery>(
+        apolloClient,
+        GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_SUPPLIERS,
+        requestedSuppliers,
+        (data) =>
+          (data.icelandicGovernmentInstitutionsSuppliers?.data ?? []).map(
+            (s) => s.id,
+          ),
+      ),
+      resolveExisting<IcelandicGovernmentInstitutionsMinistriesQuery>(
+        apolloClient,
+        GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_MINISTRIES,
+        requestedMinistries,
+        (data) =>
+          (data.icelandicGovernmentInstitutionsMinistries?.data ?? []).map(
+            (m) => m.id,
+          ),
+      ),
+      resolveExisting<IcelandicGovernmentInstitutionsInvoicePaymentTypeGroupsQuery>(
+        apolloClient,
+        GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_PAYMENT_TYPE_GROUPS,
+        requestedPaymentTypes,
+        (data) =>
+          (
+            data.icelandicGovernmentInstitutionsInvoicePaymentTypeGroups
+              ?.data ?? []
+          ).flatMap((g) => g.codes),
+      ),
+    ])
+
+    const changedKeys: string[] = []
+    if (
+      requestedDebtors &&
+      requestedDebtors.length !== (debtorsResolved?.length ?? 0)
+    ) {
+      changedKeys.push('debtors')
+    }
+    if (
+      requestedSuppliers &&
+      requestedSuppliers.length !== (suppliersResolved?.length ?? 0)
+    ) {
+      changedKeys.push('suppliers')
+    }
+    if (
+      requestedMinistries &&
+      requestedMinistries.length !== (ministriesResolved?.length ?? 0)
+    ) {
+      changedKeys.push('ministries')
+    }
+    if (
+      requestedPaymentTypes &&
+      requestedPaymentTypes.length !== (paymentTypesResolved?.length ?? 0)
+    ) {
+      changedKeys.push('invoicePaymentTypes')
+    }
+
+    if (changedKeys.length > 0) {
+      const overrides: Record<string, string> = {}
+      if (debtorsResolved?.length) overrides.debtors = debtorsResolved.join(',')
+      if (suppliersResolved?.length)
+        overrides.suppliers = suppliersResolved.join(',')
+      if (ministriesResolved?.length)
+        overrides.ministries = ministriesResolved.join(',')
+      if (paymentTypesResolved?.length)
+        overrides.invoicePaymentTypes = paymentTypesResolved.join(',')
+      throw new CustomNextRedirect(buildUrl(changedKeys, overrides))
+    }
+
+    debtorsInput = filterArray(debtorsResolved)
+    suppliersInput = filterArray(suppliersResolved)
+    ministriesInput = filterArray(ministriesResolved)
+    invoicePaymentTypesInput = filterArray(paymentTypesResolved)
+  } catch (error) {
+    if (error instanceof CustomNextRedirect) {
+      throw error
+    }
+    debtorsInput = requestedDebtors
+    suppliersInput = requestedSuppliers
+    ministriesInput = requestedMinistries
+    invoicePaymentTypesInput = requestedPaymentTypes
     initialError = true
+  }
+
+  /*
+    Buyers (debtors) and ministries are mutually exclusive — if both are in the
+    URL, buyers wins and ministries is redirected away rather than silently
+    dropped from the query, so the URL stays a true reflection of the applied
+    filters.
+  */
+  if (debtorsInput && ministriesInput) {
+    throw new CustomNextRedirect(buildUrl(['ministries']))
+  }
+
+  if (!initialError) {
+    try {
+      const { data } = await apolloClient.query<
+        Query,
+        QueryIcelandicGovernmentInstitutionsInvoicePaymentsGroupsArgs
+      >({
+        query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
+        variables: {
+          input: {
+            dateFrom: dateFromInput,
+            dateTo: dateToInput,
+            debtors: debtorsInput,
+            suppliers: suppliersInput,
+            ministries: ministriesInput,
+            paymentTypeIds: invoicePaymentTypesInput,
+            sortBy: SORT_FIELD_MAP[sortIdInput],
+            sortDirection: toSortDirection(sortDirectionInput),
+            limit: PAGE_SIZE,
+            page: pageInput,
+          },
+        },
+      })
+      invoiceGroups =
+        data.icelandicGovernmentInstitutionsInvoicePaymentsGroups ?? null
+    } catch {
+      initialError = true
+    }
   }
 
   const lastPage = Math.max(
