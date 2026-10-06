@@ -2490,15 +2490,17 @@ export class CaseService {
     ) {
       // The COMPLETE transition has already checked that the parent case is
       // received
-      const parentCase = theCase.mergeCase
 
       // The parent's court sessions can change under this request: the guard
-      // locked this case's row, not the parent's, and a confirmation of the
-      // parent's latest session or a new session on it commits on the parent's
-      // row. So take the parent's lock here and decide from a fresh read under
-      // it, not from the guard's snapshot. Lock order is child then parent;
-      // nothing takes them the other way round - the parent's routes lock
-      // their own row and read the merged children without locking them.
+      // locked this case's row, not the parent's. The parent's court session
+      // routes run under the parent's row lock (CaseExistsForUpdateGuard), so
+      // taking that lock here makes a confirmation of the parent's latest
+      // session, or a new session on it, either finish before the decision
+      // below or wait for this completion to commit - and the decision is
+      // taken from a fresh read under the lock, not from the guard's snapshot.
+      // Lock order is child then parent; nothing takes them the other way
+      // round - the parent's routes lock their own row and read the merged
+      // children without locking them.
       const parentCaseLocked =
         await this.caseRepositoryService.lockByIdForUpdate(
           theCase.mergeCaseId,
@@ -2516,7 +2518,7 @@ export class CaseService {
       // has no session yet - nothing happens here: the parent's next court
       // session picks the merged case up when it is created.
       if (
-        parentCase?.withCourtSessions &&
+        theCase.mergeCase?.withCourtSessions &&
         (await this.courtSessionService.isLatestCourtSessionOpen(
           theCase.mergeCaseId,
           transaction,

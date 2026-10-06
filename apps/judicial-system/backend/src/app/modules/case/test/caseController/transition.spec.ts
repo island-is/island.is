@@ -795,7 +795,7 @@ describe('CaseController - Transition', () => {
       },
     )
 
-    describe('the parent case has no court sessions', () => {
+    describe('the parent case does not use court sessions', () => {
       beforeEach(async () => {
         const theCase = mergingCase(true)
         theCase.mergeCase = {
@@ -809,7 +809,7 @@ describe('CaseController - Transition', () => {
         })
       })
 
-      it('should still lock the parent case and leave its court sessions alone', () => {
+      it('should still lock the parent case and not read its court sessions', () => {
         expect(
           mockCaseRepositoryService.lockByIdForUpdate,
         ).toHaveBeenCalledWith(parentCaseId, transaction)
