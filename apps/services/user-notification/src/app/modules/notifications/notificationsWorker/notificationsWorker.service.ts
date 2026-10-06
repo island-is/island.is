@@ -35,7 +35,8 @@ import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale, SmsDelivery } from '../utils'
+import { UserNotificationSender } from '../user-notification-sender.model'
+import { mapToLocale, normalizeKennitala, SmsDelivery } from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
@@ -121,6 +122,9 @@ export class NotificationsWorkerService {
 
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
   ) {}
 
   private async handleActorNotification(
@@ -349,14 +353,6 @@ export class NotificationsWorkerService {
           messageId,
         })
         return
-      }
-
-      if (message.senderId) {
-        await this.recordNotificationSender(
-          nationalId,
-          message.senderId,
-          messageId,
-        )
       }
 
       locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
@@ -755,6 +751,11 @@ export class NotificationsWorkerService {
       this.logger.info('notification written to db', {
         messageId,
       })
+      await this.recordNotificationSender(
+        message.recipient,
+        message.senderId,
+        messageId,
+      )
       return created
     } catch (e) {
       this.logger.error('error writing notification to db', {
@@ -792,21 +793,28 @@ export class NotificationsWorkerService {
     }
   }
 
+  /**
+   * Records that the sender has sent the recipient a notification.
+   * Best-effort, never fails delivery.
+   */
   private async recordNotificationSender(
-    nationalId: string,
-    senderId: string,
+    recipient: string,
+    senderId: string | undefined,
     messageId: string,
   ): Promise<void> {
+    const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
+    if (!normalizedSenderId) {
+      return
+    }
+
     try {
-      await this.userProfileApi.userProfileControllerEnsureNotificationSenderSetting(
-        {
-          xParamNationalId: nationalId,
-          createNotificationSenderSettingDto: { senderId },
-        },
+      await this.userNotificationSenderModel.bulkCreate(
+        [{ recipient, senderId: normalizedSenderId }],
+        { ignoreDuplicates: true },
       )
     } catch (error) {
       this.logger.warn(
-        'Failed to record notification sender setting, proceeding with notification',
+        'Failed to record notification sender, proceeding with notification',
         { messageId, error },
       )
     }

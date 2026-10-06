@@ -24,6 +24,7 @@ import { MeNotificationsController } from './me-notifications.controller'
 import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
 import { NotificationDelivery } from './notification-delivery.model'
+import { UserNotificationSender } from './user-notification-sender.model'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
 import { EmailWorkerService } from './notificationsWorker/emailWorker.service'
@@ -38,6 +39,7 @@ import { MessageProcessorService } from './messageProcessor.service'
       Notification,
       ActorNotification,
       NotificationDelivery,
+      UserNotificationSender,
     ]),
     LoggingModule,
     CmsTranslationsModule,

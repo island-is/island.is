@@ -15,6 +15,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
 import { NotificationDelivery } from './notification-delivery.model'
+import { UserNotificationSender } from './user-notification-sender.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
@@ -42,7 +43,7 @@ import {
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
 import { ApiScope, DocumentsScope } from '@island.is/auth/scopes'
-import { col, fn, Op } from 'sequelize'
+import { Op } from 'sequelize'
 
 /**
  * These are the properties that can be replaced in the template
@@ -69,6 +70,8 @@ export class NotificationsService {
     private readonly actorNotificationModel: typeof ActorNotification,
     @InjectModel(NotificationDelivery)
     private readonly notificationDeliveryModel: typeof NotificationDelivery,
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -453,17 +456,14 @@ export class NotificationsService {
   }
 
   async findSenders(nationalId: string): Promise<NotificationSendersDto> {
-    const rows = (await this.notificationModel.findAll({
-      attributes: [[fn('DISTINCT', col('sender_id')), 'senderId']],
+    const rows = await this.userNotificationSenderModel.findAll({
+      attributes: ['senderId'],
       where: { recipient: nationalId },
-      raw: true,
-    })) as unknown as { senderId: string | null }[]
+      order: [['senderId', 'ASC']],
+    })
 
     return {
-      senders: rows
-        .map((row) => row.senderId)
-        .filter((senderId): senderId is string => !!senderId)
-        .map((senderId) => ({ senderId })),
+      senders: rows.map(({ senderId }) => ({ senderId })),
     }
   }
 
