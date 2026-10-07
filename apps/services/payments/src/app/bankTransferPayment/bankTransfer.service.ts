@@ -51,6 +51,7 @@ import {
   createLogPrefix,
   deriveBankTransferFailureReason,
   generateBankTransferChargeFJSPayload,
+  getBankTransferDebtor,
   isBankTransferFailureStatus,
   isBlikkStatus,
   isOnboardingRequired,
@@ -103,6 +104,35 @@ export class BankTransferService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
+    // Normally unreachable — a payer it does not allow is never offered the method — but a flow
+    // created while the company flag was on still lists it, and the endpoint can be called directly.
+    if (
+      !(await this.paymentFlowService.isBankTransferAllowedForPayer(
+        paymentFlow.payerNationalId,
+      ))
+    ) {
+      this.logger.warn(
+        `[${input.paymentFlowId}] Bank transfer requested for a payer it is not enabled for`,
+      )
+      throw new BadRequestException(
+        BankTransferErrorCode.FailedToCreateBankTransfer,
+      )
+    }
+
+    const debtor = getBankTransferDebtor(
+      paymentFlow.payerNationalId,
+      input.actorNationalId,
+    )
+    if (!debtor) {
+      // The payment screen validates this; reaching here means a missing or non-person actor.
+      this.logger.warn(
+        `[${input.paymentFlowId}] Company bank transfer requested without a valid individual to authorise it`,
+      )
+      throw new BadRequestException(
+        BankTransferErrorCode.InvalidActorNationalId,
+      )
+    }
+
     if (existing) {
       // throws an error if the bank transfer payment is already paid or still pending
       await this.handleExistingActiveBankTransferRow(existing)
@@ -132,7 +162,7 @@ export class BankTransferService {
         partnerRedirectUrl,
         expiresAt: expiresAtSeconds,
         items: catalogItems,
-        debtorExternalId: paymentFlow.payerNationalId,
+        ...debtor,
         bankAccountNumber: input.bankAccountNumber,
       })
     } catch (error) {
@@ -175,6 +205,11 @@ export class BankTransferService {
         provider: 'blikk',
         providerPaymentId: providerResult.providerPaymentId,
         scaRedirectUrl: providerResult.scaRedirectUrl,
+        // Kept on the row only: flow events are delivered to the organisation, and this is a
+        // person's national id.
+        actorNationalId: debtor.debtorCorpExternalId
+          ? debtor.debtorExternalId
+          : null,
         amount: totalPrice,
         lastKnownStatus: providerResult.rawStatus,
         expiresAt,
@@ -659,6 +694,7 @@ export class BankTransferService {
       expiresAt: input.expiresAt,
       items: input.items?.map(toBlikkItem),
       debtorExternalId: input.debtorExternalId,
+      debtorCorpExternalId: input.debtorCorpExternalId,
       // Blikk expects a debtor name; we send the national id.
       debtorName: input.debtorExternalId,
       debtorBban: input.bankAccountNumber,

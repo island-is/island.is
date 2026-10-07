@@ -20,10 +20,7 @@ import {
   CourtSessionRepositoryService,
 } from '../../../repository'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -97,10 +94,13 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
       mockCourtSessionRepositoryService.findById as jest.Mock
     ).mockImplementation(async () => null)
 
-    // The swap target is clean of recorded decisions.
-    ;(appealDecisionRepositoryService.findAll as jest.Mock).mockResolvedValue(
-      [],
-    )
+    // No recorded decisions, and the swap target is clean of them.
+    ;(
+      appealDecisionRepositoryService.findAllForRuling as jest.Mock
+    ).mockResolvedValue([])
+    ;(
+      appealDecisionRepositoryService.existsForRuling as jest.Mock
+    ).mockResolvedValue(false)
     ;(
       mockFileService.createRulingOrderPronouncedOrally as jest.Mock
     ).mockImplementation(async (_theCase, name) =>

@@ -3,6 +3,7 @@ import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
+import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
@@ -12,6 +13,7 @@ import type {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealCaseType,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -21,15 +23,28 @@ import {
 
 import useSections from './index'
 
+// Two different questions. The appeal in the query string says which
+// proceeding the stepper is about; the path says which step of it the reader
+// is on. Both default to nothing, which is what every test but the verdict
+// ones wants.
+let mockAppealCaseId: string | undefined
+let mockPathname = ''
+
 jest.mock('next/router', () => ({
   useRouter() {
     return {
-      pathname: '',
+      pathname: mockPathname,
+      query: { appealCaseId: mockAppealCaseId },
     }
   },
 }))
 
 describe('useSections getSections', () => {
+  beforeEach(() => {
+    mockAppealCaseId = undefined
+    mockPathname = ''
+  })
+
   // useSections reads `workingCase` from FormContext (via the target-appeal
   // hook). Each test injects its own `c` here so the resolved target appeal
   // matches what `getSections(c, u)` is called with.
@@ -97,6 +112,83 @@ describe('useSections getSections', () => {
       ...(i > 0 && { onClick: undefined }),
     }))
   }
+
+  // A verdict appeal is a separate proceeding with its own steps. Which one
+  // the stepper is about comes from the appeal named in the URL, the same way
+  // every other Court of Appeals screen decides it.
+  describe('when the url names the verdict appeal', () => {
+    const caseWithBothAppeals = {
+      origin: CaseOrigin.RVG,
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: 'case-with-both-appeals',
+      state: CaseState.COMPLETED,
+      policeCaseNumbers: [],
+      appealCase: {
+        id: 'ruling-appeal',
+        appealState: AppealCaseState.RECEIVED,
+        appealType: AppealCaseType.RULING,
+      },
+      verdictAppealCase: {
+        id: 'verdict-appeal',
+        appealState: AppealCaseState.RECEIVED,
+        appealType: AppealCaseType.VERDICT,
+      },
+    } as unknown as Case
+
+    const coaUser = {
+      ...u,
+      role: UserRole.COURT_OF_APPEALS_JUDGE,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as unknown as User
+
+    const appealSections = (c: Case, user: User) => {
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(c),
+      })
+
+      return result.current
+        .getSections(c, user)
+        .filter((s) => s.name === 'Dómur Landsréttar' || s.name === 'Kærumál')
+    }
+
+    // The ruling appeal section sits earlier in the list and is active while
+    // that appeal is received, so leaving it in means the side panel marks it
+    // and the verdict step the reader is on stays unmarked.
+    it('shows the verdict appeal rather than the ruling appeal', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections.map((s) => s.name)).toEqual(['Dómur Landsréttar'])
+      expect(sections[0].isActive).toBe(true)
+    })
+
+    // The link has to carry the appeal id. Dropped, the next render resolves
+    // back to the case-level ruling appeal - and on a case that has none, the
+    // whole proceeding disappears from the panel the moment the reader clicks
+    // the step they are already on.
+    it('keeps the appeal id on its own overview link', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].children[0].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
+    it('leaves the ruling appeal sections alone when it names that one', () => {
+      mockAppealCaseId = 'ruling-appeal'
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections.map((s) => s.name)).toEqual(['Kærumál'])
+    })
+  })
 
   it('should return the correct sections for restriction cases in DRAFT state', () => {
     const c: Case = {

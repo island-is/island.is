@@ -251,8 +251,6 @@ export const getJobCareer = (
         return {
           employerSSN: employerSSN,
           employer: employerName,
-          started: job.startDate,
-          quit: job.endDate,
           workRatio: parseInt(job.percentage || ''),
           jobCodeId: job.jobCodeId || '',
         }

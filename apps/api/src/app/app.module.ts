@@ -114,6 +114,7 @@ import {
   DirectorateOfEqualityClientConfig,
 } from '@island.is/clients/directorate-of-equality'
 import { FjarskiptastofaSelfAssessmentClientConfig } from '@island.is/clients/fjarskiptastofa/self-assessment'
+import { DirectorateOfEqualityStatisticsClientConfig } from '@island.is/clients/directorate-of-equality-statistics'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -138,6 +139,7 @@ import {
   LegalGazetteClientConfig,
   LegalGazetteClientModule,
 } from '@island.is/clients/legal-gazette'
+import { GovernmentInvoicesClientConfig } from '@island.is/clients/government-invoices'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -198,6 +200,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { LicenseConfig } from '@island.is/services/license'
 
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
+import { IcelandicGovernmentInstitutionsModule } from '@island.is/api/domains/icelandic-government-institutions'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
@@ -301,6 +304,7 @@ const environment = getConfig
     ApiDomainsCustomsCalculatorModule,
     FormSystemModule,
     CmsModule,
+    IcelandicGovernmentInstitutionsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
     EducationModule.register({
@@ -436,11 +440,13 @@ const environment = getConfig
         SeminarsClientConfig,
         NvsPermitsClientConfig,
         AirDiscountSchemeClientConfig,
+        GovernmentInvoicesClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
         DirectorateOfEqualityClientConfig,
         FjarskiptastofaSelfAssessmentClientConfig,
+        DirectorateOfEqualityStatisticsClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,

@@ -857,6 +857,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
     },
+    XROAD_TAXI_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/TAXI-ISLANDIS',
+    },
   },
 })
 
@@ -1041,6 +1046,17 @@ export const DirectorateOfEquality = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
       prod: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti',
+    },
+  },
+})
+
+// Placeholder service name until DMR registers the statistics service.
+export const DirectorateOfEqualityStatistics = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics',
+      prod: 'IS/GOV/5804170510/DMR-Protected/jafnretti-statistics',
     },
   },
 })

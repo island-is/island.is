@@ -1,9 +1,12 @@
-import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { AirDiscountSchemeFlightLeg } from '@island.is/api/schema'
 import { messages as m } from '../../lib/messages'
-import { formatDateWithTime } from '@island.is/portals/my-pages/core'
+import {
+  createColumnHelper,
+  formatDateWithTime,
+  PortalTable,
+} from '@island.is/portals/my-pages/core'
 
 interface PropTypes {
   data: AirDiscountSchemeFlightLeg[]
@@ -12,49 +15,33 @@ interface PropTypes {
 const UsageTable = ({ data }: PropTypes) => {
   useNamespaces('sp.air-discount')
   const { formatMessage } = useLocale()
+  const columnHelper = createColumnHelper<AirDiscountSchemeFlightLeg>()
+  const columns = [
+    columnHelper.accessor((row) => row.flight.user.name, {
+      id: 'user',
+      header: formatMessage(m.user),
+      enableSorting: false,
+    }),
+    columnHelper.accessor('travel', {
+      header: formatMessage(m.flight),
+      enableSorting: false,
+    }),
+    columnHelper.accessor((row) => row.flight.bookingDate, {
+      id: 'date',
+      header: formatMessage(m.date),
+      cell: ({ getValue }) =>
+        getValue() ? formatDateWithTime(getValue()) : '',
+      enableSorting: false,
+    }),
+  ]
   return (
     <Box marginBottom={4}>
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData>
-              <Text variant="small" fontWeight="semiBold">
-                {formatMessage(m.user)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="small" fontWeight="semiBold">
-                {formatMessage(m.flight)}
-              </Text>
-            </T.HeadData>
-            <T.HeadData>
-              <Text variant="small" fontWeight="semiBold">
-                {formatMessage(m.date)}
-              </Text>
-            </T.HeadData>
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {data?.map((item: AirDiscountSchemeFlightLeg, index: number) => {
-            return (
-              <T.Row key={index + ' airfare usage table'}>
-                <T.Data>
-                  <Text variant="small">{item.flight.user.name}</Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="small">{item?.travel}</Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="small">
-                    {item?.flight.bookingDate &&
-                      formatDateWithTime(item.flight.bookingDate)}
-                  </Text>
-                </T.Data>
-              </T.Row>
-            )
-          })}
-        </T.Body>
-      </T.Table>
+      <PortalTable
+        columns={columns}
+        data={data ?? []}
+        emptyMessage=""
+        mobileTitleKey="user"
+      />
     </Box>
   )
 }

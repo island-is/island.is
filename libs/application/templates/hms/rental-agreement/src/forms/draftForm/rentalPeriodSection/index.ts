@@ -1,5 +1,4 @@
 import {
-  buildAlertMessageField,
   buildCheckboxField,
   buildDateField,
   buildDescriptionField,
@@ -9,11 +8,11 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
+import { rentalPeriodIsDefinite } from '../../../utils/rentalPeriodUtils'
 import {
-  isDateMoreThanOneYearInFuture,
-  rentalPeriodIsDefinite,
-} from '../../../utils/rentalPeriodUtils'
-import { EARLIEST_RENTAL_PERIOD_START_DATE } from '../../../utils/utils'
+  EARLIEST_RENTAL_PERIOD_START_DATE,
+  getLatestRentalPeriodStartDate,
+} from '../../../utils/utils'
 import addMonths from 'date-fns/addMonths'
 import * as m from '../../../lib/messages'
 
@@ -26,13 +25,6 @@ export const rentalPeriodSection = buildSection({
       title: m.rentalPeriod.pageTitle,
       description: m.rentalPeriod.pageDescription,
       children: [
-        buildAlertMessageField({
-          id: 'rentalPeriod.alertMessage',
-          title: m.rentalPeriod.alertMessageTitle,
-          message: m.rentalPeriod.alertMessage,
-          alertType: 'warning',
-          condition: isDateMoreThanOneYearInFuture,
-        }),
         buildDateField({
           id: 'rentalPeriod.startDate',
           title: m.rentalPeriod.startDateTitle,
@@ -40,6 +32,7 @@ export const rentalPeriodSection = buildSection({
           required: true,
           clearOnChange: ['rentalPeriod.endDate'],
           minDate: EARLIEST_RENTAL_PERIOD_START_DATE,
+          maxDate: () => getLatestRentalPeriodStartDate(),
         }),
         buildDateField({
           id: 'rentalPeriod.endDate',

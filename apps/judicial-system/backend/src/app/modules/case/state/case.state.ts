@@ -305,6 +305,7 @@ const indictmentCaseStateMachine: Map<
           courtEndTime: null,
           rulingDate: null,
           indictmentReviewerId: null,
+          appealProsecutorId: null,
           courtRecordHash: null,
         }
       },

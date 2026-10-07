@@ -84,6 +84,15 @@ describe('InternalNotificationController - Send appeal statement notifications',
             defenderNationalId,
             defenderName: hasDefender ? defender.name : undefined,
             defenderEmail: hasDefender ? defender.email : undefined,
+            defendants: hasDefender
+              ? [
+                  {
+                    defenderNationalId,
+                    defenderName: defender.name,
+                    defenderEmail: defender.email,
+                  },
+                ]
+              : [],
             courtCaseNumber,
             appealCase,
           } as Case,

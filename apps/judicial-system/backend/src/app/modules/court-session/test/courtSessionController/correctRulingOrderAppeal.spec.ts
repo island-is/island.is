@@ -27,10 +27,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -142,8 +139,9 @@ describe('CourtSessionController - Correct ruling order appeal', () => {
     })
 
     decisions = acceptedDecisions
-    const mockFindAll = appealDecisionRepositoryService.findAll as jest.Mock
-    mockFindAll.mockImplementation(() => Promise.resolve(decisions))
+    const mockFindAllForRuling =
+      appealDecisionRepositoryService.findAllForRuling as jest.Mock
+    mockFindAllForRuling.mockImplementation(() => Promise.resolve(decisions))
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
