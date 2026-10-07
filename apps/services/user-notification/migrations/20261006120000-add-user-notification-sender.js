@@ -34,7 +34,6 @@ module.exports = {
         },
       )
 
-      // Backfill from existing notifications, normalizing sender ids to digits only
       await queryInterface.sequelize.query(
         `
         INSERT INTO user_notification_sender
