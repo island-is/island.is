@@ -18,3 +18,8 @@ export * from './hooks/useDeleteApplication'
 export * from './hooks/useOpenApplication'
 export { NationalIdWithName } from './components/NationalIdWithName/NationalIdWithName'
 export { default as Slider } from './components/Slider/Slider'
+export { SpiderChart } from './components/SpiderChart/SpiderChart'
+export type {
+  SpiderChartProps,
+  SpiderChartDataPoint,
+} from './components/SpiderChart/SpiderChart'

@@ -113,6 +113,7 @@ import {
   DirectorateOfEqualityClientModule,
   DirectorateOfEqualityClientConfig,
 } from '@island.is/clients/directorate-of-equality'
+import { FjarskiptastofaSelfAssessmentClientConfig } from '@island.is/clients/fjarskiptastofa/self-assessment'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -439,6 +440,7 @@ const environment = getConfig
         AssetsClientConfig,
         PCardClientConfig,
         DirectorateOfEqualityClientConfig,
+        FjarskiptastofaSelfAssessmentClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,
