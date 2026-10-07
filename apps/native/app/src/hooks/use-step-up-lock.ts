@@ -13,13 +13,16 @@ export type StepUpLockState = 'loading' | 'locked' | 'unlocked'
  * Whether an area of the app is locked behind an Auðkenni unlock.
  *
  * The feature flag is the on/off switch, and it is the same flag the API uses
- * to refuse the area's data, so the two can't disagree. The API decides whether
- * this session is unlocked; we ask it when the area opens and whenever the app
- * comes back to the foreground, and any refused request locks straight away.
+ * to refuse the area's data. The API has the last word: it decides whether
+ * this session is unlocked, and if it refuses data the area locks even when
+ * the flag here says off (the two are read differently, and the API locks when
+ * it can't read the flag). We ask it when the area opens and whenever the app
+ * comes back to the foreground.
  */
 export function useStepUpLock(flag: string) {
-  const isRequired = useFeatureFlag(flag, false, null)
+  const isFlagOn = useFeatureFlag(flag, false, null)
   const requiredByServer = useStepUpStore((state) => state.required)
+  const isRequired = requiredByServer || isFlagOn
   const client = useApolloClient()
 
   const { data, loading, refetch } = useStepUpSessionQuery({

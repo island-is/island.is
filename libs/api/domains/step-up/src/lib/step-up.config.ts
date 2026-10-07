@@ -2,6 +2,10 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
+  // The environment's switch. Off, nothing is locked. On, the feature flag
+  // picks who is locked, and failing to read the flag locks: an access
+  // control must not open because ConfigCat is unreachable.
+  enabled: z.boolean(),
   // The API's own CIBA client, used for nothing but unlocking screens. Kept
   // apart from delegation-api's: a client is the party that acts on the result.
   issuer: z.string(),
@@ -42,6 +46,7 @@ export const StepUpConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load(env) {
     return {
+      enabled: env.optionalJSON<boolean>('STEP_UP_ENABLED') ?? false,
       issuer:
         env.optional('STEP_UP_CIBA_ISSUER_URL') ??
         env.required(
