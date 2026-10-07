@@ -747,8 +747,6 @@ export const is = {
   'stepUp.waitingApp':
     'Opnaðu Auðkennisappið og staðfestu ef öryggistalan er sú sama.',
   'stepUp.waitingSim': 'Staðfestu í símanum ef öryggistalan er sú sama.',
-  'stepUp.useApp': 'Nota Auðkennisappið í staðinn',
-  'stepUp.useSim': 'Nota rafræn skilríki í síma í staðinn',
   'stepUp.timeLeft': 'Tími eftir: {minutes}:{seconds}',
   'stepUp.denied': 'Hætt var við auðkenninguna. Reyndu aftur.',
   'stepUp.timedOut': 'Auðkenningin rann út á tíma. Reyndu aftur.',

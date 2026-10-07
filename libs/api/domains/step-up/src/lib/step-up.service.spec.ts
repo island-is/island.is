@@ -83,7 +83,6 @@ describe('StepUpService', () => {
         expiresIn: 300,
         interval: 5,
         verificationCode: '4821',
-        availableMethods: ['app', 'sim'],
       }),
       poll: jest.fn().mockResolvedValue({ status: 'pending' }),
     }
@@ -105,19 +104,10 @@ describe('StepUpService', () => {
     })
     expect(started).toMatchObject({
       method: 'app',
-      availableMethods: ['app', 'sim'],
       verificationCode: '4821',
       interval: 5,
       expiresIn: 300,
     })
-  })
-
-  it('passes on the person asking for the other method', async () => {
-    await service.start(appUser(), 'sim')
-
-    expect(ciba.start).toHaveBeenCalledWith(
-      expect.objectContaining({ method: 'sim' }),
-    )
   })
 
   it('is locked until the person approves, then unlocked', async () => {

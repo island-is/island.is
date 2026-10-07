@@ -6,11 +6,10 @@ query StepUpSession {
   }
 }
 
-mutation StepUpStart($method: StepUpMethod) {
-  stepUpStart(method: $method) {
+mutation StepUpStart {
+  stepUpStart {
     stepUpId
     method
-    availableMethods
     verificationCode
     interval
     expiresIn
