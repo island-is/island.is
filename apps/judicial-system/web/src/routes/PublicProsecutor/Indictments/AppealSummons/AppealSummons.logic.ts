@@ -195,9 +195,27 @@ export type AppealSummonsFormSection = {
   included: boolean
 }
 
+/**
+ * Civil claimants linked to a defendant for claims prefill. Empty / missing
+ * defendantIds means the claim applies to every defendant (same rule as
+ * subpoena packaging).
+ */
+export const civilClaimantsForDefendant = (
+  civilClaimants: Pick<CivilClaimant, 'name' | 'nationalId' | 'defendantIds'>[],
+  defendantId: string,
+): Pick<CivilClaimant, 'name' | 'nationalId' | 'defendantIds'>[] =>
+  civilClaimants.filter(
+    (claimant) =>
+      !claimant.defendantIds?.length ||
+      claimant.defendantIds.includes(defendantId),
+  )
+
 export const buildAppealSummonsFormSections = (
   standing: StandingAppealSummonsDefendant[],
-  civilClaimants: Pick<CivilClaimant, 'name' | 'nationalId'>[] = [],
+  civilClaimants: Pick<
+    CivilClaimant,
+    'name' | 'nationalId' | 'defendantIds'
+  >[] = [],
   existingSummons?: Pick<AppealSummons, 'defendants'> | null,
 ): AppealSummonsFormSection[] => {
   const existingByDefendant = new Map(
@@ -219,7 +237,7 @@ export const buildAppealSummonsFormSections = (
         prefillAppealSummonsClaims(
           defendant.appellantSide,
           defendant,
-          civilClaimants,
+          civilClaimantsForDefendant(civilClaimants, defendant.defendantId),
         ),
     }
   })

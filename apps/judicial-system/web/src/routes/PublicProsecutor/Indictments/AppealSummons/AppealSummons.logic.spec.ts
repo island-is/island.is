@@ -8,6 +8,7 @@ import {
 import {
   appellantSideLabel,
   buildAppealSummonsFormSections,
+  civilClaimantsForDefendant,
   getEarliestStandingAppealDate,
   getStandingAppealSummonsDefendants,
   isAppealSummonsFormReady,
@@ -251,6 +252,48 @@ describe('buildAppealSummonsFormSections', () => {
     expect(sections[0].included).toBe(false)
     expect(sections[1].included).toBe(true)
     expect(sections[1].claims).toBe('Saved claims')
+  })
+
+  it('prefills only civil claimants linked to each defendant', () => {
+    const sections = buildAppealSummonsFormSections(standing, [
+      {
+        name: 'Only for Jón',
+        nationalId: '0101303019',
+        defendantIds: ['defendant_a'],
+      },
+      {
+        name: 'Only for Guðrún',
+        nationalId: '0101302989',
+        defendantIds: ['defendant_b'],
+      },
+      {
+        name: 'For every defendant',
+        nationalId: '0101302399',
+        defendantIds: [],
+      },
+    ])
+
+    expect(sections[0].claims).toContain('Only for Jón')
+    expect(sections[0].claims).toContain('For every defendant')
+    expect(sections[0].claims).not.toContain('Only for Guðrún')
+    expect(sections[1].claims).toContain('Only for Guðrún')
+    expect(sections[1].claims).toContain('For every defendant')
+    expect(sections[1].claims).not.toContain('Only for Jón')
+  })
+})
+
+describe('civilClaimantsForDefendant', () => {
+  const claimants = [
+    { name: 'A', nationalId: '1', defendantIds: ['defendant_a'] },
+    { name: 'B', nationalId: '2', defendantIds: ['defendant_b'] },
+    { name: 'All empty', nationalId: '3', defendantIds: [] },
+    { name: 'All missing', nationalId: '4' },
+  ]
+
+  it('keeps claimants for the defendant and those with no defendant link', () => {
+    expect(
+      civilClaimantsForDefendant(claimants, 'defendant_a').map((c) => c.name),
+    ).toEqual(['A', 'All empty', 'All missing'])
   })
 })
 
