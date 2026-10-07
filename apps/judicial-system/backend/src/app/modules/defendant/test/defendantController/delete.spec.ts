@@ -31,13 +31,13 @@ describe('DefendantController - Delete', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock

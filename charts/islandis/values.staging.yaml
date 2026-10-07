@@ -17,16 +17,18 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidstaging.onmicrosoft.com/midlunUmsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: '138478ef-b078-4cfa-b322-fecdaced96e8'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://staging.identity.skra.is/staging.identity.skra.is/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidstaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
@@ -113,9 +115,7 @@ air-discount-scheme-backend:
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
     MYFLUG_API_KEY: '/k8s/air-discount-scheme/backend/MYFLUG_API_KEY'
-    NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
-    NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
-    NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
   securityContext:
@@ -152,6 +152,9 @@ api:
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
+    ELFUR_BASE_IDS_URL: 'https://identity-server.staging01.devland.is'
+    ELFUR_BASE_PATH: 'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net'
+    ELFUR_CLIENT_ID: '@fjs.is/stafraent-island-api-elfur'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     ENVIRONMENT: 'staging'
     FETCH_MAX_SOCKETS: '50'
@@ -217,6 +220,7 @@ api:
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DIRECTORATE_OF_EQUALITY_PATH: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti'
+    XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-TEST/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1'
     XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: 'IS-TEST/GOV/10016/Syslumenn-Protected/RettindiIslandis'
@@ -341,8 +345,8 @@ api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 3
+        max: 2
+        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -364,9 +368,9 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 3
-    max: 50
-    min: 3
+    default: 1
+    max: 2
+    min: 1
   resources:
     limits:
       cpu: '3000m'
@@ -409,6 +413,7 @@ api:
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
     DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
     DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
+    ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET'
     FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER'
     FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH'
     FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID: '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID'

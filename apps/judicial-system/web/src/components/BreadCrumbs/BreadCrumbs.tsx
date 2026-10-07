@@ -4,7 +4,6 @@ import Link from 'next/link'
 
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCaseTableGroups } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useCaseTableMembershipQuery } from '@island.is/judicial-system-web/src/utils/hooks/useCaseTableMembership/caseTableMembership.generated'
 
@@ -12,7 +11,6 @@ import * as styles from './BreadCrumbs.css'
 
 const BreadCrumbs: FC = () => {
   const { workingCase } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const caseId = workingCase?.id
 
   const { data, loading, error } = useCaseTableMembershipQuery({

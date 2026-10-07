@@ -778,6 +778,8 @@ export const is = {
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
   'health.overview.medicine': 'Lyf',
   'health.overview.seeAllCategories': 'Sjá alla flokka',
+  'health.overview.lastUpdated': 'Grunnupplýsingar síðast uppfærðar: {date}',
+  'health.overview.update': 'Uppfæra',
 
   // health: categories
   'health.categories.screenTitle': 'Heilsuflokkar',
@@ -787,6 +789,8 @@ export const is = {
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
   'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
+  'health.categories.treatment': 'Meðferð',
+  'health.categories.treatmentWithName': 'Meðferð - {name}',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',
@@ -912,6 +916,7 @@ export const is = {
   'health.messages.unstarError': 'Ekki tókst að fjarlægja stjörnumerkingu',
   'health.messages.videoCall': 'Myndsímtal',
   'health.messages.videoCallCanceled': 'Afboðað',
+  'health.messages.videoCallExpired': 'Tími liðinn',
   'health.messages.startVideoCall': 'Hefja myndsímtal',
   'health.messages.replyBlocked.default':
     'Ekki er hægt að svara þessum skilaboðum.',
@@ -943,6 +948,8 @@ export const is = {
   'health.messages.compose.selectServicePlaceholder':
     'Veldu þjónustu úr fellilistanum',
   'health.messages.compose.to': 'Til: {name}',
+  'health.messages.compose.subjectLabel': 'Efni',
+  'health.messages.compose.subjectPlaceholder': 'Sláðu inn efni skilaboðanna',
   'health.messages.compose.messageLabel': 'Skilaboð',
   'health.messages.compose.messagePlaceholder': 'Skrifaðu skilaboð hér',
   'health.messages.compose.termsAccept':
@@ -1023,6 +1030,7 @@ export const is = {
   'health.medicineDelegation.captionPickupAndLookup':
     'Sækja lyf í apóteki og fletta upp lyfjaávísunum.',
   'health.medicineDelegation.listValidTo': 'Gildir til {date}',
+  'health.medicineDelegation.listValidFrom': 'Gildir frá {date}',
   'health.medicineDelegation.showExpiredPermits': 'Sýna óvirkar',
   'health.medicineDelegation.hideExpiredPermits': 'Fela óvirkar',
   'health.medicineDelegation.noActiveTitle': 'Engar virkar heimildir',
@@ -1036,6 +1044,7 @@ export const is = {
   'health.medicineDelegation.detail.status': 'Staða',
   'health.medicineDelegation.detail.statusActive': 'Í gildi',
   'health.medicineDelegation.detail.statusExpired': 'Útrunnið',
+  'health.medicineDelegation.detail.statusAwaitingApproval': 'Bíður gildistöku',
   'health.medicineDelegation.detail.validity': 'Gildistími',
   'health.medicineDelegation.detail.validFor': 'Gildir fyrir',
   'health.medicineDelegation.detail.validForValue':
@@ -1097,7 +1106,7 @@ export const is = {
 
   'health.prescriptions.title': 'Lyfjaávísanir',
   'health.prescriptions.description':
-    'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
+    'Hér finnur þú yfirlit yfir þínar lyfjaávísanir. Þú getur sótt um lyfjaendurnýjun þegar á við. Athugið að breytingar hafa orðið á tilkynningum vegna lyfjaendurnýjana. Þú getur stillt hvernig þú vilt fá tilkynningar undir <link>Stillingar</link>.',
   'health.prescriptions.drug': 'Lyf',
   'health.prescriptions.strength': 'Styrkur',
   'health.prescriptions.indication': 'Notað við',
@@ -1144,7 +1153,7 @@ export const is = {
   'health.prescriptions.renewalBlockedOther': 'Óþekkt ástæða',
   'health.prescriptions.renewalModal.title': 'Beiðni um endurnýjun á lyfi',
   'health.prescriptions.renewalModal.description':
-    'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112.',
+    'Lyfjaendurnýjun verður unnin eins fljótt og auðið er. Ekki er víst að hún verði afgreidd samdægurs. Ef um neyðartilfelli er að ræða hafið samband við 112. Þú getur stillt hvernig þú vilt fá tilkynningar undir <link>Stillingar</link>.',
   'health.prescriptions.renewalModal.selectRecipient': 'Sendist til',
   'health.prescriptions.renewalModal.medicineName': 'Heiti lyfs',
   'health.prescriptions.renewalModal.usedFor': 'Notað við',
@@ -1155,6 +1164,7 @@ export const is = {
     'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
   'health.prescriptions.renewalModal.error':
     'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+  'health.prescriptions.renewalModal.dismissedTitle': 'Athugið',
   'health.prescriptions.issueDate': 'Útgáfudagur',
   'health.prescriptions.expiresAt': 'Gildir til',
   'health.prescriptions.doctor': 'Læknir',

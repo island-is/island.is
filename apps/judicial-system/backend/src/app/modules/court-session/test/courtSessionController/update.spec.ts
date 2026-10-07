@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealDecisionPartyRole,
   CaseAppealDecision,
@@ -17,6 +14,7 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealDecisionRepositoryService,
   Case,
@@ -26,10 +24,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -176,7 +171,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should add a working document delivery message to the queue', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -198,9 +193,9 @@ describe('CourtSessionController - Update', () => {
 
       // The case in this spec has no defendants or civil claimants, so a
       // prosecutor decision is all the confirm-time validation requires.
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([
         {
           partyRole: AppealDecisionPartyRole.PROSECUTOR,
           decision: CaseAppealDecision.ACCEPT,
@@ -220,7 +215,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should also notify the parties about the ruling order', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         {
           type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
           user: {},
@@ -260,9 +255,9 @@ describe('CourtSessionController - Update', () => {
       existingCourtSession.rulingFileId = fileId
       existingCourtSession.notifiedRulingFileId = fileId
 
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([
         {
           partyRole: AppealDecisionPartyRole.PROSECUTOR,
           decision: CaseAppealDecision.ACCEPT,
@@ -283,7 +278,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not notify the parties about the ruling order again', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -325,9 +320,12 @@ describe('CourtSessionController - Update', () => {
 
       // No decisions have been recorded against the new ruling file, which
       // leaves both the confirm-time completeness check and the swap check happy.
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([])
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([])
+      ;(
+        mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+      ).mockResolvedValue(false)
 
       const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce({
@@ -343,7 +341,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should notify the parties about the new ruling order', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         {
           type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
           user: {},
@@ -388,7 +386,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should add a working document delivery message to the queue', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -412,7 +410,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not add a message to the queue', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 
@@ -427,7 +425,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not add a message to the queue', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 

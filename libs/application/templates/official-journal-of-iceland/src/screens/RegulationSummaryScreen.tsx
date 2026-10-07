@@ -43,6 +43,7 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
       regulation: {
         ...(answers.regulation as Record<string, unknown>),
         effectiveDate: draftData.effectiveDate,
+        fastTrack: draftData.fastTrack,
         lawChapters: draftData.lawChapters,
         impacts,
       },

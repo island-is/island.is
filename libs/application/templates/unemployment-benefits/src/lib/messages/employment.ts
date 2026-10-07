@@ -495,11 +495,6 @@ export const employment = {
         defaultMessage: 'Starfshlutfall',
         description: 'Last job percentage label',
       },
-      lastJobStartDate: {
-        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobStartDate',
-        defaultMessage: 'Hóf störf',
-        description: 'Last job start date label',
-      },
       lastJobEndDate: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobEndDate',
         defaultMessage: 'Hvenær lýkur uppsagnafresti þínum',

@@ -7,6 +7,7 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
   COURT_OF_APPEAL_SUMMARY_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -76,6 +77,7 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealCaseType,
   CaseState,
   CaseType,
   Gender,
@@ -1524,6 +1526,38 @@ const useSections = (
     }
   }
 
+  /**
+   * The Court of Appeals' side of a verdict appeal.
+   *
+   * Separate from getCourtOfAppealSections, which is built around a ruling
+   * appeal - its steps, its state, and the appeal named in the query string.
+   * A verdict appeal is a different proceeding and will grow steps of its own;
+   * only the overview exists so far, and naming the rest here would offer
+   * links to pages that do not answer yet.
+   */
+  const getCourtOfAppealVerdictAppealSections = (
+    workingCase: Case,
+  ): RouteSection[] => [
+    {
+      name: 'Dómur Landsréttar',
+      isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
+      children: [
+        {
+          name: 'Yfirlit',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
+          // Carrying the appeal id is what keeps the page about this appeal.
+          // Without it the next render resolves back to the case-level ruling
+          // appeal, and on a case that has none the whole proceeding drops out
+          // of the panel.
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+        },
+      ],
+    },
+  ]
+
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     const isExtensionCase =
       Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
@@ -1579,9 +1613,15 @@ const useSections = (
             },
           ]
         : []),
-      ...(!targetAppealCase?.appealState ||
-      (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
-        !targetAppealCase.appealReceivedByCourtDate)
+      // One appeal proceeding in the stepper at a time, chosen by the appeal
+      // the page is about. A case can carry a ruling appeal and a verdict
+      // appeal at once, and their steps are different; showing both would let
+      // the side panel mark a step from the other proceeding active.
+      ...(targetAppealCase?.appealType === AppealCaseType.VERDICT
+        ? getCourtOfAppealVerdictAppealSections(workingCase)
+        : !targetAppealCase?.appealState ||
+          (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&
+            !targetAppealCase.appealReceivedByCourtDate)
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]

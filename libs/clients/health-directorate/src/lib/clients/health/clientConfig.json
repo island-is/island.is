@@ -1330,15 +1330,6 @@
             "schema": {
               "$ref": "#/components/schemas/Locale"
             }
-          },
-          {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1406,15 +1397,6 @@
             "description": "The locale to use for the response",
             "schema": {
               "$ref": "#/components/schemas/Locale"
-            }
-          },
-          {
-            "name": "ip",
-            "required": false,
-            "in": "query",
-            "description": "The IP address of the user",
-            "schema": {
-              "type": "string"
             }
           }
         ],
@@ -2579,7 +2561,7 @@
     "/v1/me/conversations": {
       "get": {
         "deprecated": true,
-        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star and ?search= to match the title or group name. Deprecated – use v2, which returns a paginated envelope.",
+        "description": "Get the current user's conversations, ordered by most recent activity. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star, ?search= to match the title or group name and ?treatmentId= to scope to one treatment. Deprecated – use v2, which returns a paginated envelope.",
         "operationId": "MeConversationController_getConversations_v1",
         "parameters": [
           {
@@ -2607,6 +2589,16 @@
             "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored. Matched literally: `%`, `_` and `[` carry no wildcard meaning.",
             "schema": {
               "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "treatmentId",
+            "required": false,
+            "in": "query",
+            "description": "Scope the list to one treatment (care-team group); the same id GET /me/treatments returns. Matched exactly, and an id with no rows returns an empty list rather than a 404.",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           }
@@ -2669,7 +2661,7 @@
         "tags": ["Conversations"]
       },
       "post": {
-        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Always returns 201: the message carries `deliveryStatus` `RECEIVED` when the provider acknowledged it within the wait, or `PENDING` otherwise, in which case a later read may show `RECEIVED` or `UNCONFIRMED` once the acknowledgement window has elapsed.",
+        "description": "Create a new patient-initiated conversation with an initial message and optional attachments. Returns 201 once the provider acknowledges it or the acknowledgement wait elapses.",
         "operationId": "MeConversationController_createConversation_v1",
         "parameters": [],
         "requestBody": {
@@ -2769,7 +2761,7 @@
     },
     "/v2/me/conversations": {
       "get": {
-        "description": "Get the current user's conversations, ordered by most recent activity, paginated. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star and ?search= to match the title or group name.",
+        "description": "Get the current user's conversations, ordered by most recent activity, paginated. Defaults to active (non-archived, non-deleted); use ?status= to override, ?starred= to filter by star, ?search= to match the title or group name and ?treatmentId= to scope to one treatment.",
         "operationId": "MeConversationController_getConversationsV2_v2",
         "parameters": [
           {
@@ -2797,6 +2789,16 @@
             "description": "Case-insensitive substring match on the conversation title or its group name. Whitespace-only is ignored, and `%`, `_` and `[` carry no wildcard meaning.",
             "schema": {
               "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "treatmentId",
+            "required": false,
+            "in": "query",
+            "description": "Scope the list to one treatment (care-team group); the same id GET /me/treatments returns. Matched exactly, and an id with no rows returns an empty page rather than a 404.",
+            "schema": {
+              "maxLength": 255,
               "type": "string"
             }
           },
@@ -3081,7 +3083,7 @@
     },
     "/v1/me/conversations/{id}/messages": {
       "post": {
-        "description": "Append a patient reply to an existing conversation. Always returns 201: the message carries `deliveryStatus` `RECEIVED` when the provider acknowledged it within the wait, or `PENDING` otherwise, in which case a later read may show `RECEIVED` or `UNCONFIRMED` once the acknowledgement window has elapsed.",
+        "description": "Append a patient reply to an existing conversation. Returns 201 once the provider acknowledges it or the acknowledgement wait elapses.",
         "operationId": "MeConversationController_replyToConversation_v1",
         "parameters": [
           {
@@ -3105,127 +3107,6 @@
             }
           }
         },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConversationDetailDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Conversations"]
-      }
-    },
-    "/v1/me/conversations/{id}/messages/{messageId}/retry": {
-      "post": {
-        "description": "Resend a patient message the provider has not acknowledged. Offered only once its `deliveryStatus` reads `UNCONFIRMED`; 409 while still `PENDING` or once already `RECEIVED`. The message goes back unchanged under its own guid, so the provider recognises it as the one it already holds; nothing new is stored and the message reads `PENDING` again.",
-        "operationId": "MeConversationController_retryMessage_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Conversation id",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "messageId",
-            "required": true,
-            "in": "path",
-            "description": "Id of the patient message to retry",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "201": {
             "description": "",
@@ -3786,7 +3667,7 @@
     },
     "/v1/me/certificates": {
       "post": {
-        "description": "Submit a certificate request.",
+        "description": "Submit a certificate request. Returns 201 once the provider acknowledges it or the acknowledgement wait elapses. Submitting the same request again while it is still pending returns the request already sent; 409 when an identical request is pending on a conversation hidden from the patient.",
         "operationId": "MeCertificateController_createCertificateRequest_v1",
         "parameters": [],
         "requestBody": {
@@ -4056,7 +3937,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
+                  "$ref": "#/components/schemas/CertificatePaymentConflictDto"
                 }
               }
             }
@@ -5479,7 +5360,7 @@
     },
     "/v1/me/treatments/{id}/conversations": {
       "get": {
-        "description": "The conversations belonging to this treatment. Returns the same shape as GET /me/conversations, so a client can reuse its existing model. Unbounded, like the main inbox. Returns 200 with an empty array — never 404 — for a treatment the user is not enrolled in, because the id is used only as a filter and is not checked against the provider. Key \"no longer enrolled\" off GET /me/treatments instead.",
+        "description": "The conversations belonging to this treatment. Returns the same shape as GET /me/conversations, so a client can reuse its existing model. Unbounded, like the main inbox. Returns 200 with an empty array — never 404 — for a treatment the user is not enrolled in, because the id is used only as a filter and is not checked against the provider. Key \"no longer enrolled\" off GET /me/treatments instead. The path id is the only treatment scope here; a treatmentId query parameter is ignored.",
         "operationId": "MeTreatmentController_getTreatmentConversations_v1",
         "parameters": [
           {
@@ -5827,7 +5708,7 @@
           },
           "errorCode": {
             "type": "string",
-            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
+            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, PaymentIntentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
           },
           "resourceType": {
             "type": "string",
@@ -6511,6 +6392,10 @@
           "questionnaireId": {
             "type": "string"
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this questionnaire belongs to; the same id GET /me/treatments returns. Omitted when the provider sent none."
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -6564,9 +6449,19 @@
           },
           "hasDraft": {
             "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Whether the provider has withdrawn the questionnaire; a disabled questionnaire is still returned but cannot be submitted"
+          },
+          "disabledDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "When the provider withdrew the questionnaire, null unless disabled"
           }
         },
-        "required": ["questionnaireId", "numSubmitted", "hasDraft"]
+        "required": ["questionnaireId", "numSubmitted", "hasDraft", "disabled"]
       },
       "QuestionType": {
         "type": "string",
@@ -7726,6 +7621,10 @@
           "questionnaireId": {
             "type": "string"
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this questionnaire belongs to; the same id GET /me/treatments returns. Omitted when the provider sent none."
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -7779,6 +7678,16 @@
           },
           "hasDraft": {
             "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Whether the provider has withdrawn the questionnaire; a disabled questionnaire is still returned but cannot be submitted"
+          },
+          "disabledDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true,
+            "description": "When the provider withdrew the questionnaire, null unless disabled"
           },
           "hint": {
             "type": "string",
@@ -7858,6 +7767,7 @@
           "questionnaireId",
           "numSubmitted",
           "hasDraft",
+          "disabled",
           "daysBetweenReplies",
           "canSubmit",
           "submissions",
@@ -9448,6 +9358,10 @@
             "type": "string",
             "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this conversation belongs to; the same id GET /me/treatments returns. Omitted for a thread that belongs to no treatment."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -9502,30 +9416,6 @@
           "AWAITING_ACKNOWLEDGEMENT"
         ],
         "description": "Why replying is blocked. Only set when patientCanReply is false."
-      },
-      "MessagingDayType": {
-        "type": "string",
-        "enum": ["WEEKDAY", "WEEKEND", "HOLIDAY"],
-        "description": "Which kind of day the messaging window was resolved for, in UTC."
-      },
-      "NextOpeningDto": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "format": "date-time",
-            "type": "string",
-            "description": "The UTC instant the recipient next opens."
-          },
-          "windowOpen": {
-            "type": "string",
-            "description": "When the recipient opens on that day, `HH:mm:ss` in UTC. Same time of day as `date`."
-          },
-          "windowClose": {
-            "type": "string",
-            "description": "When it closes again on that day, `HH:mm:ss` in UTC."
-          }
-        },
-        "required": ["date", "windowOpen", "windowClose"]
       },
       "MessageType": {
         "type": "string",
@@ -9589,11 +9479,6 @@
           }
         },
         "required": ["type"]
-      },
-      "AckDeliveryStatus": {
-        "type": "string",
-        "enum": ["PENDING", "RECEIVED", "UNCONFIRMED"],
-        "description": "Delivery state of a message the patient sent. Set only on PATIENT messages."
       },
       "ConversationAttachmentDto": {
         "type": "object",
@@ -9682,14 +9567,6 @@
             "type": "string",
             "description": "When the open intent named by `pendingPaymentId` was created. A young value may still get a callback on the way; an old one is a resumable abandoned attempt. Present exactly when `pendingPaymentId` is."
           },
-          "deliveryStatus": {
-            "description": "Delivery state of a message the patient sent. Set only on PATIENT messages.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AckDeliveryStatus"
-              }
-            ]
-          },
           "attachments": {
             "type": "array",
             "items": {
@@ -9751,6 +9628,10 @@
             "type": "string",
             "description": "Name of the HCP department within the organization, as the sender named it on the message, falling back to the resolved group-specific mapping row."
           },
+          "treatmentId": {
+            "type": "string",
+            "description": "The treatment (care-team group) this conversation belongs to; the same id GET /me/treatments returns. Omitted for a thread that belongs to no treatment."
+          },
           "hasAttachment": {
             "type": "boolean"
           },
@@ -9773,37 +9654,9 @@
               }
             ]
           },
-          "messagingWindowOpen": {
-            "type": "string",
-            "description": "When the recipient starts accepting new conversations, as `HH:mm:ss` in UTC."
-          },
-          "messagingWindowClose": {
-            "type": "string",
-            "description": "When the recipient stops accepting new conversations, as `HH:mm:ss` in UTC."
-          },
           "patientReplyWindowDays": {
             "type": "number",
-            "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`."
-          },
-          "isClosedToday": {
-            "type": "boolean",
-            "description": "True when the recipient accepts no new conversation today because it has no window pair set for this kind of day."
-          },
-          "dayType": {
-            "description": "Which kind of day the messaging window was resolved for, in UTC.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MessagingDayType"
-              }
-            ]
-          },
-          "nextOpensAt": {
-            "description": "When the recipient next opens, and the hours of that day. Absent while inside the window and absent when allowsMessaging is false.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/NextOpeningDto"
-              }
-            ]
+            "description": "How long the thread accepts replies, in 24-hour periods from the newest `STAFF` message in `messages`. Absent when no settings row gates the thread, which is a thread with no reply window at all rather than one of unstated length."
           },
           "unread": {
             "type": "boolean",
@@ -9857,7 +9710,7 @@
           },
           "errorCode": {
             "type": "string",
-            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, CertificatePaymentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
+            "description": "Why the request failed, so the client can tell the reasons apart rather than showing one generic message. Values come from the failing endpoint: AppointmentCancellationBlockedReason, AppointmentCancellationFailureReason, PrescriptionRenewalBlockedReason, PaymentIntentBlockedReason. Carried on a 409, and on the 504 an unanswered cancellation request returns. Absent on every other status. A route that narrows this to its own enum documents that response type separately."
           },
           "resourceType": {
             "type": "string",
@@ -9929,7 +9782,7 @@
           },
           "patientInitiatedTypeCode": {
             "type": "string",
-            "description": "PatientInitiatedConversationType code, e.g. TREATMENT_FOLLOWUP."
+            "description": "PatientInitiatedConversationType code, e.g. TREATMENT_FOLLOWUP. Omitted only for a recipient whose allowsCustomTitle is true; every other recipient requires one."
           },
           "title": {
             "type": "string",
@@ -9955,13 +9808,7 @@
             }
           }
         },
-        "required": [
-          "nodeId",
-          "groupId",
-          "patientInitiatedTypeCode",
-          "title",
-          "messageTextContent"
-        ]
+        "required": ["nodeId", "groupId", "messageTextContent"]
       },
       "CreateReplyRequestDto": {
         "type": "object",
@@ -9987,6 +9834,30 @@
           }
         },
         "required": ["messageTextContent"]
+      },
+      "MessagingDayType": {
+        "type": "string",
+        "enum": ["WEEKDAY", "WEEKEND", "HOLIDAY"],
+        "description": "Which kind of day the window was resolved for, in UTC. Holidays are Icelandic public holidays and take precedence over weekends."
+      },
+      "NextOpeningDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The UTC instant the recipient next opens."
+          },
+          "windowOpen": {
+            "type": "string",
+            "description": "When the recipient opens on that day, `HH:mm:ss` in UTC. Same time of day as `date`."
+          },
+          "windowClose": {
+            "type": "string",
+            "description": "When it closes again on that day, `HH:mm:ss` in UTC."
+          }
+        },
+        "required": ["date", "windowOpen", "windowClose"]
       },
       "OpeningHoursWindowDto": {
         "type": "object",
@@ -10077,18 +9948,24 @@
             "type": "string",
             "description": "Set when this recipient is one of the patient care teams, absent when it is a clinic. A care team and a clinic can share one nodeId + groupId and are then two entries here, so **key the list on all three fields** and send this value back on create to say which was chosen. It is the same id GET /me/treatments returns."
           },
+          "allowsCustomTitle": {
+            "type": "boolean",
+            "description": "True when the patient writes the conversation title themselves and sends no patientInitiatedTypeCode. Set for a treatment; false for a clinic or service recipient, which require a type."
+          },
           "allowsMessaging": {
             "type": "boolean",
-            "description": "Whether the recipient offers patient messaging at all. True when it accepts either new conversations or replies; false only when it accepts neither. Equals `conversationBlockedReason !== MESSAGING_NOT_ALLOWED`. It does not say whether the patient can act: `canCreateConversation` and `canRequestCertificate` do.",
+            "description": "Whether the recipient offers patient messaging at all. True when it accepts either new conversations or replies; false only when it accepts neither. Equals `conversationBlockedReason !== MESSAGING_NOT_ALLOWED`. It does not say whether the patient can act: `canCreateConversation` does.",
             "deprecated": true
           },
           "messagingWindowOpen": {
             "type": "string",
-            "description": "Effective window open time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s. Optional, so absence is a valid response; isClosedToday and nextOpensAt carry the closure."
+            "description": "Today’s window open time (HH:mm:ss, UTC). Absent when isClosedToday is true; nextOpensAt then carries the next open day and its hours. Always equal to `openingHours[dayType].windowOpen`; read that.",
+            "deprecated": true
           },
           "messagingWindowClose": {
             "type": "string",
-            "description": "Effective window close time (HH:mm:ss, UTC). When isClosedToday is true this is the next open day’s time, not today’s. Optional, so absence is a valid response; isClosedToday and nextOpensAt carry the closure."
+            "description": "Today’s window close time (HH:mm:ss, UTC). Absent when isClosedToday is true; nextOpensAt then carries the next open day and its hours. Always equal to `openingHours[dayType].windowClose`; read that.",
+            "deprecated": true
           },
           "isCurrentlyWithinWindow": {
             "type": "boolean",
@@ -10096,7 +9973,7 @@
           },
           "isClosedToday": {
             "type": "boolean",
-            "description": "True when the recipient accepts nothing today because it has no window pair set for this kind of day. Unrelated to allowsMessaging, which closes every day."
+            "description": "True when the recipient accepts nothing today because it has no window pair set for this kind of day."
           },
           "dayType": {
             "description": "Which kind of day the window was resolved for, in UTC. Holidays are Icelandic public holidays and take precedence over weekends.",
@@ -10107,7 +9984,7 @@
             ]
           },
           "nextOpensAt": {
-            "description": "When the recipient next opens, and the hours of that day. Absent while inside the window, absent when allowsMessaging is false, and absent when the recipient opens on no day within the next two weeks.",
+            "description": "When the recipient next opens, and the hours of that day. Absent while inside the window, and absent when the recipient opens on no day within the next two weeks.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/NextOpeningDto"
@@ -10115,7 +9992,7 @@
             ]
           },
           "openingHours": {
-            "description": "The recipient’s hours for every kind of day. Always present; a day type is absent from it when the recipient is closed on that kind of day, and an empty object means it never opens.",
+            "description": "The recipient’s hours for every kind of day. Always present; a day type is absent from it when the recipient is closed on that kind of day. An empty object paired with isCurrentlyWithinWindow: true means the recipient has no messaging hours at all.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/MessagingOpeningHoursDto"
@@ -10123,7 +10000,8 @@
             ]
           },
           "patientReplyWindowDays": {
-            "type": "number"
+            "type": "number",
+            "description": "A recipient with no messaging hours reports the system default here; the value gates nothing for it."
           },
           "allowedConversationTypes": {
             "type": "array",
@@ -10145,10 +10023,12 @@
           },
           "canRequestCertificate": {
             "type": "boolean",
-            "description": "Whether the patient can request a certificate from this recipient right now."
+            "description": "Always equal to `canCreateConversation`. Read that field; a certificate is one of the conversation types `allowedConversationTypes` carries, flagged by its `isCertificate`.",
+            "deprecated": true
           },
           "certificateBlockedReason": {
-            "description": "Why requesting a certificate is blocked. Only set when canRequestCertificate is false.",
+            "description": "Always equal to `conversationBlockedReason`. Read that field.",
+            "deprecated": true,
             "allOf": [
               {
                 "$ref": "#/components/schemas/RecipientCreateBlockedReason"
@@ -10160,6 +10040,7 @@
           "nodeId",
           "groupId",
           "name",
+          "allowsCustomTitle",
           "allowsMessaging",
           "isCurrentlyWithinWindow",
           "isClosedToday",
@@ -10354,6 +10235,57 @@
           }
         },
         "required": ["paymentId", "paymentPageUrl"]
+      },
+      "PaymentIntentBlockedReason": {
+        "type": "string",
+        "enum": ["ALREADY_PAID", "NOT_PAYABLE", "UNRESOLVED_ISSUER"],
+        "description": "ALREADY_PAID: the certificate is paid for and the PDF is downloadable. NOT_PAYABLE: it is free, either ungated or from an HCP that has stopped charging. UNRESOLVED_ISSUER: payment is owed but the issuing HCP cannot be resolved, so nothing can be priced and there is no open intent to resume."
+      },
+      "CertificatePaymentConflictDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "A URI reference that identifies the problem type",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HttpProblemType"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          },
+          "errorCode": {
+            "description": "ALREADY_PAID: the certificate is paid for and the PDF is downloadable. NOT_PAYABLE: it is free, either ungated or from an HCP that has stopped charging. UNRESOLVED_ISSUER: payment is owed but the issuing HCP cannot be resolved, so nothing can be priced and there is no open intent to resume.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentIntentBlockedReason"
+              }
+            ]
+          },
+          "resourceType": {
+            "type": "string",
+            "description": "What a 402 wants paid for, so the client can open a payment intent for it. Values come from PaymentResourceType. Absent on every other status."
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The id of the resource a 402 wants paid for. Absent on every other status."
+          }
+        },
+        "required": ["type", "title"]
       },
       "PregnancyStaffDto": {
         "type": "object",

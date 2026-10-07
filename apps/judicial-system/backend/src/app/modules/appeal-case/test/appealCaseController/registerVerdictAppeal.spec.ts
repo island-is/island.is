@@ -3,7 +3,6 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
-import { addMessagesToQueue } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -21,6 +20,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -32,7 +32,7 @@ import {
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -260,7 +260,7 @@ describe('AppealCaseController - Register verdict appeal', () => {
     })
 
     it('should queue no messages', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 
@@ -279,7 +279,7 @@ describe('AppealCaseController - Register verdict appeal', () => {
         mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
       ).mockResolvedValue(existingAppealCase)
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId: uuid(),

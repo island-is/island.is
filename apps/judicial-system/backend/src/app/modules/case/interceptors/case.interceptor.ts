@@ -652,6 +652,18 @@ const getDefenceUserDefendants = (
   allCancelledOrDismissed: boolean
   latestCancelledOrDismissedDate: Date | undefined
 } => {
+  // Request-case hearings cover all defendants together. Keep every defendant
+  // visible to the logged-in defender (who may only represent one of them).
+  // Indictment filtering below keys off isDefenderChoiceConfirmed, which R-cases
+  // leave null — do not reuse that path for request cases.
+  if (isRequestCase(theCase.type)) {
+    return {
+      defendants: theCase.defendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
   const myDefendants = theCase.defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&

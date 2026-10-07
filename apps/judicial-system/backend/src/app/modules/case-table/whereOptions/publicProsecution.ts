@@ -51,9 +51,10 @@ export const publicProsecutionIndictmentsReviewedWhereOptions = (
 // only has to pick them out again - a case they reviewed themselves belongs
 // here too once it is appealed.
 //
-// Heightened security needs no mention here. Both routes into the access
-// options imply it: the appeal route ANDs it, and being the reviewer is one of
-// the exemptions, so a case that is reachable at all already satisfies it.
+// Heightened security needs no mention here. Every route into the access
+// options implies it: the appeal route ANDs it, and being the reviewer or the
+// appeal prosecutor is one of the exemptions, so a case that is reachable at
+// all already satisfies it.
 //
 // One row per case, so no displayCases - unlike the office's list of the same
 // name, which gives each defendant a row of their own.

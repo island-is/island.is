@@ -123,6 +123,7 @@ export class PdfService {
           })
 
         return {
+          id: caseFile.id,
           chapter: caseFile.chapter as number,
           date: caseFile.displayDate ?? caseFile.created,
           name: caseFile.userGeneratedFilename ?? caseFile.name,
@@ -131,9 +132,10 @@ export class PdfService {
       })
 
     const policeDigitalCaseFiles =
-      await this.policeDigitalCaseFileRepositoryService.findAll({
-        where: { caseId: theCase.id, policeCaseNumber },
-      })
+      await this.policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+      )
 
     const generatedPdf = await createCaseFilesRecord(
       theCase,
@@ -141,6 +143,13 @@ export class PdfService {
       caseFiles ?? [],
       policeDigitalCaseFiles,
       this.formatMessage,
+      (file, reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unable to merge file ${file.id} of case ${theCase.id} into the case files record`,
+          { reason },
+        )
+      },
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
