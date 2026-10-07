@@ -22,6 +22,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
+import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import useAppealSummons from '@island.is/judicial-system-web/src/utils/hooks/useAppealSummons'
 
 import {
@@ -62,10 +63,10 @@ const AppealSummons = () => {
 
   const isFeatureEnabled = features.includes(Feature.INDICTMENT_APPEAL)
   const isEdit = Boolean(appealSummonsId)
-  const mayIssue = canIssueAppealSummons(
-    user,
-    Boolean(workingCase.verdictAppealCase),
+  const hasStandingAppeal = hasStandingVerdictAppeal(
+    workingCase.verdictAppealCase,
   )
+  const mayIssue = canIssueAppealSummons(user, hasStandingAppeal)
   const mayEdit =
     existingSummons !== undefined &&
     canPerformAppealSummonsAction(
@@ -73,7 +74,7 @@ const AppealSummons = () => {
       existingSummons,
       user,
     )
-  const mayAccess = isEdit ? mayEdit : mayIssue
+  const mayAccess = hasStandingAppeal && (isEdit ? mayEdit : mayIssue)
 
   const [sections, setSections] = useState<AppealSummonsFormSection[]>([])
   const [hasInitialized, setHasInitialized] = useState(false)
@@ -88,14 +89,7 @@ const AppealSummons = () => {
       return
     }
 
-    if (isEdit) {
-      if (!existingSummons || !mayEdit) {
-        router.replace(overviewUrl)
-      }
-      return
-    }
-
-    if (!mayIssue) {
+    if (!mayAccess) {
       router.replace(overviewUrl)
     }
   }, [
@@ -103,16 +97,13 @@ const AppealSummons = () => {
     isLoadingFeatures,
     caseNotFound,
     isFeatureEnabled,
-    isEdit,
-    existingSummons,
-    mayEdit,
-    mayIssue,
+    mayAccess,
     router,
     overviewUrl,
   ])
 
   useEffect(() => {
-    if (isLoadingWorkingCase || !workingCase.verdictAppealCase || hasInitialized) {
+    if (isLoadingWorkingCase || !hasStandingAppeal || hasInitialized) {
       return
     }
 
@@ -132,6 +123,7 @@ const AppealSummons = () => {
     setHasInitialized(true)
   }, [
     isLoadingWorkingCase,
+    hasStandingAppeal,
     workingCase,
     appealSummonsId,
     existingSummons,

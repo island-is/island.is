@@ -276,6 +276,7 @@ describe('showsAppealSummonses', () => {
           },
         } as Case,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        true,
       ),
     ).toBe(false)
   })
@@ -305,6 +306,21 @@ describe('canShowIssueAppealSummons', () => {
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(true)
+  })
+
+  it('hides the button when the verdict appeal has been withdrawn', () => {
+    expect(
+      canShowIssueAppealSummons(
+        {
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        } as Case,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(false)
   })
 
   it.each([UserRole.DEFENDER, UserRole.COURT_OF_APPEALS_JUDGE])(

@@ -47,7 +47,7 @@ const civilClaimantLines = (civilClaimants: PrefillCivilClaimant[]): string => {
       (claimant) =>
         `${claimant.name ?? ''}, kennitala ${formatNationalId(
           claimant.nationalId,
-        )}, heimilisfang, Reykjavík.`,
+        )}, heimilisfang.`,
     )
     .join('\n')
 

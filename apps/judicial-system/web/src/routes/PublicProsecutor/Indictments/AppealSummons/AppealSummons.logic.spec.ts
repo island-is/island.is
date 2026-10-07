@@ -51,7 +51,7 @@ describe('prefillAppealSummonsClaims', () => {
 
     expect(claims).toContain('Dæmda einkaréttarkröfu á:')
     expect(claims).toContain(
-      'Guðrún Jónsdóttir, kennitala 010130-2989, heimilisfang, Reykjavík.',
+      'Guðrún Jónsdóttir, kennitala 010130-2989, heimilisfang.',
     )
     expect(claims).toContain(
       'Guðrún Jónsdóttir hafði uppi einkaréttarkröfu fyrir héraðsdómi.',
