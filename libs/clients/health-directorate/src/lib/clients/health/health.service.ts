@@ -36,6 +36,11 @@ import {
   meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePregnancyControllerGetActivePregnancyV1,
+  mePregnancyControllerGetPregnancyCommunicationDetailV1,
+  mePregnancyControllerGetPregnancyCommunicationsV1,
+  mePregnancyControllerGetPregnancyDocumentsV1,
+  mePregnancyControllerGetPregnancyMeasurementsV1,
   mePregnancyControllerHasActivePregnancyV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
@@ -62,10 +67,12 @@ import {
 } from './gen/fetch'
 
 import {
+  ActivePregnancyDto,
   AppointmentBaseDto,
   AppointmentDetailDto,
   CertificateDto,
   CertificateRequestDto,
+  CommunicationDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
@@ -77,12 +84,16 @@ import {
   CreateOrUpdatePrescriptionCommissionDto,
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
+  ExaminationCommunicationDetailDto,
+  ExaminationMeasurementDto,
   Locale,
   MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
   PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
+  PhoneCallCommunicationDetailDto,
+  PregnancyDocumentDto,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -103,6 +114,10 @@ import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBod
 export type AttachmentDownloadResult =
   | { status: 200; data: ArrayBuffer; contentType: string }
   | { status: 402; resourceType: string; resourceId?: string }
+
+export type PregnancyCommunicationDetailDto =
+  | ({ kind: 'EXAMINATION' } & ExaminationCommunicationDetailDto)
+  | ({ kind: 'PHONE_CALL' } & PhoneCallCommunicationDetailDto)
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -349,6 +364,89 @@ export class HealthDirectorateHealthService {
     )
 
     return result?.hasActivePregnancy ?? null
+  }
+
+  public async getActivePregnancy(
+    auth: Auth,
+  ): Promise<ActivePregnancyDto | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerGetActivePregnancyV1()),
+    )
+
+    return result?.pregnancy ?? null
+  }
+
+  public async getPregnancyCommunications(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<CommunicationDto[] | null> {
+    const communications = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyCommunicationsV1({
+          path: { pregnancyId },
+        }),
+      ),
+    )
+
+    return communications ?? null
+  }
+
+  public async getPregnancyCommunicationDetail(
+    auth: Auth,
+    pregnancyId: string,
+    communicationId: string,
+  ): Promise<PregnancyCommunicationDetailDto | null> {
+    const detail = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyCommunicationDetailV1({
+          path: { pregnancyId, communicationId },
+        }),
+      ),
+    )
+
+    if (!detail) {
+      return null
+    }
+
+    // The generator emits no response transformer for this union response,
+    // so date fields arrive as ISO strings despite being typed as Date.
+    return {
+      ...detail,
+      dateTime: detail.dateTime ? new Date(detail.dateTime) : undefined,
+      lastUpdated: detail.lastUpdated
+        ? new Date(detail.lastUpdated)
+        : undefined,
+    }
+  }
+
+  public async getPregnancyMeasurements(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<ExaminationMeasurementDto[] | null> {
+    const measurements = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyMeasurementsV1({
+          path: { pregnancyId },
+        }),
+      ),
+    )
+
+    return measurements ?? null
+  }
+
+  public async getPregnancyDocuments(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyDocumentDto[] | null> {
+    const documents = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyDocumentsV1({
+          path: { pregnancyId },
+        }),
+      ),
+    )
+
+    return documents ?? null
   }
 
   public async getQuestionnaires(
