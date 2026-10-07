@@ -9,6 +9,7 @@ export enum AppealSummonsAppellantSide {
 export enum AppealSummonsAction {
   ISSUE = 'ISSUE',
   EDIT = 'EDIT',
+  DELETE = 'DELETE',
   OPEN = 'OPEN',
 }
 
@@ -60,7 +61,10 @@ export const canPerformAppealSummonsAction = (
     return true
   }
 
-  if (action === AppealSummonsAction.EDIT) {
+  if (
+    action === AppealSummonsAction.EDIT ||
+    action === AppealSummonsAction.DELETE
+  ) {
     const status = getAppealSummonsStatus(summons)
 
     return status === 'draft' || status === 'confirmed'

@@ -356,22 +356,24 @@ describe('canShowIssueAppealSummons', () => {
 })
 
 describe('getAppealSummonsMenuItems', () => {
-  it('offers edit and open on a draft for staff', () => {
+  it('offers edit, open and delete on a draft for staff', () => {
     expect(
       getAppealSummonsMenuItems(
         {},
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Breyta', 'Opna í nýjum flipa'])
+    ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
-  it('hides edit once the summons has been sent to the court of appeals', () => {
+  it('hides edit and delete once the summons has been sent to the court of appeals', () => {
     expect(
       getAppealSummonsMenuItems(
         { sentToCourtOfAppealsDate: '2026-06-10T10:00:00.000Z' },
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
         jest.fn(),
         jest.fn(),
       ).map((item) => item.title),

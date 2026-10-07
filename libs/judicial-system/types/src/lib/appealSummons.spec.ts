@@ -74,21 +74,41 @@ describe('canIssueAppealSummons', () => {
 })
 
 describe('canPerformAppealSummonsAction', () => {
-  it('lets staff edit a draft or a confirmed summons', () => {
+  it('lets staff edit or delete a draft or a confirmed summons', () => {
     expect(
       canPerformAppealSummonsAction(AppealSummonsAction.EDIT, draft, staff),
     ).toBe(true)
     expect(
       canPerformAppealSummonsAction(AppealSummonsAction.EDIT, confirmed, staff),
     ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(AppealSummonsAction.DELETE, draft, staff),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.DELETE,
+        confirmed,
+        staff,
+      ),
+    ).toBe(true)
   })
 
-  it('does not let staff edit once the summons has been sent anywhere', () => {
+  it('does not let staff edit or delete once the summons has been sent anywhere', () => {
     expect(
       canPerformAppealSummonsAction(AppealSummonsAction.EDIT, inService, staff),
     ).toBe(false)
     expect(
       canPerformAppealSummonsAction(AppealSummonsAction.EDIT, sent, staff),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.DELETE,
+        inService,
+        staff,
+      ),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(AppealSummonsAction.DELETE, sent, staff),
     ).toBe(false)
   })
 
@@ -102,10 +122,13 @@ describe('canPerformAppealSummonsAction', () => {
   })
 
   it.each([publicProsecutor, defender, undefined])(
-    'does not let other users edit or open in this PR',
+    'does not let other users edit, delete or open in this PR',
     (user) => {
       expect(
         canPerformAppealSummonsAction(AppealSummonsAction.EDIT, draft, user),
+      ).toBe(false)
+      expect(
+        canPerformAppealSummonsAction(AppealSummonsAction.DELETE, draft, user),
       ).toBe(false)
       expect(
         canPerformAppealSummonsAction(AppealSummonsAction.OPEN, draft, user),

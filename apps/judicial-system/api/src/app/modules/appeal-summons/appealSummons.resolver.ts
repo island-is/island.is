@@ -23,9 +23,11 @@ import { Case } from '../case'
 import { FeatureService } from '../feature/feature.service'
 import {
   CreateAppealSummonsInput,
+  DeleteAppealSummonsInput,
   UpdateAppealSummonsInput,
 } from './dto/appealSummons.input'
 import { AppealSummons } from './models/appealSummons.model'
+import { DeleteAppealSummonsResponse } from './models/deleteAppealSummons.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => AppealSummons)
@@ -85,6 +87,29 @@ export class AppealSummonsResolver {
         defendants: input.defendants,
       }),
       caseId,
+    )
+  }
+
+  @Mutation(() => DeleteAppealSummonsResponse)
+  deleteAppealSummons(
+    @Args('input', { type: () => DeleteAppealSummonsInput })
+    input: DeleteAppealSummonsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<DeleteAppealSummonsResponse> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Deleting appeal summons ${input.appealSummonsId} of case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DELETE_APPEAL_SUMMONS,
+      this.backendService.deleteAppealSummons(
+        input.caseId,
+        input.appealSummonsId,
+      ),
+      input.appealSummonsId,
     )
   }
 }

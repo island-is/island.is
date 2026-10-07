@@ -204,4 +204,38 @@ export class AppealSummonsRepositoryService {
       throw error
     }
   }
+
+  async delete(
+    id: string,
+    caseId: string,
+    options: { transaction: Transaction },
+  ): Promise<boolean> {
+    try {
+      this.logger.debug(`Deleting appeal summons ${id} of case ${caseId}`)
+
+      await this.deleteDefendants(id, options)
+
+      const numberOfDeletedRows = await this.appealSummonsModel.destroy({
+        where: { id, caseId },
+        transaction: options.transaction,
+      })
+
+      if (numberOfDeletedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not delete appeal summons ${id} of case ${caseId}`,
+        )
+      }
+
+      this.logger.debug(`Deleted appeal summons ${id}`)
+
+      return true
+    } catch (error) {
+      this.logger.error(
+        `Error deleting appeal summons ${id} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

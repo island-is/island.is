@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -10,10 +10,14 @@ import { Feature } from '@island.is/judicial-system/types'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Modals/FileNotFoundModal/FileNotFoundModal'
+import { Modal } from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { api } from '@island.is/judicial-system-web/src/services'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useAppealSummons,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import AppealProcessFileRow from './AppealProcessFileRow'
 import {
@@ -45,13 +49,15 @@ const formatSentInBy = (defenderName?: string | null): string => {
  * take it back is to withdraw the appeal from the verdict timeline card.
  */
 const VerdictAppealFiles: FC = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
   const router = useRouter()
+  const { deleteAppealSummons, isDeletingAppealSummons } = useAppealSummons()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
+  const [summonsIdToDelete, setSummonsIdToDelete] = useState<string>()
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
@@ -73,6 +79,29 @@ const VerdictAppealFiles: FC = () => {
       `${api.apiUrl}/api/case/${workingCase.id}/appealSummons/${appealSummonsId}`,
       '_blank',
     )
+  }
+
+  const handleConfirmDeleteAppealSummons = async () => {
+    if (!summonsIdToDelete) {
+      return
+    }
+
+    const deleted = await deleteAppealSummons(
+      workingCase.id,
+      summonsIdToDelete,
+    )
+
+    if (!deleted) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      appealSummonses: prev.appealSummonses?.filter(
+        (summons) => summons.id !== summonsIdToDelete,
+      ),
+    }))
+    setSummonsIdToDelete(undefined)
   }
 
   return (
@@ -124,6 +153,13 @@ const VerdictAppealFiles: FC = () => {
                       `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
                     ),
                   () => openAppealSummonsPdf(summons.id),
+                  () => {
+                    if (summonsIdToDelete) {
+                      return
+                    }
+
+                    setSummonsIdToDelete(summons.id)
+                  },
                 )}
               />
             )
@@ -175,6 +211,28 @@ const VerdictAppealFiles: FC = () => {
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
+      {summonsIdToDelete && (
+        <Modal
+          title="Eyða áfrýjunarstefnu"
+          text="Ertu viss um að þú viljir eyða þessari áfrýjunarstefnu?"
+          onClose={() => setSummonsIdToDelete(undefined)}
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setSummonsIdToDelete(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Eyða',
+              onClick: () => {
+                void handleConfirmDeleteAppealSummons()
+              },
+              colorScheme: 'destructive',
+              isLoading: isDeletingAppealSummons,
+            },
+          ]}
+        />
+      )}
     </Box>
   )
 }

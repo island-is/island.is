@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize-typescript'
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Inject,
@@ -38,6 +39,7 @@ import { AppealSummons, Case } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
 import { CurrentAppealSummons } from './guards/appealSummons.decorator'
 import { AppealSummonsExistsGuard } from './guards/appealSummonsExists.guard'
+import { DeleteAppealSummonsResponse } from './models/deleteAppealSummons.response'
 import { AppealSummonsService } from './appealSummons.service'
 
 @Controller('api/case/:caseId/appealSummons')
@@ -104,6 +106,31 @@ export class AppealSummonsController {
         transaction,
       ),
     )
+  }
+
+  @RolesRules(publicProsecutorStaffRule)
+  @UseGuards(AppealSummonsExistsGuard)
+  @Delete(':appealSummonsId')
+  @ApiOkResponse({
+    type: DeleteAppealSummonsResponse,
+    description: 'Deletes an appeal summons',
+  })
+  async delete(
+    @Param('caseId') caseId: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealSummons() summons: AppealSummons,
+    @CurrentHttpUser() user: User,
+  ): Promise<DeleteAppealSummonsResponse> {
+    this.logger.debug(
+      `Deleting appeal summons ${appealSummonsId} of case ${caseId}`,
+    )
+
+    const deleted = await this.sequelize.transaction((transaction) =>
+      this.appealSummonsService.delete(theCase, summons, user, transaction),
+    )
+
+    return { deleted }
   }
 
   @RolesRules(publicProsecutorStaffRule)

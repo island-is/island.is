@@ -669,6 +669,13 @@ export class BackendService {
     )
   }
 
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }

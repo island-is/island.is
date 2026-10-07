@@ -91,6 +91,7 @@ Array [
   "case.appealProsecutor.id",
   "case.appealProsecutor.name",
   "case.appealSummonses.confirmedDate",
+  "case.appealSummonses.created",
   "case.appealSummonses.defendants.appellantSide",
   "case.appealSummonses.defendants.claims",
   "case.appealSummonses.defendants.defendantId",
@@ -978,6 +979,12 @@ Array [
   "currentUser.user.nationalId",
   "currentUser.user.role",
   "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
+Array [
+  "deleteAppealSummons.deleted",
 ]
 `;
 

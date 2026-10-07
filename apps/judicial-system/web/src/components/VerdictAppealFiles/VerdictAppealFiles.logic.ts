@@ -120,6 +120,7 @@ export const getAppealSummonsMenuItems = (
   user: User | undefined,
   onEdit: () => void,
   onOpen: () => void,
+  onDelete: () => void,
 ): ContextMenuItem[] => {
   const items: ContextMenuItem[] = []
 
@@ -129,6 +130,12 @@ export const getAppealSummonsMenuItems = (
 
   if (canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)) {
     items.push({ title: 'Opna í nýjum flipa', onClick: onOpen, icon: 'open' })
+  }
+
+  if (
+    canPerformAppealSummonsAction(AppealSummonsAction.DELETE, summons, user)
+  ) {
+    items.push({ title: 'Eyða', onClick: onDelete, icon: 'trash' })
   }
 
   return items

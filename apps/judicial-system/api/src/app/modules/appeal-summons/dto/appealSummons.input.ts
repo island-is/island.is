@@ -59,3 +59,16 @@ export class UpdateAppealSummonsInput {
   @Field(() => [AppealSummonsDefendantInput])
   readonly defendants!: AppealSummonsDefendantInput[]
 }
+
+@InputType()
+export class DeleteAppealSummonsInput {
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly caseId!: string
+
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly appealSummonsId!: string
+}

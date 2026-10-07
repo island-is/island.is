@@ -161,6 +161,27 @@ export class AppealSummonsService {
     return updated
   }
 
+  async delete(
+    theCase: Case,
+    summons: AppealSummons,
+    user: User,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    if (
+      !canPerformAppealSummonsAction(AppealSummonsAction.DELETE, summons, user)
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} cannot delete appeal summons ${summons.id}`,
+      )
+    }
+
+    return this.appealSummonsRepositoryService.delete(
+      summons.id,
+      theCase.id,
+      { transaction },
+    )
+  }
+
   resolveDefendants(
     theCase: Case,
     dto: CreateAppealSummonsDto,

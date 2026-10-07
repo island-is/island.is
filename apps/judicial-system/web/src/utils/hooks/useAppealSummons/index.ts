@@ -7,6 +7,7 @@ import { api } from '@island.is/judicial-system-web/src/services'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateAppealSummonsMutation } from './createAppealSummons.generated'
+import { useDeleteAppealSummonsMutation } from './deleteAppealSummons.generated'
 import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
 
 export type AppealSummonsDefendantInput = {
@@ -20,6 +21,8 @@ const useAppealSummons = () => {
     useCreateAppealSummonsMutation()
   const [updateAppealSummonsMutation, { loading: isUpdatingAppealSummons }] =
     useUpdateAppealSummonsMutation()
+  const [deleteAppealSummonsMutation, { loading: isDeletingAppealSummons }] =
+    useDeleteAppealSummonsMutation()
 
   const createAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
@@ -79,6 +82,28 @@ const useAppealSummons = () => {
     [updateAppealSummonsMutation, isUpdatingAppealSummons],
   )
 
+  const deleteAppealSummons = useCallback(
+    async (caseId: string, appealSummonsId: string) => {
+      try {
+        if (isDeletingAppealSummons) {
+          return false
+        }
+
+        const { data, errors } = await deleteAppealSummonsMutation({
+          variables: {
+            input: { caseId, appealSummonsId },
+          },
+        })
+
+        return Boolean(data?.deleteAppealSummons.deleted && !errors)
+      } catch {
+        toast.error('Upp kom villa við að eyða áfrýjunarstefnu')
+        return false
+      }
+    },
+    [deleteAppealSummonsMutation, isDeletingAppealSummons],
+  )
+
   const previewAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
       try {
@@ -114,9 +139,11 @@ const useAppealSummons = () => {
   return {
     createAppealSummons,
     updateAppealSummons,
+    deleteAppealSummons,
     previewAppealSummons,
     isCreatingAppealSummons,
     isUpdatingAppealSummons,
+    isDeletingAppealSummons,
   }
 }
 
