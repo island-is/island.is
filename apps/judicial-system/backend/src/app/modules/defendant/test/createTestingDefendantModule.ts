@@ -90,6 +90,7 @@ export const createTestingDefendantModule = async () => {
       {
         provide: CaseFileRepositoryService,
         useValue: {
+          deleteAllForDefendant: jest.fn(),
           deleteAllForCivilClaimant: jest.fn(),
           deleteAllForCivilClaimantsOfCase: jest.fn(),
         },
