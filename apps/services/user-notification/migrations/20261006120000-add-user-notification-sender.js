@@ -34,15 +34,17 @@ module.exports = {
         },
       )
 
+      // Backfill from existing notifications, normalizing sender ids to digits only
       await queryInterface.sequelize.query(
         `
         INSERT INTO user_notification_sender
           (recipient, sender_id)
         SELECT DISTINCT
           recipient,
-          sender_id
+          regexp_replace(sender_id, '\\D', '', 'g')
         FROM user_notification
         WHERE sender_id IS NOT NULL
+          AND regexp_replace(sender_id, '\\D', '', 'g') <> ''
         ON CONFLICT DO NOTHING
         `,
         { transaction },

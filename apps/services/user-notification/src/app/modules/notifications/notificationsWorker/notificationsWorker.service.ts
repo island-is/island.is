@@ -36,7 +36,12 @@ import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
 import { UserNotificationSender } from '../user-notification-sender.model'
-import { mapToLocale, normalizeKennitala, SmsDelivery } from '../utils'
+import {
+  isValidSenderId,
+  mapToLocale,
+  normalizeKennitala,
+  SmsDelivery,
+} from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
@@ -388,6 +393,13 @@ export class NotificationsWorkerService {
     )
     const scope = template.scope || DocumentsScope.main
     const dbRecord = await this.createUserNotificationDbRecord(args, scope)
+    if (dbRecord) {
+      await this.recordNotificationSender(
+        message.recipient,
+        message.senderId,
+        messageId,
+      )
+    }
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     let pushPayload: PushQueueMessage | null = null
@@ -751,11 +763,6 @@ export class NotificationsWorkerService {
       this.logger.info('notification written to db', {
         messageId,
       })
-      await this.recordNotificationSender(
-        message.recipient,
-        message.senderId,
-        messageId,
-      )
       return created
     } catch (e) {
       this.logger.error('error writing notification to db', {
@@ -799,7 +806,7 @@ export class NotificationsWorkerService {
     messageId: string,
   ): Promise<void> {
     const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
-    if (!normalizedSenderId) {
+    if (!isValidSenderId(normalizedSenderId)) {
       return
     }
 

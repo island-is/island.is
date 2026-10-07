@@ -26,6 +26,13 @@ export const cleanString = (str: string): string =>
 export const normalizeKennitala = (senderId: string): string =>
   senderId.replace(/\D/g, '')
 
+/**
+ * A normalized sender id is valid when it is exactly 10 digits, matching the
+ * validation user-profile applies when blocking a sender.
+ */
+export const isValidSenderId = (normalizedSenderId: string): boolean =>
+  /^\d{10}$/.test(normalizedSenderId)
+
 export const extractLocaleField = (
   field: string | Record<string, string> | undefined | null,
   locale: Locale,
