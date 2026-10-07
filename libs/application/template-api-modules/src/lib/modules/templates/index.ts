@@ -1,4 +1,3 @@
-
 import { FjarskiptastofaSelfAssessmentModule } from './fjarskiptastofa/self-assessment/self-assessment.module'
 import { FjarskiptastofaSelfAssessmentService } from './fjarskiptastofa/self-assessment/self-assessment.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
@@ -307,7 +306,7 @@ export const modules = [
   DirectorateOfEqualityModule,
   U2CertificateModule,
   FjarskiptastofaSelfAssessmentModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -411,4 +410,4 @@ export const services = [
   DirectorateOfEqualityService,
   U2CertificateService,
   FjarskiptastofaSelfAssessmentService,
-            ]
+]
