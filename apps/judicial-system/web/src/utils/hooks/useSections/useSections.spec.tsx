@@ -4,6 +4,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
 import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
@@ -152,8 +153,12 @@ describe('useSections getSections', () => {
       institution: { type: InstitutionType.COURT_OF_APPEALS },
     } as unknown as User
 
+    // A step the court has not reached yet is offered through onClick, which
+    // the hook only builds when it is given somewhere to navigate to.
+    const onNavigationTo = jest.fn()
+
     const appealSections = (c: Case, user: User) => {
-      const { result } = renderHook(() => useSections(), {
+      const { result } = renderHook(() => useSections(true, onNavigationTo), {
         wrapper: makeWrapper(c),
       })
 
@@ -188,6 +193,90 @@ describe('useSections getSections', () => {
       expect(sections[0].children[0].href).toBe(
         `${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
       )
+    })
+
+    it('names the steps of the verdict appeal', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].children.map((c) => c.name)).toEqual([
+        'Yfirlit',
+        'Verjandi',
+      ])
+      // Every step carries the appeal id for the same reason the overview
+      // does: without it the next render resolves back to the ruling appeal.
+      expect(sections[0].children[1].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
+    // The side panel works out which step you are on by finding the first
+    // active section and then the active child inside it. A second active
+    // section earlier in the list sends it looking in the wrong place: the
+    // child index comes back -1 and every link in the panel goes dead.
+    it('leaves the verdict appeal as the only active section', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(caseWithBothAppeals),
+      })
+      const sections = result.current.getSections(caseWithBothAppeals, coaUser)
+      const active = sections.filter((s) => s.isActive)
+
+      expect(active.map((s) => s.name)).toEqual(['Dómur Landsréttar'])
+    })
+
+    // What the panel does with that: the step you are on is index 1, so the
+    // one before it is reachable. This is the condition DisplaySection uses.
+    it('leaves the overview reachable from the defender step', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(caseWithBothAppeals),
+      })
+      const sections = result.current.getSections(caseWithBothAppeals, coaUser)
+
+      const activeSection = sections.findIndex((s) => s.isActive)
+      const activeSubSection = sections[activeSection]?.children.findIndex(
+        (c) => c.isActive,
+      )
+
+      expect(activeSubSection).toBe(1)
+      expect(
+        Boolean(
+          sections[activeSection].children[0].href &&
+            activeSubSection &&
+            activeSubSection > 0,
+        ),
+      ).toBe(true)
+    })
+
+    // Reaching a step the court has not been to yet goes through onClick -
+    // the href branch only lights up for steps already passed. Nothing bars
+    // the way here, because the overview asks nothing of the court.
+    it('lets the defender step be reached from the overview', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+      const defenderStep = sections[0].children[1]
+
+      expect(defenderStep.name).toBe('Verjandi')
+      expect(defenderStep.onClick).toBeDefined()
+    })
+
+    // Standing on it, there is nowhere forward to go.
+    it('offers no way on to the step the court is already on', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].children[1].onClick).toBeUndefined()
     })
 
     it('leaves the ruling appeal sections alone when it names that one', () => {
