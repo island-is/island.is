@@ -98,11 +98,10 @@ export class RedisStepUpStore implements StepUpStore {
 
   async countStart(personKey: string, windowSeconds: number) {
     const key = keys.starts(personKey)
-    const count = await this.redis.incr(key)
-    if (count === 1) {
-      await this.redis.expire(key, windowSeconds)
-    }
-    return count
+    // The window is set when the counter is created, in the same command: a
+    // counter left without one would lock the person out for good.
+    await this.redis.set(key, 0, 'EX', windowSeconds, 'NX')
+    return this.redis.incr(key)
   }
 }
 

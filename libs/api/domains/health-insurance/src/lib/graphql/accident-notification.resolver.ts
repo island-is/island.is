@@ -14,7 +14,12 @@ import type { Logger } from '@island.is/logging'
 import { HealthInsuranceAccidentStatusInput } from './dto/accidentStatus.input'
 import { AccidentNotificationStatus } from './models/accidentNotificationStatus.model'
 import { AccidentNotificationService } from '../accident-notification.service'
+import { Features } from '@island.is/nest/feature-flags'
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 
+// Insurance and accident status are health data too. Applications on the web
+// use them as well, so only the app's sessions are locked.
+@StepUpRequired(Features.isHealthStepUpRequired, { appsOnly: true })
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.icelandHealth)
 @Resolver(() => AccidentNotificationStatus)

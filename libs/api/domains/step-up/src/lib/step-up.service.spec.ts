@@ -5,6 +5,7 @@ import { GraphQLError } from 'graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import type { CibaClient, CibaPollResult } from '@island.is/auth/step-up'
 import type { Logger } from '@island.is/logging'
+import type { AuditService } from '@island.is/nest/audit'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   Features,
@@ -19,6 +20,7 @@ import { MemoryStepUpStore } from './step-up.store'
 const person = '0101302989'
 
 const config: ConfigType<typeof StepUpConfig> = {
+  enabled: true,
   issuer: 'https://innskra.island.is',
   clientId: '@island.is/clients/step-up',
   clientSecret: 'secret',
@@ -51,6 +53,7 @@ describe('StepUpService', () => {
   let store: MemoryStepUpStore
   let ciba: { start: jest.Mock; poll: jest.Mock }
   let service: StepUpService
+  let audit: jest.Mock
 
   const approve = (
     claims: Partial<
@@ -87,9 +90,14 @@ describe('StepUpService', () => {
       }),
       poll: jest.fn().mockResolvedValue({ status: 'pending' }),
     }
-    service = new StepUpService(ciba as unknown as CibaClient, store, config, {
-      warn: jest.fn(),
-    } as unknown as Logger)
+    audit = jest.fn()
+    service = new StepUpService(
+      ciba as unknown as CibaClient,
+      store,
+      config,
+      { warn: jest.fn() } as unknown as Logger,
+      { audit } as unknown as AuditService,
+    )
   })
 
   afterEach(() => jest.restoreAllMocks())
@@ -126,6 +134,46 @@ describe('StepUpService', () => {
     // Asking again answers the same, without asking the identity server.
     expect(await service.status(user, stepUpId)).toBe('confirmed')
     expect(ciba.poll).toHaveBeenCalledTimes(2)
+  })
+
+  it('audits the unlock with what opened it', async () => {
+    const user = appUser()
+    const { stepUpId } = await service.start(user)
+    approve()
+    await service.status(user, stepUpId)
+
+    expect(audit).toHaveBeenCalledWith({
+      auth: user,
+      namespace: '@island.is/api/step-up',
+      action: 'stepUpUnlocked',
+      meta: {
+        method: 'app',
+        acr: 'eidas-loa-high',
+        authTime: new Date(now).toISOString(),
+      },
+    })
+  })
+
+  it('audits an approval it refuses', async () => {
+    const user = appUser()
+    const { stepUpId } = await service.start(user)
+    approve({ acr: 'eidas-loa-substantial' })
+    await service.status(user, stepUpId)
+
+    expect(audit).toHaveBeenCalledWith(
+      expect.objectContaining({ action: 'stepUpRefused' }),
+    )
+  })
+
+  it('cannot unlock a token without a session id', async () => {
+    // Keyed to the person alone, one unlock would open all their devices.
+    const user = appUser({ sid: undefined })
+
+    await expect(service.start(user)).rejects.toMatchObject({
+      extensions: { code: StepUpErrorCode.NotAvailable },
+    })
+    expect(await service.useUnlock(user)).toBe(false)
+    expect(ciba.start).not.toHaveBeenCalled()
   })
 
   it("does not tell another session about someone's step-up", async () => {
@@ -287,15 +335,17 @@ describe('StepUpGuard', () => {
       switchToHttp: () => ({ getRequest: () => ({ user }) }),
     } as unknown as ExecutionContext)
 
-  const guard = (flag: boolean, unlocked: boolean) => {
+  let getValue: jest.Mock
+
+  const guard = (flag: boolean, unlocked: boolean, enabled = true) => {
     const stepUpService = {
+      isEnabled: () => enabled,
       appliesTo: (user: User) => config.clients.includes(user.client),
       meetsRequiredAssurance: (user: User) => user.acr === config.requiredAcr,
       useUnlock: jest.fn().mockResolvedValue(unlocked),
     }
-    const featureFlagService = {
-      getValue: jest.fn().mockResolvedValue(flag),
-    }
+    getValue = jest.fn().mockResolvedValue(flag)
+    const featureFlagService = { getValue }
     return new StepUpGuard(
       new Reflector(),
       featureFlagService as unknown as FeatureFlagService,
@@ -324,6 +374,26 @@ describe('StepUpGuard', () => {
     ).resolves.toBe(true)
   })
 
+  it('does nothing while switched off in the environment', async () => {
+    await expect(
+      guard(true, false, false).canActivate(context(appUser())),
+    ).resolves.toBe(true)
+  })
+
+  it('locks when the flag cannot be read', async () => {
+    // ConfigCat answers with the default when it can't be reached.
+    const error = await guard(true, false)
+      .canActivate(context(appUser()))
+      .catch((e) => e)
+
+    expect(getValue).toHaveBeenCalledWith(
+      Features.isHealthStepUpRequired,
+      true,
+      expect.anything(),
+    )
+    expect(error.extensions.code).toBe(StepUpErrorCode.Required)
+  })
+
   it('serves a web session logged in with electronic ID', async () => {
     await expect(
       guard(true, false).canActivate(
@@ -346,5 +416,39 @@ describe('StepUpGuard', () => {
 
   it('never passes for want of a user', async () => {
     await expect(guard(true, true).canActivate(context())).rejects.toThrow()
+  })
+
+  describe('for app sessions only', () => {
+    class AppsOnly {
+      @StepUpRequired(Features.isHealthStepUpRequired, { appsOnly: true })
+      handler() {
+        return 'data'
+      }
+    }
+
+    const appsOnlyContext = (user: User) =>
+      ({
+        getHandler: () => AppsOnly.prototype.handler,
+        getClass: () => AppsOnly,
+        switchToHttp: () => ({ getRequest: () => ({ user }) }),
+      } as unknown as ExecutionContext)
+
+    it('leaves a web passkey session alone', async () => {
+      await expect(
+        guard(true, false).canActivate(
+          appsOnlyContext(
+            appUser({ client: '@island.is/web', acr: 'islandis-passkey' }),
+          ),
+        ),
+      ).resolves.toBe(true)
+    })
+
+    it('still locks the app', async () => {
+      const error = await guard(true, false)
+        .canActivate(appsOnlyContext(appUser()))
+        .catch((e) => e)
+
+      expect(error.extensions.code).toBe(StepUpErrorCode.Required)
+    })
   })
 })

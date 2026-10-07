@@ -8,6 +8,7 @@ import {
   type StepUpClaims,
   type StepUpStatus,
 } from '@island.is/auth/step-up'
+import { AuditService } from '@island.is/nest/audit'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -21,6 +22,8 @@ import {
 } from './step-up.store'
 
 export const STEP_UP_CIBA_CLIENT = 'STEP_UP_CIBA_CLIENT'
+
+const namespace = '@island.is/api/step-up'
 
 export const StepUpErrorCode = {
   /** The person must unlock before this data is served. */
@@ -64,7 +67,13 @@ export class StepUpService {
     @Inject(StepUpConfig.KEY)
     private readonly config: ConfigType<typeof StepUpConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly auditService: AuditService,
   ) {}
+
+  /** Whether step-up is switched on in this environment at all. */
+  isEnabled(): boolean {
+    return this.config.enabled
+  }
 
   /** Whether locked screens apply to this session at all. */
   appliesTo(user: User): boolean {
@@ -73,7 +82,10 @@ export class StepUpService {
 
   /** The identity server reaches the person the way this session was logged in. */
   async start(user: User): Promise<StartedStepUp> {
-    if (!this.appliesTo(user)) {
+    // Without a session id an unlock could only be keyed to the person, and
+    // would then open every device they are signed in on.
+    const sessionKey = this.sessionKeyOf(user)
+    if (!this.appliesTo(user) || !sessionKey) {
       throw new GraphQLError('Unlocking is not available for this client.', {
         extensions: { code: StepUpErrorCode.NotAvailable },
       })
@@ -104,7 +116,7 @@ export class StepUpService {
       stepUpId,
       {
         authReqId: started.authReqId,
-        sessionKey: this.sessionKeyOf(user),
+        sessionKey,
         personKey,
         method: started.method,
         startedAt,
@@ -125,7 +137,8 @@ export class StepUpService {
     const pending = await this.store.getPending(stepUpId)
 
     // Unknown, finished, or someone else's: all look the same from outside.
-    if (!pending || pending.sessionKey !== this.sessionKeyOf(user)) {
+    const sessionKey = this.sessionKeyOf(user)
+    if (!pending || !sessionKey || pending.sessionKey !== sessionKey) {
       return 'expired'
     }
 
@@ -146,8 +159,20 @@ export class StepUpService {
         return 'timed_out'
     }
 
+    const audit = {
+      method: pending.method,
+      acr: result.claims.acr,
+      authTime: result.claims.authTime.toISOString(),
+    }
+
     if (!this.isAcceptable(pending, result.claims)) {
       await this.store.deletePending(stepUpId)
+      this.auditService.audit({
+        auth: user,
+        namespace,
+        action: 'stepUpRefused',
+        meta: audit,
+      })
       return 'denied'
     }
 
@@ -163,11 +188,20 @@ export class StepUpService {
     // Kept briefly, so a repeated poll answers the same.
     await this.store.setPending(stepUpId, { ...pending, confirmed: true }, 60)
 
+    // The moment the data opens, with what opened it.
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: 'stepUpUnlocked',
+      meta: audit,
+    })
+
     return 'confirmed'
   }
 
   async session(user: User): Promise<StepUpSessionState> {
-    const unlock = await this.readUnlock(this.sessionKeyOf(user))
+    const sessionKey = this.sessionKeyOf(user)
+    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
     const expiresAt = unlock
       ? unlock.unlockedAt + this.config.maxSeconds * 1000
       : undefined
@@ -186,8 +220,8 @@ export class StepUpService {
    */
   async useUnlock(user: User): Promise<boolean> {
     const sessionKey = this.sessionKeyOf(user)
-    const unlock = await this.readUnlock(sessionKey)
-    if (!unlock) {
+    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
+    if (!sessionKey || !unlock) {
       return false
     }
 
@@ -209,7 +243,10 @@ export class StepUpService {
 
   /** Locks the session again straight away, e.g. when the person asks to. */
   async lock(user: User): Promise<void> {
-    await this.store.deleteUnlock(this.sessionKeyOf(user))
+    const sessionKey = this.sessionKeyOf(user)
+    if (sessionKey) {
+      await this.store.deleteUnlock(sessionKey)
+    }
   }
 
   /**
@@ -223,10 +260,14 @@ export class StepUpService {
   /**
    * What an unlock belongs to: this client's session for this person, as a
    * keyed hash. Switching to act for someone else keeps the person, so the
-   * unlock stays; another app install, or a new login, does not.
+   * unlock stays; another app install, or a new login, does not. None for a
+   * token without a session id: such a session can't be unlocked.
    */
-  private sessionKeyOf(user: User): string {
-    return this.keyed('session', user.client, personOf(user), user.sid ?? '-')
+  private sessionKeyOf(user: User): string | null {
+    if (!user.sid) {
+      return null
+    }
+    return this.keyed('session', user.client, personOf(user), user.sid)
   }
 
   /** A keyed hash, so Redis never holds a national id, in a key or a value. */
