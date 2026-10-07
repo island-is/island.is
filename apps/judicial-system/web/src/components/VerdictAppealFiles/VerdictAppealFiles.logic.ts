@@ -8,8 +8,8 @@ import {
 } from '@island.is/judicial-system/types'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
-  AppealCaseState,
   type AppealCase,
+  AppealCaseState,
   type AppealSummons,
   type Case,
   type CaseFile,
