@@ -43,6 +43,19 @@ export class StepUpResolver {
     return (await this.stepUpService.status(user, stepUpId)) as StepUpStatus
   }
 
+  @Mutation(() => Boolean, {
+    name: 'stepUpReopenWithPasskey',
+    description:
+      'Reopens an unlock that locked for want of use, with a passkey assertion (base64 encoded JSON, as for a passkey login). False when it could not be reopened; then the person unlocks with electronic ID.',
+  })
+  @Audit()
+  reopenWithPasskey(
+    @CurrentUser() user: User,
+    @Args('passkey') passkey: string,
+  ): Promise<boolean> {
+    return this.stepUpService.reopenWithPasskey(user, passkey)
+  }
+
   @Mutation(() => Boolean, { name: 'stepUpLock' })
   @Audit()
   async lock(@CurrentUser() user: User): Promise<boolean> {

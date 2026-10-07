@@ -15,6 +15,10 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { StepUpConfig } from './step-up.config'
 import {
+  STEP_UP_PASSKEY_VERIFIER,
+  type PasskeyVerifier,
+} from './step-up.passkey'
+import {
   STEP_UP_STORE,
   type PendingStepUp,
   type StepUpStore,
@@ -44,9 +48,23 @@ export interface StartedStepUp {
 
 export interface StepUpSessionState {
   unlocked: boolean
+  /**
+   * Locked for want of use, but the person may reopen it with their passkey
+   * until expiresAt, rather than with electronic ID.
+   */
+  canReopenWithPasskey: boolean
   /** The latest it locks again, however busy. Idle use locks it sooner. */
   expiresAt?: Date
   idleSeconds: number
+}
+
+/** An unlock that has not reached its absolute limit. */
+interface LiveUnlock {
+  sessionKey: string
+  unlock: Unlock
+  remainingSeconds: number
+  /** Unused for longer than idleSeconds. */
+  idle: boolean
 }
 
 /**
@@ -58,12 +76,18 @@ export interface StepUpSessionState {
  *
  * State lives on the server so the app can't fake it: an unlock record per
  * session, kept alive by use (idleSeconds) and never beyond maxSeconds.
+ *
+ * Unused for idleSeconds, it locks; until maxSeconds the person may reopen it
+ * with their passkey — Face ID or fingerprint, checked here rather than on the
+ * phone — instead of with electronic ID.
  */
 @Injectable()
 export class StepUpService {
   constructor(
     @Inject(STEP_UP_CIBA_CLIENT) private readonly ciba: CibaClient,
     @Inject(STEP_UP_STORE) private readonly store: StepUpStore,
+    @Inject(STEP_UP_PASSKEY_VERIFIER)
+    private readonly passkeys: PasskeyVerifier,
     @Inject(StepUpConfig.KEY)
     private readonly config: ConfigType<typeof StepUpConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -177,13 +201,16 @@ export class StepUpService {
     }
 
     const now = Date.now()
+    // Kept to the absolute limit, so that once idle it can still be reopened
+    // with a passkey; whether it is idle goes by lastUsedAt.
     await this.store.setUnlock(
       pending.sessionKey,
       this.signed(pending.sessionKey, {
         authTime: result.claims.authTime.getTime(),
         unlockedAt: now,
+        lastUsedAt: now,
       }),
-      this.config.idleSeconds,
+      this.config.maxSeconds,
     )
     // Kept briefly, so a repeated poll answers the same.
     await this.store.setPending(stepUpId, { ...pending, confirmed: true }, 60)
@@ -200,15 +227,14 @@ export class StepUpService {
   }
 
   async session(user: User): Promise<StepUpSessionState> {
-    const sessionKey = this.sessionKeyOf(user)
-    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
-    const expiresAt = unlock
-      ? unlock.unlockedAt + this.config.maxSeconds * 1000
-      : undefined
+    const live = await this.liveUnlock(user)
 
     return {
-      unlocked: !!expiresAt && expiresAt > Date.now(),
-      expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+      unlocked: !!live && !live.idle,
+      canReopenWithPasskey: !!live?.idle,
+      expiresAt: live
+        ? new Date(live.unlock.unlockedAt + this.config.maxSeconds * 1000)
+        : undefined,
       idleSeconds: this.config.idleSeconds,
     }
   }
@@ -219,25 +245,58 @@ export class StepUpService {
    * an inactivity lock.
    */
   async useUnlock(user: User): Promise<boolean> {
-    const sessionKey = this.sessionKeyOf(user)
-    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
-    if (!sessionKey || !unlock) {
+    const live = await this.liveUnlock(user)
+    if (!live || live.idle) {
       return false
     }
 
-    const remainingSeconds = Math.floor(
-      (unlock.unlockedAt + this.config.maxSeconds * 1000 - Date.now()) / 1000,
-    )
-    if (remainingSeconds <= 0) {
-      await this.store.deleteUnlock(sessionKey)
+    await this.touch(live)
+    return true
+  }
+
+  /**
+   * Reopens an unlock that locked for want of use, with the person's passkey.
+   * Only within the absolute limit: after that, only electronic ID will do.
+   */
+  async reopenWithPasskey(user: User, passkey: string): Promise<boolean> {
+    if (!this.appliesTo(user)) {
+      throw new GraphQLError('Unlocking is not available for this client.', {
+        extensions: { code: StepUpErrorCode.NotAvailable },
+      })
+    }
+
+    const live = await this.liveUnlock(user)
+    if (!live) {
       return false
     }
 
-    await this.store.setUnlock(
-      sessionKey,
-      unlock,
-      Math.min(this.config.idleSeconds, remainingSeconds),
+    // Counted apart from starts, so reopening doesn't use up the attempts at
+    // electronic ID the person may need next.
+    const attempts = await this.store.countStart(
+      this.keyed('reopen', personOf(user)),
+      this.config.maxStartsWindowSeconds,
     )
+    if (attempts > this.config.maxStarts) {
+      throw new GraphQLError('Too many attempts to unlock. Try again later.', {
+        extensions: { code: StepUpErrorCode.TooManyAttempts },
+      })
+    }
+
+    let verified: boolean
+    try {
+      verified = await this.passkeys.verify(user, passkey)
+    } catch (error) {
+      // An assertion that is not valid is refused with an error, too.
+      this.logger.warn('Passkey could not be verified for reopening.', {
+        error,
+      })
+      verified = false
+    }
+    if (!verified) {
+      return false
+    }
+
+    await this.touch(live)
     return true
   }
 
@@ -247,6 +306,44 @@ export class StepUpService {
     if (sessionKey) {
       await this.store.deleteUnlock(sessionKey)
     }
+  }
+
+  /** The session's unlock, if it has one that has not reached its limit. */
+  private async liveUnlock(user: User): Promise<LiveUnlock | null> {
+    const sessionKey = this.sessionKeyOf(user)
+    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
+    if (!sessionKey || !unlock) {
+      return null
+    }
+
+    const now = Date.now()
+    const remainingSeconds = Math.floor(
+      (unlock.unlockedAt + this.config.maxSeconds * 1000 - now) / 1000,
+    )
+    if (remainingSeconds <= 0) {
+      await this.store.deleteUnlock(sessionKey)
+      return null
+    }
+
+    return {
+      sessionKey,
+      unlock,
+      remainingSeconds,
+      idle: now - unlock.lastUsedAt >= this.config.idleSeconds * 1000,
+    }
+  }
+
+  /** Counts as use: the idle limit starts again from now. */
+  private async touch({ sessionKey, unlock, remainingSeconds }: LiveUnlock) {
+    await this.store.setUnlock(
+      sessionKey,
+      this.signed(sessionKey, {
+        authTime: unlock.authTime,
+        unlockedAt: unlock.unlockedAt,
+        lastUsedAt: Date.now(),
+      }),
+      remainingSeconds,
+    )
   }
 
   /**
@@ -288,6 +385,7 @@ export class StepUpService {
         sessionKey,
         String(unlock.authTime),
         String(unlock.unlockedAt),
+        String(unlock.lastUsedAt),
       ),
     }
   }
@@ -295,7 +393,7 @@ export class StepUpService {
   /** The unlock record, if there is one and it was written by us. */
   private async readUnlock(sessionKey: string): Promise<Unlock | null> {
     const unlock = await this.store.getUnlock(sessionKey)
-    if (!unlock?.signature) {
+    if (!unlock?.signature || typeof unlock.lastUsedAt !== 'number') {
       return null
     }
 

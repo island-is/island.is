@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common'
 
 import { CibaClient } from '@island.is/auth/step-up'
 import { createRedisCluster } from '@island.is/cache'
+import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
@@ -9,6 +10,10 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { StepUpConfig } from './step-up.config'
 import { StepUpGuard } from './step-up.guard'
 import { StepUpResolver } from './step-up.resolver'
+import {
+  PublicApiPasskeyVerifier,
+  STEP_UP_PASSKEY_VERIFIER,
+} from './step-up.passkey'
 import { STEP_UP_CIBA_CLIENT, StepUpService } from './step-up.service'
 import {
   MemoryStepUpStore,
@@ -22,11 +27,12 @@ import {
  */
 @Global()
 @Module({
-  imports: [FeatureFlagModule],
+  imports: [FeatureFlagModule, AuthPublicApiClientModule],
   providers: [
     StepUpResolver,
     StepUpService,
     StepUpGuard,
+    { provide: STEP_UP_PASSKEY_VERIFIER, useClass: PublicApiPasskeyVerifier },
     {
       provide: STEP_UP_CIBA_CLIENT,
       useFactory: (config: ConfigType<typeof StepUpConfig>) =>

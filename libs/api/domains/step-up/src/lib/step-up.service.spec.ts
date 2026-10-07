@@ -52,6 +52,7 @@ describe('StepUpService', () => {
   let now: number
   let store: MemoryStepUpStore
   let ciba: { start: jest.Mock; poll: jest.Mock }
+  let passkeys: { verify: jest.Mock }
   let service: StepUpService
   let audit: jest.Mock
 
@@ -91,9 +92,11 @@ describe('StepUpService', () => {
       poll: jest.fn().mockResolvedValue({ status: 'pending' }),
     }
     audit = jest.fn()
+    passkeys = { verify: jest.fn().mockResolvedValue(true) }
     service = new StepUpService(
       ciba as unknown as CibaClient,
       store,
+      passkeys,
       config,
       { warn: jest.fn() } as unknown as Logger,
       { audit } as unknown as AuditService,
@@ -226,6 +229,111 @@ describe('StepUpService', () => {
     expect(await service.useUnlock(user)).toBe(false)
   })
 
+  describe('reopening with a passkey', () => {
+    const unlockedThenIdle = async (user: User) => {
+      const { stepUpId } = await service.start(user)
+      approve()
+      await service.status(user, stepUpId)
+      advance(config.idleSeconds + 1)
+    }
+
+    it('is offered once it locks for want of use', async () => {
+      const user = appUser()
+      await unlockedThenIdle(user)
+
+      expect(await service.session(user)).toMatchObject({
+        unlocked: false,
+        canReopenWithPasskey: true,
+      })
+      expect(await service.useUnlock(user)).toBe(false)
+    })
+
+    it('reopens with a passkey the identity server vouches for', async () => {
+      const user = appUser()
+      await unlockedThenIdle(user)
+
+      expect(await service.reopenWithPasskey(user, 'assertion')).toBe(true)
+
+      expect(passkeys.verify).toHaveBeenCalledWith(user, 'assertion')
+      expect(await service.session(user)).toMatchObject({
+        unlocked: true,
+        canReopenWithPasskey: false,
+      })
+      expect(await service.useUnlock(user)).toBe(true)
+    })
+
+    it('keeps the absolute limit of the electronic ID unlock', async () => {
+      const user = appUser()
+      await unlockedThenIdle(user)
+      const { expiresAt } = await service.session(user)
+
+      await service.reopenWithPasskey(user, 'assertion')
+
+      expect((await service.session(user)).expiresAt).toEqual(expiresAt)
+      advance(config.maxSeconds)
+      expect(await service.useUnlock(user)).toBe(false)
+      expect(await service.reopenWithPasskey(user, 'assertion')).toBe(false)
+      expect((await service.session(user)).canReopenWithPasskey).toBe(false)
+    })
+
+    it('needs electronic ID first', async () => {
+      const user = appUser()
+
+      expect(await service.reopenWithPasskey(user, 'assertion')).toBe(false)
+      expect(passkeys.verify).not.toHaveBeenCalled()
+      expect((await service.session(user)).canReopenWithPasskey).toBe(false)
+    })
+
+    it.each([
+      ['is not valid', () => passkeys.verify.mockResolvedValue(false)],
+      [
+        'cannot be checked',
+        () => passkeys.verify.mockRejectedValue(new Error('400')),
+      ],
+    ])('stays locked when the passkey %s', async (_, arrange) => {
+      const user = appUser()
+      await unlockedThenIdle(user)
+      arrange()
+
+      expect(await service.reopenWithPasskey(user, 'assertion')).toBe(false)
+      expect(await service.useUnlock(user)).toBe(false)
+    })
+
+    it("does not reopen another session's unlock", async () => {
+      await unlockedThenIdle(appUser())
+
+      const other = appUser({ sid: 'other' })
+      expect(await service.reopenWithPasskey(other, 'assertion')).toBe(false)
+      expect(passkeys.verify).not.toHaveBeenCalled()
+    })
+
+    it('caps how many times it can be tried', async () => {
+      const user = appUser()
+      await unlockedThenIdle(user)
+      passkeys.verify.mockResolvedValue(false)
+
+      await service.reopenWithPasskey(user, 'assertion')
+      await service.reopenWithPasskey(user, 'assertion')
+
+      await expect(
+        service.reopenWithPasskey(user, 'assertion'),
+      ).rejects.toMatchObject({
+        extensions: { code: StepUpErrorCode.TooManyAttempts },
+      })
+    })
+
+    it('is not offered to other clients', async () => {
+      await expect(
+        service.reopenWithPasskey(
+          appUser({ client: '@island.is/web' }),
+          'assertion',
+        ),
+      ).rejects.toMatchObject({
+        extensions: { code: StepUpErrorCode.NotAvailable },
+      })
+    })
+  })
+
   it('locks again after the absolute limit, however busy', async () => {
     const user = appUser()
     const { stepUpId } = await service.start(user)
@@ -288,14 +396,16 @@ describe('StepUpService', () => {
     approve()
     await service.status(user, stepUpId)
 
-    // Someone with write access to Redis extends an unlock by hand.
+    // Someone with write access to Redis extends an unlock by hand, after it
+    // has locked for want of use.
+    advance(config.idleSeconds + 1)
     const entries = (
       store as unknown as { entries: Map<string, { value: string }> }
     ).entries
     for (const [key, entry] of entries) {
       if (key.startsWith('unlock:')) {
         const record = JSON.parse(entry.value)
-        entry.value = JSON.stringify({ ...record, unlockedAt: now + 3600_000 })
+        entry.value = JSON.stringify({ ...record, lastUsedAt: now })
       }
     }
 

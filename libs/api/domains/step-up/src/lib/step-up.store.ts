@@ -26,13 +26,18 @@ export interface Unlock {
   authTime: number
   /** When we recorded it; the absolute limit counts from here. Epoch ms. */
   unlockedAt: number
-  /** Keyed MAC over the session and both times, so a planted record is refused. */
+  /**
+   * When a locked screen was last used, or the unlock last renewed with a
+   * passkey; the idle limit counts from here. Epoch ms.
+   */
+  lastUsedAt: number
+  /** Keyed MAC over the session and the times, so a planted record is refused. */
   signature: string
 }
 
 /**
  * Where step-up state lives. Everything here is short-lived and safe to lose:
- * losing it only means the person unlocks again.
+ * losing it only means the person unlocks again with electronic ID.
  */
 export interface StepUpStore {
   setPending(

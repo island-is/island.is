@@ -47,6 +47,12 @@ export class StepUpSession {
   @Field(() => Boolean)
   unlocked!: boolean
 
+  @Field(() => Boolean, {
+    description:
+      'Locked for want of use, but can be reopened with the passkey until expiresAt, instead of with electronic ID.',
+  })
+  canReopenWithPasskey!: boolean
+
   @Field(() => Date, {
     nullable: true,
     description: 'The latest it locks again. Not using it locks it sooner.',
