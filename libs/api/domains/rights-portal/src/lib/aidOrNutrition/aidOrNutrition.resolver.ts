@@ -21,7 +21,7 @@ import {
 } from '@island.is/nest/feature-flags'
 
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/aid-and-nutrition' })
 export class AidOrNutritionResolver {

@@ -25,7 +25,7 @@ import { DrugCertificate } from './models/drugCertificate.model'
 import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/drug' })
 export class DrugResolver {

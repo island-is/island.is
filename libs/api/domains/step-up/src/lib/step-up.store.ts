@@ -9,8 +9,11 @@ export interface PendingStepUp {
   authReqId: string
   /** The session that started it. Only that session may ask about it. */
   sessionKey: string
-  /** Who must approve: the actor when acting for someone, else the subject. */
-  nationalId: string
+  /**
+   * Who must approve (the actor when acting for someone, else the subject), as
+   * a keyed hash: their national id is never stored.
+   */
+  personKey: string
   method: StepUpMethod
   startedAt: number
   /** Approved and recorded; kept briefly so a repeated poll answers the same. */
@@ -23,6 +26,8 @@ export interface Unlock {
   authTime: number
   /** When we recorded it; the absolute limit counts from here. Epoch ms. */
   unlockedAt: number
+  /** Keyed MAC over the session and both times, so a planted record is refused. */
+  signature: string
 }
 
 /**

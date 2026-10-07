@@ -25,7 +25,7 @@ import { HealthDirectorateTreatmentDetail } from '../models/treatmentDetail.mode
 import { HealthDirectorateTreatmentDocument } from '../models/treatmentDocument.model'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => HealthDirectorateTreatment)

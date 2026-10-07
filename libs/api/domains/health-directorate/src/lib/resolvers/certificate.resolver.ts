@@ -29,7 +29,7 @@ import { HealthDirectorateCertificateRequest } from '../models/certificateReques
 import { HealthDirectorateCertificatePaymentIntent } from '../models/paymentIntent.model'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver()

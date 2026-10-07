@@ -14,7 +14,7 @@ export default function HealthLayout() {
   const intl = useIntl()
   // The whole area locks at once: while locked no health screen mounts, so
   // nothing is fetched or shown — not even from the cache.
-  const { state, onUnlocked } = useStepUpLock('isAppHealthStepUpRequired')
+  const { state, onUnlocked } = useStepUpLock('isHealthStepUpRequired')
 
   if (state === 'loading') {
     return (

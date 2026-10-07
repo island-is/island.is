@@ -22,7 +22,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 
 import { HealthDirectorateService } from '../health-directorate.service'
 
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @CodeOwner(CodeOwners.Hugsmidjan)

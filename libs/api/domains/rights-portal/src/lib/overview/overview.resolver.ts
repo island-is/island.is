@@ -16,7 +16,7 @@ import { InsuranceConfirmation } from './models/insuranceConfirmation.model'
 import { InsuranceOverview } from './models/insuranceOverview.model'
 
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/overview' })
 @Scopes(ApiScope.healthRightsStatus)

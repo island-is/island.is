@@ -20,7 +20,7 @@ import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
 import { HealthCenterDoctorsInput } from './dto/healthCenterDoctors.input'
 import { HealthCenterDoctors } from './models/healthCenterDoctors.model'
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/health-center' })
 export class HealthCenterResolver {

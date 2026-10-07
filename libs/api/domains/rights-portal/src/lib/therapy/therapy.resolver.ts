@@ -15,7 +15,7 @@ import { TherapyService } from './therapy.service'
 import { PaginatedTherapyResponse } from './models/therapy.model'
 
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/therapy' })
 export class TherapyResolver {
