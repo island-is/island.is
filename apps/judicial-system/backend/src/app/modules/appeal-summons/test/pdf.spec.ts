@@ -1,17 +1,27 @@
 import { Response } from 'express'
 import { v4 as uuid } from 'uuid'
 
-import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
+import {
+  AppealEventType,
+  AppealSummonsAppellantSide,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
 import { PdfService } from '../../case'
-import { AppealSummons, Case } from '../../repository'
+import {
+  AppealEventLog,
+  AppealSummons,
+  Case,
+  Defendant,
+} from '../../repository'
 import { CreateAppealSummonsDto } from '../dto/createAppealSummons.dto'
 
 describe('AppealSummonsController - PDF', () => {
   const caseId = uuid()
   const summonsId = uuid()
+  const defendantId = uuid()
   const theCase = { id: caseId } as Case
   const summons = { id: summonsId } as AppealSummons
   const pdf = Buffer.from('pdf')
@@ -45,23 +55,53 @@ describe('AppealSummonsController - PDF', () => {
     expect(res.end).toHaveBeenCalledWith(pdf)
   })
 
-  it('returns a preview pdf from the form body', async () => {
+  it('re-derives appellant side for preview, even if the client sends defence', async () => {
+    const previewCase = {
+      id: caseId,
+      defendants: [{ id: defendantId, name: 'Jón Jónsson' } as Defendant],
+      verdictAppealCase: {
+        id: uuid(),
+        appealEventLogs: [
+          {
+            id: uuid(),
+            defendantId,
+            eventType: AppealEventType.APPEALED,
+            userRole: UserRole.DEFENDER,
+            created: new Date(),
+          } as AppealEventLog,
+          {
+            id: uuid(),
+            defendantId,
+            eventType: AppealEventType.APPEALED,
+            userRole: UserRole.PROSECUTOR,
+            created: new Date(),
+          } as AppealEventLog,
+        ],
+      },
+    } as Case
+
     const dto: CreateAppealSummonsDto = {
       defendants: [
         {
-          defendantId: uuid(),
+          defendantId,
           appellantSide: AppealSummonsAppellantSide.DEFENCE,
           claims: 'Kröfur',
         },
       ],
     }
 
-    await appealSummonsController.preview(caseId, theCase, dto, res)
+    await appealSummonsController.preview(caseId, previewCase, dto, res)
 
     expect(mockPdfService.getAppealSummonsPdf).toHaveBeenCalledWith(
-      theCase,
+      previewCase,
       undefined,
-      dto.defendants,
+      [
+        {
+          defendantId,
+          appellantSide: AppealSummonsAppellantSide.PROSECUTION,
+          claims: 'Kröfur',
+        },
+      ],
     )
     expect(res.end).toHaveBeenCalledWith(pdf)
   })

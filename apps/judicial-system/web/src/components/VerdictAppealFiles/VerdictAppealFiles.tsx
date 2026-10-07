@@ -94,7 +94,7 @@ const VerdictAppealFiles: FC = () => {
             <Text variant="small">
               {summonses.length === 0
                 ? 'Áfrýjunarstefna hefur ekki verið gefin út'
-                : ''}
+                : 'Áfrýjunarstefna'}
             </Text>
             {showIssueButton && (
               <Button

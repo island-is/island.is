@@ -188,6 +188,9 @@ describe('VerdictAppealFiles', () => {
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
       ).not.toBeInTheDocument()
       expect(
+        screen.getByText('Áfrýjunarstefna', { exact: true }),
+      ).toBeInTheDocument()
+      expect(
         summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
           Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy()

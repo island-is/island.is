@@ -167,7 +167,7 @@ export class AppealSummonsService {
     return updated
   }
 
-  private resolveDefendants(
+  resolveDefendants(
     theCase: Case,
     dto: CreateAppealSummonsDto,
   ): {

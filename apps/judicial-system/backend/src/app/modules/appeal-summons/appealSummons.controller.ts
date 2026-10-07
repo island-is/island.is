@@ -150,10 +150,14 @@ export class AppealSummonsController {
       `Previewing an appeal summons pdf for case ${caseId}`,
     )
 
+    const defendants = this.appealSummonsService.resolveDefendants(
+      theCase,
+      dto,
+    )
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       undefined,
-      dto.defendants,
+      defendants,
     )
 
     res.end(pdf)

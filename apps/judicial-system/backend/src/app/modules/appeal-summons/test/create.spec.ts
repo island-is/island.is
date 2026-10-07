@@ -196,6 +196,25 @@ describe('AppealSummonsController - Create', () => {
     expect(then.error.message).toContain('no standing verdict appeal')
   })
 
+  it('rejects a defendant who is not on the case', async () => {
+    const unknownDefendantId = uuid()
+    const then = await givenWhenThen(theCase, {
+      defendants: [
+        {
+          defendantId: unknownDefendantId,
+          appellantSide: AppealSummonsAppellantSide.DEFENCE,
+          claims: 'Kröfur',
+        },
+      ],
+    })
+
+    expect(then.error).toBeInstanceOf(BadRequestException)
+    expect(then.error.message).toContain(
+      `Defendant ${unknownDefendantId} is not on case ${caseId}`,
+    )
+    expect(mockAppealSummonsRepositoryService.create).not.toHaveBeenCalled()
+  })
+
   it('uses the prosecution side when both sides stand, even if the client sends defence', async () => {
     const prosecutionLog = {
       id: uuid(),
