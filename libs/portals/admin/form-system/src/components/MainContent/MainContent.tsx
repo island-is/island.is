@@ -14,8 +14,9 @@ import {
   GridRow as Row,
   Select,
   Stack,
+  ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
@@ -28,6 +29,7 @@ import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepO
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
 import { Deadline } from './components/Deadline/Deadline'
+import * as styles from './MainContent.css'
 
 interface Props {
   openPreview: boolean
@@ -45,6 +47,8 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const { formatMessage } = useIntl()
+  const [identifierEditingEnabled, setIdentifierEditingEnabled] =
+    useState(false)
 
   const showIdentifier =
     form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
@@ -77,7 +81,10 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
       {activeItem.type === 'Field' ? (
-        <FieldContent />
+        <FieldContent
+          identifierEditingEnabled={identifierEditingEnabled}
+          setIdentifierEditingEnabled={setIdentifierEditingEnabled}
+        />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'BaseSettings' ? (
         <BaseSettings />
@@ -269,6 +276,16 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
                       )}
                       {showIdentifier && (
                         <Box marginTop={4}>
+                          <Box marginBottom={2}>
+                            <ToggleSwitchCheckbox
+                              className={styles.identifierToggle}
+                              name="enableIdentifierEditing"
+                              label="Gera breytingu á identifier"
+                              checked={identifierEditingEnabled}
+                              disabled={isReadOnly}
+                              onChange={setIdentifierEditingEnabled}
+                            />
+                          </Box>
                           <Input
                             label="identifier"
                             name="identifier"
@@ -287,7 +304,7 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
                             onBlur={(e) =>
                               e.target.value !== focus && updateActiveItem()
                             }
-                            readOnly={isReadOnly}
+                            readOnly={isReadOnly || !identifierEditingEnabled}
                           />
                         </Box>
                       )}
