@@ -55,10 +55,11 @@ export const requestNotificationsPermission = async () => {
   if (androidIsVersion33OrAbove()) {
     // Notifications modal on Android triggers the lock screen, so we need to prevent the lock screen from showing
     suppressLockScreen()
-    const result = await requestAndroidNotificationsPermission()
-    clearLockScreenSuppression()
-
-    return result === 'granted'
+    try {
+      return (await requestAndroidNotificationsPermission()) === 'granted'
+    } finally {
+      clearLockScreenSuppression()
+    }
   }
 
   markPermissionRequested()
@@ -113,10 +114,11 @@ export const ensureNotificationsPermission =
 
       // Notifications modal on Android triggers the lock screen, so we need to prevent the lock screen from showing
       suppressLockScreen()
-      const result = await requestAndroidNotificationsPermission()
-      clearLockScreenSuppression()
-
-      return result
+      try {
+        return await requestAndroidNotificationsPermission()
+      } finally {
+        clearLockScreenSuppression()
+      }
     }
 
     // iOS only prompts while undetermined; once denied it never prompts again.
