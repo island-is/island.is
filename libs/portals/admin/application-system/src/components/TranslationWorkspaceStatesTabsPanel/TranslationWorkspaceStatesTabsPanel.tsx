@@ -15,6 +15,7 @@ import { TranslationWorkspaceStatesNav } from '../TranslationWorkspaceStatesNav/
 import {
   STATES_TAB_ID,
   STRINGS_TAB_ID,
+  withCount,
 } from '../../utils/translationWorkspaceNavPanel'
 import { TabsPanelStringsTab } from './TabsPanelStringsTab'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
@@ -43,9 +44,6 @@ export interface TranslationWorkspaceStatesTabsPanelProps {
   translatingIds?: ReadonlySet<string>
   ownedNamespaces?: readonly string[]
 }
-
-const withCount = (label: string, count: number) =>
-  count > 0 ? `${label} (${count})` : label
 
 export const TranslationWorkspaceStatesTabsPanel = ({
   states,

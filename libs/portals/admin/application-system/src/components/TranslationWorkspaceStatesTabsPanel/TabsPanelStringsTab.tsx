@@ -13,6 +13,7 @@ import {
   getTranslationSourceText,
   type PersistedByKey,
 } from '../../utils/translationWorkspaceEditing'
+import { withCount } from '../../utils/translationWorkspaceNavPanel'
 import { TranslationDescriptorCard } from './TranslationDescriptorCard'
 import { TranslationStringsList } from './TranslationStringsList'
 import * as styles from './TranslationWorkspaceStatesTabsPanel.css'
@@ -130,7 +131,10 @@ export const TabsPanelStringsTab = ({
                 }
                 truncate
               >
-                {formatMessage(m.translationStringsScopeApplication)}
+                {withCount(
+                  formatMessage(m.translationStringsScopeApplication),
+                  applicationStringCount,
+                )}
               </Text>
             </Box>
           </Box>
