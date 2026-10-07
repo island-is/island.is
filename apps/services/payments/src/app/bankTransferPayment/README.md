@@ -264,9 +264,11 @@ stateDiagram-v2
 > compares the reception id FJS returned against the row it adopts, and logs
 > `CRITICAL: FJS accepted a duplicate charge …` only when they differ.
 > Alert on the structured fields rather than the prose: `needsManualReversal` (a charge at FJS we
-> never persisted) and `needsReconciliation` (conflict with a soft-deleted row). A reconcile that
+> never persisted) and `needsReconciliation` (conflict with a soft-deleted row). A
+> `needsManualReversal` case is also written to `payment_flow_event` (`reason = 'other'`, the
+> reception id in `metadata`) without notifying the organisation, so it outlives log retention. A reconcile that
 > finds no row is not logged — it cannot tell a lagging commit from a real orphan, and the caller
-> and worker retries surface it anyway. Page on a settled flow that still has no `fjs_charge` row. Either way this is a duplicate *record*, not a second debit: the payer's
+> and worker retries surface it anyway. Page on a settled flow that still has no `fjs_charge` row. Either way this is a duplicate _record_, not a second debit: the payer's
 > money moves once, at the provider.
 
 > **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS

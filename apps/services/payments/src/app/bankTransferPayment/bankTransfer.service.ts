@@ -55,6 +55,7 @@ import {
   isBlikkStatus,
   isOnboardingRequired,
   isRowExpired,
+  isTerminalBankTransferStatus,
   mapBlikkStatusToBankTransferStatus,
   mapRawStatusToBankTransferPendingStatus,
   rowLogContext,
@@ -155,22 +156,6 @@ export class BankTransferService {
       throw error
     }
 
-    // Blikk can return 200 for a payment that is already terminal, with its reason in `message`.
-    if (isBankTransferFailureStatus(providerResult.status)) {
-      this.logger.warn(
-        `[${input.paymentFlowId}] Bank transfer created already ${providerResult.status}`,
-        {
-          ...bankTransferLogContext(
-            input.paymentFlowId,
-            correlationId,
-            providerResult.providerPaymentId,
-          ),
-          rawStatus: providerResult.rawStatus,
-          providerMessage: providerResult.message,
-        },
-      )
-    }
-
     try {
       await this.bankTransferPaymentModel.create({
         id: correlationId,
@@ -249,6 +234,19 @@ export class BankTransferService {
       },
       { useRetry: true, throwOnError: false },
     )
+
+    // Blikk can return 200 for a payment that is already terminal, with its reason in `message`.
+    // The row went in terminal, so `verify` will never transition it — emit the failure here.
+    if (isBankTransferFailureStatus(providerResult.status)) {
+      await this.logBankTransferFailed(
+        {
+          id: correlationId,
+          paymentFlowId: input.paymentFlowId,
+          providerPaymentId: providerResult.providerPaymentId,
+        },
+        providerResult,
+      )
+    }
 
     return {
       providerPaymentId: providerResult.providerPaymentId,
@@ -925,18 +923,24 @@ export class BankTransferService {
     row: BankTransferPayment,
     result: BankTransferPaymentResult,
   ): Promise<void> {
+    // A terminal status never moves. `verify` refetches on every call, so without this a repeat
+    // read — same status, or Blikk reporting a different terminal one — would rewrite the row and
+    // fire `payment_failed` again (Postgres counts a same-value write as a row updated).
+    if (
+      isTerminalBankTransferStatus(
+        mapBlikkStatusToBankTransferStatus(row.lastKnownStatus),
+      )
+    ) {
+      return
+    }
+
     const [affectedRows] = await this.bankTransferPaymentModel.update(
       { lastKnownStatus: result.rawStatus },
       {
         where: {
           id: row.id,
           isDeleted: false,
-          // `eq` is the compare-and-set. `ne` rejects a re-entry rewriting the same status,
-          // which Postgres still counts as a row updated — that fired `payment_failed` twice.
-          lastKnownStatus: {
-            [Op.eq]: row.lastKnownStatus,
-            [Op.ne]: result.rawStatus,
-          },
+          lastKnownStatus: row.lastKnownStatus,
         },
       },
     )
@@ -945,10 +949,22 @@ export class BankTransferService {
       return
     }
 
-    // One line per transition: this used to log here *and* via `logPaymentFlowUpdate`. The ids and
-    // Blikk's reason now ride on that single line — the reason separates a payer decline from a
-    // provider-side fault failing every payment. Only ERROR is a provider-side fault, so only it
-    // logs at `warn`; REJECTED and CANCELLED are ordinary payer outcomes.
+    await this.logBankTransferFailed(row, result)
+  }
+
+  /**
+   * The `payment_failed` event, shared by `create` (row inserted already failed) and the failure
+   * finalizer. One line per transition: the ids and Blikk's reason ride on it — the reason
+   * separates a payer decline from a provider-side fault failing every payment. Only ERROR is a
+   * provider-side fault, so only it logs at `warn`; REJECTED and CANCELLED are ordinary outcomes.
+   */
+  private async logBankTransferFailed(
+    row: Pick<
+      BankTransferPayment,
+      'id' | 'paymentFlowId' | 'providerPaymentId'
+    >,
+    result: BankTransferPaymentResult,
+  ): Promise<void> {
     await this.paymentFlowService.logPaymentFlowUpdate(
       {
         paymentFlowId: row.paymentFlowId,

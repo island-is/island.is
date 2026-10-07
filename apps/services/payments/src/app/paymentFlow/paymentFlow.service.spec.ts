@@ -19,6 +19,7 @@ import { BankTransferPayment } from '../bankTransferPayment/models/bankTransferP
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { FjsCharge } from './models/fjsCharge.model'
 import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentFlowService } from './paymentFlow.service'
 
@@ -659,6 +660,25 @@ describe('PaymentFlowService', () => {
         where: { paymentFlowId, isDeleted: false },
       })
       expect(fulfillment?.fjsChargeId).toBe(winner.id)
+
+      // Persisted too, so the orphan outlives the log line.
+      const paymentFlowEventModel = app.get<typeof PaymentFlowEvent>(
+        getModelToken(PaymentFlowEvent),
+      )
+      const events = await paymentFlowEventModel.findAll({
+        where: { paymentFlowId },
+      })
+      expect(events).toHaveLength(1)
+      expect(events[0]).toMatchObject({
+        type: 'error',
+        reason: 'other',
+        paymentMethod: 'system',
+        metadata: {
+          needsManualReversal: true,
+          receptionId: 'recept-duplicate',
+          user4: 'doc-duplicate',
+        },
+      })
     })
 
     it('does not claim a duplicate when FJS returns the reception id we already hold', async () => {
@@ -728,6 +748,12 @@ describe('PaymentFlowService', () => {
         expect.stringContaining('FJS accepted a duplicate charge'),
         expect.anything(),
       )
+      const paymentFlowEventModel = app.get<typeof PaymentFlowEvent>(
+        getModelToken(PaymentFlowEvent),
+      )
+      expect(
+        await paymentFlowEventModel.count({ where: { paymentFlowId } }),
+      ).toBe(0)
     })
   })
 

@@ -1017,6 +1017,36 @@ export class PaymentFlowService {
             },
           )
 
+          // Durable record so the orphan stays findable if the alert is missed. Written directly,
+          // not via `logPaymentFlowUpdate`: that would webhook an internal reconciliation issue to
+          // the organisation. Best effort — the adopt above succeeded, and failing it here would
+          // send the retry down the reconcile path, which never sees this reception id again.
+          await this.paymentFlowEventModel
+            .create({
+              paymentFlowId,
+              type: 'error',
+              reason: 'other',
+              paymentMethod: 'system',
+              occurredAt: new Date(),
+              message:
+                'FJS accepted a duplicate charge that was never persisted — reverse manually',
+              metadata: {
+                needsManualReversal: true,
+                receptionId: charge.receptionID,
+                user4: charge.user4,
+              },
+            })
+            .catch((error) => {
+              this.logger.error(
+                `[${paymentFlowId}] Failed to persist the orphaned FJS charge event`,
+                {
+                  needsManualReversal: true,
+                  receptionId: charge.receptionID,
+                  error: (error as Error)?.message,
+                },
+              )
+            })
+
           return reconciled
         }
 
@@ -1029,14 +1059,20 @@ export class PaymentFlowService {
             user4: charge.user4,
           },
         )
+        throw new BadRequestException(FjsErrorCode.FailedToCreateCharge)
       }
 
-      // The charge exists at FJS either way — the local row may have been inserted and only the
-      // linking failed. Reported as a create failure so the caller's `retry`, then the worker,
-      // try again; the retry reconciles rather than charging twice.
+      // The charge exists at FJS either way. If the row was inserted and only the linking failed,
+      // the caller's `retry` (then the worker) reconciles it. If the insert itself failed there is
+      // no row to reconcile, so these ids are the only handle on the charge.
       this.logger.error(
         `[${paymentFlowId}] FJS accepted the charge but the local record could not be completed`,
-        e,
+        {
+          receptionId: charge.receptionID,
+          user4: charge.user4,
+          errorName: (e as Error)?.name,
+          error: (e as Error)?.message,
+        },
       )
       throw new BadRequestException(FjsErrorCode.FailedToCreateCharge)
     }

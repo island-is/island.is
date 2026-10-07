@@ -569,8 +569,9 @@ describe('BankTransferService', () => {
     // The one case that still needs the URL from `create`: the FE redirects to it immediately,
     // before any polling exists. Breaking this silently strands first-time payers.
     // Blikk can answer 200 with a payment that is already terminal; its `message` is the only
-    // reason we get and must not wait for a poll to be logged.
-    it('warns with the provider message when Blikk returns an already-failed payment', async () => {
+    // reason we get. The row goes in terminal, so `verify` never transitions it — `create` has to
+    // emit `payment_failed` itself, and a later poll must not emit it again.
+    it('emits payment_failed once when Blikk returns an already-failed payment, and verify does not repeat it', async () => {
       jest.spyOn(service, 'createBankTransferPayment').mockResolvedValue({
         providerPaymentId: 'prov-1',
         rawStatus: 'ERROR',
@@ -582,17 +583,53 @@ describe('BankTransferService', () => {
 
       await service.create(createInput)
 
-      // Ids are metadata now; the provider's reason still has to reach the log.
-      expect(logger.warn).toHaveBeenCalledWith(
-        '[flow-1] Bank transfer created already error',
-        {
+      const rowArg = bankTransferPaymentModel.create.mock.calls[0][0]
+      expect(rowArg.lastKnownStatus).toBe('ERROR')
+      const events = paymentFlowService.logPaymentFlowUpdate.mock.calls.map(
+        ([update]) => update,
+      )
+      expect(events.map((e) => e.reason)).toEqual([
+        'payment_started',
+        'payment_failed',
+      ])
+      expect(events[1]).toMatchObject({
+        paymentFlowId: 'flow-1',
+        type: 'error',
+        paymentMethod: PaymentMethod.BANK_TRANSFER,
+        message: 'Bank transfer error',
+        metadata: {
+          providerPaymentId: 'prov-1',
+          rawStatus: 'ERROR',
+          providerMessage: 'debtor account not eligible',
+        },
+        // The provider's reason reaches the log on this one line.
+        logContext: {
           paymentFlowId: 'flow-1',
-          correlationId: expect.any(String),
+          correlationId: rowArg.id,
           rrn: 'prov-1',
           rawStatus: 'ERROR',
           providerMessage: 'debtor account not eligible',
         },
-      )
+        logLevel: 'warn',
+      })
+
+      // The FE then polls verify against the row create just inserted.
+      bankTransferPaymentModel.findOne.mockResolvedValue({
+        ...rowArg,
+        isDeleted: false,
+      })
+      jest.spyOn(service, 'getPayment').mockResolvedValue({
+        providerPaymentId: 'prov-1',
+        rawStatus: 'ERROR',
+        status: BankTransferStatus.ERROR,
+        message: 'debtor account not eligible',
+      })
+
+      const verified = await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(verified.status).toBe(BankTransferStatus.ERROR)
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(2)
     })
 
     it('still returns the onboarding URL when onboarding is required', async () => {
@@ -832,24 +869,16 @@ describe('BankTransferService', () => {
             where: {
               id: string
               isDeleted: boolean
-              lastKnownStatus: string | { [Op.eq]?: string; [Op.ne]?: string }
+              lastKnownStatus: string
             }
           },
         ) => {
           const { where } = options
-          const predicate = where.lastKnownStatus
-          const statusMatches =
-            typeof predicate === 'string'
-              ? predicate === row.lastKnownStatus
-              : (predicate[Op.eq] === undefined ||
-                  predicate[Op.eq] === row.lastKnownStatus) &&
-                (predicate[Op.ne] === undefined ||
-                  predicate[Op.ne] !== row.lastKnownStatus)
 
           if (
             where.id !== row.id ||
             where.isDeleted !== row.isDeleted ||
-            !statusMatches
+            where.lastKnownStatus !== row.lastKnownStatus
           ) {
             return [0]
           }
@@ -951,10 +980,7 @@ describe('BankTransferService', () => {
             where: {
               id: 'corr-1',
               isDeleted: false,
-              lastKnownStatus: {
-                [Op.eq]: activeRow.lastKnownStatus,
-                [Op.ne]: rawStatus,
-              },
+              lastKnownStatus: activeRow.lastKnownStatus,
             },
           },
         )
@@ -1027,12 +1053,27 @@ describe('BankTransferService', () => {
       mockGetPayment(BankTransferStatus.ERROR, 'ERROR')
       await service.verify({ paymentFlowId: 'flow-1' })
 
-      // A different terminal status: a bare `ne` guard would match and fire a second event.
+      // A different terminal status: the stale read's compare-and-set must miss.
       mockGetPayment(BankTransferStatus.REJECTED, 'REJECTED')
       await service.verify({ paymentFlowId: 'flow-1' })
 
       expect(paymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledTimes(1)
       expect(row.lastKnownStatus).toBe('ERROR')
+    })
+
+    it('never moves a row off a terminal failure status, even when Blikk later reports a different one', async () => {
+      const row = { ...activeRow, lastKnownStatus: 'REJECTED' }
+      bankTransferPaymentModel.findOne.mockImplementation(async () => ({
+        ...row,
+      }))
+      bankTransferPaymentModel.update = statefulUpdate(row)
+      mockGetPayment(BankTransferStatus.ERROR, 'ERROR')
+
+      await service.verify({ paymentFlowId: 'flow-1' })
+
+      expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      expect(paymentFlowService.logPaymentFlowUpdate).not.toHaveBeenCalled()
+      expect(row.lastKnownStatus).toBe('REJECTED')
     })
 
     it('updates lastKnownStatus race-guarded when the provider returns a different non-terminal status', async () => {
@@ -1411,10 +1452,7 @@ describe('BankTransferService', () => {
             where: {
               id: 'corr-1',
               isDeleted: false,
-              lastKnownStatus: {
-                [Op.eq]: 'PENDING',
-                [Op.ne]: failureRawStatus,
-              },
+              lastKnownStatus: 'PENDING',
             },
           },
         )
@@ -1962,10 +2000,7 @@ describe('BankTransferService', () => {
             where: {
               id: baseRow.id,
               isDeleted: false,
-              lastKnownStatus: {
-                [Op.eq]: baseRow.lastKnownStatus,
-                [Op.ne]: rawStatus,
-              },
+              lastKnownStatus: baseRow.lastKnownStatus,
             },
           },
         )
