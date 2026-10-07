@@ -61,6 +61,7 @@ import {
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -69,12 +70,15 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isProsecutorsOffice,
+  isPublicProsecutionOfficeUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import type {
   Case,
   User,
@@ -96,7 +100,17 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { showsPublicProsecutorVerdictAppealStep } from './useSections.logic'
+export const showsPublicProsecutorVerdictAppealStep = (
+  workingCase: Pick<WorkingCase, 'type' | 'verdictAppealCase'>,
+  user: User | undefined,
+  features: Feature[],
+  isRegisteringVerdictAppeal = false,
+): boolean =>
+  features.includes(Feature.INDICTMENT_APPEAL) &&
+  isIndictmentCase(workingCase.type) &&
+  isPublicProsecutionOfficeUser(user) &&
+  (hasStandingVerdictAppeal(workingCase.verdictAppealCase) ||
+    isRegisteringVerdictAppeal)
 
 const useSections = (
   isValid = true,

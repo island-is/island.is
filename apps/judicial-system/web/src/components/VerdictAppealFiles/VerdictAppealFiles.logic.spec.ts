@@ -14,6 +14,7 @@ import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
   getVerdictAppealFileGroups,
+  hasStandingVerdictAppeal,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
 
@@ -200,6 +201,29 @@ describe('getVerdictAppealFileGroups', () => {
   })
 })
 
+describe('hasStandingVerdictAppeal', () => {
+  it('is true for an appealed verdict appeal', () => {
+    expect(
+      hasStandingVerdictAppeal({
+        appealState: AppealCaseState.APPEALED,
+      }),
+    ).toBe(true)
+  })
+
+  it('is false when the verdict appeal has been withdrawn', () => {
+    expect(
+      hasStandingVerdictAppeal({
+        appealState: AppealCaseState.WITHDRAWN,
+      }),
+    ).toBe(false)
+  })
+
+  it('is false when there is no verdict appeal', () => {
+    expect(hasStandingVerdictAppeal(null)).toBe(false)
+    expect(hasStandingVerdictAppeal(undefined)).toBe(false)
+  })
+})
+
 describe('showsAppealSummonses', () => {
   const appealed = {
     verdictAppealCase: {
@@ -222,6 +246,21 @@ describe('showsAppealSummonses', () => {
     expect(
       showsAppealSummonses(
         { verdictAppealCase: null } as Case,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(false)
+  })
+
+  it('shows nothing when the verdict appeal has been withdrawn', () => {
+    expect(
+      showsAppealSummonses(
+        {
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        } as Case,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(false)

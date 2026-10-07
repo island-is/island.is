@@ -292,6 +292,26 @@ describe('useSections getSections', () => {
       expect(sections.map((s) => s.name)).not.toContain('Áfrýjun')
       expect(sections[2].isActive).toBe(true)
     })
+
+    it('hides the step after withdrawal and leaves the result step active', () => {
+      mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
+
+      const sections = sectionsFor(
+        {
+          ...appealedCase,
+          verdictAppealCase: {
+            id: 'verdict-appeal',
+            appealState: AppealCaseState.WITHDRAWN,
+            appealType: AppealCaseType.VERDICT,
+          },
+        } as unknown as Case,
+        staff,
+      )
+
+      expect(sections).toHaveLength(3)
+      expect(sections.map((s) => s.name)).not.toContain('Áfrýjun')
+      expect(sections[2].isActive).toBe(true)
+    })
   })
 
   it('should return the correct sections for restriction cases in DRAFT state', () => {

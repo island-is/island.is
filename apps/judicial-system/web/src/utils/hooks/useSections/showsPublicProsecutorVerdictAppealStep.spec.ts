@@ -6,7 +6,7 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { showsPublicProsecutorVerdictAppealStep } from '@island.is/judicial-system-web/src/utils/hooks/useSections/useSections.logic'
+import { showsPublicProsecutorVerdictAppealStep } from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 describe('showsPublicProsecutorVerdictAppealStep', () => {
@@ -84,6 +84,39 @@ describe('showsPublicProsecutorVerdictAppealStep', () => {
     expect(
       showsPublicProsecutorVerdictAppealStep(
         theCase({ verdictAppealCase: null }),
+        staff,
+        enabled,
+        true,
+      ),
+    ).toBe(true)
+  })
+
+  it('hides the step when the verdict appeal has been withdrawn', () => {
+    expect(
+      showsPublicProsecutorVerdictAppealStep(
+        theCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        }),
+        staff,
+        enabled,
+      ),
+    ).toBe(false)
+  })
+
+  it('shows the step while re-registering over a withdrawn appeal', () => {
+    expect(
+      showsPublicProsecutorVerdictAppealStep(
+        theCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        }),
         staff,
         enabled,
         true,
