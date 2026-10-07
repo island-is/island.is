@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -8,6 +9,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
+
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+
+// This spec imports the middleware barrel, which would otherwise load the
+// real helper before createTestingDefendantModule mocks it.
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 import {
   AppealCase,
@@ -41,6 +49,7 @@ describe('CivilClaimantController - Update writes an advocate confirmed event', 
   let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let transaction: Transaction
+  let mockSequelize: Sequelize
   let update: (
     civilClaimantUpdate: Partial<CivilClaimant>,
     existing?: Partial<CivilClaimant>,
@@ -58,11 +67,10 @@ describe('CivilClaimantController - Update writes an advocate confirmed event', 
     mockCivilClaimantRepositoryService = civilClaimantRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
 
+    mockSequelize = sequelize
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     update = (civilClaimantUpdate, existing = {}, caseOverrides = {}) => {
       const mockUpdate =
@@ -74,20 +82,35 @@ describe('CivilClaimantController - Update writes an advocate confirmed event', 
         ],
       })
 
-      return civilClaimantController.update(
-        caseId,
-        civilClaimantId,
-        {
-          id: caseId,
-          courtCaseNumber: 'S-14/2026',
-          verdictAppealCase: { id: appealCaseId } as AppealCase,
-          ...caseOverrides,
-        } as Case,
-        actor,
-        { id: civilClaimantId, ...existing } as CivilClaimant,
-        civilClaimantUpdate,
-      )
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      return runInRequestContext(async () => {
+        await getOrCreateTransaction(mockSequelize)
+
+        return civilClaimantController.update(
+          caseId,
+          civilClaimantId,
+          {
+            id: caseId,
+            courtCaseNumber: 'S-14/2026',
+            verdictAppealCase: { id: appealCaseId } as AppealCase,
+            ...caseOverrides,
+          } as Case,
+          actor,
+          { id: civilClaimantId, ...existing } as CivilClaimant,
+          civilClaimantUpdate,
+        )
+      })
     }
+  })
+
+  // The handler must take the request's transaction rather than open one of
+  // its own: the setup below already opened it, so a second call would mean
+  // the update and the event sat in a transaction apart from the request's.
+  it('writes in the transaction the request already opened', async () => {
+    await update({ isAppealSpokespersonConfirmed: true })
+
+    expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
   })
 
   it('records who confirmed, when, and for which claimant', async () => {

@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
@@ -8,6 +9,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
+
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+
+// This spec imports the middleware barrel, which would otherwise load the
+// real helper before createTestingDefendantModule mocks it.
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 import {
   Case,
@@ -40,6 +48,7 @@ describe('CivilClaimantController - Update', () => {
   let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
   let mockCaseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService
   let transaction: Transaction
+  let mockSequelize: Sequelize
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -51,13 +60,12 @@ describe('CivilClaimantController - Update', () => {
       civilClaimantController,
     } = await createTestingDefendantModule()
 
-    // The update now runs in a transaction, so the confirmation and the
-    // appeal event recording it land together or not at all.
+    // The handler takes the request's transaction, so the confirmation and
+    // the appeal event recording it land together or not at all.
+    mockSequelize = sequelize
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCivilClaimantRepositoryService = civilClaimantRepositoryService
@@ -72,17 +80,24 @@ describe('CivilClaimantController - Update', () => {
     ) => {
       const then = {} as Then
 
-      await civilClaimantController
-        .update(
-          caseId,
-          civilClaimantId,
-          theCase,
-          user as User,
-          civilClaimant,
-          updateData,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await civilClaimantController.update(
+            caseId,
+            civilClaimantId,
+            theCase,
+            user as User,
+            civilClaimant,
+            updateData,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
