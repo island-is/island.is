@@ -182,6 +182,7 @@ describe('VerdictAppealFiles', () => {
           [
             {
               id: 'summons_id',
+              created: '2026-10-07T12:00:00.000Z',
               defendants: [],
             },
           ],
@@ -189,7 +190,7 @@ describe('VerdictAppealFiles', () => {
         UserRole.PUBLIC_PROSECUTOR_STAFF,
       )
 
-      const summons = await screen.findByText('Áfrýjunarstefna.pdf')
+      const summons = await screen.findByText('Áfrýjunarstefna 07.10.2026.pdf')
 
       expect(
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
@@ -203,7 +204,7 @@ describe('VerdictAppealFiles', () => {
       ).toBeTruthy()
       expect(
         screen.getByRole('button', {
-          name: 'Valmynd fyrir Áfrýjunarstefna.pdf',
+          name: 'Valmynd fyrir Áfrýjunarstefna 07.10.2026.pdf',
         }),
       ).toBeInTheDocument()
     })

@@ -18,6 +18,7 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import AppealProcessFileRow from './AppealProcessFileRow'
 import {
   canShowIssueAppealSummons,
+  formatAppealSummonsFileName,
   getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   showsAppealSummonses,
@@ -78,18 +79,14 @@ const VerdictAppealFiles: FC = () => {
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
       {showSummonses && (
-        <Box
-          dataTestId="appealSummonses"
-          paddingBottom={2}
-          marginBottom={2}
-          borderBottomWidth="standard"
-          borderColor="blue200"
-        >
+        <Box dataTestId="appealSummonses" marginBottom={2}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
             alignItems="center"
-            marginBottom={summonses.length > 0 ? 2 : 0}
+            paddingBottom={2}
+            borderBottomWidth="standard"
+            borderColor="blue200"
           >
             <Text variant="small">
               {summonses.length === 0
@@ -110,23 +107,27 @@ const VerdictAppealFiles: FC = () => {
               </Button>
             )}
           </Box>
-          {summonses.map((summons) => (
-            <AppealProcessFileRow
-              key={summons.id}
-              title="Áfrýjunarstefna.pdf"
-              onOpen={() => openAppealSummonsPdf(summons.id)}
-              menuAriaLabel="Valmynd fyrir Áfrýjunarstefna.pdf"
-              menuItems={getAppealSummonsMenuItems(
-                summons,
-                user,
-                () =>
-                  router.push(
-                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
-                  ),
-                () => openAppealSummonsPdf(summons.id),
-              )}
-            />
-          ))}
+          {summonses.map((summons) => {
+            const fileName = formatAppealSummonsFileName(summons)
+
+            return (
+              <AppealProcessFileRow
+                key={summons.id}
+                title={fileName}
+                onOpen={() => openAppealSummonsPdf(summons.id)}
+                menuAriaLabel={`Valmynd fyrir ${fileName}`}
+                menuItems={getAppealSummonsMenuItems(
+                  summons,
+                  user,
+                  () =>
+                    router.push(
+                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
+                    ),
+                  () => openAppealSummonsPdf(summons.id),
+                )}
+              />
+            )
+          })}
         </Box>
       )}
       {groups.map(({ defendant, files }) => (

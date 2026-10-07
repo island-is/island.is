@@ -119,13 +119,14 @@ export class AppealSummonsController {
     @Param('appealSummonsId') appealSummonsId: string,
     @CurrentCase() theCase: Case,
     @CurrentAppealSummons() summons: AppealSummons,
+    @CurrentHttpUser() user: User,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(
       `Getting appeal summons ${appealSummonsId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getAppealSummonsPdf(theCase, summons)
+    const pdf = await this.pdfService.getAppealSummonsPdf(theCase, user, summons)
 
     res.end(pdf)
   }
@@ -141,6 +142,7 @@ export class AppealSummonsController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() dto: CreateAppealSummonsDto,
+    @CurrentHttpUser() user: User,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(`Previewing an appeal summons pdf for case ${caseId}`)
@@ -148,6 +150,7 @@ export class AppealSummonsController {
     const defendants = this.appealSummonsService.resolveDefendants(theCase, dto)
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
+      user,
       undefined,
       defendants,
     )

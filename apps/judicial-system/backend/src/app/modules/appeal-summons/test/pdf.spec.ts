@@ -39,17 +39,26 @@ describe('AppealSummonsController - PDF', () => {
     ;(mockPdfService.getAppealSummonsPdf as jest.Mock).mockResolvedValue(pdf)
   })
 
+  const user = {
+    id: uuid(),
+    name: 'Test Skrifstofa Ríkissaksóknara',
+    title: 'Skrifstofa Ríkissaksóknara',
+    role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  }
+
   it('returns the saved summons as a pdf', async () => {
     await appealSummonsController.getPdf(
       caseId,
       summonsId,
       theCase,
       summons,
+      user as never,
       res,
     )
 
     expect(mockPdfService.getAppealSummonsPdf).toHaveBeenCalledWith(
       theCase,
+      user,
       summons,
     )
     expect(res.end).toHaveBeenCalledWith(pdf)
@@ -90,10 +99,17 @@ describe('AppealSummonsController - PDF', () => {
       ],
     }
 
-    await appealSummonsController.preview(caseId, previewCase, dto, res)
+    await appealSummonsController.preview(
+      caseId,
+      previewCase,
+      dto,
+      user as never,
+      res,
+    )
 
     expect(mockPdfService.getAppealSummonsPdf).toHaveBeenCalledWith(
       previewCase,
+      user,
       undefined,
       [
         {

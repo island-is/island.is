@@ -1,3 +1,4 @@
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealSummonsAction,
   canIssueAppealSummons,
@@ -105,6 +106,14 @@ export const canShowIssueAppealSummons = (
     user,
     hasStandingVerdictAppeal(workingCase.verdictAppealCase),
   )
+
+export const formatAppealSummonsFileName = (
+  summons: Pick<AppealSummons, 'created'>,
+): string => {
+  const date = formatDate(summons.created, 'dd.MM.y')
+
+  return date ? `Áfrýjunarstefna ${date}.pdf` : 'Áfrýjunarstefna.pdf'
+}
 
 export const getAppealSummonsMenuItems = (
   summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,

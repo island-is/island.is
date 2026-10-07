@@ -14,11 +14,24 @@ import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
   canShowIssueAppealSummons,
+  formatAppealSummonsFileName,
   getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
+
+describe('formatAppealSummonsFileName', () => {
+  it('appends the created date to the file name', () => {
+    expect(
+      formatAppealSummonsFileName({ created: '2026-10-07T12:00:00.000Z' }),
+    ).toBe('Áfrýjunarstefna 07.10.2026.pdf')
+  })
+
+  it('falls back when created is missing', () => {
+    expect(formatAppealSummonsFileName({})).toBe('Áfrýjunarstefna.pdf')
+  })
+})
 
 describe('getVerdictAppealFileGroups', () => {
   const defenderNationalId = '1111111111'

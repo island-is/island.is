@@ -578,6 +578,7 @@ export class PdfService {
 
   async getAppealSummonsPdf(
     theCase: Case,
+    user: TUser,
     summons?: AppealSummons,
     previewDefendants?: AppealSummonsPdfDefendant[],
   ): Promise<Buffer> {
@@ -590,7 +591,29 @@ export class PdfService {
       appealDate: this.getDefenceAppealDate(theCase, row.defendantId),
     }))
 
-    return createAppealSummons(theCase, defendants, summons?.confirmedDate)
+    const confirmedBy = summons?.confirmedBy
+    const issuer = {
+      name: confirmedBy?.name ?? user.name,
+      title: confirmedBy?.title ?? user.title,
+    }
+
+    const confirmation: Confirmation | undefined = summons?.confirmedDate
+      ? {
+          actor: issuer.name,
+          title: issuer.title,
+          institution:
+            confirmedBy?.institution?.name ?? user.institution?.name ?? '',
+          date: summons.confirmedDate,
+        }
+      : undefined
+
+    return createAppealSummons(
+      theCase,
+      defendants,
+      issuer,
+      confirmation,
+      summons?.confirmedDate,
+    )
   }
 
   private getDefenceAppealDate(

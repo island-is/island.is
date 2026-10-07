@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories/date.factory'
@@ -7,13 +8,15 @@ import { Case } from '../../modules/repository'
 import {
   addEmptyLines,
   addHugeHeading,
+  addNormalCenteredText,
   addNormalText,
+  Confirmation,
+  drawConfirmation,
+  formatActor,
   setTitle,
 } from '../pdfHelpers'
 import {
   APPEAL_SUMMONS_CLOSING_PROCEDURE,
-  APPEAL_SUMMONS_PROSECUTOR_NAME,
-  APPEAL_SUMMONS_PROSECUTOR_TITLE,
   APPEAL_SUMMONS_TITLE,
   formatAppealSummonsClosingPlaceAndDate,
   formatAppealSummonsIntro,
@@ -26,9 +29,16 @@ export type AppealSummonsPdfDefendant = {
   appealDate?: Date | string | null
 }
 
+export type AppealSummonsPdfIssuer = {
+  name: string
+  title?: string
+}
+
 export const createAppealSummons = (
   theCase: Case,
   defendants: AppealSummonsPdfDefendant[],
+  issuer: AppealSummonsPdfIssuer,
+  confirmation?: Confirmation,
   issuedDate?: Date,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -47,13 +57,39 @@ export const createAppealSummons = (
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, APPEAL_SUMMONS_TITLE)
+
+  if (confirmation) {
+    drawConfirmation(doc, {
+      showLockIcon: true,
+      confirmationText: 'Skjal samþykkt rafrænt',
+      boxes: [
+        {
+          title: 'Samþykktaraðili',
+          content: formatActor(confirmation.actor, confirmation.title),
+          widthPercent: 40,
+        },
+        {
+          title: 'Embætti',
+          content: confirmation.institution,
+          widthPercent: 40,
+        },
+        {
+          title: 'Útgáfa áfrýjunarstefnu',
+          content: formatDate(confirmation.date) ?? '',
+          widthPercent: 20,
+        },
+      ],
+    })
+    addEmptyLines(doc, 6, doc.page.margins.left)
+  }
+
   addHugeHeading(doc, APPEAL_SUMMONS_TITLE, 'Times-Bold')
   addEmptyLines(doc)
 
   const defendantNames = (theCase.defendants ?? []).map(
     (defendant) => defendant.name,
   )
-  const closingDate = issuedDate ?? nowFactory()
+  const closingDate = issuedDate ?? confirmation?.date ?? nowFactory()
 
   for (const row of defendants) {
     const defendant = theCase.defendants?.find(
@@ -86,14 +122,17 @@ export const createAppealSummons = (
 
   addNormalText(doc, APPEAL_SUMMONS_CLOSING_PROCEDURE, 'Times-Roman')
   addEmptyLines(doc, 2)
-  addNormalText(
+  addNormalCenteredText(
     doc,
     formatAppealSummonsClosingPlaceAndDate(closingDate),
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, APPEAL_SUMMONS_PROSECUTOR_NAME, 'Times-Bold')
-  addNormalText(doc, APPEAL_SUMMONS_PROSECUTOR_TITLE, 'Times-Roman')
+  addNormalCenteredText(doc, issuer.name, 'Times-Bold')
+
+  if (issuer.title) {
+    addNormalCenteredText(doc, issuer.title, 'Times-Roman')
+  }
 
   doc.end()
 

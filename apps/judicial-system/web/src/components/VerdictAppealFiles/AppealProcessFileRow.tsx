@@ -6,6 +6,8 @@ import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMe
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import PdfButton from '@island.is/judicial-system-web/src/components/PdfButton/PdfButton'
 
+import * as styles from './AppealProcessFileRow.css'
+
 interface Props {
   title: string
   onOpen?: () => void
@@ -34,6 +36,7 @@ const AppealProcessFileRow: FC<Props> = ({
     title={title}
     disabled={disabled}
     handleClick={onOpen}
+    className={styles.flushPdfRow}
   >
     <Box display="flex" alignItems="center" justifyContent="flexEnd">
       {meta && (

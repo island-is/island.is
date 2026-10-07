@@ -38,6 +38,7 @@ interface Props {
   handleClick?: () => void
   elementId?: string | string[]
   queryParameters?: string
+  className?: string
 }
 
 const PdfButton: FC<PropsWithChildren<Props>> = ({
@@ -59,6 +60,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   handleClick, // Overwrites the default onClick handler
   elementId,
   queryParameters,
+  className,
 }) => {
   const { limitedAccess } = useContext(UserContext)
 
@@ -112,7 +114,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={cn(styles.pdfRow, {
+      className={cn(styles.pdfRow, className, {
         [styles.disabled]: disabled,
         [styles.cursor]: isInteractive,
       })}
