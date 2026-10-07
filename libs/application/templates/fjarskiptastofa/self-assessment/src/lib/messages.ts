@@ -30,31 +30,53 @@ export const m = {
         'Rekstraraðilar nauðsynlegrar þjónustu á Íslandi þurfa að fylla út sjálfsmat á þroskastigi netöryggis og senda Fjarskiptastofu. Rafræn innsending sjálfsmats á Ísland.is er fjármögnuð m.a. af Evrópusambandinu og spurningalistinn byggir á leiðbeiningum frá Netöryggisstofnun Evrópu (ENISA).',
       description: 'Prerequisites intro',
     },
-    identityTitle: {
-      id: 'fjs.sa.application:prerequisites.identity.title',
-      defaultMessage: 'Upplýsingar um fyrirtæki',
-      description: 'Identity provider title',
+    accessTitle: {
+      id: 'fjs.sa.application:prerequisites.access.title',
+      defaultMessage: 'Aðgangur að sjálfsmatinu',
+      description: 'Prerequisites: access section heading',
     },
-    identitySubTitle: {
-      id: 'fjs.sa.application:prerequisites.identity.subtitle',
+    accessBody: {
+      id: 'fjs.sa.application:prerequisites.access.body',
       defaultMessage:
-        'Nafn og kennitala fyrirtækis eru sótt til að auðkenna umsækjanda.',
-      description: 'Identity provider subtitle',
+        'Fleiri en einn notandi frá sama fyrirtæki eða stofnun geta opnað sjálfsmat í vinnslu. Prókúruhafi fyrirtækis eða stofnunar veitir starfsfólki aðgang að sjálfsmatinu í gegnum umboðskerfi Ísland.is.',
+      description: 'Prerequisites: access section body',
     },
-    userProfileTitle: {
-      id: 'fjs.sa.application:prerequisites.userProfile.title',
-      defaultMessage: 'Netfang og símanúmer',
-      description: 'User profile provider title',
+    confidentialityTitle: {
+      id: 'fjs.sa.application:prerequisites.confidentiality.title',
+      defaultMessage: 'Trúnaður',
+      description: 'Prerequisites: confidentiality section heading',
     },
-    userProfileSubTitle: {
-      id: 'fjs.sa.application:prerequisites.userProfile.subtitle',
+    confidentialityBody: {
+      id: 'fjs.sa.application:prerequisites.confidentiality.body',
       defaultMessage:
-        'Samskiptaupplýsingar eru sóttar af Mínum síðum svo hægt sé að hafa samband vegna matsins.',
-      description: 'User profile provider subtitle',
+        'Þagnarskylda ríkir á starfsfólki Fjarskiptastofu vegna innsendra gagna. Fjarskiptastofa hefur ekki aðgang að sjálfsmati í vinnslu á Ísland.is.',
+      description: 'Prerequisites: confidentiality section body',
+    },
+    timeLimitTitle: {
+      id: 'fjs.sa.application:prerequisites.timeLimit.title',
+      defaultMessage: 'Tímamörk á sjálfsmati í vinnslu',
+      description: 'Prerequisites: time limit section heading',
+    },
+    timeLimitBody: {
+      id: 'fjs.sa.application:prerequisites.timeLimit.body',
+      defaultMessage:
+        'Frá því að rekstraraðili byrjar að fylla út sjálfsmat á Ísland.is hefur hann 7 daga til að ljúka því og senda inn. Eftir þann tíma er gögnum eytt en hægt er að hefja mat aftur frá byrjun.',
+      description: 'Prerequisites: time limit section body',
+    },
+    resultsTitle: {
+      id: 'fjs.sa.application:prerequisites.results.title',
+      defaultMessage: 'Bráðabirgðaniðurstöður',
+      description: 'Prerequisites: preliminary results section heading',
+    },
+    resultsBody: {
+      id: 'fjs.sa.application:prerequisites.results.body',
+      defaultMessage:
+        'Þegar svör hafa verið send til Fjarskiptastofu birtast bráðabirgðaniðurstöður úr matinu. Hægt er að hlaða niður bæði svörum og niðurstöðum. Öll gögn eyðast út af Ísland.is 4 klukkustundum eftir skil.',
+      description: 'Prerequisites: preliminary results section body',
     },
     checkboxLabel: {
       id: 'fjs.sa.application:prerequisites.checkbox',
-      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað.',
+      defaultMessage: 'Ég staðfesti að ég hef lesið og kynnt mér ofangreint',
       description: 'Consent checkbox label',
     },
     submit: {

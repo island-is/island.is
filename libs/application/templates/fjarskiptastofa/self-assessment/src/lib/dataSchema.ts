@@ -11,9 +11,9 @@ const assessmentAnswerSchema = z.object({
 })
 
 export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v, {
-    params: {},
-  }),
+  // Consent checkbox on the intro screen. Rendered as a checkbox field, so the
+  // value is an array that must contain the single ticked option.
+  approveExternalData: z.array(z.string()).refine((v) => v.length > 0),
   assessment: z.record(assessmentAnswerSchema).optional(),
   // Applicant must tick the "answers are to the best of my knowledge"
   // confirmation on the overview before the self-assessment can be submitted.

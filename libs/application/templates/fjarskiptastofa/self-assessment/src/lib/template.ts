@@ -76,7 +76,6 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [IdentityApi, UserProfileApiWithValidation],
               delete: true,
             },
             {
@@ -101,9 +100,15 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
-          // Fetch the assessment categories and questions on entry to the draft
-          // state so the main form can render them from external data.
-          onEntry: SelfAssessmentQuestionsApi,
+          // Fetch the company data and the assessment categories/questions on
+          // entry to the draft state so the main form can render them from
+          // external data. The user profile fetch also validates that the
+          // company (or actor) has a registered email and phone number.
+          onEntry: [
+            IdentityApi,
+            UserProfileApiWithValidation,
+            SelfAssessmentQuestionsApi,
+          ],
           // Submit the completed self-assessment to Fjarskiptastofa on the way
           // to the completed state.
           onExit: defineTemplateApi({
@@ -128,7 +133,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [SelfAssessmentQuestionsApi],
+              api: [
+                IdentityApi,
+                UserProfileApiWithValidation,
+                SelfAssessmentQuestionsApi,
+              ],
               delete: true,
             },
           ],
