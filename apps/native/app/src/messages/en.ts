@@ -790,7 +790,6 @@ export const en: TranslatedMessages = {
   'health.categories.referrals': 'Referrals',
   'health.categories.paymentsAndRights': 'Payments and rights',
   'health.categories.waitingLists': 'Waiting lists',
-  'health.categories.medicalRecords': 'Medical records',
   'health.categories.treatment': 'Treatment',
   'health.categories.treatmentWithName': 'Treatment - {name}',
 
