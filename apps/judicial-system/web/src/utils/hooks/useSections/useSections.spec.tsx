@@ -3,8 +3,15 @@ import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
-import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
+} from '@island.is/judicial-system/consts'
+import { Feature } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type {
   Case,
@@ -49,7 +56,7 @@ describe('useSections getSections', () => {
   // hook). Each test injects its own `c` here so the resolved target appeal
   // matches what `getSections(c, u)` is called with.
   const makeWrapper =
-    (workingCase: Case) =>
+    (workingCase: Case, features: Feature[] = []) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ({ children }: any) =>
       (
@@ -57,23 +64,25 @@ describe('useSections getSections', () => {
           <ApolloProvider
             client={new ApolloClient({ cache: new InMemoryCache() })}
           >
-            <FormContext.Provider
-              value={
-                {
-                  workingCase,
-                  setWorkingCase: () => workingCase,
-                  isLoadingWorkingCase: false,
-                  caseNotFound: false,
-                  isCaseUpToDate: true,
-                  isCreating: false,
-                  refreshCase: () => undefined,
-                  getCase: () => undefined,
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                } as any
-              }
-            >
-              <UserProvider authenticated={true}>{children}</UserProvider>
-            </FormContext.Provider>
+            <FeatureContext.Provider value={{ features, isLoading: false }}>
+              <FormContext.Provider
+                value={
+                  {
+                    workingCase,
+                    setWorkingCase: () => workingCase,
+                    isLoadingWorkingCase: false,
+                    caseNotFound: false,
+                    isCaseUpToDate: true,
+                    isCreating: false,
+                    refreshCase: () => undefined,
+                    getCase: () => undefined,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } as any
+                }
+              >
+                <UserProvider authenticated={true}>{children}</UserProvider>
+              </FormContext.Provider>
+            </FeatureContext.Provider>
           </ApolloProvider>
         </IntlProvider>
       )
@@ -187,6 +196,121 @@ describe('useSections getSections', () => {
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
       expect(sections.map((s) => s.name)).toEqual(['Kærumál'])
+    })
+  })
+
+  // The public prosecution office works a verdict appeal from the case
+  // overview. The step marks that, and the result step before it renders as
+  // complete rather than competing with it for the active marker.
+  describe('the verdict appeal step of the public prosecution office', () => {
+    const staff = {
+      ...u,
+      role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+      institution: {
+        ...u.institution,
+        type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+      },
+    } as User
+
+    const appealedCase = {
+      origin: CaseOrigin.RVG,
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: 'appealed-case',
+      state: CaseState.COMPLETED,
+      policeCaseNumbers: [],
+      verdictAppealCase: {
+        id: 'verdict-appeal',
+        appealState: AppealCaseState.APPEALED,
+        appealType: AppealCaseType.VERDICT,
+      },
+    } as unknown as Case
+
+    const sectionsFor = (
+      c: Case,
+      user: User,
+      features: Feature[] = [Feature.INDICTMENT_APPEAL],
+    ) => {
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(c, features),
+      })
+
+      return result.current.getSections(c, user)
+    }
+
+    it('follows the result step and is active on the case overview', () => {
+      mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
+
+      const sections = sectionsFor(appealedCase, staff)
+
+      expect(sections).toHaveLength(4)
+      expect(sections[3]).toStrictEqual({
+        name: 'Áfrýjun',
+        isActive: true,
+        children: [],
+      })
+      expect(sections.filter((s) => s.isActive)).toHaveLength(1)
+    })
+
+    it('is active while an appeal is being registered, even before one exists', () => {
+      mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE
+
+      const sections = sectionsFor(
+        { ...appealedCase, verdictAppealCase: null } as unknown as Case,
+        staff,
+      )
+
+      expect(sections[3]).toStrictEqual({
+        name: 'Áfrýjun',
+        isActive: true,
+        children: [],
+      })
+      expect(sections[2].isActive).toBe(false)
+    })
+
+    it('leaves the result step active on other pages', () => {
+      mockPathname =
+        PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE
+
+      const sections = sectionsFor(appealedCase, staff)
+
+      expect(sections[2].isActive).toBe(true)
+      expect(sections[3]).toStrictEqual({
+        name: 'Áfrýjun',
+        isActive: false,
+        children: [],
+      })
+    })
+
+    it('leaves the sidebar as it is while the feature is hidden', () => {
+      mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
+
+      const sections = sectionsFor(appealedCase, staff, [])
+
+      expect(sections).toHaveLength(3)
+      expect(sections.map((s) => s.name)).not.toContain('Áfrýjun')
+      expect(sections[2].isActive).toBe(true)
+    })
+
+    it('hides the step after withdrawal and leaves the result step active', () => {
+      mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
+
+      const sections = sectionsFor(
+        {
+          ...appealedCase,
+          verdictAppealCase: {
+            id: 'verdict-appeal',
+            appealState: AppealCaseState.WITHDRAWN,
+            appealType: AppealCaseType.VERDICT,
+          },
+        } as unknown as Case,
+        staff,
+      )
+
+      expect(sections).toHaveLength(3)
+      expect(sections.map((s) => s.name)).not.toContain('Áfrýjun')
+      expect(sections[2].isActive).toBe(true)
     })
   })
 

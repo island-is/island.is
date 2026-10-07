@@ -42,14 +42,13 @@ const PaymentsAndRights: React.FC<Props> = ({
   const allError = payments.error && medicine.error && insurance.error
   const anyLoading = payments.loading || medicine.loading || insurance.loading
 
-  const currentPath = HealthPaths.HealthOverview
-
   return (
     <Box>
       <Text variant="eyebrow" color="foregroundBrandSecondary" marginBottom={2}>
         {formatMessage(messages.statusOfRightsAndPayments)}
       </Text>
       <InfoCardGrid
+        showArrow="hover"
         empty={
           anyLoading
             ? undefined
@@ -64,9 +63,7 @@ const PaymentsAndRights: React.FC<Props> = ({
           {
             title: formatMessage(messages.paymentsAndRights),
             description: formatMessage(messages.paymentsAndRightsDescription),
-            to: payments.error
-              ? currentPath
-              : HealthPaths.HealthPaymentParticipation,
+            to: HealthPaths.HealthPaymentParticipation,
             detail: [
               {
                 label: formatMessage(messages.maximumMonthlyPaymentShort),
@@ -84,9 +81,7 @@ const PaymentsAndRights: React.FC<Props> = ({
           {
             title: formatMessage(messages.medicinePurchase),
             description: formatMessage(messages.medicinePurchaseDescription),
-            to: medicine.error
-              ? currentPath
-              : HealthPaths.HealthMedicinePaymentParticipation,
+            to: HealthPaths.HealthMedicinePaymentParticipation,
             detail: [
               medicine.data
                 ? {
@@ -114,7 +109,7 @@ const PaymentsAndRights: React.FC<Props> = ({
                   messages.from,
                 ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`
               : formatMessage(messages.noHealthInsurance),
-            to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
+            to: HealthPaths.HealthPaymentRights,
 
             loading: insurance.loading,
             error: insurance.error,
@@ -140,7 +135,7 @@ const PaymentsAndRights: React.FC<Props> = ({
                     arg: formatDate(ehicDate),
                   })
                 : formatMessage(messages.noInsurance),
-            to: insurance.error ? currentPath : HealthPaths.HealthPaymentRights,
+            to: HealthPaths.HealthPaymentRights,
 
             tags: [
               {

@@ -18,6 +18,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -145,6 +146,19 @@ export class Defendant extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
+
+  /**********
+   * When the prosecutor's request should become accessible to this
+   * defendant's defender - optional. Dual-written with case.requestSharedWithDefender
+   * until request-case readers flip to the defendant column.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(RequestSharedWithDefender),
+  })
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
 
   @Column({
     type: DataType.ENUM,

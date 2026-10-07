@@ -8,6 +8,11 @@ export const productSearchInput = style({
 
 export const description = style({})
 
+export const descriptionList = style({
+  listStyleType: 'disc',
+  paddingLeft: theme.spacing[3],
+})
+
 globalStyle(`${description} a`, {
   color: theme.color.blue400,
   textDecoration: 'underline',

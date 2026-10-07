@@ -16,6 +16,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -81,6 +82,11 @@ export class UpdateDefendantDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsEnum(DefenderChoice)

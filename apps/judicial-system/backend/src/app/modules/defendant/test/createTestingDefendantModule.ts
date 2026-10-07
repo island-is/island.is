@@ -20,6 +20,7 @@ import {
   AppealEventLogRepositoryService,
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseFileRepositoryService,
+  CaseRepositoryService,
   CivilClaimantRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
@@ -41,6 +42,7 @@ jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
+jest.mock('../../repository/services/caseRepository.service')
 jest.mock(
   '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
 )
@@ -63,6 +65,7 @@ export const createTestingDefendantModule = async () => {
       UserService,
       CourtService,
       CaseService,
+      CaseRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
       AppealEventLogRepositoryService,
@@ -90,6 +93,7 @@ export const createTestingDefendantModule = async () => {
       {
         provide: CaseFileRepositoryService,
         useValue: {
+          deleteAllForDefendant: jest.fn(),
           deleteAllForCivilClaimant: jest.fn(),
           deleteAllForCivilClaimantsOfCase: jest.fn(),
         },
@@ -112,6 +116,10 @@ export const createTestingDefendantModule = async () => {
 
   const defendantRepositoryService =
     defendantModule.get<DefendantRepositoryService>(DefendantRepositoryService)
+
+  const caseRepositoryService = defendantModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
 
   const defendantEventLogRepositoryService =
     defendantModule.get<DefendantEventLogRepositoryService>(
@@ -182,6 +190,7 @@ export const createTestingDefendantModule = async () => {
     appealCaseService,
     sequelize,
     defendantRepositoryService,
+    caseRepositoryService,
     defendantEventLogRepositoryService,
     appealEventLogRepositoryService,
     caseDefendantPoliceCaseNumberRepositoryService,
