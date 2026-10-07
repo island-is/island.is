@@ -32,7 +32,11 @@ import {
 } from './dto/registrationOptions.dto'
 
 import { RegistrationResponse } from './dto/registrationResponse.dto'
-import { AuthenticationOptions } from './dto/authenticationOptions.dto'
+import {
+  AuthenticationOptions,
+  AuthenticationResponse,
+  AuthenticationResult,
+} from './dto/authenticationOptions.dto'
 
 const namespace = '@island.is/auth/public-api/passkeys'
 
@@ -116,5 +120,27 @@ export class PasskeysController {
       await this.passkeysCoreService.generateAuthenticationOptions(actor)
 
     return response as AuthenticationOptions
+  }
+
+  @Post('authenticate')
+  @Documentation({
+    summary: 'Verifies a passkey authentication by the authenticated user.',
+    description:
+      'Verifies that the authenticated user has just used their own passkey, e.g. to reopen something they unlocked recently.',
+    response: { status: 200, type: AuthenticationResult },
+  })
+  @ApiCreatedResponse({ type: AuthenticationResult })
+  @Audit<AuthenticationResult>({
+    resources: (result) => result.verified.toString(),
+  })
+  @FeatureFlag(Features.isPasskeyAuthEnabled)
+  async verifyAuthentication(
+    @CurrentActor() actor: User,
+    @Body() body: AuthenticationResponse,
+  ): Promise<AuthenticationResult> {
+    return this.passkeysCoreService.verifyAuthenticationForUser(
+      actor,
+      body.passkey,
+    )
   }
 }

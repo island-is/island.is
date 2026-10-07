@@ -250,6 +250,71 @@ describe('PasskeyCoreService', () => {
     })
   })
 
+  describe('authenticate the signed-in user', () => {
+    const PASSKEY_ID = '1337'
+
+    const assertionFor = async (owner: string) => {
+      await passkeyModel.create({
+        user_sub: owner,
+        passkey_id: PASSKEY_ID,
+        public_key: new TextEncoder().encode('public_key'),
+        audkenni_sim_number: '123',
+        name: 'Tester',
+        type: 'IslandisApp',
+        idp: 'gervimadur',
+        counter: 0,
+      })
+
+      const opts = await passkeysCoreService.generateAuthenticationOptions({
+        sub: owner,
+        authorization: TEST_AUTHORIZATION_TOKEN,
+      } as any)
+
+      verifyAuthenticationResponse.mockImplementation(
+        async (options: VerifyAuthenticationResponseOpts) => ({
+          verified: true,
+          authenticationInfo: {
+            credentialID: options.response.id,
+            newCounter: 0,
+          },
+        }),
+      )
+
+      return Buffer.from(
+        JSON.stringify({
+          id: PASSKEY_ID,
+          response: {
+            clientDataJSON: Buffer.from(
+              JSON.stringify({ challenge: opts.challenge }),
+            ).toString('base64'),
+          },
+        }),
+      ).toString('base64')
+    }
+
+    it("verifies the user's own passkey", async () => {
+      const passkey = await assertionFor(USER_SUB)
+
+      await expect(
+        passkeysCoreService.verifyAuthenticationForUser(
+          { sub: USER_SUB } as any,
+          passkey,
+        ),
+      ).resolves.toEqual({ verified: true })
+    })
+
+    it('refuses a passkey that belongs to someone else', async () => {
+      const passkey = await assertionFor('someone-else')
+
+      await expect(
+        passkeysCoreService.verifyAuthenticationForUser(
+          { sub: USER_SUB } as any,
+          passkey,
+        ),
+      ).rejects.toThrow('Passkey not found')
+    })
+  })
+
   it('passkey counter should match new counter in client authenticator response', async () => {
     const PASSKEY_ID = '1337'
     const EXPECTED_NEW_COUNTER = 13

@@ -76,3 +76,18 @@ export class AuthenticationOptions {
   })
   extensions?: AuthenticationOptionsExtensions
 }
+
+export class AuthenticationResponse {
+  @IsString()
+  @ApiProperty({
+    description:
+      'The authenticator response as base64 encoded JSON, as for a passkey login.',
+  })
+  passkey!: string
+}
+
+export class AuthenticationResult {
+  @IsBoolean()
+  @ApiProperty()
+  verified!: boolean
+}

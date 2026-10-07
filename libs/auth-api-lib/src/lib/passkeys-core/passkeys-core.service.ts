@@ -198,6 +198,24 @@ export class PasskeysCoreService {
     }
   }
 
+  /**
+   * Verifies a passkey assertion made by the signed-in person, e.g. to reopen
+   * something they unlocked a while ago. Unlike a login, the person is known:
+   * the passkey has to be theirs.
+   */
+  async verifyAuthenticationForUser(user: User, responseAsString: string) {
+    const { verified, sub } = await this.verifyAuthenticationString(
+      responseAsString,
+    )
+
+    if (sub !== getUserId(user)) {
+      this.logger.warn('Passkey assertion by someone other than the user.')
+      throw new BadRequestException('Passkey not found')
+    }
+
+    return { verified }
+  }
+
   async verifyAuthentication(response: AuthenticationResponseJSON) {
     const passkey = await this.passkeyModel.findOne({
       where: {
