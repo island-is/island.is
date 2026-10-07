@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -52,12 +53,15 @@ import {
   PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   getAppealResultTextByValue,
 } from '@island.is/judicial-system/formatters'
 import {
+  Feature,
   isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -66,11 +70,15 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isProsecutorsOffice,
+  isPublicProsecutionOfficeUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import type {
   Case,
   User,
@@ -92,6 +100,18 @@ import {
   shouldUseAppealWithdrawnRoutes,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
+export const showsPublicProsecutorVerdictAppealStep = (
+  workingCase: Pick<WorkingCase, 'type' | 'verdictAppealCase'>,
+  user: User | undefined,
+  features: Feature[],
+  isRegisteringVerdictAppeal = false,
+): boolean =>
+  features.includes(Feature.INDICTMENT_APPEAL) &&
+  isIndictmentCase(workingCase.type) &&
+  isPublicProsecutionOfficeUser(user) &&
+  (hasStandingVerdictAppeal(workingCase.verdictAppealCase) ||
+    isRegisteringVerdictAppeal)
+
 const useSections = (
   isValid = true,
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
@@ -103,6 +123,7 @@ const useSections = (
   // router query; in production the FormContext working case matches the
   // working case passed to `getSections`, so closure capture is fine.
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
+  const { features } = useContext(FeatureContext)
 
   const validateFormStepper = (
     isActiveSubSectionValid: boolean,
@@ -1561,6 +1582,19 @@ const useSections = (
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     const isExtensionCase =
       Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
+    const isRegisteringVerdictAppeal = isActive(
+      PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
+    )
+    const showsVerdictAppealStep = showsPublicProsecutorVerdictAppealStep(
+      workingCase,
+      user,
+      features,
+      isRegisteringVerdictAppeal,
+    )
+    const isVerdictAppealStepActive =
+      showsVerdictAppealStep &&
+      (isActive(PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE) ||
+        isRegisteringVerdictAppeal)
 
     return [
       isRestrictionCase(workingCase.type)
@@ -1581,15 +1615,28 @@ const useSections = (
             ? workingCase.parentCase.state
             : workingCase.state,
         ),
+        // hasBeenAppealed only reflects the case-level ruling appeal, so a
+        // verdict appeal has to switch this step off explicitly.
         isActive:
-          (workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
+          !isVerdictAppealStepActive &&
+          ((workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
-          (!isExtensionCase &&
-            isCompletedCase(workingCase.state) &&
-            !workingCase.hasBeenAppealed &&
-            workingCase.appealCase?.appealState !== AppealCaseState.COMPLETED),
+            (!isExtensionCase &&
+              isCompletedCase(workingCase.state) &&
+              !workingCase.hasBeenAppealed &&
+              workingCase.appealCase?.appealState !==
+                AppealCaseState.COMPLETED)),
         children: [],
       },
+      ...(showsVerdictAppealStep
+        ? [
+            {
+              name: 'Áfrýjun',
+              isActive: isVerdictAppealStepActive,
+              children: [],
+            },
+          ]
+        : []),
       ...(isExtensionCase
         ? [
             isRestrictionCase(workingCase.type)

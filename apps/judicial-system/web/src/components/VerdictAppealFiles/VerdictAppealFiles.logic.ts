@@ -3,12 +3,14 @@ import {
   isPublicProsecutionOfficeUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseFile,
-  CaseFileCategory,
-  Defendant,
-  User,
+import {
+  type AppealCase,
+  AppealCaseState,
+  type Case,
+  type CaseFile,
+  type CaseFileCategory,
+  type Defendant,
+  type User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -69,3 +71,21 @@ export const getVerdictAppealFileGroups = (
     return files.length > 0 ? [{ defendant, files }] : []
   })
 }
+
+/**
+ * Whether a verdict appeal currently stands. The association row persists after
+ * withdrawal (and is reused if someone re-appeals within the deadline), so a
+ * present `verdictAppealCase` alone is not enough.
+ */
+export const hasStandingVerdictAppeal = (
+  verdictAppealCase?: Pick<AppealCase, 'appealState'> | null,
+): boolean =>
+  Boolean(verdictAppealCase) &&
+  verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
+
+export const showsAppealSummonses = (
+  workingCase: Pick<Case, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  isPublicProsecutionOfficeUser(user) &&
+  hasStandingVerdictAppeal(workingCase.verdictAppealCase)
