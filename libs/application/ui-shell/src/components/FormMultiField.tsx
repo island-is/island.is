@@ -4,6 +4,7 @@ import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { formatText, resolveFieldId } from '@island.is/application/core'
 import {
   Application,
+  ExternalData,
   Field,
   FormValue,
   FieldTypes,
@@ -30,6 +31,7 @@ const FormMultiField: FC<
     answerQuestions(answers: FormValue): void
     goToScreen: (id: string) => void
     refetch: () => void
+    addExternalData?: (data: ExternalData) => void
     setBeforeSubmitCallback?: SetBeforeSubmitCallback
     setFieldLoadingState?: SetFieldLoadingState
     setSubmitButtonDisabled?: SetSubmitButtonDisabled
@@ -42,6 +44,7 @@ const FormMultiField: FC<
   goToScreen,
   multiField,
   refetch,
+  addExternalData,
   setBeforeSubmitCallback,
   setFieldLoadingState,
   setSubmitButtonDisabled,
@@ -116,6 +119,7 @@ const FormMultiField: FC<
                 errors={errors}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}

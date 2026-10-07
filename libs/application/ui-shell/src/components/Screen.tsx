@@ -487,6 +487,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                addExternalData={addExternalData}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
                 user={user}
               />
@@ -516,6 +517,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                   application={application}
                   goToScreen={goToScreen}
                   refetch={refetch}
+                  addExternalData={addExternalData}
                   setSubmitButtonDisabled={setSubmitButtonDisabled}
                   answerQuestions={answerQuestions}
                   user={user}

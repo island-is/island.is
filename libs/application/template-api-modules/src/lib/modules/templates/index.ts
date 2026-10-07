@@ -1,3 +1,5 @@
+import { PayDebtsModule } from './pay-debts/pay-debts.module'
+import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
 import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
 import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
@@ -302,6 +304,7 @@ export const modules = [
   ConfirmJobOrIncomeModule,
   DrivingLicenseAdditionalModule,
   DirectorateOfEqualityModule,
+  PayDebtsModule,
   U2CertificateModule,
 ]
 
@@ -405,5 +408,6 @@ export const services = [
   ConfirmJobOrIncomeService,
   DrivingLicenseAdditionalService,
   DirectorateOfEqualityService,
+  PayDebtsService,
   U2CertificateService,
 ]
