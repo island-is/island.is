@@ -7,7 +7,6 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isCapitalIncome } from '../../../utils/conditions'
@@ -23,28 +22,12 @@ import {
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildCanRemoveRow } from '../../../utils/reconcile'
+import { getCapitalIncomeDefaults } from '../../../utils/persistedRows'
 import {
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
 } from '../../../utils/rowCoercions'
-
-const getCapitalIncomeDefaults = (application: Application) => {
-  const payments =
-    getValueViaPath<GaldurExternalDomainModelsIncomeCapitalIncomePaymentDTO[]>(
-      application.externalData,
-      'income.data.capitalIncomePayments',
-    ) ?? []
-
-  return payments.map((payment) => ({
-    validationId: payment.id,
-    paymentType: payment.incomeTypeId ?? '',
-    amountPerMonth:
-      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-    dateFrom: payment.periodFrom ?? '',
-    dateTo: payment.periodTo ?? '',
-  }))
-}
 
 const capitalIncomeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerCapitalIncome',

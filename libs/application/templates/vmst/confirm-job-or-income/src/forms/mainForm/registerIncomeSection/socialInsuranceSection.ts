@@ -7,7 +7,6 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomeTRPaymentDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isSocialInsurance } from '../../../utils/conditions'
@@ -23,28 +22,12 @@ import {
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildCanRemoveRow } from '../../../utils/reconcile'
+import { getSocialInsuranceDefaults } from '../../../utils/persistedRows'
 import {
   periodToByFrequency,
   toRequiredNumber,
   toRequiredString,
 } from '../../../utils/rowCoercions'
-
-const getSocialInsuranceDefaults = (application: Application) => {
-  const payments =
-    getValueViaPath<GaldurExternalDomainModelsIncomeTRPaymentDTO[]>(
-      application.externalData,
-      'income.data.trPayments',
-    ) ?? []
-
-  return payments.map((payment) => ({
-    validationId: payment.id,
-    socialPaymentType: payment.incomeTypeId ?? '',
-    amountPerMonth:
-      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-    dateFrom: payment.periodFrom ?? '',
-    dateTo: payment.periodTo ?? '',
-  }))
-}
 
 const socialInsuranceValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerSocialInsurance',

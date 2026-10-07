@@ -19,8 +19,19 @@ export const application = defineMessages({
   pageDescription: {
     id: 'vmst.cjoi.application:pageDescription#markdown',
     defaultMessage:
-      'Ef þú vinnur eða færð tekjur samhliða atvinnuleysisbótum þarftu að tilkynna það til Vinnumálastofnunar. Þetta á við um alla launaða vinnu. Hvort sem er fast starf, hlutastarf eða tilfallandi vinnu.\n\n**Mikilvægt: Tilkynna þarf vinnu í síðasta lagi daginn áður en hún hefst**',
+      'Ef þú vinnur eða færð tekjur samhliða atvinnuleysisbótum þarftu að tilkynna það til Vinnumálastofnunar. Þetta á við um alla launaða vinnu, hvort sem er fast starf, hlutastarf eða tilfallandi vinna.',
     description: `Page description`,
+  },
+  incomeTypeAlertTitle: {
+    id: 'vmst.cjoi.application:incomeTypeAlertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Alert title on the income type selection page',
+  },
+  incomeTypeAlert: {
+    id: 'vmst.cjoi.application:incomeTypeAlert#markdown',
+    defaultMessage:
+      '* Tilkynna þarf vinnu í síðasta lagi daginn áður en hún hefst.\n* Hægt er að tilkynna núverandi mánuð og þann síðasta og svo fjóra mánuði fram í tímann.\n* Öll tekjuskráning á að miðast við upphæð fyrir skatt, ekki útborgaða fjárhæð eftir skatt.',
+    description: 'Alert on the income type selection page',
   },
   applicationName: {
     id: 'vmst.cjoi.application:applicationName',
@@ -426,6 +437,16 @@ export const application = defineMessages({
     id: 'vmst.cjoi.application:overviewEntryHeading',
     defaultMessage: 'Lína {index}',
     description: 'Heading for each repeater entry in the overview',
+  },
+  overviewTagNew: {
+    id: 'vmst.cjoi.application:overviewTagNew',
+    defaultMessage: 'Nýskráð',
+    description: 'Tag marking a newly added entry in the overview',
+  },
+  overviewTagDeleted: {
+    id: 'vmst.cjoi.application:overviewTagDeleted',
+    defaultMessage: 'Eytt',
+    description: 'Tag marking a deleted entry in the overview',
   },
   overviewEditButton: {
     id: 'vmst.cjoi.application:overviewEditButton',

@@ -4,11 +4,9 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  getValueViaPath,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import {
@@ -26,33 +24,13 @@ import {
   buildCanRemoveRow,
   buildEmployerSSNDelete,
 } from '../../../utils/reconcile'
+import { getPartTimeDefaults } from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalNumber,
   toOptionalString,
   toRequiredString,
 } from '../../../utils/rowCoercions'
-
-const getPartTimeDefaults = (application: Application) => {
-  const jobs =
-    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
-      application.externalData,
-      'income.data.partTimeJobs',
-    ) ?? []
-
-  return jobs.map((job) => ({
-    validationId: job.id,
-    company: {
-      nationalId: job.employerSSN ?? '',
-      name: job.employerName?.trim() ?? '',
-    },
-    jobStart: job.periodFrom ?? '',
-    jobEnd: job.periodTo ?? '',
-    workPercentage: job.ratio != null ? String(job.ratio) : '',
-    estimatedIncome:
-      job.estimatedIncome != null ? String(job.estimatedIncome) : '',
-  }))
-}
 
 const partTimeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPartTime',
