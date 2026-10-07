@@ -52,6 +52,8 @@ export const NotificationSettings = () => {
       Features.isServicePortalOnlyActionablePriorityNotificationsEnabled,
       false,
     )
+  const { value: isOnlyActionablePriorityNotificationsEnabled } =
+    useFeatureFlag(Features.isOnlyActionablePriorityNotificationsEnabled, false)
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:
@@ -143,21 +145,22 @@ export const NotificationSettings = () => {
   return (
     <NotificationSettingsCard title={userInfo?.profile.name}>
       <Stack space={[3, 4]}>
-        {isServicePortalOnlyActionablePriorityNotificationsEnabled && (
-          <ActionableOnlySettingsCard
-            title={formatMessage(mNotifications.actionablePriorityOnlyTitle)}
-            subtitle={formatMessage(
-              mNotifications.actionablePriorityOnlyDescription,
-            )}
-            toggleLabel={formatMessage(
-              mNotifications.actionablePriorityOnlyAriaLabel,
-            )}
-            checked={settings.onlyActionablePriorityNotifications}
-            onChange={(active: boolean) =>
-              onChange({ onlyActionablePriorityNotifications: active })
-            }
-          />
-        )}
+        {isServicePortalOnlyActionablePriorityNotificationsEnabled &&
+          isOnlyActionablePriorityNotificationsEnabled && (
+            <ActionableOnlySettingsCard
+              title={formatMessage(mNotifications.actionablePriorityOnlyTitle)}
+              subtitle={formatMessage(
+                mNotifications.actionablePriorityOnlyDescription,
+              )}
+              toggleLabel={formatMessage(
+                mNotifications.actionablePriorityOnlyAriaLabel,
+              )}
+              checked={settings.onlyActionablePriorityNotifications}
+              onChange={(active: boolean) =>
+                onChange({ onlyActionablePriorityNotifications: active })
+              }
+            />
+          )}
         <SettingsCard
           title={formatMessage(mNotifications.emailNotifications)}
           subtitle={formatMessage(mNotifications.emailNotificationsDescription)}
