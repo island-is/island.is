@@ -1,3 +1,5 @@
+import { isCompany, isPerson } from 'kennitala'
+
 import {
   Charge,
   PayInfoPaymentMeansEnum,
@@ -5,6 +7,7 @@ import {
 import { BlikkItem } from '@island.is/clients/blikk'
 
 import {
+  BankTransferDebtor,
   BankTransferFailureReason,
   BankTransferStatus,
   BankTransferPendingStatus,
@@ -78,6 +81,34 @@ export const mapRawStatusToBankTransferPendingStatus = (
   status === 'SCA_REQUIRED'
     ? BankTransferPendingStatus.SCA_REQUIRED
     : BankTransferPendingStatus.PROCESSING
+
+/**
+ * Resolves who Blikk debits. A person pays as themselves. A company pays from its own account,
+ * authorised by an individual with the rights to do so (entered on the payment screen), who is the
+ * one authenticating with their bank. Returns `null` for a company without a valid individual, and
+ * for any other payer, such as a temporary kennitala.
+ */
+export const getBankTransferDebtor = (
+  payerNationalId: string,
+  actorNationalId?: string,
+): BankTransferDebtor | null => {
+  if (isPerson(payerNationalId)) {
+    return { debtorExternalId: payerNationalId }
+  }
+
+  if (
+    isCompany(payerNationalId) &&
+    actorNationalId &&
+    isPerson(actorNationalId)
+  ) {
+    return {
+      debtorExternalId: actorNationalId,
+      debtorCorpExternalId: payerNationalId,
+    }
+  }
+
+  return null
+}
 
 export const toBlikkItem = (item: CatalogItemWithQuantity): BlikkItem => ({
   name: item.chargeItemName,

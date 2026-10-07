@@ -4,7 +4,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
 import { v4 as uuid } from 'uuid'
@@ -49,6 +49,11 @@ describe('PaymentFlowService', () => {
     // it on so the individuals-only tests exercise the kennitala gate. The
     // flag-off case is asserted explicitly below.
     featureFlagService = app.get<FeatureFlagService>(FeatureFlagService)
+    jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
+  })
+
+  afterEach(() => {
+    // Tests may override the flag; restore the default of every flag on.
     jest.spyOn(featureFlagService, 'getValue').mockResolvedValue(true as never)
   })
 
@@ -135,10 +140,62 @@ describe('PaymentFlowService', () => {
       expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
     })
 
-    it('should not offer bank transfer to a company payer', async () => {
+    it('should offer bank transfer to a company payer the company flag allows', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+
+      const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
+      // Evaluated for this company.
+      expect(getValue).toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        false,
+        expect.objectContaining({ nationalId: '6010100890' }),
+      )
+    })
+
+    it('should not offer bank transfer to a company payer the company flag does not allow', async () => {
+      jest
+        .spyOn(featureFlagService, 'getValue')
+        .mockImplementation(
+          (async (feature: Features) =>
+            feature !==
+            Features.isIslandisBankTransferPaymentAllowedForCompany) as never,
+        )
+
       const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
 
       expect(methods).toEqual([PaymentMethod.CARD])
+    })
+
+    it('should not consult the company flag for an individual payer', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+
+      const methods = await createFlowAndReadMethods('0101302129') // valid person kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD, PaymentMethod.BANK_TRANSFER])
+      expect(getValue).not.toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        expect.anything(),
+        expect.anything(),
+      )
+    })
+
+    it('should not consult the company flag when the feature flag is off', async () => {
+      const getValue = jest.spyOn(featureFlagService, 'getValue')
+      getValue.mockClear()
+      getValue.mockResolvedValueOnce(false as never)
+
+      const methods = await createFlowAndReadMethods('6010100890') // valid company kennitala
+
+      expect(methods).toEqual([PaymentMethod.CARD])
+      expect(getValue).not.toHaveBeenCalledWith(
+        Features.isIslandisBankTransferPaymentAllowedForCompany,
+        expect.anything(),
+        expect.anything(),
+      )
     })
 
     it('should not offer bank transfer to a temporary kennitala payer', async () => {

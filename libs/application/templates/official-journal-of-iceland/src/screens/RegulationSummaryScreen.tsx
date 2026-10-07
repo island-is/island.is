@@ -3,12 +3,16 @@ import { FormScreen } from '../components/form/FormScreen'
 import { regulation } from '../lib/messages'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
-import { ReviewWarnings, ReviewOverview } from '../components/regulations'
+import {
+  ReviewWarnings,
+  ReviewOverview,
+  TextComparison,
+} from '../components/regulations'
 import { collectRegulationWarnings } from '../utils/regulationValidations'
 import { usePrice } from '../hooks/usePrice'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -20,6 +24,14 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   })
 
   const { impacts, impactsLoaded } = useRegulationImpacts({ draftId })
+  const isAmending =
+    application.answers?.applicationType === 'amending_regulation'
+
+  // The amending text is published as written, while the base changes are
+  // applied as recorded, so the user confirms they match before submitting.
+  // Kept in local state so it has to be confirmed again on each visit.
+  const needsTextConfirmation = isAmending && impacts.length > 0
+  const [textConfirmed, setTextConfirmed] = useState(false)
   const {
     price,
     loading: priceLoading,
@@ -53,10 +65,12 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
   const isLoading = (draftId && !draftLoaded) || !impactsLoaded
   const warnings = collectRegulationWarnings(enrichedAnswers)
   const hasWarnings = isLoading || warnings.length > 0
+  const submitDisabled =
+    hasWarnings || (needsTextConfirmation && !textConfirmed)
 
   useEffect(() => {
-    setSubmitButtonDisabled && setSubmitButtonDisabled(hasWarnings)
-  }, [hasWarnings, setSubmitButtonDisabled])
+    setSubmitButtonDisabled && setSubmitButtonDisabled(submitDisabled)
+  }, [submitDisabled, setSubmitButtonDisabled])
 
   useEffect(() => {
     return () => {
@@ -87,6 +101,14 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
               priceLoading={priceLoading}
               priceError={!!priceError}
             />
+            {needsTextConfirmation && (
+              <TextComparison
+                impacts={impacts}
+                advertHtml={application.answers?.advert?.html}
+                confirmed={textConfirmed}
+                onConfirmedChange={setTextConfirmed}
+              />
+            )}
           </>
         )}
       </Stack>
