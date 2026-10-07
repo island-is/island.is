@@ -1,5 +1,7 @@
 export { Feature } from './lib/feature'
 
+export type { AuthUser, Credentials } from './lib/auth'
+
 export {
   Gender,
   DefenderChoice,

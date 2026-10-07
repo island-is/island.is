@@ -789,6 +789,8 @@ export const is = {
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
   'health.categories.waitingLists': 'Biðlistar',
   'health.categories.medicalRecords': 'Sjúkraskrá',
+  'health.categories.treatment': 'Meðferð',
+  'health.categories.treatmentWithName': 'Meðferð - {name}',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',

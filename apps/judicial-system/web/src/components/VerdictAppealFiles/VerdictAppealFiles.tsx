@@ -61,11 +61,8 @@ const VerdictAppealFiles: FC = () => {
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
-  const showSummonses = showsAppealSummonses(
-    workingCase,
-    user,
-    isIndictmentAppealEnabled,
-  )
+  const showSummonses =
+    isIndictmentAppealEnabled && showsAppealSummonses(workingCase, user)
   const showIssueButton =
     isIndictmentAppealEnabled && canShowIssueAppealSummons(workingCase, user)
   const summonses = workingCase.appealSummonses ?? []
