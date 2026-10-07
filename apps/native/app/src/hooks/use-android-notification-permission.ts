@@ -43,7 +43,9 @@ export const useAndroidNotificationPermission = (
       return
     }
 
-    ensureNotificationsPermission()
+    ensureNotificationsPermission().catch(() => {
+      // Nothing to recover here; the settings screen still offers the prompt.
+    })
   }, [
     documentNotifications,
     hasOnboardedNotifications,

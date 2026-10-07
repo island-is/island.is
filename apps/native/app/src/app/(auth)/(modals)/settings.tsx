@@ -34,18 +34,17 @@ import {
 import { useUiStore } from '@/stores/ui-store'
 import {
   Alert,
-  LinkText,
   NavigationBarSheet,
   TableViewAccessory,
   TableViewCell,
   TableViewGroup,
 } from '@/ui'
 import { useBiometricType } from '../../../hooks/use-biometric-type'
+import { NotificationsPermissionAlert } from '@/components/notifications-permission-alert'
 import { useNotificationsPermission } from '@/hooks/use-notifications-permission'
 import { ensureNotificationsPermission } from '@/utils/permissions'
 import { testIDs } from '@/utils/test-ids'
 
-import arrowForward from '@/ui/assets/icons/arrow.png'
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
 import editIcon from '@/assets/icons/edit.png'
 import { StackScreen } from '../../../components/stack-screen'
@@ -180,6 +179,9 @@ export default function SettingsScreen() {
   const onAllowNotificationsPress = async () => {
     try {
       await ensureNotificationsPermission()
+    } catch {
+      // Nothing to tell the user: the refresh below leaves the banner showing
+      // whatever the OS actually reports.
     } finally {
       refreshNotificationsPermission()
     }
@@ -222,6 +224,9 @@ export default function SettingsScreen() {
           ],
         )
       }
+    } catch {
+      // Reading or requesting the permission failed; the banner stays in sync
+      // with the OS through the refresh below.
     } finally {
       refreshNotificationsPermission()
     }
@@ -382,61 +387,19 @@ export default function SettingsScreen() {
           })}
         >
           {notificationsNotEnabledYet && (
-            <Alert
-              type="warning"
-              size="small"
-              hasBorder
-              title={intl.formatMessage({
-                id: 'settings.communication.notificationsNotEnabledTitle',
-              })}
-              message={intl.formatMessage({
-                id: 'settings.communication.notificationsNotEnabledDescription',
-              })}
-              action={
-                <TouchableOpacity
-                  onPress={onAllowNotificationsPress}
-                  accessibilityRole="button"
-                >
-                  <LinkText variant="small" icon={arrowForward}>
-                    {intl.formatMessage({
-                      id: 'settings.communication.notificationsNotEnabledLinkText',
-                    })}
-                  </LinkText>
-                </TouchableOpacity>
-              }
-              style={{
-                marginHorizontal: theme.spacing[2],
-                marginBottom: theme.spacing[2],
-              }}
+            <NotificationsPermissionAlert
+              titleId="settings.communication.notificationsNotEnabledTitle"
+              messageId="settings.communication.notificationsNotEnabledDescription"
+              linkTextId="settings.communication.notificationsNotEnabledLinkText"
+              onPress={onAllowNotificationsPress}
             />
           )}
           {notificationsBlockedByOs && (
-            <Alert
-              type="warning"
-              size="small"
-              hasBorder
-              title={intl.formatMessage({
-                id: 'settings.communication.notificationsBlockedTitle',
-              })}
-              message={intl.formatMessage({
-                id: 'settings.communication.notificationsBlockedDescription',
-              })}
-              action={
-                <TouchableOpacity
-                  onPress={onNotificationsBlockedPress}
-                  accessibilityRole="button"
-                >
-                  <LinkText variant="small" icon={arrowForward}>
-                    {intl.formatMessage({
-                      id: 'settings.communication.notificationsBlockedLinkText',
-                    })}
-                  </LinkText>
-                </TouchableOpacity>
-              }
-              style={{
-                marginHorizontal: theme.spacing[2],
-                marginBottom: theme.spacing[2],
-              }}
+            <NotificationsPermissionAlert
+              titleId="settings.communication.notificationsBlockedTitle"
+              messageId="settings.communication.notificationsBlockedDescription"
+              linkTextId="settings.communication.notificationsBlockedLinkText"
+              onPress={onNotificationsBlockedPress}
             />
           )}
           <TableViewCell

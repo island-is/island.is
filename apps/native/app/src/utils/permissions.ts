@@ -32,7 +32,7 @@ const isAuthorized = (status: AuthorizationStatusValue) =>
 const markPermissionRequested = () =>
   preferencesStore.setState({ hasRequestedNotificationsPermission: true })
 
-export const requestAndroidNotificationsPermission =
+const requestAndroidNotificationsPermission =
   async (): Promise<NotificationsPermissionOutcome> => {
     markPermissionRequested()
 
@@ -67,14 +67,6 @@ export const requestNotificationsPermission = async () => {
 
   return isAuthorized(authStatus)
 }
-
-/**
- * Whether the OS currently lets the app post notifications, without prompting.
- * On Android this is `areNotificationsEnabled()`, so it also covers notifications
- * switched off in the system settings.
- */
-export const hasNotificationsPermission = async () =>
-  isAuthorized(await hasPermission(app.messaging()))
 
 export const getNotificationsPermissionStatus =
   async (): Promise<NotificationsPermissionStatus> => {
