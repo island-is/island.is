@@ -24,11 +24,14 @@ const createTestData = async (app: TestApp) => {
 
 describe('MeUserProfileController', () => {
   describe.each`
-    method     | endpoint
-    ${'GET'}   | ${`/v2/me`}
-    ${'PATCH'} | ${`/v2/me`}
-    ${'POST'}  | ${`/v2/me/nudge`}
-    ${'POST'}  | ${`/v2/actor/create-verification`}
+    method      | endpoint
+    ${'GET'}    | ${`/v2/me`}
+    ${'PATCH'}  | ${`/v2/me`}
+    ${'POST'}   | ${`/v2/me/nudge`}
+    ${'POST'}   | ${`/v2/actor/create-verification`}
+    ${'GET'}    | ${`/v2/me/notification-settings`}
+    ${'POST'}   | ${`/v2/me/notification-settings/blocked-senders`}
+    ${'DELETE'} | ${`/v2/me/notification-settings/blocked-senders/1234567890`}
   `('$method $endpoint', ({ method, endpoint }: TestEndpointOptions) => {
     it('should return 401 when user is not authenticated', async () => {
       // Arrange
