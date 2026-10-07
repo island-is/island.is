@@ -9,10 +9,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { ScopesCategoriesList } from '../ScopesCategoriesList'
 import { useMemo, useState } from 'react'
+import {
+  canSelectScope,
+  useCanGrantSensitiveScopes,
+} from '../../hooks/useCanGrantSensitiveScopes'
 import * as styles from './GrantAccessSteps.css'
 
 import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Filter,
   FilterMultiChoice,
@@ -54,6 +59,7 @@ export const AccessScopes = () => {
     },
   )
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
+  const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
   const defaultDate = add(new Date(), { years: 1 })
 
   const { data: domainsData } = useAuthDomainsQuery({
@@ -94,7 +100,7 @@ export const AccessScopes = () => {
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
       setSelectedScopes(selectedScopes.filter((s) => s.name !== scope.name))
-    } else {
+    } else if (canSelectScope(scope, canGrantSensitiveScopes)) {
       setSelectedScopes([...selectedScopes, { ...scope, validTo: defaultDate }])
     }
   }
@@ -107,7 +113,9 @@ export const AccessScopes = () => {
     } else {
       setSelectedScopes([
         ...selectedScopes,
-        ...scopes.map((s) => ({ ...s, validTo: defaultDate })),
+        ...scopes
+          .filter((s) => canSelectScope(s, canGrantSensitiveScopes))
+          .map((s) => ({ ...s, validTo: defaultDate })),
       ])
     }
   }
@@ -174,6 +182,15 @@ export const AccessScopes = () => {
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <RecipientsTag />
+      {!canGrantSensitiveScopes && (
+        <Box marginBottom={2} width="full">
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.sensitiveScopesUnavailableTitle)}
+            message={formatMessage(m.sensitiveScopesUnavailableMessage)}
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         columnGap={[0, 2]}

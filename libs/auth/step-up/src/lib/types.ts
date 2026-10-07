@@ -18,14 +18,6 @@ export interface CibaStartRequest {
   /** Shown on the screen and on the phone, so the person knows what they approve. */
   bindingMessage: string
   /**
-   * The person's own choice, when they ask to use the other method. Without it
-   * the identity server goes by how the session behind userToken was logged in.
-   * "sim" only ever reaches the number saved from the person's own last SIM
-   * login (and falls back to the app without one), so this can't send the
-   * request anywhere else.
-   */
-  method?: StepUpMethod
-  /**
    * A hash of exactly what is being approved. The identity server mixes it into
    * what the person's key signs and puts it back on the token, so the result can
    * be checked to be for this content and nothing else.
@@ -45,8 +37,6 @@ export interface CibaStartResult {
   interval: number
   /** The code shown in the Auðkenni app, for the person to compare. */
   verificationCode?: string
-  /** Every method the person could use, so they can be offered the other one. */
-  availableMethods: StepUpMethod[]
 }
 
 /** What the identity server vouches for once the person has approved. */
@@ -66,3 +56,11 @@ export type CibaPollResult =
   | { status: 'denied' }
   | { status: 'expired' }
   | { status: 'authenticated'; claims: StepUpClaims }
+
+/**
+ * Whether a session was logged in with an ID card: card logins carry the amr
+ * value "sc". Such a session can't step up — the step-up only uses the method
+ * the person logged in with, and a card can't be used for it.
+ */
+export const isCardSession = (amr: string[] | undefined) =>
+  amr?.includes('sc') ?? false

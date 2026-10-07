@@ -9,10 +9,20 @@ import { useLocale } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { IntroHeader } from '@island.is/portals/core'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
-import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import { useDelegationForm } from '../../context/DelegationFormContext'
+import {
+  canSelectScope,
+  useCanGrantSensitiveScopes,
+} from '../../hooks/useCanGrantSensitiveScopes'
 import add from 'date-fns/add'
 import { useEffect, useState } from 'react'
 import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipients'
@@ -63,10 +73,12 @@ export const CategoryDetails = () => {
   const loading = categoriesLoading || tagsLoading
   const error = categoriesError || tagsError
 
+  const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
+
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
       setSelectedScopes(selectedScopes.filter((s) => s.name !== scope.name))
-    } else {
+    } else if (canSelectScope(scope, canGrantSensitiveScopes)) {
       setSelectedScopes([...selectedScopes, { ...scope, validTo: defaultDate }])
     }
   }
@@ -125,6 +137,16 @@ export const CategoryDetails = () => {
         {!showFlow && (
           <>
             <Text variant="h5">{formatMessage(m.delegationsThatSuit)}</Text>
+            {!canGrantSensitiveScopes &&
+              data?.scopes?.some((scope) => scope.requiresConfirmation) && (
+                <Box paddingTop={2}>
+                  <AlertMessage
+                    type="info"
+                    title={formatMessage(m.sensitiveScopesUnavailableTitle)}
+                    message={formatMessage(m.sensitiveScopesUnavailableMessage)}
+                  />
+                </Box>
+              )}
             <Box paddingTop={2} paddingBottom={4}>
               <ScopesTable
                 scopes={data?.scopes as AuthApiScope[]}

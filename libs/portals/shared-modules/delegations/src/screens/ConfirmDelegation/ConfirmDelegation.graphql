@@ -21,11 +21,10 @@ query AuthDelegationConfirmation($input: AuthDelegationConfirmationInput!) {
 }
 
 mutation AuthStartDelegationConfirmationAuthentication(
-  $input: AuthStartDelegationConfirmationAuthenticationInput!
+  $input: AuthDelegationConfirmationInput!
 ) {
   authStartDelegationConfirmationAuthentication(input: $input) {
     method
-    availableMethods
     verificationCode
     interval
     expiresIn

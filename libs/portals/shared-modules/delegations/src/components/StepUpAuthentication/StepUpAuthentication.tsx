@@ -10,7 +10,6 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import * as styles from './StepUpAuthentication.css'
 
 export type StepUpMethod = 'app' | 'sim'
 
@@ -30,8 +29,6 @@ export interface StepUpStart {
   interval: number
   /** Seconds until the step-up gives up. */
   expiresIn: number
-  /** Every method the person could use, so they can be offered the other one. */
-  availableMethods: StepUpMethod[]
 }
 
 /** Why starting failed, so the right thing can be said about it. */
@@ -39,12 +36,12 @@ export type StepUpStartError = 'too_many_attempts' | 'failed'
 
 interface StepUpAuthenticationProps {
   /**
-   * Asks the server to start the authentication. By default the server decides
-   * how to reach the person — the way they logged in to this session. They may
-   * ask for the other method, never for where it goes, so it only ever reaches
-   * their own phone. Reject with a StepUpStartError.
+   * Asks the server to start the authentication. The server reaches the person
+   * the way they logged in to this session — their Auðkenni app or their own
+   * SIM — so it only ever reaches their own phone. Reject with a
+   * StepUpStartError.
    */
-  start: (method?: StepUpMethod) => Promise<StepUpStart>
+  start: () => Promise<StepUpStart>
   /** Asks the server where the authentication stands. */
   check: () => Promise<StepUpStatus>
   onConfirmed: () => void
@@ -64,18 +61,14 @@ type State =
       method: StepUpMethod
       code?: string | null
       deadline: number
-      availableMethods: StepUpMethod[]
     }
 
 /**
  * Authenticates the person again with electronic ID without leaving the page —
  * one button, a code, and they approve on their own phone. Looks like the
- * identity server's own login: the code in a blue box while waiting, and the
- * other methods under "Eða staðfestu með". Unlike that screen there is no phone
- * number field: it only ever reaches the person's own phone. The server decides
- * how, from the way they logged in: the Auðkenni app, or their own SIM. They can
- * switch to the other one if the server offers it. There is deliberately no way
- * to send it anywhere else.
+ * identity server's own verification screen: the code in a blue box while
+ * waiting. There is no phone number field and no choice of method: it uses
+ * the method the person logged in with, so it only reaches their own phone.
  *
  * Generic on purpose — it only knows how to start and how to check. Confirming
  * a sensitive delegation is the first use; locking a sensitive screen is meant
@@ -91,10 +84,6 @@ export const StepUpAuthentication = ({
   const { formatMessage } = useLocale()
   const [state, setState] = useState<State>({ name: 'idle' })
   const [secondsLeft, setSecondsLeft] = useState(0)
-  // The last attempt, so a person whose attempt failed can try the other way.
-  const [lastAttempt, setLastAttempt] = useState<
-    { method: StepUpMethod; availableMethods: StepUpMethod[] } | undefined
-  >()
   const pollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const unmounted = useRef(false)
   const autoStarted = useRef(false)
@@ -149,39 +138,30 @@ export const StepUpAuthentication = ({
     [check, onConfirmed, onExpired],
   )
 
-  const begin = useCallback(
-    async (method?: StepUpMethod) => {
-      clearTimeout(pollTimer.current)
-      setState({ name: 'starting' })
+  const begin = useCallback(async () => {
+    clearTimeout(pollTimer.current)
+    setState({ name: 'starting' })
 
-      try {
-        const started = await start(method)
-        if (unmounted.current) {
-          return
-        }
-
-        setLastAttempt({
-          method: started.method,
-          availableMethods: started.availableMethods,
-        })
-        setState({
-          name: 'waiting',
-          method: started.method,
-          code: started.verificationCode,
-          deadline: Date.now() + started.expiresIn * 1000,
-          availableMethods: started.availableMethods,
-        })
-        poll(started.interval)
-      } catch (error) {
-        setState({
-          name: 'idle',
-          notice:
-            error === 'too_many_attempts' ? 'too_many_attempts' : 'failed',
-        })
+    try {
+      const started = await start()
+      if (unmounted.current) {
+        return
       }
-    },
-    [start, poll],
-  )
+
+      setState({
+        name: 'waiting',
+        method: started.method,
+        code: started.verificationCode,
+        deadline: Date.now() + started.expiresIn * 1000,
+      })
+      poll(started.interval)
+    } catch (error) {
+      setState({
+        name: 'idle',
+        notice: error === 'too_many_attempts' ? 'too_many_attempts' : 'failed',
+      })
+    }
+  }, [start, poll])
 
   // Kept to exactly one start, however many times React mounts this.
   useEffect(() => {
@@ -223,17 +203,6 @@ export const StepUpAuthentication = ({
 
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
-
-  // The other ways of reaching the person, if the server offers them: while
-  // waiting (e.g. their SIM isn't at hand), and after an attempt that failed.
-  const otherMethods =
-    state.name === 'waiting'
-      ? state.availableMethods.filter((method) => method !== state.method)
-      : state.name === 'idle' && state.notice && lastAttempt
-      ? lastAttempt.availableMethods.filter(
-          (method) => method !== lastAttempt.method,
-        )
-      : []
 
   return (
     <Box display="flex" flexDirection="column" rowGap={[4, 4, 5]} width="full">
@@ -297,33 +266,6 @@ export const StepUpAuthentication = ({
         >
           {formatMessage(m.stepUpStart)}
         </Button>
-      )}
-
-      {otherMethods.length > 0 && (
-        <Box width="full" display="flex" flexDirection="column" rowGap={3}>
-          <Box position="relative" width="full" textAlign="center">
-            <span className={styles.textBackgroundLine} />
-            <span className={styles.textWrapper}>
-              <Text variant="small">{formatMessage(m.stepUpOtherMethods)}</Text>
-            </span>
-          </Box>
-          <Box display="flex" flexDirection="column" rowGap={2} width="full">
-            {otherMethods.map((method) => (
-              <Button
-                key={method}
-                type="button"
-                variant="ghost"
-                fluid
-                size="small"
-                onClick={() => begin(method)}
-              >
-                {formatMessage(
-                  method === 'sim' ? m.stepUpMethodSim : m.stepUpMethodApp,
-                )}
-              </Button>
-            ))}
-          </Box>
-        </Box>
       )}
     </Box>
   )

@@ -163,12 +163,6 @@ export class DelegationConfirmationAuthenticationStart {
   @Field(() => DelegationConfirmationStepUpMethod)
   method!: DelegationConfirmationStepUpMethod
 
-  @Field(() => [DelegationConfirmationStepUpMethod], {
-    description:
-      'Every method the grantor could use, so they can be offered the other one.',
-  })
-  availableMethods!: DelegationConfirmationStepUpMethod[]
-
   @Field(() => String, {
     nullable: true,
     description:

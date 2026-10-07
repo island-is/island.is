@@ -7,7 +7,6 @@ import {
   DelegationConfirmationReceiptDTO,
   DelegationConfirmationService,
   DelegationsOutgoingService,
-  StartDelegationConfirmationAuthenticationDTO,
   StartedDelegationConfirmationAuthenticationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -114,8 +113,8 @@ export class MeDelegationConfirmationsController {
   /**
    * Starts the confirming authentication: the identity server asks Auðkenni to
    * authenticate the grantor on their phone, showing the confirmation's binding
-   * message. Poll the GET endpoint for the result. The grantor may ask for the
-   * other method (app or SIM); never for where it goes.
+   * message, by the method the grantor logged in with. Poll the GET endpoint
+   * for the result.
    */
   @Post(':confirmationId/authentication')
   @Documentation({
@@ -129,21 +128,16 @@ export class MeDelegationConfirmationsController {
   async startAuthentication(
     @CurrentUser() user: User,
     @Param('confirmationId') id: string,
-    @Body() body?: StartDelegationConfirmationAuthenticationDTO,
   ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
     const started =
-      await this.delegationConfirmationService.startAuthentication(
-        user,
-        id,
-        body?.method,
-      )
+      await this.delegationConfirmationService.startAuthentication(user, id)
 
     this.auditService.audit({
       auth: user,
       action: 'startAuthentication',
       namespace,
       resources: id,
-      meta: { method: started.method, requested: body?.method },
+      meta: { method: started.method },
     })
 
     return started

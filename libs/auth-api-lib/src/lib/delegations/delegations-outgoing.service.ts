@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -44,6 +45,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isCardSession } from '@island.is/auth/step-up'
 import { DelegationConfirmationService } from '../delegation-confirmation/delegation-confirmation.service'
 import type { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
 import { PendingConfirmationDTO } from '../delegation-confirmation/dto/delegation-confirmation.dto'
@@ -478,6 +480,14 @@ export class DelegationsOutgoingService {
 
     if (sensitiveScopeNames.length === 0) {
       return { grantable: scopes }
+    }
+
+    // The confirmation is a step-up by the method the grantor logged in with,
+    // and a card can't be used for it, so a card session can't grant these.
+    if (isCardSession(user.amr)) {
+      throw new ForbiddenException(
+        'Scopes that require confirmation cannot be granted from a session logged in with an ID card.',
+      )
     }
 
     // All of it waits for the confirmation, sensitive or not.

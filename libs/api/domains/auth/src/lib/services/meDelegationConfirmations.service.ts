@@ -7,26 +7,9 @@ import type {
   DelegationConfirmationReceiptDTO,
   StartedDelegationConfirmationAuthenticationDTO,
 } from '@island.is/clients/auth/delegation-api'
-import {
-  MeDelegationConfirmationsApi,
-  StartDelegationConfirmationAuthenticationDTOMethodEnum,
-} from '@island.is/clients/auth/delegation-api'
+import { MeDelegationConfirmationsApi } from '@island.is/clients/auth/delegation-api'
 
-import {
-  DelegationConfirmationStepUpMethod,
-  type DelegationConfirmationInput,
-  type StartDelegationConfirmationAuthenticationInput,
-} from '../dto'
-
-const toApiMethod: Record<
-  DelegationConfirmationStepUpMethod,
-  StartDelegationConfirmationAuthenticationDTOMethodEnum
-> = {
-  [DelegationConfirmationStepUpMethod.app]:
-    StartDelegationConfirmationAuthenticationDTOMethodEnum.app,
-  [DelegationConfirmationStepUpMethod.sim]:
-    StartDelegationConfirmationAuthenticationDTOMethodEnum.sim,
-}
+import type { DelegationConfirmationInput } from '../dto'
 
 @Injectable()
 export class MeDelegationConfirmationsService {
@@ -101,16 +84,11 @@ export class MeDelegationConfirmationsService {
 
   startAuthentication(
     user: User,
-    { confirmationId, method }: StartDelegationConfirmationAuthenticationInput,
+    { confirmationId }: DelegationConfirmationInput,
   ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
     return this.apiWithAuth(
       user,
-    ).meDelegationConfirmationsControllerStartAuthentication({
-      confirmationId,
-      startDelegationConfirmationAuthenticationDTO: {
-        method: method && toApiMethod[method],
-      },
-    })
+    ).meDelegationConfirmationsControllerStartAuthentication({ confirmationId })
   }
 
   async getAuthentication(

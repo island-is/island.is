@@ -129,7 +129,6 @@ describe('MeDelegationConfirmationsController', () => {
           expiresIn: 300,
           interval: 5,
           verificationCode: '4821',
-          availableMethods: ['app', 'sim'],
         }
       })
     ciba.poll.mockReset().mockResolvedValue({ status: 'pending' })
@@ -228,6 +227,33 @@ describe('MeDelegationConfirmationsController', () => {
       expect(res.status).toEqual(201)
       expect(res.body.pendingConfirmations).toBeUndefined()
       expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
+    })
+
+    it('refuses sensitive scopes from a session logged in with an ID card', async () => {
+      // Arrange — a card login: the step-up can't be done with a card.
+      await app.cleanUp()
+      await setup({ amr: ['hwk', 'sc', 'pin'] })
+
+      // Act
+      const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
+
+      // Assert — nothing written, nothing held.
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([])
+      expect(await confirmations().count()).toEqual(0)
+    })
+
+    it('still grants ordinary scopes from a card session', async () => {
+      // Arrange
+      await app.cleanUp()
+      await setup({ amr: ['hwk', 'sc', 'pin'] })
+
+      // Act
+      const res = await grant([ORDINARY_SCOPE])
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
     })
 
     it('holds the whole grant when any of it is sensitive, and writes it all at once when confirmed', async () => {
@@ -348,39 +374,30 @@ describe('MeDelegationConfirmationsController', () => {
       })
     })
 
-    it('lets the grantor ask for the other method', async () => {
-      // Act — e.g. the SIM isn't at hand.
-      const res = await server
-        .post(
-          `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
-        )
-        .send({ method: 'app' })
-
-      // Assert — the choice reaches the identity server, which still decides
-      // where "sim" goes.
-      expect(res.status).toEqual(200)
-      expect(ciba.start).toHaveBeenCalledWith(
-        expect.objectContaining({ method: 'app' }),
-      )
-      expect(res.body.availableMethods).toEqual(['app', 'sim'])
-    })
-
     it.each([
-      [{ method: 'card' }],
+      [{ method: 'app' }],
       [{ phoneNumber: '699-1234' }],
       [{ method: 'sim', phoneNumber: '699-1234' }],
-    ])('lets no one choose where the request goes (%j)', async (body) => {
-      // Act — a client trying to name a number, or a method we don't offer.
-      const res = await server
-        .post(
-          `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
-        )
-        .send(body)
+    ])(
+      'lets no one choose how or where the request goes (%j)',
+      async (body) => {
+        // Act — a client trying to name a method or a number.
+        const res = await server
+          .post(
+            `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
+          )
+          .send(body)
 
-      // Assert — refused before anything reaches the identity server.
-      expect(res.status).toEqual(400)
-      expect(ciba.start).not.toHaveBeenCalled()
-    })
+        // Assert — ignored: nothing but who and what reaches the identity
+        // server, which uses the method the grantor logged in with.
+        expect(res.status).toEqual(200)
+        expect(Object.keys(ciba.start.mock.calls[0][0]).sort()).toEqual([
+          'bindingMessage',
+          'contextHash',
+          'userToken',
+        ])
+      },
+    )
 
     it('leaves the default method to the identity server', async () => {
       // Act — no choice made: the identity server goes by how the session

@@ -2,6 +2,7 @@ import { generateKeyPairSync } from 'crypto'
 import { sign } from 'jsonwebtoken'
 
 import { CibaClient } from './ciba.client'
+import { isCardSession } from './types'
 
 const { privateKey, publicKey } = generateKeyPairSync('rsa', {
   modulusLength: 2048,
@@ -49,6 +50,17 @@ const respond = (status: number, json: Record<string, unknown>) =>
 const sentForm = (fetchMock: jest.SpyInstance) =>
   new URLSearchParams(String(fetchMock.mock.calls[0][1].body))
 
+describe('isCardSession', () => {
+  it.each([
+    [['hwk', 'sc', 'pin'], true],
+    [['hwk', 'pin'], false],
+    [['swk', 'pin'], false],
+    [undefined, false],
+  ])('%j → %s', (amr, expected) => {
+    expect(isCardSession(amr)).toBe(expected)
+  })
+})
+
 describe('CibaClient', () => {
   afterEach(() => jest.restoreAllMocks())
 
@@ -61,14 +73,12 @@ describe('CibaClient', () => {
         interval: 5,
         verification_code: '4821',
         login_method: 'sim',
-        available_login_methods: ['app', 'sim'],
       })
 
       // Act
       const started = await new CibaClient(options).start({
         userToken: 'Bearer user-access-token',
         bindingMessage: 'Opna heilsu í appinu',
-        method: 'sim',
         contextHash: 'abc123',
       })
 
@@ -79,7 +89,7 @@ describe('CibaClient', () => {
       expect(form.has('login_hint')).toBe(false)
       expect(form.get('binding_message')).toBe('Opna heilsu í appinu')
       expect(form.get('acr_values')).toBe('eidas-loa-high')
-      expect(form.get('login_method')).toBe('sim')
+      expect(form.has('login_method')).toBe(false)
       expect(form.has('login_method_hint')).toBe(false)
       expect(form.get('context_hash')).toBe('abc123')
       expect(form.get('client_id')).toBe(clientId)
@@ -89,20 +99,7 @@ describe('CibaClient', () => {
         expiresIn: 300,
         interval: 5,
         verificationCode: '4821',
-        availableMethods: ['app', 'sim'],
       })
-    })
-
-    it('always offers the app, even if the identity server lists nothing', async () => {
-      respond(200, { auth_req_id: 'req-1', expires_in: 300, interval: 5 })
-
-      const started = await new CibaClient(options).start({
-        userToken: 't',
-        bindingMessage: 'x',
-      })
-
-      expect(started.availableMethods).toEqual(['app'])
-      expect(started.method).toEqual('app')
     })
 
     it('refuses to start without a client secret', async () => {

@@ -708,18 +708,6 @@ export const m = defineMessages({
     defaultMessage:
       'Ath. að öryggistalan er ekki PIN-númerið á skilríkjunum þínum.',
   },
-  stepUpOtherMethods: {
-    id: 'sp.access-control-delegations:step-up-other-methods',
-    defaultMessage: 'Eða staðfestu með',
-  },
-  stepUpMethodSim: {
-    id: 'sp.access-control-delegations:step-up-method-sim',
-    defaultMessage: 'Skilríki í síma',
-  },
-  stepUpMethodApp: {
-    id: 'sp.access-control-delegations:step-up-method-app',
-    defaultMessage: 'Auðkennisappinu',
-  },
   stepUpTimeLeft: {
     id: 'sp.access-control-delegations:step-up-time-left',
     defaultMessage: 'Tími eftir: {minutes}:{seconds}',
@@ -759,6 +747,15 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:sensitive-scope-tooltip',
     defaultMessage:
       'Þessi réttindi veita aðgang að viðkvæmum upplýsingum. Þú þarft að staðfesta umboðið með rafrænum skilríkjum.',
+  },
+  sensitiveScopesUnavailableTitle: {
+    id: 'sp.access-control-delegations:sensitive-scopes-unavailable-title',
+    defaultMessage: 'Viðkvæm réttindi eru ekki í boði',
+  },
+  sensitiveScopesUnavailableMessage: {
+    id: 'sp.access-control-delegations:sensitive-scopes-unavailable-message',
+    defaultMessage:
+      'Þú skráðir þig inn með skilríkjum á korti. Réttindi merkt „Viðkvæmt“ þarf að staðfesta með rafrænum skilríkjum í síma eða Auðkennisappinu og því er aðeins hægt að veita þau eftir innskráningu með þeim.',
   },
   sensitiveScopesSelectedTitle: {
     id: 'sp.access-control-delegations:sensitive-scopes-selected-title',
