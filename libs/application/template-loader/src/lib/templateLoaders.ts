@@ -313,8 +313,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.U2_CERTIFICATE]: () =>
     import('@island.is/application/templates/vmst/u2-certificate'),
-  [ApplicationTypes.TRANSLATION_WORKSPACE_SMOKE_TEST]: () =>
-    import('@island.is/application/templates/translation-workspace-smoke-test'),
 }
 
 export default templates
