@@ -18,17 +18,17 @@ export const routes: RouteObject[] = [
         </Layout>
       </HeaderInfoProvider>
     ),
+    errorElement: (
+      <ErrorShell
+        title={m.unexpectedErrorTitle}
+        subTitle={m.unexpectedErrorSubtitle}
+        description={m.unexpectedErrorDescription}
+        retryText={m.reloadPage}
+        onRetry={() => window.location.reload()}
+      />
+    ),
     children: [
       {
-        errorElement: (
-          <ErrorShell
-            title={m.unexpectedErrorTitle}
-            subTitle={m.unexpectedErrorSubtitle}
-            description={m.unexpectedErrorDescription}
-            retryText={m.reloadPage}
-            onRetry={() => window.location.reload()}
-          />
-        ),
         children: [
           {
             path: '/:slug',
