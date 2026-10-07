@@ -29,15 +29,29 @@ import { PhoneCallCommunicationDetail } from '../models/phoneCallCommunicationDe
 import { PregnancyDocument } from '../models/pregnancyDocument.model'
 import { PregnancyStaff } from '../models/pregnancyStaff.model'
 
-const mapCommunicationKind = (kind: CommunicationKind): CommunicationKindEnum =>
-  kind === CommunicationKind.PHONE_CALL
-    ? CommunicationKindEnum.phoneCall
-    : CommunicationKindEnum.examination
+const mapCommunicationKind = (
+  kind: CommunicationKind,
+): CommunicationKindEnum => {
+  switch (kind) {
+    case CommunicationKind.EXAMINATION:
+      return CommunicationKindEnum.examination
+    case CommunicationKind.PHONE_CALL:
+      return CommunicationKindEnum.phoneCall
+    default:
+      return CommunicationKindEnum.unknown
+  }
+}
 
-const mapDocumentKind = (kind: DocumentKind): PregnancyDocumentKindEnum =>
-  kind === DocumentKind.ATTACHMENT
-    ? PregnancyDocumentKindEnum.attachment
-    : PregnancyDocumentKindEnum.certificate
+const mapDocumentKind = (kind: DocumentKind): PregnancyDocumentKindEnum => {
+  switch (kind) {
+    case DocumentKind.CERTIFICATE:
+      return PregnancyDocumentKindEnum.certificate
+    case DocumentKind.ATTACHMENT:
+      return PregnancyDocumentKindEnum.attachment
+    default:
+      return PregnancyDocumentKindEnum.unknown
+  }
+}
 
 export const mapPregnancyStaff = (
   dto: PregnancyStaffDto,
@@ -161,10 +175,16 @@ const mapPhoneCallCommunicationDetail = (
 
 export const mapCommunicationDetail = (
   dto: PregnancyCommunicationDetailDto,
-): typeof CommunicationDetail =>
-  dto.kind === CommunicationKind.PHONE_CALL
-    ? mapPhoneCallCommunicationDetail(dto)
-    : mapExaminationCommunicationDetail(dto)
+): typeof CommunicationDetail | null => {
+  switch (dto.kind) {
+    case CommunicationKind.EXAMINATION:
+      return mapExaminationCommunicationDetail(dto)
+    case CommunicationKind.PHONE_CALL:
+      return mapPhoneCallCommunicationDetail(dto)
+    default:
+      return null
+  }
+}
 
 export const mapExaminationMeasurement = (
   dto: ExaminationMeasurementDto,
