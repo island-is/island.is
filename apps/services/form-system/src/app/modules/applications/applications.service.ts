@@ -22,6 +22,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { jwtDecode } from 'jwt-decode'
 import * as kennitala from 'kennitala'
 import { Op, QueryTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -89,11 +90,32 @@ export class ApplicationsService {
     private readonly sequelize: Sequelize,
   ) {}
 
+  private isFakeUserAllowed(form: Form, user: User | null): boolean {
+    if (
+      process.env.name !== 'prod' ||
+      form.status !== FormStatus.PUBLISHED ||
+      !user
+    ) {
+      return true
+    }
+
+    const { idp } = jwtDecode<{ idp?: string }>(
+      user.authorization.replace(/^Bearer /i, ''),
+    )
+    return idp !== 'gervimadur'
+  }
+
   async create(slug: string, user: User): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -565,6 +587,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (!this.isFakeUserAllowed(form, user)) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isLoginTypeAllowed = false
+        return responseDto
+      }
+
       if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isInaccessible = true
@@ -632,6 +660,12 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
