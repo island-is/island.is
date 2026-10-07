@@ -41,10 +41,9 @@ module.exports = {
           (recipient, sender_id)
         SELECT DISTINCT
           recipient,
-          regexp_replace(sender_id, '\\D', '', 'g')
+          sender_id
         FROM user_notification
         WHERE sender_id IS NOT NULL
-          AND regexp_replace(sender_id, '\\D', '', 'g') <> ''
         ON CONFLICT DO NOTHING
         `,
         { transaction },

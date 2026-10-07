@@ -31,9 +31,6 @@ export class NotificationSettingsService {
     }
   }
 
-  /**
-   * Blocks notifications from the given sender for the user. Idempotent.
-   */
   async blockSender(nationalId: string, senderId: string): Promise<void> {
     const normalizedSenderId = this.normalizeSenderId(senderId)
 
@@ -46,9 +43,6 @@ export class NotificationSettingsService {
     )
   }
 
-  /**
-   * Unblocks notifications from the given sender for the user. Idempotent.
-   */
   async unblockSender(nationalId: string, senderId: string): Promise<void> {
     const normalizedSenderId = this.normalizeSenderId(senderId)
 

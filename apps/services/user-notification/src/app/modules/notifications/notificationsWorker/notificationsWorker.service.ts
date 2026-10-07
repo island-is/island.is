@@ -793,10 +793,6 @@ export class NotificationsWorkerService {
     }
   }
 
-  /**
-   * Records that the sender has sent the recipient a notification.
-   * Best-effort, never fails delivery.
-   */
   private async recordNotificationSender(
     recipient: string,
     senderId: string | undefined,

@@ -334,7 +334,7 @@ export class MeUserProfileController {
   @Scopes(UserProfileScope.write)
   @Documentation({
     description:
-      'Blocks notifications from a specific sender for the current user. Idempotent.',
+      'Blocks notifications from a specific sender for the current user.',
     response: { status: 204 },
   })
   blockNotificationSender(
@@ -362,7 +362,7 @@ export class MeUserProfileController {
   @Scopes(UserProfileScope.write)
   @Documentation({
     description:
-      'Unblocks notifications from a specific sender for the current user. Idempotent.',
+      'Unblocks notifications from a specific sender for the current user.',
     request: {
       params: {
         senderId: {
