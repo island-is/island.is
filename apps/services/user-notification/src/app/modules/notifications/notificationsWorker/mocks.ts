@@ -120,6 +120,51 @@ export const userWhoDeclinesInformationalNotifications: MockUserProfileDto = {
   onlyActionablePriorityNotifications: true,
 }
 
+export const delegateWhoDeclinesInformationalNotifications: MockUserProfileDto =
+  {
+    name: 'delegateWhoDeclinesInformationalNotifications',
+    nationalId: createNationalId('person'),
+    mobilePhoneNumber: '7654321',
+    email: 'delegatedeclinesinformational@email.com',
+    emailVerified: true,
+    mobilePhoneNumberVerified: true,
+    documentNotifications: true,
+    emailNotifications: true,
+    isRestricted: false,
+    smsNotifications: true,
+    onlyActionablePriorityNotifications: true,
+  }
+
+// Unrestricted user whose only delegate is delegateWhoDeclinesInformationalNotifications.
+export const delegatorWithRestrictedDelegate: MockUserProfileDto = {
+  name: 'delegatorWithRestrictedDelegate',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'delegatorrestricteddelegate@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
+}
+
+// Restricted user whose only delegate is userWithNoDelegations.
+export const restrictedDelegatorWithDelegate: MockUserProfileDto = {
+  name: 'restrictedDelegatorWithDelegate',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'restricteddelegator@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionablePriorityNotifications: true,
+}
+
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   name: 'userWithFeatureFlagDisabled',
   nationalId: createNationalId('person'),
@@ -285,6 +330,9 @@ export const userProfiles = [
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
   userWhoDeclinesInformationalNotifications,
+  delegateWhoDeclinesInformationalNotifications,
+  delegatorWithRestrictedDelegate,
+  restrictedDelegatorWithDelegate,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
   userWithNoEmail,
@@ -335,6 +383,26 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       toNationalId: legalGuardianOne.nationalId,
       subjectId: null,
       type: AuthDelegationType.Custom,
+      customDelegationScopes: null,
+    },
+  ],
+  // Restricted delegator, unrestricted delegate.
+  [`${restrictedDelegatorWithDelegate.nationalId}:@island.is/documents`]: [
+    {
+      fromNationalId: restrictedDelegatorWithDelegate.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
+    },
+  ],
+  // Unrestricted delegator, restricted delegate.
+  [`${delegatorWithRestrictedDelegate.nationalId}:@island.is/documents`]: [
+    {
+      fromNationalId: delegatorWithRestrictedDelegate.nationalId,
+      toNationalId: delegateWhoDeclinesInformationalNotifications.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.ProcurationHolder,
       customDelegationScopes: null,
     },
   ],

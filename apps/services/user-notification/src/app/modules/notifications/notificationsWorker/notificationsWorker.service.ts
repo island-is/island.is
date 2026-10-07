@@ -126,6 +126,37 @@ export class NotificationsWorkerService {
     private readonly actorNotificationModel: typeof ActorNotification,
   ) {}
 
+  // Stopgap: lets users ignore notifications that are neither urgent nor
+  // actionable. Only the receiving user's own profile is consulted.
+  private shouldDeliverByPriority({
+    profile,
+    priorityType,
+    urgent,
+    messageId,
+  }: {
+    profile?: Pick<UserProfileDto, 'onlyActionablePriorityNotifications'>
+    priorityType: HnippTemplatePriorityType
+    urgent?: boolean
+    messageId: string
+  }): boolean {
+    const shouldDeliver =
+      !!urgent ||
+      !(
+        profile?.onlyActionablePriorityNotifications &&
+        priorityType !== 'Actionable'
+      )
+
+    if (!shouldDeliver) {
+      this.logger.info('Notification not sent because of user request', {
+        messageId,
+        urgent,
+        priorityType,
+      })
+    }
+
+    return shouldDeliver
+  }
+
   private async handleActorNotification(
     args: InternalCreateHnippNotificationDto & { messageId: string },
   ) {
@@ -198,6 +229,16 @@ export class NotificationsWorkerService {
       })
     }
 
+    // The delegate is the end receiver, so their own preference applies, not
+    // the original recipient's. ALWAYS SMS and forced minor-guardian SMS still
+    // bypass it (see buildSmsPayload).
+    const shouldSendNotification = this.shouldDeliverByPriority({
+      profile: delegateProfile,
+      priorityType: template.priorityType,
+      urgent: args.urgent,
+      messageId,
+    })
+
     const [formattedTemplate, recipientNames, onBehalfOfNames] =
       await Promise.all([
         this.notificationsService.formatArguments(
@@ -221,7 +262,8 @@ export class NotificationsWorkerService {
             messageId,
             nationalId: args.recipient,
             email: actorProfile.email,
-            emailNotifications: actorProfile.emailNotifications,
+            emailNotifications:
+              actorProfile.emailNotifications && shouldSendNotification,
             fullName:
               args.onBehalfOf?.name ||
               onBehalfOfNames?.fullName ||
@@ -235,7 +277,8 @@ export class NotificationsWorkerService {
         messageId,
         nationalId: args.recipient,
         mobilePhoneNumber: delegateProfile?.mobilePhoneNumber,
-        smsNotifications: delegateProfile?.smsNotifications,
+        smsNotifications:
+          delegateProfile?.smsNotifications && shouldSendNotification,
         formattedTemplate,
         fullName: recipientNames.shortName,
         onBehalfOf: onBehalfOfNames?.shortName,
@@ -388,18 +431,14 @@ export class NotificationsWorkerService {
 
     // This is a stopgap solution while we ensure better usage of notification templates.
     // This allows users to quickly ignore notifications that are not urgent or actionable.
-    const shouldSendNotification =
-      args.urgent ||
-      !(
-        userProfile?.onlyActionablePriorityNotifications &&
-        template.priorityType !== 'Actionable'
-      )
-
-    !shouldSendNotification &&
-      this.logger.info('Notification not sent because of user request', {
-        urgent: args.urgent,
-        priorityType: template.priorityType,
-      })
+    // Templates with smsDelivery ALWAYS bypass this filter for SMS only (see
+    // buildSmsPayload), so wasSent describes push/email delivery.
+    const shouldSendNotification = this.shouldDeliverByPriority({
+      profile: userProfile,
+      priorityType: template.priorityType,
+      urgent: args.urgent,
+      messageId,
+    })
 
     const scope = template.scope || DocumentsScope.main
     const dbRecord = await this.createUserNotificationDbRecord(
