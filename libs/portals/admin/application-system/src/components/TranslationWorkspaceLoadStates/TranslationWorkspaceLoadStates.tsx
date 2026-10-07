@@ -10,7 +10,16 @@ import { getTranslationLoadErrorDetail } from '../../utils/translationWorkspaceE
 export const TranslationWorkspaceLoading = () => (
   <GridContainer>
     <Box marginTop={4}>
-      <SkeletonLoader height={400} />
+      <Box marginBottom={3}>
+        <SkeletonLoader height={48} borderRadius="large" />
+      </Box>
+      <Box marginBottom={3}>
+        <SkeletonLoader height={38} borderRadius="large" />
+      </Box>
+      <Box marginBottom={3}>
+        <SkeletonLoader height={32} borderRadius="large" />
+      </Box>
+      <SkeletonLoader height={220} repeat={4} space={3} borderRadius="large" />
     </Box>
   </GridContainer>
 )
