@@ -137,11 +137,10 @@ export const getSalaryComponentDetailTooltips = (
 // stored a fraction and multiplied by 100 for display; carrying that over would
 // turn 173,33 hours into 17.333.
 export const paidHoursToFormValue = (hours?: number | null): string =>
-  hours == null ? '' : String(hours)
+  hours == null ? '' : String(hours).replace('.', ',')
 
-// Accepts '173,33' as well as '173.33': type="number" on an is-IS locale can
-// hand back a comma, and Number('173,33') is NaN — which would submit 0 hours
-// and silently inflate tímakaup instead of failing.
+// Accepts '173,33' as well as a pasted '173.33': Number('173,33') is NaN, which
+// would submit 0 hours and silently inflate tímakaup instead of failing.
 export const paidHoursFromFormValue = (value: string): number => {
   const parsed = Number(String(value).replace(',', '.'))
   // DECIMAL(6,2) on the API side.

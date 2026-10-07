@@ -94,7 +94,7 @@ export const EmployeeRow: FC<Props> = ({
     {
       label: formatMessage(m.paidHoursLabel),
       value: formatPaidHours(employee.paidHours),
-      tooltip: formatMessage(m.paidHoursTooltip),
+      tooltip: formatMessage(m.paidHoursDetailTooltip),
     },
     {
       label: formatMessage(m.baseSalaryLabel),

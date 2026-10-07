@@ -948,7 +948,12 @@ export const messages = {
         defaultMessage:
           'Krónur á tímabilinu. Skildu eftir autt ef á ekki við. Hér er átt við aðrar tilfallandi greiðslur og hlunnindi sem tengjast starfsaðstæðum eða sérhæfingu, þ.e. tilfallandi álagsgreiðslur aðrar en í dálki M, s.s. fjarvinnuálag, geislaálag, vopnaálag, aðgerðarálag o.fl.',
       },
-      // Saved-row variants: "Skildu eftir autt" only makes sense on the input.
+      // Saved-row variants: input instructions don't apply to saved data.
+      paidHoursDetailTooltip: {
+        id: 'doe.sr.application:report.employees.paidHoursDetailTooltip',
+        defaultMessage:
+          'Fjöldi greiddra stunda, að föstum yfirvinnustundum meðtöldum en ekki tilfallandi.',
+      },
       additionalFixedOvertimeDetailTooltip: {
         id: 'doe.sr.application:report.employees.additionalFixedOvertimeDetailTooltip',
         defaultMessage:

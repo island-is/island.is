@@ -14,8 +14,8 @@ describe('paidHours round-trip', () => {
   })
 
   it('does not scale a full-time month into a percentage', () => {
-    expect(paidHoursToFormValue(173.33)).toBe('173.33')
-    expect(paidHoursFromFormValue('173.33')).toBe(173.33)
+    expect(paidHoursToFormValue(173.33)).toBe('173,33')
+    expect(paidHoursFromFormValue('173,33')).toBe(173.33)
   })
 
   it('renders an absent value as empty rather than 0', () => {
@@ -23,10 +23,11 @@ describe('paidHours round-trip', () => {
     expect(paidHoursToFormValue(undefined)).toBe('')
   })
 
-  // type="number" on an is-IS locale can hand back a comma; Number('173,33') is
-  // NaN, which would silently submit 0 hours and inflate tímakaup.
-  it('parses an Icelandic decimal comma', () => {
+  // Number('173,33') is NaN, which would silently submit 0 hours and inflate
+  // tímakaup; a pasted '173.33' must not lose its decimal either.
+  it('parses both a decimal comma and a decimal point', () => {
     expect(paidHoursFromFormValue('173,33')).toBe(173.33)
+    expect(paidHoursFromFormValue('173.33')).toBe(173.33)
   })
 
   it('rounds to the API DECIMAL(6,2) precision', () => {

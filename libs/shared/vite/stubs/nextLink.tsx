@@ -1,5 +1,8 @@
 import { cloneElement, createElement, forwardRef, isValidElement } from 'react'
-import type { AnchorHTMLAttributes, ReactNode, RefAttributes } from 'react'
+import type { AnchorHTMLAttributes, ReactNode } from 'react'
+
+// Next's isAbsoluteUrl.
+const ABSOLUTE_URL = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/
 
 /**
  * Stand-in for `next/link` for the SPAs, where island-ui's Link components
@@ -39,13 +42,16 @@ const Link = forwardRef<
   const resolvedHref = typeof href === 'string' ? href : href?.pathname
   // Like real next/link: inject href into the child anchor rather than wrap
   // it, which would nest anchors and drop the child's target and class.
+  // The child keeps its own ref; Next ignores the outer one in legacy mode.
   if (
     legacyBehavior &&
-    isValidElement<
-      AnchorHTMLAttributes<HTMLAnchorElement> & RefAttributes<HTMLAnchorElement>
-    >(children)
+    isValidElement<AnchorHTMLAttributes<HTMLAnchorElement>>(children)
   ) {
-    return cloneElement(children, { href: resolvedHref, ref })
+    const assignHref =
+      ABSOLUTE_URL.test(resolvedHref ?? '') ||
+      passHref ||
+      (children.type === 'a' && !('href' in children.props))
+    return cloneElement(children, assignHref ? { href: resolvedHref } : {})
   }
   return createElement('a', { href: resolvedHref, ref, ...rest }, children)
 })

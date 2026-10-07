@@ -150,11 +150,8 @@ export const EmployeeForm: FC<Props> = ({
               label={formatMessage(m.paidHoursInputLabel)}
               placeholder={formatMessage(m.paidHoursPlaceholder)}
               tooltip={formatMessage(m.paidHoursTooltip)}
-              type="number"
-              // Without it NumberFormat keeps '.' as the decimal separator and
-              // drops a typed comma, so 173,33 becomes 17333.
-              thousandSeparator
-              decimalScale={2}
+              // Plain text, not type="number": NumberFormat strips a pasted
+              // '.' (173.33 → 17333). paidHoursFromFormValue parses both.
               inputMode="decimal"
               backgroundColor="white"
               size="sm"
