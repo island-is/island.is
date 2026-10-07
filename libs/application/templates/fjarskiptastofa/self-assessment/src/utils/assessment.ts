@@ -18,8 +18,10 @@ import {
 // id keeps it an object keyed by string.
 export const answerKey = (questionId: number) => `q${questionId}`
 
-export const answerFieldId = (questionId: number, field: 'answerValue' | 'remark') =>
-  `${ASSESSMENT_ANSWERS_ID}.${answerKey(questionId)}.${field}`
+export const answerFieldId = (
+  questionId: number,
+  field: 'answerValue' | 'remark',
+) => `${ASSESSMENT_ANSWERS_ID}.${answerKey(questionId)}.${field}`
 
 export const parseQuestionId = (key: string): number =>
   Number(key.replace(/^q/, ''))
