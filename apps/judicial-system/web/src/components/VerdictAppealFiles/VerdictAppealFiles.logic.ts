@@ -4,8 +4,8 @@ import {
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 import {
-  AppealCaseState,
   type AppealCase,
+  AppealCaseState,
   type Case,
   type CaseFile,
   type CaseFileCategory,
