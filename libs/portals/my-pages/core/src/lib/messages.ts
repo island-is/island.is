@@ -2423,6 +2423,14 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
   },
+  healthTreatment: {
+    id: 'sp.search.tags:health-treatment',
+    defaultMessage: 'Meðferð',
+  },
+  healthPregnancy: {
+    id: 'sp.search.tags:health-pregnancy',
+    defaultMessage: 'Meðganga',
+  },
   healthReferrals: {
     id: 'sp.search.tags:health-referrals',
     defaultMessage: 'Vísanir',
