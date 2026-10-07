@@ -56,7 +56,7 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Version([VERSION_NEUTRAL, '1'])
   @Get('preferences')
-  @ApiOkResponse({ isArray: true })
+  @ApiOkResponse({ isArray: true, type: DelegationPreferenceDto })
   findPreferences(
     @CurrentUser() user: User,
   ): Promise<DelegationPreferenceDto[]> {
@@ -159,12 +159,11 @@ export class DelegationsController {
     @Body()
     request: DelegationVerification,
   ): Promise<DelegationVerificationResult> {
-    const verified =
-      await this.delegationsIncomingService.verifyDelegationAtProvider(
-        user,
-        request.fromNationalId,
-        request.delegationTypes,
-      )
+    const verified = await this.delegationsIncomingService.verifyDelegationAtProvider(
+      user,
+      request.fromNationalId,
+      request.delegationTypes,
+    )
 
     return { verified }
   }

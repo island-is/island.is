@@ -161,6 +161,17 @@ describe('DelegationsController preferences', () => {
         .expect(200)
     })
 
+    it('rejects a party the actor holds no delegation for', async () => {
+      await indexRecord(party)
+
+      await server
+        .post(`${path}/favourite`)
+        .send({ fromNationalId: company, isFavourite: true })
+        .expect(400)
+
+      await expect(rowFor(company)).resolves.toBeNull()
+    })
+
     it('rejects a national id that is not one', async () => {
       await server
         .post(`${path}/favourite`)

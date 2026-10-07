@@ -108,6 +108,18 @@ export class DelegationPreferenceService {
     }
 
     const live = await this.liveParties(toNationalId)
+
+    /**
+     * The cap only counts live parties, so without this a caller could store
+     * any number of favourites for parties the actor does not hold: none would
+     * be counted, and favourites are never pruned.
+     */
+    if (live && !live.has(fromNationalId)) {
+      throw new BadRequestException(
+        'Cannot favourite a party the user holds no delegation for',
+      )
+    }
+
     const sequelize = this.delegationPreferenceModel.sequelize
 
     if (!sequelize) {

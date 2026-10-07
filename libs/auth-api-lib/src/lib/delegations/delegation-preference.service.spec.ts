@@ -240,6 +240,27 @@ describe('DelegationPreferenceService', () => {
       )
     })
 
+    it('refuses a party the actor holds no delegation for', async () => {
+      // Otherwise the cap, which counts only live parties, would never see
+      // these rows and nothing would bound how many an actor could store.
+      indexed(OTHER_PARTY)
+
+      await expect(service.setFavourite(ACTOR, PARTY, true)).rejects.toThrow(
+        BadRequestException,
+      )
+      expect(model.upsert).not.toHaveBeenCalled()
+      expect(model.sequelize.transaction).not.toHaveBeenCalled()
+    })
+
+    it('allows any party when the actor has no index rows at all', async () => {
+      index.findAll.mockResolvedValue([])
+
+      await expect(
+        service.setFavourite(ACTOR, PARTY, true),
+      ).resolves.toBeUndefined()
+      expect(model.upsert).toHaveBeenCalled()
+    })
+
     it('refuses to star beyond the cap', async () => {
       model.count.mockResolvedValue(5)
 
