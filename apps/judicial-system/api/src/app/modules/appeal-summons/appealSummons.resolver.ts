@@ -1,11 +1,5 @@
 import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -87,11 +81,9 @@ export class AppealSummonsResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_APPEAL_SUMMONS,
-      this.backendService.updateAppealSummons(
-        caseId,
-        input.appealSummonsId,
-        { defendants: input.defendants },
-      ),
+      this.backendService.updateAppealSummons(caseId, input.appealSummonsId, {
+        defendants: input.defendants,
+      }),
       caseId,
     )
   }

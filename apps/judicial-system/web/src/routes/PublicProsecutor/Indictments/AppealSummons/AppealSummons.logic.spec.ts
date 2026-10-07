@@ -25,10 +25,7 @@ describe('prefillAppealSummonsClaims', () => {
 
   it('returns the defence wording', () => {
     expect(
-      prefillAppealSummonsClaims(
-        AppealSummonsAppellantSide.DEFENCE,
-        defendant,
-      ),
+      prefillAppealSummonsClaims(AppealSummonsAppellantSide.DEFENCE, defendant),
     ).toContain('Ákærði krefst þess aðallega að hann verði sýknaður')
   })
 

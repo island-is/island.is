@@ -43,9 +43,7 @@ export class AppealSummonsService {
     const appealCase = theCase.verdictAppealCase
 
     if (!appealCase) {
-      throw new BadRequestException(
-        `Case ${theCase.id} has no verdict appeal`,
-      )
+      throw new BadRequestException(`Case ${theCase.id} has no verdict appeal`)
     }
 
     this.logger.debug(
@@ -109,11 +107,7 @@ export class AppealSummonsService {
     transaction: Transaction,
   ): Promise<AppealSummons> {
     if (
-      !canPerformAppealSummonsAction(
-        AppealSummonsAction.EDIT,
-        summons,
-        user,
-      )
+      !canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)
     ) {
       throw new ForbiddenException(
         `User ${user.id} cannot edit appeal summons ${summons.id}`,
@@ -178,9 +172,7 @@ export class AppealSummonsService {
     const appealCase = theCase.verdictAppealCase
 
     if (!appealCase) {
-      throw new BadRequestException(
-        `Case ${theCase.id} has no verdict appeal`,
-      )
+      throw new BadRequestException(`Case ${theCase.id} has no verdict appeal`)
     }
 
     const standing = standingVerdictAppellants(appealCase)

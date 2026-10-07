@@ -24,10 +24,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import {
-  indictmentCases,
-  type User,
-} from '@island.is/judicial-system/types'
+import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
 import { publicProsecutorStaffRule } from '../../guards'
 import {
@@ -146,14 +143,9 @@ export class AppealSummonsController {
     @Body() dto: CreateAppealSummonsDto,
     @Res() res: Response,
   ): Promise<void> {
-    this.logger.debug(
-      `Previewing an appeal summons pdf for case ${caseId}`,
-    )
+    this.logger.debug(`Previewing an appeal summons pdf for case ${caseId}`)
 
-    const defendants = this.appealSummonsService.resolveDefendants(
-      theCase,
-      dto,
-    )
+    const defendants = this.appealSummonsService.resolveDefendants(theCase, dto)
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       undefined,

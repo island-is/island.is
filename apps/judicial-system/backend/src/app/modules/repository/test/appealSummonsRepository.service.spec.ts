@@ -73,11 +73,9 @@ describe('AppealSummonsRepositoryService', () => {
       const found = { id: 'summons_id', defendants: [] }
       summonsModel.findOne.mockResolvedValueOnce(found)
 
-      const result = await service.findByIdAndCaseId(
-        'summons_id',
-        'case_id',
-        { transaction },
-      )
+      const result = await service.findByIdAndCaseId('summons_id', 'case_id', {
+        transaction,
+      })
 
       expect(summonsModel.findOne).toHaveBeenCalledWith({
         where: { id: 'summons_id', caseId: 'case_id' },

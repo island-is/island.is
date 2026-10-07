@@ -160,7 +160,11 @@ describe('VerdictAppealFiles', () => {
     })
 
     it('should hide the summons subsection while the feature is off', async () => {
-      renderSection(appealed([declaration]), UserRole.PUBLIC_PROSECUTOR_STAFF, [])
+      renderSection(
+        appealed([declaration]),
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+        [],
+      )
 
       expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
       expect(
@@ -173,12 +177,15 @@ describe('VerdictAppealFiles', () => {
 
     it('should list a draft summons above the declarations', async () => {
       renderSection(
-        appealed([declaration], [
-          {
-            id: 'summons_id',
-            defendants: [],
-          },
-        ]),
+        appealed(
+          [declaration],
+          [
+            {
+              id: 'summons_id',
+              defendants: [],
+            },
+          ],
+        ),
         UserRole.PUBLIC_PROSECUTOR_STAFF,
       )
 

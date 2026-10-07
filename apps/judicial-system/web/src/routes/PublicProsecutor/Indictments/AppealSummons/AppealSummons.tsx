@@ -133,8 +133,7 @@ const AppealSummons = () => {
   const standing = getStandingAppealSummonsDefendants(workingCase)
   const earliestAppealDate = getEarliestStandingAppealDate(standing)
   const isSaving = isCreatingAppealSummons || isUpdatingAppealSummons
-  const isReady =
-    !isLoadingWorkingCase && !isLoadingFeatures && hasInitialized
+  const isReady = !isLoadingWorkingCase && !isLoadingFeatures && hasInitialized
 
   const updateSection = (
     defendantId: string,

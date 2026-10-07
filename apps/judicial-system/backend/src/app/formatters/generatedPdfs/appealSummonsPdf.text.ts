@@ -17,7 +17,8 @@ export const formatAppealSummonsDefendantNames = (
   names: (string | undefined | null)[],
 ): string => {
   const listed = names.filter(
-    (name): name is string => name !== undefined && name !== null && name !== '',
+    (name): name is string =>
+      name !== undefined && name !== null && name !== '',
   )
 
   if (listed.length === 0) {
@@ -57,9 +58,7 @@ export const formatAppealSummonsIntro = ({
   courtCaseNumber,
   defendantNames,
 }: AppealSummonsIntroInput): string => {
-  const courtGenitive = applyGenitiveCaseToCourtName(
-    courtName || 'Héraðsdómur',
-  )
+  const courtGenitive = applyGenitiveCaseToCourtName(courtName || 'Héraðsdómur')
   const against = formatAppealSummonsDefendantNames(defendantNames)
   const caseAgainst = against ? `Ákæruvaldið gegn ${against}` : 'Ákæruvaldið'
 
@@ -72,9 +71,9 @@ export const formatAppealSummonsIntro = ({
 
   return `Ríkissaksóknari gerir kunnugt: Ákærði, ${
     defendantName ?? ''
-  }, kennitala ${formatNationalId(
-    defendantNationalId,
-  )}, ${defendantAddress ?? ''}, hefur með yfirlýsingu ${formatDate(
+  }, kennitala ${formatNationalId(defendantNationalId)}, ${
+    defendantAddress ?? ''
+  }, hefur með yfirlýsingu ${formatDate(
     appealDate,
     'PPP',
   )} áfrýjað til Landsréttar dómi ${courtGenitive}, uppkveðnum ${formatDate(

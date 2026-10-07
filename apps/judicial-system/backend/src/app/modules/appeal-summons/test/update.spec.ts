@@ -93,7 +93,6 @@ describe('AppealSummonsController - Update', () => {
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
-
     ;(
       mockAppealSummonsRepositoryService.deleteDefendants as jest.Mock
     ).mockResolvedValue(1)

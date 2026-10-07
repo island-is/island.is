@@ -107,25 +107,18 @@ export const canShowIssueAppealSummons = (
   )
 
 export const getAppealSummonsMenuItems = (
-  summons: Pick<
-    AppealSummons,
-    'confirmedDate' | 'sentToCourtOfAppealsDate'
-  >,
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
   user: User | undefined,
   onEdit: () => void,
   onOpen: () => void,
 ): ContextMenuItem[] => {
   const items: ContextMenuItem[] = []
 
-  if (
-    canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)
-  ) {
+  if (canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)) {
     items.push({ title: 'Breyta', onClick: onEdit, icon: 'pencil' })
   }
 
-  if (
-    canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)
-  ) {
+  if (canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)) {
     items.push({ title: 'Opna í nýjum flipa', onClick: onOpen, icon: 'open' })
   }
 

@@ -86,7 +86,9 @@ describe('formatAppealSummonsIntro', () => {
 describe('formatAppealSummonsClosingPlaceAndDate', () => {
   it('places the office in Reykjavík', () => {
     expect(
-      formatAppealSummonsClosingPlaceAndDate(new Date('2026-06-05T12:00:00.000Z')),
+      formatAppealSummonsClosingPlaceAndDate(
+        new Date('2026-06-05T12:00:00.000Z'),
+      ),
     ).toContain('Skrifstofu ríkissaksóknara, Reykjavík')
   })
 })

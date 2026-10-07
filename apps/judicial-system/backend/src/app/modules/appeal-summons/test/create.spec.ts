@@ -113,7 +113,6 @@ describe('AppealSummonsController - Create', () => {
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
-
     ;(mockAppealSummonsRepositoryService.create as jest.Mock).mockResolvedValue(
       { id: summonsId },
     )
@@ -123,9 +122,9 @@ describe('AppealSummonsController - Create', () => {
     ;(
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
     ).mockResolvedValue(created)
-    ;(mockAppealEventLogRepositoryService.create as jest.Mock).mockResolvedValue(
-      {},
-    )
+    ;(
+      mockAppealEventLogRepositoryService.create as jest.Mock
+    ).mockResolvedValue({})
 
     givenWhenThen = async (theCase, dto, actingUser = user) => {
       const then = {} as Then
@@ -224,18 +223,15 @@ describe('AppealSummonsController - Create', () => {
       created: new Date(),
     } as AppealEventLog
 
-    await givenWhenThen(
-      caseWithAppeal([appealedLog, prosecutionLog]),
-      {
-        defendants: [
-          {
-            defendantId,
-            appellantSide: AppealSummonsAppellantSide.DEFENCE,
-            claims: 'Kröfur',
-          },
-        ],
-      },
-    )
+    await givenWhenThen(caseWithAppeal([appealedLog, prosecutionLog]), {
+      defendants: [
+        {
+          defendantId,
+          appellantSide: AppealSummonsAppellantSide.DEFENCE,
+          claims: 'Kröfur',
+        },
+      ],
+    })
 
     expect(
       mockAppealSummonsRepositoryService.createDefendant,

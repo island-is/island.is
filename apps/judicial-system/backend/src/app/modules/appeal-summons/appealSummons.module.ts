@@ -5,10 +5,7 @@ import { AppealSummonsController } from './appealSummons.controller'
 import { AppealSummonsService } from './appealSummons.service'
 
 @Module({
-  imports: [
-    forwardRef(() => CaseModule),
-    forwardRef(() => RepositoryModule),
-  ],
+  imports: [forwardRef(() => CaseModule), forwardRef(() => RepositoryModule)],
   controllers: [AppealSummonsController],
   providers: [AppealSummonsService],
   exports: [AppealSummonsService],

@@ -184,12 +184,11 @@ export class AppealSummonsRepositoryService {
         `Deleting appeal summons defendant rows for summons ${appealSummonsId}`,
       )
 
-      const numberOfDeletedRows = await this.appealSummonsDefendantModel.destroy(
-        {
+      const numberOfDeletedRows =
+        await this.appealSummonsDefendantModel.destroy({
           where: { appealSummonsId },
           transaction: options.transaction,
-        },
-      )
+        })
 
       this.logger.debug(
         `Deleted ${numberOfDeletedRows} appeal summons defendant row(s) for summons ${appealSummonsId}`,
