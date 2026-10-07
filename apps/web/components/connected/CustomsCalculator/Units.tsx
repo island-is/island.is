@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Control, Controller, useForm } from 'react-hook-form'
+import { Control, Controller, useForm, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { useLazyQuery, useQuery } from '@apollo/client'
 
@@ -185,7 +185,7 @@ export const Units = ({
 }: UnitsProps) => {
   const { formatMessage } = useIntl()
 
-  const { control, getValues } = useForm<UnitsFormValues>({
+  const { control, getValues, setValue } = useForm<UnitsFormValues>({
     defaultValues: {
       net: '',
       unitCount: '1',
@@ -199,6 +199,10 @@ export const Units = ({
       priceWithShipping: '',
     },
   })
+
+  // ISK prices are whole numbers while foreign prices can include cents
+  const currency = useWatch({ control, name: 'currency' })
+  const priceDecimalScale = currency?.value === 'ISK' ? 0 : 2
 
   const [calculate, { data, loading, called, error }] =
     useLazyQuery<CustomsCalculatorCalculateQuery>(
@@ -413,7 +417,14 @@ export const Units = ({
                     label={formatMessage(translationStrings.currencyLabel)}
                     backgroundColor="white"
                     onChange={(option) => {
-                      if (option) onChange(option)
+                      if (!option) return
+                      onChange(option)
+                      // Drop decimals that can't be shown for ISK prices
+                      if (option.value === 'ISK') {
+                        const price = getValues('priceWithShipping')
+                        if (price.includes('.'))
+                          setValue('priceWithShipping', price.split('.')[0])
+                      }
                     }}
                     defaultValue={currencyOptions?.[0]}
                   />
@@ -424,7 +435,7 @@ export const Units = ({
               <UnitInput
                 name="priceWithShipping"
                 label={formatMessage(translationStrings.priceWithShippingLabel)}
-                decimalScale={0}
+                decimalScale={priceDecimalScale}
                 control={control}
               />
             </GridColumn>
