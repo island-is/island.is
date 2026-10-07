@@ -836,9 +836,18 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
+  removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
+  /** Per row gate for the delete button. Defaults to every row being removable. */
+  canRemoveRow?: (
+    application: Application,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    row: Record<string, any>,
+    index: number,
+  ) => boolean
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -877,6 +886,10 @@ export type TableRepeaterField = BaseField & {
     >
   }
   initActiveFieldIfEmpty?: boolean
+  /**
+   * If true, hides the table header when there are no visible rows.
+   */
+  hideTableHeaderIfEmpty?: boolean
 }
 
 export type FieldsRepeaterField = BaseField & {
@@ -902,11 +915,20 @@ export type FieldsRepeaterField = BaseField & {
   maxRows?: MaybeWithAnswersAndExternalData<number>
 }
 
+export type AccordionItemTag = {
+  label: FormText
+  variant?: TagVariant
+  outlined?: boolean
+}
+
 export type AccordionItem = {
   itemTitle: FormText
   itemContent?: FormText
   children?: Field[]
   startExpanded?: boolean
+  tag?:
+    | AccordionItemTag
+    | ((application: Application) => AccordionItemTag | undefined)
 }
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION

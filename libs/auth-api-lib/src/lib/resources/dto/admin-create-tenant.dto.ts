@@ -55,4 +55,16 @@ export class AdminCreateTenantDto {
   @IsEmail()
   @ApiPropertyOptional({ example: 'island@example.is' })
   contactEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{4}$/, {
+    message: 'Municipality code must be 4 digits',
+  })
+  @ApiPropertyOptional({
+    example: '0000',
+    description:
+      'Municipality number (sveitarfélagsnúmer), used to match users to their municipality domain.',
+  })
+  municipalityCode?: string
 }

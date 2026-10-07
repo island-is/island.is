@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-ship-registry',
   preset: '../../../../jest.preset.js',

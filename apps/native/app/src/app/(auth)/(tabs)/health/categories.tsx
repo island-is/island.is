@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 
 import calendarIcon from '@/assets/icons/calendar.png'
+import envelopeIcon from '@/assets/icons/tabbar-mail.png'
 import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
@@ -11,6 +12,7 @@ import { LinkRowButton } from '@/components/link-row-button/link-row-button'
 import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
 import { getConfig } from '@/config'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
+import { useGetHealthTreatmentsQuery } from '@/graphql/types/schema'
 import { Href } from 'expo-router'
 
 const ContentContainer = styled.View`
@@ -67,6 +69,22 @@ export default function HealthCategoriesScreen() {
     false,
     null,
   )
+  const isHealthMessagesEnabled = useFeatureFlag(
+    'isAppHealthMessagesEnabled',
+    false,
+    null,
+  )
+  const isTreatmentsEnabled = useFeatureFlag(
+    'isServicePortalHealthTreatmentsPageEnabled',
+    false,
+    null,
+  )
+
+  // The resolver is behind the same flag; querying with it off 403s.
+  const { data: treatmentsData } = useGetHealthTreatmentsQuery({
+    skip: !isTreatmentsEnabled,
+  })
+  const treatments = treatmentsData?.healthDirectorateTreatments ?? []
 
   const healthCardRows = useMemo(() => {
     // Build the medicine subLinks based on feature flags
@@ -105,7 +123,7 @@ export default function HealthCategoriesScreen() {
           id: 'prescriptionsAndCertificates',
           titleId: 'health.drugCertificates.title',
           icon: medicineIcon,
-          route: '/health/medicine/legacy',
+          route: '/health/medicine/certificates',
           enabled: !isMedicineEnabled,
         },
         {
@@ -122,6 +140,13 @@ export default function HealthCategoriesScreen() {
           icon: calendarIcon,
           route: '/health/appointments',
           enabled: isAppointmentsEnabled,
+        },
+        {
+          id: 'messages',
+          titleId: 'health.messages.screenTitle',
+          icon: envelopeIcon,
+          route: '/health/messages',
+          enabled: isHealthMessagesEnabled,
         },
         {
           id: 'questionnaires',
@@ -145,9 +170,15 @@ export default function HealthCategoriesScreen() {
     isQuestionnaireFeatureEnabled,
     isVaccinationsEnabled,
     isAppointmentsEnabled,
+    isHealthMessagesEnabled,
   ])
 
-  const externalLinks = [
+  const externalLinks: Array<{
+    id: string
+    titleId: string
+    titleValues?: Record<string, string>
+    url: string
+  }> = [
     {
       id: 'referrals',
       titleId: 'health.categories.referrals',
@@ -178,6 +209,18 @@ export default function HealthCategoriesScreen() {
       titleId: 'health.categories.medicalRecords',
       url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,
     },
+    // One row per treatment, as on my pages. Names repeat, so key by id.
+    ...treatments.map((treatment) => {
+      const name = treatment.name.trim()
+      return {
+        id: `treatment-${treatment.id}`,
+        titleId: name
+          ? 'health.categories.treatmentWithName'
+          : 'health.categories.treatment',
+        titleValues: name ? { name } : undefined,
+        url: `${origin}/minarsidur/heilsa/medferd/${treatment.id}`,
+      }
+    }),
   ]
 
   return (
@@ -203,8 +246,9 @@ export default function HealthCategoriesScreen() {
         </CategoriesContainer>
         <MoreInfoContiner
           externalLinks={externalLinks.map((link) => ({
+            id: link.id,
             link: link.url,
-            title: intl.formatMessage({ id: link.titleId }),
+            title: intl.formatMessage({ id: link.titleId }, link.titleValues),
             isExternal: true,
           }))}
         />

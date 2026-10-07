@@ -162,6 +162,27 @@ export const m = defineMessages({
     defaultMessage: 'Birta yfirlit áður en umsókn er send inn',
     description: 'Display summary before submission',
   },
+  enableApplicationPdfDownload: {
+    id: 'form.system:enable-application-pdf-download',
+    defaultMessage: 'Leyfa notanda að hlaða niður umsókn sem PDF',
+    description: 'Allow the user to download the application as a PDF',
+  },
+  downloadApplicationPdf: {
+    id: 'form.system:download-application-pdf',
+    defaultMessage: 'Sækja PDF',
+    description: 'Download PDF',
+  },
+  applicationPdfDownloadDescription: {
+    id: 'form.system:application-pdf-download-description',
+    defaultMessage:
+      'Þú getur sótt umsóknina á PDF með því að smella á hnappinn',
+    description: 'Application PDF download instructions',
+  },
+  applicationPdfDownloadError: {
+    id: 'form.system:application-pdf-download-error',
+    defaultMessage: 'Ekki tókst að sækja PDF. Vinsamlegast reyndu aftur.',
+    description: 'Failed to download the application PDF. Please try again.',
+  },
   payment: {
     id: 'form.system:payment',
     defaultMessage: 'Greiðsla',
@@ -891,9 +912,8 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'form.system:external-data-title',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
-    description:
-      'The following data will be retrieved electronically with your consent',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+    description: 'The following information will be retrieved electronically',
   },
   externalDataHeader: {
     id: 'form.system:external-data-header',
@@ -907,30 +927,29 @@ export const m = defineMessages({
   },
   externalDataAgreement: {
     id: 'form.system:externalData.agreement',
-    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
-    description: 'I have read the above regarding data collection',
+    defaultMessage: 'Ég skil að ofangreindra upplýsinga verði aflað',
+    description:
+      'I understand that the above-mentioned information will be collected',
   },
   icelandicRegistryTitle: {
     id: 'form.system:icelandic-registry-title',
-    defaultMessage: 'Upplýsingar úr Þjóðskrá',
-    description: 'Icelandic registry',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá',
+    description: 'Information from Registers Iceland',
   },
   icelandicRegistryDescription: {
     id: 'form.system:icelandic-registry-description',
-    defaultMessage: 'Upplýsingar um þig',
-    description: 'Information about you',
+    defaultMessage: 'Upplýsingar um nafn, kennitölu og lögheimili',
+    description: 'Information regarding name, National ID, and legal domicile',
   },
   myPagesTitle: {
     id: 'form.system:my-pages-title',
-    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
-    description: 'My information on My Pages on Ísland.is',
+    defaultMessage: 'Upplýsingar frá Ísland.is',
+    description: 'Information from Ísland.is',
   },
   myPagesDescription: {
     id: 'form.system:my-pages-description',
-    defaultMessage:
-      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
-    description:
-      'Information about phone number and email to facilitate the application process',
+    defaultMessage: 'Upplýsingar um símanúmer og netfang',
+    description: 'Information on phone number and email address',
   },
   continue: {
     id: 'form.system:continue',
@@ -1263,8 +1282,8 @@ export const m = defineMessages({
   },
   completedMessage: {
     id: 'form.system:completed-message',
-    defaultMessage: 'Skilaboð á lokasíðu',
-    description: 'Message on completed page',
+    defaultMessage: 'Lokasíða',
+    description: 'Completed page',
   },
   isPartOfMulti: {
     id: 'form.system:is-part-of-multi',
@@ -1329,6 +1348,11 @@ export const m = defineMessages({
     id: 'form.system:total',
     defaultMessage: 'Samtals',
     description: 'Total',
+  },
+  toPay: {
+    id: 'form.system:to-pay',
+    defaultMessage: 'Til greiðslu',
+    description: 'To pay',
   },
   price: {
     id: 'form.system:price',

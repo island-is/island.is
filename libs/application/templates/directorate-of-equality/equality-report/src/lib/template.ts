@@ -19,6 +19,7 @@ import {
   GetReportCommentsApi,
   IdentityApiProvider,
   PreviousEqualityReportContentApi,
+  PreviousEqualityReportPdfApi,
   SubmitReportCommentApi,
   SubmitEqualityDraftApi,
 } from '../dataProviders'
@@ -189,6 +190,9 @@ const template: ApplicationTemplate<
                 CreateEqualityDraftApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
+                // Listed purely so `updateApplicationExternalData` is permitted
+                // to invoke it on demand — never wired to a state's onEntry.
+                PreviousEqualityReportPdfApi,
               ],
               delete: true,
             },

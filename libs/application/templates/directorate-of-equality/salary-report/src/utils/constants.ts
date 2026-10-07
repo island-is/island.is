@@ -4,7 +4,6 @@ import { JobFactor, SalaryComponentKey, SubCriterion } from './types'
 export type Events = {
   type:
     | DefaultEvents.SUBMIT
-    | DefaultEvents.ABORT
     | DefaultEvents.APPROVE
     | DefaultEvents.REJECT
     | DefaultEvents.EDIT
@@ -38,11 +37,14 @@ export enum ApiActions {
   getDoeCompany = 'getDoeCompany',
   getSubCriterionCatalog = 'getSubCriterionCatalog',
   getActiveEqualityReport = 'getActiveEqualityReport',
+  getSalaryReportEligibility = 'getSalaryReportEligibility',
   getBlankExcelTemplate = 'getBlankExcelTemplate',
   presignImportUpload = 'presignImportUpload',
   createSalaryDraft = 'createSalaryDraft',
   importSalaryDraftWorkbook = 'importSalaryDraftWorkbook',
   submitSalaryReport = 'submitSalaryReport',
+  deleteSalaryReportDraft = 'deleteSalaryReportDraft',
+  withdrawSalaryReport = 'withdrawSalaryReport',
   analyzeSalaryReport = 'analyzeSalaryReport',
   editOutliers = 'editOutliers',
   getReportComments = 'getReportComments',
@@ -134,7 +136,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'RESPONSIBILITY',
     title: 'Ábyrgð',
     description:
-      'Metur ábyrgð starfsins á fólki, fjármálum, gæðum og öðrum þáttum.',
+      'Metur þær kröfur sem starfið gerir til ábyrgðar á fólki, fjármálum, gæðum og öðrum þáttum.',
     weight: '25',
   },
   {
@@ -142,7 +144,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'STRAIN',
     title: 'Álag',
     description:
-      'Metur hraða, tímaþrýsting, líkamlegt og tilfinningalegt álag.',
+      'Metur kröfur starfsins til að vinna við áreiti, vera undir líkamlegu- og tilfinningalegu álagi og fleiri þátta.',
     weight: '25',
   },
   {
@@ -150,7 +152,7 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'CONDITION',
     title: 'Vinnuaðstæður',
     description:
-      'Metur vaktavinnu, ferðalög, áhættu og aðrar aðstæður starfsins.',
+      'Metur kröfur starfsins um vinnuhraða, hávaða í starfsumhverfi, vinnu með gufur og eiturefni og fleiri þætti.',
     weight: '25',
   },
   {
@@ -158,10 +160,25 @@ export const createDefaultJobFactors = (): JobFactor[] => [
     type: 'COMPETENCE',
     title: 'Hæfni',
     description:
-      'Metur menntunarkröfur, reynslukröfur og sérhæfingu starfsins.',
+      'Metur menntunarkröfur starfsins, kröfur um starfsreynslu og ýmis konar færni sem starfið krefst.',
     weight: '25',
   },
 ]
+
+// How many þrep a sub-criterion may be scored on. Mirrors DMR's own MIN_STEPS /
+// MAX_STEPS (report-excel/workbook.schema.ts), which its Excel parser and its
+// parsed-payload integrity check both enforce — so a workbook-imported draft
+// cannot exceed this. `POST …/draft/sync` enforces neither, and submit does not
+// re-validate, so on a portal-authored draft this bound is ours alone to keep.
+//
+// Enforced on the "Fjöldi þrepa" input itself (min/max) rather than by silently
+// rewriting the step list behind the applicant's back — see useStepCountSync,
+// where an out-of-range value is a no-op precisely so that nothing is
+// destroyed mid-keystroke. A draft that somehow arrives outside the range is
+// therefore left alone rather than trimmed to fit, and can only be brought back
+// into it by the applicant.
+export const MIN_SUB_CRITERION_STEPS = 2
+export const MAX_SUB_CRITERION_STEPS = 8
 
 export const createDefaultSubCriterion = (
   criterionId: string,
@@ -171,27 +188,34 @@ export const createDefaultSubCriterion = (
   title: '',
   description: '',
   weight: '',
-  stepCount: '2',
-  steps: [
-    { id: crypto.randomUUID(), description: '' },
-    { id: crypto.randomUUID(), description: '' },
-  ],
+  stepCount: String(MIN_SUB_CRITERION_STEPS),
+  steps: Array.from({ length: MIN_SUB_CRITERION_STEPS }, () => ({
+    id: crypto.randomUUID(),
+    description: '',
+  })),
 })
 
+// Order is load-bearing, not cosmetic: this drives the order of the pay inputs in
+// EmployeeForm and of the detail rows in EmployeeRow, and it mirrors columns J–O
+// of the 2.0 workbook the applicant just filled in. The two groups are the
+// workbook's row-4 bands, Fastar greiðslur and Tilfallandi greiðslur.
 export const SALARY_COMPONENT_GROUPS: {
   group: 'additional' | 'bonus'
   keys: SalaryComponentKey[]
 }[] = [
   {
     group: 'additional',
-    keys: ['additionalFixedOvertime', 'additionalFixedCarAllowance'],
+    keys: [
+      'additionalFixedOvertime',
+      'additionalFixedCarAllowance',
+      'additionalFixedOther',
+    ],
   },
   {
     group: 'bonus',
     keys: [
-      'bonusOccasionalCarAllowance',
       'bonusOccasionalOvertime',
-      'bonusPayments',
+      'bonusOccasionalCarAllowance',
       'bonusOther',
     ],
   },

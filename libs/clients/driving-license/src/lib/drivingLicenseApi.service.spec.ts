@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { DrivingLicenseApiConfig } from './drivingLicenseApi.config'
-import { DrivingLicenseApi } from './drivingLicenseApi.service'
+import { DrivingLicenseApi } from './services/drivingLicenseApi.service'
 import { startMocking } from '@island.is/shared/mocking'
 import { LoggingModule } from '@island.is/logging'
 import { DrivingLicenseApiModule } from './drivingLicenseApi.module'

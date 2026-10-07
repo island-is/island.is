@@ -83,12 +83,30 @@ export const getSalaryComponentLabels = (
     additionalFixedCarAllowance: formatMessage(
       m.additionalFixedCarAllowanceLabel,
     ),
+    additionalFixedOther: formatMessage(m.additionalFixedOtherLabel),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
     bonusOccasionalCarAllowance: formatMessage(
       m.bonusOccasionalCarAllowanceLabel,
     ),
-    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeLabel),
-    bonusPayments: formatMessage(m.bonusPaymentsLabel),
     bonusOther: formatMessage(m.bonusOtherLabel),
+  }
+}
+
+export const getSalaryComponentTooltips = (
+  formatMessage: FormatMessage,
+): Record<SalaryComponentKey, string> => {
+  const m = messages.report.employees
+  return {
+    additionalFixedOvertime: formatMessage(m.additionalFixedOvertimeTooltip),
+    additionalFixedCarAllowance: formatMessage(
+      m.additionalFixedCarAllowanceTooltip,
+    ),
+    additionalFixedOther: formatMessage(m.additionalFixedOtherTooltip),
+    bonusOccasionalOvertime: formatMessage(m.bonusOccasionalOvertimeTooltip),
+    bonusOccasionalCarAllowance: formatMessage(
+      m.bonusOccasionalCarAllowanceTooltip,
+    ),
+    bonusOther: formatMessage(m.bonusOtherTooltip),
   }
 }
 

@@ -37,8 +37,7 @@ export interface BaseTemplateAPIModuleConfig {
   }
 }
 
-export interface SharedModuleConfig
-  extends ConfigType<typeof sharedModuleConfig> {}
+export type SharedModuleConfig = ConfigType<typeof sharedModuleConfig>
 
 export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments

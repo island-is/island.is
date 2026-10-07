@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-vehicle-service-fjs-v1',
   preset: './jest.preset.js',

@@ -9,7 +9,11 @@ export enum DynamicPaths {
 
   EducationDrivingLessons = '/menntun/okunam',
 
+  HealthPregnancy = '/heilsa/medganga',
+  HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
+
   SocialBenefitsUnemploymentStatus = '/framfaersla/atvinnuleysisbaetur/minstada',
+  SocialBenefitsUnemploymentIncome = '/framfaersla/atvinnuleysisbaetur/tekjur',
   SocialBenefitsUnemploymentMyData = '/framfaersla/atvinnuleysisbaetur/mingogn',
   SocialBenefitsActivationAllowanceStatus = '/framfaersla/virknistyrkur/minstada',
   SocialBenefitsActivationAllowanceMyData = '/framfaersla/virknistyrkur/mingogn',

@@ -73,6 +73,10 @@ export const socialBenefitsNavigation: PortalNavigationItem = {
           path: UnemploymentBenefitsPaths.Status,
         },
         {
+          name: sharedMessages.myIncome,
+          path: UnemploymentBenefitsPaths.Income,
+        },
+        {
           name: sharedMessages.myData,
           path: UnemploymentBenefitsPaths.MyData,
         },

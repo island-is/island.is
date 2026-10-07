@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { UniqueConstraintError } from 'sequelize'
+import { Op, UniqueConstraintError } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -17,6 +17,8 @@ import { TenantDto } from './dto/tenant.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
+
+const ADMIN_TENANT_ID = '@admin.island.is'
 
 /**
  * This is a service that is used to access the tenant resource.
@@ -34,6 +36,35 @@ export class TenantsService {
     @InjectModel(ApiScopeGroup)
     private readonly apiScopeGroupModel: typeof ApiScopeGroup,
   ) {}
+
+  async findAllPublic(): Promise<TenantDto[]> {
+    const tenants = await this.domainModel.findAll({
+      where: {
+        name: { [Op.ne]: ADMIN_TENANT_ID },
+        nationalId: { [Op.ne]: '' },
+      },
+      attributes: ['name', 'displayName', 'nationalId'],
+      include: [
+        {
+          model: ApiScope,
+          as: 'scopes',
+          attributes: [],
+          required: true,
+          where: {
+            enabled: true,
+            allowExplicitDelegationGrant: true,
+            archived: null,
+          },
+        },
+      ],
+    })
+
+    return tenants.map((tenant) => ({
+      name: tenant.name,
+      displayName: [{ locale: 'is', value: tenant.displayName }],
+      nationalId: tenant.nationalId,
+    }))
+  }
 
   async findAllByUser(user: User): Promise<TenantDto[]> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)

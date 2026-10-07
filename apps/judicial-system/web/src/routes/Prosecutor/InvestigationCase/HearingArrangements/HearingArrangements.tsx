@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, toast } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
@@ -89,11 +89,9 @@ const HearingArrangements = () => {
         } else {
           setNavigateTo(destination)
         }
-      } else {
-        toast.error(formatMessage(errors.transitionCase))
       }
     },
-    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+    [router, setWorkingCase, transitionCase, workingCase],
   )
 
   const stepIsValid = isHearingArrangementsStepValidIC(workingCase)

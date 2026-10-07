@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'services-contentful-entry-tagger',
   preset: './jest.preset.js',

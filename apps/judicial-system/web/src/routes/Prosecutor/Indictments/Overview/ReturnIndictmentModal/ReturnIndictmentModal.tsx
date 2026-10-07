@@ -1,9 +1,7 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 
-import { Box, Input, toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
+import { Box, Input } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/judicial-system-web/src/components'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -23,7 +21,6 @@ const ReturnIndictmentModal: FC<Props> = ({
   onClose,
   onComplete,
 }) => {
-  const { formatMessage } = useIntl()
   const { updateCase, transitionCase } = useCase()
   const [explanation, setExplanation] = useState<string>()
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -76,7 +73,6 @@ const ReturnIndictmentModal: FC<Props> = ({
       )
 
       if (!transitioned) {
-        toast.error(formatMessage(errors.transitionCase))
         return
       }
 

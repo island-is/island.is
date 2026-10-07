@@ -273,4 +273,80 @@ describe('IndictmentCountRepositoryService', () => {
       ).rejects.toThrow(error)
     })
   })
+
+  describe('copyAllToCase', () => {
+    const newCaseId = 'some-new-case-id'
+
+    it('copies every count of the case to the new case as a new row and maps old ids to new', async () => {
+      const firstId = 'first-count-id'
+      const secondId = 'second-count-id'
+      model.findAll.mockResolvedValueOnce([
+        {
+          id: firstId,
+          toJSON: () => ({
+            id: firstId,
+            caseId,
+            incidentDescription: 'Did something',
+          }),
+        },
+        {
+          id: secondId,
+          toJSON: () => ({ id: secondId, caseId, displayOrder: 2 }),
+        },
+      ])
+      model.create
+        .mockResolvedValueOnce({ id: 'new-first-count-id' })
+        .mockResolvedValueOnce({ id: 'new-second-count-id' })
+
+      const result = await service.copyAllToCase(caseId, newCaseId, {
+        transaction,
+      })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId },
+        transaction,
+      })
+      expect(model.create).toHaveBeenNthCalledWith(
+        1,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          incidentDescription: 'Did something',
+        },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenNthCalledWith(
+        2,
+        { id: undefined, caseId: newCaseId, displayOrder: 2 },
+        { transaction },
+      )
+      expect(result).toEqual(
+        new Map([
+          [firstId, 'new-first-count-id'],
+          [secondId, 'new-second-count-id'],
+        ]),
+      )
+    })
+
+    it('returns an empty map when the case has no counts', async () => {
+      const result = await service.copyAllToCase(caseId, newCaseId, {
+        transaction,
+      })
+
+      expect(model.create).not.toHaveBeenCalled()
+      expect(result).toEqual(new Map())
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { id: indictmentCountId, toJSON: () => ({ id: indictmentCountId }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyAllToCase(caseId, newCaseId, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
 })

@@ -75,6 +75,13 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
             defenderNationalId,
             defenderName: defender.name,
             defenderEmail: defender.email,
+            defendants: [
+              {
+                defenderNationalId,
+                defenderName: defender.name,
+                defenderEmail: defender.email,
+              },
+            ],
             courtCaseNumber,
             courtId: court.id,
           } as Case,

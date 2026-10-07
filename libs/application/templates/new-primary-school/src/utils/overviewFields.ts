@@ -177,6 +177,7 @@ export const overviewFields = (editable?: boolean) => {
       condition: (answers, externalData) =>
         //Business logic override as applicationConfig isn't ready on MMS side
         //Should be removed when applicationConfig is ready
+        // eslint-disable-next-line no-constant-binary-expression -- intentional override, see above
         true || !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
@@ -186,6 +187,7 @@ export const overviewFields = (editable?: boolean) => {
       condition: (answers, externalData) =>
         //Business logic override as applicationConfig isn't ready on MMS side
         //Should be removed when applicationConfig is ready
+        // eslint-disable-next-line no-constant-binary-expression -- intentional override, see above
         false && hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({

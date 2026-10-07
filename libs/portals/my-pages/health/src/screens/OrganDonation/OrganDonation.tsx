@@ -2,6 +2,7 @@ import { Box, Button, Text, ActionCard } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  HEALTH_DIRECTORATE_SLUG,
   IntroWrapper,
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
@@ -59,6 +60,10 @@ const OrganDonation = () => {
     <IntroWrapper
       title={formatMessage(m.organDonation)}
       intro={formatMessage(m.organDonationDescription)}
+      serviceProvider={{
+        slug: HEALTH_DIRECTORATE_SLUG,
+        tooltip: formatMessage(m.landlaeknirOrganDonationTooltip),
+      }}
       buttonGroup={{
         actions: [
           <LinkResolver
@@ -88,7 +93,7 @@ const OrganDonation = () => {
         !isMinor &&
         !isTemporaryResident &&
         donorStatus !== null && (
-          <Box>
+          <Box marginTop={[2, 2, 0]}>
             <Text variant="eyebrow" color="purple400" marginBottom={1}>
               {formatMessage(m.takeOnOrganDonation)}
             </Text>

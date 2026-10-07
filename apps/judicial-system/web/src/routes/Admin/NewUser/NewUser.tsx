@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, toast } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { ADMIN_USERS_ROUTE } from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -18,6 +18,7 @@ import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import UserForm from '@island.is/judicial-system-web/src/routes/Admin/UserForm/UserForm'
 import * as styles from '@island.is/judicial-system-web/src/routes/Admin/Users/Users.css'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateUserMutation } from './createUser.generated'
 import { strings } from './NewUser.strings'

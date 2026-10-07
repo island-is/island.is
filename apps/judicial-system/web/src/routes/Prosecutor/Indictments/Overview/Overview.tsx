@@ -11,7 +11,6 @@ import {
   Checkbox,
   RadioButton,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
@@ -22,7 +21,7 @@ import {
   isCompletedCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   AllIndictmentCaseFiles,
@@ -134,7 +133,6 @@ const Overview: FC = () => {
     )
 
     if (!caseTransitioned) {
-      toast.error(formatMessage(errors.transitionCase))
       return false
     }
 

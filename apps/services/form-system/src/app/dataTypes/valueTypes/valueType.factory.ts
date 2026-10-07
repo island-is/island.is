@@ -121,7 +121,36 @@ export class ValueTypeFactory {
   ): ValueType => {
     return defaults(
       pick(obj, keys),
-      zipObject(keys, Array(keys.length).fill(defaultValue)),
+      zipObject(
+        keys,
+        keys.map((key) => {
+          if (key === 'checkboxValue' || key === 'isLoggedInUser') {
+            return false
+          }
+          if (
+            key === 'text' ||
+            key === 'email' ||
+            key === 'iskNumber' ||
+            key === 'phoneNumber' ||
+            key === 'bankAccount' ||
+            key === 'name' ||
+            key === 'nationalId' ||
+            key === 'address' ||
+            key === 'postalCode' ||
+            key === 'municipality' ||
+            key === 'time' ||
+            key === 'model' ||
+            key === 'registrationNumber' ||
+            key === 'propertyNumber'
+          ) {
+            return ''
+          }
+          if (key === 's3Key') {
+            return []
+          }
+          return defaultValue
+        }),
+      ),
     ) as ValueType
   }
 }

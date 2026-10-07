@@ -77,7 +77,7 @@ describe('VerdictController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFind = mockVerdictRepositoryService.findOne as jest.Mock
+      const mockFind = mockVerdictRepositoryService.findById as jest.Mock
       mockFind.mockResolvedValueOnce(verdict)
 
       const mockUpdate = mockVerdictRepositoryService.update as jest.Mock

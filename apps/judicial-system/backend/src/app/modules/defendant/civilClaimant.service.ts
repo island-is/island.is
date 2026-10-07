@@ -9,19 +9,18 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CivilClaimantNotificationType,
   type User,
 } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { CourtService } from '../court'
 import {
   Case,
   CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CivilClaimant,
   CivilClaimantRepositoryService,
 } from '../repository'
@@ -32,6 +31,7 @@ import { DeliverResponse } from './models/deliver.response'
 export class CivilClaimantService {
   constructor(
     private readonly civilClaimantRepositoryService: CivilClaimantRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly caseDefendantPoliceCaseNumberRepositoryService: CaseDefendantPoliceCaseNumberRepositoryService,
     private readonly courtService: CourtService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -57,7 +57,7 @@ export class CivilClaimantService {
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
       if (theCase.courtCaseNumber) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CIVIL_CLAIMANT,
           user,
           caseId: theCase.id,
@@ -65,14 +65,14 @@ export class CivilClaimantService {
         })
       }
 
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
         elementId: updatedCivilClaimant.id,
       })
       // send a notification to follow-up on scheduled court date
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
         caseId: updatedCivilClaimant.caseId,
         user,
@@ -185,11 +185,25 @@ export class CivilClaimantService {
     }
   }
 
-  async delete(caseId: string, civilClaimantId: string): Promise<boolean> {
+  // A civil claimant's files go with the claimant, so they are deleted first in
+  // the same transaction - the delete of the claimant would otherwise fail on
+  // the case file foreign key.
+  async delete(
+    caseId: string,
+    civilClaimantId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    await this.caseFileRepositoryService.deleteAllForCivilClaimant(
+      caseId,
+      civilClaimantId,
+      { transaction },
+    )
+
     const numberOfAffectedRows =
       await this.civilClaimantRepositoryService.deleteByIdAndCase(
         civilClaimantId,
         caseId,
+        { transaction },
       )
 
     if (numberOfAffectedRows > 1) {
@@ -207,16 +221,13 @@ export class CivilClaimantService {
   }
 
   async deleteAll(caseId: string, transaction: Transaction): Promise<void> {
+    await this.caseFileRepositoryService.deleteAllForCivilClaimantsOfCase(
+      caseId,
+      { transaction },
+    )
+
     await this.civilClaimantRepositoryService.deleteAllForCase(caseId, {
       transaction,
     })
-  }
-
-  findLatestClaimantBySpokespersonNationalId(
-    nationalId: string,
-  ): Promise<CivilClaimant | null> {
-    return this.civilClaimantRepositoryService.findLatestBySpokespersonNationalId(
-      nationalId,
-    )
   }
 }

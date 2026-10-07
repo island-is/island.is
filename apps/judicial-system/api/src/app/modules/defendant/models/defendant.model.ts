@@ -7,6 +7,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -22,6 +23,7 @@ registerEnumType(PunishmentType, { name: 'PunishmentType' })
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
+// RequestSharedWithDefender is registered on the Case GraphQL model.
 
 @ObjectType()
 export class IndictmentCancelledOrDismissedState {
@@ -76,6 +78,9 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
+  @Field(() => RequestSharedWithDefender, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
+
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
@@ -113,6 +118,27 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
+
+  // The defender who appealed the verdict, when the public prosecution office
+  // registered the appeal on their letter. Information only; no access follows
+  // until the court of appeals confirms them.
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderName?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderEmail?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderPhoneNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderConfirmed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderWaived?: boolean
 
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean

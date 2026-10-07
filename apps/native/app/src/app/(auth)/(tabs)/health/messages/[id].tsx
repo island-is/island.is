@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { gql, useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
   FlatList,
@@ -8,10 +8,15 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import {
+  router,
+  useFocusEffect,
+  useLocalSearchParams,
+  usePathname,
+} from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -36,9 +41,11 @@ import {
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
+  Problem,
   ProblemTemplate,
   theme,
 } from '@/ui'
+import { isAndroid } from '@/utils/devices'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { downloadHealthAttachment } from '@/utils/download-health-attachment'
 import { HealthConversationMessageContent } from '@/components/health-conversation-message-content'
@@ -50,6 +57,25 @@ type ConversationMessage = NonNullable<
 >['messages'][number]
 
 type FlatListItem = ConversationMessage | { __typename: 'Skeleton'; id: string }
+
+// Hermes ships no Intl.PluralRules and the app has no polyfill for it, so ICU
+// `plural` syntax silently falls back to the raw pattern. Pick the form by
+// hand instead: Icelandic takes the singular for numbers ending in 1 except
+// 11 (1, 21, 31 ...), English only for exactly 1.
+const isSingularDayCount = (days: number, locale: string): boolean => {
+  if (locale.startsWith('is')) {
+    return days % 10 === 1 && days % 100 !== 11
+  }
+  return days === 1
+}
+
+// The list and detail queries normalize to separate cache entries, so the list's
+// title survives a failed detail fetch. Read it to fall back on for the header.
+const CONVERSATION_TITLE_FRAGMENT = gql`
+  fragment HealthConversationTitle on HealthDirectorateHealthConversation {
+    title
+  }
+`
 
 // Maps a reply-blocked reason to its explanatory message.
 const replyBlockedMessageId = (
@@ -64,6 +90,8 @@ const replyBlockedMessageId = (
       return 'health.messages.replyBlocked.awaitingStaff'
     case HealthDirectorateHealthConversationReplyBlockedReason.RepliesDisabled:
       return 'health.messages.replyBlocked.repliesDisabled'
+    case HealthDirectorateHealthConversationReplyBlockedReason.AwaitingAcknowledgement:
+      return 'health.messages.replyBlocked.awaitingAcknowledgement'
     default:
       return 'health.messages.replyBlocked.default'
   }
@@ -75,10 +103,21 @@ export default function HealthMessageDetailScreen() {
     justCreated?: string
   }>()
   const intl = useIntl()
+  const insets = useSafeAreaInsets()
   const client = useApolloClient()
   const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
   const [refetching, setRefetching] = useState(false)
+  // Also re-exported in the notifications modal, so compose has to be pushed
+  // onto whichever stack we are in.
+  const pathname = usePathname()
+  const inNotificationsSheet = pathname.startsWith('/notifications/')
+  const composeHref = inNotificationsSheet
+    ? '/notifications/message/new'
+    : '/health/messages/new'
+  // Only the sheet clears the Android nav bar; in the tabs the tab bar does.
+  const androidSheetInset =
+    isAndroid && inNotificationsSheet ? insets.bottom : 0
 
   const res = useGetHealthConversationQuery({
     variables: { id },
@@ -132,6 +171,50 @@ export default function HealthMessageDetailScreen() {
   const conversation = res.data?.healthDirectorateHealthConversation
   const messages = useMemo(() => conversation?.messages ?? [], [conversation])
   const isSkeleton = res.loading && !res.data
+  // Only surface the error when we have nothing to show, so a cached
+  // conversation still renders through a failed background refetch.
+  const hasError = !!res.error && !conversation
+  // A bad or stale id (e.g. a notification outliving the thread) is a successful
+  // response carrying null, not a failure, so it needs its own branch.
+  const notFound = !hasError && !isSkeleton && !!res.data && !conversation
+
+  // Falls back to the title the list query cached, so the header still names the
+  // message when the detail fetch fails instead of going blank.
+  const cachedTitle = useMemo(() => {
+    const cacheId = client.cache.identify({
+      __typename: 'HealthDirectorateHealthConversation',
+      id,
+    })
+    if (!cacheId) {
+      return undefined
+    }
+    return (
+      client.readFragment<{ title?: string | null }>({
+        id: cacheId,
+        fragment: CONVERSATION_TITLE_FRAGMENT,
+      })?.title ?? undefined
+    )
+  }, [client, id])
+
+  // An expired reply window is the one reason we can quantify, so name the
+  // number of days when the server sends it. It is nullable, so fall back to
+  // the generic wording rather than rendering a blank count.
+  const replyWindowDays = conversation?.patientReplyWindowDays
+  const replyBlockedMessage =
+    conversation?.replyBlockedReason ===
+      HealthDirectorateHealthConversationReplyBlockedReason.ReplyWindowExpired &&
+    replyWindowDays != null
+      ? intl.formatMessage(
+          {
+            id: isSingularDayCount(replyWindowDays, intl.locale)
+              ? 'health.messages.replyBlocked.windowExpiredDay'
+              : 'health.messages.replyBlocked.windowExpiredDays',
+          },
+          { days: replyWindowDays },
+        )
+      : intl.formatMessage({
+          id: replyBlockedMessageId(conversation?.replyBlockedReason),
+        })
 
   const [markAsRead] = useMarkHealthConversationAsReadMutation({
     // Fire-and-forget: the server state self-corrects on the next load.
@@ -297,7 +380,13 @@ export default function HealthMessageDetailScreen() {
       // The certificate attached to this message needs paying before it can be
       // accessed. The app can't take the payment natively, so — matching the
       // compose flow's certificate notice — we point the user to My Pages.
-      const isUnpaidCertificate = !!item.requiresPayment && !item.paid
+      // No certificateId means there is nothing to pay for yet, so offer no
+      // pay affordance — as my-pages' CertificateAction does.
+      const isUnpaidCertificate =
+        !!item.certificateId && !!item.requiresPayment && !item.paid
+      // The download service refuses attachments with 402 while the certificate
+      // is unpaid, so withhold them all, like my-pages.
+      const attachmentsLocked = !!item.requiresPayment && !item.paid
       const certificatePaymentMessage =
         item.amountIsk != null
           ? intl.formatMessage(
@@ -358,17 +447,19 @@ export default function HealthMessageDetailScreen() {
           }
           date={dateTime}
           hasTopBorder={index !== 0}
-          attachments={item.attachments.map((attachment) => ({
-            id: attachment.id,
-            label: attachment.fileName,
-            loading: downloadingAttachmentId === attachment.id,
-            onPress: () =>
-              handleAttachmentPress({
-                id: attachment.id,
-                fileName: attachment.fileName,
-                url: attachment.downloadServiceURL,
-              }),
-          }))}
+          attachments={(attachmentsLocked ? [] : item.attachments).map(
+            (attachment) => ({
+              id: attachment.id,
+              label: attachment.fileName,
+              loading: downloadingAttachmentId === attachment.id,
+              onPress: () =>
+                handleAttachmentPress({
+                  id: attachment.id,
+                  fileName: attachment.fileName,
+                  url: attachment.downloadServiceURL,
+                }),
+            }),
+          )}
         />
       )
     },
@@ -398,7 +489,7 @@ export default function HealthMessageDetailScreen() {
       <StackScreen
         networkStatus={res.networkStatus}
         options={{
-          title: conversation?.title ?? '',
+          title: conversation?.title ?? cachedTitle ?? '',
           // Android centers a long title over the back arrow; left-align there
           // so it truncates next to it instead. iOS reserves the button space.
           headerTitleAlign: Platform.OS === 'android' ? 'left' : 'center',
@@ -456,7 +547,8 @@ export default function HealthMessageDetailScreen() {
               onRefresh={refreshConversation}
             />
           }
-          contentContainerStyle={{ flexGrow: 1 }}
+          // No `flexGrow: 1`: it stretches the content past the visible area
+          // by the header's content inset, so even one message scrolled.
           contentInsetAdjustmentBehavior="automatic"
           automaticallyAdjustContentInsets
           ListHeaderComponent={
@@ -480,17 +572,56 @@ export default function HealthMessageDetailScreen() {
               </View>
             ) : null
           }
-          ListFooterComponent={
-            <SafeAreaView
-              style={{ height: conversation?.patientCanReply ? 160 : 24 }}
-            />
+          ListEmptyComponent={
+            hasError || notFound ? (
+              <View
+                style={{
+                  paddingHorizontal: theme.spacing[2],
+                  paddingTop: theme.spacing[3],
+                }}
+              >
+                {hasError ? (
+                  <Problem
+                    type="error"
+                    error={res.error}
+                    title={intl.formatMessage({ id: 'problem.error.title' })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.errorMessage',
+                    })}
+                  />
+                ) : (
+                  <Problem
+                    type="no_data"
+                    title={intl.formatMessage({ id: 'problem.noData.title' })}
+                    message={intl.formatMessage({
+                      id: 'health.messages.notFoundMessage',
+                    })}
+                  />
+                )}
+              </View>
+            ) : null
           }
+          // Just an end-of-thread gap — the reply drawer below is a flow
+          // sibling, not an overlay, so it needs no space reserved here.
+          ListFooterComponent={<View style={{ height: theme.spacing[3] }} />}
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
-            <SafeAreaView>
+            {/* Clears the home indicator; a device without one reports 0,
+                so a minimum stands in. */}
+            <View
+              style={{
+                paddingBottom:
+                  (Platform.OS === 'ios'
+                    ? Math.max(insets.bottom, theme.spacing[2])
+                    : androidSheetInset) + theme.spacing[1],
+              }}
+            >
               {isSkeleton ? (
-                <GeneralCardSkeleton height={48} />
+                // The card skeleton carries a bottom margin of its own, which
+                // would leave the placeholder sitting higher than the button
+                // or alert that replaces it.
+                <GeneralCardSkeleton height={48} style={{ marginBottom: 0 }} />
               ) : conversation?.patientCanReply ? (
                 <Button
                   title={intl.formatMessage({
@@ -502,7 +633,7 @@ export default function HealthMessageDetailScreen() {
                   icon={require('@/assets/icons/reply.png')}
                   onPress={() =>
                     router.push({
-                      pathname: '/health/messages/new',
+                      pathname: composeHref,
                       params: {
                         conversationId: id,
                         recipientName:
@@ -518,13 +649,11 @@ export default function HealthMessageDetailScreen() {
                 <Alert
                   type="info"
                   size="small"
-                  message={intl.formatMessage({
-                    id: replyBlockedMessageId(conversation?.replyBlockedReason),
-                  })}
+                  message={replyBlockedMessage}
                   hasBorder
                 />
               )}
-            </SafeAreaView>
+            </View>
           </ButtonDrawer>
         ) : null}
       </View>

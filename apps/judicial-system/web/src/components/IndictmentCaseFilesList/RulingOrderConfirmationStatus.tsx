@@ -1,7 +1,7 @@
 import type { FC, MouseEvent } from 'react'
 import { useContext, useState } from 'react'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isRulingOrderWithoutDocument,
@@ -12,6 +12,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useConfirmRulingOrderMutation } from './confirmRulingOrder.generated'
 

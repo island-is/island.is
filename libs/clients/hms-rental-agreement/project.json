@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\"  http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json | jq '(.components[][] | objects | select(has(\"properties\")) | .properties | .[]) |= if has(\"nullable\") and (has(\"type\") | not) then (.type = \"object\") else . end' > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE,
@@ -39,6 +39,7 @@ import {
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -110,22 +111,21 @@ const Defendant = () => {
   )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
-    if (workingCase.defendants && workingCase.defendants.length > 1) {
-      if (workingCase.id) {
-        const defendantDeleted = await deleteDefendant(
-          workingCase.id,
-          defendant.id,
-        )
+    if (!workingCase.defendants || workingCase.defendants.length <= 1) {
+      return
+    }
 
-        if (defendantDeleted && workingCase.defendants) {
-          removeDefendantFromState(defendant)
-        } else {
-          // TODO: handle error
-        }
-      } else {
-        removeDefendantFromState(defendant)
+    if (workingCase.id) {
+      const deleted = await deleteDefendant(workingCase.id, defendant.id)
+
+      // The failure has been reported. Keep the defendant in the form so
+      // the deletion can be retried.
+      if (!deleted) {
+        return
       }
     }
+
+    removeDefendantFromState(defendant)
   }
 
   const removeDefendantFromState = (defendant: TDefendant) => {
@@ -142,6 +142,13 @@ const Defendant = () => {
   const handleCreateDefendantClick = async () => {
     if (workingCase.id) {
       const defendantId = await createDefendant({ caseId: workingCase.id })
+
+      // The failure has been reported. Adding a defendant the server does
+      // not know about would only make every later save of it fail too.
+      if (!defendantId) {
+        return
+      }
+
       createEmptyDefendant(defendantId)
     } else {
       createEmptyDefendant()

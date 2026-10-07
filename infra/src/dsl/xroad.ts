@@ -306,11 +306,6 @@ export const RentalService = new XroadConf({
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
     },
-    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
-      dev: 'IS-DEV/GOV/10000/island-is-client',
-      staging: 'IS-TEST/GOV/5501692829/test-client',
-      prod: 'IS/GOV/5501692829/island-is-client',
-    },
   },
 })
 
@@ -848,6 +843,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
     },
+    XROAD_TAXI_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/TAXI-ISLANDIS',
+    },
   },
 })
 
@@ -1030,6 +1030,17 @@ export const DirectorateOfEquality = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/api.ritstjorn-jafnretti',
       prod: 'IS/GOV/5804170510/DMR-Protected/api.ritstjorn-jafnretti',
+    },
+  },
+})
+
+// Placeholder service name until DMR registers the statistics service.
+export const DirectorateOfEqualityStatistics = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics',
+      prod: 'IS/GOV/5804170510/DMR-Protected/jafnretti-statistics',
     },
   },
 })

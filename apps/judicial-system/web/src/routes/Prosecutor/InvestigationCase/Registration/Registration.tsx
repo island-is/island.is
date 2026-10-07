@@ -1,9 +1,8 @@
 import type { FC } from 'react'
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Input, Select, toast } from '@island.is/island-ui/core'
+import { Box, Input, Select } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
@@ -14,7 +13,6 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -44,7 +42,6 @@ const Registration: FC = () => {
   // from the case type list to allow the user to continue.
   const [caseType, setCaseType] = useState<CaseType | null>()
 
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -73,8 +70,6 @@ const Registration: FC = () => {
 
       if (createdCase) {
         router.push(`${destination}/${createdCase.id}`)
-      } else {
-        toast.error(formatMessage(errors.createCase))
       }
     } else {
       router.push(`${destination}/${workingCase.id}`)

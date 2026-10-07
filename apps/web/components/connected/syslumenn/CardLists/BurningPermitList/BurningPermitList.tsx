@@ -90,7 +90,7 @@ export const BurningPermitList: FC<
             dateString,
             permit.type ?? '',
             permit.subtype ?? '',
-            String(permit.size) ?? '',
+            String(permit.size ?? ''),
           ])
         }
 

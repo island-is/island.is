@@ -16,6 +16,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -83,6 +84,11 @@ export class UpdateDefendantDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
+
+  @IsOptional()
   @IsEnum(DefenderChoice)
   @ApiPropertyOptional({ enum: DefenderChoice })
   readonly defenderChoice?: DefenderChoice
@@ -120,6 +126,50 @@ export class UpdateDefendantDto {
   @ApiPropertyOptional({ type: Boolean })
   readonly isDefenderChoiceConfirmed?: boolean
 
+  /**********
+   * The appeal proceeding's defender, which the court of appeals settles for
+   * itself. The public prosecution office fills these in when it registers an
+   * appeal arriving by letter; the court of appeals may replace them, waive
+   * counsel, and confirms whoever stands at the end.
+   *
+   * Separate from the district court fields above and never written back to
+   * them: who defended at the district court is a fact about that proceeding.
+   **********/
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderName?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly appealDefenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isAppealDefenderWaived?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isAppealDefenderConfirmed?: boolean
+
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
@@ -155,6 +205,16 @@ export class UpdateDefendantDto {
   @IsEnum(IndictmentCaseReviewDecision)
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  // Whether a changed review decision should also file or withdraw the
+  // prosecution's verdict appeal. Set by the API, which reads the
+  // INDICTMENT_APPEAL feature; the backend never reads the feature itself, so
+  // an environment where it is hidden simply never asks for this. Not a
+  // defendant field - it is stripped before the update reaches the database.
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly registerVerdictAppeal?: boolean
 
   @IsOptional()
   @IsBoolean()

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'delegation-admin',
   preset: '../../../../jest.preset.js',
