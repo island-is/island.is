@@ -4,13 +4,19 @@ import type {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
+  AppealCaseType,
   CaseFileCategory,
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
-import { getVerdictAppealFileGroups } from './VerdictAppealFiles.logic'
+import {
+  getVerdictAppealFileGroups,
+  hasStandingVerdictAppeal,
+  showsAppealSummonses,
+} from './VerdictAppealFiles.logic'
 
 describe('getVerdictAppealFileGroups', () => {
   const defenderNationalId = '1111111111'
@@ -192,5 +198,81 @@ describe('getVerdictAppealFileGroups', () => {
       'own_client_id',
       'other_client_id',
     ])
+  })
+})
+
+describe('hasStandingVerdictAppeal', () => {
+  it('is true for an appealed verdict appeal', () => {
+    expect(
+      hasStandingVerdictAppeal({
+        appealState: AppealCaseState.APPEALED,
+      }),
+    ).toBe(true)
+  })
+
+  it('is false when the verdict appeal has been withdrawn', () => {
+    expect(
+      hasStandingVerdictAppeal({
+        appealState: AppealCaseState.WITHDRAWN,
+      }),
+    ).toBe(false)
+  })
+
+  it('is false when there is no verdict appeal', () => {
+    expect(hasStandingVerdictAppeal(null)).toBe(false)
+    expect(hasStandingVerdictAppeal(undefined)).toBe(false)
+  })
+})
+
+describe('showsAppealSummonses', () => {
+  const appealed = {
+    verdictAppealCase: {
+      id: 'verdict_appeal_id',
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.APPEALED,
+    },
+  } as Case
+
+  it('shows the summonses to the public prosecution office on a verdict appeal', () => {
+    expect(
+      showsAppealSummonses(
+        appealed,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(true)
+  })
+
+  it('shows nothing before the verdict is appealed', () => {
+    expect(
+      showsAppealSummonses(
+        { verdictAppealCase: null } as Case,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(false)
+  })
+
+  it('shows nothing when the verdict appeal has been withdrawn', () => {
+    expect(
+      showsAppealSummonses(
+        {
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        } as Case,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(false)
+  })
+
+  // Defenders never see a summons. The Court of Appeals only sees the ones sent
+  // to it, which arrive in a later step; until then it has nothing to show.
+  it.each([
+    UserRole.DEFENDER,
+    UserRole.PROSECUTOR,
+    UserRole.COURT_OF_APPEALS_JUDGE,
+  ])('shows nothing to %s', (role) => {
+    expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
   })
 })
