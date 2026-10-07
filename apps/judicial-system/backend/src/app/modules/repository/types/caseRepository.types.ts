@@ -29,6 +29,8 @@ import {
 import { AppealCase } from '../models/appealCase.model'
 import { AppealDecision } from '../models/appealDecision.model'
 import { AppealEventLog } from '../models/appealEventLog.model'
+import { AppealSummons } from '../models/appealSummons.model'
+import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -143,6 +145,27 @@ export const caseInclude: Includeable[] = [
     as: 'appealDecisions',
     required: false,
     separate: true,
+  },
+  {
+    model: AppealSummons,
+    as: 'appealSummonses',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+    include: [
+      {
+        model: User,
+        as: 'confirmedBy',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: AppealSummonsDefendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+      },
+    ],
   },
   {
     model: User,
