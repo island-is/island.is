@@ -90,6 +90,14 @@ Array [
   "case.appealDecisions.withdrawnDate",
   "case.appealProsecutor.id",
   "case.appealProsecutor.name",
+  "case.appealSummonses.confirmedDate",
+  "case.appealSummonses.created",
+  "case.appealSummonses.defendants.appellantSide",
+  "case.appealSummonses.defendants.claims",
+  "case.appealSummonses.defendants.defendantId",
+  "case.appealSummonses.defendants.id",
+  "case.appealSummonses.id",
+  "case.appealSummonses.sentToCourtOfAppealsDate",
   "case.arraignmentDate.date",
   "case.arraignmentDate.location",
   "case.arrestDate",
@@ -784,6 +792,18 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths CreateAppealSummons 1`] = `
+Array [
+  "createAppealSummons.confirmedDate",
+  "createAppealSummons.defendants.appellantSide",
+  "createAppealSummons.defendants.claims",
+  "createAppealSummons.defendants.defendantId",
+  "createAppealSummons.defendants.id",
+  "createAppealSummons.id",
+  "createAppealSummons.sentToCourtOfAppealsDate",
+]
+`;
+
 exports[`GraphQL operations select these field paths CreateCase 1`] = `
 Array [
   "createCase.defendants.id",
@@ -959,6 +979,12 @@ Array [
   "currentUser.user.nationalId",
   "currentUser.user.role",
   "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
+Array [
+  "deleteAppealSummons.deleted",
 ]
 `;
 
@@ -1952,6 +1978,18 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealSummons 1`] = `
+Array [
+  "updateAppealSummons.confirmedDate",
+  "updateAppealSummons.defendants.appellantSide",
+  "updateAppealSummons.defendants.claims",
+  "updateAppealSummons.defendants.defendantId",
+  "updateAppealSummons.defendants.id",
+  "updateAppealSummons.id",
+  "updateAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 

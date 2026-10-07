@@ -1,19 +1,29 @@
 import type { FC } from 'react'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
+import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
-import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import { Feature } from '@island.is/judicial-system/types'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Modals/FileNotFoundModal/FileNotFoundModal'
-import PdfButton from '@island.is/judicial-system-web/src/components/PdfButton/PdfButton'
+import { Modal } from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-
+import { api } from '@island.is/judicial-system-web/src/services'
 import {
+  useAppealSummons,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+
+import AppealProcessFileRow from './AppealProcessFileRow'
+import {
+  canShowIssueAppealSummons,
+  formatAppealSummonsFileName,
+  getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -39,31 +49,118 @@ const formatSentInBy = (defenderName?: string | null): string => {
  * take it back is to withdraw the appeal from the verdict timeline card.
  */
 const VerdictAppealFiles: FC = () => {
-  const { workingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
+  const router = useRouter()
+  const { deleteAppealSummons, isDeletingAppealSummons } = useAppealSummons()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
+  const [summonsIdToDelete, setSummonsIdToDelete] = useState<string>()
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
-  const showSummonses = showsAppealSummonses(workingCase, user)
+  const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
+  const showSummonses =
+    isIndictmentAppealEnabled && showsAppealSummonses(workingCase, user)
+  const showIssueButton =
+    isIndictmentAppealEnabled && canShowIssueAppealSummons(workingCase, user)
+  const summonses = workingCase.appealSummonses ?? []
 
   if (groups.length === 0 && !showSummonses) {
     return null
+  }
+
+  const openAppealSummonsPdf = (appealSummonsId: string) => {
+    window.open(
+      `${api.apiUrl}/api/case/${workingCase.id}/appealSummons/${appealSummonsId}`,
+      '_blank',
+    )
+  }
+
+  const handleConfirmDeleteAppealSummons = async () => {
+    if (!summonsIdToDelete) {
+      return
+    }
+
+    const deleted = await deleteAppealSummons(
+      workingCase.id,
+      summonsIdToDelete,
+    )
+
+    if (!deleted) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      appealSummonses: prev.appealSummonses?.filter(
+        (summons) => summons.id !== summonsIdToDelete,
+      ),
+    }))
+    setSummonsIdToDelete(undefined)
   }
 
   return (
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
       {showSummonses && (
-        <Box
-          dataTestId="appealSummonses"
-          paddingBottom={2}
-          marginBottom={2}
-          borderBottomWidth="standard"
-          borderColor="blue200"
-        >
-          <Text variant="small">Áfrýjunarstefna hefur ekki verið gefin út</Text>
+        <Box dataTestId="appealSummonses" marginBottom={2}>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            paddingBottom={2}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+          >
+            <Text variant="small">
+              {summonses.length === 0
+                ? 'Áfrýjunarstefna hefur ekki verið gefin út'
+                : 'Áfrýjunarstefna'}
+            </Text>
+            {showIssueButton && (
+              <Button
+                variant="text"
+                size="small"
+                onClick={() =>
+                  router.push(
+                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}`,
+                  )
+                }
+              >
+                Gefa út áfrýjunarstefnu
+              </Button>
+            )}
+          </Box>
+          {summonses.map((summons) => {
+            const fileName = formatAppealSummonsFileName(summons)
+
+            return (
+              <AppealProcessFileRow
+                key={summons.id}
+                title={fileName}
+                onOpen={() => openAppealSummonsPdf(summons.id)}
+                menuAriaLabel={`Valmynd fyrir ${fileName}`}
+                menuItems={getAppealSummonsMenuItems(
+                  summons,
+                  user,
+                  () =>
+                    router.push(
+                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE}/${workingCase.id}/${summons.id}`,
+                    ),
+                  () => openAppealSummonsPdf(summons.id),
+                  () => {
+                    if (summonsIdToDelete) {
+                      return
+                    }
+
+                    setSummonsIdToDelete(summons.id)
+                  },
+                )}
+              />
+            )
+          })}
         </Box>
       )}
       {groups.map(({ defendant, files }) => (
@@ -74,20 +171,21 @@ const VerdictAppealFiles: FC = () => {
             </Text>
           )}
           {files.map((file) => (
-            <PdfButton
+            <AppealProcessFileRow
               key={file.id}
-              renderAs="row"
-              title={file.name}
+              title={file.name ?? ''}
               disabled={!file.isKeyAccessible}
-              handleClick={() => onOpen(file.id)}
-            >
-              <Box display="flex" alignItems="center" justifyContent="flexEnd">
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="flexEnd"
-                  textAlign="right"
-                >
+              onOpen={() => onOpen(file.id)}
+              menuAriaLabel={`Valmynd fyrir ${file.name}`}
+              menuItems={[
+                {
+                  title: 'Opna',
+                  onClick: () => onOpen(file.id),
+                  icon: 'open',
+                },
+              ]}
+              meta={
+                <>
                   {/* Date only, no time of day. An appeal the public
                   prosecution office registers on a letter has only the date the
                   letter was filed, so showing the upload time for appeals filed
@@ -101,37 +199,37 @@ const VerdictAppealFiles: FC = () => {
                       defendant.appealDefenderName ?? defendant.defenderName,
                     )}
                   </Text>
-                </Box>
-                <Box marginLeft={3}>
-                  <ContextMenu
-                    items={[
-                      {
-                        title: 'Opna',
-                        onClick: () => onOpen(file.id),
-                        icon: 'open',
-                      },
-                    ]}
-                    render={
-                      <IconButton
-                        icon="ellipsisVertical"
-                        colorScheme="transparent"
-                        ariaLabel={`Valmynd fyrir ${file.name}`}
-                        disabled={!file.isKeyAccessible}
-                        onClick={(evt) => {
-                          evt.stopPropagation()
-                        }}
-                      />
-                    }
-                  />
-                </Box>
-              </Box>
-            </PdfButton>
+                </>
+              }
+            />
           ))}
         </Box>
       ))}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
+      {summonsIdToDelete && (
+        <Modal
+          title="Eyða áfrýjunarstefnu"
+          text="Ertu viss um að þú viljir eyða þessari áfrýjunarstefnu?"
+          onClose={() => setSummonsIdToDelete(undefined)}
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setSummonsIdToDelete(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Eyða',
+              onClick: () => {
+                void handleConfirmDeleteAppealSummons()
+              },
+              colorScheme: 'destructive',
+              isLoading: isDeletingAppealSummons,
+            },
+          ]}
+        />
+      )}
     </Box>
   )
 }

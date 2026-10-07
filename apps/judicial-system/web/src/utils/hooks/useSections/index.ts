@@ -53,6 +53,7 @@ import {
   PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -1585,16 +1586,20 @@ const useSections = (
     const isRegisteringVerdictAppeal = isActive(
       PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
     )
+    const isIssuingAppealSummons = isActive(
+      PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE,
+    )
     const showsVerdictAppealStep = showsPublicProsecutorVerdictAppealStep(
       workingCase,
       user,
       features,
-      isRegisteringVerdictAppeal,
+      isRegisteringVerdictAppeal || isIssuingAppealSummons,
     )
     const isVerdictAppealStepActive =
       showsVerdictAppealStep &&
       (isActive(PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE) ||
-        isRegisteringVerdictAppeal)
+        isRegisteringVerdictAppeal ||
+        isIssuingAppealSummons)
 
     return [
       isRestrictionCase(workingCase.type)

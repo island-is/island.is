@@ -1,11 +1,17 @@
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  AppealSummonsAction,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   type AppealCase,
   AppealCaseState,
+  type AppealSummons,
   type Case,
   type CaseFile,
   type CaseFileCategory,
@@ -89,3 +95,46 @@ export const showsAppealSummonses = (
 ): boolean =>
   isPublicProsecutionOfficeUser(user) &&
   hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+export const canShowIssueAppealSummons = (
+  workingCase: Pick<Case, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  canIssueAppealSummons(
+    user,
+    hasStandingVerdictAppeal(workingCase.verdictAppealCase),
+  )
+
+export const formatAppealSummonsFileName = (
+  summons: Pick<AppealSummons, 'created'>,
+): string => {
+  const date = formatDate(summons.created, 'dd.MM.y')
+
+  return date ? `Áfrýjunarstefna ${date}.pdf` : 'Áfrýjunarstefna.pdf'
+}
+
+export const getAppealSummonsMenuItems = (
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  user: User | undefined,
+  onEdit: () => void,
+  onOpen: () => void,
+  onDelete: () => void,
+): ContextMenuItem[] => {
+  const items: ContextMenuItem[] = []
+
+  if (canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)) {
+    items.push({ title: 'Breyta', onClick: onEdit, icon: 'pencil' })
+  }
+
+  if (canPerformAppealSummonsAction(AppealSummonsAction.OPEN, summons, user)) {
+    items.push({ title: 'Opna í nýjum flipa', onClick: onOpen, icon: 'open' })
+  }
+
+  if (
+    canPerformAppealSummonsAction(AppealSummonsAction.DELETE, summons, user)
+  ) {
+    items.push({ title: 'Eyða', onClick: onDelete, icon: 'trash' })
+  }
+
+  return items
+}
