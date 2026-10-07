@@ -124,9 +124,15 @@ export const Footer = ({
 
   const validate = async () => trigger()
 
-  const lastScreenDisplayOrder = state.application.sections
-    ?.at(-1)
-    ?.screens?.at(-1)?.displayOrder
+  const lastVisibleScreen = state.sections
+    ?.filter(
+      (section) =>
+        section?.isHidden === false &&
+        section?.sectionType !== SectionTypes.COMPLETED,
+    )
+    .flatMap((section) => section?.screens ?? [])
+    .filter((screen) => screen?.isHidden === false)
+    .at(-1)
 
   const hasVisiblePaymentField = state.sections?.some((section) =>
     section?.screens?.some((screen) =>
@@ -149,7 +155,7 @@ export const Footer = ({
       state.application.hasPayment !== true) ||
     (state.application.hasPayment === false &&
       state.application.hasSummaryScreen === false &&
-      state.currentScreen?.index === lastScreenDisplayOrder)
+      state.currentScreen?.data?.id === lastVisibleScreen?.id)
 
   const isCompletedSection = currentSectionType === SectionTypes.COMPLETED
 
