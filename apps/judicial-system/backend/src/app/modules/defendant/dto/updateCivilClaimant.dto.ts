@@ -77,6 +77,52 @@ export class UpdateCivilClaimantDto {
   @ApiPropertyOptional({ type: Boolean })
   readonly isSpokespersonConfirmed?: boolean
 
+  /**********
+   * The appeal proceeding's advocate, which the court of appeals settles for
+   * itself. Mirrors the district court fields above and is never written back
+   * to them - a claimant represented at the district court may go
+   * unrepresented on appeal, and the other way round.
+   **********/
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly hasAppealSpokesperson?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly appealSpokespersonIsLawyer?: boolean
+
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly appealSpokespersonNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly appealSpokespersonName?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly appealSpokespersonEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly appealSpokespersonPhoneNumber?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isAppealSpokespersonConfirmed?: boolean
+
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

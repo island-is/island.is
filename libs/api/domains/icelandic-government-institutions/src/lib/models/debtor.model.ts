@@ -2,9 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('IcelandicGovernmentInstitutionsDebtor')
 export class Debtor {
-  @Field(() => ID, {
-    description: 'ERP legal entity ID of the debtor, used to identify it',
-  })
+  @Field(() => ID)
   id!: string
 
   @Field(() => String, {

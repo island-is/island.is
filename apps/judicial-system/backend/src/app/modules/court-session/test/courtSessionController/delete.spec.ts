@@ -10,6 +10,7 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import { FileService } from '../../../file'
 import {
   AppealCaseRepositoryService,
@@ -64,9 +65,7 @@ describe('CourtSessionController - Delete', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
@@ -100,12 +99,18 @@ describe('CourtSessionController - Delete', () => {
       const then = {} as Then
 
       try {
-        then.result = await courtSessionController.delete(
-          caseId,
-          courtSession.id,
-          theCase,
-          courtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.delete(
+            caseId,
+            courtSession.id,
+            theCase,
+            courtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -206,9 +211,42 @@ describe('CourtSessionController - Delete', () => {
     })
   })
 
-  // The controller checks the same rule against the guard's snapshot of the
-  // case; this is the check against the transaction's view, which is the one
-  // that holds when two requests race.
+  // The controller's check, against the case the guard read under FOR UPDATE:
+  // the row is locked for the request, so a session that is not the last one
+  // here will not become it before the request commits. The service's own
+  // re-check below is never reached.
+  describe('session that is not the latest on the locked case', () => {
+    const earlierCourtSession = { id: courtSessionId, caseId } as CourtSession
+    const theCase = {
+      id: caseId,
+      caseFiles: [],
+      courtSessions: [earlierCourtSession, { id: uuid(), caseId }],
+      rulingOrderAppealCases: [],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, earlierCourtSession)
+    })
+
+    it('should refuse to delete the session', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Could not delete court session ${courtSessionId} of case ${caseId}. Only the latest court session can be deleted.`,
+      )
+    })
+
+    it('should not reach the service', () => {
+      expect(
+        mockCourtSessionRepositoryService.findLatestByCase,
+      ).not.toHaveBeenCalled()
+      expect(mockCourtSessionRepositoryService.delete).not.toHaveBeenCalled()
+    })
+  })
+
+  // The service's check against the same transaction's view of the case. The
+  // controller already decided against the locked row, so this only fires for
+  // a caller that passed a stale case.
   describe('session that is no longer the latest', () => {
     let then: Then
 

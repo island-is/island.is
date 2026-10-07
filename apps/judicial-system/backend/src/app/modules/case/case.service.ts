@@ -1276,18 +1276,27 @@ export class CaseService {
         CaseState.WAITING_FOR_CONFIRMATION,
       ].includes(updatedCase.state)
     ) {
-      const updatedRole =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-          ? updatedCase.judge
-          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
-          ? updatedCase.registrar
-          : null
-
-      if (updatedRole?.nationalId) {
+      // The delivery resolves one role per message, so a judge and a registrar
+      // assigned in the same update are delivered as two messages
+      if (
+        updatedCase.judge?.nationalId &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+      ) {
         this.addMessagesForIndictmentCourtRoleAssigned(
           updatedCase,
           user,
-          updatedRole.nationalId,
+          updatedCase.judge.nationalId,
+        )
+      }
+
+      if (
+        updatedCase.registrar?.nationalId &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+      ) {
+        this.addMessagesForIndictmentCourtRoleAssigned(
+          updatedCase,
+          user,
+          updatedCase.registrar.nationalId,
         )
       }
     }
@@ -2481,18 +2490,42 @@ export class CaseService {
     ) {
       // The COMPLETE transition has already checked that the parent case is
       // received
-      const parentCase = theCase.mergeCase
 
-      // Update the latest court session if it is unconfirmed
+      // The parent's court sessions can change under this request: the guard
+      // locked this case's row, not the parent's. The parent's court session
+      // routes run under the parent's row lock (CaseExistsForUpdateGuard), so
+      // taking that lock here makes a confirmation of the parent's latest
+      // session, or a new session on it, either finish before the decision
+      // below or wait for this completion to commit - and the decision is
+      // taken from a fresh read under the lock, not from the guard's snapshot.
+      // Lock order is child then parent; nothing takes them the other way
+      // round - the parent's routes lock their own row and read the merged
+      // children without locking them.
+      const parentCaseLocked =
+        await this.caseRepositoryService.lockByIdForUpdate(
+          theCase.mergeCaseId,
+          transaction,
+        )
+
+      if (!parentCaseLocked) {
+        throw new InternalServerErrorException(
+          `Could not find parent case ${theCase.mergeCaseId} when completing merged case ${theCase.id}`,
+        )
+      }
+
+      // The merged case joins the parent's latest court session while that
+      // session is still open. Once it has been confirmed - or if the parent
+      // has no session yet - nothing happens here: the parent's next court
+      // session picks the merged case up when it is created.
       if (
-        parentCase?.withCourtSessions &&
-        parentCase.courtSessions &&
-        parentCase.courtSessions.length > 0 &&
-        !parentCase.courtSessions[parentCase.courtSessions.length - 1]
-          .isConfirmed
+        theCase.mergeCase?.withCourtSessions &&
+        (await this.courtSessionService.isLatestCourtSessionOpen(
+          theCase.mergeCaseId,
+          transaction,
+        ))
       ) {
         await this.courtSessionService.addMergedCaseToLatestCourtSession(
-          parentCase.id,
+          theCase.mergeCaseId,
           theCase.id,
           transaction,
         )

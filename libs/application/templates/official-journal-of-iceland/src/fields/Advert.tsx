@@ -242,7 +242,12 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             applicationId={application.id}
             name={InputFields.advert.title}
             label={advert.inputs.title.label}
-            defaultValue={application.answers?.advert?.title}
+            // Live answers, so a remount after the title is regenerated
+            // shows the new title
+            defaultValue={
+              currentApplication?.answers?.advert?.title ??
+              application.answers?.advert?.title
+            }
             placeholder={advert.inputs.title.placeholder}
             textarea={true}
             maxLength={1000}
