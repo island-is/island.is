@@ -8,15 +8,15 @@ import {
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
   GenericLicenseType,
+  GenericUserLicenseDataFieldTagColor,
+  GenericUserLicenseDataFieldTagType,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
-import {
-  DtoV5DriverLicenseDto as DriversLicense,
-  LicenseComments,
-} from '@island.is/clients/driving-license'
+import { LicenseComments } from '@island.is/clients/driving-license'
+import { DriversLicenseWithExtras } from '@island.is/clients/license-client'
 import { isDefined } from '@island.is/shared/utils'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
@@ -33,7 +33,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
 
-    const typedPayload = payload as Array<DriversLicense>
+    const typedPayload = payload as Array<DriversLicenseWithExtras>
 
     const { formatMessage } = await this.intlService.useIntl(
       [LICENSE_NAMESPACE],
@@ -76,11 +76,37 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             label: formatMessage(m.publishedDate),
             value: t.publishDate ? formatDate(t.publishDate) : '',
           },
+          t.totalPenaltyPoints !== undefined
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: formatMessage(m.penaltyPoints),
+                value: t.totalPenaltyPoints.toString(),
+                link: {
+                  label: formatMessage(m.viewPenaltyPoints),
+                  value: '/log-og-reglur/punktastada',
+                  type: GenericUserLicenseMetaLinksType.External,
+                },
+              }
+            : undefined,
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),
             value: t.dateValidTo ? formatDate(t.dateValidTo) : '',
-            tag: expiryTag(formatMessage, isExpired),
+            tag:
+              t.hasActiveDeprivation === true
+                ? {
+                    text: formatMessage(m.activeDeprivationTag),
+                    color: 'red',
+                    icon: GenericUserLicenseDataFieldTagType.closeCircle,
+                    iconColor: GenericUserLicenseDataFieldTagColor.red,
+                    iconText: formatMessage(m.activeDeprivationTag),
+                  }
+                : expiryTag(formatMessage, isExpired),
+            link: {
+              label: formatMessage(m.viewDeprivationDetails),
+              value: '/log-og-reglur/sviptingar',
+              type: GenericUserLicenseMetaLinksType.External,
+            },
           },
           {
             type: GenericLicenseDataFieldType.Group,
@@ -115,7 +141,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             label: formatMessage(m.extraCodes),
             value: t.comments ? this.formatComments(t.comments) : '',
           },
-        ]
+        ].filter(isDefined)
 
         return {
           licenseName: formatMessage(m.drivingLicense),

@@ -21,7 +21,7 @@ import { Payment } from './components/Payment/Payment'
 import { Summary } from './components/Summary/Summary'
 
 export const Screen = () => {
-  const { state, dispatch } = useApplicationContext()
+  const { state, dispatch, validateEligibility } = useApplicationContext()
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
   const { formatMessage } = useIntl()
@@ -90,6 +90,20 @@ export const Screen = () => {
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
+  const [
+    hasValidateEligibilityNotificationError,
+    setHasValidateEligibilityNotificationError,
+  ] = useState(false)
+  const [
+    isValidateEligibilityNotificationLoading,
+    setIsValidateEligibilityNotificationLoading,
+  ] = useState(false)
+  const hasValidateEligibilityError =
+    currentSectionType === SectionTypes.PREMISES &&
+    validateEligibility &&
+    (state.screenError?.hasError === true ||
+      hasValidateEligibilityNotificationError ||
+      isValidateEligibilityNotificationLoading)
 
   const anchorFieldIndex = useMemo(
     () => fieldsForMultisetLoop.findIndex((f) => f.isPartOfMultiset !== false),
@@ -208,7 +222,16 @@ export const Screen = () => {
         </Text>
 
         {currentSectionType === SectionTypes.PREMISES && (
-          <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
+          <ExternalData
+            disabled={hasValidateEligibilityError}
+            setHasValidateEligibilityNotificationError={
+              setHasValidateEligibilityNotificationError
+            }
+            setIsValidateEligibilityNotificationLoading={
+              setIsValidateEligibilityNotificationLoading
+            }
+            setExternalDataAgreement={setExternalDataAgreement}
+          />
         )}
 
         {currentSectionType === SectionTypes.PARTIES && (
@@ -266,7 +289,10 @@ export const Screen = () => {
         )}
       </GridColumn>
 
-      <Footer externalDataAgreement={externalDataAgreement} />
+      <Footer
+        externalDataAgreement={externalDataAgreement}
+        isValidateEligibilityError={hasValidateEligibilityError}
+      />
     </Box>
   )
 }

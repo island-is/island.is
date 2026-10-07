@@ -35,6 +35,12 @@ export const payout = {
       defaultMessage: 'Stéttafélag',
       description: 'payout union label',
     },
+    unionSelectDescription: {
+      id: 'vmst.ub.application:payout.payoutInformation.unionSelectDescription',
+      defaultMessage:
+        'Veldu stéttarfélagið sem þú greiddir síðast félagsgjald til. Ef þú ert ekki viss geturðu séð nafn félagsins á síðasta launaseðli þínum.',
+      description: 'description text above union select field',
+    },
     unionAlertTitle: {
       id: 'vmst.ub.application:payout.payoutInformation.unionAlertTitle',
       defaultMessage: 'Athugið',

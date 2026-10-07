@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   SkeletonLoader,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../lib/messages'
@@ -18,6 +19,7 @@ import { toast } from '@island.is/island-ui/core'
 import { ApiActions, draftActionId } from '../utils/constants'
 import { htmlToPlainText } from '../utils/htmlHelpers'
 import { getProviderErrorMessage } from '../utils/providerError'
+import { formatValidUntil } from '../utils/dates'
 
 // The runner writes `data: {}` next to `status: 'failure'`, so reading `data`
 // without checking the status hands back an empty bag that looks like a plan.
@@ -32,6 +34,16 @@ type ProviderEntry = {
   } | null
   reason?: unknown
 }
+
+/**
+ * Coverage that is a certificate from Jafnrettisstofa's retired register rather
+ * than a report filed here. There is a valid plan — the screen is right to be
+ * showing — but no report row behind it, so no content, no PDF and nothing to
+ * fetch. Branching on `source` rather than on a missing id is what DMR's API
+ * asks for; without this branch the empty content reads as a failed fetch and
+ * the screen tells the applicant their plan could not be loaded.
+ */
+const LEGACY_COVERAGE_SOURCE = 'LEGACY'
 
 /**
  * ⚠️ **A PDF-backed plan arrives with BLANK content, and that is success.**
@@ -67,7 +79,24 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
 
+  const isLegacyCoverage =
+    getValueViaPath<string>(
+      application.externalData,
+      'activeEqualityReport.data.source',
+    ) === LEGACY_COVERAGE_SOURCE
+
+  const legacyValidUntil = formatValidUntil(
+    getValueViaPath<string>(
+      application.externalData,
+      'activeEqualityReport.data.validUntil',
+    ),
+  )
+
   useEffect(() => {
+    // Nothing to fetch, and the provider would answer null anyway: legacy
+    // coverage has no providerId to read a report by.
+    if (isLegacyCoverage) return
+
     const cachedData = getValueViaPath<ProviderEntry['data']>(
       application.externalData,
       'previousEqualityReportContent.data',
@@ -227,6 +256,35 @@ export const PreviousEqualityPlan = ({ application }: FieldBaseProps) => {
     } finally {
       setDownloadingPdf(false)
     }
+  }
+
+  // Ahead of the loading check: the effect above returns without fetching, so
+  // `loading` never clears for this branch.
+  if (isLegacyCoverage) {
+    return (
+      <AlertMessage
+        type="info"
+        title={formatMessage(
+          messages.equalityReport.previousEqualityPlan.alertTitle,
+        )}
+        message={
+          <Box>
+            <Text>
+              {formatMessage(
+                messages.equalityReport.previousEqualityPlan.legacyNotice,
+              )}
+            </Text>
+            {legacyValidUntil && (
+              <Text marginTop={1}>
+                {`${formatMessage(
+                  messages.equalityReport.previousEqualityPlan.validUntil,
+                )}: ${legacyValidUntil}`}
+              </Text>
+            )}
+          </Box>
+        }
+      />
+    )
   }
 
   if (loading) {

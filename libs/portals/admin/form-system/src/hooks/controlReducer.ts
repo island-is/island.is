@@ -138,6 +138,7 @@ type ChangeActions =
       payload: { lang: 'en' | 'is'; newValue: string; id: string }
     }
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
+  | { type: 'CHANGE_IDENTIFIER'; payload: { newValue: string } }
   | {
       type: 'CHANGE_FORM_NAME'
       payload: { lang: 'en' | 'is'; newValue: string }
@@ -169,11 +170,22 @@ type ChangeActions =
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
+      type: 'TOGGLE_VALIDATE_ELIGIBILITY'
+      payload: {
+        checked: boolean
+        update: (updatedForm: FormSystemForm) => void
+      }
+    }
+  | {
       type: 'CHANGE_HAS_SUMMARY_SCREEN'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | {
       type: 'CHANGE_HAS_PAYMENT'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
+  | {
+      type: 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD'
       payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
@@ -761,6 +773,44 @@ export const controlReducer = (
       }
     }
 
+    case 'CHANGE_IDENTIFIER': {
+      if (
+        !activeItem.data ||
+        (activeItem.type !== 'Screen' && activeItem.type !== 'Field')
+      ) {
+        return state
+      }
+      if (activeItem.type === 'Screen') {
+        const newData = {
+          ...(activeItem.data as FormSystemScreen),
+          identifier: action.payload.newValue,
+        }
+        return {
+          ...state,
+          activeItem: { ...activeItem, data: newData },
+          form: {
+            ...form,
+            screens: screens?.map((screen) =>
+              screen?.id === newData.id ? newData : screen,
+            ),
+          },
+        }
+      }
+      const newData = {
+        ...(activeItem.data as FormSystemField),
+        identifier: action.payload.newValue,
+      }
+      return {
+        ...state,
+        activeItem: { ...activeItem, data: newData },
+        form: {
+          ...form,
+          fields: fields?.map((field) =>
+            field?.id === newData.id ? newData : field,
+          ),
+        },
+      }
+    }
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
       let newData
@@ -924,6 +974,17 @@ export const controlReducer = (
       action.payload.update({ ...updatedState.form })
       return updatedState
     }
+    case 'TOGGLE_VALIDATE_ELIGIBILITY': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          validateEligibility: action.payload.checked,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
     case 'CHANGE_HAS_SUMMARY_SCREEN': {
       const updatedState = {
         ...state,
@@ -941,6 +1002,17 @@ export const controlReducer = (
         form: {
           ...form,
           hasPayment: action.payload.value,
+        },
+      }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
+    }
+    case 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          enableApplicationPdfDownload: action.payload.value,
         },
       }
       action.payload.update({ ...updatedState.form })
@@ -993,6 +1065,9 @@ export const controlReducer = (
           fields: nextFields,
           screens: nextScreens,
           useValidate: nextUseValidate,
+          validateEligibility: nextUseValidate
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState
@@ -1035,6 +1110,9 @@ export const controlReducer = (
           ...form,
           screens: nextScreens,
           useValidate: action.payload.value,
+          validateEligibility: action.payload.value
+            ? form.validateEligibility
+            : false,
         },
       }
       return updatedState

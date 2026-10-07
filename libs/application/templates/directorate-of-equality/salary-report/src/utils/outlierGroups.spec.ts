@@ -1,10 +1,13 @@
 import {
   buildOutlierClearCommands,
   buildOutlierSyncCommands,
+  cloneOutlierGroups,
   foldGroupDirection,
   outlierGroupsWithMembers,
   isOutlierGroupComplete,
   isOutlierGroupSubmittable,
+  outlierGroupFingerprint,
+  savedOutlierGroupIndex,
   unassignedOutlierOrdinals,
   withFallbackOutlierGroupNames,
 } from './outlierGroups'
@@ -267,5 +270,118 @@ describe('buildOutlierSyncCommands with an emptied group', () => {
 
     expect(outlierGroups).toEqual([])
     expect(employees).toEqual([])
+  })
+})
+
+// What decides whether a group's "Vista" button still reads "Vistað".
+describe('outlierGroupFingerprint', () => {
+  const GROUP = {
+    id: 'group-1',
+    name: 'Sölufólk',
+    reason: 'Reynsla',
+    action: 'Endurskoðun',
+    remedyDate: '2027-01-31',
+    signatureName: 'Jón Jónsson',
+    signatureRole: 'Framkvæmdastjóri',
+    employeeOrdinals: [1, 2],
+  }
+
+  it('matches a group against an unedited copy of itself', () => {
+    expect(outlierGroupFingerprint(GROUP)).toBe(
+      outlierGroupFingerprint({ ...GROUP }),
+    )
+  })
+
+  it('ignores the id, which the applicant cannot change', () => {
+    expect(outlierGroupFingerprint({ ...GROUP, id: 'group-2' })).toBe(
+      outlierGroupFingerprint(GROUP),
+    )
+  })
+
+  it.each([
+    ['name', { name: 'Sérfræðingar' }],
+    ['reason', { reason: 'Menntun' }],
+    ['action', { action: 'Launaleiðrétting' }],
+    ['remedyDate', { remedyDate: '2027-02-01' }],
+    ['signatureName', { signatureName: 'Anna Ansdóttir' }],
+    ['signatureRole', { signatureRole: 'Mannauðsstjóri' }],
+    ['employeeOrdinals', { employeeOrdinals: [1] }],
+  ])('notices an edit to %s', (_field, edit) => {
+    expect(outlierGroupFingerprint({ ...GROUP, ...edit })).not.toBe(
+      outlierGroupFingerprint(GROUP),
+    )
+  })
+
+  // A blank field and a missing one are the same group as far as the button is
+  // concerned: emptyOutlierGroupAnswer writes '' where the buffer round-trip
+  // can hand back undefined.
+  it('reads a missing field as blank', () => {
+    expect(outlierGroupFingerprint({ employeeOrdinals: [] })).toBe(
+      outlierGroupFingerprint({
+        name: '',
+        reason: '',
+        action: '',
+        remedyDate: '',
+        signatureName: '',
+        signatureRole: '',
+        employeeOrdinals: [],
+      }),
+    )
+  })
+})
+
+describe('cloneOutlierGroups', () => {
+  it('copies the members, so the form cannot write into the saved plan', () => {
+    const group = { name: 'Sölufólk', employeeOrdinals: [1, 2] }
+    const [clone] = cloneOutlierGroups([group])
+
+    group.employeeOrdinals.push(3)
+
+    expect(clone.employeeOrdinals).toEqual([1, 2])
+  })
+})
+
+describe('savedOutlierGroupIndex', () => {
+  // DRAFT mints an id per group, so a removal higher up the list must not make
+  // every group below it look edited.
+  describe('with ids (draft mode)', () => {
+    const saved = [
+      { id: 'a', employeeOrdinals: [1] },
+      { id: 'b', employeeOrdinals: [2] },
+    ]
+
+    it('finds the group by id rather than by position', () => {
+      expect(savedOutlierGroupIndex(saved, { id: 'b' }, 0)).toBe(1)
+    })
+
+    it('reports a group the saved plan does not hold as unsaved', () => {
+      expect(savedOutlierGroupIndex(saved, { id: 'c' }, 0)).toBe(-1)
+    })
+  })
+
+  // POSTPONED has no ids: the two arrays only ever grow at the end, and a
+  // removal drops the group from both together or from neither.
+  describe('without ids (postponed mode)', () => {
+    const saved = [{ employeeOrdinals: [1] }, { employeeOrdinals: [2] }]
+
+    it('falls back to the position', () => {
+      expect(savedOutlierGroupIndex(saved, { employeeOrdinals: [2] }, 1)).toBe(
+        1,
+      )
+    })
+
+    it('reports a group past the end of the saved plan as unsaved', () => {
+      expect(savedOutlierGroupIndex(saved, { employeeOrdinals: [3] }, 2)).toBe(
+        -1,
+      )
+    })
+
+    it('reports an undefined group as unsaved once past the end', () => {
+      expect(savedOutlierGroupIndex(saved, undefined, 2)).toBe(-1)
+    })
+
+    it('treats an empty saved plan as holding nothing', () => {
+      expect(savedOutlierGroupIndex([], { employeeOrdinals: [1] }, 0)).toBe(-1)
+    })
   })
 })

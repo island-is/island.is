@@ -94,6 +94,13 @@ export const mapDelegationStatus = (
   }
 }
 
+export const formatStrength = (strength?: string | null) => {
+  if (!strength) {
+    return strength ?? undefined
+  }
+  return /^[.,]\d/.test(strength) ? `0${strength}` : strength
+}
+
 export const mapDispensationItem = (
   item: DispensationHistoryItemDto,
 ): MedicineHistoryDispensation => {
@@ -117,6 +124,6 @@ export const mapDispensationItem = (
     expirationDate: item.expirationDate,
     isExpired: item.isExpired,
     date: item.dispensationDate,
-    strength: item.product.strength ?? '',
+    strength: formatStrength(item.product.strength) ?? '',
   }
 }

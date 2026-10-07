@@ -66,6 +66,7 @@ describe('BankTransferService', () => {
     getPaymentFlowDetails: jest.Mock
     getPaymentFlowChargeDetails: jest.Mock
     isEligibleToBePaid: jest.Mock
+    isBankTransferAllowedForPayer: jest.Mock
     logPaymentFlowUpdate: jest.Mock
   }
 
@@ -85,7 +86,7 @@ describe('BankTransferService', () => {
       getPaymentFlowDetails: jest.fn().mockResolvedValue({
         id: 'flow-1',
         organisationId: 'org-1',
-        payerNationalId: '1234567890',
+        payerNationalId: '0101307789',
         charges: [{ chargeType: 'AB', chargeItemCode: 'AB123', quantity: 1 }],
         extraData: [],
       }),
@@ -103,6 +104,7 @@ describe('BankTransferService', () => {
         totalPrice: 14000,
       }),
       isEligibleToBePaid: jest.fn().mockResolvedValue(true),
+      isBankTransferAllowedForPayer: jest.fn().mockResolvedValue(true),
       logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
     }
     blikkClient = {
@@ -167,6 +169,8 @@ describe('BankTransferService', () => {
       expect(body.debtorExternalId).toBe('1234567890')
       expect(body.debtorName).toBe('1234567890')
       expect(body.debtorBban).toBe('123456789012')
+      // An individual payer has no corporate debtor.
+      expect(body.debtorCorpExternalId).toBeUndefined()
       // Provider items: chargeItemName→name, priceAmount→string unitPrice, chargeItemCode→sku.
       expect(body.items).toEqual([
         { name: 'Vegabréf', quantity: 1, unitPrice: '14000', sku: 'AB123' },
@@ -196,9 +200,34 @@ describe('BankTransferService', () => {
         currency: 'ISK',
         paymentFlowId: 'flow-1',
         correlationId: 'btp-onboard',
+        debtorExternalId: '1234567890',
       })
 
       expect(result.onboardingRequired).toBe(true)
+    })
+
+    it('sends the company as the corporate debtor and the individual as the debtor', async () => {
+      blikkClient.createPayment.mockResolvedValue({
+        id: 'provider-123',
+        status: 'DRAFT',
+        scaRedirectUrl: '',
+        message: '',
+      })
+
+      await service.createBankTransferPayment({
+        amount: 14000,
+        currency: 'ISK',
+        paymentFlowId: 'flow-1',
+        correlationId: 'btp-company',
+        debtorExternalId: '0101302129',
+        debtorCorpExternalId: '6010100890',
+        bankAccountNumber: '123456789012',
+      })
+
+      const body = blikkClient.createPayment.mock.calls[0][0]
+      expect(body.debtorExternalId).toBe('0101302129')
+      expect(body.debtorName).toBe('0101302129')
+      expect(body.debtorCorpExternalId).toBe('6010100890')
     })
 
     it('maps a BlikkClientError to FailedToCreateBankTransfer and logs Blikk’s reason', async () => {
@@ -215,6 +244,7 @@ describe('BankTransferService', () => {
           currency: 'ISK',
           paymentFlowId: 'flow-1',
           correlationId: 'btp-err',
+          debtorExternalId: '1234567890',
         }),
       ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
 
@@ -516,7 +546,7 @@ describe('BankTransferService', () => {
         callbackUrl: 'https://island.is/greida/api/bank-transfer/callback',
         partnerRedirectUrl: 'https://island.is/greida/is/flow-1',
         // payerNationalId from the getPaymentFlowDetails mock; BBAN from the input.
-        debtorExternalId: '1234567890',
+        debtorExternalId: '0101307789',
         bankAccountNumber: '123456789012',
       })
       expect(blikkArg.correlationId).not.toBe('flow-1')
@@ -562,6 +592,110 @@ describe('BankTransferService', () => {
         onboardingRequired: false,
       })
       expect(rowArg.scaRedirectUrl).toBe('https://blikk/sca')
+    })
+
+    describe('company payer', () => {
+      const companyFlow = {
+        id: 'flow-1',
+        organisationId: 'org-1',
+        payerNationalId: '6010100890',
+        charges: [{ chargeType: 'AB', chargeItemCode: 'AB123', quantity: 1 }],
+        extraData: [],
+      }
+
+      beforeEach(() => {
+        paymentFlowService.getPaymentFlowDetails.mockResolvedValue(companyFlow)
+      })
+
+      it('refuses a company the company flag does not allow, without calling Blikk', async () => {
+        paymentFlowService.isBankTransferAllowedForPayer.mockResolvedValue(
+          false,
+        )
+        const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
+
+        await expect(
+          service.create({ ...createInput, actorNationalId: '0101302129' }),
+        ).rejects.toThrow(BankTransferErrorCode.FailedToCreateBankTransfer)
+        expect(
+          paymentFlowService.isBankTransferAllowedForPayer,
+        ).toHaveBeenCalledWith('6010100890')
+        expect(blikkSpy).not.toHaveBeenCalled()
+        expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+        expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+      })
+
+      it('debits the company with the entered individual authorising it', async () => {
+        const blikkSpy = mockBlikkCreate()
+
+        await service.create({ ...createInput, actorNationalId: '0101302129' })
+
+        expect(blikkSpy.mock.calls[0][0]).toMatchObject({
+          debtorExternalId: '0101302129',
+          debtorCorpExternalId: '6010100890',
+        })
+        // Kept for disputes and reconciliation, but not on the flow event the organisation gets.
+        expect(
+          bankTransferPaymentModel.create.mock.calls[0][0].actorNationalId,
+        ).toBe('0101302129')
+        expect(
+          JSON.stringify(paymentFlowService.logPaymentFlowUpdate.mock.calls),
+        ).not.toContain('0101302129')
+      })
+
+      it.each<[string, string | undefined]>([
+        ['no individual', undefined],
+        ['a company as the individual', '6010100890'],
+        ['a temporary kennitala as the individual', '8123456789'],
+      ])(
+        'refuses with InvalidActorNationalId for %s, without calling Blikk',
+        async (_, actorNationalId) => {
+          const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
+
+          await expect(
+            service.create({ ...createInput, actorNationalId }),
+          ).rejects.toThrow(BankTransferErrorCode.InvalidActorNationalId)
+          expect(blikkSpy).not.toHaveBeenCalled()
+          expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+          expect(bankTransferPaymentModel.update).not.toHaveBeenCalled()
+        },
+      )
+    })
+
+    // A temporary kennitala is never offered the method, but the endpoint can be called directly.
+    it('refuses a temporary-kennitala payer, without calling Blikk', async () => {
+      paymentFlowService.getPaymentFlowDetails.mockResolvedValue({
+        id: 'flow-1',
+        organisationId: 'org-1',
+        payerNationalId: '8123456789',
+        charges: [{ chargeType: 'AB', chargeItemCode: 'AB123', quantity: 1 }],
+        extraData: [],
+      })
+      paymentFlowService.isBankTransferAllowedForPayer.mockResolvedValue(false)
+      const blikkSpy = jest.spyOn(service, 'createBankTransferPayment')
+
+      await expect(service.create(createInput)).rejects.toThrow(
+        BankTransferErrorCode.FailedToCreateBankTransfer,
+      )
+      expect(
+        paymentFlowService.isBankTransferAllowedForPayer,
+      ).toHaveBeenCalledWith('8123456789')
+      expect(blikkSpy).not.toHaveBeenCalled()
+      expect(bankTransferPaymentModel.create).not.toHaveBeenCalled()
+    })
+
+    it('ignores an individual sent for a payer that is not a company', async () => {
+      const blikkSpy = mockBlikkCreate()
+
+      await service.create({ ...createInput, actorNationalId: '0101302129' })
+
+      expect(blikkSpy.mock.calls[0][0]).toMatchObject({
+        debtorExternalId: '0101307789',
+      })
+      expect(blikkSpy.mock.calls[0][0].debtorCorpExternalId).toBeUndefined()
+      // A person authorises their own transfer, so there is no one else to record.
+      expect(
+        bankTransferPaymentModel.create.mock.calls[0][0].actorNationalId,
+      ).toBeNull()
     })
 
     // The one case that still needs the URL from `create`: the FE redirects to it immediately,

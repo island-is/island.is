@@ -41,6 +41,11 @@ import { Case, CivilClaimant } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'
+import {
+  courtOfAppealsAssistantUpdateCivilClaimantRule,
+  courtOfAppealsJudgeUpdateCivilClaimantRule,
+  courtOfAppealsRegistrarUpdateCivilClaimantRule,
+} from './guards/rolesRules'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
@@ -90,6 +95,11 @@ export class CivilClaimantController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    // Field rules, unlike the role rules above: this court settles the appeal
+    // proceeding's advocate and nothing else on the claimant.
+    courtOfAppealsJudgeUpdateCivilClaimantRule,
+    courtOfAppealsRegistrarUpdateCivilClaimantRule,
+    courtOfAppealsAssistantUpdateCivilClaimantRule,
   )
   @Patch(':civilClaimantId')
   @ApiOkResponse({
@@ -130,9 +140,8 @@ export class CivilClaimantController {
       `Deleting civil claimant ${civilClaimantId} of case ${caseId}`,
     )
 
-    const deleted = await this.civilClaimantService.delete(
-      caseId,
-      civilClaimantId,
+    const deleted = await this.sequelize.transaction((transaction) =>
+      this.civilClaimantService.delete(caseId, civilClaimantId, transaction),
     )
 
     return { deleted }

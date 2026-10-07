@@ -41,7 +41,7 @@ const UserContract = () => {
         data.hmsRentalAgreement.contractProperty ?? undefined,
       )
     }
-  }, [data?.hmsRentalAgreement?.contractProperty])
+  }, [contract?.contractProperty])
 
   const status = useMemo(() => {
     if (
@@ -50,16 +50,16 @@ const UserContract = () => {
     ) {
       return mapStatusTypeToTag(data.hmsRentalAgreement.status)
     }
-  }, [data?.hmsRentalAgreement?.status])
+  }, [contract?.status])
 
   const propertyTypeMessage = mapPropertyTypeToMessage(
-    data?.hmsRentalAgreement?.contractProperty?.type,
+    contract?.contractProperty?.type,
   )
 
   return (
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
-      intro={propertyTypeMessage ?? cm.contractDetailSubtitle}
+      intro={propertyTypeMessage}
       serviceProvider={{
         slug: HMS_SLUG,
         tooltip: formatMessage(m.rentalAgreementsTooltip),
@@ -132,12 +132,14 @@ const UserContract = () => {
               label={cm.lengthOfRentalAgreement}
               content={
                 contract?.dateFrom
-                  ? formatMessage(cm.rentalAgreementDate, {
-                      from: new Date(contract.dateFrom),
-                      to: contract.dateTo
-                        ? new Date(contract.dateTo)
-                        : undefined,
-                    })
+                  ? contract.dateTo
+                    ? formatMessage(cm.rentalAgreementDate, {
+                        from: new Date(contract.dateFrom),
+                        to: new Date(contract.dateTo),
+                      })
+                    : formatMessage(cm.rentalAgreementDateFrom, {
+                        from: new Date(contract.dateFrom),
+                      })
                   : undefined
               }
             />

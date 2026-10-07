@@ -18,7 +18,7 @@ const useCaseAppealDecision = () => {
         })
 
         return data?.updateCaseAppealDecision
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra ákvörðun um kæru')
 
         return undefined

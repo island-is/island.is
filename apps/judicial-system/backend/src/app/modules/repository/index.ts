@@ -44,6 +44,7 @@ export {
 } from './services/caseStringRepository.service'
 export {
   CaseFileRepositoryService,
+  CopyCaseFileTarget,
   CreateCaseFile,
   UpdateCaseFile,
   UpdatedCaseFiles,
@@ -119,7 +120,6 @@ export {
 } from './services/victimRepository.service'
 
 export {
-  caseInclude,
   CreateAppealCase,
   UpdateAppealCase,
   UpdateCase,

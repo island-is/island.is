@@ -118,8 +118,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
@@ -155,8 +156,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
@@ -193,8 +195,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
     const documentToken = uuid()
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce(theCase)
 
       await givenWhenThen(caseId, user, theCase, documentToken)
     })

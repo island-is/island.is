@@ -9,10 +9,6 @@ import { DefendantEventType, User } from '@island.is/judicial-system/types'
 
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 
-interface CreateDefendantEventLogOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class DefendantEventLogRepositoryService {
   constructor(
@@ -27,7 +23,7 @@ export class DefendantEventLogRepositoryService {
     defendantId: string,
     user: User,
     transaction: Transaction,
-    created?: Date,
+    options?: { created?: Date; verdictId?: string },
   ): Promise<void> {
     await this.create(
       {
@@ -39,7 +35,8 @@ export class DefendantEventLogRepositoryService {
         userName: user.name,
         userTitle: user.title,
         institutionName: user.institution?.name,
-        ...(created ? { created } : {}),
+        ...(options?.created ? { created: options.created } : {}),
+        ...(options?.verdictId ? { verdictId: options.verdictId } : {}),
       },
       { transaction },
     )
@@ -47,7 +44,7 @@ export class DefendantEventLogRepositoryService {
 
   async create(
     data: Partial<DefendantEventLog>,
-    options: CreateDefendantEventLogOptions,
+    options: { transaction: Transaction },
   ): Promise<DefendantEventLog> {
     try {
       this.logger.debug(
@@ -64,6 +61,39 @@ export class DefendantEventLogRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error creating a new defendant event log for defendant ${data.defendantId} of case ${data.caseId} with event type ${data.eventType}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Moves every event log of a defendant to another case, when the defendant is
+  // split off into a case of their own. Returns the number of event logs moved.
+  async moveAllForDefendantToCase(
+    caseId: string,
+    defendantId: string,
+    newCaseId: string,
+    options: { transaction: Transaction },
+  ): Promise<number> {
+    try {
+      this.logger.debug(
+        `Moving the event logs of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      const [numberOfAffectedRows] = await this.defendantEventLogModel.update(
+        { caseId: newCaseId },
+        { where: { caseId, defendantId }, transaction: options.transaction },
+      )
+
+      this.logger.debug(
+        `Moved ${numberOfAffectedRows} event logs of defendant ${defendantId} from case ${caseId} to case ${newCaseId}`,
+      )
+
+      return numberOfAffectedRows
+    } catch (error) {
+      this.logger.error(
+        `Error moving the event logs of defendant ${defendantId} from case ${caseId} to case ${newCaseId}:`,
         { error },
       )
 

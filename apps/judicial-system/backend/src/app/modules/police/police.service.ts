@@ -24,6 +24,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -343,11 +344,14 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
+    const errorSummary = (
+      reason instanceof Error ? reason.message : String(reason)
+    ).slice(0, 2000)
+
     this.logger.error(logMessage, {
       ...info,
       error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+      errorSummary,
     })
   }
 
@@ -497,6 +501,10 @@ export class PoliceService {
     caseId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ) {
     const startTime = nowFactory()
     const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
@@ -524,6 +532,8 @@ export class PoliceService {
           caseId,
           actor: user.name,
           institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
           startTime,
           endTime: nowFactory(),
           source,
@@ -558,6 +568,10 @@ export class PoliceService {
     policeDigitalFileId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     const startTime = nowFactory()
     const query = new URLSearchParams({
@@ -615,6 +629,8 @@ export class PoliceService {
           rafraennGagnId: policeDigitalFileId,
           actor: user.name,
           institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
           startTime,
           endTime: nowFactory(),
           source,
@@ -680,11 +696,16 @@ export class PoliceService {
   async getAllPoliceSystemDigitalCaseFiles(
     caseId: string,
     user: User,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<PoliceSystemDigitalCaseFile[]> {
     const caseFiles = await this.getDigitalCaseFiles(
       caseId,
       user,
       'getAllPoliceSystemDigitalCaseFiles',
+      caseNumbers,
     )
 
     const files: PoliceSystemDigitalCaseFile[] = []
@@ -736,7 +757,7 @@ export class PoliceService {
         nationalId: defendant.accusedNationalId,
         name: defendant.accusedName ?? undefined,
         gender: defendant.accusedGender ?? undefined,
-        address: defendant.accusedAddress ?? undefined,
+        address: normalizePersonAddress(defendant.accusedAddress ?? undefined),
         dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))
@@ -1204,6 +1225,16 @@ export class PoliceService {
       courtDocuments,
     }
 
+    const failureInfo = {
+      caseId,
+      actor: user.name,
+      institution: user.institution?.name,
+      caseType: String(caseType),
+      caseState: String(caseState),
+      policeCaseNumber,
+      courtCaseNumber,
+    }
+
     return this.fetchPoliceCaseApi(url, {
       method: 'PUT',
       headers: {
@@ -1220,9 +1251,20 @@ export class PoliceService {
           return true
         }
 
-        const response = await res.text()
+        const responseBody = await res.text()
+        const message =
+          responseBody.trim() !== ''
+            ? responseBody
+            : `Police case update failed with empty response body (HTTP ${res.status})`
 
-        throw response
+        this.logPoliceFailureAndNotify(
+          'Failed to update police case',
+          `Failed to update police case ${caseId}`,
+          { ...failureInfo, statusCode: String(res.status) },
+          new Error(message),
+        )
+
+        return false
       })
       .catch((reason) => {
         if (reason instanceof ServiceUnavailableException) {
@@ -1234,15 +1276,7 @@ export class PoliceService {
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
           `Failed to update police case ${caseId}`,
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            caseType: String(caseType),
-            caseState: String(caseState),
-            policeCaseNumber,
-            courtCaseNumber,
-          },
+          failureInfo,
           reason,
         )
 

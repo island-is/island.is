@@ -11,7 +11,6 @@ import {
   Inject,
   Param,
   Patch,
-  Query,
   Res,
   UseGuards,
   UseInterceptors,
@@ -27,7 +26,6 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
@@ -46,7 +44,7 @@ import { nowFactory } from '../../factories'
 import { defenderRule, prisonSystemStaffRule } from '../../guards'
 import { EventService } from '../event'
 import { getDefenceUserVisiblePoliceCaseNumbers } from '../file'
-import { Case, CivilClaimant, Defendant, User } from '../repository'
+import { Case, CivilClaimant, Defendant } from '../repository'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -150,20 +148,6 @@ export class LimitedAccessCaseController {
         transaction,
       ),
     )
-  }
-
-  @UseGuards(TokenGuard)
-  @Get('cases/limitedAccess/defender')
-  @ApiOkResponse({
-    type: User,
-    description: 'Gets a defender by national id',
-  })
-  findDefenderByNationalId(
-    @Query('nationalId') nationalId: string,
-  ): Promise<User> {
-    this.logger.debug(`Getting a defender by national id`)
-
-    return this.limitedAccessCaseService.findDefenderByNationalId(nationalId)
   }
 
   @UseGuards(

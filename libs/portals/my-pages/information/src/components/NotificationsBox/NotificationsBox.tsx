@@ -100,9 +100,12 @@ export const NotificationsBox = ({
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={[4, 4, 0]}
+        paddingX={[2, 2, 0]}
       >
-        <LinkResolver href={InformationPaths.Notifications}>
+        <LinkResolver
+          href={InformationPaths.Notifications}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
@@ -124,6 +127,7 @@ export const NotificationsBox = ({
           <LinkResolver
             href={InformationPaths.Notifications}
             aria-label={formatMessage(m.notificationsViewAll)}
+            className={styles.headerLink}
           >
             <Icon
               icon="arrowForward"
@@ -136,7 +140,7 @@ export const NotificationsBox = ({
       </Box>
 
       {loading && (
-        <Box marginTop={4} paddingX={[4, 4, 0]}>
+        <Box marginTop={4} paddingX={[2, 2, 0]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -183,7 +187,8 @@ export const NotificationsBox = ({
               alignItems="center"
               columnGap={2}
               paddingY={2}
-              paddingX={[4, 4, 2]}
+              paddingLeft={[1, 1, 2]}
+              paddingRight={2}
               borderTopWidth="standard"
               borderColor="blue200"
               className={unread ? styles.unreadRow : undefined}

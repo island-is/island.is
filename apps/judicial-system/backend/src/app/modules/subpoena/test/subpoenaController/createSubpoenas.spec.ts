@@ -8,6 +8,7 @@ import {
   CaseOrigin,
   CaseType,
   CourtDocumentType,
+  ServiceStatus,
   SubpoenaType,
   User,
 } from '@island.is/judicial-system/types'
@@ -81,6 +82,7 @@ describe('SubpoenaController - Create subpoenas', () => {
   let mockSubpoenaRepositoryService: SubpoenaRepositoryService
   let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
   let mockQueuedMessages: Message[]
+  let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let subpoenaController: SubpoenaController
@@ -92,14 +94,16 @@ describe('SubpoenaController - Create subpoenas', () => {
       subpoenaRepositoryService,
       courtDocumentRepositoryService,
       subpoenaController: controller,
-      queuedMessages,
+      queuedMessagesAfterCommit,
+      mockQueueMessagesAfterCommit: mockQueueMessages,
     } = await createTestingSubpoenaModule()
 
     mockCaseRepositoryService = caseRepositoryService
     mockSubpoenaRepositoryService = subpoenaRepositoryService
     mockCourtDocumentRepositoryService = courtDocumentRepositoryService
     subpoenaController = controller
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
+    mockQueueMessagesAfterCommit = mockQueueMessages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -116,6 +120,7 @@ describe('SubpoenaController - Create subpoenas', () => {
 
       // Clear queued messages before each test
       mockQueuedMessages.length = 0
+      mockQueueMessagesAfterCommit.mockClear()
 
       try {
         then.result = await subpoenaController.createSubpoenas(
@@ -157,7 +162,8 @@ describe('SubpoenaController - Create subpoenas', () => {
       const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
       // The case is passed directly from the controller, so no need to fetch it again
-      expect(mockCaseRepositoryService.findOne).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.findById).not.toHaveBeenCalled()
+      expect(mockCaseRepositoryService.findLiveById).not.toHaveBeenCalled()
 
       expect(mockSubpoenaRepositoryService.create).toHaveBeenCalledTimes(2)
       expect(mockSubpoenaRepositoryService.create).toHaveBeenNthCalledWith(
@@ -209,6 +215,9 @@ describe('SubpoenaController - Create subpoenas', () => {
           }),
         ]),
       )
+
+      // Queued for after the commit, in one call, so a rollback sends nothing
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledTimes(1)
 
       expect(then.result).toEqual([subpoena1, subpoena2])
       expect(then.error).toBeUndefined()
@@ -362,6 +371,232 @@ describe('SubpoenaController - Create subpoenas', () => {
       expect(mockQueuedMessages).toEqual([])
 
       expect(then.result).toEqual([])
+      expect(then.error).toBeUndefined()
+    })
+  })
+
+  describe('previous subpoenas revoked when reissued', () => {
+    const futureArraignmentDate = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    const pastArraignmentDate = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const oldSubpoenaId = uuid()
+    const policeSubpoenaId = uuid()
+
+    beforeEach(() => {
+      const mockCreate = mockSubpoenaRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(subpoena1)
+    })
+
+    it('should revoke previous undelivered subpoenas with a future arraignment date', async () => {
+      const defendantWithPreviousSubpoena = {
+        ...defendant1,
+        subpoenas: [
+          {
+            id: oldSubpoenaId,
+            policeSubpoenaId,
+            arraignmentDate: futureArraignmentDate,
+          },
+        ],
+      } as Defendant
+
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        origin: CaseOrigin.RVG,
+        defendants: [defendantWithPreviousSubpoena],
+        withCourtSessions: false,
+      } as Case
+
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1],
+        arraignmentDate,
+        location,
+      }
+
+      const user = { id: uuid() } as User
+
+      mockQueuedMessages.length = 0
+      mockQueueMessagesAfterCommit.mockClear()
+
+      const result = await subpoenaController.createSubpoenas(
+        caseId,
+        theCase,
+        createSubpoenasDto,
+        user,
+      )
+
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+            caseId: theCase.id,
+            elementId: [defendantId1, oldSubpoenaId],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+            caseId: theCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+            caseId: theCase.id,
+            elementId: [defendantId1, subpoenaId1],
+          }),
+        ]),
+      )
+      expect(mockQueuedMessages).toHaveLength(3)
+
+      // The revocation and the delivery messages are both queued for after the
+      // commit, the revocation first
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledTimes(2)
+      expect(mockQueueMessagesAfterCommit).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+        }),
+      )
+      expect(mockQueueMessagesAfterCommit).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+        }),
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+        }),
+      )
+
+      expect(result).toEqual([subpoena1])
+    })
+
+    it('should not revoke previous subpoenas with a past arraignment date', async () => {
+      const defendantWithPreviousSubpoena = {
+        ...defendant1,
+        subpoenas: [
+          {
+            id: oldSubpoenaId,
+            policeSubpoenaId,
+            arraignmentDate: pastArraignmentDate,
+          },
+        ],
+      } as Defendant
+
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        origin: CaseOrigin.RVG,
+        defendants: [defendantWithPreviousSubpoena],
+        withCourtSessions: false,
+      } as Case
+
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+          }),
+          expect.objectContaining({
+            type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          }),
+        ]),
+      )
+      expect(
+        mockQueuedMessages.some(
+          (message) =>
+            message.type ===
+            MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+        ),
+      ).toBe(false)
+      expect(mockQueuedMessages).toHaveLength(2)
+
+      expect(then.result).toEqual([subpoena1])
+      expect(then.error).toBeUndefined()
+    })
+
+    it('should not revoke previous subpoenas that were successfully served', async () => {
+      const defendantWithPreviousSubpoena = {
+        ...defendant1,
+        subpoenas: [
+          {
+            id: oldSubpoenaId,
+            policeSubpoenaId,
+            arraignmentDate: futureArraignmentDate,
+            serviceStatus: ServiceStatus.ELECTRONICALLY,
+          },
+        ],
+      } as Defendant
+
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        origin: CaseOrigin.RVG,
+        defendants: [defendantWithPreviousSubpoena],
+        withCourtSessions: false,
+      } as Case
+
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(
+        mockQueuedMessages.some(
+          (message) =>
+            message.type ===
+            MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+        ),
+      ).toBe(false)
+      expect(mockQueuedMessages).toHaveLength(2)
+
+      expect(then.result).toEqual([subpoena1])
+      expect(then.error).toBeUndefined()
+    })
+
+    it('should not revoke previous subpoenas that were never delivered to police', async () => {
+      const defendantWithPreviousSubpoena = {
+        ...defendant1,
+        subpoenas: [
+          {
+            id: oldSubpoenaId,
+            arraignmentDate: futureArraignmentDate,
+          },
+        ],
+      } as Defendant
+
+      const theCase = {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+        origin: CaseOrigin.RVG,
+        defendants: [defendantWithPreviousSubpoena],
+        withCourtSessions: false,
+      } as Case
+
+      const createSubpoenasDto: CreateSubpoenasDto = {
+        defendantIds: [defendantId1],
+        arraignmentDate,
+        location,
+      }
+
+      const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
+
+      expect(
+        mockQueuedMessages.some(
+          (message) =>
+            message.type ===
+            MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
+        ),
+      ).toBe(false)
+      expect(mockQueuedMessages).toHaveLength(2)
+
+      expect(then.result).toEqual([subpoena1])
       expect(then.error).toBeUndefined()
     })
   })

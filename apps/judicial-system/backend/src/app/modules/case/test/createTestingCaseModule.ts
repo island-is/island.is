@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended'
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -14,10 +13,12 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
+import { Message } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
+import { CourtSessionService } from '../../court-session'
 import { CivilClaimantService } from '../../defendant'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
@@ -31,12 +32,21 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseArchiveRepositoryService,
+  CaseDefendantPoliceCaseNumberRepositoryService,
+  CaseFileRepositoryService,
   CaseRepositoryService,
   CaseStringRepositoryService,
+  CivilClaimantRepositoryService,
   DateLogRepositoryService,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
+  EventLogRepositoryService,
+  IndictmentCountRepositoryService,
+  OffenseRepositoryService,
   PoliceDigitalCaseFileRepositoryService,
+  SubpoenaRepositoryService,
+  VerdictRepositoryService,
+  VictimRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { UserService } from '../../user'
@@ -44,12 +54,14 @@ import { VerdictService } from '../../verdict'
 import { caseModuleConfig } from '../case.config'
 import { CaseController } from '../case.controller'
 import { CaseService } from '../case.service'
+import { CaseCloningService } from '../caseCloning.service'
 import { InternalCaseController } from '../internalCase.controller'
 import { InternalCaseService } from '../internalCase.service'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { PdfService } from '../pdf.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service', () => {
   const actual = jest.requireActual('../../court/court.service')
@@ -60,6 +72,7 @@ jest.mock('../../court/court.service', () => {
   }
 })
 jest.mock('../../police/police.service')
+jest.mock('../../court-session/courtSession.service')
 jest.mock('../../event/event.service')
 jest.mock('../../event-log/eventLog.service')
 jest.mock('../../user/user.service')
@@ -75,11 +88,22 @@ jest.mock('../../repository/services/appealDecisionRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
+jest.mock(
+  '../../repository/services/caseDefendantPoliceCaseNumber.repository.service',
+)
+jest.mock('../../repository/services/caseFileRepository.service')
+jest.mock('../../repository/services/civilClaimantRepository.service')
+jest.mock('../../repository/services/indictmentCountRepository.service')
+jest.mock('../../repository/services/offenseRepository.service')
+jest.mock('../../repository/services/victimRepository.service')
 jest.mock('../../repository/services/caseStringRepository.service')
 jest.mock('../../repository/services/dateLogRepository.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../repository/services/eventLogRepository.service')
 jest.mock('../../repository/services/policeDigitalCaseFileRepository.service')
+jest.mock('../../repository/services/subpoenaRepository.service')
+jest.mock('../../repository/services/verdictRepository.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -97,6 +121,7 @@ export const createTestingCaseModule = async () => {
       SharedAuthModule,
       EventLogService,
       CourtService,
+      CourtSessionService,
       PoliceService,
       UserService,
       FileService,
@@ -113,11 +138,20 @@ export const createTestingCaseModule = async () => {
       AppealEventLogRepositoryService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
+      CaseDefendantPoliceCaseNumberRepositoryService,
+      CaseFileRepositoryService,
       CaseStringRepositoryService,
+      CivilClaimantRepositoryService,
       DateLogRepositoryService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      EventLogRepositoryService,
+      IndictmentCountRepositoryService,
+      OffenseRepositoryService,
       PoliceDigitalCaseFileRepositoryService,
+      SubpoenaRepositoryService,
+      VerdictRepositoryService,
+      VictimRepositoryService,
       {
         provide: IntlService,
         useValue: {
@@ -140,6 +174,7 @@ export const createTestingCaseModule = async () => {
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       CaseService,
+      CaseCloningService,
       InternalCaseService,
       LimitedAccessCaseService,
       PdfService,
@@ -157,6 +192,9 @@ export const createTestingCaseModule = async () => {
   const eventService = caseModule.get<EventService>(EventService)
 
   const courtService = caseModule.get<CourtService>(CourtService)
+
+  const courtSessionService =
+    caseModule.get<CourtSessionService>(CourtSessionService)
 
   const policeService = caseModule.get<PoliceService>(PoliceService)
 
@@ -202,6 +240,12 @@ export const createTestingCaseModule = async () => {
     Promise.resolve(theCase.splitCaseId ?? theCase.id),
   )
 
+  const mockFindLiveDescendantCase =
+    caseRepositoryService.findLiveDescendantCase as jest.Mock
+  mockFindLiveDescendantCase.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase),
+  )
+
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
@@ -236,6 +280,45 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const caseDefendantPoliceCaseNumberRepositoryService =
+    caseModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
+      CaseDefendantPoliceCaseNumberRepositoryService,
+    )
+
+  const caseFileRepositoryService = caseModule.get<CaseFileRepositoryService>(
+    CaseFileRepositoryService,
+  )
+
+  const civilClaimantRepositoryService =
+    caseModule.get<CivilClaimantRepositoryService>(
+      CivilClaimantRepositoryService,
+    )
+
+  const indictmentCountRepositoryService =
+    caseModule.get<IndictmentCountRepositoryService>(
+      IndictmentCountRepositoryService,
+    )
+
+  const offenseRepositoryService = caseModule.get<OffenseRepositoryService>(
+    OffenseRepositoryService,
+  )
+
+  const victimRepositoryService = caseModule.get<VictimRepositoryService>(
+    VictimRepositoryService,
+  )
+
+  const subpoenaRepositoryService = caseModule.get<SubpoenaRepositoryService>(
+    SubpoenaRepositoryService,
+  )
+
+  const verdictRepositoryService = caseModule.get<VerdictRepositoryService>(
+    VerdictRepositoryService,
+  )
+
+  const eventLogRepositoryService = caseModule.get<EventLogRepositoryService>(
+    EventLogRepositoryService,
+  )
+
   const internalCaseService =
     caseModule.get<InternalCaseService>(InternalCaseService)
 
@@ -252,22 +335,28 @@ export const createTestingCaseModule = async () => {
   const limitedAccessCaseController =
     caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
 
+  // Every message the request queued, in order, and the same messages one
+  // entry per call, for a spec that cares what was registered together
   const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+  const queuedMessagesAfterCommit: Message[][] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
     queuedMessages.push(...msgs)
+    queuedMessagesAfterCommit.push(msgs)
   })
 
   caseModule.close()
 
   return {
     queuedMessages,
+    queuedMessagesAfterCommit,
     appealCaseRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,
     eventLogService,
     eventService,
     courtService,
+    courtSessionService,
     policeService,
     userService,
     fileService,
@@ -288,6 +377,15 @@ export const createTestingCaseModule = async () => {
     dateLogRepositoryService,
     caseConfig,
     caseService,
+    caseDefendantPoliceCaseNumberRepositoryService,
+    caseFileRepositoryService,
+    civilClaimantRepositoryService,
+    indictmentCountRepositoryService,
+    offenseRepositoryService,
+    victimRepositoryService,
+    subpoenaRepositoryService,
+    verdictRepositoryService,
+    eventLogRepositoryService,
     internalCaseService,
     limitedAccessCaseService,
     caseController,

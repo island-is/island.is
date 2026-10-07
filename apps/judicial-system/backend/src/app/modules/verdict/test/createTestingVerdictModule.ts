@@ -33,6 +33,7 @@ import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
@@ -105,6 +106,13 @@ export const createTestingVerdictModule = async () => {
 
   const fileService = verdictModule.get<FileService>(FileService)
 
+  const pdfService = verdictModule.get<PdfService>(PdfService)
+
+  const defendantService = verdictModule.get<DefendantService>(DefendantService)
+
+  const internalCaseService =
+    verdictModule.get<InternalCaseService>(InternalCaseService)
+
   const verdictController =
     verdictModule.get<VerdictController>(VerdictController)
 
@@ -122,6 +130,9 @@ export const createTestingVerdictModule = async () => {
     policeService,
     eventService,
     fileService,
+    pdfService,
+    defendantService,
+    internalCaseService,
     verdictRepositoryService,
     caseRepositoryService,
     sequelize,

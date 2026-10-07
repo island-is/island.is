@@ -43,6 +43,7 @@ export const ReviewForm = buildForm({
           id: 'expandableDescriptionField',
           title: sharedMessages.whatHappensNextTitle,
           description: sharedMessages.whatHappensNextDescription,
+          startExpanded: true,
         }),
         buildOverviewField({
           id: 'reviewOverview',

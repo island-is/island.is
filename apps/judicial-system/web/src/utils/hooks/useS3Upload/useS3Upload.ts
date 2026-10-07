@@ -415,7 +415,7 @@ const useS3Upload = (
           )
 
           return true
-        } catch (e) {
+        } catch {
           toast.error(formatMessage(strings.uploadFailed))
           updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
@@ -554,7 +554,7 @@ const useS3Upload = (
             },
             fileId,
           )
-        } catch (error) {
+        } catch {
           if (noNationalId) {
             toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`, {
               logMessage: 'Defendant has no national id',

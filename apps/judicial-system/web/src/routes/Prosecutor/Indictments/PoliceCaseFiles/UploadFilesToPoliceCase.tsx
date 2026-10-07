@@ -1,7 +1,6 @@
 import type { FC } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import _isEqual from 'lodash/isEqual'
 
 import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'

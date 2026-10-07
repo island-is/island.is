@@ -35,7 +35,7 @@ const useVictims = () => {
           }
         }
         return null
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að bæta við brotaþola')
         return null
       }
@@ -51,7 +51,7 @@ const useVictims = () => {
         })
 
         return Boolean(data?.deleteVictim.deleted)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða brotaþola')
         return false
       }
@@ -69,7 +69,7 @@ const useVictims = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra brotaþola')
         return false
       }

@@ -82,6 +82,12 @@ export class FormDto {
   isInaccessible!: boolean
 
   @ApiProperty()
+  validateEligibility!: boolean
+
+  @ApiProperty()
+  enableApplicationPdfDownload!: boolean
+
+  @ApiProperty()
   hasSummaryScreen!: boolean
 
   @ApiProperty({ type: OrganizationZendeskInstanceDto })

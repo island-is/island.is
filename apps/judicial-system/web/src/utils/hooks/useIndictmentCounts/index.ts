@@ -45,7 +45,7 @@ const useIndictmentCounts = () => {
         }
 
         return data?.createIndictmentCount
-      } catch (e) {
+      } catch {
         toast.error(formatMessage(errors.createIndictmentCount))
       }
     },
@@ -60,7 +60,7 @@ const useIndictmentCounts = () => {
         })
 
         return data?.deleteIndictmentCount?.deleted
-      } catch (e) {
+      } catch {
         toast.error(formatMessage(errors.deleteIndictmentCount))
       }
     },
@@ -89,7 +89,7 @@ const useIndictmentCounts = () => {
         }
 
         return data?.updateIndictmentCount
-      } catch (e) {
+      } catch {
         toast.error(formatMessage(errors.updateIndictmentCount))
       }
     },

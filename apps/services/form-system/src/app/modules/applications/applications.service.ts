@@ -22,6 +22,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { jwtDecode } from 'jwt-decode'
 import * as kennitala from 'kennitala'
 import { Op, QueryTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -62,6 +63,8 @@ import { escapeLike } from './utils/escapeLike'
 import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
+import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -87,11 +90,32 @@ export class ApplicationsService {
     private readonly sequelize: Sequelize,
   ) {}
 
+  private isFakeUserAllowed(form: Form, user: User | null): boolean {
+    if (
+      process.env.name !== 'prod' ||
+      form.status !== FormStatus.PUBLISHED ||
+      !user
+    ) {
+      return true
+    }
+
+    const { idp } = jwtDecode<{ idp?: string }>(
+      user.authorization.replace(/^Bearer /i, ''),
+    )
+    return idp !== 'gervimadur'
+  }
+
   async create(slug: string, user: User): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -120,7 +144,8 @@ export class ApplicationsService {
 
     const isTest = form.status !== FormStatus.PUBLISHED
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     try {
       await this.sequelize.transaction(async (transaction) => {
@@ -132,6 +157,7 @@ export class ApplicationsService {
             dependencies: form.dependencies,
             status: ApplicationStatus.DRAFT,
             nationalId,
+            actorNationalId,
             draftTotalSteps: form.draftTotalSteps,
             pruneAt: calculatePruneAt(form.draftDaysToLive),
           } as Application,
@@ -254,7 +280,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -337,7 +363,7 @@ export class ApplicationsService {
       const loginTypes = await this.getLoginTypes(user)
       const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
       if (
-        !this.doesUserMatchApplication(application, user, loginTypes) ||
+        !this.doesUserMatchApplication(application, user) ||
         !hasRequiredDelegation
       ) {
         throw new ForbiddenException(
@@ -561,6 +587,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (!this.isFakeUserAllowed(form, user)) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isLoginTypeAllowed = false
+        return responseDto
+      }
+
       if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isInaccessible = true
@@ -572,7 +604,7 @@ export class ApplicationsService {
         const loginTypes = await this.getLoginTypes(user)
         if (
           !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
-          !this.doesUserMatchApplication(application, user, loginTypes)
+          !this.doesUserMatchApplication(application, user)
         ) {
           const responseDto = new ApplicationResponseDto()
           responseDto.isLoginTypeAllowed = false
@@ -597,6 +629,9 @@ export class ApplicationsService {
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
       responseDto.isInaccessible = form.isInaccessible
+      responseDto.validateEligibility = form.validateEligibility
+      responseDto.enableApplicationPdfDownload =
+        form.enableApplicationPdfDownload
 
       return responseDto
     } catch (error) {
@@ -625,6 +660,12 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -661,17 +702,52 @@ export class ApplicationsService {
     return responseDto
   }
 
+  async getApplicationPdf(
+    applicationId: string,
+    slug: string,
+    user: User,
+    locale: Locale = 'is',
+  ): Promise<ApplicationPdfResponseDto> {
+    const response = await this.getApplication(applicationId, slug, user)
+
+    if (
+      response.isInaccessible ||
+      response.isLoginTypeAllowed === false ||
+      response.hasRequiredDelegation === false ||
+      !response.application
+    ) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (!response.enableApplicationPdfDownload) {
+      throw new ForbiddenException(
+        'PDF download is not enabled for this application',
+      )
+    }
+
+    if (response.application.status !== ApplicationStatus.COMPLETED) {
+      throw new BadRequestException(
+        'PDF download is only available for completed applications',
+      )
+    }
+
+    const pdf = await buildApplicationPdf(response.application, locale)
+    return {
+      base64: pdf.toString('base64'),
+      filename: `${slug}-${applicationId}.pdf`,
+    }
+  }
+
   async findAllByNationalId(
     locale: Locale,
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-
     const applications = await this.applicationModel.findAll({
       where: {
-        nationalId,
+        nationalId: user.nationalId,
+        actorNationalId: user.actor?.nationalId || user.nationalId,
         pruned: false,
         isTest: false,
       },
@@ -727,20 +803,16 @@ export class ApplicationsService {
     formId: string,
     slug: string,
   ): Promise<ApplicationDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-
     const applications = await this.applicationModel.findAll({
       where: {
-        nationalId,
+        nationalId: user.nationalId,
+        actorNationalId: user.actor?.nationalId || user.nationalId,
         formId,
         status: { [Op.in]: [ApplicationStatus.DRAFT] },
         pruned: false,
       },
       include: [{ model: Value, as: 'values' }],
     })
-
     const loginTypes = await this.getLoginTypes(user)
     const applicationsByUser = await this.getApplicationsByUser(
       applications,
@@ -824,40 +896,12 @@ export class ApplicationsService {
   private doesUserMatchApplication(
     application: Application,
     user: User,
-    loginTypes: string[],
   ): boolean {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
-
-    const loggedInUser = application.values?.find(
-      (value) =>
-        value.fieldType === FieldTypesEnum.APPLICANT &&
-        value.json?.nationalId === nationalId &&
-        loginTypes.includes(value.json?.applicantType ?? ''),
+    return (
+      application.nationalId === user.nationalId &&
+      application.actorNationalId ===
+        (user.actor?.nationalId ?? user.nationalId)
     )
-
-    const delegator = delegatorNationalId
-      ? application.values?.find(
-          (value) =>
-            value.fieldType === FieldTypesEnum.APPLICANT &&
-            value.json?.nationalId === delegatorNationalId &&
-            loginTypes.includes(value.json?.applicantType ?? ''),
-        )
-      : null
-
-    if (hasDelegation === true) {
-      if (loggedInUser && delegator) {
-        return true
-      }
-    } else {
-      if (loggedInUser) {
-        return true
-      }
-    }
-
-    return false
   }
 
   private async getApplicationsByUser(
@@ -868,7 +912,7 @@ export class ApplicationsService {
     const filteredApplications: Application[] = []
 
     for (const application of applications) {
-      if (this.doesUserMatchApplication(application, user, loginTypes)) {
+      if (this.doesUserMatchApplication(application, user)) {
         filteredApplications.push(application)
       }
     }
@@ -1054,7 +1098,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1226,7 +1270,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1339,12 +1383,10 @@ export class ApplicationsService {
         dataFromUrlRequestDto,
       )
     } else {
-      dataFromUrlRequestDto.loggedInUserNationalId =
+      dataFromUrlRequestDto.actorNationalId =
         user.actor?.nationalId || user.nationalId
 
-      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
-        ? user.nationalId
-        : undefined
+      dataFromUrlRequestDto.nationalId = user.nationalId
 
       dataFromUrlRequestDto.fieldType = fieldType
       dataFromUrlRequestDto.identifier = field.identifier
@@ -1389,7 +1431,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1405,11 +1447,16 @@ export class ApplicationsService {
       )
     }
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
+    notificationDto.actorNationalId = actorNationalId
 
-    if (!notificationDto.screenDto) {
+    if (
+      !notificationDto.screenDto &&
+      notificationDto.command !== NotificationCommands.VALIDATE_ELIGIBILITY
+    ) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
@@ -1435,28 +1482,50 @@ export class ApplicationsService {
 
     response.screen = screen
 
-    response.screen.screenError = {
-      hasError: false,
-      title: { is: '', en: '' },
-      message: { is: '', en: '' },
+    if (response.screen) {
+      response.screen.screenError = {
+        hasError: false,
+        title: { is: '', en: '' },
+        message: { is: '', en: '' },
+      }
     }
 
     if (!response.operationSuccessful) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError = this.getDefaultScreenErrorValidate()
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError = this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     } else if (response.screenError?.hasError) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError =
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError =
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     }
 
     if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${
+          notificationDto.applicationId
+        }'${
+          screen ? ` on screen: '${screen.id}'` : ' for premises'
+        } with command ${notificationDto.command}`,
       )
     }
 

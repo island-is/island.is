@@ -9,4 +9,5 @@ export {
   InCourtAppellant,
   inCourtAppellantsFromDecisions,
   isOutOfCourtAppealEvent,
+  standingVerdictAppellants,
 } from './appealCase.helpers'

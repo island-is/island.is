@@ -5,7 +5,13 @@ export const wrapper = style({
   width: '100%',
 })
 
-export const searchButton = style({})
+globalStyle(`${wrapper} button:last-of-type`, {
+  '@media': {
+    [`(max-width: ${theme.breakpoints.md - 1}px)`]: {
+      right: 16,
+    },
+  },
+})
 
 export const item = style({
   display: 'block',
@@ -30,16 +36,6 @@ export const active = style({})
 export const breadcrumb = style({
   position: 'relative',
   width: 'auto',
-})
-
-globalStyle(`${searchButton}:focus > span`, {
-  color: theme.color.dark400,
-  backgroundColor: theme.color.mint400,
-})
-
-globalStyle(`${searchButton}:focus`, {
-  outline: 0,
-  boxShadow: 'none',
 })
 
 globalStyle(`${active}:hover ${breadcrumb} p`, {

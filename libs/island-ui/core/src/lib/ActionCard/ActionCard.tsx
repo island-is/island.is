@@ -36,29 +36,39 @@ const backgroundMap: Record<BackgroundColor, Colors> = {
   blue: 'blue100',
   red: 'red100',
   white: 'white',
+  grey: 'dark100',
 }
 const colorMap: Record<BackgroundColor, Colors> = {
   blue: 'blue600',
   red: 'red600',
   white: 'currentColor',
+  grey: 'currentColor',
+}
+
+const headingColorMap: Record<BackgroundColor, Colors> = {
+  ...colorMap,
+  grey: 'dark350',
 }
 
 const eyebrowMap: Record<BackgroundColor, Colors> = {
   blue: 'purple400',
   red: 'purple400',
   white: 'blue400',
+  grey: 'blue400',
 }
 
 const borderMap: Record<BackgroundColor, Colors> = {
   blue: 'blue100',
   red: 'red200',
   white: 'blue200',
+  grey: 'dark200',
 }
 
 const avatarMap: Record<BackgroundColor, { circle: Colors; text: Colors }> = {
   blue: { circle: 'blue200', text: 'blue400' },
   red: { circle: 'red200', text: 'red600' },
   white: { circle: 'blue100', text: 'blue400' },
+  grey: { circle: 'dark200', text: 'dark400' },
 }
 
 export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
@@ -84,6 +94,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
   const bgr = backgroundMap[backgroundColor]
   const color = colorMap[backgroundColor]
+  const headingColor = headingColorMap[backgroundColor]
   const avatarColors = avatarMap[backgroundColor]
   const borderColor = borderMap[backgroundColor]
 
@@ -194,30 +205,40 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     return tag.renderTag ? tag.renderTag(tagEl) : tagEl
   }
 
+  const isTextVariant =
+    cta?.variant === 'text' || cta.buttonType?.variant === 'text'
+
+  // variant="text" buttons should be small
+  const smallButton = isTextVariant && _cta?.size === undefined
+
+  // variant="text" buttons should not full width on mobile
+  const intrinsicSize = isTextVariant && _cta?.fluid === undefined
+
+  // On mobile the tag shares the footer row with an intrinsic-size CTA.
+  // A fluid button leaves no room beside it, so those cards keep the tag on top
+  const hasMobileFooterTag =
+    hasTag && intrinsicSize && Boolean(cta?.label) && !unavailable.active
+
   const renderCTA = () => {
     if (!cta?.label || unavailable?.active) {
       return null
     }
 
-    const isTextVariant =
-      cta?.variant === 'text' || cta.buttonType?.variant === 'text'
-
-    // varinat="text" buttons should be small
-    const smallButton = isTextVariant && _cta?.size === undefined
-
-    // variant="text" buttons should not full width on mobile
-    const intrinsicSize = isTextVariant && _cta?.fluid === undefined
-
     return (
       <Box
         display="flex"
-        justifyContent={['flexStart', 'flexEnd']}
-        alignItems={['stretch', 'center']}
+        justifyContent={[
+          hasMobileFooterTag ? 'spaceBetween' : 'flexStart',
+          'flexEnd',
+        ]}
+        alignItems={[hasMobileFooterTag ? 'center' : 'stretch', 'center']}
         flexDirection="row"
+        columnGap={2}
         marginTop={hasTag ? 'auto' : 0}
-        paddingTop={hasTag ? 1 : 0}
+        paddingTop={hasTag ? [0, 1] : 0}
         marginLeft={[0, 0, 5]}
       >
+        {hasMobileFooterTag && <Hidden above="xs">{renderTag()}</Hidden>}
         <Button
           {...(cta.buttonType ?? { variant: cta.variant })}
           size={smallButton ? 'small' : cta.size}
@@ -264,7 +285,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   }
 
   const headingEl = (
-    <Text variant={headingVariant} color={color}>
+    <Text variant={headingVariant} color={headingColor}>
       {heading}
     </Text>
   )
@@ -276,8 +297,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       borderColor={focused ? 'mint400' : borderColor}
       borderRadius="large"
       borderWidth="standard"
-      paddingX={[3, 3, 4]}
-      paddingY={3}
+      paddingX={[2, 3, 4]}
+      paddingY={[2, 3]}
       background={bgr}
     >
       {hasEyebrowElements ? (
@@ -293,7 +314,11 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             {renderEyebrow()}
           </Box>
 
-          {renderTag()}
+          {hasMobileFooterTag ? (
+            <Hidden below="sm">{renderTag()}</Hidden>
+          ) : (
+            renderTag()
+          )}
         </Box>
       ) : null}
 
@@ -302,7 +327,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         alignItems={['stretch', 'center', 'stretch', 'center']}
         display="flex"
         flexDirection={['column', 'row', 'column', 'row']}
-        rowGap={3}
+        rowGap={[2, 3]}
         columnGap={3}
       >
         {renderAvatar()}
@@ -317,7 +342,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             >
               {renderHeading ? renderHeading(headingEl) : headingEl}
 
-              {hasEyebrowElements ? null : (
+              {hasEyebrowElements || hasMobileFooterTag ? null : (
                 <Hidden above="xs">{renderTag()}</Hidden>
               )}
 
