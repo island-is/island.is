@@ -788,6 +788,8 @@ export const is = {
   'health.categories.referrals': 'Tilvísanir',
   'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
   'health.categories.waitingLists': 'Biðlistar',
+  'health.categories.treatment': 'Meðferð',
+  'health.categories.treatmentWithName': 'Meðferð - {name}',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',

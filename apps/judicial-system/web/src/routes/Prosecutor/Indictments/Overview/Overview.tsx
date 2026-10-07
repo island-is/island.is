@@ -21,7 +21,7 @@ import {
   isCompletedCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import type { FormFooterAction } from '@island.is/judicial-system-web/src/components'
 import {
   AllIndictmentCaseFiles,
@@ -53,7 +53,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCaseModal'
 import ReturnIndictmentModal from './ReturnIndictmentModal/ReturnIndictmentModal'
@@ -134,7 +133,6 @@ const Overview: FC = () => {
     )
 
     if (!caseTransitioned) {
-      toast.error(formatMessage(errors.transitionCase))
       return false
     }
 

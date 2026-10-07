@@ -41,7 +41,6 @@ import {
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -90,11 +89,9 @@ const HearingArrangements = () => {
         } else {
           setNavigateTo(destination)
         }
-      } else {
-        toast.error(formatMessage(errors.transitionCase))
       }
     },
-    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+    [router, setWorkingCase, transitionCase, workingCase],
   )
 
   const stepIsValid = isHearingArrangementsStepValidIC(workingCase)

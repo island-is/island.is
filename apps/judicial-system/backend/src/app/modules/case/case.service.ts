@@ -1276,18 +1276,27 @@ export class CaseService {
         CaseState.WAITING_FOR_CONFIRMATION,
       ].includes(updatedCase.state)
     ) {
-      const updatedRole =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-          ? updatedCase.judge
-          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
-          ? updatedCase.registrar
-          : null
-
-      if (updatedRole?.nationalId) {
+      // The delivery resolves one role per message, so a judge and a registrar
+      // assigned in the same update are delivered as two messages
+      if (
+        updatedCase.judge?.nationalId &&
+        updatedCase.judge.nationalId !== theCase.judge?.nationalId
+      ) {
         this.addMessagesForIndictmentCourtRoleAssigned(
           updatedCase,
           user,
-          updatedRole.nationalId,
+          updatedCase.judge.nationalId,
+        )
+      }
+
+      if (
+        updatedCase.registrar?.nationalId &&
+        updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+      ) {
+        this.addMessagesForIndictmentCourtRoleAssigned(
+          updatedCase,
+          user,
+          updatedCase.registrar.nationalId,
         )
       }
     }
