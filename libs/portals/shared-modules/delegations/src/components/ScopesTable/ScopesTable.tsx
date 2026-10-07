@@ -149,7 +149,7 @@ export const ScopesTable = ({
                             {scope.displayName}
                           </Text>
                           {scope.requiresConfirmation && (
-                            <Tag variant="warn" outlined disabled>
+                            <Tag variant="red" disabled>
                               {formatMessage(m.sensitiveScopeTag)}
                             </Tag>
                           )}
@@ -391,7 +391,7 @@ export const ScopesTable = ({
                   >
                     <Text variant="medium">{scope.displayName}</Text>
                     {scope.requiresConfirmation && (
-                      <Tag variant="warn" outlined disabled>
+                      <Tag variant="red" disabled>
                         {formatMessage(m.sensitiveScopeTag)}
                       </Tag>
                     )}
