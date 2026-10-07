@@ -22,7 +22,9 @@ const STEP_UP_REQUIRED_KEY = 'step-up-required'
  * The flag is the on/off switch for a whole area of the app, and is the same
  * flag the app reads to show its lock screen, so the two can't disagree.
  *
- * Only sessions of the clients in StepUpConfig.clients (the app) are affected.
+ * App sessions (StepUpConfig.clients) need a recent unlock with electronic ID.
+ * Any other session — the web — must have been logged in with electronic ID
+ * (eidas-loa-high); a passkey session is turned away.
  *
  * Runs after the user is known: apply it above @UseGuards(IdsUserGuard, …) on
  * a class, or on a method.
@@ -56,14 +58,23 @@ export class StepUpGuard implements CanActivate {
       throw new UnauthorizedException()
     }
 
-    if (!this.stepUpService.appliesTo(user)) {
-      return true
-    }
-
     if (!(await this.featureFlagService.getValue(flag, false, user))) {
       return true
     }
 
+    // Anything else, the web above all: only a session logged in with
+    // electronic ID. A session opened with a passkey (e.g. from the app) is
+    // turned away and asked to log in again.
+    if (!this.stepUpService.appliesTo(user)) {
+      if (this.stepUpService.meetsRequiredAssurance(user)) {
+        return true
+      }
+      throw new GraphQLError('Log in with electronic ID to see this.', {
+        extensions: { code: StepUpErrorCode.HighAssuranceRequired },
+      })
+    }
+
+    // The app's long-lived session: a recent unlock with electronic ID.
     if (await this.stepUpService.useUnlock(user)) {
       return true
     }

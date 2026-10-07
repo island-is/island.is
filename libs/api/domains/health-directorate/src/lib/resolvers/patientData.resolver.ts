@@ -25,7 +25,7 @@ import { Countries } from '.././models/permits/country.model'
 import { PermitReturn } from '.././models/permits/permitReturn.model'
 import { Permits } from '.././models/permits/permits.model'
 
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver()

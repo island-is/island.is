@@ -16,7 +16,7 @@ import { BloodService } from './blood.service'
 import { BloodType } from './models/bloodType.model'
 
 @Resolver(() => BloodType)
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/blood' })
 export class BloodResolver {

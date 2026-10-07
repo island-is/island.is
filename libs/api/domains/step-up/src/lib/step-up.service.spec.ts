@@ -26,12 +26,13 @@ const config: ConfigType<typeof StepUpConfig> = {
   requiredAcr: 'eidas-loa-high',
   allowAnyAcrInDev: false,
   clients: ['@island.is/app'],
-  idleSeconds: 15 * 60,
-  maxSeconds: 12 * 60 * 60,
+  idleSeconds: 60 * 60,
+  maxSeconds: 5 * 60 * 60,
   maxStarts: 2,
   maxStartsWindowSeconds: 15 * 60,
   bindingMessage: 'Opna viðkvæmar upplýsingar í Ísland.is appinu',
   redis: { nodes: [], ssl: false },
+  stateSecret: 'test-step-up-state-secret',
 }
 
 const appUser = (overrides: Partial<User> = {}): User =>
@@ -215,6 +216,44 @@ describe('StepUpService', () => {
     expect(await service.useUnlock(actingForChild)).toBe(true)
   })
 
+  it('keeps no national id in its state', async () => {
+    const user = appUser()
+    const { stepUpId } = await service.start(user)
+    approve()
+    await service.status(user, stepUpId)
+
+    // Keys and values: hashed with the state secret, never the national id.
+    const entries = [
+      ...(store as unknown as { entries: Map<string, { value: string }> })
+        .entries,
+    ]
+    expect(entries.length).toBeGreaterThan(0)
+    for (const [key, { value }] of entries) {
+      expect(key).not.toContain(person)
+      expect(value).not.toContain(person)
+    }
+  })
+
+  it('refuses an unlock record it did not write', async () => {
+    const user = appUser()
+    const { stepUpId } = await service.start(user)
+    approve()
+    await service.status(user, stepUpId)
+
+    // Someone with write access to Redis extends an unlock by hand.
+    const entries = (
+      store as unknown as { entries: Map<string, { value: string }> }
+    ).entries
+    for (const [key, entry] of entries) {
+      if (key.startsWith('unlock:')) {
+        const record = JSON.parse(entry.value)
+        entry.value = JSON.stringify({ ...record, unlockedAt: now + 3600_000 })
+      }
+    }
+
+    expect(await service.useUnlock(user)).toBe(false)
+  })
+
   it('caps how many unlocks can be started', async () => {
     await service.start(appUser())
     await service.start(appUser())
@@ -235,7 +274,7 @@ describe('StepUpService', () => {
 
 describe('StepUpGuard', () => {
   class Locked {
-    @StepUpRequired(Features.isAppHealthStepUpRequired)
+    @StepUpRequired(Features.isHealthStepUpRequired)
     handler() {
       return 'data'
     }
@@ -251,6 +290,7 @@ describe('StepUpGuard', () => {
   const guard = (flag: boolean, unlocked: boolean) => {
     const stepUpService = {
       appliesTo: (user: User) => config.clients.includes(user.client),
+      meetsRequiredAssurance: (user: User) => user.acr === config.requiredAcr,
       useUnlock: jest.fn().mockResolvedValue(unlocked),
     }
     const featureFlagService = {
@@ -284,12 +324,24 @@ describe('StepUpGuard', () => {
     ).resolves.toBe(true)
   })
 
-  it('leaves other clients alone', async () => {
+  it('serves a web session logged in with electronic ID', async () => {
     await expect(
       guard(true, false).canActivate(
-        context(appUser({ client: '@island.is/web' })),
+        context(appUser({ client: '@island.is/web', acr: 'eidas-loa-high' })),
       ),
     ).resolves.toBe(true)
+  })
+
+  it('turns away a web session opened with a passkey', async () => {
+    // E.g. Mínar síður opened from the app with its passkey.
+    const error = await guard(true, true)
+      .canActivate(
+        context(appUser({ client: '@island.is/web', acr: 'islandis-passkey' })),
+      )
+      .catch((e) => e)
+
+    expect(error).toBeInstanceOf(GraphQLError)
+    expect(error.extensions.code).toBe(StepUpErrorCode.HighAssuranceRequired)
   })
 
   it('never passes for want of a user', async () => {

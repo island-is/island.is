@@ -6,6 +6,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
+import { HighAssuranceGate } from './components/HighAssuranceGate/HighAssuranceGate'
 import TreatmentScopedRoute from './screens/Treatments/components/TreatmentScopedRoute'
 
 const HealthOverview = lazy(() =>
@@ -188,7 +189,7 @@ const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
 
-export const healthModule: PortalModule = {
+const healthModuleWithoutGate: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }): PortalRoute[] => [
@@ -834,4 +835,16 @@ export const healthModule: PortalModule = {
       ),
     },
   ],
+}
+
+/** Every health screen needs a session logged in with electronic ID. */
+export const healthModule: PortalModule = {
+  ...healthModuleWithoutGate,
+  routes: async (props) =>
+    (await healthModuleWithoutGate.routes(props)).map((route) => ({
+      ...route,
+      element: route.element && (
+        <HighAssuranceGate>{route.element}</HighAssuranceGate>
+      ),
+    })),
 }

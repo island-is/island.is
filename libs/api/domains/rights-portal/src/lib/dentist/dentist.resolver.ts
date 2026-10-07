@@ -21,7 +21,7 @@ import { DentistsInput } from './dto/dentist.input'
 import { DentistRegisterResponse } from './models/registerResponse.model'
 
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/dentist' })
 export class DentistResolver {

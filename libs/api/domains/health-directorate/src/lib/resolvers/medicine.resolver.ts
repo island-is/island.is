@@ -34,7 +34,7 @@ import { Prescriptions } from '.././models/prescriptions.model'
 import { HealthDirectorateRenewalInput } from '.././models/renewal.input'
 import { PrescriptionRenewalTarget } from '.././models/renewalTarget.model'
 
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver()

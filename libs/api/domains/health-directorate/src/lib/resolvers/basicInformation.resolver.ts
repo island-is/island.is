@@ -48,7 +48,7 @@ import {
   HealthDirectorateAppointmentsInput,
 } from '../dto/appointments.input'
 
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)

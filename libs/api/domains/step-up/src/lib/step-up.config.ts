@@ -28,6 +28,9 @@ const schema = z.object({
   maxStartsWindowSeconds: z.number().min(60),
   // What the person sees on their phone.
   bindingMessage: z.string().max(120),
+  // Keys the state kept in Redis: the person's national id never appears in a
+  // key or value, and an unlock record can't be planted without it.
+  stateSecret: z.string().min(16),
   redis: z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
@@ -59,9 +62,12 @@ export const StepUpConfig = defineConfig<z.infer<typeof schema>>({
       clients: env.optionalJSON<string[]>('STEP_UP_CLIENTS') ?? [
         '@island.is/app',
       ],
-      idleSeconds: env.optionalJSON<number>('STEP_UP_IDLE_SECONDS') ?? 15 * 60,
+      // An hour without use (NIST SP 800-63B-4 AAL2), and at most five hours
+      // after the person authenticated (as in Lyfja's app, agreed with the
+      // health authorities), whatever happens.
+      idleSeconds: env.optionalJSON<number>('STEP_UP_IDLE_SECONDS') ?? 60 * 60,
       maxSeconds:
-        env.optionalJSON<number>('STEP_UP_MAX_SECONDS') ?? 12 * 60 * 60,
+        env.optionalJSON<number>('STEP_UP_MAX_SECONDS') ?? 5 * 60 * 60,
       maxStarts: env.optionalJSON<number>('STEP_UP_MAX_STARTS') ?? 5,
       maxStartsWindowSeconds:
         env.optionalJSON<number>('STEP_UP_MAX_STARTS_WINDOW_SECONDS') ??
@@ -69,6 +75,10 @@ export const StepUpConfig = defineConfig<z.infer<typeof schema>>({
       bindingMessage:
         env.optional('STEP_UP_BINDING_MESSAGE') ??
         'Opna viðkvæmar upplýsingar í Ísland.is appinu',
+      stateSecret: env.required(
+        'STEP_UP_STATE_SECRET',
+        'local-step-up-state-secret',
+      ),
       redis: {
         nodes: env.optionalJSON('STEP_UP_REDIS_NODES') ?? [],
         ssl: env.optionalJSON('STEP_UP_REDIS_SSL', false) ?? true,

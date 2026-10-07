@@ -48,7 +48,7 @@ import { HealthDirectorateHealthConversationRecipient } from '../models/healthCo
 import { HealthDirectorateConversationOrganization } from '../models/healthConversationOrganization.model'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => HealthDirectorateHealthConversation)
@@ -216,7 +216,7 @@ export class HealthConversationsResolver {
 }
 
 @CodeOwner(CodeOwners.Hugsmidjan)
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => HealthDirectorateConversationOrganization)
 export class HealthConversationOrganizationResolver {

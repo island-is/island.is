@@ -32,7 +32,7 @@ import { PaymentOverviewTotalsServiceTypeResponse } from './models/paymentOvervi
 import { PaymentOverviewTotalsResponse } from './models/paymentOverviewTotals.response'
 
 @Resolver()
-@StepUpRequired(Features.isAppHealthStepUpRequired)
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/payment' })
 export class PaymentResolver {
