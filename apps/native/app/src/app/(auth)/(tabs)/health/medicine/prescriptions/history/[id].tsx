@@ -155,7 +155,11 @@ export default function MedicineHistoryScreen() {
                     .join(' – ')}
                 </DispensationMetaText>
                 <Typography variant="heading5">{dispensation.name}</Typography>
-                <Typography variant="body">{dispensation.quantity}</Typography>
+                <Typography variant="body">
+                  {[dispensation.strength, dispensation.quantity]
+                    .filter(Boolean)
+                    .join(' – ')}
+                </Typography>
               </DispensationInfo>
             </DispensationRow>
           ))}
