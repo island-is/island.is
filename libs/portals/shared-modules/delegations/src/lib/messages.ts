@@ -779,12 +779,15 @@ export const m = defineMessages({
   },
   sensitiveScopesSelectedTitle: {
     id: 'sp.access-control-delegations:sensitive-scopes-selected-title',
-    defaultMessage: 'Umboðið þarf tvöfalt samþykki',
+    defaultMessage: 'Þarfnast samþykkis með rafrænum skilríkjum',
   },
   confirmAccessSensitiveStepUpMessage: {
     id: 'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
-    defaultMessage:
-      'Þegar þú staðfestir færðu beiðni í símann þinn um að staðfesta með rafrænum skilríkjum. Umboðið tekur ekki gildi fyrr en þú hefur gert það.',
+    defaultMessage: 'Þar sem umboðið inniheldur viðkvæm réttindi.',
+  },
+  confirmAccessButton: {
+    id: 'sp.access-control-delegations:confirm-access-button',
+    defaultMessage: 'Staðfesta umboð',
   },
   headerName: {
     id: 'sp.access-control-delegations:header-name',
