@@ -83,10 +83,7 @@ const VerdictAppealFiles: FC = () => {
       return
     }
 
-    const deleted = await deleteAppealSummons(
-      workingCase.id,
-      summonsIdToDelete,
-    )
+    const deleted = await deleteAppealSummons(workingCase.id, summonsIdToDelete)
 
     if (!deleted) {
       return
