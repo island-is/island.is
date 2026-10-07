@@ -29,12 +29,6 @@ export class StepUpStart {
   @Field(() => StepUpMethod)
   method!: StepUpMethod
 
-  @Field(() => [StepUpMethod], {
-    description:
-      'Every method the person could use, so they can be offered the other one.',
-  })
-  availableMethods!: StepUpMethod[]
-
   @Field(() => String, {
     nullable: true,
     description: 'Shown in the Auðkenni app too, for the person to compare.',

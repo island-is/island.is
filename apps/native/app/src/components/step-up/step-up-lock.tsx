@@ -28,7 +28,6 @@ type State =
       method: StepUpMethod
       code?: string | null
       deadline: number
-      availableMethods: StepUpMethod[]
     }
 
 const Host = styled(SafeAreaView)`
@@ -65,20 +64,15 @@ const notices: Record<Notice, { type: 'warning' | 'error'; id: string }> = {
 
 /**
  * Shown in place of a locked area. One button, a code, and the person approves
- * on their own phone. The server decides how to reach them from the way they
- * logged in (the Auðkenni app, or their own SIM); they can switch to the other
- * one if the server offers it. There is deliberately no way to send it anywhere
- * else.
+ * on their own phone, by the method they logged in with (the Auðkenni app, or
+ * their own SIM). There is deliberately no way to choose another method or send
+ * it anywhere else.
  */
 export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
   const intl = useIntl()
   const theme = useTheme()
   const [state, setState] = useState<State>({ name: 'idle' })
   const [secondsLeft, setSecondsLeft] = useState(0)
-  // The last attempt, so a person whose attempt failed can try the other way.
-  const [lastAttempt, setLastAttempt] = useState<
-    { method: StepUpMethod; availableMethods: StepUpMethod[] } | undefined
-  >()
   const pollTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const unmounted = useRef(false)
 
@@ -132,51 +126,43 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
     [checkStepUp, onUnlocked],
   )
 
-  const begin = useCallback(
-    async (method?: StepUpMethod) => {
-      clearTimeout(pollTimer.current)
-      setState({ name: 'starting' })
+  const begin = useCallback(async () => {
+    clearTimeout(pollTimer.current)
+    setState({ name: 'starting' })
 
-      try {
-        const res = await startStepUp({ variables: { method } })
-        const started = res.data?.stepUpStart
-        if (!started) {
-          throw new Error('No step-up started')
-        }
-        if (unmounted.current) {
-          return
-        }
-
-        // The person may switch to the Auðkenni app on this phone to approve;
-        // coming back shouldn't ask for the PIN on top of it.
-        suppressLockScreen()
-
-        setLastAttempt({
-          method: started.method,
-          availableMethods: started.availableMethods,
-        })
-        setState({
-          name: 'waiting',
-          method: started.method,
-          code: started.verificationCode,
-          deadline: Date.now() + started.expiresIn * 1000,
-          availableMethods: started.availableMethods,
-        })
-        poll(started.stepUpId, started.interval)
-      } catch (error) {
-        const tooMany =
-          error instanceof ApolloError &&
-          error.graphQLErrors.some(
-            (e) => e.extensions?.code === TOO_MANY_ATTEMPTS,
-          )
-        setState({
-          name: 'idle',
-          notice: tooMany ? 'too_many_attempts' : 'failed',
-        })
+    try {
+      const res = await startStepUp()
+      const started = res.data?.stepUpStart
+      if (!started) {
+        throw new Error('No step-up started')
       }
-    },
-    [startStepUp, poll],
-  )
+      if (unmounted.current) {
+        return
+      }
+
+      // The person may switch to the Auðkenni app on this phone to approve;
+      // coming back shouldn't ask for the PIN on top of it.
+      suppressLockScreen()
+
+      setState({
+        name: 'waiting',
+        method: started.method,
+        code: started.verificationCode,
+        deadline: Date.now() + started.expiresIn * 1000,
+      })
+      poll(started.stepUpId, started.interval)
+    } catch (error) {
+      const tooMany =
+        error instanceof ApolloError &&
+        error.graphQLErrors.some(
+          (e) => e.extensions?.code === TOO_MANY_ATTEMPTS,
+        )
+      setState({
+        name: 'idle',
+        notice: tooMany ? 'too_many_attempts' : 'failed',
+      })
+    }
+  }, [startStepUp, poll])
 
   // Countdown shown while waiting. The server decides when it has expired;
   // this is only for the person's benefit.
@@ -195,29 +181,6 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
 
   const notice =
     state.name === 'idle' && state.notice ? notices[state.notice] : undefined
-
-  // The other way of reaching the person, if the server offers one: while
-  // waiting (e.g. their SIM isn't at hand), and after an attempt that failed.
-  const otherMethod =
-    state.name === 'waiting'
-      ? state.availableMethods.find((method) => method !== state.method)
-      : state.name === 'idle' && state.notice && lastAttempt
-      ? lastAttempt.availableMethods.find(
-          (method) => method !== lastAttempt.method,
-        )
-      : undefined
-
-  const switchMethod = otherMethod && (
-    <Button
-      isOutlined
-      style={{ marginTop: 16 }}
-      title={intl.formatMessage({
-        id:
-          otherMethod === StepUpMethod.App ? 'stepUp.useApp' : 'stepUp.useSim',
-      })}
-      onPress={() => void begin(otherMethod)}
-    />
-  )
 
   return (
     <Host>
@@ -278,7 +241,6 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
                   },
                 )}
               </Typography>
-              {switchMethod}
             </Full>
           )}
 
@@ -290,7 +252,6 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
                 loading={state.name === 'starting'}
                 disabled={state.name === 'starting'}
               />
-              {state.name === 'idle' && switchMethod}
             </Full>
           )}
         </Content>
