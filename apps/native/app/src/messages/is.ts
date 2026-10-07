@@ -743,6 +743,11 @@ export const is = {
   'stepUp.title': 'Staðfestu að þetta sért þú',
   'stepUp.intro':
     'Heilsuupplýsingar eru læstar þegar appið hefur ekki verið notað um stund. Staðfestu með rafrænum skilríkjum til að opna þær.',
+  'stepUp.introPasskey':
+    'Heilsuupplýsingar eru læstar þegar appið hefur ekki verið notað um stund. Staðfestu með Face ID eða fingrafari til að opna þær aftur.',
+  'stepUp.reopenWithPasskey': 'Opna með Face ID eða fingrafari',
+  'stepUp.passkeyFailed':
+    'Ekki tókst að opna á þann hátt. Staðfestu frekar með rafrænum skilríkjum.',
   'stepUp.start': 'Staðfesta með rafrænum skilríkjum',
   'stepUp.waitingApp':
     'Opnaðu Auðkennisappið og staðfestu ef öryggistalan er sú sama.',

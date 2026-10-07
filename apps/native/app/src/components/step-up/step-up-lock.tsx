@@ -2,27 +2,37 @@ import { ApolloError } from '@apollo/client'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Image, SafeAreaView, ScrollView } from 'react-native'
+import { Passkey } from 'react-native-passkey'
 import styled, { useTheme } from 'styled-components/native'
 
 import {
   StepUpMethod,
   StepUpStatus,
+  useStepUpReopenWithPasskeyMutation,
   useStepUpStartMutation,
   useStepUpStatusMutation,
 } from '@/graphql/types/schema'
+import { useGetPasskeyAssertion } from '@/lib/passkeys/useGetPasskeyAssertion'
 import {
   clearLockScreenSuppression,
   suppressLockScreen,
 } from '@/stores/auth-store'
+import { usePreferencesStore } from '@/stores/preferences-store'
 import { Alert, Button, Typography } from '@/ui'
 
 const TOO_MANY_ATTEMPTS = 'STEP_UP_TOO_MANY_ATTEMPTS'
 
-type Notice = 'denied' | 'timed_out' | 'too_many_attempts' | 'failed'
+type Notice =
+  | 'denied'
+  | 'timed_out'
+  | 'too_many_attempts'
+  | 'failed'
+  | 'passkey_failed'
 
 type State =
   | { name: 'idle'; notice?: Notice }
   | { name: 'starting' }
+  | { name: 'reopening' }
   | {
       name: 'waiting'
       method: StepUpMethod
@@ -60,17 +70,39 @@ const notices: Record<Notice, { type: 'warning' | 'error'; id: string }> = {
   timed_out: { type: 'warning', id: 'stepUp.timedOut' },
   too_many_attempts: { type: 'warning', id: 'stepUp.tooManyAttempts' },
   failed: { type: 'error', id: 'stepUp.failed' },
+  passkey_failed: { type: 'warning', id: 'stepUp.passkeyFailed' },
 }
+
+const isTooManyAttempts = (error: unknown) =>
+  error instanceof ApolloError &&
+  error.graphQLErrors.some((e) => e.extensions?.code === TOO_MANY_ATTEMPTS)
 
 /**
  * Shown in place of a locked area. One button, a code, and the person approves
  * on their own phone, by the method they logged in with (the Auðkenni app, or
  * their own SIM). There is deliberately no way to choose another method or send
  * it anywhere else.
+ *
+ * Locked for want of use, within a while of the last electronic ID unlock, the
+ * passkey will do instead: the server checks the Face ID or fingerprint, so
+ * it is asked for straight away. If it fails, electronic ID it is.
  */
-export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
+export function StepUpLock({
+  canReopenWithPasskey,
+  onUnlocked,
+}: {
+  canReopenWithPasskey: boolean
+  onUnlocked(): void
+}) {
   const intl = useIntl()
   const theme = useTheme()
+  const { hasCreatedPasskey } = usePreferencesStore()
+  const [passkeyFailed, setPasskeyFailed] = useState(false)
+  const offerPasskey =
+    canReopenWithPasskey &&
+    hasCreatedPasskey &&
+    !passkeyFailed &&
+    Passkey.isSupported()
   const [state, setState] = useState<State>({ name: 'idle' })
   const [secondsLeft, setSecondsLeft] = useState(0)
   const pollTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -78,6 +110,8 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
 
   const [startStepUp] = useStepUpStartMutation()
   const [checkStepUp] = useStepUpStatusMutation()
+  const [reopenStepUp] = useStepUpReopenWithPasskeyMutation()
+  const { getPasskeyAssertion } = useGetPasskeyAssertion()
 
   useEffect(() => {
     unmounted.current = false
@@ -152,17 +186,49 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
       })
       poll(started.stepUpId, started.interval)
     } catch (error) {
-      const tooMany =
-        error instanceof ApolloError &&
-        error.graphQLErrors.some(
-          (e) => e.extensions?.code === TOO_MANY_ATTEMPTS,
-        )
       setState({
         name: 'idle',
-        notice: tooMany ? 'too_many_attempts' : 'failed',
+        notice: isTooManyAttempts(error) ? 'too_many_attempts' : 'failed',
       })
     }
   }, [startStepUp, poll])
+
+  const reopen = useCallback(async () => {
+    setState({ name: 'reopening' })
+
+    let notice: Notice | undefined
+    try {
+      const passkey = await getPasskeyAssertion()
+      if (passkey) {
+        const res = await reopenStepUp({ variables: { passkey } })
+        if (res.data?.stepUpReopenWithPasskey) {
+          onUnlocked()
+          return
+        }
+      }
+      // Cancelled by the person: no notice, the passkey stays on offer.
+      notice = passkey ? 'passkey_failed' : undefined
+    } catch (error) {
+      notice = isTooManyAttempts(error) ? 'too_many_attempts' : 'passkey_failed'
+    }
+
+    if (unmounted.current) {
+      return
+    }
+    if (notice) {
+      setPasskeyFailed(true)
+    }
+    setState({ name: 'idle', notice })
+  }, [getPasskeyAssertion, reopenStepUp, onUnlocked])
+
+  // Asked for straight away, as the phone's own lock would.
+  const askedForPasskey = useRef(false)
+  useEffect(() => {
+    if (offerPasskey && !askedForPasskey.current) {
+      askedForPasskey.current = true
+      void reopen()
+    }
+  }, [offerPasskey, reopen])
 
   // Countdown shown while waiting. The server decides when it has expired;
   // this is only for the person's benefit.
@@ -196,7 +262,9 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
             {intl.formatMessage({ id: 'stepUp.title' })}
           </Typography>
           <Typography textAlign="center">
-            {intl.formatMessage({ id: 'stepUp.intro' })}
+            {intl.formatMessage({
+              id: offerPasskey ? 'stepUp.introPasskey' : 'stepUp.intro',
+            })}
           </Typography>
 
           {notice && (
@@ -244,6 +312,18 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
             </Full>
           )}
 
+          {offerPasskey &&
+            (state.name === 'idle' || state.name === 'reopening') && (
+              <Full>
+                <Button
+                  title={intl.formatMessage({ id: 'stepUp.reopenWithPasskey' })}
+                  onPress={() => void reopen()}
+                  loading={state.name === 'reopening'}
+                  disabled={state.name === 'reopening'}
+                />
+              </Full>
+            )}
+
           {(state.name === 'idle' || state.name === 'starting') && (
             <Full>
               <Button
@@ -251,6 +331,7 @@ export function StepUpLock({ onUnlocked }: { onUnlocked(): void }) {
                 onPress={() => void begin()}
                 loading={state.name === 'starting'}
                 disabled={state.name === 'starting'}
+                isOutlined={offerPasskey}
               />
             </Full>
           )}

@@ -1,6 +1,7 @@
 query StepUpSession {
   stepUpSession {
     unlocked
+    canReopenWithPasskey
     expiresAt
     idleSeconds
   }
@@ -18,6 +19,10 @@ mutation StepUpStart {
 
 mutation StepUpStatus($stepUpId: ID!) {
   stepUpStatus(stepUpId: $stepUpId)
+}
+
+mutation StepUpReopenWithPasskey($passkey: String!) {
+  stepUpReopenWithPasskey(passkey: $passkey)
 }
 
 mutation StepUpLock {

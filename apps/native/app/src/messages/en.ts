@@ -746,6 +746,11 @@ export const en: TranslatedMessages = {
   'stepUp.title': 'Confirm it is you',
   'stepUp.intro':
     'Health information is locked when the app has not been used for a while. Confirm with electronic ID to open it.',
+  'stepUp.introPasskey':
+    'Health information is locked when the app has not been used for a while. Confirm with Face ID or fingerprint to open it again.',
+  'stepUp.reopenWithPasskey': 'Open with Face ID or fingerprint',
+  'stepUp.passkeyFailed':
+    'It could not be opened that way. Confirm with electronic ID instead.',
   'stepUp.start': 'Confirm with electronic ID',
   'stepUp.waitingApp':
     'Open the Auðkenni app and approve if the security code matches.',

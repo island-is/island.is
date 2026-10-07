@@ -45,6 +45,14 @@ export function useStepUpLock(flag: string) {
     return () => subscription.remove()
   }, [refresh])
 
+  // Refused by the server: what we know of the session is out of date, and
+  // whether the passkey will do depends on it.
+  useEffect(() => {
+    if (requiredByServer) {
+      refresh()
+    }
+  }, [requiredByServer, refresh])
+
   let state: StepUpLockState
   if (isRequired === null) {
     state = 'loading'
@@ -74,5 +82,10 @@ export function useStepUpLock(flag: string) {
     await refetch().catch(() => undefined)
   }, [refetch])
 
-  return { state, onUnlocked }
+  // Locked for want of use, within the window of the last electronic ID
+  // unlock: the passkey will do.
+  const canReopenWithPasskey =
+    state === 'locked' && !!data?.stepUpSession.canReopenWithPasskey
+
+  return { state, canReopenWithPasskey, onUnlocked }
 }
