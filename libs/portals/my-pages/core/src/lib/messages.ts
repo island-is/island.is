@@ -2487,6 +2487,14 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:medicine-delegation-other-new',
     defaultMessage: 'Nýtt lyfjaumboð',
   },
+  medicinePrescriptions: {
+    id: 'sp.search.tags:medicine-prescriptions',
+    defaultMessage: 'Lyfseðlar',
+  },
+  medicinePrescription: {
+    id: 'sp.search.tags:medicine-prescription',
+    defaultMessage: 'Lyfseðill',
+  },
   appointment: {
     id: 'sp.search.tags:appointment',
     defaultMessage: 'Tími',

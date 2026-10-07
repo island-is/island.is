@@ -44,6 +44,7 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: m.medicinePrescriptions,
           description: m.medicinePrescriptionsIntro,
+          searchTags: [s.medicinePrescriptions, s.medicinePrescription],
           path: HealthPaths.HealthMedicinePrescription,
         },
 
