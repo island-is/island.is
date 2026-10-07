@@ -88,7 +88,11 @@ export class FileService {
     const stream = result.body
 
     res.header('Content-Type', `application/${contentType}`)
-    res.header('Content-length', result.headers.get('Content-Length') as string)
+
+    const contentLength = result.headers.get('Content-Length')
+    if (contentLength !== null) {
+      res.header('Content-length', contentLength)
+    }
 
     return stream.pipe(res)
   }
