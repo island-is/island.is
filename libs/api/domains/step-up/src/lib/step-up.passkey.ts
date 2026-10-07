@@ -5,10 +5,16 @@ import { PasskeysApi } from '@island.is/clients/auth/public-api'
 
 export const STEP_UP_PASSKEY_VERIFIER = 'STEP_UP_PASSKEY_VERIFIER'
 
+export interface PasskeyVerification {
+  verified: boolean
+  /** When the passkey was registered, or last replaced. */
+  registeredAt: Date
+}
+
 /** Checks that the person behind a session has just used their own passkey. */
 export interface PasskeyVerifier {
-  /** Throws when the assertion can't be checked, false when it isn't valid. */
-  verify(user: User, passkey: string): Promise<boolean>
+  /** Throws when the assertion can't be checked or isn't valid. */
+  verify(user: User, passkey: string): Promise<PasskeyVerification>
 }
 
 /**
@@ -21,12 +27,15 @@ export interface PasskeyVerifier {
 export class PublicApiPasskeyVerifier implements PasskeyVerifier {
   constructor(private readonly passkeysApi: PasskeysApi) {}
 
-  async verify(user: User, passkey: string): Promise<boolean> {
+  async verify(user: User, passkey: string): Promise<PasskeyVerification> {
     const result = await this.passkeysApi
       .withMiddleware(new AuthMiddleware(user))
       .passkeysControllerVerifyAuthentication({
         authenticationResponse: { passkey },
       })
-    return result.verified === true
+    return {
+      verified: result.verified === true,
+      registeredAt: result.registeredAt,
+    }
   }
 }

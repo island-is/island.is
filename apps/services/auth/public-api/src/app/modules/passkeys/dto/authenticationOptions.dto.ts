@@ -3,6 +3,7 @@ import { Type } from 'class-transformer'
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsNumber,
   IsObject,
   IsOptional,
@@ -90,4 +91,11 @@ export class AuthenticationResult {
   @IsBoolean()
   @ApiProperty()
   verified!: boolean
+
+  @IsDate()
+  @ApiProperty({
+    description:
+      'When the passkey was registered. Only trust a passkey registered before what it is used to reopen.',
+  })
+  registeredAt!: Date
 }

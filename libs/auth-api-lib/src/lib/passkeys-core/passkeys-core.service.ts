@@ -142,6 +142,9 @@ export class PasskeysCoreService {
         name: tokenInfo.name,
         idp: tokenInfo.idp,
         counter: registrationInfo.counter,
+        // Set explicitly: on replacing a passkey, upsert would otherwise keep
+        // the old one's date, and with it its age and when it was registered.
+        created: new Date(),
       },
       {
         conflictFields: ['user_sub', 'type'],
@@ -202,18 +205,21 @@ export class PasskeysCoreService {
    * Verifies a passkey assertion made by the signed-in person, e.g. to reopen
    * something they unlocked a while ago. Unlike a login, the person is known:
    * the passkey has to be theirs.
+   *
+   * Also says when the passkey was registered. Registering only takes a token,
+   * so whoever holds a copy of one can register a passkey of their own; the
+   * caller should only trust a passkey that predates what it is reopening.
    */
   async verifyAuthenticationForUser(user: User, responseAsString: string) {
-    const { verified, sub } = await this.verifyAuthenticationString(
-      responseAsString,
-    )
+    const { verified, sub, registeredAt } =
+      await this.verifyAuthenticationString(responseAsString)
 
     if (sub !== getUserId(user)) {
       this.logger.warn('Passkey assertion by someone other than the user.')
       throw new BadRequestException('Passkey not found')
     }
 
-    return { verified }
+    return { verified, registeredAt }
   }
 
   async verifyAuthentication(response: AuthenticationResponseJSON) {
@@ -285,6 +291,7 @@ export class PasskeysCoreService {
       verified,
       idp: passkey.idp,
       sub: passkey.user_sub,
+      registeredAt: passkey.created,
     }
   }
 

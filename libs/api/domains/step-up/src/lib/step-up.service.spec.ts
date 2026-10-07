@@ -28,7 +28,7 @@ const config: ConfigType<typeof StepUpConfig> = {
   requiredAcr: 'eidas-loa-high',
   allowAnyAcrInDev: false,
   clients: ['@island.is/app'],
-  idleSeconds: 60 * 60,
+  idleSeconds: 15 * 60,
   maxSeconds: 5 * 60 * 60,
   maxStarts: 2,
   maxStartsWindowSeconds: 15 * 60,
@@ -92,7 +92,13 @@ describe('StepUpService', () => {
       poll: jest.fn().mockResolvedValue({ status: 'pending' }),
     }
     audit = jest.fn()
-    passkeys = { verify: jest.fn().mockResolvedValue(true) }
+    passkeys = {
+      verify: jest.fn().mockResolvedValue({
+        verified: true,
+        // Registered long before the person unlocked.
+        registeredAt: new Date(0),
+      }),
+    }
     service = new StepUpService(
       ciba as unknown as CibaClient,
       store,
@@ -285,7 +291,14 @@ describe('StepUpService', () => {
     })
 
     it.each([
-      ['is not valid', () => passkeys.verify.mockResolvedValue(false)],
+      [
+        'is not valid',
+        () =>
+          passkeys.verify.mockResolvedValue({
+            verified: false,
+            registeredAt: new Date(0),
+          }),
+      ],
       [
         'cannot be checked',
         () => passkeys.verify.mockRejectedValue(new Error('400')),
@@ -299,6 +312,40 @@ describe('StepUpService', () => {
       expect(await service.useUnlock(user)).toBe(false)
     })
 
+    it('refuses a passkey registered since the unlock', async () => {
+      // Someone with a copy of the token registers a passkey of their own
+      // while the owner's unlock is idle.
+      const user = appUser()
+      await unlockedThenIdle(user)
+      passkeys.verify.mockResolvedValue({
+        verified: true,
+        registeredAt: new Date(now),
+      })
+
+      expect(await service.reopenWithPasskey(user, 'assertion')).toBe(false)
+      expect(await service.useUnlock(user)).toBe(false)
+      expect(audit).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          action: 'stepUpReopenRefused',
+          meta: { method: 'passkey', outcome: 'registered_after_unlock' },
+        }),
+      )
+    })
+
+    it('audits a reopening', async () => {
+      const user = appUser()
+      await unlockedThenIdle(user)
+
+      await service.reopenWithPasskey(user, 'assertion')
+
+      expect(audit).toHaveBeenLastCalledWith({
+        auth: user,
+        namespace: '@island.is/api/step-up',
+        action: 'stepUpReopened',
+        meta: { method: 'passkey', outcome: 'reopened' },
+      })
+    })
+
     it("does not reopen another session's unlock", async () => {
       await unlockedThenIdle(appUser())
 
@@ -310,7 +357,7 @@ describe('StepUpService', () => {
     it('caps how many times it can be tried', async () => {
       const user = appUser()
       await unlockedThenIdle(user)
-      passkeys.verify.mockResolvedValue(false)
+      passkeys.verify.mockRejectedValue(new Error('400'))
 
       await service.reopenWithPasskey(user, 'assertion')
       await service.reopenWithPasskey(user, 'assertion')

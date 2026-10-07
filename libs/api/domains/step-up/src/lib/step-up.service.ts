@@ -16,6 +16,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { StepUpConfig } from './step-up.config'
 import {
   STEP_UP_PASSKEY_VERIFIER,
+  type PasskeyVerification,
   type PasskeyVerifier,
 } from './step-up.passkey'
 import {
@@ -282,22 +283,49 @@ export class StepUpService {
       })
     }
 
-    let verified: boolean
-    try {
-      verified = await this.passkeys.verify(user, passkey)
-    } catch (error) {
-      // An assertion that is not valid is refused with an error, too.
-      this.logger.warn('Passkey could not be verified for reopening.', {
-        error,
-      })
-      verified = false
-    }
-    if (!verified) {
+    const outcome = await this.checkPasskey(user, passkey, live.unlock)
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: outcome === 'reopened' ? 'stepUpReopened' : 'stepUpReopenRefused',
+      meta: { method: 'passkey', outcome },
+    })
+    if (outcome !== 'reopened') {
       return false
     }
 
     await this.touch(live)
     return true
+  }
+
+  private async checkPasskey(
+    user: User,
+    passkey: string,
+    unlock: Unlock,
+  ): Promise<'reopened' | 'invalid' | 'registered_after_unlock'> {
+    let verification: PasskeyVerification
+    try {
+      verification = await this.passkeys.verify(user, passkey)
+    } catch (error) {
+      // An assertion that is not valid is refused with an error, too.
+      this.logger.warn('Passkey could not be verified for reopening.', {
+        error,
+      })
+      return 'invalid'
+    }
+    if (!verification.verified) {
+      return 'invalid'
+    }
+
+    // Registering a passkey only takes a token. One registered since the
+    // person unlocked with electronic ID may be someone else's, made with a
+    // copy of the token: it takes electronic ID once more to trust it.
+    if (verification.registeredAt.getTime() >= unlock.unlockedAt) {
+      this.logger.warn('Passkey registered after the unlock it would reopen.')
+      return 'registered_after_unlock'
+    }
+
+    return 'reopened'
   }
 
   /** Locks the session again straight away, e.g. when the person asks to. */

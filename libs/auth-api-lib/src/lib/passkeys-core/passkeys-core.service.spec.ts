@@ -127,6 +127,45 @@ describe('PasskeyCoreService', () => {
 
       expect(verification.verified).toBe(true)
     })
+
+    it('dates a replaced passkey from when it was replaced', async () => {
+      const user = {
+        sub: USER_SUB,
+        authorization: TEST_AUTHORIZATION_TOKEN,
+      } as any
+      const yearAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 365)
+      await passkeyModel.create({
+        user_sub: USER_SUB,
+        passkey_id: 'old',
+        public_key: new TextEncoder().encode('public_key'),
+        audkenni_sim_number: '123',
+        name: 'Tester',
+        type: 'IslandApp',
+        idp: 'gervimadur',
+        created: yearAgo,
+        counter: 0,
+      })
+
+      await passkeysCoreService.generateRegistrationOptions(user)
+      verifyRegistrationResponse.mockImplementation(
+        async (options: VerifyRegistrationResponseOpts) => ({
+          verified: true,
+          registrationInfo: {
+            credentialID: options.response.id,
+            credentialPublicKey: Buffer.from('test-public-key'),
+            counter: 0,
+          },
+        }),
+      )
+      await passkeysCoreService.verifyRegistration(user, { id: 'new' } as any)
+
+      const passkeys = await passkeyModel.findAll({
+        where: { user_sub: USER_SUB },
+      })
+      expect(passkeys).toHaveLength(1)
+      expect(passkeys[0].passkey_id).toBe('new')
+      expect(passkeys[0].created.getTime()).toBeGreaterThan(Date.now() - 60_000)
+    })
   })
 
   describe('authenticate', () => {
@@ -300,7 +339,7 @@ describe('PasskeyCoreService', () => {
           { sub: USER_SUB } as any,
           passkey,
         ),
-      ).resolves.toEqual({ verified: true })
+      ).resolves.toEqual({ verified: true, registeredAt: expect.any(Date) })
     })
 
     it('refuses a passkey that belongs to someone else', async () => {

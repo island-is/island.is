@@ -67,10 +67,11 @@ export const StepUpConfig = defineConfig<z.infer<typeof schema>>({
       clients: env.optionalJSON<string[]>('STEP_UP_CLIENTS') ?? [
         '@island.is/app',
       ],
-      // An hour without use (NIST SP 800-63B-4 AAL2), and at most five hours
-      // after the person authenticated (as in Lyfja's app, agreed with the
-      // health authorities), whatever happens.
-      idleSeconds: env.optionalJSON<number>('STEP_UP_IDLE_SECONDS') ?? 60 * 60,
+      // Fifteen minutes without use (NIST SP 800-63B-4 AAL3), after which the
+      // passkey reopens it; and at most five hours after the person
+      // authenticated (as in Lyfja's app, agreed with the health
+      // authorities), whatever happens.
+      idleSeconds: env.optionalJSON<number>('STEP_UP_IDLE_SECONDS') ?? 15 * 60,
       maxSeconds:
         env.optionalJSON<number>('STEP_UP_MAX_SECONDS') ?? 5 * 60 * 60,
       maxStarts: env.optionalJSON<number>('STEP_UP_MAX_STARTS') ?? 5,
