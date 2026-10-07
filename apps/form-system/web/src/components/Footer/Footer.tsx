@@ -125,7 +125,11 @@ export const Footer = ({
   const validate = async () => trigger()
 
   const lastVisibleScreen = state.sections
-    ?.filter((section) => section?.isHidden === false)
+    ?.filter(
+      (section) =>
+        section?.isHidden === false &&
+        section?.sectionType !== SectionTypes.COMPLETED,
+    )
     .flatMap((section) => section?.screens ?? [])
     .filter((screen) => screen?.isHidden === false)
     .at(-1)
