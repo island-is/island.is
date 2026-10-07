@@ -131,7 +131,10 @@ export const createAppealAppointmentLetter = (
 
   doc.on('data', (chunk) => chunks.push(chunk))
 
-  const title = getAppealAppointmentSubject(letter.kind, letter.appealCaseNumber)
+  const title = getAppealAppointmentSubject(
+    letter.kind,
+    letter.appealCaseNumber,
+  )
 
   setTitle(doc, title)
 

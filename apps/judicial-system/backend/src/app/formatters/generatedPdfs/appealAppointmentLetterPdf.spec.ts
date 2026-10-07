@@ -44,7 +44,9 @@ describe('getAppealAppointmentSentence', () => {
 
     expect(
       getAppealAppointmentSentence(AppealAppointmentKind.SPOKESPERSON),
-    ).toBe('Þér eruð hér með skipaðir réttargæslumaður brotaþola fyrir Landsrétti.')
+    ).toBe(
+      'Þér eruð hér með skipaðir réttargæslumaður brotaþola fyrir Landsrétti.',
+    )
   })
 })
 
