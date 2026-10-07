@@ -33,6 +33,7 @@ import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
+import { UserNotificationSender } from '../user-notification-sender.model'
 import {
   NotificationDelivery,
   NotificationChannel,
@@ -115,6 +116,7 @@ describe('NotificationsWorkerService', () => {
   let companyRegistryService: CompanyRegistryClientService
   let smsService: SmsService
   let notificationDeliveryModel: typeof NotificationDelivery
+  let userNotificationSenderModel: typeof UserNotificationSender
 
   beforeAll(async () => {
     app = await testServer({
@@ -147,6 +149,7 @@ describe('NotificationsWorkerService', () => {
     notificationModel = app.get(getModelToken(Notification))
     actorNotificationModel = app.get(getModelToken(ActorNotification))
     notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
+    userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
     notificationsService = app.get(NotificationsService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
@@ -1123,6 +1126,166 @@ describe('NotificationsWorkerService', () => {
         (call) => call[0].nationalId === userWithNoDelegations.nationalId,
       )
       expect(actorPushNotificationCall).toBeUndefined()
+    })
+  })
+
+  describe('Notification senders', () => {
+    const senderId = createNationalId('company')
+    const otherSenderId = createNationalId('company')
+    const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
+
+    const addToQueueWithSender = async (
+      recipient: string,
+      senderId?: string,
+    ) => {
+      await queue.add({
+        recipient,
+        senderId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+      })
+
+      // give the worker some time to process the message
+      await wait(2)
+    }
+
+    it('should record the sender when a notification with a senderId is created', async () => {
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithNoDelegations.nationalId,
+        senderId,
+      })
+    })
+
+    it('should record the same sender only once, also when its id is dashed', async () => {
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        dashedSenderId,
+      )
+
+      // Assert
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(3)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].senderId).toBe(senderId)
+    })
+
+    it('should record each sender the recipient receives notifications from', async () => {
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+      await addToQueueWithSender(
+        userWithNoDelegations.nationalId,
+        otherSenderId,
+      )
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(senders.map((sender) => sender.senderId).sort()).toEqual(
+        [senderId, otherSenderId].sort(),
+      )
+    })
+
+    it('should not record a sender when the notification has no senderId', async () => {
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId)
+
+      // Assert
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(await userNotificationSenderModel.count()).toBe(0)
+    })
+
+    it('should not record the sender for delegation holders receiving actor notifications', async () => {
+      // Act
+      await addToQueueWithSender(userWithDelegations.nationalId, senderId)
+
+      // Wait for the queued actor notifications to be processed
+      await wait(2)
+
+      // Assert
+      const actorNotifications = await actorNotificationModel.findAll()
+      expect(actorNotifications.length).toBeGreaterThan(0)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithDelegations.nationalId,
+        senderId,
+      })
+    })
+
+    it('should record the sender for the represented user, not the actor, when onBehalfOf is provided without rootMessageId', async () => {
+      // Act
+      await queue.add({
+        recipient: userWithNoDelegations.nationalId, // The actor
+        senderId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        onBehalfOf: {
+          nationalId: userWithDelegations.nationalId,
+          name: userWithDelegations.name,
+        },
+      })
+      await wait(3)
+
+      // Assert
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0]).toMatchObject({
+        recipient: userWithDelegations.nationalId,
+        senderId,
+      })
+    })
+
+    it('should still write and deliver the notification when recording the sender fails', async () => {
+      // Arrange
+      const bulkCreateSpy = jest
+        .spyOn(userNotificationSenderModel, 'bulkCreate')
+        .mockRejectedValueOnce(new Error('DB write error'))
+
+      // Act
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      // Assert
+      expect(bulkCreateSpy).toHaveBeenCalled()
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(await userNotificationSenderModel.count()).toBe(0)
+
+      expect(emailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: expect.objectContaining({
+            address: userWithNoDelegations.email,
+          }),
+        }),
+      )
+      expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          nationalId: userWithNoDelegations.nationalId,
+          userNotificationId: notifications[0].id,
+        }),
+      )
+
+      bulkCreateSpy.mockRestore()
     })
   })
 
