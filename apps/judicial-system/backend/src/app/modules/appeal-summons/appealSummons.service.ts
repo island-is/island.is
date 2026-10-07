@@ -175,11 +175,9 @@ export class AppealSummonsService {
       )
     }
 
-    return this.appealSummonsRepositoryService.delete(
-      summons.id,
-      theCase.id,
-      { transaction },
-    )
+    return this.appealSummonsRepositoryService.delete(summons.id, theCase.id, {
+      transaction,
+    })
   }
 
   resolveDefendants(

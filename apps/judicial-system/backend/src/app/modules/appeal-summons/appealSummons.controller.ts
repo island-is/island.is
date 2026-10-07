@@ -153,7 +153,11 @@ export class AppealSummonsController {
       `Getting appeal summons ${appealSummonsId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getAppealSummonsPdf(theCase, user, summons)
+    const pdf = await this.pdfService.getAppealSummonsPdf(
+      theCase,
+      user,
+      summons,
+    )
 
     res.end(pdf)
   }
