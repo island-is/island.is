@@ -87,9 +87,9 @@ export const mapFetalHeartRate = (
 
 export const mapActivePregnancy = (
   dto: ActivePregnancyDto,
-): ActivePregnancy => {
+): ActivePregnancy | null => {
   if (!dto.id) {
-    throw new Error('ActivePregnancyDto missing required id field')
+    return null
   }
 
   return {
