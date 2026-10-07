@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-import { PermissionsAndroid } from 'react-native'
 import { usePreferencesStore } from '../stores/preferences-store'
-import { requestAndroidNotificationsPermission } from '../utils/permissions'
+import { ensureNotificationsPermission } from '../utils/permissions'
 import { androidIsVersion33OrAbove } from '../utils/versions-check'
 import { isAndroid } from '../utils/devices'
 
@@ -9,6 +8,9 @@ import { isAndroid } from '../utils/devices'
  * Android >= 13 (API level >= 33) requires explicit permission for posting notifications.
  * This hook is for already onboarded users that have enabled notifications and are using Android 13 or above.
  * It then requests the permission if it hasn't been granted yet.
+ *
+ * They onboarded before POST_NOTIFICATIONS existed, so they were never asked. Users
+ * who chose to decide later are skipped and can enable it from the settings screen.
  */
 export const useAndroidNotificationPermission = (
   documentNotifications?: boolean,
@@ -16,27 +18,36 @@ export const useAndroidNotificationPermission = (
   const hasOnboardedNotifications = usePreferencesStore(
     ({ hasOnboardedNotifications }) => hasOnboardedNotifications,
   )
+  const hasDeferredNotificationsOnboarding = usePreferencesStore(
+    ({ hasDeferredNotificationsOnboarding }) =>
+      hasDeferredNotificationsOnboarding,
+  )
+  const hasRequestedNotificationsPermission = usePreferencesStore(
+    ({ hasRequestedNotificationsPermission }) =>
+      hasRequestedNotificationsPermission,
+  )
 
   useEffect(() => {
     // Only run on Android devices
-    if (!isAndroid) {
+    if (!isAndroid || !androidIsVersion33OrAbove()) {
       return
     }
 
-    // We need to check if the user has already enabled notifications and has onboarded the notifications screen
-    // and if the user is using Android 13 (API level 33) or above.
+    // Skip unless they enabled notifications, onboarded, and were never asked.
     if (
-      documentNotifications &&
-      hasOnboardedNotifications &&
-      androidIsVersion33OrAbove()
+      !documentNotifications ||
+      !hasOnboardedNotifications ||
+      hasDeferredNotificationsOnboarding ||
+      hasRequestedNotificationsPermission
     ) {
-      PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-      ).then((granted) => {
-        if (!granted) {
-          requestAndroidNotificationsPermission()
-        }
-      })
+      return
     }
-  }, [documentNotifications, hasOnboardedNotifications])
+
+    ensureNotificationsPermission()
+  }, [
+    documentNotifications,
+    hasOnboardedNotifications,
+    hasDeferredNotificationsOnboarding,
+    hasRequestedNotificationsPermission,
+  ])
 }

@@ -34,14 +34,18 @@ import {
 import { useUiStore } from '@/stores/ui-store'
 import {
   Alert,
+  LinkText,
   NavigationBarSheet,
   TableViewAccessory,
   TableViewCell,
   TableViewGroup,
 } from '@/ui'
 import { useBiometricType } from '../../../hooks/use-biometric-type'
+import { useNotificationsPermission } from '@/hooks/use-notifications-permission'
+import { ensureNotificationsPermission } from '@/utils/permissions'
 import { testIDs } from '@/utils/test-ids'
 
+import arrowForward from '@/ui/assets/icons/arrow.png'
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
 import editIcon from '@/assets/icons/edit.png'
 import { StackScreen } from '../../../components/stack-screen'
@@ -84,6 +88,17 @@ export default function SettingsScreen() {
   const [emailNotifications, setEmailNotifications] = useState(
     !!userProfile.data?.getUserProfile?.canNudge,
   )
+  const {
+    status: osNotificationsStatus,
+    refresh: refreshNotificationsPermission,
+  } = useNotificationsPermission()
+
+  // The toggle is only a preference, so warn when the OS disagrees: `denied` can
+  // only be undone in system settings, `undetermined` can still be prompted for.
+  const notificationsBlockedByOs =
+    !!documentNotifications && osNotificationsStatus === 'denied'
+  const notificationsNotEnabledYet =
+    !!documentNotifications && osNotificationsStatus === 'undetermined'
 
   useEffect(() => {
     if (userProfile) {
@@ -156,6 +171,60 @@ export default function SettingsScreen() {
           }),
         )
       })
+  }
+
+  const onNotificationsBlockedPress = () => {
+    Linking.openSettings()
+  }
+
+  const onAllowNotificationsPress = async () => {
+    try {
+      await ensureNotificationsPermission()
+    } finally {
+      refreshNotificationsPermission()
+    }
+  }
+
+  const onDocumentNotificationsChange = async (value: boolean) => {
+    updateDocumentNotifications(value)
+    setDocumentNotifications(value)
+
+    // Turning it off cannot revoke the OS permission, so there is nothing to do.
+    if (!value) {
+      return
+    }
+
+    try {
+      const outcome = await ensureNotificationsPermission()
+
+      // No prompt is possible, so offer system settings instead.
+      if (outcome === 'blocked') {
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.notificationsBlockedAlertTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.notificationsBlockedAlertDescription',
+          }),
+          [
+            {
+              text: intl.formatMessage({
+                id: 'settings.communication.notificationsBlockedAlertCancelButton',
+              }),
+              style: 'cancel',
+            },
+            {
+              text: intl.formatMessage({
+                id: 'settings.communication.notificationsBlockedAlertOpenSettingsButton',
+              }),
+              onPress: onNotificationsBlockedPress,
+            },
+          ],
+        )
+      }
+    } finally {
+      refreshNotificationsPermission()
+    }
   }
 
   const updateEmailNotifications = (value: boolean) => {
@@ -312,6 +381,64 @@ export default function SettingsScreen() {
             id: 'settings.communication.groupTitle',
           })}
         >
+          {notificationsNotEnabledYet && (
+            <Alert
+              type="warning"
+              size="small"
+              hasBorder
+              title={intl.formatMessage({
+                id: 'settings.communication.notificationsNotEnabledTitle',
+              })}
+              message={intl.formatMessage({
+                id: 'settings.communication.notificationsNotEnabledDescription',
+              })}
+              action={
+                <TouchableOpacity
+                  onPress={onAllowNotificationsPress}
+                  accessibilityRole="button"
+                >
+                  <LinkText variant="small" icon={arrowForward}>
+                    {intl.formatMessage({
+                      id: 'settings.communication.notificationsNotEnabledLinkText',
+                    })}
+                  </LinkText>
+                </TouchableOpacity>
+              }
+              style={{
+                marginHorizontal: theme.spacing[2],
+                marginBottom: theme.spacing[2],
+              }}
+            />
+          )}
+          {notificationsBlockedByOs && (
+            <Alert
+              type="warning"
+              size="small"
+              hasBorder
+              title={intl.formatMessage({
+                id: 'settings.communication.notificationsBlockedTitle',
+              })}
+              message={intl.formatMessage({
+                id: 'settings.communication.notificationsBlockedDescription',
+              })}
+              action={
+                <TouchableOpacity
+                  onPress={onNotificationsBlockedPress}
+                  accessibilityRole="button"
+                >
+                  <LinkText variant="small" icon={arrowForward}>
+                    {intl.formatMessage({
+                      id: 'settings.communication.notificationsBlockedLinkText',
+                    })}
+                  </LinkText>
+                </TouchableOpacity>
+              }
+              style={{
+                marginHorizontal: theme.spacing[2],
+                marginBottom: theme.spacing[2],
+              }}
+            />
+          )}
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.communication.newNotificationsEmailLabel',
@@ -347,10 +474,7 @@ export default function SettingsScreen() {
             accessory={
               <View>
                 <Switch
-                  onValueChange={(value) => {
-                    updateDocumentNotifications(value)
-                    setDocumentNotifications(value)
-                  }}
+                  onValueChange={onDocumentNotificationsChange}
                   disabled={userProfile.loading && !userProfile.data}
                   value={documentNotifications}
                   thumbColor={Platform.select({ android: theme.color.dark100 })}

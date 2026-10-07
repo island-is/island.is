@@ -102,6 +102,25 @@ export const is = {
     'Tilkynningar í Ísland.is appinu',
   'settings.communication.newNotificationsInAppDescription':
     'Stofnanir geta sent þér tilkynningu í Ísland.is appið.',
+  'settings.communication.notificationsNotEnabledTitle':
+    'Tilkynningar eru ekki virkar í tækinu',
+  'settings.communication.notificationsNotEnabledDescription':
+    'Þú þarft að leyfa tilkynningar í tækinu til að fá þær frá Ísland.is.',
+  'settings.communication.notificationsNotEnabledLinkText':
+    'Leyfa tilkynningar',
+  'settings.communication.notificationsBlockedTitle':
+    'Slökkt er á tilkynningum í tækinu',
+  'settings.communication.notificationsBlockedDescription':
+    'Ísland.is getur ekki sent þér tilkynningar fyrr en þú leyfir þær í stillingum tækisins.',
+  'settings.communication.notificationsBlockedLinkText':
+    'Opna stillingar tækisins',
+  'settings.communication.notificationsBlockedAlertTitle':
+    'Leyfa tilkynningar í tækinu?',
+  'settings.communication.notificationsBlockedAlertDescription':
+    'Slökkt er á tilkynningum frá Ísland.is í stillingum tækisins. Þú þarft að kveikja á þeim þar.',
+  'settings.communication.notificationsBlockedAlertCancelButton': 'Ekki núna',
+  'settings.communication.notificationsBlockedAlertOpenSettingsButton':
+    'Opna stillingar',
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
