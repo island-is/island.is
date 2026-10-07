@@ -53,17 +53,17 @@ export const ConfirmAccessModal = ({
   // Held confirmations returned by the grant. While there are any, this modal
   // is the second act of "tvöfalt samþykki": the grantor confirms each one with
   // electronic ID, right here.
-  const [pendingIds, setPendingIds] = useState<string[]>([])
+  const [pending, setPending] = useState<{ id: string; toName: string }[]>([])
   const [current, setCurrent] = useState(0)
   const [expired, setExpired] = useState(false)
-  const confirmationId = pendingIds[current]
+  const confirmationId = pending[current]?.id
 
   const { start, check } = useDelegationConfirmationStepUp(confirmationId, {
     onExpired: () => setExpired(true),
   })
 
   const handleStepUpConfirmed = () => {
-    if (current + 1 < pendingIds.length) {
+    if (current + 1 < pending.length) {
       setCurrent(current + 1)
       return
     }
@@ -75,7 +75,7 @@ export const ConfirmAccessModal = ({
   // grantor's delegations rather than back to the form. An unfinished
   // confirmation stays pending until it expires.
   const handleClose = () =>
-    pendingIds.length ? navigate(DelegationPaths.DelegationsNew) : onClose()
+    pending.length ? navigate(DelegationPaths.DelegationsNew) : onClose()
 
   const handleConfirm = async () => {
     if (onConfirm) {
@@ -128,14 +128,17 @@ export const ConfirmAccessModal = ({
       // Branch on what the server actually returned, never on our own feature
       // flag read: the two are cached independently and disagreeing with the
       // server is how you strand a half-created grant.
-      const pending = data?.createAuthDelegations?.flatMap((delegation) =>
+      const held = data?.createAuthDelegations?.flatMap((delegation) =>
         delegation.__typename === 'AuthCustomDelegation'
-          ? delegation.pendingConfirmations ?? []
+          ? (delegation.pendingConfirmations ?? []).map((confirmation) => ({
+              id: confirmation.id,
+              toName: delegation.to?.name ?? '',
+            }))
           : [],
       )
 
-      if (pending?.length) {
-        setPendingIds(pending.map((confirmation) => confirmation.id))
+      if (held?.length) {
+        setPending(held)
         return
       }
 
@@ -151,13 +154,24 @@ export const ConfirmAccessModal = ({
     <Modal
       id="confirm-access-modal"
       label={formatMessage(coreMessages.codeConfirmation)}
-      title={formatMessage(
-        isEdit ? m.confirmEditAccessModalTitle : m.confirmAccessModalTitle,
-      )}
+      // The step-up has a heading of its own.
+      title={
+        confirmationId
+          ? undefined
+          : formatMessage(
+              isEdit
+                ? m.confirmEditAccessModalTitle
+                : m.confirmAccessModalTitle,
+            )
+      }
       onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
-      eyebrow={formatMessage(coreMessages.digitalDelegations)}
+      eyebrow={
+        confirmationId
+          ? undefined
+          : formatMessage(coreMessages.digitalDelegations)
+      }
     >
       {confirmationId ? (
         <Box
@@ -166,11 +180,11 @@ export const ConfirmAccessModal = ({
           rowGap={2}
           paddingBottom={[3, 3, 6]}
         >
-          {pendingIds.length > 1 && (
+          {pending.length > 1 && (
             <Text variant="eyebrow" textAlign="center">
               {formatMessage(m.stepUpProgress, {
                 current: current + 1,
-                total: pendingIds.length,
+                total: pending.length,
               })}
             </Text>
           )}
@@ -188,6 +202,10 @@ export const ConfirmAccessModal = ({
               check={check}
               onConfirmed={handleStepUpConfirmed}
               onExpired={() => setExpired(true)}
+              context={formatMessage(m.stepUpContext, {
+                name: pending[current].toName,
+              })}
+              onBack={handleClose}
             />
           )}
         </Box>

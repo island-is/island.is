@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import {
-  AlertMessage,
-  Box,
-  Button,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -47,6 +41,10 @@ interface StepUpAuthenticationProps {
   onConfirmed: () => void
   /** The thing being confirmed is gone; there is nothing left to authenticate for. */
   onExpired: () => void
+  /** What is being confirmed, shown under the title, e.g. "Veiting umboðs · Name". */
+  context?: string
+  /** Shows a "Til baka" button. */
+  onBack?: () => void
   /** Start straight away, without waiting for a button press. */
   autoStart?: boolean
 }
@@ -54,21 +52,20 @@ interface StepUpAuthenticationProps {
 type Notice = 'denied' | 'timed_out' | StepUpStartError
 
 type State =
-  | { name: 'idle'; notice?: Notice }
+  | { name: 'idle'; notice?: Notice; method?: StepUpMethod }
   | { name: 'starting' }
   | {
       name: 'waiting'
       method: StepUpMethod
       code?: string | null
-      deadline: number
     }
 
 /**
- * Authenticates the person again with electronic ID without leaving the page —
- * one button, a code, and they approve on their own phone. Looks like the
- * identity server's own verification screen: the code in a blue box while
- * waiting. There is no phone number field and no choice of method: it uses
- * the method the person logged in with, so it only reaches their own phone.
+ * Authenticates the person again with electronic ID without leaving the page:
+ * a code, and they approve on their own phone. Looks like the identity
+ * server's own verification screen. There is no phone number field and no
+ * choice of method: it uses the method the person logged in with, so it only
+ * reaches their own phone.
  *
  * Generic on purpose — it only knows how to start and how to check. Confirming
  * a sensitive delegation is the first use; locking a sensitive screen is meant
@@ -79,11 +76,12 @@ export const StepUpAuthentication = ({
   check,
   onConfirmed,
   onExpired,
+  context,
+  onBack,
   autoStart = false,
 }: StepUpAuthenticationProps) => {
   const { formatMessage } = useLocale()
   const [state, setState] = useState<State>({ name: 'idle' })
-  const [secondsLeft, setSecondsLeft] = useState(0)
   const pollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const unmounted = useRef(false)
   const autoStarted = useRef(false)
@@ -100,7 +98,7 @@ export const StepUpAuthentication = ({
   }, [])
 
   const poll = useCallback(
-    (interval: number) => {
+    (interval: number, method: StepUpMethod) => {
       clearTimeout(pollTimer.current)
       pollTimer.current = setTimeout(async () => {
         let status: StepUpStatus
@@ -117,7 +115,7 @@ export const StepUpAuthentication = ({
 
         switch (status) {
           case 'pending':
-            poll(interval)
+            poll(interval, method)
             return
           case 'confirmed':
             onConfirmed()
@@ -127,7 +125,7 @@ export const StepUpAuthentication = ({
             return
           case 'denied':
           case 'timed_out':
-            setState({ name: 'idle', notice: status })
+            setState({ name: 'idle', notice: status, method })
             return
           case 'not_started':
             setState({ name: 'idle' })
@@ -152,9 +150,8 @@ export const StepUpAuthentication = ({
         name: 'waiting',
         method: started.method,
         code: started.verificationCode,
-        deadline: Date.now() + started.expiresIn * 1000,
       })
-      poll(started.interval)
+      poll(started.interval, started.method)
     } catch (error) {
       setState({
         name: 'idle',
@@ -171,49 +168,52 @@ export const StepUpAuthentication = ({
     }
   }, [autoStart, begin])
 
-  // Countdown shown while waiting. The server decides when it has expired; this
-  // is only for the person's benefit.
-  useEffect(() => {
-    if (state.name !== 'waiting') {
-      return
-    }
-
-    const tick = () =>
-      setSecondsLeft(
-        Math.max(0, Math.round((state.deadline - Date.now()) / 1000)),
-      )
-    tick()
-    const timer = setInterval(tick, 1000)
-
-    return () => clearInterval(timer)
-  }, [state])
-
-  const notices: Record<
-    Notice,
-    { type: 'warning' | 'error'; message: string }
-  > = {
-    denied: { type: 'warning', message: formatMessage(m.stepUpDenied) },
-    timed_out: { type: 'warning', message: formatMessage(m.stepUpTimedOut) },
-    too_many_attempts: {
-      type: 'warning',
-      message: formatMessage(m.stepUpTooManyAttempts),
-    },
-    failed: { type: 'error', message: formatMessage(m.stepUpStartFailed) },
+  const notices: Record<Notice, string> = {
+    denied: formatMessage(m.stepUpDenied),
+    timed_out: formatMessage(m.stepUpTimedOut),
+    too_many_attempts: formatMessage(m.stepUpTooManyAttempts),
+    failed: formatMessage(m.stepUpStartFailed),
   }
 
   const notice =
-    state.name === 'idle' && state.notice ? notices[state.notice] : undefined
+    state.name === 'idle' && state.notice ? state.notice : undefined
+  const method = state.name === 'starting' ? undefined : state.method
+  // Starting again won't help after too many attempts.
+  const canRetry = notice !== 'too_many_attempts'
 
   return (
-    <Box display="flex" flexDirection="column" rowGap={[4, 4, 5]} width="full">
-      <Box>
-        <Text variant="h3" as="h2" marginBottom={1}>
-          {formatMessage(m.stepUpTitle)}
+    <Box display="flex" flexDirection="column" rowGap={4} width="full">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        rowGap={1}
+        textAlign="center"
+      >
+        {method && (
+          <Text variant="eyebrow" color="blue400">
+            {formatMessage(
+              method === 'sim' ? m.stepUpMethodSim : m.stepUpMethodApp,
+            )}
+          </Text>
+        )}
+        <Text variant="h3" as="h2">
+          {formatMessage(notice ? m.stepUpFailedTitle : m.stepUpTitle)}
         </Text>
-        <Text>{formatMessage(m.stepUpIntro)}</Text>
+        {context && <Text>{context}</Text>}
       </Box>
 
-      {notice && <AlertMessage type={notice.type} message={notice.message} />}
+      {notice && (
+        <Box role="alert">
+          <Text textAlign="center">{notices[notice]}</Text>
+        </Box>
+      )}
+
+      {state.name === 'starting' && (
+        <Box display="flex" justifyContent="center">
+          <LoadingDots />
+        </Box>
+      )}
 
       {state.name === 'waiting' && (
         <>
@@ -222,50 +222,51 @@ export const StepUpAuthentication = ({
             width="full"
             display="flex"
             flexDirection="column"
-            justifyContent="center"
             alignItems="center"
             rowGap="smallGutter"
-            paddingY={3}
+            padding={3}
             background="blue100"
             borderRadius="large"
             role="alert"
           >
             <Text>{formatMessage(m.stepUpYourSecurityCode)}</Text>
-            <Text variant="h1">{state.code}</Text>
+            <Text variant="h3" as="p">
+              {state.code}
+            </Text>
           </Box>
           <Box display="flex" justifyContent="center">
             <LoadingDots />
           </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            rowGap={2}
-          >
-            <Text textAlign="center">
-              {formatMessage(m.stepUpSecurityCodeConfirmMessage)}
+          <Box display="flex" flexDirection="column" rowGap={1}>
+            <Text variant="small" textAlign="center">
+              {formatMessage(
+                state.method === 'sim'
+                  ? m.stepUpSecurityCodeConfirmMessage
+                  : m.stepUpSecurityCodeConfirmMessageApp,
+              )}
             </Text>
-            <Text textAlign="center">
+            <Text variant="small" textAlign="center">
               {formatMessage(m.stepUpSecurityCodeConfirmSubtitle)}
-            </Text>
-            <Text variant="small" color="dark300">
-              {formatMessage(m.stepUpTimeLeft, {
-                minutes: Math.floor(secondsLeft / 60),
-                seconds: String(secondsLeft % 60).padStart(2, '0'),
-              })}
             </Text>
           </Box>
         </>
       )}
 
-      {(state.name === 'idle' || state.name === 'starting') && (
-        <Button
-          fluid
-          onClick={() => begin()}
-          loading={state.name === 'starting'}
-        >
-          {formatMessage(m.stepUpStart)}
-        </Button>
+      {(onBack || state.name === 'idle') && (
+        <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
+          {onBack ? (
+            <Button variant="ghost" onClick={onBack}>
+              {formatMessage(m.stepUpBack)}
+            </Button>
+          ) : (
+            <span />
+          )}
+          {state.name === 'idle' && canRetry && (
+            <Button onClick={() => begin()}>
+              {formatMessage(notice ? m.stepUpRetry : m.stepUpStart)}
+            </Button>
+          )}
+        </Box>
       )}
     </Box>
   )

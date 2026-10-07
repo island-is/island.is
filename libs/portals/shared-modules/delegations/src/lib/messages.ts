@@ -675,12 +675,31 @@ export const m = defineMessages({
   },
   stepUpTitle: {
     id: 'sp.access-control-delegations:step-up-title',
-    defaultMessage: 'Rafræn auðkenning',
+    defaultMessage: 'Staðfestu beiðnina',
   },
-  stepUpIntro: {
-    id: 'sp.access-control-delegations:step-up-intro',
-    defaultMessage:
-      'Staðfestu umboðið með rafrænum skilríkjum. Það tekur gildi um leið og þú hefur staðfest.',
+  stepUpFailedTitle: {
+    id: 'sp.access-control-delegations:step-up-failed-title',
+    defaultMessage: 'Auðkenning tókst ekki',
+  },
+  stepUpContext: {
+    id: 'sp.access-control-delegations:step-up-context',
+    defaultMessage: 'Veiting umboðs · {name}',
+  },
+  stepUpMethodSim: {
+    id: 'sp.access-control-delegations:step-up-method-sim',
+    defaultMessage: 'Rafræn skilríki í síma',
+  },
+  stepUpMethodApp: {
+    id: 'sp.access-control-delegations:step-up-method-app',
+    defaultMessage: 'Auðkennisappið',
+  },
+  stepUpBack: {
+    id: 'sp.access-control-delegations:step-up-back',
+    defaultMessage: 'Til baka',
+  },
+  stepUpRetry: {
+    id: 'sp.access-control-delegations:step-up-retry',
+    defaultMessage: 'Reyna aftur',
   },
   stepUpProgress: {
     id: 'sp.access-control-delegations:step-up-progress',
@@ -703,23 +722,24 @@ export const m = defineMessages({
     defaultMessage:
       'Staðfestu auðkenninguna ef öryggistalan er sú sama og birtist á símanum þínum.',
   },
+  stepUpSecurityCodeConfirmMessageApp: {
+    id: 'sp.access-control-delegations:step-up-security-code-confirm-message-app',
+    defaultMessage:
+      'Opnaðu Auðkennisappið og staðfestu ef öryggistalan er sú sama og birtist þar.',
+  },
   stepUpSecurityCodeConfirmSubtitle: {
     id: 'sp.access-control-delegations:step-up-security-code-confirm-subtitle',
-    defaultMessage:
-      'Ath. að öryggistalan er ekki PIN-númerið á skilríkjunum þínum.',
-  },
-  stepUpTimeLeft: {
-    id: 'sp.access-control-delegations:step-up-time-left',
-    defaultMessage: 'Tími eftir: {minutes}:{seconds}',
+    defaultMessage: 'Öryggistalan er ekki PIN-númerið á skilríkjunum þínum.',
   },
   stepUpDenied: {
     id: 'sp.access-control-delegations:step-up-denied',
     defaultMessage:
-      'Staðfestingin tókst ekki. Hætt var við í símanum eða annar aðili svaraði. Þú getur reynt aftur.',
+      'Hætt var við auðkenninguna. Beiðnin hefur ekki verið samþykkt.',
   },
   stepUpTimedOut: {
     id: 'sp.access-control-delegations:step-up-timed-out',
-    defaultMessage: 'Ekki var svarað í tæka tíð. Þú getur reynt aftur.',
+    defaultMessage:
+      'Auðkenningin var ekki staðfest í tæka tíð. Beiðnin hefur ekki verið samþykkt.',
   },
   stepUpTooManyAttempts: {
     id: 'sp.access-control-delegations:step-up-too-many-attempts',

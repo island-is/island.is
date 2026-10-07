@@ -158,6 +158,9 @@ export const ConfirmDelegation = () => {
             check={check}
             onConfirmed={() => setOutcome('confirmed')}
             onExpired={() => setOutcome('expired')}
+            context={formatMessage(m.stepUpContext, {
+              name: confirmation.toName,
+            })}
           />
         </Box>
       )}
