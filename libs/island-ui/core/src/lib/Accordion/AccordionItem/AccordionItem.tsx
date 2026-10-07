@@ -239,7 +239,12 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
               display="flex"
               alignItems="center"
             >
-              <Box {...buttonProps} display="flex" alignItems="center" flexGrow={1}>
+              <Box
+                {...buttonProps}
+                display="flex"
+                alignItems="center"
+                flexGrow={1}
+              >
                 <Box
                   component="span"
                   width="full"
