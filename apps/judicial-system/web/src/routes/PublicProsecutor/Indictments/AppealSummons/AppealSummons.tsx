@@ -292,7 +292,9 @@ const AppealSummons = () => {
               previousUrl={overviewUrl}
               actions={[
                 {
-                  text: 'Gefa út áfrýjunarstefnu',
+                  text: isEdit
+                    ? 'Vista áfrýjunarstefnu'
+                    : 'Gefa út áfrýjunarstefnu',
                   onClick: handleSave,
                   disabled: !isAppealSummonsFormReady(sections) || isSaving,
                   loading: isSaving,
