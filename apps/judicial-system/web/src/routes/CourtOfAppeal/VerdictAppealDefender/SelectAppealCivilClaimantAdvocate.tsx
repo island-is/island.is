@@ -9,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  AppealAppointmentLetterButton,
   BlueBox,
   FormContext,
   IconButton,
@@ -235,6 +236,10 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             type="success"
           />
         )}
+        {/* Only a réttargæslumaður is appointed by the court, so a claimant
+        who engaged a lögmaður of their own gets no row - the shared rule
+        decides, not this screen. */}
+        <AppealAppointmentLetterButton civilClaimant={civilClaimant} />
         {hasSpokesperson && !isConfirmed && (
           <Box display="flex" justifyContent="flexEnd">
             <Button
