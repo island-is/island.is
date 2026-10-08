@@ -5,11 +5,11 @@ import {
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
-import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { ApplicationAnswers } from '../lib/dataSchema'
 import * as m from '../lib/messages'
 import { PaymentFrequency } from './constants'
+import { formatIsDate, formatIsDateOrDash } from './formatters'
 import {
   getPersistedRecords,
   toCapitalIncomeRow,
@@ -20,9 +20,6 @@ import {
   toSocialInsuranceRow,
 } from './persistedRows'
 import { splitPersisted } from './reconcile'
-
-const formatDateStr = (dateStr: string | undefined): string =>
-  dateStr ? format(new Date(dateStr), 'dd.MM.yyyy') : ''
 
 const getOptionLabel = (
   options: Array<{ id?: string; name?: string }> | undefined,
@@ -151,12 +148,12 @@ export const getCasualWorkOverviewItems = (
     {
       width: 'half',
       keyText: m.application.dateFrom,
-      valueText: formatDateStr(entry.dateFrom),
+      valueText: formatIsDate(entry.dateFrom),
     },
     {
       width: 'half',
       keyText: m.application.dateTo,
-      valueText: formatDateStr(entry.dateTo),
+      valueText: formatIsDateOrDash(entry.dateTo),
     },
     {
       width: 'half',
@@ -196,7 +193,12 @@ export const getPartTimeOverviewItems = (
     {
       width: 'half',
       keyText: m.application.jobStart,
-      valueText: formatDateStr(entry.jobStart),
+      valueText: formatIsDate(entry.jobStart),
+    },
+    {
+      width: 'half',
+      keyText: m.application.jobEnd,
+      valueText: formatIsDateOrDash(entry.jobEnd),
     },
     {
       width: 'half',
@@ -230,12 +232,12 @@ export const getContractWorkOverviewItems = (
     {
       width: 'half',
       keyText: m.application.overviewContractWorkStart,
-      valueText: formatDateStr(entry.contractJobStart),
+      valueText: formatIsDate(entry.contractJobStart),
     },
     {
       width: 'half',
       keyText: m.application.overviewContractWorkEnd,
-      valueText: formatDateStr(entry.workEnds),
+      valueText: formatIsDateOrDash(entry.workEnds),
     },
   ])
 }
@@ -281,6 +283,16 @@ export const getPensionOverviewItems = (
       keyText: m.application.overviewAmountPerMonth,
       valueText: formatCurrency(entry.amountPerMonth),
     },
+    {
+      width: 'half',
+      keyText: m.application.dateFrom,
+      valueText: formatIsDate(entry.dateFrom),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateTo,
+      valueText: formatIsDateOrDash(entry.dateTo),
+    },
   ])
 }
 
@@ -322,6 +334,16 @@ export const getCapitalIncomeOverviewItems = (
       keyText: m.application.paymentFrequency,
       valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
     },
+    {
+      width: 'half',
+      keyText: m.application.dateFrom,
+      valueText: formatIsDate(entry.dateFrom),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateTo,
+      valueText: formatIsDateOrDash(entry.dateTo),
+    },
   ])
 }
 
@@ -362,6 +384,16 @@ export const getSocialInsuranceOverviewItems = (
       width: 'half',
       keyText: m.application.paymentFrequency,
       valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateFrom,
+      valueText: formatIsDate(entry.dateFrom),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateTo,
+      valueText: formatIsDateOrDash(entry.dateTo),
     },
   ])
 }
