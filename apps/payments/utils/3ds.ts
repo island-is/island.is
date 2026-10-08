@@ -28,6 +28,17 @@ const renderHiddenInputs = (fields: FormField[]) =>
     )
     .join('')
 
+// Only load the gateway script from the gateway's own https domain (the CSP
+// enforces the same host for scripts).
+const isGatewayScriptUrl = (url: string) => {
+  try {
+    const { protocol, hostname } = new URL(url)
+    return protocol === 'https:' && hostname.endsWith('.valitor.com')
+  } catch {
+    return false
+  }
+}
+
 // Builds the custom 3DS redirection form. Rapyd requires merchants using
 // postUrl + verificationFields to run the form with the gateway script from
 // `scriptPath`, unchanged and from its remote location, and to perform the 3DS
@@ -50,9 +61,6 @@ export const generateFormHtml = ({
     verificationFields.find((field) => field.name === '_charset_')?.value ||
     'UTF-8'
 
-  const hasTdsMethod = !!tdsMethodPostUrl && !!tdsMethodFields?.length
-  const hasTxidField = verificationFields.some((field) => field.name === 'txid')
-
   const tdsMethodHtml =
     tdsMethodPostUrl && tdsMethodFields?.length
       ? `
@@ -66,11 +74,23 @@ export const generateFormHtml = ({
       </form>`
       : ''
 
+  // The gateway script writes the 3DS Method outcome into a txid input
+  const needsTxidField =
+    !!tdsMethodHtml &&
+    !verificationFields.some((field) => field.name === 'txid')
+
+  if (scriptPath && !isGatewayScriptUrl(scriptPath)) {
+    console.error('Ignoring 3DS scriptPath outside the gateway domain')
+  }
+
   // The gateway script submits the form itself (after the 3DS Method when
   // present). Our own submit script is only a fallback for responses without
-  // a scriptPath. Both are external files, inline scripts are blocked by CSP.
+  // a usable scriptPath. Both are external files, inline scripts are blocked
+  // by CSP.
   const submitScriptSrc =
-    scriptPath || `${basepath ?? ''}/scripts/submitForm.js`
+    scriptPath && isGatewayScriptUrl(scriptPath)
+      ? scriptPath
+      : `${basepath ?? ''}/scripts/submitForm.js`
 
   return `
       <div id="flowType" data-value="${escapeHtml(
@@ -81,11 +101,7 @@ export const generateFormHtml = ({
         postUrl,
       )}" method="POST" accept-charset="${escapeHtml(charset)}">
         ${renderHiddenInputs(verificationFields)}
-        ${
-          hasTdsMethod && !hasTxidField
-            ? '<input type="hidden" name="txid" value="">'
-            : ''
-        }
+        ${needsTxidField ? '<input type="hidden" name="txid" value="">' : ''}
         <input type="submit" style="display: none;" />
       </form>
       <script src="${escapeHtml(submitScriptSrc)}"></script>

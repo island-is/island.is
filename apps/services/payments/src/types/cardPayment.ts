@@ -2,6 +2,10 @@ import { z } from 'zod'
 
 export interface CachePaymentFlowStatus {
   isVerified?: boolean
+  // Set when the 3DS result for the current attempt came back without
+  // authentication data, so the client can stop waiting
+  isFailed?: boolean
+  // Correlation id of the current verification attempt for the payment flow
   correlationId?: string
 }
 

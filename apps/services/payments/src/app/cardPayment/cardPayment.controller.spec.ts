@@ -25,6 +25,7 @@ import { AppModule } from '../app.module'
 import { CreatePaymentFlowInput } from '../paymentFlow/dtos/createPaymentFlow.input'
 import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { CardPaymentService } from './cardPayment.service'
 import {
@@ -443,11 +444,103 @@ describe('CardPaymentController', () => {
         .post('/v1/payments/card/verify')
         .send(verifyPayload)
 
-      expect(response.status).toBe(200)
+      expect(response.status).toBe(201)
       expect(response.body).toMatchObject(tdsMethodData)
-      expect(await cacheManager.get(paymentFlowId)).toBeFalsy()
+      // The previous attempt's verified status is replaced by the new attempt
+      expect(await cacheManager.get(paymentFlowId)).toEqual({
+        isVerified: false,
+        correlationId: expect.any(String),
+      })
+      const currentStatus = (await cacheManager.get(paymentFlowId)) as {
+        correlationId?: string
+      }
+      expect(currentStatus.correlationId).not.toBe('previous-attempt')
 
       fetchSpy.mockRestore()
+    })
+
+    describe('verify-callback-failed', () => {
+      const startAttempt = async (correlationId: string) => {
+        await cacheManager.set(correlationId, { paymentFlowId })
+        await cacheManager.set(paymentFlowId, {
+          isVerified: false,
+          correlationId,
+        })
+        return generateMd({
+          correlationId,
+          paymentsTokenSigningSecret: TOKEN_SIGNING_SECRET,
+          paymentsTokenSigningAlgorithm: TOKEN_SIGNING_ALGORITHM,
+        })
+      }
+
+      const getFailedVerificationEvents = () =>
+        app
+          .get<typeof PaymentFlowEvent>(getModelToken(PaymentFlowEvent))
+          .findAll({
+            where: {
+              paymentFlowId,
+              reason: 'payment_failed',
+              message: 'Card verification failed (mdStatus: 96)',
+            },
+          })
+
+      beforeEach(async () => {
+        // logPaymentFlowUpdate is spied on a different service instance than the
+        // one the controller uses, so assert on the stored flow events instead
+        logPaymentFlowUpdateSpy.mockRestore()
+        await app
+          .get<typeof PaymentFlowEvent>(getModelToken(PaymentFlowEvent))
+          .destroy({ where: { paymentFlowId, reason: 'payment_failed' } })
+      })
+
+      it('marks the current attempt as failed so the client stops waiting', async () => {
+        const md = await startAttempt(uuid())
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md, mdStatus: '96', callbackSource: 'Fallback' })
+
+        expect(response.status).toBe(201)
+        expect(response.body).toEqual({ paymentFlowId })
+
+        const status = await server.get(
+          `/v1/payments/card/verification-status/${paymentFlowId}`,
+        )
+        expect(status.body).toEqual({ isVerified: false, isFailed: true })
+
+        const events = await getFailedVerificationEvents()
+        expect(events).toHaveLength(1)
+        expect(events[0].metadata).toEqual({
+          mdStatus: '96',
+          callbackSource: 'Fallback',
+        })
+      })
+
+      it('ignores a failed result from an earlier attempt', async () => {
+        const earlierMd = await startAttempt(uuid())
+        // The payer retried before the earlier result arrived
+        await startAttempt(uuid())
+
+        const response = await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md: earlierMd, mdStatus: '96' })
+
+        expect(response.status).toBe(201)
+
+        const status = await server.get(
+          `/v1/payments/card/verification-status/${paymentFlowId}`,
+        )
+        expect(status.body).toEqual({ isVerified: false, isFailed: false })
+        expect(await getFailedVerificationEvents()).toHaveLength(0)
+      })
+
+      it('rejects an invalid md', async () => {
+        const response = await server
+          .post('/v1/payments/card/verify-callback-failed')
+          .send({ md: 'not-a-valid-md', mdStatus: '96' })
+
+        expect(response.status).toBe(400)
+      })
     })
 
     it('should throw an error in verification callback if correlation id is not found in cache', async () => {

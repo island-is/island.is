@@ -47,6 +47,7 @@ export const GetVerificationStatus = gql`
   query getVerificationStatus($input: GetPaymentFlowInput!) {
     paymentsGetVerificationStatus(input: $input) {
       isVerified
+      isFailed
     }
   }
 `

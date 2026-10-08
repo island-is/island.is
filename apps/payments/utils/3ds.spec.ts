@@ -55,6 +55,22 @@ describe('generateFormHtml', () => {
     )
   })
 
+  it('ignores a scriptPath outside the gateway domain', () => {
+    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+
+    for (const scriptPath of [
+      'https://evil.example/red.js',
+      'http://rapyd3ds.uat.valitor.com/red.js',
+      'https://valitor.com.evil.example/red.js',
+      'not a url',
+    ]) {
+      const container = render({ ...baseData, scriptPath })
+      expect(container.querySelector('script')?.getAttribute('src')).toBe(
+        '/greida/scripts/submitForm.js',
+      )
+    }
+  })
+
   it('renders the 3DS Method iframe and form when the gateway requires it', () => {
     const container = render({
       ...baseData,

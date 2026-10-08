@@ -123,6 +123,20 @@ export class PaymentsResolver {
     }
   }
 
+  @Mutation(() => CardVerificationResponse, {
+    name: 'paymentsVerificationCallbackFailed',
+  })
+  async verificationCallbackFailed(
+    @Args('input', { type: () => CardVerificationCallbackInput })
+    input: CardVerificationCallbackInput,
+  ): Promise<CardVerificationResponse> {
+    try {
+      return this.paymentsService.verifyCardCallbackFailed(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
   @Mutation(() => ChargeCardResponse, { name: 'paymentsChargeCard' })
   async chargeCard(
     @Args('input', { type: () => ChargeCardInput })

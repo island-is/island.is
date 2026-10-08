@@ -26,6 +26,16 @@ export const VerifyCardMutation = gql`
   }
 `
 
+export const VerificationCallbackFailedMutation = gql`
+  mutation verificationCallbackFailed(
+    $input: PaymentsCardVerificationCallbackInput!
+  ) {
+    paymentsVerificationCallbackFailed(input: $input) {
+      paymentFlowId
+    }
+  }
+`
+
 export const VerificationCallbackMutation = gql`
   mutation verificationCallback(
     $input: PaymentsCardVerificationCallbackInput!

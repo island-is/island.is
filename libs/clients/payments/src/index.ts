@@ -5,6 +5,7 @@ export {
   GetPaymentFlowDTO,
   VerificationStatusResponse,
   VerificationCallbackInput,
+  VerificationCallbackFailedInput,
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   ChargeCardInput,
   VerifyCardInput,

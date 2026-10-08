@@ -1,3 +1,4 @@
+import type { ApolloError } from '@apollo/client'
 import { sign } from 'jsonwebtoken'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
@@ -10,6 +11,9 @@ import {
   VerificationCallbackMutation,
   VerificationCallbackMutationVariables,
   VerificationCallbackDocument,
+  VerificationCallbackFailedMutation,
+  VerificationCallbackFailedMutationVariables,
+  VerificationCallbackFailedDocument,
 } from '../../../graphql/mutations.graphql.generated'
 
 // The 3-D Secure ACS posts the verification result here as
@@ -30,10 +34,15 @@ const VerificationCallbackSchema = z.object({
 // Non-sensitive 3DS outcome fields from the gateway callback, logged to triage
 // failures. `callbackSource` tells whether the result came from the cardholder's
 // browser, the gateway server, or a server "Fallback" after the ACS did not respond.
-// Never log cavv, xid, MD, dsTransId or cardholderInfo.
+// Never log cavv, xid, MD, dsTransId or cardholderInfo. Values come from an
+// external POST, so they are capped in length.
+const MAX_DIAGNOSTIC_LENGTH = 64
+
 const getCallbackDiagnostics = (body: Record<string, unknown>) => {
   const read = (key: string) =>
-    typeof body[key] === 'string' && body[key] ? (body[key] as string) : null
+    typeof body[key] === 'string' && body[key]
+      ? (body[key] as string).slice(0, MAX_DIAGNOSTIC_LENGTH)
+      : null
 
   return {
     mdStatus: read('mdStatus'),
@@ -42,6 +51,70 @@ const getCallbackDiagnostics = (body: Record<string, unknown>) => {
     transStatusReason: read('TDS2.transStatusReason'),
     authType: read('authType'),
     threeDSMessageVersion: read('threeDSMessageVersion'),
+  }
+}
+
+// findProblemInApolloError expects an ApolloError and throws on anything else
+// (e.g. a network error), which would turn a handled failure into a 500.
+const getErrorDetail = (e: unknown) => {
+  const problem =
+    e && typeof e === 'object' && 'graphQLErrors' in e
+      ? findProblemInApolloError(e as ApolloError)
+      : undefined
+  return problem?.detail ?? (e instanceof Error ? e.message : 'unknown error')
+}
+
+// Tells the payments service that the current 3DS attempt failed, so the payment
+// page stops waiting. The result may come from the gateway server rather than the
+// payer's browser, in which case the 3DS iframe never shows our failure page and
+// this is the only way the payment page finds out. Best effort: the payer is sent
+// to the failure page either way.
+const reportFailedVerification = async (body: Record<string, unknown>) => {
+  const md = typeof body.MD === 'string' ? body.MD : ''
+
+  if (!md) {
+    return
+  }
+
+  const {
+    mdStatus,
+    callbackSource,
+    transStatus,
+    transStatusReason,
+  } = getCallbackDiagnostics(body)
+
+  const { verificationCallbackSigningSecret } = getServerRuntimeEnv()
+
+  const verificationToken = sign(
+    {
+      md,
+      mdStatus: mdStatus ?? undefined,
+      callbackSource: callbackSource ?? undefined,
+      transStatus: transStatus ?? undefined,
+      transStatusReason: transStatusReason ?? undefined,
+    },
+    verificationCallbackSigningSecret,
+  )
+
+  try {
+    const { errors } = await initApollo().mutate<
+      VerificationCallbackFailedMutation,
+      VerificationCallbackFailedMutationVariables
+    >({
+      mutation: VerificationCallbackFailedDocument,
+      variables: { input: { verificationToken } },
+    })
+
+    if (errors) {
+      console.error(
+        'Card verification callback: failed-verification mutation returned errors',
+      )
+    }
+  } catch (e) {
+    console.error(
+      'Card verification callback: failed-verification mutation failed',
+      { detail: getErrorDetail(e) },
+    )
   }
 }
 
@@ -95,6 +168,8 @@ export default async function cardVerificationCallbackHandler(
       },
     )
 
+    await reportFailedVerification(body)
+
     return res.redirect(303, FAILURE_REDIRECT)
   }
 
@@ -144,10 +219,8 @@ export default async function cardVerificationCallbackHandler(
 
     return res.redirect(303, SUCCESS_REDIRECT)
   } catch (e) {
-    const problem = findProblemInApolloError(e)
     console.error('Card verification callback: verify mutation failed', {
-      detail:
-        problem?.detail ?? (e instanceof Error ? e.message : 'unknown error'),
+      detail: getErrorDetail(e),
     })
     return res.redirect(303, FAILURE_REDIRECT)
   }

@@ -9,6 +9,7 @@ import {
   PaymentsApi,
   VerificationStatusResponse,
   VerificationCallbackInput,
+  VerificationCallbackFailedInput,
   GetPaymentFlowDTOBankTransferPendingStatusEnum,
   GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOPaymentStatusEnum,
@@ -156,6 +157,40 @@ export class PaymentsService {
         md,
         mdStatus,
         dsTransId,
+      },
+    })
+  }
+
+  async verifyCardCallbackFailed(
+    cardVerificationInput: CardVerificationCallbackInput,
+  ): Promise<CardVerificationResponse> {
+    const { verificationToken } = cardVerificationInput
+
+    let decoded: null | VerificationCallbackFailedInput = null
+
+    try {
+      decoded = verify(
+        verificationToken,
+        this.config.verificationCallbackSigningSecret,
+      ) as VerificationCallbackFailedInput
+    } catch (e) {
+      // pass
+    }
+
+    if (!decoded?.md) {
+      throw new Error('Invalid verification token')
+    }
+
+    const { md, mdStatus, callbackSource, transStatus, transStatusReason } =
+      decoded
+
+    return this.paymentsApi.cardPaymentControllerVerificationCallbackFailed({
+      verificationCallbackFailedInput: {
+        md,
+        mdStatus,
+        callbackSource,
+        transStatus,
+        transStatusReason,
       },
     })
   }

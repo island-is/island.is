@@ -52,6 +52,7 @@ import {
   ChargeCardInput,
   ChargeCardResponse,
   GetVerificationStatus,
+  VerificationCallbackFailedInput,
   VerificationCallbackInput,
   VerificationCallbackResponse,
   VerificationStatusResponse,
@@ -179,6 +180,18 @@ export class CardPaymentController {
         paymentFlowId,
       }
     } catch (e) {
+      // Let the client stop waiting instead of polling until it times out
+      await this.cardPaymentService
+        .markVerificationFailed({
+          paymentFlowId,
+          correlationId,
+        })
+        .catch((markError) =>
+          this.logger.warn(
+            `[${paymentFlowId}] Failed to mark verification as failed: ${markError.message}`,
+          ),
+        )
+
       try {
         await this.paymentFlowService.logPaymentFlowUpdate({
           paymentFlowId,
@@ -207,6 +220,56 @@ export class CardPaymentController {
     }
   }
 
+  @Post('/verify-callback-failed')
+  @ApiOkResponse({
+    type: VerificationCallbackResponse,
+  })
+  async verificationCallbackFailed(
+    @Body() input: VerificationCallbackFailedInput,
+  ): Promise<VerificationCallbackResponse> {
+    const { md, ...outcome } = input
+    const { correlationId } = this.cardPaymentService.getMdPayload(md)
+    const { paymentFlowId } =
+      await this.cardPaymentService.getSavedVerificationPendingData(
+        correlationId,
+      )
+
+    const isCurrentAttempt =
+      await this.cardPaymentService.markVerificationFailed({
+        paymentFlowId,
+        correlationId,
+      })
+
+    if (!isCurrentAttempt) {
+      this.logger.info(
+        `[${paymentFlowId}] Ignoring failed card verification result from an earlier attempt`,
+        outcome,
+      )
+      return { paymentFlowId }
+    }
+
+    try {
+      await this.paymentFlowService.logPaymentFlowUpdate({
+        paymentFlowId,
+        type: 'update',
+        occurredAt: new Date(),
+        paymentMethod: PaymentMethod.CARD,
+        reason: 'payment_failed',
+        message: `Card verification failed (mdStatus: ${
+          outcome.mdStatus ?? 'none'
+        })`,
+        metadata: outcome,
+      })
+    } catch (logError) {
+      this.logger.warn(
+        `[${paymentFlowId}] Failed to log payment flow update after failed card verification: ${logError.message}`,
+        { paymentFlowId, logError },
+      )
+    }
+
+    return { paymentFlowId }
+  }
+
   @Get('/verification-status/:paymentFlowId')
   @ApiOkResponse({
     type: VerificationStatusResponse,
@@ -221,6 +284,7 @@ export class CardPaymentController {
 
     return {
       isVerified: paymentFlowStatus?.isVerified === true,
+      isFailed: paymentFlowStatus?.isFailed === true,
     }
   }
 

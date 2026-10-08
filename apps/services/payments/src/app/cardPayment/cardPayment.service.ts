@@ -127,14 +127,23 @@ export class CardPaymentService {
       paymentFlowId,
     }
 
-    // A previous attempt may have left the flow marked as verified (the status is
-    // only cleared after a successful charge). Clear it so the client waits for
-    // this attempt's 3DS result instead of charging with stale verification data.
-    await this.cacheManager.del(paymentFlowId)
-
     await this.cacheManager.set(
       correlationId,
       savedVerificationPendingData,
+      memCacheExpiryMinutes * 60000,
+    )
+
+    // Make this the current attempt for the flow. This replaces any status left
+    // by a previous attempt (only cleared after a successful charge), so the
+    // client waits for this attempt's 3DS result instead of charging with stale
+    // verification data, and late results from earlier attempts are ignored.
+    const currentAttemptStatus: CachePaymentFlowStatus = {
+      isVerified: false,
+      correlationId,
+    }
+    await this.cacheManager.set(
+      paymentFlowId,
+      currentAttemptStatus,
       memCacheExpiryMinutes * 60000,
     )
 
@@ -266,11 +275,44 @@ export class CardPaymentService {
   async getVerificationStatus(paymentFlowId: string) {
     const status = await this.getFullVerificationStatus(paymentFlowId)
 
-    const isVerified = status?.isVerified === true
-
     return {
-      isVerified,
+      isVerified: status?.isVerified === true,
+      isFailed: status?.isFailed === true,
     }
+  }
+
+  /**
+   * Marks the current verification attempt as failed so the client stops
+   * waiting. Returns false when the result belongs to an earlier attempt (the
+   * payer already retried), in which case nothing is changed.
+   */
+  async markVerificationFailed({
+    paymentFlowId,
+    correlationId,
+  }: {
+    paymentFlowId: string
+    correlationId: string
+  }): Promise<boolean> {
+    const status = await this.getFullVerificationStatus(paymentFlowId)
+
+    if (status?.correlationId !== correlationId) {
+      return false
+    }
+
+    await this.cacheManager.del(correlationId)
+
+    const failedStatus: CachePaymentFlowStatus = {
+      isVerified: false,
+      isFailed: true,
+      correlationId,
+    }
+    await this.cacheManager.set(
+      paymentFlowId,
+      failedStatus,
+      this.config.memCacheExpiryMinutes * 60000,
+    )
+
+    return true
   }
 
   // PAYMENT FLOW METHODS ------------------------------------------------------------------------------------------------
