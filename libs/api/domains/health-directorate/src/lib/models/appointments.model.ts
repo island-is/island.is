@@ -144,4 +144,7 @@ export class Appointment {
 export class Appointments {
   @Field(() => [Appointment], { nullable: true })
   data?: Appointment[]
+
+  @Field(() => Int, { nullable: true })
+  totalCount?: number
 }
