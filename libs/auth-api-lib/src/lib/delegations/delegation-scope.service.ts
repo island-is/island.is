@@ -31,6 +31,7 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
 import { DelegationConfirmationStatus } from '../delegation-confirmation/types/delegation-confirmation-status'
+import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { validateDistrictCommissionersDelegations } from './utils/delegations'
@@ -45,10 +46,11 @@ export type CreateScopesOptions =
   /** The confirmed confirmation these scopes were redeemed under. */
   | { confirmationId: string }
   /**
-   * The grantor does not have delegation confirmation (the feature flag is off
-   * for them), so a marked scope is granted as it always was.
+   * Who is granting. If confirmation is not required of them (see
+   * DelegationConfirmationPolicy), a marked scope is granted as it always was;
+   * the guard decides that itself.
    */
-  | { confirmationNotRequired: true }
+  | { grantor: User }
 
 @Injectable()
 export class DelegationScopeService {
@@ -69,6 +71,7 @@ export class DelegationScopeService {
     private readonly syslumennService: SyslumennService,
     private readonly delegationsIndexService: DelegationsIndexService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly delegationConfirmationPolicy: DelegationConfirmationPolicy,
   ) {}
 
   async createOrUpdate(
@@ -104,10 +107,6 @@ export class DelegationScopeService {
     transaction?: Transaction,
     options?: CreateScopesOptions,
   ): Promise<void> {
-    if (options && 'confirmationNotRequired' in options) {
-      return
-    }
-
     const sensitiveScopes = await this.apiScopeModel.findAll({
       attributes: ['name'],
       where: {
@@ -123,7 +122,16 @@ export class DelegationScopeService {
 
     const sensitiveNames = sensitiveScopes.map((scope) => scope.name)
 
-    if (!options) {
+    // Decided here, not taken from the caller.
+    if (
+      options &&
+      'grantor' in options &&
+      !(await this.delegationConfirmationPolicy.isRequired(options.grantor))
+    ) {
+      return
+    }
+
+    if (!options || !('confirmationId' in options)) {
       throw new Error(
         `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveNames.join(
           ', ',

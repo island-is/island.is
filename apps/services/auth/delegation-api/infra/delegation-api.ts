@@ -36,6 +36,14 @@ export const serviceSetup = (services: {
       name: 'servicesauth',
     })
     .env({
+      // Off: sensitive scopes are granted as before. On: the
+      // isDelegationConfirmationEnabled flag decides, and failing to read it
+      // means confirmation is required. The flag must exist (false) first.
+      DELEGATION_CONFIRMATION_ENABLED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',

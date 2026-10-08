@@ -52,6 +52,7 @@ import { PendingConfirmationDTO } from '../delegation-confirmation/dto/delegatio
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import type { CreateScopesOptions } from './delegation-scope.service'
 import { Domain } from '../resources/models/domain.model'
+import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 
 /**
  * Discriminated result for the PATCH endpoint. Controllers translate the
@@ -97,6 +98,7 @@ export class DelegationsOutgoingService {
     private namesService: NamesService,
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
+    private delegationConfirmationPolicy: DelegationConfirmationPolicy,
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -465,19 +467,10 @@ export class DelegationsOutgoingService {
       return { grantable: scopes }
     }
 
-    const confirmationEnabled = await this.featureFlagService.getValue(
-      Features.isDelegationConfirmationEnabled,
-      false,
-      user,
-    )
-
     // Without the feature, a scope marked for confirmation is granted as it
-    // always was. Said explicitly, so the guard below every write knows.
-    if (!confirmationEnabled) {
-      return {
-        grantable: scopes,
-        writeOptions: { confirmationNotRequired: true },
-      }
+    // always was. The guard below every write decides that again for itself.
+    if (!(await this.delegationConfirmationPolicy.isRequired(user))) {
+      return { grantable: scopes, writeOptions: { grantor: user } }
     }
 
     const sensitiveScopeNames =

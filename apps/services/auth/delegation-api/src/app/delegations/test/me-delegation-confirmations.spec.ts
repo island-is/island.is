@@ -8,10 +8,12 @@ import request from 'supertest'
 import {
   Delegation,
   DelegationConfirmation,
+  DelegationConfirmationPolicy,
   DelegationConfirmationService,
   DelegationConfirmationStatus,
   DelegationResourcesService,
   DelegationScope,
+  DelegationScopeService,
   DelegationsIndexService,
   DelegationsOutgoingService,
   Domain,
@@ -229,6 +231,57 @@ describe('MeDelegationConfirmationsController', () => {
       expect(res.status).toEqual(201)
       expect(res.body.pendingConfirmations).toBeUndefined()
       expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
+    })
+
+    it('holds a sensitive scope when the flag cannot be read', async () => {
+      // Arrange — ConfigCat unreachable: the client answers with the default.
+      jest
+        .spyOn(app.get(FeatureFlagService), 'getValue')
+        .mockImplementation(async (_feature, defaultValue) => defaultValue)
+
+      // Act
+      const res = await grant([SENSITIVE_SCOPE])
+
+      // Assert — an outage must not hand out sensitive scopes in one click.
+      expect(res.status).toEqual(201)
+      expect(res.body.pendingConfirmations).toHaveLength(1)
+      expect(await scopeNamesInDb()).toEqual([])
+    })
+
+    it('grants a sensitive scope as before while switched off in the environment', async () => {
+      // Arrange — the flag says yes, but the environment says no.
+      jest
+        .spyOn(app.get(DelegationConfirmationPolicy), 'isRequired')
+        .mockResolvedValue(false)
+
+      // Act
+      const res = await grant([SENSITIVE_SCOPE])
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(res.body.pendingConfirmations).toBeUndefined()
+      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
+    })
+
+    it('refuses to write a sensitive scope on the word of its caller alone', async () => {
+      // Arrange — a write path claiming the grantor need not confirm, while
+      // the policy says they must.
+      const user = createCurrentUser({ nationalId: grantorNationalId })
+      const { body: delegation } = await grant([ORDINARY_SCOPE])
+
+      // Act
+      const write = app
+        .get(DelegationScopeService)
+        .createOrUpdate(
+          delegation.id,
+          [{ name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) }],
+          undefined,
+          { grantor: user },
+        )
+
+      // Assert — the guard asks the policy itself.
+      await expect(write).rejects.toThrow(/without a redeemed confirmation/)
+      expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
     })
 
     it('refuses sensitive scopes from a session logged in with an ID card', async () => {

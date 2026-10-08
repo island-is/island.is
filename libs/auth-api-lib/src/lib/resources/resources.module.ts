@@ -33,6 +33,7 @@ import { ResourcesService } from './resources.service'
 import { ScopeService } from './scope.service'
 import { TenantsService } from './tenants.service'
 import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
+import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
     ResourceAccessService,
     ResourceTranslationService,
     DelegationResourcesService,
+    DelegationConfirmationPolicy,
     TenantsService,
     ScopeService,
   ],
@@ -77,6 +79,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
     ResourcesService,
     ResourceAccessService,
     DelegationResourcesService,
+    DelegationConfirmationPolicy,
     TenantsService,
     ScopeService,
   ],
