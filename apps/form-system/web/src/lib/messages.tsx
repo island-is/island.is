@@ -28,4 +28,9 @@ export const m = defineMessages({
     defaultMessage: 'Endurhlaða síðu',
     description: 'Button that reloads the page after an unexpected error',
   },
+  myApplications: {
+    id: 'form.system:myApplications',
+    defaultMessage: 'Fara í þínar umsóknir',
+    description: 'Button that opens the user application overview',
+  },
 })
