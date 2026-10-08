@@ -168,4 +168,44 @@ describe('VerdictAppealFiles', () => {
       ).not.toBeInTheDocument()
     })
   })
+
+  // Which parties get a letter is covered in the logic spec; what is left here
+  // is that the row reaches the page and opens the pdf route rather than a
+  // stored file.
+  describe('the letter of appointment', () => {
+    const confirmed = (caseFiles: Case['caseFiles']): Case => {
+      const base = theCase(caseFiles, 'Vaka Dagsdóttir')
+
+      return {
+        ...base,
+        defendants: (base.defendants ?? []).map((defendant) => ({
+          ...defendant,
+          isAppealDefenderConfirmed: true,
+        })),
+        verdictAppealCase: {
+          id: 'verdict_appeal_id',
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.APPEALED,
+        },
+      }
+    }
+
+    it('should offer the court of appeals a row per confirmed advocate', async () => {
+      renderSection(confirmed([]), UserRole.COURT_OF_APPEALS_JUDGE)
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Skipunarbréf Vaka Dagsdóttir.pdf'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByTestId('appealAppointmentLetterPDFButton'),
+      ).toBeInTheDocument()
+    })
+
+    it('should not offer it to a defender', () => {
+      renderSection(confirmed([]))
+
+      expect(screen.queryByText('Áfrýjunarferli')).not.toBeInTheDocument()
+    })
+  })
 })
