@@ -383,19 +383,7 @@ export const ScopesTable = ({
                       {scope.domain?.displayName || scope.domain?.name || '-'}
                     </Text>
                   </Box>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    columnGap={1}
-                    flexWrap="wrap"
-                  >
-                    <Text variant="medium">{scope.displayName}</Text>
-                    {scope.requiresConfirmation && (
-                      <Tag variant="red" disabled>
-                        {formatMessage(m.sensitiveScopeTag)}
-                      </Tag>
-                    )}
-                  </Box>
+                  <Text variant="medium">{scope.displayName}</Text>
                 </Box>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
@@ -424,7 +412,20 @@ export const ScopesTable = ({
                 </T.Data>
               )}
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{permissionType}</Text>
+                {/* The tag ends the row, as in the design. */}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="spaceBetween"
+                  columnGap={2}
+                >
+                  <Text variant="medium">{permissionType}</Text>
+                  {scope.requiresConfirmation && (
+                    <Tag variant="red" disabled>
+                      {formatMessage(m.sensitiveScopeTag)}
+                    </Tag>
+                  )}
+                </Box>
               </T.Data>
             </T.Row>
           )
