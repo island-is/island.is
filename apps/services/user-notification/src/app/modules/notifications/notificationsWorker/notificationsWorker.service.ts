@@ -229,16 +229,6 @@ export class NotificationsWorkerService {
       })
     }
 
-    // The delegate is the end receiver, so their own preference applies, not
-    // the original recipient's. ALWAYS SMS and forced minor-guardian SMS still
-    // bypass it (see buildSmsPayload).
-    const shouldSendNotification = this.shouldDeliverByPriority({
-      profile: delegateProfile,
-      priorityType: template.priorityType,
-      urgent: args.urgent,
-      messageId,
-    })
-
     const [formattedTemplate, recipientNames, onBehalfOfNames] =
       await Promise.all([
         this.notificationsService.formatArguments(
@@ -262,8 +252,7 @@ export class NotificationsWorkerService {
             messageId,
             nationalId: args.recipient,
             email: actorProfile.email,
-            emailNotifications:
-              actorProfile.emailNotifications && shouldSendNotification,
+            emailNotifications: actorProfile.emailNotifications,
             fullName:
               args.onBehalfOf?.name ||
               onBehalfOfNames?.fullName ||
@@ -277,8 +266,7 @@ export class NotificationsWorkerService {
         messageId,
         nationalId: args.recipient,
         mobilePhoneNumber: delegateProfile?.mobilePhoneNumber,
-        smsNotifications:
-          delegateProfile?.smsNotifications && shouldSendNotification,
+        smsNotifications: delegateProfile?.smsNotifications,
         formattedTemplate,
         fullName: recipientNames.shortName,
         onBehalfOf: onBehalfOfNames?.shortName,

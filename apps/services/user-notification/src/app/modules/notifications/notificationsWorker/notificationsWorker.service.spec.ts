@@ -1612,7 +1612,9 @@ describe('NotificationsWorkerService', () => {
     })
   })
 
-  describe('when a delegate declines informational notification', () => {
+  // Delegates will be handled specfically and these test might become relevant
+  // when the logic for them has been decided.
+  describe.skip('when a delegate declines informational notification', () => {
     // The delegate is the end receiver, so their own
     // onlyActionablePriorityNotifications decides, not the delegator's.
     const delegator = userWithDelegations
