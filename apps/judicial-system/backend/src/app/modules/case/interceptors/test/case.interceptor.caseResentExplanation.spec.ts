@@ -48,16 +48,18 @@ const makeCase = (theCase: Partial<Case>) =>
     caseFiles: undefined,
     prosecutor: undefined,
     civilClaimants: undefined,
-    caseStrings: undefined,
-    eventLogs: undefined,
-    parentCase: undefined,
-    childCase: undefined,
-    mergeCase: undefined,
-    mergedCases: undefined,
-    splitCase: undefined,
-    splitCases: undefined,
     ...theCase,
   } as unknown as Case)
+
+const sharedWithDefender = (share: RequestSharedWithDefender) => [
+  {
+    defenderNationalId: defender.nationalId,
+    requestSharedWithDefender: share,
+    toJSON() {
+      return this
+    },
+  },
+]
 
 const intercept = async (theCase: Case, user: User) => {
   const interceptor = new CaseInterceptor({
@@ -112,7 +114,9 @@ describe('CaseInterceptor - caseResentExplanation', () => {
     it('should hide the resent explanation when the case is not in an allowed state', async () => {
       const theCase = makeCase({
         state: CaseState.DRAFT,
-        requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        defendants: sharedWithDefender(
+          RequestSharedWithDefender.READY_FOR_COURT,
+        ),
       })
 
       const res = await intercept(theCase, defender)
@@ -123,7 +127,9 @@ describe('CaseInterceptor - caseResentExplanation', () => {
     it('should reveal the resent explanation when the request is shared and the case is in an allowed state', async () => {
       const theCase = makeCase({
         state: CaseState.SUBMITTED,
-        requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        defendants: sharedWithDefender(
+          RequestSharedWithDefender.READY_FOR_COURT,
+        ),
       })
 
       const res = await intercept(theCase, defender)
@@ -134,7 +140,7 @@ describe('CaseInterceptor - caseResentExplanation', () => {
     it('should hide the resent explanation when shared from the court date but no arraignment has been scheduled', async () => {
       const theCase = makeCase({
         state: CaseState.RECEIVED,
-        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        defendants: sharedWithDefender(RequestSharedWithDefender.COURT_DATE),
       })
 
       const res = await intercept(theCase, defender)
@@ -145,7 +151,7 @@ describe('CaseInterceptor - caseResentExplanation', () => {
     it('should reveal the resent explanation when shared from the court date and an arraignment has been scheduled', async () => {
       const theCase = makeCase({
         state: CaseState.RECEIVED,
-        requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        defendants: sharedWithDefender(RequestSharedWithDefender.COURT_DATE),
         dateLogs: [arraignmentDateLog],
       })
 
@@ -157,7 +163,7 @@ describe('CaseInterceptor - caseResentExplanation', () => {
     it('should reveal the resent explanation on a completed case that was never shared', async () => {
       const theCase = makeCase({
         state: CaseState.ACCEPTED,
-        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        defendants: sharedWithDefender(RequestSharedWithDefender.NOT_SHARED),
       })
 
       const res = await intercept(theCase, defender)
