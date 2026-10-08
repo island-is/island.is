@@ -209,11 +209,25 @@ export const OverviewFilter = ({
           <Box className={styles.title}>
             <Box
               className={cn({ [styles.titleShadow]: !atTop })}
+              display="flex"
+              alignItems="center"
+              justifyContent="spaceBetween"
+              columnGap={2}
               paddingBottom={3}
             >
               <Text variant="h4" as="h3" paddingY={1}>
                 {title}
               </Text>
+              <Box flexShrink={0}>
+                <Button
+                  icon="reload"
+                  size="small"
+                  variant="text"
+                  onClick={clear}
+                >
+                  {formatMessage(m.search.clearFilters)}
+                </Button>
+              </Box>
             </Box>
           </Box>
         )}
@@ -252,11 +266,6 @@ export const OverviewFilter = ({
                   {formatMessage(m.search.viewResults)}
                 </Button>
               </Box>
-            </Box>
-            <Box textAlign="right" paddingTop={2}>
-              <Button icon="reload" size="small" variant="text" onClick={clear}>
-                {formatMessage(m.search.clearFilters)}
-              </Button>
             </Box>
           </Box>
         </Box>
