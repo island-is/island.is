@@ -108,25 +108,19 @@ export const mapFetalHeartRate = (
 
 export const mapActivePregnancy = (
   dto: ActivePregnancyDto,
-): ActivePregnancy | null => {
-  if (!dto.id) {
-    return null
-  }
-
-  return {
-    id: dto.id,
-    startDate: dto.startDate ?? undefined,
-    dueDate: dto.dueDate ?? undefined,
-    gestationalWeeks: dto.lengthWeeks ?? undefined,
-    gestationalDays: dto.lengthDays ?? undefined,
-    numberOfEmbryos: dto.numberOfEmbryos ?? undefined,
-    motherName: dto.motherName ?? undefined,
-    partnerName: dto.partnerName ?? undefined,
-    staff: dto.staff ? dto.staff.map(mapPregnancyStaff).filter(isDefined) : [],
-    endedWithBirth: dto.endedWithBirth ?? undefined,
-    lastUpdated: dto.lastUpdated ?? undefined,
-  }
-}
+): ActivePregnancy => ({
+  id: dto.id,
+  startDate: dto.startDate ?? undefined,
+  dueDate: dto.dueDate ?? undefined,
+  gestationalWeeks: dto.lengthWeeks ?? undefined,
+  gestationalDays: dto.lengthDays ?? undefined,
+  numberOfEmbryos: dto.numberOfEmbryos ?? undefined,
+  motherName: dto.motherName ?? undefined,
+  partnerName: dto.partnerName ?? undefined,
+  staff: dto.staff ? dto.staff.map(mapPregnancyStaff).filter(isDefined) : [],
+  endedWithBirth: dto.endedWithBirth ?? undefined,
+  lastUpdated: dto.lastUpdated ?? undefined,
+})
 
 export const mapPregnancyCommunication = (
   dto: CommunicationDto,
@@ -184,14 +178,12 @@ const mapPhoneCallCommunicationDetail = (
 
 export const mapPregnancyCommunicationDetail = (
   dto: PregnancyCommunicationDetailDto,
-): PregnancyCommunicationDetail | null => {
+): PregnancyCommunicationDetail => {
   switch (dto.kind) {
     case CommunicationKind.EXAMINATION:
       return mapExaminationCommunicationDetail(dto)
     case CommunicationKind.PHONE_CALL:
       return mapPhoneCallCommunicationDetail(dto)
-    default:
-      return null
   }
 }
 
