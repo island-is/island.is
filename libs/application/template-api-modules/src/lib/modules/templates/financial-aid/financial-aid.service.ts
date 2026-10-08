@@ -17,22 +17,16 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
-  ApplicationModel,
-  ApplicationModelEmploymentEnum,
-  ApplicationModelFamilyStatusEnum,
-  ApplicationModelHomeCircumstancesEnum,
-  ApplicationModelStateEnum,
   MunicipalityApi,
   MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 
-import {
-  CreateApplicationOperationRequest,
-  CreateApplicationRequest,
-  ApplicationsApi as rvkApplicationsApi,
-} from '@island.is/clients/rvk-financial-aid'
+// import {
+//   CreateApplicationOperationRequest,
+//   ApplicationsApi as rvkApplicationsApi,
+// } from '@island.is/clients/rvk-financial-aid'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'

@@ -3,16 +3,32 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/rvk-financial-aid/src",
   "projectType": "library",
-  "tags": ["lib:client", "scope:client"],
+  "tags": [
+    "lib:client",
+    "scope:client"
+  ],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/rvk-financial-aid"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/rvk-financial-aid"
+      ],
       "options": {
         "jestConfig": "libs/clients/rvk-financial-aid/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl --fail --silent --show-error -H \"X-Road-Client: IS-DEV/MUN/10025/rvik-island-is-client\" http://localhost:8081/r1/IS-DEV/MUN/10025/rvik-veita-protected/veita-v1/islandis/swagger/v1/swagger.json -H 'Accept: application/json' -o src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/rvk-financial-aid"
       }
     },
     "codegen/backend-client": {
@@ -20,7 +36,9 @@
       "options": {
         "command": "yarn openapi-generator -o libs/clients/rvk-financial-aid/gen/fetch -i libs/clients/rvk-financial-aid/src/clientConfig.json --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      "outputs": [
+        "{projectRoot}/gen/fetch"
+      ]
     }
   }
 }

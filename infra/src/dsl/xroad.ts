@@ -1185,3 +1185,13 @@ export const RecyclingFund = new XroadConf({
     },
   },
 })
+
+export const RVKFinancialAid = new XroadConf({
+  env: {
+    XROAD_RVK_VEITA_PATH: {
+      dev: 'IS-DEV/MUN/10025/rvik-veita-protected/veita-v1/islandis/',
+      staging: 'IS-TEST/MUN/5302697609/rvik-veita-protected/veita-v1/islandis/',
+      prod: 'IS/MUN/5302697609/rvik-veita-protected/veita-v1/islandis/',
+    },
+  },
+})
