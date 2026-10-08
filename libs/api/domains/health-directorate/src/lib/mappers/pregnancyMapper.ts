@@ -176,14 +176,21 @@ const mapPhoneCallCommunicationDetail = (
   registeredBy: mapPregnancyCommunicationAuthor(dto.registeredBy),
 })
 
+const unexpectedCommunicationKind = (kind: never): never => {
+  throw new Error(`Unexpected pregnancy communication kind: ${kind}`)
+}
+
 export const mapPregnancyCommunicationDetail = (
   dto: PregnancyCommunicationDetailDto,
 ): PregnancyCommunicationDetail => {
-  switch (dto.kind) {
+  const { kind } = dto
+  switch (kind) {
     case CommunicationKind.EXAMINATION:
       return mapExaminationCommunicationDetail(dto)
     case CommunicationKind.PHONE_CALL:
       return mapPhoneCallCommunicationDetail(dto)
+    default:
+      return unexpectedCommunicationKind(kind)
   }
 }
 
