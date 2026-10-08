@@ -81,6 +81,26 @@ export function useStepUpLock(flag: string) {
     return () => clearTimeout(timer)
   }, [session, refresh])
 
+  // Refused by the server: what we know of the session is out of date, so ask
+  // again. The server's latest answer is the truth — if it now says open (e.g.
+  // after logging in again), the refusal no longer holds.
+  useEffect(() => {
+    if (requiredByServer) {
+      refresh()
+    }
+  }, [requiredByServer, refresh])
+  useEffect(() => {
+    if (
+      requiredByServer &&
+      networkStatus === NetworkStatus.ready &&
+      data?.stepUpSession.unlocked
+    ) {
+      stepUpStore.getState().markUnlocked()
+    }
+    // Only a new answer counts, not the one we already had.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, networkStatus])
+
   let state: StepUpLockState
   if (isRequired === null) {
     state = 'loading'
