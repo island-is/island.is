@@ -31,6 +31,8 @@ export const en: TranslatedMessages = {
   'applock.title': 'Enter a 4-digit PIN',
   'applock.attempts': 'attempts left',
   'applock.attempt': 'attempt left',
+  'applock.usePin': 'Use PIN',
+  'biometrics.cancel': 'Cancel',
 
   // onboarding
   'onboarding.notifications.title': 'Allow notifications',
