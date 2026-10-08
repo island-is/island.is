@@ -91,8 +91,15 @@ export interface AppealAppointmentLetterRow {
   elementId: string[]
 }
 
-const appointmentLetterName = (advocateName: string) =>
-  `Skipunarbréf ${advocateName}.pdf`
+const appointmentLetterRow = (
+  party: 'defendant' | 'civilClaimant',
+  partyId: string,
+  advocateName: string,
+): AppealAppointmentLetterRow => {
+  const name = `Skipunarbréf ${advocateName}.pdf`
+
+  return { key: `${party}-${partyId}`, name, elementId: [party, partyId, name] }
+}
 
 /**
  * The letters of appointment that currently stand - one per party whose
@@ -123,15 +130,11 @@ export const getAppealAppointmentLetters = (
   const defenderLetters = (workingCase.defendants ?? []).flatMap((defendant) =>
     defendant.isAppealDefenderConfirmed && defendant.appealDefenderName
       ? [
-          {
-            key: `defendant-${defendant.id}`,
-            name: appointmentLetterName(defendant.appealDefenderName),
-            elementId: [
-              'defendant',
-              defendant.id,
-              appointmentLetterName(defendant.appealDefenderName),
-            ],
-          },
+          appointmentLetterRow(
+            'defendant',
+            defendant.id,
+            defendant.appealDefenderName,
+          ),
         ]
       : [],
   )
@@ -142,15 +145,11 @@ export const getAppealAppointmentLetters = (
       !civilClaimant.appealSpokespersonIsLawyer &&
       civilClaimant.appealSpokespersonName
         ? [
-            {
-              key: `civilClaimant-${civilClaimant.id}`,
-              name: appointmentLetterName(civilClaimant.appealSpokespersonName),
-              elementId: [
-                'civilClaimant',
-                civilClaimant.id,
-                appointmentLetterName(civilClaimant.appealSpokespersonName),
-              ],
-            },
+            appointmentLetterRow(
+              'civilClaimant',
+              civilClaimant.id,
+              civilClaimant.appealSpokespersonName,
+            ),
           ]
         : [],
   )

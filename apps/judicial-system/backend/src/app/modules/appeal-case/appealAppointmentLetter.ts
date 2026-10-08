@@ -1,3 +1,5 @@
+import { AppealCaseState } from '@island.is/judicial-system/types'
+
 import {
   AppealAppointmentKind,
   type AppealAppointmentLetter,
@@ -7,9 +9,25 @@ import {
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
-/** How the letter lists someone in its copy line: name, then what they are. */
-const withTitle = (name?: string | null, title?: string | null) =>
-  name ? [name, title].filter(Boolean).join(' ') : undefined
+/**
+ * One name on the copy line, with the national id it is the same person by.
+ * The letter prints the name; the id is only how two entries are told apart,
+ * because one lawyer may act for several co-accused and two lawyers may share
+ * a name.
+ */
+interface CopyRecipient {
+  text: string
+  nationalId?: string | null
+}
+
+const recipient = (
+  name?: string | null,
+  title?: string | null,
+  nationalId?: string | null,
+): CopyRecipient | undefined =>
+  name
+    ? { text: [name, title].filter(Boolean).join(' '), nationalId }
+    : undefined
 
 /**
  * Who is copied on the letter.
@@ -23,6 +41,9 @@ const withTitle = (name?: string | null, title?: string | null) =>
  * their client is on the other side of the claim the spokesperson pursues, so
  * they have to know who it is. A defender's letter copies the prosecution
  * alone.
+ *
+ * Each person appears once. A lawyer acting for several co-accused is routine,
+ * and the letter would otherwise name them once per client.
  */
 const getCopyRecipients = (
   theCase: Case,
@@ -31,21 +52,43 @@ const getCopyRecipients = (
   const prosecutor: User | undefined =
     theCase.appealProsecutor ?? theCase.indictmentReviewer
 
-  const recipients = [withTitle(prosecutor?.name, prosecutor?.title)]
+  const recipients = [
+    recipient(prosecutor?.name, prosecutor?.title, prosecutor?.nationalId),
+  ]
 
   if (kind === AppealAppointmentKind.SPOKESPERSON) {
     recipients.push(
       ...(theCase.defendants ?? [])
         .filter((defendant) => defendant.isAppealDefenderConfirmed)
         .map((defendant) =>
-          withTitle(defendant.appealDefenderName, 'lögmaður'),
+          recipient(
+            defendant.appealDefenderName,
+            'lögmaður',
+            defendant.appealDefenderNationalId,
+          ),
         ),
     )
   }
 
-  return recipients.filter((recipient): recipient is string =>
-    Boolean(recipient),
-  )
+  const seen = new Set<string>()
+
+  return recipients.flatMap((entry) => {
+    if (!entry) {
+      return []
+    }
+
+    // Fall back to the printed line when no id is recorded: without one there
+    // is nothing better to tell two entries apart by than what they say.
+    const key = entry.nationalId ?? entry.text
+
+    if (seen.has(key)) {
+      return []
+    }
+
+    seen.add(key)
+
+    return [entry.text]
+  })
 }
 
 /**
@@ -71,7 +114,10 @@ export const buildAppealAppointmentLetter = (params: {
 
   const appealCase = theCase.verdictAppealCase
 
-  if (!appealCase) {
+  // The row persists after withdrawal, and is reused if someone re-appeals
+  // inside the deadline, so its presence alone does not mean an appeal stands.
+  // The screen stops offering the letter at the same point.
+  if (!appealCase || appealCase.appealState === AppealCaseState.WITHDRAWN) {
     return undefined
   }
 

@@ -356,6 +356,44 @@ describe('getAppealAppointmentLetters', () => {
     ).toEqual([])
   })
 
+  // "Ákærði óskar ekki eftir verjanda": the screen confirms the answer while
+  // clearing the name, so confirmed alone does not mean somebody was appointed.
+  it('offers nothing for a defendant who waived a defender', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Gervimaður Jónsson',
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+            },
+          ],
+        } as Partial<Case>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  it('offers nothing for a spokesperson the court has not confirmed', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: false,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<Case>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
   // A réttargæslumaður is appointed by the court; a lögmaður is hired by the
   // claimant, and the court does not appoint what it did not choose.
   it('offers nothing for a lawyer the claimant engaged', () => {

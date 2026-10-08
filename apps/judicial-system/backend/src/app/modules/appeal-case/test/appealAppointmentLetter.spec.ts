@@ -1,4 +1,7 @@
-import { AppealEventType } from '@island.is/judicial-system/types'
+import {
+  AppealCaseState,
+  AppealEventType,
+} from '@island.is/judicial-system/types'
 
 import { AppealAppointmentKind } from '../../../formatters/generatedPdfs/appealAppointmentLetterPdf'
 import {
@@ -140,6 +143,20 @@ describe('buildAppealAppointmentLetter', () => {
     ).toBeUndefined()
   })
 
+  // "Ákærði óskar ekki eftir verjanda": the screen confirms the answer while
+  // clearing the name, so confirmed alone does not mean somebody was appointed.
+  it('writes no letter for a defendant who waived a defender', () => {
+    expect(
+      buildAppealAppointmentLetter({
+        theCase: theCase(),
+        defendant: defendant({
+          isAppealDefenderWaived: true,
+          appealDefenderName: undefined,
+        }),
+      }),
+    ).toBeUndefined()
+  })
+
   // The letter is signed and dated by whoever confirmed the advocate, and the
   // party row keeps neither.
   it('writes no letter when nothing records the confirmation', () => {
@@ -147,6 +164,19 @@ describe('buildAppealAppointmentLetter', () => {
       buildAppealAppointmentLetter({
         theCase: theCase({
           verdictAppealCase: appealCase({ appealEventLogs: [] }),
+        }),
+        defendant: defendant(),
+      }),
+    ).toBeUndefined()
+  })
+
+  it('writes no letter once the appeal is withdrawn', () => {
+    expect(
+      buildAppealAppointmentLetter({
+        theCase: theCase({
+          verdictAppealCase: appealCase({
+            appealState: AppealCaseState.WITHDRAWN,
+          }),
         }),
         defendant: defendant(),
       }),
@@ -184,6 +214,47 @@ describe('buildAppealAppointmentLetter', () => {
         'Hrafnhildur M. Gunnarsdóttir saksóknari',
         'Þórður Már Jónsson lögmaður',
       ])
+    })
+
+    // The mirror of the defender case above: a confirmation of some other
+    // party must not sign this party's letter.
+    it('reads the confirmation of this claimant and no other', () => {
+      const letter = buildAppealAppointmentLetter({
+        theCase: theCase({
+          civilClaimants: [civilClaimant()],
+          verdictAppealCase: appealCase({
+            appealEventLogs: [
+              confirmation({
+                civilClaimantId: 'civil-claimant-id',
+                userName: 'Staðfesti réttargæslumann',
+                created: new Date('2026-08-13'),
+              }),
+              confirmation({
+                defendantId: 'defendant-id',
+                userName: 'Staðfesti verjanda',
+                created: new Date('2026-09-01'),
+              }),
+            ],
+          }),
+        }),
+        civilClaimant: civilClaimant(),
+      })
+
+      expect(letter?.appointedBy.name).toBe('Staðfesti réttargæslumann')
+      expect(letter?.appointedDate).toEqual(new Date('2026-08-13'))
+    })
+
+    // Un-confirming does not delete the confirmation event, so the event alone
+    // cannot stand in for the party row's answer.
+    it('writes no letter for a spokesperson the court has not confirmed', () => {
+      expect(
+        buildAppealAppointmentLetter({
+          theCase: caseWithClaimant,
+          civilClaimant: civilClaimant({
+            isAppealSpokespersonConfirmed: false,
+          }),
+        }),
+      ).toBeUndefined()
     })
 
     // A réttargæslumaður is appointed by the court; a lögmaður is hired by the
@@ -231,6 +302,64 @@ describe('buildAppealAppointmentLetter', () => {
       })
 
       expect(letter?.copyTo).toEqual(['Áfrýjunar Saksóknari saksóknari'])
+    })
+
+    it('copies only the defenders the court has appointed', () => {
+      const letter = buildAppealAppointmentLetter({
+        theCase: theCase({
+          civilClaimants: [civilClaimant()],
+          defendants: [
+            defendant({ id: 'confirmed-id' }),
+            defendant({
+              id: 'unconfirmed-id',
+              isAppealDefenderConfirmed: false,
+              appealDefenderName: 'Óstaðfestur Verjandi',
+            }),
+          ],
+          verdictAppealCase: appealCase({
+            appealEventLogs: [
+              confirmation({ civilClaimantId: 'civil-claimant-id' }),
+            ],
+          }),
+        }),
+        civilClaimant: civilClaimant(),
+      })
+
+      expect(letter?.copyTo).toEqual([
+        'Hrafnhildur M. Gunnarsdóttir saksóknari',
+        'Þórður Már Jónsson lögmaður',
+      ])
+    })
+
+    // One lawyer for several co-accused is routine, and each defendant row
+    // carries its own copy of the name.
+    it('names a defender acting for two of the accused once', () => {
+      const letter = buildAppealAppointmentLetter({
+        theCase: theCase({
+          civilClaimants: [civilClaimant()],
+          defendants: [
+            defendant({
+              id: 'first-id',
+              appealDefenderNationalId: '0101302989',
+            }),
+            defendant({
+              id: 'second-id',
+              appealDefenderNationalId: '0101302989',
+            }),
+          ],
+          verdictAppealCase: appealCase({
+            appealEventLogs: [
+              confirmation({ civilClaimantId: 'civil-claimant-id' }),
+            ],
+          }),
+        }),
+        civilClaimant: civilClaimant(),
+      })
+
+      expect(letter?.copyTo).toEqual([
+        'Hrafnhildur M. Gunnarsdóttir saksóknari',
+        'Þórður Már Jónsson lögmaður',
+      ])
     })
 
     it('omits the copy line when no prosecutor is recorded', () => {

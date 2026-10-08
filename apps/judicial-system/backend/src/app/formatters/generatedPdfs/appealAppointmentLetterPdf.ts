@@ -71,15 +71,15 @@ export const getCourtNameInGenitive = (courtName?: string | null) =>
  * are more than two.
  */
 export const getAppealAppointmentDefendantNames = (names: string[]): string => {
+  if (names.length === 0) {
+    return ''
+  }
+
   if (names.length === 1) {
     return names[0]
   }
 
-  if (names.length === 2) {
-    return `${names[0]} og ${names[1]}`
-  }
-
-  return names.length > 2 ? `${names[0]} o.fl.` : ''
+  return names.length === 2 ? `${names[0]} og ${names[1]}` : `${names[0]} o.fl.`
 }
 
 /** The court of appeals number, or what stands in for it until one is recorded. */
