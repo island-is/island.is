@@ -1,8 +1,14 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/ui'
-import { Box, Input, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  Stack,
+  ToggleSwitchCheckbox,
+} from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
+import * as styles from '../../MainContent.css'
 import { Preview } from '../Preview/Preview'
 import { BaseInput } from './components/BaseInput'
 import { FieldSettings } from './components/FieldSettings/FieldSettings'
@@ -10,7 +16,15 @@ import { ListBuilder } from './components/ListBuilder/ListBuilder'
 import { PaymentField } from './components/PaymentField/PaymentField'
 import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 
-export const FieldContent = () => {
+interface Props {
+  identifierEditingEnabled: boolean
+  setIdentifierEditingEnabled: (enabled: boolean) => void
+}
+
+export const FieldContent = ({
+  identifierEditingEnabled,
+  setIdentifierEditingEnabled,
+}: Props) => {
   const {
     control,
     controlDispatch,
@@ -39,6 +53,16 @@ export const FieldContent = () => {
         )}
         {showIdentifier && (
           <Box marginTop={2}>
+            <Box marginBottom={2}>
+              <ToggleSwitchCheckbox
+                className={styles.identifierToggle}
+                name="enableIdentifierEditing"
+                label="Gera breytingu á identifier"
+                checked={identifierEditingEnabled}
+                disabled={control.isReadOnly}
+                onChange={setIdentifierEditingEnabled}
+              />
+            </Box>
             <Input
               label="identifier"
               name="identifier"
@@ -52,7 +76,7 @@ export const FieldContent = () => {
               }
               onFocus={(e) => setFocus(e.target.value)}
               onBlur={(e) => e.target.value !== focus && updateActiveItem()}
-              readOnly={control.isReadOnly}
+              readOnly={control.isReadOnly || !identifierEditingEnabled}
             />
           </Box>
         )}

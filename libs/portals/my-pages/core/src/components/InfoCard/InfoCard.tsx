@@ -162,7 +162,12 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                       showArrow === 'hover' ? styles.arrowOnHover : undefined
                     }
                   >
-                    <Icon icon="arrowForward" type="outline" color="blue400" />
+                    <Icon
+                      icon="arrowForward"
+                      type="outline"
+                      color="blue400"
+                      size={isMobile ? 'small' : 'medium'}
+                    />
                   </Box>
                 )}
               </Box>

@@ -33,6 +33,7 @@ import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
   Case,
+  CaseFileRepositoryService,
   CaseRepositoryService,
   Defendant,
   DefendantEventLog,
@@ -52,6 +53,7 @@ export class DefendantService {
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => AppealCaseService))
     private readonly appealCaseService: AppealCaseService,
@@ -697,12 +699,21 @@ export class DefendantService {
     return updatedDefendant
   }
 
+  // A defendant's files go with the defendant, so they are deleted first in
+  // the same transaction - the delete of the defendant would otherwise fail on
+  // the case file foreign key.
   async delete(
     theCase: Case,
     defendantId: string,
     user: User,
     transaction: Transaction,
   ): Promise<boolean> {
+    await this.caseFileRepositoryService.deleteAllForDefendant(
+      theCase.id,
+      defendantId,
+      { transaction },
+    )
+
     await this.defendantRepositoryService.delete(theCase.id, defendantId, {
       transaction,
     })

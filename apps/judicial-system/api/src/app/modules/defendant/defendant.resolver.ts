@@ -22,6 +22,7 @@ import { DeleteDefendantInput } from './dto/deleteDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
+import { assertAppealAdvocatesAvailable } from './appealAdvocates'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
@@ -59,6 +60,11 @@ export class DefendantResolver {
   ): Promise<Defendant> {
     const { caseId, defendantId, ...updateDefendant } = input
     this.logger.debug(`Updating defendant ${defendantId} for case ${caseId}`)
+
+    // The appeal proceeding's defender belongs to the hidden feature, so the
+    // write path closes with it - a hidden feature must not be reachable by
+    // calling the API directly. Mirrors the appeal case resolver.
+    assertAppealAdvocatesAvailable(this.featureService, updateDefendant)
 
     // For the public prosecution the review decision is the appeal, so a
     // changed decision files or withdraws one - in the same transaction as the
