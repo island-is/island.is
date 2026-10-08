@@ -51,11 +51,13 @@ export class MemberResolver {
     return this.memberService.getBenefit(user, member.nationalId)
   }
 
-  @ResolveField('usedFlightLegsThisPeriod', () => [UsedFlightLeg])
+  @ResolveField('usedFlightLegsThisPeriod', () => [UsedFlightLeg], {
+    nullable: true,
+  })
   usedFlightLegsThisPeriod(
     @Parent() member: Member,
     @Loader(UsedFlightLegsLoader) loader: UsedFlightLegsDataLoader,
-  ): Promise<UsedFlightLeg[]> {
-    return loader.load(member.nationalId)
+  ): Promise<UsedFlightLeg[] | null> {
+    return loader.load(member.nationalId).catch(() => null)
   }
 }
