@@ -9,25 +9,9 @@ import {
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
 
-/**
- * One name on the copy line, with the national id it is the same person by.
- * The letter prints the name; the id is only how two entries are told apart,
- * because one lawyer may act for several co-accused and two lawyers may share
- * a name.
- */
-interface CopyRecipient {
-  text: string
-  nationalId?: string | null
-}
-
-const recipient = (
-  name?: string | null,
-  title?: string | null,
-  nationalId?: string | null,
-): CopyRecipient | undefined =>
-  name
-    ? { text: [name, title].filter(Boolean).join(' '), nationalId }
-    : undefined
+/** How the letter lists someone in its copy line: name, then what they are. */
+const recipient = (name?: string | null, title?: string | null) =>
+  name ? [name, title].filter(Boolean).join(' ') : undefined
 
 /**
  * Who is copied on the letter.
@@ -42,8 +26,13 @@ const recipient = (
  * they have to know who it is. A defender's letter copies the prosecution
  * alone.
  *
- * Each person appears once. A lawyer acting for several co-accused is routine,
- * and the letter would otherwise name them once per client.
+ * Each line appears once. A lawyer acting for several co-accused is routine,
+ * and the letter would otherwise name them once per client. The line itself is
+ * what tells two entries apart, not the national id behind it: the id is
+ * recorded only for an advocate picked out of the lawyer register, so keying
+ * on it would let the same lawyer through twice when one of the two was typed
+ * in by hand. Two different lawyers sharing a name and title would print
+ * identical lines anyway, so collapsing them loses a reader nothing.
  */
 const getCopyRecipients = (
   theCase: Case,
@@ -52,43 +41,21 @@ const getCopyRecipients = (
   const prosecutor: User | undefined =
     theCase.appealProsecutor ?? theCase.indictmentReviewer
 
-  const recipients = [
-    recipient(prosecutor?.name, prosecutor?.title, prosecutor?.nationalId),
-  ]
+  const recipients = [recipient(prosecutor?.name, prosecutor?.title)]
 
   if (kind === AppealAppointmentKind.SPOKESPERSON) {
     recipients.push(
       ...(theCase.defendants ?? [])
         .filter((defendant) => defendant.isAppealDefenderConfirmed)
         .map((defendant) =>
-          recipient(
-            defendant.appealDefenderName,
-            'lögmaður',
-            defendant.appealDefenderNationalId,
-          ),
+          recipient(defendant.appealDefenderName, 'lögmaður'),
         ),
     )
   }
 
-  const seen = new Set<string>()
-
-  return recipients.flatMap((entry) => {
-    if (!entry) {
-      return []
-    }
-
-    // Fall back to the printed line when no id is recorded: without one there
-    // is nothing better to tell two entries apart by than what they say.
-    const key = entry.nationalId ?? entry.text
-
-    if (seen.has(key)) {
-      return []
-    }
-
-    seen.add(key)
-
-    return [entry.text]
-  })
+  return Array.from(
+    new Set(recipients.filter((entry): entry is string => Boolean(entry))),
+  )
 }
 
 /**

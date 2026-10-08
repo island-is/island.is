@@ -332,35 +332,45 @@ describe('buildAppealAppointmentLetter', () => {
     })
 
     // One lawyer for several co-accused is routine, and each defendant row
-    // carries its own copy of the name.
-    it('names a defender acting for two of the accused once', () => {
-      const letter = buildAppealAppointmentLetter({
-        theCase: theCase({
-          civilClaimants: [civilClaimant()],
-          defendants: [
-            defendant({
-              id: 'first-id',
-              appealDefenderNationalId: '0101302989',
-            }),
-            defendant({
-              id: 'second-id',
-              appealDefenderNationalId: '0101302989',
-            }),
-          ],
-          verdictAppealCase: appealCase({
-            appealEventLogs: [
-              confirmation({ civilClaimantId: 'civil-claimant-id' }),
+    // carries its own copy of the name. The second case is the one the
+    // national id would get wrong: the court picked the lawyer out of the
+    // register for one of the accused and typed the same lawyer in for the
+    // other, so only one of the two rows has an id to be the same person by.
+    it.each([
+      ['both picked from the lawyer register', '0101302989', '0101302989'],
+      ['one picked from the register, one typed in', '0101302989', undefined],
+      ['neither in the register', undefined, undefined],
+    ])(
+      'names a defender acting for two of the accused once: %s',
+      (_name, firstNationalId, secondNationalId) => {
+        const letter = buildAppealAppointmentLetter({
+          theCase: theCase({
+            civilClaimants: [civilClaimant()],
+            defendants: [
+              defendant({
+                id: 'first-id',
+                appealDefenderNationalId: firstNationalId,
+              }),
+              defendant({
+                id: 'second-id',
+                appealDefenderNationalId: secondNationalId,
+              }),
             ],
+            verdictAppealCase: appealCase({
+              appealEventLogs: [
+                confirmation({ civilClaimantId: 'civil-claimant-id' }),
+              ],
+            }),
           }),
-        }),
-        civilClaimant: civilClaimant(),
-      })
+          civilClaimant: civilClaimant(),
+        })
 
-      expect(letter?.copyTo).toEqual([
-        'Hrafnhildur M. Gunnarsdóttir saksóknari',
-        'Þórður Már Jónsson lögmaður',
-      ])
-    })
+        expect(letter?.copyTo).toEqual([
+          'Hrafnhildur M. Gunnarsdóttir saksóknari',
+          'Þórður Már Jónsson lögmaður',
+        ])
+      },
+    )
 
     it('omits the copy line when no prosecutor is recorded', () => {
       const letter = buildAppealAppointmentLetter({
