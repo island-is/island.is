@@ -18,9 +18,11 @@ export const HighAssuranceGate = ({ children }: { children: ReactNode }) => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const bffUrlGenerator = useBffUrlGenerator()
+  // Read as the API reads it: if the flag can't be read, the API refuses the
+  // data, so this asks for the login rather than leaving the page to fail.
   const { value: required, loading } = useFeatureFlag(
     Features.isHealthStepUpRequired,
-    false,
+    true,
   )
 
   const acr = (userInfo?.profile as { acr?: string } | undefined)?.acr
