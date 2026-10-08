@@ -284,17 +284,17 @@ query Case($input: CaseQueryInput!) {
         userTitle
         institutionName
       }
-    }
-    appealSummonses {
-      id
-      created
-      confirmedDate
-      sentToCourtOfAppealsDate
-      defendants {
+      appealSummonses {
         id
-        defendantId
-        appellantSide
-        claims
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
       }
     }
     rulingOrderAppealCases {

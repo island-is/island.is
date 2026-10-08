@@ -18,8 +18,8 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../appeal-case'
 import { BackendService } from '../backend'
-import { Case } from '../case'
 import { FeatureService } from '../feature/feature.service'
 import {
   CreateAppealSummonsInput,
@@ -115,13 +115,13 @@ export class AppealSummonsResolver {
 }
 
 @UseGuards(JwtGraphQlAuthUserGuard)
-@Resolver(() => Case)
-export class CaseAppealSummonsResolver {
+@Resolver(() => AppealCase)
+export class AppealCaseAppealSummonsResolver {
   constructor(private readonly featureService: FeatureService) {}
 
   @ResolveField('appealSummonses', () => [AppealSummons], { nullable: true })
   appealSummonses(
-    @Parent() theCase: Case,
+    @Parent() appealCase: AppealCase,
     @CurrentGraphQlUser() user: User,
   ): AppealSummons[] {
     if (
@@ -131,6 +131,6 @@ export class CaseAppealSummonsResolver {
       return []
     }
 
-    return theCase.appealSummonses ?? []
+    return appealCase.appealSummonses ?? []
   }
 }

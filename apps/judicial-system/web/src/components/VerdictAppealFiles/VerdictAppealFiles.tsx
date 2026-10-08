@@ -65,7 +65,7 @@ const VerdictAppealFiles: FC = () => {
     isIndictmentAppealEnabled && showsAppealSummonses(workingCase, user)
   const showIssueButton =
     isIndictmentAppealEnabled && canShowIssueAppealSummons(workingCase, user)
-  const summonses = workingCase.appealSummonses ?? []
+  const summonses = workingCase.verdictAppealCase?.appealSummonses ?? []
 
   if (groups.length === 0 && !showSummonses) {
     return null
@@ -91,9 +91,14 @@ const VerdictAppealFiles: FC = () => {
 
     setWorkingCase((prev) => ({
       ...prev,
-      appealSummonses: prev.appealSummonses?.filter(
-        (summons) => summons.id !== summonsIdToDelete,
-      ),
+      verdictAppealCase: prev.verdictAppealCase
+        ? {
+            ...prev.verdictAppealCase,
+            appealSummonses: prev.verdictAppealCase.appealSummonses?.filter(
+              (summons) => summons.id !== summonsIdToDelete,
+            ),
+          }
+        : prev.verdictAppealCase,
     }))
     setSummonsIdToDelete(undefined)
   }

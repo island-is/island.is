@@ -134,15 +134,17 @@ describe('VerdictAppealFiles', () => {
   describe('the appeal summons', () => {
     const appealed = (
       caseFiles: Case['caseFiles'],
-      appealSummonses: Case['appealSummonses'] = [],
+      appealSummonses: NonNullable<
+        Case['verdictAppealCase']
+      >['appealSummonses'] = [],
     ): Case => ({
       ...theCase(caseFiles),
       verdictAppealCase: {
         id: 'verdict_appeal_id',
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.APPEALED,
+        appealSummonses,
       },
-      appealSummonses,
     })
 
     // The prosecution can appeal without filing a declaration, and the office
