@@ -158,9 +158,7 @@ describe('WorkerService', () => {
       paymentMethod: 'card' | 'bank_transfer',
     ) =>
       Promise.resolve(
-        paymentMethod === 'card'
-          ? (flows.card ?? [])
-          : (flows.bankTransfer ?? []),
+        paymentMethod === 'card' ? flows.card ?? [] : flows.bankTransfer ?? [],
       )) as never)
   }
 

@@ -111,7 +111,9 @@ export class WorkerService {
 
     if (deferredFlowIds.length > 0) {
       this.logger.info(
-        `Deferring ${deferredFlowIds.length} payment flow(s) that failed less than ${
+        `Deferring ${
+          deferredFlowIds.length
+        } payment flow(s) that failed less than ${
           this.workerConfig.workerRetryDelayMinutesAfterFailure
         } minute(s) ago: ${deferredFlowIds.join(', ')}`,
       )
