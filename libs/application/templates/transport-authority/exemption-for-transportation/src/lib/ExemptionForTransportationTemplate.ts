@@ -23,7 +23,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { application as applicationMessage, overview } from './messages'
-import { Features } from '@island.is/feature-flags'
 import {
   ExemptionRulesApi,
   NationalRegistryV3UserApi,
@@ -82,7 +81,6 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.ExemptionForTransportation.translation,
   dataSchema: ExemptionForTransportationSchema,
-  featureFlag: Features.ExemptionForTransportation,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

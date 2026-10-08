@@ -66,9 +66,10 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockawsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
-    const mockFindAll = module.policeDigitalCaseFileRepositoryService
-      .findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
+    const mockFindPoliceDigitalCaseFiles = module
+      .policeDigitalCaseFileRepositoryService
+      .findByCaseAndPoliceCaseNumber as jest.Mock
+    mockFindPoliceDigitalCaseFiles.mockResolvedValue([])
 
     givenWhenThen = async (policeCaseNumber: string) => {
       const then = {} as Then
@@ -107,6 +108,7 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
         policeCaseNumber,
         expect.any(Array),
         expect.any(Array),
+        expect.any(Function),
         expect.any(Function),
       )
       expect(mockawsS3Service.putObject).toHaveBeenCalledWith(

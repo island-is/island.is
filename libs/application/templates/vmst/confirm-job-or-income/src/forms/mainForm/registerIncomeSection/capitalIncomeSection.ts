@@ -18,10 +18,11 @@ import {
 } from '../../../utils/date'
 import {
   formatIsCurrency,
-  formatIsDateLong,
-  formatIsDateLongOrDash,
+  formatIsDate,
+  formatIsDateOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
 import {
   periodToByFrequency,
   toRequiredNumber,
@@ -91,6 +92,10 @@ export const capitalIncomeSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getCapitalIncomeDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            capitalIncomeValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             paymentType: {
@@ -156,6 +161,7 @@ export const capitalIncomeSection = buildSubSection({
               width: 'half',
               required: (_application, activeField) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
@@ -194,8 +200,8 @@ export const capitalIncomeSection = buildSubSection({
                 const type = incomeTypes.find((t) => t.id === value)
                 return type?.name ?? value
               },
-              dateFrom: formatIsDateLong,
-              dateTo: formatIsDateLongOrDash,
+              dateFrom: formatIsDate,
+              dateTo: formatIsDateOrDash,
               amountPerMonth: formatIsCurrency,
             },
           },

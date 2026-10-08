@@ -8,25 +8,29 @@ import {
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
+import { useIsMobile } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetHealthTreatmentDocumentsQuery } from './TreatmentEducationalContent.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
-  id: string
+  treatmentId: string
 }
 
 const TreatmentEducationalContent = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
 
   const { formatMessage } = useLocale()
-  const { id } = useParams() as UseParams
+  const { isMobile } = useIsMobile()
+  const { treatmentId } = useParams() as UseParams
   const [searchQuery, setSearchQuery] = useState('')
 
   const { data, loading, error } = useGetHealthTreatmentDocumentsQuery({
-    variables: { treatmentId: id },
+    variables: { treatmentId },
   })
 
   // One card per link; the parent document supplies the sent date and a
@@ -66,7 +70,7 @@ const TreatmentEducationalContent = () => {
         <CardLoader />
       ) : (
         <Stack space={3}>
-          <Box width="half">
+          <Box width={isMobile ? 'full' : 'half'}>
             <Input
               name="treatment-documents-search"
               aria-label={formatMessage(m.searchPlaceholder)}
@@ -118,11 +122,13 @@ const TreatmentEducationalContent = () => {
                         })}
                       </Text>
                     </Box>
-                    <LinkButton
-                      to={card.href}
-                      text={formatMessage(messages.openDocument)}
-                      variant="text"
-                    />
+                    <Box alignSelf="flexEnd">
+                      <LinkButton
+                        to={card.href}
+                        text={formatMessage(messages.openDocument)}
+                        variant="text"
+                      />
+                    </Box>
                   </Box>
                 </Box>
               ))}

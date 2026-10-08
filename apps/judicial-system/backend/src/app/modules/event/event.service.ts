@@ -340,7 +340,7 @@ export class EventService {
   async postErrorEvent(
     message: string,
     info: { [key: string]: string | boolean | Date | undefined },
-    reason: Error,
+    reason?: Error,
   ) {
     try {
       if (!this.config.errorUrl) {
@@ -360,7 +360,9 @@ export class EventService {
                 type: 'mrkdwn',
                 text: `${
                   errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
-                } *${message}:*\n${infoText}>${serializeErrorForSlack(reason)}`,
+                } *${message}:*\n${infoText}>${
+                  reason ? serializeErrorForSlack(reason) : ''
+                }`,
               },
             },
           ],

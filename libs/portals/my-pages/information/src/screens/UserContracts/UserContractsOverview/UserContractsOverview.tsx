@@ -12,6 +12,7 @@ import {
   IntroWrapper,
   m,
   HMS_SLUG,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { HmsRentalAgreementSortOrder } from '@island.is/api/schema'
@@ -57,6 +58,24 @@ const UserContractsOverview = () => {
       }}
       marginBottom={3}
       desktopContentSpan="10/12"
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key="link-button-1"
+            to={formatMessage(cm.contractsOverviewLink1Url)}
+            text={formatMessage(cm.contractsOverviewLink1Text)}
+            icon="open"
+            variant="utility"
+          />,
+          <LinkButton
+            key="link-button-2"
+            to={formatMessage(cm.contractsOverviewLink2Url)}
+            text={formatMessage(cm.contractsOverviewLink2Text)}
+            icon="open"
+            variant="utility"
+          />,
+        ],
+      }}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
