@@ -41,6 +41,12 @@ export const serviceSetup = (services: {
         staging: 'https://beta.staging01.devland.is/samradsgatt/api/auth',
         prod: 'https://island.is/samradsgatt/api/auth',
       },
+      NEXTAUTH_URL_INTERNAL: {
+        local: 'http://localhost:4200/samradsgatt/api/auth',
+        dev: 'http://localhost:3333/samradsgatt/api/auth',
+        staging: 'http://localhost:3333/samradsgatt/api/auth',
+        prod: 'http://localhost:3333/samradsgatt/api/auth',
+      },
       BACKEND_DL_URL: {
         dev: 'https://samradapi-test.devland.is/api/Documents/',
         staging: 'https://samradapi-test.devland.is/api/Documents/',
