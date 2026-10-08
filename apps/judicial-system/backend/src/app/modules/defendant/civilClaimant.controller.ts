@@ -33,7 +33,7 @@ import {
 } from '../../guards'
 import { getOrCreateTransaction } from '../../middleware'
 import {
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   CaseTypeGuard,
   CaseWriteGuard,
   CurrentCase,
@@ -50,12 +50,33 @@ import {
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
+// Every route here changes the case's civil claimants, and each decides what
+// to change from the case the guard loaded: update narrows the claimant's
+// defendants to the ones its police case numbers still reach and branches on
+// whether the case is at court and on its verdict appeal, delete removes the
+// claimant the guard found on the case. CaseExistsForUpdateGuard reads the
+// case under FOR UPDATE in the request's transaction, so two of these
+// requests on one case serialize on the case row and the second sees the
+// first's commit - and so do the defendant and the converted case routes,
+// which lock the same row.
+//
+// RolesGuard runs first, ahead of the guard that takes the write lock. It
+// can, because every rule on these routes decides on the user alone - the
+// court of appeals rules are field rules, which read the body, not the case -
+// and none has a canActivate: a caller this controller has no rule for is
+// turned away before any case row is locked. civilClaimantRolesRules.spec.ts
+// pins that assumption, so a rule that starts reading the case cannot
+// silently reopen the exposure.
+//
+// The guards after the locking read all decide from request.case and so see
+// the locked row - including CivilClaimantExistsGuard on the routes that name
+// a claimant.
 @Controller('api/case/:caseId/civilClaimant')
 @ApiTags('civilClaimants')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   new CaseTypeGuard(indictmentCases),
   CaseWriteGuard,
 )
@@ -84,9 +105,12 @@ export class CivilClaimantController {
   ): Promise<CivilClaimant> {
     this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.civilClaimantService.create(theCase, transaction),
-    )
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.civilClaimantService.create(theCase, transaction)
   }
 
   @UseGuards(CivilClaimantExistsGuard)
@@ -118,10 +142,7 @@ export class CivilClaimantController {
     this.logger.debug(
       `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
-    // The request's own transaction, committed by
-    // TransactionCommitInterceptor once this handler has returned. Opening one
-    // of our own would leave the update and the appeal event that records it
-    // in a transaction separate from anything else the request has done.
+
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.civilClaimantService.update(
@@ -148,8 +169,12 @@ export class CivilClaimantController {
       `Deleting civil claimant ${civilClaimantId} of case ${caseId}`,
     )
 
-    const deleted = await this.sequelize.transaction((transaction) =>
-      this.civilClaimantService.delete(caseId, civilClaimantId, transaction),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const deleted = await this.civilClaimantService.delete(
+      caseId,
+      civilClaimantId,
+      transaction,
     )
 
     return { deleted }
