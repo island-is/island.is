@@ -160,30 +160,8 @@ describe('DelegationsController preferences', () => {
       await expect(rowFor(party)).resolves.toBeNull()
     })
 
-    it('refuses a sixth favourite', async () => {
-      const parties = Array.from({ length: 6 }, () =>
-        createNationalId('person'),
-      )
-
-      for (const id of parties) {
-        await indexRecord(id)
-      }
-
-      for (const id of parties.slice(0, 5)) {
-        await server
-          .post(`${path}/favourite`)
-          .send({ fromNationalId: id, isFavourite: true })
-          .expect(200)
-      }
-
-      await server
-        .post(`${path}/favourite`)
-        .send({ fromNationalId: parties[5], isFavourite: true })
-        .expect(400)
-    })
-
-    it('stays idempotent when re-starring one that is already a favourite at the cap', async () => {
-      const parties = Array.from({ length: 5 }, () =>
+    it('takes as many favourites as the actor has delegations', async () => {
+      const parties = Array.from({ length: 8 }, () =>
         createNationalId('person'),
       )
 
@@ -195,10 +173,9 @@ describe('DelegationsController preferences', () => {
           .expect(200)
       }
 
-      await server
-        .post(`${path}/favourite`)
-        .send({ fromNationalId: parties[0], isFavourite: true })
-        .expect(200)
+      const res = await server.get(path)
+
+      expect(res.body).toHaveLength(8)
     })
 
     it('rejects a party the actor holds no delegation for', async () => {
