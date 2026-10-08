@@ -26,7 +26,11 @@ export interface StepUpStart {
 }
 
 /** Why starting failed, so the right thing can be said about it. */
-export type StepUpStartError = 'too_many_attempts' | 'failed'
+export type StepUpStartError =
+  | 'too_many_attempts'
+  /** This session can't confirm at all, e.g. an ID card login. */
+  | 'unavailable'
+  | 'failed'
 
 interface StepUpAuthenticationProps {
   /**
@@ -155,7 +159,10 @@ export const StepUpAuthentication = ({
     } catch (error) {
       setState({
         name: 'idle',
-        notice: error === 'too_many_attempts' ? 'too_many_attempts' : 'failed',
+        notice:
+          error === 'too_many_attempts' || error === 'unavailable'
+            ? error
+            : 'failed',
       })
     }
   }, [start, poll])
@@ -172,14 +179,16 @@ export const StepUpAuthentication = ({
     denied: formatMessage(m.stepUpDenied),
     timed_out: formatMessage(m.stepUpTimedOut),
     too_many_attempts: formatMessage(m.stepUpTooManyAttempts),
+    unavailable: formatMessage(m.stepUpUnavailable),
     failed: formatMessage(m.stepUpStartFailed),
   }
 
   const notice =
     state.name === 'idle' && state.notice ? state.notice : undefined
   const method = state.name === 'starting' ? undefined : state.method
-  // Starting again won't help after too many attempts.
-  const canRetry = notice !== 'too_many_attempts'
+  // Starting again won't help after too many attempts, or from a session that
+  // can't confirm at all.
+  const canRetry = notice !== 'too_many_attempts' && notice !== 'unavailable'
 
   return (
     <Box display="flex" flexDirection="column" rowGap={4} width="full">

@@ -16,6 +16,7 @@ import { Sequelize } from 'sequelize-typescript'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CibaClient,
+  SessionCannotStepUpError,
   type StepUpClaims,
   type StepUpMethod,
 } from '@island.is/auth/step-up'
@@ -269,6 +270,42 @@ export class DelegationConfirmationService {
   }
 
   /**
+   * Ends confirmations that can never be completed: they expire, and a
+   * delegation left with nothing granted is removed, so the grant is undone as
+   * if it had never been made.
+   */
+  private async cancel(confirmations: DelegationConfirmation[]): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      await this.delegationConfirmationModel.update(
+        { status: DelegationConfirmationStatus.Expired, authReqId: null },
+        {
+          where: {
+            id: confirmations.map((confirmation) => confirmation.id),
+            status: DelegationConfirmationStatus.Pending,
+          },
+          transaction,
+        },
+      )
+
+      for (const confirmation of confirmations) {
+        if (!confirmation.delegationId) {
+          continue
+        }
+        const scopes = await this.delegationScopeService.findByDelegationId(
+          confirmation.delegationId,
+          transaction,
+        )
+        if (scopes.length === 0) {
+          await this.delegationModel.destroy({
+            where: { id: confirmation.delegationId },
+            transaction,
+          })
+        }
+      }
+    })
+  }
+
+  /**
    * Refuses a group that is no longer whole, expiring what is left of it: the
    * grantor would be confirming less than they were shown, under a phone
    * message that no longer fits.
@@ -427,16 +464,27 @@ export class DelegationConfirmationService {
     // actor when acting for a company — which assertConfirmingUser has just
     // checked is who this confirmation is for. It also reads from the token how
     // that session was logged in, which decides the method.
-    const started = await this.cibaClient.start({
-      userToken: user.authorization,
-      bindingMessage: confirmation.contentSnapshot.bindingMessage,
-      // Bound into what the grantor's key signs and echoed on the token, so the
-      // approval can only complete this exact content — every confirmation in
-      // the group, and no other.
-      contextHash: hashConfirmationGroup(
-        members.map((member) => member.contentHash),
-      ),
-    })
+    const started = await this.cibaClient
+      .start({
+        userToken: user.authorization,
+        bindingMessage: confirmation.contentSnapshot.bindingMessage,
+        // Bound into what the grantor's key signs and echoed on the token, so the
+        // approval can only complete this exact content — every confirmation in
+        // the group, and no other.
+        contextHash: hashConfirmationGroup(
+          members.map((member) => member.contentHash),
+        ),
+      })
+      .catch(async (error) => {
+        // The session can never be stepped up (an ID card login the token
+        // doesn't show as one, or a SIM number we no longer have). Waiting
+        // for the confirmation to expire would only strand the grant, so it
+        // ends now and the grantor is told why.
+        if (error instanceof SessionCannotStepUpError) {
+          await this.cancel(members)
+        }
+        throw error
+      })
 
     await this.delegationConfirmationModel.update(
       {

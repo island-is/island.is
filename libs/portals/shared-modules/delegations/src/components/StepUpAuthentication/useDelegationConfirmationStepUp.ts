@@ -41,8 +41,13 @@ export const useDelegationConfirmationStepUp = (
       if (status === 410) {
         onExpired?.()
       }
+      // 403: this session can never confirm, and the grant has been undone.
       const reason: StepUpStartError =
-        status === 429 ? 'too_many_attempts' : 'failed'
+        status === 429
+          ? 'too_many_attempts'
+          : status === 403
+          ? 'unavailable'
+          : 'failed'
       throw reason
     }
   }, [confirmationId, startMutation, onExpired])

@@ -750,6 +750,11 @@ export const m = defineMessages({
     defaultMessage:
       'Of margar tilraunir. Veittu umboðið aftur til að hefja nýja staðfestingu.',
   },
+  stepUpUnavailable: {
+    id: 'sp.access-control-delegations:step-up-unavailable',
+    defaultMessage:
+      'Ekki er hægt að staðfesta umboðið með þessari innskráningu, t.d. ef þú skráðir þig inn með skilríkjum á korti. Umboðið var ekki veitt. Skráðu þig inn með rafrænum skilríkjum í síma eða Auðkennisappinu og veittu það aftur.',
+  },
   stepUpStartFailed: {
     id: 'sp.access-control-delegations:step-up-start-failed',
     defaultMessage:

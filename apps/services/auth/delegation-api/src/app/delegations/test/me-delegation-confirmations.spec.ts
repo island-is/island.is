@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import addYears from 'date-fns/addYears'
 import subMinutes from 'date-fns/subMinutes'
@@ -22,7 +22,7 @@ import {
   UserIdentitiesService,
 } from '@island.is/auth-api-lib'
 import { delegationScopes } from '@island.is/auth/scopes'
-import { CibaClient } from '@island.is/auth/step-up'
+import { CibaClient, SessionCannotStepUpError } from '@island.is/auth/step-up'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { FixtureFactory } from '@island.is/services/auth/testing'
@@ -466,6 +466,39 @@ describe('MeDelegationConfirmationsController', () => {
         'contextHash',
         'userToken',
       ])
+    })
+
+    it('undoes the grant when the session can never be stepped up', async () => {
+      // Arrange — e.g. an ID card login from before card logins were marked.
+      ciba.start.mockRejectedValue(new SessionCannotStepUpError())
+
+      // Act
+      const res = await start()
+
+      // Assert — refused, and nothing is left waiting to expire.
+      expect(res.status).toEqual(403)
+      const row = await confirmations().findByPk(confirmationId)
+      expect(row?.status).toEqual(DelegationConfirmationStatus.Expired)
+      const delegations = await app
+        .get<typeof Delegation>(getModelToken(Delegation))
+        .findAll()
+      expect(delegations).toHaveLength(0)
+      expect(await scopeNamesInDb()).toEqual([])
+    })
+
+    it('keeps the grant waiting after a refusal that may pass', async () => {
+      // Arrange
+      ciba.start.mockRejectedValue(
+        new BadRequestException('access_denied (too many pending)'),
+      )
+
+      // Act
+      const res = await start()
+
+      // Assert
+      expect(res.status).toEqual(400)
+      const row = await confirmations().findByPk(confirmationId)
+      expect(row?.status).toEqual(DelegationConfirmationStatus.Pending)
     })
 
     it('reports not_started before anything is started', async () => {

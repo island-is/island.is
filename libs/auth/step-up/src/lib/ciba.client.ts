@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   ServiceUnavailableException,
 } from '@nestjs/common'
 import { decode, verify, type JwtPayload } from 'jsonwebtoken'
@@ -23,6 +24,22 @@ export interface CibaClientOptions {
   /** The assurance level the person must authenticate at. */
   requiredAcr: string
 }
+
+/**
+ * The session behind the user token can't be stepped up at all — logged in
+ * with an ID card, or reachable by no method we have. Unlike other refusals it
+ * won't pass: there is no point trying again from the same session.
+ */
+export class SessionCannotStepUpError extends ForbiddenException {
+  constructor() {
+    super(
+      'This session can not be stepped up, e.g. because it was logged in with an ID card.',
+    )
+  }
+}
+
+/** How the identity server marks that refusal: the start of error_description. */
+const SESSION_CANNOT_STEP_UP = 'session_cannot_step_up'
 
 const JWKS_PATH = '/.well-known/openid-configuration/jwks'
 const CIBA_GRANT_TYPE = 'urn:openid:params:grant-type:ciba'
@@ -85,6 +102,13 @@ export class CibaClient {
       throw new ServiceUnavailableException(
         'The identity server could not start the authentication.',
       )
+    }
+
+    if (
+      json['error'] === 'access_denied' &&
+      String(json['error_description'] ?? '').startsWith(SESSION_CANNOT_STEP_UP)
+    ) {
+      throw new SessionCannotStepUpError()
     }
 
     // invalid_request, unknown_user_id, access_denied (feature off), ...
