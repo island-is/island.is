@@ -36,9 +36,14 @@ import {
   isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { queueMessagesAfterCommit } from '../../middleware'
+import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+  registerAfterCommit,
+} from '../../middleware'
 import {
   CaseCompletedGuard,
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
@@ -160,7 +165,13 @@ export class InternalVerdictController {
     }
   }
 
-  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
+  // The police name the verdict, not the case: ExternalPoliceVerdictExistsGuard
+  // resolves it by its police document id and puts the case id on the request
+  // params, which is where CaseExistsForUpdateGuard reads it from - so it has
+  // to run first. The case is then read under FOR UPDATE, and the service
+  // status below is written against a row no one else can change until the
+  // request's transaction commits.
+  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsForUpdateGuard)
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
@@ -172,9 +183,15 @@ export class InternalVerdictController {
       `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
 
-    const updatedVerdict = await this.sequelize.transaction(
-      async (transaction) =>
-        this.verdictService.updatePoliceDelivery(verdict, update, transaction),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
+      verdict,
+      update,
+      transaction,
     )
 
     if (
@@ -201,19 +218,30 @@ export class InternalVerdictController {
         })
       }
 
-      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
-        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
-        Birt:
-          formatDate(updatedVerdict.serviceDate, 'dd.MM.y HH:mm') ??
-          'ekki skráð',
-      })
+      // The event announces a service status the database has accepted, so
+      // it is posted after the commit - which TransactionCommitInterceptor
+      // does after this handler has returned - as it was when the handler
+      // committed a transaction of its own. Still fire and forget: a failed
+      // announcement is logged, not returned to the caller. Registered after
+      // the suspension notification above, so the two keep their order.
+      const { serviceStatus, serviceDate } = updatedVerdict
+
+      registerAfterCommit(() =>
+        this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
+          Staða: getVerdictServiceStatusText(serviceStatus),
+          Birt: formatDate(serviceDate, 'dd.MM.y HH:mm') ?? 'ekki skráð',
+        }),
+      )
     }
 
     return updatedVerdict
   }
 
+  // The appeal decision is validated against the case's ruling and written to
+  // the verdict the guards found on it, so the case is read under FOR UPDATE
+  // and the guards after the read all decide from that locked row.
   @UseGuards(
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseCompletedGuard,
     DefendantNationalIdExistsGuard,
@@ -224,7 +252,7 @@ export class InternalVerdictController {
     type: Verdict,
     description: 'Updates defendant verdict appeal decision',
   })
-  updateVerdictAppeal(
+  async updateVerdictAppeal(
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
@@ -243,12 +271,13 @@ export class InternalVerdictController {
       verdict,
     })
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.verdictService.updateRestricted(
-        verdict,
-        { appealDecision: verdictAppeal.appealDecision },
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see updateVerdict.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.verdictService.updateRestricted(
+      verdict,
+      { appealDecision: verdictAppeal.appealDecision },
+      transaction,
     )
   }
 

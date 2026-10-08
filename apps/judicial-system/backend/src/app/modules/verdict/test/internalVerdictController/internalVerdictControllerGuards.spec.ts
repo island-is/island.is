@@ -4,6 +4,7 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 import { verifyGuards } from '../../../../test'
 import {
   CaseCompletedGuard,
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseTypeGuard,
 } from '../../../case'
@@ -32,10 +33,12 @@ describe('InternalVerdictController - deliverVerdictToNationalCommissionersOffic
   )
 })
 
+// The verdict lookup supplies the case id the locking read needs, so it
+// stays first. verdictGuardChain.spec.ts runs the chain.
 describe('InternalVerdictController - updateVerdict', () => {
   verifyGuards(InternalVerdictController, 'updateVerdict', [
     ExternalPoliceVerdictExistsGuard,
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
   ])
 })
 
@@ -44,7 +47,7 @@ describe('InternalVerdictController - updateVerdictAppeal', () => {
     InternalVerdictController,
     'updateVerdictAppeal',
     [
-      CaseExistsGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseCompletedGuard,
       DefendantNationalIdExistsGuard,

@@ -14,36 +14,26 @@ import {
   Verdict,
   VerdictRepositoryService,
 } from '../../../repository'
-import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
+import { CreateVerdictDto } from '../../dto/createVerdict.dto'
 
 interface Then {
-  result: Verdict
+  result: Verdict[]
   error: Error
 }
 
-type GivenWhenThen = (verdictUpdate: UpdateVerdictDto) => Promise<Then>
+type GivenWhenThen = (verdictsToCreate: CreateVerdictDto[]) => Promise<Then>
 
-describe('VerdictController - Update', () => {
+describe('VerdictController - Create verdicts', () => {
   const caseId = uuid()
-  const theCase = { id: caseId, rulingDate: new Date(2020, 1, 1) } as Case
-
   const defendantId = uuid()
-  const defendant = {
-    id: defendantId,
-    name: 'Jane Doe',
-  } as Defendant
-
-  const verdictId = uuid()
-  const verdict = {
-    id: verdictId,
-    caseId,
-    defendantId,
-  } as Verdict
+  const theCase = {
+    id: caseId,
+    defendants: [{ id: defendantId, caseId } as Defendant],
+  } as Case
 
   let mockVerdictRepositoryService: VerdictRepositoryService
   let mockSequelize: Sequelize
   let transaction: Transaction
-
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -57,10 +47,7 @@ describe('VerdictController - Update', () => {
     transaction = {} as Transaction
     mockTransaction.mockResolvedValue(transaction)
 
-    const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
-    mockUpdate.mockRejectedValue(new Error('Some error'))
-
-    givenWhenThen = async (verdictUpdate) => {
+    givenWhenThen = async (verdictsToCreate) => {
       const then = {} as Then
 
       // The route is guarded by CaseExistsForUpdateGuard, so the request
@@ -72,12 +59,10 @@ describe('VerdictController - Update', () => {
         await runInRequestContext(async () => {
           await getOrCreateTransaction(mockSequelize)
 
-          then.result = await verdictController.update(
-            theCase.id,
-            defendant.id,
+          then.result = await verdictController.createVerdicts(
+            caseId,
             theCase,
-            verdict,
-            verdictUpdate,
+            verdictsToCreate,
           )
         })
       } catch (error) {
@@ -88,50 +73,50 @@ describe('VerdictController - Update', () => {
     }
   })
 
-  describe('verdict updated', () => {
-    const verdictUpdate = {
-      serviceRequirement: ServiceRequirement.NOT_APPLICABLE,
-    }
-    const updateVerdict = { ...verdict, ...verdictUpdate }
+  describe('verdict created', () => {
+    const verdictToCreate = {
+      defendantId,
+      serviceRequirement: ServiceRequirement.REQUIRED,
+    } as CreateVerdictDto
+    const createdVerdict = { id: uuid(), caseId, ...verdictToCreate } as Verdict
+
     let then: Then
 
     beforeEach(async () => {
-      const mockFind = mockVerdictRepositoryService.findById as jest.Mock
-      mockFind.mockResolvedValueOnce(verdict)
+      const mockCreate = mockVerdictRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdVerdict)
 
-      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce(updateVerdict)
-
-      then = await givenWhenThen(verdictUpdate)
+      then = await givenWhenThen([verdictToCreate])
     })
 
-    it('should update the verdict in the transaction the guard opened, without opening another', () => {
+    it('should create the verdict in the transaction the guard opened, without opening another', () => {
       // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
       // call would be the handler opening a transaction of its own, which
       // would block on the guard's row lock and deadlock the request.
       expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
-      expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
-        caseId,
-        defendantId,
-        verdictId,
-        // since service requirement is not applicable, the serviceDate will be set to same as the ruling date
-        { ...verdictUpdate, serviceDate: new Date(2020, 1, 1) },
+      expect(mockVerdictRepositoryService.create).toHaveBeenCalledWith(
+        { caseId, ...verdictToCreate },
         { transaction },
       )
-      expect(then.result).toBe(updateVerdict)
+      expect(then.result).toEqual([createdVerdict])
     })
   })
 
-  describe('verdict update fails', () => {
+  describe('defendant is not on the case', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen({})
+      then = await givenWhenThen([
+        {
+          defendantId: uuid(),
+          serviceRequirement: ServiceRequirement.REQUIRED,
+        } as CreateVerdictDto,
+      ])
     })
 
-    it('should throw Error', () => {
+    it('should create nothing', () => {
       expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe('Some error')
+      expect(mockVerdictRepositoryService.create).not.toHaveBeenCalled()
     })
   })
 })
