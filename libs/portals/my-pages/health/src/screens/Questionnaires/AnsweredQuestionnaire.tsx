@@ -21,13 +21,14 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { HealthPaths, messages } from '../..'
+import { messages } from '../..'
 import * as styles from './Questionnaires.css'
 import {
   useGetAnsweredQuestionnaireQuery,
   useGetQuestionnaireLazyQuery,
 } from './questionnaires.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 
 const AnsweredQuestionnaire: FC = () => {
   useNamespaces('sp.health')
@@ -37,6 +38,7 @@ const AnsweredQuestionnaire: FC = () => {
     submissionId?: string
   }>()
   const navigate = useNavigate()
+  const paths = useTreatmentScopedPaths()
   useHealthPlausibleSwap()
 
   const { formatMessage, lang } = useLocale()
@@ -118,10 +120,10 @@ const AnsweredQuestionnaire: FC = () => {
     )
   }
 
-  const link = HealthPaths.HealthQuestionnairesAnswer.replace(
-    ':org',
-    org?.toLocaleLowerCase() ?? '',
-  ).replace(':id', id)
+  const link = paths.questionnaireAnswer({
+    org: org?.toLocaleLowerCase() ?? '',
+    id,
+  })
 
   return (
     <IntroWrapper

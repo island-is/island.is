@@ -16,9 +16,12 @@ import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildEmployerSSNDelete } from '../../../utils/reconcile'
+import {
+  buildCanRemoveRow,
+  buildEmployerSSNDelete,
+} from '../../../utils/reconcile'
 import {
   getCompanyNationalId,
   toOptionalString,
@@ -105,6 +108,10 @@ export const casualWorkSection = buildSubSection({
           hideTableHeaderIfEmpty: true,
           marginTop: 2,
           defaultValue: getCasualWorkDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            casualWorkValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           fields: {
             company: {
               component: 'nationalIdWithName',
@@ -128,7 +135,7 @@ export const casualWorkSection = buildSubSection({
               label: m.application.dateTo,
               width: 'half',
               required: true,
-
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
@@ -201,8 +208,8 @@ export const casualWorkSection = buildSubSection({
                 const clean = value.replace('-', '')
                 return `${clean.slice(0, 6)}-${clean.slice(6)}`
               },
-              dateFrom: formatIsDateLong,
-              dateTo: formatIsDateLong,
+              dateFrom: formatIsDate,
+              dateTo: formatIsDate,
               workshiftPeriod: (value, _displayIndex, application) => {
                 if (!value || !application) return ''
                 const workshiftPeriods =

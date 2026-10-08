@@ -25,6 +25,7 @@ import {
 import Limitations from './Limitations'
 import { Loader } from './Loader'
 import { NoAccess } from './NoAccess'
+import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 const OPT_IN = 'opt-in'
 const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
@@ -32,6 +33,7 @@ const OPT_OUT = 'opt-out'
 
 export const OrganRegistrationForm = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 
@@ -114,9 +116,31 @@ export const OrganRegistrationForm = () => {
         slug: HEALTH_DIRECTORATE_SLUG,
         tooltip: formatMessage(messages.landlaeknirOrganDonationTooltip),
       }}
+      buttonGroup={{
+        actions: [
+          <LinkResolver
+            href={formatMessage(messages.organDonationLink)}
+            key="organ-donation"
+          >
+            <Button
+              variant="utility"
+              size="small"
+              icon="open"
+              iconType="outline"
+            >
+              {formatMessage(messages.readAboutOrganDonation)}
+            </Button>
+          </LinkResolver>,
+        ],
+      }}
       desktopContentSpan="10/12"
     >
-      <Text variant="eyebrow" color="purple400" marginBottom={1}>
+      <Text
+        variant="eyebrow"
+        color="purple400"
+        marginTop={[2, 2, 0]}
+        marginBottom={1}
+      >
         {formatMessage(messages.changeTake)}
       </Text>
       {loading && <Loader />}

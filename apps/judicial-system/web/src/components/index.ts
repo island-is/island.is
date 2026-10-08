@@ -44,6 +44,7 @@ export { default as FormContentContainer } from './FormContentContainer/FormCont
 export { default as FormFooter } from './FormFooter/FormFooter'
 export type { FormFooterAction } from './FormFooter/FormFooter'
 export { FormProvider, FormContext } from './FormProvider/FormProvider'
+export type { WorkingCase } from './FormProvider/FormProvider'
 export { default as Header } from './Header/Header'
 export { default as HideableText } from './HideableText/HideableText'
 export { default as IndictmentInfo } from './IndictmentInfo/IndictmentInfo'
@@ -143,3 +144,4 @@ export { default as AppealRulingModifiedAlert } from './Alerts/AppealRulingModif
 export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal/ChangeProsecutorModal'
 export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as RichTextEditor } from './RichTextEditor/RichTextEditor'
+export { default as Stackable } from './Stackable/Stackable'

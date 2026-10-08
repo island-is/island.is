@@ -32,6 +32,7 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: messages.myPregnancy,
           path: HealthPaths.HealthPregnancyOverview,
+          searchHide: true,
         },
       ],
     },

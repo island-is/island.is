@@ -29,6 +29,7 @@ export class HealthDirectorateHealthModule {
         name: 'clients-health-directorate-health',
         organizationSlug: 'landlaeknir',
         logErrorResponseBody: true,
+        timeout: 35000,
         authSource: 'context',
         autoAuth: idsClientConfig.isConfigured
           ? {

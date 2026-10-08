@@ -16,8 +16,9 @@ import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsDateLong } from '../../../utils/formatters'
+import { formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
 import { toOptionalString, toRequiredString } from '../../../utils/rowCoercions'
 
 const getContractWorkDefaults = (application: Application) => {
@@ -84,6 +85,10 @@ export const contractWorkSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getContractWorkDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            contractWorkValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             contractJobStart: {
@@ -102,6 +107,7 @@ export const contractWorkSection = buildSubSection({
               label: m.application.workEnds,
               width: 'half',
               required: true,
+              maxDate: getCurrentMonthEndDate,
               minDate: (_application, activeField) => {
                 const fromDate = activeField?.contractJobStart
                 if (fromDate) {
@@ -128,8 +134,8 @@ export const contractWorkSection = buildSubSection({
             ],
             rows: ['contractJobStart', 'workEnds'],
             format: {
-              contractJobStart: formatIsDateLong,
-              workEnds: formatIsDateLong,
+              contractJobStart: formatIsDate,
+              workEnds: formatIsDate,
             },
           },
         }),

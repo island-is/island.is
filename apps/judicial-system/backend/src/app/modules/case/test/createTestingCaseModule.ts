@@ -13,8 +13,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
+import { Message } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
 import { CourtSessionService } from '../../court-session'
@@ -60,6 +61,7 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { PdfService } from '../pdf.service'
 
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service', () => {
   const actual = jest.requireActual('../../court/court.service')
@@ -238,6 +240,12 @@ export const createTestingCaseModule = async () => {
     Promise.resolve(theCase.splitCaseId ?? theCase.id),
   )
 
+  const mockFindLiveDescendantCase =
+    caseRepositoryService.findLiveDescendantCase as jest.Mock
+  mockFindLiveDescendantCase.mockImplementation((theCase: Case) =>
+    Promise.resolve(theCase),
+  )
+
   const caseArchiveRepositoryService =
     caseModule.get<CaseArchiveRepositoryService>(CaseArchiveRepositoryService)
 
@@ -327,16 +335,21 @@ export const createTestingCaseModule = async () => {
   const limitedAccessCaseController =
     caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
 
+  // Every message the request queued, in order, and the same messages one
+  // entry per call, for a spec that cares what was registered together
   const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+  const queuedMessagesAfterCommit: Message[][] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
     queuedMessages.push(...msgs)
+    queuedMessagesAfterCommit.push(msgs)
   })
 
   caseModule.close()
 
   return {
     queuedMessages,
+    queuedMessagesAfterCommit,
     appealCaseRepositoryService,
     appealDecisionRepositoryService,
     appealEventLogRepositoryService,

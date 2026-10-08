@@ -1,7 +1,8 @@
 import { Box, Hidden, Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkResolver, m } from '@island.is/portals/my-pages/core'
+import { LinkResolver, m, useIsMobile } from '@island.is/portals/my-pages/core'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { generatePath } from 'react-router-dom'
 import { messages } from '../../../lib/messages'
 import { HealthPaths } from '../../../lib/paths'
 import { SECTION_GAP } from '../../../utils/constants'
@@ -10,6 +11,7 @@ import * as styles from './TreatmentsBox.css'
 
 export const TreatmentsBox = () => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
   const { value: showTreatments } = useFeatureFlag(
     Features.isServicePortalHealthTreatmentsPageEnabled,
     false,
@@ -36,7 +38,9 @@ export const TreatmentsBox = () => {
         {treatments.map((treatment) => (
           <LinkResolver
             key={treatment.id}
-            href={HealthPaths.HealthTreatment.replace(':id', treatment.id)}
+            href={generatePath(HealthPaths.HealthTreatment, {
+              treatmentId: treatment.id,
+            })}
             className={styles.cardLink}
           >
             <Box
@@ -44,10 +48,11 @@ export const TreatmentsBox = () => {
               border="standard"
               borderColor="blue200"
               borderRadius="large"
-              padding={3}
+              padding={[2, 2, 3]}
               display="flex"
               justifyContent="spaceBetween"
               columnGap={3}
+              className={styles.card}
             >
               <Box
                 display="flex"
@@ -72,7 +77,12 @@ export const TreatmentsBox = () => {
                   </Box>
                 </Hidden>
                 <Box paddingTop="smallGutter">
-                  <Icon icon="arrowForward" type="outline" color="blue400" />
+                  <Icon
+                    icon="arrowForward"
+                    type="outline"
+                    color="blue400"
+                    size={isMobile ? 'small' : 'medium'}
+                  />
                 </Box>
               </Box>
             </Box>

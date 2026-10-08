@@ -9,10 +9,6 @@ import { DefendantEventType, User } from '@island.is/judicial-system/types'
 
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 
-interface CreateDefendantEventLogOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class DefendantEventLogRepositoryService {
   constructor(
@@ -48,7 +44,7 @@ export class DefendantEventLogRepositoryService {
 
   async create(
     data: Partial<DefendantEventLog>,
-    options: CreateDefendantEventLogOptions,
+    options: { transaction: Transaction },
   ): Promise<DefendantEventLog> {
     try {
       this.logger.debug(
