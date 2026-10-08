@@ -18,3 +18,12 @@ export enum PaymentFrequency {
   ONE_TIME = 'oneTime',
   MONTHLY = 'monthly',
 }
+
+export const INCOME_TYPE_ANSWER_KEYS = {
+  casualWork: 'registerCasualWork',
+  partTime: 'registerPartTime',
+  contractWork: 'registerContractWork',
+  pension: 'registerPension',
+  capitalIncome: 'registerCapitalIncome',
+  socialInsurance: 'registerSocialInsurance',
+} as const
