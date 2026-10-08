@@ -239,6 +239,62 @@ describe('StepUpService', () => {
     expect(await service.useUnlock(user)).toBe(false)
   })
 
+  describe('a recent login with electronic ID', () => {
+    const loggedIn = (secondsAgo: number, acr = 'eidas-loa-high') =>
+      appUser({ authTime: new Date(now - secondsAgo * 1000), acr })
+
+    it('opens the session without a step-up', async () => {
+      const user = loggedIn(10)
+
+      expect((await service.session(user)).unlocked).toBe(true)
+      expect(await service.useUnlock(user)).toBe(true)
+      expect(ciba.start).not.toHaveBeenCalled()
+    })
+
+    it('counts as the last use, so idle time runs from the login', async () => {
+      expect(await service.useUnlock(loggedIn(config.idleSeconds + 1))).toBe(
+        false,
+      )
+    })
+
+    it('stays open while used, up to the limit counted from the login', async () => {
+      const user = loggedIn(10)
+      expect(await service.useUnlock(user)).toBe(true)
+
+      // Used just within the idle limit each time: still open.
+      for (let used = 0; used + 600 < config.maxSeconds - 10; used += 600) {
+        advance(600)
+        expect(await service.useUnlock(user)).toBe(true)
+      }
+
+      // Past the absolute limit, counted from the login: locked.
+      advance(600)
+      expect(await service.useUnlock(user)).toBe(false)
+    })
+
+    it('does not count a login at a lower assurance level', async () => {
+      // E.g. a passkey login.
+      expect(await service.useUnlock(loggedIn(10, 'islandis-passkey'))).toBe(
+        false,
+      )
+    })
+
+    it('does not reopen a session locked after the login', async () => {
+      const user = loggedIn(10)
+      await service.lock(user)
+
+      expect(await service.useUnlock(user)).toBe(false)
+      expect((await service.session(user)).unlocked).toBe(false)
+    })
+
+    it('reopens it when logging in again after the lock', async () => {
+      await service.lock(loggedIn(10))
+      advance(5)
+
+      expect(await service.useUnlock(loggedIn(1))).toBe(true)
+    })
+  })
+
   it('locks straight away when asked', async () => {
     const user = appUser()
     const { stepUpId } = await service.start(user)

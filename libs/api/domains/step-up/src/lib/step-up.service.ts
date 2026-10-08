@@ -196,7 +196,9 @@ export class StepUpService {
 
   async session(user: User): Promise<StepUpSessionState> {
     const sessionKey = this.sessionKeyOf(user)
-    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
+    const unlock = sessionKey
+      ? await this.currentUnlock(user, sessionKey)
+      : null
     const expiresAt = unlock
       ? unlock.unlockedAt + this.config.maxSeconds * 1000
       : undefined
@@ -215,7 +217,9 @@ export class StepUpService {
    */
   async useUnlock(user: User): Promise<boolean> {
     const sessionKey = this.sessionKeyOf(user)
-    const unlock = sessionKey ? await this.readUnlock(sessionKey) : null
+    const unlock = sessionKey
+      ? await this.currentUnlock(user, sessionKey)
+      : null
     if (!sessionKey || !unlock) {
       return false
     }
@@ -230,18 +234,72 @@ export class StepUpService {
 
     await this.store.setUnlock(
       sessionKey,
-      unlock,
+      this.signed(sessionKey, {
+        authTime: unlock.authTime,
+        unlockedAt: unlock.unlockedAt,
+      }),
       Math.min(this.config.idleSeconds, remainingSeconds),
     )
     return true
   }
 
-  /** Locks the session again straight away, e.g. when the person asks to. */
+  /**
+   * Locks the session again straight away, e.g. when the person asks to. It
+   * stays locked until they authenticate again: logging in no longer counts
+   * unless it comes after this.
+   */
   async lock(user: User): Promise<void> {
     const sessionKey = this.sessionKeyOf(user)
-    if (sessionKey) {
-      await this.store.deleteUnlock(sessionKey)
+    if (!sessionKey) {
+      return
     }
+    const now = Date.now()
+    await this.store.setUnlock(
+      sessionKey,
+      this.signed(sessionKey, { authTime: 0, unlockedAt: 0, lockedAt: now }),
+      this.config.maxSeconds,
+    )
+  }
+
+  /**
+   * The unlock this session has right now, if any: one recorded by a step-up,
+   * or the login itself. Logging in with electronic ID proves the same thing a
+   * step-up does, so a session logged in that way recently is open — under the
+   * same limits, counted from the login, which also counts as the last use.
+   */
+  private async currentUnlock(
+    user: User,
+    sessionKey: string,
+  ): Promise<Omit<Unlock, 'signature'> | null> {
+    const recorded = await this.readUnlock(sessionKey)
+    const login = this.loginAsUnlock(user)
+
+    // The most recent authentication wins: a login after a lock reopens it, a
+    // lock after the login closes it.
+    const recordedAt = recorded
+      ? recorded.lockedAt ?? recorded.unlockedAt
+      : -Infinity
+    if (login && login.unlockedAt > recordedAt) {
+      return login
+    }
+    if (!recorded || recorded.lockedAt) {
+      return null
+    }
+    return recorded
+  }
+
+  /** The session's own login, as an unlock, if it can count as one now. */
+  private loginAsUnlock(user: User): Omit<Unlock, 'signature'> | null {
+    const authTime = user.authTime?.getTime()
+    if (!authTime || !this.meetsRequiredAssurance(user)) {
+      return null
+    }
+    // Only while the login itself would still be within the idle limit; after
+    // that the recorded unlock, kept alive by use, is what counts.
+    if (Date.now() - authTime >= this.config.idleSeconds * 1000) {
+      return null
+    }
+    return { authTime, unlockedAt: authTime }
   }
 
   /**
@@ -283,6 +341,7 @@ export class StepUpService {
         sessionKey,
         String(unlock.authTime),
         String(unlock.unlockedAt),
+        String(unlock.lockedAt ?? ''),
       ),
     }
   }

@@ -26,7 +26,12 @@ export interface Unlock {
   authTime: number
   /** When we recorded it; the absolute limit counts from here. Epoch ms. */
   unlockedAt: number
-  /** Keyed MAC over the session and both times, so a planted record is refused. */
+  /**
+   * Set when the session was locked on purpose. Only an authentication after
+   * this — a step-up, or logging in again — opens it again. Epoch ms.
+   */
+  lockedAt?: number
+  /** Keyed MAC over the session and the times, so a planted record is refused. */
   signature: string
 }
 
