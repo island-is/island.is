@@ -25,7 +25,7 @@ The worker finds paid card payment flows that do not yet have an FJS charge, cre
 ### When events are recorded
 
 - **Success** — FJS created the charge: one success event is recorded.
-- **Failure (recorded)** — FJS returned an error (e.g. `FailedToCreateCharge`, `AlreadyCreatedCharge`): one failure event is recorded.
+- **Failure (recorded)** — Any other error while processing the flow, whether FJS returned an error (e.g. `FailedToCreateCharge`, `AlreadyCreatedCharge`) or a local error was raised before the FJS request: one failure event is recorded.
 - **Failure (not recorded)** — No response from FJS (network/transient error): no event is recorded, but the failure is still counted in the worker run summary. The worker will retry on the next run.
 
 ### Retry delay
@@ -33,7 +33,8 @@ The worker finds paid card payment flows that do not yet have an FJS charge, cre
 A flow that has never failed is processed as soon as it is picked up. A flow with **at least one failure event** is **deferred** until the configured delay has passed since its **latest** failure event, so an FJS outage does not exhaust the failure limit within a few runs.
 
 - **Config:** `workerRetryDelayMinutesAfterFailure` (default 60). Deferred flows are listed in one info line per run and counted as `deferred (retry delay)` in the run summary.
-- **Not gated:** network/transient errors (`FJS_NETWORK_ERROR`) record no event, so they do not start the delay. Such a flow is retried on every run (every 5 minutes) until FJS responds. Only failures that FJS or X-Road answered with an error response (recorded events) are delayed.
+- **What starts the delay:** every failure the worker records, i.e. any error thrown while processing the flow except `FJS_NETWORK_ERROR`. This includes FJS error responses, X-Road errors, and local errors raised before the FJS request (e.g. missing card payment details, missing bank transfer row, catalog mismatch).
+- **Not gated:** network/transient errors (`FJS_NETWORK_ERROR`) record no event, so they do not start the delay. Such a flow is retried on every run (every 5 minutes) until FJS responds.
 
 ### Failure limit
 
