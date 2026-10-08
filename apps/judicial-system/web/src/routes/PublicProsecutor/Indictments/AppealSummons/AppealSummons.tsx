@@ -57,10 +57,9 @@ const AppealSummons = () => {
 
   const appealSummonsId = router.query.appealSummonsId?.toString()
   const overviewUrl = `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE}/${workingCase.id}`
-  const existingSummons =
-    workingCase.verdictAppealCase?.appealSummonses?.find(
-      (summons) => summons.id === appealSummonsId,
-    )
+  const existingSummons = workingCase.verdictAppealCase?.appealSummonses?.find(
+    (summons) => summons.id === appealSummonsId,
+  )
 
   const isFeatureEnabled = features.includes(Feature.INDICTMENT_APPEAL)
   const isEdit = Boolean(appealSummonsId)
