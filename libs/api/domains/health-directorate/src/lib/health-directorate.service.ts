@@ -222,7 +222,16 @@ export class HealthDirectorateService {
     )
     if (!communications) return null
 
-    return communications.map(mapPregnancyCommunication)
+    return communications.flatMap((dto) => {
+      const communication = mapPregnancyCommunication(dto)
+      if (!communication) {
+        this.logger.error(
+          `Unexpected pregnancy communication kind ${dto.kind} for communication ${dto.id}`,
+        )
+        return []
+      }
+      return [communication]
+    })
   }
 
   async getPregnancyCommunicationDetail(
@@ -237,7 +246,14 @@ export class HealthDirectorateService {
     )
     if (!detail) return null
 
-    return mapPregnancyCommunicationDetail(detail)
+    const mapped = mapPregnancyCommunicationDetail(detail)
+    if (!mapped) {
+      this.logger.error(
+        `Unexpected pregnancy communication kind ${detail.kind} for communication ${communicationId}`,
+      )
+      return null
+    }
+    return mapped
   }
 
   async getPregnancyMeasurements(

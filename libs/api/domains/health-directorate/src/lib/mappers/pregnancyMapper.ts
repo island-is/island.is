@@ -33,14 +33,14 @@ import { PregnancyStaff } from '../models/pregnancyStaff.model'
 
 const mapCommunicationKind = (
   kind: CommunicationKind,
-): PregnancyCommunicationKindEnum => {
+): PregnancyCommunicationKindEnum | undefined => {
   switch (kind) {
     case CommunicationKind.EXAMINATION:
       return PregnancyCommunicationKindEnum.examination
     case CommunicationKind.PHONE_CALL:
       return PregnancyCommunicationKindEnum.phoneCall
     default:
-      return PregnancyCommunicationKindEnum.unknown
+      return undefined
   }
 }
 
@@ -124,17 +124,22 @@ export const mapActivePregnancy = (
 
 export const mapPregnancyCommunication = (
   dto: CommunicationDto,
-): PregnancyCommunication => ({
-  id: dto.id,
-  kind: mapCommunicationKind(dto.kind),
-  weeks: dto.weeks ?? undefined,
-  days: dto.days ?? undefined,
-  dateTime: dto.dateTime ?? undefined,
-  text: dto.text ?? undefined,
-  authorName: dto.authorName ?? undefined,
-  subject: dto.subject?.term ?? undefined,
-  lastUpdated: dto.lastUpdated ?? undefined,
-})
+): PregnancyCommunication | undefined => {
+  const kind = mapCommunicationKind(dto.kind)
+  if (!kind) return undefined
+
+  return {
+    id: dto.id,
+    kind,
+    weeks: dto.weeks ?? undefined,
+    days: dto.days ?? undefined,
+    dateTime: dto.dateTime ?? undefined,
+    text: dto.text ?? undefined,
+    authorName: dto.authorName ?? undefined,
+    subject: dto.subject?.term ?? undefined,
+    lastUpdated: dto.lastUpdated ?? undefined,
+  }
+}
 
 const mapExaminationCommunicationDetail = (
   dto: ExaminationCommunicationDetailDto,
@@ -176,21 +181,16 @@ const mapPhoneCallCommunicationDetail = (
   registeredBy: mapPregnancyCommunicationAuthor(dto.registeredBy),
 })
 
-const unexpectedCommunicationKind = (kind: never): never => {
-  throw new Error(`Unexpected pregnancy communication kind: ${kind}`)
-}
-
 export const mapPregnancyCommunicationDetail = (
   dto: PregnancyCommunicationDetailDto,
-): PregnancyCommunicationDetail => {
-  const { kind } = dto
-  switch (kind) {
+): PregnancyCommunicationDetail | undefined => {
+  switch (dto.kind) {
     case CommunicationKind.EXAMINATION:
       return mapExaminationCommunicationDetail(dto)
     case CommunicationKind.PHONE_CALL:
       return mapPhoneCallCommunicationDetail(dto)
     default:
-      return unexpectedCommunicationKind(kind)
+      return undefined
   }
 }
 

@@ -12,10 +12,16 @@ import { PregnancyCommunicationKindEnum } from './enums'
 import { FetalHeartRate } from './fetalHeartRate.model'
 
 @InterfaceType('HealthDirectoratePregnancyCommunicationDetail', {
-  resolveType: (value: PregnancyCommunicationDetail) =>
-    value.kind === PregnancyCommunicationKindEnum.phoneCall
-      ? PhoneCallCommunicationDetail
-      : ExaminationCommunicationDetail,
+  resolveType: (value: PregnancyCommunicationDetail) => {
+    switch (value.kind) {
+      case PregnancyCommunicationKindEnum.examination:
+        return ExaminationCommunicationDetail
+      case PregnancyCommunicationKindEnum.phoneCall:
+        return PhoneCallCommunicationDetail
+      default:
+        return undefined
+    }
+  },
 })
 export abstract class PregnancyCommunicationDetail {
   abstract kind: PregnancyCommunicationKindEnum

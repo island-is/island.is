@@ -290,7 +290,6 @@ registerEnumType(AppointmentCancelOutcomeEnum, {
 export enum PregnancyCommunicationKindEnum {
   examination = 'examination',
   phoneCall = 'phoneCall',
-  unknown = 'unknown',
 }
 registerEnumType(PregnancyCommunicationKindEnum, {
   name: 'HealthDirectoratePregnancyCommunicationKind',
