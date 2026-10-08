@@ -22,7 +22,7 @@ export interface FaqListProps {
 
 export const FaqList: FC<React.PropsWithChildren<FaqListProps>> = ({
   title,
-  questions,
+  questions = [],
   showTitle = true,
   locale = 'is',
 }) => {
