@@ -1,5 +1,7 @@
 export { Feature } from './lib/feature'
 
+export type { AuthUser, Credentials } from './lib/auth'
+
 export {
   Gender,
   DefenderChoice,
@@ -166,7 +168,9 @@ export {
   completedCaseStates,
   isCompletedCase,
   isRulingOrDismissalCase,
+  CasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
+  getIndictmentCasePoliceState,
   isIndictmentCaseState,
   isRequestCaseState,
   isIndictmentCaseTransition,

@@ -37,11 +37,13 @@ import {
 } from '@island.is/shared/components'
 import cn from 'classnames'
 import { useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { useMeasure, useWindowSize } from 'react-use'
 import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
 import NotificationButton from '../Notifications/NotificationButton'
 import { SearchInput } from '../SearchInput/SearchInput'
+import { SEARCH_MENU_ID, SearchMenu } from '../SearchMenu/SearchMenu'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
 
@@ -70,7 +72,7 @@ const DocumentsLink = ({
 // reveal the header over whatever is being tapped
 const SCROLL_DELTA_THRESHOLD = 10
 
-export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
+export type MenuTypes = 'side' | 'user' | 'notifications' | 'search' | undefined
 interface Props {
   position: number
   includeSearchInHeader?: boolean
@@ -79,6 +81,8 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
   const { formatMessage } = useLocale()
   const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const ref = useRef<HTMLButtonElement>(null)
+  const searchToggleRef = useRef<HTMLButtonElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [measureRef, { height: measuredHeaderHeight }] =
     useMeasure<HTMLElement>()
   const { width } = useWindowSize()
@@ -87,8 +91,12 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
   const user = useUserInfo()
 
   const hasNotificationsDelegationAccess = hasNotificationScopes(user?.scopes)
-  const { headerVisible, setHeaderVisible, setHeaderHeight } =
-    useHeaderVisibility()
+  const {
+    headerVisible,
+    setHeaderVisible,
+    setHeaderHeight,
+    setSearchMenuOpen,
+  } = useHeaderVisibility()
   const headerVisibleRef = useRef<boolean>(true)
   const lastScrollYRef = useRef<number>(0)
   const [disableTransition, setDisableTransition] = useState<boolean>(false)
@@ -122,6 +130,23 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
       isNavigatingRef.current = false
     }
   }, [isMobile, location.pathname, setHeaderVisible])
+
+  useEffect(() => {
+    setMenuOpen((prev) => (prev === 'search' ? undefined : prev))
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!isMobile) {
+      setMenuOpen((prev) => (prev === 'search' ? undefined : prev))
+    }
+  }, [isMobile])
+
+  const searchMenuOpen =
+    includeSearchInHeader && isMobile && menuOpen === 'search'
+
+  useEffect(() => {
+    setSearchMenuOpen(searchMenuOpen)
+  }, [searchMenuOpen, setSearchMenuOpen])
 
   // Scrolling logic to show/hide header based on scroll direction and position
   useScrollPosition(
@@ -224,31 +249,74 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                       marginLeft={[1, 1, 2]}
                       printHidden
                     >
-                      {includeSearchInHeader && (
-                        <Box
-                          marginRight={[1, 1, 2]}
-                          flexGrow={isMobile ? 0 : 1}
-                          className={styles.search}
-                        >
-                          <SearchInput
-                            placeholder={formatMessage(m.searchOnMyPages)}
-                            buttonAriaLabel={formatMessage(m.searchOnMyPages)}
-                            whiteMenuBackground
-                            hideInput={isMobile}
-                            box={{ marginLeft: 'auto' }}
-                            onButtonClick={() =>
-                              myPagesHeaderSearchIconClick(
-                                formatPlausiblePathToParams(location.pathname),
-                              )
-                            }
-                            onInputInitialized={() =>
-                              myPagesHeaderSearchInputInitialized(
-                                formatPlausiblePathToParams(location.pathname),
-                              )
-                            }
-                          />
-                        </Box>
-                      )}
+                      {includeSearchInHeader &&
+                        (isMobile ? (
+                          <Box marginRight={[1, 1, 2]}>
+                            <Button
+                              ref={searchToggleRef}
+                              variant="utility"
+                              colorScheme="white"
+                              size="small"
+                              icon={searchMenuOpen ? 'close' : 'search'}
+                              iconType="outline"
+                              aria-label={formatMessage(m.searchOnMyPages)}
+                              aria-expanded={searchMenuOpen}
+                              aria-controls={
+                                searchMenuOpen ? SEARCH_MENU_ID : undefined
+                              }
+                              onClick={() => {
+                                if (searchMenuOpen) {
+                                  setMenuOpen(undefined)
+                                  return
+                                }
+                                myPagesHeaderSearchIconClick(
+                                  formatPlausiblePathToParams(
+                                    location.pathname,
+                                  ),
+                                )
+                                flushSync(() => setMenuOpen('search'))
+                                searchInputRef.current?.focus()
+                              }}
+                            />
+                            {searchMenuOpen && (
+                              <SearchMenu
+                                inputRef={searchInputRef}
+                                onClose={() => {
+                                  setMenuOpen(undefined)
+                                  searchToggleRef.current?.focus()
+                                }}
+                                onNavigate={() => setMenuOpen(undefined)}
+                                onInputInitialized={() =>
+                                  myPagesHeaderSearchInputInitialized(
+                                    formatPlausiblePathToParams(
+                                      location.pathname,
+                                    ),
+                                  )
+                                }
+                              />
+                            )}
+                          </Box>
+                        ) : (
+                          <Box
+                            marginRight={[1, 1, 2]}
+                            flexGrow={1}
+                            className={styles.search}
+                          >
+                            <SearchInput
+                              placeholder={formatMessage(m.searchOnMyPages)}
+                              buttonAriaLabel={formatMessage(m.searchOnMyPages)}
+                              whiteMenuBackground
+                              box={{ marginLeft: 'auto' }}
+                              onInputInitialized={() =>
+                                myPagesHeaderSearchInputInitialized(
+                                  formatPlausiblePathToParams(
+                                    location.pathname,
+                                  ),
+                                )
+                              }
+                            />
+                          </Box>
+                        ))}
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
                           <Button

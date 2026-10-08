@@ -104,12 +104,16 @@ export const DefendantList = () => {
     }
   }
 
+  // The defendant's files are deleted with the defendant
   const removeDefendantFromState = (defendant: Defendant) => {
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       defendants:
         prevWorkingCase.defendants &&
         [...prevWorkingCase.defendants].filter((d) => d.id !== defendant.id),
+      caseFiles: prevWorkingCase.caseFiles?.filter(
+        (caseFile) => caseFile.defendantId !== defendant.id,
+      ),
     }))
   }
 

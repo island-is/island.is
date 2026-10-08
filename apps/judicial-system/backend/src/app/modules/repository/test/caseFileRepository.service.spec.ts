@@ -461,6 +461,7 @@ describe('CaseFileRepositoryService', () => {
         newCaseId,
         {
           key: `${newCaseId}/def/document.pdf`,
+          isKeyAccessible: false,
           defendantId: 'new-defendant-id',
           civilClaimantId: 'new-civil-claimant-id',
         },
@@ -474,6 +475,9 @@ describe('CaseFileRepositoryService', () => {
           name: 'document.pdf',
           category: CaseFileCategory.CASE_FILE,
           key: `${newCaseId}/def/document.pdf`,
+          // The object is not there yet - the caller says so rather than the
+          // copy inheriting the original's accessible object
+          isKeyAccessible: false,
           // Back to being stored only in RVG
           state: CaseFileState.STORED_IN_RVG,
           // Pointed at the copies of the defendant and civil claimant
@@ -495,7 +499,7 @@ describe('CaseFileRepositoryService', () => {
       await service.copyToCase(
         sourceFile,
         newCaseId,
-        { key: `${newCaseId}/def/document.pdf` },
+        { key: `${newCaseId}/def/document.pdf`, isKeyAccessible: true },
         { transaction },
       )
 
@@ -516,7 +520,7 @@ describe('CaseFileRepositoryService', () => {
         service.copyToCase(
           sourceFile,
           newCaseId,
-          { key: `${newCaseId}/def/document.pdf` },
+          { key: `${newCaseId}/def/document.pdf`, isKeyAccessible: true },
           { transaction },
         ),
       ).rejects.toThrow(error)
@@ -771,6 +775,40 @@ describe('CaseFileRepositoryService', () => {
           new Map([[oldCivilClaimantId, newCivilClaimantId]]),
           { transaction },
         ),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('deleteAllForDefendant', () => {
+    const defendantId = 'some-defendant-id'
+
+    it("soft-deletes the defendant's files within the case, clears the defendant reference and returns the count", async () => {
+      model.update.mockResolvedValueOnce([2, []])
+
+      const result = await service.deleteAllForDefendant(caseId, defendantId, {
+        transaction,
+      })
+
+      expect(model.update).toHaveBeenCalledWith(
+        {
+          state: CaseFileState.DELETED,
+          isKeyAccessible: false,
+          defendantId: null,
+        },
+        {
+          where: { caseId, defendantId },
+          transaction,
+        },
+      )
+      expect(result).toBe(2)
+    })
+
+    it('rethrows when the update fails', async () => {
+      const error = new Error('Some error')
+      model.update.mockRejectedValueOnce(error)
+
+      await expect(
+        service.deleteAllForDefendant(caseId, defendantId, { transaction }),
       ).rejects.toThrow(error)
     })
   })

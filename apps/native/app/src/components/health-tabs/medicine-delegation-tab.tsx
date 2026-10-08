@@ -34,7 +34,7 @@ const Container = styled.View`
 `
 
 const HeaderActions = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
   /* Cards bring 16px of their own, so this tops the gap between the buttons
      and the list up to the 24px the design asks for. */
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
@@ -64,7 +64,7 @@ const Card = styled(TouchableOpacity)`
 `
 
 const TagContainer = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
   align-self: flex-start;
 `
 
@@ -235,7 +235,22 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                         })}
                   </Typography>
                   <TagContainer>
-                    {!delegation.isActive ? (
+                    {/* A permit that has not taken effect yet is neither
+                        active nor expired - it gets its own "valid from" tag. */}
+                    {delegation.status === 'awaitingApproval' ? (
+                      delegation.dates?.from && (
+                        <Label color="pending">
+                          {intl.formatMessage(
+                            {
+                              id: 'health.medicineDelegation.listValidFrom',
+                            },
+                            {
+                              date: intl.formatDate(delegation.dates.from),
+                            },
+                          )}
+                        </Label>
+                      )
+                    ) : !delegation.isActive ? (
                       <Label color="danger">
                         <FormattedMessage id="health.medicineDelegation.labelExpired" />
                       </Label>

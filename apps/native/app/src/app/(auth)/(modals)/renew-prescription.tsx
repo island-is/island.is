@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Alert, Button, Select, Typography } from '@/ui'
+import { SettingsLink } from '@/components/settings-link'
 import { toast, ToastHost } from '@/components/toast'
 import {
   useGetPrescriptionRenewalTargetsQuery,
@@ -19,6 +20,7 @@ type RenewPrescriptionParams = {
   indication?: string
   dosageInstructions?: string
   totalPrescribedAmount?: string
+  renewResponseMessage?: string
 }
 
 // Encodes a target's composite key into a single Select option value.
@@ -33,10 +35,6 @@ export default function RenewPrescriptionScreen() {
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
     undefined,
   )
-  // Measured height of the floating action bar so the scroll content can be
-  // padded to clear it (nothing hides permanently behind the buttons).
-  const [footerHeight, setFooterHeight] = useState(0)
-
   const { data, loading: targetsLoading } =
     useGetPrescriptionRenewalTargetsQuery({
       variables: { prescriptionId: params.id },
@@ -74,6 +72,12 @@ export default function RenewPrescriptionScreen() {
     })
 
   const noTargets = !targetsLoading && options.length === 0
+  // With a single recipient there is nothing to pick, so the dropdown is
+  // dropped and the renewal is submitted against that one target.
+  const singleTarget = options.length === 1
+  // Until the targets are in we don't know which of the three it is, so show
+  // nothing rather than a placeholder that may turn out to be wrong.
+  const showRecipient = !targetsLoading && !singleTarget
 
   const fields = [
     {
@@ -140,16 +144,21 @@ export default function RenewPrescriptionScreen() {
     <View style={{ flex: 1 }}>
       <ScrollView
         style={{ flex: 1 }}
+        // The sheet reports no bottom inset of its own, so let iOS resolve the
+        // safe area against the scroll view itself. Without this the content
+        // ends underneath the sheet's bottom edge.
+        contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
           padding: theme.spacing[2],
-          // Clear the floating action bar plus some breathing room so every
-          // field can be scrolled up above the buttons.
-          paddingBottom: footerHeight + theme.spacing[10],
+          // The buttons are the last thing in the scroll content, so it has to
+          // end clear of the bottom edge and the home indicator for the cancel
+          // button to scroll fully into view.
+          paddingBottom: Math.max(insets.bottom, theme.spacing[8]),
         }}
       >
         <View>
           <Typography
-            variant="heading2"
+            variant="heading3"
             style={{ marginBottom: theme.spacing[1] }}
           >
             {intl.formatMessage({
@@ -158,46 +167,49 @@ export default function RenewPrescriptionScreen() {
           </Typography>
           <Typography
             variant="body2"
-            style={{ marginBottom: theme.spacing[3] }}
-          >
-            {intl.formatMessage({
-              id: 'health.prescriptions.renewalModal.description',
-            })}
-          </Typography>
-
-          {/* Reserve this slot from first render so the layout doesn't jump
-              when the targets arrive: show the select (disabled while loading)
-              and only swap to the warning if there are genuinely no targets. */}
-          <View style={{ marginBottom: theme.spacing[3] }}>
-            {noTargets ? (
-              <Alert
-                type="warning"
-                hasBorder
-                message={intl.formatMessage({
-                  id: 'health.prescriptions.renewalModal.noTargets',
-                })}
-              />
-            ) : (
-              <Select
-                label={intl.formatMessage({
-                  id: 'health.prescriptions.renewalModal.selectRecipient',
-                })}
-                options={options}
-                value={selectedValue}
-                onSelect={setSelectedValue}
-                disabled={targetsLoading}
-              />
-            )}
-          </View>
-
-          <Typography
-            variant="eyebrow"
+            weight="300"
             style={{ marginBottom: theme.spacing[1] }}
           >
-            {intl.formatMessage({
-              id: 'health.prescriptions.renewalModal.medicineInformation',
-            })}
+            <FormattedMessage
+              id="health.prescriptions.renewalModal.description"
+              values={{
+                link: (chunks: React.ReactNode[]) => (
+                  <SettingsLink variant="body2">{chunks}</SettingsLink>
+                ),
+              }}
+            />
           </Typography>
+
+          {/* Nothing stands here while the targets load. Once they are in:
+              the warning when there are none, the dropdown when there is a
+              choice to make, and nothing at all for a lone recipient. */}
+          {showRecipient && (
+            <View
+              style={{
+                marginTop: theme.spacing[2],
+                marginBottom: theme.spacing[3],
+              }}
+            >
+              {noTargets ? (
+                <Alert
+                  type="warning"
+                  hasBorder
+                  message={intl.formatMessage({
+                    id: 'health.prescriptions.renewalModal.noTargets',
+                  })}
+                />
+              ) : (
+                <Select
+                  label={intl.formatMessage({
+                    id: 'health.prescriptions.renewalModal.selectRecipient',
+                  })}
+                  options={options}
+                  value={selectedValue}
+                  onSelect={setSelectedValue}
+                />
+              )}
+            </View>
+          )}
 
           {fields.map((field, index) => (
             <View
@@ -209,7 +221,7 @@ export default function RenewPrescriptionScreen() {
               }}
             >
               <Typography
-                variant="eyebrow"
+                variant="body3"
                 style={{ marginBottom: theme.spacing.smallGutter }}
               >
                 {field.label}
@@ -217,39 +229,46 @@ export default function RenewPrescriptionScreen() {
               <Typography variant="heading5">{field.value}</Typography>
             </View>
           ))}
+
+          {/* The prescriber's word on the last request — the same note the
+              card shows when expanded. Carried over so a dismissed renewal
+              still says why before the user asks again. */}
+          {!!params.renewResponseMessage && (
+            <View style={{ marginTop: theme.spacing[3] }}>
+              <Alert
+                type="warning"
+                size="small"
+                hasBorder
+                title={intl.formatMessage({
+                  id: 'health.prescriptions.renewalModal.dismissedTitle',
+                })}
+                message={params.renewResponseMessage}
+              />
+            </View>
+          )}
+        </View>
+
+        <View style={{ marginTop: theme.spacing[3], gap: theme.spacing[1] }}>
+          <Button
+            title={intl.formatMessage({ id: 'health.prescriptions.renew' })}
+            onPress={onSubmit}
+            // The recipients decide whether there is anything to submit, so
+            // the button spins while they load rather than sitting inert.
+            loading={submitting || targetsLoading}
+            disabled={submitting || targetsLoading || noTargets}
+            style={{ alignSelf: 'stretch' }}
+          />
+          <Button
+            isOutlined
+            title={intl.formatMessage({
+              id: 'health.prescriptions.renewalModal.cancel',
+            })}
+            onPress={() => router.back()}
+            disabled={submitting}
+            style={{ alignSelf: 'stretch' }}
+          />
         </View>
       </ScrollView>
-
-      <View
-        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          padding: theme.spacing[2],
-          paddingBottom: theme.spacing[2] + insets.bottom,
-          gap: theme.spacing[1],
-          backgroundColor: theme.color.white,
-        }}
-      >
-        <Button
-          title={intl.formatMessage({ id: 'health.prescriptions.renew' })}
-          onPress={onSubmit}
-          loading={submitting}
-          disabled={submitting || noTargets}
-          style={{ alignSelf: 'stretch' }}
-        />
-        <Button
-          isOutlined
-          title={intl.formatMessage({
-            id: 'health.prescriptions.renewalModal.cancel',
-          })}
-          onPress={() => router.back()}
-          disabled={submitting}
-          style={{ alignSelf: 'stretch' }}
-        />
-      </View>
       <ToastHost />
     </View>
   )

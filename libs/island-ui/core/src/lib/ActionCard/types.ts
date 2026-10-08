@@ -3,7 +3,7 @@ import type { TagVariant } from '../Tag/types'
 import type { Icon as IconType } from '../IconRC/iconMap'
 import type { ProgressMeterVariant } from '../ProgressMeter/types'
 
-export type BackgroundColor = 'white' | 'blue' | 'red'
+export type BackgroundColor = 'white' | 'blue' | 'red' | 'grey'
 export type EyebrowColor = 'blue400' | 'purple400'
 
 export type ActionCardProps = {

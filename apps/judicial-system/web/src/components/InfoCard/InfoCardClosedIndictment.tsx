@@ -10,6 +10,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
@@ -23,6 +24,9 @@ export interface Props {
 const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  // The appeal this page is about - the same one the items below read, so the
+  // section appears exactly when that appeal has a case number.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const {
     defendants,
@@ -44,6 +48,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    linkedCaseSections,
   } = useInfoCardItems()
 
   const {
@@ -92,16 +97,20 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           ],
           columns: 2,
         },
-        ...(workingCase.appealCase?.appealCaseNumber
+        // The cases this one was merged with or split from. They belong here
+        // just as much as on the active card - a case does not stop having
+        // been merged when it closes.
+        ...linkedCaseSections,
+        ...(targetAppealCase?.appealCaseNumber
           ? [
               {
                 id: 'court-of-appeal-section',
                 items: [
                   appealCaseNumber,
                   ...(appealAssistant ? [appealAssistant] : []),
-                  ...(workingCase.appealCase?.appealJudge1 &&
-                  workingCase.appealCase?.appealJudge2 &&
-                  workingCase.appealCase?.appealJudge3
+                  ...(targetAppealCase?.appealJudge1 &&
+                  targetAppealCase?.appealJudge2 &&
+                  targetAppealCase?.appealJudge3
                     ? [appealJudges]
                     : []),
                 ],

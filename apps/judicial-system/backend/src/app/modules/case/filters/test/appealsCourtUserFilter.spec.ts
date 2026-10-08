@@ -146,4 +146,42 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
       })
     },
   )
+
+  // A verdict appeal is the court's from the moment it is filed, unlike a
+  // ruling appeal, which it only sees once received. The court has to be able
+  // to open one in order to receive it at all.
+  //
+  // This mirrors the case table access rule, which asks only that the appeal
+  // exists. The two have to agree: a court that is shown a row it cannot open
+  // is worse off than one not shown it.
+  describe.each(indictmentCases)('verdict appeal on indictment %s', (type) => {
+    describe.each(Object.values(AppealCaseState))(
+      'verdict appeal state %s',
+      (appealState) => {
+        const theCase = { type, verdictAppealCase: { appealState } } as Case
+
+        verifyFullAccess(theCase, user)
+      },
+    )
+
+    describe('verdict appeal with no state yet', () => {
+      const theCase = { type, verdictAppealCase: {} } as Case
+
+      verifyFullAccess(theCase, user)
+    })
+  })
+
+  // Request cases are appealed by kaera only, so a verdict appeal on one is
+  // not a route in.
+  describe.each([...restrictionCases, ...investigationCases])(
+    'verdict appeal on request case %s',
+    (type) => {
+      const theCase = {
+        type,
+        verdictAppealCase: { appealState: AppealCaseState.RECEIVED },
+      } as Case
+
+      verifyNoAccess(theCase, user)
+    },
+  )
 })
