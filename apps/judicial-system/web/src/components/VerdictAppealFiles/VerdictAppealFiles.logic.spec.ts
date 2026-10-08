@@ -319,7 +319,8 @@ describe('getAppealAppointmentLetters', () => {
     ).toEqual([
       {
         key: 'defendant-defendant_id',
-        name: 'Skipunarbréf Þórður Már Jónsson.pdf',
+        fileName: 'Skipunarbréf Þórður Már Jónsson.pdf',
+        buttonLabel: 'Skipunarbréf Þórður Már Jónsson - PDF',
         elementId: [
           'defendant',
           'defendant_id',
@@ -328,7 +329,8 @@ describe('getAppealAppointmentLetters', () => {
       },
       {
         key: 'civilClaimant-claimant_id',
-        name: 'Skipunarbréf Brynjar Sveinsson.pdf',
+        fileName: 'Skipunarbréf Brynjar Sveinsson.pdf',
+        buttonLabel: 'Skipunarbréf Brynjar Sveinsson - PDF',
         elementId: [
           'civilClaimant',
           'claimant_id',

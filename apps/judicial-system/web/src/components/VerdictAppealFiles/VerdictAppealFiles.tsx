@@ -144,7 +144,7 @@ const VerdictAppealFiles: FC = () => {
           key={letter.key}
           renderAs="row"
           caseId={workingCase.id}
-          title={letter.name}
+          title={letter.fileName}
           pdfType="appealAppointmentLetter"
           elementId={letter.elementId}
         />

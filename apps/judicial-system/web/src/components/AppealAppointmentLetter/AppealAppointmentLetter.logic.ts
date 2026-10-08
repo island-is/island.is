@@ -11,7 +11,10 @@ import { AppealCaseState } from '@island.is/judicial-system-web/src/graphql/sche
 export interface AppealAppointmentLetterRow {
   /** Stable across renders: the party the letter appoints an advocate for. */
   key: string
-  name: string
+  /** The file as it downloads, and how a list of files names it. */
+  fileName: string
+  /** How the advocate screen labels the button, per the design. */
+  buttonLabel: string
   /** The path segments the pdf route is addressed by, after the pdf type. */
   elementId: string[]
 }
@@ -33,9 +36,14 @@ const letterRow = (
   partyId: string,
   advocateName: string,
 ): AppealAppointmentLetterRow => {
-  const name = `Skipunarbréf ${advocateName}.pdf`
+  const fileName = `Skipunarbréf ${advocateName}.pdf`
 
-  return { key: `${party}-${partyId}`, name, elementId: [party, partyId, name] }
+  return {
+    key: `${party}-${partyId}`,
+    fileName,
+    buttonLabel: `Skipunarbréf ${advocateName} - PDF`,
+    elementId: [party, partyId, fileName],
+  }
 }
 
 /**

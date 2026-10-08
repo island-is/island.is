@@ -145,4 +145,4 @@ export { default as ChangeProsecutorModal } from './Modals/ChangeProsecutorModal
 export { default as DuplicateIndictmentModal } from './Modals/DuplicateIndictmentModal/DuplicateIndictmentModal'
 export { default as RichTextEditor } from './RichTextEditor/RichTextEditor'
 export { default as Stackable } from './Stackable/Stackable'
-export { default as AppealAppointmentLetterButton } from './AppealAppointmentLetter/AppealAppointmentLetterButton'
+export { default as AppealAppointmentLetterButtons } from './AppealAppointmentLetter/AppealAppointmentLetterButtons'

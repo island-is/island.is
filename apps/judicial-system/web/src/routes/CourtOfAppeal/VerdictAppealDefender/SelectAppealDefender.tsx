@@ -9,7 +9,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  AppealAppointmentLetterButton,
   BlueBox,
   FormContext,
   IconButton,
@@ -211,11 +210,6 @@ const SelectAppealDefender: FC<Props> = ({ defendant }) => {
             type="success"
           />
         )}
-        {/* The letter the court sends the defender it just appointed, where
-        the appointment was made. The same row is on the appeal overview; both
-        ask getAppealAppointmentLetter, so a defendant who waived a defender
-        gets neither. */}
-        <AppealAppointmentLetterButton defendant={defendant} />
         {!isConfirmed && (
           <Box display="flex" justifyContent="flexEnd">
             <Button
