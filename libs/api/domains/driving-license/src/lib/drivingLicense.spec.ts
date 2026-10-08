@@ -57,6 +57,7 @@ startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
   let drivingLicenseApi: DrivingLicenseApi
+  let nationalRegistry: NationalRegistryV3ApplicationsClientService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -89,6 +90,7 @@ describe('DrivingLicenseService', () => {
 
     service = module.get(DrivingLicenseService)
     drivingLicenseApi = module.get(DrivingLicenseApi)
+    nationalRegistry = module.get(NationalRegistryV3ApplicationsClientService)
   })
 
   describe('Module', () => {
@@ -493,6 +495,76 @@ describe('DrivingLicenseService', () => {
       )
       expect(canApply?.messageIs).toBe('Þú ert með punkta á ökuskírteini')
       expect(canApply?.messageEn).toBe('You have points on your license')
+    })
+
+    describe('only fetches what the type checks', () => {
+      // RLS flagged driving-assessment and Ö3 lookups during 65+ testing: they
+      // were fetched for every type, though only B-full reads them (and only
+      // B-full/B-temp read residency).
+      const spyLookups = () => {
+        jest.spyOn(service, 'canApplyFor').mockResolvedValue({ result: true })
+        return {
+          assessment: jest.spyOn(drivingLicenseApi, 'getDrivingAssessment'),
+          school: jest.spyOn(drivingLicenseApi, 'getHasFinishedOkugerdi'),
+          residence: jest.spyOn(nationalRegistry, 'getResidenceHistory'),
+        }
+      }
+
+      it.each([
+        // Runtime value outside the narrower TS union (see the test above).
+        'B-full-renewal-65' as DrivingLicenseApplicationType,
+        'BE' as DrivingLicenseApplicationType,
+      ])(
+        'skips the assessment, Ö3 and residency lookups for %s',
+        async (type) => {
+          const { assessment, school, residence } = spyLookups()
+
+          const response = await asUser(MOCK_USER.authorization, () =>
+            service.getApplicationEligibility(
+              MOCK_USER,
+              MOCK_NATIONAL_ID,
+              type,
+            ),
+          )
+
+          expect(assessment).not.toHaveBeenCalled()
+          expect(school).not.toHaveBeenCalled()
+          expect(residence).not.toHaveBeenCalled()
+          expect(response.isEligible).toBe(true)
+        },
+      )
+
+      it('fetches residency but not the assessment or Ö3 for B-temp', async () => {
+        const { assessment, school, residence } = spyLookups()
+
+        await asUser(MOCK_USER.authorization, () =>
+          service.getApplicationEligibility(
+            MOCK_USER,
+            MOCK_NATIONAL_ID,
+            'B-temp',
+          ),
+        )
+
+        expect(assessment).not.toHaveBeenCalled()
+        expect(school).not.toHaveBeenCalled()
+        expect(residence).toHaveBeenCalledTimes(1)
+      })
+
+      it('still fetches all three for B-full', async () => {
+        const { assessment, school, residence } = spyLookups()
+
+        await asUser(MOCK_USER.authorization, () =>
+          service.getApplicationEligibility(
+            MOCK_USER,
+            MOCK_NATIONAL_ID,
+            'B-full',
+          ),
+        )
+
+        expect(assessment).toHaveBeenCalledTimes(1)
+        expect(school).toHaveBeenCalledTimes(1)
+        expect(residence).toHaveBeenCalledTimes(1)
+      })
     })
   })
 
