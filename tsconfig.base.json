@@ -1075,9 +1075,6 @@
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
-      "@island.is/clients/vehicle-service-fjs-v1": [
-        "libs/clients/vehicle-service-fjs-v1/src/index.ts"
-      ],
       "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vehicles-mileage": [
         "libs/clients/vehicles-mileage/src/index.ts"

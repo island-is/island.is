@@ -10,7 +10,6 @@ export interface VehicleDetails {
   role?: string
   requireMileage?: boolean | null
   mileageReading?: string | null
-  isDebtLess?: boolean | null
   validationErrorMessages?: ValidationErrorMessage[]
   vehicleHasMilesOdometer?: boolean
 }
