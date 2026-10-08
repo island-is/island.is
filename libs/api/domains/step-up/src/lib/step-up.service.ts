@@ -70,11 +70,6 @@ export class StepUpService {
     private readonly auditService: AuditService,
   ) {}
 
-  /** Whether step-up is switched on in this environment at all. */
-  isEnabled(): boolean {
-    return this.config.enabled
-  }
-
   /** Whether locked screens apply to this session at all. */
   appliesTo(user: User): boolean {
     return this.config.clients.includes(user.client)

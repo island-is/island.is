@@ -271,13 +271,6 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
-      // Off: nothing is locked. On: the isHealthStepUpRequired flag decides,
-      // and failing to read it locks. The flag must exist (false) first.
-      STEP_UP_ENABLED: {
-        dev: 'true',
-        staging: 'false',
-        prod: 'false',
-      },
       STEP_UP_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',

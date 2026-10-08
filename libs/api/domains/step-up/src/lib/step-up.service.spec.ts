@@ -20,7 +20,6 @@ import { MemoryStepUpStore } from './step-up.store'
 const person = '0101302989'
 
 const config: ConfigType<typeof StepUpConfig> = {
-  enabled: true,
   issuer: 'https://innskra.island.is',
   clientId: '@island.is/clients/step-up',
   clientSecret: 'secret',
@@ -337,9 +336,8 @@ describe('StepUpGuard', () => {
 
   let getValue: jest.Mock
 
-  const guard = (flag: boolean, unlocked: boolean, enabled = true) => {
+  const guard = (flag: boolean, unlocked: boolean) => {
     const stepUpService = {
-      isEnabled: () => enabled,
       appliesTo: (user: User) => config.clients.includes(user.client),
       meetsRequiredAssurance: (user: User) => user.acr === config.requiredAcr,
       useUnlock: jest.fn().mockResolvedValue(unlocked),
@@ -371,12 +369,6 @@ describe('StepUpGuard', () => {
   it('does nothing while the switch is off', async () => {
     await expect(
       guard(false, false).canActivate(context(appUser())),
-    ).resolves.toBe(true)
-  })
-
-  it('does nothing while switched off in the environment', async () => {
-    await expect(
-      guard(true, false, false).canActivate(context(appUser())),
     ).resolves.toBe(true)
   })
 

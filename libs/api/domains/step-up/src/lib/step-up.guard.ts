@@ -31,10 +31,10 @@ interface StepUpRequirement extends StepUpRequiredOptions {
 }
 
 /**
- * Locks what this resolver serves behind a recent unlock, when step-up is
- * enabled in the environment (StepUpConfig.enabled) and the flag is on for the
- * user. The flag is the same one the app reads to show its lock screen; if it
- * can't be read here, the data is locked.
+ * Locks what this resolver serves behind a recent unlock, when the flag is on
+ * for the user. The flag is the same one the app reads to show its lock
+ * screen. If it can't be read here — ConfigCat unreachable, or the flag
+ * missing — the data is locked: an outage must not open it.
  *
  * App sessions (StepUpConfig.clients) need a recent unlock with electronic ID.
  * Any other session — the web — must have been logged in with electronic ID
@@ -66,7 +66,7 @@ export class StepUpGuard implements CanActivate {
     const requirement = this.reflector.getAllAndOverride<
       StepUpRequirement | undefined
     >(STEP_UP_REQUIRED_KEY, [context.getHandler(), context.getClass()])
-    if (!requirement || !this.stepUpService.isEnabled()) {
+    if (!requirement) {
       return true
     }
 

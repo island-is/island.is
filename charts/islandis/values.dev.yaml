@@ -199,7 +199,6 @@ api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
     SESSIONS_API_URL: 'http://services-sessions.services-sessions.svc.cluster.local'
-    STEP_UP_ENABLED: 'true'
     STEP_UP_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
