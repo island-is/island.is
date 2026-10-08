@@ -287,12 +287,12 @@ registerEnumType(AppointmentCancelOutcomeEnum, {
   name: 'HealthDirectorateAppointmentCancelOutcome',
 })
 
-export enum CommunicationKindEnum {
+export enum PregnancyCommunicationKindEnum {
   examination = 'examination',
   phoneCall = 'phoneCall',
   unknown = 'unknown',
 }
-registerEnumType(CommunicationKindEnum, {
+registerEnumType(PregnancyCommunicationKindEnum, {
   name: 'HealthDirectoratePregnancyCommunicationKind',
 })
 

@@ -13,10 +13,10 @@ export class ActivePregnancy {
   dueDate?: Date
 
   @Field(() => Int, { nullable: true })
-  weeks?: number
+  gestationalWeeks?: number
 
   @Field(() => Int, { nullable: true })
-  days?: number
+  gestationalDays?: number
 
   @Field(() => Int, { nullable: true })
   numberOfEmbryos?: number

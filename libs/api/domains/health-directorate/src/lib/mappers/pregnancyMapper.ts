@@ -15,11 +15,11 @@ import {
 } from '@island.is/clients/health-directorate'
 
 import { ActivePregnancy } from '../models/activePregnancy.model'
-import { Communication } from '../models/communication.model'
-import { CommunicationAuthor } from '../models/communicationAuthor.model'
-import { CommunicationDetail } from '../models/communicationDetail.model'
+import { PregnancyCommunication } from '../models/pregnancyCommunication.model'
+import { PregnancyCommunicationAuthor } from '../models/pregnancyCommunicationAuthor.model'
+import { PregnancyCommunicationDetail } from '../models/pregnancyCommunicationDetail.model'
 import {
-  CommunicationKindEnum,
+  PregnancyCommunicationKindEnum,
   PregnancyDocumentKindEnum,
 } from '../models/enums'
 import { ExaminationCommunicationDetail } from '../models/examinationCommunicationDetail.model'
@@ -31,14 +31,14 @@ import { PregnancyStaff } from '../models/pregnancyStaff.model'
 
 const mapCommunicationKind = (
   kind: CommunicationKind,
-): CommunicationKindEnum => {
+): PregnancyCommunicationKindEnum => {
   switch (kind) {
     case CommunicationKind.EXAMINATION:
-      return CommunicationKindEnum.examination
+      return PregnancyCommunicationKindEnum.examination
     case CommunicationKind.PHONE_CALL:
-      return CommunicationKindEnum.phoneCall
+      return PregnancyCommunicationKindEnum.phoneCall
     default:
-      return CommunicationKindEnum.unknown
+      return PregnancyCommunicationKindEnum.unknown
   }
 }
 
@@ -68,9 +68,9 @@ export const mapPregnancyStaff = (
   }
 }
 
-export const mapCommunicationAuthor = (
+export const mapPregnancyCommunicationAuthor = (
   dto: CommunicationStaffRefDto | undefined,
-): CommunicationAuthor | undefined => {
+): PregnancyCommunicationAuthor | undefined => {
   if (!dto?.name) {
     return undefined
   }
@@ -87,12 +87,17 @@ export const mapCommunicationAuthor = (
 export const mapFetalHeartRate = (
   dto: FetalHeartRateDto,
 ): FetalHeartRate | undefined => {
-  if (!dto.identifier) {
+  if (
+    !dto.identifier &&
+    !isDefined(dto.soundLower) &&
+    !isDefined(dto.soundUpper) &&
+    !isDefined(dto.position)
+  ) {
     return undefined
   }
 
   return {
-    identifier: dto.identifier,
+    identifier: dto.identifier ?? undefined,
     soundLower: dto.soundLower ?? undefined,
     soundUpper: dto.soundUpper ?? undefined,
     position: dto.position ?? undefined,
@@ -110,8 +115,8 @@ export const mapActivePregnancy = (
     id: dto.id,
     startDate: dto.startDate ?? undefined,
     dueDate: dto.dueDate ?? undefined,
-    weeks: dto.lengthWeeks ?? undefined,
-    days: dto.lengthDays ?? undefined,
+    gestationalWeeks: dto.lengthWeeks ?? undefined,
+    gestationalDays: dto.lengthDays ?? undefined,
     numberOfEmbryos: dto.numberOfEmbryos ?? undefined,
     motherName: dto.motherName ?? undefined,
     partnerName: dto.partnerName ?? undefined,
@@ -121,7 +126,9 @@ export const mapActivePregnancy = (
   }
 }
 
-export const mapCommunication = (dto: CommunicationDto): Communication => ({
+export const mapPregnancyCommunication = (
+  dto: CommunicationDto,
+): PregnancyCommunication => ({
   id: dto.id,
   kind: mapCommunicationKind(dto.kind),
   weeks: dto.weeks ?? undefined,
@@ -137,7 +144,7 @@ const mapExaminationCommunicationDetail = (
   dto: ExaminationCommunicationDetailDto,
 ): ExaminationCommunicationDetail => ({
   id: dto.id,
-  kind: CommunicationKindEnum.examination,
+  kind: PregnancyCommunicationKindEnum.examination,
   weeks: dto.weeks ?? undefined,
   days: dto.days ?? undefined,
   dateTime: dto.dateTime ?? undefined,
@@ -145,7 +152,7 @@ const mapExaminationCommunicationDetail = (
   authorName: dto.authorName ?? undefined,
   subject: dto.subject?.term ?? undefined,
   lastUpdated: dto.lastUpdated ?? undefined,
-  registeredBy: mapCommunicationAuthor(dto.registeredBy),
+  registeredBy: mapPregnancyCommunicationAuthor(dto.registeredBy),
   weight: dto.weight ?? undefined,
   pulse: dto.pulse ?? undefined,
   bloodPressureUpper: dto.bloodPressureUpper ?? undefined,
@@ -162,7 +169,7 @@ const mapPhoneCallCommunicationDetail = (
   dto: PhoneCallCommunicationDetailDto,
 ): PhoneCallCommunicationDetail => ({
   id: dto.id,
-  kind: CommunicationKindEnum.phoneCall,
+  kind: PregnancyCommunicationKindEnum.phoneCall,
   weeks: dto.weeks ?? undefined,
   days: dto.days ?? undefined,
   dateTime: dto.dateTime ?? undefined,
@@ -170,12 +177,12 @@ const mapPhoneCallCommunicationDetail = (
   authorName: dto.authorName ?? undefined,
   subject: dto.subject?.term ?? undefined,
   lastUpdated: dto.lastUpdated ?? undefined,
-  registeredBy: mapCommunicationAuthor(dto.registeredBy),
+  registeredBy: mapPregnancyCommunicationAuthor(dto.registeredBy),
 })
 
-export const mapCommunicationDetail = (
+export const mapPregnancyCommunicationDetail = (
   dto: PregnancyCommunicationDetailDto,
-): typeof CommunicationDetail | null => {
+): typeof PregnancyCommunicationDetail | null => {
   switch (dto.kind) {
     case CommunicationKind.EXAMINATION:
       return mapExaminationCommunicationDetail(dto)

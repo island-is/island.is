@@ -416,6 +416,14 @@ export class HealthDirectorateHealthService {
       lastUpdated: detail.lastUpdated
         ? new Date(detail.lastUpdated)
         : undefined,
+      subject: detail.subject
+        ? {
+            ...detail.subject,
+            date: detail.subject.date
+              ? new Date(detail.subject.date)
+              : undefined,
+          }
+        : undefined,
     }
   }
 

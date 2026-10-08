@@ -1,7 +1,7 @@
 import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType({ isAbstract: true })
-export abstract class CommunicationBase {
+export abstract class PregnancyCommunicationBase {
   @Field(() => ID)
   id!: string
 

@@ -37,11 +37,7 @@ export class ExaminationMeasurement {
   @Field(() => Float, { nullable: true })
   hemoglobin?: number
 
-  @Field({
-    nullable: true,
-    description:
-      'Source mixes label strings ("Neikvætt") and comma-decimal entries ("1,0 ++") — exposed as raw string.',
-  })
+  @Field({ nullable: true })
   albumenInUrineScore?: string
 
   @Field(() => Float, { nullable: true })

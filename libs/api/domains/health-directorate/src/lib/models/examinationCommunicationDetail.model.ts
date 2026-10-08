@@ -1,15 +1,15 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
-import { CommunicationAuthor } from './communicationAuthor.model'
-import { CommunicationBase } from './communicationBase.model'
-import { CommunicationKindEnum } from './enums'
+import { PregnancyCommunicationAuthor } from './pregnancyCommunicationAuthor.model'
+import { PregnancyCommunicationBase } from './pregnancyCommunicationBase.model'
+import { PregnancyCommunicationKindEnum } from './enums'
 import { FetalHeartRate } from './fetalHeartRate.model'
 
 @ObjectType('HealthDirectoratePregnancyExaminationDetail')
-export class ExaminationCommunicationDetail extends CommunicationBase {
-  kind!: CommunicationKindEnum.examination
+export class ExaminationCommunicationDetail extends PregnancyCommunicationBase {
+  kind!: PregnancyCommunicationKindEnum.examination
 
-  @Field(() => CommunicationAuthor, { nullable: true })
-  registeredBy?: CommunicationAuthor
+  @Field(() => PregnancyCommunicationAuthor, { nullable: true })
+  registeredBy?: PregnancyCommunicationAuthor
 
   @Field(() => Float, { nullable: true })
   weight?: number
@@ -26,11 +26,7 @@ export class ExaminationCommunicationDetail extends CommunicationBase {
   @Field(() => Float, { nullable: true })
   hemoglobin?: number
 
-  @Field({
-    nullable: true,
-    description:
-      'Source mixes label strings ("Neikvætt") and comma-decimal entries ("1,0 ++") — exposed as raw string.',
-  })
+  @Field({ nullable: true })
   albumenInUrineScore?: string
 
   @Field(() => Float, { nullable: true })

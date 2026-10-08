@@ -21,8 +21,8 @@ import { CodeOwners } from '@island.is/shared/constants'
 
 import { HealthDirectorateService } from '../health-directorate.service'
 import { ActivePregnancy } from '../models/activePregnancy.model'
-import { Communication } from '../models/communication.model'
-import { CommunicationDetail } from '../models/communicationDetail.model'
+import { PregnancyCommunication } from '../models/pregnancyCommunication.model'
+import { PregnancyCommunicationDetail } from '../models/pregnancyCommunicationDetail.model'
 import { ExaminationMeasurement } from '../models/examinationMeasurement.model'
 import { PregnancyDocument } from '../models/pregnancyDocument.model'
 
@@ -55,7 +55,7 @@ export class PregnancyResolver {
     return this.api.getActivePregnancy(user)
   }
 
-  @Query(() => [Communication], {
+  @Query(() => [PregnancyCommunication], {
     name: 'healthDirectoratePregnancyCommunications',
     nullable: true,
   })
@@ -65,11 +65,11 @@ export class PregnancyResolver {
   pregnancyCommunications(
     @Args('pregnancyId', { type: () => ID }) pregnancyId: string,
     @CurrentUser() user: User,
-  ): Promise<Communication[] | null> {
+  ): Promise<PregnancyCommunication[] | null> {
     return this.api.getPregnancyCommunications(user, pregnancyId)
   }
 
-  @Query(() => CommunicationDetail, {
+  @Query(() => PregnancyCommunicationDetail, {
     name: 'healthDirectoratePregnancyCommunicationDetail',
     nullable: true,
   })
@@ -80,7 +80,7 @@ export class PregnancyResolver {
     @Args('pregnancyId', { type: () => ID }) pregnancyId: string,
     @Args('communicationId', { type: () => ID }) communicationId: string,
     @CurrentUser() user: User,
-  ): Promise<typeof CommunicationDetail | null> {
+  ): Promise<typeof PregnancyCommunicationDetail | null> {
     return this.api.getPregnancyCommunicationDetail(
       user,
       pregnancyId,

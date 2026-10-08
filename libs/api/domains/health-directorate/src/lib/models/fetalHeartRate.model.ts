@@ -1,9 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('HealthDirectorateFetalHeartRate')
+@ObjectType('HealthDirectoratePregnancyFetalHeartRate')
 export class FetalHeartRate {
-  @Field()
-  identifier!: string
+  @Field({ nullable: true })
+  identifier?: string
 
   @Field(() => Int, { nullable: true })
   soundLower?: number

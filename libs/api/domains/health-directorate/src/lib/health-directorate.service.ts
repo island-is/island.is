@@ -130,14 +130,14 @@ import { HealthDirectorateCertificate } from './models/certificate.model'
 import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
 import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
 import { ActivePregnancy } from './models/activePregnancy.model'
-import { Communication } from './models/communication.model'
-import { CommunicationDetail } from './models/communicationDetail.model'
+import { PregnancyCommunication } from './models/pregnancyCommunication.model'
+import { PregnancyCommunicationDetail } from './models/pregnancyCommunicationDetail.model'
 import { ExaminationMeasurement } from './models/examinationMeasurement.model'
 import { PregnancyDocument } from './models/pregnancyDocument.model'
 import {
   mapActivePregnancy,
-  mapCommunication,
-  mapCommunicationDetail,
+  mapPregnancyCommunication,
+  mapPregnancyCommunicationDetail,
   mapExaminationMeasurement,
   mapPregnancyDocument,
 } from './mappers/pregnancyMapper'
@@ -215,21 +215,21 @@ export class HealthDirectorateService {
   async getPregnancyCommunications(
     auth: Auth,
     pregnancyId: string,
-  ): Promise<Communication[] | null> {
+  ): Promise<PregnancyCommunication[] | null> {
     const communications = await this.healthApi.getPregnancyCommunications(
       auth,
       pregnancyId,
     )
     if (!communications) return null
 
-    return communications.map(mapCommunication)
+    return communications.map(mapPregnancyCommunication)
   }
 
   async getPregnancyCommunicationDetail(
     auth: Auth,
     pregnancyId: string,
     communicationId: string,
-  ): Promise<typeof CommunicationDetail | null> {
+  ): Promise<typeof PregnancyCommunicationDetail | null> {
     const detail = await this.healthApi.getPregnancyCommunicationDetail(
       auth,
       pregnancyId,
@@ -237,7 +237,7 @@ export class HealthDirectorateService {
     )
     if (!detail) return null
 
-    return mapCommunicationDetail(detail)
+    return mapPregnancyCommunicationDetail(detail)
   }
 
   async getPregnancyMeasurements(
