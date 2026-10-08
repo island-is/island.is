@@ -103,6 +103,27 @@ export const caseInclude: Includeable[] = [
         where: { eventType: appealEventTypes },
         separate: true,
       },
+      {
+        model: AppealSummons,
+        as: 'appealSummonses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
     ],
   },
   {
@@ -145,27 +166,6 @@ export const caseInclude: Includeable[] = [
     as: 'appealDecisions',
     required: false,
     separate: true,
-  },
-  {
-    model: AppealSummons,
-    as: 'appealSummonses',
-    required: false,
-    order: [['created', 'ASC']],
-    separate: true,
-    include: [
-      {
-        model: User,
-        as: 'confirmedBy',
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: AppealSummonsDefendant,
-        as: 'defendants',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-    ],
   },
   {
     model: User,
