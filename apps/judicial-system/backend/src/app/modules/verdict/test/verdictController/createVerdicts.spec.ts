@@ -2,6 +2,8 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException } from '@nestjs/common'
+
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
@@ -83,6 +85,10 @@ describe('VerdictController - Create verdicts', () => {
     let then: Then
 
     beforeEach(async () => {
+      const mockFindLatestForDefendant =
+        mockVerdictRepositoryService.findLatestForDefendant as jest.Mock
+      mockFindLatestForDefendant.mockResolvedValueOnce(null)
+
       const mockCreate = mockVerdictRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdVerdict)
 
@@ -94,6 +100,9 @@ describe('VerdictController - Create verdicts', () => {
       // call would be the handler opening a transaction of its own, which
       // would block on the guard's row lock and deadlock the request.
       expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
+      expect(
+        mockVerdictRepositoryService.findLatestForDefendant,
+      ).toHaveBeenCalledWith(defendantId, { transaction })
       expect(mockVerdictRepositoryService.create).toHaveBeenCalledWith(
         { caseId, ...verdictToCreate },
         { transaction },
@@ -115,7 +124,7 @@ describe('VerdictController - Create verdicts', () => {
     })
 
     it('should create nothing', () => {
-      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockVerdictRepositoryService.create).not.toHaveBeenCalled()
     })
   })

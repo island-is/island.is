@@ -169,8 +169,8 @@ export class InternalVerdictController {
   // resolves it by its police document id and puts the case id on the request
   // params, which is where CaseExistsForUpdateGuard reads it from - so it has
   // to run first. The case is then read under FOR UPDATE, and the service
-  // status below is written against a row no one else can change until the
-  // request's transaction commits.
+  // status below is written, and the change in it decided, against a row no
+  // one else can change until the request's transaction commits.
   @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsForUpdateGuard)
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
@@ -194,9 +194,20 @@ export class InternalVerdictController {
       transaction,
     )
 
+    // Whether the service status changed is decided against the verdict as the
+    // locked case carries it, not against the one the police-id guard read
+    // before the lock. Two deliveries of the same status at once both read
+    // the verdict unserved before either locks; the second then serializes
+    // behind the first's commit, and the copy on the locked case is the one
+    // that already shows the status - so it announces nothing twice.
+    const verdictBeforeUpdate =
+      theCase.defendants
+        ?.flatMap((defendant) => defendant.verdicts ?? [])
+        .find((candidate) => candidate.id === verdict.id) ?? verdict
+
     if (
       updatedVerdict.serviceStatus &&
-      updatedVerdict.serviceStatus !== verdict.serviceStatus
+      updatedVerdict.serviceStatus !== verdictBeforeUpdate.serviceStatus
     ) {
       const hasDrivingLicenseSuspension =
         theCase.defendants?.some(
@@ -222,8 +233,9 @@ export class InternalVerdictController {
       // it is posted after the commit - which TransactionCommitInterceptor
       // does after this handler has returned - as it was when the handler
       // committed a transaction of its own. Still fire and forget: a failed
-      // announcement is logged, not returned to the caller. Registered after
-      // the suspension notification above, so the two keep their order.
+      // announcement is logged, not returned to the caller. It runs after the
+      // suspension notification above has been queued; nothing depends on the
+      // order between the two.
       const { serviceStatus, serviceDate } = updatedVerdict
 
       registerAfterCommit(() =>
