@@ -109,6 +109,9 @@ export class ValueTypeFactory {
           'municipality',
         ]
         return this.pickSettings(valueType, keys)
+      case FieldTypesEnum.FAMILY:
+        keys = ['nationalId', 'name']
+        return this.pickSettings(valueType, keys)
       default:
         return undefined
     }

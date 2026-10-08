@@ -211,15 +211,42 @@ export const FieldTypes: FieldType[] = [
     },
     isCommon: false,
   },
-  // {
-  //   id: FieldTypesEnum.NATIONAL_ID_ESTATE,
-  //   name: { is: 'Kennitala dánarbús', en: 'National Id estate' },
-  //   description: {
-  //     is: 'Notandi slær inn kennitölu sem við flettum upp í gagnagrunni látinna',
-  //     en: 'User enters national Id that we look up in database of deceaced',
-  //   },
-  //   isCommon: false,
-  // },
+  {
+    id: FieldTypesEnum.FAMILY,
+    name: { is: 'Fjölskylda', en: 'Family' },
+    description: {
+      is: 'Notandi slær inn upplýsingar um fjölskyldu sína',
+      en: 'User enters information about their family',
+    },
+    isCommon: true,
+  },
+  {
+    id: FieldTypesEnum.CHILD,
+    name: { is: 'Barn', en: 'Child' },
+    description: {
+      is: 'Notandi velur barn sitt úr lista yfir börn tengd kennitölu',
+      en: 'The user selects their child from a list of children related to their national Id',
+    },
+    isCommon: true,
+  },
+  {
+    id: FieldTypesEnum.SPOUSE,
+    name: { is: 'Makki', en: 'Spouse' },
+    description: {
+      is: 'Upplýsingar um maka notanda tengdar kennitölu eru sóttar til Þjóðskrár',
+      en: "Information about the user's spouse related to their national Id is retrieved from the National Registry",
+    },
+    isCommon: true,
+  },
+  {
+    id: FieldTypesEnum.NATIONAL_ID_ESTATE,
+    name: { is: 'Kennitala dánarbús', en: 'National Id estate' },
+    description: {
+      is: 'Notandi slær inn kennitölu sem við flettum upp í gagnagrunni látinna',
+      en: 'User enters national Id that we look up in database of deceaced',
+    },
+    isCommon: true,
+  },
   // {
   //   id: FieldTypesEnum.NATIONAL_ID_ALL,
   //   name: { is: 'Kennitala allt', en: 'National Id all' },
