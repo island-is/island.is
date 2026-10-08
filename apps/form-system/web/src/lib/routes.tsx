@@ -9,6 +9,16 @@ import { m } from './messages'
 
 export const BASE_PATH = '/form'
 
+const UnexpectedErrorShell = () => (
+  <ErrorShell
+    title={m.unexpectedErrorTitle}
+    subTitle={m.unexpectedErrorSubtitle}
+    description={m.unexpectedErrorDescription}
+    retryText={m.reloadPage}
+    onRetry={() => window.location.reload()}
+  />
+)
+
 export const routes: RouteObject[] = [
   {
     element: (
@@ -18,17 +28,10 @@ export const routes: RouteObject[] = [
         </Layout>
       </HeaderInfoProvider>
     ),
-    errorElement: (
-      <ErrorShell
-        title={m.unexpectedErrorTitle}
-        subTitle={m.unexpectedErrorSubtitle}
-        description={m.unexpectedErrorDescription}
-        retryText={m.reloadPage}
-        onRetry={() => window.location.reload()}
-      />
-    ),
+    errorElement: <UnexpectedErrorShell />,
     children: [
       {
+        errorElement: <UnexpectedErrorShell />,
         children: [
           {
             path: '/:slug',
