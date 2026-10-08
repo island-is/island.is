@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import copyToClipboard from 'copy-to-clipboard'
 
+import { AirDiscountSchemeUsedFlightLeg } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -31,18 +32,14 @@ import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
 
 import { messages as m } from '../../lib/messages'
-import {
-  AirDiscountMembersQuery,
-  useAirDiscountMembersQuery,
-} from './AirDiscountOverview.generated'
+import { useAirDiscountMembersQuery } from './AirDiscountOverview.generated'
 
 type CopiedCode = {
   code: string
   copied: boolean
 }
 
-type Member = AirDiscountMembersQuery['airDiscountSchemeMembers'][number]
-type UsageRow = Member['usedFlightLegsThisPeriod'][number] & { name: string }
+type UsageRow = AirDiscountSchemeUsedFlightLeg & { name: string }
 
 const columnHelper = createColumnHelper<UsageRow>()
 
@@ -77,7 +74,7 @@ export const AirDiscountOverview = () => {
   )
   const usageRows: UsageRow[] =
     members?.flatMap((member) =>
-      member.usedFlightLegsThisPeriod.map((leg) => ({
+      (member.usedFlightLegsThisPeriod ?? []).map((leg) => ({
         ...leg,
         name: member.name,
       })),
