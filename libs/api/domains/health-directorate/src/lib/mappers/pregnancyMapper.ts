@@ -120,7 +120,7 @@ export const mapActivePregnancy = (
     numberOfEmbryos: dto.numberOfEmbryos ?? undefined,
     motherName: dto.motherName ?? undefined,
     partnerName: dto.partnerName ?? undefined,
-    staff: (dto.staff ?? []).map(mapPregnancyStaff).filter(isDefined),
+    staff: dto.staff ? dto.staff.map(mapPregnancyStaff).filter(isDefined) : [],
     endedWithBirth: dto.endedWithBirth ?? undefined,
     lastUpdated: dto.lastUpdated ?? undefined,
   }
@@ -160,9 +160,9 @@ const mapExaminationCommunicationDetail = (
   hemoglobin: dto.hemoglobinScore ?? undefined,
   albumenInUrineScore: dto.albumenInUrineScore ?? undefined,
   fundalHeight: dto.cervixHeight ?? undefined,
-  fetalHeartRates: (dto.fetalHeartRates ?? [])
-    .map(mapFetalHeartRate)
-    .filter(isDefined),
+  fetalHeartRates: dto.fetalHeartRates
+    ? dto.fetalHeartRates.map(mapFetalHeartRate).filter(isDefined)
+    : [],
 })
 
 const mapPhoneCallCommunicationDetail = (
@@ -212,9 +212,9 @@ export const mapExaminationMeasurement = (
     hemoglobin: dto.hemoglobinScore ?? undefined,
     albumenInUrineScore: dto.albumenInUrineScore ?? undefined,
     fundalHeight: dto.cervixHeight ?? undefined,
-    fetalHeartRates: (dto.fetalHeartRates ?? [])
-      .map(mapFetalHeartRate)
-      .filter(isDefined),
+    fetalHeartRates: dto.fetalHeartRates
+      ? dto.fetalHeartRates.map(mapFetalHeartRate).filter(isDefined)
+      : [],
   }
 }
 
