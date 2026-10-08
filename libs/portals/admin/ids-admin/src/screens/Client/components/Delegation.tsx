@@ -2,7 +2,6 @@ import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Hidden, Stack, Text } from '@island.is/island-ui/core'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { AuthDelegationProvider } from '@island.is/shared/types'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
@@ -13,6 +12,11 @@ import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
 import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
+import {
+  getDelegationTypeFormValues,
+  getEditableDelegationTypes,
+  isDelegationProviderVisible,
+} from '../../../utils/getDelegationTypeFormValues'
 
 interface DelegationProps {
   promptDelegations: boolean
@@ -40,76 +44,45 @@ const Delegation = ({
     promptDelegations: boolean
     requireApiScopes: boolean
     supportedDelegationTypes: string[]
-    addedDelegationTypes: string[]
-    removedDelegationTypes: string[]
   }>({
     promptDelegations,
     requireApiScopes,
     supportedDelegationTypes,
-    addedDelegationTypes: [],
-    removedDelegationTypes: [],
   })
 
-  const providers = delegationProviders.map(
-    getDelegationProviderTranslations('clientDelegation', formatMessage),
-  )
+  const providers = delegationProviders
+    .map(getDelegationProviderTranslations('clientDelegation', formatMessage))
+    .filter(
+      (provider) =>
+        provider && isDelegationProviderVisible(provider.id, isSuperAdmin),
+    )
+
+  // Delegation types the user cannot edit are left out, since their sync cannot
+  // resolve a difference in them.
+  const editableDelegationTypes = getEditableDelegationTypes(providers)
+  const environmentsWithEditableTypes = client.environments.map((env) => ({
+    ...env,
+    supportedDelegationTypes: (env.supportedDelegationTypes ?? []).filter(
+      (type) => editableDelegationTypes.includes(type),
+    ),
+  }))
 
   const toggleDelegationType = (field: string, checked: boolean) => {
     const type = field.split(FIELD_PREFIX)[1]
 
-    if (checked) {
-      const newInputValues = { ...inputValues }
-      // should not be in removed delegation types if field is checked
-      if (inputValues.removedDelegationTypes.includes(type)) {
-        newInputValues.removedDelegationTypes =
-          inputValues.removedDelegationTypes.filter((t) => t !== type)
-      }
-
-      // if not in supported delegation types, user is adding it for the first time
-      if (!supportedDelegationTypes.includes(type)) {
-        newInputValues.addedDelegationTypes = [
-          ...inputValues.addedDelegationTypes,
-          type,
-        ]
-        newInputValues.supportedDelegationTypes = [
-          ...inputValues.supportedDelegationTypes,
-          type,
-        ]
-      }
-
-      // if already in supported delegation types, user is re-adding it
-      if (supportedDelegationTypes.includes(type)) {
-        newInputValues.supportedDelegationTypes = [
-          ...inputValues.supportedDelegationTypes,
-          type,
-        ]
-      }
-
-      setInputValues(newInputValues)
-    } else {
-      const newInputValues = { ...inputValues }
-      // should not be in added delegation types if field is not checked
-      if (inputValues.addedDelegationTypes.includes(type)) {
-        newInputValues.addedDelegationTypes =
-          inputValues.addedDelegationTypes.filter((t) => t !== type)
-      }
-      // should not be in supported delegation types if field is not checked
-      if (inputValues.supportedDelegationTypes.includes(type)) {
-        newInputValues.supportedDelegationTypes =
-          inputValues.supportedDelegationTypes.filter((t) => t !== type)
-      }
-
-      // if not in removed delegation types, user is removing it for the first time
-      if (supportedDelegationTypes.includes(type)) {
-        newInputValues.removedDelegationTypes = [
-          ...inputValues.removedDelegationTypes,
-          type,
-        ]
-      }
-
-      setInputValues(newInputValues)
-    }
+    setInputValues((prev) => ({
+      ...prev,
+      supportedDelegationTypes: checked
+        ? [...prev.supportedDelegationTypes, type]
+        : prev.supportedDelegationTypes.filter((t) => t !== type),
+    }))
   }
+
+  const { addedDelegationTypes, removedDelegationTypes } =
+    getDelegationTypeFormValues({
+      providers,
+      supportedDelegationTypes: inputValues.supportedDelegationTypes,
+    })
 
   return (
     <FormCard
@@ -118,23 +91,15 @@ const Delegation = ({
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
       headerMarginBottom={3}
-      inSync={checkEnvironmentsSync(client.environments, [
-        'supportsProcuringHolders',
-        'supportsLegalGuardians',
+      inSync={checkEnvironmentsSync(environmentsWithEditableTypes, [
+        'supportedDelegationTypes',
         'promptDelegations',
-        'supportsPersonalRepresentatives',
-        'supportsCustomDelegation',
         'requireApiScopes',
       ])}
     >
       <Stack space={4}>
         {providers.map((provider) =>
-          !provider ||
-          (!isSuperAdmin &&
-            (provider.id ===
-              AuthDelegationProvider.PersonalRepresentativeRegistry ||
-              provider.id ===
-                AuthDelegationProvider.DistrictCommissionersRegistry)) ? null : (
+          !provider ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>
@@ -204,12 +169,12 @@ const Delegation = ({
           />
         </Stack>
       </Stack>
-      {inputValues.removedDelegationTypes.map((type) => (
+      {removedDelegationTypes.map((type) => (
         <Hidden key={type} print screen>
           <input type="hidden" name="removedDelegationTypes" value={type} />
         </Hidden>
       ))}
-      {inputValues.addedDelegationTypes.map((type) => (
+      {addedDelegationTypes.map((type) => (
         <Hidden key={type} print screen>
           <input type="hidden" name="addedDelegationTypes" value={type} />
         </Hidden>
