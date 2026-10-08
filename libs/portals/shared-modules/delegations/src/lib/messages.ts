@@ -753,7 +753,7 @@ export const m = defineMessages({
   stepUpUnavailable: {
     id: 'sp.access-control-delegations:step-up-unavailable',
     defaultMessage:
-      'Ekki er hægt að staðfesta umboðið með þessari innskráningu, t.d. ef þú skráðir þig inn með skilríkjum á korti. Umboðið var ekki veitt. Skráðu þig inn með rafrænum skilríkjum í síma eða Auðkennisappinu og veittu það aftur.',
+      'Ekki er hægt að staðfesta umboðið með rafrænum skilríkjum, t.d. ef þú skráðir þig inn með skilríkjum á korti eða staðfesting er ekki í boði eins og er. Umboðið var ekki veitt.',
   },
   stepUpStartFailed: {
     id: 'sp.access-control-delegations:step-up-start-failed',
@@ -785,6 +785,11 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:sensitive-scopes-unavailable-message',
     defaultMessage:
       'Þú skráðir þig inn með skilríkjum á korti. Réttindi merkt „Viðkvæmt“ þarf að staðfesta með rafrænum skilríkjum í síma eða Auðkennisappinu og því er aðeins hægt að veita þau eftir innskráningu með þeim.',
+  },
+  sensitiveScopesNotAvailableMessage: {
+    id: 'sp.access-control-delegations:sensitive-scopes-not-available-message',
+    defaultMessage:
+      'Réttindi merkt „Viðkvæmt“ er ekki hægt að veita eins og er. Reyndu aftur síðar.',
   },
   sensitiveScopesSelectedTitle: {
     id: 'sp.access-control-delegations:sensitive-scopes-selected-title',

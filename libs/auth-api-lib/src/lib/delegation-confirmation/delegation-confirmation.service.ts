@@ -17,6 +17,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   CibaClient,
   SessionCannotStepUpError,
+  StepUpUnavailableError,
   type StepUpClaims,
   type StepUpMethod,
 } from '@island.is/auth/step-up'
@@ -476,11 +477,15 @@ export class DelegationConfirmationService {
         ),
       })
       .catch(async (error) => {
-        // The session can never be stepped up (an ID card login the token
-        // doesn't show as one, or a SIM number we no longer have). Waiting
-        // for the confirmation to expire would only strand the grant, so it
-        // ends now and the grantor is told why.
-        if (error instanceof SessionCannotStepUpError) {
+        // The step-up won't come: the session can't be stepped up (an ID card
+        // login the token doesn't show as one, or a SIM number we no longer
+        // have), or the identity server doesn't offer it to this person right
+        // now. Waiting for the confirmation to expire would only strand the
+        // grant, so it ends now and the grantor is told why.
+        if (
+          error instanceof SessionCannotStepUpError ||
+          error instanceof StepUpUnavailableError
+        ) {
           await this.cancel(members)
         }
         throw error

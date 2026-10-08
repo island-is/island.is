@@ -36,10 +36,6 @@ const schema = z.object({
   // the evidence record.
   identityServerIssuerUrl: z.string(),
   defaultValidityPeriodInDays: z.number().min(1),
-  // The environment's switch for delegation confirmation. Off, sensitive scopes
-  // are granted as before. On, the isDelegationConfirmationEnabled flag picks
-  // who needs it, and failing to read the flag means they do.
-  confirmationEnabled: z.boolean(),
   // How long a grantor has to complete the second, high-assurance confirmation
   // of a delegation containing sensitive scopes.
   confirmationLifetimeInMinutes: z.number().min(1),
@@ -148,8 +144,6 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
     ),
     defaultValidityPeriodInDays:
       env.optionalJSON('DELEGATION_DEFAULT_VALID_PERIOD_IN_DAYS') ?? 365,
-    confirmationEnabled:
-      env.optionalJSON<boolean>('DELEGATION_CONFIRMATION_ENABLED') ?? false,
     confirmationLifetimeInMinutes:
       env.optionalJSON('DELEGATION_CONFIRMATION_LIFETIME_IN_MINUTES') ?? 15,
     confirmationRequiredAcr:

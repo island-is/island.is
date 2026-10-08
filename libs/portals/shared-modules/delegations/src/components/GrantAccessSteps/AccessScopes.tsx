@@ -11,7 +11,7 @@ import { ScopesCategoriesList } from '../ScopesCategoriesList'
 import { useMemo, useState } from 'react'
 import {
   canSelectScope,
-  useCanGrantSensitiveScopes,
+  useSensitiveScopesAvailability,
 } from '../../hooks/useCanGrantSensitiveScopes'
 import * as styles from './GrantAccessSteps.css'
 
@@ -59,7 +59,8 @@ export const AccessScopes = () => {
     },
   )
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
-  const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
+  const { canGrant: canGrantSensitiveScopes, reason: sensitiveUnavailable } =
+    useSensitiveScopesAvailability()
   const defaultDate = add(new Date(), { years: 1 })
 
   const { data: domainsData } = useAuthDomainsQuery({
@@ -182,15 +183,22 @@ export const AccessScopes = () => {
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <RecipientsTag />
-      {!canGrantSensitiveScopes && (
-        <Box marginBottom={2} width="full">
-          <AlertMessage
-            type="info"
-            title={formatMessage(m.sensitiveScopesUnavailableTitle)}
-            message={formatMessage(m.sensitiveScopesUnavailableMessage)}
-          />
-        </Box>
-      )}
+      {sensitiveUnavailable &&
+        categoriesData?.authScopeCategories.some((category) =>
+          category.scopes.some((scope) => scope.requiresConfirmation),
+        ) && (
+          <Box marginBottom={2} width="full">
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.sensitiveScopesUnavailableTitle)}
+              message={formatMessage(
+                sensitiveUnavailable === 'card_session'
+                  ? m.sensitiveScopesUnavailableMessage
+                  : m.sensitiveScopesNotAvailableMessage,
+              )}
+            />
+          </Box>
+        )}
       <Box
         display="flex"
         columnGap={[0, 2]}

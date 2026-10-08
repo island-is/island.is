@@ -1,7 +1,11 @@
 import { generateKeyPairSync } from 'crypto'
 import { sign } from 'jsonwebtoken'
 
-import { CibaClient, SessionCannotStepUpError } from './ciba.client'
+import {
+  CibaClient,
+  SessionCannotStepUpError,
+  StepUpUnavailableError,
+} from './ciba.client'
 import { isCardSession } from './types'
 
 const { privateKey, publicKey } = generateKeyPairSync('rsa', {
@@ -129,6 +133,18 @@ describe('CibaClient', () => {
       await expect(
         new CibaClient(options).start({ userToken: 't', bindingMessage: 'x' }),
       ).rejects.toBeInstanceOf(SessionCannotStepUpError)
+    })
+
+    it('says when step-up is not available for the person', async () => {
+      respond(400, {
+        error: 'access_denied',
+        error_description:
+          'step_up_unavailable: Step-up authentication is not enabled.',
+      })
+
+      await expect(
+        new CibaClient(options).start({ userToken: 't', bindingMessage: 'x' }),
+      ).rejects.toBeInstanceOf(StepUpUnavailableError)
     })
 
     it('does not mistake a passing refusal for it', async () => {

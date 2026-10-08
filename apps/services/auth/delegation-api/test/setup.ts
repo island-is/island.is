@@ -29,7 +29,6 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
   identityServerIssuerUrl: 'https://identity-server.test',
   customScopeRules: [],
   defaultValidityPeriodInDays: 90,
-  confirmationEnabled: true,
   confirmationLifetimeInMinutes: 15,
   confirmationRequiredAcr: 'eidas-loa-high',
   confirmationMaxAttempts: 5,

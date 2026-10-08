@@ -21,7 +21,7 @@ import { AuthApiScope, AuthDelegationDirection } from '@island.is/api/schema'
 import { useDelegationForm } from '../../context/DelegationFormContext'
 import {
   canSelectScope,
-  useCanGrantSensitiveScopes,
+  useSensitiveScopesAvailability,
 } from '../../hooks/useCanGrantSensitiveScopes'
 import add from 'date-fns/add'
 import { useEffect, useState } from 'react'
@@ -73,7 +73,8 @@ export const CategoryDetails = () => {
   const loading = categoriesLoading || tagsLoading
   const error = categoriesError || tagsError
 
-  const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
+  const { canGrant: canGrantSensitiveScopes, reason: sensitiveUnavailable } =
+    useSensitiveScopesAvailability()
 
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
@@ -137,13 +138,17 @@ export const CategoryDetails = () => {
         {!showFlow && (
           <>
             <Text variant="h5">{formatMessage(m.delegationsThatSuit)}</Text>
-            {!canGrantSensitiveScopes &&
+            {sensitiveUnavailable &&
               data?.scopes?.some((scope) => scope.requiresConfirmation) && (
                 <Box paddingTop={2}>
                   <AlertMessage
                     type="info"
                     title={formatMessage(m.sensitiveScopesUnavailableTitle)}
-                    message={formatMessage(m.sensitiveScopesUnavailableMessage)}
+                    message={formatMessage(
+                      sensitiveUnavailable === 'card_session'
+                        ? m.sensitiveScopesUnavailableMessage
+                        : m.sensitiveScopesNotAvailableMessage,
+                    )}
                   />
                 </Box>
               )}

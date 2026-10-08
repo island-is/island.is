@@ -8,7 +8,6 @@ import request from 'supertest'
 import {
   Delegation,
   DelegationConfirmation,
-  DelegationConfirmationPolicy,
   DelegationConfirmationService,
   DelegationConfirmationStatus,
   DelegationResourcesService,
@@ -22,7 +21,11 @@ import {
   UserIdentitiesService,
 } from '@island.is/auth-api-lib'
 import { delegationScopes } from '@island.is/auth/scopes'
-import { CibaClient, SessionCannotStepUpError } from '@island.is/auth/step-up'
+import {
+  CibaClient,
+  SessionCannotStepUpError,
+  StepUpUnavailableError,
+} from '@island.is/auth/step-up'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { FixtureFactory } from '@island.is/services/auth/testing'
@@ -216,7 +219,7 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([])
     })
 
-    it('grants a sensitive scope as before when the grantor does not have the feature', async () => {
+    it('refuses a sensitive scope when the grantor does not have the feature', async () => {
       // Arrange — the flag off for this grantor; the scope is still marked.
       jest
         .spyOn(app.get(FeatureFlagService), 'getValue')
@@ -227,13 +230,29 @@ describe('MeDelegationConfirmationsController', () => {
       // Act
       const res = await grant([SENSITIVE_SCOPE])
 
-      // Assert — no 500, no confirmation: exactly what happened before.
-      expect(res.status).toEqual(201)
-      expect(res.body.pendingConfirmations).toBeUndefined()
-      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
+      // Assert — never granted without a confirmation, and none can be had.
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([])
+      expect(await confirmations().count()).toEqual(0)
     })
 
-    it('holds a sensitive scope when the flag cannot be read', async () => {
+    it('still grants ordinary scopes when the grantor does not have the feature', async () => {
+      // Arrange
+      jest
+        .spyOn(app.get(FeatureFlagService), 'getValue')
+        .mockImplementation(async (feature) =>
+          feature === Features.isDelegationConfirmationEnabled ? false : '*',
+        )
+
+      // Act
+      const res = await grant([ORDINARY_SCOPE])
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
+    })
+
+    it('refuses a sensitive scope when the flag cannot be read', async () => {
       // Arrange — ConfigCat unreachable: the client answers with the default.
       jest
         .spyOn(app.get(FeatureFlagService), 'getValue')
@@ -243,30 +262,12 @@ describe('MeDelegationConfirmationsController', () => {
       const res = await grant([SENSITIVE_SCOPE])
 
       // Assert — an outage must not hand out sensitive scopes in one click.
-      expect(res.status).toEqual(201)
-      expect(res.body.pendingConfirmations).toHaveLength(1)
+      expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
     })
 
-    it('grants a sensitive scope as before while switched off in the environment', async () => {
-      // Arrange — the flag says yes, but the environment says no.
-      jest
-        .spyOn(app.get(DelegationConfirmationPolicy), 'isRequired')
-        .mockResolvedValue(false)
-
-      // Act
-      const res = await grant([SENSITIVE_SCOPE])
-
-      // Assert
-      expect(res.status).toEqual(201)
-      expect(res.body.pendingConfirmations).toBeUndefined()
-      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
-    })
-
-    it('refuses to write a sensitive scope on the word of its caller alone', async () => {
-      // Arrange — a write path claiming the grantor need not confirm, while
-      // the policy says they must.
-      const user = createCurrentUser({ nationalId: grantorNationalId })
+    it('refuses to write a sensitive scope without a confirmation', async () => {
+      // Arrange — a write path with no confirmation to show for it.
       const { body: delegation } = await grant([ORDINARY_SCOPE])
 
       // Act
@@ -276,10 +277,9 @@ describe('MeDelegationConfirmationsController', () => {
           delegation.id,
           [{ name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) }],
           undefined,
-          { grantor: user },
         )
 
-      // Assert — the guard asks the policy itself.
+      // Assert — whoever calls it, with or without the feature.
       await expect(write).rejects.toThrow(/without a redeemed confirmation/)
       expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
     })
@@ -468,9 +468,16 @@ describe('MeDelegationConfirmationsController', () => {
       ])
     })
 
-    it('undoes the grant when the session can never be stepped up', async () => {
-      // Arrange — e.g. an ID card login from before card logins were marked.
-      ciba.start.mockRejectedValue(new SessionCannotStepUpError())
+    it.each([
+      ['the session can never be stepped up', new SessionCannotStepUpError()],
+      [
+        'step-up is not available for the grantor',
+        new StepUpUnavailableError(),
+      ],
+    ])('undoes the grant when %s', async (_, refusal) => {
+      // Arrange — e.g. an ID card login from before card logins were marked,
+      // or the identity server's feature off for the grantor.
+      ciba.start.mockRejectedValue(refusal)
 
       // Act
       const res = await start()

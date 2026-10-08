@@ -6,7 +6,6 @@ import { and, Op, or } from 'sequelize'
 import { Includeable } from 'sequelize/types/model'
 
 import { User } from '@island.is/auth-nest-tools'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { NoContentException } from '@island.is/nest/problem'
 import { AuthDelegationType } from '@island.is/shared/types'
 
@@ -27,7 +26,6 @@ import { mapToScopeTree } from './utils/scope-tree.mapper'
 import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
 import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
-import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -50,8 +48,6 @@ export class DelegationResourcesService {
     private resourceTranslationService: ResourceTranslationService,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
-    private featureFlagService: FeatureFlagService,
-    private delegationConfirmationPolicy: DelegationConfirmationPolicy,
   ) {}
 
   async findAllDomains(
@@ -305,18 +301,6 @@ export class DelegationResourcesService {
 
     if (language) {
       await this.resourceTranslationService.translateApiScopes(scopes, language)
-    }
-
-    // A scope only requires confirmation for a grantor who has the feature. For
-    // everyone else it is an ordinary scope, granted as before — so marking a
-    // scope in ids-admin changes nothing until the flag is turned on.
-    if (
-      scopes.some((scope) => scope.requiresConfirmation) &&
-      !(await this.delegationConfirmationPolicy.isRequired(user))
-    ) {
-      for (const scope of scopes) {
-        scope.requiresConfirmation = false
-      }
     }
 
     return scopes

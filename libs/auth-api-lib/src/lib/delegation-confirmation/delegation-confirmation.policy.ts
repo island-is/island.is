@@ -1,36 +1,25 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
-import type { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-import { DelegationConfig } from '../delegations/DelegationConfig'
-
 /**
- * Whether scopes marked `requiresConfirmation` need a confirmation when this
- * person grants them. The one place that decides it: the grant, the scope
- * listing and the guard below every write all ask here.
+ * Whether this person can confirm a grant right now, and so may grant scopes
+ * marked `requiresConfirmation` at all. A marked scope is never granted
+ * without a confirmation: when one can't be had, it can't be granted.
  *
- * Off in the environment (DelegationConfig.confirmationEnabled), never. On, the
- * feature flag picks who, and if the flag can't be read they do: a ConfigCat
- * outage must not quietly hand out sensitive scopes in one click.
+ * Read with default false, so a ConfigCat outage — or a missing flag — means
+ * sensitive scopes can't be granted for a while, never that they are granted
+ * in one click.
  */
 @Injectable()
 export class DelegationConfirmationPolicy {
-  constructor(
-    @Inject(DelegationConfig.KEY)
-    private readonly delegationConfig: ConfigType<typeof DelegationConfig>,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  async isRequired(grantor: User): Promise<boolean> {
-    if (!this.delegationConfig.confirmationEnabled) {
-      return false
-    }
-
+  isAvailable(grantor: User): Promise<boolean> {
     return this.featureFlagService.getValue(
       Features.isDelegationConfirmationEnabled,
-      true,
+      false,
       grantor,
     )
   }

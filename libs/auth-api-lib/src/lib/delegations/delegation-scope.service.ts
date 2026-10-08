@@ -31,7 +31,6 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
 import { DelegationConfirmationStatus } from '../delegation-confirmation/types/delegation-confirmation-status'
-import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { validateDistrictCommissionersDelegations } from './utils/delegations'
@@ -42,15 +41,10 @@ import type { User } from '@island.is/auth-nest-tools'
  * How a write may include scopes marked `requiresConfirmation`. Without either,
  * it may not include any.
  */
-export type CreateScopesOptions =
+export type CreateScopesOptions = {
   /** The confirmed confirmation these scopes were redeemed under. */
-  | { confirmationId: string }
-  /**
-   * Who is granting. If confirmation is not required of them (see
-   * DelegationConfirmationPolicy), a marked scope is granted as it always was;
-   * the guard decides that itself.
-   */
-  | { grantor: User }
+  confirmationId: string
+}
 
 @Injectable()
 export class DelegationScopeService {
@@ -71,7 +65,6 @@ export class DelegationScopeService {
     private readonly syslumennService: SyslumennService,
     private readonly delegationsIndexService: DelegationsIndexService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly delegationConfirmationPolicy: DelegationConfirmationPolicy,
   ) {}
 
   async createOrUpdate(
@@ -122,16 +115,7 @@ export class DelegationScopeService {
 
     const sensitiveNames = sensitiveScopes.map((scope) => scope.name)
 
-    // Decided here, not taken from the caller.
-    if (
-      options &&
-      'grantor' in options &&
-      !(await this.delegationConfirmationPolicy.isRequired(options.grantor))
-    ) {
-      return
-    }
-
-    if (!options || !('confirmationId' in options)) {
+    if (!options) {
       throw new Error(
         `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveNames.join(
           ', ',

@@ -38,8 +38,19 @@ export class SessionCannotStepUpError extends ForbiddenException {
   }
 }
 
-/** How the identity server marks that refusal: the start of error_description. */
+/**
+ * Step-up is not available for this person right now: the identity server has
+ * the feature off for them, or can't read its flag. Waiting won't help either.
+ */
+export class StepUpUnavailableError extends ForbiddenException {
+  constructor() {
+    super('Step-up is not available for this person right now.')
+  }
+}
+
+/** How the identity server marks those refusals: the start of error_description. */
 const SESSION_CANNOT_STEP_UP = 'session_cannot_step_up'
+const STEP_UP_UNAVAILABLE = 'step_up_unavailable'
 
 const JWKS_PATH = '/.well-known/openid-configuration/jwks'
 const CIBA_GRANT_TYPE = 'urn:openid:params:grant-type:ciba'
@@ -104,11 +115,14 @@ export class CibaClient {
       )
     }
 
-    if (
-      json['error'] === 'access_denied' &&
-      String(json['error_description'] ?? '').startsWith(SESSION_CANNOT_STEP_UP)
-    ) {
-      throw new SessionCannotStepUpError()
+    if (json['error'] === 'access_denied') {
+      const description = String(json['error_description'] ?? '')
+      if (description.startsWith(SESSION_CANNOT_STEP_UP)) {
+        throw new SessionCannotStepUpError()
+      }
+      if (description.startsWith(STEP_UP_UNAVAILABLE)) {
+        throw new StepUpUnavailableError()
+      }
     }
 
     // invalid_request, unknown_user_id, access_denied (feature off), ...
