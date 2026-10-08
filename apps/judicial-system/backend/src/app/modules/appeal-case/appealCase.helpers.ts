@@ -323,6 +323,42 @@ export const buildInCourtAppealedEvent = (params: {
   }
 }
 
+/**
+ * The record of the court of appeals settling who represents one party in the
+ * appeal.
+ *
+ * It exists for the letter of appointment, which is signed by whoever
+ * confirmed the advocate and dated the day they did it - neither of which the
+ * party row keeps. Only the latest such event per party is ever read, so an
+ * advocate replaced later leaves nothing to clean up.
+ *
+ * userRole is the actor's own role here. The column usually carries the
+ * appellant's side, but a confirmation has no appellant: it is an act of the
+ * court, and the court is who it names.
+ */
+export const buildAdvocateConfirmedEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: { defendantId?: string; civilClaimantId?: string }
+  actor: User
+}): Partial<AppealEventLog> => {
+  const { theCase, appealCase, party, actor } = params
+
+  return {
+    caseId: theCase.id,
+    appealCaseId: appealCase.id,
+    eventType: AppealEventType.ADVOCATE_CONFIRMED,
+    defendantId: party.defendantId,
+    civilClaimantId: party.civilClaimantId,
+    userRole: actor.role,
+    userId: actor.id,
+    nationalId: actor.nationalId,
+    userName: actor.name,
+    userTitle: actor.title,
+    institutionName: actor.institution?.name,
+  }
+}
+
 // An APPEALED event for an appeal the party filed itself, outside the court
 // record. Such an appellant has no decision = APPEAL row - they appealed because
 // they postponed in court - so it must never be inferred from the decision rows
