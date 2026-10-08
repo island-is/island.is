@@ -68,9 +68,18 @@ describe('mapPaymentDto', () => {
   })
 
   it('returns null when the nested invoice fails to map (cascading drop)', () => {
-    const result = mapPaymentDto({ ...baseData, invoiceNum: null })
+    const result = mapPaymentDto({ ...baseData, invoiceGuid: undefined })
 
     expect(result).toBeNull()
+  })
+
+  it('keeps a payment whose invoice number is withheld by the view', () => {
+    const result = mapPaymentDto({ ...baseData, invoiceNum: null })
+
+    expect(result?.id).toBe(baseData.paymentGuid)
+    expect(result?.amount).toBe(12683)
+    expect(result?.invoice.number).toBeNull()
+    expect(result?.invoice.totalAmount).toBe(16161)
   })
 
   it('nests the mapped invoice', () => {
@@ -79,7 +88,6 @@ describe('mapPaymentDto', () => {
     expect(result?.invoice).toEqual({
       id: '00000000-0000-0000-0000-000000000002',
       number: '191552084',
-      numberRedacted: false,
       totalAmount: 16161,
       itemization: [],
     })
