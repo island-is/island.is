@@ -58,6 +58,7 @@ import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdictExists.guard'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
+import { VerdictOnCaseGuard } from './guards/verdictOnCase.guard'
 import { DeliverResponse } from './models/deliver.response'
 import { validateVerdictAppealUpdate } from './verdict.helpers'
 import {
@@ -168,10 +169,18 @@ export class InternalVerdictController {
   // The police name the verdict, not the case: ExternalPoliceVerdictExistsGuard
   // resolves it by its police document id and puts the case id on the request
   // params, which is where CaseExistsForUpdateGuard reads it from - so it has
-  // to run first. The case is then read under FOR UPDATE, and the service
-  // status below is written, and the change in it decided, against a row no
-  // one else can change until the request's transaction commits.
-  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsForUpdateGuard)
+  // to run first. The case is then read under FOR UPDATE, and VerdictOnCaseGuard
+  // swaps the verdict for the copy the locked case carries: the first read
+  // happened before the lock, so its fields may be stale, and the service
+  // status change below is decided from them. Two deliveries of the same
+  // status at once both read the verdict unserved before either locks; the
+  // second serializes behind the first's commit and then sees the status
+  // already there, so it announces nothing twice.
+  @UseGuards(
+    ExternalPoliceVerdictExistsGuard,
+    CaseExistsForUpdateGuard,
+    VerdictOnCaseGuard,
+  )
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
@@ -194,20 +203,9 @@ export class InternalVerdictController {
       transaction,
     )
 
-    // Whether the service status changed is decided against the verdict as the
-    // locked case carries it, not against the one the police-id guard read
-    // before the lock. Two deliveries of the same status at once both read
-    // the verdict unserved before either locks; the second then serializes
-    // behind the first's commit, and the copy on the locked case is the one
-    // that already shows the status - so it announces nothing twice.
-    const verdictBeforeUpdate =
-      theCase.defendants
-        ?.flatMap((defendant) => defendant.verdicts ?? [])
-        .find((candidate) => candidate.id === verdict.id) ?? verdict
-
     if (
       updatedVerdict.serviceStatus &&
-      updatedVerdict.serviceStatus !== verdictBeforeUpdate.serviceStatus
+      updatedVerdict.serviceStatus !== verdict.serviceStatus
     ) {
       const hasDrivingLicenseSuspension =
         theCase.defendants?.some(

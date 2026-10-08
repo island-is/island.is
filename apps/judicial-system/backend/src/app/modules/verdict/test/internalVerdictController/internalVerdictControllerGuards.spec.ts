@@ -12,6 +12,7 @@ import { DefendantExistsGuard } from '../../../defendant'
 import { DefendantNationalIdExistsGuard } from '../../../defendant/guards/defendantNationalIdExists.guard'
 import { ExternalPoliceVerdictExistsGuard } from '../../guards/ExternalPoliceVerdictExists.guard'
 import { VerdictExistsGuard } from '../../guards/verdictExists.guard'
+import { VerdictOnCaseGuard } from '../../guards/verdictOnCase.guard'
 import { InternalVerdictController } from '../../internalVerdict.controller'
 
 describe('InternalVerdictController - Top-level guards', () => {
@@ -34,11 +35,13 @@ describe('InternalVerdictController - deliverVerdictToNationalCommissionersOffic
 })
 
 // The verdict lookup supplies the case id the locking read needs, so it
-// stays first. verdictGuardChain.spec.ts runs the chain.
+// stays first; the verdict is then re-taken from the locked case.
+// verdictGuardChain.spec.ts runs the chain.
 describe('InternalVerdictController - updateVerdict', () => {
   verifyGuards(InternalVerdictController, 'updateVerdict', [
     ExternalPoliceVerdictExistsGuard,
     CaseExistsForUpdateGuard,
+    VerdictOnCaseGuard,
   ])
 })
 

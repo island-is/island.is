@@ -42,6 +42,7 @@ import {
 } from '../../repository'
 import { ExternalPoliceVerdictExistsGuard } from '../guards/ExternalPoliceVerdictExists.guard'
 import { VerdictExistsGuard } from '../guards/verdictExists.guard'
+import { VerdictOnCaseGuard } from '../guards/verdictOnCase.guard'
 import { InternalVerdictController } from '../internalVerdict.controller'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
@@ -112,6 +113,27 @@ const withServedDefendant = (theCase: Case) =>
         verdicts: [
           {
             id: uuid(),
+            caseId: theCase.id,
+            defendantId,
+            created: new Date(),
+          } as Verdict,
+        ],
+      } as Defendant,
+    ],
+  } as Case)
+
+// The verdict the police named, as the locked case carries it.
+const withNamedVerdict = (theCase: Case, verdictId: string) =>
+  ({
+    ...theCase,
+    defendants: [
+      {
+        id: defendantId,
+        caseId: theCase.id,
+        nationalId: defendantNationalId,
+        verdicts: [
+          {
+            id: verdictId,
             caseId: theCase.id,
             defendantId,
             created: new Date(),
@@ -463,10 +485,12 @@ describe.each(routes)(
 
 describe('InternalVerdictController - updateVerdict guard chain', () => {
   const policeDocumentId = uuid()
+  const verdictId = uuid()
   const transaction = {} as Transaction
 
   let mockCaseRepositoryService: CaseRepositoryService
   let mockVerdictService: VerdictService
+  let request: { verdict?: Verdict; case?: Case }
   let runChain: (
     authorization: string | undefined,
   ) => Promise<{ allowed: boolean; rejectedBy?: string; error?: Error }>
@@ -485,18 +509,27 @@ describe('InternalVerdictController - updateVerdict guard chain', () => {
       new TokenGuard({ jwtSecret: '', secretToken, isConfigured: true }),
       new ExternalPoliceVerdictExistsGuard(verdictService),
       new CaseExistsForUpdateGuard(caseService, sequelize),
+      new VerdictOnCaseGuard(),
     ]
 
     // The police name the verdict rather than the case, so the request
     // carries no case id: ExternalPoliceVerdictExistsGuard supplies it.
-    runChain = (authorization) =>
-      runInRequestContext(() =>
-        runGuardChain(InternalVerdictController, 'updateVerdict', guards, {
-          params: { policeDocumentId },
-          headers: { authorization },
-          case: undefined,
-        }),
+    runChain = (authorization) => {
+      request = {
+        params: { policeDocumentId },
+        headers: { authorization },
+        case: undefined,
+      } as typeof request
+
+      return runInRequestContext(() =>
+        runGuardChain(
+          InternalVerdictController,
+          'updateVerdict',
+          guards,
+          request,
+        ),
       )
+    }
   })
 
   describe('police document known', () => {
@@ -507,7 +540,7 @@ describe('InternalVerdictController - updateVerdict guard chain', () => {
       const mockFindByExternalPoliceDocumentId =
         mockVerdictService.findByExternalPoliceDocumentId as jest.Mock
       mockFindByExternalPoliceDocumentId.mockResolvedValueOnce({
-        id: uuid(),
+        id: verdictId,
         caseId,
         defendantId,
       } as Verdict)
@@ -515,7 +548,7 @@ describe('InternalVerdictController - updateVerdict guard chain', () => {
       const mockFindLiveByIdForUpdate =
         mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
       mockFindLiveByIdForUpdate.mockResolvedValueOnce(
-        completedIndictmentAtCourt(caseId),
+        withNamedVerdict(completedIndictmentAtCourt(caseId), verdictId),
       )
 
       then = await runChain(`Bearer ${secretToken}`)
@@ -533,6 +566,53 @@ describe('InternalVerdictController - updateVerdict guard chain', () => {
       expect(
         mockVerdictService.findByExternalPoliceDocumentId,
       ).toHaveBeenCalledWith(policeDocumentId)
+      expect(
+        mockCaseRepositoryService.findLiveByIdForUpdate,
+      ).toHaveBeenCalledWith(caseId, transaction)
+    })
+
+    // The handler decides the status change from request.verdict, so what
+    // it sees must be the copy read under the lock, not the one looked up
+    // before it.
+    it('should hand the handler the verdict as the locked case carries it', () => {
+      const verdictOnCase = request.case?.defendants
+        ?.flatMap((defendant) => defendant.verdicts ?? [])
+        .find((candidate) => candidate.id === verdictId)
+
+      expect(verdictOnCase).toBeDefined()
+      expect(request.verdict).toBe(verdictOnCase)
+    })
+  })
+
+  describe('verdict is not on the locked case', () => {
+    const caseId = uuid()
+    let then: Awaited<ReturnType<typeof runChain>>
+
+    beforeEach(async () => {
+      const mockFindByExternalPoliceDocumentId =
+        mockVerdictService.findByExternalPoliceDocumentId as jest.Mock
+      mockFindByExternalPoliceDocumentId.mockResolvedValueOnce({
+        id: verdictId,
+        caseId,
+        defendantId,
+      } as Verdict)
+
+      const mockFindLiveByIdForUpdate =
+        mockCaseRepositoryService.findLiveByIdForUpdate as jest.Mock
+      mockFindLiveByIdForUpdate.mockResolvedValueOnce(
+        withNamedVerdict(completedIndictmentAtCourt(caseId), uuid()),
+      )
+
+      then = await runChain(`Bearer ${secretToken}`)
+    })
+
+    it('should be rejected by VerdictOnCaseGuard', () => {
+      expect(then.allowed).toBe(false)
+      expect(then.rejectedBy).toBe(VerdictOnCaseGuard.name)
+      expect(then.error).toBeInstanceOf(NotFoundException)
+    })
+
+    it('should have read the case under the request transaction first', () => {
       expect(
         mockCaseRepositoryService.findLiveByIdForUpdate,
       ).toHaveBeenCalledWith(caseId, transaction)

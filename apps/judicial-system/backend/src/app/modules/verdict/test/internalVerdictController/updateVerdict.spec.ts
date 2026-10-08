@@ -209,41 +209,9 @@ describe('InternalVerdictController - Update verdict', () => {
     })
   })
 
-  // The police-id guard reads the verdict before the lock; the copy on the
-  // locked case is what the status comparison trusts. Here the two disagree:
-  // another delivery served the verdict between that read and the lock.
-  describe('verdict already served on the locked case', () => {
-    const servedCase = {
-      ...theCase,
-      defendants: [
-        {
-          id: defendantId1,
-          isDrivingLicenseSuspended: true,
-          verdicts: [
-            {
-              ...verdict,
-              serviceStatus: VerdictServiceStatus.ELECTRONICALLY,
-            } as Verdict,
-          ],
-        },
-      ],
-    } as Case
-    const updatedVerdict = { ...verdict, ...dto }
-
-    beforeEach(async () => {
-      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce(updatedVerdict)
-
-      await givenWhenThen(servedCase)
-    })
-
-    it('should neither notify nor register an event', () => {
-      expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
-      expect(mockEventService.postEvent).not.toHaveBeenCalled()
-      expect(transactionContext?.afterCommit).toHaveLength(0)
-    })
-  })
-
+  // VerdictOnCaseGuard hands the handler the verdict as the locked case
+  // carries it, so a status another delivery already recorded arrives here
+  // as the verdict's own.
   describe('service status unchanged', () => {
     const servedVerdict = {
       ...verdict,
