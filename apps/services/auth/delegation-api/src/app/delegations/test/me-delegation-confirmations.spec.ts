@@ -924,6 +924,38 @@ describe('MeDelegationConfirmationsController', () => {
       expect((await status(ids[0])).body.status).toEqual('expired')
     })
 
+    it('cannot be started once part of it has changed', async () => {
+      // Arrange — the grant to the first recipient is replaced before starting.
+      const ids = pendingIds(await grantToBoth())
+      await grant([SENSITIVE_SCOPE])
+
+      // Act
+      const res = await start(ids[1])
+
+      // Assert — nothing goes to the phone, and the rest expires.
+      expect(res.status).toEqual(410)
+      expect(ciba.start).not.toHaveBeenCalled()
+      const row = await confirmations().findByPk(ids[1])
+      expect(row?.status).toEqual(DelegationConfirmationStatus.Expired)
+    })
+
+    it("does not use up the others' attempts when a start is refused", async () => {
+      // Arrange — one member has no attempts left.
+      const ids = pendingIds(await grantToBoth())
+      await confirmations().update(
+        { authStartCount: 5 },
+        { where: { id: ids[0] } },
+      )
+
+      // Act
+      const res = await start(ids[1])
+
+      // Assert
+      expect(res.status).toEqual(429)
+      const row = await confirmations().findByPk(ids[1])
+      expect(row?.authStartCount).toEqual(0)
+    })
+
     it('confirms none of it if any of it can no longer be given', async () => {
       // Arrange
       const ids = pendingIds(await grantToBoth())

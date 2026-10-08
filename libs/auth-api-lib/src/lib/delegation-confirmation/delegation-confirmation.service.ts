@@ -268,6 +268,44 @@ export class DelegationConfirmationService {
     return members.filter((member) => member.expiresAt.getTime() > now)
   }
 
+  /**
+   * Refuses a group that is no longer whole, expiring what is left of it: the
+   * grantor would be confirming less than they were shown, under a phone
+   * message that no longer fits.
+   */
+  private async assertWholeGroup(
+    confirmation: DelegationConfirmation,
+    pendingMembers: DelegationConfirmation[],
+  ): Promise<void> {
+    if (!confirmation.groupId) {
+      return
+    }
+
+    const size = await this.delegationConfirmationModel.count({
+      where: {
+        groupId: confirmation.groupId,
+        fromNationalId: confirmation.fromNationalId,
+      },
+    })
+    if (size === pendingMembers.length) {
+      return
+    }
+
+    await this.delegationConfirmationModel.update(
+      { status: DelegationConfirmationStatus.Expired, authReqId: null },
+      {
+        where: {
+          groupId: confirmation.groupId,
+          fromNationalId: confirmation.fromNationalId,
+          status: DelegationConfirmationStatus.Pending,
+        },
+      },
+    )
+    throw new GoneException(
+      'Part of this grant has changed since it was made. Grant it again.',
+    )
+  }
+
   /** Every confirmation in the group, whatever its status, for display. */
   async findGroupForUser(
     user: User,
@@ -346,33 +384,40 @@ export class DelegationConfirmationService {
     this.assertConfirmingUser(user, confirmation)
     await this.assertPending(confirmation)
 
-    // The whole group is confirmed by this one authentication.
+    // The whole group is confirmed by this one authentication, and only as a
+    // whole: if any of it has been superseded or has expired, the grant has
+    // changed since the grantor saw it, so none of it can be started.
     const members = await this.findPendingGroup(confirmation)
+    await this.assertWholeGroup(confirmation, members)
     for (const member of members) {
       this.assertConfirmingUser(user, member)
     }
     const ids = members.map((member) => member.id)
 
     // Counted before anything goes out, with a conditional increment, so
-    // concurrent starts can't slip past the cap.
-    const [counted] = await this.delegationConfirmationModel.update(
-      { authStartCount: Sequelize.literal('auth_start_count + 1') },
-      {
-        where: {
-          id: ids,
-          status: DelegationConfirmationStatus.Pending,
-          authStartCount: {
-            [Op.lt]: this.delegationConfig.confirmationMaxAuthStarts,
+    // concurrent starts can't slip past the cap. All of the group or none of
+    // it: a refused start must not use up the others' attempts.
+    await this.sequelize.transaction(async (transaction) => {
+      const [counted] = await this.delegationConfirmationModel.update(
+        { authStartCount: Sequelize.literal('auth_start_count + 1') },
+        {
+          where: {
+            id: ids,
+            status: DelegationConfirmationStatus.Pending,
+            authStartCount: {
+              [Op.lt]: this.delegationConfig.confirmationMaxAuthStarts,
+            },
           },
+          transaction,
         },
-      },
-    )
-    if (counted !== ids.length) {
-      throw new HttpException(
-        'Too many authentication attempts for this confirmation.',
-        HttpStatus.TOO_MANY_REQUESTS,
       )
-    }
+      if (counted !== ids.length) {
+        throw new HttpException(
+          'Too many authentication attempts for this confirmation.',
+          HttpStatus.TOO_MANY_REQUESTS,
+        )
+      }
+    })
 
     // Recorded before the request goes out, so the authentication that comes
     // back can be required to be no older than this.
