@@ -16,6 +16,7 @@ import { LoadingScreen } from '@island.is/react/components'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { m } from '../lib/messages'
 import { PortalModule, PortalRoute } from '../types/portalCore'
+import { clearStaleDelegationRequestGrantor } from '../utils/delegationRequest'
 import { createModuleRoutes } from '../utils/router/createModuleRoutes'
 import { prepareRouterData } from '../utils/router/prepareRouterData'
 import { PortalMeta, PortalProvider } from './PortalProvider'
@@ -43,6 +44,10 @@ export const PortalRouter = ({
     modules: PortalModule[]
     routes: PortalRoute[]
   } | null>(null)
+
+  useEffect(() => {
+    clearStaleDelegationRequestGrantor(userInfo)
+  }, [userInfo])
 
   useEffect(() => {
     if (userInfo) {

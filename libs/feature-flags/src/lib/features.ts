@@ -191,6 +191,9 @@ export enum Features {
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
 
+  isDelegationRequestsEnabled = 'isDelegationRequestsEnabled',
+  isDelegationRequestNotificationEnabled = 'isDelegationRequestNotificationEnabled',
+
   // Validate Personal representative delegations at syslumenn
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
   // SMS Notifications

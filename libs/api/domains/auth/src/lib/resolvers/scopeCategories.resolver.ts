@@ -12,11 +12,13 @@ import {
   ScopesApi,
   ScopesControllerFindCategoriesDirectionEnum,
   ScopesControllerFindTagsDirectionEnum,
+  ScopesControllerFindTagsRequestGrantorTypeEnum,
   MeDelegationsControllerFindAllDirectionEnum,
 } from '@island.is/clients/auth/delegation-api'
 
 import { ScopeCategory } from '../models/scopeCategory.model'
 import { ScopeTag } from '../models/scopeTag.model'
+import { RequestGrantorType } from '../dto/requestGrantorType'
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -40,13 +42,22 @@ export class ScopeCategoriesResolver {
       nullable: true,
     })
     direction?: MeDelegationsControllerFindAllDirectionEnum,
+    @Args('requestGrantorType', {
+      type: () => RequestGrantorType,
+      nullable: true,
+      description:
+        'When set, returns the catalog of scopes that can be requested from this kind of grantor.',
+    })
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeCategory[]> {
     const categories = await this.scopesApiWithAuth(
       user,
     ).scopesControllerFindCategories({
       lang,
-      direction:
-        direction as unknown as ScopesControllerFindCategoriesDirectionEnum,
+      direction: requestGrantorType
+        ? ScopesControllerFindCategoriesDirectionEnum.request
+        : (direction as unknown as ScopesControllerFindCategoriesDirectionEnum),
+      requestGrantorType,
     })
 
     return categories as ScopeCategory[]
@@ -65,10 +76,21 @@ export class ScopeCategoriesResolver {
       nullable: true,
     })
     direction?: MeDelegationsControllerFindAllDirectionEnum,
+    @Args('requestGrantorType', {
+      type: () => RequestGrantorType,
+      nullable: true,
+      description:
+        'When set, returns the catalog of scopes that can be requested from this kind of grantor.',
+    })
+    requestGrantorType?: RequestGrantorType,
   ): Promise<ScopeTag[]> {
     const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
       lang,
-      direction: direction as unknown as ScopesControllerFindTagsDirectionEnum,
+      direction: requestGrantorType
+        ? ScopesControllerFindTagsDirectionEnum.request
+        : (direction as unknown as ScopesControllerFindTagsDirectionEnum),
+      requestGrantorType:
+        requestGrantorType as unknown as ScopesControllerFindTagsRequestGrantorTypeEnum,
     })
 
     return tags as ScopeTag[]

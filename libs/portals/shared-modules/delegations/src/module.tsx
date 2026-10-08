@@ -9,6 +9,7 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { Features } from '@island.is/react/feature-flags'
+import { isCompany } from '@island.is/shared/utils'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
 import { Navigate } from 'react-router-dom'
@@ -21,6 +22,12 @@ const DelegationLayout = lazy(() => import('./screens/DelegationLayout'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>
   import('./screens/GrantAccessNew/GrantAccessNew'),
+)
+const RequestDelegation = lazy(() =>
+  import('./screens/RequestDelegation/RequestDelegation'),
+)
+const DelegationRequests = lazy(() =>
+  import('./screens/DelegationRequests/DelegationRequests'),
 )
 
 const AccessOutgoing = lazy(() =>
@@ -53,9 +60,19 @@ export const createDelegationsModule = (
         },
       ))
 
+    const delegationRequestsEnabled = await featureFlagClient.getValue(
+      Features.isDelegationRequestsEnabled,
+      false,
+      {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      },
+    )
+
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
+    const canRequestDelegation = !isCompany(userInfo)
     const commonProps = {
       name: coreMessages.accessControlDelegations,
       navHide: !hasAccess || useNewRoutes,
@@ -87,6 +104,23 @@ export const createDelegationsModule = (
             navHide: true,
             enabled: hasAccess,
             element: <GrantAccessNew />,
+          },
+          {
+            name: m.delegationRequestsNavTitle,
+            path: DelegationPaths.DelegationRequestsList,
+            navHide: !delegationRequestsEnabled,
+            enabled: hasAccess && Boolean(delegationRequestsEnabled),
+            element: <DelegationRequests />,
+          },
+          {
+            name: m.requestDelegationNavTitle,
+            path: DelegationPaths.DelegationRequest,
+            navHide: !delegationRequestsEnabled || !canRequestDelegation,
+            enabled:
+              hasAccess &&
+              Boolean(delegationRequestsEnabled) &&
+              canRequestDelegation,
+            element: <RequestDelegation />,
           },
           {
             name: m.editAccessTitle,
