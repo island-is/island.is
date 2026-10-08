@@ -15,6 +15,12 @@ export const VerifyCardMutation = gql`
       }
       isSuccess
       scriptPath
+      tdsMethodPostUrl
+      tdsMethodFields {
+        name
+        value
+      }
+      authenticationType
       responseCode
     }
   }

@@ -61,6 +61,7 @@ describe('card verification callback handler', () => {
     })
     mockMutate.mockResolvedValue({ errors: undefined })
     jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    jest.spyOn(console, 'info').mockImplementation(() => undefined)
   })
 
   afterEach(() => {
@@ -122,6 +123,60 @@ describe('card verification callback handler', () => {
 
     expect(mockMutate).not.toHaveBeenCalled()
     expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
+  })
+
+  it('logs the 3DS outcome fields of an incomplete callback without sensitive data', async () => {
+    const res = createRes()
+
+    await handler(
+      createReq({
+        body: {
+          xid: 'secret-xid',
+          mdStatus: '96',
+          MD: 'secret-md',
+          callbackSource: 'Fallback',
+          'TDS2.transStatus': 'U',
+          'TDS2.transStatusReason': '14',
+          cardholderInfo: 'Contact your bank at 555-0000',
+        },
+      }),
+      res,
+    )
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Card verification callback: incomplete or invalid callback',
+      expect.objectContaining({
+        mdStatus: '96',
+        callbackSource: 'Fallback',
+        transStatus: 'U',
+        transStatusReason: '14',
+        missingFields: ['cavv', 'TDS2.dsTransID'],
+      }),
+    )
+    const logged = JSON.stringify((console.error as jest.Mock).mock.calls)
+    expect(logged).not.toContain('secret-xid')
+    expect(logged).not.toContain('secret-md')
+    expect(logged).not.toContain('555-0000')
+    expect(res.redirect).toHaveBeenCalledWith(303, FAILURE_REDIRECT)
+  })
+
+  it('logs the 3DS outcome fields of a completed callback without sensitive data', async () => {
+    const res = createRes()
+
+    await handler(
+      createReq({
+        body: { ...completedAuthBody, callbackSource: 'Browser' },
+      }),
+      res,
+    )
+
+    expect(console.info).toHaveBeenCalledWith(
+      'Card verification callback: received',
+      expect.objectContaining({ mdStatus: 'Y', callbackSource: 'Browser' }),
+    )
+    const logged = JSON.stringify((console.info as jest.Mock).mock.calls)
+    expect(logged).not.toContain(completedAuthBody.cavv)
+    expect(logged).not.toContain(completedAuthBody.MD)
   })
 
   it('rejects non-POST requests with a 400 and does not redirect', async () => {

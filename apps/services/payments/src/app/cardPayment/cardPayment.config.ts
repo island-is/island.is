@@ -68,9 +68,11 @@ export const CardPaymentModuleConfig = defineConfig({
         'APPLE_PAY_PAYMENT_PROCESSING_KEY',
       ),
     },
-    tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
+    // Must cover the whole 3DS step, including issuer challenges approved in a
+    // banking app. Keep in sync with the client wait in useCardPayment.
+    tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 10,
     memCacheExpiryMinutes:
-      env.optionalJSON('PAYMENTS_MEM_CACHE_EXPIRY_MINUTES') ?? 2,
+      env.optionalJSON('PAYMENTS_MEM_CACHE_EXPIRY_MINUTES') ?? 10,
     webOrigin: env.required('PAYMENTS_WEB_URL', 'http://localhost:4200/greida'),
   }),
 })

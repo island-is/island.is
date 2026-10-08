@@ -2,14 +2,11 @@ import React, { useEffect, useRef } from 'react'
 
 import { Box, ModalBase, SkeletonLoader } from '@island.is/island-ui/core'
 
-import { generateFormHtml } from '../../utils/3ds'
+import { generateFormHtml, ThreeDSFormData } from '../../utils/3ds'
 import * as styles from './ThreeDSecure.css'
 
-interface ThreeDSecureProps {
+interface ThreeDSecureProps extends ThreeDSFormData {
   isActive: boolean
-  postUrl: string
-  scriptPath?: string
-  verificationFields: { name: string; value: string }[]
   hasData: boolean
   onClose: () => void
 }
@@ -19,6 +16,9 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
   postUrl,
   scriptPath,
   verificationFields,
+  tdsMethodPostUrl,
+  tdsMethodFields,
+  authenticationType,
   hasData,
 }) => {
   const iframeContainerRef = useRef<HTMLIFrameElement>(null)
@@ -42,6 +42,9 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
           postUrl,
           scriptPath,
           verificationFields,
+          tdsMethodPostUrl,
+          tdsMethodFields,
+          authenticationType,
         })
         iframeDoc.open()
         iframeDoc.write(formHtml)
@@ -49,7 +52,15 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
         formReadyRef.current = true
       }
     }
-  }, [isActive, postUrl, scriptPath, verificationFields])
+  }, [
+    isActive,
+    postUrl,
+    scriptPath,
+    verificationFields,
+    tdsMethodPostUrl,
+    tdsMethodFields,
+    authenticationType,
+  ])
 
   return (
     <ModalBase

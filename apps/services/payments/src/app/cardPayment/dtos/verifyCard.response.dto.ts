@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsArray,
   IsBoolean,
@@ -52,10 +52,38 @@ export class VerifyCardResponse {
   @IsObject()
   cardInformation!: CardInformation
 
-  @ApiProperty({ description: 'Script path for further actions', type: String })
+  @ApiProperty({
+    description:
+      'Gateway script that must be loaded, unchanged, to run the custom 3DS form',
+    type: String,
+  })
   @IsString()
   @IsOptional()
   scriptPath?: string
+
+  @ApiPropertyOptional({
+    description: 'URL the 3DS Method fields are posted to (hidden iframe)',
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  tdsMethodPostUrl?: string
+
+  @ApiPropertyOptional({
+    description: '3DS Method fields, present when the issuer requires it',
+    type: [VerificationField],
+  })
+  @IsArray()
+  @IsOptional()
+  tdsMethodFields?: VerificationField[]
+
+  @ApiPropertyOptional({
+    description: '3DS flow type: Challenge, Frictionless or Method',
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  authenticationType?: string
 
   @ApiProperty({
     description: 'Response code from the verification',

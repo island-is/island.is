@@ -60,10 +60,29 @@ export class VerifyCardResponse {
   cardInformation!: CardInformation
 
   @Field(() => String, {
-    description: 'Script path for further actions',
+    description:
+      'Gateway script that must be loaded, unchanged, to run the custom 3DS form',
     nullable: true,
   })
   scriptPath?: string
+
+  @Field(() => String, {
+    description: 'URL the 3DS Method fields are posted to (hidden iframe)',
+    nullable: true,
+  })
+  tdsMethodPostUrl?: string
+
+  @Field(() => [VerificationField], {
+    description: '3DS Method fields, present when the issuer requires it',
+    nullable: true,
+  })
+  tdsMethodFields?: VerificationField[]
+
+  @Field(() => String, {
+    description: '3DS flow type: Challenge, Frictionless or Method',
+    nullable: true,
+  })
+  authenticationType?: string
 
   @Field(() => String, { description: 'Response code from the verification' })
   responseCode!: string

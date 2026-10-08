@@ -127,6 +127,11 @@ export class CardPaymentService {
       paymentFlowId,
     }
 
+    // A previous attempt may have left the flow marked as verified (the status is
+    // only cleared after a successful charge). Clear it so the client waits for
+    // this attempt's 3DS result instead of charging with stale verification data.
+    await this.cacheManager.del(paymentFlowId)
+
     await this.cacheManager.set(
       correlationId,
       savedVerificationPendingData,

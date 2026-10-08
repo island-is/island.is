@@ -162,6 +162,11 @@ export const paymentErrorToTitleAndMessage = (
         title: cardError.verificationDeadlineExceededTitle,
         message: cardError.verificationDeadlineExceeded,
       }
+    case CardErrorCode.VerificationFailed:
+      return {
+        title: cardError.verificationFailedTitle,
+        message: cardError.verificationFailed,
+      }
     case FjsErrorCode.AlreadyCreatedCharge:
       return {
         title: genericError.alreadyPaidTitle,

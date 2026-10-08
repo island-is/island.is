@@ -16,6 +16,7 @@ import {
 } from '../graphql/queries.graphql.generated'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import { getBrowserInfo } from '../utils/browserInfo'
+import { THREE_DS_RESULT_MESSAGE_TYPE } from '../utils/constants'
 import { PaymentError } from '../utils/error/error'
 import { ApolloError } from '@apollo/client'
 
@@ -53,6 +54,8 @@ export const useCardPayment = ({
   >(null)
 
   const isVerifyingRef = useRef(false) // For polling loop control
+  // Set when the 3DS result page (inside the iframe) reports a failed verification
+  const verificationFailedRef = useRef(false)
 
   useEffect(() => {
     return () => {
@@ -60,18 +63,40 @@ export const useCardPayment = ({
     }
   }, [])
 
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (
+        event.origin !== window.location.origin ||
+        event.data?.type !== THREE_DS_RESULT_MESSAGE_TYPE
+      ) {
+        return
+      }
+      if (event.data.status === 'failed' && isVerifyingRef.current) {
+        verificationFailedRef.current = true
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [])
+
   const waitForCardVerification = useCallback(async () => {
     if (!paymentFlow?.id) {
       throw new Error('Payment flow ID is missing for verification.')
     }
 
-    const maximumWaitTimeSeconds = 2 * 60
+    // Must cover issuer challenges approved in a banking app. Keep in sync with
+    // the token and cache expiry in the payments service (cardPayment.config).
+    const maximumWaitTimeSeconds = 10 * 60
     let remainingWaitTimeInMilliSeconds = maximumWaitTimeSeconds * 1000
     const interval = 5000
 
     while (remainingWaitTimeInMilliSeconds > 0) {
       if (!isVerifyingRef.current) {
         throw new Error(CardErrorCode.VerificationCancelledByUser)
+      }
+
+      if (verificationFailedRef.current) {
+        throw new Error(CardErrorCode.VerificationFailed)
       }
 
       const { data } = await getVerificationStatusQueryHook({
@@ -175,6 +200,7 @@ export const useCardPayment = ({
       setIsProcessing(true)
       setThreeDSecureDataForModal(null)
       isVerifyingRef.current = false
+      verificationFailedRef.current = false
 
       try {
         const verifyCardResponse = await verifyCardApi({

@@ -421,6 +421,17 @@ export const cardError = defineMessages({
     defaultMessage: 'Tími til að staðfesta kort er útrunninn.',
     description: 'Generic decline description',
   },
+  verificationFailedTitle: {
+    id: 'payments:cardError.verificationFailedTitle',
+    defaultMessage: 'Auðkenning tókst ekki',
+    description: '3-D Secure verification did not complete',
+  },
+  verificationFailed: {
+    id: 'payments:cardError.verificationFailed',
+    defaultMessage:
+      'Ekki tókst að staðfesta kortið hjá kortaútgefanda. Reyndu aftur eða notaðu annað kort.',
+    description: '3-D Secure verification did not complete description',
+  },
   errorGettingApplePaySessionTitle: {
     id: 'payments:cardError.errorGettingApplePaySessionTitle',
     defaultMessage: 'Villa við Apple Pay tengingu',

@@ -111,6 +111,12 @@ export const CardVerificationSuccessSchema = PaymentGatewaySuccessSchema.extend(
     verificationFields: z.array(FieldSchema),
     additionalFields: z.array(FieldSchema),
     scriptPath: z.string().optional(),
+    // 3DS Method: when present, must be posted into a hidden iframe before the
+    // issuer redirect. The gateway script (scriptPath) drives this automatically.
+    tdsMethodPostUrl: z.string().nullish(),
+    tdsMethodFields: z.array(FieldSchema).nullish(),
+    // Challenge | Frictionless | Method, read by the gateway script
+    authenticationType: z.string().nullish(),
     cardInformation: CardInformationSchema.optional(),
     threeDSMessageVersion: z.string().optional(),
   },

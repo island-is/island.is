@@ -406,6 +406,50 @@ describe('CardPaymentController', () => {
       fetchSpy.mockRestore()
     })
 
+    it('clears a stale verified status and returns the 3DS Method data from the gateway', async () => {
+      const tdsMethodData = {
+        tdsMethodPostUrl: 'https://acs.example.com/method',
+        tdsMethodFields: [{ name: 'threeDSMethodData', value: 'abc' }],
+        authenticationType: 'Method',
+        scriptPath: 'https://rapyd3ds.example.valitor.com/red.js',
+      }
+
+      // A previous attempt left the flow marked as verified
+      await cacheManager.set(paymentFlowId, {
+        isVerified: true,
+        correlationId: 'previous-attempt',
+      })
+
+      const fetchSpy = jest.spyOn(global, 'fetch').mockImplementation(
+        async () =>
+          ({
+            json: async () => ({
+              ...mockVerificationSuccessResponse,
+              ...tdsMethodData,
+            }),
+            status: 200,
+            ok: true,
+          } as Response),
+      )
+
+      const verifyPayload: VerifyCardInput = {
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      }
+
+      const response = await server
+        .post('/v1/payments/card/verify')
+        .send(verifyPayload)
+
+      expect(response.status).toBe(200)
+      expect(response.body).toMatchObject(tdsMethodData)
+      expect(await cacheManager.get(paymentFlowId)).toBeFalsy()
+
+      fetchSpy.mockRestore()
+    })
+
     it('should throw an error in verification callback if correlation id is not found in cache', async () => {
       const cacheGetSpy = jest.spyOn(cacheManager, 'get') // not mocking return value ("nothing in cache")
 

@@ -27,6 +27,24 @@ const VerificationCallbackSchema = z.object({
   ['TDS2.dsTransID']: z.string().min(1, 'TDS2.dsTransID is required'),
 })
 
+// Non-sensitive 3DS outcome fields from the gateway callback, logged to triage
+// failures. `callbackSource` tells whether the result came from the cardholder's
+// browser, the gateway server, or a server "Fallback" after the ACS did not respond.
+// Never log cavv, xid, MD, dsTransId or cardholderInfo.
+const getCallbackDiagnostics = (body: Record<string, unknown>) => {
+  const read = (key: string) =>
+    typeof body[key] === 'string' && body[key] ? (body[key] as string) : null
+
+  return {
+    mdStatus: read('mdStatus'),
+    callbackSource: read('callbackSource'),
+    transStatus: read('TDS2.transStatus'),
+    transStatusReason: read('TDS2.transStatusReason'),
+    authType: read('authType'),
+    threeDSMessageVersion: read('threeDSMessageVersion'),
+  }
+}
+
 // POST/Redirect/GET back to the (GET) result page. 303 (not 307) so the browser issues a
 // GET and the sensitive 3DS callback fields are not re-posted to the page route.
 const SUCCESS_REDIRECT = '/greida/3ds'
@@ -68,7 +86,7 @@ export default async function cardVerificationCallbackHandler(
     console.error(
       'Card verification callback: incomplete or invalid callback',
       {
-        mdStatus: typeof body.mdStatus === 'string' ? body.mdStatus : null,
+        ...getCallbackDiagnostics(body),
         hasXid: isPresent('xid'),
         hasMd: isPresent('MD'),
         hasCavv: isPresent('cavv'),
@@ -82,6 +100,11 @@ export default async function cardVerificationCallbackHandler(
 
   const { xid, mdStatus, MD, cavv } = parsed.data
   const dsTransId = parsed.data['TDS2.dsTransID']
+
+  console.info(
+    'Card verification callback: received',
+    getCallbackDiagnostics((req.body ?? {}) as Record<string, unknown>),
+  )
 
   const client = initApollo()
 
