@@ -254,16 +254,24 @@ export class DrivingLicenseService {
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
-    const assessmentResult = await this.getDrivingAssessmentResult(user)
-    const hasFinishedSchool =
-      await this.drivingLicenseApi.getHasFinishedOkugerdi({
-        auth: user,
-      })
+    // Only fetch what this type's requirements read: the driving assessment and
+    // driving school 3 (Ö3) are B-full checks, residency is B-full/B-temp only.
+    // Fetching them for every type sent RLS pointless lookups for 65+ and BE
+    // applicants (flagged by RLS), and let an unrelated lookup failure fail
+    // eligibility for types that never use the result.
+    const isBFull = type === 'B-full'
+    const needsResidence = isBFull || type === 'B-temp'
 
-    const residenceHistory = await this.nationalRegistryV3.getResidenceHistory(
-      nationalId,
-      user,
-    )
+    const assessmentResult = isBFull
+      ? await this.getDrivingAssessmentResult(user)
+      : null
+    const hasFinishedSchool = isBFull
+      ? await this.drivingLicenseApi.getHasFinishedOkugerdi({ auth: user })
+      : false
+
+    const residenceHistory = needsResidence
+      ? await this.nationalRegistryV3.getResidenceHistory(nationalId, user)
+      : null
 
     const residence = mapResidence(residenceHistory ?? [])
     const residenceTime = computeCountryResidence(residence)
