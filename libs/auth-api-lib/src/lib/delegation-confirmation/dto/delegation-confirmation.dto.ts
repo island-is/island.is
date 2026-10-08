@@ -44,6 +44,7 @@ export class PendingConfirmationDTO {
     this.contentHash = model.contentHash
     this.requestedAcr = model.requestedAcr
     this.scopeNames = model.scopes.map((scope) => scope.name)
+    this.groupId = model.groupId ?? null
   }
 
   @ApiProperty({
@@ -78,11 +79,49 @@ export class PendingConfirmationDTO {
 
   @ApiProperty({ isArray: true, type: String })
   scopeNames: string[]
+
+  @ApiProperty({
+    nullable: true,
+    type: String,
+    description:
+      'Shared by the confirmations one grant made. One authentication, started for any of them, confirms them all.',
+  })
+  groupId: string | null
+}
+
+/** One confirmation of a group, as shown on the confirmation screen. */
+export class DelegationConfirmationGroupMemberDTO {
+  constructor(model: DelegationConfirmation) {
+    this.id = model.id
+    this.status = model.status
+    this.toNationalId = model.toNationalId
+    this.toName = model.contentSnapshot.toName
+    this.domainDisplayName = model.contentSnapshot.domainDisplayName ?? null
+    this.scopes = model.scopes
+  }
+
+  @ApiProperty()
+  id: string
+
+  @ApiProperty({ enum: DelegationConfirmationStatus })
+  status: DelegationConfirmationStatus
+
+  @ApiProperty()
+  toNationalId: string
+
+  @ApiProperty()
+  toName: string
+
+  @ApiProperty({ nullable: true, type: String })
+  domainDisplayName: string | null
+
+  @ApiProperty({ isArray: true, type: Object })
+  scopes: ConfirmationScope[]
 }
 
 /** The confirmation as shown on the confirmation screen. */
 export class DelegationConfirmationDTO {
-  constructor(model: DelegationConfirmation) {
+  constructor(model: DelegationConfirmation, group?: DelegationConfirmation[]) {
     this.id = model.id
     this.status = model.status
     this.fromNationalId = model.fromNationalId
@@ -96,6 +135,10 @@ export class DelegationConfirmationDTO {
     this.expiresAt = model.expiresAt
     this.confirmedAt = model.confirmedAt ?? undefined
     this.bindingMessage = model.contentSnapshot.bindingMessage
+    this.groupId = model.groupId ?? null
+    this.group = group?.map(
+      (member) => new DelegationConfirmationGroupMemberDTO(member),
+    )
   }
 
   @ApiProperty()
@@ -103,6 +146,21 @@ export class DelegationConfirmationDTO {
 
   @ApiProperty({ enum: DelegationConfirmationStatus })
   status: DelegationConfirmationStatus
+
+  @ApiProperty({
+    nullable: true,
+    type: String,
+    description:
+      'Shared by the confirmations one grant made; one authentication confirms them all.',
+  })
+  groupId: string | null
+
+  @ApiPropertyOptional({
+    type: [DelegationConfirmationGroupMemberDTO],
+    description:
+      'Every confirmation the same authentication confirms, this one included. Only on a single confirmation.',
+  })
+  group?: DelegationConfirmationGroupMemberDTO[]
 
   @ApiProperty()
   fromNationalId: string

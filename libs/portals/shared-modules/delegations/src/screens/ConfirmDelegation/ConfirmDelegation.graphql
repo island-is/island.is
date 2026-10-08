@@ -12,6 +12,17 @@ fragment AuthDelegationConfirmationFields on AuthDelegationConfirmation {
     displayName
     validTo
   }
+  group {
+    id
+    toNationalId
+    toName
+    domainDisplayName
+    scopes {
+      name
+      displayName
+      validTo
+    }
+  }
 }
 
 query AuthDelegationConfirmation($input: AuthDelegationConfirmationInput!) {

@@ -685,6 +685,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-up-context',
     defaultMessage: 'Veiting umboðs · {name}',
   },
+  stepUpNamesAnd: {
+    id: 'sp.access-control-delegations:step-up-names-and',
+    defaultMessage: 'og',
+  },
   stepUpMethodSim: {
     id: 'sp.access-control-delegations:step-up-method-sim',
     defaultMessage: 'Rafræn skilríki í síma',

@@ -63,6 +63,17 @@ export class DelegationConfirmation extends Model<
   })
   delegationId?: string | null
 
+  /**
+   * Shared by the confirmations one grant made — several recipients, or
+   * several domains — so that one authentication confirms them all. Null for
+   * a confirmation on its own.
+   */
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  groupId?: string | null
+
   /** The grantor: a person, or a company for procuration grants. */
   @Column({
     type: DataType.STRING,

@@ -51,6 +51,35 @@ export class PendingDelegationConfirmation {
 
   @Field(() => [String])
   scopeNames!: string[]
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'Shared by the confirmations one grant made. One authentication, started for any of them, confirms them all.',
+  })
+  groupId?: string | null
+}
+
+/** One confirmation of a group, as shown on the confirmation screen. */
+@ObjectType('AuthDelegationConfirmationGroupMember')
+export class DelegationConfirmationGroupMember {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  status!: string
+
+  @Field(() => String)
+  toNationalId!: string
+
+  @Field(() => String)
+  toName!: string
+
+  @Field(() => String, { nullable: true })
+  domainDisplayName?: string | null
+
+  @Field(() => [DelegationConfirmationScope])
+  scopes!: DelegationConfirmationScope[]
 }
 
 /** A confirmation as shown on the confirmation screen. */
@@ -93,6 +122,16 @@ export class DelegationConfirmation {
     description: 'The text shown in the Auðkenni app when confirming.',
   })
   bindingMessage!: string
+
+  @Field(() => String, { nullable: true })
+  groupId?: string | null
+
+  @Field(() => [DelegationConfirmationGroupMember], {
+    nullable: true,
+    description:
+      'Every confirmation the same authentication confirms, this one included.',
+  })
+  group?: DelegationConfirmationGroupMember[]
 }
 
 /** The grantor's own copy of the evidence record. */

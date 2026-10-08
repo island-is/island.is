@@ -270,6 +270,16 @@ export class DelegationsOutgoingService {
       for (const input of inputs) {
         rows.push(await this.writeForDomain(user, input, transaction))
       }
+
+      // One authentication confirms everything this grant holds, whatever
+      // recipients and domains it spans.
+      await this.delegationConfirmationService.group(
+        rows.flatMap((row) =>
+          row.pendingConfirmation ? [row.pendingConfirmation] : [],
+        ),
+        transaction,
+      )
+
       return rows
     })
 

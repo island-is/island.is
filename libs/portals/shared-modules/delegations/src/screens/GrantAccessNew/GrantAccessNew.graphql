@@ -12,6 +12,7 @@ mutation CreateAuthDelegations($input: CreateAuthDelegationsInput!) {
         contentHash
         requestedAcr
         scopeNames
+        groupId
       }
     }
   }

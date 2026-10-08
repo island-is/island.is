@@ -87,8 +87,12 @@ export class MeDelegationConfirmationsController {
   ): Promise<DelegationConfirmationDTO> {
     const confirmation =
       await this.delegationConfirmationService.findByIdForUser(user, id)
+    const group = await this.delegationConfirmationService.findGroupForUser(
+      user,
+      confirmation,
+    )
 
-    return new DelegationConfirmationDTO(confirmation)
+    return new DelegationConfirmationDTO(confirmation, group)
   }
 
   @Get(':confirmationId/receipt')
@@ -114,7 +118,8 @@ export class MeDelegationConfirmationsController {
    * Starts the confirming authentication: the identity server asks Auðkenni to
    * authenticate the grantor on their phone, showing the confirmation's binding
    * message, by the method the grantor logged in with. Poll the GET endpoint
-   * for the result.
+   * for the result. For a confirmation in a group, this one authentication
+   * confirms every pending confirmation in it.
    */
   @Post(':confirmationId/authentication')
   @Documentation({
@@ -160,29 +165,31 @@ export class MeDelegationConfirmationsController {
     const { status, confirmation, completedNow } =
       await this.delegationConfirmationService.getAuthenticationStatus(user, id)
 
-    // Only the poll that completes it is audited and notified, so a client
-    // polling an already-confirmed row doesn't repeat either.
-    if (completedNow) {
+    // Only the poll that completes them is audited and notified, so a client
+    // polling an already-confirmed row doesn't repeat either. One audit entry
+    // and one notification per confirmation the authentication confirmed.
+    for (const confirmed of completedNow ?? []) {
       this.auditService.audit({
         auth: user,
         action: 'confirm',
         namespace,
-        resources: confirmation.id,
+        resources: confirmed.id,
         meta: {
-          delegationId: confirmation.delegationId,
-          toNationalId: confirmation.toNationalId,
-          contentHash: confirmation.contentHash,
-          acr: confirmation.acr,
-          amr: confirmation.amr,
-          scopes: confirmation.scopes.map((scope) => scope.name),
+          delegationId: confirmed.delegationId,
+          toNationalId: confirmed.toNationalId,
+          groupId: confirmed.groupId,
+          contentHash: confirmed.contentHash,
+          acr: confirmed.acr,
+          amr: confirmed.amr,
+          scopes: confirmed.scopes.map((scope) => scope.name),
         },
       })
 
       // The recipient is told only now, when the access actually exists.
-      if (confirmation.delegationId) {
+      if (confirmed.delegationId) {
         void this.delegationsOutgoingService.notifyConfirmedDelegation(
           user,
-          confirmation.delegationId,
+          confirmed.delegationId,
           false,
         )
       }

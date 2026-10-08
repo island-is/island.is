@@ -15,6 +15,7 @@ import {
   DelegationsIndexService,
   DelegationsOutgoingService,
   Domain,
+  hashConfirmationGroup,
   NamesService,
   UserIdentitiesService,
 } from '@island.is/auth-api-lib'
@@ -37,6 +38,7 @@ const REQUIRED_ACR = 'eidas-loa-high'
 
 const grantorNationalId = createNationalId('person')
 const recipientNationalId = createNationalId('person')
+const secondRecipientNationalId = createNationalId('person')
 
 /**
  * Stands in for the identity server's CIBA endpoints. Each test decides what
@@ -755,6 +757,140 @@ describe('MeDelegationConfirmationsController', () => {
       expect(after.body.scopes).toHaveLength(1)
       // Names the identity provider that attested the login, not a userinfo URL.
       expect(after.body.receiptIssuer).toEqual('https://identity-server.test')
+    })
+  })
+
+  describe('one authentication for a whole grant', () => {
+    const grantToBoth = () =>
+      server.post('/v1/me/delegations/batch').send({
+        delegations: [recipientNationalId, secondRecipientNationalId].map(
+          (toNationalId) => ({
+            toNationalId,
+            domainName: domain.name,
+            scopes: [
+              { name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) },
+            ],
+          }),
+        ),
+      })
+
+    const pendingIds = (res: request.Response): string[] =>
+      res.body.flatMap(
+        (delegation: { pendingConfirmations?: { id: string }[] }) =>
+          (delegation.pendingConfirmations ?? []).map(
+            (confirmation) => confirmation.id,
+          ),
+      )
+
+    const start = (id: string) =>
+      server.post(`/v1/me/delegation-confirmations/${id}/authentication`)
+
+    const status = (id: string) =>
+      server.get(`/v1/me/delegation-confirmations/${id}/authentication`)
+
+    beforeEach(() => setup())
+
+    it('groups what one grant holds, with one message for the phone', async () => {
+      // Act
+      const res = await grantToBoth()
+
+      // Assert
+      expect(res.status).toEqual(201)
+      const ids = pendingIds(res)
+      expect(ids).toHaveLength(2)
+
+      const rows = await confirmations().findAll({ where: { id: ids } })
+      expect(rows[0].groupId).toBeTruthy()
+      expect(rows[1].groupId).toEqual(rows[0].groupId)
+      for (const row of rows) {
+        expect(row.contentSnapshot.bindingMessage).toEqual(
+          'Umboð til 2 aðila · 2 heimildir',
+        )
+      }
+    })
+
+    it('confirms all of it with one authentication', async () => {
+      // Arrange
+      const ids = pendingIds(await grantToBoth())
+
+      // Act
+      const started = await start(ids[0])
+      approvedBy(grantorNationalId)
+      const res = await status(ids[0])
+
+      // Assert — one step-up, bound to both confirmations together.
+      expect(started.status).toEqual(200)
+      expect(ciba.start).toHaveBeenCalledTimes(1)
+      const rows = await confirmations().findAll({ where: { id: ids } })
+      expect(ciba.start.mock.calls[0][0].contextHash).toEqual(
+        hashConfirmationGroup(rows.map((row) => row.contentHash)),
+      )
+
+      expect(res.body.status).toEqual('confirmed')
+      for (const row of rows) {
+        await row.reload()
+        expect(row.status).toEqual(DelegationConfirmationStatus.Confirmed)
+      }
+      expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE, SENSITIVE_SCOPE])
+
+      // Asking about the other one answers the same, without another step-up.
+      expect((await status(ids[1])).body.status).toEqual('confirmed')
+      expect(ciba.start).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows the whole group on each confirmation', async () => {
+      // Arrange
+      const ids = pendingIds(await grantToBoth())
+
+      // Act
+      const res = await server.get(`/v1/me/delegation-confirmations/${ids[1]}`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(
+        res.body.group
+          .map((member: { toNationalId: string }) => member.toNationalId)
+          .sort(),
+      ).toEqual([recipientNationalId, secondRecipientNationalId].sort())
+    })
+
+    it('confirms none of it if part of the group changed after starting', async () => {
+      // Arrange — the grant to the first recipient is replaced while the
+      // step-up runs, superseding its confirmation.
+      const ids = pendingIds(await grantToBoth())
+      await start(ids[0])
+      await grant([SENSITIVE_SCOPE])
+      approvedBy(grantorNationalId)
+
+      // Act
+      const res = await status(ids[1])
+
+      // Assert — the approval was for both; it confirms neither.
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([])
+      expect((await status(ids[0])).body.status).toEqual('expired')
+    })
+
+    it('confirms none of it if any of it can no longer be given', async () => {
+      // Arrange
+      const ids = pendingIds(await grantToBoth())
+      await start(ids[0])
+      approvedBy(grantorNationalId)
+      jest
+        .spyOn(app.get(DelegationResourcesService), 'validateScopeAccess')
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false)
+
+      // Act
+      const res = await status(ids[0])
+
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([])
+      const rows = await confirmations().findAll({ where: { id: ids } })
+      for (const row of rows) {
+        expect(row.status).toEqual(DelegationConfirmationStatus.Pending)
+      }
     })
   })
 

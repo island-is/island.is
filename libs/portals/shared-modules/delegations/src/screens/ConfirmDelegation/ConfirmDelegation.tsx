@@ -13,6 +13,7 @@ import { IntroHeader } from '@island.is/portals/core'
 
 import { StepUpAuthentication } from '../../components/StepUpAuthentication/StepUpAuthentication'
 import { useDelegationConfirmationStepUp } from '../../components/StepUpAuthentication/useDelegationConfirmationStepUp'
+import { joinNames } from '../../components/StepUpAuthentication/joinNames'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 import { useAuthDelegationConfirmationQuery } from './ConfirmDelegation.generated'
@@ -41,6 +42,12 @@ export const ConfirmDelegation = () => {
   })
 
   const confirmation = data?.authDelegationConfirmation
+  // One authentication confirms the whole group, so all of it is shown.
+  const members = confirmation?.group?.length
+    ? confirmation.group
+    : confirmation
+    ? [confirmation]
+    : []
 
   const goToDelegations = () => navigate(DelegationPaths.DelegationsNew)
 
@@ -118,28 +125,37 @@ export const ConfirmDelegation = () => {
 
       {confirmation && (
         <Box marginBottom={4} display="flex" flexDirection="column" rowGap={2}>
-          <Box>
-            <Text variant="eyebrow" color="purple400">
-              {formatMessage(m.confirmDelegationRecipient)}
-            </Text>
-            <Text variant="h4" as="p">
-              {confirmation.toName}
-            </Text>
-          </Box>
-          <Box>
-            <Text variant="eyebrow" color="purple400">
-              {formatMessage(m.confirmDelegationPermissions)}
-            </Text>
-            {confirmation.scopes.map((scope) => (
-              <Text key={scope.name}>
-                {scope.displayName}
-                {' · '}
-                {formatMessage(m.confirmDelegationValidTo, {
-                  date: formatDateFns(scope.validTo, 'dd.MM.yyyy'),
-                })}
-              </Text>
-            ))}
-          </Box>
+          {members.map((member) => (
+            <Box
+              key={member.id}
+              display="flex"
+              flexDirection="column"
+              rowGap={2}
+            >
+              <Box>
+                <Text variant="eyebrow" color="purple400">
+                  {formatMessage(m.confirmDelegationRecipient)}
+                </Text>
+                <Text variant="h4" as="p">
+                  {member.toName}
+                </Text>
+              </Box>
+              <Box>
+                <Text variant="eyebrow" color="purple400">
+                  {formatMessage(m.confirmDelegationPermissions)}
+                </Text>
+                {member.scopes.map((scope) => (
+                  <Text key={scope.name}>
+                    {scope.displayName}
+                    {' · '}
+                    {formatMessage(m.confirmDelegationValidTo, {
+                      date: formatDateFns(scope.validTo, 'dd.MM.yyyy'),
+                    })}
+                  </Text>
+                ))}
+              </Box>
+            </Box>
+          ))}
           {!result && (
             <Box>
               <Text variant="eyebrow" color="purple400">
@@ -159,7 +175,10 @@ export const ConfirmDelegation = () => {
             onConfirmed={() => setOutcome('confirmed')}
             onExpired={() => setOutcome('expired')}
             context={formatMessage(m.stepUpContext, {
-              name: confirmation.toName,
+              name: joinNames(
+                members.map((member) => member.toName),
+                formatMessage(m.stepUpNamesAnd),
+              ),
             })}
           />
         </Box>

@@ -64,7 +64,13 @@ export class MeDelegationConfirmationsService {
       return null
     }
 
-    return this.withParsedScopeDates(await request.value())
+    const confirmation = await request.value()
+    return {
+      ...this.withParsedScopeDates(confirmation),
+      group: confirmation.group?.map((member) =>
+        this.withParsedScopeDates(member),
+      ),
+    }
   }
 
   async getReceipt(

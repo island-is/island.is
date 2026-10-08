@@ -8,6 +8,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { randomUUID } from 'crypto'
 import addMinutes from 'date-fns/addMinutes'
 import { Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -35,7 +36,11 @@ import type {
   ConfirmationScope,
 } from './types/delegation-confirmation-content'
 import { DelegationConfirmationStatus } from './types/delegation-confirmation-status'
-import { CONTENT_HASH_ALG, hashConfirmationContent } from './utils/content-hash'
+import {
+  CONTENT_HASH_ALG,
+  hashConfirmationContent,
+  hashConfirmationGroup,
+} from './utils/content-hash'
 
 export interface RequestConfirmationOptions {
   user: User
@@ -78,10 +83,11 @@ export interface AuthenticationStatusResult {
   status: AuthenticationStatus
   confirmation: DelegationConfirmation
   /**
-   * True only on the call that completed the confirmation, so the caller can
-   * audit and notify exactly once however often the client polls.
+   * Set only on the call that completed it: every confirmation the one
+   * authentication confirmed — this one, and the rest of its group — so the
+   * caller can audit and notify exactly once however often the client polls.
    */
-  completedNow?: boolean
+  completedNow?: DelegationConfirmation[]
 }
 
 /**
@@ -193,6 +199,93 @@ export class DelegationConfirmationService {
       : this.sequelize.transaction(run)
   }
 
+  /**
+   * Makes the confirmations one grant requested into a group that one
+   * authentication confirms. Their phone message becomes one for the whole
+   * group, and is re-hashed into each, so every row records what the phone
+   * showed. Call in the grant's transaction, after requesting them all.
+   */
+  async group(
+    confirmations: DelegationConfirmation[],
+    transaction: Transaction,
+  ): Promise<DelegationConfirmation[]> {
+    if (confirmations.length < 2) {
+      return confirmations
+    }
+
+    const groupId = randomUUID()
+    const bindingMessage = createGroupBindingMessage(
+      confirmations.map((confirmation) => ({
+        nationalId: confirmation.toNationalId,
+        name: confirmation.contentSnapshot.toName,
+      })),
+      confirmations.reduce(
+        (count, confirmation) =>
+          count + confirmation.contentSnapshot.scopes.length,
+        0,
+      ),
+    )
+
+    return Promise.all(
+      confirmations.map((confirmation) => {
+        const contentSnapshot = {
+          ...confirmation.contentSnapshot,
+          bindingMessage,
+        }
+        return confirmation.update(
+          {
+            groupId,
+            contentSnapshot,
+            contentHash: hashConfirmationContent(contentSnapshot),
+          },
+          { transaction },
+        )
+      }),
+    )
+  }
+
+  /**
+   * The confirmation and the rest of its group still waiting, in a fixed
+   * order. One authentication confirms them all.
+   */
+  async findPendingGroup(
+    confirmation: DelegationConfirmation,
+  ): Promise<DelegationConfirmation[]> {
+    if (!confirmation.groupId) {
+      return [confirmation]
+    }
+
+    const now = Date.now()
+    const members = await this.delegationConfirmationModel.findAll({
+      where: {
+        groupId: confirmation.groupId,
+        fromNationalId: confirmation.fromNationalId,
+        status: DelegationConfirmationStatus.Pending,
+      },
+      order: [['id', 'ASC']],
+    })
+
+    return members.filter((member) => member.expiresAt.getTime() > now)
+  }
+
+  /** Every confirmation in the group, whatever its status, for display. */
+  async findGroupForUser(
+    user: User,
+    confirmation: DelegationConfirmation,
+  ): Promise<DelegationConfirmation[]> {
+    if (!confirmation.groupId) {
+      return [confirmation]
+    }
+
+    return this.delegationConfirmationModel.findAll({
+      where: {
+        groupId: confirmation.groupId,
+        fromNationalId: user.nationalId,
+      },
+      order: [['id', 'ASC']],
+    })
+  }
+
   /** Confirmations belonging to the current grantor. Never an oracle. */
   async findAllForUser(user: User): Promise<DelegationConfirmation[]> {
     return this.delegationConfirmationModel.findAll({
@@ -253,13 +346,20 @@ export class DelegationConfirmationService {
     this.assertConfirmingUser(user, confirmation)
     await this.assertPending(confirmation)
 
+    // The whole group is confirmed by this one authentication.
+    const members = await this.findPendingGroup(confirmation)
+    for (const member of members) {
+      this.assertConfirmingUser(user, member)
+    }
+    const ids = members.map((member) => member.id)
+
     // Counted before anything goes out, with a conditional increment, so
     // concurrent starts can't slip past the cap.
     const [counted] = await this.delegationConfirmationModel.update(
       { authStartCount: Sequelize.literal('auth_start_count + 1') },
       {
         where: {
-          id: confirmation.id,
+          id: ids,
           status: DelegationConfirmationStatus.Pending,
           authStartCount: {
             [Op.lt]: this.delegationConfig.confirmationMaxAuthStarts,
@@ -267,7 +367,7 @@ export class DelegationConfirmationService {
         },
       },
     )
-    if (counted !== 1) {
+    if (counted !== ids.length) {
       throw new HttpException(
         'Too many authentication attempts for this confirmation.',
         HttpStatus.TOO_MANY_REQUESTS,
@@ -286,20 +386,26 @@ export class DelegationConfirmationService {
       userToken: user.authorization,
       bindingMessage: confirmation.contentSnapshot.bindingMessage,
       // Bound into what the grantor's key signs and echoed on the token, so the
-      // approval can only complete this exact content.
-      contextHash: confirmation.contentHash,
+      // approval can only complete this exact content — every confirmation in
+      // the group, and no other.
+      contextHash: hashConfirmationGroup(
+        members.map((member) => member.contentHash),
+      ),
     })
 
-    await confirmation.update({
-      authReqId: started.authReqId,
-      authMethod: started.method,
-      authStartedAt: startedAt,
-    })
-
-    const secondsLeft = Math.max(
-      0,
-      Math.floor((confirmation.expiresAt.getTime() - Date.now()) / 1000),
+    await this.delegationConfirmationModel.update(
+      {
+        authReqId: started.authReqId,
+        authMethod: started.method,
+        authStartedAt: startedAt,
+      },
+      { where: { id: ids } },
     )
+
+    const expiresAt = Math.min(
+      ...members.map((member) => member.expiresAt.getTime()),
+    )
+    const secondsLeft = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
 
     return {
       method: started.method,
@@ -358,123 +464,158 @@ export class DelegationConfirmationService {
 
     const result = await this.cibaClient.poll(confirmation.authReqId)
 
+    const authReqId = confirmation.authReqId
+    const endStepUp = () =>
+      this.delegationConfirmationModel.update(
+        { authReqId: null },
+        { where: { authReqId } },
+      )
+
     switch (result.status) {
       case 'pending':
         return { status: 'pending', confirmation }
       case 'denied':
         // The grantor declined, or the identity server refused the person who
-        // answered. The confirmation stays pending so they can try again.
-        await confirmation.update({ authReqId: null })
+        // answered. The confirmations stay pending so they can try again.
+        await endStepUp()
         return { status: 'denied', confirmation }
       case 'expired':
-        await confirmation.update({ authReqId: null })
+        await endStepUp()
         return { status: 'timed_out', confirmation }
     }
 
-    await this.assertStepUp(confirmation, result.claims)
-    await this.complete(user, confirmation, result.claims)
+    // What this authentication was started for: the group as it stood then.
+    // If any of it has since been superseded or expired, the hash won't match
+    // and nothing is confirmed.
+    const members = (await this.findPendingGroup(confirmation)).filter(
+      (member) => member.authReqId === authReqId,
+    )
 
-    return { status: 'confirmed', confirmation, completedNow: true }
+    try {
+      await this.assertStepUp(confirmation, members, result.claims)
+    } catch (error) {
+      await endStepUp()
+      throw error
+    }
+    await this.complete(user, members, result.claims)
+    await confirmation.reload()
+
+    return { status: 'confirmed', confirmation, completedNow: members }
   }
 
   /**
-   * Grants the held scopes and turns the row into the evidence record, in one
-   * transaction.
+   * Grants the held scopes and turns the rows into the evidence records, all in
+   * one transaction: the whole group is confirmed, or none of it.
    */
   private async complete(
     user: User,
-    confirmation: DelegationConfirmation,
+    confirmations: DelegationConfirmation[],
     claims: StepUpClaims,
   ): Promise<void> {
-    // The content hash is recomputed rather than trusted, so a tampered
-    // snapshot cannot pass.
-    if (
-      hashConfirmationContent(confirmation.contentSnapshot) !==
-      confirmation.contentHash
-    ) {
-      throw new BadRequestException(
-        'The stored confirmation content does not match its hash.',
-      )
-    }
+    const delegations = await Promise.all(
+      confirmations.map(async (confirmation) => {
+        // The content hash is recomputed rather than trusted, so a tampered
+        // snapshot cannot pass.
+        if (
+          hashConfirmationContent(confirmation.contentSnapshot) !==
+          confirmation.contentHash
+        ) {
+          throw new BadRequestException(
+            'The stored confirmation content does not match its hash.',
+          )
+        }
 
-    const delegation = confirmation.delegationId
-      ? await this.delegationModel.findByPk(confirmation.delegationId)
-      : null
+        const delegation = confirmation.delegationId
+          ? await this.delegationModel.findByPk(confirmation.delegationId)
+          : null
 
-    if (!delegation) {
-      throw new BadRequestException(
-        'The delegation this confirmation belongs to no longer exists.',
-      )
-    }
+        if (!delegation) {
+          throw new BadRequestException(
+            'The delegation this confirmation belongs to no longer exists.',
+          )
+        }
 
-    // The one place a held scope becomes real, up to the confirmation's lifetime
-    // after it was requested: check again that the grantor may still give it.
-    if (
-      !(await this.delegationResourcesService.validateScopeAccess(
-        user,
-        delegation.domainName ?? null,
-        DelegationDirection.OUTGOING,
-        confirmation.scopes.map((scope) => scope.name),
-      ))
-    ) {
-      throw new ForbiddenException(
-        'The grantor no longer has access to the scopes being confirmed.',
-      )
-    }
+        // The one place a held scope becomes real, up to the confirmation's
+        // lifetime after it was requested: check again that the grantor may
+        // still give it.
+        if (
+          !(await this.delegationResourcesService.validateScopeAccess(
+            user,
+            delegation.domainName ?? null,
+            DelegationDirection.OUTGOING,
+            confirmation.scopes.map((scope) => scope.name),
+          ))
+        ) {
+          throw new ForbiddenException(
+            'The grantor no longer has access to the scopes being confirmed.',
+          )
+        }
+
+        return delegation
+      }),
+    )
 
     await this.sequelize.transaction(async (transaction) => {
-      // Single-use: a conditional update that either claims the row or loses
-      // the race. No locking and no read-then-write window.
-      const [affected] = await this.delegationConfirmationModel.update(
-        {
-          status: DelegationConfirmationStatus.Confirmed,
-          confirmedAt: new Date(),
-          confirmingNationalId: claims.nationalId,
-          acr: claims.acr ?? null,
-          amr: claims.amr,
-          authTime: claims.authTime,
-          confirmedSub: claims.sub,
-          confirmedSid: null,
-          confirmedClientId: user.client,
-          confirmedIp: user.ip ?? null,
-          confirmedUserAgent: user.userAgent ?? null,
-          certificateThumbprint: claims.certificateThumbprint ?? null,
-          authReqId: null,
-        },
-        {
-          where: {
-            id: confirmation.id,
-            status: DelegationConfirmationStatus.Pending,
+      for (const [index, confirmation] of confirmations.entries()) {
+        // Single-use: a conditional update that either claims the row or loses
+        // the race. No locking and no read-then-write window.
+        const [affected] = await this.delegationConfirmationModel.update(
+          {
+            status: DelegationConfirmationStatus.Confirmed,
+            confirmedAt: new Date(),
+            confirmingNationalId: claims.nationalId,
+            acr: claims.acr ?? null,
+            amr: claims.amr,
+            authTime: claims.authTime,
+            confirmedSub: claims.sub,
+            confirmedSid: null,
+            confirmedClientId: user.client,
+            confirmedIp: user.ip ?? null,
+            confirmedUserAgent: user.userAgent ?? null,
+            certificateThumbprint: claims.certificateThumbprint ?? null,
+            authReqId: null,
           },
-          transaction,
-        },
-      )
+          {
+            where: {
+              id: confirmation.id,
+              status: DelegationConfirmationStatus.Pending,
+            },
+            transaction,
+          },
+        )
 
-      if (affected !== 1) {
-        throw new BadRequestException(
-          'Confirmation has already been completed.',
+        if (affected !== 1) {
+          throw new BadRequestException(
+            'Confirmation has already been completed.',
+          )
+        }
+
+        await this.delegationScopeService.createOrUpdate(
+          delegations[index].id,
+          confirmation.scopes.map((scope) => ({
+            name: scope.name,
+            validTo: new Date(scope.validTo),
+          })),
+          transaction,
+          { confirmationId: confirmation.id },
         )
       }
-
-      await this.delegationScopeService.createOrUpdate(
-        delegation.id,
-        confirmation.scopes.map((scope) => ({
-          name: scope.name,
-          validTo: new Date(scope.validTo),
-        })),
-        transaction,
-        { confirmationId: confirmation.id },
-      )
     })
 
     // Indexed after commit so the index never advertises a scope that rolled
     // back, matching the existing pattern in DelegationsOutgoingService.patch.
-    void this.delegationsIndexService.indexCustomDelegations(
-      confirmation.toNationalId,
-      user,
-    )
+    for (const toNationalId of new Set(
+      confirmations.map((confirmation) => confirmation.toNationalId),
+    )) {
+      void this.delegationsIndexService.indexCustomDelegations(
+        toNationalId,
+        user,
+      )
+    }
 
-    await confirmation.reload()
+    await Promise.all(
+      confirmations.map((confirmation) => confirmation.reload()),
+    )
   }
 
   private async assertPending(
@@ -549,6 +690,7 @@ export class DelegationConfirmationService {
    */
   private async assertStepUp(
     confirmation: DelegationConfirmation,
+    members: DelegationConfirmation[],
     claims: StepUpClaims,
   ): Promise<void> {
     const expectedNationalId =
@@ -558,7 +700,6 @@ export class DelegationConfirmationService {
       // The identity server already refuses an approval by the wrong person;
       // this is the same rule checked again on the token, where it matters.
       await confirmation.update({
-        authReqId: null,
         attemptCount: confirmation.attemptCount + 1,
       })
       throw new ForbiddenException(
@@ -579,10 +720,14 @@ export class DelegationConfirmationService {
       )
     }
 
-    // What the grantor's key signed was bound to this content hash; the token
-    // says so. Anything else was approved for something else.
-    if (claims.contextHash !== confirmation.contentHash) {
-      await confirmation.update({ authReqId: null })
+    // What the grantor's key signed was bound to this content — every
+    // confirmation in the group — and the token says so. Anything else was
+    // approved for something else.
+    if (
+      members.length === 0 ||
+      claims.contextHash !==
+        hashConfirmationGroup(members.map((member) => member.contentHash))
+    ) {
       throw new ForbiddenException(
         'The authentication was not made for this confirmation.',
       )
@@ -632,4 +777,20 @@ export const createBindingMessage = (toName: string, scopeCount: number) => {
     toName.length > maxName ? `${toName.slice(0, maxName - 1)}…` : toName
 
   return `${prefix}${name}${suffix}`
+}
+
+/**
+ * The text shown when one authentication confirms a whole grant: the
+ * recipient's name if there is one, else how many there are. Counted by
+ * national id: two people may share a name.
+ */
+export const createGroupBindingMessage = (
+  recipients: { nationalId: string; name: string }[],
+  scopeCount: number,
+) => {
+  const nationalIds = new Set(recipients.map((r) => r.nationalId))
+  return createBindingMessage(
+    nationalIds.size === 1 ? recipients[0].name : `${nationalIds.size} aðila`,
+    scopeCount,
+  )
 }

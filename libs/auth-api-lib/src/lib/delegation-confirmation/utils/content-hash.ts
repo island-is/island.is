@@ -75,6 +75,20 @@ const canonicalize = (value: JsonValue): string => {
 export const canonicalizeForHash = canonicalize
 
 /**
+ * The digest one authentication is bound to when it confirms several
+ * confirmations at once: over their content hashes, in a fixed order, so it
+ * covers exactly that set. A single confirmation is bound to its own hash.
+ */
+export const hashConfirmationGroup = (contentHashes: string[]): string => {
+  if (contentHashes.length === 1) {
+    return contentHashes[0]
+  }
+  return createHash(CONTENT_HASH_ALG)
+    .update(canonicalize([...contentHashes].sort()), 'utf8')
+    .digest('hex')
+}
+
+/**
  * Computes the digest that binds a confirmation to the exact grant the grantor
  * was shown. Recomputed at redemption time and compared against the stored
  * value, so a confirmation cannot be moved onto a different set of scopes.

@@ -2,6 +2,7 @@ import {
   CONTENT_HASH_ALG,
   canonicalizeForHash,
   hashConfirmationContent,
+  hashConfirmationGroup,
 } from './content-hash'
 import type { ConfirmationContentSnapshot } from '../types/delegation-confirmation-content'
 
@@ -157,5 +158,28 @@ describe('hashConfirmationContent', () => {
   it('matches the pinned digest', () => {
     expect(CONTENT_HASH_ALG).toEqual('sha256')
     expect(hashConfirmationContent(snapshot())).toEqual(expectedHash)
+  })
+})
+
+describe('hashConfirmationGroup', () => {
+  const a = 'a'.repeat(64)
+  const b = 'b'.repeat(64)
+  const c = 'c'.repeat(64)
+
+  it("is the confirmation's own hash for a group of one", () => {
+    expect(hashConfirmationGroup([a])).toEqual(a)
+  })
+
+  it('does not depend on order', () => {
+    expect(hashConfirmationGroup([a, b])).toEqual(hashConfirmationGroup([b, a]))
+  })
+
+  it('differs from each member and from any other set', () => {
+    const group = hashConfirmationGroup([a, b])
+
+    expect(group).not.toEqual(a)
+    expect(group).not.toEqual(b)
+    expect(group).not.toEqual(hashConfirmationGroup([a, c]))
+    expect(group).not.toEqual(hashConfirmationGroup([a, b, c]))
   })
 })

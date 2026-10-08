@@ -20,6 +20,12 @@ module.exports = {
             // Evidence must outlive the delegation it was created for.
             onDelete: 'SET NULL',
           },
+          // Confirmations made by one grant share it, and one authentication
+          // confirms them all.
+          group_id: {
+            type: Sequelize.UUID,
+            allowNull: true,
+          },
           from_national_id: {
             type: Sequelize.STRING,
             allowNull: false,
@@ -153,6 +159,12 @@ module.exports = {
       await queryInterface.addIndex('delegation_confirmation', {
         fields: ['delegation_id'],
         name: 'delegation_confirmation_delegation_id',
+        transaction,
+      })
+
+      await queryInterface.addIndex('delegation_confirmation', {
+        fields: ['group_id'],
+        name: 'delegation_confirmation_group_id',
         transaction,
       })
 
