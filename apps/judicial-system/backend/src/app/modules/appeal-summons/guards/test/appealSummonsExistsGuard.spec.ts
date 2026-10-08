@@ -19,10 +19,10 @@ describe('AppealSummonsExistsGuard', () => {
   const summons = { id: 'summons_id' } as AppealSummons
   const theCase = {
     id: 'case_id',
-    appealSummonses: [summons],
+    verdictAppealCase: { appealSummonses: [summons] },
   } as Case
 
-  it('should resolve the summons on the case', () => {
+  it('should resolve the summons on the verdict appeal case', () => {
     const request = {
       case: theCase,
       params: { appealSummonsId: summons.id },

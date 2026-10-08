@@ -26,7 +26,7 @@ export class AppealSummonsExistsGuard implements CanActivate {
       throw new BadRequestException('Missing appeal summons id')
     }
 
-    const appealSummons = theCase.appealSummonses?.find(
+    const appealSummons = theCase.verdictAppealCase?.appealSummonses?.find(
       (summons) => summons.id === appealSummonsId,
     )
 
