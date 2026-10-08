@@ -743,9 +743,9 @@ export const en: TranslatedMessages = {
 
   // health - overview
   // step up (locked screens)
-  'stepUp.title': 'Confirm it is you',
+  'stepUp.title': 'Electronic authentication',
   'stepUp.intro':
-    'Health information is locked when the app has not been used for a while. Confirm with electronic ID to open it.',
+    'Access to health information requires signing in with electronic ID.',
   'stepUp.start': 'Confirm with electronic ID',
   'stepUp.waitingApp':
     'Open the Auðkenni app and approve if the security code matches.',

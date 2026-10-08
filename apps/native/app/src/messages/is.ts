@@ -740,9 +740,9 @@ export const is = {
 
   // health - overview
   // step up (locked screens)
-  'stepUp.title': 'Staðfestu að þetta sért þú',
+  'stepUp.title': 'Rafræn auðkenning',
   'stepUp.intro':
-    'Heilsuupplýsingar eru læstar þegar appið hefur ekki verið notað um stund. Staðfestu með rafrænum skilríkjum til að opna þær.',
+    'Aðgangur að heilsuupplýsingum þarfnast innskráningar með rafrænum skilríkjum.',
   'stepUp.start': 'Staðfesta með rafrænum skilríkjum',
   'stepUp.waitingApp':
     'Opnaðu Auðkennisappið og staðfestu ef öryggistalan er sú sama.',
