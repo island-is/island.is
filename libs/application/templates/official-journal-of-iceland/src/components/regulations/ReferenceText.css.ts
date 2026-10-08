@@ -15,7 +15,9 @@ import {
 export const referenceTextContainer = style({
   position: 'fixed',
   top: '2vh',
-  zIndex: 10010,
+  // Below ModalBase's backdrop (10000), so a dialog on the page covers the
+  // panel. Inside a modal it sits in the backdrop's own stacking context.
+  zIndex: 9999,
   height: 0,
   transition: 'all 300ms 200ms ease-in-out',
   transitionProperty: 'transform',
@@ -25,7 +27,7 @@ export const referenceTextContainer = style({
   transform: 'translateX(calc(-50vw + 5%))',
 
   selectors: {
-    '&:hover': {
+    '&:hover, &:focus-within': {
       transform: 'translateX(calc(-50vw + 101%))',
     },
   },
