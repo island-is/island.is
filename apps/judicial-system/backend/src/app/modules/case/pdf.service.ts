@@ -591,28 +591,42 @@ export class PdfService {
       appealDate: this.getDefenceAppealDate(theCase, row.defendantId),
     }))
 
-    const confirmedBy = summons?.confirmedBy
-    const issuer = {
-      name: confirmedBy?.name ?? user.name,
-      title: confirmedBy?.title ?? user.title,
-    }
+    // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
+    // stamp and issuer must be the recorded confirmer — never the downloader.
+    if (summons?.confirmedDate) {
+      const confirmedBy = summons.confirmedBy
 
-    const confirmation: Confirmation | undefined = summons?.confirmedDate
-      ? {
+      if (!confirmedBy) {
+        throw new InternalServerErrorException(
+          `Appeal summons ${summons.id} is confirmed but confirmedBy was not loaded`,
+        )
+      }
+
+      const issuer = {
+        name: confirmedBy.name ?? '',
+        title: confirmedBy.title,
+      }
+
+      return createAppealSummons(
+        theCase,
+        defendants,
+        issuer,
+        {
           actor: issuer.name,
           title: issuer.title,
-          institution:
-            confirmedBy?.institution?.name ?? user.institution?.name ?? '',
+          institution: confirmedBy.institution?.name ?? '',
           date: summons.confirmedDate,
-        }
-      : undefined
+        },
+        summons.confirmedDate,
+      )
+    }
 
     return createAppealSummons(
       theCase,
       defendants,
-      issuer,
-      confirmation,
-      summons?.confirmedDate,
+      { name: user.name, title: user.title },
+      undefined,
+      undefined,
     )
   }
 
