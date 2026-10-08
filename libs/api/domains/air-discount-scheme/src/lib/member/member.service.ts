@@ -65,9 +65,9 @@ export class MemberService {
   }
 
   private toBenefit(discount: Discount): Benefit | null {
-    const fund = discount.user.fund
+    const { fund } = discount.user
 
-    if (!fund || (fund.credit === 0 && fund.used === 0)) {
+    if (fund.credit === 0 && fund.used === 0) {
       return null
     }
 
