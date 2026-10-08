@@ -21,7 +21,7 @@ import {
   filterMessageDescriptorsBySearch,
   hasDraftChangesInRows,
 } from '../../utils/translationWorkspaceEditing'
-import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
+import { TranslationWorkspaceHeaderSlot } from '../../components/TranslationWorkspaceHeader/TranslationWorkspaceHeader'
 import { TranslationStringsList } from '../../components/TranslationWorkspaceStatesTabsPanel/TranslationStringsList'
 import {
   TranslationWorkspaceError,
@@ -127,20 +127,21 @@ export const SharedNamespaceTranslationWorkspace = () => {
     !(loading || Boolean(introspection && translationsLoading)) &&
     !(error ?? translationsError)
 
-  useRegisterTranslationWorkspaceHeaderChrome({
-    hasUnsavedChanges,
-    unsavedCount,
-    saving,
-    onSaveAll: handleSaveAll,
-    showValidationErrors: false,
-    onToggleValidationErrors: () => undefined,
-    showValidationToggle: false,
-    hasDraftChanges,
-    publishing,
-    onPublish: handlePublish,
-    onOpenHistory: handleOpenHistory,
-    isReady: isWorkspaceReady,
-  })
+  const headerChrome = isWorkspaceReady
+    ? {
+        hasUnsavedChanges,
+        unsavedCount,
+        saving,
+        onSaveAll: handleSaveAll,
+        showValidationErrors: false,
+        onToggleValidationErrors: () => undefined,
+        showValidationToggle: false,
+        hasDraftChanges,
+        publishing,
+        onPublish: handlePublish,
+        onOpenHistory: handleOpenHistory,
+      }
+    : null
 
   if (location.pathname.includes('/thydingar/shared/') && namespace) {
     return (
@@ -249,6 +250,7 @@ export const SharedNamespaceTranslationWorkspace = () => {
 
   return (
     <>
+      <TranslationWorkspaceHeaderSlot chrome={headerChrome} />
       <TranslationUnsavedChangesGuard
         hasUnsavedChanges={hasUnsavedChanges}
         onSave={handleSaveAll}

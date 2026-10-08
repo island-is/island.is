@@ -1,15 +1,33 @@
-import { useCallback, useState } from 'react'
+import { createContext, useCallback, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { PortalHeaderSlot } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { buildTranslationsBackPath } from '../../lib/paths'
 import { useViewportMaxWidth } from '../../hooks/useViewportMaxWidth'
-import { useTranslationWorkspaceHeaderBridgeOptional } from '../../context/TranslationWorkspaceHeaderBridge'
 import * as styles from './TranslationWorkspaceHeader.css'
 
+export type TranslationWorkspaceHeaderChrome = {
+  hasUnsavedChanges: boolean
+  unsavedCount: number
+  saving: boolean
+  onSaveAll: () => void | Promise<boolean>
+  showValidationErrors: boolean
+  onToggleValidationErrors: () => void
+  showValidationToggle?: boolean
+  hasDraftChanges: boolean
+  publishing: boolean
+  onPublish: () => void
+  onOpenHistory: () => void
+}
+
+const ChromeContext = createContext<TranslationWorkspaceHeaderChrome | null>(
+  null,
+)
+
 const useHeaderChrome = () => {
-  const chrome = useTranslationWorkspaceHeaderBridgeOptional()?.workspaceChrome
+  const chrome = useContext(ChromeContext)
   const { formatMessage } = useLocale()
   return { chrome, formatMessage }
 }
@@ -255,20 +273,24 @@ export const TranslationWorkspaceHeaderOverflowMenu = () => {
   )
 }
 
-/** Trail actions in the shell header. Renders nothing when workspace chrome is not registered. */
-export const TranslationWorkspaceHeaderActions = () => {
-  const ctx = useTranslationWorkspaceHeaderBridgeOptional()
-
-  if (!ctx?.workspaceChrome) {
-    return null
-  }
-
-  return (
-    <div className={styles.trailActions}>
-      <TranslationWorkspaceHeaderHistoryButton />
-      <TranslationWorkspaceHeaderSaveButton />
-      <TranslationWorkspaceHeaderPublishButton />
-      <TranslationWorkspaceHeaderOverflowMenu />
-    </div>
-  )
-}
+export const TranslationWorkspaceHeaderSlot = ({
+  chrome,
+}: {
+  chrome: TranslationWorkspaceHeaderChrome | null
+}) => (
+  <ChromeContext.Provider value={chrome}>
+    <PortalHeaderSlot
+      lead={chrome && <TranslationWorkspaceHeaderBackButton />}
+      trail={
+        chrome && (
+          <div className={styles.trailActions}>
+            <TranslationWorkspaceHeaderHistoryButton />
+            <TranslationWorkspaceHeaderSaveButton />
+            <TranslationWorkspaceHeaderPublishButton />
+            <TranslationWorkspaceHeaderOverflowMenu />
+          </div>
+        )
+      }
+    />
+  </ChromeContext.Provider>
+)

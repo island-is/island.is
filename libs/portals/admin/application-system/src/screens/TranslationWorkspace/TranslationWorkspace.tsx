@@ -13,7 +13,7 @@ import {
 import { TranslationPublishHistory } from '../../components/TranslationPublishHistory/TranslationPublishHistory'
 import { TranslationPublishConfirmModal } from '../../components/TranslationPublishConfirmModal/TranslationPublishConfirmModal'
 import { TranslationUnsavedChangesGuard } from '../../components/TranslationUnsavedChangesModal/TranslationUnsavedChangesModal'
-import { useRegisterTranslationWorkspaceHeaderChrome } from '../../context/TranslationWorkspaceHeaderBridge'
+import { TranslationWorkspaceHeaderSlot } from '../../components/TranslationWorkspaceHeader/TranslationWorkspaceHeader'
 import { useTranslationWorkspaceData } from '../../hooks/useTranslationWorkspaceData'
 import { useTranslationWorkspaceDerivedView } from '../../hooks/useTranslationWorkspaceDerivedView'
 import { useTranslationWorkspaceDrafts } from '../../hooks/useTranslationWorkspaceDrafts'
@@ -128,19 +128,20 @@ export const TranslationWorkspace = () => {
 
   const isWorkspaceReady = Boolean(introspection) && !isLoading && !loadError
 
-  useRegisterTranslationWorkspaceHeaderChrome({
-    hasUnsavedChanges,
-    unsavedCount,
-    saving,
-    onSaveAll: handleSaveAll,
-    showValidationErrors,
-    onToggleValidationErrors: handleToggleValidationErrors,
-    hasDraftChanges,
-    publishing,
-    onPublish: handlePublish,
-    onOpenHistory: handleOpenHistory,
-    isReady: isWorkspaceReady,
-  })
+  const headerChrome = isWorkspaceReady
+    ? {
+        hasUnsavedChanges,
+        unsavedCount,
+        saving,
+        onSaveAll: handleSaveAll,
+        showValidationErrors,
+        onToggleValidationErrors: handleToggleValidationErrors,
+        hasDraftChanges,
+        publishing,
+        onPublish: handlePublish,
+        onOpenHistory: handleOpenHistory,
+      }
+    : null
 
   let workspace: ReactNode
 
@@ -259,6 +260,7 @@ export const TranslationWorkspace = () => {
 
   return (
     <>
+      <TranslationWorkspaceHeaderSlot chrome={headerChrome} />
       <TranslationUnsavedChangesGuard
         hasUnsavedChanges={hasUnsavedChanges}
         onSave={handleSaveAll}

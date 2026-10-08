@@ -63,16 +63,19 @@ export const applicationSystemAdminModule: PortalModule = {
       name: m.translations,
       path: '/umsoknakerfi/thydingar/shared/:namespace',
       element: <SharedNamespaceTranslationWorkspaceRoute />,
+      layout: 'default',
     },
     {
       name: m.translations,
       path: ApplicationSystemPaths.SharedNamespaceTranslationWorkspace,
       element: <SharedNamespaceTranslationWorkspaceRoute />,
+      layout: 'default',
     },
     {
       name: m.translations,
       path: ApplicationSystemPaths.TranslationWorkspace,
       element: <TranslationWorkspaceRoute />,
+      layout: 'workspace',
     },
   ],
 }

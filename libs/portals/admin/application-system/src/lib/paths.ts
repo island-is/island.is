@@ -8,27 +8,10 @@ export enum ApplicationSystemPaths {
   TranslationWorkspace = '/umsoknakerfi/thydingar/:typeId',
 }
 
-const sharedNamespaceTranslationPathPrefix = `${ApplicationSystemPaths.Translations}/namespaces/`
-const legacySharedNamespaceTranslationPathPrefix = `${ApplicationSystemPaths.Translations}/shared/`
-
 export const buildSharedNamespaceTranslationPath = (namespace: string) =>
-  `${sharedNamespaceTranslationPathPrefix}${encodeURIComponent(namespace)}`
-
-export const isSharedNamespaceTranslationPath = (pathname: string) =>
-  pathname.startsWith(sharedNamespaceTranslationPathPrefix) ||
-  pathname.startsWith(legacySharedNamespaceTranslationPathPrefix)
-
-export const isApplicationTranslationWorkspacePath = (pathname: string) => {
-  if (pathname === ApplicationSystemPaths.Translations) {
-    return false
-  }
-
-  if (isSharedNamespaceTranslationPath(pathname)) {
-    return false
-  }
-
-  return pathname.startsWith(`${ApplicationSystemPaths.Translations}/`)
-}
+  `${ApplicationSystemPaths.Translations}/namespaces/${encodeURIComponent(
+    namespace,
+  )}`
 
 export const APPLICATION_SYSTEM_TAB_QUERY_PARAM = 'tab'
 export const APPLICATION_SYSTEM_TRANSLATIONS_TAB_ID = 'translations'

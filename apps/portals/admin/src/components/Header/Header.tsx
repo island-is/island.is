@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import {
   Box,
@@ -9,13 +9,11 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import {
-  TranslationWorkspaceHeaderActions,
-  TranslationWorkspaceHeaderBackButton,
-  isApplicationTranslationWorkspacePath,
-  isSharedNamespaceTranslationPath,
-  useTranslationWorkspaceHeaderBridgeOptional,
-} from '@island.is/portals/admin/application-system'
-import { PortalPageLoader } from '@island.is/portals/core'
+  PortalHeaderSlotOutlet,
+  PortalPageLoader,
+  usePortalHeaderSlotActive,
+  useRouteLayout,
+} from '@island.is/portals/core'
 import { UserMenu } from '@island.is/shared/components'
 
 import { ModuleSwitcher } from '../ModuleSwitcher/ModuleSwitcher'
@@ -43,14 +41,9 @@ const HeaderUserMenu = () => (
 )
 
 export const Header = () => {
-  const { pathname } = useLocation()
-  const hasWorkspaceChrome = Boolean(
-    useTranslationWorkspaceHeaderBridgeOptional()?.workspaceChrome,
-  )
-  const isWorkspace =
-    hasWorkspaceChrome ||
-    isApplicationTranslationWorkspacePath(pathname) ||
-    isSharedNamespaceTranslationPath(pathname)
+  const hasSlot = usePortalHeaderSlotActive()
+  const routeLayout = useRouteLayout()
+  const isWorkspace = hasSlot || routeLayout === 'workspace'
 
   return (
     <>
@@ -64,10 +57,10 @@ export const Header = () => {
                 <div className={styles.switcher}>
                   <ModuleSwitcher />
                 </div>
-                <TranslationWorkspaceHeaderBackButton />
+                <PortalHeaderSlotOutlet name="lead" />
               </div>
               <div className={styles.trail}>
-                <TranslationWorkspaceHeaderActions />
+                <PortalHeaderSlotOutlet name="trail" />
                 <HeaderUserMenu />
               </div>
             </div>
