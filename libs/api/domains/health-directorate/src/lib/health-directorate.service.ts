@@ -229,7 +229,7 @@ export class HealthDirectorateService {
     auth: Auth,
     pregnancyId: string,
     communicationId: string,
-  ): Promise<typeof PregnancyCommunicationDetail | null> {
+  ): Promise<PregnancyCommunicationDetail | null> {
     const detail = await this.healthApi.getPregnancyCommunicationDetail(
       auth,
       pregnancyId,

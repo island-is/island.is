@@ -17,15 +17,17 @@ import {
 import { ActivePregnancy } from '../models/activePregnancy.model'
 import { PregnancyCommunication } from '../models/pregnancyCommunication.model'
 import { PregnancyCommunicationAuthor } from '../models/pregnancyCommunicationAuthor.model'
-import { PregnancyCommunicationDetail } from '../models/pregnancyCommunicationDetail.model'
+import {
+  ExaminationCommunicationDetail,
+  PhoneCallCommunicationDetail,
+  PregnancyCommunicationDetail,
+} from '../models/pregnancyCommunicationDetail.model'
 import {
   PregnancyCommunicationKindEnum,
   PregnancyDocumentKindEnum,
 } from '../models/enums'
-import { ExaminationCommunicationDetail } from '../models/examinationCommunicationDetail.model'
 import { ExaminationMeasurement } from '../models/examinationMeasurement.model'
 import { FetalHeartRate } from '../models/fetalHeartRate.model'
-import { PhoneCallCommunicationDetail } from '../models/phoneCallCommunicationDetail.model'
 import { PregnancyDocument } from '../models/pregnancyDocument.model'
 import { PregnancyStaff } from '../models/pregnancyStaff.model'
 
@@ -182,7 +184,7 @@ const mapPhoneCallCommunicationDetail = (
 
 export const mapPregnancyCommunicationDetail = (
   dto: PregnancyCommunicationDetailDto,
-): typeof PregnancyCommunicationDetail | null => {
+): PregnancyCommunicationDetail | null => {
   switch (dto.kind) {
     case CommunicationKind.EXAMINATION:
       return mapExaminationCommunicationDetail(dto)

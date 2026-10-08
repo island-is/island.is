@@ -29,7 +29,7 @@ import { PregnancyDocument } from '../models/pregnancyDocument.model'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @CodeOwner(CodeOwners.Hugsmidjan)
-@Resolver(() => ActivePregnancy)
+@Resolver()
 export class PregnancyResolver {
   constructor(private api: HealthDirectorateService) {}
 
@@ -80,7 +80,7 @@ export class PregnancyResolver {
     @Args('pregnancyId', { type: () => ID }) pregnancyId: string,
     @Args('communicationId', { type: () => ID }) communicationId: string,
     @CurrentUser() user: User,
-  ): Promise<typeof PregnancyCommunicationDetail | null> {
+  ): Promise<PregnancyCommunicationDetail | null> {
     return this.api.getPregnancyCommunicationDetail(
       user,
       pregnancyId,
