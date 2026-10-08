@@ -141,7 +141,11 @@ export default function AppLockScreen() {
     }
 
     isPromptRef.current = true
-    const response = await authenticateAsync()
+    const response = await authenticateAsync({
+      disableDeviceFallback: true,
+      fallbackLabel: '',
+      cancelLabel: intl.formatMessage({ id: 'applock.usePin' }),
+    })
 
     if (response.success) {
       void selectionAsync()
