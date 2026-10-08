@@ -113,9 +113,6 @@ export const convertBase64StringToBase64Url = (base64String: string) => {
 const MY_PAGES_PATH = '/minarsidur'
 const APPLICATIONS_PATH = '/umsoknir'
 const allowedPaths = [MY_PAGES_PATH, APPLICATIONS_PATH]
-// Health information needs a login with electronic ID, which a passkey is not:
-// these pages are opened without signing the browser in with the passkey.
-const HEALTH_PATH = `${MY_PAGES_PATH}/heilsa`
 
 export const addPasskeyAsLoginHint = (
   url: string,
@@ -146,8 +143,7 @@ export const doesUrlSupportPasskey = (url: string): boolean => {
     (url.startsWith('https://beta.dev01.devland.is') ||
       url.startsWith('https://beta.staging01.devland.is') ||
       url.startsWith('https://island.is')) &&
-    (url.includes(MY_PAGES_PATH) || url.includes(APPLICATIONS_PATH)) &&
-    !url.includes(HEALTH_PATH)
+    (url.includes(MY_PAGES_PATH) || url.includes(APPLICATIONS_PATH))
   ) {
     return true
   }
