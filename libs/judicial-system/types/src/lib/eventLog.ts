@@ -42,6 +42,7 @@ export enum AppealEventType {
   // court session confirmation) or directly by the party within the appeal deadline
   APPEALED = 'APPEALED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
+  APPEAL_SUMMONS_ISSUED = 'APPEAL_SUMMONS_ISSUED',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)

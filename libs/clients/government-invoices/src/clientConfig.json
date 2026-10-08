@@ -761,12 +761,6 @@
             "description": "Gets or sets the invoice type name.",
             "nullable": true,
             "example": "string"
-          },
-          "isConfidential": {
-            "type": "boolean",
-            "description": "Gets or sets whether the invoice type is confidential.",
-            "nullable": true,
-            "example": false
           }
         },
         "additionalProperties": false,
@@ -787,7 +781,7 @@
             "description": "Gets or sets the GL Date.",
             "format": "date",
             "nullable": true,
-            "example": "2026-10-06"
+            "example": "2026-10-08"
           },
           "accountedAmount": {
             "type": "number",
@@ -838,22 +832,13 @@
             "nullable": true,
             "example": 0
           },
-          "invoicePaymentNumber": {
-            "type": "integer",
-            "description": "Gets or sets the Invoice Payment Number.",
-            "format": "int32"
-          },
           "supplier": { "$ref": "#/components/schemas/InvoiceSupplierDto" },
           "debtor": { "$ref": "#/components/schemas/InvoiceDebtorDto" },
           "invoiceNum": {
             "type": "string",
-            "description": "Gets or sets the Invoice Number. Null when Elfur.Core.Domain.OpenInvoices.InvoicePaymentDetailResponseDto.InvoiceNumRedacted is true.",
+            "description": "Gets or sets the Invoice Number. Null when withheld by the database view.",
             "nullable": true,
             "example": "string"
-          },
-          "invoiceNumRedacted": {
-            "type": "boolean",
-            "description": "Gets or sets whether Elfur.Core.Domain.OpenInvoices.InvoicePaymentDetailResponseDto.InvoiceNum was withheld because the supplier is a\r\nprivate person, a private person proxy, or confidential -- private individuals sometimes\r\nput a national ID or other sensitive string in this field. A null Elfur.Core.Domain.OpenInvoices.InvoicePaymentDetailResponseDto.InvoiceNum\r\nwith this false would instead indicate a data issue."
           },
           "invoiceTotalBaseAmount": {
             "type": "number",
@@ -899,22 +884,7 @@
             "nullable": true,
             "example": "string"
           },
-          "name": { "type": "string", "nullable": true, "example": "string" },
-          "isPrivatePerson": {
-            "type": "boolean",
-            "nullable": true,
-            "example": false
-          },
-          "isPrivatePersonProxy": {
-            "type": "boolean",
-            "nullable": true,
-            "example": false
-          },
-          "isConfidential": {
-            "type": "boolean",
-            "nullable": true,
-            "example": false
-          }
+          "name": { "type": "string", "nullable": true, "example": "string" }
         },
         "additionalProperties": false,
         "description": "Supplier information embedded in an invoice payment response."
@@ -1169,18 +1139,6 @@
       "SupplierResponseDto": {
         "type": "object",
         "properties": {
-          "isPrivatePerson": {
-            "type": "boolean",
-            "description": "Gets or sets if the supplier is a private person (individual)."
-          },
-          "isPrivatePersonProxy": {
-            "type": "boolean",
-            "description": "Gets or sets if the supplier is a private entity."
-          },
-          "isConfidential": {
-            "type": "boolean",
-            "description": "Gets or sets if the supplier information is confidential."
-          },
           "legalId": {
             "type": "string",
             "description": "Gets the invoice entity legal ID.",
