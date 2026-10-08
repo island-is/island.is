@@ -57,15 +57,15 @@ export class DelegationPreferenceService {
   }
 
   async findAll(toNationalId: string): Promise<DelegationPreferenceDto[]> {
-    const attributes = ['fromNationalId', 'isFavourite', 'lastUsedAt'] as const
+    const attributes = ['fromNationalId', 'favouritedAt', 'lastUsedAt'] as const
     const live = await this.liveParties(toNationalId)
     const scope = DelegationPreferenceService.scopeTo(live)
 
     const [favourites, recent] = await Promise.all([
       this.delegationPreferenceModel.findAll({
-        where: { toNationalId, isFavourite: true, ...scope },
+        where: { toNationalId, favouritedAt: { [Op.ne]: null }, ...scope },
         attributes: [...attributes],
-        order: [['created', 'ASC']],
+        order: [['favouritedAt', 'ASC']],
         limit: MAX_FAVOURITE_ROWS,
       }),
       this.delegationPreferenceModel.findAll({
@@ -81,7 +81,7 @@ export class DelegationPreferenceService {
     for (const preference of [...favourites, ...recent]) {
       byNationalId.set(preference.fromNationalId, {
         fromNationalId: preference.fromNationalId,
-        isFavourite: preference.isFavourite,
+        isFavourite: Boolean(preference.favouritedAt),
         lastUsedAt: preference.lastUsedAt ?? null,
       })
     }
@@ -100,7 +100,7 @@ export class DelegationPreferenceService {
       })
 
       await this.delegationPreferenceModel.update(
-        { isFavourite: false },
+        { favouritedAt: null },
         { where: { toNationalId, fromNationalId } },
       )
 
@@ -146,7 +146,7 @@ export class DelegationPreferenceService {
       const others = await this.delegationPreferenceModel.count({
         where: {
           toNationalId,
-          isFavourite: true,
+          favouritedAt: { [Op.ne]: null },
           fromNationalId: {
             [Op.ne]: fromNationalId,
             ...(live ? { [Op.in]: [...live] } : {}),
@@ -162,10 +162,10 @@ export class DelegationPreferenceService {
       }
 
       await this.delegationPreferenceModel.upsert(
-        { toNationalId, fromNationalId, isFavourite: true },
+        { toNationalId, fromNationalId, favouritedAt: new Date() },
         {
           conflictFields: CONFLICT_COLUMNS,
-          fields: ['isFavourite'],
+          fields: ['favouritedAt'],
           transaction,
         },
       )
@@ -198,12 +198,12 @@ export class DelegationPreferenceService {
     await this.delegationPreferenceModel.sequelize?.query(
       `DELETE FROM delegation_preference
          WHERE to_national_id = :toNationalId
-           AND is_favourite = false
+           AND favourited_at IS NULL
            AND last_used_at < (
              SELECT min(last_used_at) FROM (
                SELECT last_used_at FROM delegation_preference
                 WHERE to_national_id = :toNationalId
-                  AND is_favourite = false
+                  AND favourited_at IS NULL
                   AND last_used_at IS NOT NULL
                 ORDER BY last_used_at DESC
                 LIMIT :keep

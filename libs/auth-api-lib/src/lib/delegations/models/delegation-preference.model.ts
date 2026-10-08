@@ -54,12 +54,11 @@ export class DelegationPreference extends Model<
   fromNationalId!: string
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
+    type: DataType.DATE,
+    allowNull: true,
   })
-  @ApiProperty()
-  isFavourite!: CreationOptional<boolean>
+  @ApiProperty({ type: Date, nullable: true })
+  favouritedAt?: Date | null
 
   @Column({
     type: DataType.DATE,

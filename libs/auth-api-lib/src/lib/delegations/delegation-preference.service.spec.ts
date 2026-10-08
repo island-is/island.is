@@ -14,7 +14,7 @@ const OTHER_PARTY = '5005101370'
 const row = (overrides: Partial<DelegationPreference>) =>
   ({
     fromNationalId: PARTY,
-    isFavourite: false,
+    favouritedAt: null,
     lastUsedAt: null,
     ...overrides,
   } as DelegationPreference)
@@ -127,8 +127,8 @@ describe('DelegationPreferenceService', () => {
 
       expect(favourites).toEqual(
         expect.objectContaining({
-          where: { toNationalId: ACTOR, isFavourite: true },
-          order: [['created', 'ASC']],
+          where: { toNationalId: ACTOR, favouritedAt: { [Op.ne]: null } },
+          order: [['favouritedAt', 'ASC']],
           limit: expect.any(Number),
         }),
       )
@@ -145,8 +145,8 @@ describe('DelegationPreferenceService', () => {
       const lastUsedAt = new Date('2026-09-17T19:15:29Z')
 
       model.findAll
-        .mockResolvedValueOnce([row({ isFavourite: true })])
-        .mockResolvedValueOnce([row({ isFavourite: true, lastUsedAt })])
+        .mockResolvedValueOnce([row({ favouritedAt: new Date() })])
+        .mockResolvedValueOnce([row({ favouritedAt: new Date(), lastUsedAt })])
 
       await expect(service.findAll(ACTOR)).resolves.toEqual([
         { fromNationalId: PARTY, isFavourite: true, lastUsedAt },
@@ -155,7 +155,7 @@ describe('DelegationPreferenceService', () => {
 
     it('reports a missing lastUsedAt as null rather than undefined', async () => {
       model.findAll.mockResolvedValueOnce([
-        row({ isFavourite: true, lastUsedAt: undefined }),
+        row({ favouritedAt: new Date(), lastUsedAt: undefined }),
       ])
 
       const [preference] = await service.findAll(ACTOR)
@@ -220,7 +220,7 @@ describe('DelegationPreferenceService', () => {
       await service.setFavourite(ACTOR, PARTY, false)
 
       expect(model.update).toHaveBeenCalledWith(
-        { isFavourite: false },
+        { favouritedAt: null },
         { where: { toNationalId: ACTOR, fromNationalId: PARTY } },
       )
       expect(model.count).not.toHaveBeenCalled()
@@ -228,16 +228,30 @@ describe('DelegationPreferenceService', () => {
   })
 
   describe('setFavourite', () => {
-    it('writes only isFavourite, so a concurrent switch cannot lose its timestamp', async () => {
+    it('writes only favouritedAt, so a concurrent switch cannot lose its timestamp', async () => {
       await service.setFavourite(ACTOR, PARTY, true)
 
       expect(model.upsert).toHaveBeenCalledWith(
-        { toNationalId: ACTOR, fromNationalId: PARTY, isFavourite: true },
+        {
+          toNationalId: ACTOR,
+          fromNationalId: PARTY,
+          favouritedAt: expect.any(Date),
+        },
         expect.objectContaining({
           conflictFields: ['to_national_id', 'from_national_id'],
-          fields: ['isFavourite'],
+          fields: ['favouritedAt'],
         }),
       )
+    })
+
+    it('records when a party was starred, so favourites keep a predictable order', async () => {
+      // The row may already exist from a switch, so its created date is when
+      // the actor first used the party, not when they starred it.
+      await service.setFavourite(ACTOR, PARTY, true)
+
+      const [values] = model.upsert.mock.calls[0]
+
+      expect(values.favouritedAt).toBeInstanceOf(Date)
     })
 
     it('refuses a party the actor holds no delegation for', async () => {
@@ -318,7 +332,7 @@ describe('DelegationPreferenceService', () => {
       await service.setFavourite(ACTOR, PARTY, false)
 
       expect(model.update).toHaveBeenCalledWith(
-        { isFavourite: false },
+        { favouritedAt: null },
         { where: { toNationalId: ACTOR, fromNationalId: PARTY } },
       )
     })
@@ -331,7 +345,7 @@ describe('DelegationPreferenceService', () => {
       const [sql, options] = model.sequelize.query.mock.calls[0]
 
       expect(sql).toContain('DELETE FROM delegation_preference')
-      expect(sql).toContain('is_favourite = false')
+      expect(sql).toContain('favourited_at IS NULL')
       expect(options.replacements).toEqual({
         toNationalId: ACTOR,
         keep: expect.any(Number),
@@ -343,7 +357,7 @@ describe('DelegationPreferenceService', () => {
 
       const [sql] = model.sequelize.query.mock.calls[0]
 
-      expect(sql.match(/is_favourite = false/g)).toHaveLength(2)
+      expect(sql.match(/favourited_at IS NULL/g)).toHaveLength(2)
     })
 
     it('is a single upsert that leaves isFavourite alone', async () => {

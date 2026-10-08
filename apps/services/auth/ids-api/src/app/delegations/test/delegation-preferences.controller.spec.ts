@@ -102,6 +102,44 @@ describe('DelegationsController preferences', () => {
     })
   })
 
+  describe('the order favourites come back in', () => {
+    it('follows when each was starred, not when the row first appeared', async () => {
+      const first = createNationalId('person')
+      const second = createNationalId('person')
+
+      for (const id of [first, second]) {
+        await indexRecord(id)
+      }
+
+      // Both rows exist from a switch, second one first.
+      await server
+        .post(`${path}/usage`)
+        .send({ fromNationalId: second })
+        .expect(200)
+      await server
+        .post(`${path}/usage`)
+        .send({ fromNationalId: first })
+        .expect(200)
+
+      // Starred the other way round.
+      await server
+        .post(`${path}/favourite`)
+        .send({ fromNationalId: first, isFavourite: true })
+        .expect(200)
+      await server
+        .post(`${path}/favourite`)
+        .send({ fromNationalId: second, isFavourite: true })
+        .expect(200)
+
+      const res = await server.get(path)
+      const starred = res.body
+        .filter((p: { isFavourite: boolean }) => p.isFavourite)
+        .map((p: { fromNationalId: string }) => p.fromNationalId)
+
+      expect(starred).toEqual([first, second])
+    })
+  })
+
   describe('POST preferences/favourite', () => {
     it('stars and unstars a party', async () => {
       await indexRecord(party)
@@ -110,7 +148,9 @@ describe('DelegationsController preferences', () => {
         .post(`${path}/favourite`)
         .send({ fromNationalId: party, isFavourite: true })
         .expect(200)
-      await expect(rowFor(party)).resolves.toMatchObject({ isFavourite: true })
+      await expect(rowFor(party)).resolves.toMatchObject({
+        favouritedAt: expect.any(Date),
+      })
 
       await server
         .post(`${path}/favourite`)
@@ -197,7 +237,7 @@ describe('DelegationsController preferences', () => {
         .expect(200)
 
       await expect(rowFor(party)).resolves.toMatchObject({
-        isFavourite: false,
+        favouritedAt: null,
       })
       const row = await rowFor(party)
       expect(row?.lastUsedAt).toBeTruthy()
@@ -215,7 +255,9 @@ describe('DelegationsController preferences', () => {
         .send({ fromNationalId: party })
         .expect(200)
 
-      await expect(rowFor(party)).resolves.toMatchObject({ isFavourite: true })
+      await expect(rowFor(party)).resolves.toMatchObject({
+        favouritedAt: expect.any(Date),
+      })
     })
 
     it('rejects a body with no national id', async () => {

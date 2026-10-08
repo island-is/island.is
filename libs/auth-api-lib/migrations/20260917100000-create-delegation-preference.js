@@ -20,10 +20,9 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          is_favourite: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
+          favourited_at: {
+            type: Sequelize.DATE,
+            allowNull: true,
           },
           last_used_at: {
             type: Sequelize.DATE,
@@ -41,6 +40,7 @@ module.exports = {
         { transaction },
       )
 
+      // Also the read index: the leading column serves lookup by actor.
       await queryInterface.addConstraint('delegation_preference', {
         fields: ['to_national_id', 'from_national_id'],
         type: 'unique',
