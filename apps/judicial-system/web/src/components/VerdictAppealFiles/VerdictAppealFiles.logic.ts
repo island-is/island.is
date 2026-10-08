@@ -83,6 +83,83 @@ export const hasStandingVerdictAppeal = (
   Boolean(verdictAppealCase) &&
   verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
 
+export interface AppealAppointmentLetterRow {
+  /** Stable across renders: the party the letter appoints an advocate for. */
+  key: string
+  name: string
+  /** The path segments the pdf route is addressed by, after the pdf type. */
+  elementId: string[]
+}
+
+const appointmentLetterName = (advocateName: string) =>
+  `Skipunarbréf ${advocateName}.pdf`
+
+/**
+ * The letters of appointment that currently stand - one per party whose
+ * advocate the court of appeals has confirmed.
+ *
+ * Only the court of appeals sees them: it writes the letter and sends it, and
+ * the advocate it appoints is told by e-mail rather than from this screen.
+ *
+ * Only the advocate in force has a letter. Replacing one supersedes it, and
+ * nothing keeps the ones before, so a row is offered for exactly the
+ * appointment the letter would reproduce.
+ *
+ * A civil claimant who engaged a lawyer of their own gets no row: a
+ * réttargæslumaður is appointed by the court, a lögmaður is hired by the
+ * claimant, and the court does not appoint what it did not choose.
+ */
+export const getAppealAppointmentLetters = (
+  workingCase: Case,
+  user: User | undefined,
+): AppealAppointmentLetterRow[] => {
+  if (
+    !isCourtOfAppealsUser(user) ||
+    !hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+  ) {
+    return []
+  }
+
+  const defenderLetters = (workingCase.defendants ?? []).flatMap((defendant) =>
+    defendant.isAppealDefenderConfirmed && defendant.appealDefenderName
+      ? [
+          {
+            key: `defendant-${defendant.id}`,
+            name: appointmentLetterName(defendant.appealDefenderName),
+            elementId: [
+              'defendant',
+              defendant.id,
+              appointmentLetterName(defendant.appealDefenderName),
+            ],
+          },
+        ]
+      : [],
+  )
+
+  const spokespersonLetters = (workingCase.civilClaimants ?? []).flatMap(
+    (civilClaimant) =>
+      civilClaimant.isAppealSpokespersonConfirmed &&
+      !civilClaimant.appealSpokespersonIsLawyer &&
+      civilClaimant.appealSpokespersonName
+        ? [
+            {
+              key: `civilClaimant-${civilClaimant.id}`,
+              name: appointmentLetterName(
+                civilClaimant.appealSpokespersonName,
+              ),
+              elementId: [
+                'civilClaimant',
+                civilClaimant.id,
+                appointmentLetterName(civilClaimant.appealSpokespersonName),
+              ],
+            },
+          ]
+        : [],
+  )
+
+  return [...defenderLetters, ...spokespersonLetters]
+}
+
 export const showsAppealSummonses = (
   workingCase: Pick<Case, 'verdictAppealCase'>,
   user: User | undefined,

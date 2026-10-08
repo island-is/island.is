@@ -24,8 +24,10 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import type { AppealAppointmentLetter } from '../../formatters'
 import {
   Confirmation,
+  createAppealAppointmentLetter,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
@@ -559,6 +561,18 @@ export class PdfService {
     })
 
     return generatedPdf
+  }
+
+  /**
+   * The letter by which the court of appeals appoints one party's advocate.
+   * Everything it prints is resolved by the caller - see
+   * buildAppealAppointmentLetter - so there is nothing to look up here and no
+   * translations to refresh.
+   */
+  async getAppealAppointmentLetterPdf(
+    letter: AppealAppointmentLetter,
+  ): Promise<Buffer> {
+    return createAppealAppointmentLetter(letter)
   }
 
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {

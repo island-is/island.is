@@ -359,6 +359,33 @@ export const buildAdvocateConfirmedEvent = (params: {
   }
 }
 
+/**
+ * The confirmation that currently stands for one party, which is what the
+ * letter of appointment is written from: its signatory and its date.
+ *
+ * Only the latest matters. An advocate replaced later is simply superseded -
+ * nothing tracks the ones before, by design - so the letter always reproduces
+ * the appointment in force.
+ */
+export const latestAdvocateConfirmedEvent = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  party: { defendantId?: string; civilClaimantId?: string },
+): AppealEventLog | undefined =>
+  (appealCase.appealEventLogs ?? [])
+    .filter(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.ADVOCATE_CONFIRMED &&
+        (party.defendantId
+          ? eventLog.defendantId === party.defendantId
+          : Boolean(party.civilClaimantId) &&
+            eventLog.civilClaimantId === party.civilClaimantId),
+    )
+    .reduce<AppealEventLog | undefined>(
+      (latest, eventLog) =>
+        !latest || eventLog.created > latest.created ? eventLog : latest,
+      undefined,
+    )
+
 // An APPEALED event for an appeal the party filed itself, outside the court
 // record. Such an appellant has no decision = APPEAL row - they appealed because
 // they postponed in court - so it must never be inferred from the decision rows

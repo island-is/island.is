@@ -55,6 +55,33 @@ const LETTERHEAD = [
 export const getAppealAppointmentCaseTitle = (defendantName: string) =>
   `Ákæruvaldið gegn ${defendantName}`
 
+/**
+ * The district court as the letter names it: "dómur Héraðsdóms Reykjavíkur",
+ * not "dómur Héraðsdómur Reykjavíkur". Icelandic has no general way to decline
+ * a name, but every district court is "Héraðsdómur <place>" and only the first
+ * word changes - the same substitution the custody notice has made for years.
+ */
+export const getCourtNameInGenitive = (courtName?: string | null) =>
+  courtName?.replace('dómur', 'dóms') ?? ''
+
+/**
+ * How the letter names the accused. The title names the case, not the party
+ * the letter appoints an advocate for, so a case with several accused carries
+ * all of them - abbreviated the way court documents abbreviate it once there
+ * are more than two.
+ */
+export const getAppealAppointmentDefendantNames = (names: string[]): string => {
+  if (names.length === 1) {
+    return names[0]
+  }
+
+  if (names.length === 2) {
+    return `${names[0]} og ${names[1]}`
+  }
+
+  return names.length > 2 ? `${names[0]} o.fl.` : ''
+}
+
 /** The court of appeals number, or what stands in for it until one is recorded. */
 export const getAppealCaseNumberOrPlaceholder = (
   appealCaseNumber?: string | null,
@@ -131,7 +158,10 @@ export const createAppealAppointmentLetter = (
 
   doc.on('data', (chunk) => chunks.push(chunk))
 
-  const title = getAppealAppointmentSubject(letter.kind, letter.appealCaseNumber)
+  const title = getAppealAppointmentSubject(
+    letter.kind,
+    letter.appealCaseNumber,
+  )
 
   setTitle(doc, title)
 
