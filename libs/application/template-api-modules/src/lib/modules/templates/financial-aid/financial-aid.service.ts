@@ -51,6 +51,10 @@ import {
   fetchPersonalTaxReturnFromRsk,
   shouldFetchTaxDataFromRsk,
 } from './taxDataFromRsk'
+import {
+  CreateIslandisApplicationRequest,
+  ForIslandisApi,
+} from '@island.is/clients/rvk-financial-aid'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication & ApplicationWithAttachments
@@ -60,7 +64,7 @@ type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
 export class FinancialAidService extends BaseTemplateApiService {
   constructor(
     private applicationApi: ApplicationApi,
-    private rvkApplicationsApi: rvkApplicationsApi,
+    private rvkApplicationsApi: ForIslandisApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
     private rskPersonalTaxReturnApi: RskPersonalTaxReturnApi,
@@ -420,10 +424,10 @@ export class FinancialAidService extends BaseTemplateApiService {
         },
         xTenantIdentifier: 'reykjavik',
         xUserPermissions: 'finaid:write',
-      } as CreateApplicationOperationRequest
+      } as CreateIslandisApplicationRequest
 
       return await this.rvkApplicationsApiWithAuth(auth)
-        .createApplication(rvkRequest)
+        .createIslandisApplication(rvkRequest)
         .then(() => {
           return { currentApplicationId: newApplication.applicationSystemId }
         })

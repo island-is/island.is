@@ -3,11 +3,11 @@ import { z } from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  rvkVeitaClientId: z.string(),
-  rvkVeitaClientSecret: z.string(),
-  rvkVeitaBaseUrl: z.string(),
-  rvkVeitaAuthTokenEndpoint: z.string(),
-  rvkVeitaAuthScope: z.string(),
+  // rvkVeitaClientId: z.string(),
+  // rvkVeitaClientSecret: z.string(),
+  // rvkVeitaBaseUrl: z.string(),
+  // rvkVeitaAuthTokenEndpoint: z.string(),
+  // rvkVeitaAuthScope: z.string(),
 })
 
 export const RvkFinancialAidConfig = defineConfig({
@@ -17,7 +17,7 @@ export const RvkFinancialAidConfig = defineConfig({
     return {
       xRoadServicePath: env.required(
         'XROAD_RVK_VEITA_PATH',
-        'IS-DEV/MUN/10025/rvik-veita-protected/veita-v1/islandis/',
+        'IS-DEV/MUN/10025/rvik-veita-protected/veita-v1',
       ),
       // rvkVeitaClientId: env.required('RVK_VEITA_CLIENT_ID', ''),
       // rvkVeitaClientSecret: env.required('RVK_VEITA_CLIENT_SECRET', ''),

@@ -76,7 +76,7 @@ export const UPLOAD_ACCEPT = [
 ]
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
-export const RVK_MUNICIPALITY_CODES = ['0000', '1400']
+export const RVK_MUNICIPALITY_CODES = ['0000', '1400', '3000']
 
 export const isRvkMunicipalityCode = (
   municipalityCode?: string | null,

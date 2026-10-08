@@ -1,20 +1,9 @@
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import {
-  ApplicationsApi,
-  DocumentsApi,
-  NotificationsApi,
-  SettingsApi,
-  Configuration,
-} from '../gen/fetch'
+import { Configuration, ForIslandisApi } from '../gen/fetch'
 import { RvkFinancialAidConfig } from './rvkFinancialAid.config'
 
-export const exportedApis = [
-  ApplicationsApi,
-  DocumentsApi,
-  NotificationsApi,
-  SettingsApi,
-].map((Api) => ({
+export const exportedApis = [ForIslandisApi].map((Api) => ({
   provide: Api,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
