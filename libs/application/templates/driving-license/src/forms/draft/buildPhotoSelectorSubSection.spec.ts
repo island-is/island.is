@@ -1,4 +1,7 @@
+import { createElement, FC } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { FormValue } from '@island.is/application/types'
+import { PHOTO_FRAME_HEIGHT, PHOTO_FRAME_WIDTH } from './photoIllustration'
 import { subSectionQualityPhotoBE } from './subSectionQualityPhotoBE'
 import { subSectionQualityPhoto65 } from './subSectionQualityPhoto65'
 import { subSectionQualityPhotoTemp } from './subSectionQualityPhotoTemp'
@@ -160,6 +163,67 @@ describe('buildPhotoSelectorSubSection', () => {
           'photoDescription',
         ]),
       )
+    })
+  })
+
+  describe('photo options render in one fixed frame', () => {
+    // Þjóðskrá and RLS photos arrive at different pixel sizes, and a plain image
+    // illustration rendered each at its natural size, so the two options came
+    // out visibly mismatched. Both must go through the same fixed frame.
+    const externalData = {
+      allPhotosFromThjodskra: {
+        data: {
+          images: [
+            {
+              biometricId: 'facial-1',
+              content: 'AAAA',
+              contentSpecification: 'FACIAL',
+            },
+          ],
+        },
+        date: new Date(),
+        status: 'success',
+      },
+      qualityPhotoAndSignature: {
+        data: { imageId: 1, pohto: 'BBBB' },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    const findNode = (node: unknown, id: string): unknown => {
+      const item = node as { id?: string; children?: unknown[] }
+      if (item?.id === id) return item
+      for (const child of item?.children ?? []) {
+        const found = findNode(child, id)
+        if (found) return found
+      }
+      return undefined
+    }
+
+    it.each([
+      subSectionQualityPhotoBE,
+      subSectionQualityPhoto65,
+      subSectionQualityPhotoTemp,
+      subSectionQualityPhotoBFull,
+    ])('%#: renders the Þjóðskrá and RLS photos at the same size', (s) => {
+      const radio = findNode(s, 'selectLicensePhoto') as {
+        options: (
+          application: unknown,
+        ) => Array<{ value: string; illustration: FC }>
+      }
+      const options = radio.options({ externalData })
+
+      expect(options.map(({ value }) => value)).toEqual([
+        'facial-1',
+        'qualityPhoto',
+      ])
+      for (const { illustration } of options) {
+        const html = renderToStaticMarkup(createElement(illustration))
+        expect(html).toContain(`width="${PHOTO_FRAME_WIDTH}"`)
+        expect(html).toContain(`height="${PHOTO_FRAME_HEIGHT}"`)
+        expect(html).toContain('object-fit:contain')
+      }
     })
   })
 })
