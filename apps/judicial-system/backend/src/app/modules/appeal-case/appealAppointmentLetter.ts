@@ -37,7 +37,9 @@ const getCopyRecipients = (
     recipients.push(
       ...(theCase.defendants ?? [])
         .filter((defendant) => defendant.isAppealDefenderConfirmed)
-        .map((defendant) => withTitle(defendant.appealDefenderName, 'lögmaður')),
+        .map((defendant) =>
+          withTitle(defendant.appealDefenderName, 'lögmaður'),
+        ),
     )
   }
 

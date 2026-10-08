@@ -291,7 +291,9 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(
       `Getting the appeal appointment letter for ${
-        defendantId ? `defendant ${defendantId}` : `civil claimant ${civilClaimantId}`
+        defendantId
+          ? `defendant ${defendantId}`
+          : `civil claimant ${civilClaimantId}`
       } of case ${id} as a pdf document`,
     )
 

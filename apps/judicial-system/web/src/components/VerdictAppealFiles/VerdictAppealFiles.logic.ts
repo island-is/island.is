@@ -144,9 +144,7 @@ export const getAppealAppointmentLetters = (
         ? [
             {
               key: `civilClaimant-${civilClaimant.id}`,
-              name: appointmentLetterName(
-                civilClaimant.appealSpokespersonName,
-              ),
+              name: appointmentLetterName(civilClaimant.appealSpokespersonName),
               elementId: [
                 'civilClaimant',
                 civilClaimant.id,
