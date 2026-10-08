@@ -18,13 +18,28 @@ const localizedMarkdownSchema = z.object({
 // Stable row identity while `key` is still empty in the editor draft state.
 const rowUidSchema = z.string().min(1)
 
-const inputSectionFieldSchema = z.object({
+export const calculatorInputFieldSizes = ['small', 'medium', 'large'] as const
+export type CalculatorInputFieldSize = typeof calculatorInputFieldSizes[number]
+
+const inputValueFieldSchema = z.object({
   uid: rowUidSchema,
+  kind: z.literal('field'),
   key: z.string().min(1),
   label: localizedTextSchema.optional(),
   placeholder: localizedTextSchema.optional(),
-  span: z.number().int().min(1).max(12),
+  size: z.enum(calculatorInputFieldSizes),
 })
+
+const inputContentFieldSchema = z.object({
+  uid: rowUidSchema,
+  kind: z.literal('content'),
+  content: localizedMarkdownSchema,
+})
+
+const inputSectionFieldSchema = z.discriminatedUnion('kind', [
+  inputValueFieldSchema,
+  inputContentFieldSchema,
+])
 
 const sectionToggleSchema = z.object({
   key: z.string().min(1),
@@ -163,6 +178,8 @@ export const calculatorConfigSchema = z
         }
         seenInputFieldUids.add(field.uid)
 
+        if (field.kind !== 'field') return
+
         if (seenInputFieldKeys.has(field.key)) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -236,6 +253,10 @@ export type CalculatorSectionGate = z.infer<typeof sectionGateSchema>
 export type CalculatorInputSectionField = z.infer<
   typeof inputSectionFieldSchema
 >
+export type CalculatorInputValueField = z.infer<typeof inputValueFieldSchema>
+export type CalculatorInputContentField = z.infer<
+  typeof inputContentFieldSchema
+>
 export type CalculatorInputSection = z.infer<typeof inputSectionSchema>
 export type CalculatorOutputItemField = z.infer<typeof outputItemFieldSchema>
 export type CalculatorOutputValueField = z.infer<typeof outputValueFieldSchema>
@@ -256,9 +277,13 @@ export const collectInputSectionToggles = (
     .map((section) => section.toggle)
     .filter((toggle): toggle is CalculatorSectionToggle => Boolean(toggle))
 
+export const isInputValueField = (
+  field: CalculatorInputSectionField,
+): field is CalculatorInputValueField => field.kind === 'field'
+
 export const collectInputFieldKeys = (config: CalculatorConfig): string[] =>
   config.inputSections.flatMap((section) =>
-    section.fields.map((field) => field.key),
+    section.fields.filter(isInputValueField).map((field) => field.key),
   )
 
 export const isOutputValueField = (

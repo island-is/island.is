@@ -13,8 +13,8 @@ import type { CalculatorOutputSection as OutputSectionModel } from '@island.is/t
 
 import type { OutputFieldContract } from '../contract'
 import type { OutputSectionActions } from '../types'
+import { ContentRow } from './ContentRow'
 import { LocalizedTextFields } from './LocalizedTextFields'
-import { OutputContentRow } from './OutputContentRow'
 import { OutputFieldRow } from './OutputFieldRow'
 import { EmptyDropZone, SortableRow } from './SortableRow'
 import * as styles from './CalculatorEditor.css'
@@ -102,7 +102,7 @@ export const OutputSection = ({
               isDisabled={isDisabled}
             >
               {field.kind === 'content' ? (
-                <OutputContentRow
+                <ContentRow
                   field={field}
                   isDisabled={isDisabled}
                   issues={rowIssues.get(field.uid)}

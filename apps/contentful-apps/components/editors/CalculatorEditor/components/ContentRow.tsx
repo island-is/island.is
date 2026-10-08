@@ -1,9 +1,15 @@
 import type { Node } from 'slate'
 import { DialogsAPI } from '@contentful/app-sdk'
-import { FormControl, IconButton, Stack } from '@contentful/f36-components'
+import {
+  FormControl,
+  IconButton,
+  Stack,
+  Text,
+} from '@contentful/f36-components'
 import { DeleteIcon } from '@contentful/f36-icons'
 
 import type {
+  CalculatorInputContentField,
   CalculatorLocalizedMarkdown,
   CalculatorOutputContentField,
 } from '@island.is/tax-calculators'
@@ -14,7 +20,7 @@ import { serializeAndFormat } from '../../../translation-namespace/utils/seriali
 import * as styles from './CalculatorEditor.css'
 
 interface Props {
-  field: CalculatorOutputContentField
+  field: CalculatorOutputContentField | CalculatorInputContentField
   isDisabled?: boolean
   issues?: string[]
   dialogs: DialogsAPI
@@ -27,7 +33,7 @@ const LOCALES: { id: 'is' | 'en'; label: string }[] = [
   { id: 'en', label: 'Content (English)' },
 ]
 
-export const OutputContentRow = ({
+export const ContentRow = ({
   field,
   isDisabled,
   issues,
@@ -51,14 +57,9 @@ export const OutputContentRow = ({
       className={styles.fieldRow}
     >
       <Stack flexDirection="row" alignItems="center" spacing="spacingXs">
-        <FormControl
-          isRequired
-          isInvalid={Boolean(issues?.length)}
-          marginBottom="none"
-          className={styles.grow}
-        >
-          <FormControl.Label>Content</FormControl.Label>
-        </FormControl>
+        <Text fontWeight="fontWeightMedium" className={styles.grow}>
+          Content
+        </Text>
         <IconButton
           aria-label="Remove content"
           icon={<DeleteIcon />}
@@ -66,6 +67,12 @@ export const OutputContentRow = ({
           onClick={onRemove}
         />
       </Stack>
+
+      {!field.content?.is?.trim() && (
+        <Text fontColor="gray600" fontSize="fontSizeS">
+          Not saved yet — Icelandic content is required.
+        </Text>
+      )}
 
       {LOCALES.map((locale) => (
         <FormControl key={locale.id} marginBottom="none">

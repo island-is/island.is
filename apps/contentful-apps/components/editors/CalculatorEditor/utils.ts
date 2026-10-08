@@ -81,13 +81,20 @@ const filterInputSections = (
         : undefined
 
     const fields = section.fields
-      .filter((field) => hasText(field.key))
+      .filter((field) =>
+        field.kind === 'content'
+          ? hasText(field.content?.is)
+          : hasText(field.key),
+      )
       .map((field, fieldIndex) => {
         identity.set(`inputSections.${sectionIndex}.fields.${fieldIndex}`, {
           tab: 'input',
           sectionKey: section.key,
           fieldUid: field.uid,
         })
+        if (field.kind === 'content') {
+          return { ...field, content: filterMarkdown(field.content)! }
+        }
         return {
           ...field,
           label: filterText(field.label),
