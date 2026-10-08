@@ -29,15 +29,22 @@ type Props = {
   onEdit: () => void
 }
 
-// Alternating white / transparent (blue container shows through) rows.
-// The column gap keeps a label that fills its half ("Númer starfsmanns") from
-// running straight into its value.
-const DetailItem: FC<{
+type DetailItemProps = {
   label: string
   value: string
   highlight: boolean
   tooltip?: string
-}> = ({ label, value, highlight, tooltip }) => (
+}
+
+// Alternating white / transparent (blue container shows through) rows, one
+// full-width list with a 2:1 label/value split. The column gap keeps a long
+// label from running straight into its value.
+const DetailItem: FC<DetailItemProps> = ({
+  label,
+  value,
+  highlight,
+  tooltip,
+}) => (
   <Box
     display="flex"
     columnGap={2}
@@ -74,7 +81,10 @@ export const EmployeeRow: FC<Props> = ({
 
   const background = expanded ? 'blue100' : 'transparent'
 
-  const employeeItems = [
+  const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentDetailTooltips(formatMessage)
+
+  const detailItems: Omit<DetailItemProps, 'highlight'>[] = [
     { label: formatMessage(m.ordinalLabel), value: String(employee.ordinal) },
     { label: formatMessage(m.fieldLabel), value: employee.field ?? '' },
     {
@@ -85,12 +95,6 @@ export const EmployeeRow: FC<Props> = ({
       label: formatMessage(m.startDateLabel),
       value: formatDateValue(employee.startDate),
     },
-  ]
-
-  const componentLabels = getSalaryComponentLabels(formatMessage)
-  const componentTooltips = getSalaryComponentDetailTooltips(formatMessage)
-
-  const salaryItems = [
     {
       label: formatMessage(m.paidHoursLabel),
       value: formatPaidHours(employee.paidHours),
@@ -106,11 +110,6 @@ export const EmployeeRow: FC<Props> = ({
       value: formatCurrency(employee[key] ?? 0),
       tooltip: componentTooltips[key],
     })),
-  ]
-
-  const detailItems: { label: string; value: string; tooltip?: string }[] = [
-    ...employeeItems,
-    ...salaryItems,
   ]
 
   return (

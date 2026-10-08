@@ -1044,6 +1044,10 @@ export const messages = {
         defaultMessage:
           'Greiddar stundir þurfa að vera á bilinu 4–750. Skráðu fjölda greiddra stunda í mánuðinum, ekki starfshlutfall.',
       },
+      paidHoursFormatError: {
+        id: 'doe.sr.application:report.employees.paidHoursFormatError',
+        defaultMessage: 'Skráðu fjölda stunda sem tölu, t.d. 173,33.',
+      },
       saveButton: {
         id: 'doe.sr.application:report.employees.saveButton',
         defaultMessage: 'Vista starfsmann',

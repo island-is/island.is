@@ -2,6 +2,7 @@ import {
   formatHourlyWage,
   formatPaidHours,
   formatWageAmount,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   paidHoursToFormValue,
 } from './utils'
@@ -37,6 +38,19 @@ describe('paidHours round-trip', () => {
   it('falls back to 0 on unparseable input rather than NaN', () => {
     expect(paidHoursFromFormValue('')).toBe(0)
     expect(paidHoursFromFormValue('abc')).toBe(0)
+  })
+
+  it.each(['1e2', '0x64', '173,3,3', '173,', ',5', '-10', '1.234,5'])(
+    'rejects %p rather than letting Number() coerce it',
+    (value) => {
+      expect(isPaidHoursFormat(value)).toBe(false)
+      expect(paidHoursFromFormValue(value)).toBe(0)
+    },
+  )
+
+  it('accepts surrounding whitespace', () => {
+    expect(isPaidHoursFormat(' 173,33 ')).toBe(true)
+    expect(paidHoursFromFormValue(' 173,33 ')).toBe(173.33)
   })
 })
 

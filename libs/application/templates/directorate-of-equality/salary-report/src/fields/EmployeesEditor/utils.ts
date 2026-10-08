@@ -139,12 +139,20 @@ export const getSalaryComponentDetailTooltips = (
 export const paidHoursToFormValue = (hours?: number | null): string =>
   hours == null ? '' : String(hours).replace('.', ',')
 
-// Accepts '173,33' as well as a pasted '173.33': Number('173,33') is NaN, which
-// would submit 0 hours and silently inflate tímakaup instead of failing.
+// Digits with an optional ',' or pasted '.' decimal. Checked before Number(),
+// which would otherwise accept '1e2' or '0x64' as 100.
+const PAID_HOURS_PATTERN = /^\d+([.,]\d+)?$/
+
+export const isPaidHoursFormat = (value: string): boolean =>
+  PAID_HOURS_PATTERN.test(String(value).trim())
+
+// Number('173,33') is NaN, which would submit 0 hours and silently inflate
+// tímakaup instead of failing.
 export const paidHoursFromFormValue = (value: string): number => {
-  const parsed = Number(String(value).replace(',', '.'))
+  if (!isPaidHoursFormat(value)) return 0
+  const parsed = Number(String(value).trim().replace(',', '.'))
   // DECIMAL(6,2) on the API side.
-  return Number.isFinite(parsed) ? Math.round(parsed * 100) / 100 : 0
+  return Math.round(parsed * 100) / 100
 }
 
 export const formatPaidHours = (hours?: number | null): string =>

@@ -27,6 +27,7 @@ import {
   type EmployeeFormValues,
   getSalaryComponentLabels,
   getSalaryComponentTooltips,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   toFormValues,
 } from './utils'
@@ -162,6 +163,9 @@ export const EmployeeForm: FC<Props> = ({
                 // a starfshlutfall carried into this field: 0,8 or 1 would
                 // otherwise pass and inflate tímakaup ~173x silently.
                 validate: (value: string) => {
+                  if (!isPaidHoursFormat(value)) {
+                    return formatMessage(m.paidHoursFormatError)
+                  }
                   const hours = paidHoursFromFormValue(value)
                   return (
                     (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||

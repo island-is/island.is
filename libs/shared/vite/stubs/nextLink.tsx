@@ -47,10 +47,12 @@ const Link = forwardRef<
     legacyBehavior &&
     isValidElement<AnchorHTMLAttributes<HTMLAnchorElement>>(children)
   ) {
+    // Unlike Next, an href the stub can't resolve leaves the child's own alone.
     const assignHref =
-      ABSOLUTE_URL.test(resolvedHref ?? '') ||
-      passHref ||
-      (children.type === 'a' && !('href' in children.props))
+      resolvedHref !== undefined &&
+      (ABSOLUTE_URL.test(resolvedHref) ||
+        passHref ||
+        (children.type === 'a' && !('href' in children.props)))
     return cloneElement(children, assignHref ? { href: resolvedHref } : {})
   }
   return createElement('a', { href: resolvedHref, ref, ...rest }, children)
