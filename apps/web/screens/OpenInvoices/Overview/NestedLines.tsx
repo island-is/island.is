@@ -16,7 +16,7 @@ import * as styles from './Overview.css'
 
 interface Props {
   supplierLegalId: string
-  erpLegalEntityId: number
+  debtorId: string
   total: number
   dateFrom?: Date
   dateTo?: Date
@@ -26,7 +26,7 @@ interface Props {
 
 export const NestedLines = ({
   supplierLegalId,
-  erpLegalEntityId,
+  debtorId,
   dateFrom,
   dateTo,
   paymentTypeIds,
@@ -45,7 +45,7 @@ export const NestedLines = ({
     variables: {
       input: {
         supplierLegalId,
-        erpLegalEntityId,
+        debtorId,
         dateFrom: dateFrom,
         dateTo: dateTo,
         paymentTypeIds: paymentTypeIds ?? undefined,

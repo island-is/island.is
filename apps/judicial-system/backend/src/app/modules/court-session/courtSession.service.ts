@@ -257,6 +257,22 @@ export class CourtSessionService {
     return courtSession
   }
 
+  // Whether the latest court session of a case is still open - unconfirmed, so
+  // a merged case may still join it. Read from the caller's transaction so a
+  // decision taken on it holds for the rest of that transaction, which the
+  // guard's earlier snapshot of the case cannot promise.
+  async isLatestCourtSessionOpen(
+    caseId: string,
+    transaction: Transaction,
+  ): Promise<boolean> {
+    const latestCourtSession =
+      await this.courtSessionRepositoryService.findLatestByCase(caseId, {
+        transaction,
+      })
+
+    return Boolean(latestCourtSession && !latestCourtSession.isConfirmed)
+  }
+
   // A case merged into another after that case's latest court session was
   // opened joins that session - provided it is still open. Once a session is
   // confirmed its record is final, and the merge must not reach back into it.

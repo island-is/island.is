@@ -10,7 +10,7 @@ const baseData: OpenInvoiceGroupResponseDto = {
     isConfidential: false,
   },
   debtor: {
-    erpLegalEntityId: 1,
+    debtorGuid: '00000000-0000-0000-0000-000000000001',
     name: 'Debtor',
   },
   totalPaymentsSum: 1000,

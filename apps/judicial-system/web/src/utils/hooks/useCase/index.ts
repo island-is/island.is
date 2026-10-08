@@ -209,6 +209,8 @@ const useCase = () => {
           const appealState = res?.transitionCase?.appealCase?.appealState
 
           if (!state && !appealState) {
+            toast.error(formatMessage(errors.transitionCase))
+
             return false
           }
 

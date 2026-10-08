@@ -2,11 +2,11 @@ import { InvoicePaymentDetailResponseDto } from '../../../gen/fetch'
 import { mapPaymentDto } from './payment.dto'
 
 const baseData: InvoicePaymentDetailResponseDto = {
-  erpInvoicePaymentId: 18708645,
+  paymentGuid: '00000000-0000-0000-0000-000000000003',
   paymentAccountingDate: '2025-02-07',
   paymentCurrencyCode: 'ISK',
   paymentAmountISK: 12683,
-  erpInvoiceId: 22136687,
+  invoiceGuid: '00000000-0000-0000-0000-000000000002',
   invoiceNum: '191552084',
   invoiceCurrencyCode: 'ISK',
   invoiceTotalBaseAmountISK: 16161,
@@ -20,16 +20,10 @@ describe('mapPaymentDto', () => {
     expect(result?.amount).toBe(12683)
   })
 
-  it('sources id from erpInvoicePaymentId, coerced to a string', () => {
+  it('sources id from paymentGuid', () => {
     const result = mapPaymentDto(baseData)
 
-    expect(result?.id).toBe('18708645')
-  })
-
-  it('maps successfully when erpInvoicePaymentId is 0', () => {
-    const result = mapPaymentDto({ ...baseData, erpInvoicePaymentId: 0 })
-
-    expect(result?.id).toBe('0')
+    expect(result?.id).toBe('00000000-0000-0000-0000-000000000003')
   })
 
   it('returns null when paymentAmountISK is null', () => {
@@ -44,10 +38,10 @@ describe('mapPaymentDto', () => {
     expect(result?.amount).toBe(0)
   })
 
-  it('returns null when erpInvoicePaymentId is missing', () => {
+  it('returns null when paymentGuid is missing', () => {
     const result = mapPaymentDto({
       ...baseData,
-      erpInvoicePaymentId: undefined,
+      paymentGuid: undefined,
     })
 
     expect(result).toBeNull()
@@ -69,8 +63,8 @@ describe('mapPaymentDto', () => {
       invoiceCurrencyCode: null,
     })
 
-    expect(result?.id).toBe('18708645')
-    expect(result?.invoice.id).toBe('22136687')
+    expect(result?.id).toBe('00000000-0000-0000-0000-000000000003')
+    expect(result?.invoice.id).toBe('00000000-0000-0000-0000-000000000002')
   })
 
   it('returns null when the nested invoice fails to map (cascading drop)', () => {
@@ -83,7 +77,7 @@ describe('mapPaymentDto', () => {
     const result = mapPaymentDto(baseData)
 
     expect(result?.invoice).toEqual({
-      id: '22136687',
+      id: '00000000-0000-0000-0000-000000000002',
       number: '191552084',
       numberRedacted: false,
       totalAmount: 16161,

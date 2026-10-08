@@ -81,13 +81,6 @@ globalStyle(`${termsCheckbox} label > div`, {
   marginTop: 2,
 })
 
-export const typeInstructions = style({})
-
-// Out-specifies the shared Markdown component's light-weight p global
-globalStyle(`${typeInstructions} div p`, {
-  fontWeight: theme.typography.semiBold,
-})
-
 export const messageTextContent = style({
   whiteSpace: 'pre-line',
   overflowWrap: 'anywhere',

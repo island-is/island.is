@@ -138,6 +138,7 @@ type ChangeActions =
       payload: { lang: 'en' | 'is'; newValue: string; id: string }
     }
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
+  | { type: 'CHANGE_IDENTIFIER'; payload: { newValue: string } }
   | {
       type: 'CHANGE_FORM_NAME'
       payload: { lang: 'en' | 'is'; newValue: string }
@@ -772,6 +773,44 @@ export const controlReducer = (
       }
     }
 
+    case 'CHANGE_IDENTIFIER': {
+      if (
+        !activeItem.data ||
+        (activeItem.type !== 'Screen' && activeItem.type !== 'Field')
+      ) {
+        return state
+      }
+      if (activeItem.type === 'Screen') {
+        const newData = {
+          ...(activeItem.data as FormSystemScreen),
+          identifier: action.payload.newValue,
+        }
+        return {
+          ...state,
+          activeItem: { ...activeItem, data: newData },
+          form: {
+            ...form,
+            screens: screens?.map((screen) =>
+              screen?.id === newData.id ? newData : screen,
+            ),
+          },
+        }
+      }
+      const newData = {
+        ...(activeItem.data as FormSystemField),
+        identifier: action.payload.newValue,
+      }
+      return {
+        ...state,
+        activeItem: { ...activeItem, data: newData },
+        form: {
+          ...form,
+          fields: fields?.map((field) =>
+            field?.id === newData.id ? newData : field,
+          ),
+        },
+      }
+    }
     case 'CHANGE_NAME': {
       const { lang, newValue } = action.payload
       let newData

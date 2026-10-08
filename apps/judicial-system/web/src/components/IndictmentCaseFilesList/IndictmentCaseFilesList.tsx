@@ -359,12 +359,14 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
-      // The court of appeals needs it for the same reason the others do: the
-      // certificate is what dates the appeal window the appeal depends on.
+      // Not the court of appeals. This certifies service of the verdict, and
+      // the only list of theirs this component reaches is the ruling appeal,
+      // which is a different proceeding - it appeals a ruling order made
+      // while the case ran, not the verdict. The backend route agrees and
+      // admits neither of their roles, so offering it only produced a link
+      // that answers 403.
       canViewVerdictServiceCertificate:
-        isPublicProsecutionOfficeUser(user) ||
-        isPrisonAdminUser(user) ||
-        isCourtOfAppealsUser(user),
+        isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
     [user, workingCase.hasCivilClaims, workingCase.state],
   )

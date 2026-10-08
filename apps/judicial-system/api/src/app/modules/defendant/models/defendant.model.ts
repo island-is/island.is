@@ -138,6 +138,9 @@ export class Defendant {
   readonly isAppealDefenderConfirmed?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderWaived?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean
 
   @Field(() => Boolean, { nullable: true })
