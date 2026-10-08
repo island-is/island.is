@@ -188,13 +188,6 @@ export class DelegationPreferenceService {
   }
 
   private async pruneRecent(toNationalId: string): Promise<void> {
-    /**
-     * Deleting by timestamp rather than by id: under READ COMMITTED the
-     * subquery runs against the snapshot taken when the statement started, so
-     * picking ids to drop could delete a row that a concurrent switch has just
-     * refreshed. A refreshed row carries a new timestamp and so falls outside
-     * the threshold instead.
-     */
     await this.delegationPreferenceModel.sequelize?.query(
       `DELETE FROM delegation_preference
          WHERE to_national_id = :toNationalId
