@@ -82,6 +82,11 @@ export class ValueType {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  maritalStatus?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   address?: string
 
   @IsOptional()

@@ -6,12 +6,11 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { Case } from '../../repository'
-import { InternalCaseService } from '../internalCase.service'
+import { Case, CaseRepositoryService } from '../../repository'
 
 @Injectable()
 export class CaseOriginalAncestorInterceptor implements NestInterceptor {
-  constructor(private readonly internalCaseService: InternalCaseService) {}
+  constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
 
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
@@ -22,7 +21,9 @@ export class CaseOriginalAncestorInterceptor implements NestInterceptor {
       throw new InternalServerErrorException('Missing case')
     }
 
-    request.case = await this.internalCaseService.findOriginalAncestor(theCase)
+    request.case = await this.caseRepositoryService.findOriginalAncestor(
+      theCase,
+    )
 
     return next.handle()
   }

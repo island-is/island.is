@@ -10,6 +10,7 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   AppealCase,
   AppealEventLogRepositoryService,
@@ -61,9 +62,7 @@ describe('DefendantController - Update writes an advocate confirmed event', () =
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     update = (defendantUpdate, existing = {}, caseOverrides = {}) => {
       const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
@@ -73,19 +72,23 @@ describe('DefendantController - Update writes an advocate confirmed event', () =
         ...defendantUpdate,
       })
 
-      return defendantController.update(
-        caseId,
-        defendantId,
-        actor,
-        {
-          id: caseId,
-          type: CaseType.INDICTMENT,
-          courtCaseNumber: 'S-14/2026',
-          verdictAppealCase: { id: appealCaseId } as AppealCase,
-          ...caseOverrides,
-        } as Case,
-        { ...defendant, ...existing } as Defendant,
-        defendantUpdate,
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      return runInRequestContext(() =>
+        defendantController.update(
+          caseId,
+          defendantId,
+          actor,
+          {
+            id: caseId,
+            type: CaseType.INDICTMENT,
+            courtCaseNumber: 'S-14/2026',
+            verdictAppealCase: { id: appealCaseId } as AppealCase,
+            ...caseOverrides,
+          } as Case,
+          { ...defendant, ...existing } as Defendant,
+          defendantUpdate,
+        ),
       )
     }
   })

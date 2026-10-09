@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -10,6 +11,8 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   Defendant,
@@ -59,6 +62,7 @@ describe('InternalVerdictController - Update verdict appeal', () => {
 
   const now = new Date(2025, 2, 10)
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -67,27 +71,36 @@ describe('InternalVerdictController - Update verdict appeal', () => {
       await createTestingVerdictModule()
 
     mockVerdictRepositoryService = verdictRepositoryService
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
 
-      await internalVerdictController
-        .updateVerdictAppeal(
-          caseId,
-          defendantNationalId,
-          theCase,
-          defendant,
-          verdict,
-          dto,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await internalVerdictController.updateVerdictAppeal(
+            caseId,
+            defendantNationalId,
+            theCase,
+            defendant,
+            verdict,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -107,7 +120,11 @@ describe('InternalVerdictController - Update verdict appeal', () => {
       then = await givenWhenThen()
     })
 
-    it('should update the verdict', () => {
+    it('should update the verdict in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         defendantId,
