@@ -1,13 +1,17 @@
+import { Response } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
   Body,
   Controller,
   Delete,
+  Get,
+  Header,
   Inject,
   Param,
   Patch,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
@@ -29,6 +33,7 @@ import {
   CaseReadGuard,
   CaseTypeGuard,
   CurrentCase,
+  PdfService,
 } from '../case'
 import { AppealSummons, Case } from '../repository'
 import { CreateAppealSummonsDto } from './dto/createAppealSummons.dto'
@@ -49,6 +54,7 @@ import { AppealSummonsService } from './appealSummons.service'
 export class AppealSummonsController {
   constructor(
     private readonly appealSummonsService: AppealSummonsService,
+    private readonly pdfService: PdfService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -125,5 +131,61 @@ export class AppealSummonsController {
     )
 
     return { deleted }
+  }
+
+  @RolesRules(publicProsecutorStaffRule)
+  @UseGuards(AppealSummonsExistsGuard)
+  @Get(':appealSummonsId/pdf')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets an appeal summons as a pdf document',
+  })
+  async getPdf(
+    @Param('caseId') caseId: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealSummons() summons: AppealSummons,
+    @CurrentHttpUser() user: User,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting appeal summons ${appealSummonsId} of case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.pdfService.getAppealSummonsPdf(
+      theCase,
+      user,
+      summons,
+    )
+
+    res.end(pdf)
+  }
+
+  @RolesRules(publicProsecutorStaffRule)
+  @Post('preview')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Previews an unsaved appeal summons as a pdf document',
+  })
+  async preview(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() dto: CreateAppealSummonsDto,
+    @CurrentHttpUser() user: User,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(`Previewing an appeal summons pdf for case ${caseId}`)
+
+    const defendants = this.appealSummonsService.resolveDefendants(theCase, dto)
+    const pdf = await this.pdfService.getAppealSummonsPdf(
+      theCase,
+      user,
+      undefined,
+      defendants,
+    )
+
+    res.end(pdf)
   }
 }

@@ -8,6 +8,7 @@ import {
 
 import {
   applyDativeCaseToCourtName,
+  applyGenitiveCaseToCourtName,
   capitalize,
   containsHtml,
   displayFirstPlusRemaining,
@@ -502,6 +503,18 @@ describe('applyDativeCaseToCourtName', () => {
 
     // Assert
     expect(result).toBe(courtName)
+  })
+})
+
+describe('applyGenitiveCaseToCourtName', () => {
+  test('should return genitive case if court name contains "dómur"', () => {
+    expect(applyGenitiveCaseToCourtName('Héraðsdómur Reykjavíkur')).toBe(
+      'Héraðsdóms Reykjavíkur',
+    )
+  })
+
+  test('should return the same court name if name does not contain "dómur"', () => {
+    expect(applyGenitiveCaseToCourtName('Bull')).toBe('Bull')
   })
 })
 
