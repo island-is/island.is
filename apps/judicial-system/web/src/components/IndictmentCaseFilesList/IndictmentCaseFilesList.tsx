@@ -27,10 +27,7 @@ import {
   isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
-import type {
-  MergedCase,
-  WorkingCase,
-} from '@island.is/judicial-system-web/src/components'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FileNotFoundModal,
   PdfButton,
@@ -56,7 +53,11 @@ import {
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { shouldShowPoliceDigitalCaseFilesSection } from './IndictmentCaseFilesList.logic'
+import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
+import {
+  getVisibleSubpoenas,
+  shouldShowPoliceDigitalCaseFilesSection,
+} from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -215,15 +216,6 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
     visibleNumbers.has(policeCaseNumber),
   )
 }
-
-// The list renders the working case and, through
-// ConnectedCaseFilesAccordionItem, each case merged into it. A merged case is
-// fetched with fewer fields, so the type is what the two have in common. The
-// two fields only the working case carries are optional: a merged case has no
-// split cases of its own in the payload, and its indictment row is named
-// without a date.
-export type CaseFilesListCase = MergedCase &
-  Partial<Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases'>>
 
 interface Props {
   workingCase: CaseFilesListCase
@@ -432,44 +424,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { prefixGeneratedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
-  const allSubpoenas = useMemo(
-    () => [
-      ...(workingCase.defendants?.flatMap((defendant) =>
-        (defendant.subpoenas ?? []).map((subpoena) => ({
-          defendant,
-          subpoena,
-          caseId: workingCase.id,
-        })),
-      ) ?? []),
-      ...(workingCase.splitCases?.flatMap((splitCase) =>
-        (splitCase.defendants ?? []).flatMap((defendant) =>
-          (defendant.subpoenas ?? []).map((subpoena) => ({
-            defendant,
-            subpoena,
-            caseId: workingCase.id,
-          })),
-        ),
-      ) ?? []),
-    ],
-    [workingCase],
-  )
-
-  const visibleSubpoenas = useMemo(() => {
-    if (!isDefenceUser(user)) {
-      return allSubpoenas
-    }
-
-    const normalizedUserNationalId = normalizeAndFormatNationalId(
-      user?.nationalId ?? '',
-    )
-
-    return allSubpoenas.filter(
-      ({ defendant }) =>
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizedUserNationalId.includes(defendant.defenderNationalId),
-    )
-  }, [allSubpoenas, user])
+  const visibleSubpoenas = getVisibleSubpoenas(workingCase, user)
 
   const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
