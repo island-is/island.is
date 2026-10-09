@@ -11,11 +11,11 @@ import {
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { appealCorrectionLock } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
   CaseAppealDecision,
@@ -35,7 +35,7 @@ import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
 
-type AppealDecisionRow = NonNullable<Case['appealDecisions']>[number]
+type AppealDecisionRow = NonNullable<WorkingCase['appealDecisions']>[number]
 
 interface AppealDecisionPatch {
   decision?: CaseAppealDecision
@@ -43,8 +43,8 @@ interface AppealDecisionPatch {
 }
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onChange?: ({
     accusedAppealDecision,
     accusedAppealAnnouncement,

@@ -6,15 +6,13 @@ import userEvent from '@testing-library/user-event'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealEventType,
@@ -73,7 +71,7 @@ jest.mock('../../../../utils/hooks/useDefendants', () => ({
     isUpdatingDefendant: false,
     updateDefendantState: (
       update: { defendantId: string; indictmentReviewDecision: unknown },
-      setWorkingCase: (fn: (prev: Case) => Case) => void,
+      setWorkingCase: (fn: (prev: WorkingCase) => WorkingCase) => void,
     ) =>
       setWorkingCase((prev) => ({
         ...prev,
@@ -92,11 +90,10 @@ jest.mock('../../../../utils/hooks/useDefendants', () => ({
 
 // A form context whose working case actually updates, unlike the shared
 // wrapper's jest.fn setter.
-const StatefulFormContext: FC<PropsWithChildren<{ initialCase: Case }>> = ({
-  initialCase,
-  children,
-}) => {
-  const [workingCase, setWorkingCase] = useState<Case>(initialCase)
+const StatefulFormContext: FC<
+  PropsWithChildren<{ initialCase: WorkingCase }>
+> = ({ initialCase, children }) => {
+  const [workingCase, setWorkingCase] = useState<WorkingCase>(initialCase)
 
   return (
     <FormContext.Provider
@@ -182,7 +179,7 @@ describe('Prosecutor IndictmentOverview', () => {
   describe('confirming the review decisions', () => {
     // Two defendants; the first was already reviewed as ACCEPT, the second is
     // still undecided.
-    const reviewCase = (): Case => ({
+    const reviewCase = (): WorkingCase => ({
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.COMPLETED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -350,10 +347,10 @@ describe('Prosecutor IndictmentOverview', () => {
     ).toISOString()
 
     const appealCase = (
-      theCase: Partial<Case> & {
-        verdictAppealCase?: Case['verdictAppealCase']
+      theCase: Partial<WorkingCase> & {
+        verdictAppealCase?: WorkingCase['verdictAppealCase']
       },
-    ): Case => ({
+    ): WorkingCase => ({
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.COMPLETED,
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -374,7 +371,7 @@ describe('Prosecutor IndictmentOverview', () => {
       ...theCase,
     })
 
-    const renderCase = (theCase: Case, features: Feature[] = []) =>
+    const renderCase = (theCase: WorkingCase, features: Feature[] = []) =>
       render(
         <MockedProvider
           mocks={[...mockCaseTableMembershipQuery('test_id')]}

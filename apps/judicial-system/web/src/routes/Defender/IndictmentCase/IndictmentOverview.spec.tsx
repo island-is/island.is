@@ -2,8 +2,8 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, within } from '@testing-library/react'
 
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -38,7 +38,7 @@ interface CompletedCaseOptions {
   // Both defenders confirmed, as they are once a case has been tried.
   defendersConfirmed?: boolean
   ownClientAppealDate?: string
-  verdictAppealCase?: Case['verdictAppealCase']
+  verdictAppealCase?: WorkingCase['verdictAppealCase']
   // The public prosecution office has not yet decided whether the first
   // defendant's verdict must be served.
   ownClientServiceUndecided?: boolean
@@ -52,7 +52,7 @@ const completedCase = (
     verdictAppealCase,
     ownClientServiceUndecided = false,
   }: CompletedCaseOptions = {},
-): Case => ({
+): WorkingCase => ({
   ...mockCase(CaseType.INDICTMENT),
   state: CaseState.COMPLETED,
   indictmentRulingDecision,
@@ -94,7 +94,7 @@ const completedCase = (
   ],
 })
 
-const renderOverview = (theCase: Case, features: Feature[] = []) =>
+const renderOverview = (theCase: WorkingCase, features: Feature[] = []) =>
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <FeatureContext.Provider value={{ features, isLoading: false }}>
