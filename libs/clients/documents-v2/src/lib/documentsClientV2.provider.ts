@@ -13,6 +13,10 @@ export const DocumentsClientV2Provider: Provider<CustomersApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-documents-v2',
+          // This API proxies requests to document providers. We don't want a
+          // single document provider to open the circuit and break all other
+          // document requests.
+          circuitBreaker: false,
           autoAuth: {
             mode: 'token',
             clientId: config.clientId,

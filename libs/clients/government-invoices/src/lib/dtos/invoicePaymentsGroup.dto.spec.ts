@@ -5,9 +5,6 @@ const baseData: OpenInvoiceGroupResponseDto = {
   supplier: {
     legalId: 'supplier-1',
     name: 'Supplier',
-    isPrivatePerson: false,
-    isPrivatePersonProxy: false,
-    isConfidential: false,
   },
   debtor: {
     debtorGuid: '00000000-0000-0000-0000-000000000001',

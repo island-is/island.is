@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { PaymentFrequency } from '../utils/constants'
+import { getPartTimeCasualWorkOverlapIndices } from '../utils/overlap'
 import { errorMessages } from './messages'
 
 const casualWorkEntrySchema = z.object({
@@ -13,6 +14,9 @@ const casualWorkEntrySchema = z.object({
   // Correlates this row with the 3rd party income validation response.
   validationId: z.string().optional(),
   disabled: z.enum(['true', 'false']).optional(),
+  // Table repeater soft deletes: the row is only dropped from the answers on submit,
+  // so it must be declared here to survive parsing and be skipped by the refinements.
+  isRemoved: z.boolean().optional(),
 })
 
 const casualWorkArraySchema = z
@@ -22,6 +26,7 @@ const casualWorkArraySchema = z
       for (let j = i + 1; j < entries.length; j++) {
         const a = entries[i]
         const b = entries[j]
+        if (a.isRemoved || b.isRemoved) continue
         if (!a.company?.nationalId || !b.company?.nationalId) continue
         if (a.company.nationalId !== b.company.nationalId) continue
         const aFrom = Date.parse(a.dateFrom)
@@ -64,6 +69,8 @@ const partTimeEntrySchema = z.object({
   // Used to correlate this row with the VMST validation response.
   validationId: z.string().optional(),
   disabled: z.enum(['true', 'false']).optional(),
+  // See casualWorkEntrySchema.isRemoved.
+  isRemoved: z.boolean().optional(),
 })
 
 const partTimeArraySchema = z
@@ -73,6 +80,7 @@ const partTimeArraySchema = z
       for (let j = i + 1; j < entries.length; j++) {
         const a = entries[i]
         const b = entries[j]
+        if (a.isRemoved || b.isRemoved) continue
         if (!a.company?.nationalId || !b.company?.nationalId) continue
         if (a.company.nationalId !== b.company.nationalId) continue
         const aFrom = Date.parse(a.jobStart)
@@ -185,15 +193,42 @@ const incomeTypeEnum = z.enum([
   'socialInsurance',
 ])
 
-export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  typeOfIncome: z.array(incomeTypeEnum).min(1),
-  registerCasualWork: casualWorkArraySchema.optional(),
-  registerPartTime: partTimeArraySchema.optional(),
-  registerContractWork: z.array(contractWorkEntrySchema).optional(),
-  registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
-  registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
-  registerPension: z.array(pensionEntrySchema).optional(),
-})
+export const dataSchema = z
+  .object({
+    // Optional at the object level because the root refinement below turns the schema
+    // into a ZodEffects, which the application system parses without `.partial()`.
+    // The inner refinements still apply whenever the answer is actually submitted.
+    approveExternalData: z
+      .boolean()
+      .refine((v) => v)
+      .optional(),
+    typeOfIncome: z.array(incomeTypeEnum).min(1).optional(),
+    registerCasualWork: casualWorkArraySchema.optional(),
+    registerPartTime: partTimeArraySchema.optional(),
+    registerContractWork: z.array(contractWorkEntrySchema).optional(),
+    registerCapitalIncome: z.array(capitalIncomeEntrySchema).optional(),
+    registerSocialInsurance: z.array(socialInsuranceEntrySchema).optional(),
+    registerPension: z.array(pensionEntrySchema).optional(),
+  })
+  .superRefine((data, ctx) => {
+    const partTimeEntries = data.registerPartTime ?? []
+    const casualWorkEntries = data.registerCasualWork ?? []
+    if (!partTimeEntries.length || !casualWorkEntries.length) return
+
+    const overlapIndices = getPartTimeCasualWorkOverlapIndices(
+      partTimeEntries,
+      casualWorkEntries,
+    )
+
+    for (const index of overlapIndices) {
+      for (const field of ['jobStart', 'jobEnd'] as const) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPartTime', index, field],
+          params: errorMessages.partTimeCasualWorkOverlappingPeriods,
+        })
+      }
+    }
+  })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

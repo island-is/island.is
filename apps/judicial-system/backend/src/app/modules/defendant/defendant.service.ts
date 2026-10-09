@@ -28,10 +28,14 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { queueMessagesAfterCommit } from '../../middleware'
-import { hasStandingVerdictAppeal } from '../appeal-case/appealCase.helpers'
+import {
+  buildAdvocateConfirmedEvent,
+  hasStandingVerdictAppeal,
+} from '../appeal-case/appealCase.helpers'
 import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
+  AppealEventLogRepositoryService,
   Case,
   CaseFileRepositoryService,
   CaseRepositoryService,
@@ -52,6 +56,7 @@ export class DefendantService {
   constructor(
     private readonly defendantRepositoryService: DefendantRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly caseFileRepositoryService: CaseFileRepositoryService,
     private readonly courtService: CourtService,
@@ -382,6 +387,30 @@ export class DefendantService {
           user,
         },
         transaction,
+      )
+    }
+
+    // The court of appeals confirming this defendant's defender for the
+    // appeal. Written in the same transaction as the confirmation so the two
+    // cannot drift: the letter of appointment is signed by whoever confirmed
+    // and dated the day they did, and the defendant row keeps neither.
+    //
+    // No verdict appeal means no proceeding to record it against, which a
+    // court of appeals user reaching this defendant through a ruling appeal
+    // alone would be. The confirmation still saves.
+    if (
+      updatedDefendant.isAppealDefenderConfirmed &&
+      !defendant.isAppealDefenderConfirmed &&
+      theCase.verdictAppealCase
+    ) {
+      await this.appealEventLogRepositoryService.create(
+        buildAdvocateConfirmedEvent({
+          theCase,
+          appealCase: theCase.verdictAppealCase,
+          party: { defendantId: defendant.id },
+          actor: user,
+        }),
+        { transaction },
       )
     }
   }

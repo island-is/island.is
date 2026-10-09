@@ -17,6 +17,7 @@ import {
   ApplicationTypes,
   StaticText,
 } from '@island.is/application/types'
+import { m as formSystemMessages } from '../../lib/messages'
 
 import * as styles from './FormShell.css'
 import Markdown from 'markdown-to-jsx'
@@ -158,9 +159,7 @@ export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
                   href={`/minarsidur/umsoknir`}
                 >
                   <Button>
-                    {formatMessage(
-                      coreErrorScreenMessages.buttonMyApplications,
-                    )}
+                    {formatMessage(formSystemMessages.myApplications)}
                   </Button>
                 </a>
               </Box>
