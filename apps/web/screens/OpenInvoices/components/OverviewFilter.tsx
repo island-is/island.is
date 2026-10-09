@@ -62,7 +62,7 @@ interface AsyncSelectProps {
   initiallyExpanded?: boolean
 }
 
-interface Props {
+interface BaseProps {
   onSearchUpdate: (
     categoryId: keyof SearchState,
     values?: Array<string>,
@@ -74,10 +74,17 @@ interface Props {
   url: string
   locale: Locale
   categories: Array<DateSelectProps | CheckboxProps | AsyncSelectProps>
-  variant?: FilterProps['variant']
   hits?: number
-  title?: string
 }
+
+type Props = BaseProps &
+  (
+    | { variant?: 'default'; title: string }
+    | {
+        variant: Exclude<FilterProps['variant'], 'default' | undefined>
+        title?: string
+      }
+  )
 
 export const OverviewFilter = ({
   onSearchUpdate,
@@ -205,32 +212,25 @@ export const OverviewFilter = ({
   if (variant === 'default') {
     return (
       <Box className={styles.sidebar}>
-        {title && (
-          <Box className={styles.title}>
-            <Box
-              className={cn({ [styles.titleShadow]: !atTop })}
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-              columnGap={2}
-              paddingBottom={3}
-            >
-              <Text variant="h4" as="h3" paddingY={1}>
-                {title}
-              </Text>
-              <Box flexShrink={0}>
-                <Button
-                  icon="reload"
-                  size="small"
-                  variant="text"
-                  onClick={clear}
-                >
-                  {formatMessage(m.search.clearFilters)}
-                </Button>
-              </Box>
+        <Box className={styles.title}>
+          <Box
+            className={cn({ [styles.titleShadow]: !atTop })}
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+            columnGap={2}
+            paddingBottom={3}
+          >
+            <Text variant="h4" as="h2" paddingY={1}>
+              {title}
+            </Text>
+            <Box flexShrink={0}>
+              <Button icon="reload" size="small" variant="text" onClick={clear}>
+                {formatMessage(m.search.clearFilters)}
+              </Button>
             </Box>
           </Box>
-        )}
+        </Box>
         <Box
           component="form"
           className={styles.form}
