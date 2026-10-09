@@ -21,6 +21,7 @@ import { Text } from '../../Text/Text'
 import { TextVariants } from '../../Text/Text.css'
 import { AccordionContext } from '../Accordion'
 import { Icon } from '../../IconRC/Icon'
+import { Tooltip } from '../../Tooltip/Tooltip'
 import * as styles from './AccordionItem.css'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
@@ -40,6 +41,19 @@ type BaseProps = {
   onBlur?: () => void
   onFocus?: () => void
   colorVariant?: ColorVariants
+  /**
+   * Shows a checkmark before the label, e.g. to mark the item as answered/completed.
+   */
+  checkmark?: boolean
+  /**
+   * Optional tooltip shown as an info icon next to the label.
+   */
+  tooltip?: ReactNode
+  /**
+   * Optional status pill/element rendered in the header, between the label and
+   * the expand icon. Typically a `Tag`.
+   */
+  statusPill?: ReactNode
 }
 
 type StateProps =
@@ -78,6 +92,9 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       onBlur,
       onFocus,
       colorVariant,
+      checkmark,
+      statusPill,
+      tooltip,
     },
     forwardedRef,
   ) => {
@@ -131,85 +148,178 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       ? 'purple'
       : 'blue'
 
+    const checkmarkNode = checkmark ? (
+      <Box
+        component="span"
+        display="flex"
+        alignItems="center"
+        marginRight={1}
+        flexShrink={0}
+      >
+        <Icon icon="checkmark" size="medium" type="outline" color="blue400" />
+      </Box>
+    ) : null
+
+    const labelNode =
+      typeof label === 'string' ? (
+        <Text variant={labelVariant} as="span" color={labelColor}>
+          {label}
+        </Text>
+      ) : (
+        label
+      )
+
+    const statusPillNode = statusPill ? (
+      <Box component="span" height="full" display="flex" alignItems="center">
+        {statusPill}
+      </Box>
+    ) : null
+
+    const expandIcon = (
+      <span
+        className={cn(
+          styles.iconWrap,
+          styles.plusIconWrap({
+            iconVariant,
+            color: plusColor,
+          }),
+        )}
+      >
+        <span
+          className={cn(styles.icon, styles.removeIcon, {
+            [styles.showRemoveIcon]: expanded,
+          })}
+        >
+          <Icon
+            icon="remove"
+            size={iconVariant === 'default' ? 'large' : 'small'}
+            color="currentColor"
+          />
+        </span>
+        <span
+          className={cn(styles.icon, styles.addIcon, {
+            [styles.hideAddIcon]: expanded,
+          })}
+        >
+          <Icon
+            icon="add"
+            size={iconVariant === 'default' ? 'large' : 'small'}
+            color="currentColor"
+          />
+        </span>
+      </span>
+    )
+
+    const buttonProps = {
+      ref: forwardedRef,
+      component: 'button' as const,
+      type: 'button' as const,
+      cursor: 'pointer' as const,
+      className: [styles.button, useVirtualTouchable()],
+      outline: 'none' as const,
+      textAlign: 'left' as const,
+      'aria-controls': id,
+      'aria-expanded': expanded,
+      onFocus,
+      onBlur,
+      onClick: onClick ? onClick : handleToggle,
+    }
+
     return (
       <Box>
         <Box position="relative" display="flex">
-          <Box component={labelUse} width="full" display="flex">
+          {tooltip ? (
+            // The tooltip trigger is focusable (tabIndex=0), which is invalid
+            // and unreliable nested inside the toggle <button>. So it lives
+            // outside the button; the chevron becomes a second, aria-hidden
+            // toggle so clicking it still expands the item.
             <Box
-              ref={forwardedRef}
-              component="button"
-              type="button"
-              cursor="pointer"
-              className={[styles.button, useVirtualTouchable()]}
-              outline="none"
+              component={labelUse}
               width="full"
-              textAlign="left"
-              aria-controls={id}
-              aria-expanded={expanded}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onClick={onClick ? onClick : handleToggle}
+              display="flex"
+              alignItems="center"
             >
-              <Columns space={2} alignY="center" as="span">
-                <Column>
-                  <Box
-                    component="span"
-                    height="full"
-                    width="full"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    {typeof label === 'string' ? (
-                      <Text variant={labelVariant} as="span" color={labelColor}>
-                        {label}
-                      </Text>
-                    ) : (
-                      label
-                    )}
+              <Box
+                {...buttonProps}
+                display="flex"
+                alignItems="center"
+                flexGrow={1}
+              >
+                <Box
+                  component="span"
+                  width="full"
+                  display="flex"
+                  flexDirection="column"
+                >
+                  <Box component="span" display="flex" alignItems="center">
+                    {checkmarkNode}
+                    {labelNode}
                   </Box>
                   {visibleContent && (
                     <Box paddingTop={2}>
                       <Text>{visibleContent}</Text>
                     </Box>
                   )}
-                </Column>
-                <Column width="content">
-                  <span
-                    className={cn(
-                      styles.iconWrap,
-                      styles.plusIconWrap({
-                        iconVariant,
-                        color: plusColor,
-                      }),
-                    )}
-                  >
-                    <span
-                      className={cn(styles.icon, styles.removeIcon, {
-                        [styles.showRemoveIcon]: expanded,
-                      })}
-                    >
-                      <Icon
-                        icon="remove"
-                        size={iconVariant === 'default' ? 'large' : 'small'}
-                        color="currentColor"
-                      />
-                    </span>
-                    <span
-                      className={cn(styles.icon, styles.addIcon, {
-                        [styles.hideAddIcon]: expanded,
-                      })}
-                    >
-                      <Icon
-                        icon="add"
-                        size={iconVariant === 'default' ? 'large' : 'small'}
-                        color="currentColor"
-                      />
-                    </span>
-                  </span>
-                </Column>
-              </Columns>
+                </Box>
+              </Box>
+              <Box
+                component="span"
+                display="flex"
+                alignItems="center"
+                marginLeft={1}
+                flexShrink={0}
+              >
+                <Tooltip text={tooltip} />
+              </Box>
+              {statusPillNode && (
+                <Box marginLeft={2} flexShrink={0}>
+                  {statusPillNode}
+                </Box>
+              )}
+              <Box
+                component="button"
+                type="button"
+                cursor="pointer"
+                className={styles.button}
+                outline="none"
+                marginLeft={2}
+                flexShrink={0}
+                aria-hidden
+                tabIndex={-1}
+                onClick={onClick ? onClick : handleToggle}
+              >
+                {expandIcon}
+              </Box>
             </Box>
-          </Box>
+          ) : (
+            <Box component={labelUse} width="full" display="flex">
+              <Box {...buttonProps} width="full">
+                <Columns space={2} alignY="center" as="span">
+                  <Column>
+                    <Box
+                      component="span"
+                      height="full"
+                      width="full"
+                      display="flex"
+                      alignItems="center"
+                    >
+                      {checkmarkNode}
+                      {labelNode}
+                    </Box>
+                    {visibleContent && (
+                      <Box paddingTop={2}>
+                        <Text>{visibleContent}</Text>
+                      </Box>
+                    )}
+                  </Column>
+                  {statusPillNode ? (
+                    <Column width="content">{statusPillNode}</Column>
+                  ) : null}
+                  <Column width="content">{expandIcon}</Column>
+                </Columns>
+              </Box>
+            </Box>
+          )}
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
         <AnimateHeight duration={300} height={height}>
