@@ -59,6 +59,17 @@ switch (job) {
       })
     break
   }
+  case 'rsk-treaties-import': {
+    import('./app/rsk-treaties-import/rsk-treaties-import-worker')
+      .then((app) => app.rskTreatiesImportWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the rsk treaties import worker:',
+          error,
+        )
+      })
+    break
+  }
   default: {
     console.debug('No argument provided, nothing executed')
   }
