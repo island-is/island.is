@@ -5,7 +5,7 @@ let activeEnvironment: ActiveEnvironment
 const isServer = typeof window === 'undefined'
 
 if (isServer) {
-  if (process.env.name === 'production') {
+  if (process.env.name === 'production' || process.env.name === 'prod') {
     activeEnvironment = 'production'
   } else if (process.env.name === 'staging') {
     activeEnvironment = 'staging'
