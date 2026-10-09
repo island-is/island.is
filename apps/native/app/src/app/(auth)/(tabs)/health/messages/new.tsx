@@ -17,6 +17,7 @@ import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
+  HealthDirectorateHealthConversationRecipientAvailability,
   LocaleEnum,
   useCreateHealthConversationMutation,
   useGetHealthConversationRecipientsQuery,
@@ -128,10 +129,19 @@ export default function HealthMessageComposeScreen() {
   const hidesComposer = isCertificateSelected || !!externalLinkUrl
   const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
-  // cache-and-network reports loading on a revisit too, so only an empty
-  // cache waits.
+  const hasOpenRecipient = recipients.some(canStartConversation)
+  // A closed window may have reopened since the cache was written.
+  const hasClosedWindow = recipients.some(
+    (r) =>
+      r.availability ===
+      HealthDirectorateHealthConversationRecipientAvailability.Closed,
+  )
+  // Show the cache on a revisit, unless it's all closed by a window: then
+  // wait for the refetch.
   const recipientsLoading =
-    !isReply && recipientsRes.loading && !recipientsRes.data
+    !isReply &&
+    recipientsRes.loading &&
+    (!recipientsRes.data || (!hasOpenRecipient && hasClosedWindow))
   const recipientsError =
     !isReply && !recipientsLoading && !!recipientsRes.error
   // Nothing to send to: no form can open, so the notice takes over the sheet
@@ -140,7 +150,7 @@ export default function HealthMessageComposeScreen() {
     !isReply &&
     !recipientsLoading &&
     !recipientsError &&
-    !recipients.some(canStartConversation)
+    !hasOpenRecipient
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
