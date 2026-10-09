@@ -43,6 +43,7 @@ export const serviceSetup = (services: {
     })
     .secrets({
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
+      BS_SECRET: '/k8s/web/BS_SECRET',
     })
     .ingress({
       primary: {
