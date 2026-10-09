@@ -231,7 +231,7 @@ export const FieldTypes: FieldType[] = [
   },
   {
     id: FieldTypesEnum.SPOUSE,
-    name: { is: 'Makki', en: 'Spouse' },
+    name: { is: 'Maki', en: 'Spouse' },
     description: {
       is: 'Upplýsingar um maka notanda tengdar kennitölu eru sóttar til Þjóðskrár',
       en: "Information about the user's spouse related to their national Id is retrieved from the National Registry",

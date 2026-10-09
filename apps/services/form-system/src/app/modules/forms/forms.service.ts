@@ -15,7 +15,7 @@ import zipObject from 'lodash/zipObject'
 import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AssetTypes } from '@island.is/form-system/enums'
+import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 import {
   FieldTypesEnum,
   FormStatus,
@@ -1584,6 +1584,9 @@ export class FormsService {
               field.fieldType === FieldTypesEnum.NUMBERBOX
                 ? field.fieldSettings?.isDecimal
                 : undefined,
+              field.fieldType === FieldTypesEnum.FAMILY
+                ? field.fieldSettings?.familyType
+                : undefined,
             ),
           } as ApplicationJsonValueDto,
         ]
@@ -1606,6 +1609,7 @@ export class FormsService {
     partial: Partial<ValueType>,
     assetType?: string,
     isDecimal?: boolean,
+    familyType?: string,
   ): ValueType {
     const assetValueTypes =
       assetType === AssetTypes.REAL_ESTATE
@@ -1613,9 +1617,15 @@ export class FormsService {
         : assetType === AssetTypes.VEHICLE
         ? ['registrationNumber', 'model', 'color']
         : undefined
-    const v = (
-      assetValueTypes ? pick(partial, assetValueTypes) : partial
-    ) as any
+    const familyValueTypes =
+      familyType === FamilyTypes.SPOUSE
+        ? ['nationalId', 'name', 'maritalStatus']
+        : familyType === FamilyTypes.CHILD ||
+          familyType === FamilyTypes.NATIONAL_ID_ESTATE
+        ? ['nationalId', 'name']
+        : undefined
+    const valueTypes = assetValueTypes ?? familyValueTypes
+    const v = (valueTypes ? pick(partial, valueTypes) : partial) as any
 
     if ('text' in v) v.text = 'Dæmi texti'
     if ('number' in v) v.number = isDecimal ? 17.5 : 17

@@ -64,18 +64,6 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
     },
   )
 
-  useEffect(() => {
-    if (isValidFormat) {
-      return
-    }
-
-    setValue(nameField, '')
-    dispatch?.({
-      type: 'SET_NAME',
-      payload: { id: item.id, value: '', valueIndex },
-    })
-  }, [dispatch, isValidFormat, item.id, nameField, setValue, valueIndex])
-
   return (
     <Stack space={2}>
       <Row>
@@ -115,6 +103,13 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
                     type: 'SET_NATIONAL_ID',
                     payload: { id: item.id, value, valueIndex },
                   })
+                  if (value !== field.value) {
+                    setValue(nameField, '')
+                    dispatch?.({
+                      type: 'SET_NAME',
+                      payload: { id: item.id, value: '', valueIndex },
+                    })
+                  }
                 }}
                 onBlur={field.onBlur}
                 hasError={Boolean(fieldState.error)}

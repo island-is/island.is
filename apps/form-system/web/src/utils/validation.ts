@@ -88,9 +88,10 @@ const validateEmail = (value?: string) => {
 const validateNationalId = (nationalId?: string, name?: string) => {
   // if (!nationalId || !name) return false
   if (!nationalId || !name) return false
+  const normalizedNationalId = nationalId.replace(/^(\d{6})(\d{4})$/, '$1-$2')
   const nationalIdRegex = /^\d{6}-\d{4}$/
 
-  if (!nationalIdRegex.test(nationalId)) return false
+  if (!nationalIdRegex.test(normalizedNationalId)) return false
   // if (name.length < 2) return false
   return true
 }
