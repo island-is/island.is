@@ -32,10 +32,14 @@ export class IndictmentCountService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(indictmentCountId: string): Promise<IndictmentCount> {
+  async findById(
+    indictmentCountId: string,
+    options: { transaction: Transaction },
+  ): Promise<IndictmentCount> {
     const indictmentCount =
       await this.indictmentCountRepositoryService.findByIdWithOffenses(
         indictmentCountId,
+        options,
       )
 
     if (!indictmentCount) {

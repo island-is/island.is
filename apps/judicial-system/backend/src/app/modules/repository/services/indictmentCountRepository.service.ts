@@ -50,9 +50,13 @@ export class IndictmentCountRepositoryService {
   ) {}
 
   // The offenses ride along in creation order, loaded as a separate query so
-  // the count itself stays a single row.
+  // the count itself stays a single row. Both queries run in the caller's
+  // transaction: the one caller is a guard on routes that already hold the
+  // case row's lock in it, and a read outside it would take a second pooled
+  // connection for the rest of the request.
   async findByIdWithOffenses(
     indictmentCountId: string,
+    options: { transaction: Transaction },
   ): Promise<IndictmentCount | null> {
     try {
       this.logger.debug(
@@ -71,6 +75,7 @@ export class IndictmentCountRepositoryService {
               order: [['created', 'ASC']],
             },
           ],
+          transaction: options.transaction,
         },
       )
 

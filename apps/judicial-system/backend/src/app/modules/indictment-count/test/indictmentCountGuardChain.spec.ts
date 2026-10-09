@@ -142,7 +142,7 @@ describe.each(routes)(
         new RolesGuard(new Reflector()),
         new MinimalCaseExistsForUpdateGuard(caseService, sequelize),
         new MinimalCaseAccessGuard(),
-        new IndictmentCountExistsGuard(indictmentCountService),
+        new IndictmentCountExistsGuard(indictmentCountService, sequelize),
         new OffenseExistsGuard(),
       ]
 
@@ -199,6 +199,18 @@ describe.each(routes)(
             mockCaseRepositoryService.findLiveMinimalByIdForUpdate,
           ).toHaveBeenCalledWith(caseId, transaction)
         })
+
+        if (resolves) {
+          // The count is read in the same transaction, after the lock: it
+          // sees the state the lock protects, and the request holds one
+          // connection, not two.
+          it('should read the indictment count in that same transaction', () => {
+            expect(mockIndictmentCountService.findById).toHaveBeenCalledWith(
+              indictmentCountId,
+              { transaction },
+            )
+          })
+        }
       },
     )
 
@@ -345,8 +357,9 @@ describe.each(routes)(
           then = await runChain(prosecutionUser(UserRole.PROSECUTOR), caseId)
         })
 
-        // IndictmentCountExistsGuard matches the count's caseId against the
-        // locked row's id, so it decides from the case the lock protects.
+        // IndictmentCountExistsGuard reads the count in the request
+        // transaction and matches its caseId against the locked row's id, so
+        // it decides from the state the lock protects.
         it('should be rejected by IndictmentCountExistsGuard', () => {
           expect(then.allowed).toBe(false)
           expect(then.rejectedBy).toBe(IndictmentCountExistsGuard.name)
