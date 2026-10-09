@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateDefendantInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -131,9 +131,9 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -157,7 +157,7 @@ const useDefendants = () => {
   const setAndSendDefendantToServer = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
       updateDefendant(update)

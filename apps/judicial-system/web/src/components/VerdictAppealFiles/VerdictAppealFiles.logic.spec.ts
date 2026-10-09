@@ -1,5 +1,5 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -70,7 +70,7 @@ describe('getVerdictAppealFileGroups', () => {
     created: string,
   ): CaseFile => ({ id, defendantId, category, created, name: `${id}.pdf` })
 
-  const theCase = (caseFiles: CaseFile[]): Case =>
+  const theCase = (caseFiles: CaseFile[]): WorkingCase =>
     ({
       id: 'case_id',
       type: CaseType.INDICTMENT,
@@ -89,7 +89,7 @@ describe('getVerdictAppealFileGroups', () => {
         },
       ],
       caseFiles,
-    } as Case)
+    } as WorkingCase)
 
   it('should return nothing when no declaration has been filed', () => {
     expect(
@@ -268,7 +268,7 @@ describe('showsAppealSummonses', () => {
       appealType: AppealCaseType.VERDICT,
       appealState: AppealCaseState.APPEALED,
     },
-  } as Case
+  } as WorkingCase
 
   it('shows the summonses to the public prosecution office on a verdict appeal', () => {
     expect(
@@ -282,7 +282,7 @@ describe('showsAppealSummonses', () => {
   it('shows nothing before the verdict is appealed', () => {
     expect(
       showsAppealSummonses(
-        { verdictAppealCase: null } as Case,
+        { verdictAppealCase: null } as WorkingCase,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(false)
@@ -297,7 +297,7 @@ describe('showsAppealSummonses', () => {
             appealType: AppealCaseType.VERDICT,
             appealState: AppealCaseState.WITHDRAWN,
           },
-        } as Case,
+        } as WorkingCase,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(false)
@@ -365,7 +365,7 @@ describe('canShowIssueAppealSummons', () => {
             appealType: AppealCaseType.VERDICT,
             appealState: AppealCaseState.APPEALED,
           },
-        } as Case,
+        } as WorkingCase,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(true)
@@ -380,7 +380,7 @@ describe('canShowIssueAppealSummons', () => {
             appealType: AppealCaseType.VERDICT,
             appealState: AppealCaseState.WITHDRAWN,
           },
-        } as Case,
+        } as WorkingCase,
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
       ),
     ).toBe(false)
@@ -397,7 +397,7 @@ describe('canShowIssueAppealSummons', () => {
               appealType: AppealCaseType.VERDICT,
               appealState: AppealCaseState.APPEALED,
             },
-          } as Case,
+          } as WorkingCase,
           mockUser(role),
         ),
       ).toBe(false)

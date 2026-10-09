@@ -2,21 +2,6 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const tagList = style({})
-
-globalStyle(`${tagList} button, ${tagList} a, ${tagList} span`, {
-  maxWidth: '100%',
-  minWidth: 0,
-})
-
-export const tagLabel = style({
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  minWidth: 0,
-  flex: 1,
-})
-
 export const scrollList = style({
   maxHeight: 200,
   overflowY: 'auto',
@@ -30,7 +15,7 @@ export const scrollList = style({
 
 export const filterOption = style({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   columnGap: theme.spacing[1],
 })
 
@@ -43,9 +28,21 @@ globalStyle(`${filterOptionLabel} span`, {
   overflowWrap: 'anywhere',
 })
 
+// island-ui's Checkbox centres the box against the whole label; top-align it
+// so a wrapped label keeps its box beside the first line.
+globalStyle(`${filterOptionLabel} label`, {
+  alignItems: 'flex-start',
+})
+
+globalStyle(`${filterOptionLabel} label > div:first-child`, {
+  alignSelf: 'flex-start',
+})
+
+// Height matches the checkbox so the icon centres on the label's first line.
 export const filterOptionTooltip = style({
   flexShrink: 0,
   width: 16,
+  height: theme.spacing[3],
   display: 'flex',
   alignItems: 'center',
 })

@@ -5,13 +5,13 @@ import { useIntl } from 'react-intl'
 import type { Option } from '@island.is/island-ui/core'
 import { Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './Overview.strings'
@@ -21,7 +21,7 @@ export const IndictmentReviewerSelector = ({
   selectedIndictmentReviewer,
   setSelectedIndictmentReviewer,
 }: {
-  workingCase: Case
+  workingCase: WorkingCase
   selectedIndictmentReviewer: Option<string> | null | undefined
   setSelectedIndictmentReviewer: Dispatch<
     SetStateAction<Option<string> | null | undefined>

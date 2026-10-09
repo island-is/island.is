@@ -3,11 +3,9 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import type {
-  Case,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseTransition,
   CaseIndictmentRulingDecision,
@@ -124,7 +122,10 @@ describe('VerdictTimelineCard', () => {
     defendant: Defendant,
     indictmentRulingDecision = CaseIndictmentRulingDecision.RULING,
     canDefendantAppealVerdict = true,
-    { features = [] as Feature[], caseOverrides = {} as Partial<Case> } = {},
+    {
+      features = [] as Feature[],
+      caseOverrides = {} as Partial<WorkingCase>,
+    } = {},
   ) => {
     return render(
       <IntlProviderWrapper>

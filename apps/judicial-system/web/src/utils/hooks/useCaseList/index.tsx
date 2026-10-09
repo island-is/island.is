@@ -35,12 +35,12 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -77,7 +77,7 @@ const useCaseList = () => {
 
   const openCase = useCallback(
     (
-      caseToOpen: Case,
+      caseToOpen: WorkingCase,
       openCaseInNewTab?: boolean,
       appealCaseId?: string | null,
     ) => {

@@ -3,11 +3,9 @@ import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { Modal } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useRequestCourtRecordSignatureMutation } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/requestCourtRecordSignature.generated'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -18,7 +16,7 @@ export type SignatureType = 'ruling' | 'courtRecord'
 type LoadingMethod = 'mobile' | 'audkenni'
 
 interface SigningMethodSelectionModalProps {
-  workingCase: Case
+  workingCase: WorkingCase
   signatureType: SignatureType
   onClose: () => void
   onSignatureRequested: (

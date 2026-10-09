@@ -1,4 +1,4 @@
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
@@ -6,14 +6,15 @@ import { getCaseResubmittedText } from './CaseResubmitModal'
 
 describe('getCaseResubmittedText', () => {
   const formatMessage = createFormatMessage()
-  const fn = (theCase: Case) => getCaseResubmittedText(formatMessage, theCase)
+  const fn = (theCase: WorkingCase) =>
+    getCaseResubmittedText(formatMessage, theCase)
 
   test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {
     const theCase = {
       id: 'abc',
       requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
       arraignmentDate: { date: '2022-06-13T13:37:00Z' },
-    } as Case
+    } as WorkingCase
 
     const res = fn(theCase)
 
@@ -30,7 +31,11 @@ describe('getCaseResubmittedText', () => {
   `(
     'should not include section about notification',
     ({ id, arraignmentDate, requestSharedWithDefender }) => {
-      const theCase = { id, arraignmentDate, requestSharedWithDefender } as Case
+      const theCase = {
+        id,
+        arraignmentDate,
+        requestSharedWithDefender,
+      } as WorkingCase
 
       const res = fn(theCase)
 
