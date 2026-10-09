@@ -67,6 +67,44 @@ export class UpdateCivilClaimantInput {
   @Field(() => Boolean, { nullable: true })
   readonly isSpokespersonConfirmed?: boolean
 
+  /**********
+   * The appeal proceeding's advocate, settled by the court of appeals.
+   **********/
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly hasAppealSpokesperson?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly appealSpokespersonIsLawyer?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonNationalId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonName?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonEmail?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonPhoneNumber?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealSpokespersonConfirmed?: boolean
+
   @Allow()
   @IsOptional()
   @Field(() => [String], { nullable: true })

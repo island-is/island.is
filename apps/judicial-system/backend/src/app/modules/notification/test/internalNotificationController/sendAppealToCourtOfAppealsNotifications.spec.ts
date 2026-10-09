@@ -23,7 +23,11 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (user: User, defenderNationalId?: string) => Promise<Then>
+type GivenWhenThen = (
+  user: User,
+  defenderNationalId?: string,
+  courtId?: string,
+) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal to court of appeals notifications', () => {
   const { prosecutor, judge, registrar, defender, court } = createTestUsers([
@@ -55,7 +59,11 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     mockEmailService = emailService
     mockSmsService = smsService
 
-    givenWhenThen = async (user: User, defenderNationalId?: string) => {
+    givenWhenThen = async (
+      user: User,
+      defenderNationalId?: string,
+      courtId: string = court.id,
+    ) => {
       const then = {} as Then
 
       await internalNotificationController
@@ -75,8 +83,15 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
             defenderNationalId,
             defenderName: defender.name,
             defenderEmail: defender.email,
+            defendants: [
+              {
+                defenderNationalId,
+                defenderName: defender.name,
+                defenderEmail: defender.email,
+              },
+            ],
             courtCaseNumber,
-            courtId: court.id,
+            courtId,
           } as Case,
           { id: appealCaseId } as AppealCase,
           {
@@ -137,6 +152,26 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         [court.mobile],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('case appealed at a court without a configured assistant mobile number', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+        } as User,
+        uuid(),
+        uuid(),
+      )
+    })
+
+    it('should skip the court sms and still report the notification as delivered', () => {
+      expect(mockSmsService.sendSms).not.toHaveBeenCalled()
       expect(then.result).toEqual({ delivered: true })
     })
   })

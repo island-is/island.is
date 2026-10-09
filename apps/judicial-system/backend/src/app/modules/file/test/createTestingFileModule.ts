@@ -12,12 +12,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
@@ -27,8 +24,10 @@ import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
 import { InternalFileController } from '../internalFile.controller'
 import { LimitedAccessFileController } from '../limitedAccessFile.controller'
+import { PoliceDigitalCaseFileService } from '../policeDigitalCaseFiles/policeDigitalCaseFile.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../case/case.service.ts')
@@ -111,6 +110,9 @@ export const createTestingFileModule = async () => {
 
   const fileService = fileModule.get<FileService>(FileService)
 
+  const policeDigitalCaseFileService =
+    fileModule.get<PoliceDigitalCaseFileService>(PoliceDigitalCaseFileService)
+
   const fileController = fileModule.get<FileController>(FileController)
 
   const internalFileController = fileModule.get<InternalFileController>(
@@ -122,16 +124,18 @@ export const createTestingFileModule = async () => {
 
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 
-  const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   fileModule.close()
 
   return {
-    queuedMessages,
+    queuedMessagesAfterCommit,
     sequelize,
     messageService,
     awsS3Service,
@@ -139,6 +143,7 @@ export const createTestingFileModule = async () => {
     caseFileRepositoryService,
     fileConfig,
     fileService,
+    policeDigitalCaseFileService,
     fileController,
     internalFileController,
     limitedAccessFileController,

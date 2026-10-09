@@ -136,6 +136,14 @@ export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
 export const COURT_OF_APPEAL_SUMMARY_ROUTE = '/landsrettur/samantekt'
 export const COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE = '/landsrettur/nidurfelling'
+
+// Verdict appeals are a separate proceeding from ruling appeals, with their
+// own screens, so they get their own path segment rather than sharing the
+// routes above. The steps that follow this one land under the same segment.
+export const COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE =
+  '/landsrettur/afryjun/yfirlit'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
+  '/landsrettur/afryjun/verjandi'
 //#endregion Court of appeals user routes
 
 //#region District court user routes

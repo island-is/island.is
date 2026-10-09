@@ -3,7 +3,7 @@ import type { TagVariant } from '../Tag/types'
 import type { Icon as IconType } from '../IconRC/iconMap'
 import type { ProgressMeterVariant } from '../ProgressMeter/types'
 
-export type BackgroundColor = 'white' | 'blue' | 'red'
+export type BackgroundColor = 'white' | 'blue' | 'red' | 'grey'
 export type EyebrowColor = 'blue400' | 'purple400'
 
 export type ActionCardProps = {
@@ -25,6 +25,7 @@ export type ActionCardProps = {
   }
   cta?: {
     label: string
+    ariaLabel?: string
     /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
     variant?: ButtonTypes['variant']
     /** Allows for full buttonType control. Supersedes the variant property when both are defined. */

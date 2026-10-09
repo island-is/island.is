@@ -38,6 +38,11 @@ import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
+import {
+  courtOfAppealsAssistantUpdateDefendantRule,
+  courtOfAppealsJudgeUpdateDefendantRule,
+  courtOfAppealsRegistrarUpdateDefendantRule,
+} from './guards/rolesRules'
 import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
@@ -83,6 +88,11 @@ export class DefendantController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
+    // Field rules, unlike the role rules above: this court settles the appeal
+    // proceeding's defender and nothing else on the defendant.
+    courtOfAppealsJudgeUpdateDefendantRule,
+    courtOfAppealsRegistrarUpdateDefendantRule,
+    courtOfAppealsAssistantUpdateDefendantRule,
   )
   @Patch(':defendantId')
   @ApiOkResponse({

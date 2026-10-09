@@ -15,6 +15,14 @@ import {
 
 import InfoCardActiveIndictment from './InfoCardActiveIndictment'
 
+// The info card items resolve which appeal the page is about from the query
+// string, so rendering one needs a router even where no appeal is in play.
+jest.mock('next/router', () => ({
+  useRouter() {
+    return { pathname: '', query: {} }
+  },
+}))
+
 const DEFENDER_NATIONAL_ID = '1234567890'
 
 const renderActiveIndictment = (

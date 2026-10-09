@@ -323,6 +323,42 @@ export const buildInCourtAppealedEvent = (params: {
   }
 }
 
+/**
+ * The record of the court of appeals settling who represents one party in the
+ * appeal.
+ *
+ * It exists for the letter of appointment, which is signed by whoever
+ * confirmed the advocate and dated the day they did it - neither of which the
+ * party row keeps. Only the latest such event per party is ever read, so an
+ * advocate replaced later leaves nothing to clean up.
+ *
+ * userRole is the actor's own role here. The column usually carries the
+ * appellant's side, but a confirmation has no appellant: it is an act of the
+ * court, and the court is who it names.
+ */
+export const buildAdvocateConfirmedEvent = (params: {
+  theCase: Case
+  appealCase: AppealCase
+  party: { defendantId?: string; civilClaimantId?: string }
+  actor: User
+}): Partial<AppealEventLog> => {
+  const { theCase, appealCase, party, actor } = params
+
+  return {
+    caseId: theCase.id,
+    appealCaseId: appealCase.id,
+    eventType: AppealEventType.ADVOCATE_CONFIRMED,
+    defendantId: party.defendantId,
+    civilClaimantId: party.civilClaimantId,
+    userRole: actor.role,
+    userId: actor.id,
+    nationalId: actor.nationalId,
+    userName: actor.name,
+    userTitle: actor.title,
+    institutionName: actor.institution?.name,
+  }
+}
+
 // An APPEALED event for an appeal the party filed itself, outside the court
 // record. Such an appellant has no decision = APPEAL row - they appealed because
 // they postponed in court - so it must never be inferred from the decision rows
@@ -353,15 +389,12 @@ export const hasOutOfCourtAppeal = (events: AppealEventLog[]): boolean =>
 //     spokesperson of a party (defendant / civil claimant) that has an APPEALED
 //     event;
 //   - request-case defence is collective (no party on the event), so it resolves
-//     to the case's *current* registered defender.
+//     to any current defender registered on a defendant of the case.
 // This does not cover in-court ruling-order appeals - their live per-party
 // withdrawal state is on the decision row (see userHasActiveInCourtAppeal), which
 // the event log only catches up to on session confirmation.
 export const userIsAppellant = (
-  theCase: Pick<
-    Case,
-    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
-  >,
+  theCase: Pick<Case, 'type' | 'defendants' | 'civilClaimants'>,
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {
@@ -388,12 +421,15 @@ export const userIsAppellant = (
   )
 
   if (isRequestCase(theCase.type)) {
-    // Collective defence: no party on the event, so authorize the case's current
-    // registered defender.
+    // Collective defence: no party on the event, so authorize any current
+    // defender registered on a defendant of the case.
     return (
       defenceAppealed &&
-      Boolean(theCase.defenderNationalId) &&
-      theCase.defenderNationalId === user.nationalId
+      Boolean(
+        theCase.defendants?.some(
+          (defendant) => defendant.defenderNationalId === user.nationalId,
+        ),
+      )
     )
   }
 
@@ -485,10 +521,7 @@ export const appellantRepresentativeNationalIds = (
 // here rather than in userIsAppellant, and is used by both the withdrawal guard
 // and the case tables' cancel-appeal action so they stay in sync.
 export const canWithdrawCaseLevelAppeal = (
-  theCase: Pick<
-    Case,
-    'type' | 'defenderNationalId' | 'defendants' | 'civilClaimants'
-  >,
+  theCase: Pick<Case, 'type' | 'defendants' | 'civilClaimants'>,
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
   user: User,
 ): boolean => {

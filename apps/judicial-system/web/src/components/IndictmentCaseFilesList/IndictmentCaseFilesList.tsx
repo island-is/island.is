@@ -45,7 +45,6 @@ import {
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { caseFiles } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
@@ -54,6 +53,7 @@ import {
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
+import { shouldShowPoliceDigitalCaseFilesSection } from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -359,6 +359,12 @@ const useFilePermissions = (workingCase: WorkingCase, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
+      // Not the court of appeals. This certifies service of the verdict, and
+      // the only list of theirs this component reaches is the ruling appeal,
+      // which is a different proceeding - it appeals a ruling order made
+      // while the case ran, not the verdict. The backend route agrees and
+      // admits neither of their roles, so offering it only produced a link
+      // that answers 403.
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -523,9 +529,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const showDigitalCaseFilesSection =
-    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
-    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+  const showDigitalCaseFilesSection = shouldShowPoliceDigitalCaseFilesSection(
+    user,
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+  )
 
   const hasNoFiles =
     !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection

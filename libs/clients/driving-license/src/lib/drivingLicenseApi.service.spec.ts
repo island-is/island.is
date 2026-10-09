@@ -1,3 +1,4 @@
+import { Auth } from '@island.is/auth-nest-tools'
 import { Test } from '@nestjs/testing'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { DrivingLicenseApiConfig } from './drivingLicenseApi.config'
@@ -6,21 +7,27 @@ import { startMocking } from '@island.is/shared/mocking'
 import { LoggingModule } from '@island.is/logging'
 import { DrivingLicenseApiModule } from './drivingLicenseApi.module'
 import { exportedApis } from './apiConfiguration'
-import { CodeTableV5 } from '../v5'
-import { ApplicationApiV6 } from '../v6'
-import type { Auth } from '@island.is/auth-nest-tools'
+import { ApplicationApiV6, CodeTableV6 } from '../v6'
 
 import {
   lastNewCategoryRequest,
+  lastV6BeRequest,
+  lastV6Renewal65Request,
   lastV6TemporaryRequest,
   MOCK_TOKEN,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 
+const mockAuth = (authorization: string): Auth => ({
+  authorization,
+  client: 'test-client',
+  scope: [],
+})
+
 startMocking(requestHandlers)
 describe('DrivingLicenseDuplicateService', () => {
   let service: DrivingLicenseApi
-  let codeTable: CodeTableV5
+  let codeTable: CodeTableV6
   let applicationV6: ApplicationApiV6
 
   beforeEach(async () => {
@@ -37,7 +44,7 @@ describe('DrivingLicenseDuplicateService', () => {
     }).compile()
 
     service = module.get(DrivingLicenseApi)
-    codeTable = module.get(CodeTableV5)
+    codeTable = module.get(CodeTableV6)
     applicationV6 = module.get(ApplicationApiV6)
   })
 
@@ -48,30 +55,32 @@ describe('DrivingLicenseDuplicateService', () => {
   })
 
   describe('Photo And Signature', () => {
+    // The msw handlers route on the `jwttoken` header (401 without it), so these
+    // cover the token forwarding in apiConfiguration.ts, not just the mapping.
     it('GetHasQualityPhoto for a person with no photo', async () => {
       const response = await service.getHasQualityPhoto({
-        token: MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE,
+        auth: mockAuth(MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE),
       })
       expect(response).toBe(false)
     })
 
     it('GetHasQualityPhoto for a person with photo', async () => {
       const response = await service.getHasQualityPhoto({
-        token: MOCK_TOKEN.LICENSE_B_CATEGORY,
+        auth: mockAuth(MOCK_TOKEN.LICENSE_B_CATEGORY),
       })
       expect(response).toBe(true)
     })
 
     it('GetHasQualitySignature for a person with no signature', async () => {
       const response = await service.getHasQualitySignature({
-        token: MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE,
+        auth: mockAuth(MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE),
       })
       expect(response).toBe(false)
     })
 
     it('GetHasQualitySignature for a person with signature', async () => {
       const response = await service.getHasQualitySignature({
-        token: MOCK_TOKEN.LICENSE_B_CATEGORY,
+        auth: mockAuth(MOCK_TOKEN.LICENSE_B_CATEGORY),
       })
       expect(response).toBe(true)
     })
@@ -137,9 +146,13 @@ describe('DrivingLicenseDuplicateService', () => {
   })
 
   describe('postApplyForRenewal65', () => {
+    beforeEach(() => {
+      lastV6Renewal65Request.body = undefined
+    })
+
     it('returns true when the apply-for endpoint succeeds', async () => {
       const result = await service.postApplyForRenewal65({
-        token: MOCK_TOKEN.STUDENT,
+        auth: mockAuth(MOCK_TOKEN.STUDENT),
         districtId: 37,
         phoneNumber: '5551234',
         email: 'test@example.is',
@@ -157,7 +170,36 @@ describe('DrivingLicenseDuplicateService', () => {
         photoBiometricsId: null,
         signatureBiometricsId: null,
       })
-      expect(result).toBe(true)
+      expect(result.success).toBe(true)
+      // The v6 apply-for endpoint returns the review guid; capture it so a
+      // tester can deny the created application.
+      expect(result.applicationGuid).toBe('renewal65-guid-0001')
+      // Required by v6. Sent empty: the 65+ flow asks no health questions, so
+      // there are no answers to forward.
+      expect(lastV6Renewal65Request.body?.healthDeclaration).toEqual({})
+    })
+
+    it('resolves with a null guid — never throws — when RLS omits applicationGuid', async () => {
+      // Fool-proof path: an older RLS build, or a category that does not enter
+      // manual review, may return no guid. Success must still be decided by
+      // `result`, and the guid must degrade to null rather than crash.
+      jest
+        .spyOn(applicationV6, 'apiApplicationsV6ApplyforRenewal65Post')
+        .mockResolvedValue({ category: 'B', result: true })
+
+      const result = await service.postApplyForRenewal65({
+        auth: mockAuth(MOCK_TOKEN.STUDENT),
+        districtId: 37,
+        phoneNumber: '5551234',
+        email: 'test@example.is',
+        sendPlasticToPerson: false,
+        photoBiometricsId: null,
+        signatureBiometricsId: null,
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.applicationGuid).toBeNull()
+      jest.restoreAllMocks()
     })
   })
 
@@ -272,6 +314,83 @@ describe('DrivingLicenseDuplicateService', () => {
       ).resolves.toBeDefined()
 
       expect(lastV6TemporaryRequest.headers?.jwttoken).toBeNull()
+    })
+  })
+
+  describe('postApplyForBELicense v6 wire shape', () => {
+    // BE is live in production with no redesign flag, so this migration changes
+    // its request on release day for every applicant. RLS reshaped the model
+    // between v5 and v6: `userId` and `healthDeclarationModel` are gone and
+    // `healthDeclaration` is required. Pin the serialized body — not just that a
+    // mock was called — so a regression in the mapping cannot pass silently.
+    const auth = { authorization: 'Bearer be-user-token' } as Auth
+    const healthDeclarationModel = {
+      hasReducedPeripheralVision: false,
+      hasEpilepsy: false,
+      hasHeartDisease: true,
+      hasMentalIllness: false,
+      usesMedicalDrugs: false,
+      isAlcoholic: false,
+      hasDiabetes: false,
+      isDisabled: false,
+      hasOtherDiseases: false,
+    }
+
+    beforeEach(() => {
+      lastV6BeRequest.headers = undefined
+      lastV6BeRequest.body = undefined
+    })
+
+    it('sends exactly the v6 model — healthDeclaration in, userId and healthDeclarationModel out', async () => {
+      const result = await service.postApplyForBELicense({
+        nationalIdApplicant: '0101302479',
+        auth,
+        jurisdictionId: 37,
+        instructorSSN: '0101302719',
+        phoneNumber: '+3545551234',
+        email: 'be@example.is',
+        contentList: [
+          {
+            fileName: 'cert.pdf',
+            fileExtension: 'pdf',
+            contentType: 'application/pdf',
+            content: 'AAAA',
+          },
+        ],
+        photoBiometricsId: 'photo-1',
+        signatureBiometricsId: 'sig-1',
+        sendPlasticToPerson: true,
+        healthDeclarationModel,
+      })
+      expect(result.success).toBe(true)
+      // The BE v6 response carries the review guid; capture it (a tester denies
+      // the created application with it).
+      expect(result.applicationGuid).toBe('be-guid-0001')
+
+      // Identity travels in the header RLS reads, bare token, as for every v6 call.
+      expect(lastV6BeRequest.headers?.jwttoken).toBe('be-user-token')
+
+      const body = lastV6BeRequest.body ?? {}
+      expect(Object.keys(body).sort()).toEqual(
+        [
+          'contentList',
+          'districtId',
+          'healthDeclaration',
+          'instructorSSN',
+          'photoBiometricsId',
+          'primaryPhoneNumber',
+          'sendPlasticToPerson',
+          'signatureBiometricsId',
+          'studentEmail',
+        ].sort(),
+      )
+      // The three fields v6 marks required.
+      expect(body.districtId).toBe(37)
+      expect(body.instructorSSN).toBe('0101302719')
+      expect(body.healthDeclaration).toEqual(healthDeclarationModel)
+      // The two v5 fields RLS removed must not leak through under their old names.
+      expect(body).not.toHaveProperty('userId')
+      expect(body).not.toHaveProperty('healthDeclarationModel')
     })
   })
 
@@ -392,7 +511,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('fetches the catalogue once and memoises a non-empty result', async () => {
       const spy = jest
-        .spyOn(codeTable, 'apiCodetablesErrorCodesGet')
+        .spyOn(codeTable, 'apiCodetablesV6ErrorCodesGet')
         .mockResolvedValue(sampleCatalogue)
 
       const first = await service.getErrorCodeDescriptions()
@@ -405,7 +524,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('does not memoise an empty body — retries on the next call', async () => {
       const spy = jest
-        .spyOn(codeTable, 'apiCodetablesErrorCodesGet')
+        .spyOn(codeTable, 'apiCodetablesV6ErrorCodesGet')
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce(sampleCatalogue)
 
@@ -419,7 +538,7 @@ describe('DrivingLicenseDuplicateService', () => {
 
     it('does not memoise a failure — retries on the next call', async () => {
       const spy = jest
-        .spyOn(codeTable, 'apiCodetablesErrorCodesGet')
+        .spyOn(codeTable, 'apiCodetablesV6ErrorCodesGet')
         .mockRejectedValueOnce(new Error('codetable down'))
         .mockResolvedValueOnce(sampleCatalogue)
 

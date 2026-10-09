@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid'
 import { BadRequestException } from '@nestjs/common'
 
 import {
-  AppealCaseState,
   CaseFileCategory,
   CourtSessionRulingType,
   User,
@@ -12,9 +11,9 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import { FileService } from '../../../file'
 import {
-  AppealCase,
   AppealCaseRepositoryService,
   Case,
   CaseFile,
@@ -22,10 +21,7 @@ import {
   CourtSessionRepositoryService,
 } from '../../../repository'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -72,9 +68,7 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealCaseRepositoryService = appealCaseRepositoryService
@@ -99,10 +93,13 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
       mockCourtSessionRepositoryService.findById as jest.Mock
     ).mockImplementation(async () => null)
 
-    // The swap target is clean of recorded decisions.
-    ;(appealDecisionRepositoryService.findAll as jest.Mock).mockResolvedValue(
-      [],
-    )
+    // No recorded decisions, and the swap target is clean of them.
+    ;(
+      appealDecisionRepositoryService.findAllForRuling as jest.Mock
+    ).mockResolvedValue([])
+    ;(
+      appealDecisionRepositoryService.existsForRuling as jest.Mock
+    ).mockResolvedValue(false)
     ;(
       mockFileService.createRulingOrderPronouncedOrally as jest.Mock
     ).mockImplementation(async (_theCase, name) =>
@@ -127,13 +124,19 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
       const then = {} as Then
 
       try {
-        then.result = await courtSessionController.pronounceRulingOrally(
-          caseId,
-          courtSessionId,
-          user,
-          theCase,
-          courtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.pronounceRulingOrally(
+            caseId,
+            courtSessionId,
+            user,
+            theCase,
+            courtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -391,22 +394,15 @@ describe('CourtSessionController - Pronounce ruling orally', () => {
     })
 
     it('should keep a ruling an appeal still keys on', async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [
-          {
-            id: uuid(),
-            rulingFileId: pronouncedOrally.id,
-            appealState: AppealCaseState.APPEALED,
-          } as AppealCase,
-        ],
-      )
+      ;(
+        mockAppealCaseRepositoryService.existsForRulingFile as jest.Mock
+      ).mockResolvedValue(true)
 
       await swapAwayFrom(caseStillPronouncing())
 
-      expect(mockAppealCaseRepositoryService.findAll).toHaveBeenCalledWith({
-        where: { caseId, rulingFileId: pronouncedOrally.id },
-        transaction,
-      })
+      expect(
+        mockAppealCaseRepositoryService.existsForRulingFile,
+      ).toHaveBeenCalledWith(caseId, pronouncedOrally.id, { transaction })
       expect(mockFileService.deleteCaseFile).not.toHaveBeenCalled()
     })
   })

@@ -9,7 +9,11 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, DefendantRepositoryService } from '../../../repository'
+import {
+  Case,
+  CaseFileRepositoryService,
+  DefendantRepositoryService,
+} from '../../../repository'
 import { DeleteDefendantResponse } from '../../models/delete.response'
 
 interface Then {
@@ -26,19 +30,22 @@ describe('DefendantController - Delete', () => {
 
   let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
+      caseFileRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -77,6 +84,12 @@ describe('DefendantController - Delete', () => {
       then = await givenWhenThen()
     })
 
+    it("should delete the defendant's case files", () => {
+      expect(
+        mockCaseFileRepositoryService.deleteAllForDefendant,
+      ).toHaveBeenCalledWith(caseId, defendantId, { transaction })
+    })
+
     it('should delete the defendant without queuing', () => {
       expect(mockDefendantRepositoryService.delete).toHaveBeenCalledWith(
         caseId,
@@ -84,6 +97,35 @@ describe('DefendantController - Delete', () => {
         { transaction },
       )
       expect(then.result).toEqual({ deleted: true })
+      expect(mockQueuedMessages).toEqual([])
+    })
+
+    it('should delete the case files before the defendant', () => {
+      const mockDeleteFiles =
+        mockCaseFileRepositoryService.deleteAllForDefendant as jest.Mock
+      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
+
+      expect(mockDeleteFiles.mock.invocationCallOrder[0]).toBeLessThan(
+        mockDelete.mock.invocationCallOrder[0],
+      )
+    })
+  })
+
+  describe('case file deletion fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDeleteFiles =
+        mockCaseFileRepositoryService.deleteAllForDefendant as jest.Mock
+      mockDeleteFiles.mockRejectedValue(new Error('Case file error'))
+
+      then = await givenWhenThen()
+    })
+
+    it('should not delete the defendant', () => {
+      expect(mockDefendantRepositoryService.delete).not.toHaveBeenCalled()
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Case file error')
       expect(mockQueuedMessages).toEqual([])
     })
   })

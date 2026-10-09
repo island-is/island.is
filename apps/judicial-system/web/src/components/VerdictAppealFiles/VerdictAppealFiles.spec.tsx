@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
+  AppealCaseType,
   CaseFileCategory,
   CaseType,
   UserRole,
@@ -52,12 +54,15 @@ describe('VerdictAppealFiles', () => {
     isKeyAccessible: true,
   }
 
-  const renderSection = (theCase: WorkingCase) =>
+  const renderSection = (
+    theCase: WorkingCase,
+    userRole: UserRole = UserRole.DEFENDER,
+  ) =>
     render(
       <MockedProvider mocks={[]} addTypename={false}>
         <IntlProviderWrapper>
           <UserContextWrapper
-            userRole={UserRole.DEFENDER}
+            userRole={userRole}
             nationalId={defenderNationalId}
           >
             <FormContextWrapper theCase={theCase}>
@@ -109,5 +114,58 @@ describe('VerdictAppealFiles', () => {
     expect(
       await screen.findByText('Verjandi (VD) sendi inn'),
     ).toBeInTheDocument()
+  })
+
+  describe('the appeal summons', () => {
+    const appealed = (caseFiles: WorkingCase['caseFiles']): WorkingCase => ({
+      ...theCase(caseFiles),
+      verdictAppealCase: {
+        id: 'verdict_appeal_id',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.APPEALED,
+      },
+    })
+
+    // The prosecution can appeal without filing a declaration, and the office
+    // still has a summons to issue.
+    it('should tell the public prosecution office none has been issued, even before any declaration', async () => {
+      renderSection(appealed([]), UserRole.PUBLIC_PROSECUTOR_STAFF)
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).toBeInTheDocument()
+    })
+
+    it('should list it above the declarations', async () => {
+      renderSection(appealed([declaration]), UserRole.PUBLIC_PROSECUTOR_STAFF)
+
+      const summons = await screen.findByText(
+        'Áfrýjunarstefna hefur ekki verið gefin út',
+      )
+
+      expect(
+        summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+    })
+
+    it('should not show it to a defender', async () => {
+      renderSection(appealed([declaration]))
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should not show it to the court of appeals', async () => {
+      renderSection(appealed([declaration]), UserRole.COURT_OF_APPEALS_JUDGE)
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+    })
   })
 })

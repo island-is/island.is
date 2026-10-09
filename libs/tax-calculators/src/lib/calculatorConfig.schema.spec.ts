@@ -145,7 +145,6 @@ describe('calculatorConfigSchema', () => {
       expect(result.success).toBe(false)
     })
 
-    /* An output value may legitimately appear twice; input keys may not. */
     it('accepts a repeated output field key across sections', () => {
       const result = calculatorConfigSchema.safeParse(
         config({
@@ -277,7 +276,6 @@ describe('calculatorConfigSchema', () => {
       expect(result.success).toBe(true)
     })
 
-    /* An unresolved gate silently reads as "off" on the web side. */
     it('rejects a gate pointing at a toggle no section declares', () => {
       const result = calculatorConfigSchema.safeParse(
         config({ inputSections: [section({ gate: { toggle: 'ghost' } })] }),
@@ -293,7 +291,6 @@ describe('calculatorConfigSchema', () => {
       }
     })
 
-    /* The switch that would reveal this section is rendered by the section it hides. */
     it('rejects a gate pointing at a toggle its own section declares', () => {
       const result = calculatorConfigSchema.safeParse(
         config({
