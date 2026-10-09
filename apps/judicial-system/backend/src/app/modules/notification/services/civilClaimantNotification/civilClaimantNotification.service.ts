@@ -27,6 +27,10 @@ import {
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import {
+  appealAdvocateAssignedBody,
+  appealAdvocateAssignedSubject,
+} from '../appealAdvocateAssigned'
 import { BaseNotificationService } from '../baseNotification.service'
 
 @Injectable()
@@ -188,6 +192,51 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
+  /**
+   * The court of appeals telling a claimant's advocate it has recorded them on
+   * the appeal. A lögmaður gets this too, though no letter of appointment
+   * follows: they are never formally appointed.
+   */
+  private async sendAppealSpokespersonAssignedNotification(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+  ): Promise<DeliverResponse> {
+    if (
+      !civilClaimant.isAppealSpokespersonConfirmed ||
+      !civilClaimant.appealSpokespersonEmail ||
+      this.hasReceivedNotification(
+        TrackedNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+        civilClaimant.appealSpokespersonEmail,
+        theCase.notifications,
+      )
+    ) {
+      // Nothing should be sent so we return a successful response
+      return { delivered: true }
+    }
+
+    // Not through sendEmails: that one writes to the district court's
+    // spokesperson, and the appeal has its own advocate on its own columns.
+    const recipient = await this.sendEmail({
+      subject: appealAdvocateAssignedSubject(),
+      html: appealAdvocateAssignedBody(
+        civilClaimant.appealSpokespersonIsLawyer
+          ? 'lögmann einkaréttarkröfuhafa'
+          : 'réttargæslumann einkaréttarkröfuhafa',
+        theCase.verdictAppealCase?.appealCaseNumber,
+      ),
+      recipientName: civilClaimant.appealSpokespersonName,
+      recipientEmail: civilClaimant.appealSpokespersonEmail,
+      attachments: undefined,
+      skipTail: true,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+      [recipient],
+    )
+  }
+
   private sendNotification(
     notificationType: CivilClaimantNotificationType,
     civilClaimant: CivilClaimant,
@@ -197,6 +246,11 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     switch (notificationType) {
       case CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED:
         return this.sendSpokespersonAssignedNotification(civilClaimant, theCase)
+      case CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED:
+        return this.sendAppealSpokespersonAssignedNotification(
+          theCase,
+          civilClaimant,
+        )
       case CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP:
         return this.sendSpokespersonCourtDateEmailNotification(
           theCase,

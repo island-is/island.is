@@ -2,8 +2,10 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealEventType,
+  CivilClaimantNotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -168,5 +170,124 @@ describe('CivilClaimantController - Update writes an advocate confirmed event', 
     )
 
     expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+  })
+})
+
+/**
+ * The mail that tells the claimant's advocate the court of appeals has
+ * recorded them. A lögmaður gets it too, though no letter of appointment
+ * follows.
+ */
+describe('CivilClaimantController - Update notifies a confirmed appeal advocate', () => {
+  const caseId = uuid()
+  const civilClaimantId = uuid()
+  const appealCaseId = uuid()
+
+  const actor = {
+    id: uuid(),
+    nationalId: '0000000000',
+    name: 'Áslaug Björk Ingólfsdóttir',
+    role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+    institution: { name: 'Landsréttur' },
+  } as User
+
+  let queuedMessages: { type: MessageType; body?: unknown }[]
+  let update: (
+    civilClaimantUpdate: Partial<CivilClaimant>,
+    existing?: Partial<CivilClaimant>,
+    caseOverrides?: Partial<Case>,
+  ) => Promise<unknown>
+
+  const appealAdvocateNotifications = () =>
+    queuedMessages.filter(
+      (message) =>
+        message.type === MessageType.CIVIL_CLAIMANT_NOTIFICATION &&
+        (message.body as { type?: string })?.type ===
+          CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+    )
+
+  beforeEach(async () => {
+    const {
+      sequelize,
+      civilClaimantRepositoryService,
+      civilClaimantController,
+      queuedMessagesAfterCommit,
+    } = await createTestingDefendantModule()
+
+    queuedMessages = queuedMessagesAfterCommit
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+
+    update = (civilClaimantUpdate, existing = {}, caseOverrides = {}) => {
+      const mockUpdate =
+        civilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [
+          { id: civilClaimantId, caseId, ...existing, ...civilClaimantUpdate },
+        ],
+      })
+
+      return runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        return civilClaimantController.update(
+          caseId,
+          civilClaimantId,
+          {
+            id: caseId,
+            courtCaseNumber: 'S-14/2026',
+            verdictAppealCase: { id: appealCaseId } as AppealCase,
+            ...caseOverrides,
+          } as Case,
+          actor,
+          { id: civilClaimantId, ...existing } as CivilClaimant,
+          civilClaimantUpdate,
+        )
+      })
+    }
+  })
+
+  // The same message whichever role the court settled on - the body names the
+  // role, and only the letter of appointment tells a lawyer apart.
+  it.each([true, false])(
+    'queues the mail when the advocate is confirmed (lawyer: %s)',
+    async (appealSpokespersonIsLawyer) => {
+      await update({
+        isAppealSpokespersonConfirmed: true,
+        appealSpokespersonIsLawyer,
+      })
+
+      expect(appealAdvocateNotifications()).toEqual([
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId,
+          elementId: civilClaimantId,
+          body: {
+            type: CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+          },
+        },
+      ])
+    },
+  )
+
+  it('queues nothing when the confirmation already stood', async () => {
+    await update(
+      { appealSpokespersonEmail: 'ny@example.is' },
+      { isAppealSpokespersonConfirmed: true },
+    )
+
+    expect(appealAdvocateNotifications()).toEqual([])
+  })
+
+  it('queues nothing when there is no verdict appeal', async () => {
+    await update(
+      { isAppealSpokespersonConfirmed: true },
+      {},
+      {
+        verdictAppealCase: undefined,
+      },
+    )
+
+    expect(appealAdvocateNotifications()).toEqual([])
   })
 })
