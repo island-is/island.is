@@ -199,18 +199,6 @@ export class CivilClaimantService {
         }),
         { transaction },
       )
-
-      // Telling the advocate the court of appeals has recorded them. A
-      // lögmaður hears the same way a réttargæslumaður does; only the letter
-      // of appointment tells them apart.
-      queueMessagesAfterCommit({
-        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
-        caseId: theCase.id,
-        elementId: civilClaimant.id,
-        body: {
-          type: CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
-        },
-      })
     }
 
     this.addMessagesForUpdateCivilClaimantToQueue(

@@ -7,8 +7,6 @@ export enum TrackedNotificationType {
   APPEAL_RECEIVED_BY_COURT = 'APPEAL_RECEIVED_BY_COURT',
   APPEAL_STATEMENT = 'APPEAL_STATEMENT',
   APPEAL_TO_COURT_OF_APPEALS = 'APPEAL_TO_COURT_OF_APPEALS',
-  APPEAL_DEFENDER_ASSIGNED = 'APPEAL_DEFENDER_ASSIGNED',
-  APPEAL_SPOKESPERSON_ASSIGNED = 'APPEAL_SPOKESPERSON_ASSIGNED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
   CASE_FILES_UPDATED = 'CASE_FILES_UPDATED',
   COURT_DATE = 'COURT_DATE',
@@ -89,11 +87,6 @@ export enum AppealCaseNotificationType {
 }
 
 export enum DefendantNotificationType {
-  // The court of appeals confirming this defendant's defender for the appeal.
-  // Distinct from DEFENDER_ASSIGNED, which is the district court doing the
-  // same for the case below: they are two appointments, and a defender who
-  // acted at both stages has to hear about each.
-  APPEAL_DEFENDER_ASSIGNED = TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
   DEFENDANT_DELEGATED_DEFENDER_CHOICE = TrackedNotificationType.DEFENDANT_DELEGATED_DEFENDER_CHOICE,
   DEFENDANT_SELECTED_DEFENDER = TrackedNotificationType.DEFENDANT_SELECTED_DEFENDER,
   DEFENDER_ASSIGNED = TrackedNotificationType.DEFENDER_ASSIGNED,
@@ -105,11 +98,6 @@ export enum DefendantNotificationType {
 }
 
 export enum CivilClaimantNotificationType {
-  // The court of appeals confirming this claimant's advocate for the appeal.
-  // One type for both: a lögmaður and a réttargæslumaður get the same mail
-  // with the role named differently, and only the latter is also appointed by
-  // letter.
-  APPEAL_SPOKESPERSON_ASSIGNED = TrackedNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
   SPOKESPERSON_ASSIGNED = TrackedNotificationType.SPOKESPERSON_ASSIGNED,
   SPOKESPERSON_COURT_DATE_FOLLOW_UP = TrackedNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP,
 }

@@ -44,10 +44,6 @@ import {
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
-import {
-  appealAdvocateAssignedBody,
-  appealAdvocateAssignedSubject,
-} from '../appealAdvocateAssigned'
 import { BaseNotificationService } from '../baseNotification.service'
 import { strings } from './defendantNotification.strings'
 
@@ -281,51 +277,6 @@ export class DefendantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
-  /**
-   * The court of appeals telling an advocate it has recorded them on the
-   * appeal.
-   *
-   * Deliberately not a link to the case: confirming an advocate grants them
-   * no access yet, so a link would lead to a refusal. The text is the one on
-   * the ticket.
-   *
-   * Dedupe is per recipient address, so replacing a defender tells the new one
-   * without telling the old one twice.
-   */
-  private async sendAppealDefenderAssignedNotification(
-    theCase: Case,
-    defendant: Defendant,
-  ): Promise<DeliverResponse> {
-    if (
-      !defendant.isAppealDefenderConfirmed ||
-      !defendant.appealDefenderEmail ||
-      this.hasReceivedNotification(
-        TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
-        defendant.appealDefenderEmail,
-        theCase.notifications,
-      )
-    ) {
-      // Nothing should be sent so we return a successful response
-      return { delivered: true }
-    }
-
-    return this.sendEmails(
-      theCase,
-      TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
-      appealAdvocateAssignedSubject(),
-      appealAdvocateAssignedBody(
-        'verjanda',
-        theCase.verdictAppealCase?.appealCaseNumber,
-      ),
-      [
-        {
-          name: defendant.appealDefenderName,
-          email: defendant.appealDefenderEmail,
-        },
-      ],
-    )
-  }
-
   private async sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
     const dashboardRoute = getStandardUserDashboardRoute({
       role: UserRole.PRISON_SYSTEM_STAFF,
@@ -541,8 +492,6 @@ export class DefendantNotificationService extends BaseNotificationService {
         return this.sendDefendantDelegatedDefenderChoiceNotification(theCase)
       case DefendantNotificationType.DEFENDER_ASSIGNED:
         return this.sendDefenderAssignedNotification(theCase, defendant)
-      case DefendantNotificationType.APPEAL_DEFENDER_ASSIGNED:
-        return this.sendAppealDefenderAssignedNotification(theCase, defendant)
       case DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN:
         return this.sendIndictmentSentToPrisonAdminNotification(theCase)
       case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:
