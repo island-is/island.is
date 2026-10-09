@@ -360,6 +360,28 @@ export const buildAdvocateConfirmedEvent = (params: {
 }
 
 /**
+ * Whether an update puts a different advocate on a party than the one already
+ * there.
+ *
+ * Only a field the update actually carries counts: a PATCH that leaves the
+ * name out is not changing it, and one that repeats the same name is not
+ * either.
+ *
+ * Used to take a confirmation back when the advocate under it changes. A
+ * confirmation names a person, and the letter of appointment is signed and
+ * dated from the event that confirmation wrote - so a row left confirmed under
+ * a new name would print the new advocate over the old signatory and date.
+ * The screen already makes the court confirm again; this is the same rule
+ * where the screen cannot reach.
+ */
+export const namesADifferentAdvocate = (
+  current: { name?: string | null; nationalId?: string | null },
+  update: { name?: string | null; nationalId?: string | null },
+): boolean =>
+  (update.name !== undefined && update.name !== current.name) ||
+  (update.nationalId !== undefined && update.nationalId !== current.nationalId)
+
+/**
  * The confirmation that currently stands for one party, which is what the
  * letter of appointment is written from: its signatory and its date.
  *
