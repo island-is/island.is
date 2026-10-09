@@ -2711,6 +2711,9 @@
             "type": "string",
             "format": "guid"
           },
+          "employerName": {
+            "type": "string"
+          },
           "estimatedIncome": {
             "type": "number",
             "format": "decimal"

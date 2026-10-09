@@ -21,15 +21,6 @@ registerEnumType(VmstApplicantIncomeRowType, {
   name: 'VmstApplicantIncomeRowType',
 })
 
-@ObjectType('VmstApplicantEmployer')
-export class VmstApplicantEmployer {
-  @Field(() => String)
-  name!: string
-
-  @Field(() => String)
-  ssn!: string
-}
-
 @ObjectType('VmstApplicantPeriod')
 export class VmstApplicantPeriod {
   @Field(() => GraphQLISODateTime)
@@ -82,16 +73,22 @@ export abstract class VmstApplicantIncomeRow {
   implements: () => [VmstApplicantIncomeRow],
 })
 export class VmstApplicantIrregularJob extends VmstApplicantIncomeRow {
-  @Field(() => VmstApplicantEmployer)
-  employer!: VmstApplicantEmployer
+  @Field(() => String, { nullable: true })
+  employerName?: string | null
+
+  @Field(() => String, { nullable: true })
+  employerSSN?: string | null
 }
 
 @ObjectType('VmstApplicantPartTimeJob', {
   implements: () => [VmstApplicantIncomeRow],
 })
 export class VmstApplicantPartTimeJob extends VmstApplicantIncomeRow {
-  @Field(() => VmstApplicantEmployer)
-  employer!: VmstApplicantEmployer
+  @Field(() => String, { nullable: true })
+  employerName?: string | null
+
+  @Field(() => String, { nullable: true })
+  employerSSN?: string | null
 
   @Field(() => Float, { nullable: true })
   ratio?: number | null
@@ -101,6 +98,9 @@ export class VmstApplicantPartTimeJob extends VmstApplicantIncomeRow {
   implements: () => [VmstApplicantIncomeRow],
 })
 export class VmstApplicantPensionPayment extends VmstApplicantIncomeRow {
+  @Field(() => String, { nullable: true })
+  employerName?: string | null
+
   @Field(() => String)
   incomeTypeId!: string
 
