@@ -14,7 +14,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { PrimarySchoolKeyInfoClientService } from '@island.is/clients/mms/primary-school'
+import { FriggKeyInfoClientService } from '@island.is/clients/mms/frigg'
 
 import { PrimarySchoolAgent } from '../models/primarySchool/keyInfo/agent.model'
 import {
@@ -28,7 +28,7 @@ import {
 } from '../models/primarySchool/keyInfo/profiles.model'
 import {
   mapAgent,
-  mapAllergy,
+  mapAllergyOption,
   mapHealthProfile,
   mapLanguageEnvironment,
   mapLanguageProfile,
@@ -57,7 +57,7 @@ import {
 @Resolver()
 export class PrimarySchoolKeyInfoResolver {
   constructor(
-    private readonly keyInfoService: PrimarySchoolKeyInfoClientService,
+    private readonly keyInfoService: FriggKeyInfoClientService,
   ) {}
 
   /* -- Lookup lists -------------------------------------------------------- */
@@ -66,22 +66,22 @@ export class PrimarySchoolKeyInfoResolver {
   async primarySchoolAgentRelationTypes(
     @CurrentUser() user: User,
   ): Promise<RelationType[]> {
-    const types = await this.keyInfoService.getAgentRelationTypes(user)
-    return types.map(mapRelationType)
+    const options = await this.keyInfoService.getRelationTypeOptions(user)
+    return options.map(mapRelationType)
   }
 
   @Query(() => [Allergy], { nullable: true })
   async primarySchoolAllergies(@CurrentUser() user: User): Promise<Allergy[]> {
-    const allergies = await this.keyInfoService.getAllergies(user)
-    return allergies.map(mapAllergy)
+    const options = await this.keyInfoService.getAllergyOptions(user)
+    return options.map(mapAllergyOption)
   }
 
   @Query(() => [LanguageEnvironment], { nullable: true })
   async primarySchoolLanguageEnvironments(
     @CurrentUser() user: User,
   ): Promise<LanguageEnvironment[]> {
-    const environments = await this.keyInfoService.getLanguageEnvironments(user)
-    return environments.map(mapLanguageEnvironment)
+    const options = await this.keyInfoService.getLanguageEnvironmentOptions(user)
+    return options.map(mapLanguageEnvironment)
   }
 
   /* -- Emergency contacts (agents) ----------------------------------------- */
@@ -91,8 +91,11 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('childId') childId: string,
   ): Promise<PrimarySchoolAgent[]> {
-    const agents = await this.keyInfoService.getChildAgents(user, childId)
-    return agents.map(mapAgent)
+    const contacts = await this.keyInfoService.getEmergencyContacts(
+      user,
+      childId,
+    )
+    return contacts.map(mapAgent)
   }
 
   @Mutation(() => PrimarySchoolAgent)
@@ -100,11 +103,15 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('input') input: AddAgentInput,
   ): Promise<PrimarySchoolAgent> {
-    const agent = await this.keyInfoService.addChildAgent(user, input.childId, {
-      nationalId: input.nationalId,
-      relationTypeId: input.relationTypeId,
-    })
-    return mapAgent(agent)
+    const contact = await this.keyInfoService.addEmergencyContact(
+      user,
+      input.childId,
+      {
+        nationalId: input.nationalId,
+        relationTypeId: input.relationTypeId,
+      },
+    )
+    return mapAgent(contact)
   }
 
   @Mutation(() => PrimarySchoolAgent)
@@ -112,13 +119,13 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateAgentInput,
   ): Promise<PrimarySchoolAgent> {
-    const agent = await this.keyInfoService.updateChildAgent(
+    const contact = await this.keyInfoService.updateEmergencyContact(
       user,
       input.childId,
       input.agentId,
       { relationTypeId: input.relationTypeId },
     )
-    return mapAgent(agent)
+    return mapAgent(contact)
   }
 
   @Mutation(() => Boolean)
@@ -126,11 +133,12 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('input') input: DeleteAgentInput,
   ): Promise<boolean> {
-    return this.keyInfoService.deleteChildAgent(
+    await this.keyInfoService.deleteEmergencyContact(
       user,
       input.childId,
       input.agentId,
     )
+    return true
   }
 
   /* -- Language profile ---------------------------------------------------- */
@@ -140,10 +148,7 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('childId') childId: string,
   ): Promise<LanguageProfile> {
-    const profile = await this.keyInfoService.getChildLanguageProfile(
-      user,
-      childId,
-    )
+    const profile = await this.keyInfoService.getLanguageProfile(user, childId)
     return mapLanguageProfile(profile)
   }
 
@@ -152,11 +157,12 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateLanguageProfileInput,
   ): Promise<LanguageProfile> {
-    const profile = await this.keyInfoService.updateChildLanguageProfile(
+    const profile = await this.keyInfoService.updateLanguageProfile(
       user,
       input.childId,
       {
-        languageEnvironmentId: input.languageEnvironmentId ?? null,
+        // MMS requires an id here; the UI select enforces a choice.
+        languageEnvironmentId: input.languageEnvironmentId ?? '',
         preferredLanguage: input.preferredLanguage ?? null,
         languages: input.languages,
         interpreter: input.interpreter,
@@ -173,11 +179,8 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('childId') childId: string,
   ): Promise<HealthProfile> {
-    const profile = await this.keyInfoService.getChildHealthProfile(
-      user,
-      childId,
-    )
-    return mapHealthProfile(profile, this.keyInfoService.healthEditEnabled())
+    const profile = await this.keyInfoService.getHealthProfile(user, childId)
+    return mapHealthProfile(profile)
   }
 
   @Mutation(() => HealthProfile)
@@ -185,7 +188,7 @@ export class PrimarySchoolKeyInfoResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateHealthProfileInput,
   ): Promise<HealthProfile> {
-    const profile = await this.keyInfoService.updateChildHealthProfile(
+    const profile = await this.keyInfoService.updateHealthProfile(
       user,
       input.childId,
       {
@@ -195,6 +198,6 @@ export class PrimarySchoolKeyInfoResolver {
         allergies: input.allergies,
       },
     )
-    return mapHealthProfile(profile, this.keyInfoService.healthEditEnabled())
+    return mapHealthProfile(profile)
   }
 }
