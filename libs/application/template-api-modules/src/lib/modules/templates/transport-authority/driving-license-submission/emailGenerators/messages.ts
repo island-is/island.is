@@ -49,14 +49,44 @@ export const m = {
     'Þú getur uppfært stafræna ökuskírteinið þitt í <a href="https://island.is/okuskirteini">Ísland.is appinu</a>.',
   ],
   congratulations: 'Góðan daginn',
+  // Per-type greeting where product asked for different wording; every other
+  // type keeps `congratulations`.
+  greeting: {
+    'B-full-renewal-65': 'Góðan dag',
+  } as Record<string, string | undefined>,
   nextSteps: {
     BE: [
-      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
-      'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+      {
+        paragraphs: [
+          'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Þegar umsókn hefur verið samþykkt verður hún send áfram í ökunámsbók. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
+          'Þegar verklegu prófi er lokið verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+        ],
+      },
     ],
     'B-full-renewal-65': [
-      'Ef læknisvottorð fylgdi umsókninni verður það nú yfirfarið. Ef læknisvottorð uppfyllir ekki skilyrði getur umsókninni verið hafnað. Ef umsókn er hafnað þarf að senda beiðni um endurgreiðslu á endurgreidsla@island.is og sækja aftur um.',
-      'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað og afhent samkvæmt því sem valið var í umsóknarferlinu, annað hvort sent eða sótt á valda afgreiðslu.',
+      {
+        heading: 'Yfirferð læknisvottorðs',
+        paragraphs: [
+          'Fylgi læknisvottorð umsókninni verður það yfirfarið og uppfylli það ekki skilyrði gæti umsókninni verið hafnað.',
+          'Sé umsókninni hafnað þarf að óska eftir endurgreiðslu með því að senda tölvupóst á endurgreidsla@island.is og gera svo aðra umsókn þar sem gild gögn fylgja með.',
+        ],
+      },
+      {
+        heading: 'Pöntun og afhending ökuskírteinis',
+        paragraphs: [
+          'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað. Afhending fer eftir því sem valið er í umsóknarferlinu.',
+        ],
+        list: [
+          'Skírteinið verður sent til þín, eða',
+          'þú sækir það á þann afgreiðslustað sem þú valdir.',
+        ],
+      },
     ],
-  } as Record<string, string[] | undefined>,
+  } as Record<string, NextStepsSection[] | undefined>,
+}
+
+export type NextStepsSection = {
+  heading?: string
+  paragraphs: string[]
+  list?: string[]
 }
