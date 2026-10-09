@@ -181,7 +181,11 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
     const renderAllPages = () => {
       // Fall back to drawing every page if the page sizes couldn't be read
       if (lazyPages && !pageSizesFailed) {
-        return pageSizes?.map((size, page) => (
+        if (!pageSizes) {
+          return disableLoading ? null : loadingView()
+        }
+
+        return pageSizes.map((size, page) => (
           <LazyPage
             key={`page_${page + 1}`}
             Page={pdfLib.Page}
