@@ -65,7 +65,6 @@ auth-admin-web:
       cpu: '200m'
       memory: '192Mi'
   secrets:
-    BS_SECRET: '/k8s/auth-admin-web/BS_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
     NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET'
