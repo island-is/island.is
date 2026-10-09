@@ -2,8 +2,8 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor } from '@testing-library/react'
 
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -39,7 +39,7 @@ window.scrollTo = jest.fn()
 
 const defenderNationalId = '1111111111'
 
-const appealableCase = (ownClientAppealDate?: string): Case => ({
+const appealableCase = (ownClientAppealDate?: string): WorkingCase => ({
   ...mockCase(CaseType.INDICTMENT),
   state: CaseState.COMPLETED,
   indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -75,7 +75,7 @@ const appealableCase = (ownClientAppealDate?: string): Case => ({
 })
 
 const renderPage = (
-  theCase: Case,
+  theCase: WorkingCase,
   { features = [Feature.INDICTMENT_APPEAL], isLoading = false } = {},
 ) =>
   render(

@@ -20,6 +20,7 @@ import {
   isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   ContextMenu,
   FileNotFoundModal,
@@ -29,10 +30,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  CaseFile,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   CaseFileCategory,
@@ -70,7 +68,10 @@ const isProsecutorCategory = (category: CaseFileCategory | undefined | null) =>
   ].includes(category) ||
     prosecutorDeleteCategories.includes(category))
 
-const getFileSubmittedByText = (file: CaseFile, workingCase: Case): string => {
+const getFileSubmittedByText = (
+  file: CaseFile,
+  workingCase: WorkingCase,
+): string => {
   const prosecutorSubmitted = isProsecutorCategory(file.category)
 
   if (prosecutorSubmitted) {

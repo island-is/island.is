@@ -6,7 +6,7 @@ import {
   LoadingDots,
   Select,
 } from '@island.is/island-ui/core'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
@@ -15,8 +15,8 @@ import { useCandidateMergeCasesQuery } from './candidateMergeCases.generated'
 type CandidateMergeCaseOption = ReactSelectOption
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   mergeCaseNumber?: string | null
 }
 

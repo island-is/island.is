@@ -3,12 +3,12 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   MultipleValueList,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -16,14 +16,14 @@ import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   clientPoliceNumbers?: string[] | null
   setClientPoliceNumbers: Dispatch<SetStateAction<string[] | undefined | null>>
 }
 
 // Needed so that users can remove all loke numbers in client without syncing to server
-export const usePoliceCaseNumbers = (workingCase: Case) => {
+export const usePoliceCaseNumbers = (workingCase: WorkingCase) => {
   const [clientPoliceNumbers, setClientPoliceNumbers] = useState<
     string[] | undefined | null
   >(workingCase.policeCaseNumbers)

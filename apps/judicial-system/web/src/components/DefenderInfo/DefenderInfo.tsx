@@ -9,6 +9,7 @@ import {
   isProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   InputAdvocate,
@@ -16,7 +17,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   RequestSharedWithDefender,
   SessionArrangements,
@@ -27,8 +27,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
 }
 
 const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {

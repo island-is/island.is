@@ -6,12 +6,12 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import type { CourtDocument } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BaseSelect,
   IconButton,
 } from '@island.is/judicial-system-web/src/components'
 import MultipleValueList from '@island.is/judicial-system-web/src/components/MultipleValueList/MultipleValueList'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -19,8 +19,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as styles from './CourtDocuments.css'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
 }
 
 const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
