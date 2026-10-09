@@ -71,7 +71,6 @@ describe('AppealSummonsController - Create', () => {
     defendants: [
       {
         defendantId,
-        appellantSide: AppealSummonsAppellantSide.DEFENCE,
         claims: 'Kröfur',
       },
     ],
@@ -201,7 +200,6 @@ describe('AppealSummonsController - Create', () => {
       defendants: [
         {
           defendantId: unknownDefendantId,
-          appellantSide: AppealSummonsAppellantSide.DEFENCE,
           claims: 'Kröfur',
         },
       ],
@@ -214,7 +212,7 @@ describe('AppealSummonsController - Create', () => {
     expect(mockAppealSummonsRepositoryService.create).not.toHaveBeenCalled()
   })
 
-  it('uses the prosecution side when both sides stand, even if the client sends defence', async () => {
+  it('uses the prosecution side when both sides stand', async () => {
     const prosecutionLog = {
       id: uuid(),
       defendantId,
@@ -227,7 +225,6 @@ describe('AppealSummonsController - Create', () => {
       defendants: [
         {
           defendantId,
-          appellantSide: AppealSummonsAppellantSide.DEFENCE,
           claims: 'Kröfur',
         },
       ],
@@ -248,12 +245,10 @@ describe('AppealSummonsController - Create', () => {
       defendants: [
         {
           defendantId,
-          appellantSide: AppealSummonsAppellantSide.DEFENCE,
           claims: 'Kröfur',
         },
         {
           defendantId,
-          appellantSide: AppealSummonsAppellantSide.DEFENCE,
           claims: 'Aðrar kröfur',
         },
       ],

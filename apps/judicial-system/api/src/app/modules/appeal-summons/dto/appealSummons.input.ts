@@ -3,7 +3,6 @@ import {
   Allow,
   ArrayMinSize,
   IsArray,
-  IsEnum,
   IsNotEmpty,
   IsString,
   IsUUID,
@@ -12,19 +11,12 @@ import {
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
-import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
-
 @InputType()
 export class AppealSummonsDefendantInput {
   @Allow()
   @IsUUID()
   @Field(() => ID)
   readonly defendantId!: string
-
-  @Allow()
-  @IsEnum(AppealSummonsAppellantSide)
-  @Field(() => AppealSummonsAppellantSide)
-  readonly appellantSide!: AppealSummonsAppellantSide
 
   @Allow()
   @IsString()

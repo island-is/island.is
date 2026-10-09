@@ -334,7 +334,6 @@ describe('toAppealSummonsDefendantInputs', () => {
     ).toEqual([
       {
         defendantId: 'a',
-        appellantSide: AppealSummonsAppellantSide.DEFENCE,
         claims: 'one',
       },
     ])

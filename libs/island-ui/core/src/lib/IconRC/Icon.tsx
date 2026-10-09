@@ -28,6 +28,20 @@ const Placeholder = ({
   />
 )
 
+// Rendered when an icon chunk cannot be fetched, e.g. while the browser is
+// offline. A blank of the same size keeps the failure from reaching the
+// nearest error boundary, which for a toast may be the whole app.
+const UnavailableIcon = ({
+  width,
+  height,
+  className,
+}: React.SVGProps<SVGSVGElement> & SvgProps) => (
+  <span
+    className={className}
+    style={{ display: 'inline-block', width, height }}
+  />
+)
+
 export const Icon = ({
   icon,
   type = 'filled',
@@ -42,8 +56,13 @@ export const Icon = ({
 }: IconProps) => {
   const path = iconMap[type][icon]
   const IconSvg = useMemo(
-    // Extension included so vite can resolve the import (webpack inferred it).
-    () => React.lazy(() => import(`./icons/${path}.tsx`)),
+    () =>
+      React.lazy(() =>
+        // Extension included so vite can resolve the import (webpack inferred it).
+        import(`./icons/${path}.tsx`).catch(() => ({
+          default: UnavailableIcon,
+        })),
+      ),
     [path],
   )
 
