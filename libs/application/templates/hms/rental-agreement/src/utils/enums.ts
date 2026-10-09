@@ -19,6 +19,8 @@ export enum Routes {
   PARTIESINFORMATION = 'partiesInfo',
   REGISTERPROPERTY = 'registerProperty',
   PROPERTYINFORMATION = 'propertyInfo',
+  /** Multi-field screen id for the property search step (not the answer path). */
+  PROPERTYSEARCHPAGE = 'registerProperty.search',
   PROPERTYSEARCH = 'registerProperty.searchresults',
   SPECIALPROVISIONS = 'specialProvisions',
   CONDITION = 'condition',

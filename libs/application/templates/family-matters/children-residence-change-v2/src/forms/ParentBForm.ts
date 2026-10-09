@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
-import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
+import { contactInfoParentBIds } from '../fields/ContactInfoParentB/constants'
 import * as m from '../lib/messages'
 
 export const ParentBForm: Form = buildForm({
