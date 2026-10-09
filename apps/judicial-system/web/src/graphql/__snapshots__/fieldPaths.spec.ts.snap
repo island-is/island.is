@@ -690,6 +690,14 @@ Array [
   "case.verdictAppealCase.appealJudge3.id",
   "case.verdictAppealCase.appealJudge3.name",
   "case.verdictAppealCase.appealState",
+  "case.verdictAppealCase.appealSummonses.confirmedDate",
+  "case.verdictAppealCase.appealSummonses.created",
+  "case.verdictAppealCase.appealSummonses.defendants.appellantSide",
+  "case.verdictAppealCase.appealSummonses.defendants.claims",
+  "case.verdictAppealCase.appealSummonses.defendants.defendantId",
+  "case.verdictAppealCase.appealSummonses.defendants.id",
+  "case.verdictAppealCase.appealSummonses.id",
+  "case.verdictAppealCase.appealSummonses.sentToCourtOfAppealsDate",
   "case.verdictAppealCase.appealType",
   "case.verdictAppealCase.id",
   "case.victims.hasLawyer",
@@ -784,6 +792,18 @@ Array [
 exports[`GraphQL operations select these field paths CreateAppealEventLog 1`] = `
 Array [
   "createAppealEventLog.id",
+]
+`;
+
+exports[`GraphQL operations select these field paths CreateAppealSummons 1`] = `
+Array [
+  "createAppealSummons.confirmedDate",
+  "createAppealSummons.defendants.appellantSide",
+  "createAppealSummons.defendants.claims",
+  "createAppealSummons.defendants.defendantId",
+  "createAppealSummons.defendants.id",
+  "createAppealSummons.id",
+  "createAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 
@@ -962,6 +982,12 @@ Array [
   "currentUser.user.nationalId",
   "currentUser.user.role",
   "currentUser.user.title",
+]
+`;
+
+exports[`GraphQL operations select these field paths DeleteAppealSummons 1`] = `
+Array [
+  "deleteAppealSummons.deleted",
 ]
 `;
 
@@ -1955,6 +1981,18 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+]
+`;
+
+exports[`GraphQL operations select these field paths UpdateAppealSummons 1`] = `
+Array [
+  "updateAppealSummons.confirmedDate",
+  "updateAppealSummons.defendants.appellantSide",
+  "updateAppealSummons.defendants.claims",
+  "updateAppealSummons.defendants.defendantId",
+  "updateAppealSummons.defendants.id",
+  "updateAppealSummons.id",
+  "updateAppealSummons.sentToCourtOfAppealsDate",
 ]
 `;
 

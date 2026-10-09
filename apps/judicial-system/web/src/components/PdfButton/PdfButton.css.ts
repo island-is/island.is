@@ -9,7 +9,8 @@ export const pdfRow = style({
   width: '100%',
   minHeight: `${theme.spacing[10]}px`,
   boxShadow: `inset 0 -1px 0 0 ${theme.color.blue200}`,
-  padding: theme.spacing[2],
+  paddingBlock: theme.spacing[2],
+  paddingInline: theme.spacing[2],
 })
 
 export const pdfRowMain = style({
