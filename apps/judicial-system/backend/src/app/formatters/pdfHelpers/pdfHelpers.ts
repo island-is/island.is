@@ -337,21 +337,19 @@ export const drawTextWithEllipsisPDFKit = (
   let width = font.type.widthOfTextAtSize(text, font.size)
   if (width <= maxWidth) {
     doc.drawText(text, { x, y, font: font.type, size: font.size })
-  } else {
-    while (
-      width >
-      maxWidth - font.type.widthOfTextAtSize(ellipsis, font.size)
-    ) {
-      text = text.slice(0, -1)
-      width = font.type.widthOfTextAtSize(text, font.size)
-    }
-    doc.drawText(text + ellipsis, {
-      x,
-      y,
-      font: font.type,
-      size: font.size,
-    })
+    return
   }
+
+  // Drop characters until the text and the ellipsis fit. When not even the
+  // ellipsis fits, the text runs out and the ellipsis alone is drawn.
+  const availableWidth =
+    maxWidth - font.type.widthOfTextAtSize(ellipsis, font.size)
+  while (text.length > 0 && width > availableWidth) {
+    text = text.slice(0, -1)
+    width = font.type.widthOfTextAtSize(text, font.size)
+  }
+
+  doc.drawText(text + ellipsis, { x, y, font: font.type, size: font.size })
 }
 
 export const addEmptyLines = (

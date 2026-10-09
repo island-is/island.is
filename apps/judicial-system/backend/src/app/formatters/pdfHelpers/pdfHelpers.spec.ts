@@ -1,6 +1,12 @@
+import { PDFFont, PDFPage } from 'pdf-lib'
 import PDFDocument from 'pdfkit'
 
-import { addNumberedList, addRichText, htmlToBlocks } from './pdfHelpers'
+import {
+  addNumberedList,
+  addRichText,
+  drawTextWithEllipsisPDFKit,
+  htmlToBlocks,
+} from './pdfHelpers'
 
 describe('htmlToBlocks', () => {
   it('wraps plain text in a single block', () => {
@@ -1245,5 +1251,42 @@ describe('addNumberedList', () => {
     expect(visibleText(frags)).toContain(name)
     expect(visibleText(frags)).not.toContain('\u200B')
     doc.end()
+  })
+})
+
+describe('drawTextWithEllipsisPDFKit', () => {
+  // Every character is 10 units wide at any size
+  const font = {
+    type: {
+      widthOfTextAtSize: (text: string) => text.length * 10,
+    } as unknown as PDFFont,
+    size: 6,
+  }
+  const drawText = jest.fn()
+  const page = { drawText } as unknown as PDFPage
+
+  beforeEach(() => {
+    drawText.mockClear()
+  })
+
+  it('draws text that fits unchanged', () => {
+    drawTextWithEllipsisPDFKit(page, 'abcde', font, 1, 2, 50)
+
+    expect(drawText).toHaveBeenCalledWith(
+      'abcde',
+      expect.objectContaining({ x: 1, y: 2 }),
+    )
+  })
+
+  it('shortens text that does not fit and appends an ellipsis', () => {
+    drawTextWithEllipsisPDFKit(page, 'abcdefghij', font, 0, 0, 70)
+
+    expect(drawText).toHaveBeenCalledWith('abcd...', expect.anything())
+  })
+
+  it('draws only the ellipsis when not even the ellipsis fits', () => {
+    drawTextWithEllipsisPDFKit(page, 'abcdefghij', font, 0, 0, 20)
+
+    expect(drawText).toHaveBeenCalledWith('...', expect.anything())
   })
 })
