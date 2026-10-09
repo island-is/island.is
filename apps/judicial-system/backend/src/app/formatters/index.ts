@@ -52,5 +52,7 @@ export { createFineSentToPrisonAdminPdf } from './generatedPdfs/fineSentToPrison
 export { getCaseFileHash } from './confirmation/getCaseFileHash'
 export type { Confirmation } from './pdfHelpers/pdfHelpers'
 export { createVerdictServiceCertificate } from './generatedPdfs/verdictServiceCertificatePdf'
+export { createAppealAppointmentLetter } from './generatedPdfs/appealAppointmentLetterPdf'
+export type { AppealAppointmentLetter } from './generatedPdfs/appealAppointmentLetterPdf'
 export { createAppealSummons } from './generatedPdfs/appealSummonsPdf'
 export type { AppealSummonsPdfDefendant } from './generatedPdfs/appealSummonsPdf'

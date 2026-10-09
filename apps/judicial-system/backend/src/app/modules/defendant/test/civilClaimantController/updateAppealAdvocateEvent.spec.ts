@@ -170,3 +170,116 @@ describe('CivilClaimantController - Update writes an advocate confirmed event', 
     expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
   })
 })
+
+describe('CivilClaimantController - Update takes a stale confirmation back', () => {
+  const caseId = uuid()
+  const civilClaimantId = uuid()
+  const appealCaseId = uuid()
+
+  const actor = {
+    id: uuid(),
+    role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+  } as User
+
+  let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
+  let update: (
+    civilClaimantUpdate: Partial<CivilClaimant>,
+    existing?: Partial<CivilClaimant>,
+  ) => Promise<unknown>
+
+  beforeEach(async () => {
+    const {
+      sequelize,
+      civilClaimantRepositoryService,
+      civilClaimantController,
+    } = await createTestingDefendantModule()
+
+    mockCivilClaimantRepositoryService = civilClaimantRepositoryService
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+
+    update = (civilClaimantUpdate, existing = {}) => {
+      const mockUpdate =
+        civilClaimantRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        civilClaimants: [
+          { id: civilClaimantId, caseId, ...existing, ...civilClaimantUpdate },
+        ],
+      })
+
+      return runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        return civilClaimantController.update(
+          caseId,
+          civilClaimantId,
+          {
+            id: caseId,
+            courtCaseNumber: 'S-14/2026',
+            verdictAppealCase: { id: appealCaseId } as AppealCase,
+          } as Case,
+          actor,
+          { id: civilClaimantId, ...existing } as CivilClaimant,
+          civilClaimantUpdate,
+        )
+      })
+    }
+  })
+
+  // A confirmation names a person, so one cannot survive the person changing:
+  // the letter would otherwise print the new advocate over the signatory and
+  // date of the confirmation that named the old one.
+  it('takes the confirmation back when the advocate changes', async () => {
+    await update(
+      { appealSpokespersonName: 'Nýr Réttargæslumaður' },
+      {
+        isAppealSpokespersonConfirmed: true,
+        appealSpokespersonName: 'Fyrri Réttargæslumaður',
+      },
+    )
+
+    expect(
+      mockCivilClaimantRepositoryService.updateByIdAndCase,
+    ).toHaveBeenCalledWith(
+      civilClaimantId,
+      caseId,
+      expect.objectContaining({ isAppealSpokespersonConfirmed: false }),
+      expect.anything(),
+    )
+  })
+
+  it('leaves a first confirmation alone', async () => {
+    await update({
+      appealSpokespersonName: 'Brynjar Sveinsson',
+      isAppealSpokespersonConfirmed: true,
+    })
+
+    expect(
+      mockCivilClaimantRepositoryService.updateByIdAndCase,
+    ).toHaveBeenCalledWith(
+      civilClaimantId,
+      caseId,
+      expect.objectContaining({ isAppealSpokespersonConfirmed: true }),
+      expect.anything(),
+    )
+  })
+
+  it('leaves an update that renames nobody alone', async () => {
+    await update(
+      { appealSpokespersonEmail: 'ny@example.is' },
+      {
+        isAppealSpokespersonConfirmed: true,
+        appealSpokespersonName: 'Fyrri Réttargæslumaður',
+      },
+    )
+
+    expect(
+      mockCivilClaimantRepositoryService.updateByIdAndCase,
+    ).toHaveBeenCalledWith(
+      civilClaimantId,
+      caseId,
+      expect.not.objectContaining({ isAppealSpokespersonConfirmed: false }),
+      expect.anything(),
+    )
+  })
+})

@@ -14,6 +14,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import {
+  getAppealAppointmentLetters,
   getVerdictAppealFileGroups,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -47,8 +48,13 @@ const VerdictAppealFiles: FC = () => {
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const showSummonses = showsAppealSummonses(workingCase, user)
+  const appointmentLetters = getAppealAppointmentLetters(workingCase, user)
 
-  if (groups.length === 0 && !showSummonses) {
+  if (
+    groups.length === 0 &&
+    !showSummonses &&
+    appointmentLetters.length === 0
+  ) {
     return null
   }
 
@@ -128,6 +134,20 @@ const VerdictAppealFiles: FC = () => {
             </PdfButton>
           ))}
         </Box>
+      ))}
+      {/* Last, because the court writes the letter once the appeal has
+      reached it and it has settled who represents each party. Generated on
+      demand rather than stored, so there is nothing to date it by here - the
+      letter carries the date it was signed. */}
+      {appointmentLetters.map((letter) => (
+        <PdfButton
+          key={letter.key}
+          renderAs="row"
+          caseId={workingCase.id}
+          title={letter.fileName}
+          pdfType="appealAppointmentLetter"
+          elementId={letter.elementId}
+        />
       ))}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}

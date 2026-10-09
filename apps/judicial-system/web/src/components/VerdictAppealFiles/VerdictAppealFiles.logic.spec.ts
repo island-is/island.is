@@ -13,6 +13,7 @@ import {
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
+  getAppealAppointmentLetters,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
@@ -274,5 +275,172 @@ describe('showsAppealSummonses', () => {
     UserRole.COURT_OF_APPEALS_JUDGE,
   ])('shows nothing to %s', (role) => {
     expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+  })
+})
+
+describe('getAppealAppointmentLetters', () => {
+  const appealedCase = (fields: Partial<WorkingCase> = {}): WorkingCase =>
+    ({
+      id: 'case_id',
+      type: CaseType.INDICTMENT,
+      verdictAppealCase: {
+        id: 'verdict_appeal_id',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+      },
+      defendants: [
+        {
+          id: 'defendant_id',
+          name: 'Gervimaður Jónsson',
+          isAppealDefenderConfirmed: true,
+          appealDefenderName: 'Þórður Már Jónsson',
+        },
+      ],
+      civilClaimants: [],
+      ...fields,
+    } as WorkingCase)
+
+  const coaUser = mockUser(UserRole.COURT_OF_APPEALS_REGISTRAR)
+
+  it('offers a letter for each confirmed advocate', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-defendant_id',
+        fileName: 'Skipunarbréf Þórður Már Jónsson.pdf',
+        buttonLabel: 'Skipunarbréf Þórður Már Jónsson - PDF',
+        elementId: [
+          'defendant',
+          'defendant_id',
+          'Skipunarbréf Þórður Már Jónsson.pdf',
+        ],
+      },
+      {
+        key: 'civilClaimant-claimant_id',
+        fileName: 'Skipunarbréf Brynjar Sveinsson.pdf',
+        buttonLabel: 'Skipunarbréf Brynjar Sveinsson - PDF',
+        elementId: [
+          'civilClaimant',
+          'claimant_id',
+          'Skipunarbréf Brynjar Sveinsson.pdf',
+        ],
+      },
+    ])
+  })
+
+  it('offers nothing for an advocate the court has not confirmed', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Gervimaður Jónsson',
+              isAppealDefenderConfirmed: false,
+              appealDefenderName: 'Þórður Már Jónsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  // "Ákærði óskar ekki eftir verjanda": the screen confirms the answer while
+  // clearing the name, so confirmed alone does not mean somebody was appointed.
+  it('offers nothing for a defendant who waived a defender', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [
+            {
+              id: 'defendant_id',
+              name: 'Gervimaður Jónsson',
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  it('offers nothing for a spokesperson the court has not confirmed', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: false,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  // A réttargæslumaður is appointed by the court; a lögmaður is hired by the
+  // claimant, and the court does not appoint what it did not choose.
+  it('offers nothing for a lawyer the claimant engaged', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          defendants: [],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonIsLawyer: true,
+              appealSpokespersonName: 'Brynjar Sveinsson',
+            },
+          ],
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  it('offers nothing once the appeal is withdrawn', () => {
+    expect(
+      getAppealAppointmentLetters(
+        appealedCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_id',
+            appealType: AppealCaseType.VERDICT,
+            appealState: AppealCaseState.WITHDRAWN,
+          },
+        } as Partial<WorkingCase>),
+        coaUser,
+      ),
+    ).toEqual([])
+  })
+
+  // The court of appeals writes the letter and sends it; the advocate it
+  // appoints is told by e-mail, and nobody else is party to the appointment.
+  it.each([
+    UserRole.DEFENDER,
+    UserRole.PROSECUTOR,
+    UserRole.PUBLIC_PROSECUTOR_STAFF,
+  ])('offers nothing to %s', (role) => {
+    expect(getAppealAppointmentLetters(appealedCase(), mockUser(role))).toEqual(
+      [],
+    )
   })
 })

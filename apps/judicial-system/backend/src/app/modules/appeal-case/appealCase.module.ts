@@ -4,6 +4,7 @@ import {
   CaseModule,
   EventModule,
   FileModule,
+  LawyerRegistryModule,
   RepositoryModule,
   UserModule,
 } from '..'
@@ -17,6 +18,7 @@ import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.con
     forwardRef(() => UserModule),
     forwardRef(() => EventModule),
     forwardRef(() => FileModule),
+    forwardRef(() => LawyerRegistryModule),
     forwardRef(() => RepositoryModule),
   ],
   controllers: [AppealCaseController, LimitedAccessAppealCaseController],

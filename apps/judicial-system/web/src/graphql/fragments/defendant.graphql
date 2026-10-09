@@ -23,6 +23,7 @@ fragment DefendantFields on Defendant {
   appealDefenderEmail
   appealDefenderPhoneNumber
   isAppealDefenderConfirmed
+  isAppealDefenderWaived
   verdictAppealDeadline
   isVerdictAppealDeadlineExpired
   subpoenaType
