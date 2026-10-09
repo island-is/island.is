@@ -94,9 +94,37 @@ export const hasStandingVerdictAppeal = (
 export const showsAppealSummonses = (
   workingCase: Pick<Case, 'verdictAppealCase'>,
   user: User | undefined,
-): boolean =>
-  (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) &&
-  hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+): boolean => {
+  if (!hasStandingVerdictAppeal(workingCase.verdictAppealCase)) {
+    return false
+  }
+
+  if (
+    isPublicProsecutionOfficeUser(user) ||
+    isPublicProsecutionUser(user)
+  ) {
+    return true
+  }
+
+  if (isCourtOfAppealsUser(user)) {
+    return (
+      (workingCase.verdictAppealCase?.sentAppealSummonses?.length ?? 0) > 0
+    )
+  }
+
+  return false
+}
+
+export const getAppealSummonsRows = (
+  workingCase: Pick<Case, 'verdictAppealCase'>,
+  user: User | undefined,
+): AppealSummons[] => {
+  if (isCourtOfAppealsUser(user)) {
+    return workingCase.verdictAppealCase?.sentAppealSummonses ?? []
+  }
+
+  return workingCase.verdictAppealCase?.appealSummonses ?? []
+}
 
 export const canConfirmAppealSummonsRow = (
   summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
@@ -119,6 +147,18 @@ export const formatAppealSummonsConfirmedDate = (
   }
 
   return `${date} kl. ${time}`
+}
+
+export const formatAppealSummonsSentToCourtOfAppealsTooltip = (
+  sentToCourtOfAppealsDate?: string | null,
+): string | undefined => {
+  if (!sentToCourtOfAppealsDate) {
+    return undefined
+  }
+
+  const date = formatDate(sentToCourtOfAppealsDate, 'dd.MM.y')
+
+  return date ? `Sent til Landsréttar ${date}` : undefined
 }
 
 export const canShowIssueAppealSummons = (
@@ -144,8 +184,24 @@ export const getAppealSummonsMenuItems = (
   onEdit: () => void,
   onOpen: () => void,
   onDelete: () => void,
+  onSendToCourtOfAppeals?: () => void,
 ): ContextMenuItem[] => {
   const items: ContextMenuItem[] = []
+
+  if (
+    onSendToCourtOfAppeals &&
+    canPerformAppealSummonsAction(
+      AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+      summons,
+      user,
+    )
+  ) {
+    items.push({
+      title: 'Senda til Landsréttar',
+      onClick: onSendToCourtOfAppeals,
+      icon: 'arrowForward',
+    })
+  }
 
   if (canPerformAppealSummonsAction(AppealSummonsAction.EDIT, summons, user)) {
     items.push({ title: 'Breyta', onClick: onEdit, icon: 'pencil' })

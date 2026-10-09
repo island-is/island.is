@@ -51,10 +51,20 @@ describe('showsPublicProsecutorVerdictAppealStep', () => {
   })
 
   it('shows the step to a prosecutor at the public prosecutor office', () => {
-    const publicProsecutor = mockUser(UserRole.PROSECUTOR)
-    publicProsecutor.institution = {
-      ...publicProsecutor.institution!,
-      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    const user = mockUser(UserRole.PROSECUTOR)
+    const publicProsecutor = {
+      ...user,
+      institution: {
+        ...(user.institution ?? {
+          id: '',
+          created: '',
+          modified: '',
+          name: '',
+          active: true,
+          type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE,
+        }),
+        type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+      },
     }
 
     expect(

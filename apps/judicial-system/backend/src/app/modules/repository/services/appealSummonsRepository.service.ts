@@ -34,6 +34,7 @@ export type CreateAppealSummonsDefendant = {
 export type UpdateAppealSummons = {
   confirmedById?: string | null
   confirmedDate?: Date | null
+  sentToCourtOfAppealsDate?: Date | null
   hash?: string | null
   hashAlgorithm?: HashAlgorithm | null
 }

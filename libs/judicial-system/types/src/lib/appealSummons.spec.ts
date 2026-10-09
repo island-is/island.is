@@ -28,6 +28,11 @@ const defender = {
   role: UserRole.DEFENDER,
 } as InstitutionUser
 
+const courtOfAppealsJudge = {
+  role: UserRole.COURT_OF_APPEALS_JUDGE,
+  institution: { type: InstitutionType.COURT_OF_APPEALS },
+} as InstitutionUser
+
 const draft = {}
 const confirmed = { confirmedDate: '2026-06-05T09:15:00.000Z' }
 const inService = {
@@ -147,6 +152,68 @@ describe('canPerformAppealSummonsAction', () => {
     ).toBe(true)
   })
 
+  it('lets the court of appeals open a summons only once it has been sent', () => {
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.OPEN,
+        sent,
+        courtOfAppealsJudge,
+      ),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.OPEN,
+        confirmed,
+        courtOfAppealsJudge,
+      ),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.OPEN,
+        draft,
+        courtOfAppealsJudge,
+      ),
+    ).toBe(false)
+  })
+
+  it('lets staff send a confirmed or in-service summons to the court of appeals', () => {
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+        confirmed,
+        staff,
+      ),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+        inService,
+        staff,
+      ),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+        draft,
+        staff,
+      ),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+        sent,
+        staff,
+      ),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+        confirmed,
+        publicProsecutor,
+      ),
+    ).toBe(false)
+  })
+
   it('lets a public prosecution prosecutor confirm a draft only', () => {
     expect(
       canPerformAppealSummonsAction(
@@ -179,7 +246,7 @@ describe('canPerformAppealSummonsAction', () => {
   })
 
   it.each([districtProsecutor, defender, undefined])(
-    'does not let other users edit, delete or open',
+    'does not let other users edit, delete, open or send',
     (user) => {
       expect(
         canPerformAppealSummonsAction(AppealSummonsAction.EDIT, draft, user),
@@ -189,6 +256,13 @@ describe('canPerformAppealSummonsAction', () => {
       ).toBe(false)
       expect(
         canPerformAppealSummonsAction(AppealSummonsAction.OPEN, draft, user),
+      ).toBe(false)
+      expect(
+        canPerformAppealSummonsAction(
+          AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+          confirmed,
+          user,
+        ),
       ).toBe(false)
     },
   )

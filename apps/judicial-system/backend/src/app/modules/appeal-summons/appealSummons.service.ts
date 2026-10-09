@@ -9,7 +9,9 @@ import {
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealEventType,
   AppealSummonsAction,
   AppealSummonsAppellantSide,
@@ -18,6 +20,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getCaseFileHash } from '../../formatters'
+import { queueMessagesAfterCommit } from '../../middleware'
 import { standingVerdictAppellants } from '../appeal-case'
 import { PdfService } from '../case'
 import {
@@ -265,6 +268,79 @@ export class AppealSummonsService {
     if (!result) {
       throw new BadRequestException(
         `Appeal summons ${summons.id} was not found after hashing`,
+      )
+    }
+
+    return result
+  }
+
+  async sendToCourtOfAppeals(
+    theCase: Case,
+    summons: AppealSummons,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealSummons> {
+    if (
+      !canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_COURT_OF_APPEALS,
+        summons,
+        user,
+      )
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} cannot send appeal summons ${summons.id} to the court of appeals`,
+      )
+    }
+
+    const appealCase = theCase.verdictAppealCase
+
+    if (!appealCase) {
+      throw new BadRequestException(`Case ${theCase.id} has no verdict appeal`)
+    }
+
+    const sentToCourtOfAppealsDate = new Date()
+
+    await this.appealSummonsRepositoryService.update(
+      summons.id,
+      theCase.id,
+      { sentToCourtOfAppealsDate },
+      { transaction },
+    )
+
+    await this.appealEventLogRepositoryService.create(
+      {
+        caseId: theCase.id,
+        appealCaseId: appealCase.id,
+        eventType: AppealEventType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS,
+        userRole: user.role,
+        userId: user.id,
+        nationalId: user.nationalId,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      { transaction },
+    )
+
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS,
+      },
+    })
+
+    const result = await this.appealSummonsRepositoryService.findByIdAndCaseId(
+      summons.id,
+      theCase.id,
+      { transaction },
+    )
+
+    if (!result) {
+      throw new BadRequestException(
+        `Appeal summons ${summons.id} was not found after send to court of appeals`,
       )
     }
 

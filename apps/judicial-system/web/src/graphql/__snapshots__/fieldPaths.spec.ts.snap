@@ -697,6 +697,14 @@ Array [
   "case.verdictAppealCase.appealSummonses.sentToCourtOfAppealsDate",
   "case.verdictAppealCase.appealType",
   "case.verdictAppealCase.id",
+  "case.verdictAppealCase.sentAppealSummonses.confirmedDate",
+  "case.verdictAppealCase.sentAppealSummonses.created",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.appellantSide",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.claims",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.defendantId",
+  "case.verdictAppealCase.sentAppealSummonses.defendants.id",
+  "case.verdictAppealCase.sentAppealSummonses.id",
+  "case.verdictAppealCase.sentAppealSummonses.sentToCourtOfAppealsDate",
   "case.victims.hasLawyer",
   "case.victims.hasNationalId",
   "case.victims.id",
@@ -1908,6 +1916,13 @@ Array [
 exports[`GraphQL operations select these field paths SendAppealNotification 1`] = `
 Array [
   "sendAppealNotification.notificationSent",
+]
+`;
+
+exports[`GraphQL operations select these field paths SendAppealSummonsToCourtOfAppeals 1`] = `
+Array [
+  "sendAppealSummonsToCourtOfAppeals.id",
+  "sendAppealSummonsToCourtOfAppeals.sentToCourtOfAppealsDate",
 ]
 `;
 

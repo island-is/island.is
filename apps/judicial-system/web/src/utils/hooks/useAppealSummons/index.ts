@@ -9,6 +9,7 @@ import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { useConfirmAppealSummonsMutation } from './confirmAppealSummons.generated'
 import { useCreateAppealSummonsMutation } from './createAppealSummons.generated'
 import { useDeleteAppealSummonsMutation } from './deleteAppealSummons.generated'
+import { useSendAppealSummonsToCourtOfAppealsMutation } from './sendAppealSummonsToCourtOfAppeals.generated'
 import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
 
 export type AppealSummonsDefendantInput = {
@@ -26,6 +27,10 @@ const useAppealSummons = () => {
     useDeleteAppealSummonsMutation()
   const [confirmAppealSummonsMutation, { loading: isConfirmingAppealSummons }] =
     useConfirmAppealSummonsMutation()
+  const [
+    sendAppealSummonsToCourtOfAppealsMutation,
+    { loading: isSendingAppealSummonsToCourtOfAppeals },
+  ] = useSendAppealSummonsToCourtOfAppealsMutation()
 
   const createAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
@@ -134,6 +139,37 @@ const useAppealSummons = () => {
     [confirmAppealSummonsMutation, isConfirmingAppealSummons],
   )
 
+  const sendAppealSummonsToCourtOfAppeals = useCallback(
+    async (caseId: string, appealSummonsId: string) => {
+      try {
+        if (isSendingAppealSummonsToCourtOfAppeals) {
+          return undefined
+        }
+
+        const { data, errors } =
+          await sendAppealSummonsToCourtOfAppealsMutation({
+            variables: {
+              caseId,
+              input: { appealSummonsId },
+            },
+          })
+
+        if (data?.sendAppealSummonsToCourtOfAppeals && !errors) {
+          return data.sendAppealSummonsToCourtOfAppeals
+        }
+
+        return undefined
+      } catch {
+        toast.error('Upp kom villa við að senda áfrýjunarstefnu til Landsréttar')
+        return undefined
+      }
+    },
+    [
+      isSendingAppealSummonsToCourtOfAppeals,
+      sendAppealSummonsToCourtOfAppealsMutation,
+    ],
+  )
+
   const previewAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
       try {
@@ -171,11 +207,13 @@ const useAppealSummons = () => {
     updateAppealSummons,
     deleteAppealSummons,
     confirmAppealSummons,
+    sendAppealSummonsToCourtOfAppeals,
     previewAppealSummons,
     isCreatingAppealSummons,
     isUpdatingAppealSummons,
     isDeletingAppealSummons,
     isConfirmingAppealSummons,
+    isSendingAppealSummonsToCourtOfAppeals,
   }
 }
 

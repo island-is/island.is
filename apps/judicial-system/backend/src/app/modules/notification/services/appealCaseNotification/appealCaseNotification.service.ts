@@ -12,6 +12,7 @@ import { SmsService } from '@island.is/nova-sms'
 
 import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   DEFENDER_INDICTMENT_CASE_ROUTE,
   ROUTE_HANDLER_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
@@ -1988,6 +1989,73 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     return recipients
   }
 
+  //#region APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS notifications
+  private async sendAppealSummonsSentToCourtOfAppealsNotifications(
+    theCase: Case,
+    appealCase: AppealCase,
+  ): Promise<DeliverResponse> {
+    const caseNumber =
+      appealCase.appealCaseNumber ?? theCase.courtCaseNumber ?? theCase.id
+    const subject = `Áfrýjunarstefna í máli ${caseNumber}`
+    const html = `Ný áfrýjunarstefna er aðgengileg í máli ${caseNumber}. Hægt er að nálgast hana á <a href="${this.config.clientUrl}${COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">yfirlitssíðu áfrýjunar í Réttarvörslugátt</a>.`
+    const courtOfAppealsName = this.formatMessage(
+      notifications.emailNames.courtOfAppeals,
+    )
+
+    const recipientsByEmail = new Map<string, { name?: string; email: string }>()
+
+    const addRecipient = (name: string | undefined, email: string | undefined) => {
+      if (!email || recipientsByEmail.has(email)) {
+        return
+      }
+
+      recipientsByEmail.set(email, { name, email })
+    }
+
+    for (const email of this.config.email.courtOfAppealsAssistantEmails
+      .split(',')
+      .map((value: string) => value.trim())
+      .filter(Boolean)) {
+      addRecipient(courtOfAppealsName, email)
+    }
+
+    addRecipient(
+      courtOfAppealsName,
+      this.getCourtEmail(this.config.courtOfAppealsId),
+    )
+
+    for (const assigned of [
+      appealCase.appealJudge1,
+      appealCase.appealJudge2,
+      appealCase.appealJudge3,
+      appealCase.appealAssistant,
+    ]) {
+      addRecipient(assigned?.name, assigned?.email)
+    }
+
+    const promises = [...recipientsByEmail.values()].map((recipient) =>
+      this.sendEmail({
+        subject,
+        html,
+        recipientName: recipient.name,
+        recipientEmail: recipient.email,
+      }),
+    )
+
+    if (promises.length === 0) {
+      return { delivered: true }
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS,
+      recipients,
+    )
+  }
+  //#endregion
+
   //#region API
   private sendNotification(
     type: AppealCaseNotificationType,
@@ -2023,6 +2091,11 @@ export class AppealCaseNotificationService extends BaseNotificationService {
         )
       case AppealCaseNotificationType.APPEAL_WITHDRAWN:
         return this.sendAppealWithdrawnNotifications(theCase, appealCase, user)
+      case AppealCaseNotificationType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS:
+        return this.sendAppealSummonsSentToCourtOfAppealsNotifications(
+          theCase,
+          appealCase,
+        )
       default:
         throw new InternalServerErrorException(
           `Invalid appeal case notification type ${type}`,
