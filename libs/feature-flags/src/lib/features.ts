@@ -145,6 +145,11 @@ export enum Features {
   // that contains scopes marked `requiresConfirmation` (tvöfalt samþykki).
   isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
 
+  // Health data needs electronic ID: the app unlocks with Auðkenni for a time,
+  // and a web session must have been logged in with it (not a passkey). Read
+  // by the app, Mínar síður and the API.
+  isHealthStepUpRequired = 'isHealthStepUpRequired',
+
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
   shouldSendEmailNotificationsToCompanyUserProfiles = 'shouldSendEmailNotificationsToCompanyUserProfiles',

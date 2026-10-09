@@ -18,6 +18,7 @@ import { environments } from '../constants/environments'
 import { setInitializer } from './client-instance'
 import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
+import { STEP_UP_REQUIRED, stepUpStore } from '../stores/step-up-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
@@ -129,6 +130,15 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     graphQLErrors.map((graphQLError) =>
       console.log(`[GraphQL error]: ${JSON.stringify(graphQLError, null, 2)}`),
     )
+
+    // A locked area: the screen showing it swaps to its lock.
+    if (
+      graphQLErrors.some(
+        (graphQLError) => graphQLError.extensions?.code === STEP_UP_REQUIRED,
+      )
+    ) {
+      stepUpStore.getState().markRequired()
+    }
   }
 
   if (networkError) {

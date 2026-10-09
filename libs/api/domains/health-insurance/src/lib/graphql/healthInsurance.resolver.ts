@@ -13,9 +13,14 @@ import { AuditService } from '@island.is/nest/audit'
 
 import { HealthInsuranceService } from '../healthInsurance.service'
 import { IsHealthInsuredInput } from './dto'
+import { Features } from '@island.is/nest/feature-flags'
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 
 const namespace = '@island.is/api/health-insurance'
 
+// Insurance and accident status are health data too. Applications on the web
+// use them as well, so only the app's sessions are locked.
+@StepUpRequired(Features.isHealthStepUpRequired, { appsOnly: true })
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver(() => String)

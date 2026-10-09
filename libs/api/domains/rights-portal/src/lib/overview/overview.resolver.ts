@@ -1,3 +1,5 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
+import { Features } from '@island.is/feature-flags'
 import { Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
@@ -14,6 +16,7 @@ import { InsuranceConfirmation } from './models/insuranceConfirmation.model'
 import { InsuranceOverview } from './models/insuranceOverview.model'
 
 @Resolver()
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/overview' })
 @Scopes(ApiScope.healthRightsStatus)

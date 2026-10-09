@@ -1,3 +1,4 @@
+import { StepUpRequired } from '@island.is/api/domains/step-up'
 import { Query, Resolver } from '@nestjs/graphql'
 
 import { UseGuards } from '@nestjs/common'
@@ -21,6 +22,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 
 import { HealthDirectorateService } from '../health-directorate.service'
 
+@StepUpRequired(Features.isHealthStepUpRequired)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @CodeOwner(CodeOwners.Hugsmidjan)

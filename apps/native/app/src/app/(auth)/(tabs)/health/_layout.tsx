@@ -1,5 +1,11 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
+import { StyleSheet, View } from 'react-native'
+import { useTheme } from 'styled-components/native'
+
+import { StepUpLock } from '@/components/step-up/step-up-lock'
+import { useStepUpLock } from '@/hooks/use-step-up-lock'
+import { Loader } from '@/ui'
 import {
   modalScreenOptions,
   tabScreenOptions,
@@ -7,128 +13,165 @@ import {
 
 export default function HealthLayout() {
   const intl = useIntl()
+  const theme = useTheme()
+  // The whole area locks at once: while locked no health screen mounts, so
+  // nothing is fetched or shown — not even from the cache.
+  const { state, onUnlocked } = useStepUpLock('isHealthStepUpRequired')
+
+  if (state === 'loading') {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Loader />
+      </View>
+    )
+  }
+
+  if (state === 'locked') {
+    return <StepUpLock onUnlocked={onUnlocked} />
+  }
+
   return (
-    <Stack
-      initialRouteName="index"
-      screenOptions={{
-        ...tabScreenOptions,
-      }}
-    >
-      <Stack.Screen
-        name="index"
-        options={{
-          title: intl.formatMessage({ id: 'health.overview.screenTitle' }),
+    <View style={{ flex: 1 }}>
+      <Stack
+        initialRouteName="index"
+        screenOptions={{
+          ...tabScreenOptions,
         }}
-      />
-      <Stack.Screen
-        name="categories"
-        options={{
-          title: intl.formatMessage({ id: 'health.categories.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="vaccinations"
-        options={{
-          title: intl.formatMessage({ id: 'health.vaccinations.screenTitle' }),
-        }}
-      />
-      <Stack.Screen
-        name="appointments/index"
-        options={{
-          title: intl.formatMessage({ id: 'health.appointments.screenTitle' }),
-        }}
-      />
-      <Stack.Screen name="appointments/[id]" options={modalScreenOptions} />
-      <Stack.Screen
-        name="messages/index"
-        options={{
-          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Stack.Screen
-        name="messages/filter"
-        options={{
-          title: intl.formatMessage({
-            id: 'health.messages.filter.screenTitle',
-          }),
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Stack.Screen
-        name="messages/[id]"
-        options={{
-          title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
-          headerTitleAlign: 'center',
-        }}
-      />
-      <Stack.Screen name="messages/new" options={modalScreenOptions} />
-      <Stack.Screen
-        name="questionnaires/index"
-        options={{
-          title: intl.formatMessage({
-            id: 'health.questionnaires.screenTitle',
-          }),
-        }}
-      />
-      <Stack.Screen name="questionnaires/[id]" options={modalScreenOptions} />
-      {/* New health screen */}
-      <Stack.Screen
-        name="medicine/index"
-        options={{
-          title: intl.formatMessage({
-            id: 'health.prescriptionsAndCertificates.screenTitle',
-          }),
-        }}
-      />
-      {/* The old app's medicine screen: certificates only, and the
+      >
+        <Stack.Screen
+          name="index"
+          options={{
+            title: intl.formatMessage({ id: 'health.overview.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="categories"
+          options={{
+            title: intl.formatMessage({ id: 'health.categories.screenTitle' }),
+          }}
+        />
+        <Stack.Screen
+          name="vaccinations"
+          options={{
+            title: intl.formatMessage({
+              id: 'health.vaccinations.screenTitle',
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="appointments/index"
+          options={{
+            title: intl.formatMessage({
+              id: 'health.appointments.screenTitle',
+            }),
+          }}
+        />
+        <Stack.Screen name="appointments/[id]" options={modalScreenOptions} />
+        <Stack.Screen
+          name="messages/index"
+          options={{
+            title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen
+          name="messages/filter"
+          options={{
+            title: intl.formatMessage({
+              id: 'health.messages.filter.screenTitle',
+            }),
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen
+          name="messages/[id]"
+          options={{
+            title: intl.formatMessage({ id: 'health.messages.screenTitle' }),
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Stack.Screen name="messages/new" options={modalScreenOptions} />
+        <Stack.Screen
+          name="questionnaires/index"
+          options={{
+            title: intl.formatMessage({
+              id: 'health.questionnaires.screenTitle',
+            }),
+          }}
+        />
+        <Stack.Screen name="questionnaires/[id]" options={modalScreenOptions} />
+        {/* New health screen */}
+        <Stack.Screen
+          name="medicine/index"
+          options={{
+            title: intl.formatMessage({
+              id: 'health.prescriptionsAndCertificates.screenTitle',
+            }),
+          }}
+        />
+        {/* The old app's medicine screen: certificates only, and the
           destination whenever the medicine feature flags are off. Remove it
           once those flags are permanently on. */}
-      <Stack.Screen
-        name="medicine/certificates"
-        options={{
-          title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
-        }}
-      />
-      <Stack.Screen
-        name="medicine/prescriptions/index"
-        options={{
-          title: intl.formatMessage({ id: 'health.prescriptions.title' }),
-        }}
-      />
-      <Stack.Screen
-        name="medicine/prescriptions/history/[id]"
-        options={{
-          ...modalScreenOptions,
-          title: intl.formatMessage({ id: 'health.medicineHistory.title' }),
-        }}
-      />
-      <Stack.Screen
-        name="medicine/delegation/index"
-        options={{
-          title: intl.formatMessage({
-            id: 'health.medicineDelegation.screenTitle',
-          }),
-        }}
-      />
-      <Stack.Screen
-        name="medicine/delegation/add"
-        options={{
-          ...modalScreenOptions,
-          title: intl.formatMessage({
-            id: 'health.medicineDelegation.form.title',
-          }),
-        }}
-      />
-      <Stack.Screen
-        name="medicine/delegation/[id]"
-        options={{
-          ...modalScreenOptions,
-          title: intl.formatMessage({
-            id: 'health.medicineDelegation.screenTitle',
-          }),
-        }}
-      />
-    </Stack>
+        <Stack.Screen
+          name="medicine/certificates"
+          options={{
+            title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
+          }}
+        />
+        <Stack.Screen
+          name="medicine/prescriptions/index"
+          options={{
+            title: intl.formatMessage({ id: 'health.prescriptions.title' }),
+          }}
+        />
+        <Stack.Screen
+          name="medicine/prescriptions/history/[id]"
+          options={{
+            ...modalScreenOptions,
+            title: intl.formatMessage({ id: 'health.medicineHistory.title' }),
+          }}
+        />
+        <Stack.Screen
+          name="medicine/delegation/index"
+          options={{
+            title: intl.formatMessage({
+              id: 'health.medicineDelegation.screenTitle',
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="medicine/delegation/add"
+          options={{
+            ...modalScreenOptions,
+            title: intl.formatMessage({
+              id: 'health.medicineDelegation.form.title',
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="medicine/delegation/[id]"
+          options={{
+            ...modalScreenOptions,
+            title: intl.formatMessage({
+              id: 'health.medicineDelegation.screenTitle',
+            }),
+          }}
+        />
+      </Stack>
+      {state === 'checking' && (
+        // Asking whether it is still unlocked: hide what is on screen without
+        // losing where the person was.
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.shade.background,
+          }}
+        >
+          <Loader />
+        </View>
+      )}
+    </View>
   )
 }

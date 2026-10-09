@@ -129,6 +129,7 @@
 /apps/portals/admin/                                                                                                         @island-is/aranja
 /libs/api/domains/auth-admin/                                                                                                @island-is/aranja
 /libs/api/domains/sessions/                                                                                                  @island-is/aranja
+/libs/api/domains/step-up/                                                                                                   @island-is/aranja
 /libs/clients/auth/                                                                                                          @island-is/aranja
 /libs/clients/middlewares/                                                                                                   @island-is/aranja
 libs/clients/rsk/relationships/                                                                                              @island-is/aranja
