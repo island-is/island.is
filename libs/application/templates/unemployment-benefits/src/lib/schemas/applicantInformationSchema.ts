@@ -4,9 +4,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { YES } from '@island.is/application/core'
 import { serviceErrors } from '../messages'
 
-// Falls back to 'IS' only for legacy answers stored without a country code prefix.
 const isValidPhoneNumber = (phoneNumber: string) =>
-  !!parsePhoneNumberFromString(phoneNumber?.trim() ?? '', 'IS')?.isValid()
+  !!parsePhoneNumberFromString(phoneNumber)?.isValid()
 
 export const applicantInformationSchema = z
   .object({
