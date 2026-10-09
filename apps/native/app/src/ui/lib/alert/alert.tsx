@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   Image,
   ImageSourcePropType,
@@ -34,6 +34,8 @@ interface AlertProps {
 
   visible?: boolean
   hideIcon?: boolean
+  /** Action rendered below the message */
+  action?: ReactNode
   sharedAnimatedValue?: any
   hasBorder?: boolean
   hasBottomBorder?: boolean
@@ -115,6 +117,11 @@ const Title = styled(Typography)<{ $size: AlertSize }>`
   margin-bottom: ${({ $size }) => ($size === 'small' ? '2px' : '4px')};
 `
 
+const Action = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  align-self: flex-start;
+`
+
 const Close = styled(TouchableOpacity)`
   padding: 10px;
   justify-content: center;
@@ -157,6 +164,7 @@ export function Alert({
   size = 'default',
   hideIcon = false,
   visible = true,
+  action,
   onClose,
   onClosed,
   sharedAnimatedValue,
@@ -210,7 +218,7 @@ export function Alert({
           </Icon>
         )}
 
-        {(message || title) && (
+        {(message || title || action) && (
           <Content>
             {title && (
               <Title variant={isSmall ? 'eyebrow' : 'heading5'} $size={size}>
@@ -218,6 +226,7 @@ export function Alert({
               </Title>
             )}
             {message && <Typography variant="body3">{message}</Typography>}
+            {action && <Action>{action}</Action>}
           </Content>
         )}
 

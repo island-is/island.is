@@ -179,7 +179,6 @@ query Case($input: CaseQueryInput!) {
     rulingModifiedHistory
     caseResentExplanation
     origin
-    originalAncestorId
     openedByDefender
     defendantWaivesRightToCounsel
     crimeScenes
