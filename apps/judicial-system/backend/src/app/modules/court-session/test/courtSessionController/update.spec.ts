@@ -15,6 +15,7 @@ import {
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
 import { queueMessagesAfterCommit } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   AppealDecisionRepositoryService,
   Case,
@@ -70,9 +71,7 @@ describe('CourtSessionController - Update', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
@@ -91,14 +90,20 @@ describe('CourtSessionController - Update', () => {
       const user = {} as never
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          courtSessionToUpdate,
-          user,
-          theCase,
-          existingCourtSession as unknown as CourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            courtSessionToUpdate,
+            user,
+            theCase,
+            existingCourtSession as unknown as CourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }

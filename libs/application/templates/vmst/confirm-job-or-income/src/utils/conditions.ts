@@ -1,4 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
+import {
+  CasualWorkEntry,
+  PartTimeEntry,
+  getPartTimeCasualWorkOverlapIndices,
+  isActiveRow,
+} from './overlap'
 
 export const isCasualWork = (answers: Record<string, unknown>) =>
   getValueViaPath<string[]>(answers, 'typeOfIncome')?.includes('casualWork') ??
@@ -27,12 +33,6 @@ export const isSocialInsurance = (answers: Record<string, unknown>) =>
     'socialInsurance',
   ) ?? false
 
-type CasualWorkEntry = {
-  company?: { nationalId?: string }
-  dateFrom?: string
-  dateTo?: string
-}
-
 export const hasCasualWorkOverlap = (answers: Record<string, unknown>) => {
   const entries =
     getValueViaPath<CasualWorkEntry[]>(answers, 'registerCasualWork') ?? []
@@ -40,6 +40,7 @@ export const hasCasualWorkOverlap = (answers: Record<string, unknown>) => {
     for (let j = i + 1; j < entries.length; j++) {
       const a = entries[i]
       const b = entries[j]
+      if (!isActiveRow(a) || !isActiveRow(b)) continue
       const aId = a?.company?.nationalId
       const bId = b?.company?.nationalId
       if (!aId || !bId || aId !== bId) continue
@@ -60,12 +61,6 @@ export const hasCasualWorkOverlap = (answers: Record<string, unknown>) => {
   return false
 }
 
-type PartTimeEntry = {
-  company?: { nationalId?: string }
-  jobStart?: string
-  jobEnd?: string
-}
-
 export const hasPartTimeOverlap = (answers: Record<string, unknown>) => {
   const entries =
     getValueViaPath<PartTimeEntry[]>(answers, 'registerPartTime') ?? []
@@ -73,6 +68,7 @@ export const hasPartTimeOverlap = (answers: Record<string, unknown>) => {
     for (let j = i + 1; j < entries.length; j++) {
       const a = entries[i]
       const b = entries[j]
+      if (!isActiveRow(a) || !isActiveRow(b)) continue
       const aId = a?.company?.nationalId
       const bId = b?.company?.nationalId
       if (!aId || !bId || aId !== bId) continue
@@ -87,4 +83,18 @@ export const hasPartTimeOverlap = (answers: Record<string, unknown>) => {
     }
   }
   return false
+}
+
+export const hasPartTimeCasualWorkOverlap = (
+  answers: Record<string, unknown>,
+) => {
+  const partTimeEntries =
+    getValueViaPath<PartTimeEntry[]>(answers, 'registerPartTime') ?? []
+  const casualWorkEntries =
+    getValueViaPath<CasualWorkEntry[]>(answers, 'registerCasualWork') ?? []
+
+  return (
+    getPartTimeCasualWorkOverlapIndices(partTimeEntries, casualWorkEntries)
+      .length > 0
+  )
 }
