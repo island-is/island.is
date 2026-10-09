@@ -1,27 +1,46 @@
-import {
-  CardLoader,
-  InfoLine,
-  InfoLineStack,
-  m,
-} from '@island.is/portals/my-pages/core'
+import { CardLoader, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolStudentOverviewQuery } from './PrimarySchoolStudentOverview.generated'
+import { usePrimarySchoolKeyInfo } from './keyInfo/usePrimarySchoolKeyInfo'
+import { USE_MOCK_KEY_INFO, mockStudent } from './keyInfo/mockData'
+import { BaseInfoSection } from './keyInfo/BaseInfoSection'
+import { EmergencyContactsSection } from './keyInfo/EmergencyContactsSection'
+import { LanguageProfileSection } from './keyInfo/LanguageProfileSection'
+import { HealthProfileSection } from './keyInfo/HealthProfileSection'
 
 export const PrimarySchoolOverview = () => {
   useNamespaces('sp.education-primary-school')
   const { formatMessage } = useLocale()
   const { studentId } = useParams<{ studentId: string }>()
 
-  const { data, loading, error } = usePrimarySchoolStudentOverviewQuery({
+  const {
+    data,
+    loading: queryLoading,
+    error: queryError,
+  } = usePrimarySchoolStudentOverviewQuery({
     variables: { studentId: studentId ?? '' },
-    skip: !studentId,
+    skip: !studentId || USE_MOCK_KEY_INFO,
   })
 
-  const student = data?.primarySchoolStudent
+  // DEV-ONLY mock override: bypass the (not-yet-existing) backend so the whole
+  // page renders. Remove together with mockData.ts once MMS v0.2 lands.
+  const loading = USE_MOCK_KEY_INFO ? false : queryLoading
+  const error = USE_MOCK_KEY_INFO ? undefined : queryError
+  const student = USE_MOCK_KEY_INFO ? mockStudent : data?.primarySchoolStudent
+
+  // Lykilupplýsingar (key information) sections. Each section owns its own
+  // loading/error/save state and PATCH — there is no shared page-level save.
+  const {
+    emergencyContacts,
+    languageProfile,
+    healthProfile,
+    removeAgent,
+    saving,
+  } = usePrimarySchoolKeyInfo(studentId)
 
   return (
     <>
@@ -39,23 +58,29 @@ export const PrimarySchoolOverview = () => {
         </Box>
       )}
       {!loading && !error && student && (
-        <InfoLineStack label={formatMessage(m.baseInfo)}>
-          <InfoLine
-            label={psm.schoolLabel}
-            content={student.schoolName ?? undefined}
-            loading={loading}
+        <Stack space={10}>
+          <BaseInfoSection student={student} loading={loading} />
+
+          <EmergencyContactsSection
+            contacts={emergencyContacts.data}
+            loading={emergencyContacts.loading}
+            error={emergencyContacts.error}
+            saving={saving}
+            onRemove={removeAgent}
           />
-          <InfoLine
-            label={psm.contactTeacher}
-            content={student.contactTeacherName ?? undefined}
-            loading={loading}
+
+          <LanguageProfileSection
+            profile={languageProfile.data}
+            loading={languageProfile.loading}
+            error={languageProfile.error}
           />
-          <InfoLine
-            label={psm.homeRoom}
-            content={student.homeRoomName ?? undefined}
-            loading={loading}
+
+          <HealthProfileSection
+            profile={healthProfile.data}
+            loading={healthProfile.loading}
+            error={healthProfile.error}
           />
-        </InfoLineStack>
+        </Stack>
       )}
     </>
   )

@@ -5,10 +5,11 @@ import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { client } from '../../gen/fetch/client.gen'
 import { PrimarySchoolClientConfig } from './primarySchoolClient.config'
 import { PrimarySchoolClientService } from './primarySchoolClient.service'
+import { PrimarySchoolKeyInfoClientService } from './keyInfo/primarySchoolKeyInfo.service'
 
 @Module({
-  providers: [PrimarySchoolClientService],
-  exports: [PrimarySchoolClientService],
+  providers: [PrimarySchoolClientService, PrimarySchoolKeyInfoClientService],
+  exports: [PrimarySchoolClientService, PrimarySchoolKeyInfoClientService],
 })
 export class PrimarySchoolClientModule {
   constructor(
