@@ -24,7 +24,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `^20.15.0` and Yarn at `^3.2.3`.
+- You have Node `22.22.3` and Yarn `4.6` installed (pinned in `package.json` under `volta`; `.npmrc` is `engine-strict`, so other Node versions fail `yarn install`).
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
