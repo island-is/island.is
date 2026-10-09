@@ -50,19 +50,23 @@ describe('OffenseRepositoryService', () => {
   })
 
   describe('create', () => {
-    it('creates the offense against the indictment count', async () => {
+    it('creates the offense against the indictment count in the caller transaction', async () => {
       const created = { id: offenseId, indictmentCountId }
       model.create.mockResolvedValueOnce(created)
 
       const result = await service.create(
         indictmentCountId,
         IndictmentCountOffense.DRUNK_DRIVING,
+        { transaction },
       )
 
-      expect(model.create).toHaveBeenCalledWith({
-        indictmentCountId,
-        offense: IndictmentCountOffense.DRUNK_DRIVING,
-      })
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          indictmentCountId,
+          offense: IndictmentCountOffense.DRUNK_DRIVING,
+        },
+        { transaction },
+      )
       expect(result).toBe(created)
     })
 
@@ -71,13 +75,17 @@ describe('OffenseRepositoryService', () => {
       model.create.mockRejectedValueOnce(error)
 
       await expect(
-        service.create(indictmentCountId, IndictmentCountOffense.DRUNK_DRIVING),
+        service.create(
+          indictmentCountId,
+          IndictmentCountOffense.DRUNK_DRIVING,
+          { transaction },
+        ),
       ).rejects.toThrow(error)
     })
   })
 
   describe('updateByIdAndIndictmentCount', () => {
-    it('scopes the update to the row id and the indictment count and returns the rows', async () => {
+    it('scopes the update to the row id and the indictment count in the caller transaction and returns the rows', async () => {
       const offense = { id: offenseId, substances: { ALCOHOL: '0,10' } }
       model.update.mockResolvedValueOnce([1, [offense]])
 
@@ -85,11 +93,12 @@ describe('OffenseRepositoryService', () => {
         offenseId,
         indictmentCountId,
         { substances: { ALCOHOL: '0,10' } },
+        { transaction },
       )
 
       expect(model.update).toHaveBeenCalledWith(
         { substances: { ALCOHOL: '0,10' } },
-        { where: expectedWhere, returning: true },
+        { where: expectedWhere, returning: true, transaction },
       )
       expect(result).toEqual({ numberOfAffectedRows: 1, offenses: [offense] })
     })
@@ -99,6 +108,7 @@ describe('OffenseRepositoryService', () => {
         offenseId,
         indictmentCountId,
         { substances: null },
+        { transaction },
       )
 
       expect(result).toEqual({ numberOfAffectedRows: 0, offenses: [] })
@@ -109,21 +119,30 @@ describe('OffenseRepositoryService', () => {
       model.update.mockRejectedValueOnce(error)
 
       await expect(
-        service.updateByIdAndIndictmentCount(offenseId, indictmentCountId, {}),
+        service.updateByIdAndIndictmentCount(
+          offenseId,
+          indictmentCountId,
+          {},
+          { transaction },
+        ),
       ).rejects.toThrow(error)
     })
   })
 
   describe('deleteByIdAndIndictmentCount', () => {
-    it('scopes the delete to the row id and the indictment count and reports the row count', async () => {
+    it('scopes the delete to the row id and the indictment count in the caller transaction and reports the row count', async () => {
       model.destroy.mockResolvedValueOnce(1)
 
       const result = await service.deleteByIdAndIndictmentCount(
         offenseId,
         indictmentCountId,
+        { transaction },
       )
 
-      expect(model.destroy).toHaveBeenCalledWith({ where: expectedWhere })
+      expect(model.destroy).toHaveBeenCalledWith({
+        where: expectedWhere,
+        transaction,
+      })
       expect(result).toBe(1)
     })
 
@@ -132,7 +151,9 @@ describe('OffenseRepositoryService', () => {
       model.destroy.mockRejectedValueOnce(error)
 
       await expect(
-        service.deleteByIdAndIndictmentCount(offenseId, indictmentCountId),
+        service.deleteByIdAndIndictmentCount(offenseId, indictmentCountId, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })

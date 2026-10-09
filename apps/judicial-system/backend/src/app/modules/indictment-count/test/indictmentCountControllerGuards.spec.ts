@@ -5,7 +5,7 @@ import { verifyGuards } from '../../../test'
 import {
   CaseTypeGuard,
   MinimalCaseAccessGuard,
-  MinimalCaseExistsGuard,
+  MinimalCaseExistsForUpdateGuard,
 } from '../../case'
 import { IndictmentCountExistsGuard } from '../guards/indictmentCountExists.guard'
 import { OffenseExistsGuard } from '../guards/offenseExists.guard'
@@ -18,7 +18,7 @@ describe('IndictmentCountController - Top-level guards', () => {
     [
       JwtAuthUserGuard,
       RolesGuard,
-      MinimalCaseExistsGuard,
+      MinimalCaseExistsForUpdateGuard,
       CaseTypeGuard,
       MinimalCaseAccessGuard,
     ],

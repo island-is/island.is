@@ -1395,6 +1395,29 @@ export class CaseService {
     return minimalCase
   }
 
+  /**
+   * Reads the case row with its row locked for the rest of the transaction.
+   * Used by `MinimalCaseExistsForUpdateGuard` so that a mutating route that
+   * decides against the case's own columns does so against a row no one else
+   * can change until it commits.
+   */
+  async findMinimalByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<MinimalCase> {
+    const minimalCase =
+      await this.caseRepositoryService.findLiveMinimalByIdForUpdate(
+        id,
+        transaction,
+      )
+
+    if (!minimalCase) {
+      throw new NotFoundException(`Case ${id} not found`)
+    }
+
+    return minimalCase
+  }
+
   getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
     return this.caseRepositoryService.findConnectedIndictmentCases(theCase)
   }
