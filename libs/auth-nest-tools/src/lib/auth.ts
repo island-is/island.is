@@ -22,4 +22,17 @@ export interface Auth {
   userAgent?: string
   audkenniSimNumber?: string
   delegationProvider?: AuthDelegationProvider
+  /**
+   * Authentication Context Class Reference of the authentication behind this
+   * token, e.g. `eidas-loa-high` for electronic ID or `islandis-passkey` for
+   * a passkey login. Undefined if the identity provider did not assert one.
+   */
+  acr?: string
+  /** Authentication Methods References, e.g. `['hwk', 'pin']`. */
+  amr?: string[]
+  /**
+   * When the end-user authenticated. Note that this is preserved across an
+   * identity switch, so it is not on its own proof of a fresh authentication.
+   */
+  authTime?: Date
 }

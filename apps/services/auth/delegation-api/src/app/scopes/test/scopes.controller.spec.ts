@@ -46,7 +46,9 @@ describe('ScopesController', () => {
       const factory = new FixtureFactory(app)
 
       await Promise.all(
-        apiScopes.map((s) => factory.createApiScope({ name: s })),
+        apiScopes.map((s) =>
+          factory.createApiScope({ name: s, requiresConfirmation: s === 's2' }),
+        ),
       )
 
       await Promise.all(
@@ -72,6 +74,23 @@ describe('ScopesController', () => {
       expect(res.body.map((s: ScopeTreeDTO) => s.name)).toMatchObject(
         requestedScopes,
       )
+    })
+
+    it('GET /scopes/scope-tree surfaces requiresConfirmation', async () => {
+      // Act
+      const res = await server.get(
+        '/v1/scopes/scope-tree?requestedScopes=s1&requestedScopes=s2&requestedScopes=i1',
+      )
+
+      // Assert
+      expect(res.status).toEqual(200)
+      const byName = new Map(
+        res.body.map((s: ScopeTreeDTO) => [s.name, s.requiresConfirmation]),
+      )
+      expect(byName.get('s1')).toBe(false)
+      expect(byName.get('s2')).toBe(true)
+      // Identity resources are not api scopes and can never be sensitive.
+      expect(byName.get('i1')).toBe(false)
     })
 
     describe('with translations', () => {
@@ -226,6 +245,7 @@ describe('ScopesController', () => {
       const scope2 = await factory.createApiScope({
         name: 'cat-scope-2',
         allowExplicitDelegationGrant: true,
+        requiresConfirmation: true,
       })
 
       const apiScopeCategoryModel = app.get(getModelToken(ApiScopeCategory))
@@ -260,6 +280,23 @@ describe('ScopesController', () => {
       expect(
         financeCategory.scopes.map((s: { name: string }) => s.name),
       ).toContain('cat-scope-2')
+    })
+
+    it('surfaces requiresConfirmation per scope', async () => {
+      // Act
+      const res = await server.get('/v1/scopes/categories')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      const scopes = res.body.find(
+        (c: ScopeCategoryDTO) => c.id === categoryId,
+      ).scopes
+      expect(
+        scopes.find((s: { name: string }) => s.name === 'cat-scope-1'),
+      ).toMatchObject({ requiresConfirmation: false })
+      expect(
+        scopes.find((s: { name: string }) => s.name === 'cat-scope-2'),
+      ).toMatchObject({ requiresConfirmation: true })
     })
 
     it('filters scopes by OUTGOING direction', async () => {
@@ -339,6 +376,7 @@ describe('ScopesController', () => {
       const scope2 = await factory.createApiScope({
         name: 'tag-scope-2',
         allowExplicitDelegationGrant: true,
+        requiresConfirmation: true,
       })
 
       const apiScopeTagModel = app.get(getModelToken(ApiScopeTag))
@@ -371,6 +409,21 @@ describe('ScopesController', () => {
       expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain(
         'tag-scope-2',
       )
+    })
+
+    it('surfaces requiresConfirmation per scope', async () => {
+      // Act
+      const res = await server.get('/v1/scopes/tags')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      const scopes = res.body.find((t: ScopeTagDTO) => t.id === tagId).scopes
+      expect(
+        scopes.find((s: { name: string }) => s.name === 'tag-scope-1'),
+      ).toMatchObject({ requiresConfirmation: false })
+      expect(
+        scopes.find((s: { name: string }) => s.name === 'tag-scope-2'),
+      ).toMatchObject({ requiresConfirmation: true })
     })
 
     it('filters scopes by OUTGOING direction', async () => {

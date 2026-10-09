@@ -3,6 +3,7 @@ fragment AuthApiScopeOutgoing on AuthApiScope {
   displayName
   description
   allowsWrite
+  requiresConfirmation
   thirdPartyLoginUrl
 }
 

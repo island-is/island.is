@@ -1,0 +1,54 @@
+fragment AuthDelegationConfirmationFields on AuthDelegationConfirmation {
+  id
+  status
+  toNationalId
+  toName
+  domainDisplayName
+  bindingMessage
+  expiresAt
+  confirmedAt
+  scopes {
+    name
+    displayName
+    validTo
+  }
+  group {
+    id
+    toNationalId
+    toName
+    domainDisplayName
+    scopes {
+      name
+      displayName
+      validTo
+    }
+  }
+}
+
+query AuthDelegationConfirmation($input: AuthDelegationConfirmationInput!) {
+  authDelegationConfirmation(input: $input) {
+    ...AuthDelegationConfirmationFields
+  }
+}
+
+mutation AuthStartDelegationConfirmationAuthentication(
+  $input: AuthDelegationConfirmationInput!
+) {
+  authStartDelegationConfirmationAuthentication(input: $input) {
+    method
+    verificationCode
+    interval
+    expiresIn
+  }
+}
+
+mutation AuthCheckDelegationConfirmationAuthentication(
+  $input: AuthDelegationConfirmationInput!
+) {
+  authCheckDelegationConfirmationAuthentication(input: $input) {
+    status
+    confirmation {
+      ...AuthDelegationConfirmationFields
+    }
+  }
+}

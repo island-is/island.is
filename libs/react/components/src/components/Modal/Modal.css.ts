@@ -31,10 +31,24 @@ export const modal = recipe({
         maxWidth: 'min(calc(100vw - 64px), 888px)',
 
         paddingTop: theme.spacing[9],
+
+        // When a modal changes size while open, it narrows rather than jumps.
+        transition: 'max-width 200ms ease',
       },
     }),
   },
   variants: {
+    size: {
+      default: {},
+      // For short, focused content, e.g. a code to compare.
+      small: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            maxWidth: 'min(calc(100vw - 64px), 440px)',
+          },
+        }),
+      },
+    },
     noPaddingBottom: {
       false: {
         paddingBottom: theme.spacing[3],

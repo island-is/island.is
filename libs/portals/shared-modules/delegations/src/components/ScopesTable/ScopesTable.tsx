@@ -6,6 +6,7 @@ import {
   DatePicker,
   Divider,
   Table as T,
+  Tag,
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
@@ -17,6 +18,10 @@ import {
   useDelegationForm,
   type ScopeSelection,
 } from '../../context/DelegationFormContext'
+import {
+  canSelectScope,
+  useCanGrantSensitiveScopes,
+} from '../../hooks/useCanGrantSensitiveScopes'
 import { m } from '../../lib/messages'
 
 type ScopesTableProps = {
@@ -43,6 +48,15 @@ export const ScopesTable = ({
 
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
   const scopes = scopesProp ?? selectedScopes ?? []
+  const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
+
+  // Sensitive scopes can't be added in a session logged in with an ID card.
+  // One already selected (e.g. when editing a delegation) can still be removed.
+  const isLocked = (scope: AuthApiScope, isChecked: boolean) =>
+    !isChecked && !canSelectScope(scope, canGrantSensitiveScopes)
+  const selectableScopes = scopes.filter((s) =>
+    canSelectScope(s, canGrantSensitiveScopes),
+  )
 
   const onChangeScopeDate = (scope: ScopeSelection, date: Date) => {
     setSelectedScopes(
@@ -53,16 +67,18 @@ export const ScopesTable = ({
   }
 
   const allSelected =
-    scopes.length > 0 &&
-    scopes.every((s) => selectedScopes?.some((sel) => sel.name === s.name))
+    selectableScopes.length > 0 &&
+    selectableScopes.every((s) =>
+      selectedScopes?.some((sel) => sel.name === s.name),
+    )
 
   const onSelectAll = () => {
     if (allSelected) {
-      const scopeNames = new Set(scopes.map((s) => s.name))
+      const scopeNames = new Set(selectableScopes.map((s) => s.name))
       setSelectedScopes(selectedScopes.filter((s) => !scopeNames.has(s.name)))
     } else {
       const alreadySelected = new Set(selectedScopes.map((s) => s.name))
-      const newScopes = scopes
+      const newScopes = selectableScopes
         .filter((s) => !alreadySelected.has(s.name))
         .map((s) => ({ ...s, validTo: add(new Date(), { years: 1 }) }))
       setSelectedScopes([...selectedScopes, ...newScopes])
@@ -106,6 +122,7 @@ export const ScopesTable = ({
                     <Checkbox
                       name={`mobile-scope-${scope.name}`}
                       checked={isChecked}
+                      disabled={isLocked(scope as AuthApiScope, !!isChecked)}
                       onChange={() => onSelectScope?.(scope as AuthApiScope)}
                     />
                   )}
@@ -122,9 +139,21 @@ export const ScopesTable = ({
                         alignItems="center"
                         columnGap={2}
                       >
-                        <Text variant="h5" fontWeight="semiBold">
-                          {scope.displayName}
-                        </Text>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          columnGap={1}
+                          flexWrap="wrap"
+                        >
+                          <Text variant="h5" fontWeight="semiBold">
+                            {scope.displayName}
+                          </Text>
+                          {scope.requiresConfirmation && (
+                            <Tag variant="red" disabled>
+                              {formatMessage(m.sensitiveScopeTag)}
+                            </Tag>
+                          )}
+                        </Box>
                         <Box
                           display="flex"
                           alignItems="center"
@@ -322,6 +351,10 @@ export const ScopesTable = ({
                 <T.Data style={{ paddingLeft: 16, paddingRight: 0 }}>
                   <Checkbox
                     checked={selectedScopes?.some((s) => s.name === scope.name)}
+                    disabled={isLocked(
+                      scope as AuthApiScope,
+                      !!selectedScopes?.some((s) => s.name === scope.name),
+                    )}
                     onChange={() => onSelectScope?.(scope as AuthApiScope)}
                   />
                 </T.Data>
@@ -379,7 +412,20 @@ export const ScopesTable = ({
                 </T.Data>
               )}
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{permissionType}</Text>
+                {/* The tag ends the row, as in the design. */}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="spaceBetween"
+                  columnGap={2}
+                >
+                  <Text variant="medium">{permissionType}</Text>
+                  {scope.requiresConfirmation && (
+                    <Tag variant="red" disabled>
+                      {formatMessage(m.sensitiveScopeTag)}
+                    </Tag>
+                  )}
+                </Box>
               </T.Data>
             </T.Row>
           )

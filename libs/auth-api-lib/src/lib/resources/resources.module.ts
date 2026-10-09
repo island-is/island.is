@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { CmsModule } from '@island.is/cms'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { Client } from '../clients/models/client.model'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
@@ -32,10 +33,12 @@ import { ResourcesService } from './resources.service'
 import { ScopeService } from './scope.service'
 import { TenantsService } from './tenants.service'
 import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
+import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 
 @Module({
   imports: [
     CmsModule,
+    FeatureFlagModule,
     NationalRegistryV3ClientModule,
     TranslationModule,
     SequelizeModule.forFeature([
@@ -68,6 +71,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
     ResourceAccessService,
     ResourceTranslationService,
     DelegationResourcesService,
+    DelegationConfirmationPolicy,
     TenantsService,
     ScopeService,
   ],
@@ -75,6 +79,7 @@ import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model
     ResourcesService,
     ResourceAccessService,
     DelegationResourcesService,
+    DelegationConfirmationPolicy,
     TenantsService,
     ScopeService,
   ],

@@ -29,11 +29,23 @@ import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
+import { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
+import { DelegationConfirmationStatus } from '../delegation-confirmation/types/delegation-confirmation-status'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 import { getScopeValidityWhereClause } from './utils/scopes'
 import { validateDistrictCommissionersDelegations } from './utils/delegations'
 
 import type { User } from '@island.is/auth-nest-tools'
+
+/**
+ * How a write may include scopes marked `requiresConfirmation`. Without either,
+ * it may not include any.
+ */
+export type CreateScopesOptions = {
+  /** The confirmed confirmation these scopes were redeemed under. */
+  confirmationId: string
+}
+
 @Injectable()
 export class DelegationScopeService {
   constructor(
@@ -45,6 +57,8 @@ export class DelegationScopeService {
     private identityResourceModel: typeof IdentityResource,
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(DelegationConfirmation)
+    private delegationConfirmationModel: typeof DelegationConfirmation,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private delegationProviderService: DelegationProviderService,
@@ -57,24 +71,103 @@ export class DelegationScopeService {
     delegationId: string,
     scopes?: UpdateDelegationScopeDTO[],
     transaction?: Transaction,
+    options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
     if (scopes && scopes.length > 0) {
+      // Checked before anything is deleted: a refused write must not remove the
+      // scopes it was meant to replace, transaction or not.
+      await this.assertScopesMayBeGranted(
+        delegationId,
+        scopes,
+        transaction,
+        options,
+      )
       await this.delete(
         delegationId,
         scopes.map((s) => s.name),
         transaction,
       )
-      return this.createMany(delegationId, scopes, transaction)
+      return this.createMany(delegationId, scopes, transaction, options)
     }
 
     return []
+  }
+
+  /**
+   * Refuses to write a scope marked `requiresConfirmation` unless the caller
+   * presents the confirmation it was redeemed under.
+   *
+   * This sits below every write path — create, patch, and anything added later
+   * — so the rule cannot be bypassed by forgetting to check it higher up. It is
+   * the last line of defence behind the reserve-don't-write design, not the
+   * primary one.
+   */
+  private async assertScopesMayBeGranted(
+    delegationId: string,
+    scopes: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
+    options?: CreateScopesOptions,
+  ): Promise<void> {
+    const sensitiveScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
+      where: {
+        name: scopes.map((scope) => scope.name),
+        requiresConfirmation: true,
+      },
+      transaction,
+    })
+
+    if (sensitiveScopes.length === 0) {
+      return
+    }
+
+    const sensitiveNames = sensitiveScopes.map((scope) => scope.name)
+
+    if (!options) {
+      throw new Error(
+        `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveNames.join(
+          ', ',
+        )}`,
+      )
+    }
+
+    // The confirmation must exist, be confirmed, belong to this delegation and
+    // cover every sensitive scope written — not just be named.
+    const confirmation = await this.delegationConfirmationModel.findOne({
+      where: {
+        id: options.confirmationId,
+        delegationId,
+        status: DelegationConfirmationStatus.Confirmed,
+      },
+      transaction,
+    })
+    const confirmed = new Set(
+      confirmation?.scopes.map((scope) => scope.name) ?? [],
+    )
+    const uncovered = sensitiveNames.filter((name) => !confirmed.has(name))
+
+    if (uncovered.length > 0) {
+      throw new Error(
+        `Refusing to grant scopes not covered by confirmation ${
+          options.confirmationId
+        }: ${uncovered.join(', ')}`,
+      )
+    }
   }
 
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
     transaction?: Transaction,
+    options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
+    await this.assertScopesMayBeGranted(
+      delegationId,
+      scopes,
+      transaction,
+      options,
+    )
+
     const validFrom = startOfDay(new Date())
     const defaultValidTo = addDays(
       validFrom,

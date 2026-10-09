@@ -5,6 +5,16 @@ mutation CreateAuthDelegations($input: CreateAuthDelegationsInput!) {
       nationalId
       name
     }
+    ... on AuthCustomDelegation {
+      pendingConfirmations {
+        id
+        expiresAt
+        contentHash
+        requestedAcr
+        scopeNames
+        groupId
+      }
+    }
   }
 }
 

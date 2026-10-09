@@ -2,7 +2,7 @@ import { Modal } from '@island.is/react/components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text, toast } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
 import { ScopeSelection, useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { StepUpAuthentication } from '../StepUpAuthentication/StepUpAuthentication'
+import { useDelegationConfirmationStepUp } from '../StepUpAuthentication/useDelegationConfirmationStepUp'
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -37,12 +39,44 @@ export const ConfirmAccessModal = ({
 
   const { identities, selectedScopes } = useDelegationForm()
 
+  const hasSensitiveScopeSelected = selectedScopes.some(
+    (scope) => scope.requiresConfirmation,
+  )
+
   const [createAuthDelegations, { loading: createLoading }] =
     useCreateAuthDelegationsMutation()
   const [patchAuthDelegation, { loading: patchLoading }] =
     usePatchAuthDelegationMutation()
   const [submitting, setSubmitting] = useState(false)
   const mutationLoading = submitting || createLoading || patchLoading
+
+  // Held confirmations returned by the grant, as step-ups. While there are any,
+  // this modal is the second act of "tvöfalt samþykki": the grantor confirms
+  // with electronic ID, right here. Confirmations the server grouped take one
+  // step-up together, started for any of them; normally that is all of them.
+  const [pending, setPending] = useState<{ id: string }[]>([])
+  const [current, setCurrent] = useState(0)
+  const [expired, setExpired] = useState(false)
+  const confirmationId = pending[current]?.id
+
+  const { start, check } = useDelegationConfirmationStepUp(confirmationId, {
+    onExpired: () => setExpired(true),
+  })
+
+  const handleStepUpConfirmed = () => {
+    if (current + 1 < pending.length) {
+      setCurrent(current + 1)
+      return
+    }
+    toast.success(formatMessage(m.stepUpConfirmed))
+    navigate(DelegationPaths.DelegationsNew)
+  }
+
+  // The grant itself exists once the step-up has begun, so closing goes to the
+  // grantor's delegations rather than back to the form. An unfinished
+  // confirmation stays pending until it expires.
+  const handleClose = () =>
+    pending.length ? navigate(DelegationPaths.DelegationsNew) : onClose()
 
   const handleConfirm = async () => {
     if (onConfirm) {
@@ -83,7 +117,7 @@ export const ConfirmAccessModal = ({
         })
       }
 
-      await createAuthDelegations({
+      const { data } = await createAuthDelegations({
         variables: {
           input: {
             toNationalIds: identities.map((identity) => identity.nationalId),
@@ -91,6 +125,31 @@ export const ConfirmAccessModal = ({
           },
         },
       })
+
+      // Branch on what the server actually returned, never on our own feature
+      // flag read: the two are cached independently and disagreeing with the
+      // server is how you strand a half-created grant.
+      const held = data?.createAuthDelegations?.flatMap((delegation) =>
+        delegation.__typename === 'AuthCustomDelegation'
+          ? (delegation.pendingConfirmations ?? []).map((confirmation) => ({
+              id: confirmation.id,
+              groupId: confirmation.groupId ?? confirmation.id,
+            }))
+          : [],
+      )
+
+      if (held?.length) {
+        // One step-up per group, started for any of its confirmations.
+        const stepUps = new Map<string, { id: string }>()
+        for (const confirmation of held) {
+          if (!stepUps.has(confirmation.groupId)) {
+            stepUps.set(confirmation.groupId, { id: confirmation.id })
+          }
+        }
+        setPending([...stepUps.values()])
+        return
+      }
+
       navigate(DelegationPaths.DelegationsNew)
     } catch {
       toast.error(formatMessage(m.confirmError))
@@ -103,73 +162,136 @@ export const ConfirmAccessModal = ({
     <Modal
       id="confirm-access-modal"
       label={formatMessage(coreMessages.codeConfirmation)}
-      title={formatMessage(
-        isEdit ? m.confirmEditAccessModalTitle : m.confirmAccessModalTitle,
-      )}
-      onClose={onClose}
+      // The step-up has a heading of its own.
+      title={
+        confirmationId
+          ? undefined
+          : formatMessage(
+              isEdit
+                ? m.confirmEditAccessModalTitle
+                : m.confirmAccessModalTitle,
+            )
+      }
+      onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
-      eyebrow={formatMessage(coreMessages.digitalDelegations)}
+      // The step-up needs much less room than the grant it confirms.
+      size={confirmationId ? 'small' : 'default'}
+      eyebrow={
+        confirmationId
+          ? undefined
+          : formatMessage(coreMessages.digitalDelegations)
+      }
     >
-      <Box display="flex" flexDirection="column" rowGap={[3, 3, 4]}>
+      {confirmationId ? (
         <Box
-          alignSelf={['stretch', 'stretch', 'flexStart']}
           display="flex"
+          flexDirection="column"
           rowGap={2}
-          columnGap={2}
-          flexWrap={['nowrap', 'nowrap', 'wrap']}
-          flexDirection={['column', 'column', 'row']}
+          paddingBottom={[3, 3, 6]}
         >
-          {identities.map((identity) => {
-            return (
-              <div
-                key={identity.nationalId}
-                className={styles.idCard}
-                style={{
-                  flexBasis:
-                    identities.length >= 3 && !isMobile
-                      ? 'calc(33% - 9px)'
-                      : 'auto',
-                }}
-              >
-                <Text variant="eyebrow">
-                  {formatMessage(m.accessHolder)}
-                  {identities.length > 1
-                    ? ` ${identities.indexOf(identity) + 1}`
-                    : ''}
-                </Text>
-                <Box>
-                  <Text variant="h5">{identity.name}</Text>
-                  <Text variant="default">{`kt. ${identity.nationalId}`}</Text>
-                </Box>
-              </div>
-            )
-          })}
+          {pending.length > 1 && (
+            <Text variant="eyebrow" textAlign="center">
+              {formatMessage(m.stepUpProgress, {
+                current: current + 1,
+                total: pending.length,
+              })}
+            </Text>
+          )}
+          {expired ? (
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.confirmDelegationExpiredTitle)}
+              message={formatMessage(m.confirmDelegationExpiredMessage)}
+            />
+          ) : (
+            <StepUpAuthentication
+              key={confirmationId}
+              autoStart
+              start={start}
+              check={check}
+              onConfirmed={handleStepUpConfirmed}
+              onExpired={() => setExpired(true)}
+              context={formatMessage(m.stepUpContext)}
+              onBack={handleClose}
+            />
+          )}
         </Box>
-        <Box display="flex" flexDirection="column" rowGap={[1, 1, 2]}>
-          <Text variant="h5">
-            {formatMessage(m.selectedScopesWithValidityPeriod)}:
-          </Text>
-          <ScopesTable
-            showDate
-            editableDates={false}
-            removedScopes={removedScopes}
-          />
-        </Box>
-      </Box>
+      ) : (
+        <>
+          <Box display="flex" flexDirection="column" rowGap={[3, 3, 4]}>
+            <Box
+              alignSelf={['stretch', 'stretch', 'flexStart']}
+              display="flex"
+              rowGap={2}
+              columnGap={2}
+              flexWrap={['nowrap', 'nowrap', 'wrap']}
+              flexDirection={['column', 'column', 'row']}
+            >
+              {identities.map((identity) => {
+                return (
+                  <div
+                    key={identity.nationalId}
+                    className={styles.idCard}
+                    style={{
+                      flexBasis:
+                        identities.length >= 3 && !isMobile
+                          ? 'calc(33% - 9px)'
+                          : 'auto',
+                    }}
+                  >
+                    <Text variant="eyebrow">
+                      {formatMessage(m.accessHolder)}
+                      {identities.length > 1
+                        ? ` ${identities.indexOf(identity) + 1}`
+                        : ''}
+                    </Text>
+                    <Box>
+                      <Text variant="h5">{identity.name}</Text>
+                      <Text variant="default">{`kt. ${identity.nationalId}`}</Text>
+                    </Box>
+                  </div>
+                )
+              })}
+            </Box>
+            <Box display="flex" flexDirection="column" rowGap={[1, 1, 2]}>
+              <Text variant="h5">
+                {formatMessage(m.selectedScopesWithValidityPeriod)}:
+              </Text>
+              <ScopesTable
+                showDate
+                editableDates={false}
+                removedScopes={removedScopes}
+              />
+            </Box>
+            {hasSensitiveScopeSelected && (
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.sensitiveScopesSelectedTitle)}
+                message={formatMessage(m.confirmAccessSensitiveStepUpMessage)}
+              />
+            )}
+          </Box>
 
-      <Box position="sticky" bottom={0}>
-        <DelegationsFormFooter
-          loading={loading || mutationLoading}
-          showShadow={false}
-          onCancel={onClose}
-          onConfirm={handleConfirm}
-          confirmLabel={formatMessage(coreMessages.codeConfirmation)}
-          confirmIcon="checkmark"
-          containerPaddingBottom={[3, 3, 6]}
-          divider={false}
-        />
-      </Box>
+          <Box position="sticky" bottom={0}>
+            <DelegationsFormFooter
+              loading={loading || mutationLoading}
+              showShadow={false}
+              onCancel={handleClose}
+              onConfirm={handleConfirm}
+              // A sensitive grant goes on to the authentication from here.
+              confirmLabel={formatMessage(
+                hasSensitiveScopeSelected
+                  ? m.confirmAccessAuthenticateButton
+                  : m.confirmAccessButton,
+              )}
+              confirmIcon="checkmark"
+              containerPaddingBottom={[3, 3, 6]}
+              divider={false}
+            />
+          </Box>
+        </>
+      )}
     </Modal>
   )
 }

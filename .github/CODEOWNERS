@@ -423,6 +423,7 @@ codemagic.yaml                                                                  
 /libs/auth-api-lib/                                                                                                          @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/seeders/                                                                                                  @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                                       @island-is/fuglar @island-is/aranja
+/libs/auth/step-up/                                                                                                          @island-is/fuglar @island-is/aranja
 
 /libs/application/templates/criminal-record/                                                                                 @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission/                                 @island-is/origo

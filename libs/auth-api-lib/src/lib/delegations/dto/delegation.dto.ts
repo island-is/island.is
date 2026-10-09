@@ -13,6 +13,7 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 
+import { PendingConfirmationDTO } from '../../delegation-confirmation/dto/delegation-confirmation.dto'
 import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
 import {
   DelegationScopeDTO,
@@ -91,6 +92,15 @@ export class DelegationDTO {
   @IsString()
   @ApiPropertyOptional({ nullable: true, type: String })
   subjectId?: string | null
+
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'Scopes which were not granted because they require a separate high-assurance confirmation. The client must complete each confirmation before those scopes take effect.',
+    type: [PendingConfirmationDTO],
+  })
+  @IsArray()
+  pendingConfirmations?: PendingConfirmationDTO[]
 
   // This property is only used in delegation index
   rights?: PersonalRepresentativeRightTypeDTO[]

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -44,6 +45,13 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isCardSession } from '@island.is/auth/step-up'
+import { DelegationConfirmationService } from '../delegation-confirmation/delegation-confirmation.service'
+import type { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
+import { PendingConfirmationDTO } from '../delegation-confirmation/dto/delegation-confirmation.dto'
+import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import { Domain } from '../resources/models/domain.model'
+import { DelegationConfirmationPolicy } from '../delegation-confirmation/delegation-confirmation.policy'
 
 /**
  * Discriminated result for the PATCH endpoint. Controllers translate the
@@ -61,6 +69,14 @@ export type PatchDelegationResult =
     }
   | { kind: 'destroyed'; toNationalId: string }
 
+interface WrittenDelegation {
+  id: string
+  toNationalId: string
+  hadExistingScopes: boolean
+  /** Sensitive scopes held back from this write until the grantor confirms. */
+  pendingConfirmation?: DelegationConfirmation
+}
+
 /**
  * Service class for outgoing delegations.
  * This class supports domain based delegations.
@@ -70,12 +86,18 @@ export class DelegationsOutgoingService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(ApiScope)
+    private apiScopeModel: typeof ApiScope,
+    @InjectModel(Domain)
+    private domainModel: typeof Domain,
+    private delegationConfirmationService: DelegationConfirmationService,
     private delegationScopeService: DelegationScopeService,
     private delegationResourceService: DelegationResourcesService,
     private delegationIndexService: DelegationsIndexService,
     private namesService: NamesService,
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
+    private delegationConfirmationPolicy: DelegationConfirmationPolicy,
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -245,14 +267,20 @@ export class DelegationsOutgoingService {
     }
 
     const written = await this.sequelize.transaction(async (transaction) => {
-      const rows: Array<{
-        id: string
-        toNationalId: string
-        hadExistingScopes: boolean
-      }> = []
+      const rows: WrittenDelegation[] = []
       for (const input of inputs) {
         rows.push(await this.writeForDomain(user, input, transaction))
       }
+
+      // One authentication confirms everything this grant holds, whatever
+      // recipients and domains it spans.
+      await this.delegationConfirmationService.group(
+        rows.flatMap((row) =>
+          row.pendingConfirmation ? [row.pendingConfirmation] : [],
+        ),
+        transaction,
+      )
+
       return rows
     })
 
@@ -265,7 +293,7 @@ export class DelegationsOutgoingService {
     }
 
     return Promise.all(
-      written.map(async ({ id, hadExistingScopes }) => {
+      written.map(async ({ id, hadExistingScopes, pendingConfirmation }) => {
         const delegation = await this.findOneInternal(
           user,
           DelegationDirection.OUTGOING,
@@ -275,6 +303,11 @@ export class DelegationsOutgoingService {
           throw new InternalServerErrorException(
             `Failed to find the newly created delegation with id ${id}`,
           )
+        }
+        if (pendingConfirmation) {
+          delegation.pendingConfirmations = [
+            new PendingConfirmationDTO(pendingConfirmation),
+          ]
         }
         return { delegation, hadExistingScopes }
       }),
@@ -324,7 +357,7 @@ export class DelegationsOutgoingService {
     user: User,
     createDelegation: CreateDelegationDTO,
     transaction: Transaction,
-  ): Promise<{ id: string; toNationalId: string; hadExistingScopes: boolean }> {
+  ): Promise<WrittenDelegation> {
     let delegation = await this.delegationModel.findOne({
       where: {
         fromNationalId: user.nationalId,
@@ -368,9 +401,19 @@ export class DelegationsOutgoingService {
       )
     }
 
+    // Sensitive scopes are held for confirmation in the same transaction, so a
+    // rolled-back grant never leaves a confirmation behind.
+    const { grantable, pendingConfirmation } = await this.splitSensitiveScopes({
+      user,
+      delegation,
+      domainName: createDelegation.domainName ?? null,
+      scopes: createDelegation.scopes ?? [],
+      transaction,
+    })
+
     await this.delegationScopeService.createOrUpdate(
       delegation.id,
-      createDelegation.scopes,
+      grantable,
       transaction,
     )
 
@@ -378,7 +421,157 @@ export class DelegationsOutgoingService {
       id: delegation.id,
       toNationalId: delegation.toNationalId,
       hadExistingScopes,
+      pendingConfirmation,
     }
+  }
+
+  /**
+   * Decides whether a grant can be written now or must wait for a second,
+   * high-assurance confirmation.
+   *
+   * If any requested scope is sensitive, the whole grant waits: every scope in
+   * it is held on the confirmation record and nothing is written to the
+   * delegation tables until the grantor confirms, when all of it is written
+   * at once. Granting part of it now would leave a grantor who stops at the
+   * step-up thinking nothing happened while some of it already took effect.
+   * Held scopes being absent from the tables is also what makes them unusable
+   * by construction rather than by filtering every read path.
+   *
+   * Scopes the delegation already has are untouched: only what this grant
+   * changes waits. A sensitive scope sent again with the same date, as the edit
+   * form does, counts as unchanged.
+   */
+  private async splitSensitiveScopes({
+    user,
+    delegation,
+    domainName,
+    scopes,
+    transaction,
+  }: {
+    user: User
+    delegation: Delegation
+    domainName: string | null
+    scopes: UpdateDelegationScopeDTO[]
+    transaction?: Transaction
+  }): Promise<{
+    grantable: UpdateDelegationScopeDTO[]
+    pendingConfirmation?: Awaited<
+      ReturnType<DelegationConfirmationService['request']>
+    >
+  }> {
+    if (scopes.length === 0) {
+      return { grantable: scopes }
+    }
+
+    const sensitiveScopeNames =
+      await this.delegationResourceService.findSensitiveScopeNames(
+        user,
+        domainName,
+        DelegationDirection.OUTGOING,
+        scopes.map((scope) => scope.name),
+      )
+
+    if (sensitiveScopeNames.length === 0) {
+      return { grantable: scopes }
+    }
+
+    // The edit form sends back every selected scope, including sensitive ones
+    // the delegation already has under an earlier confirmation. Unchanged in
+    // name and date, they stay as they are: they neither make the grant wait
+    // nor are written again.
+    const sensitive = new Set(sensitiveScopeNames)
+    const existing = await this.delegationScopeService.findByDelegationId(
+      delegation.id,
+      transaction,
+    )
+    const isUnchanged = (scope: UpdateDelegationScopeDTO) =>
+      Boolean(scope.validTo) &&
+      existing.some(
+        (granted) =>
+          granted.scopeName === scope.name &&
+          granted.validTo?.getTime() ===
+            startOfDay(new Date(scope.validTo)).getTime(),
+      )
+    const requested = scopes.filter(
+      (scope) => !(sensitive.has(scope.name) && isUnchanged(scope)),
+    )
+    if (!requested.some((scope) => sensitive.has(scope.name))) {
+      return { grantable: requested }
+    }
+
+    // A marked scope is never granted without a confirmation. When one can't be
+    // had right now (the feature is off for the grantor, or its flag can't be
+    // read), the scope can't be granted at all.
+    if (!(await this.delegationConfirmationPolicy.isAvailable(user))) {
+      throw new ForbiddenException(
+        'Scopes that require confirmation cannot be granted right now.',
+      )
+    }
+
+    // The confirmation is a step-up by the method the grantor logged in with,
+    // and a card can't be used for it, so a card session can't grant these.
+    if (isCardSession(user.amr)) {
+      throw new ForbiddenException(
+        'Scopes that require confirmation cannot be granted from a session logged in with an ID card.',
+      )
+    }
+
+    // All of it waits for the confirmation, sensitive or not.
+    const held = requested
+
+    const [scopeDisplayNames, domain] = await Promise.all([
+      this.findScopeDisplayNames(held.map((scope) => scope.name)),
+      this.domainModel.findOne({ where: { name: domainName } }),
+    ])
+
+    const pendingConfirmation =
+      await this.delegationConfirmationService.request({
+        user,
+        delegation,
+        scopes: held,
+        scopeDisplayNames,
+        toName: delegation.toName,
+        domainDisplayName: domain?.displayName ?? null,
+        transaction,
+      })
+
+    return { grantable: [], pendingConfirmation }
+  }
+
+  private async findScopeDisplayNames(
+    scopeNames: string[],
+  ): Promise<Map<string, string>> {
+    const scopes = await this.apiScopeModel.findAll({
+      attributes: ['name', 'displayName'],
+      where: { name: scopeNames },
+    })
+
+    return new Map(scopes.map((scope) => [scope.name, scope.displayName]))
+  }
+
+  /**
+   * Notifies the recipient once a held grant has actually taken effect.
+   *
+   * The recipient is deliberately not notified when the scopes are merely
+   * requested — otherwise they would be told about access they cannot use, and
+   * an abandoned confirmation would leave a false notification behind.
+   */
+  async notifyConfirmedDelegation(
+    user: User,
+    delegationId: string,
+    hadExistingScopes: boolean,
+  ): Promise<void> {
+    const delegation = await this.findOneInternal(
+      user,
+      DelegationDirection.OUTGOING,
+      { id: delegationId },
+    )
+
+    if (!delegation) {
+      return
+    }
+
+    await this.notifyDelegationUpdate(user, [{ delegation, hadExistingScopes }])
   }
 
   private async notifyDelegationUpdate(
@@ -474,6 +667,8 @@ export class DelegationsOutgoingService {
       )
     }
 
+    let pendingConfirmationId: string | undefined
+
     const txResult = await this.sequelize.transaction(async (transaction) => {
       const currentDelegation = await this.delegationModel.findOne({
         where: {
@@ -528,11 +723,24 @@ export class DelegationsOutgoingService {
         patchedDelegation.updateScopes &&
         patchedDelegation.updateScopes.length > 0
       ) {
-        await this.delegationScopeService.createOrUpdate(
-          delegationId,
-          patchedDelegation.updateScopes,
-          transaction,
-        )
+        const { grantable, pendingConfirmation } =
+          await this.splitSensitiveScopes({
+            user,
+            delegation: currentDelegation,
+            domainName: currentDelegation.domainName ?? null,
+            scopes: patchedDelegation.updateScopes,
+            transaction,
+          })
+
+        pendingConfirmationId = pendingConfirmation?.id
+
+        if (grantable.length > 0) {
+          await this.delegationScopeService.createOrUpdate(
+            delegationId,
+            grantable,
+            transaction,
+          )
+        }
       }
 
       const remainingScopes =
@@ -541,9 +749,11 @@ export class DelegationsOutgoingService {
           transaction,
         )
 
-      if (remainingScopes.length === 0) {
+      if (remainingScopes.length === 0 && !pendingConfirmationId) {
         // No scopes remain — delete the delegation row so it doesn't linger
-        // as an empty record that grants nothing.
+        // as an empty record that grants nothing. A delegation with a pending
+        // confirmation is kept: it is the envelope the held scopes attach to
+        // once the confirmation is redeemed.
         await this.delegationModel.destroy({
           where: { id: delegationId },
           transaction,
@@ -579,6 +789,21 @@ export class DelegationsOutgoingService {
     }
 
     const delegation = await this.findById(user, delegationId)
+
+    if (pendingConfirmationId) {
+      const pendingConfirmation =
+        await this.delegationConfirmationService.findByIdForUser(
+          user,
+          pendingConfirmationId,
+        )
+      delegation.pendingConfirmations = [
+        new PendingConfirmationDTO(pendingConfirmation),
+      ]
+    }
+
+    // Only access that actually took effect is notified (a delegation with
+    // nothing but held scopes has none). Held scopes notify when their
+    // confirmation is redeemed instead.
     void this.notifyDelegationUpdate(user, [
       { delegation, hadExistingScopes: txResult.hadExistingScopes },
     ])
