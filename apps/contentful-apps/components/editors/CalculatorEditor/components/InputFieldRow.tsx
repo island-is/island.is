@@ -151,7 +151,7 @@ export const InputFieldRow = ({
 
       {isDraft && (
         <Text fontColor="gray600" fontSize="fontSizeS">
-          Not saved yet — pick a field.
+          This row isn&apos;t saved until a field is picked.
         </Text>
       )}
 

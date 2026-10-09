@@ -94,6 +94,49 @@ describe('filterConfigForPersistence', () => {
     ])
   })
 
+  it('treats markdown made only of empty paragraphs as empty', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          { uid: 'c1', kind: 'content', content: { is: '<br>\n<br>\n<br>' } },
+          {
+            uid: 'c2',
+            kind: 'content',
+            content: { is: 'Skýring', en: '<br>\n\n<br>' },
+          },
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields).toEqual([
+      { uid: 'c2', kind: 'content', content: { is: 'Skýring' } },
+    ])
+  })
+
+  it('trims empty paragraphs trailing the content', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          {
+            uid: 'c1',
+            kind: 'content',
+            content: { is: 'Skýring\n\n<br>\n\n<br>', en: 'Note\n\n<br>' },
+          },
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields[0]).toEqual({
+      uid: 'c1',
+      kind: 'content',
+      content: { is: 'Skýring', en: 'Note' },
+    })
+  })
+
   it('keeps an input content row markdown unchanged', () => {
     const { payload } = filterConfigForPersistence({
       outputTotal: outputTotal(),

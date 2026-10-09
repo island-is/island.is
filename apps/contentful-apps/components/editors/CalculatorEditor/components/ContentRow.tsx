@@ -17,6 +17,7 @@ import type {
 import { MarkdownEditor } from '../../../translation-namespace/components/MarkdownEditor'
 import { unifyAndDeserialize } from '../../../translation-namespace/utils/deserialize'
 import { serializeAndFormat } from '../../../translation-namespace/utils/serialize'
+import { isBlankMarkdown } from '../utils'
 import * as styles from './CalculatorEditor.css'
 
 interface Props {
@@ -42,7 +43,7 @@ export const ContentRow = ({
   onRemove,
 }: Props) => {
   const setLocale = (locale: 'is' | 'en', markdown: string) => {
-    const trimmed = markdown.trim() ? markdown : ''
+    const trimmed = isBlankMarkdown(markdown) ? '' : markdown
     onChange({
       is: locale === 'is' ? trimmed : field.content?.is ?? '',
       en: locale === 'en' ? trimmed : field.content?.en,
@@ -68,9 +69,9 @@ export const ContentRow = ({
         />
       </Stack>
 
-      {!field.content?.is?.trim() && (
+      {isBlankMarkdown(field.content?.is) && (
         <Text fontColor="gray600" fontSize="fontSizeS">
-          Not saved yet — Icelandic content is required.
+          This row isn&apos;t saved until it has Icelandic content.
         </Text>
       )}
 
