@@ -8,18 +8,40 @@ import {
   AppealCaseType,
   CaseFileCategory,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
+  canConfirmAppealSummonsRow,
   canShowIssueAppealSummons,
+  formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
   getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
+
+const publicProsecutorUser = (): User => {
+  const user = mockUser(UserRole.PROSECUTOR)
+
+  return {
+    ...user,
+    institution: {
+      ...(user.institution ?? {
+        id: '',
+        created: '',
+        modified: '',
+        name: '',
+        active: true,
+        type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE,
+      }),
+      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    },
+  }
+}
 
 describe('formatAppealSummonsFileName', () => {
   it('appends the created date to the file name', () => {
@@ -281,14 +303,55 @@ describe('showsAppealSummonses', () => {
     ).toBe(false)
   })
 
-  // Defenders never see a summons. The Court of Appeals only sees the ones sent
-  // to it, which arrive in a later step; until then it has nothing to show.
+  it('shows the summonses to a prosecutor at the public prosecutor office', () => {
+    expect(showsAppealSummonses(appealed, publicProsecutorUser())).toBe(true)
+  })
+
+  // Defenders never see a summons. District prosecutors keep their own overview.
+  // The Court of Appeals only sees the ones sent to it in a later step.
   it.each([
     UserRole.DEFENDER,
     UserRole.PROSECUTOR,
     UserRole.COURT_OF_APPEALS_JUDGE,
-  ])('shows nothing to %s', (role) => {
+  ])('shows nothing to %s outside the public prosecutor office', (role) => {
     expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+  })
+})
+
+describe('canConfirmAppealSummonsRow', () => {
+  it('lets a public prosecution prosecutor confirm a draft', () => {
+    expect(canConfirmAppealSummonsRow({}, publicProsecutorUser())).toBe(true)
+  })
+
+  it('does not let staff confirm', () => {
+    expect(
+      canConfirmAppealSummonsRow(
+        {},
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toBe(false)
+  })
+
+  it('does not offer confirm once the summons is confirmed', () => {
+    expect(
+      canConfirmAppealSummonsRow(
+        { confirmedDate: '2026-06-05T09:15:00.000Z' },
+        publicProsecutorUser(),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('formatAppealSummonsConfirmedDate', () => {
+  it('formats the confirmation date and time', () => {
+    expect(
+      formatAppealSummonsConfirmedDate('2026-06-05T09:15:00.000Z'),
+    ).toMatch(/05\.06\.2026 kl\. \d{2}:\d{2}/)
+  })
+
+  it('returns undefined when there is no date', () => {
+    expect(formatAppealSummonsConfirmedDate(null)).toBeUndefined()
+    expect(formatAppealSummonsConfirmedDate(undefined)).toBeUndefined()
   })
 })
 
@@ -355,11 +418,35 @@ describe('getAppealSummonsMenuItems', () => {
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
+  it('hides edit and delete once the summons has been confirmed', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        { confirmedDate: '2026-06-05T09:15:00.000Z' },
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Opna í nýjum flipa'])
+  })
+
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
     expect(
       getAppealSummonsMenuItems(
         { sentToCourtOfAppealsDate: '2026-06-10T10:00:00.000Z' },
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Opna í nýjum flipa'])
+  })
+
+  it('offers only open to a public prosecution prosecutor', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        {},
+        publicProsecutorUser(),
         jest.fn(),
         jest.fn(),
         jest.fn(),

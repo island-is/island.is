@@ -21,7 +21,9 @@ import {
 
 import AppealProcessFileRow from './AppealProcessFileRow'
 import {
+  canConfirmAppealSummonsRow,
   canShowIssueAppealSummons,
+  formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
   getAppealSummonsMenuItems,
   getVerdictAppealFileGroups,
@@ -53,11 +55,17 @@ const VerdictAppealFiles: FC = () => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
   const router = useRouter()
-  const { deleteAppealSummons, isDeletingAppealSummons } = useAppealSummons()
+  const {
+    deleteAppealSummons,
+    isDeletingAppealSummons,
+    confirmAppealSummons,
+    isConfirmingAppealSummons,
+  } = useAppealSummons()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
   const [summonsIdToDelete, setSummonsIdToDelete] = useState<string>()
+  const [summonsIdToConfirm, setSummonsIdToConfirm] = useState<string>()
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
@@ -103,6 +111,37 @@ const VerdictAppealFiles: FC = () => {
     setSummonsIdToDelete(undefined)
   }
 
+  const handleConfirmAppealSummons = async () => {
+    if (!summonsIdToConfirm) {
+      return
+    }
+
+    const confirmed = await confirmAppealSummons(
+      workingCase.id,
+      summonsIdToConfirm,
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      verdictAppealCase: prev.verdictAppealCase
+        ? {
+            ...prev.verdictAppealCase,
+            appealSummonses: prev.verdictAppealCase.appealSummonses?.map(
+              (summons) =>
+                summons.id === confirmed.id
+                  ? { ...summons, confirmedDate: confirmed.confirmedDate }
+                  : summons,
+            ),
+          }
+        : prev.verdictAppealCase,
+    }))
+    setSummonsIdToConfirm(undefined)
+  }
+
   return (
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
@@ -137,6 +176,10 @@ const VerdictAppealFiles: FC = () => {
           </Box>
           {summonses.map((summons) => {
             const fileName = formatAppealSummonsFileName(summons)
+            const confirmedLabel = formatAppealSummonsConfirmedDate(
+              summons.confirmedDate,
+            )
+            const showConfirm = canConfirmAppealSummonsRow(summons, user)
 
             return (
               <AppealProcessFileRow
@@ -144,6 +187,28 @@ const VerdictAppealFiles: FC = () => {
                 title={fileName}
                 onOpen={() => openAppealSummonsPdf(summons.id)}
                 menuAriaLabel={`Valmynd fyrir ${fileName}`}
+                meta={
+                  confirmedLabel ? (
+                    <Text whiteSpace="nowrap">{confirmedLabel}</Text>
+                  ) : undefined
+                }
+                action={
+                  showConfirm ? (
+                    <Button
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        if (summonsIdToConfirm) {
+                          return
+                        }
+
+                        setSummonsIdToConfirm(summons.id)
+                      }}
+                    >
+                      Staðfesta
+                    </Button>
+                  ) : undefined
+                }
                 menuItems={getAppealSummonsMenuItems(
                   summons,
                   user,
@@ -228,6 +293,27 @@ const VerdictAppealFiles: FC = () => {
               },
               colorScheme: 'destructive',
               isLoading: isDeletingAppealSummons,
+            },
+          ]}
+        />
+      )}
+      {summonsIdToConfirm && (
+        <Modal
+          title="Viltu staðfesta áfrýjunarstefnu?"
+          text="Áfrýjunarstefnan verður staðfest rafrænt í þínu nafni. Ef henni er breytt síðar þarf að staðfesta hana aftur."
+          onClose={() => setSummonsIdToConfirm(undefined)}
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => setSummonsIdToConfirm(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Staðfesta',
+              onClick: () => {
+                void handleConfirmAppealSummons()
+              },
+              isLoading: isConfirmingAppealSummons,
             },
           ]}
         />

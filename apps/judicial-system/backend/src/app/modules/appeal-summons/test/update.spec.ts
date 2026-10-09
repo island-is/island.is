@@ -139,7 +139,7 @@ describe('AppealSummonsController - Update', () => {
     expect(result).toBe(updated)
   })
 
-  it('clears confirmation when a confirmed summons is edited', async () => {
+  it('rejects an edit once the summons has been confirmed', async () => {
     const summons = {
       id: summonsId,
       confirmedDate: new Date(),
@@ -147,26 +147,20 @@ describe('AppealSummonsController - Update', () => {
       hash: 'abc',
     } as AppealSummons
 
-    await appealSummonsController.update(
-      caseId,
-      summonsId,
-      theCase,
-      summons,
-      dto,
-      user,
-    )
+    await expect(
+      appealSummonsController.update(
+        caseId,
+        summonsId,
+        theCase,
+        summons,
+        dto,
+        user,
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException)
 
-    expect(mockAppealSummonsRepositoryService.update).toHaveBeenCalledWith(
-      summonsId,
-      caseId,
-      {
-        confirmedById: null,
-        confirmedDate: null,
-        hash: null,
-        hashAlgorithm: null,
-      },
-      { transaction },
-    )
+    expect(
+      mockAppealSummonsRepositoryService.deleteDefendants,
+    ).not.toHaveBeenCalled()
   })
 
   it('rejects an edit after the summons has been sent to the Court of Appeals', async () => {

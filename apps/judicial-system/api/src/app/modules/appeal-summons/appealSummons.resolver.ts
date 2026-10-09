@@ -20,6 +20,7 @@ import {
 import {
   Feature,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -27,6 +28,7 @@ import { AppealCase } from '../appeal-case'
 import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
 import {
+  ConfirmAppealSummonsInput,
   CreateAppealSummonsInput,
   DeleteAppealSummonsInput,
   UpdateAppealSummonsInput,
@@ -117,6 +119,27 @@ export class AppealSummonsResolver {
       input.appealSummonsId,
     )
   }
+
+  @Mutation(() => AppealSummons)
+  confirmAppealSummons(
+    @Args('caseId', { type: () => String }) caseId: string,
+    @Args('input', { type: () => ConfirmAppealSummonsInput })
+    input: ConfirmAppealSummonsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Confirming appeal summons ${input.appealSummonsId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CONFIRM_APPEAL_SUMMONS,
+      this.backendService.confirmAppealSummons(caseId, input.appealSummonsId),
+      caseId,
+    )
+  }
 }
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -131,7 +154,7 @@ export class AppealCaseAppealSummonsResolver {
   ): AppealSummons[] {
     if (
       this.featureService.isHidden(Feature.INDICTMENT_APPEAL) ||
-      !isPublicProsecutionOfficeUser(user)
+      !(isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user))
     ) {
       return []
     }

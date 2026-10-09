@@ -1,3 +1,4 @@
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   AppealSummonsAction,
@@ -5,6 +6,7 @@ import {
   canPerformAppealSummonsAction,
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -93,8 +95,31 @@ export const showsAppealSummonses = (
   workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): boolean =>
-  isPublicProsecutionOfficeUser(user) &&
+  (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) &&
   hasStandingVerdictAppeal(workingCase.verdictAppealCase)
+
+export const canConfirmAppealSummonsRow = (
+  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  user: User | undefined,
+): boolean =>
+  canPerformAppealSummonsAction(AppealSummonsAction.CONFIRM, summons, user)
+
+export const formatAppealSummonsConfirmedDate = (
+  confirmedDate?: string | null,
+): string | undefined => {
+  if (!confirmedDate) {
+    return undefined
+  }
+
+  const date = formatDate(confirmedDate, 'dd.MM.y')
+  const time = formatDate(confirmedDate, TIME_FORMAT)
+
+  if (!date || !time) {
+    return undefined
+  }
+
+  return `${date} kl. ${time}`
+}
 
 export const canShowIssueAppealSummons = (
   workingCase: Pick<WorkingCase, 'verdictAppealCase'>,

@@ -72,6 +72,25 @@ describe('AppealSummonsController - Delete', () => {
     expect(result).toEqual({ deleted: true })
   })
 
+  it('rejects delete once the summons has been confirmed', async () => {
+    const confirmed = {
+      id: summonsId,
+      confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+    } as AppealSummons
+
+    await expect(
+      appealSummonsController.delete(
+        caseId,
+        summonsId,
+        theCase,
+        confirmed,
+        user,
+      ),
+    ).rejects.toThrow(ForbiddenException)
+
+    expect(mockAppealSummonsRepositoryService.delete).not.toHaveBeenCalled()
+  })
+
   it('rejects delete once the summons has been sent to the court of appeals', async () => {
     await expect(
       appealSummonsController.delete(caseId, summonsId, theCase, sent, user),
