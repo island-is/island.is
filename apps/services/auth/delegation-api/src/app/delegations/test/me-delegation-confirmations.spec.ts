@@ -271,15 +271,17 @@ describe('MeDelegationConfirmationsController', () => {
       const { body: delegation } = await grant([ORDINARY_SCOPE])
 
       // Act
-      const write = app
-        .get(DelegationScopeService)
-        .createOrUpdate(
-          delegation.id,
-          [{ name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) }],
-          undefined,
-        )
+      const write = app.get(DelegationScopeService).createOrUpdate(
+        delegation.id,
+        [
+          { name: ORDINARY_SCOPE, validTo: addYears(new Date(), 2) },
+          { name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) },
+        ],
+        undefined,
+      )
 
-      // Assert — whoever calls it, with or without the feature.
+      // Assert — whoever calls it, with or without the feature, and without a
+      // transaction the scope it would have replaced is still there.
       await expect(write).rejects.toThrow(/without a redeemed confirmation/)
       expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
     })
@@ -335,6 +337,67 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual(
         [ORDINARY_SCOPE, SENSITIVE_SCOPE].sort(),
       )
+    })
+
+    describe('editing a delegation that already has a sensitive scope', () => {
+      const confirmGrant = async (scopes: string[]) => {
+        const res = await grant(scopes)
+        const id = res.body.pendingConfirmations[0].id
+        const path = `/v1/me/delegation-confirmations/${id}/authentication`
+        await server.post(path)
+        approvedBy(grantorNationalId)
+        await server.get(path)
+      }
+
+      it('does not hold the edit for the sensitive scope sent back unchanged', async () => {
+        // Arrange — granted and confirmed earlier.
+        await confirmGrant([SENSITIVE_SCOPE])
+
+        // Act — the edit form sends every selected scope back, the confirmed
+        // sensitive one included, with the same date.
+        const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
+
+        // Assert — the new ordinary scope takes effect, nothing waits.
+        expect(res.status).toEqual(201)
+        expect(res.body.pendingConfirmations).toBeUndefined()
+        expect(await scopeNamesInDb()).toEqual(
+          [ORDINARY_SCOPE, SENSITIVE_SCOPE].sort(),
+        )
+      })
+
+      it('still holds it when its date changes', async () => {
+        // Arrange
+        await confirmGrant([SENSITIVE_SCOPE])
+
+        // Act
+        const res = await server.post('/v1/me/delegations').send({
+          toNationalId: recipientNationalId,
+          domainName: domain.name,
+          scopes: [{ name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 2) }],
+        })
+
+        // Assert
+        expect(res.status).toEqual(201)
+        expect(res.body.pendingConfirmations).toHaveLength(1)
+      })
+    })
+
+    it('leaves no empty delegation behind when a first grant expires unconfirmed', async () => {
+      // Arrange — a first grant to this recipient, held for confirmation.
+      const res = await grant([SENSITIVE_SCOPE])
+      await confirmations().update(
+        { expiresAt: subMinutes(new Date(), 1) },
+        { where: { id: res.body.pendingConfirmations[0].id } },
+      )
+
+      // Act — the cleanup worker runs.
+      await app.get(DelegationConfirmationService).expirePending()
+
+      // Assert
+      const delegations = await app
+        .get<typeof Delegation>(getModelToken(Delegation))
+        .findAll()
+      expect(delegations).toHaveLength(0)
     })
 
     it('supersedes an earlier pending confirmation instead of duplicating it', async () => {
@@ -508,6 +571,16 @@ describe('MeDelegationConfirmationsController', () => {
       expect(row?.status).toEqual(DelegationConfirmationStatus.Pending)
     })
 
+    it('refuses an id that is not a confirmation id', async () => {
+      // Act
+      const res = await server.get(
+        '/v1/me/delegation-confirmations/not-a-uuid/authentication',
+      )
+
+      // Assert — a bad request, not a database error.
+      expect(res.status).toEqual(400)
+    })
+
     it('reports not_started before anything is started', async () => {
       // Act
       const res = await status()
@@ -638,9 +711,10 @@ describe('MeDelegationConfirmationsController', () => {
       // Assert
       expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
-      expect((await confirmations().findByPk(confirmationId))?.status).toEqual(
-        DelegationConfirmationStatus.Pending,
-      )
+      const row = await confirmations().findByPk(confirmationId)
+      expect(row?.status).toEqual(DelegationConfirmationStatus.Pending)
+      // The step-up has ended: the next poll says so rather than timed_out.
+      expect(row?.authReqId).toBeNull()
     })
 
     it('lets the procuration holder who granted for a company confirm it', async () => {
