@@ -8,6 +8,7 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
   COURT_OF_APPEAL_SUMMARY_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
@@ -1573,7 +1574,9 @@ const useSections = (
   ): RouteSection[] => [
     {
       name: 'Dómur Landsréttar',
-      isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE),
+      isActive:
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1587,6 +1590,26 @@ const useSections = (
             targetAppealCase?.id,
           ),
         },
+        {
+          name: 'Verjandi',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          // The href alone only reaches a step the court has already passed.
+          // Going forward to one needs this, and nothing stands in the way:
+          // the overview before it asks nothing of the court.
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                  )
+              : undefined,
+        },
       ],
     },
   ]
@@ -1594,6 +1617,11 @@ const useSections = (
   const getSections = (workingCase: Case, user?: User): RouteSection[] => {
     const isExtensionCase =
       Boolean(workingCase.parentCase) && !isIndictmentCase(workingCase.type)
+    // Two different readers stand on a verdict appeal: the court of appeals,
+    // whose stepper is about the appeal itself, and the public prosecution
+    // office, whose own Áfrýjun step sits in their indictment stepper.
+    const isVerdictAppealProceeding =
+      targetAppealCase?.appealType === AppealCaseType.VERDICT
     const isRegisteringVerdictAppeal = isActive(
       PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
     )
@@ -1633,7 +1661,9 @@ const useSections = (
         ),
         // hasBeenAppealed only reflects the case-level ruling appeal, so a
         // verdict appeal has to switch this step off explicitly.
+        // Both readers switch it off, each for their own proceeding.
         isActive:
+          !isVerdictAppealProceeding &&
           !isVerdictAppealStepActive &&
           ((workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN &&
             !workingCase.appealCase?.appealReceivedByCourtDate) ||
@@ -1668,6 +1698,7 @@ const useSections = (
                 workingCase.state,
               ),
               isActive:
+                !isVerdictAppealProceeding &&
                 isCompletedCase(workingCase.state) &&
                 !workingCase.hasBeenAppealed &&
                 workingCase.appealCase?.appealState !==
@@ -1680,7 +1711,7 @@ const useSections = (
       // the page is about. A case can carry a ruling appeal and a verdict
       // appeal at once, and their steps are different; showing both would let
       // the side panel mark a step from the other proceeding active.
-      ...(targetAppealCase?.appealType === AppealCaseType.VERDICT
+      ...(isVerdictAppealProceeding
         ? getCourtOfAppealVerdictAppealSections(workingCase)
         : !targetAppealCase?.appealState ||
           (targetAppealCase.appealState === AppealCaseState.WITHDRAWN &&

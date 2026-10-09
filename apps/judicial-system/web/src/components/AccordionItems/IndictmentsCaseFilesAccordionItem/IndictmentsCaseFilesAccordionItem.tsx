@@ -441,29 +441,31 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    const { errors } = await updateFilesMutation({
-      variables: {
-        input: {
-          caseId,
-          files: filesToUpdate.map((file, index) => {
-            // This nasty update-in-place is needed to keep local data current
-            file.chapter = chapter ?? undefined
-            file.orderWithinChapter =
-              orderWithinChapter === null
-                ? undefined
-                : orderWithinChapter + index
-            return {
-              id: file.id,
-              chapter,
-              orderWithinChapter:
-                orderWithinChapter === null ? null : orderWithinChapter + index,
-            }
-          }),
+    try {
+      await updateFilesMutation({
+        variables: {
+          input: {
+            caseId,
+            files: filesToUpdate.map((file, index) => {
+              // This nasty update-in-place is needed to keep local data current
+              file.chapter = chapter ?? undefined
+              file.orderWithinChapter =
+                orderWithinChapter === null
+                  ? undefined
+                  : orderWithinChapter + index
+              return {
+                id: file.id,
+                chapter,
+                orderWithinChapter:
+                  orderWithinChapter === null
+                    ? null
+                    : orderWithinChapter + index,
+              }
+            }),
+          },
         },
-      },
-    })
-
-    if (errors) {
+      })
+    } catch {
       toast.error(formatMessage(strings.reorderFailedErrorMessage))
     }
   }
@@ -485,22 +487,22 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ),
     )
 
-    const { errors } = await updateFilesMutation({
-      variables: {
-        input: {
-          caseId,
-          files: [
-            {
-              id: fileId,
-              userGeneratedFilename: newName,
-              displayDate: newDisplayDate,
-            },
-          ],
+    try {
+      await updateFilesMutation({
+        variables: {
+          input: {
+            caseId,
+            files: [
+              {
+                id: fileId,
+                userGeneratedFilename: newName,
+                displayDate: newDisplayDate,
+              },
+            ],
+          },
         },
-      },
-    })
-
-    if (errors) {
+      })
+    } catch {
       toast.error(formatMessage(strings.renameFailedErrorMessage))
     }
   }
@@ -521,19 +523,19 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       return
     }
 
-    const { errors } = await updatePoliceDigitalCaseFilesMutation({
-      variables: {
-        input: {
-          caseId,
-          files: reorderableDigitalFiles.map((file, index) => ({
-            id: file.id,
-            orderWithinChapter: index,
-          })),
+    try {
+      await updatePoliceDigitalCaseFilesMutation({
+        variables: {
+          input: {
+            caseId,
+            files: reorderableDigitalFiles.map((file, index) => ({
+              id: file.id,
+              orderWithinChapter: index,
+            })),
+          },
         },
-      },
-    })
-
-    if (errors) {
+      })
+    } catch {
       toast.error(formatMessage(strings.reorderFailedErrorMessage))
     }
   }

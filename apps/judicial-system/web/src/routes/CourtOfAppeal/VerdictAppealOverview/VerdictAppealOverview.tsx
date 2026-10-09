@@ -3,7 +3,11 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+import {
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  getStandardUserDashboardRoute,
+} from '@island.is/judicial-system/consts'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
@@ -18,6 +22,7 @@ import {
 import CourtOfAppealsVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/CourtOfAppealsVerdictTimelineCard'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
 import DistrictCourtCaseFiles from './DistrictCourtCaseFiles'
 import VerdictAppealConclusions from './VerdictAppealConclusions'
@@ -40,11 +45,23 @@ const VerdictAppealOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
+  // Not the shared resolver here. This page is only ever about the verdict
+  // appeal, and a case can carry a ruling appeal as well - the resolver falls
+  // back to that one when the URL names no appeal, which a legacy link does,
+  // and the step that follows would then be opened for the wrong proceeding.
+  // When the URL does name the verdict appeal the resolver returns this very
+  // object, so nothing is lost by reading it directly.
+  const verdictAppealCase = workingCase.verdictAppealCase
   const { formatMessage } = useIntl()
   const router = useRouter()
 
   const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+    router.push(
+      appendAppealCaseIdQuery(
+        `${destination}/${workingCase.id}`,
+        verdictAppealCase?.id,
+      ),
+    )
 
   const headerLines = getVerdictAppealOverviewHeaderLines(workingCase)
 
@@ -95,7 +112,20 @@ const VerdictAppealOverview = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
+        <FormFooter
+          previousUrl={getStandardUserDashboardRoute(user)}
+          actions={[
+            {
+              text: formatMessage(core.continue),
+              icon: 'arrowForward',
+              onClick: () =>
+                handleNavigationTo(
+                  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                ),
+              testId: 'continueButton',
+            },
+          ]}
+        />
       </FormContentContainer>
     </PageLayout>
   )

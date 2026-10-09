@@ -94,7 +94,7 @@ export const NestedLines = ({
                 {format(new Date(payment.date), 'do MMMM yyyy')}
               </Text>
             </Box>
-            {payment.invoice.numberRedacted !== true && (
+            {payment.invoice.number != null && (
               <Text variant="small">
                 {formatMessage(m.totals.invoiceHeading, {
                   number: payment.invoice.number,

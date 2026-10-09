@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildDescriptionField,
-  buildImageField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -17,6 +16,7 @@ import {
   hasUsableRlsQualityPhoto,
   isVisible,
 } from '../../lib/utils'
+import { photoIllustration } from './photoIllustration'
 
 export interface ThjodskraImage {
   biometricId: string
@@ -132,7 +132,7 @@ export const buildPhotoSelectorSubSection = ({
               const options: Array<{
                 value: string
                 label: typeof m.usePassportImage
-                illustration?: ReturnType<typeof buildImageField>
+                illustration?: ReturnType<typeof photoIllustration>
               }> = []
 
               // Thjodskra facial photos
@@ -140,10 +140,9 @@ export const buildPhotoSelectorSubSection = ({
                 options.push({
                   value: photo.biometricId,
                   label: m.usePassportImage,
-                  illustration: buildImageField({
-                    id: `photo-${photo.biometricId}`,
-                    image: toBase64DataUrl(photo.content),
-                  }),
+                  illustration: photoIllustration(
+                    toBase64DataUrl(photo.content),
+                  ),
                 })
               }
 
@@ -159,10 +158,9 @@ export const buildPhotoSelectorSubSection = ({
                 options.push({
                   value: 'qualityPhoto',
                   label: m.useDriversLicenseImage,
-                  illustration: buildImageField({
-                    id: 'qualityPhoto-illustration',
-                    image: toBase64DataUrl(photoAndSig?.pohto ?? undefined),
-                  }),
+                  illustration: photoIllustration(
+                    toBase64DataUrl(photoAndSig?.pohto ?? undefined),
+                  ),
                 })
               }
 
