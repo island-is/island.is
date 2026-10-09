@@ -15,11 +15,10 @@ const usePoliceDigitalCaseFile = () => {
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
-  const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
-  // originalAncestorId is resolved server-side (split case id for indictments,
-  // the extension's original ancestor for request cases). Fall back to caseId
-  // only to satisfy the nullable GraphQL type — the backend always sets it.
-  const effectiveCaseId = originalAncestorId ?? caseId
+  // Always ask with the case the user is looking at. Access is decided
+  // against that case, and the backend resolves the original ancestor the
+  // police digital case files live on after the guards have run.
+  const { id: caseId, origin: caseOrigin } = workingCase
 
   const handleCompleted = useCallback(
     (completedData: {
@@ -38,7 +37,7 @@ const usePoliceDigitalCaseFile = () => {
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId: effectiveCaseId } },
+    variables: { input: { caseId } },
     skip:
       isLoadingWorkingCase ||
       caseOrigin !== CaseOrigin.LOKE ||
@@ -64,19 +63,19 @@ const usePoliceDigitalCaseFile = () => {
   const openDigitalCaseFileUrl = useCallback(
     (policeDigitalFileId: string) => {
       window.open(
-        `/akaera/rafraen-gogn?caseId=${effectiveCaseId}&fileId=${policeDigitalFileId}`,
+        `/akaera/rafraen-gogn?caseId=${caseId}&fileId=${policeDigitalFileId}`,
         '_blank',
         'noopener',
       )
     },
-    [effectiveCaseId],
+    [caseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
     async (fileId: string) => {
       try {
         const { data } = await deleteMutation({
-          variables: { input: { caseId: effectiveCaseId, fileId } },
+          variables: { input: { caseId, fileId } },
         })
 
         if (data?.deletePoliceDigitalCaseFile) {
@@ -89,7 +88,7 @@ const usePoliceDigitalCaseFile = () => {
         return false
       }
     },
-    [effectiveCaseId, deleteMutation, refetch],
+    [caseId, deleteMutation, refetch],
   )
 
   return {
