@@ -225,9 +225,11 @@ export class HealthDirectorateService {
     return communications.flatMap((dto) => {
       const communication = mapPregnancyCommunication(dto)
       if (!communication) {
-        this.logger.error(
-          `Unexpected pregnancy communication kind ${dto.kind} for communication ${dto.id}`,
-        )
+        this.logger.warn('Unexpected pregnancy communication kind', {
+          kind: dto.kind,
+          communicationId: dto.id,
+          pregnancyId,
+        })
         return []
       }
       return [communication]
@@ -248,9 +250,11 @@ export class HealthDirectorateService {
 
     const mapped = mapPregnancyCommunicationDetail(detail)
     if (!mapped) {
-      this.logger.error(
-        `Unexpected pregnancy communication kind ${detail.kind} for communication ${communicationId}`,
-      )
+      this.logger.warn('Unexpected pregnancy communication detail kind', {
+        kind: detail.kind,
+        communicationId,
+        pregnancyId,
+      })
       return null
     }
     return mapped
