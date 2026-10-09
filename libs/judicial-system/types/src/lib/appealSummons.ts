@@ -94,9 +94,7 @@ export const canPerformAppealSummonsAction = (
     action === AppealSummonsAction.EDIT ||
     action === AppealSummonsAction.DELETE
   ) {
-    const status = getAppealSummonsStatus(summons)
-
-    return status === 'draft' || status === 'confirmed'
+    return getAppealSummonsStatus(summons) === 'draft'
   }
 
   return false

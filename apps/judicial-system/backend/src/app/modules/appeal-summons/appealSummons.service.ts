@@ -122,20 +122,6 @@ export class AppealSummonsService {
 
     const resolvedDefendants = this.resolveDefendants(theCase, dto)
 
-    if (summons.confirmedDate) {
-      await this.appealSummonsRepositoryService.update(
-        summons.id,
-        theCase.id,
-        {
-          confirmedById: null,
-          confirmedDate: null,
-          hash: null,
-          hashAlgorithm: null,
-        },
-        { transaction },
-      )
-    }
-
     await this.appealSummonsRepositoryService.deleteDefendants(summons.id, {
       transaction,
     })

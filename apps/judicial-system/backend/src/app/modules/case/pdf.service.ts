@@ -582,6 +582,24 @@ export class PdfService {
     summons?: AppealSummons,
     previewDefendants?: AppealSummonsPdfDefendant[],
   ): Promise<Buffer> {
+    // Same cache shape as subpoena: once confirmed (hash set), prefer the
+    // frozen object in S3 so later downloads do not drift with case edits.
+    const key = summons ? `${theCase.id}/appealSummons/${summons.id}.pdf` : ''
+
+    if (summons?.hash && key) {
+      const existingPdf = await this.tryGetPdfFromS3(theCase, key)
+
+      if (existingPdf) {
+        return existingPdf
+      }
+    }
+
+    if (!theCase.rulingDate) {
+      throw new BadRequestException(
+        `Case ${theCase.id} has no ruling date; cannot generate an appeal summons PDF`,
+      )
+    }
+
     const rows = summons?.defendants ?? previewDefendants ?? []
 
     const defendants: AppealSummonsPdfDefendant[] = rows.map((row) => ({
@@ -593,6 +611,8 @@ export class PdfService {
 
     // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
     // stamp and issuer must be the recorded confirmer — never the downloader.
+    let generatedPdf: Buffer
+
     if (summons?.confirmedDate) {
       const confirmedBy = summons.confirmedBy
 
@@ -607,7 +627,7 @@ export class PdfService {
         title: confirmedBy.title,
       }
 
-      return createAppealSummons(
+      generatedPdf = await createAppealSummons(
         theCase,
         defendants,
         issuer,
@@ -619,15 +639,23 @@ export class PdfService {
         },
         summons.confirmedDate,
       )
+    } else {
+      generatedPdf = await createAppealSummons(
+        theCase,
+        defendants,
+        { name: user.name, title: user.title },
+        undefined,
+        undefined,
+      )
     }
 
-    return createAppealSummons(
-      theCase,
-      defendants,
-      { name: user.name, title: user.title },
-      undefined,
-      undefined,
-    )
+    // Confirm generates the stamped PDF before the hash is written; upload
+    // then so the next GET (with hash) can serve the same bytes.
+    if (summons?.confirmedDate && key) {
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
+    }
+
+    return generatedPdf
   }
 
   private getDefenceAppealDate(

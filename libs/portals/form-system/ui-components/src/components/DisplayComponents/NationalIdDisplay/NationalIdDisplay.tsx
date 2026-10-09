@@ -1,6 +1,9 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { FamilyTypes } from '@island.is/form-system/enums'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldTypesEnum } from '../../../lib/enums'
+import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 
 interface Props {
@@ -19,6 +22,10 @@ export const NationalIdDisplay = ({
   const value = item.values?.[valueIndex]
   const nationalId = value?.json?.nationalId ?? undefined
   const name = value?.json?.name ?? undefined
+  const showMaritalStatus =
+    item.fieldType === FieldTypesEnum.FAMILY &&
+    item.fieldSettings?.familyType === FamilyTypes.SPOUSE
+  const maritalStatus = getValue(item, 'maritalStatus', valueIndex)
   const showAddress = item.fieldSettings?.showAddress ?? false
   const address = value?.json?.address ?? undefined
   const postalCode = value?.json?.postalCode ?? undefined
@@ -93,6 +100,20 @@ export const NationalIdDisplay = ({
                 </Text>
               )}
             </Text>
+            {showMaritalStatus && (
+              <Text fontWeight="medium" lineHeight="sm">
+                {`${formatMessage(m.maritalStatus)}:`}
+                {'\u00A0\u00A0\u00A0'}
+                <Text
+                  as="span"
+                  fontWeight="light"
+                  color="dark400"
+                  lineHeight="sm"
+                >
+                  {maritalStatus}
+                </Text>
+              </Text>
+            )}
             {showAddress && (
               <Text fontWeight="medium" lineHeight="sm">
                 {`${formatMessage(m.address)}:`}

@@ -488,7 +488,7 @@ describe('getAppealSummonsMenuItems', () => {
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
-  it('offers send before edit on a confirmed summons for staff', () => {
+  it('offers send and open on a confirmed summons for staff', () => {
     expect(
       getAppealSummonsMenuItems(
         { confirmedDate: '2026-06-05T09:15:00.000Z' },
@@ -498,7 +498,7 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Senda til Landsréttar', 'Breyta', 'Opna í nýjum flipa', 'Eyða'])
+    ).toEqual(['Senda til Landsréttar', 'Opna í nýjum flipa'])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
