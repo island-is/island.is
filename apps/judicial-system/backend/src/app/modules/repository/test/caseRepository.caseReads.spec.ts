@@ -163,6 +163,28 @@ describe('CaseRepositoryService - case reads', () => {
         { transaction: undefined },
       )
     })
+
+    describe('in a transaction', () => {
+      const transaction = {} as never
+
+      beforeEach(async () => {
+        mockCaseModel.findOne.mockClear()
+        mockResolvePoliceCaseNumbersForCases.mockClear()
+
+        result = await caseRepositoryService.findLiveMinimalById(caseId, {
+          transaction,
+        })
+      })
+
+      it('should read the row and resolve the police case numbers in it', () => {
+        expect(findOneOptions().transaction).toBe(transaction)
+        expect(mockResolvePoliceCaseNumbersForCases).toHaveBeenCalledWith(
+          [theCase],
+          { transaction },
+        )
+        expect(result).toBe(theCase)
+      })
+    })
   })
 
   describe('findSplitSourceById', () => {

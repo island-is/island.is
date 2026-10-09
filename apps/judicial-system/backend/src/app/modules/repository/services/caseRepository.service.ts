@@ -625,18 +625,26 @@ export class CaseRepositoryService {
   // The case row on its own, with none of its associations read - what
   // MinimalCase describes. The routes that only decide against the case's own
   // columns take this read rather than the whole graph.
-  async findLiveMinimalById(id: string): Promise<Case | null> {
+  //
+  // findLiveMinimalByIdForUpdate is this read with the case row locked first.
+  async findLiveMinimalById(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
     try {
       this.logger.debug(`Finding minimal case ${id}`)
 
       const result = await this.caseModel.findOne({
         where: this.liveCaseWhere(id),
+        transaction: options?.transaction,
       })
 
       this.logger.debug(`Minimal case ${id} ${result ? 'found' : 'not found'}`)
 
       if (result) {
-        await this.resolvePoliceCaseNumbersForCaseGraph([result])
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
       }
 
       return result
@@ -859,6 +867,32 @@ export class CaseRepositoryService {
     }
 
     return this.findLiveById(id, { transaction })
+  }
+
+  /**
+   * findLiveMinimalById with the case row locked first: the read for a route
+   * that decides against the case's own columns and needs no one else to
+   * change them until it commits. The lock is a query of its own for the
+   * reason findLiveByIdForUpdate gives, and so that the two for-update reads
+   * stay the same shape - the minimal read has no joins to lock through, but
+   * a lock folded into it would silently stop covering the row the day it
+   * gains one.
+   */
+  async findLiveMinimalByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<Case | null> {
+    const locked = await this.lockByIdForUpdate(
+      id,
+      transaction,
+      this.liveCaseWhere(id),
+    )
+
+    if (!locked) {
+      return null
+    }
+
+    return this.findLiveMinimalById(id, { transaction })
   }
 
   /**
