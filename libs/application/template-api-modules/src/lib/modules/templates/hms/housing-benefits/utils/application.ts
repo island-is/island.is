@@ -509,6 +509,7 @@ export const mapApplicationToHousingBenefitsModel = (
     address: getValueViaPath<string>(answers, 'applicant.address') ?? '',
     municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
     postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
+    islandIsDateCreated: new Date(application.created),
     islandIsDateRegistered: new Date(),
 
     phoneNumber: normalizePhoneNumber(

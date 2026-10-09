@@ -11,7 +11,7 @@ export class DrivingInstructorGuard implements CanActivate {
     const user = ctx.getContext().req.user
     const teachingRights = await this.drivingLicenseService.getTeachingRights({
       nationalId: user.nationalId,
-      token: user.authorization,
+      auth: user,
     })
     return teachingRights.hasTeachingRights
   }

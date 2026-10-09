@@ -1134,6 +1134,11 @@ export type KeyValueItem = {
   boldValueText?: boolean
   lineAboveKeyText?: boolean
   hideIfEmpty?: boolean
+  tag?: {
+    label: FormText
+    variant?: TagVariant
+    outlined?: boolean
+  }
 }
 
 export type AttachmentItem = {

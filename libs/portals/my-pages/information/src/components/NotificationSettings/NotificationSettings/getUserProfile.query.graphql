@@ -4,6 +4,7 @@ mutation UpdateUserProfileSettings($input: UpdateUserProfileInput!) {
     documentNotifications
     canNudge
     smsNotifications
+    onlyActionablePriorityNotifications
   }
 }
 
@@ -13,5 +14,6 @@ query UserProfileSettings {
     documentNotifications
     canNudge
     smsNotifications
+    onlyActionablePriorityNotifications
   }
 }
