@@ -85,6 +85,7 @@ export type FieldTypeMapping = {
   [FieldTypesEnum.FAMILY]: {
     name?: FormSystemValue['name']
     nationalId?: FormSystemValue['nationalId']
+    maritalStatus?: FormSystemValue['maritalStatus']
   }
 }
 
@@ -154,7 +155,11 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
         municipality: undefined,
       } as FieldTypeMapping[T]
     case FieldTypesEnum.FAMILY:
-      return { name: undefined, nationalId: undefined } as FieldTypeMapping[T]
+      return {
+        name: undefined,
+        nationalId: undefined,
+        maritalStatus: undefined,
+      } as FieldTypeMapping[T]
     default:
       throw new Error(`Field type ${fieldType} not supported`)
   }

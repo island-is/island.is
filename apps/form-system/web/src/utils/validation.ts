@@ -37,6 +37,8 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
       return value?.phoneNumber === '' || !value.phoneNumber
     case FieldTypesEnum.NATIONAL_ID:
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
+    case FieldTypesEnum.FAMILY:
+      return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
     case FieldTypesEnum.ISK_NUMBERBOX:
       return !value?.iskNumber || value?.iskNumber.length === 0
     // case FieldTypesEnum.PROPERTY_NUMBER:

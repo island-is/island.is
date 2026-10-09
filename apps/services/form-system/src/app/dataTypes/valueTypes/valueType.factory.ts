@@ -110,7 +110,7 @@ export class ValueTypeFactory {
         ]
         return this.pickSettings(valueType, keys)
       case FieldTypesEnum.FAMILY:
-        keys = ['nationalId', 'name']
+        keys = ['nationalId', 'name', 'maritalStatus']
         return this.pickSettings(valueType, keys)
       default:
         return undefined
@@ -144,7 +144,8 @@ export class ValueTypeFactory {
             key === 'time' ||
             key === 'model' ||
             key === 'registrationNumber' ||
-            key === 'propertyNumber'
+            key === 'propertyNumber' ||
+            key === 'maritalStatus'
           ) {
             return ''
           }

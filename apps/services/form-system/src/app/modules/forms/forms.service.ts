@@ -1559,10 +1559,14 @@ export class FormsService {
         if (field.fieldType === FieldTypesEnum.ASSETS) {
           settings.assetType = field.fieldSettings?.assetType
         }
+        if (field.fieldType === FieldTypesEnum.FAMILY) {
+          settings.familyType = field.fieldSettings?.familyType
+        }
         if (
           settings.isDecimal !== undefined ||
           settings.applicantType !== undefined ||
-          settings.assetType !== undefined
+          settings.assetType !== undefined ||
+          settings.familyType !== undefined
         ) {
           jsonField.fieldSettings = settings
         }
@@ -1626,6 +1630,7 @@ export class FormsService {
     if ('municipality' in v) v.municipality = 'Reykjavík'
     if ('jobTitle' in v) v.jobTitle = 'Developer'
     if ('altName' in v) v.altName = 'Aukanafn'
+    if ('maritalStatus' in v) v.maritalStatus = 'Gift/ur'
 
     if ('homestayNumber' in v) v.homestayNumber = 'HOMESTAY-123'
     if ('propertyNumber' in v) v.propertyNumber = 'F1234567'
