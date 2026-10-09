@@ -5,14 +5,21 @@ import {
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
-import format from 'date-fns/format'
 import { format as formatKennitala } from 'kennitala'
 import { ApplicationAnswers } from '../lib/dataSchema'
 import * as m from '../lib/messages'
 import { PaymentFrequency } from './constants'
-
-const formatDateStr = (dateStr: string | undefined): string =>
-  dateStr ? format(new Date(dateStr), 'dd.MM.yyyy') : ''
+import { formatIsDate, formatIsDateOrDash } from './formatters'
+import {
+  getPersistedRecords,
+  toCapitalIncomeRow,
+  toCasualWorkRow,
+  toContractWorkRow,
+  toPartTimeRow,
+  toPensionRow,
+  toSocialInsuranceRow,
+} from './persistedRows'
+import { splitPersisted } from './reconcile'
 
 const getOptionLabel = (
   options: Array<{ id?: string; name?: string }> | undefined,
@@ -38,19 +45,61 @@ const incomeTypeLabelMap = {
   socialInsurance: m.application.incomeTypeSocialInsurance,
 } as const
 
-const buildEntryHeading = (index: number, total: number): KeyValueItem[] =>
-  total > 1
-    ? [
-        {
-          width: 'full',
-          keyText: {
-            ...m.application.overviewEntryHeading,
-            values: { index: index + 1 },
-          },
-          lineAboveKeyText: index > 0,
-        },
-      ]
-    : []
+type EntryStatus = 'new' | 'removed'
+
+type DiffedEntry<TRow> = { entry: TRow; status: EntryStatus }
+
+// Deleted rows are stripped from the answers the moment the repeater screen is
+// submitted, so the only record of a deletion is a persisted id that no longer
+// appears in the answers. Unchanged rows are intentionally left out entirely.
+const getDiffedEntries = <TPersisted extends { id?: string }, TRow>(
+  answers: FormValue,
+  externalData: ExternalData,
+  answersPath: string,
+  persistedPath: string,
+  toRow: (record: TPersisted) => TRow,
+): Array<DiffedEntry<TRow>> => {
+  const entries = getValueViaPath<TRow[]>(answers, answersPath) ?? []
+  const persisted = getPersistedRecords<TPersisted>(externalData, persistedPath)
+
+  const { creates, removedRecords } = splitPersisted(
+    entries as Array<TRow & { isRemoved?: boolean }>,
+    persisted,
+  )
+
+  return [
+    ...creates.map((entry) => ({
+      entry: entry as TRow,
+      status: 'new' as const,
+    })),
+    ...removedRecords.map((record) => ({
+      entry: toRow(record),
+      status: 'removed' as const,
+    })),
+  ]
+}
+
+const buildEntryHeading = (
+  index: number,
+  status: EntryStatus,
+): KeyValueItem[] => [
+  {
+    width: 'full',
+    keyText: {
+      ...m.application.overviewEntryHeading,
+      values: { index: index + 1 },
+    },
+    lineAboveKeyText: index > 0,
+    tag: {
+      label:
+        status === 'new'
+          ? m.application.overviewTagNew
+          : m.application.overviewTagDeleted,
+      variant: status === 'new' ? 'blue' : 'red',
+      outlined: true,
+    },
+  },
+]
 
 export const getIncomeTypeOverviewItems = (
   answers: FormValue,
@@ -71,15 +120,20 @@ export const getIncomeTypeOverviewItems = (
 
 export const getCasualWorkOverviewItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const entries =
-    getValueViaPath<NonNullable<ApplicationAnswers['registerCasualWork']>>(
-      answers,
-      'registerCasualWork',
-    ) ?? []
+  const entries = getDiffedEntries(
+    answers,
+    externalData,
+    'registerCasualWork',
+    'income.data.irregularJobs',
+    toCasualWorkRow,
+  ) as Array<
+    DiffedEntry<NonNullable<ApplicationAnswers['registerCasualWork']>[number]>
+  >
 
-  return entries.flatMap((entry, index) => [
-    ...buildEntryHeading(index, entries.length),
+  return entries.flatMap(({ entry, status }, index) => [
+    ...buildEntryHeading(index, status),
     {
       width: 'half',
       keyText: m.application.overviewNationalId,
@@ -94,12 +148,12 @@ export const getCasualWorkOverviewItems = (
     {
       width: 'half',
       keyText: m.application.dateFrom,
-      valueText: formatDateStr(entry.dateFrom),
+      valueText: formatIsDate(entry.dateFrom),
     },
     {
       width: 'half',
       keyText: m.application.dateTo,
-      valueText: formatDateStr(entry.dateTo),
+      valueText: formatIsDateOrDash(entry.dateTo),
     },
     {
       width: 'half',
@@ -111,15 +165,20 @@ export const getCasualWorkOverviewItems = (
 
 export const getPartTimeOverviewItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const entries =
-    getValueViaPath<NonNullable<ApplicationAnswers['registerPartTime']>>(
-      answers,
-      'registerPartTime',
-    ) ?? []
+  const entries = getDiffedEntries(
+    answers,
+    externalData,
+    'registerPartTime',
+    'income.data.partTimeJobs',
+    toPartTimeRow,
+  ) as Array<
+    DiffedEntry<NonNullable<ApplicationAnswers['registerPartTime']>[number]>
+  >
 
-  return entries.flatMap((entry, index) => [
-    ...buildEntryHeading(index, entries.length),
+  return entries.flatMap(({ entry, status }, index) => [
+    ...buildEntryHeading(index, status),
     {
       width: 'half',
       keyText: m.application.overviewNationalId,
@@ -134,7 +193,12 @@ export const getPartTimeOverviewItems = (
     {
       width: 'half',
       keyText: m.application.jobStart,
-      valueText: formatDateStr(entry.jobStart),
+      valueText: formatIsDate(entry.jobStart),
+    },
+    {
+      width: 'half',
+      keyText: m.application.jobEnd,
+      valueText: formatIsDateOrDash(entry.jobEnd),
     },
     {
       width: 'half',
@@ -151,24 +215,29 @@ export const getPartTimeOverviewItems = (
 
 export const getContractWorkOverviewItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const entries =
-    getValueViaPath<NonNullable<ApplicationAnswers['registerContractWork']>>(
-      answers,
-      'registerContractWork',
-    ) ?? []
+  const entries = getDiffedEntries(
+    answers,
+    externalData,
+    'registerContractWork',
+    'income.data.contractorJobs',
+    toContractWorkRow,
+  ) as Array<
+    DiffedEntry<NonNullable<ApplicationAnswers['registerContractWork']>[number]>
+  >
 
-  return entries.flatMap((entry, index) => [
-    ...buildEntryHeading(index, entries.length),
+  return entries.flatMap(({ entry, status }, index) => [
+    ...buildEntryHeading(index, status),
     {
       width: 'half',
       keyText: m.application.overviewContractWorkStart,
-      valueText: formatDateStr(entry.contractJobStart),
+      valueText: formatIsDate(entry.contractJobStart),
     },
     {
       width: 'half',
       keyText: m.application.overviewContractWorkEnd,
-      valueText: formatDateStr(entry.workEnds),
+      valueText: formatIsDateOrDash(entry.workEnds),
     },
   ])
 }
@@ -177,11 +246,15 @@ export const getPensionOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const entries =
-    getValueViaPath<NonNullable<ApplicationAnswers['registerPension']>>(
-      answers,
-      'registerPension',
-    ) ?? []
+  const entries = getDiffedEntries(
+    answers,
+    externalData,
+    'registerPension',
+    'income.data.pensionPayments',
+    toPensionRow,
+  ) as Array<
+    DiffedEntry<NonNullable<ApplicationAnswers['registerPension']>[number]>
+  >
   const pensionFunds =
     getValueViaPath<Array<{ id?: string; name?: string }>>(
       externalData,
@@ -193,8 +266,8 @@ export const getPensionOverviewItems = (
       'incomeTypes.data.pensionTypes',
     ) ?? []
 
-  return entries.flatMap((entry, index) => [
-    ...buildEntryHeading(index, entries.length),
+  return entries.flatMap(({ entry, status }, index) => [
+    ...buildEntryHeading(index, status),
     {
       width: 'full',
       keyText: m.application.pensionFund,
@@ -210,6 +283,16 @@ export const getPensionOverviewItems = (
       keyText: m.application.overviewAmountPerMonth,
       valueText: formatCurrency(entry.amountPerMonth),
     },
+    {
+      width: 'half',
+      keyText: m.application.dateFrom,
+      valueText: formatIsDate(entry.dateFrom),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateTo,
+      valueText: formatIsDateOrDash(entry.dateTo),
+    },
   ])
 }
 
@@ -217,19 +300,25 @@ export const getCapitalIncomeOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const entries =
-    getValueViaPath<NonNullable<ApplicationAnswers['registerCapitalIncome']>>(
-      answers,
-      'registerCapitalIncome',
-    ) ?? []
+  const entries = getDiffedEntries(
+    answers,
+    externalData,
+    'registerCapitalIncome',
+    'income.data.capitalIncomePayments',
+    toCapitalIncomeRow,
+  ) as Array<
+    DiffedEntry<
+      NonNullable<ApplicationAnswers['registerCapitalIncome']>[number]
+    >
+  >
   const capitalIncomeTypes =
     getValueViaPath<Array<{ id?: string; name?: string }>>(
       externalData,
       'incomeTypes.data.capitalIncomeTypes',
     ) ?? []
 
-  return entries.flatMap((entry, index) => [
-    ...buildEntryHeading(index, entries.length),
+  return entries.flatMap(({ entry, status }, index) => [
+    ...buildEntryHeading(index, status),
     {
       width: 'full',
       keyText: m.application.overviewCapitalIncomeType,
@@ -245,6 +334,16 @@ export const getCapitalIncomeOverviewItems = (
       keyText: m.application.paymentFrequency,
       valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
     },
+    {
+      width: 'half',
+      keyText: m.application.dateFrom,
+      valueText: formatIsDate(entry.dateFrom),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateTo,
+      valueText: formatIsDateOrDash(entry.dateTo),
+    },
   ])
 }
 
@@ -252,19 +351,25 @@ export const getSocialInsuranceOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const entries =
-    getValueViaPath<NonNullable<ApplicationAnswers['registerSocialInsurance']>>(
-      answers,
-      'registerSocialInsurance',
-    ) ?? []
+  const entries = getDiffedEntries(
+    answers,
+    externalData,
+    'registerSocialInsurance',
+    'income.data.trPayments',
+    toSocialInsuranceRow,
+  ) as Array<
+    DiffedEntry<
+      NonNullable<ApplicationAnswers['registerSocialInsurance']>[number]
+    >
+  >
   const socialInsuranceTypes =
     getValueViaPath<Array<{ id?: string; name?: string }>>(
       externalData,
       'incomeTypes.data.trTypes',
     ) ?? []
 
-  return entries.flatMap((entry, index) => [
-    ...buildEntryHeading(index, entries.length),
+  return entries.flatMap(({ entry, status }, index) => [
+    ...buildEntryHeading(index, status),
     {
       width: 'full',
       keyText: m.application.overviewSocialInsuranceType,
@@ -279,6 +384,16 @@ export const getSocialInsuranceOverviewItems = (
       width: 'half',
       keyText: m.application.paymentFrequency,
       valueText: getPaymentFrequencyLabel(entry.paymentFrequency),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateFrom,
+      valueText: formatIsDate(entry.dateFrom),
+    },
+    {
+      width: 'half',
+      keyText: m.application.dateTo,
+      valueText: formatIsDateOrDash(entry.dateTo),
     },
   ])
 }

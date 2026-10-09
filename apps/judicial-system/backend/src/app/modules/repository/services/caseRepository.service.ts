@@ -285,6 +285,27 @@ export class CaseRepositoryService {
     return originalAncestorId
   }
 
+  // The case the police files of a case family live under: the split origin of
+  // a split indictment, otherwise the root of the parentCaseId chain. Returns
+  // the given case itself when it is its own original ancestor.
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    const originalAncestorId = await this.findOriginalAncestorId(theCase)
+
+    if (originalAncestorId === theCase.id) {
+      return theCase
+    }
+
+    const originalAncestor = await this.findById(originalAncestorId)
+
+    if (!originalAncestor) {
+      throw new InternalServerErrorException(
+        `Original ancestor of case ${theCase.id} not found`,
+      )
+    }
+
+    return originalAncestor
+  }
+
   // Walks the parentCaseId duplicate chain to the newest non-deleted leaf.
   // Split cases are out of scope for case police state.
   // Only id and state are loaded for children; callers must not rely on other fields.
