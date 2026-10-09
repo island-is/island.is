@@ -47,6 +47,27 @@ export class CivilClaimant {
   @Field(() => Boolean, { nullable: true })
   readonly isSpokespersonConfirmed?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly hasAppealSpokesperson?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly appealSpokespersonIsLawyer?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonName?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonEmail?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealSpokespersonPhoneNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealSpokespersonConfirmed?: boolean
+
   @Field(() => [String], { nullable: true })
   readonly policeCaseNumbers?: string[]
 

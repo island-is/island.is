@@ -6,7 +6,12 @@ import {
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatDate, LinkResolver, m } from '@island.is/portals/my-pages/core'
+import {
+  formatDate,
+  LinkResolver,
+  m,
+  useIsMobile,
+} from '@island.is/portals/my-pages/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -55,6 +60,7 @@ const StateMessage = ({
 
 export const HealthConversationsBox = ({ limit }: Props) => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
   const userInfo = useUserInfo()
   const hasHealthScope = !!userInfo?.scopes?.includes(ApiScope.health)
 
@@ -74,7 +80,8 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       borderRadius="large"
       borderWidth="standard"
       borderColor="blue200"
-      paddingY={3}
+      paddingTop={[2, 2, 3]}
+      paddingBottom={3}
       height="full"
     >
       {!loading && !hasHealthScope && (
@@ -88,9 +95,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={3}
+        paddingX={[2, 2, 3]}
       >
-        <LinkResolver href={HealthPaths.HealthConversations}>
+        <LinkResolver
+          href={HealthPaths.HealthConversations}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
@@ -112,19 +122,20 @@ export const HealthConversationsBox = ({ limit }: Props) => {
           <LinkResolver
             href={HealthPaths.HealthConversations}
             aria-label={formatMessage(messages.seeAllMessages)}
+            className={styles.headerLink}
           >
             <Icon
               icon="arrowForward"
               type="filled"
               color="blue400"
-              size="medium"
+              size={isMobile ? 'small' : 'medium'}
             />
           </LinkResolver>
         )}
       </Box>
 
       {loading && (
-        <Box marginTop={4} paddingX={3}>
+        <Box marginTop={4} paddingX={[2, 2, 3]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -157,7 +168,7 @@ export const HealthConversationsBox = ({ limit }: Props) => {
       {!loading &&
         hasHealthScope &&
         !error &&
-        conversations.map((item) => {
+        conversations.map((item, index) => {
           const unread = !item.isRead
           return (
             <LinkResolver
@@ -176,10 +187,12 @@ export const HealthConversationsBox = ({ limit }: Props) => {
                   borderTopWidth="standard"
                   borderColor="blue200"
                   paddingY={2}
-                  paddingX={[3, 3, 2]}
+                  paddingLeft={2}
+                  paddingRight={2}
                   className={cn(
                     listStyles.conversationRow,
                     unread && styles.unreadRow,
+                    index === 0 && styles.firstRow,
                   )}
                 >
                   <ConversationAvatar

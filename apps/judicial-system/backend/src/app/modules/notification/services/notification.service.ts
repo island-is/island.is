@@ -1,11 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import { CaseState, type User } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { type Case } from '../../repository'
 import { UserInitiatedAppealNotificationType } from '../dto/appealNotification.dto'
 import { UserInitiatedNotificationType } from '../dto/notification.dto'
@@ -18,7 +16,7 @@ export class NotificationService {
     user: User,
     theCase: Case,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -36,7 +34,7 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     switch (type) {
       case UserInitiatedAppealNotificationType.APPEAL_CASE_FILES_UPDATED:
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           user,
           caseId: theCase.id,
@@ -63,7 +61,7 @@ export class NotificationService {
         this.addMessageForNotificationToQueue(type, user, theCase)
 
         if (theCase.state === CaseState.RECEIVED) {
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_COURT_REQUEST,
             user,
             caseId: theCase.id,

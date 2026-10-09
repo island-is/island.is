@@ -86,7 +86,12 @@ describe('defence request case access where options', () => {
     expect(sql).toMatch(
       /FROM defendant[\s\S]*WHERE defender_national_id = '1111111111'/,
     )
-    // Case-level column is no longer used for defender access.
+    // Sharing timing is read from the defendant row, not the case column.
+    expect(sql).toMatch(
+      /FROM defendant[\s\S]*request_shared_with_defender = 'READY_FOR_COURT'/,
+    )
+    // Case-level columns are no longer used for defender access.
     expect(sql).not.toContain(`"Case"."defender_national_id" = '1111111111'`)
+    expect(sql).not.toContain(`"Case"."request_shared_with_defender"`)
   })
 })

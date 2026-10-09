@@ -10,10 +10,9 @@ import {
 } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
-import { ClosedRecipientCard } from '@/components/closed-recipient-card'
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
-import { RecipientNoticeCard } from '@/components/recipient-notice-card'
 import { HealthMessageIntro } from '@/components/health-message-intro'
+import { NoOpenRecipientNotice } from '@/components/no-open-recipient-notice'
 import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
@@ -54,6 +53,18 @@ const getRecipientKey = (recipient: {
   `${recipient.nodeId}-${recipient.groupId}${
     recipient.treatmentId ? `-${recipient.treatmentId}` : ''
   }`
+
+// An open window is not enough: without a type — or a care team's own
+// subject — there is nothing to submit.
+const canStartConversation = (recipient: {
+  canCreateConversation: boolean
+  allowsCustomTitle: boolean
+  treatmentId?: string | null
+  allowedMessageTypes: unknown[]
+}) =>
+  recipient.canCreateConversation &&
+  (recipient.allowedMessageTypes.length > 0 ||
+    (!!recipient.treatmentId && recipient.allowsCustomTitle))
 
 export default function HealthMessageComposeScreen() {
   const { conversationId, recipientName, subject } = useLocalSearchParams<{
@@ -99,16 +110,6 @@ export default function HealthMessageComposeScreen() {
     !!selectedRecipient?.treatmentId &&
     !!selectedRecipient?.allowsCustomTitle
 
-  // With one blocked recipient there is nothing to switch to, so the
-  // explanation takes over the sheet and the picker goes.
-  const soleRecipient =
-    !isReply && recipients.length === 1 ? recipients[0] : undefined
-  const isSoleBlocked = !!soleRecipient && !soleRecipient.canCreateConversation
-  const soleWindowClosed =
-    isSoleBlocked &&
-    soleRecipient?.availability ===
-      HealthDirectorateHealthConversationRecipientAvailability.Closed
-  const soleNotAllowed = isSoleBlocked && !soleWindowClosed
   // A picked recipient that can't be messaged — closed now, or not at all —
   // gets a card in place of the form; the card says which.
   const isSelectedBlocked =
@@ -128,14 +129,25 @@ export default function HealthMessageComposeScreen() {
   const hidesComposer = isCertificateSelected || !!externalLinkUrl
   const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
-  const recipientsLoading = !isReply && recipientsRes.loading
+  const hasOpenRecipient = recipients.some(canStartConversation)
+  // A closed window may have reopened since the cache was written.
+  const hasClosedWindow = recipients.some(
+    (r) =>
+      r.availability ===
+      HealthDirectorateHealthConversationRecipientAvailability.Closed,
+  )
+  // Show the cache on a revisit, unless it's all closed by a window: then
+  // wait for the refetch.
+  const recipientsLoading =
+    !isReply &&
+    recipientsRes.loading &&
+    (!recipientsRes.data || (!hasOpenRecipient && hasClosedWindow))
   const recipientsError =
     !isReply && !recipientsLoading && !!recipientsRes.error
-  const noRecipients =
-    !isReply &&
-    !recipientsLoading &&
-    !recipientsError &&
-    recipients.length === 0
+  // Nothing to send to: no form can open, so the notice takes over the sheet
+  // and the intro is skipped.
+  const noOpenRecipient =
+    !isReply && !recipientsLoading && !recipientsError && !hasOpenRecipient
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
@@ -278,12 +290,14 @@ export default function HealthMessageComposeScreen() {
   const isMenuOpen = recipientMenuOpen || serviceMenuOpen
 
   const goBackToIntro = useCallback(() => setStep('intro'), [])
+  // Nothing to step back to when the intro was skipped.
+  const canReturnToIntro = hasIntro && !noOpenRecipient
 
   // Android has no header close item, so every back pops the sheet. Step back
   // to the intro instead — except after a send (see `isCompletingRef`).
   const navigation = useNavigation()
   useEffect(() => {
-    if (Platform.OS !== 'android' || !hasIntro || step !== 'compose') {
+    if (Platform.OS !== 'android' || !canReturnToIntro || step !== 'compose') {
       return
     }
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -297,7 +311,7 @@ export default function HealthMessageComposeScreen() {
       goBackToIntro()
     })
     return unsubscribe
-  }, [navigation, hasIntro, step, goBackToIntro])
+  }, [navigation, canReturnToIntro, step, goBackToIntro])
 
   // iOS clears the modal header's left slot, so the chevron is added back
   // explicitly. Mirrors `blueBackItem`.
@@ -314,7 +328,7 @@ export default function HealthMessageComposeScreen() {
     [theme.color.blue400, goBackToIntro],
   )
 
-  if (step === 'intro') {
+  if (step === 'intro' && !noOpenRecipient) {
     return (
       <>
         <StackScreen
@@ -328,6 +342,7 @@ export default function HealthMessageComposeScreen() {
           }}
         />
         <HealthMessageIntro
+          loading={recipientsLoading}
           termsAccepted={termsAccepted}
           onToggleTerms={() => setTermsAccepted(!termsAccepted)}
           onContinue={() => setStep('compose')}
@@ -343,7 +358,7 @@ export default function HealthMessageComposeScreen() {
         options={{
           title: '',
           gestureEnabled: !isMenuOpen,
-          ...(hasIntro && Platform.OS === 'ios' && { headerLeftItems }),
+          ...(canReturnToIntro && Platform.OS === 'ios' && { headerLeftItems }),
         }}
       />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
@@ -357,13 +372,13 @@ export default function HealthMessageComposeScreen() {
             theme.spacing[4] + (Platform.OS === 'android' ? keyboardHeight : 0),
           rowGap: theme.spacing[2],
           // Let the full-screen "blocked" message fill the sheet.
-          ...(isSoleBlocked && { flexGrow: 1 }),
+          ...(noOpenRecipient && { flexGrow: 1 }),
         }}
         keyboardShouldPersistTaps="handled"
         // iOS: inset for the keyboard so the Send button clears it.
         automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
-        {!isSoleBlocked && (
+        {!noOpenRecipient && (
           <Typography variant="heading3">{headerTitle}</Typography>
         )}
 
@@ -381,27 +396,8 @@ export default function HealthMessageComposeScreen() {
               id: 'health.messages.errorMessage',
             })}
           />
-        ) : soleWindowClosed && soleRecipient ? (
-          <ClosedRecipientCard recipient={soleRecipient} />
-        ) : soleNotAllowed ? (
-          <RecipientNoticeCard
-            title={intl.formatMessage({
-              id: 'health.messages.compose.soleBlockedTitle',
-            })}
-            message={intl.formatMessage(
-              { id: 'health.messages.compose.soleBlockedText' },
-              { name: soleRecipient?.name },
-            )}
-          />
-        ) : noRecipients ? (
-          <RecipientNoticeCard
-            title={intl.formatMessage({
-              id: 'health.messages.compose.noRecipient',
-            })}
-            message={intl.formatMessage({
-              id: 'health.messages.compose.noRecipientText',
-            })}
-          />
+        ) : noOpenRecipient ? (
+          <NoOpenRecipientNotice recipients={recipients} />
         ) : (
           <>
             {fixedRecipientName !== undefined ? (
@@ -570,6 +566,7 @@ export default function HealthMessageComposeScreen() {
                       })}
                       onPress={onSend}
                       disabled={!canSend || sending}
+                      loading={sending}
                     />
                   </View>
                 )}

@@ -41,13 +41,13 @@ describe('FileController - Create case file', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       caseFileRepositoryService,
       fileController,
     } = await createTestingFileModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock

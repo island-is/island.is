@@ -6,6 +6,8 @@ import { LinkRowButton } from '../link-row-button/link-row-button'
 
 export interface MoreInfoConteinerProps {
   externalLinks: {
+    /** Render key, for lists where titles repeat. */
+    id?: string
     link: string
     title: string
     icon?: ImageSourcePropType
@@ -33,7 +35,7 @@ export const MoreInfoContiner = ({ externalLinks }: MoreInfoConteinerProps) => {
               ...link,
               isExternal: true,
             }}
-            key={link.title}
+            key={link.id ?? link.title}
           />
         ))}
       </View>

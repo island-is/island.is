@@ -7,6 +7,7 @@ import { CourtSessionStringType } from '@island.is/judicial-system/types'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CourtDocument,
@@ -16,10 +17,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -60,9 +58,7 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
       await createTestingCourtSessionModule()
 
     const mockTransaction = sequelize.transaction as jest.Mock
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn({} as Transaction),
-    )
+    mockTransaction.mockResolvedValue({} as Transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
@@ -75,14 +71,20 @@ describe('CourtSessionController - Confirm with merged case entries', () => {
       const theCase = { id: caseId, caseFiles: [] } as unknown as Case
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          courtSessionToUpdate,
-          {} as never,
-          theCase,
-          existingCourtSession as unknown as CourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            courtSessionToUpdate,
+            {} as never,
+            theCase,
+            existingCourtSession as unknown as CourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }

@@ -22,6 +22,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import {
   AppealCase,
   Case,
@@ -68,24 +69,27 @@ const canProsecutionUserAccessCase = (
     user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
       user.institution?.id !== theCase.sharedWithProsecutorsOfficeId) &&
-    user.id !== theCase.indictmentReviewerId
+    user.id !== theCase.indictmentReviewerId &&
+    user.id !== theCase.appealProsecutorId
   ) {
     return false
   }
 
   // Check heightened security level access
   //
-  // Being made the reviewer of a case is itself a grant of access to that one
-  // case - it is why the office check above lets the reviewer through - so it
-  // survives this restriction too. Without that, a reviewer is handed a case
-  // and then refused it, and every list built on the reviewer route shows a row
-  // that will not open. Request cases have no reviewer, so nothing changes
-  // where heightened security actually applies.
+  // Being made the reviewer or the appeal prosecutor of a case is itself a
+  // grant of access to that one case - it is why the office check above lets
+  // those assignees through - so it survives this restriction too. Without
+  // that, an assignee is handed a case and then refused it, and every list
+  // built on that assignment route shows a row that will not open. Request
+  // cases have neither assignment, so nothing changes where heightened
+  // security actually applies.
   if (
     theCase.isHeightenedSecurityLevel &&
     user.id !== theCase.creatingProsecutorId &&
     user.id !== theCase.prosecutorId &&
-    user.id !== theCase.indictmentReviewerId
+    user.id !== theCase.indictmentReviewerId &&
+    user.id !== theCase.appealProsecutorId
   ) {
     return false
   }
@@ -258,10 +262,25 @@ const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
   return canAppealsCourtUserAccessCaseAppealCase(theCase)
 }
 
+// An appealed verdict reaches the court earlier than an appealed ruling does.
+// Every clause above waits for receipt; a verdict appeal is filed and then
+// waits for the court to pick it up, so the court has to see it from the
+// moment it is filed or it could never receive it at all. Every state of one
+// is the court's to see, which is what the case table access rule says too -
+// the two have to agree, or the court gets a row in a list that it cannot
+// open.
+//
+// The association is scoped to appeal_type = VERDICT, so its presence is the
+// whole of the question.
+const canAppealsCourtUserAccessCaseVerdictAppealCase = (
+  theCase: Case,
+): boolean => Boolean(theCase.verdictAppealCase)
+
 const canAppealsCourtUserAccessIndictmentCase = (theCase: Case): boolean => {
   return (
     canAppealsCourtUserAccessCaseAppealCase(theCase) ||
-    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase)
+    canAppealsCourtUserAccessCaseRulingOrderAppealCase(theCase) ||
+    canAppealsCourtUserAccessCaseVerdictAppealCase(theCase)
   )
 }
 
@@ -271,7 +290,8 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
     return canAppealsCourtUserAccessRequestCase(theCase)
   }
 
-  // Indictment cases — only dismissed cases can be appealed
+  // Indictment cases - a dismissal or a ruling order is appealed by ruling appeal,
+  // a judgment by verdict appeal.
   if (isIndictmentCase(theCase.type)) {
     return canAppealsCourtUserAccessIndictmentCase(theCase)
   }
@@ -425,7 +445,11 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
 ) => {
   if (
     !canDefenceUserAccessRequestCaseState({
-      requestSharedWhen: theCase.requestSharedWithDefender,
+      requestSharedWhen:
+        getMostPermissiveRequestSharedWithDefenderForNationalId(
+          theCase.defendants,
+          user.nationalId,
+        ) ?? undefined,
       state: theCase.state,
       dateLogs: theCase.dateLogs,
     })
@@ -434,7 +458,7 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
   }
 
   // Defendant-level assignment. A defender of any defendant on the case gets
-  // access, subject to the requestSharedWithDefender timing rules above.
+  // access, subject to that defender's requestSharedWithDefender timing above.
   return Boolean(
     theCase.defendants?.some(
       (defendant) => defendant.defenderNationalId === user.nationalId,

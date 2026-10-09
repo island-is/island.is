@@ -9,7 +9,9 @@
  * - Simplified to show regulation summary in a clean format
  */
 import { useMemo, ReactNode } from 'react'
+import parseISO from 'date-fns/parseISO'
 import {
+  AlertMessage,
   Box,
   Divider,
   Inline,
@@ -23,6 +25,10 @@ import { prettyName, RegName } from '@island.is/regulations'
 import { useLawChapters } from '../../hooks/useLawChapters'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
 import { regulation } from '../../lib/messages'
+import {
+  getEffectiveDateWarnings,
+  getImpactsAfterEffectiveDate,
+} from '../../utils/regulationValidations'
 
 // ---------------------------------------------------------------------------
 
@@ -119,7 +125,7 @@ export const ReviewOverview = ({
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '—'
     try {
-      return formatDateFns(new Date(dateStr), 'd. MMMM yyyy')
+      return formatDateFns(parseISO(dateStr), 'd. MMMM yyyy')
     } catch {
       return dateStr
     }
@@ -127,6 +133,15 @@ export const ReviewOverview = ({
 
   const advert = answers.advert
   const reg = answers.regulation
+  const impactsAfterEffectiveDate = getImpactsAfterEffectiveDate(
+    reg?.effectiveDate,
+    reg?.impacts,
+  )
+  const effectiveDateWarnings = getEffectiveDateWarnings(
+    reg?.effectiveDate,
+    advert?.requestedDate,
+    reg?.fastTrack,
+  )
   const ministry =
     answers.signature?.regular?.records?.[0]?.institution ??
     answers.signature?.committee?.records?.[0]?.institution
@@ -164,6 +179,25 @@ export const ReviewOverview = ({
             : 'Tekur þegar gildi'}
         </Text>
       </OverviewItem>
+
+      {impactsAfterEffectiveDate.length > 0 && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="warning"
+            title={f(regulation.summary.impactsAfterEffectiveDate.title)}
+            message={f(regulation.summary.impactsAfterEffectiveDate.message, {
+              effectiveDate: formatDate(reg?.effectiveDate),
+              regulations: [
+                ...new Set(
+                  impactsAfterEffectiveDate.map((impact) =>
+                    prettyName(impact.name as RegName),
+                  ),
+                ),
+              ].join(', '),
+            })}
+          />
+        </Box>
+      )}
 
       <OverviewItem label={f(regulation.summary.labels.lawChapters)}>
         {reg?.lawChapters && reg.lawChapters.length > 0 ? (
@@ -208,6 +242,12 @@ export const ReviewOverview = ({
           <Text>{formatDate(advert.requestedDate)}</Text>
         </OverviewItem>
       )}
+
+      {effectiveDateWarnings.map((warning) => (
+        <Box key={warning.id} marginBottom={3}>
+          <AlertMessage type="warning" message={f(warning)} />
+        </Box>
+      ))}
 
       {advert?.channels && advert.channels.length > 0 && (
         <OverviewItem label="Samskiptaleiðir">

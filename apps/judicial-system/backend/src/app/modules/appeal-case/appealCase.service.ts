@@ -13,10 +13,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
   AppealCaseNotificationType,
@@ -42,6 +39,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { queueMessagesAfterCommit } from '../../middleware'
 import { FileService } from '../file'
 import {
   AppealCase,
@@ -292,7 +290,7 @@ export class AppealCaseService {
         caseFile.category &&
         fileCategories.includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -301,7 +299,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -340,7 +338,7 @@ export class AppealCaseService {
         caseFile.category &&
         fileCategories.includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -349,7 +347,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -363,7 +361,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -385,7 +383,7 @@ export class AppealCaseService {
         caseFile.category &&
         caseFile.category === CaseFileCategory.APPEAL_RULING
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -394,7 +392,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue(
+    queueMessagesAfterCommit(
       {
         type: MessageType.APPEAL_CASE_NOTIFICATION,
         user,
@@ -411,7 +409,7 @@ export class AppealCaseService {
     )
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_APPEAL,
         user,
         caseId: theCase.id,
@@ -425,7 +423,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -439,7 +437,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -466,7 +464,7 @@ export class AppealCaseService {
           CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         ].includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -475,7 +473,7 @@ export class AppealCaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
       user,
       caseId: theCase.id,
@@ -492,7 +490,7 @@ export class AppealCaseService {
     appealCase: AppealCase,
     user: User,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
       user,
       caseId: theCase.id,
@@ -521,7 +519,7 @@ export class AppealCaseService {
     user: User,
     userIds: string[],
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.APPEAL_CASE_NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -936,7 +934,7 @@ export class AppealCaseService {
     // portal, and only then: an appeal the office registered itself is one it
     // already knows about, and the prosecution's own appeal needs no telling.
     if (actor === 'DEFENDER') {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,

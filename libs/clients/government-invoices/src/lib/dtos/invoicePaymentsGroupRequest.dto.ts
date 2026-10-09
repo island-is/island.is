@@ -4,7 +4,7 @@ export { OpenInvoiceSortFields, SortDirections }
 
 export interface InvoicePaymentsGroupRequestDto {
   suppliers?: string[]
-  debtors?: number[]
+  debtors?: string[]
   ministries?: string[]
   paymentTypeIds?: string[]
   dateFrom?: Date

@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -14,6 +11,7 @@ import {
   AppealEventType,
   AppealOrigin,
   CaseFileCategory,
+  CaseFileState,
   CaseType,
   User,
   UserRole,
@@ -22,6 +20,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -31,7 +30,7 @@ import {
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -151,7 +150,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
     })
 
     it('should queue the appeal to court of appeals notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -163,6 +162,7 @@ describe('LimitedAccessAppealCaseController - Create', () => {
 
   describe('defence user appeals a ruling order on an indictment case', () => {
     const rulingFileId = uuid()
+    const briefFileId = uuid()
     const defendantId = uuid()
     const theCase = {
       id: caseId,
@@ -172,6 +172,20 @@ describe('LimitedAccessAppealCaseController - Create', () => {
         {
           id: rulingFileId,
           category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        },
+        {
+          id: briefFileId,
+          rulingFileId,
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        },
+        {
+          id: uuid(),
+          rulingFileId: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         },
       ],
       defendants: [
@@ -211,6 +225,31 @@ describe('LimitedAccessAppealCaseController - Create', () => {
 
     it('should not touch appeal_decision rows for an out-of-court appeal', () => {
       expect(mockAppealDecisionRepositoryService.upsert).not.toHaveBeenCalled()
+    })
+
+    it('should queue delivery of the appeal brief filed against this ruling order', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          caseId,
+          elementId: briefFileId,
+        }),
+      )
+    })
+
+    it('should queue the appeal notification for the ruling-order appeal', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          caseId,
+          elementId: appealCaseId,
+          body: { type: AppealCaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
+        }),
+      )
+    })
+
+    it('should queue nothing else', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(2)
     })
 
     it('should record an APPEALED event tied to the represented defendant', () => {
