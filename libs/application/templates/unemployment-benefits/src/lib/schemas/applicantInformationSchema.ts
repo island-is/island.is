@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { YES } from '@island.is/application/core'
+import { serviceErrors } from '../messages'
+
+// Falls back to 'IS' only for legacy answers stored without a country code prefix.
+const isValidPhoneNumber = (phoneNumber: string) =>
+  !!parsePhoneNumberFromString(phoneNumber?.trim() ?? '', 'IS')?.isValid()
 
 export const applicantInformationSchema = z
   .object({
@@ -17,7 +23,9 @@ export const applicantInformationSchema = z
     city: z.string(),
     postalCode: z.string(),
     email: z.string(),
-    phoneNumber: z.string(),
+    phoneNumber: z.string().refine(isValidPhoneNumber, {
+      params: serviceErrors.phoneNumberError,
+    }),
     password: z.string().min(4),
     otherAddressCheckbox: z.array(z.string()).optional(),
     otherAddress: z.string().optional(),
