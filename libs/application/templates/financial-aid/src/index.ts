@@ -10,6 +10,10 @@ export * from './lib/types'
 
 export * from './lib/utils'
 
+export { RVK_MUNICIPALITY_CODES, isRvkMunicipalityCode } from './lib/constants'
+
 export * as messages from './lib/messages'
 
 export default FinancialAidTemplate
+
+// Trigger deploy
