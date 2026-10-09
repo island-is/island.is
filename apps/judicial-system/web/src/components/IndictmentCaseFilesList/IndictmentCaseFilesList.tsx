@@ -420,21 +420,16 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { prefixGeneratedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
-  const ownSubpoenas = useMemo(
-    () =>
-      workingCase.defendants?.flatMap((defendant) =>
+  const allSubpoenas = useMemo(
+    () => [
+      ...(workingCase.defendants?.flatMap((defendant) =>
         (defendant.subpoenas ?? []).map((subpoena) => ({
           defendant,
           subpoena,
           caseId: workingCase.id,
         })),
-      ) ?? [],
-    [workingCase],
-  )
-
-  const splitCaseSubpoenas = useMemo(
-    () =>
-      workingCase.splitCases?.flatMap((splitCase) =>
+      ) ?? []),
+      ...(workingCase.splitCases?.flatMap((splitCase) =>
         (splitCase.defendants ?? []).flatMap((defendant) =>
           (defendant.subpoenas ?? []).map((subpoena) => ({
             defendant,
@@ -442,29 +437,27 @@ const IndictmentCaseFilesList: FC<Props> = ({
             caseId: workingCase.id,
           })),
         ),
-      ) ?? [],
+      ) ?? []),
+    ],
     [workingCase],
   )
 
   const visibleSubpoenas = useMemo(() => {
     if (!isDefenceUser(user)) {
-      return [...ownSubpoenas, ...splitCaseSubpoenas]
+      return allSubpoenas
     }
 
     const normalizedUserNationalId = normalizeAndFormatNationalId(
       user?.nationalId ?? '',
     )
 
-    // The case query fetches split-case defendants without their defender
-    // fields, so a defence user cannot be matched against them and is only
-    // shown the subpoenas of this case's own defendants.
-    return ownSubpoenas.filter(
+    return allSubpoenas.filter(
       ({ defendant }) =>
         defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
         normalizedUserNationalId.includes(defendant.defenderNationalId),
     )
-  }, [ownSubpoenas, splitCaseSubpoenas, user])
+  }, [allSubpoenas, user])
 
   const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
