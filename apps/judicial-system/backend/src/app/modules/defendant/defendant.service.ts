@@ -412,6 +412,15 @@ export class DefendantService {
         }),
         { transaction },
       )
+
+      // Telling the defender the court of appeals has recorded them. Queued
+      // after commit, so a confirmation that rolls back sends nothing.
+      queueMessagesAfterCommit({
+        type: MessageType.DEFENDANT_NOTIFICATION,
+        caseId: theCase.id,
+        elementId: defendant.id,
+        body: { type: DefendantNotificationType.APPEAL_DEFENDER_ASSIGNED },
+      })
     }
   }
 
