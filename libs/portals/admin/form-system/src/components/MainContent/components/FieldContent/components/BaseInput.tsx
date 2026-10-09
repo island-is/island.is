@@ -48,8 +48,11 @@ export const BaseInput = () => {
 
   const excludedFieldTypes = [
     FieldTypesEnum.NATIONAL_ID_WITH_ADDRESS,
+    FieldTypesEnum.NATIONAL_ID_ESTATE,
     FieldTypesEnum.VEHICLE,
     FieldTypesEnum.REAL_ESTATE,
+    FieldTypesEnum.CHILD,
+    FieldTypesEnum.SPOUSE,
     ...(!hasAssetLookupPermission ? [FieldTypesEnum.ASSETS] : []),
   ]
 
