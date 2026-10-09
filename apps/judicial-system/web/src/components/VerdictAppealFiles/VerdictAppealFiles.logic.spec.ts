@@ -535,6 +535,7 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
     ).toEqual(['Opna í nýjum flipa'])
   })
