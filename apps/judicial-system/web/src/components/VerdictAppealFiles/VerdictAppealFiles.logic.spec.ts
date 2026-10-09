@@ -24,6 +24,25 @@ import {
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
 
+const publicProsecutorUser = (): User => {
+  const user = mockUser(UserRole.PROSECUTOR)
+
+  return {
+    ...user,
+    institution: {
+      ...(user.institution ?? {
+        id: '',
+        created: '',
+        modified: '',
+        name: '',
+        active: true,
+        type: InstitutionType.DISTRICT_PROSECUTORS_OFFICE,
+      }),
+      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    },
+  }
+}
+
 describe('formatAppealSummonsFileName', () => {
   it('appends the created date to the file name', () => {
     expect(
@@ -285,13 +304,7 @@ describe('showsAppealSummonses', () => {
   })
 
   it('shows the summonses to a prosecutor at the public prosecutor office', () => {
-    const publicProsecutor = mockUser(UserRole.PROSECUTOR)
-    publicProsecutor.institution = {
-      ...publicProsecutor.institution,
-      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-    }
-
-    expect(showsAppealSummonses(appealed, publicProsecutor)).toBe(true)
+    expect(showsAppealSummonses(appealed, publicProsecutorUser())).toBe(true)
   })
 
   // Defenders never see a summons. District prosecutors keep their own overview.
@@ -307,13 +320,7 @@ describe('showsAppealSummonses', () => {
 
 describe('canConfirmAppealSummonsRow', () => {
   it('lets a public prosecution prosecutor confirm a draft', () => {
-    const publicProsecutor = mockUser(UserRole.PROSECUTOR)
-    publicProsecutor.institution = {
-      ...publicProsecutor.institution,
-      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-    }
-
-    expect(canConfirmAppealSummonsRow({}, publicProsecutor)).toBe(true)
+    expect(canConfirmAppealSummonsRow({}, publicProsecutorUser())).toBe(true)
   })
 
   it('does not let staff confirm', () => {
@@ -326,16 +333,10 @@ describe('canConfirmAppealSummonsRow', () => {
   })
 
   it('does not offer confirm once the summons is confirmed', () => {
-    const publicProsecutor = mockUser(UserRole.PROSECUTOR)
-    publicProsecutor.institution = {
-      ...publicProsecutor.institution,
-      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-    }
-
     expect(
       canConfirmAppealSummonsRow(
         { confirmedDate: '2026-06-05T09:15:00.000Z' },
-        publicProsecutor,
+        publicProsecutorUser(),
       ),
     ).toBe(false)
   })
@@ -442,16 +443,10 @@ describe('getAppealSummonsMenuItems', () => {
   })
 
   it('offers only open to a public prosecution prosecutor', () => {
-    const publicProsecutor = mockUser(UserRole.PROSECUTOR)
-    publicProsecutor.institution = {
-      ...publicProsecutor.institution,
-      type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-    }
-
     expect(
       getAppealSummonsMenuItems(
         {},
-        publicProsecutor,
+        publicProsecutorUser(),
         jest.fn(),
         jest.fn(),
         jest.fn(),
