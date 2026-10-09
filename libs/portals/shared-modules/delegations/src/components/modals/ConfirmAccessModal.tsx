@@ -16,7 +16,6 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { StepUpAuthentication } from '../StepUpAuthentication/StepUpAuthentication'
 import { useDelegationConfirmationStepUp } from '../StepUpAuthentication/useDelegationConfirmationStepUp'
-import { joinNames } from '../StepUpAuthentication/joinNames'
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -55,9 +54,7 @@ export const ConfirmAccessModal = ({
   // this modal is the second act of "tvöfalt samþykki": the grantor confirms
   // with electronic ID, right here. Confirmations the server grouped take one
   // step-up together, started for any of them; normally that is all of them.
-  const [pending, setPending] = useState<{ id: string; toNames: string[] }[]>(
-    [],
-  )
+  const [pending, setPending] = useState<{ id: string }[]>([])
   const [current, setCurrent] = useState(0)
   const [expired, setExpired] = useState(false)
   const confirmationId = pending[current]?.id
@@ -137,20 +134,17 @@ export const ConfirmAccessModal = ({
           ? (delegation.pendingConfirmations ?? []).map((confirmation) => ({
               id: confirmation.id,
               groupId: confirmation.groupId ?? confirmation.id,
-              toName: delegation.to?.name ?? '',
             }))
           : [],
       )
 
       if (held?.length) {
-        const stepUps = new Map<string, { id: string; toNames: string[] }>()
+        // One step-up per group, started for any of its confirmations.
+        const stepUps = new Map<string, { id: string }>()
         for (const confirmation of held) {
-          const stepUp = stepUps.get(confirmation.groupId) ?? {
-            id: confirmation.id,
-            toNames: [],
+          if (!stepUps.has(confirmation.groupId)) {
+            stepUps.set(confirmation.groupId, { id: confirmation.id })
           }
-          stepUp.toNames.push(confirmation.toName)
-          stepUps.set(confirmation.groupId, stepUp)
         }
         setPending([...stepUps.values()])
         return
@@ -181,6 +175,8 @@ export const ConfirmAccessModal = ({
       onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
+      // The step-up needs much less room than the grant it confirms.
+      size={confirmationId ? 'small' : 'default'}
       eyebrow={
         confirmationId
           ? undefined
@@ -216,12 +212,7 @@ export const ConfirmAccessModal = ({
               check={check}
               onConfirmed={handleStepUpConfirmed}
               onExpired={() => setExpired(true)}
-              context={formatMessage(m.stepUpContext, {
-                name: joinNames(
-                  pending[current].toNames,
-                  formatMessage(m.stepUpNamesAnd),
-                ),
-              })}
+              context={formatMessage(m.stepUpContext)}
               onBack={handleClose}
             />
           )}
@@ -288,7 +279,12 @@ export const ConfirmAccessModal = ({
               showShadow={false}
               onCancel={handleClose}
               onConfirm={handleConfirm}
-              confirmLabel={formatMessage(m.confirmAccessButton)}
+              // A sensitive grant goes on to the authentication from here.
+              confirmLabel={formatMessage(
+                hasSensitiveScopeSelected
+                  ? m.confirmAccessAuthenticateButton
+                  : m.confirmAccessButton,
+              )}
               confirmIcon="checkmark"
               containerPaddingBottom={[3, 3, 6]}
               divider={false}

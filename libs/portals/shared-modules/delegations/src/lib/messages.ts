@@ -683,11 +683,7 @@ export const m = defineMessages({
   },
   stepUpContext: {
     id: 'sp.access-control-delegations:step-up-context',
-    defaultMessage: 'Veiting umboðs · {name}',
-  },
-  stepUpNamesAnd: {
-    id: 'sp.access-control-delegations:step-up-names-and',
-    defaultMessage: 'og',
+    defaultMessage: 'Beiðni um viðkvæmt umboð',
   },
   stepUpMethodSim: {
     id: 'sp.access-control-delegations:step-up-method-sim',
@@ -723,32 +719,49 @@ export const m = defineMessages({
   },
   stepUpSecurityCodeConfirmMessage: {
     id: 'sp.access-control-delegations:step-up-security-code-confirm-message',
-    defaultMessage:
-      'Staðfestu auðkenninguna ef öryggistalan er sú sama og birtist á símanum þínum.',
+    defaultMessage: 'Staðfestu ef sama tala birtist í símanum þínum.',
   },
   stepUpSecurityCodeConfirmMessageApp: {
     id: 'sp.access-control-delegations:step-up-security-code-confirm-message-app',
-    defaultMessage:
-      'Opnaðu Auðkennisappið og staðfestu ef öryggistalan er sú sama og birtist þar.',
+    defaultMessage: 'Staðfestu ef sama tala birtist í Auðkennisappinu.',
   },
   stepUpSecurityCodeConfirmSubtitle: {
     id: 'sp.access-control-delegations:step-up-security-code-confirm-subtitle',
-    defaultMessage: 'Öryggistalan er ekki PIN-númerið á skilríkjunum þínum.',
+    defaultMessage: 'Öryggistalan er ekki PIN-númer skilríkjanna.',
+  },
+  stepUpDeniedTitle: {
+    id: 'sp.access-control-delegations:step-up-denied-title',
+    defaultMessage: 'Hætt við auðkenningu',
   },
   stepUpDenied: {
     id: 'sp.access-control-delegations:step-up-denied',
     defaultMessage:
-      'Hætt var við auðkenninguna. Beiðnin hefur ekki verið samþykkt.',
+      'Hætt var við auðkenninguna og beiðnin hefur ekki verið samþykkt.',
+  },
+  stepUpTimedOutTitle: {
+    id: 'sp.access-control-delegations:step-up-timed-out-title',
+    defaultMessage: 'Tíminn rann út',
   },
   stepUpTimedOut: {
     id: 'sp.access-control-delegations:step-up-timed-out',
     defaultMessage:
-      'Auðkenningin var ekki staðfest í tæka tíð. Beiðnin hefur ekki verið samþykkt.',
+      'Auðkenningin var ekki staðfest í tæka tíð og beiðnin hefur ekki verið samþykkt.',
+  },
+  stepUpTooManyAttemptsTitle: {
+    id: 'sp.access-control-delegations:step-up-too-many-attempts-title',
+    defaultMessage: 'Of margar tilraunir',
+  },
+  stepUpUnavailableTitle: {
+    id: 'sp.access-control-delegations:step-up-unavailable-title',
+    defaultMessage: 'Ekki hægt að staðfesta',
+  },
+  stepUpStartFailedTitle: {
+    id: 'sp.access-control-delegations:step-up-start-failed-title',
+    defaultMessage: 'Ekki tókst að hefja auðkenningu',
   },
   stepUpTooManyAttempts: {
     id: 'sp.access-control-delegations:step-up-too-many-attempts',
-    defaultMessage:
-      'Of margar tilraunir. Veittu umboðið aftur til að hefja nýja staðfestingu.',
+    defaultMessage: 'Veittu umboðið aftur til að hefja nýja staðfestingu.',
   },
   stepUpUnavailable: {
     id: 'sp.access-control-delegations:step-up-unavailable',
@@ -757,8 +770,7 @@ export const m = defineMessages({
   },
   stepUpStartFailed: {
     id: 'sp.access-control-delegations:step-up-start-failed',
-    defaultMessage:
-      'Ekki tókst að hefja staðfestingu. Reyndu aftur eftir smá stund.',
+    defaultMessage: 'Reyndu aftur eftir smá stund.',
   },
   confirmDelegationRetry: {
     id: 'sp.access-control-delegations:confirm-delegation-retry',
@@ -798,6 +810,10 @@ export const m = defineMessages({
   confirmAccessSensitiveStepUpMessage: {
     id: 'sp.access-control-delegations:confirm-access-sensitive-step-up-message',
     defaultMessage: 'Þar sem umboðið inniheldur viðkvæm réttindi.',
+  },
+  confirmAccessAuthenticateButton: {
+    id: 'sp.access-control-delegations:confirm-access-authenticate-button',
+    defaultMessage: 'Auðkenna',
   },
   confirmAccessButton: {
     id: 'sp.access-control-delegations:confirm-access-button',

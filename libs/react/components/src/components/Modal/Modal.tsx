@@ -40,6 +40,11 @@ export interface ModalProps {
    * Will hide the modal when clicking outside of it
    */
   hideOnClickOutside?: boolean
+  /**
+   * 'small' for short, focused content. Full width on small screens either way.
+   * @default "default"
+   */
+  size?: 'default' | 'small'
 }
 
 export const Modal = ({
@@ -54,6 +59,7 @@ export const Modal = ({
   scrollType = 'outside',
   closeButtonLabel = 'Close',
   hideOnClickOutside = true,
+  size = 'default',
 }: ModalProps) => {
   const headingRef = useRef<HTMLElement>(null)
   const handleOnVisibilityChange = (isVisible: boolean) => {
@@ -73,7 +79,7 @@ export const Modal = ({
       <ModalBase
         baseId={id}
         modalLabel={label}
-        className={styles.modal({ noPaddingBottom, scrollType })}
+        className={styles.modal({ noPaddingBottom, scrollType, size })}
         isVisible={isVisible}
         onVisibilityChange={handleOnVisibilityChange}
         hideOnClickOutside={hideOnClickOutside}
