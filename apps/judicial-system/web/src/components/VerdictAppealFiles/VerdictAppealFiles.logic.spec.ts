@@ -333,10 +333,7 @@ describe('showsAppealSummonses', () => {
 
   it('hides the summons block from the court of appeals when none have been sent', () => {
     expect(
-      showsAppealSummonses(
-        appealed,
-        mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
-      ),
+      showsAppealSummonses(appealed, mockUser(UserRole.COURT_OF_APPEALS_JUDGE)),
     ).toBe(false)
   })
 })
@@ -383,7 +380,10 @@ describe('canConfirmAppealSummonsRow', () => {
 
   it('does not let staff confirm', () => {
     expect(
-      canConfirmAppealSummonsRow({}, mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF)),
+      canConfirmAppealSummonsRow(
+        {},
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
     ).toBe(false)
   })
 
@@ -470,9 +470,7 @@ describe('formatAppealSummonsSentToCourtOfAppealsTooltip', () => {
   })
 
   it('returns undefined when there is no date', () => {
-    expect(
-      formatAppealSummonsSentToCourtOfAppealsTooltip(null),
-    ).toBeUndefined()
+    expect(formatAppealSummonsSentToCourtOfAppealsTooltip(null)).toBeUndefined()
   })
 })
 
@@ -500,12 +498,7 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
       ).map((item) => item.title),
-    ).toEqual([
-      'Senda til Landsréttar',
-      'Breyta',
-      'Opna í nýjum flipa',
-      'Eyða',
-    ])
+    ).toEqual(['Senda til Landsréttar', 'Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {

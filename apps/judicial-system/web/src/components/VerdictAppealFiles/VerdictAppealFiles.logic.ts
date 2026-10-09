@@ -99,17 +99,12 @@ export const showsAppealSummonses = (
     return false
   }
 
-  if (
-    isPublicProsecutionOfficeUser(user) ||
-    isPublicProsecutionUser(user)
-  ) {
+  if (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) {
     return true
   }
 
   if (isCourtOfAppealsUser(user)) {
-    return (
-      (workingCase.verdictAppealCase?.sentAppealSummonses?.length ?? 0) > 0
-    )
+    return (workingCase.verdictAppealCase?.sentAppealSummonses?.length ?? 0) > 0
   }
 
   return false

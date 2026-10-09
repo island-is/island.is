@@ -2002,9 +2002,15 @@ export class AppealCaseNotificationService extends BaseNotificationService {
       notifications.emailNames.courtOfAppeals,
     )
 
-    const recipientsByEmail = new Map<string, { name?: string; email: string }>()
+    const recipientsByEmail = new Map<
+      string,
+      { name?: string; email: string }
+    >()
 
-    const addRecipient = (name: string | undefined, email: string | undefined) => {
+    const addRecipient = (
+      name: string | undefined,
+      email: string | undefined,
+    ) => {
       if (!email || recipientsByEmail.has(email)) {
         return
       }

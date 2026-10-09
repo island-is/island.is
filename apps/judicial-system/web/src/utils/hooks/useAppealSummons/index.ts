@@ -158,7 +158,9 @@ const useAppealSummons = () => {
 
         return undefined
       } catch {
-        toast.error('Upp kom villa við að senda áfrýjunarstefnu til Landsréttar')
+        toast.error(
+          'Upp kom villa við að senda áfrýjunarstefnu til Landsréttar',
+        )
         return undefined
       }
     },

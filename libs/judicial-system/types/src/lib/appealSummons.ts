@@ -71,10 +71,7 @@ export const canPerformAppealSummonsAction = (
   }
 
   if (action === AppealSummonsAction.OPEN) {
-    if (
-      isPublicProsecutionOfficeUser(user) ||
-      isPublicProsecutionUser(user)
-    ) {
+    if (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) {
       return true
     }
 

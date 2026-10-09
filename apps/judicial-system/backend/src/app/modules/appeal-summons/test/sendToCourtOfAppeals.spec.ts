@@ -76,7 +76,6 @@ describe('AppealSummonsController - Send to court of appeals', () => {
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
-
     ;(queueMessagesAfterCommit as jest.Mock).mockClear()
   })
 
@@ -87,9 +86,9 @@ describe('AppealSummonsController - Send to court of appeals', () => {
       sentToCourtOfAppealsDate: new Date(),
     } as AppealSummons
 
-    ;(mockAppealSummonsRepositoryService.update as jest.Mock).mockResolvedValueOnce(
-      afterSend,
-    )
+    ;(
+      mockAppealSummonsRepositoryService.update as jest.Mock
+    ).mockResolvedValueOnce(afterSend)
     ;(
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
     ).mockResolvedValueOnce(afterSend)
