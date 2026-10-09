@@ -19,6 +19,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   Feature,
+  isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   type User,
@@ -31,6 +32,7 @@ import {
   ConfirmAppealSummonsInput,
   CreateAppealSummonsInput,
   DeleteAppealSummonsInput,
+  SendAppealSummonsToCourtOfAppealsInput,
   UpdateAppealSummonsInput,
 } from './dto/appealSummons.input'
 import { AppealSummons } from './models/appealSummons.model'
@@ -140,6 +142,30 @@ export class AppealSummonsResolver {
       caseId,
     )
   }
+
+  @Mutation(() => AppealSummons)
+  sendAppealSummonsToCourtOfAppeals(
+    @Args('caseId', { type: () => String }) caseId: string,
+    @Args('input', { type: () => SendAppealSummonsToCourtOfAppealsInput })
+    input: SendAppealSummonsToCourtOfAppealsInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Sending appeal summons ${input.appealSummonsId} of case ${caseId} to the court of appeals`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEND_APPEAL_SUMMONS_TO_COURT_OF_APPEALS,
+      this.backendService.sendAppealSummonsToCourtOfAppeals(
+        caseId,
+        input.appealSummonsId,
+      ),
+      caseId,
+    )
+  }
 }
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -160,5 +186,22 @@ export class AppealCaseAppealSummonsResolver {
     }
 
     return appealCase.appealSummonses ?? []
+  }
+
+  @ResolveField('sentAppealSummonses', () => [AppealSummons], {
+    nullable: true,
+  })
+  sentAppealSummonses(
+    @Parent() appealCase: AppealCase,
+    @CurrentGraphQlUser() user: User,
+  ): AppealSummons[] {
+    if (
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL) ||
+      !isCourtOfAppealsUser(user)
+    ) {
+      return []
+    }
+
+    return appealCase.sentAppealSummonses ?? []
   }
 }

@@ -124,6 +124,27 @@ export const caseInclude: Includeable[] = [
           },
         ],
       },
+      {
+        model: AppealSummons,
+        as: 'sentAppealSummonses',
+        required: false,
+        order: [['created', 'ASC']],
+        separate: true,
+        include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
+          {
+            model: AppealSummonsDefendant,
+            as: 'defendants',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
+        ],
+      },
     ],
   },
   {

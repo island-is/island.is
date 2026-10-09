@@ -18,7 +18,9 @@ import {
   canShowIssueAppealSummons,
   formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
+  formatAppealSummonsSentToCourtOfAppealsTooltip,
   getAppealSummonsMenuItems,
+  getAppealSummonsRows,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
@@ -308,13 +310,66 @@ describe('showsAppealSummonses', () => {
   })
 
   // Defenders never see a summons. District prosecutors keep their own overview.
-  // The Court of Appeals only sees the ones sent to it in a later step.
-  it.each([
-    UserRole.DEFENDER,
-    UserRole.PROSECUTOR,
-    UserRole.COURT_OF_APPEALS_JUDGE,
-  ])('shows nothing to %s outside the public prosecutor office', (role) => {
-    expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+  it.each([UserRole.DEFENDER, UserRole.PROSECUTOR])(
+    'shows nothing to %s outside the public prosecutor office',
+    (role) => {
+      expect(showsAppealSummonses(appealed, mockUser(role))).toBe(false)
+    },
+  )
+
+  it('shows sent summonses to the court of appeals', () => {
+    expect(
+      showsAppealSummonses(
+        {
+          verdictAppealCase: {
+            ...appealed.verdictAppealCase,
+            sentAppealSummonses: [{ id: 'sent' }],
+          },
+        } as Case,
+        mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+      ),
+    ).toBe(true)
+  })
+
+  it('hides the summons block from the court of appeals when none have been sent', () => {
+    expect(
+      showsAppealSummonses(appealed, mockUser(UserRole.COURT_OF_APPEALS_JUDGE)),
+    ).toBe(false)
+  })
+})
+
+describe('getAppealSummonsRows', () => {
+  it('returns sent summonses for the court of appeals', () => {
+    const sent = [{ id: 'sent' }]
+    const draft = [{ id: 'draft' }]
+
+    expect(
+      getAppealSummonsRows(
+        {
+          verdictAppealCase: {
+            appealSummonses: draft,
+            sentAppealSummonses: sent,
+          },
+        } as Case,
+        mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+      ),
+    ).toEqual(sent)
+  })
+
+  it('returns all summonses for staff', () => {
+    const summonses = [{ id: 'draft' }]
+
+    expect(
+      getAppealSummonsRows(
+        {
+          verdictAppealCase: {
+            appealSummonses: summonses,
+            sentAppealSummonses: [{ id: 'sent' }],
+          },
+        } as Case,
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
+    ).toEqual(summonses)
   })
 })
 
@@ -405,6 +460,20 @@ describe('canShowIssueAppealSummons', () => {
   )
 })
 
+describe('formatAppealSummonsSentToCourtOfAppealsTooltip', () => {
+  it('formats the send date', () => {
+    expect(
+      formatAppealSummonsSentToCourtOfAppealsTooltip(
+        '2026-06-10T10:00:00.000Z',
+      ),
+    ).toBe('Sent til Landsréttar 10.06.2026')
+  })
+
+  it('returns undefined when there is no date', () => {
+    expect(formatAppealSummonsSentToCourtOfAppealsTooltip(null)).toBeUndefined()
+  })
+})
+
 describe('getAppealSummonsMenuItems', () => {
   it('offers edit, open and delete on a draft for staff', () => {
     expect(
@@ -414,11 +483,12 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
-  it('hides edit and delete once the summons has been confirmed', () => {
+  it('offers send and open on a confirmed summons for staff', () => {
     expect(
       getAppealSummonsMenuItems(
         { confirmedDate: '2026-06-05T09:15:00.000Z' },
@@ -426,8 +496,9 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Opna í nýjum flipa'])
+    ).toEqual(['Senda til Landsréttar', 'Opna í nýjum flipa'])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
@@ -435,6 +506,7 @@ describe('getAppealSummonsMenuItems', () => {
       getAppealSummonsMenuItems(
         { sentToCourtOfAppealsDate: '2026-06-10T10:00:00.000Z' },
         mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
         jest.fn(),
         jest.fn(),
         jest.fn(),
@@ -447,6 +519,20 @@ describe('getAppealSummonsMenuItems', () => {
       getAppealSummonsMenuItems(
         {},
         publicProsecutorUser(),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Opna í nýjum flipa'])
+  })
+
+  it('offers only open to the court of appeals once sent', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        { sentToCourtOfAppealsDate: '2026-06-10T10:00:00.000Z' },
+        mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+        jest.fn(),
         jest.fn(),
         jest.fn(),
         jest.fn(),

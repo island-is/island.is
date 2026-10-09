@@ -1,7 +1,13 @@
 import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { prosecutorRule, publicProsecutorStaffRule } from '../../../guards'
+import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  prosecutorRule,
+  publicProsecutorStaffRule,
+} from '../../../guards'
 import { verifyGuards, verifyRolesRules } from '../../../test'
 import { CaseExistsGuard, CaseReadGuard, CaseTypeGuard } from '../../case'
 import { AppealSummonsController } from '../appealSummons.controller'
@@ -34,6 +40,12 @@ describe('AppealSummonsController - confirm guards', () => {
   verifyGuards(AppealSummonsController, 'confirm', [AppealSummonsExistsGuard])
 })
 
+describe('AppealSummonsController - sendToCourtOfAppeals guards', () => {
+  verifyGuards(AppealSummonsController, 'sendToCourtOfAppeals', [
+    AppealSummonsExistsGuard,
+  ])
+})
+
 describe('AppealSummonsController - getPdf guards', () => {
   verifyGuards(AppealSummonsController, 'getPdf', [AppealSummonsExistsGuard])
 })
@@ -60,10 +72,19 @@ describe('AppealSummonsController - confirm roles', () => {
   verifyRolesRules(AppealSummonsController, 'confirm', [prosecutorRule])
 })
 
+describe('AppealSummonsController - sendToCourtOfAppeals roles', () => {
+  verifyRolesRules(AppealSummonsController, 'sendToCourtOfAppeals', [
+    publicProsecutorStaffRule,
+  ])
+})
+
 describe('AppealSummonsController - getPdf roles', () => {
   verifyRolesRules(AppealSummonsController, 'getPdf', [
     publicProsecutorStaffRule,
     prosecutorRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 

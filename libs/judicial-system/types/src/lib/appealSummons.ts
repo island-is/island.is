@@ -1,5 +1,9 @@
 import type { InstitutionUser } from './user'
-import { isPublicProsecutionOfficeUser, isPublicProsecutionUser } from './user'
+import {
+  isCourtOfAppealsUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
+} from './user'
 
 export enum AppealSummonsAppellantSide {
   DEFENCE = 'DEFENCE',
@@ -12,6 +16,7 @@ export enum AppealSummonsAction {
   DELETE = 'DELETE',
   OPEN = 'OPEN',
   CONFIRM = 'CONFIRM',
+  SEND_TO_COURT_OF_APPEALS = 'SEND_TO_COURT_OF_APPEALS',
 }
 
 export type AppealSummonsStatus = 'draft' | 'confirmed' | 'inService' | 'sent'
@@ -66,11 +71,23 @@ export const canPerformAppealSummonsAction = (
   }
 
   if (action === AppealSummonsAction.OPEN) {
-    return isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)
+    if (isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)) {
+      return true
+    }
+
+    return (
+      isCourtOfAppealsUser(user) && getAppealSummonsStatus(summons) === 'sent'
+    )
   }
 
   if (!isPublicProsecutionOfficeUser(user)) {
     return false
+  }
+
+  if (action === AppealSummonsAction.SEND_TO_COURT_OF_APPEALS) {
+    const status = getAppealSummonsStatus(summons)
+
+    return status === 'confirmed' || status === 'inService'
   }
 
   if (

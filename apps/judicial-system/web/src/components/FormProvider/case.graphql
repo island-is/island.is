@@ -295,6 +295,18 @@ query Case($input: CaseQueryInput!) {
           claims
         }
       }
+      sentAppealSummonses {
+        id
+        created
+        confirmedDate
+        sentToCourtOfAppealsDate
+        defendants {
+          id
+          defendantId
+          appellantSide
+          claims
+        }
+      }
     }
     rulingOrderAppealCases {
       ...AppealCaseFields

@@ -147,4 +147,9 @@ export class AppealCase {
   // Only meaningful on a verdict appeal case (áfrýjunarstefna).
   @Field(() => [AppealSummons], { nullable: true })
   readonly appealSummonses?: AppealSummons[]
+
+  // Summonses already sent to Landsréttur. Staff keep appealSummonses; CoA
+  // reads this field only.
+  @Field(() => [AppealSummons], { nullable: true })
+  readonly sentAppealSummonses?: AppealSummons[]
 }
