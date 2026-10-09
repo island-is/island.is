@@ -842,6 +842,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  maritalStatus: {
+    id: 'form.system:marital-status',
+    defaultMessage: 'Hjúskaparstaða',
+    description: 'Marital status',
+  },
   basicErrorMessage: {
     id: 'form.system:basic-error-message',
     defaultMessage: 'Villa kom upp',

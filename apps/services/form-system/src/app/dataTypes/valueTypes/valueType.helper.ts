@@ -7,6 +7,7 @@ const valueTypeAttributeToLanguageType: Record<string, LanguageType> = {
   label: { is: 'Gildi', en: 'Value' },
   nationalId: { is: 'Kennitala', en: 'National ID' },
   name: { is: 'Nafn', en: 'Name' },
+  maritalStatus: { is: 'Hjúskaparstaða', en: 'Marital status' },
   address: { is: 'Heimilisfang', en: 'Address' },
   postalCode: { is: 'Póstnúmer', en: 'Postal code' },
   municipality: { is: 'Sveitarfélag', en: 'Municipality' },

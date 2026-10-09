@@ -93,7 +93,8 @@ export class CivilClaimantService {
   private async filterDefendantIdsByPoliceCaseNumbers(
     caseId: string,
     policeCaseNumbers: string[],
-    currentDefendantIds?: string[],
+    currentDefendantIds: string[] | undefined,
+    transaction: Transaction,
   ): Promise<string[]> {
     if (!currentDefendantIds?.length || !policeCaseNumbers.length) {
       return []
@@ -104,6 +105,7 @@ export class CivilClaimantService {
         caseId,
         policeCaseNumbers,
         currentDefendantIds,
+        { transaction },
       ),
     )
 
@@ -130,6 +132,7 @@ export class CivilClaimantService {
           caseId,
           update.policeCaseNumbers ?? civilClaimant.policeCaseNumbers ?? [],
           update.defendantIds ?? civilClaimant.defendantIds,
+          transaction,
         ),
       }
     }
