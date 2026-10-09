@@ -147,10 +147,7 @@ export default function HealthMessageComposeScreen() {
   // Nothing to send to: no form can open, so the notice takes over the sheet
   // and the intro is skipped.
   const noOpenRecipient =
-    !isReply &&
-    !recipientsLoading &&
-    !recipientsError &&
-    !hasOpenRecipient
+    !isReply && !recipientsLoading && !recipientsError && !hasOpenRecipient
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
