@@ -22,6 +22,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import {
   AppealCase,
   Case,
@@ -444,7 +445,11 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
 ) => {
   if (
     !canDefenceUserAccessRequestCaseState({
-      requestSharedWhen: theCase.requestSharedWithDefender,
+      requestSharedWhen:
+        getMostPermissiveRequestSharedWithDefenderForNationalId(
+          theCase.defendants,
+          user.nationalId,
+        ) ?? undefined,
       state: theCase.state,
       dateLogs: theCase.dateLogs,
     })
@@ -453,7 +458,7 @@ const canCaseDefendantDefenceUserAccessRequestCase = (
   }
 
   // Defendant-level assignment. A defender of any defendant on the case gets
-  // access, subject to the requestSharedWithDefender timing rules above.
+  // access, subject to that defender's requestSharedWithDefender timing above.
   return Boolean(
     theCase.defendants?.some(
       (defendant) => defendant.defenderNationalId === user.nationalId,

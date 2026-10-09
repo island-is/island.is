@@ -143,6 +143,10 @@ export class CivilClaimantController {
       `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
 
+    // The request's own transaction, committed by
+    // TransactionCommitInterceptor once this handler has returned. Opening one
+    // of our own would leave the update and the appeal event that records it
+    // in a transaction separate from anything else the request has done.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.civilClaimantService.update(

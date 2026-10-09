@@ -1,10 +1,22 @@
 import faker from 'faker'
+import { MockedProvider } from '@apollo/client/testing'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { FileUploadStatus } from '@island.is/island-ui/core'
-import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileState,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  FormContextWrapper,
+  IntlProviderWrapper,
+} from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import type { ReorderableItem } from './IndictmentsCaseFilesAccordionItem'
-import {
+import IndictmentsCaseFilesAccordionItem, {
   getFilesToUpdate,
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
@@ -356,5 +368,91 @@ describe('sortedFilesInChapter', () => {
 
   it('should only return an array of files in a given chapter', () => {
     expect(sortedFilesInChapter(0, caseFiles).length).toEqual(3)
+  })
+})
+
+// The update mutations run with Apollo's default errorPolicy, so a failed
+// request rejects instead of populating `errors` on the result. The handlers
+// have to catch to report anything at all.
+const mockUpdateFiles = jest.fn()
+
+jest.mock('./updateFiles.generated', () => ({
+  useUpdateFilesMutation: () => [mockUpdateFiles],
+}))
+
+jest.mock('./updatePoliceDigitalCaseFiles.generated', () => ({
+  useUpdatePoliceDigitalCaseFilesMutation: () => [jest.fn()],
+}))
+
+jest.mock('@island.is/judicial-system-web/src/utils/toast', () => ({
+  toast: { error: jest.fn(), success: jest.fn(), warning: jest.fn() },
+}))
+
+describe('IndictmentsCaseFilesAccordionItem - renaming a file', () => {
+  const caseId = faker.datatype.uuid()
+  const file = {
+    id: faker.datatype.uuid(),
+    created: '2026-01-05T10:00:00.000Z',
+    modified: '2026-01-05T10:00:00.000Z',
+    caseId,
+    name: 'skyrsla.pdf',
+    type: 'application/pdf',
+    state: CaseFileState.STORED_IN_RVG,
+    size: 1,
+    chapter: 0,
+    orderWithinChapter: 0,
+  }
+
+  const renderItem = () =>
+    render(
+      <MockedProvider mocks={[]}>
+        <IntlProviderWrapper>
+          <FormContextWrapper theCase={mockCase(CaseType.INDICTMENT)}>
+            <IndictmentsCaseFilesAccordionItem
+              policeCaseNumber="007-2026-1"
+              caseFiles={[file]}
+              policeDigitalCaseFiles={[]}
+              caseId={caseId}
+              shouldStartExpanded
+              setEditCount={jest.fn()}
+            />
+          </FormContextWrapper>
+        </IntlProviderWrapper>
+      </MockedProvider>,
+    )
+
+  const saveRename = async () => {
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Breyta skrá' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Vista breytingar' }),
+    )
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('reports a failed rename once', async () => {
+    mockUpdateFiles.mockRejectedValueOnce(new Error('network down'))
+
+    renderItem()
+    await saveRename()
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1))
+    expect(toast.error).toHaveBeenCalledWith('Ekki tókst að endurnefna skjal')
+  })
+
+  it('does not toast when the rename succeeds', async () => {
+    mockUpdateFiles.mockResolvedValueOnce({
+      data: { updateFiles: { caseFiles: [{ id: file.id }] } },
+    })
+
+    renderItem()
+    await saveRename()
+
+    await waitFor(() => expect(mockUpdateFiles).toHaveBeenCalledTimes(1))
+    expect(toast.error).not.toHaveBeenCalled()
   })
 })

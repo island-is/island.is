@@ -68,4 +68,23 @@ describe('InternalNotificationController - Send heads up notifications', () => {
       expect(then.result).toEqual({ delivered: true })
     })
   })
+
+  describe('court without a configured mobile number', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      courtId: uuid(),
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, theCase)
+    })
+
+    it('should skip the sms and still report the notification as delivered', () => {
+      expect(mockSmsService.sendSms).not.toHaveBeenCalled()
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
 })

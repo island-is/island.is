@@ -300,7 +300,7 @@ export const defenceRequestCasesAccessWhereOptions = (user: User) => {
       {
         // Defender assigned to any defendant on the case. nationalId is
         // digits-only via sanitizeNationalId above, so embedding it in the
-        // literal is safe.
+        // literal is safe. READY_FOR_COURT is read from the defendant row.
         id: {
           [Op.in]: literal(`
             (SELECT case_id
@@ -311,8 +311,14 @@ export const defenceRequestCasesAccessWhereOptions = (user: User) => {
         [Op.or]: [
           {
             state: [CaseState.SUBMITTED, CaseState.RECEIVED],
-            request_shared_with_defender:
-              RequestSharedWithDefender.READY_FOR_COURT,
+            id: {
+              [Op.in]: literal(`
+                (SELECT case_id
+                  FROM defendant
+                  WHERE defender_national_id = '${userNationalId}'
+                  AND request_shared_with_defender = '${RequestSharedWithDefender.READY_FOR_COURT}')
+              `),
+            },
           },
           {
             state: CaseState.RECEIVED,

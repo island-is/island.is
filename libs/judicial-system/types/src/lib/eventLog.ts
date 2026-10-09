@@ -42,6 +42,7 @@ export enum AppealEventType {
   // court session confirmation) or directly by the party within the appeal deadline
   APPEALED = 'APPEALED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
+  APPEAL_SUMMONS_ISSUED = 'APPEAL_SUMMONS_ISSUED',
   // The court of appeals settled who represents a party in the appeal.
   // Confirmed rather than appointed: a civil claimant's lawyer is confirmed
   // the same way but is never formally appointed, and gets no letter.
