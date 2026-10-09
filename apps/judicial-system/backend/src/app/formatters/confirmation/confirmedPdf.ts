@@ -37,6 +37,8 @@ interface ConfirmationBox {
   title: string
   content: string
   widthPercent: number // 0-100
+  // Shorten content that does not fit the box instead of overflowing it
+  ellipsize?: boolean
 }
 
 interface ConfirmationFonts {
@@ -157,14 +159,21 @@ const drawConfirmation = (
 
     drawBox(currentX, boxTop, boxWidth, boxHeight, white)
     drawText(box.title, currentX + padding, boxTop + boxTextTop, fonts.bold)
-    drawTextWithEllipsisPDFKit(
-      page,
-      box.content,
-      { type: fonts.regular, size: fontSize },
-      currentX + padding,
-      fromTop(boxTop + boxTextTop + boxLineHeight + ascent),
-      boxWidth - padding * 2,
-    )
+
+    const contentTop = boxTop + boxTextTop + boxLineHeight
+
+    if (box.ellipsize) {
+      drawTextWithEllipsisPDFKit(
+        page,
+        box.content,
+        { type: fonts.regular, size: fontSize },
+        currentX + padding,
+        fromTop(contentTop + ascent),
+        boxWidth - padding * 2,
+      )
+    } else {
+      drawText(box.content, currentX + padding, contentTop, fonts.regular)
+    }
 
     currentX += boxWidth
   }
@@ -189,6 +198,7 @@ const getConfirmationBoxes = (
           title: 'Samþykktaraðili',
           content: formatActor(confirmation.actor, confirmation.title),
           widthPercent: 50,
+          ellipsize: true,
         },
       ]
     case CaseFileCategory.COURT_RECORD:

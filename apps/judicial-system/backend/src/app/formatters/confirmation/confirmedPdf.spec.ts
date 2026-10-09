@@ -143,6 +143,26 @@ describe('createConfirmedPdf', () => {
     expect(texts().slice(3)).toEqual(['Dómstóll', 'Héraðsdómur Reykjavíkur'])
   })
 
+  it('shortens an approver that does not fit the box but never the court', async () => {
+    const longConfirmation = {
+      ...confirmation,
+      actor: 'Guðríður Þorbjörnsdóttir Hallvarðsdóttir Sigurbjörnsdóttir',
+      title: 'Settur héraðsdómari við Héraðsdóm Reykjavíkur',
+      institution:
+        'Héraðsdómur Reykjavíkur, Reykjaness, Vesturlands og Vestfjarða',
+    }
+
+    await createConfirmedPdf(longConfirmation, pdf, CaseFileCategory.RULING)
+
+    const [, , , , institution, , approver] = texts()
+
+    expect(institution).toBe(longConfirmation.institution)
+    expect(approver.endsWith('...')).toBe(true)
+    expect(approver.length).toBeLessThan(
+      `${longConfirmation.actor} ${longConfirmation.title}`.length,
+    )
+  })
+
   it('returns the stamped pdf', async () => {
     const result = await createConfirmedPdf(
       confirmation,
