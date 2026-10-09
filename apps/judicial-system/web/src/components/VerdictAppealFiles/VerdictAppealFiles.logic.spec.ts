@@ -287,7 +287,7 @@ describe('showsAppealSummonses', () => {
   it('shows the summonses to a prosecutor at the public prosecutor office', () => {
     const publicProsecutor = mockUser(UserRole.PROSECUTOR)
     publicProsecutor.institution = {
-      ...publicProsecutor.institution!,
+      ...publicProsecutor.institution,
       type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
     }
 
@@ -309,7 +309,7 @@ describe('canConfirmAppealSummonsRow', () => {
   it('lets a public prosecution prosecutor confirm a draft', () => {
     const publicProsecutor = mockUser(UserRole.PROSECUTOR)
     publicProsecutor.institution = {
-      ...publicProsecutor.institution!,
+      ...publicProsecutor.institution,
       type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
     }
 
@@ -328,7 +328,7 @@ describe('canConfirmAppealSummonsRow', () => {
   it('does not offer confirm once the summons is confirmed', () => {
     const publicProsecutor = mockUser(UserRole.PROSECUTOR)
     publicProsecutor.institution = {
-      ...publicProsecutor.institution!,
+      ...publicProsecutor.institution,
       type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
     }
 
@@ -432,7 +432,7 @@ describe('getAppealSummonsMenuItems', () => {
   it('offers only open to a public prosecution prosecutor', () => {
     const publicProsecutor = mockUser(UserRole.PROSECUTOR)
     publicProsecutor.institution = {
-      ...publicProsecutor.institution!,
+      ...publicProsecutor.institution,
       type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
     }
 

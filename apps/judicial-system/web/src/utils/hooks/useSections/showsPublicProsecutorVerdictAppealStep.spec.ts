@@ -53,7 +53,7 @@ describe('showsPublicProsecutorVerdictAppealStep', () => {
   it('shows the step to a prosecutor at the public prosecutor office', () => {
     const publicProsecutor = mockUser(UserRole.PROSECUTOR)
     publicProsecutor.institution = {
-      ...publicProsecutor.institution!,
+      ...publicProsecutor.institution,
       type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
     }
 
