@@ -73,6 +73,7 @@ describe('buildAppealAppointmentLetter', () => {
     expect(letter).toEqual({
       kind: AppealAppointmentKind.DEFENDER,
       advocateName: 'Þórður Már Jónsson',
+      advocatePractice: undefined,
       defendantName: 'Gervimaður Jónsson',
       courtName: 'Héraðsdóms Reykjavíkur',
       courtCaseNumber: 'S-4275/2025',
@@ -304,7 +305,17 @@ describe('buildAppealAppointmentLetter', () => {
       expect(letter?.copyTo).toEqual(['Áfrýjunar Saksóknari saksóknari'])
     })
 
-    it('copies only the defenders the court has appointed', () => {
+    it('carries the firm the caller looked up', () => {
+      const letter = buildAppealAppointmentLetter({
+        theCase: theCase(),
+        defendant: defendant(),
+        advocatePractice: 'Vivos lögmenn',
+      })
+
+      expect(letter?.advocatePractice).toBe('Vivos lögmenn')
+    })
+
+    it('names a party the case records nobody for', () => {
       const letter = buildAppealAppointmentLetter({
         theCase: theCase({
           civilClaimants: [civilClaimant()],
@@ -328,7 +339,32 @@ describe('buildAppealAppointmentLetter', () => {
       expect(letter?.copyTo).toEqual([
         'Hrafnhildur M. Gunnarsdóttir saksóknari',
         'Þórður Már Jónsson lögmaður',
+        'Ekki skráð',
       ])
+    })
+
+    // Two parties with nobody recorded are two gaps, not one: the line stands
+    // for the party, so it is counted rather than collapsed the way a repeated
+    // name is.
+    it('names each unrecorded party separately', () => {
+      const letter = buildAppealAppointmentLetter({
+        theCase: theCase({
+          civilClaimants: [civilClaimant()],
+          indictmentReviewer: undefined,
+          defendants: [
+            defendant({ id: 'first-id', isAppealDefenderConfirmed: false }),
+            defendant({ id: 'second-id', isAppealDefenderConfirmed: false }),
+          ],
+          verdictAppealCase: appealCase({
+            appealEventLogs: [
+              confirmation({ civilClaimantId: 'civil-claimant-id' }),
+            ],
+          }),
+        }),
+        civilClaimant: civilClaimant(),
+      })
+
+      expect(letter?.copyTo).toEqual(['Ekki skráð', 'Ekki skráð', 'Ekki skráð'])
     })
 
     // One lawyer for several co-accused is routine, and each defendant row
@@ -372,13 +408,13 @@ describe('buildAppealAppointmentLetter', () => {
       },
     )
 
-    it('omits the copy line when no prosecutor is recorded', () => {
+    it('says so when no prosecutor is recorded', () => {
       const letter = buildAppealAppointmentLetter({
         theCase: theCase({ indictmentReviewer: undefined }),
         defendant: defendant(),
       })
 
-      expect(letter?.copyTo).toEqual([])
+      expect(letter?.copyTo).toEqual(['Ekki skráð'])
     })
   })
 })

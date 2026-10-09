@@ -39,6 +39,7 @@ const defendant = {
   name: 'Gervimaður Jónsson',
   isAppealDefenderConfirmed: true,
   appealDefenderName: 'Þórður Már Jónsson',
+  appealDefenderNationalId: '0101302989',
 } as Defendant
 
 const civilClaimant = {
@@ -69,15 +70,21 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
 
   let appealCaseController: AppealCaseController
   let mockGetPdf: jest.Mock
+  let mockGetLawyer: jest.Mock
   let res: Response
 
   beforeEach(async () => {
-    const { appealCaseController: controller, pdfService } =
-      await createTestingAppealCaseModule()
+    const {
+      appealCaseController: controller,
+      pdfService,
+      lawyerRegistryService,
+    } = await createTestingAppealCaseModule()
 
     appealCaseController = controller
     mockGetPdf = pdfService.getAppealAppointmentLetterPdf as jest.Mock
     mockGetPdf.mockResolvedValue(pdf)
+    mockGetLawyer = lawyerRegistryService.getByNationalId as jest.Mock
+    mockGetLawyer.mockResolvedValue({ practice: 'Vivos lögmenn' })
     res = { end: jest.fn() } as unknown as Response
   })
 
@@ -109,6 +116,56 @@ describe('AppealCaseController - get appeal appointment letter pdf', () => {
       expect.objectContaining({ advocateName: 'Brynjar Sveinsson' }),
     )
     expect(res.end).toHaveBeenCalledWith(pdf)
+  })
+
+  describe("the advocate's firm", () => {
+    it('puts the one the lawyer register holds on the letter', async () => {
+      await appealCaseController.getDefenderAppointmentLetterPdf(
+        theCase.id,
+        defendant.id,
+        theCase,
+        defendant,
+        res,
+      )
+
+      expect(mockGetLawyer).toHaveBeenCalledWith('0101302989')
+      expect(mockGetPdf).toHaveBeenCalledWith(
+        expect.objectContaining({ advocatePractice: 'Vivos lögmenn' }),
+      )
+    })
+
+    // The register throws rather than returning nothing, and a letter is worth
+    // sending without the firm.
+    it('still writes the letter when the register has no such lawyer', async () => {
+      mockGetLawyer.mockRejectedValue(new NotFoundException())
+
+      await appealCaseController.getDefenderAppointmentLetterPdf(
+        theCase.id,
+        defendant.id,
+        theCase,
+        defendant,
+        res,
+      )
+
+      expect(mockGetPdf).toHaveBeenCalledWith(
+        expect.objectContaining({ advocatePractice: undefined }),
+      )
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+
+    // An advocate typed in by hand has no national id to find them by.
+    it('does not look one up for an advocate outside the register', async () => {
+      await appealCaseController.getDefenderAppointmentLetterPdf(
+        theCase.id,
+        defendant.id,
+        theCase,
+        { ...defendant, appealDefenderNationalId: undefined } as Defendant,
+        res,
+      )
+
+      expect(mockGetLawyer).not.toHaveBeenCalled()
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
   })
 
   // The screen only offers the row for a confirmed advocate, but the route is

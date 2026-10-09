@@ -1,7 +1,7 @@
 import {
   AppealAppointmentKind,
   createAppealAppointmentLetter,
-  getAppealAppointmentAddressee,
+  getAppealAppointmentAddresseeLines,
   getAppealAppointmentBody,
   getAppealAppointmentCaseTitle,
   getAppealAppointmentCaseTitleLines,
@@ -66,13 +66,21 @@ describe('getAppealAppointmentCaseTitleLines', () => {
   })
 })
 
-describe('getAppealAppointmentAddressee', () => {
+describe('getAppealAppointmentAddresseeLines', () => {
   // Whichever role the court appoints them to, the person it writes to is a
-  // lawyer, and both letters address them as one.
-  it('addresses the advocate as a lawyer', () => {
-    expect(getAppealAppointmentAddressee('Þórður Már Jónsson')).toBe(
+  // lawyer, and both letters address them as one, with their firm beneath.
+  it('addresses the advocate as a lawyer, over their firm', () => {
+    expect(
+      getAppealAppointmentAddresseeLines('Þórður Már Jónsson', 'Vivos lögmenn'),
+    ).toEqual(['Þórður Már Jónsson lögmaður', 'Vivos lögmenn'])
+  })
+
+  // The register does not always record one, and a blank line in the address
+  // block would look like something failed to print.
+  it('leaves out a firm the register does not hold', () => {
+    expect(getAppealAppointmentAddresseeLines('Þórður Már Jónsson')).toEqual([
       'Þórður Már Jónsson lögmaður',
-    )
+    ])
   })
 })
 

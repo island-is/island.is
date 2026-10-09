@@ -5,6 +5,7 @@ import {
   type AppealAppointmentLetter,
   getAppealAppointmentDefendantNames,
   getCourtNameInGenitive,
+  NOT_RECORDED,
 } from '../../formatters/generatedPdfs/appealAppointmentLetterPdf'
 import { Case, CivilClaimant, Defendant, User } from '../repository'
 import { latestAdvocateConfirmedEvent } from './appealCase.helpers'
@@ -21,18 +22,22 @@ const recipient = (name?: string | null, title?: string | null) =>
  * who handled the indictment is the prosecutor in the case, and is who the
  * court writes to.
  *
- * A spokesperson's letter also copies the defenders appointed for the appeal -
+ * A spokesperson's letter also copies the defender of each of the accused -
  * their client is on the other side of the claim the spokesperson pursues, so
  * they have to know who it is. A defender's letter copies the prosecution
  * alone.
  *
- * Each line appears once. A lawyer acting for several co-accused is routine,
- * and the letter would otherwise name them once per client. The line itself is
- * what tells two entries apart, not the national id behind it: the id is
- * recorded only for an advocate picked out of the lawyer register, so keying
- * on it would let the same lawyer through twice when one of the two was typed
- * in by hand. Two different lawyers sharing a name and title would print
- * identical lines anyway, so collapsing them loses a reader nothing.
+ * Every party gets a line whether or not the case names anyone for it: one
+ * that does not says so. Named recipients appear once each - a lawyer acting
+ * for several co-accused is routine - but an unnamed party is counted, not
+ * collapsed, because the line stands for the party rather than the person.
+ *
+ * The line itself is what tells two named entries apart, not the national id
+ * behind it: the id is recorded only for an advocate picked out of the lawyer
+ * register, so keying on it would let the same lawyer through twice when one
+ * of the two was typed in by hand. Two different lawyers sharing a name and
+ * title would print identical lines anyway, so collapsing them loses a reader
+ * nothing.
  */
 const getCopyRecipients = (
   theCase: Case,
@@ -41,21 +46,33 @@ const getCopyRecipients = (
   const prosecutor: User | undefined =
     theCase.appealProsecutor ?? theCase.indictmentReviewer
 
-  const recipients = [recipient(prosecutor?.name, prosecutor?.title)]
+  const parties = [recipient(prosecutor?.name, prosecutor?.title)]
 
   if (kind === AppealAppointmentKind.SPOKESPERSON) {
-    recipients.push(
-      ...(theCase.defendants ?? [])
-        .filter((defendant) => defendant.isAppealDefenderConfirmed)
-        .map((defendant) =>
-          recipient(defendant.appealDefenderName, 'lögmaður'),
-        ),
+    parties.push(
+      ...(theCase.defendants ?? []).map((defendant) =>
+        defendant.isAppealDefenderConfirmed
+          ? recipient(defendant.appealDefenderName, 'lögmaður')
+          : undefined,
+      ),
     )
   }
 
-  return Array.from(
-    new Set(recipients.filter((entry): entry is string => Boolean(entry))),
-  )
+  const seen = new Set<string>()
+
+  return parties.flatMap((party) => {
+    if (!party) {
+      return [NOT_RECORDED]
+    }
+
+    if (seen.has(party)) {
+      return []
+    }
+
+    seen.add(party)
+
+    return [party]
+  })
 }
 
 /**
@@ -76,8 +93,10 @@ export const buildAppealAppointmentLetter = (params: {
   theCase: Case
   defendant?: Defendant
   civilClaimant?: CivilClaimant
+  /** The advocate's firm, which only the lawyer register knows. */
+  advocatePractice?: string | null
 }): AppealAppointmentLetter | undefined => {
-  const { theCase, defendant, civilClaimant } = params
+  const { theCase, defendant, civilClaimant, advocatePractice } = params
 
   const appealCase = theCase.verdictAppealCase
 
@@ -128,6 +147,7 @@ export const buildAppealAppointmentLetter = (params: {
   return {
     kind,
     advocateName,
+    advocatePractice,
     defendantName: getAppealAppointmentDefendantNames(
       (theCase.defendants ?? [])
         .map((d) => d.name)

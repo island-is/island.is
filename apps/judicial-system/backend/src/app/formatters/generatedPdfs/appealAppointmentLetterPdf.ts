@@ -24,6 +24,8 @@ export interface AppealAppointmentLetter {
   kind: AppealAppointmentKind
   /** The advocate being appointed, who is also who the letter is addressed to. */
   advocateName: string
+  /** Their firm, as the lawyer register records it. */
+  advocatePractice?: string | null
   /** The accused, who names the case whichever advocate is appointed. */
   defendantName: string
   /** The district court and its case number, which a completed case always has. */
@@ -46,6 +48,13 @@ export interface AppealAppointmentLetter {
 // missing, the other is not built.
 const NO_APPEAL_CASE_NUMBER = 'xxx/xxxx'
 const NO_APPEAL_SUMMONS_DATE = 'Ekki útfært'
+
+/**
+ * What the copy line says in place of a party the case does not name. A party
+ * with nobody recorded is still a party, and saying so reads as a gap to be
+ * filled - where leaving the line out reads as a list that is complete.
+ */
+export const NOT_RECORDED = 'Ekki skráð'
 
 // The court's own stationery, reproduced from the letters on the ticket. Fixed
 // text rather than institution data: this letter only ever comes from the court
@@ -79,6 +88,7 @@ const FOOTER_LINE_HEIGHT = 12
 const COPY_BLOCK_Y = 712
 const COPY_LINE_HEIGHT = 17
 const COPY_BLOCK_GAP = 24
+const COPY_BLOCK_BOTTOM_GAP = 14
 
 /** How a criminal case is named: the prosecution against the accused. */
 export const getAppealAppointmentCaseTitle = (defendantName: string) =>
@@ -129,13 +139,19 @@ export const getAppealAppointmentDefendantNames = (names: string[]): string => {
 /**
  * Who the letter is addressed to. Every advocate the court appoints is a
  * lawyer, whichever role it appoints them to, and that is how both letters
- * address them.
+ * address them, with their firm beneath.
  *
- * The firm and street address that follow on those letters are left out: the
- * lawyer register stores neither.
+ * The street address that follows on those letters is left out - the lawyer
+ * register does not hold one - and so is the firm when the register has not
+ * recorded it, rather than leaving a blank line in the block.
  */
-export const getAppealAppointmentAddressee = (advocateName: string) =>
-  `${advocateName} lögmaður`
+export const getAppealAppointmentAddresseeLines = (
+  advocateName: string,
+  advocatePractice?: string | null,
+): string[] =>
+  [`${advocateName} lögmaður`, advocatePractice].filter(
+    (line): line is string => Boolean(line),
+  )
 
 export const getAppealAppointmentSubject = (
   kind: AppealAppointmentKind,
@@ -255,11 +271,24 @@ const drawStationery = (doc: PDFKit.PDFDocument) => {
  * signature instead of being overprinted by it.
  */
 const drawCopyRecipients = (doc: PDFKit.PDFDocument, copyTo: string[]) => {
-  const top = Math.max(doc.y + COPY_BLOCK_GAP, COPY_BLOCK_Y)
+  const lines = ['Afrit:', ...copyTo]
+
+  // Where the letters put it, unless the list is long enough to reach the
+  // stationery - a case with several accused names a party per line - in which
+  // case it starts higher so it still ends above the rule. A body that has
+  // already run that far pushes it down regardless.
+  const top = Math.max(
+    doc.y + COPY_BLOCK_GAP,
+    Math.min(
+      COPY_BLOCK_Y,
+      FOOTER_RULE_Y - COPY_BLOCK_BOTTOM_GAP - lines.length * COPY_LINE_HEIGHT,
+    ),
+  )
 
   drawAbsolute(doc, () => {
     doc.font('Times-Roman').fontSize(basePlusFontSize).fillColor('black')
-    ;['Afrit:', ...copyTo].forEach((line, index) =>
+
+    lines.forEach((line, index) =>
       doc.text(line, TEXT_LEFT, top + index * COPY_LINE_HEIGHT),
     )
   })
@@ -309,11 +338,12 @@ export const createAppealAppointmentLetter = (
 
   setTitle(doc, title)
 
-  addNormalPlusText(
-    doc,
-    getAppealAppointmentAddressee(letter.advocateName),
-    'Times-Roman',
-  )
+  for (const line of getAppealAppointmentAddresseeLines(
+    letter.advocateName,
+    letter.advocatePractice,
+  )) {
+    addNormalPlusText(doc, line, 'Times-Roman')
+  }
 
   addEmptyLines(doc, 3)
 

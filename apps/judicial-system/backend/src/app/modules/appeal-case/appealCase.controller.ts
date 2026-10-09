@@ -47,6 +47,7 @@ import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExist
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
+import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
 import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { UserService } from '../user'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
@@ -83,6 +84,7 @@ export class AppealCaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
+    private readonly lawyerRegistryService: LawyerRegistryService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -266,12 +268,46 @@ export class AppealCaseController {
     return result.appealCase
   }
 
+  /**
+   * The advocate's firm, which the letter puts under their name. It lives in
+   * the lawyer register rather than on the case, and only for an advocate
+   * picked out of that register - one typed in by hand has no national id to
+   * find them by. A letter is worth sending without the firm, so a lookup
+   * that finds nothing is not an error.
+   */
+  private async getAdvocatePractice(
+    nationalId?: string | null,
+  ): Promise<string | undefined> {
+    if (!nationalId) {
+      return undefined
+    }
+
+    try {
+      const lawyer = await this.lawyerRegistryService.getByNationalId(
+        nationalId,
+      )
+
+      return lawyer.practice
+    } catch {
+      return undefined
+    }
+  }
+
   private async writeAppointmentLetter(
     theCase: Case,
     party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
     res: Response,
   ): Promise<void> {
-    const letter = buildAppealAppointmentLetter({ theCase, ...party })
+    const advocatePractice = await this.getAdvocatePractice(
+      party.defendant?.appealDefenderNationalId ??
+        party.civilClaimant?.appealSpokespersonNationalId,
+    )
+
+    const letter = buildAppealAppointmentLetter({
+      theCase,
+      ...party,
+      advocatePractice,
+    })
 
     if (!letter) {
       throw new NotFoundException('No appeal appointment letter to write')
