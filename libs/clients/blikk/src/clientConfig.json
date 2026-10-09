@@ -1,0 +1,1217 @@
+{
+  "components": {
+    "callbacks": {
+      "{$request.body#/callbackUrl}": {
+        "post": {
+          "description": "This is the callback URL that Blikk will call to inform the merchant about final payment status updates.",
+          "operationId": "paymentCallback",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "amount": {
+                      "description": "The amount",
+                      "examples": [1000],
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "description": "The Unix timestamp when the payment was created",
+                      "examples": [1789656367],
+                      "type": "integer"
+                    },
+                    "currency": {
+                      "description": "The currency of the payment",
+                      "examples": ["ISK"],
+                      "type": "string"
+                    },
+                    "error": {
+                      "description": "An error message if the payment failed, empty if the payment was successful",
+                      "examples": ["Bank payment error 002"],
+                      "type": "string"
+                    },
+                    "id": {
+                      "description": "The ID of the payment",
+                      "examples": ["12345"],
+                      "type": "string"
+                    },
+                    "source": {
+                      "description": "The value of the source field from the payment request, if provided",
+                      "examples": ["pos-123"],
+                      "type": "string"
+                    },
+                    "sourceReferenceId": {
+                      "description": "The value of the sourceReferenceId field from the payment request, if provided",
+                      "examples": ["1234567890"],
+                      "type": "string"
+                    },
+                    "status": {
+                      "description": "The status of the payment",
+                      "enum": ["SUCCESS", "ERROR", "CANCELLED", "REJECTED"],
+                      "examples": ["SUCCESS"],
+                      "type": "string"
+                    }
+                  },
+                  "title": "PaymentCallback",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The payment status update sent by Blikk"
+          },
+          "responses": { "200": { "description": "OK" } },
+          "tags": ["payments v3"]
+        }
+      }
+    },
+    "schemas": {
+      "Account": {
+        "additionalProperties": true,
+        "properties": {
+          "bban": { "type": "string" },
+          "iban": { "type": "string" }
+        },
+        "type": "object"
+      },
+      "CancelPaymentReqBody": {
+        "additionalProperties": true,
+        "properties": {
+          "cancelMessage": {
+            "description": "An optional message describing the reason for cancellation.",
+            "examples": ["User requested cancellation"],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CancelPaymentResp": {
+        "additionalProperties": true,
+        "properties": {
+          "message": {
+            "description": "A message describing the result of the cancellation.",
+            "type": "string"
+          }
+        },
+        "required": ["message"],
+        "type": "object"
+      },
+      "CreateDirectDebtorPaymentBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "description": "The amount of the payment.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "currency": {
+            "description": "The currency of the payment.",
+            "type": "string"
+          },
+          "endToEndIdentification": {
+            "description": "The end-to-end identification of the payment. This is a unique identifier for the payment that can be used for reconciliation.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The unique identifier of the created payment.",
+            "type": "string"
+          },
+          "message": {
+            "description": "Error message if the payment failed",
+            "type": "string"
+          },
+          "partnerRedirectUrl": {
+            "description": "Redirect URL to the partner after payment is completed. Blikk redirects the user to this URL.",
+            "type": "string"
+          },
+          "scaRedirectUrl": {
+            "description": "The URL to redirect the user to perform SCA. You should always redirect the user to this URL for them to complete the payment.",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the payment.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "scaRedirectUrl",
+          "message",
+          "partnerRedirectUrl",
+          "endToEndIdentification",
+          "amount",
+          "currency"
+        ],
+        "type": "object"
+      },
+      "CreateDirectDebtorPaymentReqBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "description": "The amount of the payment.",
+            "examples": [1000],
+            "format": "int64",
+            "type": "integer"
+          },
+          "callbackUrl": {
+            "description": "Webhook URL used by Blikk for final payment status updates (Id, Status, Amount, CreatedAt, Currency, Error, Source, SourceReferenceId).",
+            "examples": ["https://example.com/callback"],
+            "type": "string"
+          },
+          "creditor": {
+            "$ref": "#/components/schemas/Creditor",
+            "description": "Optional creditor account information to override the default creditor of the sales channel."
+          },
+          "currency": {
+            "description": "The currency of the payment. Currently only ISK is supported.",
+            "examples": ["ISK"],
+            "type": "string"
+          },
+          "debtorBban": {
+            "description": "The BBAN of the debtor account.",
+            "examples": ["000123456789"],
+            "type": "string"
+          },
+          "debtorCorpExternalId": {
+            "description": "DebtorCorpExternalId is used to specify the Corporate-PSU (Corporate Payment Service User) for the payment initiation. This is optional.",
+            "examples": ["5005891499"],
+            "type": "string"
+          },
+          "debtorExternalId": {
+            "description": "SSN/kennitala of the debtor. This identifier is required for direct debtor payments.",
+            "examples": ["2005891499"],
+            "type": "string"
+          },
+          "debtorName": {
+            "description": "The name of the debtor.",
+            "examples": ["John Doe"],
+            "type": "string"
+          },
+          "debtorPhoneNo": {
+            "description": "Optional phone number of the PSU (Payment Service User).",
+            "examples": ["+3540002329"],
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "Unix timestamp (seconds) after which the payment expires. Defaults to 120 seconds from creation. Cannot be in the past.",
+            "examples": [1735689600],
+            "format": "int64",
+            "type": "integer"
+          },
+          "items": {
+            "description": "Metadata for the items that are being paid for",
+            "items": { "$ref": "#/components/schemas/Item" },
+            "type": ["array", "null"]
+          },
+          "partnerRedirectUrl": {
+            "description": "The URL to redirect the user to after the payment is completed. It will include the payment ID as a query parameter, e.g. https://example.com/redirect?paymentId=12345",
+            "examples": ["https://example.com/redirect"],
+            "type": "string"
+          },
+          "source": {
+            "description": "Optional merchant-defined source identifier.",
+            "examples": ["pos-123"],
+            "type": "string"
+          },
+          "sourceReferenceId": {
+            "description": "An optional merchant-supplied identifier for the payment - if provided, a new payment will not be created while a non-terminal payment with the same sourceReferenceId and amount already exists for the merchant; the existing payment is returned instead. This allows for idempotent payment creation on the merchant side. Note that once a payment has reached a terminal state a new payment with the same sourceReferenceId and amount can be created.",
+            "examples": ["1234567890"],
+            "type": "string"
+          }
+        },
+        "required": ["debtorBban", "debtorExternalId", "debtorName", "amount"],
+        "type": "object"
+      },
+      "CreatePaymentV1InputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "description": "The amount of the payment",
+            "type": "string"
+          },
+          "callbackUrl": {
+            "description": "Optional URL to receive webhooks when a payment's status is updated",
+            "type": "string"
+          },
+          "creditor": {
+            "$ref": "#/components/schemas/Creditor",
+            "description": "The creditor details. Note that only the account can be overridden, not the creditor name, external id or logo. If not provided, the default creditor configured for the sales channel will be used."
+          },
+          "currency": {
+            "description": "The currency of the payment",
+            "type": "string"
+          },
+          "debtorPhoneNo": {
+            "description": "The phone number of the user initiating the payment",
+            "type": "string"
+          },
+          "items": {
+            "description": "Metadata for the items that are being paid for",
+            "items": { "$ref": "#/components/schemas/Item" },
+            "type": ["array", "null"]
+          },
+          "partnerRedirectUrl": {
+            "description": "The url that the user will be redirected to (by the bank/PSD2 api) after the payment SCA is completed",
+            "type": "string"
+          },
+          "source": {
+            "description": "Optional merchant source reference",
+            "type": "string"
+          },
+          "sourceReferenceId": {
+            "description": "An optional merchant-supplied identifier for the payment - if provided, a new payment will not be created while a non-terminal payment with the same sourceReferenceId and amount already exists for the merchant; the existing payment is returned instead. This allows for idempotent payment creation on the merchant side. Note that once a payment has reached a terminal state a new payment with the same sourceReferenceId and amount can be created.",
+            "type": "string"
+          },
+          "userToken": {
+            "description": "The user token of the user initiating the payment",
+            "type": "string"
+          }
+        },
+        "required": ["amount", "currency"],
+        "type": "object"
+      },
+      "CreatePaymentV1OutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "deeplinkUrl": {
+            "description": "Deeplink URL to the payment. Please redirect the user to this URL to complete the payment",
+            "type": "string"
+          },
+          "id": {
+            "description": "The unique identifier of the payment",
+            "type": "string"
+          },
+          "qrCode": {
+            "description": "URL to the QR code for the payment in PNG format",
+            "type": "string"
+          }
+        },
+        "required": ["id", "qrCode", "deeplinkUrl"],
+        "type": "object"
+      },
+      "CreatePaymentV2InputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "description": "The amount of the payment",
+            "format": "int64",
+            "type": "integer"
+          },
+          "callbackUrl": {
+            "description": "Optional URL to receive webhooks when a payment's status is updated",
+            "type": "string"
+          },
+          "creditor": {
+            "$ref": "#/components/schemas/Creditor",
+            "description": "The creditor details. Note that only the account can be overridden, not the creditor name, external id or logo. If not provided, the default creditor configured for the sales channel will be used."
+          },
+          "currency": {
+            "description": "The currency of the payment",
+            "type": "string"
+          },
+          "debtorPhoneNo": {
+            "description": "The phone number of the user initiating the payment",
+            "type": "string"
+          },
+          "items": {
+            "description": "Metadata for the items that are being paid for",
+            "items": { "$ref": "#/components/schemas/Item" },
+            "type": ["array", "null"]
+          },
+          "partnerRedirectUrl": {
+            "description": "The url that the user will be redirected to (by the bank/PSD2 api) after the payment SCA is completed",
+            "type": "string"
+          },
+          "source": {
+            "description": "Optional merchant source reference",
+            "type": "string"
+          },
+          "sourceReferenceId": {
+            "description": "An optional merchant-supplied identifier for the payment - if provided, a new payment will not be created while a non-terminal payment with the same sourceReferenceId and amount already exists for the merchant; the existing payment is returned instead. This allows for idempotent payment creation on the merchant side. Note that once a payment has reached a terminal state a new payment with the same sourceReferenceId and amount can be created.",
+            "type": "string"
+          }
+        },
+        "required": ["amount", "currency"],
+        "type": "object"
+      },
+      "CreatePaymentV2OutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "deeplinkUrl": {
+            "description": "Deeplink URL to the payment. Please redirect the user to this URL to complete the payment",
+            "type": "string"
+          },
+          "id": {
+            "description": "The unique identifier of the payment",
+            "type": "string"
+          },
+          "qrCode": {
+            "description": "URL to the QR code for the payment in PNG format",
+            "type": "string"
+          }
+        },
+        "required": ["id", "qrCode", "deeplinkUrl"],
+        "type": "object"
+      },
+      "CreatePaymentV3InputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "examples": [1000],
+            "format": "int64",
+            "type": "integer"
+          },
+          "callbackUrl": {
+            "description": "Webhook URL used by Blikk for final payment status updates (Id, Status, Amount, CreatedAt, Currency, Error, Source, SourceReferenceId).",
+            "examples": ["https://example.com/callback"],
+            "type": "string"
+          },
+          "creditor": {
+            "$ref": "#/components/schemas/Creditor",
+            "description": "Optional creditor account information to override the default creditor of the sales channel."
+          },
+          "currency": {
+            "description": "The currency of the payment. Currently only ISK is supported.",
+            "examples": ["ISK"],
+            "type": "string"
+          },
+          "debtorCorpExternalId": {
+            "description": "DebtorCorpExternalId is used to specify the Corporate-PSU (Corporate Payment Service User) for the payment initiation.",
+            "examples": ["5005891499"],
+            "type": "string"
+          },
+          "debtorExternalId": {
+            "description": "SSN/kennitala of the PSU. Provide this or debtorPhoneNo to identify an existing user. If both are omitted an anonymous payment is created.",
+            "examples": ["2005891499"],
+            "type": "string"
+          },
+          "debtorPhoneNo": {
+            "description": "Phone number of the PSU. Can be used instead of debtorExternalId to identify the user. If both identifiers are omitted the payment is anonymous.",
+            "examples": ["+3540002329"],
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "Unix timestamp (seconds) after which the payment expires. Defaults to 120 seconds from creation, or 5 minutes for payments requiring onboarding. Cannot be in the past.",
+            "examples": [1735689600],
+            "format": "int64",
+            "type": "integer"
+          },
+          "items": {
+            "description": "Metadata for the items that are being paid for",
+            "items": { "$ref": "#/components/schemas/Item" },
+            "type": ["array", "null"]
+          },
+          "partnerRedirectUrl": {
+            "description": "The URL to redirect the user to after the payment is completed. It will include the payment ID as a query parameter, e.g. https://example.com/redirect?paymentId=12345",
+            "examples": ["https://example.com/redirect"],
+            "type": "string"
+          },
+          "source": {
+            "description": "Optional merchant-defined source identifier.",
+            "examples": ["pos-123"],
+            "type": "string"
+          },
+          "sourceReferenceId": {
+            "description": "An optional merchant-supplied identifier for the payment - if provided, a new payment will not be created while a non-terminal payment with the same sourceReferenceId and amount already exists for the merchant; the existing payment is returned instead. This allows for idempotent payment creation on the merchant side. Note that once a payment has reached a terminal state a new payment with the same sourceReferenceId and amount can be created.",
+            "examples": ["1234567890"],
+            "type": "string"
+          }
+        },
+        "required": ["amount"],
+        "type": "object"
+      },
+      "CreatePaymentV3OutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "description": "The amount of the payment.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "currency": {
+            "description": "The currency of the payment.",
+            "type": "string"
+          },
+          "endToEndIdentification": {
+            "description": "The end-to-end identification of the payment, which is a unique identifier for the payment transaction.",
+            "type": "string"
+          },
+          "id": {
+            "description": "The unique identifier of the created payment.",
+            "type": "string"
+          },
+          "message": {
+            "description": "Error message if the payment failed",
+            "type": "string"
+          },
+          "partnerRedirectUrl": {
+            "description": "Redirect URL to the partner after payment is completed. Blikk redirects the user to this URL post SCA completion at the bank. The payment ID will be included as a query parameter http://example.com/redirect?paymentId=12345",
+            "type": "string"
+          },
+          "scaRedirectUrl": {
+            "description": "The URL to redirect the user to perform SCA. You should always redirect the user to this URL for them to complete the payment.",
+            "type": "string"
+          },
+          "status": {
+            "description": "The current status of the payment.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "scaRedirectUrl",
+          "message",
+          "partnerRedirectUrl",
+          "endToEndIdentification",
+          "amount",
+          "currency"
+        ],
+        "type": "object"
+      },
+      "Creditor": {
+        "additionalProperties": true,
+        "properties": { "account": { "$ref": "#/components/schemas/Account" } },
+        "type": "object"
+      },
+      "DoesUserExistBody": {
+        "additionalProperties": true,
+        "properties": { "doesUserExist": { "type": "boolean" } },
+        "required": ["doesUserExist"],
+        "type": "object"
+      },
+      "ErrorDetail": {
+        "additionalProperties": true,
+        "properties": {
+          "location": {
+            "description": "Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'",
+            "type": "string"
+          },
+          "message": { "description": "Error message text", "type": "string" },
+          "value": { "description": "The value at the given location" }
+        },
+        "type": "object"
+      },
+      "ErrorModel": {
+        "additionalProperties": true,
+        "properties": {
+          "detail": {
+            "description": "A human-readable explanation specific to this occurrence of the problem.",
+            "examples": ["Property foo is required but is missing."],
+            "type": "string"
+          },
+          "errors": {
+            "description": "Optional list of individual error details",
+            "items": { "$ref": "#/components/schemas/ErrorDetail" },
+            "type": ["array", "null"]
+          },
+          "instance": {
+            "description": "A URI reference that identifies the specific occurrence of the problem.",
+            "examples": ["https://example.com/error-log/abc123"],
+            "format": "uri",
+            "type": "string"
+          },
+          "status": {
+            "description": "HTTP status code",
+            "examples": [400],
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "description": "A short, human-readable summary of the problem type. This value should not change between occurrences of the error.",
+            "examples": ["Bad Request"],
+            "type": "string"
+          },
+          "type": {
+            "default": "about:blank",
+            "description": "A URI reference to human-readable documentation for the error.",
+            "examples": ["https://example.com/errors/example"],
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetPaymentOutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": { "format": "int64", "type": "integer" },
+          "currency": { "type": "string" },
+          "endToEndIdentification": { "type": "string" },
+          "id": { "type": "string" },
+          "message": { "type": "string" },
+          "scaRedirectUrl": { "type": "string" },
+          "status": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "status",
+          "scaRedirectUrl",
+          "message",
+          "endToEndIdentification",
+          "amount",
+          "currency"
+        ],
+        "type": "object"
+      },
+      "GetPaymentV1OutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": { "type": "string" },
+          "code": { "type": "string" },
+          "createdAt": { "format": "int64", "type": "integer" },
+          "currency": { "type": "string" },
+          "error": { "type": "string" },
+          "id": { "type": "string" },
+          "source": { "type": "string" },
+          "sourceReferenceId": { "type": "string" },
+          "status": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "status",
+          "createdAt",
+          "amount",
+          "currency",
+          "source",
+          "sourceReferenceId"
+        ],
+        "type": "object"
+      },
+      "GetPaymentV2OutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": { "type": "string" },
+          "code": { "type": "string" },
+          "createdAt": { "format": "int64", "type": "integer" },
+          "currency": { "type": "string" },
+          "error": { "type": "string" },
+          "id": { "type": "string" },
+          "source": { "type": "string" },
+          "sourceReferenceId": { "type": "string" },
+          "status": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "status",
+          "createdAt",
+          "amount",
+          "currency",
+          "source",
+          "sourceReferenceId"
+        ],
+        "type": "object"
+      },
+      "GetUserTokenBody": {
+        "additionalProperties": true,
+        "properties": {
+          "createdAt": {
+            "description": "The timestamp of the user token creation",
+            "format": "int64",
+            "type": "integer"
+          },
+          "merchantId": {
+            "description": "The merchant ID of the merchant initiating the payment",
+            "type": "string"
+          },
+          "partnerId": {
+            "description": "The merchant ID of the merchant initiating the payment",
+            "type": "string"
+          },
+          "userToken": {
+            "description": "The user token that can be used to authenticate the user",
+            "type": "string"
+          }
+        },
+        "required": ["userToken", "merchantId", "partnerId", "createdAt"],
+        "type": "object"
+      },
+      "Item": {
+        "additionalProperties": true,
+        "properties": {
+          "description": { "type": "string" },
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "quantity": { "format": "int64", "type": "integer" },
+          "sku": { "type": "string" },
+          "unitPrice": { "type": "string" },
+          "upc": { "type": "string" },
+          "vat": { "type": "string" }
+        },
+        "type": "object"
+      },
+      "RefundPaymentV2Body": {
+        "additionalProperties": true,
+        "properties": {
+          "bban": {
+            "description": "The BBAN of the debtor to refund the payment to",
+            "type": "string"
+          },
+          "iban": {
+            "description": "The IBAN of the debtor to refund the payment to",
+            "type": "string"
+          },
+          "ssn": {
+            "description": "The SSN of the debtor to refund the payment to",
+            "type": "string"
+          }
+        },
+        "required": ["iban", "bban", "ssn"],
+        "type": "object"
+      },
+      "RefundPaymentV3Body": {
+        "additionalProperties": true,
+        "properties": {
+          "bban": { "type": "string" },
+          "iban": { "type": "string" },
+          "ssn": { "type": "string" }
+        },
+        "required": ["iban", "bban", "ssn"],
+        "type": "object"
+      },
+      "RefundPaymentV4ReqBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": {
+            "description": "Refund amount in ISK. Can be partial, but must not exceed the remaining refundable amount of the original payment.",
+            "examples": [1000],
+            "format": "int64",
+            "type": "integer"
+          },
+          "externalId": {
+            "description": "Personal externalId (kennitala) of the debtor authorizing the refund from the original creditor account. Must have access to the account or the bank will reject the payment during initialization.",
+            "examples": ["2005891499"],
+            "type": "string"
+          }
+        },
+        "required": ["externalId", "amount"],
+        "type": "object"
+      },
+      "RefundPaymentV4RespBody": {
+        "additionalProperties": true,
+        "properties": {
+          "amount": { "format": "int64", "type": "integer" },
+          "currency": { "type": "string" },
+          "endToEndIdentification": { "type": "string" },
+          "id": { "type": "string" },
+          "message": { "type": "string" },
+          "partnerRedirectUrl": { "type": "string" },
+          "scaRedirectUrl": { "type": "string" },
+          "status": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "status",
+          "scaRedirectUrl",
+          "message",
+          "partnerRedirectUrl",
+          "endToEndIdentification",
+          "amount",
+          "currency"
+        ],
+        "type": "object"
+      },
+      "ValidateBbanAccountInputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "bban": { "examples": ["011126110615"], "type": "string" },
+          "externalId": { "examples": ["2008862329"], "type": "string" }
+        },
+        "required": ["bban", "externalId"],
+        "type": "object"
+      },
+      "ValidateBbanAccountOutputBody": {
+        "additionalProperties": true,
+        "properties": {
+          "bban": { "examples": ["011126110615"], "type": "string" },
+          "errorMessage": { "examples": ["BBAN is invalid"], "type": "string" },
+          "iban": { "examples": ["IS1401792600"], "type": "string" },
+          "isCorporateAccount": { "examples": [false], "type": "boolean" },
+          "isValid": { "examples": [true], "type": "boolean" },
+          "newExternalId": { "examples": ["2008862329"], "type": "string" },
+          "newIban": { "examples": ["IS1401792600"], "type": "string" }
+        },
+        "required": [
+          "iban",
+          "bban",
+          "isCorporateAccount",
+          "isValid",
+          "errorMessage"
+        ],
+        "type": "object"
+      },
+      "PaymentCallback": {
+        "properties": {
+          "amount": {
+            "description": "The amount",
+            "examples": [1000],
+            "type": "integer"
+          },
+          "createdAt": {
+            "description": "The Unix timestamp when the payment was created",
+            "examples": [1789656367],
+            "type": "integer"
+          },
+          "currency": {
+            "description": "The currency of the payment",
+            "examples": ["ISK"],
+            "type": "string"
+          },
+          "error": {
+            "description": "An error message if the payment failed, empty if the payment was successful",
+            "examples": ["Bank payment error 002"],
+            "type": "string"
+          },
+          "id": {
+            "description": "The ID of the payment",
+            "examples": ["12345"],
+            "type": "string"
+          },
+          "source": {
+            "description": "The value of the source field from the payment request, if provided",
+            "examples": ["pos-123"],
+            "type": "string"
+          },
+          "sourceReferenceId": {
+            "description": "The value of the sourceReferenceId field from the payment request, if provided",
+            "examples": ["1234567890"],
+            "type": "string"
+          },
+          "status": {
+            "description": "The status of the payment",
+            "enum": ["SUCCESS", "ERROR", "CANCELLED", "REJECTED"],
+            "examples": ["SUCCESS"],
+            "type": "string"
+          }
+        },
+        "title": "PaymentCallback",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "This is the merchants sales channel API key that is used to identify the merchant and authorize access to the API.",
+        "in": "header",
+        "name": "API-Key",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "<!-- markdownlint-disable MD028 MD029 -->\n\n# Blikk ECom API\n\nPayment initiation, Strong Customer Authentication (SCA) redirection, webhook callbacks and status polling for Blikk ECom payments.\n\n## Contact\n\nQuestions or API key requests: [hello@blikk.tech](mailto:hello@blikk.tech)\n\n## Getting Started\n\n1. Obtain API key (email support)\n2. Use HTTPS endpoints\n3. Include API key header in every request (example below)\n4. Redirect users using returned `scaRedirectUrl`\n5. Verify payment result via GET or webhook+GET\n\n> [!IMPORTANT] \n> Stage uses bank sandbox systems: no real funds move.\n\n### Authentication\n\nTypical HTTP header\n\n```text\nAPI-Key: YOUR_API_KEY\nContent-Type: application/json\n```\n\n## Integration Experiences\n\nThere are two ways to integrate Blikk ECom payments. Choose based on where your users initiate the payment.\n\n| Experience | Use when |\n| --- | --- |\n| **Simple** | Web apps, desktop, mobile apps or any mobile browser |\n| **In-App** | Native iOS or Android app |\n| **Direct Debtor** | Bespoke web apps, desktop apps, mobile apps (iOS/Android) or any mobile/desktop browser |\n\n> [!IMPORTANT] \n> The In-App experience requires a **native mobile app**. Mobile browsers (iOS Safari and most Android browsers) block programmatic deep-links to banking apps — the user must tap a link themselves. Use Standard for all browser-based integrations.\n\n### Simple\n\nThe merchant redirects the user to Blikk's hosted Payment Page to complete SCA. Works on all platforms.\n\n1. **Create payment** — `POST /ecom/v3/payments` or `POST /ecom/v3/payments/direct-debtor`. Optionally supply debtor identity (`debtorExternalId` / `debtorPhoneNo`). If omitted, the user enters their details on the Payment Page.\n2. **Redirect user** to the `scaRedirectUrl` from the response. Open in the system browser.\n3. **User completes SCA** on Blikk's Payment Page (identity entry, then bank authentication).\n4. **User returns** to your `partnerRedirectUrl` (if supplied).\n5. **Confirm status** via webhook or `GET /ecom/v3/payments/:id`.\n\n### In-App\n\nThe merchant app polls for an SCA redirect URL and redirects the user from within the native app, typically into their banking app, or to Blikk onboarding when required.\n\n1. **Create payment** — `POST /ecom/v3/payments` or `POST /ecom/v3/payments/direct-debtor` with `debtorExternalId` and/or `debtorPhoneNo`.\n2. **Poll** `GET /ecom/v3/payments/:id` for `scaRedirectUrl` or a terminal status.\n3. **Redirect** the user to `scaRedirectUrl` from within your native app, **only if it is non-empty**.\n4. **User completes SCA** in their banking app.\n5. **User returns** to your app via app switching or your `partnerRedirectUrl`.\n6. **Confirm status** via webhook or `GET /ecom/v3/payments/:id`.\n\n> [!IMPORTANT] \n> **Always redirect when `scaRedirectUrl` is non-empty**, regardless of payment `status`. If the user does not yet have a Blikk account, has no registered bank account, or their bank account consent has expired, `scaRedirectUrl` will point to Blikk's onboarding page rather than a banking app. The redirect behaviour is the same in all cases — your app does not need to differentiate.\n\n> [!NOTE] \n> **Some banks (e.g. ISB / Íslandsbanki) use back-channel SCA** — the user is notified via a push notification in their banking app rather than through a redirect URL. In this case, `scaRedirectUrl` may remain empty even while the payment is being processed. **Only redirect the user if `scaRedirectUrl` is non-empty.** Regardless of bank, continue polling `GET /ecom/v3/payments/:id` or rely on the webhook callback to confirm the terminal status of the payment (`SUCCESS`, `ERROR`, `REJECTED`, or `CANCELLED`). The user will complete SCA via their banking app push notification without any action needed from your app.\n\n### Direct Debtor\n\nDirect Debtor creates and initializes a payment for a specific debtor account (`POST /ecom/v3/payments/direct-debtor`). If the debtor is not onboarded then we create a non-onboarded user. This allows the creditor to create a payment without having the debtor go through the onboarding process first.\n\n**Required request fields**\n\n* `debtorBban` — debtor account BBAN (dashes/spaces are normalized by the API)\n* `debtorExternalId` — debtor SSN/kennitala\n* `debtorName` — debtor full name\n* `amount` — integer in smallest currency unit\n\n**Optional request fields**\n\n* `debtorPhoneNo` — if sent without `+354`, the API prepends `+354`\n* `debtorCorpExternalId` — corporate PSU identifier\n* `currency` — defaults to `ISK` when omitted\n* `partnerRedirectUrl`, `callbackUrl`, `items`, `expiresAt`, `source`, `sourceReferenceId`, `creditor`\n* `requestedExecutionAt` (hidden/internal field; format `YYYY-MM-DD`)\n\n1. **Create payment** with the fields above.\n2. **Receive response** with `id`, `status`, `scaRedirectUrl`, `message`, and `partnerRedirectUrl`.\n3. **Redirect to `scaRedirectUrl` when non-empty** for SCA/onboarding.\n4. **Confirm terminal status** via webhook and/or `GET /ecom/v3/payments/:id`.\n\n> [!IMPORTANT] \n> Direct Debtor is enabled per sales channel. If disabled, the endpoint returns `403 Forbidden`.\n\n> [!NOTE] \n> The handler validates/creates a shadow user from the debtor fields and validates/adds the debtor BBAN account before payment initialization.\n\n**Error responses**\n\nErrors follow [RFC 9457 Problem Details](https://datatracker.ietf.org/doc/html/rfc9457). Use the HTTP status code for broad categorisation and the `detail` field for the specific reason.\n\n| # | `detail` |\n|---|----------|\n| 400 | `debtor bban is required` |\n| 400 | `debtorExternalId is required` |\n| 400 | `debtorName is required` |\n| 400 | `invalid requestedExecutionAt date format` |\n| 400 | `requestedExecutionAt date cannot be in the past` |\n| 400 | `expiresAt must be a future Unix timestamp in seconds or 0 to use the default expiry time` |\n| 400 | `invalid creditor account override` |\n| 401 | `sales channel not found in context` |\n| 403 | `sales channel does not allow direct debtor payments` |\n| 500 | `failed to validate debtor information` |\n| 500 | `failed to add account to shadow user` |\n\n## Step-by-Step\n\n### 1. Create Payment\n\nPOST `/ecom/v3/payments` or `/ecom/v3/payments/direct-debtor`\n\n> [!NOTE] \n> Corporate payments require debtor phone, debtor SSN, and corporate ID (fyrirtækjakennitala).\n\n> [!TIP] \n> **Idempotency via `sourceReferenceId`:** If you supply a `sourceReferenceId` on the create request, the API checks whether a non-terminal payment with the same `sourceReferenceId` and `amount` already exists for your merchant account. If one is found, it is returned instead of creating a new payment. This prevents duplicate payments on retries — set it to your internal order or transaction ID.\n\n> [!IMPORTANT] \n> Open `scaRedirectUrl` in the system browser (preferred) rather than an embedded WebView. Desktop users will see a QR code to scan with their mobile device.\n\n> [!WARNING] \n> If using a WebView, ensure deep/universal link handling is enabled so banking app handoff works.\n\n### 2. Redirect User to SCA\n\n### 2.1 New User (Light Onboarding)\n\n> [!IMPORTANT]\n> This step does not apply to Direct Debtor payments. Skip to step 2.2 if you are using Direct Debtor.\n\nIf the debtor is not yet a Blikk user, `scaRedirectUrl` presents a 1‑step onboarding form (phone, SSN, BBAN in format `0101-26-123456`). After completion, the flow proceeds directly to bank authentication.\n\n### 2.2 Authentication (SCA)\n\nUser reaches their banking app (or scans desktop QR) and authorizes the payment.\n\n### 3. Return to Merchant\n\nAfter bank authentication, user is redirected to `partnerRedirectUrl` (if supplied). Otherwise they can manually return (e.g. via app switching form bank app to browser/merchant app).\n\n> [!TIP] \n> You may append query parameters (e.g. order identifiers) to `partnerRedirectUrl`.\n\n### 4. Retrieve / Confirm Status\n\nUse either:\n\n* Webhook (from `callbackUrl`) + verify via GET\n* Poll `GET /ecom/v3/payments/:id` until a terminal status\n\n> [!CAUTION] \n> Webhooks are currently unsigned. Always verify by calling `GET /ecom/v3/payments/:id` before finalizing business logic.\n\n## Status Lifecycle\n\n| Status | Description | Keep Polling |\n|---------------|-------------------------------------------------------------------------|--------------|\n| `DRAFT` | Created; not yet initiated by debtor | ✅ |\n| `PENDING` | Initiated; awaiting bank processing | ✅ |\n| `SCA_REQUIRED`| Bank indicates SCA is required | ✅ |\n| `SCA_COMPLETE`| User has completed SCA; settlement pending | ✅ |\n| `ERROR` | Irrecoverable error; payment invalid | ❌ |\n| `CANCELLED` | Cancelled by user or merchant | ❌ |\n| `REJECTED` | Rejected by user or bank | ❌ |\n| `SUCCESS` | Completed; funds transferred | ❌ |\n\nTerminal statuses: `ERROR`, `CANCELLED`, `REJECTED`, `SUCCESS`.\n\n> [!NOTE]\n> The optional `expiresAt` field (set at payment creation) controls when a non-terminal payment expires. After expiry, the payment can no longer be processed.\n\n## API Reference (Environments)\n\n| ENV | Docs URL | Demo API Key |\n|-----------|--------------------------------------------------|--------------|\n| Stage | <https://stage.blikk.tech/ecom/docs> | `HC34QUE3RM` |\n| Production| <https://api.blikk.tech/ecom/docs> | — |\n\n## Demo Users and Simulation (Stage Environment)\n\nUse these debtor phone numbers to create test payments:\n\n```text\n+3540002329 or 0002329 (Landsbankinn)\n+3540002328 or 0002328 (Arion)\n```\n\nSet `amount` to force an immediate status (after creation):\n\n| Amount | Simulated Status |\n|--------|------------------|\n| 121 | ERROR |\n| 131 | CANCELLED |\n| 141 | REJECTED |\n| 151 | SUCCESS |\n\n`GET /ecom/v3/payments/:id` returns the simulated status right after creation.\n\n## Items (Line Items)\n\nAdd `items` array in create request to persist purchased item metadata for user visibility inside the Blikk app. Strongly encouraged for transparency and reconciliation.\n\nExample item object (field names are illustrative — refer to the endpoint docs for the canonical spec):\n\n```text\n{\n \"name\": \"Subscription Plan A\",\n \"quantity\": 1,\n \"unitPrice\": 9900,\n \"currency\": \"ISK\",\n \"reference\": \"SKU-PLAN-A\"\n}\n```\n\n## Webhooks (Callbacks)\n\nProvide `callbackUrl` in create request to receive payment lifecycle updates.\n\nBest practice on receipt:\n\n1. Parse JSON request body\n2. Extract `id`, `status`, `source` and `sourceReferenceId` alongside other payment fields (see callback request schema in the endpoint docs)\n3. Act on business logic using `id` and `status`\n4. Optionally verify status via `GET /ecom/v3/payments/:id`\n5. Respond with HTTP 200\n\nRetries: Implement idempotent handling (webhooks may be delivered more than once). Respond with HTTP 200 OK to acknowledge.\n\n## Displaying Payment Status (User-Facing Icelandic)\n\n| Status | Recommended Translation |\n|--------------|-------------------------|\n| DRAFT | Beðið eftir heimild… |\n| PENDING | Beðið eftir heimild… |\n| SCA_REQUIRED | Beðið eftir heimild… |\n| SCA_COMPLETE | Beðið eftir heimild… |\n| SUCCESS | Greiðsla tókst |\n| ERROR | Villa við greiðslu |\n| REJECTED | Greiðslu hafnað |\n| CANCELLED | Hætt var við greiðslu |\n\nGroup non-terminal waiting statuses with same message to reduce flicker.\n\n## Implementation Tips\n\n* Treat payment `id` as the canonical key for reconciliation\n* We recommend always verifying terminal state server-side before granting value when receiving a webhook callback (fetch payment status via GET)\n* Use exponential backoff if polling (e.g. 1s → 2s → 4s, cap ~15s)\n* Log full webhook body before processing\n* Avoid embedding `scaRedirectUrl` in iframes / restricted WebViews\n* Set `source` and `sourceReferenceId` fields when creating payments to link to your internal order/sales IDs\n\n## Refunds\n\nUse `POST /ecom/v4/payments/refund/{id}` to refund a completed payment. Partial refunds are supported — you can refund any amount up to the remaining refundable amount of the original payment.\n\n> [!IMPORTANT]\n> Refunds require a `SUCCESS` status on the original payment. The request is rejected if the requested amount exceeds the remaining refundable amount.\n\n### Endpoint\n\n```\nPOST /ecom/v4/payments/refund/{id}\n```\n\n| Parameter | Location | Description |\n|-----------|----------|-------------|\n| `id` | Path | Original payment ID to refund |\n| `externalId` | Body | Kennitala (SSN) of the person authorizing the refund from the merchant's account. Must have access to the original creditor (merchant) bank account. |\n| `amount` | Body | Refund amount in ISK (integer, smallest currency unit). Must be positive and ≤ remaining refundable amount. |\n\n**Authentication:** `API-Key` header required.\n\n### Refund Flow\n\n1. Merchant calls `POST /ecom/v4/payments/refund/{id}` with the original payment ID, the authorizing person's kennitala (`externalId`), and the refund `amount`.\n2. Ecom fetches the original payment and validates ownership against your API key.\n3. Ecom checks that the requested amount does not exceed the remaining refundable balance (`originalPayment.Amount - sum(previousRefunds)`).\n4. A refund payment is created with **debtor/creditor accounts reversed** from the original: the merchant account is debited and the customer account is credited.\n5. The payment is initialized via bank A2A. The response includes a `scaRedirectUrl` for the merchant-side person to authorize the debit in their banking app.\n6. After SCA, the refund settles and the original payment's refunded amount is updated in `paymentsms`.\n\n> [!NOTE]\n> The `scaRedirectUrl` in the refund response should be presented to the merchant-side authorizer (the person whose kennitala was provided).\n\n### Error Cases\n\n| HTTP Status | Cause |\n|-------------|-------|\n| `400 Bad Request` | Missing/invalid `externalId` or `amount`; requested amount exceeds remaining refundable balance |\n| `401 Unauthorized` | Missing or invalid `API-Key` |\n| `403 Forbidden` | `externalId` does not have access to the creditor bank account |\n| `404 Not Found` | Original payment not found or does not belong to your merchant account |\n| `500 Internal Server Error` | Upstream error during payment creation or initialization |\n\n## Glossary\n\n| Term | Meaning |\n|--------------------|---------|\n| SCA | Strong Customer Authentication (bank mandated user auth) |\n| Debtor | Paying user (payer) |\n| Creditor | Receiving merchant (payee) |\n| Partner Redirect URL| URL to which user is redirected after SCA completion |\n| Callback URL | Webhook target URL for payment status updates |\n| BBAN | Domestic bank account number |\n| Kennitala (SSN) | Icelandic national ID |\n| Corporate ID | Icelandic company identifier (fyrirtækjakennitala) |\n| Light Onboarding | A streamlined onboarding flow for new users that collects the minimum required identity/details before continuing to payment or account setup |\n| Refund | A reverse payment that credits the original debtor (customer) from the original creditor (merchant) account |\n| Anonymous Payment | Payment where the merchant creates a payment without providing debtor identity upfront (phone/SSN). Debtor provides their identity via Blikk's secure Payment Page |\n",
+    "title": "ecom",
+    "version": ""
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/account/validate-bban": {
+      "post": {
+        "description": "Validate a BBAN account number. This endpoint is used to check if the BBAN is valid and if it belongs to the specified external ID. The BBAN is valid, if the field \"isValid\" is true in the response.\nThe response can include a new IBAN and new external ID. If this is the case, the merchant should use the returned new IBAN or the BBAN and new external ID for direct-debtor payments instead of the original external ID.\nThe response can also indicate that the account is a corporate account. In this case, the merchant should also use the returned corporate ID for direct-debtor payments instead of the original external ID.\n",
+        "operationId": "validate-bban-account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateBbanAccountInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateBbanAccountOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["account"]
+      }
+    },
+    "/payments/complete": {
+      "get": {
+        "description": "Called after the user has completed payment SCA at the bank. Usually the bank redirects the user to this GET endpoint. This endpoint fetches the payment and redirects the user to the PartnerRedirectUrl.",
+        "operationId": "payment-complete",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "state",
+            "schema": { "type": "string" }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "bpId",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": { "Location": { "schema": { "type": "string" } } }
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "tags": ["payments v3"]
+      }
+    },
+    "/users-token": {
+      "post": {
+        "deprecated": true,
+        "description": "GetUserTokenByCode is deprecated. Always returns an empty user token. User authentication is now done via the Blikk app.",
+        "operationId": "get-user-token",
+        "parameters": [
+          {
+            "description": "The API key of the merchant initiating the payment",
+            "in": "header",
+            "name": "API-Key",
+            "required": true,
+            "schema": {
+              "description": "The API key of the merchant initiating the payment",
+              "examples": ["8H4KSUDP74"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetUserTokenBody" }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["users"]
+      }
+    },
+    "/users/{phone-number}/exist": {
+      "get": {
+        "description": "Get a user by phone number",
+        "operationId": "does-user-exist",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "phone-number",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DoesUserExistBody" }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["users"]
+      }
+    },
+    "/v3/payments": {
+      "post": {
+        "callbacks": {
+          "paymentCallback": {
+            "{$request.body#/callbackUrl}": {
+              "post": {
+                "description": "This is the callback URL that Blikk will call to inform the merchant about final payment status updates.",
+                "operationId": "paymentCallback",
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/PaymentCallback"
+                      }
+                    }
+                  },
+                  "description": "The payment status update sent by Blikk"
+                },
+                "responses": { "200": { "description": "OK" } },
+                "tags": ["payments v3"]
+              }
+            }
+          }
+        },
+        "description": "Create a new Ecom payment for a specific user and inits it if the user exists.\nThe payment creditor account can be overridden but the account holder SSN must match that of the sales channel creditor.\nShould the user not exist an onboarding redirect URL will be returned during polling of the created payment.\nUpon successful onboarding the payment will be initiated and the user upon successful SCA will be redirected to the PartnerRedirectUrl.\nThe user can be identified by either their debtorExternalId (SSN / kennitala) or debtorPhoneNo.\nIf neither debtorExternalId nor debtorPhoneNo is provided the user has to input their SSN or phone number at a secure Blikk payment page before proceeding with the payment.\nPayments created for users that do not exist will have a payment expiry time of 5 minutes instead of the default 120 seconds to give the user more time to onboard.",
+        "operationId": "create-payment-v3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentV3InputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentV3OutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["payments v3"]
+      }
+    },
+    "/v3/payments/cancel/{id}": {
+      "post": {
+        "description": "Cancel a payment that is in DRAFT status. Once a payment is cancelled it cannot be initiated and will eventually expire. This endpoint can be used by the merchant to cancel a payment if the user decides to not go through with the payment after it has been created.",
+        "operationId": "cancel-payment",
+        "parameters": [
+          {
+            "description": "The payment id of the payment that needs to be cancelled",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "description": "The payment id of the payment that needs to be cancelled",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CancelPaymentReqBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentResp",
+                  "description": "The body of the cancellation response."
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["payments v3"]
+      }
+    },
+    "/v3/payments/direct-debtor": {
+      "post": {
+        "callbacks": {
+          "paymentCallback": {
+            "{$request.body#/callbackUrl}": {
+              "post": {
+                "description": "This is the callback URL that Blikk will call to inform the merchant about final payment status updates.",
+                "operationId": "paymentCallback",
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/PaymentCallback"
+                      }
+                    }
+                  },
+                  "description": "The payment status update sent by Blikk"
+                },
+                "responses": { "200": { "description": "OK" } },
+                "tags": ["payments v3"]
+              }
+            }
+          }
+        },
+        "description": "Create a new payment with direct debtor account information. This endpoint is used to create direct payments. If the debtor is not onboarded then we create an non-onboarded user. This allows the creditor to create a payment without having the debtor go through the onboarding process first.",
+        "operationId": "create-direct-debtor-payment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDirectDebtorPaymentReqBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateDirectDebtorPaymentBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [{ "$ref": "#/components/schemas/ErrorModel" }],
+                  "description": "<table><thead><tr><th>Status</th><th>detail</th></tr></thead><tbody><tr><td>400</td><td>debtor bban is required</td></tr><tr><td>400</td><td>debtorExternalId is required</td></tr><tr><td>400</td><td>debtorName is required</td></tr><tr><td>400</td><td>invalid requestedExecutionAt date format</td></tr><tr><td>400</td><td>requestedExecutionAt date cannot be in the past</td></tr><tr><td>400</td><td>expiresAt must be a future Unix timestamp in seconds or 0 to use the default expiry time</td></tr><tr><td>400</td><td>invalid creditor account override</td></tr><tr><td>401</td><td>sales channel not found in context</td></tr><tr><td>403</td><td>sales channel does not allow direct debtor payments</td></tr><tr><td>500</td><td>failed to validate debtor information</td></tr><tr><td>500</td><td>failed to add account to shadow user</td></tr></tbody></table>"
+                }
+              }
+            },
+            "description": "4XX & 500 responses"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["payments v3"]
+      }
+    },
+    "/v3/payments/{id}": {
+      "get": {
+        "description": "Get a BAB payment by ID.\nBAB payments are used to transfer money between two parties, without the need for the payer/debtor to have a Blikk account.\nIf the payment is in DRAFT status and the debtor does not have a Blikk account, the ScaRedirectUrl field will be populated with an onboarding URL that the debtor can use to onboard and complete the payment.\nIf the payment has the status SCA_REQUIRED the ScaRedirectUrl field will be populated with the URL to the bank's SCA page/app. Once the debtor has completed SCA at the bank, the bank will redirect the user to the payment-complete endpoint, which will in turn redirect the user to the PartnerRedirectUrl specified during payment creation.",
+        "operationId": "get-payment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["payments v3"]
+      }
+    },
+    "/v4/payments/refund/{id}": {
+      "post": {
+        "description": "Create and initialize a refund payment with reversed debtor/creditor accounts from the original payment.",
+        "operationId": "refund-payment-v4",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundPaymentV4ReqBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefundPaymentV4RespBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ErrorModel" }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [{ "ApiKeyAuth": [] }],
+        "tags": ["payments v4"]
+      }
+    }
+  }
+}
