@@ -53,14 +53,18 @@ describe('PdfService - getAppealSummonsPdf', () => {
     const cached = Buffer.from('%PDF-cached')
     ;(mockAwsS3Service.getObject as jest.Mock).mockResolvedValueOnce(cached)
 
-    const result = await pdfService.getAppealSummonsPdf(theCase, user as never, {
-      id: summonsId,
-      confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
-      hash: 'frozen-hash',
-      hashAlgorithm: HashAlgorithm.SHA256,
-      confirmedBy: user,
-      defendants: [],
-    } as AppealSummons)
+    const result = await pdfService.getAppealSummonsPdf(
+      theCase,
+      user as never,
+      {
+        id: summonsId,
+        confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+        hash: 'frozen-hash',
+        hashAlgorithm: HashAlgorithm.SHA256,
+        confirmedBy: user,
+        defendants: [],
+      } as AppealSummons,
+    )
 
     expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
       CaseType.INDICTMENT,

@@ -584,9 +584,7 @@ export class PdfService {
   ): Promise<Buffer> {
     // Same cache shape as subpoena: once confirmed (hash set), prefer the
     // frozen object in S3 so later downloads do not drift with case edits.
-    const key = summons
-      ? `${theCase.id}/appealSummons/${summons.id}.pdf`
-      : ''
+    const key = summons ? `${theCase.id}/appealSummons/${summons.id}.pdf` : ''
 
     if (summons?.hash && key) {
       const existingPdf = await this.tryGetPdfFromS3(theCase, key)
