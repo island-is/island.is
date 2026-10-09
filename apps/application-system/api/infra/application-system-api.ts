@@ -31,6 +31,7 @@ import {
   Properties,
   RskCompanyInfo,
   RskCarRentalRate,
+  RVKFinancialAid,
   SeminarsVer,
   SocialInsuranceAdministration,
   TransportAuthority,
@@ -451,6 +452,7 @@ export const serviceSetup = (services: {
       VMSTUnemployment,
       RecyclingFund,
       DirectorateOfEquality,
+      RVKFinancialAid,
     )
     .secrets({
       NOVA_URL: '/k8s/NOVA_URL_V1',

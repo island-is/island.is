@@ -5,9 +5,10 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   rvkVeitaClientId: z.string(),
   rvkVeitaClientSecret: z.string(),
-  rvkVeitaBaseUrl: z.string(),
   rvkVeitaAuthTokenEndpoint: z.string(),
   rvkVeitaAuthScope: z.string(),
+  rvkVeitaAuthHeaderName: z.string(),
+  rvkVeitaTenantIdentifier: z.string(),
 })
 
 export const RvkFinancialAidConfig = defineConfig({
@@ -21,15 +22,24 @@ export const RvkFinancialAidConfig = defineConfig({
       ),
       rvkVeitaClientId: env.required('RVK_VEITA_CLIENT_ID', ''),
       rvkVeitaClientSecret: env.required('RVK_VEITA_CLIENT_SECRET', ''),
-      rvkVeitaBaseUrl: env.required(
-        'RVK_VEITA_BASE_URL',
-        'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
-      ),
       rvkVeitaAuthTokenEndpoint: env.required(
         'RVK_VEITA_AUTH_TOKEN_ENDPOINT',
         'https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token',
       ),
-      rvkVeitaAuthScope: 'api://veita-api.test.reykjavik.is/.default',
+      // Azure AD client_credentials only accepts the `/.default` scope, not the granular one in the OpenAPI spec.
+      rvkVeitaAuthScope: env.required(
+        'RVK_VEITA_AUTH_SCOPE',
+        'api://veita-api.test.reykjavik.is/.default',
+      ),
+      // Flip to `authorization` if Veita reads the standard header instead of the X-Road-safe one.
+      rvkVeitaAuthHeaderName: env.required(
+        'RVK_VEITA_AUTH_HEADER_NAME',
+        'X-Client-Authorization',
+      ),
+      rvkVeitaTenantIdentifier: env.required(
+        'RVK_VEITA_TENANT_IDENTIFIER',
+        'hafnarfjordur',
+      ),
     }
   },
 })

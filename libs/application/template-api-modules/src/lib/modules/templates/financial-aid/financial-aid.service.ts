@@ -378,7 +378,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     if (this.municipalityCodeCheck(municipalityCode)) {
-      const rvkRequest = {
+      const rvkRequest: CreateIslandisApplicationRequest = {
         createApplicationRequest: {
           name: externalData.nationalRegistry.data.fullName,
           nationalId: externalData.nationalRegistry.data.nationalId,
@@ -422,9 +422,9 @@ export class FinancialAidService extends BaseTemplateApiService {
           directTaxPayments: [JSON.stringify(directTaxPayments())],
           applicationSystemId: id,
         },
-        xTenantIdentifier: 'reykjavik',
-        xUserPermissions: 'finaid:write',
-      } as CreateIslandisApplicationRequest
+        xTenantIdentifier: 'hafnarfjordur',
+        xUserPermissions: 'financialaid:write',
+      } as CreateIslandisApplicationRequest //TODO REMOVE
 
       return await this.rvkApplicationsApiWithAuth(auth)
         .createIslandisApplication(rvkRequest)
