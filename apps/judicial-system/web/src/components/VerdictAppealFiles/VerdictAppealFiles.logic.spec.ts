@@ -417,6 +417,18 @@ describe('getAppealSummonsMenuItems', () => {
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
+  it('hides edit and delete once the summons has been confirmed', () => {
+    expect(
+      getAppealSummonsMenuItems(
+        { confirmedDate: '2026-06-05T09:15:00.000Z' },
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+        jest.fn(),
+        jest.fn(),
+        jest.fn(),
+      ).map((item) => item.title),
+    ).toEqual(['Opna í nýjum flipa'])
+  })
+
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
     expect(
       getAppealSummonsMenuItems(

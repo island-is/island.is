@@ -93,31 +93,31 @@ describe('canConfirmAppealSummons', () => {
 })
 
 describe('canPerformAppealSummonsAction', () => {
-  it('lets staff edit or delete a draft or a confirmed summons', () => {
+  it('lets staff edit or delete a draft summons only', () => {
     expect(
       canPerformAppealSummonsAction(AppealSummonsAction.EDIT, draft, staff),
     ).toBe(true)
     expect(
-      canPerformAppealSummonsAction(AppealSummonsAction.EDIT, confirmed, staff),
-    ).toBe(true)
-    expect(
       canPerformAppealSummonsAction(AppealSummonsAction.DELETE, draft, staff),
     ).toBe(true)
+  })
+
+  it('does not let staff edit or delete once the summons is confirmed or beyond', () => {
+    expect(
+      canPerformAppealSummonsAction(AppealSummonsAction.EDIT, confirmed, staff),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(AppealSummonsAction.EDIT, inService, staff),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(AppealSummonsAction.EDIT, sent, staff),
+    ).toBe(false)
     expect(
       canPerformAppealSummonsAction(
         AppealSummonsAction.DELETE,
         confirmed,
         staff,
       ),
-    ).toBe(true)
-  })
-
-  it('does not let staff edit or delete once the summons has been sent anywhere', () => {
-    expect(
-      canPerformAppealSummonsAction(AppealSummonsAction.EDIT, inService, staff),
-    ).toBe(false)
-    expect(
-      canPerformAppealSummonsAction(AppealSummonsAction.EDIT, sent, staff),
     ).toBe(false)
     expect(
       canPerformAppealSummonsAction(
