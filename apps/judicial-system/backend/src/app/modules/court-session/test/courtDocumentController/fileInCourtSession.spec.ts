@@ -5,6 +5,7 @@ import { BadRequestException } from '@nestjs/common'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
 import { runInRequestContext } from '../../../../test'
 import {
   Case,
@@ -31,6 +32,7 @@ describe('CourtDocumentController - File in court session', () => {
   const filedCourtDocument = { id: courtDocumentId, caseId } as CourtDocument
 
   let transaction: Transaction
+  let mockTransaction: jest.Mock
   let mockCourtDocumentRepositoryService: CourtDocumentRepositoryService
   let givenWhenThen: GivenWhenThen
 
@@ -41,7 +43,7 @@ describe('CourtDocumentController - File in court session', () => {
       courtDocumentController,
     } = await createTestingCourtSessionModule()
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
     mockTransaction.mockResolvedValue(transaction)
 
@@ -56,6 +58,10 @@ describe('CourtDocumentController - File in court session', () => {
       try {
         // The request transaction is the guard's; see create.spec.ts.
         await runInRequestContext(async () => {
+          // Stand in for CaseExistsForUpdateGuard, which opens the request
+          // transaction before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
           then.result = await courtDocumentController.fileInCourtSession(
             caseId,
             courtDocumentId,
@@ -76,6 +82,13 @@ describe('CourtDocumentController - File in court session', () => {
 
     beforeEach(async () => {
       then = await givenWhenThen(theCase, courtSessionId)
+    })
+
+    // One call to sequelize.transaction: the guard's. A handler that opened a
+    // transaction of its own - the deadlock the controller warns about - would
+    // make it two, and the mock would resolve the same stub for both.
+    it('should join the transaction the guard opened rather than open one', () => {
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
     })
 
     it('should file the document in the session under the request transaction', () => {
