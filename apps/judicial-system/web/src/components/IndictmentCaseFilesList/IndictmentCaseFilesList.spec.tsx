@@ -3,7 +3,9 @@ import { render, screen } from '@testing-library/react'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   CaseFileCategory,
+  CaseState,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -18,6 +20,73 @@ import {
 import IndictmentCaseFilesList from './IndictmentCaseFilesList'
 
 describe('IndictmentCaseFilesList', () => {
+  // The verdict service certificate. A completed case whose defendant has a
+  // served verdict is the only state in which the row can appear at all.
+  const caseWithServedVerdict = {
+    ...mockCase(CaseType.INDICTMENT),
+    state: CaseState.COMPLETED,
+    defendants: [
+      {
+        id: 'defendant-id',
+        name: 'Jón Sigurður Jónsson',
+        verdict: {
+          serviceDate: '2026-06-01T00:00:00.000Z',
+          externalPoliceDocumentId: 'police-document-id',
+        },
+      },
+    ],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any
+
+  const renderForRole = (role: UserRole) =>
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={
+              {
+                user: { role, institution: { type: institutionFor(role) } },
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              } as any
+            }
+          >
+            {/* The ruling-and-court-record section sits inside the block
+                that only renders when the case has files of its own, and a
+                certificate is not one of them. */}
+            <IndictmentCaseFilesList
+              workingCase={caseWithServedVerdict}
+              forceDisplayAdditionalFiles
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+  const institutionFor = (role: UserRole) =>
+    role === UserRole.COURT_OF_APPEALS_JUDGE
+      ? InstitutionType.COURT_OF_APPEALS
+      : InstitutionType.PUBLIC_PROSECUTORS_OFFICE
+
+  it('offers the verdict service certificate to the public prosecution office', async () => {
+    renderForRole(UserRole.PUBLIC_PROSECUTOR_STAFF)
+
+    expect(
+      await screen.findByText('Birtingarvottorð Jón Sigurður Jónsson.pdf'),
+    ).toBeInTheDocument()
+  })
+
+  // This certifies service of the verdict. The only list of theirs that
+  // reaches this component is the ruling appeal, a different proceeding, and
+  // the backend route admits neither of their roles - so the row was a link
+  // that answered 403.
+  it('does not offer it to the court of appeals', () => {
+    renderForRole(UserRole.COURT_OF_APPEALS_JUDGE)
+
+    expect(
+      screen.queryByText('Birtingarvottorð Jón Sigurður Jónsson.pdf'),
+    ).not.toBeInTheDocument()
+  })
+
   it('should render court records if there are courtRecord case files', async () => {
     render(
       <IntlProviderWrapper>
@@ -231,6 +300,70 @@ describe('IndictmentCaseFilesList', () => {
     ).toBeInTheDocument()
     expect(
       screen.queryByText(/Fyrirkall Defendant Two/),
+    ).not.toBeInTheDocument()
+  })
+
+  it('should show a defender the subpoenas of their defendants in split cases', async () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProviderWrapper>
+          <UserContext.Provider
+            value={{
+              user: {
+                id: 'defender-user-id',
+                role: UserRole.DEFENDER,
+                nationalId: '1234567890',
+                name: 'Defender',
+              },
+            }}
+          >
+            <IndictmentCaseFilesList
+              workingCase={{
+                ...mockCase(CaseType.INDICTMENT),
+                defendants: [],
+                splitCases: [
+                  {
+                    id: 'split-case-1',
+                    defendants: [
+                      {
+                        id: 'split-defendant-1',
+                        name: 'Split Defendant One',
+                        isDefenderChoiceConfirmed: true,
+                        defenderNationalId: '1234567890',
+                        subpoenas: [
+                          {
+                            id: 'split-subpoena-1',
+                            created: '2026-01-17T12:00:00.000Z',
+                          },
+                        ],
+                      },
+                      {
+                        id: 'split-defendant-2',
+                        name: 'Split Defendant Two',
+                        isDefenderChoiceConfirmed: true,
+                        defenderNationalId: '0987654321',
+                        subpoenas: [
+                          {
+                            id: 'split-subpoena-2',
+                            created: '2026-01-18T12:00:00.000Z',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              }}
+            />
+          </UserContext.Provider>
+        </ApolloProviderWrapper>
+      </IntlProviderWrapper>,
+    )
+
+    expect(
+      await screen.findByText(/Fyrirkall Split Defendant One/),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Fyrirkall Split Defendant Two/),
     ).not.toBeInTheDocument()
   })
 })

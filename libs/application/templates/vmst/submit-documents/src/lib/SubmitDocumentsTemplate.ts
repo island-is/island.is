@@ -23,7 +23,6 @@ import {
   GetRequestedAttachments,
   SubmitDocumentsEligibilityApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -38,7 +37,6 @@ const template: ApplicationTemplate<
   institution: am.institutionName,
   translationNamespaces:
     ApplicationConfigurations.VmstSubmitDocuments.translation,
-  featureFlag: Features.isSubmitDocumentsEnabled,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

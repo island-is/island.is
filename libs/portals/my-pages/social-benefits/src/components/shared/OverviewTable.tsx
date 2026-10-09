@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, Tag } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { UserInfoLine } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { VmstApplicationStatus } from '@island.is/api/schema'
@@ -51,11 +51,25 @@ export const OverviewTable = ({
       <Stack space={0}>
         {overviewItems.map((item, index) => {
           const tag = getRowTag(item.key)
+          const lines = (item.value ?? '')
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean)
           return (
             <Box key={item.key ?? index}>
               <UserInfoLine
                 label={item.label ?? ''}
-                content={item.value ?? '-'}
+                content={
+                  lines.length > 1 ? (
+                    <Stack space={1}>
+                      {lines.map((line, i) => (
+                        <Text key={i}>{line}</Text>
+                      ))}
+                    </Stack>
+                  ) : (
+                    lines[0] ?? '-'
+                  )
+                }
                 renderEnd={tag}
                 {...(!tag && {
                   valueColumnSpan: ['1/1', '7/12', '1/1', '1/1', '7/12'],

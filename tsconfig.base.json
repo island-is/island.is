@@ -154,6 +154,9 @@
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-institutions": [
+        "libs/api/domains/icelandic-government-institutions/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-medicines-agency": [
         "libs/api/domains/icelandic-medicines-agency/src/index.ts"
       ],
@@ -693,6 +696,9 @@
       "@island.is/application/templates/university": [
         "libs/application/templates/university/src/index.ts"
       ],
+      "@island.is/application/templates/vmst/confirm-job-or-income": [
+        "libs/application/templates/vmst/confirm-job-or-income/src/index.ts"
+      ],
       "@island.is/application/templates/vmst/confirm-job-search": [
         "libs/application/templates/vmst/confirm-job-search/src/index.ts"
       ],
@@ -790,6 +796,9 @@
       "@island.is/clients/directorate-of-equality": [
         "libs/clients/directorate-of-equality/src/index.ts"
       ],
+      "@island.is/clients/directorate-of-equality-statistics": [
+        "libs/clients/directorate-of-equality-statistics/src/index.ts"
+      ],
       "@island.is/clients/directorate-of-immigration": [
         "libs/clients/directorate-of-immigration/src/index.ts"
       ],
@@ -847,6 +856,9 @@
       ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
+      ],
+      "@island.is/clients/government-invoices": [
+        "libs/clients/government-invoices/src/index.ts"
       ],
       "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
       "@island.is/clients/health-directorate": [
@@ -999,6 +1011,9 @@
       ],
       "@island.is/clients/transport-authority/exemption-for-transportation": [
         "libs/clients/transport-authority/exemption-for-transportation/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/taxi": [
+        "libs/clients/transport-authority/taxi/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"

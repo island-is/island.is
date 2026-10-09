@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   CourtArrangements,
@@ -26,7 +27,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -50,7 +50,7 @@ import { pdfButtonGrid } from './Subpoena.css'
 
 export interface Updates {
   defendants?: Defendant[] | null
-  theCase: Case
+  theCase: WorkingCase
 }
 
 interface ModalContent {

@@ -36,29 +36,39 @@ const backgroundMap: Record<BackgroundColor, Colors> = {
   blue: 'blue100',
   red: 'red100',
   white: 'white',
+  grey: 'dark100',
 }
 const colorMap: Record<BackgroundColor, Colors> = {
   blue: 'blue600',
   red: 'red600',
   white: 'currentColor',
+  grey: 'currentColor',
+}
+
+const headingColorMap: Record<BackgroundColor, Colors> = {
+  ...colorMap,
+  grey: 'dark350',
 }
 
 const eyebrowMap: Record<BackgroundColor, Colors> = {
   blue: 'purple400',
   red: 'purple400',
   white: 'blue400',
+  grey: 'blue400',
 }
 
 const borderMap: Record<BackgroundColor, Colors> = {
   blue: 'blue100',
   red: 'red200',
   white: 'blue200',
+  grey: 'dark200',
 }
 
 const avatarMap: Record<BackgroundColor, { circle: Colors; text: Colors }> = {
   blue: { circle: 'blue200', text: 'blue400' },
   red: { circle: 'red200', text: 'red600' },
   white: { circle: 'blue100', text: 'blue400' },
+  grey: { circle: 'dark200', text: 'dark400' },
 }
 
 export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
@@ -84,6 +94,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
   const bgr = backgroundMap[backgroundColor]
   const color = colorMap[backgroundColor]
+  const headingColor = headingColorMap[backgroundColor]
   const avatarColors = avatarMap[backgroundColor]
   const borderColor = borderMap[backgroundColor]
 
@@ -231,6 +242,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         <Button
           {...(cta.buttonType ?? { variant: cta.variant })}
           size={smallButton ? 'small' : cta.size}
+          aria-label={cta.ariaLabel}
           onClick={cta.onClick}
           disabled={cta.disabled}
           icon={cta.icon}
@@ -274,7 +286,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   }
 
   const headingEl = (
-    <Text variant={headingVariant} color={color}>
+    <Text variant={headingVariant} color={headingColor}>
       {heading}
     </Text>
   )

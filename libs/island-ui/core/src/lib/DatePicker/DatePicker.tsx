@@ -81,6 +81,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   handleOpenCalendar,
   handleClear,
   required,
+  ariaLabelledBy,
   inputName = '',
   backgroundColor = 'white',
   appearInline = false,
@@ -392,6 +393,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           startDate={startDate}
           required={required}
+          ariaLabelledBy={ariaLabelledBy}
           autoComplete="off"
           calendarClassName={cn({
             [styles.backgroundBlue]: backgroundColor === 'blue',

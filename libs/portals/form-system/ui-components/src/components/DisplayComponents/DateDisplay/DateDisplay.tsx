@@ -38,7 +38,6 @@ export const DateDisplay = ({
 
   return (
     <Box
-      component="form"
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"

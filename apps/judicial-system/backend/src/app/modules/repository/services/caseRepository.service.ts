@@ -62,14 +62,6 @@ interface FindAllOptions {
   having?: FindOptions['having']
 }
 
-interface CreateCaseOptions {
-  transaction: Transaction
-}
-
-interface UpdateCaseOptions {
-  transaction: Transaction
-}
-
 // The period the statistics are asked for, and the institution they are asked
 // about - an institution matches a case it either prosecutes or presides over.
 export type CaseStatisticsFilter = {
@@ -291,6 +283,61 @@ export class CaseRepositoryService {
     }
 
     return originalAncestorId
+  }
+
+  // The case the police files of a case family live under: the split origin of
+  // a split indictment, otherwise the root of the parentCaseId chain. Returns
+  // the given case itself when it is its own original ancestor.
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    const originalAncestorId = await this.findOriginalAncestorId(theCase)
+
+    if (originalAncestorId === theCase.id) {
+      return theCase
+    }
+
+    const originalAncestor = await this.findById(originalAncestorId)
+
+    if (!originalAncestor) {
+      throw new InternalServerErrorException(
+        `Original ancestor of case ${theCase.id} not found`,
+      )
+    }
+
+    return originalAncestor
+  }
+
+  // Walks the parentCaseId duplicate chain to the newest non-deleted leaf.
+  // Split cases are out of scope for case police state.
+  // Only id and state are loaded for children; callers must not rely on other fields.
+  async findLiveDescendantCase(
+    theCase: Pick<Case, 'id' | 'state'>,
+  ): Promise<Pick<Case, 'id' | 'state'>> {
+    let current: Pick<Case, 'id' | 'state'> = theCase
+    const visited = new Set<string>([theCase.id])
+
+    for (;;) {
+      const child = await this.caseModel.findOne({
+        where: {
+          parentCaseId: current.id,
+          state: { [Op.not]: CaseState.DELETED },
+        },
+        attributes: ['id', 'state'],
+        order: [['created', 'DESC']],
+      })
+
+      if (!child) {
+        return current
+      }
+
+      if (visited.has(child.id)) {
+        throw new InternalServerErrorException(
+          `Cyclic parentCaseId chain detected at case ${child.id}`,
+        )
+      }
+
+      visited.add(child.id)
+      current = child
+    }
   }
 
   // The next case that has outlived its retention window, with the whole graph
@@ -1081,7 +1128,10 @@ export class CaseRepositoryService {
     }
   }
 
-  async create(data: Partial<Case>, options: CreateCaseOptions): Promise<Case> {
+  async create(
+    data: Partial<Case>,
+    options: { transaction: Transaction },
+  ): Promise<Case> {
     try {
       this.logger.debug('Creating a new case with data:', {
         data: Object.keys(data),
@@ -1118,7 +1168,7 @@ export class CaseRepositoryService {
   async update(
     caseId: string,
     data: UpdateCase,
-    options: UpdateCaseOptions,
+    options: { transaction: Transaction },
   ): Promise<Case> {
     try {
       this.logger.debug(`Updating case ${caseId} with data:`, {

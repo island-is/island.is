@@ -41,15 +41,6 @@ export const messages = {
       defaultMessage:
         'Engin samþykkt jafnréttisáætlun fannst hjá Jafnréttisstofu. Ekki er hægt að senda inn launagreiningu fyrr en jafnréttisáætlun fyrirtækisins hefur verið samþykkt.',
     },
-    // The submit-side twin of notAllowed.renewalWindowDescription, without the
-    // date: a TemplateApiError summary is rendered through formatMessage with no
-    // values argument (see handleServerError), so an interpolated date would
-    // reach the applicant as a literal placeholder.
-    renewalWindowNotOpen: {
-      id: 'doe.sr.application:errors.renewalWindowNotOpen',
-      defaultMessage:
-        'Ekki er komið að skilum á launagreiningu hjá fyrirtækinu. Hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag.',
-    },
     retryButton: {
       id: 'doe.sr.application:errors.retryButton',
       defaultMessage: 'Reyna aftur',
@@ -114,24 +105,6 @@ export const messages = {
       id: 'doe.sr.application:notAllowed.notCompanyDescription',
       defaultMessage:
         'Vinsamlegast skráðu þig inn í umboði fyrirtækis til að senda inn launagreiningu.',
-    },
-    // The other half of DMR's eligibility answer: the company holds an approved
-    // jafnréttisáætlun, it is simply too early in the three-year cycle.
-    renewalWindowTitle: {
-      id: 'doe.sr.application:notAllowed.renewalWindowTitle',
-      defaultMessage: 'Ekki er komið að skilum á launagreiningu',
-    },
-    renewalWindowDescription: {
-      id: 'doe.sr.application:notAllowed.renewalWindowDescription',
-      defaultMessage:
-        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Fyrirtækið getur sent inn launagreiningu frá og með {earliestSubmissionDate}.',
-    },
-    // `earliestSubmissionDate` is null until DMR has a due date to anchor the
-    // window on, so the same refusal has to stand without one.
-    renewalWindowDescriptionNoDate: {
-      id: 'doe.sr.application:notAllowed.renewalWindowDescriptionNoDate',
-      defaultMessage:
-        'Launagreiningu er skilað á þriggja ára fresti og hægt er að senda inn nýja greiningu síðustu sex mánuðina fyrir skiladag. Ekki er komið að næstu skilum hjá fyrirtækinu.',
     },
   }),
 
@@ -880,8 +853,10 @@ export const messages = {
         id: 'doe.sr.application:report.employees.departmentLabel',
         defaultMessage: 'Deild',
       },
+      // New id rather than an edit: Contentful holds "Ráðningardags." for the old
+      // `startDateLabel` id, and that text wins over any defaultMessage here.
       startDateLabel: {
-        id: 'doe.sr.application:report.employees.startDateLabel',
+        id: 'doe.sr.application:report.employees.employmentStartDateLabel',
         defaultMessage: 'Ráðningardagsetning',
       },
       paidHoursLabel: {
@@ -909,11 +884,11 @@ export const messages = {
       // in workbook column order J–O, the order SALARY_COMPONENT_GROUPS renders.
       additionalFixedOvertimeLabel: {
         id: 'doe.sr.application:report.employees.additionalFixedOvertimeLabel',
-        defaultMessage: 'Föst yfirvinna',
+        defaultMessage: 'Föst yfirvinna / álag',
       },
       additionalFixedCarAllowanceLabel: {
         id: 'doe.sr.application:report.employees.additionalFixedCarAllowanceLabel',
-        defaultMessage: 'Föst bifreiðahlunnindi',
+        defaultMessage: 'Fastur ökutækjastyrkur / bifreiðahlunnindi',
       },
       additionalFixedOtherLabel: {
         id: 'doe.sr.application:report.employees.additionalFixedOtherLabel',
@@ -921,15 +896,61 @@ export const messages = {
       },
       bonusOccasionalOvertimeLabel: {
         id: 'doe.sr.application:report.employees.bonusOccasionalOvertimeLabel',
-        defaultMessage: 'Tilfallandi / mæld yfirvinna',
+        defaultMessage: 'Tilfallandi / mæld yfirvinna / álag',
       },
       bonusOccasionalCarAllowanceLabel: {
         id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceLabel',
-        defaultMessage: 'Tilfallandi / mældur bifreiðastyrkur',
+        defaultMessage:
+          'Tilfallandi / mældur ökutækjastyrkur / bifreiðahlunnindi',
       },
       bonusOtherLabel: {
         id: 'doe.sr.application:report.employees.bonusOtherLabel',
         defaultMessage: 'Aðrar tilfallandi greiðslur / hlunnindi',
+      },
+      // Cell-comment text from row 5 of the workbook, so hovering a pay field
+      // here explains it the way hovering the column header does in Excel. The
+      // sheet's comment titles are dropped: they either repeat the column header
+      // or read "Launatala"; where the title is "Krónur á tímabilinu." it leads
+      // the text instead.
+      paidHoursTooltip: {
+        id: 'doe.sr.application:report.employees.paidHoursTooltip',
+        defaultMessage:
+          'Fjöldi greiddra stunda, að föstum yfirvinnustundum meðtöldum en ekki tilfallandi. Aukastafir leyfðir.',
+      },
+      startDateTooltip: {
+        id: 'doe.sr.application:report.employees.startDateTooltip',
+        defaultMessage: 'Dagsetning ráðningar.',
+      },
+      baseSalaryTooltip: {
+        id: 'doe.sr.application:report.employees.baseSalaryTooltip',
+        defaultMessage: 'Krónur á tímabilinu.',
+      },
+      additionalFixedOvertimeTooltip: {
+        id: 'doe.sr.application:report.employees.additionalFixedOvertimeTooltip',
+        defaultMessage:
+          'Krónur á tímabilinu. Skildu eftir autt ef á ekki við. Hér er átt við fasta yfirvinnu og ýmis konar álagsgreiðslur sem eru hluti fastra launa og gerðar eru upp á hverju útborgunartímabili.',
+      },
+      additionalFixedCarAllowanceTooltip: {
+        id: 'doe.sr.application:report.employees.additionalFixedCarAllowanceTooltip',
+        defaultMessage: 'Krónur á tímabilinu. Skildu eftir autt ef á ekki við.',
+      },
+      additionalFixedOtherTooltip: {
+        id: 'doe.sr.application:report.employees.additionalFixedOtherTooltip',
+        defaultMessage: 'Krónur á tímabilinu. Skildu eftir autt ef á ekki við.',
+      },
+      bonusOccasionalOvertimeTooltip: {
+        id: 'doe.sr.application:report.employees.bonusOccasionalOvertimeTooltip',
+        defaultMessage:
+          'Krónur á tímabilinu. Skildu eftir autt ef á ekki við. Hér er átt við tilfallandi/mælda yfirvinnu og ýmis konar álagsgreiðslur sem ekki fela í sér fastar greiðslur heldur tengjast vinnufyrirkomulagi, s.s. yfirvinnuálag, kvöld-, helgar- og næturálag, útkallsálag o.fl.',
+      },
+      bonusOccasionalCarAllowanceTooltip: {
+        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceTooltip',
+        defaultMessage: 'Krónur á tímabilinu. Skildu eftir autt ef á ekki við.',
+      },
+      bonusOtherTooltip: {
+        id: 'doe.sr.application:report.employees.bonusOtherTooltip',
+        defaultMessage:
+          'Krónur á tímabilinu. Skildu eftir autt ef á ekki við. Hér er átt við aðrar tilfallandi greiðslur og hlunnindi sem tengjast starfsaðstæðum eða sérhæfingu, þ.e. tilfallandi álagsgreiðslur aðrar en í dálki M, s.s. fjarvinnuálag, geislaálag, vopnaálag, aðgerðarálag o.fl.',
       },
       addButton: {
         id: 'doe.sr.application:report.employees.addButton',

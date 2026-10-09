@@ -67,7 +67,10 @@ export const VerticalScale = ({
       <Box display="inlineFlex" flexDirection="column" alignItems="flexEnd">
         <Box display="flex" alignItems="stretch">
           {(minLabel || maxLabel) && (
-            <Box className={styles.verticalEndLabels} paddingRight={3}>
+            <Box
+              className={cn(styles.verticalEndLabels, styles.endLabels)}
+              paddingRight={3}
+            >
               <Text variant="small" color="blue400" fontWeight="semiBold">
                 {maxLabel}
               </Text>
@@ -105,20 +108,21 @@ export const VerticalScale = ({
                 const passed = selectedIndex > values.indexOf(scaleValue)
                 return (
                   <Fragment key={scaleValue}>
-                    <input
-                      id={`${id}-${scaleValue}`}
-                      className={cn('visually-hidden', styles.input)}
-                      type="radio"
-                      name={id}
-                      value={scaleValue}
-                      checked={selected}
-                      disabled={disabled}
-                      onChange={(event) => onChange(event.target.value)}
-                    />
                     <label
-                      htmlFor={`${id}-${scaleValue}`}
-                      className={cn(styles.tick, styles.verticalTick)}
+                      className={cn(styles.tick, styles.verticalTick, {
+                        [styles.tickDisabled]: disabled,
+                      })}
                     >
+                      <input
+                        id={`${id}-${scaleValue}`}
+                        className={cn('visually-hidden', styles.input)}
+                        type="radio"
+                        name={id}
+                        value={scaleValue}
+                        checked={selected}
+                        disabled={disabled}
+                        onChange={(event) => onChange(event.target.value)}
+                      />
                       <span className={styles.verticalBubbleArea}>
                         <span
                           className={cn(styles.bubble, {
@@ -141,8 +145,13 @@ export const VerticalScale = ({
           </Box>
         </Box>
 
-        {onClear && selectedIndex >= 0 && !disabled && (
-          <Box marginTop={2}>
+        {onClear && !disabled && (
+          <Box
+            marginTop={2}
+            className={cn(styles.clearRow, {
+              [styles.clearReserved]: selectedIndex < 0,
+            })}
+          >
             <Button
               variant="text"
               size="small"

@@ -17,9 +17,12 @@ import {
   VmstApplicationsAvailableActions,
   VmstApplicationsAttachmentTypeList,
   VmstApplicationsAttachment,
+  VmstApplicationsIncomeValidationResult,
   VmstApplicationsU2ValidationResponse,
+  VmstApplicantIncomeRow,
 } from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
+import { VmstApplicationsIncomeValidationInput } from './dto/incomeValidation.input'
 import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
@@ -75,6 +78,17 @@ export class VMSTApplicationsResolver {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
   }
 
+  @Query(() => VmstApplicationsIncomeValidationResult, {
+    name: 'vmstApplicationsValidateIncomes',
+  })
+  @Audit()
+  async validateIncomes(
+    @CurrentUser() auth: User,
+    @Args('input', { type: () => VmstApplicationsIncomeValidationInput })
+    input: VmstApplicationsIncomeValidationInput,
+  ) {
+    return this.vmstApplicationsService.validateIncomes(auth, input)
+  }
   @Query(() => VmstApplicationsU2ValidationResponse, {
     name: 'vmstApplicationsU2Validation',
   })
@@ -169,6 +183,16 @@ export class VMSTApplicationsResolver {
     )
 
     return this.vmstApplicationsService.getApplicantActions(applicantId)
+  }
+
+  @Query(() => [VmstApplicantIncomeRow], {
+    name: 'vmstApplicantIncomeRows',
+  })
+  @Audit()
+  async getApplicantIncomeRows(
+    @CurrentUser() auth: User,
+  ): Promise<VmstApplicantIncomeRow[]> {
+    return this.vmstApplicationsService.getApplicantIncomeRows(auth)
   }
 
   @Query(() => VmstApplicationsApplicantAttachmentsResponse, {

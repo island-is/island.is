@@ -200,13 +200,15 @@ const AppointmentDetail = () => {
                   </Text>
                 )}
                 {!appointment.canCancel && (
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    <Icon
-                      icon="informationCircle"
-                      size="small"
-                      color="blue400"
-                      type="outline"
-                    />
+                  <Box display="flex" alignItems="flexStart" columnGap={1}>
+                    <Box className={styles.cancelInfoIcon}>
+                      <Icon
+                        icon="informationCircle"
+                        size="small"
+                        color="blue400"
+                        type="outline"
+                      />
+                    </Box>
                     <Text variant="medium" className={styles.cancelInfoText}>
                       {formatMessage(messages.cancelNotPossibleOnline)}
                     </Text>

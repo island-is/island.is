@@ -34,6 +34,7 @@ import {
   submitApplicationSalaryReport,
   syncApplicationReportDraft,
   updateApplicationReportDraft,
+  withdrawApplicationReport,
 } from '../../gen/fetch'
 import type {
   ApplicationReportCommentDto,
@@ -320,6 +321,17 @@ export class DirectorateOfEqualityClientService {
       user,
       () => deleteApplicationReportDraft({ path: { providerId } }),
       'Failed to delete report draft',
+    )
+  }
+
+  // Withdraws the submitted report tied to an island.is application the
+  // applicant deleted. Idempotent on WITHDRAWN; 400 once the report is decided
+  // (APPROVED/DENIED/SUPERSEDED), 404 when there is no report for providerId.
+  async withdrawReport(user: User, providerId: string): Promise<void> {
+    return this.unwrap(
+      user,
+      () => withdrawApplicationReport({ path: { providerId } }),
+      'Failed to withdraw report',
     )
   }
 

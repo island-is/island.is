@@ -13,6 +13,7 @@ export const CREATE_APPLICATION = gql`
       hasRequiredDelegation
       isInaccessible
       validateEligibility
+      enableApplicationPdfDownload
     }
   }
   ${ApplicationFragment}

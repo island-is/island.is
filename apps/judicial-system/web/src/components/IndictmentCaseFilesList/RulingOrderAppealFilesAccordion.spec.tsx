@@ -2,11 +2,11 @@ import type { ReactNode } from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
   AppealCase,
-  Case,
   CaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -76,17 +76,19 @@ describe('RulingOrderAppealFilesAccordion', () => {
     created: '2026-08-25T10:00:00.000Z',
   } as CaseFile
 
-  const makeCase = (caseFiles: CaseFile[]): Case =>
+  const makeCase = (caseFiles: CaseFile[]): WorkingCase =>
     ({
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.RECEIVED,
       rulingOrderAppealCases: [appealCase],
       caseFiles,
-    } as Case)
+    } as WorkingCase)
 
   const makeFormContext = (
-    workingCase: Case,
-    setWorkingCase: (updater: (prev: Case) => Case) => void = jest.fn(),
+    workingCase: WorkingCase,
+    setWorkingCase: (
+      updater: (prev: WorkingCase) => WorkingCase,
+    ) => void = jest.fn(),
   ) =>
     ({
       workingCase,
@@ -158,9 +160,11 @@ describe('RulingOrderAppealFilesAccordion', () => {
     } as CaseFile
 
     let workingCase = makeCase([appealBriefFile, deletableFile])
-    const setWorkingCase = jest.fn((updater: (prev: Case) => Case) => {
-      workingCase = updater(workingCase)
-    })
+    const setWorkingCase = jest.fn(
+      (updater: (prev: WorkingCase) => WorkingCase) => {
+        workingCase = updater(workingCase)
+      },
+    )
 
     const { rerender } = render(
       wrapInProviders(accordion, makeFormContext(workingCase, setWorkingCase)),

@@ -5,13 +5,14 @@ import * as styles from './LinkResolver.css'
 import cn from 'classnames'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useRoutes } from '@island.is/portals/core'
-interface Props {
+export interface LinkResolverProps {
   children?: ReactNode
   className?: string
   href: string
   label?: string
   skipOutboundTrack?: boolean
   callback?: () => void
+  'aria-label'?: string
 }
 
 export const LinkResolver = ({
@@ -20,7 +21,8 @@ export const LinkResolver = ({
   className,
   skipOutboundTrack,
   callback,
-}: Props) => {
+  'aria-label': ariaLabel,
+}: LinkResolverProps) => {
   const { pathname } = useLocation()
   const routes = useRoutes()
   const routePaths = routes.map((item) => item.path)
@@ -31,6 +33,7 @@ export const LinkResolver = ({
         href={href}
         target="_blank"
         rel="noreferrer noopener"
+        aria-label={ariaLabel}
         className={cn(styles.link, {
           [`${className}`]: className,
         })}
@@ -60,6 +63,7 @@ export const LinkResolver = ({
         [`${className}`]: className,
       })}
       to={href}
+      aria-label={ariaLabel}
       onClick={callback}
     >
       {children}

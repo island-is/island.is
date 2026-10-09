@@ -59,7 +59,7 @@ export const DashboardV2 = () => {
               <NotificationsBox limit={4} />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box marginTop={[1, 2, 2, 0]}>
+              <Box marginTop={[2, 2, 2, 0]}>
                 {loading ? (
                   <SkeletonLoader
                     space={2}

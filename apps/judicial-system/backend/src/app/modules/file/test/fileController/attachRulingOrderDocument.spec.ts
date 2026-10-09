@@ -32,7 +32,7 @@ describe('FileController - Attach ruling order document', () => {
   const key = `${caseId}/${uuid()}/urskurdur.pdf`
 
   let mockCaseFileRepositoryService: CaseFileRepositoryService
-  let queuedMessages: Message[]
+  let queuedMessagesAfterCommit: Message[]
   let transaction: Transaction
   let givenWhenThen: (
     theCase: Case,
@@ -45,11 +45,11 @@ describe('FileController - Attach ruling order document', () => {
       caseFileRepositoryService,
       fileController,
       sequelize,
-      queuedMessages: messages,
+      queuedMessagesAfterCommit: messages,
     } = await createTestingFileModule()
 
     mockCaseFileRepositoryService = caseFileRepositoryService
-    queuedMessages = messages
+    queuedMessagesAfterCommit = messages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -123,7 +123,7 @@ describe('FileController - Attach ruling order document', () => {
     })
 
     it('should deliver the ruling to the police and the court', () => {
-      expect(queuedMessages).toEqual([
+      expect(queuedMessagesAfterCommit).toEqual([
         {
           type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
           user,
@@ -187,7 +187,7 @@ describe('FileController - Attach ruling order document', () => {
       expect(then.error.message).toBe(
         'The ruling order has already been written up',
       )
-      expect(queuedMessages).toHaveLength(0)
+      expect(queuedMessagesAfterCommit).toHaveLength(0)
     })
   })
 

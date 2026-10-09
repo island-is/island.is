@@ -25,18 +25,22 @@ import {
   pageLayout,
   sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import BreadCrumbs from '@island.is/judicial-system-web/src/components/BreadCrumbs/BreadCrumbs'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import Logo from '@island.is/judicial-system-web/src/components/Logo/Logo'
 import Skeleton from '@island.is/judicial-system-web/src/components/Skeleton/Skeleton'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type {
-  Case,
-  User,
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseType,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useSections,
+  useTargetAppealCaseByAppealCaseId,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './PageLayout.css'
 
@@ -121,7 +125,7 @@ const DisplaySection: FC<SectionProps> = ({
 }
 
 interface SidePanelProps {
-  workingCase: Case
+  workingCase: WorkingCase
   user?: User
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
@@ -135,6 +139,7 @@ const SidePanel: FC<SidePanelProps> = ({
 }) => {
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { formatMessage } = useIntl()
 
   const activeSection = sections.findIndex((s) => s.isActive)
@@ -159,25 +164,32 @@ const SidePanel: FC<SidePanelProps> = ({
             </Box>
           )}
           <Box
-            marginBottom={[1, 1, showCourtCaseNumber ? 4 : 6]}
+            marginBottom={[1, 1, 2]}
             marginLeft={[3, 3, 0]}
             marginTop={[2, 2, 0]}
           >
             <Text variant="h3" as="h3" id="case-steps-heading">
-              {formatMessage(
-                user?.institution?.type === InstitutionType.COURT_OF_APPEALS
-                  ? formStepperSections.appealedCaseTitle
-                  : isIndictmentCase(workingCase.type)
-                  ? formStepperSections.indictmentTitle
-                  : formStepperSections.title,
-                { caseType: workingCase.type },
-              )}
+              {/* A verdict appeal is an áfrýjun, not a kæra - two different
+                  proceedings that the court of appeals runs side by side, and
+                  the panel names the one the page is about. */}
+              {user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+              targetAppealCase?.appealType === AppealCaseType.VERDICT
+                ? 'Áfrýjun'
+                : formatMessage(
+                    user?.institution?.type === InstitutionType.COURT_OF_APPEALS
+                      ? formStepperSections.appealedCaseTitle
+                      : isIndictmentCase(workingCase.type)
+                      ? formStepperSections.indictmentTitle
+                      : formStepperSections.title,
+                    { caseType: workingCase.type },
+                  )}
             </Text>
-            <Text>
-              {showCourtCaseNumber && courtCaseNumber.current
-                ? courtCaseNumber.current
-                : '\u00A0'}
-            </Text>
+            {/* Only when there is a number to show. The wider margin this
+                block used to carry when there was none, plus the blank line it
+                rendered to hold the space, spaced the heading twice over. */}
+            {showCourtCaseNumber && courtCaseNumber.current && (
+              <Text>{courtCaseNumber.current}</Text>
+            )}
           </Box>
           <FormStepperV2
             sections={sections.map((section, index) => (
@@ -197,7 +209,7 @@ const SidePanel: FC<SidePanelProps> = ({
 }
 interface PageProps {
   children: ReactNode
-  workingCase: Case
+  workingCase: WorkingCase
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean

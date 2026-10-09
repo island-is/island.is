@@ -1,28 +1,35 @@
 import {
+  isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseFile,
-  CaseFileCategory,
-  Defendant,
-  User,
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import {
+  type AppealCase,
+  AppealCaseState,
+  type CaseFile,
+  type CaseFileCategory,
+  type Defendant,
+  type User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
 // Whether this user may open a verdict appeal file of one of the given
-// categories. The public prosecution office sees every declaration - it acts on
-// the appeal, and registers the ones that arrive by letter - and is not a
-// prosecution user in the sense the shared appeal-file rule knows; everyone else
-// is governed by that rule (prosecution sees all, a defender their own clients').
+// categories.
+//
+// Two roles see every declaration and are named here because the shared
+// appeal-file rule does not know them: the public prosecution office, which
+// acts on the appeal and registers the ones arriving by letter, and the court
+// of appeals, to which the declaration is one of the documents the appeal
+// arrives with. Everyone else is governed by that rule - prosecution sees all,
+// a defender their own clients'.
 export const canViewVerdictAppealFile = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   categories: CaseFileCategory[],
   file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
   user: User | undefined,
 ): boolean =>
-  (isPublicProsecutionOfficeUser(user) &&
+  ((isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) &&
     Boolean(file.category && categories.includes(file.category))) ||
   isMatchingAppealCaseFile(workingCase, categories, file, user)
 
@@ -39,7 +46,7 @@ export interface VerdictAppealFileGroup {
  * every other party appeal file.
  */
 export const getVerdictAppealFileGroups = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
 ): VerdictAppealFileGroup[] => {
   const declarationFiles = (workingCase.caseFiles ?? [])
@@ -64,3 +71,21 @@ export const getVerdictAppealFileGroups = (
     return files.length > 0 ? [{ defendant, files }] : []
   })
 }
+
+/**
+ * Whether a verdict appeal currently stands. The association row persists after
+ * withdrawal (and is reused if someone re-appeals within the deadline), so a
+ * present `verdictAppealCase` alone is not enough.
+ */
+export const hasStandingVerdictAppeal = (
+  verdictAppealCase?: Pick<AppealCase, 'appealState'> | null,
+): boolean =>
+  Boolean(verdictAppealCase) &&
+  verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
+
+export const showsAppealSummonses = (
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
+  user: User | undefined,
+): boolean =>
+  isPublicProsecutionOfficeUser(user) &&
+  hasStandingVerdictAppeal(workingCase.verdictAppealCase)

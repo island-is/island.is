@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
 import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
   UserRole,
@@ -15,10 +15,18 @@ import {
 
 import InfoCardActiveIndictment from './InfoCardActiveIndictment'
 
+// The info card items resolve which appeal the page is about from the query
+// string, so rendering one needs a router even where no appeal is in play.
+jest.mock('next/router', () => ({
+  useRouter() {
+    return { pathname: '', query: {} }
+  },
+}))
+
 const DEFENDER_NATIONAL_ID = '1234567890'
 
 const renderActiveIndictment = (
-  theCase: Case,
+  theCase: WorkingCase,
   userRole: UserRole = UserRole.DISTRICT_COURT_JUDGE,
   nationalId?: string,
 ) =>

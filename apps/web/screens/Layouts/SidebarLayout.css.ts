@@ -32,6 +32,14 @@ export const contentWrapper = style({
   }),
 })
 
+export const contentWrapperHiddenOnTablet = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      maxWidth: `calc(100% - ${STICKY_NAV_MAX_WIDTH_LG}px)`,
+    },
+  }),
+})
+
 export const sticky = style({
   position: 'sticky',
   alignSelf: 'flex-start',

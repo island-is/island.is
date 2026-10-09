@@ -268,6 +268,13 @@ export const m = {
       defaultMessage: 'Prenta',
       description: 'Texti á prenta hnapp',
     },
+    printFromButton: {
+      id: 'web.verdicts:verdictPage.printFromButton',
+      defaultMessage:
+        'Notaðu „Prenta“ hnappinn á síðunni til að prenta dóminn.',
+      description:
+        'Birtist þegar PDF dómssíða er prentuð úr vafranum, vísar á Prenta hnappinn',
+    },
     goBack: {
       id: 'web.verdicts:verdictPage.goBack',
       defaultMessage: 'Til baka',
