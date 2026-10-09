@@ -1,4 +1,9 @@
-import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Inject,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common'
 import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -52,7 +57,7 @@ export class AppealSummonsResolver {
 
   @Mutation(() => AppealSummons)
   createAppealSummons(
-    @Args('caseId', { type: () => String }) caseId: string,
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => CreateAppealSummonsInput })
     input: CreateAppealSummonsInput,
     @CurrentGraphQlUser() user: User,
@@ -73,7 +78,7 @@ export class AppealSummonsResolver {
 
   @Mutation(() => AppealSummons)
   updateAppealSummons(
-    @Args('caseId', { type: () => String }) caseId: string,
+    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => UpdateAppealSummonsInput })
     input: UpdateAppealSummonsInput,
     @CurrentGraphQlUser() user: User,

@@ -519,7 +519,6 @@ Array [
   "case.notifications.type",
   "case.openedByDefender",
   "case.origin",
-  "case.originalAncestorId",
   "case.parentCase.caseFiles.civilClaimantId",
   "case.parentCase.caseFiles.created",
   "case.parentCase.caseFiles.defendantId",

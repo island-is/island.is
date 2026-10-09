@@ -263,7 +263,6 @@ export const appellantSideLabel = (
 
 export type AppealSummonsDefendantInput = {
   defendantId: string
-  appellantSide: AppealSummonsAppellantSide
   claims: string
 }
 
@@ -272,8 +271,7 @@ export const toAppealSummonsDefendantInputs = (
 ): AppealSummonsDefendantInput[] =>
   sections
     .filter((section) => section.included)
-    .map(({ defendantId, appellantSide, claims }) => ({
+    .map(({ defendantId, claims }) => ({
       defendantId,
-      appellantSide,
       claims: claims.trim(),
     }))

@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import Cookie from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-import type { AppealSummonsAppellantSide } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -14,7 +13,6 @@ import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
 
 export type AppealSummonsDefendantInput = {
   defendantId: string
-  appellantSide: AppealSummonsAppellantSide
   claims: string
 }
 
@@ -172,6 +170,10 @@ const useAppealSummons = () => {
 
   const previewAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
+      // Open synchronously so the browser still treats this as a user gesture
+      // after the fetch/blob awaits below.
+      const previewWindow = window.open('', '_blank')
+
       try {
         const token = Cookie.get(CSRF_COOKIE_NAME)
         const response = await fetch(
@@ -193,9 +195,16 @@ const useAppealSummons = () => {
 
         const blob = await response.blob()
         const previewUrl = URL.createObjectURL(blob)
-        window.open(previewUrl, '_blank')
+
+        if (previewWindow) {
+          previewWindow.location.href = previewUrl
+        } else {
+          window.open(previewUrl, '_blank')
+        }
+
         setTimeout(() => URL.revokeObjectURL(previewUrl), 1000 * 60)
       } catch {
+        previewWindow?.close()
         toast.error('Upp kom villa við að opna áfrýjunarstefnu')
       }
     },

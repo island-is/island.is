@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import fetch, { Headers } from 'node-fetch'
+import { pipeline } from 'stream/promises'
 
 import { Inject, Injectable } from '@nestjs/common'
 
@@ -89,12 +90,17 @@ export class FileService {
 
     res.header('Content-Type', `application/${contentType}`)
 
+    // node-fetch may decompress the body while leaving Content-Length as the
+    // compressed size; only forward length when the body was not encoded.
     const contentLength = result.headers.get('Content-Length')
-    if (contentLength !== null) {
+    const contentEncoding = result.headers.get('Content-Encoding')
+    if (contentLength !== null && contentEncoding === null) {
       res.header('Content-length', contentLength)
     }
 
-    return stream.pipe(res)
+    await pipeline(stream, res)
+
+    return res
   }
 
   async tryGetFile(
