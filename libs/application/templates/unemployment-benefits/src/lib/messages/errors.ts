@@ -64,6 +64,11 @@ export const serviceErrors = defineMessages({
     defaultMessage: 'Þessi dálkur er skilyrtur',
     description: 'Error message when validation fails',
   },
+  phoneNumberError: {
+    id: 'vmst.ub.application:phoneNumberError',
+    defaultMessage: 'Vinsamlegast sláðu inn gilt símanúmer',
+    description: 'Error message when phone number validation fails',
+  },
   languageError: {
     id: 'vmst.ub.application:languageError',
     defaultMessage:

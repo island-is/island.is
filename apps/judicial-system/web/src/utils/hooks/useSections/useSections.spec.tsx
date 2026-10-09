@@ -11,13 +11,11 @@ import {
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import type {
-  Case,
-  User,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
@@ -57,7 +55,7 @@ describe('useSections getSections', () => {
   // hook). Each test injects its own `c` here so the resolved target appeal
   // matches what `getSections(c, u)` is called with.
   const makeWrapper =
-    (workingCase: Case, features: Feature[] = []) =>
+    (workingCase: WorkingCase, features: Feature[] = []) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ({ children }: any) =>
       (
@@ -145,7 +143,7 @@ describe('useSections getSections', () => {
         appealState: AppealCaseState.RECEIVED,
         appealType: AppealCaseType.VERDICT,
       },
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     const coaUser = {
       ...u,
@@ -157,7 +155,7 @@ describe('useSections getSections', () => {
     // the hook only builds when it is given somewhere to navigate to.
     const onNavigationTo = jest.fn()
 
-    const appealSections = (c: Case, user: User) => {
+    const appealSections = (c: WorkingCase, user: User) => {
       const { result } = renderHook(() => useSections(true, onNavigationTo), {
         wrapper: makeWrapper(c),
       })
@@ -314,10 +312,10 @@ describe('useSections getSections', () => {
         appealState: AppealCaseState.APPEALED,
         appealType: AppealCaseType.VERDICT,
       },
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     const sectionsFor = (
-      c: Case,
+      c: WorkingCase,
       user: User,
       features: Feature[] = [Feature.INDICTMENT_APPEAL],
     ) => {
@@ -346,7 +344,7 @@ describe('useSections getSections', () => {
       mockPathname = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE
 
       const sections = sectionsFor(
-        { ...appealedCase, verdictAppealCase: null } as unknown as Case,
+        { ...appealedCase, verdictAppealCase: null } as unknown as WorkingCase,
         staff,
       )
 
@@ -393,7 +391,7 @@ describe('useSections getSections', () => {
             appealState: AppealCaseState.WITHDRAWN,
             appealType: AppealCaseType.VERDICT,
           },
-        } as unknown as Case,
+        } as unknown as WorkingCase,
         staff,
       )
 
@@ -404,11 +402,10 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for restriction cases in DRAFT state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.DRAFT,
       policeCaseNumbers: [],
@@ -435,11 +432,10 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for appealed restriction cases when the court of appeals has made a ruling', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.ACCEPTED,
       policeCaseNumbers: [],
@@ -468,10 +464,9 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in RECEIVED state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.RECEIVED,
       policeCaseNumbers: [],
@@ -488,10 +483,9 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in WAITING_FOR_CANCELLATION state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.WAITING_FOR_CANCELLATION,
       policeCaseNumbers: [],
@@ -508,10 +502,9 @@ describe('useSections getSections', () => {
   })
 
   it('should return the correct sections for indictment cases in WAITING_FOR_REVIEW state', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.WAITING_FOR_REVIEW,
       policeCaseNumbers: [],
@@ -528,10 +521,9 @@ describe('useSections getSections', () => {
   })
 
   it('should not append extension sections for indictment cases copied to draft (with a parentCase)', () => {
-    const c: Case = {
+    const c: WorkingCase = {
       type: CaseType.INDICTMENT,
       created: faker.date.past().toISOString(),
-      modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
       state: CaseState.DRAFT,
       policeCaseNumbers: [],

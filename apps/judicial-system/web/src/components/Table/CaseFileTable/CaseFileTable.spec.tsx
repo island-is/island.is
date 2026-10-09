@@ -1,10 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import type {
-  Case,
-  CaseFile,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   ApolloProviderWrapper,
@@ -24,7 +22,7 @@ const renderTable = (caseFiles: CaseFile[], onOpenFile = jest.fn()) => {
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
-        <FormContextWrapper theCase={{ id: 'case-1' } as Case}>
+        <FormContextWrapper theCase={{ id: 'case-1' } as WorkingCase}>
           <CaseFileTable
             caseFiles={caseFiles}
             onOpenFile={onOpenFile}

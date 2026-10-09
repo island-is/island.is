@@ -425,7 +425,13 @@ query Case($input: CaseQueryInput!) {
         verdictAppealDeadline
         isVerdictAppealDeadlineExpired
         subpoenaType
+        isSentToPrisonAdmin
+        sentToPrisonAdminDate
         punishmentType
+        indictmentCancelledOrDismissedState {
+          type
+          time
+        }
         subpoenas {
           ...SubpoenaFields
         }

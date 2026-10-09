@@ -6,7 +6,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { caseDates } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
   CaseType,
@@ -15,7 +15,7 @@ import {
 import * as styles from './CaseDates.css'
 
 export interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   button?: {
     label: string
     onClick: () => void

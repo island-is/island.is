@@ -9,12 +9,12 @@ import {
   isPublicProsecutionUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   type AppealCase,
   AppealCaseState,
   type AppealSummons,
-  type Case,
   type CaseFile,
   type CaseFileCategory,
   type Defendant,
@@ -32,7 +32,7 @@ import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/uti
 // arrives with. Everyone else is governed by that rule - prosecution sees all,
 // a defender their own clients'.
 export const canViewVerdictAppealFile = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   categories: CaseFileCategory[],
   file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
   user: User | undefined,
@@ -54,7 +54,7 @@ export interface VerdictAppealFileGroup {
  * every other party appeal file.
  */
 export const getVerdictAppealFileGroups = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
 ): VerdictAppealFileGroup[] => {
   const declarationFiles = (workingCase.caseFiles ?? [])
@@ -92,7 +92,7 @@ export const hasStandingVerdictAppeal = (
   verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
 
 export const showsAppealSummonses = (
-  workingCase: Pick<Case, 'verdictAppealCase'>,
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): boolean => {
   if (!hasStandingVerdictAppeal(workingCase.verdictAppealCase)) {
@@ -157,7 +157,7 @@ export const formatAppealSummonsSentToCourtOfAppealsTooltip = (
 }
 
 export const canShowIssueAppealSummons = (
-  workingCase: Pick<Case, 'verdictAppealCase'>,
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): boolean =>
   canIssueAppealSummons(

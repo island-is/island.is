@@ -1,4 +1,4 @@
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseType,
@@ -9,13 +9,13 @@ import { titleForCase } from './titleForCase'
 
 describe('titleForCase', () => {
   const formatMessage = createFormatMessage()
-  const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
+  const fn = (theCase: WorkingCase) => titleForCase(formatMessage, theCase)
 
   test('should handle rejected investigation case', () => {
     const theCase = {
       state: CaseState.REJECTED,
       type: CaseType.BODY_SEARCH,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Kröfu um rannsóknarheimild hafnað')
   })
@@ -24,13 +24,13 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.REJECTED,
       type: CaseType.CUSTODY,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Kröfu hafnað')
   })
 
   test('should handle dismissed case', () => {
-    const theCase = { state: CaseState.DISMISSED } as Case
+    const theCase = { state: CaseState.DISMISSED } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Kröfu vísað frá')
   })
@@ -40,7 +40,7 @@ describe('titleForCase', () => {
       state: CaseState.ACCEPTED,
       type: CaseType.CUSTODY,
       isValidToDateInThePast: true,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Gæsluvarðhaldi lokið')
   })
@@ -50,7 +50,7 @@ describe('titleForCase', () => {
       state: CaseState.ACCEPTED,
       type: CaseType.ADMISSION_TO_FACILITY,
       isValidToDateInThePast: true,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Vistun á viðeigandi stofnun lokið')
   })
@@ -60,7 +60,7 @@ describe('titleForCase', () => {
       state: CaseState.ACCEPTED,
       type: CaseType.TRAVEL_BAN,
       isValidToDateInThePast: true,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Farbanni lokið')
   })
@@ -69,7 +69,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
       type: CaseType.SEARCH_WARRANT,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um rannsóknarheimild samþykkt')
   })
@@ -78,7 +78,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
       type: CaseType.CUSTODY,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Gæsluvarðhald virkt')
   })
@@ -87,7 +87,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
       type: CaseType.ADMISSION_TO_FACILITY,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Vistun á viðeigandi stofnun virk')
   })
@@ -96,7 +96,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
       type: CaseType.TRAVEL_BAN,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Farbann virkt')
   })
@@ -105,7 +105,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.NEW,
       type: CaseType.SEARCH_WARRANT,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um rannsóknarheimild')
   })
@@ -115,7 +115,7 @@ describe('titleForCase', () => {
       state: CaseState.NEW,
       type: CaseType.SEARCH_WARRANT,
       parentCase: {},
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um framlengingu á rannsóknarheimild')
   })
@@ -124,7 +124,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.NEW,
       type: CaseType.CUSTODY,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um gæsluvarðhald')
   })
@@ -134,7 +134,7 @@ describe('titleForCase', () => {
       state: CaseState.NEW,
       type: CaseType.CUSTODY,
       parentCase: {},
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um framlengingu á gæsluvarðhaldi')
   })
@@ -143,7 +143,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.NEW,
       type: CaseType.ADMISSION_TO_FACILITY,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um vistun á viðeigandi stofnun')
   })
@@ -153,7 +153,7 @@ describe('titleForCase', () => {
       state: CaseState.NEW,
       type: CaseType.ADMISSION_TO_FACILITY,
       parentCase: {},
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um framlengingu á vistun á viðeigandi stofnun')
   })
@@ -162,7 +162,7 @@ describe('titleForCase', () => {
     const theCase = {
       state: CaseState.NEW,
       type: CaseType.TRAVEL_BAN,
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um farbann')
   })
@@ -172,7 +172,7 @@ describe('titleForCase', () => {
       state: CaseState.NEW,
       type: CaseType.TRAVEL_BAN,
       parentCase: {},
-    } as Case
+    } as WorkingCase
     const res = fn(theCase)
     expect(res).toEqual('Krafa um framlengingu á farbanni')
   })
