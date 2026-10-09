@@ -4,10 +4,14 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 import {
   addEmptyLines,
-  addNormalCenteredText,
-  addNormalJustifiedText,
-  addNormalText,
+  addNormalPlusCenteredText,
+  addNormalPlusJustifiedText,
+  addNormalPlusRightAlignedText,
+  addNormalPlusText,
+  baseFontSize,
+  basePlusFontSize,
   setTitle,
+  smallFontSize,
 } from '../pdfHelpers'
 
 /** Which kind of advocate the letter appoints, which is most of what differs. */
@@ -18,7 +22,7 @@ export enum AppealAppointmentKind {
 
 export interface AppealAppointmentLetter {
   kind: AppealAppointmentKind
-  /** The advocate being appointed. */
+  /** The advocate being appointed, who is also who the letter is addressed to. */
   advocateName: string
   /** The accused, who names the case whichever advocate is appointed. */
   defendantName: string
@@ -32,7 +36,7 @@ export interface AppealAppointmentLetter {
   /** Who appointed the advocate, and when - read off the appointment event. */
   appointedBy: { name: string; title?: string | null }
   appointedDate: Date | string
-  /** Everyone who gets a copy, in the order the letter lists them. */
+  /** Everyone who gets a copy, one per line in the order the letter lists them. */
   copyTo: string[]
 }
 
@@ -43,17 +47,57 @@ export interface AppealAppointmentLetter {
 const NO_APPEAL_CASE_NUMBER = 'xxx/xxxx'
 const NO_APPEAL_SUMMONS_DATE = 'Ekki útfært'
 
-// The court's own letterhead. Fixed text rather than institution data: this
-// letter only ever comes from the court of appeals, and the address it carries
-// is the court's, not anything the case knows.
-const LETTERHEAD = [
+// The court's own stationery, reproduced from the letters on the ticket. Fixed
+// text rather than institution data: this letter only ever comes from the court
+// of appeals, and the address it carries is the court's, not anything the case
+// knows.
+const WORDMARK = 'LANDSRÉTTUR'
+const FOOTER = [
   'Vesturvör 2  |  200 Kópavogur  |  Sími: 432-5300',
   'Kt. 470717-1060  |  landsrettur@landsrettur.is  |  landsrettur.is',
 ]
 
+// Measured off those letters, in points. The stationery sits outside the text
+// column: the wordmark and its rule at the page's own left margin, the footer
+// and its rule mirrored against the right.
+const BRAND_COLOUR = '#5B2646'
+const PAGE_MARGIN = 36
+const TEXT_LEFT = 71
+const TEXT_RIGHT = 73
+const TEXT_TOP = 96
+// The real wordmark is set in a condensed face the built-in PDF fonts cannot
+// reach: at the letters' cap height Times is half again as wide. Matched on
+// width instead, which is what governs the proportion against the rule below
+// it, with the tracking the original has.
+const WORDMARK_Y = 40
+const WORDMARK_SPACING = 0.8
+const HEADER_RULE_Y = 57
+const RULE_LENGTH = 261
+const FOOTER_RULE_Y = 777
+const FOOTER_TEXT_Y = 786
+const FOOTER_LINE_HEIGHT = 12
+const COPY_BLOCK_Y = 712
+const COPY_LINE_HEIGHT = 17
+const COPY_BLOCK_GAP = 24
+
 /** How a criminal case is named: the prosecution against the accused. */
 export const getAppealAppointmentCaseTitle = (defendantName: string) =>
   `Ákæruvaldið gegn ${defendantName}`
+
+/**
+ * The same title as the letter heads itself with: three lines, which is how a
+ * court document names a case.
+ */
+export const getAppealAppointmentCaseTitleLines = (defendantName: string) => [
+  'Ákæruvaldið',
+  'gegn',
+  defendantName,
+]
+
+/** The court of appeals number, or what stands in for it until one is recorded. */
+export const getAppealCaseNumberOrPlaceholder = (
+  appealCaseNumber?: string | null,
+) => appealCaseNumber || NO_APPEAL_CASE_NUMBER
 
 /**
  * The district court as the letter names it: "dómur Héraðsdóms Reykjavíkur",
@@ -82,10 +126,16 @@ export const getAppealAppointmentDefendantNames = (names: string[]): string => {
   return names.length === 2 ? `${names[0]} og ${names[1]}` : `${names[0]} o.fl.`
 }
 
-/** The court of appeals number, or what stands in for it until one is recorded. */
-export const getAppealCaseNumberOrPlaceholder = (
-  appealCaseNumber?: string | null,
-) => appealCaseNumber || NO_APPEAL_CASE_NUMBER
+/**
+ * Who the letter is addressed to. Every advocate the court appoints is a
+ * lawyer, whichever role it appoints them to, and that is how both letters
+ * address them.
+ *
+ * The firm and street address that follow on those letters are left out: the
+ * lawyer register stores neither.
+ */
+export const getAppealAppointmentAddressee = (advocateName: string) =>
+  `${advocateName} lögmaður`
 
 export const getAppealAppointmentSubject = (
   kind: AppealAppointmentKind,
@@ -97,11 +147,17 @@ export const getAppealAppointmentSubject = (
     appealCaseNumber,
   )}:`
 
-/** The sentence that does the appointing, which is the point of the letter. */
+/**
+ * The paragraph that does the appointing, which is the point of the letter.
+ * One paragraph rather than two lines: the notice about the deadline runs on
+ * from the appointment in both letters.
+ */
 export const getAppealAppointmentSentence = (kind: AppealAppointmentKind) =>
-  kind === AppealAppointmentKind.DEFENDER
-    ? 'Þér eruð hér með skipaðir verjandi ákærða fyrir Landsrétti.'
-    : 'Þér eruð hér með skipaðir réttargæslumaður brotaþola fyrir Landsrétti.'
+  `Þér eruð hér með skipaðir ${
+    kind === AppealAppointmentKind.DEFENDER
+      ? 'verjandi ákærða'
+      : 'réttargæslumaður brotaþola'
+  } fyrir Landsrétti. Tilkynnt verður síðar um frest til greinargerðar í málinu.`
 
 /**
  * What reached this court, and how. It carries both values the portal cannot
@@ -129,28 +185,116 @@ export const getAppealAppointmentBody = (
     letter.appealCaseNumber,
   )}.`
 
+const drawRule = (doc: PDFKit.PDFDocument, x: number, y: number) =>
+  doc
+    .moveTo(x, y)
+    .lineTo(x + RULE_LENGTH, y)
+    .lineWidth(1)
+    .strokeColor(BRAND_COLOUR)
+    .stroke()
+
+/**
+ * Draws at an exact spot on the page rather than in the flow.
+ *
+ * The margins have to come off first: pdfkit treats text that starts below the
+ * bottom margin as overflow and silently moves it - and everything after it -
+ * onto a new page, which is how the stationery at the foot of this letter
+ * turned a one-page letter into three.
+ */
+const drawAbsolute = (doc: PDFKit.PDFDocument, draw: () => void) => {
+  const margins = doc.page.margins
+
+  doc.page.margins = { top: 0, bottom: 0, left: 0, right: 0 }
+
+  draw()
+
+  doc.page.margins = margins
+}
+
+/** The wordmark and rule at the head of each page, and the address at its foot. */
+const drawStationery = (doc: PDFKit.PDFDocument) => {
+  const pages = doc.bufferedPageRange()
+
+  for (let page = 0; page < pages.count; page++) {
+    doc.switchToPage(page)
+
+    drawAbsolute(doc, () => {
+      doc
+        .font('Times-Roman')
+        .fontSize(baseFontSize)
+        .fillColor(BRAND_COLOUR)
+        .text(WORDMARK, PAGE_MARGIN, WORDMARK_Y, {
+          characterSpacing: WORDMARK_SPACING,
+        })
+
+      drawRule(doc, PAGE_MARGIN, HEADER_RULE_Y)
+
+      const footerRight = doc.page.width - PAGE_MARGIN
+
+      drawRule(doc, footerRight - RULE_LENGTH, FOOTER_RULE_Y)
+
+      doc.fontSize(smallFontSize)
+
+      FOOTER.forEach((line, index) =>
+        doc.text(
+          line,
+          PAGE_MARGIN,
+          FOOTER_TEXT_Y + index * FOOTER_LINE_HEIGHT,
+          { width: footerRight - PAGE_MARGIN, align: 'right' },
+        ),
+      )
+
+      doc.fillColor('black')
+    })
+  }
+}
+
+/**
+ * The copy line, anchored to the foot of the page as the letters have it -
+ * unless the body has already run that far, in which case it follows the
+ * signature instead of being overprinted by it.
+ */
+const drawCopyRecipients = (doc: PDFKit.PDFDocument, copyTo: string[]) => {
+  const top = Math.max(doc.y + COPY_BLOCK_GAP, COPY_BLOCK_Y)
+
+  drawAbsolute(doc, () => {
+    doc.font('Times-Roman').fontSize(basePlusFontSize).fillColor('black')
+    ;['Afrit:', ...copyTo].forEach((line, index) =>
+      doc.text(line, TEXT_LEFT, top + index * COPY_LINE_HEIGHT),
+    )
+  })
+}
+
 /**
  * The letter by which the Court of Appeals appoints one party's advocate for
  * an appeal.
  *
  * Two letters in one formatter, because they differ in three places only: the
  * subject line, the sentence that appoints, and who is copied. A spokesperson's
- * letter also copies the defender; a defender's copies the prosecutor alone.
+ * letter also copies the appointed defenders; a defender's copies the
+ * prosecution alone.
+ *
+ * Laid out from the two letters attached to the ticket, down to where the rules
+ * sit and how far the text column is inset. The copy list and the stationery
+ * are anchored to the foot of the page as they are there, but the copy list
+ * gives way if a long letter would otherwise run into it.
  *
  * Deliberately given everything it prints. The signatory and the date come from
  * the appointment event rather than the party row, which keeps neither, and
  * resolving that is the caller's job - this stays a pure function of its
  * arguments so it can be read against the letter it has to reproduce.
- *
- * No recipient address block. The lawyer register does not store one, and the
- * court does not need it.
  */
 export const createAppealAppointmentLetter = (
   letter: AppealAppointmentLetter,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
-    margins: { top: 80, bottom: 60, left: 50, right: 50 },
+    margins: {
+      top: TEXT_TOP,
+      bottom: PAGE_MARGIN * 2,
+      left: TEXT_LEFT,
+      right: TEXT_RIGHT,
+    },
     bufferPages: true,
   })
 
@@ -165,15 +309,17 @@ export const createAppealAppointmentLetter = (
 
   setTitle(doc, title)
 
-  for (const line of LETTERHEAD) {
-    addNormalCenteredText(doc, line, 'Times-Roman')
-  }
+  addNormalPlusText(
+    doc,
+    getAppealAppointmentAddressee(letter.advocateName),
+    'Times-Roman',
+  )
 
   addEmptyLines(doc, 3)
 
   // Where the letter was written and when, as formal letters carry it. The
   // court sits in Kópavogur.
-  addNormalText(
+  addNormalPlusRightAlignedText(
     doc,
     `Kópavogi, ${formatDate(letter.appointedDate, 'PPP')}`,
     'Times-Roman',
@@ -181,39 +327,48 @@ export const createAppealAppointmentLetter = (
 
   addEmptyLines(doc, 2)
 
-  addNormalText(doc, title, 'Times-Bold')
-  addNormalText(
-    doc,
-    getAppealAppointmentCaseTitle(letter.defendantName),
-    'Times-Bold',
-  )
+  addNormalPlusText(doc, title, 'Times-Bold')
+
+  addEmptyLines(doc)
+
+  for (const line of getAppealAppointmentCaseTitleLines(letter.defendantName)) {
+    addNormalPlusText(doc, line, 'Times-Bold')
+  }
 
   addEmptyLines(doc, 2)
 
-  addNormalJustifiedText(doc, getAppealAppointmentBody(letter), 'Times-Roman')
-
-  addEmptyLines(doc, 2)
-
-  addNormalText(doc, getAppealAppointmentSentence(letter.kind), 'Times-Roman')
-  addNormalText(
+  addNormalPlusJustifiedText(
     doc,
-    'Tilkynnt verður síðar um frest til greinargerðar í málinu.',
+    getAppealAppointmentBody(letter),
     'Times-Roman',
   )
 
-  addEmptyLines(doc, 3)
+  addEmptyLines(doc)
 
-  addNormalText(doc, 'Fyrir hönd Landsréttar', 'Times-Roman')
-  addNormalText(doc, letter.appointedBy.name, 'Times-Bold')
+  addNormalPlusJustifiedText(
+    doc,
+    getAppealAppointmentSentence(letter.kind),
+    'Times-Roman',
+  )
+
+  addEmptyLines(doc, 4)
+
+  addNormalPlusCenteredText(doc, 'Fyrir hönd Landsréttar', 'Times-Roman')
+
+  addEmptyLines(doc, 2)
+
+  addNormalPlusCenteredText(doc, letter.appointedBy.name, 'Times-Roman')
 
   if (letter.appointedBy.title) {
-    addNormalText(doc, letter.appointedBy.title, 'Times-Roman')
+    addNormalPlusCenteredText(doc, letter.appointedBy.title, 'Times-Roman')
   }
 
   if (letter.copyTo.length > 0) {
-    addEmptyLines(doc, 2)
-    addNormalText(doc, `Afrit: ${letter.copyTo.join(', ')}`, 'Times-Roman')
+    drawCopyRecipients(doc, letter.copyTo)
   }
+
+  // Last, so it lands on every page the letter turned out to need.
+  drawStationery(doc)
 
   doc.end()
 
