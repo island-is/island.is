@@ -96,8 +96,15 @@ const drawConfirmation = (
       borderWidth: 1,
     })
 
-  const drawText = (text: string, x: number, top: number, font: PDFFont) =>
-    page.drawText(text, { x, y: fromTop(top + ascent), size: fontSize, font })
+  // Draws text with the middle of its cap height on the given y, matching
+  // pdfkit's 'mathematical' baseline
+  const drawText = (text: string, x: number, centerY: number, font: PDFFont) =>
+    page.drawText(text, {
+      x,
+      y: fromTop(centerY + ascent / 2),
+      size: fontSize,
+      font,
+    })
 
   // Draw the shadow background
   page.drawRectangle({
@@ -125,15 +132,15 @@ const drawConfirmation = (
   // Draw the title box
   drawBox(contentX, contentTop, contentWidth, titleHeight, lightGray)
 
-  const titleTextTop = contentTop + titleHeight / 2 - fontSize / 2
+  const titleTextY = contentTop + titleHeight / 2
   const titleX = contentX + padding
   const title = 'Réttarvörslugátt'
 
-  drawText(title, titleX, titleTextTop, fonts.bold)
+  drawText(title, titleX, titleTextY, fonts.bold)
   drawText(
     'Rafræn staðfesting',
     titleX + fonts.bold.widthOfTextAtSize(`${title}  `, fontSize),
-    titleTextTop,
+    titleTextY,
     fonts.regular,
   )
 
@@ -144,24 +151,22 @@ const drawConfirmation = (
       contentWidth -
       padding -
       fonts.regular.widthOfTextAtSize(dateString, fontSize),
-    titleTextTop,
+    titleTextY,
     fonts.regular,
   )
 
   // Draw the boxes below the title
   const boxTop = contentTop + titleHeight
   const boxHeight = shadowHeight - titleHeight
-  const fontHeight = fonts.regular.heightAtSize(fontSize)
-  const boxTextTop = (boxHeight - boxLineHeight - fontHeight) / 2
+  const boxTitleY = boxTop + (boxHeight - boxLineHeight) / 2
+  const boxContentY = boxTitleY + boxLineHeight
   let currentX = contentX
 
   for (const box of boxes) {
     const boxWidth = (contentWidth * box.widthPercent) / 100
 
     drawBox(currentX, boxTop, boxWidth, boxHeight, white)
-    drawText(box.title, currentX + padding, boxTop + boxTextTop, fonts.bold)
-
-    const contentTop = boxTop + boxTextTop + boxLineHeight
+    drawText(box.title, currentX + padding, boxTitleY, fonts.bold)
 
     if (box.ellipsize) {
       drawTextWithEllipsisPDFKit(
@@ -169,11 +174,11 @@ const drawConfirmation = (
         box.content,
         { type: fonts.regular, size: fontSize },
         currentX + padding,
-        fromTop(contentTop + ascent),
+        fromTop(boxContentY + ascent / 2),
         boxWidth - padding * 2,
       )
     } else {
-      drawText(box.content, currentX + padding, contentTop, fonts.regular)
+      drawText(box.content, currentX + padding, boxContentY, fonts.regular)
     }
 
     currentX += boxWidth

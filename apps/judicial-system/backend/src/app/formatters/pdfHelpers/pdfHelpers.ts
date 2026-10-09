@@ -30,7 +30,7 @@ export const confirmationLayout = {
   offset: calculatePt(8),
   titleHeight: calculatePt(16),
   padding: calculatePt(8),
-  // Distance from the top of a box title to the top of its content. The two
+  // Distance between the title line and the content line of a box. The two
   // lines are centered vertically in the box.
   boxLineHeight: calculatePt(10),
   coatOfArms: {
@@ -51,6 +51,9 @@ export const giganticFontSize = 33
 const lightGray = '#FAFAFA'
 const darkGray = '#CBCBCB'
 const gold = '#ADA373'
+
+// The lock icon path spans these units vertically before scaling
+const lockIcon = { top: 0.57, height: 11.23, scale: 0.5 }
 
 const setFont = (doc: PDFKit.PDFDocument, font?: string) => {
   if (font) {
@@ -204,7 +207,10 @@ export const drawConfirmation = (
 
   // Draw the title box
   const titleBoxY = doc.y - offset
-  const titleTextY = titleBoxY + titleHeight / 2 - fontSize / 2
+  const titleTextY = titleBoxY + titleHeight / 2
+  // Center the cap height of the text on the given y instead of hanging the
+  // text from it
+  const centered = { baseline: 'mathematical' as const }
 
   doc
     .rect(
@@ -219,20 +225,24 @@ export const drawConfirmation = (
   doc.fill('black')
   doc.font('Times-Bold')
   doc.fontSize(fontSize).text('Réttarvörslugátt', titleX, titleTextY, {
+    ...centered,
     continued: true,
     lineBreak: false,
   })
 
-  doc.text('  ', { continued: true })
+  doc.text('  ', { ...centered, continued: true })
 
   doc.font('Times-Roman')
-  doc.text(confirmationText, { lineBreak: false })
+  doc.text(confirmationText, { ...centered, lineBreak: false })
 
   // Draw lock icon if needed
   if (showLockIcon) {
     doc
-      .translate(totalWidth + offset, doc.y - offset)
-      .scale(0.5)
+      .translate(
+        totalWidth + offset,
+        titleTextY - (lockIcon.top + lockIcon.height / 2) * lockIcon.scale,
+      )
+      .scale(lockIcon.scale)
       .path(
         'M2.76356 11.8047H9.57201C9.85402 11.8047 10.0826 11.5761 10.0826 11.2941V5.50692C10.0826 5.22492 9.85402 4.99629 9.57201 4.99629H9.06138V3.46439C9.06138 1.86887 7.76331 0.570801 6.16779 0.570801C4.57226 0.570801 3.2742 1.86887 3.2742 3.46439V4.99629H2.76356C2.48156 4.99629 2.25293 5.22492 2.25293 5.50692V11.2941C2.25293 11.5761 2.48156 11.8047 2.76356 11.8047ZM7.61394 8.03817L6.16714 9.48496C6.06743 9.58467 5.93674 9.63455 5.80609 9.63455C5.67543 9.63455 5.54471 9.58467 5.44504 9.48496L4.72164 8.76157C4.52222 8.56215 4.52222 8.23888 4.72164 8.03943C4.92102 7.84001 5.24436 7.84001 5.44378 8.03943L5.80612 8.40174L6.89187 7.31603C7.09125 7.11661 7.41458 7.11661 7.614 7.31603C7.81339 7.51549 7.81339 7.83875 7.61394 8.03817ZM4.29546 3.46439C4.29546 2.43199 5.13539 1.59207 6.16779 1.59207C7.20019 1.59207 8.04011 2.43199 8.04011 3.46439V4.99629H4.29546V3.46439Z',
       )
@@ -255,6 +265,7 @@ export const drawConfirmation = (
           padding,
         titleTextY,
         {
+          ...centered,
           align: 'right',
           width: dateWidth,
         },
@@ -263,8 +274,8 @@ export const drawConfirmation = (
 
   const boxY = titleBoxY + titleHeight
   const boxHeight = shadowHeight - titleHeight
-  const fontHeight = doc.fontSize(fontSize).currentLineHeight()
-  const boxTextTop = (boxHeight - boxLineHeight - fontHeight) / 2
+  const boxTitleY = boxY + (boxHeight - boxLineHeight) / 2
+  const boxContentY = boxTitleY + boxLineHeight
   let currentX = coatOfArmsX + coatOfArmsWidth
 
   boxes.forEach((box) => {
@@ -277,11 +288,12 @@ export const drawConfirmation = (
     doc.fill('black')
     doc.font('Times-Bold')
     doc.fontSize(fontSize)
-    doc.text(box.title, currentX + padding, boxY + boxTextTop, {
+    doc.text(box.title, currentX + padding, boxTitleY, {
+      ...centered,
       width: boxWidth - padding * 2,
     })
     doc.font('Times-Roman')
-    doc.text(box.content, currentX + padding, boxY + boxTextTop + boxLineHeight)
+    doc.text(box.content, currentX + padding, boxContentY, centered)
 
     currentX += boxWidth
   })
