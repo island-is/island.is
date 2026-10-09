@@ -9,6 +9,7 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CaseFileRepositoryService,
@@ -49,9 +50,7 @@ describe('DefendantController - Delete', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
     mockDelete.mockRejectedValue(new Error('Some error'))
@@ -59,13 +58,17 @@ describe('DefendantController - Delete', () => {
     givenWhenThen = async (courtCaseNumber?: string) => {
       const then = {} as Then
 
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
       try {
-        then.result = await defendantController.delete(
-          caseId,
-          defendantId,
-          user,
-          { id: caseId, courtCaseNumber } as Case,
-        )
+        await runInRequestContext(async () => {
+          then.result = await defendantController.delete(
+            caseId,
+            defendantId,
+            user,
+            { id: caseId, courtCaseNumber } as Case,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
