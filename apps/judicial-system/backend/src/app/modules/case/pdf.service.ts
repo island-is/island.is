@@ -13,6 +13,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  AppealEventType,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -24,10 +25,14 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import type { AppealAppointmentLetter } from '../../formatters'
+import type {
+  AppealAppointmentLetter,
+  AppealSummonsPdfDefendant,
+} from '../../formatters'
 import {
   Confirmation,
   createAppealAppointmentLetter,
+  createAppealSummons,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
@@ -42,8 +47,10 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { verdictAppellantSide } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import {
+  AppealSummons,
   Case,
   CaseRepositoryService,
   Defendant,
@@ -56,7 +63,7 @@ import { SubpoenaService } from '../subpoena'
 
 @Injectable()
 export class PdfService {
-  private throttle = Promise.resolve(Buffer.from(''))
+  private throttle: Promise<Buffer> = Promise.resolve(Buffer.from(''))
 
   constructor(
     private readonly awsS3Service: AwsS3Service,
@@ -583,5 +590,84 @@ export class PdfService {
     } else {
       return await createRulingSentToPrisonAdminPdf(theCase)
     }
+  }
+
+  async getAppealSummonsPdf(
+    theCase: Case,
+    user: TUser,
+    summons?: AppealSummons,
+    previewDefendants?: AppealSummonsPdfDefendant[],
+  ): Promise<Buffer> {
+    const rows = summons?.defendants ?? previewDefendants ?? []
+
+    const defendants: AppealSummonsPdfDefendant[] = rows.map((row) => ({
+      defendantId: row.defendantId,
+      appellantSide: row.appellantSide,
+      claims: row.claims,
+      appealDate: this.getDefenceAppealDate(theCase, row.defendantId),
+    }))
+
+    // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
+    // stamp and issuer must be the recorded confirmer — never the downloader.
+    if (summons?.confirmedDate) {
+      const confirmedBy = summons.confirmedBy
+
+      if (!confirmedBy) {
+        throw new InternalServerErrorException(
+          `Appeal summons ${summons.id} is confirmed but confirmedBy was not loaded`,
+        )
+      }
+
+      const issuer = {
+        name: confirmedBy.name ?? '',
+        title: confirmedBy.title,
+      }
+
+      return createAppealSummons(
+        theCase,
+        defendants,
+        issuer,
+        {
+          actor: issuer.name,
+          title: issuer.title,
+          institution: confirmedBy.institution?.name ?? '',
+          date: summons.confirmedDate,
+        },
+        summons.confirmedDate,
+      )
+    }
+
+    return createAppealSummons(
+      theCase,
+      defendants,
+      { name: user.name, title: user.title },
+      undefined,
+      undefined,
+    )
+  }
+
+  private getDefenceAppealDate(
+    theCase: Case,
+    defendantId: string,
+  ): Date | undefined {
+    const defendant = theCase.defendants?.find(
+      (item) => item.id === defendantId,
+    )
+    const verdictAppealDate = defendant?.verdicts?.[0]?.appealDate
+
+    if (verdictAppealDate) {
+      return verdictAppealDate
+    }
+
+    const logs = (theCase.verdictAppealCase?.appealEventLogs ?? [])
+      .filter(
+        (eventLog) =>
+          eventLog.defendantId === defendantId &&
+          eventLog.eventType === AppealEventType.APPEALED &&
+          verdictAppellantSide(eventLog.userRole) === 'DEFENCE',
+      )
+      .sort((a, b) => b.created.getTime() - a.created.getTime())
+
+    return logs[0]?.created
   }
 }
