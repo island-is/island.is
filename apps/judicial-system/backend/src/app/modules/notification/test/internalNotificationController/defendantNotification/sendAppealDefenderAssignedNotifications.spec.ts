@@ -5,6 +5,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseType,
   DefendantNotificationType,
+  TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -29,7 +30,10 @@ describe('InternalNotificationController - Send appeal defender assigned notific
   const { defender } = createTestUsers(['defender'])
 
   let mockEmailService: EmailService
-  let send: (defendant: Partial<Defendant>) => Promise<unknown>
+  let send: (
+    defendant: Partial<Defendant>,
+    caseNotifications?: Case['notifications'],
+  ) => Promise<unknown>
 
   beforeEach(async () => {
     const { emailService, internalNotificationController } =
@@ -37,7 +41,7 @@ describe('InternalNotificationController - Send appeal defender assigned notific
 
     mockEmailService = emailService
 
-    send = (defendantOverrides) => {
+    send = (defendantOverrides, caseNotifications?: Case['notifications']) => {
       const defendant = {
         id: defendantId,
         isAppealDefenderConfirmed: true,
@@ -56,6 +60,7 @@ describe('InternalNotificationController - Send appeal defender assigned notific
           court: { name: 'Héraðsdómur Reykjavíkur' } as Case['court'],
           verdictAppealCase: { appealCaseNumber: '77/2026' } as AppealCase,
           defendants: [defendant],
+          notifications: caseNotifications,
         } as Case,
         defendant,
         {
@@ -106,6 +111,20 @@ describe('InternalNotificationController - Send appeal defender assigned notific
         to: [{ name: '', address: defender.email }],
       }),
     )
+  })
+
+  // One lawyer may defend several of the accused on the same case. Each
+  // appointment is its own and has to be told, so an address that already heard
+  // from us about another defendant hears again about this one.
+  it('writes again to a lawyer already appointed for another party', async () => {
+    await send({}, [
+      {
+        type: TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
+        recipients: [{ success: true, address: defender.email }],
+      },
+    ] as Case['notifications'])
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
   })
 
   it('writes to nobody when the court has not confirmed the advocate', async () => {

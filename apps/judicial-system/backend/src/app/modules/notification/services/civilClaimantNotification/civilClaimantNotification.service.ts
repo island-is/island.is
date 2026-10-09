@@ -201,14 +201,14 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     theCase: Case,
     civilClaimant: CivilClaimant,
   ): Promise<DeliverResponse> {
+    // Sent once per claimant, not once per lawyer: one lawyer may act for
+    // several claimants on the same case, and each appointment is its own and
+    // has to be told. The confirmation that triggers this only crosses from
+    // unconfirmed to confirmed once per party, so there is nothing to suppress
+    // beyond that.
     if (
       !civilClaimant.isAppealSpokespersonConfirmed ||
-      !civilClaimant.appealSpokespersonEmail ||
-      this.hasReceivedNotification(
-        TrackedNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
-        civilClaimant.appealSpokespersonEmail,
-        theCase.notifications,
-      )
+      !civilClaimant.appealSpokespersonEmail
     ) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }

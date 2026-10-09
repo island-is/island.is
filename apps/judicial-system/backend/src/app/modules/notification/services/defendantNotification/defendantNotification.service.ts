@@ -296,14 +296,14 @@ export class DefendantNotificationService extends BaseNotificationService {
     theCase: Case,
     defendant: Defendant,
   ): Promise<DeliverResponse> {
+    // Sent once per defendant, not once per lawyer: one lawyer may defend
+    // several of the accused on the same case, and each appointment is its own
+    // and has to be told. The confirmation that triggers this only crosses from
+    // unconfirmed to confirmed once per party, so there is nothing to suppress
+    // beyond that.
     if (
       !defendant.isAppealDefenderConfirmed ||
-      !defendant.appealDefenderEmail ||
-      this.hasReceivedNotification(
-        TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
-        defendant.appealDefenderEmail,
-        theCase.notifications,
-      )
+      !defendant.appealDefenderEmail
     ) {
       // Nothing should be sent so we return a successful response
       return { delivered: true }
