@@ -30,6 +30,10 @@ describe('AppealSummonsController - delete guards', () => {
   verifyGuards(AppealSummonsController, 'delete', [AppealSummonsExistsGuard])
 })
 
+describe('AppealSummonsController - getPdf guards', () => {
+  verifyGuards(AppealSummonsController, 'getPdf', [AppealSummonsExistsGuard])
+})
+
 describe('AppealSummonsController - create roles', () => {
   verifyRolesRules(AppealSummonsController, 'create', [
     publicProsecutorStaffRule,
@@ -44,6 +48,18 @@ describe('AppealSummonsController - update roles', () => {
 
 describe('AppealSummonsController - delete roles', () => {
   verifyRolesRules(AppealSummonsController, 'delete', [
+    publicProsecutorStaffRule,
+  ])
+})
+
+describe('AppealSummonsController - getPdf roles', () => {
+  verifyRolesRules(AppealSummonsController, 'getPdf', [
+    publicProsecutorStaffRule,
+  ])
+})
+
+describe('AppealSummonsController - preview roles', () => {
+  verifyRolesRules(AppealSummonsController, 'preview', [
     publicProsecutorStaffRule,
   ])
 })
