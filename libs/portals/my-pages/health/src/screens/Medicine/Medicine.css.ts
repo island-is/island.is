@@ -1,5 +1,15 @@
+import { themeUtils } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
+
+export const periodSelect = style({
+  width: `${(10 / 12) * 100}%`,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 'auto',
+    },
+  }),
+})
 
 export const subTableHeaderText = style({
   fontSize: 14,

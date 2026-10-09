@@ -31,6 +31,7 @@ import {
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
   CaseExistsGuard,
   CaseTypeGuard,
@@ -41,6 +42,11 @@ import { Case, CivilClaimant } from '../repository'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
 import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'
+import {
+  courtOfAppealsAssistantUpdateCivilClaimantRule,
+  courtOfAppealsJudgeUpdateCivilClaimantRule,
+  courtOfAppealsRegistrarUpdateCivilClaimantRule,
+} from './guards/rolesRules'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
@@ -90,6 +96,11 @@ export class CivilClaimantController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    // Field rules, unlike the role rules above: this court settles the appeal
+    // proceeding's advocate and nothing else on the claimant.
+    courtOfAppealsJudgeUpdateCivilClaimantRule,
+    courtOfAppealsRegistrarUpdateCivilClaimantRule,
+    courtOfAppealsAssistantUpdateCivilClaimantRule,
   )
   @Patch(':civilClaimantId')
   @ApiOkResponse({
@@ -107,11 +118,18 @@ export class CivilClaimantController {
     this.logger.debug(
       `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
+    // The request's own transaction, committed by
+    // TransactionCommitInterceptor once this handler has returned. Opening one
+    // of our own would leave the update and the appeal event that records it
+    // in a transaction separate from anything else the request has done.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     return this.civilClaimantService.update(
       theCase,
       civilClaimant,
       updateCivilClaimantDto,
       user,
+      transaction,
     )
   }
 

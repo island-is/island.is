@@ -90,6 +90,10 @@ export const FILL_BACKGROUND_MAIN_COLOR_OPACITY = 0
 export const DEFAULT_YAXIS_WIDTH = 60
 export const DEFAULT_XAXIS_HEIGHT = 30
 
+// Wider than the default to fit the wrapped labels rendered by WrappedAxisTick.
+// The wrapped X-axis height is computed from the font size in getWrappedXAxisHeight
+export const WRAPPED_YAXIS_WIDTH = 90
+
 export const DEFAULT_PIE_INNER_RADIUS = 30
 export const DEFAULT_PIE_LABEL_FONT_SIZE = 14
 export const PIE_CHART_MAX_RADIUS = 90

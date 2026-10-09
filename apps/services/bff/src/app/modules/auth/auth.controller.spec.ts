@@ -370,10 +370,13 @@ describe('AuthController', () => {
         expect(getTokensSpy).toHaveBeenCalled()
         expect(deleteCacheSpy).toHaveBeenCalled()
 
-        expect(res.status).toEqual(HttpStatus.FOUND)
-
-        // Should redirect to the expected location
-        expect(res.headers.location).toEqual(expectedLocation)
+        // Should redirect to the expected location with an HTML page, not a 302
+        expect(res.status).toEqual(HttpStatus.OK)
+        expect(res.headers.location).toBeUndefined()
+        expect(res.headers['content-type']).toMatch(/^text\/html/)
+        expect(res.text).toContain(
+          `location.replace(${JSON.stringify(expectedLocation)})`,
+        )
       },
     )
   })

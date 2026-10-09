@@ -4,48 +4,33 @@ import {
   buildTableRepeaterField,
   buildMultiField,
   buildSubSection,
-  getValueViaPath,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomePartTimeJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
-import { hasPartTimeOverlap, isPartTime } from '../../../utils/conditions'
+import {
+  hasPartTimeCasualWorkOverlap,
+  hasPartTimeOverlap,
+  isPartTime,
+} from '../../../utils/conditions'
 import {
   getCurrentMonthEndDate,
   getCurrentMonthStartDate,
 } from '../../../utils/date'
-import { formatIsCurrency, formatIsDateLong } from '../../../utils/formatters'
+import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
-import { buildEmployerSSNDelete } from '../../../utils/reconcile'
+import {
+  buildCanRemoveRow,
+  buildEmployerSSNDelete,
+} from '../../../utils/reconcile'
+import { getPartTimeDefaults } from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalNumber,
   toOptionalString,
   toRequiredString,
 } from '../../../utils/rowCoercions'
-
-const getPartTimeDefaults = (application: Application) => {
-  const jobs =
-    getValueViaPath<GaldurExternalDomainModelsIncomePartTimeJobDTO[]>(
-      application.externalData,
-      'income.data.partTimeJobs',
-    ) ?? []
-
-  return jobs.map((job) => ({
-    validationId: job.id,
-    company: {
-      nationalId: job.employerSSN ?? '',
-      name: job.employerName?.trim() ?? '',
-    },
-    jobStart: job.periodFrom ?? '',
-    jobEnd: job.periodTo ?? '',
-    workPercentage: job.ratio != null ? String(job.ratio) : '',
-    estimatedIncome:
-      job.estimatedIncome != null ? String(job.estimatedIncome) : '',
-  }))
-}
 
 const partTimeValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPartTime',
@@ -100,6 +85,10 @@ export const partTimeSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPartTimeDefaults,
+          canRemoveRow: buildCanRemoveRow(
+            partTimeValidationProps.persistedPath,
+          ),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             company: {
@@ -107,6 +96,8 @@ export const partTimeSection = buildSubSection({
               searchCompanies: true,
               searchPersons: false,
               required: true,
+              customNationalIdLabel: m.application.companyNationalId,
+              customNameLabel: m.application.companyName,
             },
             jobStart: {
               component: 'date',
@@ -179,9 +170,9 @@ export const partTimeSection = buildSubSection({
               nationalId: (value) => {
                 if (!value) return ''
                 const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+                return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
               },
-              jobStart: formatIsDateLong,
+              jobStart: formatIsDate,
               workPercentage: (value) => {
                 if (!value) return ''
                 return `${value}%`
@@ -197,6 +188,15 @@ export const partTimeSection = buildSubSection({
           alertType: 'warning',
           marginTop: 6,
           condition: hasPartTimeOverlap,
+        }),
+        buildAlertMessageField({
+          id: 'partTimeCasualWorkOverlapAlert',
+          title: m.errorMessages.partTimeCasualWorkOverlappingPeriods,
+          message:
+            m.errorMessages.partTimeCasualWorkOverlappingPeriodsAlertMessage,
+          alertType: 'warning',
+          marginTop: 6,
+          condition: hasPartTimeCasualWorkOverlap,
         }),
         buildCustomField(
           {

@@ -1,3 +1,7 @@
+import { getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import { isIncomeDeletionLocked } from './date'
+
 export type ReconcileEntry = Record<string, unknown> & { isRemoved?: boolean }
 
 // Delete marker always carries `id` + `deleted: true`; some Galdur endpoints
@@ -46,18 +50,17 @@ const getPersistedIdFromEntry = (
 }
 
 // Splits current answer entries against persisted BE records: rows without a
-// matching persisted id are creates, persisted ids not present in the entries
-// are deletes ({ id, deleted: true }), and retained entries are dropped
+// matching persisted id are creates, persisted records whose id is no longer
+// present in the entries are removed, and retained entries are dropped
 // (submit/validate both treat edits to persisted rows as silent no-ops).
-export const splitEntries = <
+export const splitPersisted = <
   TEntry extends ReconcileEntry,
   TPersisted extends PersistedRecord,
 >(
   entries: TEntry[],
   persistedRecords: TPersisted[],
   idKey = 'validationId',
-  buildDelete: BuildDelete<TPersisted> = defaultBuildDelete,
-): { creates: TEntry[]; deletes: ReconcileDelete[] } => {
+): { creates: TEntry[]; removedRecords: TPersisted[] } => {
   const activeEntries = filterActive(entries) as TEntry[]
 
   const persistedIds = new Set(
@@ -75,11 +78,30 @@ export const splitEntries = <
     return !(persistedId && persistedIds.has(persistedId))
   })
 
-  const deletes = persistedRecords.flatMap<ReconcileDelete>((record) =>
-    record.id && !retainedIds.has(record.id) ? [buildDelete(record)] : [],
+  const removedRecords = persistedRecords.filter(
+    (record) => record.id && !retainedIds.has(record.id),
   )
 
-  return { creates, deletes }
+  return { creates, removedRecords }
+}
+
+// Same split, with the removed records mapped into Galdur delete markers.
+export const splitEntries = <
+  TEntry extends ReconcileEntry,
+  TPersisted extends PersistedRecord,
+>(
+  entries: TEntry[],
+  persistedRecords: TPersisted[],
+  idKey = 'validationId',
+  buildDelete: BuildDelete<TPersisted> = defaultBuildDelete,
+): { creates: TEntry[]; deletes: ReconcileDelete[] } => {
+  const { creates, removedRecords } = splitPersisted(
+    entries,
+    persistedRecords,
+    idKey,
+  )
+
+  return { creates, deletes: removedRecords.map(buildDelete) }
 }
 
 // Convenience wrapper that maps creates through buildCreate and concatenates
@@ -103,3 +125,27 @@ export const reconcile = <
   )
   return [...creates.map(buildCreate), ...deletes]
 }
+
+// canRemoveRow predicate for buildTableRepeaterField: during the lock window
+// rows mirroring a persisted BE record cannot be deleted, while rows the user
+// added in this session always can.
+export const buildCanRemoveRow =
+  (persistedPath: string, idKey = 'validationId') =>
+  (application: Application, row: Record<string, unknown>): boolean => {
+    if (!isIncomeDeletionLocked()) {
+      return true
+    }
+
+    const rowId = getPersistedIdFromEntry(row, idKey)
+    if (!rowId) {
+      return true
+    }
+
+    const persistedRecords =
+      getValueViaPath<PersistedRecord[]>(
+        application.externalData,
+        persistedPath,
+      ) ?? []
+
+    return !persistedRecords.some((record) => record.id === rowId)
+  }
