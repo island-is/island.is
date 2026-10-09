@@ -1600,6 +1600,15 @@ const useSections = (
         },
       ],
     },
+    // The outcome, which this court has not reached and has no screens for.
+    // Named anyway, because it is in the design and because the stepper draws
+    // no connecting line below its last section - without this the line stops
+    // at "Dómur Landsréttar" and its sub-steps hang beside a gap.
+    {
+      name: 'Niðurstaða',
+      isActive: false,
+      children: [],
+    },
   ]
 
   const getSections = (

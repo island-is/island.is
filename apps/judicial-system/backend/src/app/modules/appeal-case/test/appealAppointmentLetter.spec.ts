@@ -74,6 +74,7 @@ describe('buildAppealAppointmentLetter', () => {
       kind: AppealAppointmentKind.DEFENDER,
       advocateName: 'Þórður Már Jónsson',
       advocatePractice: undefined,
+      clientName: 'Gervimaður Jónsson',
       defendantName: 'Gervimaður Jónsson',
       courtName: 'Héraðsdóms Reykjavíkur',
       courtCaseNumber: 'S-4275/2025',
@@ -303,6 +304,43 @@ describe('buildAppealAppointmentLetter', () => {
       })
 
       expect(letter?.copyTo).toEqual(['Áfrýjunar Saksóknari saksóknari'])
+    })
+
+    // The appointing sentence names the accused this defender acts for, which
+    // is not the same as the case title when a case has several.
+    it('names the party the letter appoints the advocate to', () => {
+      expect(
+        buildAppealAppointmentLetter({
+          theCase: theCase({
+            defendants: [
+              defendant({ id: 'first-id', name: 'Fyrsti Ákærði' }),
+              defendant({ id: 'second-id', name: 'Annar Ákærði' }),
+            ],
+            verdictAppealCase: appealCase({
+              appealEventLogs: [confirmation({ defendantId: 'second-id' })],
+            }),
+          }),
+          defendant: defendant({ id: 'second-id', name: 'Annar Ákærði' }),
+        })?.clientName,
+      ).toBe('Annar Ákærði')
+    })
+
+    // A spokesperson is appointed to the injured party, who the letters do not
+    // name.
+    it('names nobody on a spokesperson letter', () => {
+      expect(
+        buildAppealAppointmentLetter({
+          theCase: theCase({
+            civilClaimants: [civilClaimant()],
+            verdictAppealCase: appealCase({
+              appealEventLogs: [
+                confirmation({ civilClaimantId: 'civil-claimant-id' }),
+              ],
+            }),
+          }),
+          civilClaimant: civilClaimant(),
+        })?.clientName,
+      ).toBeUndefined()
     })
 
     it('carries the firm the caller looked up', () => {

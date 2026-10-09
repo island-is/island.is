@@ -148,6 +148,9 @@ export const buildAppealAppointmentLetter = (params: {
     kind,
     advocateName,
     advocatePractice,
+    // Only the defender's letter names the party: it is appointed to one of
+    // the accused, and a case may have several.
+    clientName: defendant?.name,
     defendantName: getAppealAppointmentDefendantNames(
       (theCase.defendants ?? [])
         .map((d) => d.name)

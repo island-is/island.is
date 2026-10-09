@@ -8,6 +8,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
   FormContext,
@@ -20,7 +21,10 @@ import type {
   UpdateCivilClaimantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import {
+  stack,
+  twoColumn,
+} from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   getAppealSpokesperson,
@@ -141,9 +145,21 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             </Box>
           )}
         </Box>
+        {/* What the claimant asked for at the district court, so the court of
+            appeals can see the request it is answering. */}
+        {civilClaimant.hasSpokesperson && civilClaimant.spokespersonName && (
+          <Text variant="small">
+            {`Ósk einkaréttarkröfuhafa um réttargæslumann: ${[
+              civilClaimant.spokespersonName,
+              formatDOB(civilClaimant.spokespersonNationalId, false, ''),
+            ]
+              .filter(Boolean)
+              .join(' ')}`}
+          </Text>
+        )}
         {hasSpokesperson ? (
           <>
-            <Box display="flex" columnGap={2}>
+            <div className={twoColumn({ gap: 2 })}>
               <RadioButton
                 name={`appealAdvocateType-${civilClaimant.id}`}
                 id={`appeal-civil-claimant-lawyer-${civilClaimant.id}`}
@@ -164,7 +180,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                 onChange={() => send({ appealSpokespersonIsLawyer: false })}
                 disabled={isConfirmed}
               />
-            </Box>
+            </div>
             <InputAdvocate
               advocateType={isLawyer ? 'lawyer' : 'legalRightsProtector'}
               name={advocate.name}
@@ -244,7 +260,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               }
               onClick={() => setDisplayModal(true)}
             >
-              {`Staðfesta ${advocateNoun.accusative}`}
+              Staðfesta val
             </Button>
           </Box>
         )}
@@ -258,15 +274,13 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
       </BlueBox>
       {displayModal && (
         <Modal
-          title={
-            isConfirmed
-              ? `Breyta ${advocateNoun.dative}`
-              : `Staðfesta ${advocateNoun.accusative}`
-          }
+          title={isConfirmed ? `Breyta ${advocateNoun.dative}` : 'Staðfesta'}
           text={
             isConfirmed
               ? 'Ef þú breytir skráningunni þarf að staðfesta hana að nýju.'
-              : `Með því að staðfesta skráir þú ${advocate.name} sem ${advocateNoun.accusative} ${civilClaimant.name} fyrir Landsrétti.`
+              : `Valinn ${advocateNoun.nominative.toLowerCase()}, ${
+                  advocate.name
+                }, mun fá skipunarbréf og aðgang að málinu í Réttarvörslugátt`
           }
           buttons={[
             {
@@ -275,7 +289,7 @@ const SelectAppealCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               variant: 'ghost',
             },
             {
-              text: isConfirmed ? 'Breyta' : 'Staðfesta',
+              text: isConfirmed ? 'Breyta' : 'Staðfesta val',
               onClick: toggleConfirmed,
             },
           ]}
