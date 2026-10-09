@@ -309,20 +309,25 @@ export class DefendantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
-    return this.sendEmails(
-      theCase,
-      TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
-      appealAdvocateAssignedSubject(),
-      appealAdvocateAssignedBody(
+    // Not through sendEmails: that one drops a recipient with no name, and an
+    // advocate the court typed in by hand may have only an address. The
+    // address is what the mail needs.
+    const recipient = await this.sendEmail({
+      subject: appealAdvocateAssignedSubject(),
+      html: appealAdvocateAssignedBody(
         'verjanda',
         theCase.verdictAppealCase?.appealCaseNumber,
       ),
-      [
-        {
-          name: defendant.appealDefenderName,
-          email: defendant.appealDefenderEmail,
-        },
-      ],
+      recipientName: defendant.appealDefenderName,
+      recipientEmail: defendant.appealDefenderEmail,
+      attachments: undefined,
+      skipTail: true,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_DEFENDER_ASSIGNED,
+      [recipient],
     )
   }
 
