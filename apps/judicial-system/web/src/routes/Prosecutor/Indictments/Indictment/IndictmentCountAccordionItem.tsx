@@ -17,10 +17,8 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import type {
-  Case,
-  IndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { IndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/graphql/schema'
 import { getIndictmentCountWarningMessage } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './IndictmentCountAccordionItem.css'
@@ -28,7 +26,7 @@ import * as styles from './IndictmentCountAccordionItem.css'
 interface Props {
   indictmentCount: TIndictmentCount
   index: number
-  workingCase: Case
+  workingCase: WorkingCase
   expanded: boolean
   onToggle: (expanded: boolean) => void
   onReorder: () => void

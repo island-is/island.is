@@ -14,8 +14,8 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -64,7 +64,7 @@ export const getDefendantLabel = (
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const Defendants: FC<Props> = ({ workingCase }) => {
@@ -125,7 +125,7 @@ export const ProsecutorCaseInfo: FC<
 export const ProsecutorAndDefendantsEntries: FC<Props> = ({
   workingCase,
 }: {
-  workingCase: Case
+  workingCase: WorkingCase
 }) => (
   <Box display="flex" flexDirection="column" rowGap={1}>
     <Prosecutor workingCase={workingCase} />

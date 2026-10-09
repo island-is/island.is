@@ -4,21 +4,21 @@ import type { IntlShape } from 'react-intl'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { Modal } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CaseResubmitModal.strings'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   isLoading: boolean
   onClose: () => void
   onContinue: (explanation: string) => void
 }
 export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
 ) => {
   return formatMessage(strings.text, {
     requestSharedWithDefender:

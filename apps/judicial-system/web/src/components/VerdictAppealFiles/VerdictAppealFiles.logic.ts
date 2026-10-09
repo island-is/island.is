@@ -3,8 +3,8 @@ import {
   isPublicProsecutionOfficeUser,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CaseFile,
   CaseFileCategory,
   Defendant,
@@ -33,7 +33,7 @@ export type { AppealAppointmentLetterRow } from '../AppealAppointmentLetter/Appe
 // arrives with. Everyone else is governed by that rule - prosecution sees all,
 // a defender their own clients'.
 export const canViewVerdictAppealFile = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   categories: CaseFileCategory[],
   file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
   user: User | undefined,
@@ -55,7 +55,7 @@ export interface VerdictAppealFileGroup {
  * every other party appeal file.
  */
 export const getVerdictAppealFileGroups = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   user: User | undefined,
 ): VerdictAppealFileGroup[] => {
   const declarationFiles = (workingCase.caseFiles ?? [])
@@ -82,7 +82,7 @@ export const getVerdictAppealFileGroups = (
 }
 
 export const showsAppealSummonses = (
-  workingCase: Pick<Case, 'verdictAppealCase'>,
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): boolean =>
   isPublicProsecutionOfficeUser(user) &&

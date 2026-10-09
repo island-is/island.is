@@ -24,7 +24,10 @@ import {
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import type { SignatureType } from '@island.is/judicial-system-web/src/components'
+import type {
+  SignatureType,
+  WorkingCase,
+} from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseFilesOverview,
   AppealRulingModifiedAlert,
@@ -54,7 +57,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import type {
-  Case,
   Institution,
   RequestSignatureResponse,
   User,
@@ -84,7 +86,7 @@ interface ModalControls {
   text: ReactNode
 }
 
-export const shouldHideNextButton = (workingCase: Case, user?: User) => {
+export const shouldHideNextButton = (workingCase: WorkingCase, user?: User) => {
   // Hide the next button if there is no user
   if (!user) {
     return true
@@ -107,7 +109,7 @@ export const shouldHideNextButton = (workingCase: Case, user?: User) => {
 
 const getNextButtonText = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   user?: User,
 ) =>
   isProsecutionUser(user)
@@ -118,7 +120,7 @@ const getNextButtonText = (
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
+  workingCase: WorkingCase,
   user?: User,
 ): string | undefined => {
   if (!isProsecutionUser(user)) {

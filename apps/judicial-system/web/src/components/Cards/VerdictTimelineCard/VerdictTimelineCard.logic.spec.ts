@@ -1,7 +1,5 @@
-import type {
-  Case,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
@@ -23,7 +21,9 @@ import {
 describe('VerdictTimelineCard.logic', () => {
   const publicProsecutorStaff = mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF)
 
-  const completedCase = (overrides: Partial<Case> = {}): Case => ({
+  const completedCase = (
+    overrides: Partial<WorkingCase> = {},
+  ): WorkingCase => ({
     ...mockCase(CaseType.INDICTMENT),
     state: CaseState.COMPLETED,
     indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
