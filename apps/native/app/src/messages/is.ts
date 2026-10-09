@@ -29,6 +29,8 @@ export const is = {
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
   'applock.attempt': 'tilraun eftir',
+  'applock.usePin': 'Nota PIN',
+  'biometrics.cancel': 'Hætta við',
 
   // onboarding
   'onboarding.notifications.title': 'Leyfa tilkynningar',
