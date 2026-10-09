@@ -4724,7 +4724,6 @@ web:
       cpu: '1200m'
       memory: '1024Mi'
   secrets:
-    BS_SECRET: '/k8s/web/BS_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   securityContext:
