@@ -1,8 +1,8 @@
 import type { FC, PropsWithChildren } from 'react'
 import { act, renderHook } from '@testing-library/react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { AppealDecisionPartyRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useDebouncedAppealAnnouncement from './useDebouncedAppealAnnouncement'
@@ -35,7 +35,7 @@ describe('useDebouncedAppealAnnouncement', () => {
         announcement: 'Ákærði kærir úrskurðinn til Landsréttar.',
       },
     ],
-  } as unknown as Case
+  } as unknown as WorkingCase
 
   const wrapper: FC<PropsWithChildren> = ({ children }) => (
     <FormContext.Provider

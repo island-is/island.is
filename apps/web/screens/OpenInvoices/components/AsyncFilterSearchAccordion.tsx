@@ -14,11 +14,8 @@ import {
   AccordionItem,
   Box,
   Checkbox,
-  Icon,
-  Inline,
   Input,
   LoadingDots,
-  Tag,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
@@ -267,38 +264,6 @@ export const AsyncFilterSearchAccordion = ({
             />
           </Box>
 
-          {selectedRows.length > 0 && (
-            <Box marginTop={1} marginBottom={2} className={styles.tagList}>
-              <Inline space={1}>
-                {selectedRows.map((item) => (
-                  <Tag
-                    key={item.value}
-                    variant="blue"
-                    onClick={() => toggle(item.value)}
-                  >
-                    <Box
-                      component="span"
-                      display="flex"
-                      alignItems="center"
-                      columnGap={1}
-                    >
-                      <Box component="span" className={styles.tagLabel}>
-                        {item.label}
-                      </Box>
-                      <Icon icon="close" size="small" color="blue400" />
-                      <Box component="span" className={helperStyles.srOnly}>
-                        {formatMessage(m.search.removeFilter, {
-                          label: item.label,
-                          category: title,
-                        })}
-                      </Box>
-                    </Box>
-                  </Tag>
-                ))}
-              </Inline>
-            </Box>
-          )}
-
           <Box
             ref={scrollListRef}
             className={styles.scrollList}
@@ -316,6 +281,7 @@ export const AsyncFilterSearchAccordion = ({
                       <Checkbox
                         name={`${id}-${item.value}`}
                         label={item.label}
+                        labelVariant="medium"
                         checked={selected.includes(item.value)}
                         onChange={() => toggle(item.value)}
                       />
@@ -344,6 +310,12 @@ export const AsyncFilterSearchAccordion = ({
                 )}
               </>
             )}
+          </Box>
+          <Box aria-live="polite" className={helperStyles.srOnly}>
+            {formatMessage(m.search.selectedCount, {
+              category: title,
+              count: selected.length,
+            })}
           </Box>
           <Box aria-live="polite" className={helperStyles.srOnly}>
             {loadingMore

@@ -2,8 +2,8 @@ import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
 import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -40,9 +40,9 @@ describe('VerdictAppealFiles', () => {
   const defenderNationalId = '1111111111'
 
   const theCase = (
-    caseFiles: Case['caseFiles'],
+    caseFiles: WorkingCase['caseFiles'],
     appealDefenderName?: string,
-  ): Case => ({
+  ): WorkingCase => ({
     ...mockCase(CaseType.INDICTMENT),
     defendants: [
       {
@@ -67,7 +67,7 @@ describe('VerdictAppealFiles', () => {
   }
 
   const renderSection = (
-    theCase: Case,
+    theCase: WorkingCase,
     userRole: UserRole = UserRole.DEFENDER,
     features: Feature[] = [Feature.INDICTMENT_APPEAL],
   ) =>
@@ -133,11 +133,11 @@ describe('VerdictAppealFiles', () => {
 
   describe('the appeal summons', () => {
     const appealed = (
-      caseFiles: Case['caseFiles'],
+      caseFiles: WorkingCase['caseFiles'],
       appealSummonses: NonNullable<
-        Case['verdictAppealCase']
+        WorkingCase['verdictAppealCase']
       >['appealSummonses'] = [],
-    ): Case => ({
+    ): WorkingCase => ({
       ...theCase(caseFiles),
       verdictAppealCase: {
         id: 'verdict_appeal_id',

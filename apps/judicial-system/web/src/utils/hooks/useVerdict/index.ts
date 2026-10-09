@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback, useMemo } from 'react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateVerdictsInput,
   Defendant,
   UpdateVerdictInput,
@@ -19,9 +19,9 @@ const useVerdict = (currentVerdict?: Verdict) => {
   const updateDefendantVerdictState = useCallback(
     (
       update: UpdateVerdictInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
-      setWorkingCase((prevWorkingCase: Case) => {
+      setWorkingCase((prevWorkingCase: WorkingCase) => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
@@ -87,7 +87,7 @@ const useVerdict = (currentVerdict?: Verdict) => {
   const setAndSendVerdictToServer = useCallback(
     (
       update: UpdateVerdictInput,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       updateDefendantVerdictState(update, setWorkingCase)
       updateVerdict(update)
