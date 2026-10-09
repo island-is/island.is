@@ -321,7 +321,6 @@ export class DefendantNotificationService extends BaseNotificationService {
       recipientName: defendant.appealDefenderName,
       recipientEmail: defendant.appealDefenderEmail,
       attachments: undefined,
-      skipTail: true,
     })
 
     return this.recordNotification(

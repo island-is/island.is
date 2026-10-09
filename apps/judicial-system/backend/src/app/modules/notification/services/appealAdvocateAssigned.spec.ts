@@ -16,8 +16,7 @@ describe('appealAdvocateAssignedSubject', () => {
 describe('appealAdvocateAssignedBody', () => {
   it('names the role the advocate was recorded in', () => {
     expect(appealAdvocateAssignedBody('verjanda', '77/2026')).toBe(
-      'Landsréttur hefur skráð þig sem verjanda í máli 77/2026.<br /><br />' +
-        'Hægt er að nálgast málið í Réttarvörslugátt.',
+      'Landsréttur hefur skráð þig sem verjanda í máli 77/2026.',
     )
 
     expect(
@@ -40,10 +39,11 @@ describe('appealAdvocateAssignedBody', () => {
     )
   })
 
-  // Being recorded grants no access yet, so a link would lead to a refusal.
-  it('offers no link to the case', () => {
+  // The base notification service only appends its closing line and link to a
+  // mail that carries no link of its own, so this one must not.
+  it('carries no link, leaving the closing line to the service', () => {
     expect(appealAdvocateAssignedBody('verjanda', '77/2026')).not.toContain(
-      '<a ',
+      '<a',
     )
   })
 })

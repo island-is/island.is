@@ -72,10 +72,24 @@ describe('InternalNotificationController - Send appeal defender assigned notific
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         subject: 'Landsréttur - aðgangur að máli',
-        html:
-          'Landsréttur hefur skráð þig sem verjanda í máli 77/2026.<br /><br />' +
-          'Hægt er að nálgast málið í Réttarvörslugátt.',
+        html: expect.stringContaining(
+          'Landsréttur hefur skráð þig sem verjanda í máli 77/2026.',
+        ),
         to: [{ name: defender.name, address: defender.email }],
+      }),
+    )
+  })
+
+  // The body carries no link, so the base service closes the mail the way it
+  // closes every other one, with a link to the portal.
+  it('closes with the portal link the service appends', async () => {
+    await send({})
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringMatching(
+          /Hægt er að nálgast yfirlitssíðu málsins í <a href="[^"]+">Réttarvörslugátt<\/a>\.$/,
+        ),
       }),
     )
   })

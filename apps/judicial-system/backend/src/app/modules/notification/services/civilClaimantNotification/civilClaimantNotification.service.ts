@@ -227,7 +227,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       recipientName: civilClaimant.appealSpokespersonName,
       recipientEmail: civilClaimant.appealSpokespersonEmail,
       attachments: undefined,
-      skipTail: true,
     })
 
     return this.recordNotification(

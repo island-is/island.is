@@ -28,9 +28,11 @@ export const appealAdvocateAssignedSubject = () =>
   `${COURT_NAME} - aðgangur að máli`
 
 /**
- * No link to the case. Being recorded grants no access yet, so a link would
- * lead the advocate to a refusal; the step that opens the case to them is a
- * later one, and the link belongs with it.
+ * The sentence that records the advocate, and nothing else.
+ *
+ * How to reach the case is left to the tail the base notification service
+ * appends to every mail that carries no link of its own - the same closing
+ * line and the same link the rest of the portal's mail ends with.
  */
 export const appealAdvocateAssignedBody = (
   role: AppealAdvocateRole,
@@ -38,4 +40,4 @@ export const appealAdvocateAssignedBody = (
 ) =>
   `${COURT_NAME} hefur skráð þig sem ${role} í máli ${getAppealCaseNumberOrPlaceholder(
     appealCaseNumber,
-  )}.<br /><br />Hægt er að nálgast málið í Réttarvörslugátt.`
+  )}.`
