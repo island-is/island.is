@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import Cookie from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
-import type { AppealSummonsAppellantSide } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -12,7 +11,6 @@ import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
 
 export type AppealSummonsDefendantInput = {
   defendantId: string
-  appellantSide: AppealSummonsAppellantSide
   claims: string
 }
 

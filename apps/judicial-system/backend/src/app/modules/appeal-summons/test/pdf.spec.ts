@@ -93,7 +93,6 @@ describe('AppealSummonsController - PDF', () => {
       defendants: [
         {
           defendantId,
-          appellantSide: AppealSummonsAppellantSide.DEFENCE,
           claims: 'Kröfur',
         },
       ],

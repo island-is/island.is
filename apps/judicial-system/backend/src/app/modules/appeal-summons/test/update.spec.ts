@@ -60,7 +60,6 @@ describe('AppealSummonsController - Update', () => {
     defendants: [
       {
         defendantId,
-        appellantSide: AppealSummonsAppellantSide.DEFENCE,
         claims: 'Uppfærðar kröfur',
       },
     ],
@@ -68,7 +67,13 @@ describe('AppealSummonsController - Update', () => {
 
   const updated = {
     id: summonsId,
-    defendants: dto.defendants,
+    defendants: [
+      {
+        defendantId,
+        appellantSide: AppealSummonsAppellantSide.DEFENCE,
+        claims: 'Uppfærðar kröfur',
+      },
+    ],
   } as AppealSummons
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
