@@ -1,6 +1,11 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
+import {
+  formatDate,
+  getVerdictServiceStatusText,
+} from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   IndictmentCaseNotificationType,
@@ -9,7 +14,14 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
-import { queueMessagesAfterCommit } from '../../../../middleware'
+import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  queueMessagesAfterCommit,
+  TransactionContext,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+import { EventService } from '../../../event'
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
 
@@ -18,7 +30,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (theCase: Case, currentVerdict?: Verdict) => Promise<Then>
 
 describe('InternalVerdictController - Update verdict', () => {
   const verdictId = uuid()
@@ -52,38 +64,65 @@ describe('InternalVerdictController - Update verdict', () => {
   } as PoliceUpdateVerdictDto
 
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockEventService: EventService
+  let mockSequelize: Sequelize
   let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     jest.resetAllMocks()
 
-    const { sequelize, internalVerdictController, verdictRepositoryService } =
-      await createTestingVerdictModule()
+    const {
+      sequelize,
+      internalVerdictController,
+      verdictRepositoryService,
+      eventService,
+    } = await createTestingVerdictModule()
 
     mockVerdictRepositoryService = verdictRepositoryService
+    mockEventService = eventService
+    mockSequelize = sequelize
     mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
-    givenWhenThen = async (theCase: Case): Promise<Then> => {
+    givenWhenThen = async (
+      theCase: Case,
+      currentVerdict = verdict,
+    ): Promise<Then> => {
       const then = {} as Then
 
-      await internalVerdictController
-        .updateVerdict(externalPoliceDocumentId, verdict, theCase, dto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await internalVerdictController.updateVerdict(
+            externalPoliceDocumentId,
+            currentVerdict,
+            theCase,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
   })
 
-  describe('verdict updated', () => {
+  describe('verdict served', () => {
     const updatedVerdict = { ...verdict, ...dto }
 
     let then: Then
@@ -95,7 +134,11 @@ describe('InternalVerdictController - Update verdict', () => {
       then = await givenWhenThen(theCase)
     })
 
-    it('should update the verdict ', () => {
+    it('should update the verdict in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         defendantId1,
@@ -105,6 +148,28 @@ describe('InternalVerdictController - Update verdict', () => {
       )
       expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(then.result).toBe(updatedVerdict)
+    })
+
+    it('should register the service status event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the service status event once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        'VERDICT_SERVICE_STATUS',
+        theCase,
+        {
+          Staða: getVerdictServiceStatusText(
+            VerdictServiceStatus.ELECTRONICALLY,
+          ),
+          Birt: formatDate(dto.serviceDate, 'dd.MM.y HH:mm'),
+        },
+      )
     })
   })
 
@@ -133,6 +198,38 @@ describe('InternalVerdictController - Update verdict', () => {
         },
       })
       expect(then.result).toBe(updatedVerdict)
+    })
+
+    // One callback, the event's: the suspension notification goes through
+    // queueMessagesAfterCommit, which the testing module mocks, so it never
+    // registers one of its own here.
+    it('should register the service status event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+  })
+
+  // VerdictOnCaseGuard hands the handler the verdict as the locked case
+  // carries it, so a status another delivery already recorded arrives here
+  // as the verdict's own.
+  describe('service status unchanged', () => {
+    const servedVerdict = {
+      ...verdict,
+      serviceStatus: VerdictServiceStatus.ELECTRONICALLY,
+    } as Verdict
+    const updatedVerdict = { ...servedVerdict, ...dto }
+
+    beforeEach(async () => {
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedVerdict)
+
+      await givenWhenThen(theCase, servedVerdict)
+    })
+
+    it('should neither notify nor register an event', () => {
+      expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
     })
   })
 })
