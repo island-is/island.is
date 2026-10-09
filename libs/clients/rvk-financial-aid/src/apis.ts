@@ -15,16 +15,16 @@ export const exportedApis = [ForIslandisApi].map((Api) => ({
           name: 'clients-rvk-financial-aid',
           organizationSlug: 'reykjavikurborg',
           // X-Road owns the Authorization header, so Veita's token goes in a custom one
-          autoAuth: {
-            mode: 'token',
-            // Unused: tokenEndpoint is set explicitly below.
-            issuer: '',
-            tokenEndpoint: config.rvkVeitaAuthTokenEndpoint,
-            clientId: config.rvkVeitaClientId,
-            clientSecret: config.rvkVeitaClientSecret,
-            scope: [config.rvkVeitaAuthScope],
-            headerName: config.rvkVeitaAuthHeaderName,
-          },
+          // autoAuth: {
+          //   mode: 'token',
+          //   // Unused: tokenEndpoint is set explicitly below.
+          //   issuer: '',
+          //   tokenEndpoint: config.rvkVeitaAuthTokenEndpoint,
+          //   clientId: config.rvkVeitaClientId,
+          //   clientSecret: config.rvkVeitaClientSecret,
+          //   scope: [config.rvkVeitaAuthScope],
+          //   headerName: config.rvkVeitaAuthHeaderName,
+          // },
         }),
         headers: {
           'X-Road-Client': xRoadConfig.xRoadClient,

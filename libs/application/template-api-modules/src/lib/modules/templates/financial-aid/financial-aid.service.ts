@@ -486,7 +486,14 @@ export class FinancialAidService extends BaseTemplateApiService {
       return null
     }
     if (this.municipalityCodeCheck(municipalityCode)) {
-      return this.MOCK_RVK_MUNICIPALITY
+      return (await this.rvkApplicationsApiWithAuth(
+        auth,
+      ).getFinaidServiceSettingsForIslandis({
+        xTenantIdentifier: '',
+        xUserPermissions: '',
+        municipalityCode: '0000',
+      })) as unknown as MunicipalityModel
+      //return this.MOCK_RVK_MUNICIPALITY
     }
 
     return await this.municipalityApiWithAuth(auth)
