@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
@@ -7,6 +7,7 @@ import {
   calculatePt,
   Confirmation,
   confirmationFontSize,
+  confirmationLayout,
   drawTextWithEllipsisPDFKit,
   formatActor,
 } from '../pdfHelpers'
@@ -26,246 +27,172 @@ export const hasConfirmableCaseFileCategories = (
     category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
   )
 }
+
 // Colors
 const lightGray = rgb(0.9804, 0.9804, 0.9804)
 const darkGray = rgb(0.7961, 0.7961, 0.7961)
 const white = rgb(1, 1, 1)
 
-// Spacing
-const pageMargin = calculatePt(18)
-const coatOfArmsX = pageMargin + calculatePt(8)
-const coatOfArmsWidth = calculatePt(105)
-const confirmedByHeight = calculatePt(50)
-const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
+interface ConfirmationBox {
+  title: string
+  content: string
+  widthPercent: number // 0-100
+}
 
-const createRulingConfirmation = async (
+interface ConfirmationFonts {
+  regular: PDFFont
+  bold: PDFFont
+}
+
+// Draws the same stamp as drawConfirmation in pdfHelpers, for documents that
+// were uploaded as finished PDFs rather than generated. pdf-lib measures y
+// from the bottom of the page and positions text by its baseline, so every
+// position is computed from the top of the page, like pdfkit does, and
+// flipped when drawn.
+const drawConfirmation = (
+  page: PDFPage,
+  fonts: ConfirmationFonts,
   confirmation: Confirmation,
-  pdfDoc: PDFDocument,
+  boxes: ConfirmationBox[],
 ) => {
-  const pages = pdfDoc.getPages()
-  const doc = pages[0]
-
-  const { height } = doc.getSize()
-  const shadowHeight = calculatePt(70)
-  const institutionWidth = calculatePt(297)
-  const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
-  const titleHeight = calculatePt(24)
-  const titleWidth = institutionWidth + confirmedByWidth
-
-  // Draw the shadow
-  doc.drawRectangle({
-    x: pageMargin,
-    y: height - shadowHeight - pageMargin,
-    width: shadowWidth,
-    height: shadowHeight,
-    color: lightGray,
-  })
-
-  // Draw the box around the coat of arms
-  doc.drawRectangle({
-    x: coatOfArmsX,
-    y: height - shadowHeight - pageMargin + calculatePt(8),
-    width: coatOfArmsWidth,
-    height: shadowHeight,
-    color: rgb(1, 1, 1),
-    borderColor: darkGray,
-    borderWidth: 1,
-  })
-
-  PDFKitCoatOfArms(doc, height + 8)
-
-  doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsWidth,
-    y: height - pageMargin - titleHeight + calculatePt(8),
-    width: titleWidth,
-    height: titleHeight,
-    color: lightGray,
-    borderColor: darkGray,
-    borderWidth: 1,
-  })
-
-  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-  const timesRomanBoldFont = await pdfDoc.embedFont(
-    StandardFonts.TimesRomanBold,
-  )
+  const {
+    pageMargin,
+    shadowHeight,
+    coatOfArmsWidth,
+    coatOfArmsHeight,
+    offset,
+    titleHeight,
+    padding,
+    boxTextTop,
+    boxLineHeight,
+    coatOfArms,
+  } = confirmationLayout
+  const { width: pageWidth, height: pageHeight } = page.getSize()
   const fontSize = calculatePt(confirmationFontSize)
-  doc.drawText('Réttarvörslugátt', {
-    x: titleX,
-    y: height - pageMargin - titleHeight + calculatePt(16),
-    size: fontSize,
-    font: timesRomanBoldFont,
-  })
+  const ascent = fonts.regular.heightAtSize(fontSize, { descender: false })
 
-  doc.drawText('Rafræn staðfesting', {
-    x: 158,
-    y: height - pageMargin - titleHeight + calculatePt(16),
-    size: fontSize,
-    font: timesRomanFont,
-  })
+  const totalWidth = pageWidth - pageMargin * 2
+  const contentX = pageMargin + offset + coatOfArmsWidth
+  const contentWidth = totalWidth - coatOfArmsWidth
+  const contentTop = pageMargin - offset
 
-  doc.drawText(formatDate(confirmation.date) || '', {
-    x: shadowWidth - calculatePt(24),
-    y: height - pageMargin - titleHeight + calculatePt(16),
-    size: fontSize,
-    font: timesRomanFont,
-  })
+  const fromTop = (y: number) => pageHeight - y
 
-  // Draw the "Institution" box
-  doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsWidth,
-    y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
-    width: institutionWidth,
-    height: shadowHeight - titleHeight,
-    color: white,
-    borderColor: darkGray,
-    borderWidth: 1,
-  })
-
-  doc.drawText('Dómstóll', {
-    x: titleX,
-    y: height - pageMargin - titleHeight - calculatePt(10),
-    size: fontSize,
-    font: timesRomanBoldFont,
-  })
-
-  if (confirmation?.institution) {
-    doc.drawText(confirmation.institution, {
-      x: titleX,
-      y: height - pageMargin - titleHeight - calculatePt(22),
-      font: timesRomanFont,
-      size: fontSize,
+  const drawBox = (
+    x: number,
+    top: number,
+    width: number,
+    height: number,
+    color: ReturnType<typeof rgb>,
+  ) =>
+    page.drawRectangle({
+      x,
+      y: fromTop(top + height),
+      width,
+      height,
+      color,
+      borderColor: darkGray,
+      borderWidth: 1,
     })
-  }
 
-  // Draw the "Institution" box
-  doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsWidth + institutionWidth,
-    y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
-    width: confirmedByWidth,
-    height: shadowHeight - titleHeight,
-    color: white,
-    borderColor: darkGray,
-    borderWidth: 1,
+  const drawText = (text: string, x: number, top: number, font: PDFFont) =>
+    page.drawText(text, { x, y: fromTop(top + ascent), size: fontSize, font })
+
+  // Draw the shadow background
+  page.drawRectangle({
+    x: pageMargin,
+    y: fromTop(pageMargin + shadowHeight),
+    width: totalWidth,
+    height: shadowHeight,
+    color: lightGray,
   })
 
-  doc.drawText('Samþykktaraðili', {
-    x: titleX + institutionWidth,
-    y: height - pageMargin - titleHeight - calculatePt(10),
-    size: fontSize,
-    font: timesRomanBoldFont,
+  // Draw the coat of arms box, offset up and to the right of the shadow
+  drawBox(
+    pageMargin + offset,
+    contentTop,
+    coatOfArmsWidth,
+    coatOfArmsHeight,
+    white,
+  )
+  PDFKitCoatOfArms(page, {
+    x: pageMargin + coatOfArms.offsetX,
+    y: fromTop(pageMargin + coatOfArms.offsetY),
+    scale: coatOfArms.scale,
   })
 
-  if (confirmation?.actor) {
+  // Draw the title box
+  drawBox(contentX, contentTop, contentWidth, titleHeight, lightGray)
+
+  const titleTextTop = contentTop + titleHeight / 2 - fontSize / 2
+  const titleX = contentX + padding
+  const title = 'Réttarvörslugátt'
+
+  drawText(title, titleX, titleTextTop, fonts.bold)
+  drawText(
+    'Rafræn staðfesting',
+    titleX + fonts.bold.widthOfTextAtSize(`${title}  `, fontSize),
+    titleTextTop,
+    fonts.regular,
+  )
+
+  const dateString = formatDate(confirmation.date) ?? ''
+  drawText(
+    dateString,
+    contentX +
+      contentWidth -
+      padding -
+      fonts.regular.widthOfTextAtSize(dateString, fontSize),
+    titleTextTop,
+    fonts.regular,
+  )
+
+  // Draw the boxes below the title
+  const boxTop = contentTop + titleHeight
+  const boxHeight = shadowHeight - titleHeight
+  let currentX = contentX
+
+  for (const box of boxes) {
+    const boxWidth = (contentWidth * box.widthPercent) / 100
+
+    drawBox(currentX, boxTop, boxWidth, boxHeight, white)
+    drawText(box.title, currentX + padding, boxTop + boxTextTop, fonts.bold)
     drawTextWithEllipsisPDFKit(
-      doc,
-      formatActor(confirmation.actor, confirmation.title),
-      { type: timesRomanFont, size: fontSize },
-      titleX + institutionWidth,
-      height - pageMargin - titleHeight - calculatePt(22),
-      confirmedByWidth - 16,
+      page,
+      box.content,
+      { type: fonts.regular, size: fontSize },
+      currentX + padding,
+      fromTop(boxTop + boxTextTop + boxLineHeight + ascent),
+      boxWidth - padding * 2,
     )
+
+    currentX += boxWidth
   }
 }
 
-const createCourtRecordConfirmation = async (
+const getConfirmationBoxes = (
   confirmation: Confirmation,
-  pdfDoc: PDFDocument,
-) => {
-  const pages = pdfDoc.getPages()
-  const doc = pages[0]
+  fileType: ConfirmableCaseFileCategories,
+): ConfirmationBox[] => {
+  const institution = {
+    title: 'Dómstóll',
+    content: confirmation.institution,
+    widthPercent: 100,
+  }
 
-  const { height } = doc.getSize()
-  const shadowHeight = calculatePt(70)
-  const institutionWidth = calculatePt(160)
-  const confirmedByWidth = institutionWidth + calculatePt(48)
-  const shadowWidth = institutionWidth + confirmedByWidth + coatOfArmsWidth
-  const titleHeight = calculatePt(24)
-  const titleWidth = institutionWidth + confirmedByWidth
-
-  // Draw the shadow
-  doc.drawRectangle({
-    x: pageMargin,
-    y: height - shadowHeight - pageMargin,
-    width: shadowWidth,
-    height: shadowHeight,
-    color: lightGray,
-  })
-
-  // Draw the box around the coat of arms
-  doc.drawRectangle({
-    x: coatOfArmsX,
-    y: height - shadowHeight - pageMargin + calculatePt(8),
-    width: coatOfArmsWidth,
-    height: shadowHeight,
-    color: rgb(1, 1, 1),
-    borderColor: darkGray,
-    borderWidth: 1,
-  })
-
-  PDFKitCoatOfArms(doc, height + 8)
-
-  doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsWidth,
-    y: height - pageMargin - titleHeight + calculatePt(8),
-    width: titleWidth,
-    height: titleHeight,
-    color: lightGray,
-    borderColor: darkGray,
-    borderWidth: 1,
-  })
-
-  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
-  const timesRomanBoldFont = await pdfDoc.embedFont(
-    StandardFonts.TimesRomanBold,
-  )
-  const fontSize = calculatePt(confirmationFontSize)
-  doc.drawText('Réttarvörslugátt', {
-    x: titleX,
-    y: height - pageMargin - titleHeight + calculatePt(16),
-    size: fontSize,
-    font: timesRomanBoldFont,
-  })
-
-  doc.drawText('Rafræn staðfesting', {
-    x: 158,
-    y: height - pageMargin - titleHeight + calculatePt(16),
-    size: fontSize,
-    font: timesRomanFont,
-  })
-
-  doc.drawText(formatDate(confirmation.date) || '', {
-    x: shadowWidth - calculatePt(24),
-    y: height - pageMargin - titleHeight + calculatePt(16),
-    size: fontSize,
-    font: timesRomanFont,
-  })
-
-  // Draw the "Institution" box
-  doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsWidth,
-    y: height - pageMargin - titleHeight - confirmedByHeight + calculatePt(12),
-    width: institutionWidth + confirmedByWidth,
-    height: shadowHeight - titleHeight,
-    color: white,
-    borderColor: darkGray,
-    borderWidth: 1,
-  })
-
-  doc.drawText('Dómstóll', {
-    x: titleX,
-    y: height - pageMargin - titleHeight - calculatePt(10),
-    size: fontSize,
-    font: timesRomanBoldFont,
-  })
-
-  if (confirmation?.institution) {
-    doc.drawText(confirmation.institution, {
-      x: titleX,
-      y: height - pageMargin - titleHeight - calculatePt(22),
-      font: timesRomanFont,
-      size: fontSize,
-    })
+  switch (fileType) {
+    case CaseFileCategory.RULING:
+    case CaseFileCategory.COURT_INDICTMENT_RULING_ORDER:
+      return [
+        { ...institution, widthPercent: 50 },
+        {
+          title: 'Samþykktaraðili',
+          content: formatActor(confirmation.actor, confirmation.title),
+          widthPercent: 50,
+        },
+      ]
+    case CaseFileCategory.COURT_RECORD:
+      return [institution]
   }
 }
 
@@ -274,25 +201,22 @@ export const createConfirmedPdf = async (
   pdf: Buffer,
   fileType: ConfirmableCaseFileCategories,
 ) => {
-  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
-
-  switch (fileType) {
-    case CaseFileCategory.RULING: {
-      await createRulingConfirmation(confirmation, pdfDoc)
-      break
-    }
-    case CaseFileCategory.COURT_RECORD: {
-      await createCourtRecordConfirmation(confirmation, pdfDoc)
-      break
-    }
-    case CaseFileCategory.COURT_INDICTMENT_RULING_ORDER: {
-      await createRulingConfirmation(confirmation, pdfDoc)
-      break
-    }
-    default: {
-      throw new Error('CaseFileCategory not supported')
-    }
+  if (!hasConfirmableCaseFileCategories(fileType)) {
+    throw new Error('CaseFileCategory not supported')
   }
+
+  const pdfDoc = await PDFDocument.load(new Uint8Array(pdf))
+  const fonts = {
+    regular: await pdfDoc.embedFont(StandardFonts.TimesRoman),
+    bold: await pdfDoc.embedFont(StandardFonts.TimesRomanBold),
+  }
+
+  drawConfirmation(
+    pdfDoc.getPage(0),
+    fonts,
+    confirmation,
+    getConfirmationBoxes(confirmation, fileType),
+  )
 
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes)

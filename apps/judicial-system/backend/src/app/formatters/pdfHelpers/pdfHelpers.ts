@@ -17,6 +17,28 @@ export interface Confirmation {
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
 export const xsFontSize = 5
 export const confirmationFontSize = 7
+// Layout of the confirmation stamp drawn at the top of the first page. Shared
+// by drawConfirmation below (pdfkit, generated documents) and confirmedPdf.ts
+// (pdf-lib, uploaded documents) so that every document carries the same stamp.
+export const confirmationLayout = {
+  pageMargin: calculatePt(18),
+  shadowHeight: calculatePt(48),
+  coatOfArmsWidth: calculatePt(88),
+  coatOfArmsHeight: calculatePt(48),
+  // The coat of arms box and the content sit this far up and to the right of
+  // the shadow
+  offset: calculatePt(8),
+  titleHeight: calculatePt(16),
+  padding: calculatePt(8),
+  boxTextTop: calculatePt(9),
+  // Distance from the top of a box title to the top of its content
+  boxLineHeight: calculatePt(10),
+  coatOfArms: {
+    offsetX: calculatePt(35),
+    offsetY: -calculatePt(1),
+    scale: 0.25,
+  },
+}
 export const smallFontSize = 9
 export const baseFontSize = 11
 export const basePlusFontSize = 12
@@ -138,13 +160,20 @@ export const drawConfirmation = (
 ) => {
   const { boxes, confirmationText, showLockIcon = false, date } = config
 
-  const pageMargin = calculatePt(18)
-  const shaddowHeight = calculatePt(48)
-  const coatOfArmsHeight = calculatePt(48)
-  const coatOfArmsWidth = calculatePt(88)
-  const coatOfArmsX = pageMargin + calculatePt(8)
-  const titleHeight = calculatePt(16)
-  const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
+  const {
+    pageMargin,
+    shadowHeight,
+    coatOfArmsHeight,
+    coatOfArmsWidth,
+    offset,
+    titleHeight,
+    padding,
+    boxTextTop,
+    boxLineHeight,
+    coatOfArms,
+  } = confirmationLayout
+  const coatOfArmsX = pageMargin + offset
+  const titleX = coatOfArmsX + coatOfArmsWidth + padding
   const fontSize = calculatePt(confirmationFontSize)
 
   // Page width minus 2 times the page margin
@@ -156,26 +185,26 @@ export const drawConfirmation = (
   doc.x = pageMargin
   doc.y = pageMargin
 
-  // Draw the shaddow background
-  doc.rect(doc.x, doc.y, totalWidth, shaddowHeight).fill(lightGray)
+  // Draw the shadow background
+  doc.rect(doc.x, doc.y, totalWidth, shadowHeight).fill(lightGray)
 
   // Draw the Coat of Arms box. Note that the x and y is offset by
   // 8pts to create a shadow effect
   doc
-    .rect(
-      doc.x + calculatePt(8),
-      doc.y - calculatePt(8),
-      coatOfArmsWidth,
-      coatOfArmsHeight,
-    )
+    .rect(doc.x + offset, doc.y - offset, coatOfArmsWidth, coatOfArmsHeight)
     .fillAndStroke('white', darkGray)
 
   // Draw the actual Coat of Arms. Note that the x and y is offset by
   // some magic numbers to center it in the box
-  addCoatOfArms(doc, doc.x + calculatePt(35), doc.y - calculatePt(1), 0.25)
+  addCoatOfArms(
+    doc,
+    doc.x + coatOfArms.offsetX,
+    doc.y + coatOfArms.offsetY,
+    coatOfArms.scale,
+  )
 
   // Draw the title box
-  const titleBoxY = doc.y - calculatePt(8)
+  const titleBoxY = doc.y - offset
   const titleTextY = titleBoxY + titleHeight / 2 - fontSize / 2
 
   doc
@@ -203,7 +232,7 @@ export const drawConfirmation = (
   // Draw lock icon if needed
   if (showLockIcon) {
     doc
-      .translate(totalWidth + calculatePt(8), doc.y - calculatePt(8))
+      .translate(totalWidth + offset, doc.y - offset)
       .scale(0.5)
       .path(
         'M2.76356 11.8047H9.57201C9.85402 11.8047 10.0826 11.5761 10.0826 11.2941V5.50692C10.0826 5.22492 9.85402 4.99629 9.57201 4.99629H9.06138V3.46439C9.06138 1.86887 7.76331 0.570801 6.16779 0.570801C4.57226 0.570801 3.2742 1.86887 3.2742 3.46439V4.99629H2.76356C2.48156 4.99629 2.25293 5.22492 2.25293 5.50692V11.2941C2.25293 11.5761 2.48156 11.8047 2.76356 11.8047ZM7.61394 8.03817L6.16714 9.48496C6.06743 9.58467 5.93674 9.63455 5.80609 9.63455C5.67543 9.63455 5.54471 9.58467 5.44504 9.48496L4.72164 8.76157C4.52222 8.56215 4.52222 8.23888 4.72164 8.03943C4.92102 7.84001 5.24436 7.84001 5.44378 8.03943L5.80612 8.40174L6.89187 7.31603C7.09125 7.11661 7.41458 7.11661 7.614 7.31603C7.81339 7.51549 7.81339 7.83875 7.61394 8.03817ZM4.29546 3.46439C4.29546 2.43199 5.13539 1.59207 6.16779 1.59207C7.20019 1.59207 8.04011 2.43199 8.04011 3.46439V4.99629H4.29546V3.46439Z',
@@ -224,7 +253,7 @@ export const drawConfirmation = (
           coatOfArmsWidth +
           (totalWidth - coatOfArmsWidth) -
           dateWidth -
-          calculatePt(8),
+          padding,
         titleTextY,
         {
           align: 'right',
@@ -234,7 +263,7 @@ export const drawConfirmation = (
   }
 
   const boxY = titleBoxY + titleHeight
-  const boxHeight = shaddowHeight - titleHeight
+  const boxHeight = shadowHeight - titleHeight
   let currentX = coatOfArmsX + coatOfArmsWidth
 
   boxes.forEach((box) => {
@@ -247,12 +276,11 @@ export const drawConfirmation = (
     doc.fill('black')
     doc.font('Times-Bold')
     doc.fontSize(fontSize)
-    doc.text(box.title, currentX + calculatePt(8), boxY + calculatePt(9), {
-      lineGap: 1,
-      width: boxWidth - calculatePt(16),
+    doc.text(box.title, currentX + padding, boxY + boxTextTop, {
+      width: boxWidth - padding * 2,
     })
     doc.font('Times-Roman')
-    doc.text(box.content)
+    doc.text(box.content, currentX + padding, boxY + boxTextTop + boxLineHeight)
 
     currentX += boxWidth
   })
