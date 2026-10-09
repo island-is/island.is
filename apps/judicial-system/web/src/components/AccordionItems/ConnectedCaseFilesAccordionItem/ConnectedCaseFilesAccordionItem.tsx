@@ -1,12 +1,12 @@
 import type { FC } from 'react'
 
 import { AccordionItem } from '@island.is/island-ui/core'
-import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { MergedCase } from '@island.is/judicial-system-web/src/components'
 import { IndictmentCaseFilesList } from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   connectedCaseParentId: string
-  connectedCase: WorkingCase
+  connectedCase: MergedCase
   displayGeneratedPDFs?: boolean
 }
 

@@ -27,7 +27,10 @@ import {
   isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
-import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
+  MergedCase,
+  WorkingCase,
+} from '@island.is/judicial-system-web/src/components'
 import {
   FileNotFoundModal,
   PdfButton,
@@ -213,8 +216,17 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
   )
 }
 
+// The list renders the working case and, through
+// ConnectedCaseFilesAccordionItem, each case merged into it. A merged case is
+// fetched with fewer fields, so the type is what the two have in common. The
+// two fields only the working case carries are optional: a merged case has no
+// split cases of its own in the payload, and its indictment row is named
+// without a date.
+export type CaseFilesListCase = MergedCase &
+  Partial<Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases'>>
+
 interface Props {
-  workingCase: WorkingCase
+  workingCase: CaseFilesListCase
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   forceDisplayAdditionalFiles?: boolean
@@ -294,7 +306,7 @@ const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
 
 const useFilteredCaseFiles = (
   caseFiles?: CaseFile[] | null,
-  splitCases?: WorkingCase[] | null,
+  splitCases?: WorkingCase['splitCases'],
 ) => {
   return useMemo(() => {
     const splitCaseFiles =
@@ -342,7 +354,7 @@ const useFilteredCaseFiles = (
   }, [caseFiles, splitCases])
 }
 
-const useFilePermissions = (workingCase: WorkingCase, user?: User) => {
+const useFilePermissions = (workingCase: CaseFilesListCase, user?: User) => {
   return useMemo(
     () => ({
       canViewCriminalRecordUpdate:
@@ -372,7 +384,7 @@ const useFilePermissions = (workingCase: WorkingCase, user?: User) => {
   )
 }
 
-export const useSentToPrisonAdminDate = (workingCase: WorkingCase) => {
+export const useSentToPrisonAdminDate = (workingCase: CaseFilesListCase) => {
   return useMemo(() => {
     // For now we return the newest date on any defendant that has been sent to prison admin
     // but we may need to change this in the future depending on how we want to handle
