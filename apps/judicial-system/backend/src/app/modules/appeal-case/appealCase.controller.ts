@@ -1,13 +1,18 @@
+import { Response } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
   Body,
   Controller,
   ForbiddenException,
+  Get,
+  Header,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
@@ -25,12 +30,25 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 import { AppealCaseType, UserRole } from '@island.is/judicial-system/types'
 
-import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+} from '../../guards'
 import { CurrentCase } from '../case/guards/case.decorator'
 import { CaseExistsGuard } from '../case/guards/caseExists.guard'
+import { CaseReadGuard } from '../case/guards/caseRead.guard'
 import { CaseWriteGuard } from '../case/guards/caseWrite.guard'
+import { PdfService } from '../case/pdf.service'
+import { CurrentCivilClaimant } from '../defendant/guards/civilClaimaint.decorator'
+import { CivilClaimantExistsGuard } from '../defendant/guards/civilClaimantExists.guard'
+import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
+import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
-import { AppealCase, Case } from '../repository'
+import { LawyerRegistryService } from '../lawyer-registry/lawyerRegistry.service'
+import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { UserService } from '../user'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
@@ -54,6 +72,7 @@ import {
   publicProsecutorStaffCreateRule,
   publicProsecutorStaffTransitionRule,
 } from './guards/rolesRules'
+import { buildAppealAppointmentLetter } from './appealAppointmentLetter'
 import { AppealCaseService } from './appealCase.service'
 
 @Controller('api')
@@ -64,6 +83,8 @@ export class AppealCaseController {
     private readonly appealCaseService: AppealCaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
+    private readonly pdfService: PdfService,
+    private readonly lawyerRegistryService: LawyerRegistryService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -245,5 +266,112 @@ export class AppealCaseController {
     this.eventService.postEvent(dto.transition, theCase)
 
     return result.appealCase
+  }
+
+  /**
+   * The advocate's firm, which the letter puts under their name. It lives in
+   * the lawyer register rather than on the case, and only for an advocate
+   * picked out of that register - one typed in by hand has no national id to
+   * find them by. A letter is worth sending without the firm, so a lookup
+   * that finds nothing is not an error.
+   */
+  private async getAdvocatePractice(
+    nationalId?: string | null,
+  ): Promise<string | undefined> {
+    if (!nationalId) {
+      return undefined
+    }
+
+    try {
+      const lawyer = await this.lawyerRegistryService.getByNationalId(
+        nationalId,
+      )
+
+      return lawyer.practice
+    } catch {
+      return undefined
+    }
+  }
+
+  private async writeAppointmentLetter(
+    theCase: Case,
+    party: { defendant?: Defendant; civilClaimant?: CivilClaimant },
+    res: Response,
+  ): Promise<void> {
+    const advocatePractice = await this.getAdvocatePractice(
+      party.defendant?.appealDefenderNationalId ??
+        party.civilClaimant?.appealSpokespersonNationalId,
+    )
+
+    const letter = buildAppealAppointmentLetter({
+      theCase,
+      ...party,
+      advocatePractice,
+    })
+
+    if (!letter) {
+      throw new NotFoundException('No appeal appointment letter to write')
+    }
+
+    res.end(await this.pdfService.getAppealAppointmentLetterPdf(letter))
+  }
+
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard, DefendantExistsGuard)
+  @RolesRules(
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
+  @Get('case/:caseId/defendant/:defendantId/appealAppointmentLetter')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      "Gets the letter appointing a defendant's defender for an appeal as a pdf document",
+  })
+  async getDefenderAppointmentLetterPdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the appeal appointment letter for defendant ${defendantId} of case ${caseId} as a pdf document`,
+    )
+
+    await this.writeAppointmentLetter(theCase, { defendant }, res)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
+    CaseReadGuard,
+    CivilClaimantExistsGuard,
+  )
+  @RolesRules(
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
+  @Get('case/:caseId/civilClaimant/:civilClaimantId/appealAppointmentLetter')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      "Gets the letter appointing a civil claimant's spokesperson for an appeal as a pdf document",
+  })
+  async getSpokespersonAppointmentLetterPdf(
+    @Param('caseId') caseId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the appeal appointment letter for civil claimant ${civilClaimantId} of case ${caseId} as a pdf document`,
+    )
+
+    await this.writeAppointmentLetter(theCase, { civilClaimant }, res)
   }
 }

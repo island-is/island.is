@@ -359,6 +359,55 @@ export const buildAdvocateConfirmedEvent = (params: {
   }
 }
 
+/**
+ * Whether an update puts a different advocate on a party than the one already
+ * there.
+ *
+ * Only a field the update actually carries counts: a PATCH that leaves the
+ * name out is not changing it, and one that repeats the same name is not
+ * either.
+ *
+ * Used to take a confirmation back when the advocate under it changes. A
+ * confirmation names a person, and the letter of appointment is signed and
+ * dated from the event that confirmation wrote - so a row left confirmed under
+ * a new name would print the new advocate over the old signatory and date.
+ * The screen already makes the court confirm again; this is the same rule
+ * where the screen cannot reach.
+ */
+export const namesADifferentAdvocate = (
+  current: { name?: string | null; nationalId?: string | null },
+  update: { name?: string | null; nationalId?: string | null },
+): boolean =>
+  (update.name !== undefined && update.name !== current.name) ||
+  (update.nationalId !== undefined && update.nationalId !== current.nationalId)
+
+/**
+ * The confirmation that currently stands for one party, which is what the
+ * letter of appointment is written from: its signatory and its date.
+ *
+ * Only the latest matters. An advocate replaced later is simply superseded -
+ * nothing tracks the ones before, by design - so the letter always reproduces
+ * the appointment in force.
+ */
+export const latestAdvocateConfirmedEvent = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+  party: { defendantId?: string; civilClaimantId?: string },
+): AppealEventLog | undefined =>
+  (appealCase.appealEventLogs ?? [])
+    .filter(
+      (eventLog) =>
+        eventLog.eventType === AppealEventType.ADVOCATE_CONFIRMED &&
+        (party.defendantId
+          ? eventLog.defendantId === party.defendantId
+          : Boolean(party.civilClaimantId) &&
+            eventLog.civilClaimantId === party.civilClaimantId),
+    )
+    .reduce<AppealEventLog | undefined>(
+      (latest, eventLog) =>
+        !latest || eventLog.created > latest.created ? eventLog : latest,
+      undefined,
+    )
+
 // An APPEALED event for an appeal the party filed itself, outside the court
 // record. Such an appellant has no decision = APPEAL row - they appealed because
 // they postponed in court - so it must never be inferred from the decision rows

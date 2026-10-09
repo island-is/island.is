@@ -1,8 +1,10 @@
 import {
   AppealAppointmentKind,
   createAppealAppointmentLetter,
+  getAppealAppointmentAddresseeLines,
   getAppealAppointmentBody,
   getAppealAppointmentCaseTitle,
+  getAppealAppointmentCaseTitleLines,
   getAppealAppointmentSentence,
   getAppealAppointmentSubject,
 } from './appealAppointmentLetterPdf'
@@ -36,17 +38,49 @@ describe('getAppealAppointmentSubject', () => {
 
 describe('getAppealAppointmentSentence', () => {
   // The sentence that does the appointing. A defender is appointed to the
-  // accused, a spokesperson to the injured party.
+  // accused, a spokesperson to the injured party. The notice about the
+  // deadline runs on from it as one paragraph, as it does on the letters.
   it('appoints the right advocate to the right party', () => {
     expect(getAppealAppointmentSentence(AppealAppointmentKind.DEFENDER)).toBe(
-      'Þér eruð hér með skipaðir verjandi ákærða fyrir Landsrétti.',
+      'Þér eruð hér með skipaðir verjandi ákærða fyrir Landsrétti. Tilkynnt ' +
+        'verður síðar um frest til greinargerðar í málinu.',
     )
 
     expect(
       getAppealAppointmentSentence(AppealAppointmentKind.SPOKESPERSON),
     ).toBe(
-      'Þér eruð hér með skipaðir réttargæslumaður brotaþola fyrir Landsrétti.',
+      'Þér eruð hér með skipaðir réttargæslumaður brotaþola fyrir Landsrétti. ' +
+        'Tilkynnt verður síðar um frest til greinargerðar í málinu.',
     )
+  })
+})
+
+describe('getAppealAppointmentCaseTitleLines', () => {
+  // Three lines, which is how a court document heads a case.
+  it('breaks the case title the way the letter sets it', () => {
+    expect(getAppealAppointmentCaseTitleLines('Gervimanni Jónssyni')).toEqual([
+      'Ákæruvaldið',
+      'gegn',
+      'Gervimanni Jónssyni',
+    ])
+  })
+})
+
+describe('getAppealAppointmentAddresseeLines', () => {
+  // Whichever role the court appoints them to, the person it writes to is a
+  // lawyer, and both letters address them as one, with their firm beneath.
+  it('addresses the advocate as a lawyer, over their firm', () => {
+    expect(
+      getAppealAppointmentAddresseeLines('Þórður Már Jónsson', 'Vivos lögmenn'),
+    ).toEqual(['Þórður Már Jónsson lögmaður', 'Vivos lögmenn'])
+  })
+
+  // The register does not always record one, and a blank line in the address
+  // block would look like something failed to print.
+  it('leaves out a firm the register does not hold', () => {
+    expect(getAppealAppointmentAddresseeLines('Þórður Már Jónsson')).toEqual([
+      'Þórður Már Jónsson lögmaður',
+    ])
   })
 })
 
@@ -141,5 +175,32 @@ describe('createAppealAppointmentLetter', () => {
     const pdf = await createAppealAppointmentLetter({ ...letter, copyTo: [] })
 
     expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+  })
+
+  // The stationery sits below the bottom margin, where pdfkit treats text as
+  // overflow and moves it - and everything after it - onto a fresh page. That
+  // turned this letter into three blank-ish pages once, so the page count is
+  // worth asserting rather than trusting.
+  describe('page count', () => {
+    const countPages = (pdf: Buffer) =>
+      (pdf.toString('latin1').match(/\/Type \/Page(?!s)/g) ?? []).length
+
+    it('fits on one page', async () => {
+      expect(countPages(await createAppealAppointmentLetter(letter))).toBe(1)
+    })
+
+    it('still fits with the longer copy list', async () => {
+      const pdf = await createAppealAppointmentLetter({
+        ...letter,
+        kind: AppealAppointmentKind.SPOKESPERSON,
+        copyTo: [
+          'Hrafnhildur M. Gunnarsdóttir saksóknari',
+          'Þórður Már Jónsson lögmaður',
+          'Áslaug Björk Ingólfsdóttir lögmaður',
+        ],
+      })
+
+      expect(countPages(pdf)).toBe(1)
+    })
   })
 })

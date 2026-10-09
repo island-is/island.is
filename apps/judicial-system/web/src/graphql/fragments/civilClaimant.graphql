@@ -12,6 +12,13 @@ fragment CivilClaimantFields on CivilClaimant {
   spokespersonPhoneNumber
   caseFilesSharedWithSpokesperson
   isSpokespersonConfirmed
+  hasAppealSpokesperson
+  appealSpokespersonIsLawyer
+  appealSpokespersonName
+  appealSpokespersonNationalId
+  appealSpokespersonEmail
+  appealSpokespersonPhoneNumber
+  isAppealSpokespersonConfirmed
   policeCaseNumbers
   defendantIds
 }

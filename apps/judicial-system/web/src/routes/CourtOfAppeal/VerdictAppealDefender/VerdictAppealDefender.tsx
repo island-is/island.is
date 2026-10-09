@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
+  AppealAppointmentLetterButtons,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -105,6 +106,10 @@ const VerdictAppealDefender = () => {
               </div>
             </Box>
           )}
+          {/* Below every advocate rather than inside each box: the letters are
+              what the court takes away once it has settled everyone (design,
+              parent ticket). */}
+          <AppealAppointmentLetterButtons />
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>

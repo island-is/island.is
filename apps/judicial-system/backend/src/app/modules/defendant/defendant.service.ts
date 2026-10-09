@@ -31,10 +31,12 @@ import { queueMessagesAfterCommit } from '../../middleware'
 import {
   buildAdvocateConfirmedEvent,
   hasStandingVerdictAppeal,
+  namesADifferentAdvocate,
 } from '../appeal-case/appealCase.helpers'
 import { AppealCaseService } from '../appeal-case/appealCase.service'
 import { CourtService } from '../court'
 import {
+  AppealCase,
   AppealEventLogRepositoryService,
   Case,
   CaseFileRepositoryService,
@@ -373,6 +375,7 @@ export class DefendantService {
     updatedDefendant: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
+    verdictAppealCase = theCase.verdictAppealCase,
   ) {
     if (
       updatedDefendant.indictmentReviewDecision &&
@@ -401,12 +404,12 @@ export class DefendantService {
     if (
       updatedDefendant.isAppealDefenderConfirmed &&
       !defendant.isAppealDefenderConfirmed &&
-      theCase.verdictAppealCase
+      verdictAppealCase
     ) {
       await this.appealEventLogRepositoryService.create(
         buildAdvocateConfirmedEvent({
           theCase,
-          appealCase: theCase.verdictAppealCase,
+          appealCase: verdictAppealCase,
           party: { defendantId: defendant.id },
           actor: user,
         }),
@@ -441,7 +444,7 @@ export class DefendantService {
     update: UpdateDefendantDto,
     user: User,
     transaction: Transaction,
-  ) {
+  ): Promise<AppealCase | undefined> {
     const decision = update.indictmentReviewDecision
 
     // Only a decision that actually changed is an act of review, and only a
@@ -455,7 +458,10 @@ export class DefendantService {
     }
 
     if (decision === IndictmentCaseReviewDecision.APPEAL) {
-      await this.appealCaseService.create(
+      // Handed back rather than dropped: one request may both register the
+      // appeal and confirm an advocate on it, and the confirmation has no
+      // proceeding to record itself against until this has run.
+      return this.appealCaseService.create(
         theCase,
         user,
         undefined,
@@ -464,8 +470,6 @@ export class DefendantService {
           defendantId: defendant.id,
         },
       )
-
-      return
     }
 
     // Changed away from an appeal. A decision recorded as APPEAL before verdict
@@ -502,10 +506,29 @@ export class DefendantService {
     transaction: Transaction,
     registerVerdictAppeal?: boolean,
   ): Promise<Defendant> {
+    // A confirmation names a person, so one cannot survive the person
+    // changing. The screen makes the court confirm again; the API has to
+    // enforce the same rule, or the letter would print the new defender over
+    // the signatory and date of the confirmation that named the old one.
+    const effectiveUpdate =
+      defendant.isAppealDefenderConfirmed &&
+      namesADifferentAdvocate(
+        {
+          name: defendant.appealDefenderName,
+          nationalId: defendant.appealDefenderNationalId,
+        },
+        {
+          name: update.appealDefenderName,
+          nationalId: update.appealDefenderNationalId,
+        },
+      )
+        ? { ...update, isAppealDefenderConfirmed: false }
+        : update
+
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
-      update,
+      effectiveUpdate,
       transaction,
     )
 
@@ -542,23 +565,28 @@ export class DefendantService {
       user,
     )
 
+    // Before the event log, not after: a request that registers the appeal and
+    // confirms an advocate on it in one go has no proceeding to record the
+    // confirmation against until this has run. The two are independent
+    // otherwise - this reads the review decision, that writes events.
+    const registeredVerdictAppeal = registerVerdictAppeal
+      ? await this.handleVerdictAppealUpdates(
+          theCase,
+          defendant,
+          update,
+          user,
+          transaction,
+        )
+      : undefined
+
     await this.handleEventLogUpdates(
       theCase,
       defendant,
       updatedDefendant,
       user,
       transaction,
+      registeredVerdictAppeal ?? theCase.verdictAppealCase,
     )
-
-    if (registerVerdictAppeal) {
-      await this.handleVerdictAppealUpdates(
-        theCase,
-        defendant,
-        update,
-        user,
-        transaction,
-      )
-    }
 
     if (
       update.punishmentType !== undefined &&

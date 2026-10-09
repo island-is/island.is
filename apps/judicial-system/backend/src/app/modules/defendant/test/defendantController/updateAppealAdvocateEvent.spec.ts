@@ -4,8 +4,10 @@ import { v4 as uuid } from 'uuid'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealEventType,
+  CaseIndictmentRulingDecision,
   CaseType,
   DefendantNotificationType,
+  IndictmentCaseReviewDecision,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -134,6 +136,60 @@ describe('DefendantController - Update writes an advocate confirmed event', () =
     expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
   })
 
+  // A confirmation names a person. Putting a different defender on an already
+  // confirmed defendant must take the confirmation back, or the letter would
+  // print the new name over the old signatory and date. The screen already
+  // makes the court confirm again; this is the API doing the same.
+  it('takes the confirmation back when the defender changes', async () => {
+    await update(
+      { appealDefenderName: 'Nýr Verjandi' },
+      {
+        isAppealDefenderConfirmed: true,
+        appealDefenderName: 'Fyrri Verjandi',
+      },
+    )
+
+    expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+      caseId,
+      defendantId,
+      expect.objectContaining({ isAppealDefenderConfirmed: false }),
+      expect.anything(),
+    )
+  })
+
+  // Confirming a defender the row did not have yet is the ordinary case and
+  // must go through untouched, even though both fields move at once.
+  it('leaves a first confirmation alone', async () => {
+    await update({
+      appealDefenderName: 'Lára Lögmann',
+      isAppealDefenderConfirmed: true,
+    })
+
+    expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+      caseId,
+      defendantId,
+      expect.objectContaining({ isAppealDefenderConfirmed: true }),
+      expect.anything(),
+    )
+  })
+
+  it('leaves an update that renames nobody alone', async () => {
+    await update(
+      { appealDefenderEmail: 'ny@example.is' },
+      {
+        isAppealDefenderConfirmed: true,
+        appealDefenderName: 'Fyrri Verjandi',
+      },
+    )
+
+    expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+      caseId,
+      defendantId,
+      expect.not.objectContaining({ isAppealDefenderConfirmed: false }),
+      expect.anything(),
+    )
+  })
+
   // A court of appeals user reaching this defendant through a ruling appeal
   // has no verdict appeal to record the confirmation against. The
   // confirmation itself still saves.
@@ -147,6 +203,87 @@ describe('DefendantController - Update writes an advocate confirmed event', () =
     expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     expect(result).toEqual(
       expect.objectContaining({ isAppealDefenderConfirmed: true }),
+    )
+  })
+})
+
+/**
+ * One request may both register the prosecution's appeal and confirm an
+ * advocate on it. The confirmation has nothing to record itself against until
+ * the appeal exists, so the order the two run in decides whether the letter
+ * ever gets a signatory.
+ */
+describe('DefendantController - Update confirms against an appeal it just registered', () => {
+  const caseId = uuid()
+  const defendantId = uuid()
+  const newAppealCaseId = uuid()
+
+  const actor = {
+    id: uuid(),
+    nationalId: '0000000000',
+    name: 'RIKSAK skrifstofa',
+    role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+    institution: { name: 'Ríkissaksóknari' },
+  } as User
+
+  let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+
+  beforeEach(async () => {
+    const {
+      sequelize,
+      defendantRepositoryService,
+      appealEventLogRepositoryService,
+      appealCaseService,
+      defendantController,
+    } = await createTestingDefendantModule()
+
+    mockAppealEventLogRepositoryService = appealEventLogRepositoryService
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
+
+    const mockCreateAppeal = appealCaseService.create as jest.Mock
+    mockCreateAppeal.mockResolvedValue({ id: newAppealCaseId } as AppealCase)
+
+    const mockUpdate = defendantRepositoryService.update as jest.Mock
+    mockUpdate.mockResolvedValueOnce({
+      id: defendantId,
+      caseId,
+      isAppealDefenderConfirmed: true,
+      indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+    })
+
+    // Guards do not execute in controller unit tests, so the request context
+    // the handler takes its transaction from is set up here.
+    await runInRequestContext(() =>
+      defendantController.update(
+        caseId,
+        defendantId,
+        actor,
+        {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          courtCaseNumber: 'S-14/2026',
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+          // No appeal yet - this request is what creates it.
+          verdictAppealCase: undefined,
+        } as Case,
+        { id: defendantId, caseId } as Defendant,
+        {
+          registerVerdictAppeal: true,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          isAppealDefenderConfirmed: true,
+        },
+      ),
+    )
+  })
+
+  it('records the confirmation against the appeal the same request created', () => {
+    expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        appealCaseId: newAppealCaseId,
+        eventType: AppealEventType.ADVOCATE_CONFIRMED,
+        defendantId,
+      }),
+      expect.anything(),
     )
   })
 })
@@ -195,11 +332,7 @@ describe('DefendantController - Update notifies a confirmed appeal defender', ()
     } = await createTestingDefendantModule()
 
     queuedMessages = queuedMessagesAfterCommit
-
-    const mockTransaction = sequelize.transaction as jest.Mock
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn({} as Transaction),
-    )
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
 
     update = (defendantUpdate, existing = {}, caseOverrides = {}) => {
       const mockUpdate = defendantRepositoryService.update as jest.Mock
@@ -209,19 +342,23 @@ describe('DefendantController - Update notifies a confirmed appeal defender', ()
         ...defendantUpdate,
       })
 
-      return defendantController.update(
-        caseId,
-        defendantId,
-        actor,
-        {
-          id: caseId,
-          type: CaseType.INDICTMENT,
-          courtCaseNumber: 'S-14/2026',
-          verdictAppealCase: { id: appealCaseId } as AppealCase,
-          ...caseOverrides,
-        } as Case,
-        { ...defendant, ...existing } as Defendant,
-        defendantUpdate,
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      return runInRequestContext(() =>
+        defendantController.update(
+          caseId,
+          defendantId,
+          actor,
+          {
+            id: caseId,
+            type: CaseType.INDICTMENT,
+            courtCaseNumber: 'S-14/2026',
+            verdictAppealCase: { id: appealCaseId } as AppealCase,
+            ...caseOverrides,
+          } as Case,
+          { ...defendant, ...existing } as Defendant,
+          defendantUpdate,
+        ),
       )
     }
   })
