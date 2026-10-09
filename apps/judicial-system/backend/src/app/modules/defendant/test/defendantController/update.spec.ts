@@ -64,7 +64,7 @@ describe('DefendantController - Update', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
       defendantEventLogRepositoryService,
@@ -72,7 +72,7 @@ describe('DefendantController - Update', () => {
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
     mockAppealCaseService = appealCaseService
@@ -201,6 +201,64 @@ describe('DefendantController - Update', () => {
             type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
           },
         },
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+      ])
+    })
+  })
+
+  describe('defendant defenderEmail changed after case is delivered to court', () => {
+    const defendantUpdate = { defenderEmail: 'new-defender@example.is' }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
+
+      await givenWhenThen(defendantUpdate, CaseType.CUSTODY, uuid())
+    })
+
+    it('should queue court delivery messages for the defendant', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId,
+        },
+      ])
+    })
+  })
+
+  describe('defendant defenderName changed after case is delivered to court', () => {
+    const defendantUpdate = { defenderName: 'New Defender Name' }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedDefendant)
+
+      await givenWhenThen(defendantUpdate, CaseType.CUSTODY, uuid())
+    })
+
+    it('should queue court delivery messages for the defendant', () => {
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,

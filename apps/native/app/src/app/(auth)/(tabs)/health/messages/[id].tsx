@@ -8,7 +8,6 @@ import {
   Platform,
   Pressable,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
 import {
@@ -17,6 +16,7 @@ import {
   useLocalSearchParams,
   usePathname,
 } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { StackScreen } from '@/components/stack-screen'
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -45,6 +45,7 @@ import {
   ProblemTemplate,
   theme,
 } from '@/ui'
+import { isAndroid } from '@/utils/devices'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { downloadHealthAttachment } from '@/utils/download-health-attachment'
 import { HealthConversationMessageContent } from '@/components/health-conversation-message-content'
@@ -102,6 +103,7 @@ export default function HealthMessageDetailScreen() {
     justCreated?: string
   }>()
   const intl = useIntl()
+  const insets = useSafeAreaInsets()
   const client = useApolloClient()
   const myPagesLinks = useMyPagesLinks()
   const userName = useAuthStore((s) => s.userInfo?.name)
@@ -109,9 +111,13 @@ export default function HealthMessageDetailScreen() {
   // Also re-exported in the notifications modal, so compose has to be pushed
   // onto whichever stack we are in.
   const pathname = usePathname()
-  const composeHref = pathname.startsWith('/notifications/')
+  const inNotificationsSheet = pathname.startsWith('/notifications/')
+  const composeHref = inNotificationsSheet
     ? '/notifications/message/new'
     : '/health/messages/new'
+  // Only the sheet clears the Android nav bar; in the tabs the tab bar does.
+  const androidSheetInset =
+    isAndroid && inNotificationsSheet ? insets.bottom : 0
 
   const res = useGetHealthConversationQuery({
     variables: { id },
@@ -601,51 +607,53 @@ export default function HealthMessageDetailScreen() {
         />
         {isSkeleton || conversation ? (
           <ButtonDrawer>
-            <SafeAreaView>
-              {/* Lift the reply button / blocked alert clear of the home
-                  indicator so it doesn't sit on the bottom edge. */}
-              <View style={{ paddingBottom: theme.spacing[1] }}>
-                {isSkeleton ? (
-                  // The card skeleton carries a bottom margin of its own, which
-                  // would leave the placeholder sitting higher than the button
-                  // or alert that replaces it.
-                  <GeneralCardSkeleton
-                    height={48}
-                    style={{ marginBottom: 0 }}
-                  />
-                ) : conversation?.patientCanReply ? (
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'health.messages.replyButton',
-                    })}
-                    isTransparent
-                    isOutlined
-                    iconPosition="start"
-                    icon={require('@/assets/icons/reply.png')}
-                    onPress={() =>
-                      router.push({
-                        pathname: composeHref,
-                        params: {
-                          conversationId: id,
-                          recipientName:
-                            conversation?.organization?.name ??
-                            conversation?.lastSenderGroupName ??
-                            '',
-                          subject: conversation?.title ?? '',
-                        },
-                      })
-                    }
-                  />
-                ) : (
-                  <Alert
-                    type="info"
-                    size="small"
-                    message={replyBlockedMessage}
-                    hasBorder
-                  />
-                )}
-              </View>
-            </SafeAreaView>
+            {/* Clears the home indicator; a device without one reports 0,
+                so a minimum stands in. */}
+            <View
+              style={{
+                paddingBottom:
+                  (Platform.OS === 'ios'
+                    ? Math.max(insets.bottom, theme.spacing[2])
+                    : androidSheetInset) + theme.spacing[1],
+              }}
+            >
+              {isSkeleton ? (
+                // The card skeleton carries a bottom margin of its own, which
+                // would leave the placeholder sitting higher than the button
+                // or alert that replaces it.
+                <GeneralCardSkeleton height={48} style={{ marginBottom: 0 }} />
+              ) : conversation?.patientCanReply ? (
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.messages.replyButton',
+                  })}
+                  isTransparent
+                  isOutlined
+                  iconPosition="start"
+                  icon={require('@/assets/icons/reply.png')}
+                  onPress={() =>
+                    router.push({
+                      pathname: composeHref,
+                      params: {
+                        conversationId: id,
+                        recipientName:
+                          conversation?.organization?.name ??
+                          conversation?.lastSenderGroupName ??
+                          '',
+                        subject: conversation?.title ?? '',
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <Alert
+                  type="info"
+                  size="small"
+                  message={replyBlockedMessage}
+                  hasBorder
+                />
+              )}
+            </View>
           </ButtonDrawer>
         ) : null}
       </View>

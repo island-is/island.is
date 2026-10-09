@@ -411,7 +411,13 @@ export default function SettingsScreen() {
                 <Switch
                   onValueChange={(value) => {
                     if (value && !hasAcceptedBiometrics) {
-                      authenticateAsync().then((result) => {
+                      authenticateAsync({
+                        disableDeviceFallback: true,
+                        fallbackLabel: '',
+                        cancelLabel: intl.formatMessage({
+                          id: 'biometrics.cancel',
+                        }),
+                      }).then((result) => {
                         if (result.success) {
                           setUseBiometrics(true)
                           preferencesStore.setState({

@@ -177,9 +177,9 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.SYSLUMENN,
   },
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
-    nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
-    slug: InstitutionTypes.FJARSYSLA_RIKISINS,
-    contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,

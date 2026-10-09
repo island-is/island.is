@@ -20,18 +20,6 @@ interface FindByIdOptions {
   lock?: boolean
 }
 
-interface CreateCourtSessionOptions {
-  transaction: Transaction
-}
-
-interface UpdateCourtSessionOptions {
-  transaction: Transaction
-}
-
-interface DeleteCourtSessionOptions {
-  transaction: Transaction
-}
-
 export interface UpdateCourtSession {
   location?: string
   judgeId?: string
@@ -161,7 +149,7 @@ export class CourtSessionRepositoryService {
   // it and recording its merged cases is CourtSessionService's sequence.
   async create(
     caseId: string,
-    options: CreateCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<CourtSession> {
     try {
       this.logger.debug(`Creating a new court session for case ${caseId}`)
@@ -190,7 +178,7 @@ export class CourtSessionRepositoryService {
     caseId: string,
     courtSessionId: string,
     data: UpdateCourtSession,
-    options: UpdateCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<CourtSession> {
     try {
       this.logger.debug(
@@ -243,7 +231,7 @@ export class CourtSessionRepositoryService {
   async delete(
     caseId: string,
     courtSessionId: string,
-    options: DeleteCourtSessionOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(

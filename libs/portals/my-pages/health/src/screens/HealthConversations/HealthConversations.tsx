@@ -15,11 +15,13 @@ import {
   CardLoader,
   LinkButton,
   IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
 import { MessageActions } from './components/MessageActions'
 import { Problem } from '@island.is/react-spa/shared'
+import { TextMarkdown } from '../../components/TextMarkdown/TextMarkdown'
 import { debounceTime } from '@island.is/shared/constants'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useState } from 'react'
@@ -27,7 +29,7 @@ import { Link } from 'react-router-dom'
 import ConversationAvatar from './components/ConversationAvatar'
 import * as styles from './HealthConversations.css'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
+import { useTreatmentScopedPaths } from '../../utils/useTreatmentScopedPaths'
 import { ApolloCache } from '@apollo/client'
 import {
   HealthDirectorateHealthConversation,
@@ -43,6 +45,8 @@ import {
   useArchiveHealthConversationMutation,
   useUnarchiveHealthConversationMutation,
 } from './HealthConversations.generated'
+import { useGetHealthTreatmentQuery } from '../Treatments/TreatmentOverview.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_PAGE_SIZE = 20
 
@@ -105,7 +109,10 @@ type FilterValues = {
 
 const HealthConversations = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
+  const paths = useTreatmentScopedPaths()
+  const { treatmentId } = paths
 
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
@@ -127,9 +134,24 @@ const HealthConversations = () => {
   }, [filterValues])
 
   const listVariables = useMemo(
-    () => ({ input: { ...filterInput, limit: DEFAULT_PAGE_SIZE } }),
-    [filterInput],
+    () => ({
+      input: {
+        ...filterInput,
+        ...(treatmentId ? { treatmentId } : {}),
+        limit: DEFAULT_PAGE_SIZE,
+      },
+    }),
+    [filterInput, treatmentId],
   )
+
+  const { data: treatmentData } = useGetHealthTreatmentQuery({
+    variables: { id: treatmentId ?? '' },
+    skip: !treatmentId,
+  })
+  // Hidden until the treatment is known, so it never flashes in and out
+  const canCreate =
+    !treatmentId ||
+    !!treatmentData?.healthDirectorateTreatment?.supportsMessaging
 
   const { data, loading, error, fetchMore } = useGetHealthConversationsQuery({
     fetchPolicy: 'cache-and-network',
@@ -228,28 +250,46 @@ const HealthConversations = () => {
 
   return (
     <IntroWrapper
-      title={m.messages}
-      intro={messages.healthConversationsIntro}
+      title={treatmentId ? messages.treatmentMessagesFromTeam : m.messages}
+      {...(treatmentId
+        ? { intro: messages.treatmentConversationsIntro }
+        : {
+            introComponent: (
+              <TextMarkdown>
+                {formatMessage(messages.healthConversationsIntroWithLink)}
+              </TextMarkdown>
+            ),
+          })}
+      serviceProvider={
+        treatmentId
+          ? {
+              slug: STAFRAEN_HEILSA_SLUG,
+              tooltip: formatMessage(messages.stafraenHeilsaTreatmentTooltip),
+            }
+          : undefined
+      }
       desktopContentSpan="10/12"
     >
-      <Box
-        display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
-        marginBottom={3}
-      >
-        <LinkButton
-          to={HealthPaths.HealthConversationsNew}
-          text={formatMessage(messages.healthConversationsCreate)}
-          variant="primary"
-          size="small"
-        />
-      </Box>
+      {canCreate && (
+        <Box
+          display={['inlineFlex', 'inlineFlex', 'inlineFlex', 'none']}
+          marginBottom={4}
+        >
+          <LinkButton
+            to={paths.conversationsNew}
+            text={formatMessage(messages.healthConversationsCreate)}
+            variant="primary"
+            size="small"
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={3}
       >
-        <Box style={{ minWidth: 0 }}>
+        <Box flexGrow={1} style={{ minWidth: 0 }}>
           <Filter
             labelClearAll={formatMessage(m.clearAllFilters)}
             labelClear={formatMessage(m.clearFilter)}
@@ -257,6 +297,7 @@ const HealthConversations = () => {
             reverse
             variant="popover"
             align="left"
+            filterInputFluid
             mobileWrap={false}
             filterCount={filterCount}
             filterInput={
@@ -317,18 +358,20 @@ const HealthConversations = () => {
             </Box>
           </Filter>
         </Box>
-        <Box
-          display={['none', 'none', 'none', 'block']}
-          style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
-          marginLeft={2}
-        >
-          <LinkButton
-            to={HealthPaths.HealthConversationsNew}
-            text={formatMessage(messages.healthConversationsCreate)}
-            variant="primary"
-            size="small"
-          />
-        </Box>
+        {canCreate && (
+          <Box
+            display={['none', 'none', 'none', 'block']}
+            style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+            marginLeft={2}
+          >
+            <LinkButton
+              to={paths.conversationsNew}
+              text={formatMessage(messages.healthConversationsCreate)}
+              variant="primary"
+              size="small"
+            />
+          </Box>
+        )}
       </Box>
       {initialLoading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
@@ -355,7 +398,7 @@ const HealthConversations = () => {
               background="blue100"
               borderColor="blue200"
               borderBottomWidth="standard"
-              display="flex"
+              display={['none', 'none', 'flex']}
               justifyContent="spaceBetween"
               paddingX={2}
               paddingY={2}
@@ -378,15 +421,12 @@ const HealthConversations = () => {
                   background={item.isRead ? undefined : 'blueberry100'}
                   borderColor="blue200"
                   borderBottomWidth="standard"
-                  paddingX={2}
+                  paddingX={[1, 1, 2]}
                   paddingY="p2"
                   columnGap={2}
                 >
                   <Link
-                    to={HealthPaths.HealthConversationsDetail.replace(
-                      ':id',
-                      item.id,
-                    )}
+                    to={paths.conversationDetail(item.id)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -404,7 +444,7 @@ const HealthConversations = () => {
                     />
                     <Box minWidth={0}>
                       <Box display="flex" alignItems="center" columnGap={1}>
-                        <Text variant="medium">
+                        <Text variant="medium" className={styles.senderName}>
                           {item.groupName || item.organization?.name}
                         </Text>
                         {item.hasAttachment && (
@@ -423,12 +463,12 @@ const HealthConversations = () => {
                         fontWeight={item.isRead ? 'regular' : 'medium'}
                       >
                         {item.title}
-                        {!item.isRead && (
-                          <VisuallyHidden>
-                            {` - ${formatMessage(m.notificationUnread)}`}
-                          </VisuallyHidden>
-                        )}
                       </Text>
+                      {!item.isRead && (
+                        <VisuallyHidden>
+                          {` - ${formatMessage(m.notificationUnread)}`}
+                        </VisuallyHidden>
+                      )}
                     </Box>
                   </Link>
 

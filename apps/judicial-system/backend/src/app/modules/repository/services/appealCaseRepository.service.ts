@@ -17,22 +17,6 @@ import {
   UpdateAppealCase,
 } from '../types/caseRepository.types'
 
-interface AppealCaseTransactionOptions {
-  transaction?: Transaction
-}
-
-interface CreateAppealCaseOptions {
-  transaction: Transaction
-}
-
-interface UpdateAppealCaseOptions {
-  transaction: Transaction
-}
-
-interface DeleteAppealCaseOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class AppealCaseRepositoryService {
   constructor(
@@ -43,7 +27,7 @@ export class AppealCaseRepositoryService {
 
   async findById(
     id: string,
-    options?: AppealCaseTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<AppealCase | null> {
     try {
       this.logger.debug(`Finding appeal case ${id}`)
@@ -68,7 +52,7 @@ export class AppealCaseRepositoryService {
   // holds that, since a verdict appeal has no ruling file.
   async findVerdictAppealByCaseId(
     caseId: string,
-    options?: AppealCaseTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<AppealCase | null> {
     try {
       this.logger.debug(`Finding the verdict appeal of case ${caseId}`)
@@ -97,7 +81,7 @@ export class AppealCaseRepositoryService {
   async existsForRulingFile(
     caseId: string,
     rulingFileId: string,
-    options?: AppealCaseTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<boolean> {
     try {
       this.logger.debug(
@@ -123,7 +107,7 @@ export class AppealCaseRepositoryService {
   async create(
     caseId: string,
     data: CreateAppealCase,
-    options: CreateAppealCaseOptions,
+    options: { transaction: Transaction },
   ): Promise<AppealCase> {
     try {
       this.logger.debug(`Creating appeal case for case ${caseId} with data:`, {
@@ -151,7 +135,7 @@ export class AppealCaseRepositoryService {
   async update(
     appealCaseId: string,
     data: UpdateAppealCase,
-    options: UpdateAppealCaseOptions,
+    options: { transaction: Transaction },
   ): Promise<AppealCase> {
     try {
       this.logger.debug(`Updating appeal case ${appealCaseId} with data:`, {
@@ -192,7 +176,7 @@ export class AppealCaseRepositoryService {
 
   async delete(
     appealCaseId: string,
-    options: DeleteAppealCaseOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(`Deleting appeal case ${appealCaseId}`)

@@ -51,6 +51,7 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentQuestionnairesV1,
   meTreatmentControllerGetTreatmentV1,
   meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
@@ -372,7 +373,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<QuestionnaireDetailDto | null> {
     const questionnaire = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         questionnaireControllerGetQuestionnaireDetailV1({
           path: {
             id: id,
@@ -911,6 +912,21 @@ export class HealthDirectorateHealthService {
     )
 
     return treatment ?? null
+  }
+
+  public async getTreatmentQuestionnaires(
+    auth: Auth,
+    id: string,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentQuestionnairesV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return questionnaires ?? null
   }
 
   public async getTreatmentDocuments(

@@ -74,7 +74,7 @@ const MedicineDelegation = () => {
             })}
             backgroundColor={
               item.status === HealthDirectoratePermitStatus.awaitingApproval
-                ? 'blue'
+                ? 'grey'
                 : 'white'
             }
             subText={
@@ -84,7 +84,11 @@ const MedicineDelegation = () => {
                   formatDate(item.dates.to)
                 : undefined
             }
-            tag={permitTagSelector(item.status, formatMessage)}
+            tag={permitTagSelector(
+              item.status,
+              formatMessage,
+              item.dates?.from,
+            )}
             cta={{
               size: 'small',
               variant: 'text',

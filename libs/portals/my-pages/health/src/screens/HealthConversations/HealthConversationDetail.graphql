@@ -17,6 +17,7 @@ fragment HealthConversationVideoContent on HealthDirectorateHealthConversationVi
   appointmentDate
   appointmentHostName
   isCanceled
+  isExpired
 }
 
 fragment HealthConversationMessage on HealthDirectorateHealthConversationEntry {
@@ -48,6 +49,7 @@ query GetHealthConversationDetail($id: ID!) {
   healthDirectorateHealthConversation(id: $id) {
     id
     title
+    treatmentId
     status
     isStarred
     isArchived

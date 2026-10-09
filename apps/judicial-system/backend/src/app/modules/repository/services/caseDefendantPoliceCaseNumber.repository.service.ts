@@ -8,10 +8,6 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 
-interface ReplaceUnassignedOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class CaseDefendantPoliceCaseNumberRepositoryService {
   constructor(
@@ -23,7 +19,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
   async replaceUnassignedFromPoliceCaseNumbersArray(
     caseId: string,
     policeCaseNumbers: string[],
-    options: ReplaceUnassignedOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     const { transaction } = options
 
@@ -335,7 +331,7 @@ export class CaseDefendantPoliceCaseNumberRepositoryService {
     fromCaseId: string,
     toCaseId: string,
     defendantId: string,
-    options: ReplaceUnassignedOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     const { transaction } = options
 

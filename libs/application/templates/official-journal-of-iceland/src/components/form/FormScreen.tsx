@@ -8,6 +8,7 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
+import { Children } from 'react'
 import * as styles from './FormScreen.css'
 import { useLocale } from '@island.is/localization'
 import { general } from '../../lib/messages'
@@ -112,7 +113,9 @@ export const FormScreen = ({
         )}
         {intro && (
           <Box marginBottom={4} className={styles.contentWrapper}>
-            {intro && <Text>{intro}</Text>}
+            {/* formatMessage returns an unkeyed array when values include
+                elements (e.g. `{br}`), so key the parts before rendering. */}
+            {intro && <Text>{Children.toArray(intro)}</Text>}
           </Box>
         )}
         {description && (

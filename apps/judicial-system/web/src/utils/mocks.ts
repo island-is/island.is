@@ -1,5 +1,6 @@
 import faker from 'faker'
 
+import { courtOfAppealsRoles } from '@island.is/judicial-system/types'
 import { ProsecutorSelectionUsersDocument } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import type {
@@ -237,11 +238,12 @@ export const mockUser = (userRole: UserRole): User => {
       created: '',
       modified: '',
       type:
-        // TODO: Add more institutions if we use more user roles
         userRole === UserRole.PROSECUTOR
           ? InstitutionType.POLICE_PROSECUTORS_OFFICE
           : userRole === UserRole.PUBLIC_PROSECUTOR_STAFF
           ? InstitutionType.PUBLIC_PROSECUTORS_OFFICE
+          : courtOfAppealsRoles.includes(userRole)
+          ? InstitutionType.COURT_OF_APPEALS
           : InstitutionType.DISTRICT_COURT,
       name: '',
       active: true,

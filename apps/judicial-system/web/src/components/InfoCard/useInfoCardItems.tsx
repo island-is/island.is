@@ -34,6 +34,7 @@ import {
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
@@ -57,6 +58,11 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
+  // Which appeal these details belong to. A case can carry a case level appeal
+  // and an appeal of each ruling order at once, and the Court of Appeals opens
+  // one page per appeal, naming it in the query string. Falls back to the case
+  // level appeal, which is what every page without that query string wants.
+  const targetAppealCase = useTargetAppealCaseByAppealCaseId()
 
   const defendants = ({
     caseType,
@@ -351,9 +357,17 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
             {splitCaseEntries.map(({ defendant, splitCase }) => (
               <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
-                <LinkComponent href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}>
-                  {splitCase.courtCaseNumber}
-                </LinkComponent>
+                {/* A defence user is shown every case this one was split into,
+                    but can only follow the ones they are a party to. */}
+                {canDefenceUserOpenLinkedCase(user, splitCase) ? (
+                  <LinkComponent
+                    href={`${ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+                  >
+                    {splitCase.courtCaseNumber}
+                  </LinkComponent>
+                ) : (
+                  <Text>{splitCase.courtCaseNumber}</Text>
+                )}
               </div>
             ))}
           </div>,
@@ -383,13 +397,13 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
   const appealCaseNumber: Item = {
     id: 'appeal-case-number-item',
     title: formatMessage(core.appealCaseNumberHeading),
-    values: [workingCase.appealCase?.appealCaseNumber],
+    values: [targetAppealCase?.appealCaseNumber],
   }
 
   const appealAssistant: Item = {
     id: 'appeal-assistant-item',
     title: formatMessage(core.appealAssistantHeading),
-    values: [workingCase.appealCase?.appealAssistant?.name],
+    values: [targetAppealCase?.appealAssistant?.name],
   }
 
   const appealJudges: Item = {
@@ -398,9 +412,9 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     values: [
       <>
         {sortByIcelandicAlphabet([
-          workingCase.appealCase?.appealJudge1?.name || '',
-          workingCase.appealCase?.appealJudge2?.name || '',
-          workingCase.appealCase?.appealJudge3?.name || '',
+          targetAppealCase?.appealJudge1?.name || '',
+          targetAppealCase?.appealJudge2?.name || '',
+          targetAppealCase?.appealJudge3?.name || '',
         ]).map((judge, index) => (
           <Text key={`${judge}_${index}`}>{judge}</Text>
         ))}
@@ -525,7 +539,39 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
       : [],
   }
 
+  // The cases this one is linked to, as sections rather than items: both
+  // indictment cards render exactly this, and building it twice is how they
+  // came to disagree about whether to show it at all.
+  const linkedCaseSections = [
+    ...(isNonEmptyArray(workingCase.mergedCases)
+      ? workingCase.mergedCases.map((mergedCase) => ({
+          id: mergedCase.id,
+          items: [
+            mergedCasePoliceCaseNumbers(mergedCase),
+            mergedCaseCourtCaseNumber(mergedCase),
+            mergedCaseProsecutor(mergedCase),
+            mergedCaseJudge(mergedCase),
+            mergedCaseCourt(mergedCase),
+          ],
+          columns: 2 as const,
+        }))
+      : []),
+    ...(isNonEmptyArray(splitCaseEntries)
+      ? [
+          {
+            id: 'split-cases-section',
+            items: [splitCases],
+            columns: 2 as const,
+          },
+        ]
+      : []),
+    ...(workingCase.splitCase
+      ? [{ id: 'split-case-section', items: [splitCase], columns: 2 as const }]
+      : []),
+  ]
+
   return {
+    linkedCaseSections,
     defendants,
     cancelledAndDismissedDefendants,
     indictmentCreated,

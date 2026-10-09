@@ -39,6 +39,9 @@ export default function TabLayout() {
   return (
     <>
       <NativeTabs
+        // NativeTabs ignores `unstable_settings.initialRouteName`, so the
+        // default 'initialRoute' back behavior lands on the first trigger.
+        backBehavior="history"
         labelVisibilityMode="labeled"
         backgroundColor={
           Platform.OS === 'android' ? theme.shade.background : undefined

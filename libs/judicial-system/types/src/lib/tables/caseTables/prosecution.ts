@@ -67,11 +67,15 @@ export const prosecutionRequestCasesCompleted: CaseTable = {
   columns: pickColumns(prosecutionRequestCasesCompletedColumnKeys),
 }
 
+// The reviewer needs to tell a fine from a judgment at a glance: the appeal
+// window on a fine is the shorter one, so the deadline beside it means
+// different things. Same column the reviewed list already carries.
 const publicProsecutionIndictmentsInReviewColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
   'indictmentAppealDeadline',
+  'indictmentRulingDecision',
 ]
 
 export const publicProsecutionIndictmentsInReview: CaseTable = {

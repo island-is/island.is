@@ -15,22 +15,6 @@ import { Case } from '../models/case.model'
 import { Defendant } from '../models/defendant.model'
 import { UpdateDefendant } from '../types/caseRepository.types'
 
-interface FindDefendantOptions {
-  transaction?: Transaction
-}
-
-interface CreateDefendantOptions {
-  transaction: Transaction
-}
-
-interface UpdateDefendantOptions {
-  transaction: Transaction
-}
-
-interface DeleteDefendantOptions {
-  transaction: Transaction
-}
-
 @Injectable()
 export class DefendantRepositoryService {
   constructor(
@@ -45,7 +29,7 @@ export class DefendantRepositoryService {
   async findByIdInCases(
     defendantId: string,
     caseIds: string[],
-    options?: FindDefendantOptions,
+    options?: { transaction?: Transaction },
   ): Promise<Defendant | null> {
     try {
       this.logger.debug(
@@ -101,7 +85,7 @@ export class DefendantRepositoryService {
 
   async create(
     data: Partial<Defendant>,
-    options: CreateDefendantOptions,
+    options: { transaction: Transaction },
   ): Promise<Defendant> {
     try {
       this.logger.debug('Creating a new defendant with data:', {
@@ -127,7 +111,7 @@ export class DefendantRepositoryService {
     caseId: string,
     defendantId: string,
     data: UpdateDefendant,
-    options: UpdateDefendantOptions,
+    options: { transaction: Transaction },
   ): Promise<Defendant> {
     try {
       this.logger.debug(
@@ -181,7 +165,7 @@ export class DefendantRepositoryService {
   async delete(
     caseId: string,
     defendantId: string,
-    options: DeleteDefendantOptions,
+    options: { transaction: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(`Deleting defendant ${defendantId} of case ${caseId}`)
@@ -273,7 +257,7 @@ export class DefendantRepositoryService {
   async updateAllForCase(
     caseId: string,
     data: UpdateDefendant,
-    options: UpdateDefendantOptions,
+    options: { transaction: Transaction },
   ): Promise<number> {
     try {
       this.logger.debug(

@@ -23,8 +23,8 @@ interface NewComponentProps<T> {
 }
 
 export const withLocale =
-  <Props,>(locale: Locale) =>
-  (Component: Screen<Props>): Screen<Props> => {
+  (locale: Locale) =>
+  <Props,>(Component: Screen<Props>): Screen<Props> => {
     const getProps = Component.getProps
     if (!getProps) {
       return Component

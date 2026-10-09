@@ -139,7 +139,6 @@ const IndictmentOverview = () => {
       const success = await limitedAccessUpdateDefendant(defendantUpdate)
 
       if (!success) {
-        toast.error('Ekki tókst að uppfæra skráningu')
         updateDefendantState(
           { ...defendantUpdate, isRegisteredInPrisonSystem: !newValue },
           setWorkingCase,

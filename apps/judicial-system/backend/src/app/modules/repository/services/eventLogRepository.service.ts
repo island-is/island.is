@@ -19,10 +19,6 @@ export type CreateEventLog = {
   institutionName?: string
 }
 
-interface EventLogTransactionOptions {
-  transaction?: Transaction
-}
-
 // One row per (national id, user role, institution) group, as counted by
 // countLoginsByNationalIds. The caller decides how to key it.
 export type LoginCount = {
@@ -47,7 +43,7 @@ export class EventLogRepositoryService {
     eventType: EventType,
     caseId?: string,
     userRole?: UserRole,
-    options?: EventLogTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<boolean> {
     try {
       this.logger.debug(
@@ -79,7 +75,7 @@ export class EventLogRepositoryService {
   async findLatestForCaseAndTypes(
     caseId: string,
     eventTypes: EventType[],
-    options?: EventLogTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<EventLog | null> {
     try {
       this.logger.debug(
@@ -107,7 +103,7 @@ export class EventLogRepositoryService {
 
   async create(
     event: CreateEventLog,
-    options?: EventLogTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<EventLog> {
     try {
       this.logger.debug(

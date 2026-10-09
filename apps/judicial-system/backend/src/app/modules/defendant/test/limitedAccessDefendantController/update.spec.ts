@@ -55,14 +55,14 @@ describe('LimitedAccessDefendantController - Update', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
       defendantEventLogRepositoryService,
       limitedAccessDefendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
 

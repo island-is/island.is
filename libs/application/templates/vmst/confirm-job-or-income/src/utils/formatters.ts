@@ -1,17 +1,17 @@
-export const formatIsDateLong = (value: string | undefined): string => {
+export const formatIsDate = (value: string | undefined): string => {
   if (!value) return ''
   const date = new Date(value)
   if (isNaN(date.getTime())) return value
   return date.toLocaleDateString('is-IS', {
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
   })
 }
 
 // Returns '-' when the value is empty; used for optional table cells (e.g. dateTo)
-export const formatIsDateLongOrDash = (value: string | undefined): string =>
-  value ? formatIsDateLong(value) : '-'
+export const formatIsDateOrDash = (value: string | undefined): string =>
+  value ? formatIsDate(value) : '-'
 
 export const formatIsCurrency = (
   value: string | number | undefined,

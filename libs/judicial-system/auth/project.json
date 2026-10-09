@@ -7,7 +7,10 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "maxWarnings": 0
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

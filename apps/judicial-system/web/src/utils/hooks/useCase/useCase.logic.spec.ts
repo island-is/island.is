@@ -1,7 +1,14 @@
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  Case,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  Gender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { UpdateCase } from './useCase.logic'
-import { formatUpdates, update } from './useCase.logic'
+import { createCaseInput, formatUpdates, update } from './useCase.logic'
 
 describe('useCase', () => {
   describe('update', () => {
@@ -98,6 +105,110 @@ describe('useCase', () => {
       )
 
       expect(res.registrarId).toBe(null)
+    })
+  })
+
+  describe('createCaseInput', () => {
+    const defendant = {
+      id: 'local-1',
+      name: 'Jón Jónsson',
+      address: 'Gata 1',
+      nationalId: '010101-0101',
+      gender: Gender.MALE,
+      citizenship: 'Ísland',
+      noNationalId: false,
+    } as Defendant
+
+    test('is undefined when the case has no type', () => {
+      expect(
+        createCaseInput({ policeCaseNumbers: ['012-3456-7890'] } as Case),
+      ).toBeUndefined()
+    })
+
+    test('is undefined when the case has no police case numbers', () => {
+      expect(
+        createCaseInput({ type: CaseType.INDICTMENT } as Case),
+      ).toBeUndefined()
+    })
+
+    test('sends the defendants of an indictment with only the fields entered for them', () => {
+      const input = createCaseInput({
+        type: CaseType.INDICTMENT,
+        policeCaseNumbers: ['012-3456-7890'],
+        defendants: [defendant],
+      } as Case)
+
+      expect(input?.defendants).toEqual([
+        {
+          noNationalId: false,
+          nationalId: '010101-0101',
+          name: 'Jón Jónsson',
+          gender: Gender.MALE,
+          address: 'Gata 1',
+          citizenship: 'Ísland',
+        },
+      ])
+    })
+
+    test('sends a blank national id as null', () => {
+      const input = createCaseInput({
+        type: CaseType.INDICTMENT,
+        policeCaseNumbers: ['012-3456-7890'],
+        defendants: [{ ...defendant, nationalId: '' }],
+      } as Case)
+
+      expect(input?.defendants?.[0].nationalId).toBeNull()
+    })
+
+    test('keeps the order of the defendants', () => {
+      const input = createCaseInput({
+        type: CaseType.INDICTMENT,
+        policeCaseNumbers: ['012-3456-7890'],
+        defendants: [defendant, { ...defendant, id: 'local-2', name: 'Anna' }],
+      } as Case)
+
+      expect(input?.defendants?.map((d) => d.name)).toEqual([
+        'Jón Jónsson',
+        'Anna',
+      ])
+    })
+
+    test('sends no defendants for an indictment without any', () => {
+      const input = createCaseInput({
+        type: CaseType.INDICTMENT,
+        policeCaseNumbers: ['012-3456-7890'],
+        defendants: [],
+      } as unknown as Case)
+
+      expect(input).not.toHaveProperty('defendants')
+    })
+
+    test('sends no defendants for a request case', () => {
+      const input = createCaseInput({
+        type: CaseType.CUSTODY,
+        policeCaseNumbers: ['012-3456-7890'],
+        defendants: [defendant],
+      } as Case)
+
+      expect(input).not.toHaveProperty('defendants')
+    })
+
+    test('maps the case fields and the prosecutor id', () => {
+      const input = createCaseInput({
+        type: CaseType.CUSTODY,
+        policeCaseNumbers: ['012-3456-7890'],
+        description: 'Lýsing',
+        leadInvestigator: 'Lögreglumaður',
+        prosecutor: { id: 'prosecutor-1' },
+      } as Case)
+
+      expect(input).toMatchObject({
+        type: CaseType.CUSTODY,
+        policeCaseNumbers: ['012-3456-7890'],
+        description: 'Lýsing',
+        leadInvestigator: 'Lögreglumaður',
+        prosecutorId: 'prosecutor-1',
+      })
     })
   })
 })

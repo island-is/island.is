@@ -22,6 +22,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { jwtDecode } from 'jwt-decode'
 import * as kennitala from 'kennitala'
 import { Op, QueryTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -62,6 +63,8 @@ import { escapeLike } from './utils/escapeLike'
 import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
+import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -87,11 +90,32 @@ export class ApplicationsService {
     private readonly sequelize: Sequelize,
   ) {}
 
+  private isFakeUserAllowed(form: Form, user: User | null): boolean {
+    if (
+      process.env.name !== 'prod' ||
+      form.status !== FormStatus.PUBLISHED ||
+      !user
+    ) {
+      return true
+    }
+
+    const { idp } = jwtDecode<{ idp?: string }>(
+      user.authorization.replace(/^Bearer /i, ''),
+    )
+    return idp !== 'gervimadur'
+  }
+
   async create(slug: string, user: User): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -563,6 +587,12 @@ export class ApplicationsService {
         slug,
       )
 
+      if (!this.isFakeUserAllowed(form, user)) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isLoginTypeAllowed = false
+        return responseDto
+      }
+
       if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
         const responseDto = new ApplicationResponseDto()
         responseDto.isInaccessible = true
@@ -600,6 +630,8 @@ export class ApplicationsService {
       responseDto.isLoginTypeAllowed = true
       responseDto.isInaccessible = form.isInaccessible
       responseDto.validateEligibility = form.validateEligibility
+      responseDto.enableApplicationPdfDownload =
+        form.enableApplicationPdfDownload
 
       return responseDto
     } catch (error) {
@@ -628,6 +660,12 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -662,6 +700,44 @@ export class ApplicationsService {
     responseDto.isLoginTypeAllowed = true
     responseDto.isInaccessible = form.isInaccessible
     return responseDto
+  }
+
+  async getApplicationPdf(
+    applicationId: string,
+    slug: string,
+    user: User,
+    locale: Locale = 'is',
+  ): Promise<ApplicationPdfResponseDto> {
+    const response = await this.getApplication(applicationId, slug, user)
+
+    if (
+      response.isInaccessible ||
+      response.isLoginTypeAllowed === false ||
+      response.hasRequiredDelegation === false ||
+      !response.application
+    ) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (!response.enableApplicationPdfDownload) {
+      throw new ForbiddenException(
+        'PDF download is not enabled for this application',
+      )
+    }
+
+    if (response.application.status !== ApplicationStatus.COMPLETED) {
+      throw new BadRequestException(
+        'PDF download is only available for completed applications',
+      )
+    }
+
+    const pdf = await buildApplicationPdf(response.application, locale)
+    return {
+      base64: pdf.toString('base64'),
+      filename: `${slug}-${applicationId}.pdf`,
+    }
   }
 
   async findAllByNationalId(
@@ -1310,9 +1386,7 @@ export class ApplicationsService {
       dataFromUrlRequestDto.actorNationalId =
         user.actor?.nationalId || user.nationalId
 
-      dataFromUrlRequestDto.nationalId = user.actor?.nationalId
-        ? user.nationalId
-        : undefined
+      dataFromUrlRequestDto.nationalId = user.nationalId
 
       dataFromUrlRequestDto.fieldType = fieldType
       dataFromUrlRequestDto.identifier = field.identifier

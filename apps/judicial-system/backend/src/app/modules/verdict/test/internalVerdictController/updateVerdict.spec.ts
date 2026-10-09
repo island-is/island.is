@@ -1,10 +1,15 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { VerdictServiceStatus } from '@island.is/judicial-system/types'
+import { MessageType } from '@island.is/judicial-system/message'
+import {
+  IndictmentCaseNotificationType,
+  VerdictServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { PoliceUpdateVerdictDto } from '../../dto/policeUpdateVerdict.dto'
 
@@ -13,7 +18,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = () => Promise<Then>
+type GivenWhenThen = (theCase: Case) => Promise<Then>
 
 describe('InternalVerdictController - Update verdict', () => {
   const verdictId = uuid()
@@ -47,14 +52,18 @@ describe('InternalVerdictController - Update verdict', () => {
   } as PoliceUpdateVerdictDto
 
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockQueueMessagesAfterCommit: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    jest.resetAllMocks()
+
     const { sequelize, internalVerdictController, verdictRepositoryService } =
       await createTestingVerdictModule()
 
     mockVerdictRepositoryService = verdictRepositoryService
+    mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -62,7 +71,7 @@ describe('InternalVerdictController - Update verdict', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (): Promise<Then> => {
+    givenWhenThen = async (theCase: Case): Promise<Then> => {
       const then = {} as Then
 
       await internalVerdictController
@@ -83,7 +92,7 @@ describe('InternalVerdictController - Update verdict', () => {
       const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedVerdict)
 
-      then = await givenWhenThen()
+      then = await givenWhenThen(theCase)
     })
 
     it('should update the verdict ', () => {
@@ -94,6 +103,35 @@ describe('InternalVerdictController - Update verdict', () => {
         dto,
         { transaction },
       )
+      expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(then.result).toBe(updatedVerdict)
+    })
+  })
+
+  describe('verdict served to a defendant with a suspended driving license', () => {
+    const updatedVerdict = { ...verdict, ...dto }
+    const suspendedCase = {
+      ...theCase,
+      defendants: [{ id: defendantId1, isDrivingLicenseSuspended: true }],
+    } as Case
+
+    let then: Then
+
+    beforeEach(async () => {
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedVerdict)
+
+      then = await givenWhenThen(suspendedCase)
+    })
+
+    it('should queue the suspension notification for after the commit', () => {
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId,
+        body: {
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        },
+      })
       expect(then.result).toBe(updatedVerdict)
     })
   })

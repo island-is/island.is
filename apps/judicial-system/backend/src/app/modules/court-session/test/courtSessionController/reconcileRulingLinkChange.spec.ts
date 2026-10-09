@@ -16,6 +16,7 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { runInRequestContext } from '../../../../test'
 import { EventLogService } from '../../../event-log'
 import { FileService } from '../../../file'
 import {
@@ -28,10 +29,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -144,16 +142,18 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
-    // Default: the swap target is a clean ruling file (no recorded decisions).
+    // Default: no recorded decisions, and the swap target is a clean ruling
+    // file.
     ;(
-      mockAppealDecisionRepositoryService.findAll as jest.Mock
+      mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
     ).mockResolvedValue([])
+    ;(
+      mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+    ).mockResolvedValue(false)
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockFileService = fileService
@@ -178,14 +178,20 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
       } as unknown as CourtSession
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          update,
-          user,
-          theCase,
-          existingCourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            update,
+            user,
+            theCase,
+            existingCourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -345,10 +351,8 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      ).mockResolvedValue([
-        { id: 'existing-decision', rulingFileId: newRulingFileId },
-      ])
+        mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+      ).mockResolvedValue(true)
 
       then = await givenWhenThen(
         caseWith({ appealState: AppealCaseState.APPEALED, appealFiles: true }),
@@ -361,6 +365,9 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
     })
 
     it('should reject the swap and write nothing', () => {
+      expect(
+        mockAppealDecisionRepositoryService.existsForRuling,
+      ).toHaveBeenCalledWith(caseId, newRulingFileId, { transaction })
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockCourtSessionRepositoryService.update).not.toHaveBeenCalled()
       expect(
@@ -464,7 +471,7 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([outOfCourtAppealedEvent])
 
       then = await givenWhenThen(
@@ -493,7 +500,7 @@ describe('CourtSessionController - Reconcile ruling link change', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([outOfCourtAppealedEvent])
 
       then = await swapTo(AppealCaseState.APPEALED)

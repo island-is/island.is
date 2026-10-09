@@ -10,15 +10,13 @@ import {
 } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
-import { ClosedRecipientCard } from '@/components/closed-recipient-card'
 import { ConversationAvailabilityAlert } from '@/components/conversation-availability-alert'
-import { RecipientNoticeCard } from '@/components/recipient-notice-card'
 import { HealthMessageIntro } from '@/components/health-message-intro'
+import { NoOpenRecipientNotice } from '@/components/no-open-recipient-notice'
 import { ServiceInstructions } from '@/components/service-instructions'
 import { StackScreen } from '@/components/stack-screen'
 import { toast, ToastHost } from '@/components/toast'
 import {
-  HealthDirectorateHealthConversationRecipientAvailability,
   LocaleEnum,
   useCreateHealthConversationMutation,
   useGetHealthConversationRecipientsQuery,
@@ -39,10 +37,13 @@ import {
 } from '@/ui'
 
 const MESSAGE_MAX_LENGTH = 300
+const SUBJECT_MAX_LENGTH = 150
+// Two lines of the input's 20px line height: a long subject wraps, then
+// scrolls instead of pushing the message field down.
+const SUBJECT_MAX_HEIGHT = 40
 
-// A recipient is only unique across all three identifiers: the same node and
-// group can appear more than once, once per treatment. Mirrors the my-pages
-// getRecipientKey so both clients key the dropdown the same way.
+// Node and group repeat across a provider's treatments, so only all three
+// identify a recipient. Mirrors the my-pages getRecipientKey.
 const getRecipientKey = (recipient: {
   nodeId: string
   groupId: number
@@ -51,6 +52,18 @@ const getRecipientKey = (recipient: {
   `${recipient.nodeId}-${recipient.groupId}${
     recipient.treatmentId ? `-${recipient.treatmentId}` : ''
   }`
+
+// An open window is not enough: without a type — or a care team's own
+// subject — there is nothing to submit.
+const canStartConversation = (recipient: {
+  canCreateConversation: boolean
+  allowsCustomTitle: boolean
+  treatmentId?: string | null
+  allowedMessageTypes: unknown[]
+}) =>
+  recipient.canCreateConversation &&
+  (recipient.allowedMessageTypes.length > 0 ||
+    (!!recipient.treatmentId && recipient.allowsCustomTitle))
 
 export default function HealthMessageComposeScreen() {
   const { conversationId, recipientName, subject } = useLocalSearchParams<{
@@ -62,11 +75,11 @@ export default function HealthMessageComposeScreen() {
   const theme = useTheme()
   const locale = useLocale()
   const isReply = !!conversationId
-  // Replies go straight to the form: the intro explains starting a new
-  // conversation, and the consent it collects only applies to new ones.
+  // Replies skip the intro: its consent only covers new conversations.
   const hasIntro = !isReply
 
   const [message, setMessage] = useState('')
+  const [subjectText, setSubjectText] = useState('')
   const [recipientKey, setRecipientKey] = useState<string>()
   const [typeCode, setTypeCode] = useState<string>()
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -80,9 +93,8 @@ export default function HealthMessageComposeScreen() {
     variables: { locale: locale === 'is' ? LocaleEnum.Is : LocaleEnum.En },
     skip: isReply,
   })
-  // Every recipient the user has stays in the picker; whether each one can take
-  // a new conversation right now is decided per selection by
-  // canCreateConversation and explained by the card shown in the form's place.
+  // Every recipient stays in the picker; canCreateConversation decides per
+  // selection whether the form or an explanatory card follows.
   const recipients = useMemo(
     () =>
       recipientsRes.data?.healthDirectorateHealthConversationRecipients ?? [],
@@ -91,49 +103,44 @@ export default function HealthMessageComposeScreen() {
   const selectedRecipient = recipients.find(
     (r) => getRecipientKey(r) === recipientKey,
   )
+  // A care team takes a patient-written subject in place of a service type.
+  const usesCustomTitle =
+    !isReply &&
+    !!selectedRecipient?.treatmentId &&
+    !!selectedRecipient?.allowsCustomTitle
 
-  // When the user has a single recipient that can't take a new conversation
-  // (its window is closed, or it doesn't accept patient-initiated messages at
-  // all), the explanation takes over the whole sheet: there is no other
-  // recipient to switch to, so the picker is not worth showing either.
-  const soleRecipient =
-    !isReply && recipients.length === 1 ? recipients[0] : undefined
-  const isSoleBlocked = !!soleRecipient && !soleRecipient.canCreateConversation
-  const soleWindowClosed =
-    isSoleBlocked &&
-    soleRecipient?.availability ===
-      HealthDirectorateHealthConversationRecipientAvailability.Closed
-  const soleNotAllowed = isSoleBlocked && !soleWindowClosed
-  // A recipient picked from the dropdown that can't be messaged — closed for
-  // now, or not offering messaging at all — takes a card in place of the form.
-  // There is nothing to fill in either way, so we don't render a composer under
-  // it; the card explains which of the two it is.
+  // A picked recipient that can't be messaged — closed now, or not at all —
+  // gets a card in place of the form; the card says which.
   const isSelectedBlocked =
     !isReply && selectedRecipient?.canCreateConversation === false
-  // Certificate types are shown in the dropdown too, but they can't be
-  // submitted from the app — selecting one swaps the form for a notice that
-  // links to My Pages (see the certificate branch in the render below).
+  // Certificate types appear in the dropdown but can't be submitted here;
+  // selecting one swaps the form for a My Pages link.
   const serviceOptions = selectedRecipient?.allowedMessageTypes ?? []
   const selectedType = serviceOptions.find(
     (s) => s.patientInitiatedTypeCode === typeCode,
   )
-  const isCertificateSelected = !isReply && !!selectedType?.isCertificate
-  // Some types are handled somewhere else entirely (e.g. the Heilsuvera web
-  // chat) and carry the destination on the type itself.
+  const isCertificateSelected =
+    !isReply && !usesCustomTitle && !!selectedType?.isCertificate
+  // Some types live elsewhere (the Heilsuvera web chat) and carry their own
+  // destination.
   const externalLinkUrl = !isReply ? selectedType?.externalLinkUrl : undefined
-  // Neither kind can be composed here: the message field and send button are
-  // replaced by a notice that points at the real destination.
+  // Neither can be composed here: a notice replaces the field and send button.
   const hidesComposer = isCertificateSelected || !!externalLinkUrl
   const { healthMessageNew: certificateUrl } = useMyPagesLinks()
 
-  const recipientsLoading = !isReply && recipientsRes.loading
+  // cache-and-network reports loading on a revisit too, so only an empty
+  // cache waits.
+  const recipientsLoading =
+    !isReply && recipientsRes.loading && !recipientsRes.data
   const recipientsError =
     !isReply && !recipientsLoading && !!recipientsRes.error
-  const noRecipients =
+  // Nothing to send to: no form can open, so the notice takes over the sheet
+  // and the intro is skipped.
+  const noOpenRecipient =
     !isReply &&
     !recipientsLoading &&
     !recipientsError &&
-    recipients.length === 0
+    !recipients.some(canStartConversation)
 
   // Default to the only recipient when there is a single option.
   useEffect(() => {
@@ -147,6 +154,11 @@ export default function HealthMessageComposeScreen() {
     if (isReply) {
       return
     }
+    if (usesCustomTitle) {
+      // No type is sent, so clear any code left by the previous recipient.
+      setTypeCode(undefined)
+      return
+    }
     if (serviceOptions.length === 1) {
       setTypeCode(serviceOptions[0].patientInitiatedTypeCode)
     } else if (
@@ -155,7 +167,7 @@ export default function HealthMessageComposeScreen() {
     ) {
       setTypeCode(undefined)
     }
-  }, [isReply, serviceOptions, typeCode])
+  }, [isReply, usesCustomTitle, serviceOptions, typeCode])
 
   const onError = () => {
     toast.error(intl.formatMessage({ id: 'health.messages.compose.sendError' }))
@@ -169,9 +181,7 @@ export default function HealthMessageComposeScreen() {
     })
 
   // Set while navigating away after a send, so the Android step-back listener
-  // below lets that navigation through. Without it the `router.back()` fallback
-  // dispatches GO_BACK, gets intercepted, and leaves the user on a compose
-  // screen for a conversation that was already created.
+  // lets it through instead of trapping the user on the compose screen.
   const isCompletingRef = useRef(false)
 
   const [createConversation, { loading: creating }] =
@@ -199,7 +209,7 @@ export default function HealthMessageComposeScreen() {
     ? !!message.trim()
     : !!message.trim() &&
       !!selectedRecipient &&
-      !!typeCode &&
+      (usesCustomTitle ? !!subjectText.trim() : !!typeCode) &&
       !hidesComposer &&
       !isSelectedBlocked
 
@@ -215,17 +225,17 @@ export default function HealthMessageComposeScreen() {
     if (hidesComposer) {
       return
     }
-    if (selectedRecipient && typeCode) {
+    if (selectedRecipient && (usesCustomTitle || typeCode)) {
       createConversation({
         variables: {
           input: {
             groupId: selectedRecipient.groupId,
             nodeId: selectedRecipient.nodeId,
-            // Treatment-scoped recipients share a node and group with their
-            // siblings, so the treatment is what tells them apart on send.
+            // Siblings share a node and group; the treatment tells them apart.
             treatmentId: selectedRecipient.treatmentId,
-            patientInitiatedTypeCode: typeCode,
-            title: selectedType?.title,
+            // Exclusive: a custom title replaces the type code.
+            patientInitiatedTypeCode: usesCustomTitle ? undefined : typeCode,
+            title: usesCustomTitle ? subjectText.trim() : selectedType?.title,
             messageTextContent: message.trim(),
           },
         },
@@ -244,10 +254,8 @@ export default function HealthMessageComposeScreen() {
     ? recipients[0].name
     : undefined
 
-  // Keyboard up: lift the toast to 16px above the Send button (the Host adds its
-  // own spacing[2] base gap). Keyboard down: rest it at the bottom.
-  // iOS presents this as a form sheet that already covers the tab bar; Android
-  // presents it in-place, so hide the tab bar while composing there.
+  // The iOS form sheet already covers the tab bar; Android composes in-place,
+  // so hide it there.
   useFocusEffect(
     useCallback(() => {
       if (Platform.OS !== 'android') {
@@ -262,27 +270,27 @@ export default function HealthMessageComposeScreen() {
 
   const keyboardHeight = useKeyboardHeight()
   const [sendButtonHeight, setSendButtonHeight] = useState(0)
+  // Keyboard up: lift the toast 16px above the Send button (the Host adds its
+  // own spacing[2]). Keyboard down: rest it at the bottom.
   const toastBottomOffset =
     keyboardHeight > 0 && sendButtonHeight > 0
       ? sendButtonHeight + theme.spacing[4]
       : 0
 
-  // A selection menu lives in its own platform view controller that is not
-  // torn down with this sheet, so dragging the sheet away while one is open
-  // leaves the menu stranded over whatever is shown next. Block the dismiss
-  // gesture while a menu is up; the close button still works, because that
-  // path lets us dismiss the menu before the sheet goes.
+  // A menu lives in its own view controller and isn't torn down with the
+  // sheet, so a drag-dismiss would strand it. Block that gesture while one is
+  // open; the close button still works, it dismisses the menu first.
   const isMenuOpen = recipientMenuOpen || serviceMenuOpen
 
   const goBackToIntro = useCallback(() => setStep('intro'), [])
+  // Nothing to step back to when the intro was skipped.
+  const canReturnToIntro = hasIntro && !noOpenRecipient
 
-  // Android has no close item in the modal header, so the header arrow and the
-  // hardware/gesture back all pop the sheet. Intercept those to step back to
-  // the intro instead, while letting navigation that follows a send through
-  // untouched (see `isCompletingRef`).
+  // Android has no header close item, so every back pops the sheet. Step back
+  // to the intro instead — except after a send (see `isCompletingRef`).
   const navigation = useNavigation()
   useEffect(() => {
-    if (Platform.OS !== 'android' || !hasIntro || step !== 'compose') {
+    if (Platform.OS !== 'android' || !canReturnToIntro || step !== 'compose') {
       return
     }
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -296,10 +304,10 @@ export default function HealthMessageComposeScreen() {
       goBackToIntro()
     })
     return unsubscribe
-  }, [navigation, hasIntro, step, goBackToIntro])
+  }, [navigation, canReturnToIntro, step, goBackToIntro])
 
-  // iOS clears the header's left slot for modals (close lives on the right), so
-  // the step-back chevron is added explicitly. Mirrors `blueBackItem`.
+  // iOS clears the modal header's left slot, so the chevron is added back
+  // explicitly. Mirrors `blueBackItem`.
   const headerLeftItems = useCallback(
     (): NativeStackHeaderItem[] => [
       {
@@ -313,7 +321,7 @@ export default function HealthMessageComposeScreen() {
     [theme.color.blue400, goBackToIntro],
   )
 
-  if (step === 'intro') {
+  if (step === 'intro' && !noOpenRecipient) {
     return (
       <>
         <StackScreen
@@ -321,12 +329,13 @@ export default function HealthMessageComposeScreen() {
           options={{
             title: '',
             gestureEnabled: true,
-            // Header options are merged per key, so the form's chevron has to
-            // be cleared explicitly — omitting the key would leave it in place.
+            // Header options merge per key: omitting this would leave the
+            // form's chevron in place.
             headerLeftItems: [],
           }}
         />
         <HealthMessageIntro
+          loading={recipientsLoading}
           termsAccepted={termsAccepted}
           onToggleTerms={() => setTermsAccepted(!termsAccepted)}
           onContinue={() => setStep('compose')}
@@ -342,7 +351,7 @@ export default function HealthMessageComposeScreen() {
         options={{
           title: '',
           gestureEnabled: !isMenuOpen,
-          ...(hasIntro && Platform.OS === 'ios' && { headerLeftItems }),
+          ...(canReturnToIntro && Platform.OS === 'ios' && { headerLeftItems }),
         }}
       />
       <ToastHost ignoreTabBar bottomOffset={toastBottomOffset} />
@@ -350,21 +359,19 @@ export default function HealthMessageComposeScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{
           padding: theme.spacing[2],
-          // Android: adjustResize is set on MainActivity, but this sheet is
-          // its own window, so the keyboard overlays it instead of resizing
-          // it. Pad by the keyboard height to give the Send button somewhere
-          // to scroll clear to.
+          // Android: this sheet is its own window, so MainActivity's
+          // adjustResize doesn't reach it — pad by the keyboard height.
           paddingBottom:
             theme.spacing[4] + (Platform.OS === 'android' ? keyboardHeight : 0),
           rowGap: theme.spacing[2],
           // Let the full-screen "blocked" message fill the sheet.
-          ...(isSoleBlocked && { flexGrow: 1 }),
+          ...(noOpenRecipient && { flexGrow: 1 }),
         }}
         keyboardShouldPersistTaps="handled"
         // iOS: inset for the keyboard so the Send button clears it.
         automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
-        {!isSoleBlocked && (
+        {!noOpenRecipient && (
           <Typography variant="heading3">{headerTitle}</Typography>
         )}
 
@@ -382,27 +389,8 @@ export default function HealthMessageComposeScreen() {
               id: 'health.messages.errorMessage',
             })}
           />
-        ) : soleWindowClosed && soleRecipient ? (
-          <ClosedRecipientCard recipient={soleRecipient} />
-        ) : soleNotAllowed ? (
-          <RecipientNoticeCard
-            title={intl.formatMessage({
-              id: 'health.messages.compose.soleBlockedTitle',
-            })}
-            message={intl.formatMessage(
-              { id: 'health.messages.compose.soleBlockedText' },
-              { name: soleRecipient?.name },
-            )}
-          />
-        ) : noRecipients ? (
-          <RecipientNoticeCard
-            title={intl.formatMessage({
-              id: 'health.messages.compose.noRecipient',
-            })}
-            message={intl.formatMessage({
-              id: 'health.messages.compose.noRecipientText',
-            })}
-          />
+        ) : noOpenRecipient ? (
+          <NoOpenRecipientNotice recipients={recipients} />
         ) : (
           <>
             {fixedRecipientName !== undefined ? (
@@ -443,7 +431,7 @@ export default function HealthMessageComposeScreen() {
             {!isSelectedBlocked && (
               <>
                 <View style={{ rowGap: theme.spacing[2] }}>
-                  {!isReply && serviceOptions.length > 0 && (
+                  {!isReply && !usesCustomTitle && serviceOptions.length > 0 && (
                     <Select
                       label={intl.formatMessage({
                         id: 'health.messages.compose.selectService',
@@ -460,8 +448,41 @@ export default function HealthMessageComposeScreen() {
                       onOpenChange={setServiceMenuOpen}
                     />
                   )}
-                  {!hidesComposer && !!selectedType?.instructions && (
-                    <ServiceInstructions text={selectedType.instructions} />
+                  {!usesCustomTitle &&
+                    !hidesComposer &&
+                    !!selectedType?.instructions && (
+                      <ServiceInstructions text={selectedType.instructions} />
+                    )}
+
+                  {usesCustomTitle && !hidesComposer && (
+                    <View style={{ rowGap: theme.spacing.smallGutter }}>
+                      <TextField
+                        label={intl.formatMessage({
+                          id: 'health.messages.compose.subjectLabel',
+                        })}
+                        placeholder={intl.formatMessage({
+                          id: 'health.messages.compose.subjectPlaceholder',
+                        })}
+                        value={subjectText}
+                        // One line that may wrap to two. Newlines are stripped
+                        // so a pasted one can't reach the provider; Return
+                        // dismisses the keyboard.
+                        onChangeText={(text) =>
+                          setSubjectText(text.replace(/\n/g, ' '))
+                        }
+                        multiline
+                        submitBehavior="blurAndSubmit"
+                        inputStyle={{ maxHeight: SUBJECT_MAX_HEIGHT }}
+                        maxLength={SUBJECT_MAX_LENGTH}
+                      />
+                      <Typography
+                        variant="body3"
+                        color={theme.color.dark300}
+                        textAlign="right"
+                      >
+                        {`${subjectText.length}/${SUBJECT_MAX_LENGTH}`}
+                      </Typography>
+                    </View>
                   )}
 
                   {!hidesComposer && (
@@ -490,8 +511,8 @@ export default function HealthMessageComposeScreen() {
                     </View>
                   )}
                 </View>
-                {/* Certificate requests aren't supported in the app — point the
-                user to My Pages instead of a send form. */}
+                {/* Certificate requests aren't supported here — link to My
+                Pages instead of a send form. */}
                 {isCertificateSelected && (
                   <ProblemTemplate
                     variant="info"
@@ -510,9 +531,8 @@ export default function HealthMessageComposeScreen() {
                     }}
                   />
                 )}
-                {/* External services (the Heilsuvera web chat) are opened rather
-                than messaged. The description is written server-side and
-                already states whether the service is open right now. */}
+                {/* External services (the Heilsuvera web chat) are opened, not
+                messaged. The server-side description covers opening hours. */}
                 {!!externalLinkUrl && (
                   <ProblemTemplate
                     variant="info"
@@ -539,6 +559,7 @@ export default function HealthMessageComposeScreen() {
                       })}
                       onPress={onSend}
                       disabled={!canSend || sending}
+                      loading={sending}
                     />
                   </View>
                 )}

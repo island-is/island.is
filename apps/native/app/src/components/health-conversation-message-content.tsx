@@ -147,6 +147,12 @@ export const HealthConversationMessageContent = ({
                   id: 'health.messages.videoCallCanceled',
                 })}
               </Label>
+            ) : content.isExpired ? (
+              <Label color="primary">
+                {intl.formatMessage({
+                  id: 'health.messages.videoCallExpired',
+                })}
+              </Label>
             ) : null}
           </View>
           {appointmentDate ? (
@@ -169,7 +175,7 @@ export const HealthConversationMessageContent = ({
           {content.description ? (
             <Typography variant="body3">{content.description}</Typography>
           ) : null}
-          {!content.isCanceled ? (
+          {!content.isCanceled && !content.isExpired ? (
             <View style={{ marginTop: theme.spacing[1] }}>
               <Button
                 title={intl.formatMessage({

@@ -779,7 +779,8 @@ export const withMainLayout = <T, C extends ScreenContext>(
       layoutComponentProps?.customTopLoginButtonItem
 
     const languageToggleHrefOverride =
-      layoutComponentProps?.languageToggleHrefOverride
+      layoutComponentProps?.languageToggleHrefOverride ??
+      layoutConfig.languageToggleHrefOverride
 
     const mergedLayoutProps = {
       ...layoutProps,

@@ -4,11 +4,10 @@ import { v4 as uuid } from 'uuid'
 import { ForbiddenException } from '@nestjs/common'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
-import {
+  AppealCaseNotificationType,
+  CaseFileCategory,
   CaseType,
   InstitutionType,
   User,
@@ -18,6 +17,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import {
   AppealCase,
   AppealCaseRepositoryService,
@@ -26,7 +26,7 @@ import {
 import { UserService } from '../../../user'
 import { UpdateAppealCaseDto } from '../../dto/updateAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -140,10 +140,22 @@ describe('AppealCaseController - Update', () => {
   })
 
   describe('a new appeal case number is assigned', () => {
+    const statementFileId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
-      caseFiles: [],
+      caseFiles: [
+        {
+          id: statementFileId,
+          isKeyAccessible: true,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        },
+        {
+          id: uuid(),
+          isKeyAccessible: false,
+          category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        },
+      ],
     } as unknown as Case
     const appealCase = { id: appealCaseId, caseId } as AppealCase
     const update = { appealCaseNumber: 'LANDSRÉTTUR 1/2024' }
@@ -152,13 +164,117 @@ describe('AppealCaseController - Update', () => {
       await givenWhenThen(theCase, appealCase, update)
     })
 
+    it('should queue delivery of the accessible appeal statement file', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          caseId,
+          elementId: [appealCaseId, statementFileId],
+        }),
+      )
+    })
+
     it('should queue delivery of the received date to the court of appeals', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
           caseId,
+          elementId: appealCaseId,
         }),
       )
+    })
+
+    it('should queue nothing else before the roles are assigned', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  describe('the last appeal role is assigned', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const assistantId = uuid()
+    const judge1Id = uuid()
+    const judge2Id = uuid()
+    const judge3Id = uuid()
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealCaseNumber: 'LANDSRÉTTUR 1/2024',
+      appealAssistantId: assistantId,
+      appealJudge1Id: judge1Id,
+      appealJudge2Id: judge2Id,
+    } as AppealCase
+    const update = { appealJudge3Id: judge3Id }
+
+    beforeEach(async () => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({
+        id: judge3Id,
+        role: UserRole.COURT_OF_APPEALS_JUDGE,
+      })
+
+      await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should queue delivery of the assigned roles to the court of appeals', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
+          caseId,
+          elementId: appealCaseId,
+        }),
+      )
+    })
+
+    it('should notify only the newly assigned judge', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          caseId,
+          elementId: appealCaseId,
+          body: {
+            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+            userIds: [judge3Id],
+          },
+        }),
+      )
+    })
+
+    it('should queue nothing else', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  describe('a judge is assigned while other roles are still open', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const judge1Id = uuid()
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealCaseNumber: 'LANDSRÉTTUR 1/2024',
+    } as AppealCase
+    const update = { appealJudge1Id: judge1Id }
+
+    beforeEach(async () => {
+      const mockFindById = mockUserService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({
+        id: judge1Id,
+        role: UserRole.COURT_OF_APPEALS_JUDGE,
+      })
+
+      await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should notify the judge but not deliver the roles yet', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.APPEAL_CASE_NOTIFICATION,
+          body: {
+            type: AppealCaseNotificationType.APPEAL_JUDGES_ASSIGNED,
+            userIds: [judge1Id],
+          },
+        }),
+      )
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(1)
     })
   })
 

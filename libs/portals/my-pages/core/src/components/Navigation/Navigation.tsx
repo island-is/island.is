@@ -559,7 +559,7 @@ export const NavigationTree: FC<
                 borderRadius="large"
                 paddingLeft={isChildren ? 2 : 3}
                 paddingRight={2}
-                paddingY="smallGutter"
+                paddingY={isChildren ? 'smallGutter' : [1, 1, 'smallGutter']}
                 className={styles.link}
                 onClick={() => {
                   if (linkOnClick && !isAccordion) {

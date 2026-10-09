@@ -64,6 +64,7 @@ export class CivilClaimantRepositoryService {
     civilClaimantId: string,
     caseId: string,
     update: UpdateCivilClaimant,
+    options?: { transaction: Transaction },
   ): Promise<UpdatedCivilClaimants> {
     try {
       this.logger.debug(
@@ -74,6 +75,7 @@ export class CivilClaimantRepositoryService {
         await this.civilClaimantModel.update(update, {
           where: { id: civilClaimantId, caseId },
           returning: true,
+          transaction: options?.transaction,
         })
 
       return { numberOfAffectedRows, civilClaimants }

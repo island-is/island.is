@@ -4,13 +4,15 @@ import {
   Alert as RNAlert,
   ImageSourcePropType,
   Linking,
+  Platform,
   SafeAreaView,
   ScrollView,
   View,
 } from 'react-native'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
+import { uiStore } from '@/stores/ui-store'
 import { toast, ToastHost } from '@/components/toast'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import styled, { useTheme } from 'styled-components/native'
@@ -138,6 +140,21 @@ export default function AppointmentDetailScreen() {
   const intl = useIntl()
   const theme = useTheme()
   const router = useRouter()
+
+  // On Android a `modal` presentation still renders inside the tab navigator,
+  // so the tab bar stays visible behind it. On iOS the form sheet already
+  // covers the tabs, so leave that platform alone.
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'android') {
+        return
+      }
+      uiStore.setState({ tabsHidden: true })
+      return () => {
+        uiStore.setState({ tabsHidden: false })
+      }
+    }, []),
+  )
 
   const appointmentFromCache =
     useFragment_experimental<HealthDirectorateAppointment>({
@@ -456,6 +473,7 @@ export default function AppointmentDetailScreen() {
                       width={16}
                       height={16}
                       tintColor="blue400"
+                      resizeMode="contain"
                     />
                     <Typography variant="body">
                       {weekday}, {dateStr}

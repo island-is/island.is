@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
+import { Platform } from 'react-native'
 import {
   modalScreenOptions,
   tabScreenOptions,
@@ -14,6 +15,10 @@ export default function NotificationsLayout() {
         options={{
           ...tabScreenOptions,
           headerTitle: intl.formatMessage({ id: 'notifications.screenTitle' }),
+          // Sheet root: dismissed with the close item, so no back chevron.
+          ...(Platform.OS === 'ios' && {
+            unstable_headerLeftItems: () => [],
+          }),
         }}
       />
       <Stack.Screen

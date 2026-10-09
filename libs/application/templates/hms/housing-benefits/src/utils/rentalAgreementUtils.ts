@@ -8,6 +8,10 @@ import {
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
+import {
+  assigneeExternalDataFieldSuffix,
+  assigneeExternalDataKey,
+} from './assigneeUtils'
 
 type AssigneeNationalRegistryProvider = {
   status?: 'failure' | 'success'
@@ -108,10 +112,10 @@ export const doesAddressMatchRentalContract = (
 
 /**
  * Checks if the assignee's National Registry address matches the selected rental contract address.
- * Assignee data is stored under dynamic keys: `<nationalId>.assigneeNationalRegistry`.
+ * Assignee data is stored under dynamic keys: `<nationalId>_assigneeNationalRegistry`.
  *
  * When `userOrNationalId` is set (BffUser or national id string), only that assignee's provider
- * result is used. Otherwise the first `*.assigneeNationalRegistry` entry is used (e.g. tests).
+ * result is used. Otherwise the first `*_assigneeNationalRegistry` entry is used (e.g. tests).
  * Failed fetches (`status !== 'success'`) never count as a match.
  */
 export const doesAssigneeAddressMatchRentalContract = (
@@ -124,28 +128,30 @@ export const doesAssigneeAddressMatchRentalContract = (
     postalCode?: string | null
   } | null = null
 
+  const registrySuffix = assigneeExternalDataFieldSuffix(
+    'assigneeNationalRegistry',
+  )
+
   if (
     typeof userOrNationalId === 'string' &&
     userOrNationalId.trim().length > 0
   ) {
-    const normalized = kennitala.isValid(userOrNationalId)
-      ? kennitala.sanitize(userOrNationalId)
-      : userOrNationalId.trim()
     assigneeAddress = getAssigneeRegistryAddressFromProvider(
-      externalData[`${normalized}.assigneeNationalRegistry`],
+      externalData[
+        assigneeExternalDataKey(userOrNationalId, 'assigneeNationalRegistry')
+      ],
     )
   } else if (userOrNationalId && typeof userOrNationalId !== 'string') {
     const nationalId = userOrNationalId.profile?.nationalId
     if (nationalId) {
-      const normalized = kennitala.isValid(nationalId)
-        ? kennitala.sanitize(nationalId)
-        : nationalId
       assigneeAddress = getAssigneeRegistryAddressFromProvider(
-        externalData[`${normalized}.assigneeNationalRegistry`],
+        externalData[
+          assigneeExternalDataKey(nationalId, 'assigneeNationalRegistry')
+        ],
       )
     } else {
       for (const [key, value] of Object.entries(externalData)) {
-        if (key.endsWith('.assigneeNationalRegistry')) {
+        if (key.endsWith(registrySuffix)) {
           assigneeAddress = getAssigneeRegistryAddressFromProvider(value)
           break
         }
@@ -153,7 +159,7 @@ export const doesAssigneeAddressMatchRentalContract = (
     }
   } else {
     for (const [key, value] of Object.entries(externalData)) {
-      if (key.endsWith('.assigneeNationalRegistry')) {
+      if (key.endsWith(registrySuffix)) {
         assigneeAddress = getAssigneeRegistryAddressFromProvider(value)
         break
       }
