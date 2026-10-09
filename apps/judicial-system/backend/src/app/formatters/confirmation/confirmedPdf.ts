@@ -65,7 +65,6 @@ const drawConfirmation = (
     offset,
     titleHeight,
     padding,
-    boxTextTop,
     boxLineHeight,
     coatOfArms,
   } = confirmationLayout
@@ -152,6 +151,8 @@ const drawConfirmation = (
   // Draw the boxes below the title
   const boxTop = contentTop + titleHeight
   const boxHeight = shadowHeight - titleHeight
+  const fontHeight = fonts.regular.heightAtSize(fontSize)
+  const boxTextTop = (boxHeight - boxLineHeight - fontHeight) / 2
   let currentX = contentX
 
   for (const box of boxes) {

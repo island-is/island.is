@@ -30,8 +30,8 @@ export const confirmationLayout = {
   offset: calculatePt(8),
   titleHeight: calculatePt(16),
   padding: calculatePt(8),
-  boxTextTop: calculatePt(9),
-  // Distance from the top of a box title to the top of its content
+  // Distance from the top of a box title to the top of its content. The two
+  // lines are centered vertically in the box.
   boxLineHeight: calculatePt(10),
   coatOfArms: {
     offsetX: calculatePt(35),
@@ -168,7 +168,6 @@ export const drawConfirmation = (
     offset,
     titleHeight,
     padding,
-    boxTextTop,
     boxLineHeight,
     coatOfArms,
   } = confirmationLayout
@@ -264,6 +263,8 @@ export const drawConfirmation = (
 
   const boxY = titleBoxY + titleHeight
   const boxHeight = shadowHeight - titleHeight
+  const fontHeight = doc.fontSize(fontSize).currentLineHeight()
+  const boxTextTop = (boxHeight - boxLineHeight - fontHeight) / 2
   let currentX = coatOfArmsX + coatOfArmsWidth
 
   boxes.forEach((box) => {
