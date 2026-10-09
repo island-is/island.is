@@ -28,6 +28,7 @@ import {
 import {
   AppealCaseModule,
   appealCaseModuleConfig,
+  AppealSummonsModule,
   awsS3ModuleConfig,
   CaseModule,
   caseModuleConfig,
@@ -79,6 +80,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     PoliceModule,
     EventLogModule,
     SubpoenaModule,
+    AppealSummonsModule,
     VerdictModule,
     VictimModule,
     CaseTableModule,
