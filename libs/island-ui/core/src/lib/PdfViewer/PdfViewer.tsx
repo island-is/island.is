@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState, ReactNode } from 'react'
+import React, { FC, useEffect, useRef, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
-import type { Document, Page, Outline, pdfjs } from 'react-pdf'
+import type { Document, DocumentProps, Page, Outline, pdfjs } from 'react-pdf'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
@@ -14,6 +14,12 @@ const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
 export interface PdfViewerProps {
   file: string
   showAllPages?: boolean
+  /**
+   * With showAllPages, only draw the pages that are near the viewport. The
+   * other pages keep their size and text layer but release their canvas, so
+   * memory stays flat no matter how many pages the document has.
+   */
+  lazyPages?: boolean
   scale?: number
   autoWidth?: boolean
   errorComponent?: ReactNode
@@ -21,8 +27,12 @@ export interface PdfViewerProps {
   onLoadingError?: (error: Error) => void
   onLoadingSuccess?: () => void
 }
-interface PdfProps {
-  numPages: number
+
+type PdfDocument = Parameters<NonNullable<DocumentProps['onLoadSuccess']>>[0]
+
+interface PageSize {
+  width: number
+  height: number
 }
 
 interface IPdfLib {
@@ -33,9 +43,62 @@ interface IPdfLib {
   Outline: typeof Outline
 }
 
+interface LazyPageProps {
+  Page: typeof Page
+  pageNumber: number
+  scale: number
+  size: PageSize
+}
+
+const LazyPage = ({ Page, pageNumber, scale, size }: LazyPageProps) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isNearViewport, setIsNearViewport] = useState(false)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsNearViewport(true)
+      return
+    }
+
+    // Draw pages within one screen height above or below the viewport
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsNearViewport(entry.isIntersecting),
+      { rootMargin: '100% 0px' },
+    )
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={styles.lazyPage}
+      style={
+        {
+          '--pdf-page-width': `${Math.floor(size.width * scale)}px`,
+          '--pdf-page-height': `${Math.floor(size.height * scale)}px`,
+        } as React.CSSProperties
+      }
+    >
+      <Page
+        pageNumber={pageNumber}
+        renderMode={isNearViewport ? 'canvas' : 'none'}
+        renderTextLayer={true}
+        renderAnnotationLayer={true}
+        scale={scale}
+      />
+    </div>
+  )
+}
+
 export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   file,
   showAllPages = false,
+  lazyPages = false,
   scale = 1,
   autoWidth = true,
   errorComponent,
@@ -47,6 +110,9 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   const [pageNumber, setPageNumber] = useState(1)
   const [pdfLib, setPdfLib] = useState<IPdfLib>()
   const [pdfLibError, setPdfLibError] = useState<any>()
+  const [pdfDocument, setPdfDocument] = useState<PdfDocument>()
+  const [pageSizes, setPageSizes] = useState<PageSize[]>()
+  const [pageSizesFailed, setPageSizesFailed] = useState(false)
 
   useEffect(() => {
     import('react-pdf')
@@ -64,8 +130,38 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
       })
   }, [])
 
-  const onDocumentLoadSuccess = ({ numPages }: PdfProps) => {
-    setNumPages(numPages)
+  // Lazy pages need every page's size up front so the document has its full
+  // height before any page is drawn
+  useEffect(() => {
+    if (!lazyPages || !showAllPages || !pdfDocument) return
+
+    let cancelled = false
+
+    Promise.all(
+      Array.from({ length: pdfDocument.numPages }, (_, index) =>
+        pdfDocument.getPage(index + 1).then((page) => {
+          const { width, height } = page.getViewport({ scale: 1 })
+          return { width, height }
+        }),
+      ),
+    )
+      .then((sizes) => {
+        if (!cancelled) setPageSizes(sizes)
+      })
+      .catch(() => {
+        if (!cancelled) setPageSizesFailed(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [lazyPages, showAllPages, pdfDocument])
+
+  const onDocumentLoadSuccess = (pdf: PdfDocument) => {
+    setNumPages(pdf.numPages)
+    setPdfDocument(pdf)
+    setPageSizes(undefined)
+    setPageSizesFailed(false)
     onLoadingSuccess && onLoadingSuccess()
   }
 
@@ -82,6 +178,31 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   }
 
   if (pdfLib) {
+    const renderAllPages = () => {
+      // Fall back to drawing every page if the page sizes couldn't be read
+      if (lazyPages && !pageSizesFailed) {
+        return pageSizes?.map((size, page) => (
+          <LazyPage
+            key={`page_${page + 1}`}
+            Page={pdfLib.Page}
+            pageNumber={page + 1}
+            scale={scale}
+            size={size}
+          />
+        ))
+      }
+
+      return [...Array(numPages)].map((x, page) => (
+        <pdfLib.Page
+          key={`page_${page + 1}`}
+          pageNumber={page + 1}
+          renderTextLayer={true}
+          renderAnnotationLayer={true}
+          scale={scale}
+        />
+      ))
+    }
+
     return (
       <>
         <pdfLib.Document
@@ -94,15 +215,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           externalLinkTarget="_blank"
         >
           {showAllPages ? (
-            [...Array(numPages)].map((x, page) => (
-              <pdfLib.Page
-                key={`page_${page + 1}`}
-                pageNumber={page + 1}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                scale={scale}
-              />
-            ))
+            renderAllPages()
           ) : (
             <pdfLib.Page
               renderTextLayer={true}
