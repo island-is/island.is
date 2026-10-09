@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
+import { useMeasure } from 'react-use'
 import { useLazyQuery, useQuery } from '@apollo/client'
 
 import {
@@ -10,6 +11,7 @@ import {
   SkeletonLoader,
   Stack,
   Text,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorConfig } from '@island.is/tax-calculators'
@@ -158,6 +160,8 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const [response, setResponse] = useState<CalculationResponse>()
   const [calculationRequestFailed, setCalculationRequestFailed] =
     useState(false)
+  const [hasShownResult, setHasShownResult] = useState(false)
+  const [resultRef, { height: resultHeight }] = useMeasure<HTMLDivElement>()
 
   const { data, loading, error } = useQuery<
     GetTaxCalculatorQuery,
@@ -239,7 +243,6 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
 
   const onSubmit = async () => {
     setSubmitted(snapshot)
-    setResponse(undefined)
     setCalculationRequestFailed(false)
 
     try {
@@ -248,6 +251,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
       })
 
       if (result.error || !result.data?.taxCalculatorCalculate) {
+        setResponse(undefined)
         setCalculationRequestFailed(true)
         return
       }
@@ -257,14 +261,18 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
         result.data.taxCalculatorCalculate.errors,
       )
       setResponse(result.data.taxCalculatorCalculate)
+      if (result.data.taxCalculatorCalculate.errors.length === 0) {
+        setHasShownResult(true)
+      }
     } catch {
+      setResponse(undefined)
       setCalculationRequestFailed(true)
     }
   }
 
   const isCurrent = submitted === snapshot
-  const shown = isCurrent ? response : undefined
-  const failed = isCurrent && calculationRequestFailed
+  const shown = isCurrent && !calculating ? response : undefined
+  const failed = isCurrent && !calculating && calculationRequestFailed
 
   const fieldErrors = new Map<string, string>()
   const alerts: string[] = failed
@@ -283,7 +291,7 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   }
 
   const calculation =
-    shown && shown.errors.length === 0 ? shown.calculation : undefined
+    response && response.errors.length === 0 ? response.calculation : undefined
   const outputValues = calculation ? toOutputValues(calculation) : undefined
 
   const hasResults =
@@ -296,6 +304,17 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     ) !== undefined ||
       collectVisibleSections(config, outputContract, outputValues, activeLocale)
         .length > 0)
+
+  const announcement = calculating
+    ? localized(CALCULATOR_MESSAGES.calculating, activeLocale)
+    : alerts[0] ??
+      (hasResults
+        ? shown
+          ? localized(CALCULATOR_MESSAGES.resultReady, activeLocale)
+          : !isCurrent
+          ? localized(CALCULATOR_MESSAGES.staleResult, activeLocale)
+          : undefined
+        : undefined)
 
   return (
     <FormProvider {...methods}>
@@ -323,7 +342,12 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
                   hasUnplacedRequiredFields || !canSubmit(applicable, values)
                 }
               >
-                {localized(CALCULATOR_MESSAGES.submit, activeLocale)}
+                {localized(
+                  hasShownResult
+                    ? CALCULATOR_MESSAGES.recalculate
+                    : CALCULATOR_MESSAGES.submit,
+                  activeLocale,
+                )}
               </Button>
             </Box>
 
@@ -340,25 +364,52 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
               />
             )}
 
-            {hasResults && outputValues && (
-              <Box background="white" borderRadius="large" padding={[3, 3, 4]}>
-                <Stack space={3}>
-                  <CalculatorPrimaryResult
-                    config={config}
-                    contract={outputContract}
-                    values={outputValues}
-                    locale={activeLocale}
-                  />
-                  <CalculatorResults
-                    config={config}
-                    contract={outputContract}
-                    values={outputValues}
-                    locale={activeLocale}
-                  />
-                </Stack>
+            {(calculating || (hasResults && outputValues)) && (
+              <Box
+                background="white"
+                borderRadius="large"
+                padding={[3, 3, 4]}
+                aria-busy={calculating}
+                opacity={!calculating && !isCurrent ? 0.5 : undefined}
+              >
+                {calculating || !outputValues ? (
+                  resultHeight > 0 ? (
+                    <SkeletonLoader height={resultHeight} />
+                  ) : (
+                    <SkeletonLoader height={64} repeat={4} space={2} />
+                  )
+                ) : (
+                  <Box ref={resultRef}>
+                    {!isCurrent && (
+                      <VisuallyHidden>
+                        {localized(
+                          CALCULATOR_MESSAGES.staleResult,
+                          activeLocale,
+                        )}
+                      </VisuallyHidden>
+                    )}
+                    <Stack space={3}>
+                      <CalculatorPrimaryResult
+                        config={config}
+                        contract={outputContract}
+                        values={outputValues}
+                        locale={activeLocale}
+                      />
+                      <CalculatorResults
+                        config={config}
+                        contract={outputContract}
+                        values={outputValues}
+                        locale={activeLocale}
+                      />
+                    </Stack>
+                  </Box>
+                )}
               </Box>
             )}
           </Stack>
+          <div role="status">
+            <VisuallyHidden>{announcement}</VisuallyHidden>
+          </div>
         </Box>
       </form>
     </FormProvider>

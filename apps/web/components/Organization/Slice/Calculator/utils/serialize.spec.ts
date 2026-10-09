@@ -12,7 +12,7 @@ const entry = (
   const contractField: InputContractField = { key, type, required: false }
 
   return {
-    field: { uid: `uid-${key}`, key, span: 6 },
+    field: { uid: `uid-${key}`, key, kind: 'field', size: 'medium' },
     contractField,
     label: key,
     disabled: false,

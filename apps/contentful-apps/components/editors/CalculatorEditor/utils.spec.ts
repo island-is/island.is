@@ -13,8 +13,9 @@ const outputTotal = (extra = {}) => ({
 
 const inputField = (uid: string, key: string, extra = {}) => ({
   uid,
+  kind: 'field',
   key,
-  span: 12,
+  size: 'large',
   ...extra,
 })
 
@@ -52,7 +53,10 @@ describe('filterConfigForPersistence', () => {
       outputSections: [],
     } as never)
 
-    expect(payload.inputSections[0].fields[0].label).toBeUndefined()
+    expect(payload.inputSections[0].fields[0]).toMatchObject({
+      kind: 'field',
+      label: undefined,
+    })
   })
 
   it('drops a content row whose markdown is whitespace only', () => {
@@ -71,6 +75,88 @@ describe('filterConfigForPersistence', () => {
     } as never)
 
     expect(payload.outputSections[0].fields.map((f) => f.uid)).toEqual(['c2'])
+  })
+
+  it('drops an empty input content row and keeps a filled one', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          { uid: 'c1', kind: 'content', content: { is: '' } },
+          { uid: 'c2', kind: 'content', content: { is: 'Skýring' } },
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields).toEqual([
+      { uid: 'c2', kind: 'content', content: { is: 'Skýring' } },
+    ])
+  })
+
+  it('treats markdown made only of empty paragraphs as empty', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          { uid: 'c1', kind: 'content', content: { is: '<br>\n<br>\n<br>' } },
+          {
+            uid: 'c2',
+            kind: 'content',
+            content: { is: 'Skýring', en: '<br>\n\n<br>' },
+          },
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields).toEqual([
+      { uid: 'c2', kind: 'content', content: { is: 'Skýring' } },
+    ])
+  })
+
+  it('trims empty paragraphs trailing the content', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          {
+            uid: 'c1',
+            kind: 'content',
+            content: { is: 'Skýring\n\n<br>\n\n<br>', en: 'Note\n\n<br>' },
+          },
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields[0]).toEqual({
+      uid: 'c1',
+      kind: 'content',
+      content: { is: 'Skýring', en: 'Note' },
+    })
+  })
+
+  it('keeps an input content row markdown unchanged', () => {
+    const { payload } = filterConfigForPersistence({
+      outputTotal: outputTotal(),
+      inputSections: [
+        inputSection('s1', [
+          {
+            uid: 'c1',
+            kind: 'content',
+            content: { is: 'Skýring', en: 'Note' },
+          },
+        ]),
+      ],
+      outputSections: [],
+    } as never)
+
+    expect(payload.inputSections[0].fields[0]).toEqual({
+      uid: 'c1',
+      kind: 'content',
+      content: { is: 'Skýring', en: 'Note' },
+    })
   })
 
   it('drops an unlabelled toggle and any gate pointing at it', () => {

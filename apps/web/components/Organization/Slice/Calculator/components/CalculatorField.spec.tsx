@@ -51,7 +51,12 @@ const renderField = (contractField: InputContractField, error?: string) =>
   render(
     <Form>
       <CalculatorField
-        field={{ uid: 'uid-1', key: contractField.key, span: 6 }}
+        field={{
+          uid: 'uid-1',
+          key: contractField.key,
+          kind: 'field',
+          size: 'medium',
+        }}
         contractField={contractField}
         label="Reitur"
         locale="is"
