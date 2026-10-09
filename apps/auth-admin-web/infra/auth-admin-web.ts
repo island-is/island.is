@@ -35,7 +35,6 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> =>
     .secrets({
       IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET',
       NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET',
-      BS_SECRET: '/k8s/auth-admin-web/BS_SECRET',
     })
     .ingress({
       primary: {
