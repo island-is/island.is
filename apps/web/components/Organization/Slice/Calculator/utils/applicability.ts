@@ -2,15 +2,16 @@ import type { Locale } from '@island.is/shared/types'
 import type {
   CalculatorConfig,
   CalculatorInputSection,
-  CalculatorInputSectionField,
+  CalculatorInputValueField,
 } from '@island.is/tax-calculators'
+import { isInputValueField } from '@island.is/tax-calculators'
 
 import type { InputContractField, InputFieldContract } from '../contract'
 import { localized } from './text'
 import { toTypedValue } from './values'
 
 export interface ApplicableField {
-  field: CalculatorInputSectionField
+  field: CalculatorInputValueField
   contractField: InputContractField
   label: string
   disabled: boolean
@@ -68,7 +69,7 @@ export const collectApplicableFields = (
   for (const section of config.inputSections) {
     const state = sectionState(section, toggles)
     if (!state || state.disabled) continue
-    for (const field of section.fields) {
+    for (const field of section.fields.filter(isInputValueField)) {
       enabledSectionFieldKeys.add(field.key)
     }
   }
@@ -77,7 +78,7 @@ export const collectApplicableFields = (
     const state = sectionState(section, toggles)
     if (!state) continue
 
-    for (const field of section.fields) {
+    for (const field of section.fields.filter(isInputValueField)) {
       const contractField = contract.get(field.key)
       if (!contractField) continue
 

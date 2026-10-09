@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 
+import type { GridColumnProps } from '@island.is/island-ui/core'
 import { Checkbox, GridColumn } from '@island.is/island-ui/core'
 import {
   DatePickerController,
@@ -7,7 +8,10 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import type { Locale } from '@island.is/shared/types'
-import type { CalculatorInputSectionField } from '@island.is/tax-calculators'
+import type {
+  CalculatorInputFieldSize,
+  CalculatorInputValueField,
+} from '@island.is/tax-calculators'
 import {
   TaxCalculatorInputFieldSemantic,
   TaxCalculatorInputFieldType,
@@ -18,7 +22,7 @@ import { monthOptions, yearOptions } from '../utils/optionSources'
 import { localized } from '../utils/text'
 
 interface Props {
-  field: CalculatorInputSectionField
+  field: CalculatorInputValueField
   contractField: InputContractField
   label: string
   locale: Locale
@@ -26,22 +30,11 @@ interface Props {
   error?: string
 }
 
-/* `span` is a number 1-12 in the config, but GridColumn takes the fraction as a
- * string literal, so the two are bridged by position rather than interpolation. */
-const TWELFTHS = [
-  '1/12',
-  '2/12',
-  '3/12',
-  '4/12',
-  '5/12',
-  '6/12',
-  '7/12',
-  '8/12',
-  '9/12',
-  '10/12',
-  '11/12',
-  '12/12',
-] as const
+const SPANS: Record<CalculatorInputFieldSize, GridColumnProps['span']> = {
+  small: ['6/12', '4/12', '6/12', '4/12'],
+  medium: ['12/12', '6/12', '12/12', '8/12', '6/12'],
+  large: ['12/12', '12/12', '12/12', '12/12', '8/12'],
+}
 
 export const CalculatorField = ({
   field,
@@ -161,9 +154,5 @@ export const CalculatorField = ({
     }
   }
 
-  return (
-    <GridColumn span={['1/1', '1/1', TWELFTHS[field.span - 1] ?? '12/12']}>
-      {renderControl()}
-    </GridColumn>
-  )
+  return <GridColumn span={SPANS[field.size]}>{renderControl()}</GridColumn>
 }

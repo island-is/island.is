@@ -2,7 +2,10 @@ import type { ZodIssue } from 'zod'
 
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorConfig } from '@island.is/tax-calculators'
-import { collectInputFieldKeys } from '@island.is/tax-calculators'
+import {
+  collectInputFieldKeys,
+  isInputValueField,
+} from '@island.is/tax-calculators'
 import type { TaxCalculatorType } from '@island.is/web/graphql/schema'
 
 import type { InputFieldContract, OutputFieldContract } from '../contract'
@@ -21,7 +24,9 @@ export const collectUnlabelledKeys = (
 ): string[] => {
   const rows: CalculatorLabelledRow[] = [
     ...config.inputSections.flatMap((section) =>
-      section.fields.map((field) => ({ key: field.key, label: field.label })),
+      section.fields
+        .filter(isInputValueField)
+        .map((field) => ({ key: field.key, label: field.label })),
     ),
     ...collectOutputLabelledRows(config),
   ]
