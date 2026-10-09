@@ -10,7 +10,7 @@ if [ "$d" = "." ] || [ -z "$alias" ]; then
   # Not an importable library (a config-wired stub, an app file, a new lib): list files that reference it by path or name.
   b=$(basename "$f"); b=${b%.*}
   echo "no import alias for $f; files referencing '$b' by path:"
-  git grep -l -E "[/'\"]$b['\"./]" "$ref" -- 'libs/**' 'apps/**' '*.ts' '*.js' '*.mjs' | sed -E "s#^$ref:##" | grep -v "^$f$" | sort -u | head -40
+  git grep -l -E "[/'\"]${b}['\"./]" "$ref" -- 'libs/**' 'apps/**' '*.ts' '*.js' '*.mjs' | sed -E "s#^$ref:##" | grep -v "^$f$" | sort -u | head -40
   exit 0
 fi
 echo "library: $d  alias: $alias"
