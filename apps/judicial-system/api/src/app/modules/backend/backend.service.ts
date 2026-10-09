@@ -676,6 +676,16 @@ export class BackendService {
     return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
   }
 
+  confirmAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }

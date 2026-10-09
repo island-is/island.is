@@ -764,6 +764,13 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ConfirmAppealSummons 1`] = `
+Array [
+  "confirmAppealSummons.confirmedDate",
+  "confirmAppealSummons.id",
+]
+`;
+
 exports[`GraphQL operations select these field paths ConfirmRulingOrder 1`] = `
 Array [
   "confirmRulingOrder.id",

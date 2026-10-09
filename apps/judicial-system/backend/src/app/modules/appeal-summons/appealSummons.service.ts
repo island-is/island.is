@@ -17,7 +17,9 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { getCaseFileHash } from '../../formatters'
 import { standingVerdictAppellants } from '../appeal-case'
+import { PdfService } from '../case'
 import {
   AppealEventLogRepositoryService,
   AppealSummons,
@@ -31,6 +33,7 @@ export class AppealSummonsService {
   constructor(
     private readonly appealSummonsRepositoryService: AppealSummonsRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -178,6 +181,94 @@ export class AppealSummonsService {
     return this.appealSummonsRepositoryService.delete(summons.id, theCase.id, {
       transaction,
     })
+  }
+
+  async confirm(
+    theCase: Case,
+    summons: AppealSummons,
+    user: User,
+    transaction: Transaction,
+  ): Promise<AppealSummons> {
+    if (
+      !canPerformAppealSummonsAction(AppealSummonsAction.CONFIRM, summons, user)
+    ) {
+      throw new ForbiddenException(
+        `User ${user.id} cannot confirm appeal summons ${summons.id}`,
+      )
+    }
+
+    const appealCase = theCase.verdictAppealCase
+
+    if (!appealCase) {
+      throw new BadRequestException(`Case ${theCase.id} has no verdict appeal`)
+    }
+
+    const confirmedDate = new Date()
+
+    await this.appealSummonsRepositoryService.update(
+      summons.id,
+      theCase.id,
+      {
+        confirmedById: user.id,
+        confirmedDate,
+      },
+      { transaction },
+    )
+
+    const confirmed = await this.appealSummonsRepositoryService.findByIdAndCaseId(
+      summons.id,
+      theCase.id,
+      { transaction },
+    )
+
+    if (!confirmed) {
+      throw new BadRequestException(
+        `Appeal summons ${summons.id} was not found after confirm`,
+      )
+    }
+
+    const pdf = await this.pdfService.getAppealSummonsPdf(
+      theCase,
+      user,
+      confirmed,
+    )
+    const { hash, hashAlgorithm } = getCaseFileHash(pdf)
+
+    await this.appealSummonsRepositoryService.update(
+      summons.id,
+      theCase.id,
+      { hash, hashAlgorithm },
+      { transaction },
+    )
+
+    await this.appealEventLogRepositoryService.create(
+      {
+        caseId: theCase.id,
+        appealCaseId: appealCase.id,
+        eventType: AppealEventType.APPEAL_SUMMONS_CONFIRMED,
+        userRole: user.role,
+        userId: user.id,
+        nationalId: user.nationalId,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      { transaction },
+    )
+
+    const result = await this.appealSummonsRepositoryService.findByIdAndCaseId(
+      summons.id,
+      theCase.id,
+      { transaction },
+    )
+
+    if (!result) {
+      throw new BadRequestException(
+        `Appeal summons ${summons.id} was not found after hashing`,
+      )
+    }
+
+    return result
   }
 
   resolveDefendants(

@@ -9,6 +9,8 @@ import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { Institution } from '../models/institution.model'
+import { User } from '../models/user.model'
 import { AppealSummonsRepositoryService } from '../services/appealSummonsRepository.service'
 
 describe('AppealSummonsRepositoryService', () => {
@@ -80,6 +82,11 @@ describe('AppealSummonsRepositoryService', () => {
       expect(summonsModel.findOne).toHaveBeenCalledWith({
         where: { id: 'summons_id', caseId: 'case_id' },
         include: [
+          {
+            model: User,
+            as: 'confirmedBy',
+            include: [{ model: Institution, as: 'institution' }],
+          },
           {
             model: AppealSummonsDefendant,
             as: 'defendants',

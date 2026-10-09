@@ -27,7 +27,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import { indictmentCases, type User } from '@island.is/judicial-system/types'
 
-import { publicProsecutorStaffRule } from '../../guards'
+import { prosecutorRule, publicProsecutorStaffRule } from '../../guards'
 import {
   CaseExistsGuard,
   CaseReadGuard,
@@ -133,7 +133,30 @@ export class AppealSummonsController {
     return { deleted }
   }
 
-  @RolesRules(publicProsecutorStaffRule)
+  @RolesRules(prosecutorRule)
+  @UseGuards(AppealSummonsExistsGuard)
+  @Patch(':appealSummonsId/confirm')
+  @ApiOkResponse({
+    type: AppealSummons,
+    description: 'Confirms an appeal summons',
+  })
+  confirm(
+    @Param('caseId') caseId: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentAppealSummons() summons: AppealSummons,
+    @CurrentHttpUser() user: User,
+  ): Promise<AppealSummons> {
+    this.logger.debug(
+      `Confirming appeal summons ${appealSummonsId} of case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.appealSummonsService.confirm(theCase, summons, user, transaction),
+    )
+  }
+
+  @RolesRules(publicProsecutorStaffRule, prosecutorRule)
   @UseGuards(AppealSummonsExistsGuard)
   @Get(':appealSummonsId/pdf')
   @Header('Content-Type', 'application/pdf')

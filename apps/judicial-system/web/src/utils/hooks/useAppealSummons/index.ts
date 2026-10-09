@@ -6,6 +6,7 @@ import type { AppealSummonsAppellantSide } from '@island.is/judicial-system-web/
 import { api } from '@island.is/judicial-system-web/src/services'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { useConfirmAppealSummonsMutation } from './confirmAppealSummons.generated'
 import { useCreateAppealSummonsMutation } from './createAppealSummons.generated'
 import { useDeleteAppealSummonsMutation } from './deleteAppealSummons.generated'
 import { useUpdateAppealSummonsMutation } from './updateAppealSummons.generated'
@@ -23,6 +24,8 @@ const useAppealSummons = () => {
     useUpdateAppealSummonsMutation()
   const [deleteAppealSummonsMutation, { loading: isDeletingAppealSummons }] =
     useDeleteAppealSummonsMutation()
+  const [confirmAppealSummonsMutation, { loading: isConfirmingAppealSummons }] =
+    useConfirmAppealSummonsMutation()
 
   const createAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
@@ -104,6 +107,33 @@ const useAppealSummons = () => {
     [deleteAppealSummonsMutation, isDeletingAppealSummons],
   )
 
+  const confirmAppealSummons = useCallback(
+    async (caseId: string, appealSummonsId: string) => {
+      try {
+        if (isConfirmingAppealSummons) {
+          return undefined
+        }
+
+        const { data, errors } = await confirmAppealSummonsMutation({
+          variables: {
+            caseId,
+            input: { appealSummonsId },
+          },
+        })
+
+        if (data?.confirmAppealSummons && !errors) {
+          return data.confirmAppealSummons
+        }
+
+        return undefined
+      } catch {
+        toast.error('Upp kom villa við að staðfesta áfrýjunarstefnu')
+        return undefined
+      }
+    },
+    [confirmAppealSummonsMutation, isConfirmingAppealSummons],
+  )
+
   const previewAppealSummons = useCallback(
     async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
       try {
@@ -140,10 +170,12 @@ const useAppealSummons = () => {
     createAppealSummons,
     updateAppealSummons,
     deleteAppealSummons,
+    confirmAppealSummons,
     previewAppealSummons,
     isCreatingAppealSummons,
     isUpdatingAppealSummons,
     isDeletingAppealSummons,
+    isConfirmingAppealSummons,
   }
 }
 

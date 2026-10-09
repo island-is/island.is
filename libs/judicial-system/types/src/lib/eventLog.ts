@@ -43,6 +43,7 @@ export enum AppealEventType {
   APPEALED = 'APPEALED',
   APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
   APPEAL_SUMMONS_ISSUED = 'APPEAL_SUMMONS_ISSUED',
+  APPEAL_SUMMONS_CONFIRMED = 'APPEAL_SUMMONS_CONFIRMED',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)

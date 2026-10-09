@@ -1,5 +1,8 @@
 import type { InstitutionUser } from './user'
-import { isPublicProsecutionOfficeUser } from './user'
+import {
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
+} from './user'
 
 export enum AppealSummonsAppellantSide {
   DEFENCE = 'DEFENCE',
@@ -11,6 +14,7 @@ export enum AppealSummonsAction {
   EDIT = 'EDIT',
   DELETE = 'DELETE',
   OPEN = 'OPEN',
+  CONFIRM = 'CONFIRM',
 }
 
 export type AppealSummonsStatus = 'draft' | 'confirmed' | 'inService' | 'sent'
@@ -48,17 +52,30 @@ export const canIssueAppealSummons = (
   hasVerdictAppealCase: boolean,
 ): boolean => isPublicProsecutionOfficeUser(user) && hasVerdictAppealCase
 
+export const canConfirmAppealSummons = (
+  user: InstitutionUser | undefined,
+): boolean => isPublicProsecutionUser(user)
+
 export const canPerformAppealSummonsAction = (
   action: AppealSummonsAction,
   summons: AppealSummonsStatusFields,
   user: InstitutionUser | undefined,
 ): boolean => {
-  if (!isPublicProsecutionOfficeUser(user)) {
-    return false
+  if (action === AppealSummonsAction.CONFIRM) {
+    return (
+      canConfirmAppealSummons(user) &&
+      getAppealSummonsStatus(summons) === 'draft'
+    )
   }
 
   if (action === AppealSummonsAction.OPEN) {
-    return true
+    return (
+      isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)
+    )
+  }
+
+  if (!isPublicProsecutionOfficeUser(user)) {
+    return false
   }
 
   if (

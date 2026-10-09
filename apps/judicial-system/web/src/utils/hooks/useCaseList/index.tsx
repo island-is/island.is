@@ -30,6 +30,7 @@ import {
   isPrisonSystemUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   isRequestCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -38,6 +39,7 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -45,7 +47,10 @@ import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/f
 import useCase from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import { getCourtOfAppealsRouteForRow } from './useCaseList.logic'
+import {
+  getCourtOfAppealsRouteForRow,
+  getPublicProsecutionProsecutorVerdictAppealRoute,
+} from './useCaseList.logic'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
@@ -64,6 +69,7 @@ const useCaseList = () => {
     showLoading: false,
   })
   const { user, limitedAccess } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const { getCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { isTransitioningCase, isSendingNotification } = useCase()
@@ -76,6 +82,12 @@ const useCaseList = () => {
       appealCaseId?: string | null,
     ) => {
       let routeTo = null
+      const publicProsecutionProsecutorRoute = isPublicProsecutionUser(user)
+        ? getPublicProsecutionProsecutorVerdictAppealRoute(
+            caseToOpen,
+            features,
+          )
+        : null
 
       if (isDefenceUser(user)) {
         if (isRequestCase(caseToOpen.type)) {
@@ -86,6 +98,8 @@ const useCaseList = () => {
       } else if (isPublicProsecutionOfficeUser(user)) {
         // Public prosecutor users can only see completed indictments
         routeTo = PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE
+      } else if (publicProsecutionProsecutorRoute) {
+        routeTo = publicProsecutionProsecutorRoute
       } else if (isCourtOfAppealsUser(user)) {
         routeTo = getCourtOfAppealsRouteForRow(caseToOpen, appealCaseId)
       } else if (isDistrictCourtUser(user)) {
@@ -180,7 +194,7 @@ const useCaseList = () => {
         router.push(url)
       }
     },
-    [router, user],
+    [features, router, user],
   )
 
   const handleOpenCase = useCallback(
