@@ -70,13 +70,25 @@ export class AccidentNotificationService extends BaseTemplateApiService {
       })
       const reportId = res.reportId
 
+      // SÍ can respond 200 with success false and reportId -1 (or none) when it
+      // rejects the report, so it must not be treated as a successful submission
+      if (res.success === false || !reportId || reportId < 1) {
+        throw new Error(
+          `SÍ rejected accident report for application ${
+            application.id
+          } (reportId: ${reportId}, errorMessage: ${
+            res.errorMessage
+          }, errors: ${JSON.stringify(res.errors ?? [])})`,
+        )
+      }
+
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
           generateConfirmationEmail(
             props,
             this.accidentConfig.applicationSenderName,
             this.accidentConfig.applicationSenderEmail,
-            reportId ?? undefined,
+            reportId,
           ),
         application,
       )
@@ -90,11 +102,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
 
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
-            generateAssignReviewerEmail(
-              props,
-              assignLink,
-              reportId ?? undefined,
-            ),
+            generateAssignReviewerEmail(props, assignLink, reportId),
           application,
           token,
         )
