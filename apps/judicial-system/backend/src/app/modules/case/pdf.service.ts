@@ -596,6 +596,12 @@ export class PdfService {
       }
     }
 
+    if (!theCase.rulingDate) {
+      throw new BadRequestException(
+        `Case ${theCase.id} has no ruling date; cannot generate an appeal summons PDF`,
+      )
+    }
+
     const rows = summons?.defendants ?? previewDefendants ?? []
 
     const defendants: AppealSummonsPdfDefendant[] = rows.map((row) => ({

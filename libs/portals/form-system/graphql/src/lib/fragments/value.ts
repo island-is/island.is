@@ -35,6 +35,7 @@ export const ValueFragment = gql`
     phoneNumber
     bankAccount
     time
+    maritalStatus
     registrationNumber
     model
     color {
