@@ -99,9 +99,7 @@ describe('AppealSummonsController - Confirm', () => {
     ;(mockAppealSummonsRepositoryService.update as jest.Mock)
       .mockResolvedValueOnce(afterConfirm)
       .mockResolvedValueOnce(afterHash)
-    ;(
-      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
-    )
+    ;(mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock)
       .mockResolvedValueOnce(afterConfirm)
       .mockResolvedValueOnce(afterHash)
     ;(mockPdfService.getAppealSummonsPdf as jest.Mock).mockResolvedValueOnce(
@@ -180,13 +178,7 @@ describe('AppealSummonsController - Confirm', () => {
     } as User
 
     await expect(
-      appealSummonsController.confirm(
-        caseId,
-        summonsId,
-        theCase,
-        draft,
-        staff,
-      ),
+      appealSummonsController.confirm(caseId, summonsId, theCase, draft, staff),
     ).rejects.toThrow(ForbiddenException)
   })
 

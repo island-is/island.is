@@ -154,9 +154,7 @@ export class AppealCaseAppealSummonsResolver {
   ): AppealSummons[] {
     if (
       this.featureService.isHidden(Feature.INDICTMENT_APPEAL) ||
-      !(
-        isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)
-      )
+      !(isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user))
     ) {
       return []
     }

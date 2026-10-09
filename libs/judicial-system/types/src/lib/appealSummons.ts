@@ -1,8 +1,5 @@
 import type { InstitutionUser } from './user'
-import {
-  isPublicProsecutionOfficeUser,
-  isPublicProsecutionUser,
-} from './user'
+import { isPublicProsecutionOfficeUser, isPublicProsecutionUser } from './user'
 
 export enum AppealSummonsAppellantSide {
   DEFENCE = 'DEFENCE',
@@ -69,9 +66,7 @@ export const canPerformAppealSummonsAction = (
   }
 
   if (action === AppealSummonsAction.OPEN) {
-    return (
-      isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)
-    )
+    return isPublicProsecutionOfficeUser(user) || isPublicProsecutionUser(user)
   }
 
   if (!isPublicProsecutionOfficeUser(user)) {

@@ -163,11 +163,7 @@ describe('canPerformAppealSummonsAction', () => {
       ),
     ).toBe(false)
     expect(
-      canPerformAppealSummonsAction(
-        AppealSummonsAction.CONFIRM,
-        draft,
-        staff,
-      ),
+      canPerformAppealSummonsAction(AppealSummonsAction.CONFIRM, draft, staff),
     ).toBe(false)
     expect(
       canPerformAppealSummonsAction(

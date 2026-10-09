@@ -318,7 +318,10 @@ describe('canConfirmAppealSummonsRow', () => {
 
   it('does not let staff confirm', () => {
     expect(
-      canConfirmAppealSummonsRow({}, mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF)),
+      canConfirmAppealSummonsRow(
+        {},
+        mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
+      ),
     ).toBe(false)
   })
 

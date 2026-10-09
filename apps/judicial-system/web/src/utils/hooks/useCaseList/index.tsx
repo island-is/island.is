@@ -83,10 +83,7 @@ const useCaseList = () => {
     ) => {
       let routeTo = null
       const publicProsecutionProsecutorRoute = isPublicProsecutionUser(user)
-        ? getPublicProsecutionProsecutorVerdictAppealRoute(
-            caseToOpen,
-            features,
-          )
+        ? getPublicProsecutionProsecutorVerdictAppealRoute(caseToOpen, features)
         : null
 
       if (isDefenceUser(user)) {

@@ -215,11 +215,12 @@ export class AppealSummonsService {
       { transaction },
     )
 
-    const confirmed = await this.appealSummonsRepositoryService.findByIdAndCaseId(
-      summons.id,
-      theCase.id,
-      { transaction },
-    )
+    const confirmed =
+      await this.appealSummonsRepositoryService.findByIdAndCaseId(
+        summons.id,
+        theCase.id,
+        { transaction },
+      )
 
     if (!confirmed) {
       throw new BadRequestException(
