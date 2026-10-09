@@ -34,6 +34,7 @@ import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { CreateEmailDto } from '../dto/create-emails.dto'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
+import { BlockedNotification } from '../models/blockedNotification.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { notificationScopes } from '@island.is/auth/scopes'
 
@@ -2792,5 +2793,351 @@ describe('MeUserProfileController', () => {
         type: 'https://httpstatuses.org/403',
       })
     })
+  })
+
+  describe('Notification settings', () => {
+    const testUser = createCurrentUser({
+      nationalId: testUserProfile.nationalId,
+      scope: [UserProfileScope.read, UserProfileScope.write],
+    })
+    const otherNationalId = testUserProfile2.nationalId
+    const senderId = createNationalId('company')
+    const otherSenderId = createNationalId('company')
+    const dashedSenderId = `${senderId.slice(0, 6)}-${senderId.slice(6)}`
+
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let blockedNotificationModel: typeof BlockedNotification
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: testUser,
+      })
+
+      server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      userProfileModel = app.get(getModelToken(UserProfile))
+      blockedNotificationModel = app.get(getModelToken(BlockedNotification))
+    })
+
+    beforeEach(async () => {
+      await blockedNotificationModel.destroy({ truncate: true })
+      await userProfileModel.destroy({ truncate: true, cascade: true })
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    describe('GET /v2/me/notification-settings', () => {
+      it('should return an empty list when the user has no blocked senders', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+
+        // Act
+        const res = await server.get('/v2/me/notification-settings')
+
+        // Assert
+        expect(res.status).toBe(200)
+        expect(res.body).toEqual({ blockedSenders: [] })
+      })
+
+      it('should return an empty list when the user has no profile', async () => {
+        // Act
+        const res = await server.get('/v2/me/notification-settings')
+
+        // Assert
+        expect(res.status).toBe(200)
+        expect(res.body).toEqual({ blockedSenders: [] })
+      })
+
+      it("should return only the user's own blocked senders ordered by created", async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+        await fixtureFactory.createUserProfile({ nationalId: otherNationalId })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+          created: new Date('2026-01-02'),
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId: otherSenderId,
+          created: new Date('2026-01-01'),
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: otherNationalId,
+          senderId: createNationalId('company'),
+        })
+
+        // Act
+        const res = await server.get('/v2/me/notification-settings')
+
+        // Assert
+        expect(res.status).toBe(200)
+        expect(res.body).toEqual({
+          blockedSenders: [{ senderId: otherSenderId }, { senderId }],
+        })
+      })
+    })
+
+    describe('POST /v2/me/notification-settings/blocked-senders', () => {
+      it('should block the sender', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+
+        // Act
+        const res = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({ senderId })
+
+        // Assert
+        expect(res.status).toBe(204)
+        const blocked = await blockedNotificationModel.findAll({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(blocked).toHaveLength(1)
+        expect(blocked[0].senderId).toBe(senderId)
+      })
+
+      it('should be idempotent when blocking the same sender twice', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+
+        // Act
+        const firstRes = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({ senderId })
+        const secondRes = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({ senderId })
+
+        // Assert
+        expect(firstRes.status).toBe(204)
+        expect(secondRes.status).toBe(204)
+        const count = await blockedNotificationModel.count({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(count).toBe(1)
+      })
+
+      it('should store a dashed sender id as digits only', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+
+        // Act
+        const dashedRes = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({ senderId: dashedSenderId })
+        const plainRes = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({ senderId })
+
+        // Assert
+        expect(dashedRes.status).toBe(204)
+        expect(plainRes.status).toBe(204)
+        const blocked = await blockedNotificationModel.findAll({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(blocked).toHaveLength(1)
+        expect(blocked[0].senderId).toBe(senderId)
+      })
+
+      it.each(['123', 'abc'])(
+        'should return 400 for invalid sender id %s',
+        async (invalidSenderId) => {
+          // Act
+          const res = await server
+            .post('/v2/me/notification-settings/blocked-senders')
+            .send({ senderId: invalidSenderId })
+
+          // Assert
+          expect(res.status).toBe(400)
+          expect(res.body).toMatchObject({
+            status: 400,
+            title: 'Bad Request',
+            detail: 'Sender id is not valid',
+          })
+          expect(await blockedNotificationModel.count()).toBe(0)
+        },
+      )
+
+      it('should return 400 when senderId is missing from request body', async () => {
+        // Act
+        const res = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({})
+
+        // Assert
+        expect(res.status).toBe(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          title: 'Bad Request',
+          detail: expect.arrayContaining(['senderId must be a string']),
+        })
+      })
+
+      it('should create the user profile when it does not exist', async () => {
+        // Act
+        const res = await server
+          .post('/v2/me/notification-settings/blocked-senders')
+          .send({ senderId })
+
+        // Assert
+        expect(res.status).toBe(204)
+        const userProfile = await userProfileModel.findOne({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(userProfile).not.toBeNull()
+        const count = await blockedNotificationModel.count({
+          where: { nationalId: testUser.nationalId, senderId },
+        })
+        expect(count).toBe(1)
+      })
+    })
+
+    describe('DELETE /v2/me/notification-settings/blocked-senders/:senderId', () => {
+      beforeEach(async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+      })
+
+      it('should unblock the sender', async () => {
+        // Arrange
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+
+        // Act
+        const res = await server.delete(
+          `/v2/me/notification-settings/blocked-senders/${senderId}`,
+        )
+
+        // Assert
+        expect(res.status).toBe(204)
+        const count = await blockedNotificationModel.count({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(count).toBe(0)
+      })
+
+      it('should return 204 when the sender is not blocked', async () => {
+        // Act
+        const res = await server.delete(
+          `/v2/me/notification-settings/blocked-senders/${senderId}`,
+        )
+
+        // Assert
+        expect(res.status).toBe(204)
+      })
+
+      it('should unblock the sender when given a dashed sender id', async () => {
+        // Arrange
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+
+        // Act
+        const res = await server.delete(
+          `/v2/me/notification-settings/blocked-senders/${dashedSenderId}`,
+        )
+
+        // Assert
+        expect(res.status).toBe(204)
+        const count = await blockedNotificationModel.count({
+          where: { nationalId: testUser.nationalId },
+        })
+        expect(count).toBe(0)
+      })
+
+      it("should not remove other users' blocked senders", async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile({ nationalId: otherNationalId })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: otherNationalId,
+          senderId,
+        })
+
+        // Act
+        const res = await server.delete(
+          `/v2/me/notification-settings/blocked-senders/${senderId}`,
+        )
+
+        // Assert
+        expect(res.status).toBe(204)
+        const remaining = await blockedNotificationModel.findAll()
+        expect(remaining).toHaveLength(1)
+        expect(remaining[0].nationalId).toBe(otherNationalId)
+      })
+    })
+  })
+
+  describe('Notification settings without write scope', () => {
+    const senderId = createNationalId('company')
+
+    let app: TestApp
+    let server: SuperTest<Test>
+
+    beforeAll(async () => {
+      app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          nationalId: testUserProfile.nationalId,
+          scope: [UserProfileScope.read], // Only read scope
+        }),
+      })
+
+      server = request(app.getHttpServer())
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it.each`
+      method      | endpoint
+      ${'POST'}   | ${'/v2/me/notification-settings/blocked-senders'}
+      ${'DELETE'} | ${`/v2/me/notification-settings/blocked-senders/${senderId}`}
+    `(
+      'should return 403 for $method $endpoint',
+      async ({ method, endpoint }: { method: string; endpoint: string }) => {
+        // Act
+        const res =
+          method === 'POST'
+            ? await server.post(endpoint).send({ senderId })
+            : await server.delete(endpoint)
+
+        // Assert
+        expect(res.status).toBe(403)
+        expect(res.body).toMatchObject({
+          status: 403,
+          title: 'Forbidden',
+          detail: 'Forbidden resource',
+          type: 'https://httpstatuses.org/403',
+        })
+      },
+    )
   })
 })

@@ -35,7 +35,13 @@ import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale, SmsDelivery } from '../utils'
+import { UserNotificationSender } from '../user-notification-sender.model'
+import {
+  isValidSenderId,
+  mapToLocale,
+  normalizeKennitala,
+  SmsDelivery,
+} from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
@@ -121,6 +127,9 @@ export class NotificationsWorkerService {
 
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
   ) {}
 
   private async handleActorNotification(
@@ -384,6 +393,13 @@ export class NotificationsWorkerService {
     )
     const scope = template.scope || DocumentsScope.main
     const dbRecord = await this.createUserNotificationDbRecord(args, scope)
+    if (dbRecord) {
+      await this.recordNotificationSender(
+        message.recipient,
+        message.senderId,
+        messageId,
+      )
+    }
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     let pushPayload: PushQueueMessage | null = null
@@ -781,6 +797,29 @@ export class NotificationsWorkerService {
         { messageId },
       )
       return false
+    }
+  }
+
+  private async recordNotificationSender(
+    recipient: string,
+    senderId: string | undefined,
+    messageId: string,
+  ): Promise<void> {
+    const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
+    if (!isValidSenderId(normalizedSenderId)) {
+      return
+    }
+
+    try {
+      await this.userNotificationSenderModel.bulkCreate(
+        [{ recipient, senderId: normalizedSenderId }],
+        { ignoreDuplicates: true },
+      )
+    } catch (error) {
+      this.logger.warn(
+        'Failed to record notification sender, proceeding with notification',
+        { messageId, error },
+      )
     }
   }
 

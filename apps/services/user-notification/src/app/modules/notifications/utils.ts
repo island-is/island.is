@@ -19,6 +19,20 @@ export const mapToContentfulLocale = (locale: Locale): string =>
 export const cleanString = (str: string): string =>
   str.replace(/\s+/g, ' ').trim()
 
+/**
+ * Normalizes a sender id (kennitala) by stripping all non-digit characters,
+ * e.g. '550169-2829' -> '5501692829'.
+ */
+export const normalizeKennitala = (senderId: string): string =>
+  senderId.replace(/\D/g, '')
+
+/**
+ * A normalized sender id is valid when it is exactly 10 digits, matching the
+ * validation user-profile applies when blocking a sender.
+ */
+export const isValidSenderId = (normalizedSenderId: string): boolean =>
+  /^\d{10}$/.test(normalizedSenderId)
+
 export const extractLocaleField = (
   field: string | Record<string, string> | undefined | null,
   locale: Locale,

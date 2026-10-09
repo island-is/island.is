@@ -15,6 +15,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
 import { ActorNotification } from './actor-notification.model'
 import { NotificationDelivery } from './notification-delivery.model'
+import { UserNotificationSender } from './user-notification-sender.model'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { NotificationDeliveryDto } from './dto/notificationDelivery.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
@@ -26,6 +27,7 @@ import {
   ExtendedPaginationDto,
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
+  NotificationSendersDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import {
@@ -68,6 +70,8 @@ export class NotificationsService {
     private readonly actorNotificationModel: typeof ActorNotification,
     @InjectModel(NotificationDelivery)
     private readonly notificationDeliveryModel: typeof NotificationDelivery,
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
     private readonly cmsService: CmsService,
   ) {}
 
@@ -448,6 +452,18 @@ export class NotificationsService {
       throw new InternalServerErrorException(
         'Error getting unread notifications count',
       )
+    }
+  }
+
+  async findSenders(nationalId: string): Promise<NotificationSendersDto> {
+    const rows = await this.userNotificationSenderModel.findAll({
+      attributes: ['senderId'],
+      where: { recipient: nationalId },
+      order: [['senderId', 'ASC']],
+    })
+
+    return {
+      senders: rows.map(({ senderId }) => ({ senderId })),
     }
   }
 

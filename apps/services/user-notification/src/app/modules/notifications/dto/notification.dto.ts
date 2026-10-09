@@ -195,6 +195,28 @@ export class UnseenNotificationsCountDto {
   unseenCount!: number
 }
 
+export class NotificationSenderDto {
+  @ApiProperty({
+    example: '1234567890',
+    description:
+      'National id of a sender the current user has received notifications from',
+  })
+  @IsString()
+  senderId!: string
+}
+
+export class NotificationSendersDto {
+  @ApiProperty({
+    type: [NotificationSenderDto],
+    description:
+      'Distinct senders of notifications the current user has received',
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NotificationSenderDto)
+  senders!: NotificationSenderDto[]
+}
+
 export class ActorNotificationDto {
   @ApiProperty({ example: 123 })
   @IsInt()
