@@ -438,7 +438,7 @@ export class DelegationConfirmationService {
   ): Promise<StartAuthenticationResult> {
     const confirmation = await this.findByIdForUser(user, id)
 
-    this.assertConfirmingUser(user, confirmation)
+    await this.assertConfirmingUser(user, confirmation)
     await this.assertPending(confirmation)
 
     // The whole group is confirmed by this one authentication, and only as a
@@ -447,7 +447,7 @@ export class DelegationConfirmationService {
     const members = await this.findPendingGroup(confirmation)
     await this.assertWholeGroup(confirmation, members)
     for (const member of members) {
-      this.assertConfirmingUser(user, member)
+      await this.assertConfirmingUser(user, member)
     }
     const ids = members.map((member) => member.id)
 
@@ -578,7 +578,7 @@ export class DelegationConfirmationService {
       return { status: 'not_started', confirmation }
     }
 
-    this.assertConfirmingUser(user, confirmation)
+    await this.assertConfirmingUser(user, confirmation)
 
     const result = await this.cibaClient.poll(confirmation.authReqId)
 
@@ -777,12 +777,12 @@ export class DelegationConfirmationService {
     )
   }
 
-  private assertConfirmingUser(
+  private async assertConfirmingUser(
     user: User,
     confirmation: DelegationConfirmation,
-  ): void {
+  ): Promise<void> {
     if (!this.isConfirmingUser(user, confirmation)) {
-      void this.delegationConfirmationModel.increment('attemptCount', {
+      await this.delegationConfirmationModel.increment('attemptCount', {
         where: { id: confirmation.id },
       })
 
@@ -790,17 +790,16 @@ export class DelegationConfirmationService {
         confirmation.attemptCount + 1 >=
         this.delegationConfig.confirmationMaxAttempts
       ) {
-        void this.delegationConfirmationModel
-          .update(
-            { status: DelegationConfirmationStatus.Expired },
-            {
-              where: {
-                id: confirmation.id,
-                status: DelegationConfirmationStatus.Pending,
-              },
+        await this.delegationConfirmationModel.update(
+          { status: DelegationConfirmationStatus.Expired },
+          {
+            where: {
+              id: confirmation.id,
+              status: DelegationConfirmationStatus.Pending,
             },
-          )
-          .then(() => this.removeEmptyDelegations([confirmation.delegationId]))
+          },
+        )
+        await this.removeEmptyDelegations([confirmation.delegationId])
       }
 
       throw new ForbiddenException(

@@ -104,8 +104,17 @@ export class CibaClient {
     const { status, json } = await this.post('/connect/ciba', body)
 
     if (status === 200) {
+      if (
+        typeof json['auth_req_id'] !== 'string' ||
+        !json['auth_req_id'] ||
+        !(Number(json['expires_in']) > 0)
+      ) {
+        throw new ServiceUnavailableException(
+          'The identity server started an authentication without an id or a lifetime.',
+        )
+      }
       return {
-        authReqId: String(json['auth_req_id']),
+        authReqId: json['auth_req_id'],
         method: json['login_method'] === 'sim' ? 'sim' : 'app',
         expiresIn: Number(json['expires_in']),
         interval: Number(json['interval'] ?? 5),
@@ -247,6 +256,7 @@ export class CibaClient {
     body: URLSearchParams,
   ): Promise<{ status: number; json: Record<string, unknown> }> {
     let response: Response
+    let text: string
     try {
       response = await fetch(`${this.options.issuer}${path}`, {
         method: 'POST',
@@ -256,16 +266,30 @@ export class CibaClient {
           this.options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
         ),
       })
+      // Read under the same timeout: a body that never arrives is an outage,
+      // not an empty answer.
+      text = await response.text()
     } catch {
       throw new ServiceUnavailableException(
         'The identity server could not be reached.',
       )
     }
 
-    const json = (await response.json().catch(() => ({}))) as Record<
-      string,
-      unknown
-    >
+    let json: Record<string, unknown> = {}
+    try {
+      const parsed: unknown = text ? JSON.parse(text) : {}
+      if (parsed && typeof parsed === 'object') {
+        json = parsed as Record<string, unknown>
+      }
+    } catch {
+      // An error page that isn't JSON still answers with its status below; a
+      // success that can't be read is of no use.
+      if (response.ok) {
+        throw new ServiceUnavailableException(
+          'The identity server sent an answer that could not be read.',
+        )
+      }
+    }
 
     return { status: response.status, json }
   }

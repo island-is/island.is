@@ -136,6 +136,57 @@ describe('CibaClient', () => {
       ).rejects.toBeInstanceOf(ServiceUnavailableException)
     })
 
+    it('gives up on an answer whose body does not arrive', async () => {
+      jest.spyOn(global, 'fetch').mockImplementation(
+        async (_url, init) =>
+          new Response(
+            new ReadableStream({
+              start(controller) {
+                init?.signal?.addEventListener('abort', () =>
+                  controller.error(new Error('aborted')),
+                )
+              },
+            }),
+            { status: 200 },
+          ),
+      )
+
+      await expect(
+        new CibaClient({ ...options, timeoutMs: 20 }).start({
+          userToken: 't',
+          bindingMessage: 'x',
+        }),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
+    })
+
+    it('does not accept a success it cannot read', async () => {
+      jest
+        .spyOn(global, 'fetch')
+        .mockResolvedValue(new Response('<html>', { status: 200 }))
+
+      await expect(
+        new CibaClient(options).start({ userToken: 't', bindingMessage: 'x' }),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
+    })
+
+    it.each([
+      [{ expires_in: 120 }],
+      [{ auth_req_id: 'r', expires_in: 0 }],
+      [{ auth_req_id: 'r' }],
+    ])(
+      'does not accept a start without an id or a lifetime: %j',
+      async (json) => {
+        respond(200, json)
+
+        await expect(
+          new CibaClient(options).start({
+            userToken: 't',
+            bindingMessage: 'x',
+          }),
+        ).rejects.toBeInstanceOf(ServiceUnavailableException)
+      },
+    )
+
     it('reports why the identity server refused', async () => {
       respond(400, { error: 'unknown_user_id' })
 

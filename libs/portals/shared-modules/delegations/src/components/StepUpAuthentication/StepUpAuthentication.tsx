@@ -234,11 +234,14 @@ export const StepUpAuthentication = ({
       </Box>
 
       {notice && (
-        <AlertMessage
-          type="error"
-          title={notices[notice].title}
-          message={notices[notice].message}
-        />
+        // Announced: a refusal or a timeout arrives while the person waits.
+        <Box role="alert">
+          <AlertMessage
+            type="error"
+            title={notices[notice].title}
+            message={notices[notice].message}
+          />
+        </Box>
       )}
 
       {state.name === 'starting' && (

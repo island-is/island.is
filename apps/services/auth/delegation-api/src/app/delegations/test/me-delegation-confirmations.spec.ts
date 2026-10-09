@@ -683,6 +683,39 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([])
     })
 
+    it('has expired it, and removed the empty delegation, by the time the last refused attempt answers', async () => {
+      // Arrange — one attempt left, and the grantor tries it while acting for
+      // someone else, which a personal grant does not allow.
+      await confirmations().update(
+        { attemptCount: 4 },
+        { where: { id: confirmationId } },
+      )
+      const actingForSomeone = createCurrentUser({
+        nationalId: grantorNationalId,
+        scope: [...delegationScopes],
+        actor: {
+          nationalId: createNationalId('person'),
+          scope: [...delegationScopes],
+        },
+      })
+
+      // Act
+      await expect(
+        app
+          .get(DelegationConfirmationService)
+          .startAuthentication(actingForSomeone, confirmationId),
+      ).rejects.toBeInstanceOf(ForbiddenException)
+
+      // Assert — already done when the refusal is thrown, not some time after.
+      const row = await confirmations().findByPk(confirmationId)
+      expect(row?.status).toEqual(DelegationConfirmationStatus.Expired)
+      const delegations = await app
+        .get<typeof Delegation>(getModelToken(Delegation))
+        .findAll()
+      expect(delegations).toHaveLength(0)
+      expect(ciba.start).not.toHaveBeenCalled()
+    })
+
     it('refuses an approval made for other content', async () => {
       // Arrange — the person approved, but what their key signed was bound to
       // something else.
