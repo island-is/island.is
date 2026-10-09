@@ -236,11 +236,7 @@ describe('DefendantController - Update confirms against an appeal it just regist
     } = await createTestingDefendantModule()
 
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
-
-    const mockTransaction = sequelize.transaction as jest.Mock
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn({} as Transaction),
-    )
+    ;(sequelize.transaction as jest.Mock).mockResolvedValue({} as Transaction)
 
     const mockCreateAppeal = appealCaseService.create as jest.Mock
     mockCreateAppeal.mockResolvedValue({ id: newAppealCaseId } as AppealCase)
@@ -253,24 +249,28 @@ describe('DefendantController - Update confirms against an appeal it just regist
       indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
     })
 
-    await defendantController.update(
-      caseId,
-      defendantId,
-      actor,
-      {
-        id: caseId,
-        type: CaseType.INDICTMENT,
-        courtCaseNumber: 'S-14/2026',
-        indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        // No appeal yet - this request is what creates it.
-        verdictAppealCase: undefined,
-      } as Case,
-      { id: defendantId, caseId } as Defendant,
-      {
-        registerVerdictAppeal: true,
-        indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
-        isAppealDefenderConfirmed: true,
-      },
+    // Guards do not execute in controller unit tests, so the request context
+    // the handler takes its transaction from is set up here.
+    await runInRequestContext(() =>
+      defendantController.update(
+        caseId,
+        defendantId,
+        actor,
+        {
+          id: caseId,
+          type: CaseType.INDICTMENT,
+          courtCaseNumber: 'S-14/2026',
+          indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
+          // No appeal yet - this request is what creates it.
+          verdictAppealCase: undefined,
+        } as Case,
+        { id: defendantId, caseId } as Defendant,
+        {
+          registerVerdictAppeal: true,
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+          isAppealDefenderConfirmed: true,
+        },
+      ),
     )
   })
 
