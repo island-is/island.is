@@ -54,6 +54,7 @@ describe('AccidentNotificationService', () => {
   let accidentNotificationService: AccidentNotificationService
   let s3Service: S3Service
   let accidentReportsApi: AccidentreportsApi
+  let sharedTemplateApiService: SharedTemplateApiService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -67,6 +68,7 @@ describe('AccidentNotificationService', () => {
         {
           provide: AccidentreportsApi,
           useClass: jest.fn(() => ({
+            submitAccidentReport: jest.fn(),
             submitAccidentReportAttachment: jest
               .fn()
               .mockImplementation((input) => {
@@ -152,6 +154,69 @@ describe('AccidentNotificationService', () => {
     accidentNotificationService = module.get(AccidentNotificationService)
     s3Service = module.get(S3Service)
     accidentReportsApi = module.get(AccidentreportsApi)
+    sharedTemplateApiService = module.get(SharedTemplateApiService)
+  })
+
+  describe('submitApplication', () => {
+    const props = () => ({
+      application: createApplication({
+        id: (id++).toString(),
+        applicant: nationalId,
+        typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
+        answers: {
+          applicant: {
+            email: 'applicant@applicant.test',
+            phoneNumber: '8888888',
+          },
+        },
+      }),
+      auth: createCurrentUser(),
+      currentUserLocale: 'is' as Locale,
+    })
+
+    it.each([
+      {
+        name: 'reportId -1',
+        response: { success: false, reportId: -1, errorMessage: 'Villa' },
+      },
+      { name: 'no reportId', response: { success: true, reportId: null } },
+    ])(
+      'should fail without sending emails when SÍ responds with $name',
+      async ({ response }) => {
+        jest
+          .spyOn(accidentReportsApi, 'submitAccidentReport')
+          .mockResolvedValue(response)
+        const sendEmail = jest.spyOn(sharedTemplateApiService, 'sendEmail')
+
+        await expect(
+          accidentNotificationService.submitApplication(props()),
+        ).rejects.toThrow('Villa kom upp við vistun á umsókn.')
+
+        expect(accidentReportsApi.submitAccidentReport).toHaveBeenCalledTimes(1)
+        expect(sendEmail).not.toHaveBeenCalled()
+      },
+    )
+
+    it('should return the documentId when SÍ accepts the report', async () => {
+      jest
+        .spyOn(accidentReportsApi, 'submitAccidentReport')
+        .mockResolvedValue({ success: true, reportId: 123456 })
+      const sendEmail = jest
+        .spyOn(sharedTemplateApiService, 'sendEmail')
+        .mockResolvedValue('some message id')
+      jest
+        .spyOn(sharedTemplateApiService, 'createAssignToken')
+        .mockResolvedValue('some token')
+      const assignThroughEmail = jest
+        .spyOn(sharedTemplateApiService, 'assignApplicationThroughEmail')
+        .mockResolvedValue('some message id')
+
+      const res = await accidentNotificationService.submitApplication(props())
+
+      expect(res).toEqual({ documentId: 123456, sentDocuments: [] })
+      expect(sendEmail).toHaveBeenCalledTimes(1)
+      expect(assignThroughEmail).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('addAdditionalAttachment', () => {
