@@ -27,6 +27,7 @@ import {
   type EmployeeFormValues,
   getSalaryComponentLabels,
   getSalaryComponentTooltips,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   toFormValues,
 } from './utils'
@@ -150,7 +151,9 @@ export const EmployeeForm: FC<Props> = ({
               label={formatMessage(m.paidHoursInputLabel)}
               placeholder={formatMessage(m.paidHoursPlaceholder)}
               tooltip={formatMessage(m.paidHoursTooltip)}
-              type="number"
+              // Plain text, not type="number": NumberFormat strips a pasted
+              // '.' (173.33 → 17333). paidHoursFromFormValue parses both.
+              inputMode="decimal"
               backgroundColor="white"
               size="sm"
               required
@@ -160,6 +163,9 @@ export const EmployeeForm: FC<Props> = ({
                 // a starfshlutfall carried into this field: 0,8 or 1 would
                 // otherwise pass and inflate tímakaup ~173x silently.
                 validate: (value: string) => {
+                  if (!isPaidHoursFormat(value)) {
+                    return formatMessage(m.paidHoursFormatError)
+                  }
                   const hours = paidHoursFromFormValue(value)
                   return (
                     (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||

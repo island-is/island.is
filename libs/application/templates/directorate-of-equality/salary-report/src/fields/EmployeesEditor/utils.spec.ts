@@ -2,6 +2,7 @@ import {
   formatHourlyWage,
   formatPaidHours,
   formatWageAmount,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   paidHoursToFormValue,
 } from './utils'
@@ -14,8 +15,8 @@ describe('paidHours round-trip', () => {
   })
 
   it('does not scale a full-time month into a percentage', () => {
-    expect(paidHoursToFormValue(173.33)).toBe('173.33')
-    expect(paidHoursFromFormValue('173.33')).toBe(173.33)
+    expect(paidHoursToFormValue(173.33)).toBe('173,33')
+    expect(paidHoursFromFormValue('173,33')).toBe(173.33)
   })
 
   it('renders an absent value as empty rather than 0', () => {
@@ -23,10 +24,11 @@ describe('paidHours round-trip', () => {
     expect(paidHoursToFormValue(undefined)).toBe('')
   })
 
-  // type="number" on an is-IS locale can hand back a comma; Number('173,33') is
-  // NaN, which would silently submit 0 hours and inflate tímakaup.
-  it('parses an Icelandic decimal comma', () => {
+  // Number('173,33') is NaN, which would silently submit 0 hours and inflate
+  // tímakaup; a pasted '173.33' must not lose its decimal either.
+  it('parses both a decimal comma and a decimal point', () => {
     expect(paidHoursFromFormValue('173,33')).toBe(173.33)
+    expect(paidHoursFromFormValue('173.33')).toBe(173.33)
   })
 
   it('rounds to the API DECIMAL(6,2) precision', () => {
@@ -36,6 +38,19 @@ describe('paidHours round-trip', () => {
   it('falls back to 0 on unparseable input rather than NaN', () => {
     expect(paidHoursFromFormValue('')).toBe(0)
     expect(paidHoursFromFormValue('abc')).toBe(0)
+  })
+
+  it.each(['1e2', '0x64', '173,3,3', '173,', ',5', '-10', '1.234,5'])(
+    'rejects %p rather than letting Number() coerce it',
+    (value) => {
+      expect(isPaidHoursFormat(value)).toBe(false)
+      expect(paidHoursFromFormValue(value)).toBe(0)
+    },
+  )
+
+  it('accepts surrounding whitespace', () => {
+    expect(isPaidHoursFormat(' 173,33 ')).toBe(true)
+    expect(paidHoursFromFormValue(' 173,33 ')).toBe(173.33)
   })
 })
 

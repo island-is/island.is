@@ -917,10 +917,6 @@ export const messages = {
         defaultMessage:
           'Fjöldi greiddra stunda, að föstum yfirvinnustundum meðtöldum en ekki tilfallandi. Aukastafir leyfðir.',
       },
-      startDateTooltip: {
-        id: 'doe.sr.application:report.employees.startDateTooltip',
-        defaultMessage: 'Dagsetning ráðningar.',
-      },
       baseSalaryTooltip: {
         id: 'doe.sr.application:report.employees.baseSalaryTooltip',
         defaultMessage: 'Krónur á tímabilinu.',
@@ -951,6 +947,39 @@ export const messages = {
         id: 'doe.sr.application:report.employees.bonusOtherTooltip',
         defaultMessage:
           'Krónur á tímabilinu. Skildu eftir autt ef á ekki við. Hér er átt við aðrar tilfallandi greiðslur og hlunnindi sem tengjast starfsaðstæðum eða sérhæfingu, þ.e. tilfallandi álagsgreiðslur aðrar en í dálki M, s.s. fjarvinnuálag, geislaálag, vopnaálag, aðgerðarálag o.fl.',
+      },
+      // Saved-row variants: input instructions don't apply to saved data.
+      paidHoursDetailTooltip: {
+        id: 'doe.sr.application:report.employees.paidHoursDetailTooltip',
+        defaultMessage:
+          'Fjöldi greiddra stunda, að föstum yfirvinnustundum meðtöldum en ekki tilfallandi.',
+      },
+      additionalFixedOvertimeDetailTooltip: {
+        id: 'doe.sr.application:report.employees.additionalFixedOvertimeDetailTooltip',
+        defaultMessage:
+          'Krónur á tímabilinu. Hér er átt við fasta yfirvinnu og ýmis konar álagsgreiðslur sem eru hluti fastra launa og gerðar eru upp á hverju útborgunartímabili.',
+      },
+      additionalFixedCarAllowanceDetailTooltip: {
+        id: 'doe.sr.application:report.employees.additionalFixedCarAllowanceDetailTooltip',
+        defaultMessage: 'Krónur á tímabilinu.',
+      },
+      additionalFixedOtherDetailTooltip: {
+        id: 'doe.sr.application:report.employees.additionalFixedOtherDetailTooltip',
+        defaultMessage: 'Krónur á tímabilinu.',
+      },
+      bonusOccasionalOvertimeDetailTooltip: {
+        id: 'doe.sr.application:report.employees.bonusOccasionalOvertimeDetailTooltip',
+        defaultMessage:
+          'Krónur á tímabilinu. Hér er átt við tilfallandi/mælda yfirvinnu og ýmis konar álagsgreiðslur sem ekki fela í sér fastar greiðslur heldur tengjast vinnufyrirkomulagi, s.s. yfirvinnuálag, kvöld-, helgar- og næturálag, útkallsálag o.fl.',
+      },
+      bonusOccasionalCarAllowanceDetailTooltip: {
+        id: 'doe.sr.application:report.employees.bonusOccasionalCarAllowanceDetailTooltip',
+        defaultMessage: 'Krónur á tímabilinu.',
+      },
+      bonusOtherDetailTooltip: {
+        id: 'doe.sr.application:report.employees.bonusOtherDetailTooltip',
+        defaultMessage:
+          'Krónur á tímabilinu. Hér er átt við aðrar tilfallandi greiðslur og hlunnindi sem tengjast starfsaðstæðum eða sérhæfingu, þ.e. tilfallandi álagsgreiðslur aðrar en í dálki M, s.s. fjarvinnuálag, geislaálag, vopnaálag, aðgerðarálag o.fl.',
       },
       addButton: {
         id: 'doe.sr.application:report.employees.addButton',
@@ -1014,6 +1043,10 @@ export const messages = {
         id: 'doe.sr.application:report.employees.paidHoursRangeError',
         defaultMessage:
           'Greiddar stundir þurfa að vera á bilinu 4–750. Skráðu fjölda greiddra stunda í mánuðinum, ekki starfshlutfall.',
+      },
+      paidHoursFormatError: {
+        id: 'doe.sr.application:report.employees.paidHoursFormatError',
+        defaultMessage: 'Skráðu fjölda stunda sem tölu, t.d. 173,33.',
       },
       saveButton: {
         id: 'doe.sr.application:report.employees.saveButton',
