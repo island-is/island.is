@@ -17,6 +17,10 @@ export interface PreferencesStore {
   hasOnboardedNotifications: boolean
   hasOnboardedPrivacy: boolean
   hasAcceptedNotifications: boolean
+  /** Android cannot tell "never asked" from "declined", so remember that we asked. */
+  hasRequestedNotificationsPermission: boolean
+  /** Set by "decide later" at onboarding, so the home screen leaves them alone. */
+  hasDeferredNotificationsOnboarding: boolean
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
@@ -60,6 +64,8 @@ const defaultPreferences = {
   hasOnboardedNotifications: false,
   hasOnboardedPrivacy: false,
   hasAcceptedNotifications: false,
+  hasRequestedNotificationsPermission: false,
+  hasDeferredNotificationsOnboarding: false,
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
