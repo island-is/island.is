@@ -586,8 +586,11 @@ describe('Calculator', () => {
       ).not.toBeNull(),
     )
     expect(
-      screen.getByText('Niðurstöður eru úreltar, reiknaðu aftur'),
-    ).toBeTruthy()
+      screen.getAllByText('Niðurstöður eru úreltar, reiknaðu aftur'),
+    ).toHaveLength(2)
+    expect(screen.getByRole('status').textContent).toBe(
+      'Niðurstöður eru úreltar, reiknaðu aftur',
+    )
   })
 
   it('announces the calculation and its result in a status region', async () => {

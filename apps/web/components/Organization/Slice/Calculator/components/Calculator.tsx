@@ -308,8 +308,12 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const announcement = calculating
     ? localized(CALCULATOR_MESSAGES.calculating, activeLocale)
     : alerts[0] ??
-      (shown && hasResults
-        ? localized(CALCULATOR_MESSAGES.resultReady, activeLocale)
+      (hasResults
+        ? shown
+          ? localized(CALCULATOR_MESSAGES.resultReady, activeLocale)
+          : !isCurrent
+          ? localized(CALCULATOR_MESSAGES.staleResult, activeLocale)
+          : undefined
         : undefined)
 
   return (
