@@ -288,22 +288,38 @@ export class DelegationConfirmationService {
         },
       )
 
-      for (const confirmation of confirmations) {
-        if (!confirmation.delegationId) {
-          continue
-        }
-        const scopes = await this.delegationScopeService.findByDelegationId(
-          confirmation.delegationId,
-          transaction,
-        )
-        if (scopes.length === 0) {
-          await this.delegationModel.destroy({
-            where: { id: confirmation.delegationId },
-            transaction,
-          })
-        }
-      }
+      await this.removeEmptyDelegations(
+        confirmations.map((confirmation) => confirmation.delegationId),
+        transaction,
+      )
     })
+  }
+
+  /**
+   * Removes delegations that were made only to hold confirmations which have
+   * now ended: no scope was ever granted on them, and nothing else is waiting
+   * for them. A first grant that is never confirmed leaves nothing behind.
+   */
+  private async removeEmptyDelegations(
+    delegationIds: Array<string | null | undefined>,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const ids = new Set(delegationIds.filter((id): id is string => Boolean(id)))
+    for (const id of ids) {
+      const [scopes, waiting] = await Promise.all([
+        this.delegationScopeService.findByDelegationId(id, transaction),
+        this.delegationConfirmationModel.count({
+          where: {
+            delegationId: id,
+            status: DelegationConfirmationStatus.Pending,
+          },
+          transaction,
+        }),
+      ])
+      if (scopes.length === 0 && waiting === 0) {
+        await this.delegationModel.destroy({ where: { id }, transaction })
+      }
+    }
   }
 
   /**
@@ -338,6 +354,9 @@ export class DelegationConfirmationService {
           status: DelegationConfirmationStatus.Pending,
         },
       },
+    )
+    await this.removeEmptyDelegations(
+      pendingMembers.map((member) => member.delegationId),
     )
     throw new GoneException(
       'Part of this grant has changed since it was made. Grant it again.',
@@ -550,6 +569,7 @@ export class DelegationConfirmationService {
           status: DelegationConfirmationStatus.Expired,
           authReqId: null,
         })
+        await this.removeEmptyDelegations([confirmation.delegationId])
       }
       return { status: 'expired', confirmation }
     }
@@ -589,13 +609,16 @@ export class DelegationConfirmationService {
       (member) => member.authReqId === authReqId,
     )
 
+    // The identity server has issued its token for this request, so it can't be
+    // collected again: whatever is refused here ends the step-up, and the next
+    // poll answers not_started rather than timed_out.
     try {
       await this.assertStepUp(confirmation, members, result.claims)
+      await this.complete(user, members, result.claims)
     } catch (error) {
       await endStepUp()
       throw error
     }
-    await this.complete(user, members, result.claims)
     await confirmation.reload()
 
     return { status: 'confirmed', confirmation, completedNow: members }
@@ -729,6 +752,7 @@ export class DelegationConfirmationService {
       await confirmation.update({
         status: DelegationConfirmationStatus.Expired,
       })
+      await this.removeEmptyDelegations([confirmation.delegationId])
       throw new GoneException('Confirmation has expired.')
     }
   }
@@ -766,15 +790,17 @@ export class DelegationConfirmationService {
         confirmation.attemptCount + 1 >=
         this.delegationConfig.confirmationMaxAttempts
       ) {
-        void this.delegationConfirmationModel.update(
-          { status: DelegationConfirmationStatus.Expired },
-          {
-            where: {
-              id: confirmation.id,
-              status: DelegationConfirmationStatus.Pending,
+        void this.delegationConfirmationModel
+          .update(
+            { status: DelegationConfirmationStatus.Expired },
+            {
+              where: {
+                id: confirmation.id,
+                status: DelegationConfirmationStatus.Pending,
+              },
             },
-          },
-        )
+          )
+          .then(() => this.removeEmptyDelegations([confirmation.delegationId]))
       }
 
       throw new ForbiddenException(
@@ -847,14 +873,28 @@ export class DelegationConfirmationService {
    * rows — those are evidence and outlive the delegation.
    */
   async expirePending(): Promise<number> {
+    const elapsed = await this.delegationConfirmationModel.findAll({
+      attributes: ['id', 'delegationId'],
+      where: {
+        status: DelegationConfirmationStatus.Pending,
+        expiresAt: { [Op.lt]: new Date() },
+      },
+    })
+    if (elapsed.length === 0) {
+      return 0
+    }
+
     const [affected] = await this.delegationConfirmationModel.update(
       { status: DelegationConfirmationStatus.Expired },
       {
         where: {
+          id: elapsed.map((confirmation) => confirmation.id),
           status: DelegationConfirmationStatus.Pending,
-          expiresAt: { [Op.lt]: new Date() },
         },
       },
+    )
+    await this.removeEmptyDelegations(
+      elapsed.map((confirmation) => confirmation.delegationId),
     )
 
     return affected

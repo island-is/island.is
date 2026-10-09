@@ -1,5 +1,7 @@
 export { Feature } from './lib/feature'
 
+export type { AuthUser, Credentials } from './lib/auth'
+
 export {
   Gender,
   DefenderChoice,
@@ -68,6 +70,18 @@ export {
   AppealOrigin,
   appealOrigins,
 } from './lib/eventLog'
+
+export {
+  AppealSummonsAction,
+  AppealSummonsAppellantSide,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
+  getAppealSummonsStatus,
+} from './lib/appealSummons'
+export type {
+  AppealSummonsStatus,
+  AppealSummonsStatusFields,
+} from './lib/appealSummons'
 
 export {
   AppealCaseState,

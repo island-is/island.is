@@ -74,6 +74,14 @@ export class DelegationScopeService {
     options?: CreateScopesOptions,
   ): Promise<DelegationScope[]> {
     if (scopes && scopes.length > 0) {
+      // Checked before anything is deleted: a refused write must not remove the
+      // scopes it was meant to replace, transaction or not.
+      await this.assertScopesMayBeGranted(
+        delegationId,
+        scopes,
+        transaction,
+        options,
+      )
       await this.delete(
         delegationId,
         scopes.map((s) => s.name),

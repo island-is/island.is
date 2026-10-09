@@ -33,6 +33,8 @@ import { DelegationsIncomingWardService } from './delegations-incoming-ward.serv
 import { DelegationsIncomingService } from './delegations-incoming.service'
 import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationsOutgoingService } from './delegations-outgoing.service'
+import { DelegationPreferenceService } from './delegation-preference.service'
+import { DelegationPreference } from './models/delegation-preference.model'
 import { DelegationsService } from './delegations.service'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
@@ -74,12 +76,14 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
       DelegationDelegationType,
       DelegationConfirmation,
       Domain,
+      DelegationPreference,
     ]),
     UserSystemNotificationModule,
     SyslumennClientModule,
   ],
   providers: [
     DelegationsService,
+    DelegationPreferenceService,
     DelegationsOutgoingService,
     DelegationsIncomingService,
     DelegationScopeService,
@@ -109,6 +113,7 @@ import { NationalRegistryV3FeatureService } from './national-registry-v3-feature
   ],
   exports: [
     DelegationsService,
+    DelegationPreferenceService,
     DelegationsOutgoingService,
     DelegationsIncomingService,
     DelegationScopeService,

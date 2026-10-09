@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Box, Button, LoadingDots, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -175,12 +181,27 @@ export const StepUpAuthentication = ({
     }
   }, [autoStart, begin])
 
-  const notices: Record<Notice, string> = {
-    denied: formatMessage(m.stepUpDenied),
-    timed_out: formatMessage(m.stepUpTimedOut),
-    too_many_attempts: formatMessage(m.stepUpTooManyAttempts),
-    unavailable: formatMessage(m.stepUpUnavailable),
-    failed: formatMessage(m.stepUpStartFailed),
+  const notices: Record<Notice, { title: string; message: string }> = {
+    denied: {
+      title: formatMessage(m.stepUpDeniedTitle),
+      message: formatMessage(m.stepUpDenied),
+    },
+    timed_out: {
+      title: formatMessage(m.stepUpTimedOutTitle),
+      message: formatMessage(m.stepUpTimedOut),
+    },
+    too_many_attempts: {
+      title: formatMessage(m.stepUpTooManyAttemptsTitle),
+      message: formatMessage(m.stepUpTooManyAttempts),
+    },
+    unavailable: {
+      title: formatMessage(m.stepUpUnavailableTitle),
+      message: formatMessage(m.stepUpUnavailable),
+    },
+    failed: {
+      title: formatMessage(m.stepUpStartFailedTitle),
+      message: formatMessage(m.stepUpStartFailed),
+    },
   }
 
   const notice =
@@ -213,9 +234,11 @@ export const StepUpAuthentication = ({
       </Box>
 
       {notice && (
-        <Box role="alert">
-          <Text textAlign="center">{notices[notice]}</Text>
-        </Box>
+        <AlertMessage
+          type="error"
+          title={notices[notice].title}
+          message={notices[notice].message}
+        />
       )}
 
       {state.name === 'starting' && (
@@ -261,7 +284,8 @@ export const StepUpAuthentication = ({
         </>
       )}
 
-      {(onBack || state.name === 'idle') && (
+      {/* While waiting the modal's own close is the way out, as designed. */}
+      {state.name === 'idle' && (onBack || canRetry) && (
         <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
           {onBack ? (
             <Button variant="ghost" onClick={onBack}>
@@ -270,7 +294,7 @@ export const StepUpAuthentication = ({
           ) : (
             <span />
           )}
-          {state.name === 'idle' && canRetry && (
+          {canRetry && (
             <Button onClick={() => begin()}>
               {formatMessage(notice ? m.stepUpRetry : m.stepUpStart)}
             </Button>

@@ -171,6 +171,8 @@ export class AuthService {
 
     // Lawyers must be on the lawyer registry to get access, regardless of
     // whether they are assigned as defenders, spokespersons or victim lawyers.
+    // Request-case defenders no longer require a case-level (or defendant-level)
+    // lookup at login — case assignment only gates which cases appear later.
     let lawyerRegistryInfo: Lawyer | null = null
 
     try {

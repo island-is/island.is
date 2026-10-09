@@ -13,7 +13,6 @@ import { IntroHeader } from '@island.is/portals/core'
 
 import { StepUpAuthentication } from '../../components/StepUpAuthentication/StepUpAuthentication'
 import { useDelegationConfirmationStepUp } from '../../components/StepUpAuthentication/useDelegationConfirmationStepUp'
-import { joinNames } from '../../components/StepUpAuthentication/joinNames'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 import { useAuthDelegationConfirmationQuery } from './ConfirmDelegation.generated'
@@ -174,12 +173,7 @@ export const ConfirmDelegation = () => {
             check={check}
             onConfirmed={() => setOutcome('confirmed')}
             onExpired={() => setOutcome('expired')}
-            context={formatMessage(m.stepUpContext, {
-              name: joinNames(
-                members.map((member) => member.toName),
-                formatMessage(m.stepUpNamesAnd),
-              ),
-            })}
+            context={formatMessage(m.stepUpContext)}
           />
         </Box>
       )}

@@ -6,15 +6,39 @@ export const translation = defineMessages({
     defaultMessage: 'Verð með flutningi',
     description: 'Label for the start amount',
   },
-  totalAmountBreakdownLabel: {
-    id: 'web.customsCalculator:totalAmountBreakdownLabel',
-    defaultMessage: 'Samtals',
-    description: 'Label for the total amount breakdown',
-  },
   amountLabel: {
     id: 'web.customsCalculator:amountLabel',
-    defaultMessage: 'Upphæð',
+    defaultMessage: 'Upphæð (kr.)',
     description: 'Label for the amount',
+  },
+  explanationLabel: {
+    id: 'web.customsCalculator:explanationLabel',
+    defaultMessage: 'Skýring',
+    description: 'Column title for the explanation in the breakdown',
+  },
+  importFeesLabel: {
+    id: 'web.customsCalculator:importFeesLabel',
+    defaultMessage: 'Innflutningsgjöld',
+    description: 'Label for the total import fees',
+  },
+  disclaimer: {
+    id: 'web.customsCalculator:disclaimer',
+    defaultMessage:
+      'Útreikningur miðast við þær forsendur sem þú gafst upp hér að ofan. Við komu til landsins er varan flokkuð í réttan tollflokk af sérfræðingum.',
+    description: 'Disclaimer shown below the calculation results',
+  },
+  exchangeRateDisclaimer: {
+    id: 'web.customsCalculator:exchangeRateDisclaimer',
+    defaultMessage:
+      'Gjöld sem lögð eru á vöru miðast við <link>tollafgreiðslugengi</link> eins og það er á þeim degi sem hún er tollafgreidd. Nákvæmt og endanlegt verð liggur því aldrei fyrir fyrr en við tollafgreiðslu vöru.',
+    description:
+      'Exchange rate disclaimer shown below the calculation results, the text inside <link></link> links to the exchange rates',
+  },
+  exchangeRateDisclaimerLinkUrl: {
+    id: 'web.customsCalculator:exchangeRateDisclaimerLinkUrl',
+    defaultMessage:
+      'https://www.skatturinn.is/atvinnurekstur/tollamal/tollafgreidslugengi/gengi-gjaldmidla/',
+    description: 'Link to the exchange rates in the exchange rate disclaimer',
   },
   breakdownLabel: {
     id: 'web.customsCalculator:breakdownLabel',
@@ -25,11 +49,6 @@ export const translation = defineMessages({
     id: 'web.customsCalculator:totalAmountLabel',
     defaultMessage: 'Áætlað heildarverð',
     description: 'Label for the total amount',
-  },
-  additionalAmountLabel: {
-    id: 'web.customsCalculator:additionalAmountLabel',
-    defaultMessage: 'Þar af innflutningsgjöld',
-    description: 'Label for the additional amount',
   },
   nedcDescription: {
     id: 'web.customsCalculator:nedcDescription',
@@ -81,6 +100,12 @@ export const translation = defineMessages({
     defaultMessage: 'Vöruleit',
     description: 'Label for the product search input',
   },
+  keywordsLabel: {
+    id: 'web.customsCalculator:keywordsLabel',
+    defaultMessage: 'Lykilorð',
+    description:
+      'Label for the keywords shown under a product category in search results',
+  },
   clearProductSearchInputLabel: {
     id: 'web.customsCalculator:clearProductSearchInputLabel',
     defaultMessage: 'Hreinsa leit',
@@ -88,13 +113,30 @@ export const translation = defineMessages({
   },
   priceWithShippingDescription: {
     id: 'web.customsCalculator:priceWithShippingDescription',
-    defaultMessage: 'Verð vöru komin til Íslands',
+    defaultMessage:
+      'Verð vöru komin til Íslands. Reiknivélin notar tollafgreiðslugengi dagsins við útreikninga.',
     description: 'Description for the price with shipping input',
   },
   searchForCategory: {
     id: 'web.customsCalculator:searchForCategory',
     defaultMessage: 'Leita eftir vöruflokki',
     description: 'Button label for searching for a category',
+  },
+  descriptionConjunction: {
+    id: 'web.customsCalculator:descriptionConjunction',
+    defaultMessage: 'og',
+    description:
+      'Word joining the last two input descriptions, e.g. "Skráið áfengisprósentu og heildarmagn í lítrum"',
+  },
+  priceSectionTitle: {
+    id: 'web.customsCalculator:priceSectionTitle',
+    defaultMessage: 'Verð',
+    description: 'Title for the price section',
+  },
+  productInfoSectionTitle: {
+    id: 'web.customsCalculator:productInfoSectionTitle',
+    defaultMessage: 'Upplýsingar um vöru',
+    description: 'Title for the product information section',
   },
   shortcutsTitle: {
     id: 'web.customsCalculator:shortcutsTitle',

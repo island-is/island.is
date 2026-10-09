@@ -23,7 +23,14 @@ export interface CibaClientOptions {
   scope: string
   /** The assurance level the person must authenticate at. */
   requiredAcr: string
+  /**
+   * How long to wait for the identity server before giving up. A stalled
+   * server must not hold the caller's request, and the polls behind it, open.
+   */
+  timeoutMs?: number
 }
+
+const DEFAULT_TIMEOUT_MS = 10_000
 
 /**
  * The session behind the user token can't be stepped up at all — logged in
@@ -245,6 +252,9 @@ export class CibaClient {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body,
+        signal: AbortSignal.timeout(
+          this.options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
+        ),
       })
     } catch {
       throw new ServiceUnavailableException(

@@ -7,6 +7,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { LinkButton } from '@island.is/portals/my-pages/core'
 import { useWindowSize } from 'react-use'
+import * as styles from './RedirectCard.css'
 
 interface Props {
   title: string
@@ -33,15 +34,16 @@ export const RedirectCard = ({
       justifyContent="center"
       flexDirection={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
       columnGap={[2, 4, 8, 8, 12]}
-      rowGap={[7, 7, 7, 0]}
-      paddingY={[5, 8]}
-      paddingX={[3, 3, 5, 10]}
+      rowGap={[3, 3, 3, 0]}
+      paddingTop={[2, 8]}
+      paddingBottom={[5, 8]}
+      paddingX={[2, 3, 5, 10]}
       className={problemTemplateContainer({ blue: true })}
     >
       <Box
         display="flex"
         flexDirection="column"
-        rowGap={2}
+        rowGap={[1, 1, 1, 2]}
         alignItems={['center', 'center', 'center', 'flexStart']}
         justifyContent={['center', 'center', 'center', 'flexStart']}
       >
@@ -56,7 +58,7 @@ export const RedirectCard = ({
         <Text whiteSpace="preLine" textAlign={isStacked ? 'center' : 'left'}>
           {text}
         </Text>
-        <Box marginTop={2}>
+        <Box marginTop={2} className={styles.buttonWrap}>
           <LinkButton
             to={linkUrl}
             text={linkText}

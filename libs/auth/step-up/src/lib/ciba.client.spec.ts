@@ -1,4 +1,5 @@
 import { generateKeyPairSync } from 'crypto'
+import { ServiceUnavailableException } from '@nestjs/common'
 import { sign } from 'jsonwebtoken'
 
 import {
@@ -113,6 +114,26 @@ describe('CibaClient', () => {
           bindingMessage: 'x',
         }),
       ).rejects.toThrow('no client secret')
+    })
+
+    it('gives up on an identity server that does not answer', async () => {
+      jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(
+          (_url, init) =>
+            new Promise((_resolve, reject) =>
+              init?.signal?.addEventListener('abort', () =>
+                reject(new Error('aborted')),
+              ),
+            ),
+        )
+
+      await expect(
+        new CibaClient({ ...options, timeoutMs: 20 }).start({
+          userToken: 't',
+          bindingMessage: 'x',
+        }),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
     })
 
     it('reports why the identity server refused', async () => {

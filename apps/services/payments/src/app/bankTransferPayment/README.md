@@ -4,11 +4,12 @@ The bank-transfer method lets a payer settle a payment flow by initiating a dire
 bank-to-bank transfer, authenticated with their bank's Strong Customer Authentication (SCA).
 **[Blikk](https://blikk.tech) is the current (v1) provider**.
 
-The feature is gated behind two feature flags (see [Feature flags & access](#feature-flags--access)).
+The feature is gated behind feature flags (see [Feature flags & access](#feature-flags--access)).
 
 ## Contents
 
 - [Data model](#data-model)
+- [Company payers](#company-payers)
 - [End-to-end flow](#end-to-end-flow)
 - [Blikk status model](#blikk-status-model)
 - [Status → action → screen](#status--action--screen)
@@ -24,7 +25,7 @@ The feature is gated behind two feature flags (see [Feature flags & access](#fea
 
 ## Data model
 
-`bank_transfer_payment` ([model](./models/bankTransferPayment.model.ts), [migration](../../../migrations/20260527000000-create-bank-transfer-payment.js)):
+`bank_transfer_payment` ([model](./models/bankTransferPayment.model.ts), [migrations](../../../migrations/20260527000000-create-bank-transfer-payment.js), [actor](../../../migrations/20261006000000-add-bank-transfer-payment-actor-national-id.js)):
 
 | Column                 | Notes                                                                                                                                                                                                       |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -35,12 +36,33 @@ The feature is gated behind two feature flags (see [Feature flags & access](#fea
 | `amount`               | Amount sent to the provider (ISK).                                                                                                                                                                          |
 | `last_known_status`    | **Raw** provider status string (e.g. `SCA_REQUIRED`), persisted verbatim. Normalized on read.                                                                                                               |
 | `sca_redirect_url`     | Interactive-SCA URL. Empty/null = back-channel SCA (no redirect).                                                                                                                                           |
+| `actor_national_id`    | The individual who authorised a company payer's transfer, for disputes and reconciliation. Null when the payer is a person. Kept off flow events, which are delivered to the organisation.                  |
 | `expires_at`           | TTL; mirrors the `expiresAt` we sent the provider. Drives expiry + the FE polling hard timeout.                                                                                                             |
 | `is_deleted`           | Soft-delete flag.                                                                                                                                                                                           |
 
 **One active attempt per flow** is enforced by a partial unique index:
 `bank_transfer_payment_one_active_per_payment_flow_id ON (payment_flow_id) WHERE is_deleted = false`.
 A `(provider, provider_payment_id)` unique key prevents cross-flow id collisions.
+
+## Company payers
+
+When the flow's `payerNationalId` is a company, the payment screen asks for the national id of an
+individual with the rights to authorise payments from the company account, and shows the company's
+national id read-only. It is sent as `actorNationalId` on `paymentsCreateBankTransfer`, and
+[`getBankTransferDebtor`](./bankTransfer.utils.ts) maps it onto Blikk's debtor fields:
+
+| Payer   | `debtorExternalId` (authenticates with their bank) | `debtorCorpExternalId` (debited) |
+| ------- | -------------------------------------------------- | -------------------------------- |
+| Company | the individual (`actorNationalId`)                 | the company                      |
+| Person  | the payer (`actorNationalId` is ignored)           | —                                |
+
+Company payers are rolled out per company behind `isIslandisBankTransferPaymentAllowedForCompany`
+(see [Feature flags & access](#feature-flags--access)). A payer that is not allowed is refused with
+`FailedToCreateBankTransfer`. That covers a company the flag does not allow, and a temporary
+kennitala, which is never allowed. A company without a valid individual (missing, a company or a
+temporary kennitala) is refused with `InvalidActorNationalId`. Both refusals happen before Blikk is
+called; the screen validates the individual with the same rule and shows a refusal on that input.
+The FJS charge's payer is always `payerNationalId`.
 
 ## End-to-end flow
 
@@ -58,7 +80,7 @@ sequenceDiagram
     FE->>GQL: paymentsCreateBankTransfer
     GQL->>SVC: create()
     SVC->>SVC: isEligibleToBePaid + find active row
-    SVC->>B: POST /ecom/v3/payments/direct-debtor (amount, items, expiresAt, callbackUrl, debtorExternalId, debtorBban)
+    SVC->>B: POST /ecom/v3/payments/direct-debtor (amount, items, expiresAt, callbackUrl, debtorExternalId, debtorCorpExternalId?, debtorBban)
     B-->>SVC: { id, status, scaRedirectUrl? }
     SVC->>SVC: persist row (PENDING), emit payment_started
     SVC-->>FE: { providerPaymentId, scaRedirectUrl, expiresAt, onboardingRequired }
@@ -95,8 +117,9 @@ sequenceDiagram
     FE->>U: Receipt screen
 ```
 
-The webhook and the FE polling loop are **two independent paths to the same idempotent
-`verify`**. Either one settles the flow; the other becomes a no-op.
+The webhook and the FE polling loop are **two independent paths into the same `verify`**. Only the
+terminal state transition is idempotent: one caller wins the compare-and-set and emits the event.
+The loser still reaches `createFjsCharge` — see [Settlement & FJS charge](#settlement--fjs-charge).
 
 ## Blikk status model
 
@@ -146,7 +169,8 @@ local hook state.
    [`BankTransferPayment`](../../../../../../apps/payments/components/BankTransferPayment/BankTransferPayment.tsx)
    body renders between the selector and the submit button. It shows an **`info` disclaimer**
    banner normally, swapping to a **`default` waiting** banner while polling is in flight
-   (`isWaiting`). Submit button label is `bankTransfer.confirm`; it is disabled/loading while
+   (`isWaiting`). For a company payer the banner says who is paid for, and the individual's and
+   company's national ids appear above the account number (see [Company payers](#company-payers)). Submit button label is `bankTransfer.confirm`; it is disabled/loading while
    polling so the payer can't double-submit.
 2. **Submit → pending screen (no SCA redirect).** On submit, the FE `router.reload()`s so SSR
    lands on the pending screen — SCA is rendered **inline** there, not via redirect. The single
@@ -186,10 +210,10 @@ local hook state.
    [`useBankTransferStatusPolling`](../../../../../../apps/payments/hooks/useBankTransferStatusPolling.ts)'s
    500ms→5s ladder:
 
-   | Bank | Reached `SCA_REQUIRED` | URL at `SCA_REQUIRED` |
-   | --- | --- | --- |
-   | Landsbankinn (redirect) | 5th poll, ~6.5 s | `app.landsbankinn.is/connect/authorize?…` |
-   | Íslandsbanki (back-channel) | 1st poll, < 1 s | none — bank pushes to the banking app |
+   | Bank                        | Reached `SCA_REQUIRED` | URL at `SCA_REQUIRED`                     |
+   | --------------------------- | ---------------------- | ----------------------------------------- |
+   | Landsbankinn (redirect)     | 5th poll, ~6.5 s       | `app.landsbankinn.is/connect/authorize?…` |
+   | Íslandsbanki (back-channel) | 1st poll, < 1 s        | none — bank pushes to the banking app     |
 
    Note the redirect URL Blikk reports at `SCA_REQUIRED` is the **bank's own** authorisation page,
    not the `payment.blikk.tech` hosted page returned by `create`. They are different URLs; only the
@@ -255,6 +279,21 @@ stateDiagram-v2
    retries, the fulfillment is kept (we don't un-settle) and a warning is logged — the payment
    worker retries the charge on its next run.
 
+> **Two finalizers can both reach FJS.** The loser of the `payment_fulfillment` race in step 2
+> carries on to step 3, so a webhook and a poll landing together produce two `createFjsCharge`
+> calls. FJS is what makes that safe: `requestID = paymentFlowId` is stable, so the second create
+> is rejected as `AlreadyCreatedCharge` and reconciled by step 4. That is inferred from the client
+> surface rather than verified, so the duplicate case is handled anyway — `createFjsCharge`
+> compares the reception id FJS returned against the row it adopts, and logs
+> `CRITICAL: FJS accepted a duplicate charge …` only when they differ.
+> Alert on the structured fields rather than the prose: `needsManualReversal` (a charge at FJS we
+> never persisted) and `needsReconciliation` (conflict with a soft-deleted row). A
+> `needsManualReversal` case is also written to `payment_flow_event` (`reason = 'other'`, the
+> reception id in `metadata`) without notifying the organisation, so it outlives log retention. A reconcile that
+> finds no row is not logged — it cannot tell a lagging commit from a real orphan, and the caller
+> and worker retries surface it anyway. Page on a settled flow that still has no `fjs_charge` row. Either way this is a duplicate _record_, not a second debit: the payer's
+> money moves once, at the provider.
+
 > **Worker backstop (FJS charge only).** The payment worker sweeps paid flows without an FJS
 > charge — once per payment method
 > ([`findPaidFlowsWithoutFjsCharge`](../paymentFlow/paymentFlow.service.ts)) — and rebuilds the
@@ -271,7 +310,8 @@ webhook body's `status` is **ignored** — `verify` fetches the authoritative st
 itself. A forged callback can therefore only trigger a (harmless, idempotent) refresh.
 
 **Polling** ([`useBankTransferStatusPolling`](../../../../../../apps/payments/hooks/useBankTransferStatusPolling.ts)):
-the FE polls `verify` by `paymentFlowId` with backoff `[1s, 2s, 4s, 8s, 15s]`, capped by a hard
+the FE polls `verify` by `paymentFlowId` with backoff `[500ms, 1s, 2s, 3s, 5s]` — dropping
+to a 10s steady state once the SCA URL is on screen — capped by a hard
 timeout derived from `expiresAt` (+30s grace; 10-min fallback if absent). Polling runs only on the
 waiting screen (`paymentStatus === bank_transfer_pending`), which is where both SCA paths land via
 SSR. It exits silently on `BankTransferNotFound`.
@@ -366,17 +406,21 @@ Bank-transfer refunds reuse the FJS-charge deletion mechanism, orchestrated by t
 
 ## Feature flags & access
 
-| Flag                                          | Scope                |
-| --------------------------------------------- | -------------------- |
-| `isIslandisBankTransferPaymentEnabled`        | Global               |
-| `isIslandisBankTransferPaymentAllowedForUser` | Per-user (ConfigCat) |
+| Flag                                             | Scope                   |
+| ------------------------------------------------ | ----------------------- |
+| `isIslandisBankTransferPaymentEnabled`           | Global                  |
+| `isIslandisBankTransferPaymentAllowedForUser`    | Per-user (ConfigCat)    |
+| `isIslandisBankTransferPaymentAllowedForCompany` | Per-company (ConfigCat) |
 
-Both are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
+All are defined in [`features.ts`](../../../../../../libs/feature-flags/src/lib/features.ts).
 
 - **`isIslandisBankTransferPaymentEnabled`** — the offer kill-switch. Two effects:
   1. Guards the bank-transfer REST controller via `FeatureFlagGuard` — off → `create` / `verify` / `cancel` reject.
-  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the individuals-only `isPerson` check.
-- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints.
+  2. Gates inclusion of `bank_transfer` in a flow's `availablePaymentMethods` at flow creation (see [`paymentFlow.service.ts`](../paymentFlow/paymentFlow.service.ts)) — off → the method is never listed, so the selector never shows a method whose endpoints are also closed. Combined with the payer check: individuals are offered it, companies only when `isIslandisBankTransferPaymentAllowedForCompany` allows them, temporary kennitalas never.
+- **`isIslandisBankTransferPaymentAllowedForUser`** — frontend-only. Evaluated in the FE `getServerSideProps` to force-surface `bank_transfer` in the selector during rollout/testing, on top of whatever the backend already lists. Independent of the global flag and does **not** unlock the endpoints. Never applies to company payers, which only `isIslandisBankTransferPaymentAllowedForCompany` controls.
+- **`isIslandisBankTransferPaymentAllowedForCompany`** — the per-company rollout of [company payers](#company-payers), enforced in `services-payments`. Evaluated through `FeatureFlagService` with the company as the ConfigCat user (`identifier` = the company's kennitala, `subjectType` = `legalEntity`), so it can target single companies, or all companies via `subjectType`. Two effects, both on top of the global flag:
+  1. Flow creation lists `bank_transfer` for a company payer only when it is on for that company.
+  2. `create` refuses a company payer when it is off for that company, so neither a flow created while it was on nor a direct call can start a company transfer once it is turned off.
 
 > The GraphQL mutations (`paymentsCreateBankTransfer` / `…Verify…` / `…Cancel…`) are not guarded by these flags directly — the whole payments resolver sits behind `isIslandisPaymentEnabled`. The bank-transfer global flag bites one layer down, on the `services-payments` REST controller the resolver proxies to.
 
@@ -386,9 +430,9 @@ Env vars (values from [`infra/payments.ts`](../../../infra/payments.ts), schemas
 [`bankTransfer.config.ts`](./bankTransfer.config.ts) and
 [`blikkClient.config.ts`](../../../../../../libs/clients/blikk/src/lib/blikkClient.config.ts)):
 
-| Env var                     | Default / per-env                                                         | Description                                                           |
-| --------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `BLIKK_API_KEY`             | secret (`/k8s/services-payments/BLIKK_API_KEY`)                           | Provider API key. Read by the Blikk client.                           |
-| `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                    |
-| `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row.    |
-| `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.             |
+| Env var                     | Default / per-env                                                         | Description                                                        |
+| --------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `BLIKK_API_KEY`             | secret (`/k8s/services-payments/BLIKK_API_KEY`)                           | Provider API key. Read by the Blikk client.                        |
+| `BLIKK_API_BASE_URL`        | `https://stage.blikk.tech` (dev/staging), `https://api.blikk.tech` (prod) | Provider base URL.                                                 |
+| `BLIKK_PAYMENT_TTL_SECONDS` | `300` (dev/staging), `600` (prod)                                         | Attempt TTL; sent to Blikk as `expiresAt` and mirrored on the row. |
+| `BLIKK_FETCH_TIMEOUT`       | `10000`                                                                   | Per-request timeout (ms), enforced by the enhanced fetch.          |

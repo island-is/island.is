@@ -114,6 +114,7 @@ import {
   DirectorateOfEqualityClientModule,
   DirectorateOfEqualityClientConfig,
 } from '@island.is/clients/directorate-of-equality'
+import { DirectorateOfEqualityStatisticsClientConfig } from '@island.is/clients/directorate-of-equality-statistics'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -445,6 +446,7 @@ const environment = getConfig
         AssetsClientConfig,
         PCardClientConfig,
         DirectorateOfEqualityClientConfig,
+        DirectorateOfEqualityStatisticsClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,

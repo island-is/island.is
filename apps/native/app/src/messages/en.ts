@@ -31,6 +31,8 @@ export const en: TranslatedMessages = {
   'applock.title': 'Enter a 4-digit PIN',
   'applock.attempts': 'attempts left',
   'applock.attempt': 'attempt left',
+  'applock.usePin': 'Use PIN',
+  'biometrics.cancel': 'Cancel',
 
   // onboarding
   'onboarding.notifications.title': 'Allow notifications',
@@ -103,6 +105,24 @@ export const en: TranslatedMessages = {
     'Notifications in the Island.is app',
   'settings.communication.newNotificationsInAppDescription':
     'Government agencies can send you notifications in the Island.is app.',
+  'settings.communication.notificationsNotEnabledTitle':
+    'Notifications are not enabled on this device',
+  'settings.communication.notificationsNotEnabledDescription':
+    'You need to allow notifications on this device to receive them from Island.is.',
+  'settings.communication.notificationsNotEnabledLinkText':
+    'Allow notifications',
+  'settings.communication.notificationsBlockedTitle':
+    'Notifications are turned off on this device',
+  'settings.communication.notificationsBlockedDescription':
+    "Island.is can't send you notifications until you allow them in your device settings.",
+  'settings.communication.notificationsBlockedLinkText': 'Open device settings',
+  'settings.communication.notificationsBlockedAlertTitle':
+    'Allow notifications on this device?',
+  'settings.communication.notificationsBlockedAlertDescription':
+    "Notifications from Island.is are turned off in your device settings. You'll need to turn them on there.",
+  'settings.communication.notificationsBlockedAlertCancelButton': 'Not now',
+  'settings.communication.notificationsBlockedAlertOpenSettingsButton':
+    'Open settings',
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
@@ -804,7 +824,8 @@ export const en: TranslatedMessages = {
   'health.categories.referrals': 'Referrals',
   'health.categories.paymentsAndRights': 'Payments and rights',
   'health.categories.waitingLists': 'Waiting lists',
-  'health.categories.medicalRecords': 'Medical records',
+  'health.categories.treatment': 'Treatment',
+  'health.categories.treatmentWithName': 'Treatment - {name}',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Questionnaires',

@@ -4,7 +4,7 @@ import {
   FormTextWithLocale,
   KeyValueItem,
 } from '@island.is/application/types'
-import { Box, Divider, GridColumn, Text } from '@island.is/island-ui/core'
+import { Box, Divider, GridColumn, Tag, Text } from '@island.is/island-ui/core'
 import { SpanType } from '@island.is/island-ui/core/types'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
@@ -115,6 +115,16 @@ export const RenderItems = ({
 
   const evaluatedValueText = evaluateValueText(item.valueText, application)
 
+  const keyTextHeading = !item.inlineKeyText && (
+    <Markdown>
+      {`#### **${
+        Array.isArray(keyTextValue) //H4 markdown and bold
+          ? keyTextValue.join(', ')
+          : keyTextValue
+      }**`}
+    </Markdown>
+  )
+
   return (
     <GridColumn key={i} span={span}>
       {item.lineAboveKeyText && (
@@ -122,14 +132,23 @@ export const RenderItems = ({
           <Divider weight="black" thickness="thick" />
         </Box>
       )}
-      {!item.inlineKeyText && (
-        <Markdown>
-          {`#### **${
-            Array.isArray(keyTextValue) //H4 markdown and bold
-              ? keyTextValue.join(', ')
-              : keyTextValue
-          }**`}
-        </Markdown>
+      {item.tag ? (
+        <Box display="flex" alignItems="center" columnGap={1} flexWrap="wrap">
+          {keyTextHeading}
+          <Tag
+            variant={item.tag.variant ?? 'blue'}
+            outlined={item.tag.outlined}
+          >
+            {formatTextWithLocale(
+              item.tag.label,
+              application,
+              locale,
+              formatMessage,
+            )}
+          </Tag>
+        </Box>
+      ) : (
+        keyTextHeading
       )}
       {Array.isArray(evaluatedValueText)
         ? evaluatedValueText

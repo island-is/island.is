@@ -7,7 +7,6 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomePensionPaymentDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isPension } from '../../../utils/conditions'
@@ -18,34 +17,18 @@ import {
 } from '../../../utils/date'
 import {
   formatIsCurrency,
-  formatIsDateLong,
-  formatIsDateLongOrDash,
+  formatIsDate,
+  formatIsDateOrDash,
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
+import { buildCanRemoveRow } from '../../../utils/reconcile'
+import { getPensionDefaults } from '../../../utils/persistedRows'
 import {
   periodToByFrequency,
   toOptionalString,
   toRequiredNumber,
   toRequiredString,
 } from '../../../utils/rowCoercions'
-
-const getPensionDefaults = (application: Application) => {
-  const payments =
-    getValueViaPath<GaldurExternalDomainModelsIncomePensionPaymentDTO[]>(
-      application.externalData,
-      'income.data.pensionPayments',
-    ) ?? []
-
-  return payments.map((payment) => ({
-    validationId: payment.id,
-    pensionType: payment.incomeTypeId ?? '',
-    pensionFund: payment.pensionFundId ?? '',
-    amountPerMonth:
-      payment.estimatedIncome != null ? String(payment.estimatedIncome) : '',
-    dateFrom: payment.periodFrom ?? '',
-    dateTo: payment.periodTo ?? '',
-  }))
-}
 
 const pensionValidationProps: IncomeValidationFieldProps = {
   fieldId: 'registerPension',
@@ -94,6 +77,8 @@ export const pensionSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPensionDefaults,
+          canRemoveRow: buildCanRemoveRow(pensionValidationProps.persistedPath),
+          removeButtonDisabledTooltipText: m.application.removeLineLocked,
           marginTop: 2,
           fields: {
             pensionType: {
@@ -137,6 +122,7 @@ export const pensionSection = buildSubSection({
               largeButtons: false,
               required: true,
               width: 'half',
+              defaultValue: PaymentFrequency.ONE_TIME,
               clearOnChange: (index: number) => [
                 `registerPension[${index}].dateTo`,
               ],
@@ -233,8 +219,8 @@ export const pensionSection = buildSubSection({
                 const type = incomeTypes.find((t) => t.id === value)
                 return type?.name ?? value
               },
-              dateFrom: formatIsDateLong,
-              dateTo: formatIsDateLongOrDash,
+              dateFrom: formatIsDate,
+              dateTo: formatIsDateOrDash,
               amountPerMonth: formatIsCurrency,
             },
           },

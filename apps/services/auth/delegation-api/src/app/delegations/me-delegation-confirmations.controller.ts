@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -83,7 +91,7 @@ export class MeDelegationConfirmationsController {
   })
   async findOne(
     @CurrentUser() user: User,
-    @Param('confirmationId') id: string,
+    @Param('confirmationId', new ParseUUIDPipe()) id: string,
   ): Promise<DelegationConfirmationDTO> {
     const confirmation =
       await this.delegationConfirmationService.findByIdForUser(user, id)
@@ -106,7 +114,7 @@ export class MeDelegationConfirmationsController {
   })
   async findReceipt(
     @CurrentUser() user: User,
-    @Param('confirmationId') id: string,
+    @Param('confirmationId', new ParseUUIDPipe()) id: string,
   ): Promise<DelegationConfirmationReceiptDTO> {
     const confirmation =
       await this.delegationConfirmationService.findConfirmedForReceipt(user, id)
@@ -132,7 +140,7 @@ export class MeDelegationConfirmationsController {
   })
   async startAuthentication(
     @CurrentUser() user: User,
-    @Param('confirmationId') id: string,
+    @Param('confirmationId', new ParseUUIDPipe()) id: string,
   ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
     const started =
       await this.delegationConfirmationService.startAuthentication(user, id)
@@ -160,7 +168,7 @@ export class MeDelegationConfirmationsController {
   })
   async getAuthentication(
     @CurrentUser() user: User,
-    @Param('confirmationId') id: string,
+    @Param('confirmationId', new ParseUUIDPipe()) id: string,
   ): Promise<DelegationConfirmationAuthenticationDTO> {
     const { status, confirmation, completedNow } =
       await this.delegationConfirmationService.getAuthenticationStatus(user, id)

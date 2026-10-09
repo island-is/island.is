@@ -438,7 +438,8 @@ export class DelegationsOutgoingService {
    * by construction rather than by filtering every read path.
    *
    * Scopes the delegation already has are untouched: only what this grant
-   * requests waits.
+   * changes waits. A sensitive scope sent again with the same date, as the edit
+   * form does, counts as unchanged.
    */
   private async splitSensitiveScopes({
     user,
@@ -474,6 +475,30 @@ export class DelegationsOutgoingService {
       return { grantable: scopes }
     }
 
+    // The edit form sends back every selected scope, including sensitive ones
+    // the delegation already has under an earlier confirmation. Unchanged in
+    // name and date, they stay as they are: they neither make the grant wait
+    // nor are written again.
+    const sensitive = new Set(sensitiveScopeNames)
+    const existing = await this.delegationScopeService.findByDelegationId(
+      delegation.id,
+      transaction,
+    )
+    const isUnchanged = (scope: UpdateDelegationScopeDTO) =>
+      Boolean(scope.validTo) &&
+      existing.some(
+        (granted) =>
+          granted.scopeName === scope.name &&
+          granted.validTo?.getTime() ===
+            startOfDay(new Date(scope.validTo)).getTime(),
+      )
+    const requested = scopes.filter(
+      (scope) => !(sensitive.has(scope.name) && isUnchanged(scope)),
+    )
+    if (!requested.some((scope) => sensitive.has(scope.name))) {
+      return { grantable: requested }
+    }
+
     // A marked scope is never granted without a confirmation. When one can't be
     // had right now (the feature is off for the grantor, or its flag can't be
     // read), the scope can't be granted at all.
@@ -492,7 +517,7 @@ export class DelegationsOutgoingService {
     }
 
     // All of it waits for the confirmation, sensitive or not.
-    const held = scopes
+    const held = requested
 
     const [scopeDisplayNames, domain] = await Promise.all([
       this.findScopeDisplayNames(held.map((scope) => scope.name)),
