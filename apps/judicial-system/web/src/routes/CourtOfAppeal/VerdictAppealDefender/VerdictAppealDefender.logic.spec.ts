@@ -1,3 +1,4 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   CivilClaimant,
   Defendant,
@@ -8,7 +9,10 @@ import {
   getAppealDefender,
   getAppealSpokesperson,
   getAppealSpokespersonIsLawyer,
+  getCivilClaimantSectionTitle,
   getHasAppealSpokesperson,
+  getVerdictAppealDefenderCaseNumber,
+  getVerdictAppealDefenderHeaderLines,
 } from './VerdictAppealDefender.logic'
 
 const defendantWith = (overrides: Partial<Defendant>): Defendant =>
@@ -277,5 +281,56 @@ describe('areAllAppealAdvocatesConfirmed', () => {
         defendants: [defendantWith({ isAppealDefenderWaived: true })],
       }),
     ).toBe(false)
+  })
+})
+
+describe('getVerdictAppealDefenderCaseNumber', () => {
+  it("leads with the appeal's number at this court", () => {
+    expect(
+      getVerdictAppealDefenderCaseNumber({
+        verdictAppealCase: { appealCaseNumber: '555/2026' },
+      } as WorkingCase),
+    ).toBe('Mál nr. 555/2026')
+  })
+
+  // "Mál nr." with nothing after it reads as a value that failed to load, and
+  // nothing records the number yet.
+  it('says nothing until a number is recorded', () => {
+    expect(
+      getVerdictAppealDefenderCaseNumber({
+        verdictAppealCase: {},
+      } as WorkingCase),
+    ).toBeUndefined()
+  })
+})
+
+describe('getVerdictAppealDefenderHeaderLines', () => {
+  it('names the district court case the appeal came from', () => {
+    expect(
+      getVerdictAppealDefenderHeaderLines({
+        courtCaseNumber: 'S-123/2026',
+      } as WorkingCase),
+    ).toEqual(['Málsnr. héraðsdóms S-123/2026'])
+  })
+
+  // The design also carries a line naming who appealed and when. Left out
+  // until it is settled what it says when several parties appealed.
+  it('does not yet say who appealed', () => {
+    expect(
+      getVerdictAppealDefenderHeaderLines({
+        courtCaseNumber: 'S-123/2026',
+      } as WorkingCase).join(' '),
+    ).not.toContain('áfrýjaði')
+  })
+})
+
+describe('getCivilClaimantSectionTitle', () => {
+  // A réttargæslumaður is a lawyer too, so the heading counts claimants rather
+  // than naming the role the court settled on.
+  it('counts claimants rather than naming the role', () => {
+    expect(getCivilClaimantSectionTitle(1)).toBe(
+      'Lögmaður einkaréttarkröfuhafa',
+    )
+    expect(getCivilClaimantSectionTitle(2)).toBe('Lögmenn einkaréttarkröfuhafa')
   })
 })

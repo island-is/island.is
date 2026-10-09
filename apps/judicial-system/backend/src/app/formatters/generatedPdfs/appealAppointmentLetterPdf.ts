@@ -28,6 +28,12 @@ export interface AppealAppointmentLetter {
   advocatePractice?: string | null
   /** The accused, who names the case whichever advocate is appointed. */
   defendantName: string
+  /**
+   * The party this advocate is appointed to, which the appointing sentence
+   * names. Only a defender's letter carries one - the injured party is not
+   * named on the letters this reproduces.
+   */
+  clientName?: string | null
   /** The district court and its case number, which a completed case always has. */
   courtName: string
   courtCaseNumber: string
@@ -167,13 +173,25 @@ export const getAppealAppointmentSubject = (
  * The paragraph that does the appointing, which is the point of the letter.
  * One paragraph rather than two lines: the notice about the deadline runs on
  * from the appointment in both letters.
+ *
+ * The court speaks in its own name rather than addressing the advocate in the
+ * formal plural. The old wording - "Þér eruð hér með skipaðir ..." - forced a
+ * gender on whoever it was sent to, and had no neutral form that courts use;
+ * the registry settled on this instead (parent ticket, 2026-10-09).
+ *
+ * The defender's letter names the accused they are appointed to, because a
+ * case may have several and each gets their own letter. The spokesperson's
+ * does not: the injured party is not named on the letters this reproduces.
  */
-export const getAppealAppointmentSentence = (kind: AppealAppointmentKind) =>
-  `Þér eruð hér með skipaðir ${
+export const getAppealAppointmentSentence = (
+  kind: AppealAppointmentKind,
+  clientName?: string | null,
+) =>
+  `Landsréttur hefur skipað þig ${
     kind === AppealAppointmentKind.DEFENDER
-      ? 'verjandi ákærða'
-      : 'réttargæslumaður brotaþola'
-  } fyrir Landsrétti. Tilkynnt verður síðar um frest til greinargerðar í málinu.`
+      ? `verjanda ákærða${clientName ? ` ${clientName}` : ''}`
+      : 'réttargæslumann brotaþola'
+  } í ofangreindu máli. Tilkynnt verður síðar um frest til greinargerðar í málinu.`
 
 /**
  * What reached this court, and how. It carries both values the portal cannot
@@ -377,7 +395,7 @@ export const createAppealAppointmentLetter = (
 
   addNormalPlusJustifiedText(
     doc,
-    getAppealAppointmentSentence(letter.kind),
+    getAppealAppointmentSentence(letter.kind, letter.clientName),
     'Times-Roman',
   )
 
