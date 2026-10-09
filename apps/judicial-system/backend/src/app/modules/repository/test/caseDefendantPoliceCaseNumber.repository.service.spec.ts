@@ -197,6 +197,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
         'case-1',
         ['007-1', '007-2'],
         ['def-a', 'def-b', 'def-c'],
+        { transaction },
       )
 
       expect(mockModel.findAll).toHaveBeenCalledWith({
@@ -206,6 +207,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
           defendantId: ['def-a', 'def-b', 'def-c'],
         },
         attributes: ['defendantId'],
+        transaction,
       })
       expect(res).toEqual(['def-a', 'def-b'])
     })
@@ -221,6 +223,7 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
         'case-1',
         ['007-1'],
         ['def-a'],
+        { transaction },
       )
 
       expect(res).toEqual(['def-a'])
@@ -228,10 +231,14 @@ describe('CaseDefendantPoliceCaseNumberRepositoryService', () => {
 
     it('does not query when there are no police case numbers or no defendants', async () => {
       expect(
-        await service.findAssignedDefendantIds('case-1', [], ['def-a']),
+        await service.findAssignedDefendantIds('case-1', [], ['def-a'], {
+          transaction,
+        }),
       ).toEqual([])
       expect(
-        await service.findAssignedDefendantIds('case-1', ['007-1'], []),
+        await service.findAssignedDefendantIds('case-1', ['007-1'], [], {
+          transaction,
+        }),
       ).toEqual([])
 
       expect(mockModel.findAll).not.toHaveBeenCalled()

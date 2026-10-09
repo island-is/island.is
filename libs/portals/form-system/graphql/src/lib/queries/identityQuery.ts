@@ -16,3 +16,11 @@ export const IDENTITY_QUERY = gql`
     }
   }
 `
+
+export const DECEASED_IDENTITY_QUERY = gql`
+  query DeceasedIdentityQuery($input: GetRegistryPersonInput!) {
+    syslumennGetRegistryPerson(input: $input) {
+      name
+    }
+  }
+`
