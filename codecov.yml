@@ -1,18 +1,26 @@
 comment:
   layout: 'reach, diff, flags, files, header, footer, feedback'
   behavior: default
-github_checks: false
+github_checks: true
 coverage:
   status:
-    project: false
-    patch: false
+    project:
+      default:
+        target: auto
+        informational: true
+        branches:
+          - '!main'
+    patch:
+      default:
+        target: 80%
+        informational: true
 flag_management:
   default_rules:
     carryforward: true
 component_management:
-  default_rules: # default rules that will be inherited by all components
+  default_rules:
     statuses:
-      - type: project # in this case every component that doens't have a status defined will have a project type one
+      - type: project
         target: auto
         informational: true
         branches:
