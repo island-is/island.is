@@ -103,6 +103,10 @@ export class Notification extends Model<
   })
   read!: CreationOptional<boolean>
 
+  // Written atomically by the notification_first_read database trigger.
+  @Column({ type: DataType.DATE, allowNull: true, field: 'read_at' })
+  readAt!: CreationOptional<Date | null>
+
   @Column({
     type: DataType.BOOLEAN,
     defaultValue: false,

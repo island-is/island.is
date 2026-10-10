@@ -48,6 +48,12 @@ http://localhost:3366/
 yarn start services-user-profile
 ```
 
+## Notification metrics
+
+The hourly profile collector reports push notification preferences by user type.
+See [the metrics guide](../user-notification/metrics/README.md) for definitions,
+running the collector and the Datadog dashboard.
+
 ## Code owners and maintainers
 
 - [Norda](https://github.com/orgs/island-is/teams/norda/members)
