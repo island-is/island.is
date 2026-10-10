@@ -44,7 +44,6 @@ env:
   NODE_IMAGE_VERSION: 20
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
   pre-checks:
@@ -77,9 +76,9 @@ jobs:
       - name: Cache server health check
         run: |
           if curl -sf --max-time 3 "${ACTIONS_RESULTS_URL:-http://gha-cache.internal:3000/}" > /dev/null 2>&1; then
-            echo "✅ Cache server: ${ACTIONS_RESULTS_URL:-not set}"
+            echo "Cache server: ${ACTIONS_RESULTS_URL:-not set}"
           else
-            echo "⚠️ Cache server unreachable (${ACTIONS_RESULTS_URL:-not set}) — using GitHub cache"
+            echo "Cache server unreachable (${ACTIONS_RESULTS_URL:-not set}) using GitHub cache"
           fi
       - uses: actions/checkout@v4
         with:
@@ -366,7 +365,8 @@ jobs:
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
-          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
+          # write the nx token to a temp file for docker build secret
+          # then we clean it up after the build step
           echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
 
           # Add secret to EXTRA_DOCKER_BUILD_ARGS
@@ -404,6 +404,12 @@ jobs:
           echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
           export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+
+      # clean up the temp file with the secret in it
+      - name: Clean up secrets
+        if: always()
+        run: |
+          rm -f nx_cloud_access_token.txt
 
       - name: Docker build output
         uses: cloudposse/github-action-matrix-outputs-write@v1
