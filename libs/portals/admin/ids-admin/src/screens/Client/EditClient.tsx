@@ -20,6 +20,7 @@ import { getTranslatedValue } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { ClientType } from '../../components/ClientType'
 import { AdvancedSettings } from './components/AdvancedSettings'
+import { ArchivedEnvironment } from './components/ArchivedEnvironment'
 import { BasicInfo } from './components/BasicInfo'
 import ClientsUrl from './components/ClientsUrl'
 import { DangerZone } from './components/DangerZone'
@@ -92,6 +93,7 @@ export const EditClient = () => {
         )}
       >
         <Stack space={3}>
+          {selectedEnvironment.archived && <ArchivedEnvironment />}
           {selectedEnvironment.secrets.length > 1 && (
             <>
               <AlertMessage

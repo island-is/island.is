@@ -29,6 +29,8 @@ import { PatchClientInput } from './dto/patch-client.input'
 import { AdminClientDto } from '@island.is/auth-api-lib'
 import { PublishClientInput } from './dto/publish-client.input'
 import { RotateSecretInput } from './dto/rotate-secret.input'
+import { DeleteClientInput } from './dto/delete-client.input'
+import { RestoreClientInput } from './dto/restore-client.input'
 import { ClientSecret } from './models/client-secret.model'
 
 const baseResponse: AdminClientDto = {
@@ -96,6 +98,12 @@ const createMockAdminApi = () => ({
     ]),
   ),
   meClientSecretsControllerDeleteRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse({})),
+  meClientsControllerDeleteRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse({})),
+  meClientsControllerRestoreRaw: jest
     .fn()
     .mockResolvedValue(createMockApiResponse({})),
   meTenantsControllerFindByIdRaw: jest.fn().mockResolvedValue(
@@ -495,6 +503,84 @@ describe('ClientsService', () => {
         ...secretResponse,
         clientId: rotateSecretInput.clientId,
       })
+    })
+    it('should archive the client in all environments by default', async () => {
+      const input: DeleteClientInput = {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+      }
+
+      const response = await clientsService.deleteClient(currentUser, input)
+
+      expect(response).toBe(true)
+      expect(mockAdminDevApi.meClientsControllerDeleteRaw).toHaveBeenCalledWith(
+        input,
+      )
+      expect(
+        mockAdminStagingApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledWith(input)
+      expect(
+        mockAdminProdApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledWith(input)
+    })
+
+    it('should only archive the client in the given environments', async () => {
+      const response = await clientsService.deleteClient(currentUser, {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+        environments: [Environment.Development],
+      })
+
+      expect(response).toBe(true)
+      expect(mockAdminDevApi.meClientsControllerDeleteRaw).toHaveBeenCalledWith(
+        { tenantId: 'test-tenant-id', clientId: 'test-client-id' },
+      )
+      expect(
+        mockAdminStagingApi.meClientsControllerDeleteRaw,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAdminProdApi.meClientsControllerDeleteRaw,
+      ).not.toHaveBeenCalled()
+    })
+
+    it('should only restore the client in the given environments', async () => {
+      const input: RestoreClientInput = {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+        environments: [Environment.Staging, Environment.Production],
+      }
+
+      const response = await clientsService.restoreClient(currentUser, input)
+
+      expect(response).toBe(true)
+      expect(
+        mockAdminDevApi.meClientsControllerRestoreRaw,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockAdminStagingApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerRestoreRaw,
+      ).toHaveBeenCalledTimes(1)
+    })
+
+    it('should report failure when archiving fails in one of the environments', async () => {
+      mockAdminStagingApi.meClientsControllerDeleteRaw.mockRejectedValueOnce(
+        new Error('staging down'),
+      )
+
+      const response = await clientsService.deleteClient(currentUser, {
+        tenantId: 'test-tenant-id',
+        clientId: 'test-client-id',
+      })
+
+      expect(response).toBe(false)
+      expect(
+        mockAdminDevApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerDeleteRaw,
+      ).toHaveBeenCalledTimes(1)
     })
   })
 
