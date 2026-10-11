@@ -7,6 +7,7 @@ import {
   findFamilyStatus,
   isRvkMunicipalityCode,
   TaxData,
+  VEITA_TENANT_BY_MUNICIPALITY_CODE,
 } from '@island.is/application/templates/financial-aid'
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -84,7 +85,9 @@ export class FinancialAidService extends BaseTemplateApiService {
     return [] // no children
   }
 
-  municipalityCodeCheck(municipalityCode: string | null | undefined) {
+  municipalityCodeCheck(
+    municipalityCode: string | null | undefined,
+  ): municipalityCode is string {
     return isRvkMunicipalityCode(municipalityCode)
   }
   // End of mock data providers for testing
@@ -378,6 +381,22 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     if (this.municipalityCodeCheck(municipalityCode)) {
+      const tenantIdentifier =
+        VEITA_TENANT_BY_MUNICIPALITY_CODE[municipalityCode]
+
+      if (!tenantIdentifier) {
+        this.logger.error('No Veita tenant configured for municipality', {
+          municipalityCode,
+        })
+        throw new TemplateApiError(
+          {
+            title: messages.serviceErrors.createApplication.title,
+            summary: messages.serviceErrors.createApplication.summary,
+          },
+          500,
+        )
+      }
+
       const rvkRequest: CreateIslandisApplicationRequest = {
         createApplicationRequest: {
           name: externalData.nationalRegistry.data.fullName,
@@ -422,7 +441,7 @@ export class FinancialAidService extends BaseTemplateApiService {
           directTaxPayments: [JSON.stringify(directTaxPayments())],
           applicationSystemId: id,
         },
-        xTenantIdentifier: 'hafnarfjordur',
+        xTenantIdentifier: tenantIdentifier,
         xUserPermissions: 'financialaid:write',
       } as CreateIslandisApplicationRequest //TODO REMOVE
 
@@ -486,12 +505,22 @@ export class FinancialAidService extends BaseTemplateApiService {
       return null
     }
     if (this.municipalityCodeCheck(municipalityCode)) {
+      const tenantIdentifier =
+        VEITA_TENANT_BY_MUNICIPALITY_CODE[municipalityCode]
+
+      if (!tenantIdentifier) {
+        this.logger.error('No Veita tenant configured for municipality', {
+          municipalityCode,
+        })
+        return null
+      }
+
       return (await this.rvkApplicationsApiWithAuth(
         auth,
       ).getFinaidServiceSettingsForIslandis({
-        xTenantIdentifier: '',
-        xUserPermissions: '',
-        municipalityCode: '0000',
+        xTenantIdentifier: tenantIdentifier,
+        xUserPermissions: 'financialaid:read',
+        municipalityCode: municipalityCode,
       })) as unknown as MunicipalityModel
       //return this.MOCK_RVK_MUNICIPALITY
     }

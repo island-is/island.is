@@ -10,7 +10,11 @@ export * from './lib/types'
 
 export * from './lib/utils'
 
-export { RVK_MUNICIPALITY_CODES, isRvkMunicipalityCode } from './lib/constants'
+export {
+  RVK_MUNICIPALITY_CODES,
+  VEITA_TENANT_BY_MUNICIPALITY_CODE,
+  isRvkMunicipalityCode,
+} from './lib/constants'
 
 export * as messages from './lib/messages'
 

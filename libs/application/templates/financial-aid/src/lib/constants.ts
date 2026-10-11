@@ -76,9 +76,17 @@ export const UPLOAD_ACCEPT = [
 ]
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
-export const RVK_MUNICIPALITY_CODES = ['0000', '1400', '3000']
+export const RVK_MUNICIPALITY_CODES = ['0000', '1400']
+
+export const VEITA_TENANT_BY_MUNICIPALITY_CODE: Record<
+  string,
+  string | undefined
+> = {
+  '0000': 'reykjavik',
+  '1400': 'hafnarfjordur',
+}
 
 export const isRvkMunicipalityCode = (
   municipalityCode?: string | null,
-): boolean =>
+): municipalityCode is string =>
   Boolean(municipalityCode && RVK_MUNICIPALITY_CODES.includes(municipalityCode))
