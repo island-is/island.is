@@ -32,8 +32,6 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
   const nameField = `${fieldIndex}.fullName`
   const nationalIdField = `${fieldIndex}.nationalId`
 
-  // setValue(nameField, childFullName)
-  // setValue(nationalIdField, childNationalId)
   useEffect(() => {
     const setOptions = { shouldDirty: false, shouldValidate: false }
     setValue(nameField, childFullName, setOptions)
@@ -57,7 +55,6 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
       background="blue100"
       padding={3}
       borderRadius="standard"
-      // key={childNationalId}
     >
       <Text variant="h3" fontWeight="semiBold" marginBottom={1}>
         {childFullName}

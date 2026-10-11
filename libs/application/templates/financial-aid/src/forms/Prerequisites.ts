@@ -19,12 +19,10 @@ import { Routes } from '../lib/constants'
 import {
   CurrentApplicationApi,
   NationalRegistryV3UserApi,
-  // NationalRegistryV3SpouseApi,
-  // ChildrenCustodyInformationApiV3,
+  NationalRegistryV3SpouseApi,
+  ChildrenCustodyInformationApiV3,
   MunicipalityApi,
   TaxDataApi,
-  MockSpouseApi,
-  MockChildrenApi,
 } from '../dataProviders'
 import { createElement } from 'react'
 import { Logo } from '../components/Logo/Logo'
@@ -55,20 +53,12 @@ export const Prerequisites: Form = buildForm({
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),
-            // buildDataProviderItem({
-            //   provider: NationalRegistryV3SpouseApi,
-            //   subTitle: '',
-            // }),
-            // buildDataProviderItem({
-            //   provider: ChildrenCustodyInformationApiV3,
-            //   subTitle: '',
-            // }),
             buildDataProviderItem({
-              provider: MockSpouseApi,
+              provider: NationalRegistryV3SpouseApi,
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: MockChildrenApi,
+              provider: ChildrenCustodyInformationApiV3,
               subTitle: '',
             }),
             buildDataProviderItem({

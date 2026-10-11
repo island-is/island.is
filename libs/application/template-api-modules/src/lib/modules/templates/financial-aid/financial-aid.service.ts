@@ -75,21 +75,11 @@ export class FinancialAidService extends BaseTemplateApiService {
     super(ApplicationTypes.FINANCIAL_AID)
   }
 
-  // Mock data providers for testing
-  async getSpouse() {
-    return null // no spouse
-  }
-
-  async childrenCustodyInformation() {
-    return [] // no children
-  }
-
   municipalityCodeCheck(
     municipalityCode: string | null | undefined,
   ): municipalityCode is string {
     return isRvkMunicipalityCode(municipalityCode)
   }
-  // End of mock data providers for testing
 
   private applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))

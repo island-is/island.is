@@ -371,12 +371,6 @@ export const serviceSetup = (services: {
         staging: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
         prod: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
       },
-      RVK_VEITA_BASE_URL: {
-        dev: 'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
-        staging:
-          'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
-        prod: 'https://app-sdg-api-test-swe-01-eudeebgxashkhvhx.swedencentral-01.azurewebsites.net/veita-api/islandis/application',
-      },
       RVK_VEITA_AUTH_TOKEN_ENDPOINT: {
         dev: 'https://login.microsoftonline.com/6aed0be3-a6ff-4c6c-83b5-bb72bdd10088/oauth2/v2.0/token',
         staging:

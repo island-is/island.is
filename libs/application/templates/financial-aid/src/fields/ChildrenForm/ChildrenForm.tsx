@@ -57,12 +57,6 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
       {childrenInfo?.map((child, index) => {
         const fieldIndex = `${field.id}[${index}]`
 
-        // setValue(`${fieldIndex}.livesWithApplicant`, child.livesWithApplicant)
-        // setValue(
-        //   `${fieldIndex}.livesWithBothParents`,
-        //   child.livesWithBothParents,
-        // )
-
         return (
           <ChildInput
             key={child.nationalId}
@@ -103,10 +97,6 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
                 textarea={true}
                 rows={8}
                 backgroundColor="white"
-                // onChange={(e) => {
-                //   onChange(e.target.value)
-                //   setValue(summaryCommentType, e.target.value)
-                // }}
                 onChange={(e) => onChange(e.target.value)}
               />
             )

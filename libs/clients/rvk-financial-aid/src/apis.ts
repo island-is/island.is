@@ -14,10 +14,8 @@ export const exportedApis = [ForIslandisApi].map((Api) => ({
         fetchApi: createEnhancedFetch({
           name: 'clients-rvk-financial-aid',
           organizationSlug: 'reykjavikurborg',
-          // X-Road owns the Authorization header, so Veita's token goes in a custom one
           autoAuth: {
             mode: 'token',
-            // Unused: tokenEndpoint is set explicitly below.
             issuer: '',
             tokenEndpoint: config.rvkVeitaAuthTokenEndpoint,
             clientId: config.rvkVeitaClientId,
@@ -28,7 +26,6 @@ export const exportedApis = [ForIslandisApi].map((Api) => ({
         }),
         headers: {
           'X-Road-Client': xRoadConfig.xRoadClient,
-          //'X-Tenant-Identifier': config.rvkVeitaTenantIdentifier,
         },
         basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       }),

@@ -55,7 +55,6 @@ export const financeSection = buildSection({
             buildFileUploadField({
               condition: isRVKresident,
               id: Routes.RVKINCOMEFILES,
-              // title: m.incomeFilesForm.general.pageTitle,
               title: 'Built',
               uploadAccept: UPLOAD_ACCEPT.join(','),
               maxSize: FILE_SIZE_LIMIT,
