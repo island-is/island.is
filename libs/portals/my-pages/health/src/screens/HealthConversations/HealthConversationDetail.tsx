@@ -85,7 +85,7 @@ const HealthConversationDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certificatePaymentCancelled])
 
-  const [justSent, setJustSent] = useState(
+  const [justSent] = useState(
     Boolean((location.state as { justSent?: boolean } | null)?.justSent),
   )
 
@@ -124,13 +124,9 @@ const HealthConversationDetail = () => {
       replyInputRef.current?.focus({ preventScroll: isPhoneWidth })
     } else if (replyWasOpenRef.current) {
       // Both reply triggers unmount while the form is open, so return focus
-      // to the re-rendered footer button or the sent alert
+      // to the re-rendered footer button
       replyWasOpenRef.current = false
-      if (sentAlertRef.current) {
-        sentAlertRef.current.focus()
-      } else {
-        replyButtonRef.current?.focus()
-      }
+      replyButtonRef.current?.focus()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replyOpen])
@@ -276,8 +272,8 @@ const HealthConversationDetail = () => {
         },
       })
       setReplyText('')
-      setJustSent(true)
       setReplyOpen(false)
+      toast.success(formatMessage(messages.healthConversationReplySent))
     } catch {
       toast.error(formatMessage(m.errorTitle))
     }
