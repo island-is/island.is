@@ -24,11 +24,6 @@ import {
 } from '@island.is/clients/municipalities-financial-aid'
 import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 
-// import {
-//   CreateApplicationOperationRequest,
-//   ApplicationsApi as rvkApplicationsApi,
-// } from '@island.is/clients/rvk-financial-aid'
-
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -52,6 +47,10 @@ import {
   fetchPersonalTaxReturnFromRsk,
   shouldFetchTaxDataFromRsk,
 } from './taxDataFromRsk'
+import {
+  mapVeitaSettingsToMunicipalityModel,
+  VeitaMunicipalitySettingsResponse,
+} from './veitaMunicipalitySettings'
 import {
   CreateIslandisApplicationRequest,
   ForIslandisApi,
@@ -143,41 +142,41 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
   }
 
-  private MOCK_RVK_MUNICIPALITY: MunicipalityModel = {
-    id: '0000',
-    name: 'Reykjavík',
-    municipalityId: '0000',
-    active: true,
-    homepage: 'https://reykjavik.is',
-    rulesHomepage: 'https://reykjavik.is',
-    email: 'borgarrettur@reykjavik.is',
-    usingNav: false,
-    navUrl: '',
-    navUsername: '',
-    navPassword: '',
-    childrenAid: MunicipalityModelChildrenAidEnum.NotDefined,
-    decemberCompensation: 0,
-    created: new Date(),
-    modified: new Date(),
-    individualAidId: 'mock-individual-aid',
-    cohabitationAidId: 'mock-cohabitation-aid',
-    individualAid: this.createMockAidModel(AidModelTypeEnum.Individual, {
-      ownPlace: 211_831,
-      registeredRenting: 175_121,
-      unregisteredRenting: 140_121,
-      livesWithParents: 105_121,
-      withOthers: 140_121,
-      unknown: 140_121,
-    }),
-    cohabitationAid: this.createMockAidModel(AidModelTypeEnum.Cohabitation, {
-      ownPlace: 317_747,
-      registeredRenting: 262_682,
-      unregisteredRenting: 210_182,
-      livesWithParents: 157_682,
-      withOthers: 210_182,
-      unknown: 210_182,
-    }),
-  }
+  // private MOCK_RVK_MUNICIPALITY: MunicipalityModel = {
+  //   id: '0000',
+  //   name: 'Reykjavík',
+  //   municipalityId: '0000',
+  //   active: true,
+  //   homepage: 'https://reykjavik.is',
+  //   rulesHomepage: 'https://reykjavik.is',
+  //   email: 'borgarrettur@reykjavik.is',
+  //   usingNav: false,
+  //   navUrl: '',
+  //   navUsername: '',
+  //   navPassword: '',
+  //   childrenAid: MunicipalityModelChildrenAidEnum.NotDefined,
+  //   decemberCompensation: 0,
+  //   created: new Date(),
+  //   modified: new Date(),
+  //   individualAidId: 'mock-individual-aid',
+  //   cohabitationAidId: 'mock-cohabitation-aid',
+  //   individualAid: this.createMockAidModel(AidModelTypeEnum.Individual, {
+  //     ownPlace: 211_831,
+  //     registeredRenting: 175_121,
+  //     unregisteredRenting: 140_121,
+  //     livesWithParents: 105_121,
+  //     withOthers: 140_121,
+  //     unknown: 140_121,
+  //   }),
+  //   cohabitationAid: this.createMockAidModel(AidModelTypeEnum.Cohabitation, {
+  //     ownPlace: 317_747,
+  //     registeredRenting: 262_682,
+  //     unregisteredRenting: 210_182,
+  //     livesWithParents: 157_682,
+  //     withOthers: 210_182,
+  //     unknown: 210_182,
+  //   }),
+  // }
 
   async createApplication({
     application,
@@ -418,7 +417,6 @@ export class FinancialAidService extends BaseTemplateApiService {
           employment: answers.employment.type,
           employmentCustom: answers.employment.custom || '',
           formComment: answers.formComment,
-          state: ApplicationState.NEW,
           files: files, // attachments
           children: childrenRvk,
           childrenComment: answers.childrenComment,
@@ -443,7 +441,7 @@ export class FinancialAidService extends BaseTemplateApiService {
         },
         xTenantIdentifier: tenantIdentifier,
         xUserPermissions: 'financialaid:write',
-      } as CreateIslandisApplicationRequest //TODO REMOVE
+      }
 
       return await this.rvkApplicationsApiWithAuth(auth)
         .createIslandisApplication(rvkRequest)
@@ -515,13 +513,22 @@ export class FinancialAidService extends BaseTemplateApiService {
         return null
       }
 
-      return (await this.rvkApplicationsApiWithAuth(
+      const settings = (await this.rvkApplicationsApiWithAuth(
         auth,
       ).getFinaidServiceSettingsForIslandis({
         xTenantIdentifier: tenantIdentifier,
         xUserPermissions: 'financialaid:read',
         municipalityCode: municipalityCode,
-      })) as unknown as MunicipalityModel
+      })) as unknown as VeitaMunicipalitySettingsResponse | undefined
+
+      if (!settings?.data) {
+        this.logger.error('Veita returned no municipality settings', {
+          municipalityCode,
+        })
+        return null
+      }
+
+      return mapVeitaSettingsToMunicipalityModel(settings.data)
       //return this.MOCK_RVK_MUNICIPALITY
     }
 
