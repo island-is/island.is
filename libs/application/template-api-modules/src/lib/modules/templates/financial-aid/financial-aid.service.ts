@@ -132,42 +132,6 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
   }
 
-  // private MOCK_RVK_MUNICIPALITY: MunicipalityModel = {
-  //   id: '0000',
-  //   name: 'Reykjavík',
-  //   municipalityId: '0000',
-  //   active: true,
-  //   homepage: 'https://reykjavik.is',
-  //   rulesHomepage: 'https://reykjavik.is',
-  //   email: 'borgarrettur@reykjavik.is',
-  //   usingNav: false,
-  //   navUrl: '',
-  //   navUsername: '',
-  //   navPassword: '',
-  //   childrenAid: MunicipalityModelChildrenAidEnum.NotDefined,
-  //   decemberCompensation: 0,
-  //   created: new Date(),
-  //   modified: new Date(),
-  //   individualAidId: 'mock-individual-aid',
-  //   cohabitationAidId: 'mock-cohabitation-aid',
-  //   individualAid: this.createMockAidModel(AidModelTypeEnum.Individual, {
-  //     ownPlace: 211_831,
-  //     registeredRenting: 175_121,
-  //     unregisteredRenting: 140_121,
-  //     livesWithParents: 105_121,
-  //     withOthers: 140_121,
-  //     unknown: 140_121,
-  //   }),
-  //   cohabitationAid: this.createMockAidModel(AidModelTypeEnum.Cohabitation, {
-  //     ownPlace: 317_747,
-  //     registeredRenting: 262_682,
-  //     unregisteredRenting: 210_182,
-  //     livesWithParents: 157_682,
-  //     withOthers: 210_182,
-  //     unknown: 210_182,
-  //   }),
-  // }
-
   async createApplication({
     application,
     auth,
@@ -519,7 +483,6 @@ export class FinancialAidService extends BaseTemplateApiService {
       }
 
       return mapVeitaSettingsToMunicipalityModel(settings.data)
-      //return this.MOCK_RVK_MUNICIPALITY
     }
 
     return await this.municipalityApiWithAuth(auth)
