@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
   displayName: 'clients-rvk-financial-aid',
   preset: './jest.preset.js',
