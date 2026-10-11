@@ -7,9 +7,7 @@
   "paths": {
     "/islandis/application": {
       "post": {
-        "tags": [
-          "ForIslandis"
-        ],
+        "tags": ["ForIslandis"],
         "operationId": "CreateIslandisApplication",
         "parameters": [
           {
@@ -59,9 +57,7 @@
     },
     "/islandis/settings": {
       "get": {
-        "tags": [
-          "ForIslandis"
-        ],
+        "tags": ["ForIslandis"],
         "operationId": "GetFinaidServiceSettingsForIslandis",
         "parameters": [
           {
@@ -101,9 +97,7 @@
   "components": {
     "schemas": {
       "ChildDto": {
-        "required": [
-          "kennitala"
-        ],
+        "required": ["kennitala"],
         "type": "object",
         "properties": {
           "id": {
@@ -166,9 +160,7 @@
         "additionalProperties": false
       },
       "CreateApplicationRequest": {
-        "required": [
-          "applicationSystemId"
-        ],
+        "required": ["applicationSystemId"],
         "type": "object",
         "properties": {
           "name": {
@@ -342,9 +334,7 @@
   },
   "security": [
     {
-      "oauth2": [
-        "api://veita-api.test.reykjavik.is/Veita.Employee.Access"
-      ]
+      "oauth2": ["api://veita-api.test.reykjavik.is/Veita.Employee.Access"]
     }
   ]
 }
