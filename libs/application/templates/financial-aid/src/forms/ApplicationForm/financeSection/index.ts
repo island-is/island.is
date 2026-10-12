@@ -6,7 +6,6 @@ import {
   buildFileUploadField,
   buildDescriptionField,
   buildMultiField,
-  buildAlertMessageField,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
@@ -38,6 +37,7 @@ export const financeSection = buildSection({
           component: 'IncomeFilesForm',
         }),
         buildMultiField({
+          condition: isRVKresident,
           id: Routes.INCOMEFILESTAXSUCCESS,
           title: m.incomeFilesForm.general.pageTitle,
           children: [
@@ -50,12 +50,12 @@ export const financeSection = buildSection({
               condition: (_answers, externalData) =>
                 !taxSuccess(_answers, externalData),
               id: Routes.INCOMEFILESTAXSUCCESS,
-              description: incomeFilesForm.general.descriptionTaxSuccess,
+              description: incomeFilesForm.general.description,
             }),
             buildFileUploadField({
               condition: isRVKresident,
               id: Routes.RVKINCOMEFILES,
-              title: 'Built',
+              title: m.incomeFilesForm.general.pageTitle,
               uploadAccept: UPLOAD_ACCEPT.join(','),
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText: m.filesText.sizeErrorMessage,
@@ -86,7 +86,8 @@ export const financeSection = buildSection({
           component: 'TaxReturnFilesForm',
         }),
         buildMultiField({
-          id: Routes.TAXRETURNFILES,
+          condition: isRVKresident,
+          id: Routes.RVKTAXRETURNFILESMULTIFIELD,
           title: m.taxReturnForm.general.pageTitle,
           children: [
             buildDescriptionField({

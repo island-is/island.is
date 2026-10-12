@@ -198,7 +198,7 @@ export class FinancialAidService extends BaseTemplateApiService {
             key:
               (await this.attachmentService.getAttachmentUrl(
                 application as unknown as ApplicationWithAttachments,
-                f.key!,
+                f.key,
                 300_000,
               )) ?? '',
             size: 0,
@@ -273,7 +273,10 @@ export class FinancialAidService extends BaseTemplateApiService {
         .concat(await formatFilesRvk(spouseTaxFiles(), FileType.SPOUSEFILES))
         .concat(await formatFilesRvk(applicantTaxFiles(), FileType.TAXRETURN))
         .concat(
-          await formatFilesRvk(answers.childrenFiles, FileType.CHILDRENFILES),
+          await formatFilesRvk(
+            answers.rvkChildrenFiles,
+            FileType.CHILDRENFILES,
+          ),
         )
     } else {
       files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)

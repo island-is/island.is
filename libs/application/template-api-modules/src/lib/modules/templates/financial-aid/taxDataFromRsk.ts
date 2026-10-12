@@ -10,6 +10,8 @@ export const shouldFetchTaxDataFromRsk = isRvkMunicipalityCode
 
 const createPeriod = (pastMonth: number) => {
   const date = new Date()
+  // Normalize to the 1st so shorter target months don't roll the date forward
+  date.setDate(1)
   date.setMonth(date.getMonth() - pastMonth)
   return {
     year: date.getFullYear(),

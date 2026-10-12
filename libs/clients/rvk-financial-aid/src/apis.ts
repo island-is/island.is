@@ -14,15 +14,6 @@ export const exportedApis = [ForIslandisApi].map((Api) => ({
         fetchApi: createEnhancedFetch({
           name: 'clients-rvk-financial-aid',
           organizationSlug: 'reykjavikurborg',
-          autoAuth: {
-            mode: 'token',
-            issuer: '',
-            tokenEndpoint: config.rvkVeitaAuthTokenEndpoint,
-            clientId: config.rvkVeitaClientId,
-            clientSecret: config.rvkVeitaClientSecret,
-            scope: [config.rvkVeitaAuthScope],
-            headerName: config.rvkVeitaAuthHeaderName,
-          },
         }),
         headers: {
           'X-Road-Client': xRoadConfig.xRoadClient,

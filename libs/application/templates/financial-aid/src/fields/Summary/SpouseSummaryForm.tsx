@@ -82,8 +82,14 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
-        taxFiles={answers.spouseTaxReturnFiles ?? []}
-        incomeFiles={answers.spouseIncomeFiles ?? []}
+        taxFiles={[
+          ...(answers.spouseTaxReturnFiles ?? []),
+          ...(answers.rvkSpouseTaxReturnFiles ?? []),
+        ]}
+        incomeFiles={[
+          ...(answers.spouseIncomeFiles ?? []),
+          ...(answers.rvkSpouseIncomeFiles ?? []),
+        ]}
         childrenFiles={[]}
         applicationId={id}
       />

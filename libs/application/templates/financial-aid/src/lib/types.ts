@@ -79,6 +79,7 @@ export interface OverrideAnswerSchema extends answersSchema {
   rvkIncomeFiles: ApplicationAnswerFile[]
   rvkSpouseIncomeFiles: ApplicationAnswerFile[]
   rvkSpouseTaxReturnFiles: ApplicationAnswerFile[]
+  rvkChildrenFiles: ApplicationAnswerFile[]
   spouseIncomeFiles: ApplicationAnswerFile[]
   spouseTaxReturnFiles: ApplicationAnswerFile[]
   childrenFiles: ApplicationAnswerFile[]

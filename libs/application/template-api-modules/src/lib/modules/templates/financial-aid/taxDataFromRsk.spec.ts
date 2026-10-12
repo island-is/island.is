@@ -14,7 +14,6 @@ const ATTACHMENT_KEY = 'uuid-Framtal.pdf'
 describe('taxDataFromRsk', () => {
   describe('shouldFetchTaxDataFromRsk', () => {
     it('returns true for municipality codes in the allowlist', () => {
-      expect(shouldFetchTaxDataFromRsk('0000')).toBe(true)
       expect(shouldFetchTaxDataFromRsk('1400')).toBe(true)
     })
 

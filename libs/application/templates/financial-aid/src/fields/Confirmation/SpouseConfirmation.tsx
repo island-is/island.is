@@ -10,7 +10,8 @@ const SpouseConfirmation = ({ application }: FAFieldBaseProps) => {
 
   const missingIncomeFiles =
     answers.spouseIncome === ApproveOptions.Yes &&
-    !hasFiles('spouseIncomeFiles', answers)
+    !hasFiles('spouseIncomeFiles', answers) &&
+    !hasFiles('rvkSpouseIncomeFiles', answers)
 
   return (
     <Confirmation

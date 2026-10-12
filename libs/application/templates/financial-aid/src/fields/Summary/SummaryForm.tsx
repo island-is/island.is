@@ -182,9 +182,18 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           externalData.taxData?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
-        taxFiles={answers.taxReturnFiles ?? []}
-        incomeFiles={answers.incomeFiles ?? []}
-        childrenFiles={answers.childrenFiles ?? []}
+        taxFiles={[
+          ...(answers.taxReturnFiles ?? []),
+          ...(answers.rvkTaxReturnFiles ?? []),
+        ]}
+        incomeFiles={[
+          ...(answers.incomeFiles ?? []),
+          ...(answers.rvkIncomeFiles ?? []),
+        ]}
+        childrenFiles={[
+          ...(answers.childrenFiles ?? []),
+          ...(answers.rvkChildrenFiles ?? []),
+        ]}
         applicationId={id}
       />
 
