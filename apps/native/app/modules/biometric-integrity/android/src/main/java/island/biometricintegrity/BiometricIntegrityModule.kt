@@ -12,8 +12,9 @@ import javax.crypto.SecretKey
 
 // Detects when the set of enrolled biometrics changes after the user opted in.
 // Android exposes no enrollment fingerprint, so a Keystore key that the system
-// invalidates on biometric enrollment changes stands in for one: if the key
-// can no longer be initialised, the enrolled biometrics have changed.
+// invalidates on biometric enrollment changes stands in for one:
+// KeyPermanentlyInvalidatedException means the enrolled biometrics changed.
+// Other initialization failures return "unknown".
 class BiometricIntegrityModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("BiometricIntegrity")
