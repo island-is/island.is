@@ -55,7 +55,6 @@ import {
   CaseState,
   IndictmentDecision,
   ServiceStatus,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useAppealCase,
@@ -344,15 +343,7 @@ const IndictmentOverview: FC = () => {
               )}
             <Box component="section">
               {caseIsClosed ? (
-                <InfoCardClosedIndictment
-                  displayAppealExpirationInfo={
-                    workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.RULING &&
-                    (user?.role === UserRole.DEFENDER ||
-                      workingCase.indictmentReviewer?.id === user?.id)
-                  }
-                  displayVerdictViewDate
-                />
+                <InfoCardClosedIndictment />
               ) : (
                 <InfoCardActiveIndictment displayVerdictViewDate />
               )}
