@@ -145,17 +145,22 @@ export const richText: RichText = (
     ...opt.renderComponent,
     locale,
   }
-  return documents.map((slice) => {
+  return documents.map((slice, index) => {
+    // The same Contentful entry (e.g. an Asset or ProcessEntry) can be embedded
+    // more than once in a single body, so `slice.id` is not unique on its own.
+    // Duplicate React keys break reconciliation on client-side navigation
+    // (reused slices get hoisted/reordered), so we scope the key by position.
+    const key = `${slice.id}:${index}`
     if (slice.__typename === 'Html') {
       return (
-        <Fragment key={slice.id}>
+        <Fragment key={key}>
           {documentToReactComponents(slice.document, options)}
         </Fragment>
       )
     }
     return (
       <Box
-        key={slice.id}
+        key={key}
         id={slice.id}
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
