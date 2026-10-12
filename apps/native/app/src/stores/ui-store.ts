@@ -6,6 +6,7 @@ import {
 import { AppState } from 'react-native'
 import { DefaultTheme } from 'styled-components/native'
 import { create, useStore } from 'zustand'
+import { verifyBiometricIntegrity } from '../utils/biometric-integrity'
 
 export interface UIStore {
   theme?: DefaultTheme
@@ -56,6 +57,7 @@ function updateBiometricsStatus() {
 AppState.addEventListener('change', (state) => {
   if (state === 'active') {
     updateBiometricsStatus()
+    verifyBiometricIntegrity()
   }
 })
 
