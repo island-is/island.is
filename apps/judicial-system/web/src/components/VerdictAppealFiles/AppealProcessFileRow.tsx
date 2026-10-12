@@ -1,10 +1,12 @@
 import type { FC, ReactNode } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
-import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
-import PdfButton from '@island.is/judicial-system-web/src/components/PdfButton/PdfButton'
+import {
+  ContextMenu,
+  type ContextMenuItem,
+  IconButton,
+  PdfButton,
+} from '@island.is/judicial-system-web/src/components'
 
 import * as styles from './AppealProcessFileRow.css'
 
