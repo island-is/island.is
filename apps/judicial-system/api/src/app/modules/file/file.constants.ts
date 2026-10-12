@@ -40,6 +40,12 @@ export const SUBPOENA_SERVICE_CERTIFICATE_ENDPOINTS = [
   'subpoenaServiceCertificate/:defendantId/:subpoenaId',
   'subpoenaServiceCertificate/:defendantId/:subpoenaId/:fileName',
 ]
+export const APPEAL_APPOINTMENT_LETTER_ENDPOINTS = [
+  'appealAppointmentLetter/defendant/:defendantId',
+  'appealAppointmentLetter/defendant/:defendantId/:fileName',
+  'appealAppointmentLetter/civilClaimant/:civilClaimantId',
+  'appealAppointmentLetter/civilClaimant/:civilClaimantId/:fileName',
+]
 export const APPEAL_SUMMONS_ENDPOINTS = [
   'appealSummons/:appealSummonsId',
   'appealSummons/:appealSummonsId/:fileName',

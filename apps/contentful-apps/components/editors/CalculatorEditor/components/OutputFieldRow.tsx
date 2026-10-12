@@ -119,7 +119,7 @@ export const OutputFieldRow = ({
 
       {!field.key && (
         <Text fontColor="gray600" fontSize="fontSizeS">
-          Not saved yet — pick an output field.
+          This row isn&apos;t saved until an output field is picked.
         </Text>
       )}
 
