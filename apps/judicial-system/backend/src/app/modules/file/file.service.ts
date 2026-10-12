@@ -556,9 +556,9 @@ export class FileService {
         orderWithinChapter: finalOrderWithinChapter,
         state: CaseFileState.STORED_IN_RVG,
         name: fileName,
-        userGeneratedFilename: stripPdfExtension(
-          createFile.userGeneratedFilename ?? fileName,
-        ),
+        userGeneratedFilename:
+          stripPdfExtension(createFile.userGeneratedFilename ?? fileName) ||
+          stripPdfExtension(fileName),
         submittedBy: user.name,
       },
       { transaction },
