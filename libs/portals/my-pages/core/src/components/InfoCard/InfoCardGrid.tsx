@@ -16,6 +16,8 @@ interface InfoCardGridProps {
     img?: string
   }
   variant?: 'default' | 'detail' | 'appointment' | 'link'
+  /** Applies to every card unless a card sets its own. */
+  showArrow?: boolean | 'hover'
   error?: boolean
 }
 
@@ -24,6 +26,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
   size = 'small',
   empty,
   variant = 'default',
+  showArrow,
   error,
 }) => {
   const { width } = useWindowSize()
@@ -63,6 +66,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
                     to={card.to}
                     detail={card.detail}
                     variant={variant}
+                    showArrow={card.showArrow ?? showArrow}
                     appointment={card.appointment}
                     muted={card.muted}
                     loading={card.loading}

@@ -129,6 +129,18 @@ import { HealthDirectorateHealthConversationRecipient } from './models/healthCon
 import { HealthDirectorateCertificate } from './models/certificate.model'
 import { HealthDirectorateCertificateRequest } from './models/certificateRequest.model'
 import { HealthDirectorateCertificatePaymentIntent } from './models/paymentIntent.model'
+import { ActivePregnancy } from './models/activePregnancy.model'
+import { PregnancyCommunication } from './models/pregnancyCommunication.model'
+import { PregnancyCommunicationDetail } from './models/pregnancyCommunicationDetail.model'
+import { ExaminationMeasurement } from './models/examinationMeasurement.model'
+import { PregnancyDocument } from './models/pregnancyDocument.model'
+import {
+  mapActivePregnancy,
+  mapPregnancyCommunication,
+  mapPregnancyCommunicationDetail,
+  mapExaminationMeasurement,
+  mapPregnancyDocument,
+} from './mappers/pregnancyMapper'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -191,6 +203,87 @@ export class HealthDirectorateService {
   /* Pregnancy */
   async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
     return this.healthApi.hasActivePregnancy(auth)
+  }
+
+  async getActivePregnancy(auth: Auth): Promise<ActivePregnancy | null> {
+    const pregnancy = await this.healthApi.getActivePregnancy(auth)
+    if (!pregnancy) return null
+
+    return mapActivePregnancy(pregnancy)
+  }
+
+  async getPregnancyCommunications(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyCommunication[] | null> {
+    const communications = await this.healthApi.getPregnancyCommunications(
+      auth,
+      pregnancyId,
+    )
+    if (!communications) return null
+
+    return communications.flatMap((dto) => {
+      const communication = mapPregnancyCommunication(dto)
+      if (!communication) {
+        this.logger.warn('Unexpected pregnancy communication kind', {
+          kind: dto.kind,
+          communicationId: dto.id,
+          pregnancyId,
+        })
+        return []
+      }
+      return [communication]
+    })
+  }
+
+  async getPregnancyCommunicationDetail(
+    auth: Auth,
+    pregnancyId: string,
+    communicationId: string,
+  ): Promise<PregnancyCommunicationDetail | null> {
+    const detail = await this.healthApi.getPregnancyCommunicationDetail(
+      auth,
+      pregnancyId,
+      communicationId,
+    )
+    if (!detail) return null
+
+    const mapped = mapPregnancyCommunicationDetail(detail)
+    if (!mapped) {
+      this.logger.warn('Unexpected pregnancy communication detail kind', {
+        kind: detail.kind,
+        communicationId,
+        pregnancyId,
+      })
+      return null
+    }
+    return mapped
+  }
+
+  async getPregnancyMeasurements(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<ExaminationMeasurement[] | null> {
+    const measurements = await this.healthApi.getPregnancyMeasurements(
+      auth,
+      pregnancyId,
+    )
+    if (!measurements) return null
+
+    return measurements.map(mapExaminationMeasurement).filter(isDefined)
+  }
+
+  async getPregnancyDocuments(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyDocument[] | null> {
+    const documents = await this.healthApi.getPregnancyDocuments(
+      auth,
+      pregnancyId,
+    )
+    if (!documents) return null
+
+    return documents.map(mapPregnancyDocument).filter(isDefined)
   }
 
   async updateDonorStatus(
@@ -862,6 +955,7 @@ export class HealthDirectorateService {
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
       groupName: c.groupName ?? c.lastSenderGroupName,
+      treatmentId: c.treatmentId,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -871,8 +965,6 @@ export class HealthDirectorateService {
         c.replyBlockedReason,
       ),
       replyAvailability: toReplyAvailability(c),
-      messagingWindowOpen: c.messagingWindowOpen ?? undefined,
-      messagingWindowClose: c.messagingWindowClose ?? undefined,
       patientReplyWindowDays: c.patientReplyWindowDays ?? undefined,
       isRead: !c.unread,
       messages: c.messages.map((m) => this.mapConversationEntry(m, c.id)),
@@ -954,6 +1046,7 @@ export class HealthDirectorateService {
       lastMessageSentAt: c.lastMessageSentAt,
       lastSenderGroupName: c.groupName ?? c.lastSenderGroupName,
       groupName: c.groupName ?? c.lastSenderGroupName,
+      treatmentId: c.treatmentId,
       organization: this.mapConversationOrganization(c),
       hasAttachment: c.hasAttachment,
       isStarred: c.isStarred,
@@ -988,7 +1081,7 @@ export class HealthDirectorateService {
       nodeId: input.nodeId,
       groupId: input.groupId,
       treatmentId: input.treatmentId ?? undefined,
-      patientInitiatedTypeCode: input.patientInitiatedTypeCode,
+      patientInitiatedTypeCode: input.patientInitiatedTypeCode ?? undefined,
       title: input.title ?? '',
       messageTextContent: input.messageTextContent,
     }

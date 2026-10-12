@@ -20,6 +20,7 @@ export interface TextInputProps {
   min?: string
   max?: string
   backgroundColor?: 'white' | 'blue'
+  labelledBy?: string
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -39,6 +40,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   min,
   max,
   backgroundColor = 'blue',
+  labelledBy,
 }) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -94,6 +96,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         backgroundColor={backgroundColor}
         id={id}
         name={id}
+        aria-labelledby={labelledBy}
         placeholder={placeholder}
         value={type === 'decimal' ? value.replace('.', ',') : value}
         onChange={handleChange}

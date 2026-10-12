@@ -1,10 +1,14 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 const tickSize = 8
 const tickBorder = 2
 const tickSelectedSize = 24
 const tickSelectedBorder = 8
+// Mirrors ProgressBar's hover indicator
+const tickHoverSize = 26
+const tickHoverBorder = 9
+const tickFontSize = 14
 
 export const tickWidth = tickSelectedSize
 const trackThickness = 2
@@ -21,12 +25,24 @@ export const tick = style({
   alignItems: 'center',
   cursor: 'pointer',
   userSelect: 'none',
-  selectors: {
-    [`${input}:disabled + &`]: {
-      cursor: 'not-allowed',
-      opacity: 0.5,
-    },
-  },
+})
+
+export const tickDisabled = style({
+  cursor: 'not-allowed',
+  opacity: 0.5,
+})
+
+// Keeps the button's space so answering never shifts what follows
+export const clearReserved = style({
+  visibility: 'hidden',
+})
+
+export const endLabels = style({})
+export const clearRow = style({})
+
+// Both variants drop to 12px on mobile; a text Button renders a span
+globalStyle(`${tick} p, ${endLabels} p, ${clearRow} [role="button"]`, {
+  fontSize: tickFontSize,
 })
 
 export const bubble = style({
@@ -40,13 +56,21 @@ export const bubble = style({
   transition: 'width .1s, height .1s, border .1s, box-shadow .1s',
   selectors: {
     [`${tick}:hover &`]: {
-      borderColor: theme.color.blue400,
+      width: tickHoverSize,
+      height: tickHoverSize,
+      borderWidth: tickHoverBorder,
+      borderColor: theme.color.mint400,
+      backgroundColor: theme.color.white,
     },
-    [`${input}:focus-visible + ${tick} &`]: {
+    [`${input}:focus-visible ~ * &`]: {
       boxShadow: `0 0 0 4px ${theme.color.mint400}`,
     },
-    [`${input}:disabled + ${tick}:hover &`]: {
+    [`${tickDisabled}:hover &`]: {
+      width: tickSize,
+      height: tickSize,
+      borderWidth: tickBorder,
       borderColor: theme.color.blue300,
+      backgroundColor: theme.color.blue100,
     },
   },
 })
@@ -58,7 +82,11 @@ export const bubbleSelected = style({
   borderColor: theme.color.blue400,
   selectors: {
     [`${tick}:hover &`]: {
+      width: tickSelectedSize,
+      height: tickSelectedSize,
+      borderWidth: tickSelectedBorder,
       borderColor: theme.color.blue400,
+      backgroundColor: theme.color.blue100,
     },
   },
 })

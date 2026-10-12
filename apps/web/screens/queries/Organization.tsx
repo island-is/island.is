@@ -147,6 +147,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       title
       description
       canBeFoundInSearchResults
+      activeTranslations
       showPastEventsOption
       newsOverviewCardVariant
       topLevelNavigation {

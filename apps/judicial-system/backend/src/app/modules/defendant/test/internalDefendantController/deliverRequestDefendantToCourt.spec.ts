@@ -22,21 +22,21 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
   const deliverDto = { user }
   const defendantId = uuid()
   const defendantNationalId = '1234567890'
+  const defenderEmail = uuid()
+  const defenderName = 'Test Verjandi'
   const defendant = {
     id: defendantId,
     nationalId: defendantNationalId,
+    defenderEmail,
+    defenderName,
   } as Defendant
   const caseId = uuid()
   const courtName = 'Héraðsdómur Reykjavíkur'
   const courtCaseNumber = uuid()
-  const defenderEmail = uuid()
-  const defenderName = 'Test Verjandi'
   const theCase = {
     id: caseId,
     court: { name: courtName },
     courtCaseNumber,
-    defenderEmail,
-    defenderName,
   } as Case
 
   let mockQueuedMessages: Message[]
@@ -44,10 +44,13 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, courtService, internalDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessagesAfterCommit,
+      courtService,
+      internalDefendantController,
+    } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
 
     mockCourtService = courtService
     const mockUpdateRequestCaseWithDefenderInfo =

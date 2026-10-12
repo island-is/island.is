@@ -544,7 +544,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         ]}
       >
         <VerdictTimelineBody
-          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Dómur'}
           items={textItems}
         >
           {showDatePickers && (

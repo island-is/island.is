@@ -3,6 +3,8 @@ import type { FC } from 'react'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import type { CourtDocumentResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import * as styles from './UnfiledCourtDocumentList.css'
+
 interface Props {
   courtDocuments: CourtDocumentResponse[]
   isDisabled: boolean
@@ -20,44 +22,42 @@ export const UnfiledCourtDocumentList: FC<Props> = ({
   onOpen,
   onFile,
 }) => (
-  <Box display="flex" flexDirection="column" columnGap={2} rowGap={2}>
+  <Box display="flex" flexDirection="column" rowGap={2} width="full">
     {courtDocuments.map((courtDocument) => (
-      <Box
-        display="flex"
-        alignItems="center"
-        columnGap={2}
-        key={courtDocument.id}
-      >
+      <div className={styles.row} key={courtDocument.id}>
         <Box
-          flexGrow={1}
+          className={styles.documentCard}
           background="white"
           borderRadius="large"
           border="standard"
           borderColor="blue200"
         >
           <Box
-            display="flex"
-            alignItems="center"
+            className={styles.documentButton}
             component="button"
             onClick={() => onOpen(courtDocument.id)}
             paddingX={2}
             paddingY={2}
           >
-            <Text variant="h5">{courtDocument.name}</Text>
-            <Box marginLeft={1}>
+            <Text variant="h5" as="span" className={styles.documentName}>
+              {courtDocument.name}
+            </Text>
+            <Box marginLeft={1} flexShrink={0}>
               <Icon icon="open" type="outline" size="small" />
             </Box>
           </Box>
         </Box>
-        <Tag
-          outlined
-          variant="darkerBlue"
-          onClick={() => onFile(courtDocument)}
-          disabled={isDisabled}
-        >
-          Leggja fram
-        </Tag>
-      </Box>
+        <div className={styles.fileAction}>
+          <Tag
+            outlined
+            variant="darkerBlue"
+            onClick={() => onFile(courtDocument)}
+            disabled={isDisabled}
+          >
+            Leggja fram
+          </Tag>
+        </div>
+      </div>
     ))}
   </Box>
 )

@@ -42,9 +42,12 @@ const makeDefendant = (
   isSentToPrisonAdmin: false,
 })
 
-const makeCase = (defendants: ReturnType<typeof makeDefendant>[]) => ({
+const makeCase = (
+  defendants: ReturnType<typeof makeDefendant>[],
+  type: CaseType = CaseType.INDICTMENT,
+) => ({
   toJSON: () => ({}),
-  type: CaseType.INDICTMENT,
+  type,
   defendants,
   caseFiles: undefined,
   prosecutor: undefined,
@@ -291,6 +294,69 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
           (d) => d.defenderNationalId === nationalId,
         ),
       ).toBe(true)
+    })
+  })
+
+  describe('request case — defence user assigned to one of multiple defendants', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const assignedDefendant = {
+        ...makeDefendant(nationalId),
+        // R-cases leave choice/confirmed null (no indictment confirm workflow)
+        isDefenderChoiceConfirmed: undefined,
+      }
+      const otherDefendant = {
+        ...makeDefendant(otherNationalId),
+        isDefenderChoiceConfirmed: undefined,
+      }
+      const theCase = makeCase(
+        [assignedDefendant, otherDefendant],
+        CaseType.CUSTODY,
+      )
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns all defendants — request hearings cover the whole case', () => {
+      expect(then.result.defendants).toHaveLength(2)
+      expect(then.result.defendants.map((d) => d.defenderNationalId)).toEqual([
+        nationalId,
+        otherNationalId,
+      ])
+    })
+  })
+
+  describe('request case — defence user with no matching defendant defenderNationalId', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase(
+        [
+          {
+            ...makeDefendant(otherNationalId),
+            isDefenderChoiceConfirmed: undefined,
+          },
+        ],
+        CaseType.TRAVEL_BAN,
+      )
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('still returns all defendants', () => {
+      expect(then.result.defendants).toHaveLength(1)
+      expect(then.result.defendants[0].defenderNationalId).toBe(otherNationalId)
     })
   })
 

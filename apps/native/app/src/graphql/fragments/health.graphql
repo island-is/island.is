@@ -18,6 +18,7 @@ fragment HealthConversationMessageContent on HealthDirectorateHealthConversation
     appointmentHostName
     isCanceled
     isEdited
+    isExpired
   }
 }
 

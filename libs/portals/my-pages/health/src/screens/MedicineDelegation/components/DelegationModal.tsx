@@ -40,7 +40,13 @@ const DelegationModal: React.FC<Props> = ({
       baseId={id}
       isVisible={visible}
       initialVisibility={false}
+      onVisibilityChange={(visibility) => {
+        if (!visibility) {
+          closeModal()
+        }
+      }}
       removeOnClose
+      modalLabel={formatMessage(messages.areYouSureAboutDeletingDelegation)}
       className={styles.modal}
     >
       <Box className={styles.closeButton}>
@@ -48,6 +54,7 @@ const DelegationModal: React.FC<Props> = ({
           circle
           colorScheme="negative"
           icon="close"
+          aria-label={formatMessage(messages.closeModal)}
           onClick={() => {
             closeModal()
           }}

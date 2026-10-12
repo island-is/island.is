@@ -1,11 +1,11 @@
 import { useCallback, useContext, useState } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseTransition,
@@ -24,7 +24,7 @@ export const useCancelCase = (
     [
       cancelCaseId: string | undefined,
       isCancelCaseLoading: boolean,
-      theCase: Case | undefined,
+      theCase: WorkingCase | undefined,
     ]
   >([undefined, false, undefined])
   const { updateCase, isUpdatingCase, transitionCase, isTransitioningCase } =

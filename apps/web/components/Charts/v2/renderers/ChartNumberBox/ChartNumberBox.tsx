@@ -90,10 +90,8 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     return <SkeletonLoader width="100%" height={130} borderRadius="lg" />
   }
 
-  if (!queryResult.data || queryResult.data.length === 0) {
-    return <p>{messages[activeLocale].noDataForChart}</p>
-  }
-
+  // Empty data (e.g. a withheld value) still renders the titled box with "–"
+  const chartData = queryResult.data ?? []
   const reduceAndRoundValue = slice.reduceAndRoundValue ?? true
 
   return (
@@ -107,37 +105,49 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
       })}
     >
       {boxData.map((data, index) => {
-        // We assume that the data behind the key that is provided is a valid number
-        const comparisonValue = queryResult.data?.[data.sourceDataIndex]?.[
-          data.sourceDataKey
-        ] as number
-        const mostRecentValue = queryResult.data[queryResult.data.length - 1][
-          data.sourceDataKey
-        ] as number
+        const comparisonValue =
+          chartData[data.sourceDataIndex]?.[data.sourceDataKey]
+        const mostRecentValue =
+          chartData[chartData.length - 1]?.[data.sourceDataKey]
 
-        const change = index === 0 ? 1 : mostRecentValue / comparisonValue
+        // A null value is withheld or missing and must not be shown as 0.
+        // A zero baseline has no meaningful change, so it can't show Infinity%
+        const hasValue =
+          typeof mostRecentValue === 'number' &&
+          (index === 0 ||
+            (typeof comparisonValue === 'number' && comparisonValue !== 0))
 
-        const ariaValue =
-          data.valueType === 'number'
-            ? formatValueForPresentation(
-                activeLocale,
-                mostRecentValue,
-                reduceAndRoundValue,
-              )
-            : formatNumberBoxPercentageForPresentation(
-                index === 0 ? mostRecentValue : change - 1,
-              )
+        const change =
+          index > 0 &&
+          hasValue &&
+          typeof mostRecentValue === 'number' &&
+          typeof comparisonValue === 'number'
+            ? mostRecentValue / comparisonValue
+            : 1
 
-        const displayedValue =
-          data.valueType === 'number'
-            ? formatValueForPresentation(
-                activeLocale,
-                mostRecentValue,
-                reduceAndRoundValue,
-              )
-            : formatNumberBoxPercentageForPresentation(
-                index === 0 ? mostRecentValue : Math.abs(change - 1),
-              )
+        const ariaValue = !hasValue
+          ? messages[activeLocale].valueNotAvailable
+          : data.valueType === 'number'
+          ? formatValueForPresentation(
+              activeLocale,
+              mostRecentValue,
+              reduceAndRoundValue,
+            )
+          : formatNumberBoxPercentageForPresentation(
+              index === 0 ? mostRecentValue : change - 1,
+            )
+
+        const displayedValue = !hasValue
+          ? '–'
+          : data.valueType === 'number'
+          ? formatValueForPresentation(
+              activeLocale,
+              mostRecentValue,
+              reduceAndRoundValue,
+            )
+          : formatNumberBoxPercentageForPresentation(
+              index === 0 ? mostRecentValue : Math.abs(change - 1),
+            )
 
         const timestamp =
           slice.displayTimestamp &&
@@ -161,7 +171,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
             aria-label={`${data.title}: ${ariaValue}`}
             tabIndex={0}
           >
-            <div className={styles.titleWrapper} id={`${slice.id}.title`}>
+            <div className={styles.titleWrapper}>
               <Inline space={1} alignY="center" justifyContent="spaceBetween">
                 <h3 className={styles.title}>{data.title}</h3>
                 {timestamp && <Text variant="small">({timestamp})</Text>}
@@ -174,7 +184,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               )}
             </div>
             <p className={styles.value}>
-              {index > 0 && change !== 0 && (
+              {index > 0 && hasValue && change !== 0 && (
                 <Icon
                   type="outline"
                   icon={change > 1 ? 'arrowUp' : 'arrowDown'}

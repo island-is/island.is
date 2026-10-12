@@ -30,6 +30,16 @@ import { QuestionnaireHeader } from './Header'
 import { Review } from './Review'
 import { calculateFormula } from './utils/calculations'
 
+// Scales end with their own clear-answer row, so the divider needs less room
+const endsWithScale = (section: { questions?: QuestionnaireQuestion[] }) => {
+  const questions = section.questions ?? []
+  const lastType = questions[questions.length - 1]?.answerOptions.type
+  return (
+    lastType === QuestionnaireAnswerOptionType.scale ||
+    lastType === QuestionnaireAnswerOptionType.thermometer
+  )
+}
+
 interface GenericQuestionnaireProps {
   questionnaire: QuestionnaireDetail
   onSubmit: (
@@ -332,7 +342,7 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                             )}
                           </Box>
                         )}
-                        <Stack space={4}>
+                        <Stack space={6}>
                           {section.questions?.map(
                             (question: QuestionnaireQuestion) => (
                               <Box
@@ -354,7 +364,10 @@ export const GenericQuestionnaire: FC<GenericQuestionnaireProps> = ({
                             ),
                           )}
                         </Stack>
-                        <Box paddingBottom={3} paddingTop={6}>
+                        <Box
+                          paddingTop={endsWithScale(section) ? 4 : 6}
+                          paddingBottom={3}
+                        >
                           <Divider />
                         </Box>
                       </Box>

@@ -3,12 +3,12 @@ import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import type {
   AppealCase,
   AppealCaseTransition,
   AppealEventType,
-  Case,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { AppealCaseType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -78,7 +78,7 @@ const useAppealCase = () => {
       async (
         caseId: string,
         rulingFileId?: string,
-        setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        setWorkingCase?: Dispatch<SetStateAction<WorkingCase>>,
       ): Promise<AppealCase | undefined> => {
         const mutation = limitedAccess
           ? limitedAccessCreateAppealCaseMutation
@@ -196,7 +196,7 @@ const useAppealCase = () => {
         caseId: string,
         appealCaseId: string,
         transition: AppealCaseTransition,
-        setWorkingCase?: Dispatch<SetStateAction<Case>>,
+        setWorkingCase?: Dispatch<SetStateAction<WorkingCase>>,
         // Withdrawing a verdict appeal is per defendant; every other transition
         // ignores this.
         defendantId?: string,

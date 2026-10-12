@@ -2,7 +2,7 @@
 // URL in them has to be detected before it can be rendered as a tappable link.
 // Mirrors the my-pages implementation so both clients linkify the same way.
 const URL_REGEX =
-  /(https?:\/\/[^\s<]+[^\s<.,:;!?'")\]]|www\.[^\s<]+[^\s<.,:;!?'")\]])/gi
+  /\[([^\]|\n]+)\|((?:https?:\/\/|www\.)[^\s\]]+)\]|(https?:\/\/[^\s<]+[^\s<.,:;!?'")\]]|www\.[^\s<]+[^\s<.,:;!?'")\]])/gi
 
 export interface LinkifiedTextPart {
   type: 'text' | 'link'
@@ -21,16 +21,18 @@ export const linkifyText = (text: string): LinkifiedTextPart[] => {
       parts.push({ type: 'text', value: text.slice(lastIndex, match.index) })
     }
 
-    const url = match[0]
+    const [fullMatch, label, labelledUrl, bareUrl] = match
+    const url = labelledUrl ?? bareUrl
     parts.push({
       type: 'link',
-      value: url,
+      // `[label|url]` links render as their label.
+      value: label ?? url,
       // Bare `www.` URLs have no scheme, so give them one — the in-app browser
       // can't open a schemeless link.
-      href: url.startsWith('www.') ? `https://${url}` : url,
+      href: /^www\./i.test(url) ? `https://${url}` : url,
     })
 
-    lastIndex = match.index + url.length
+    lastIndex = match.index + fullMatch.length
   }
 
   if (lastIndex < text.length) {

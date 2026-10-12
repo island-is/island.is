@@ -19,6 +19,7 @@ interface AppointmentCardProps {
   }
   size?: 'small' | 'large'
   to?: string
+  showArrow?: boolean
   /** Grays out the card, e.g. for appointments that have already passed */
   muted?: boolean
 }
@@ -41,6 +42,7 @@ export const TimeCard = ({
   description,
   data,
   to,
+  showArrow = !!to,
   muted = false,
 }: AppointmentCardProps) => {
   const { width } = useWindowSize()
@@ -64,7 +66,14 @@ export const TimeCard = ({
           >
             {title}
           </Text>
-          {to && <Icon icon="arrowForward" type="outline" color="blue400" />}
+          {showArrow && (
+            <Icon
+              icon="arrowForward"
+              type="outline"
+              color="blue400"
+              size={isMobile ? 'small' : 'medium'}
+            />
+          )}
         </Box>
         <Box
           display="flex"
@@ -140,24 +149,30 @@ export const TimeCard = ({
       </GridColumn>
     </GridRow>
   )
+  const card = (
+    <Box
+      border="standard"
+      borderColor="blue200"
+      borderRadius="large"
+      padding={isMobile ? 2 : 3}
+      height="full"
+      className={cn(to && styles.boxContainer, muted && styles.mutedCard)}
+    >
+      {content}
+    </Box>
+  )
+
+  // The link wraps the bordered box, not the content inside it, so the focus
+  // ring and the hit area are the card itself — same as the other variants.
   return (
     <Box height="full">
-      <Box
-        border="standard"
-        borderColor="blue200"
-        borderRadius="large"
-        padding={isMobile ? 2 : 3}
-        height="full"
-        className={cn(to && styles.boxContainer, muted && styles.mutedCard)}
-      >
-        {to ? (
-          <LinkResolver href={to}>
-            <Box className={styles.containerLink}>{content}</Box>
-          </LinkResolver>
-        ) : (
-          <Box className={styles.containerLink}>{content}</Box>
-        )}
-      </Box>
+      {to ? (
+        <LinkResolver href={to} className={styles.containerLink}>
+          {card}
+        </LinkResolver>
+      ) : (
+        card
+      )}
     </Box>
   )
 }

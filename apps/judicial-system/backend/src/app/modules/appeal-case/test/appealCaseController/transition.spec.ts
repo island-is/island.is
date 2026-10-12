@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -15,6 +12,9 @@ import {
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
+  CaseFileCategory,
+  CaseFileState,
+  CaseOrigin,
   CaseType,
   InstitutionType,
   User,
@@ -24,6 +24,7 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import { EventService } from '../../../event'
 import {
   AppealCase,
@@ -35,7 +36,7 @@ import {
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -138,7 +139,7 @@ describe('AppealCaseController - Transition', () => {
 
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 
@@ -166,7 +167,7 @@ describe('AppealCaseController - Transition', () => {
     })
 
     it('should queue the appeal received notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -184,10 +185,25 @@ describe('AppealCaseController - Transition', () => {
   })
 
   describe('complete appeal', () => {
+    const appealRulingFileId = uuid()
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
-      caseFiles: [],
+      origin: CaseOrigin.LOKE,
+      caseFiles: [
+        {
+          id: appealRulingFileId,
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.APPEAL_RULING,
+        },
+        {
+          id: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        },
+      ],
     } as unknown as Case
     const appealCase = {
       id: appealCaseId,
@@ -210,8 +226,18 @@ describe('AppealCaseController - Transition', () => {
       )
     })
 
+    it('should queue delivery of the appeal ruling file', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          caseId,
+          elementId: appealRulingFileId,
+        }),
+      )
+    })
+
     it('should queue the appeal completed notification and conclusion delivery', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -222,6 +248,20 @@ describe('AppealCaseController - Transition', () => {
           caseId,
         }),
       )
+    })
+
+    it('should queue delivery of the appeal to the police for a police case', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: MessageType.DELIVERY_TO_POLICE_APPEAL,
+          caseId,
+          elementId: appealCaseId,
+        }),
+      )
+    })
+
+    it('should queue nothing else', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(3)
     })
   })
 
@@ -249,7 +289,7 @@ describe('AppealCaseController - Transition', () => {
     })
 
     it('should queue the appeal withdrawn notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -284,7 +324,7 @@ describe('AppealCaseController - Transition', () => {
     })
 
     it('should queue the received notification for the ruling-order appeal', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -345,7 +385,7 @@ describe('AppealCaseController - Transition', () => {
       beforeEach(async () => {
         // After the prosecution withdraws, the defendant's appeal still stands.
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([
           { ...bothAppealed[0], withdrawnDate: now },
           bothAppealed[1],
@@ -367,6 +407,17 @@ describe('AppealCaseController - Transition', () => {
         )
       })
 
+      it('should lock every party of the ruling before stamping its own', () => {
+        const lock =
+          mockAppealDecisionRepositoryService.lockAllForRuling as jest.Mock
+        const update = mockAppealDecisionRepositoryService.update as jest.Mock
+
+        expect(lock).toHaveBeenCalledWith(caseId, rulingFileId, { transaction })
+        expect(lock.mock.invocationCallOrder[0]).toBeLessThan(
+          update.mock.invocationCallOrder[0],
+        )
+      })
+
       it('should record an APPEAL_WITHDRAWN event', () => {
         expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -381,7 +432,7 @@ describe('AppealCaseController - Transition', () => {
       it('should leave the appeal standing - no transition, no notification', () => {
         expect(then.error).toBeUndefined()
         expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-        expect(addMessagesToQueue).not.toHaveBeenCalledWith(
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalledWith(
           expect.objectContaining({
             body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
           }),
@@ -392,7 +443,7 @@ describe('AppealCaseController - Transition', () => {
     describe('the last appealing party withdraws', () => {
       beforeEach(async () => {
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([{ ...bothAppealed[0], withdrawnDate: now }])
 
         await givenWhenThen(
@@ -411,7 +462,7 @@ describe('AppealCaseController - Transition', () => {
           }),
           { transaction },
         )
-        expect(addMessagesToQueue).toHaveBeenCalledWith(
+        expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
           expect.objectContaining({
             body: { type: AppealCaseNotificationType.APPEAL_WITHDRAWN },
           }),
@@ -495,7 +546,7 @@ describe('AppealCaseController - Transition', () => {
       beforeEach(async () => {
         // No party is left appealing once the defender withdraws for both.
         ;(
-          mockAppealDecisionRepositoryService.findAll as jest.Mock
+          mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
         ).mockResolvedValue([
           { id: defendantDecisionId, withdrawnDate: now },
           { id: defendantDecisionId2, withdrawnDate: now },

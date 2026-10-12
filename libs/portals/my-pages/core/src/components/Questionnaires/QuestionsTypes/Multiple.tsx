@@ -27,6 +27,7 @@ export interface MultipleProps {
   required?: boolean
   direction?: 'horizontal' | 'vertical'
   maxSelections?: number
+  labelledBy?: string
 }
 
 export const Multiple: React.FC<MultipleProps> = ({
@@ -39,7 +40,9 @@ export const Multiple: React.FC<MultipleProps> = ({
   required = false,
   direction = 'vertical',
   maxSelections,
+  labelledBy,
 }) => {
+  const errorId = `${id}-error`
   const { formatMessage } = useLocale()
   const isMobile = useIsMobile()
 
@@ -79,7 +82,11 @@ export const Multiple: React.FC<MultipleProps> = ({
   })
 
   return (
-    <Box>
+    <Box
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-describedby={error ? errorId : undefined}
+    >
       <Box marginBottom={2}>
         {maxSelections && (
           <Text variant="small" color="dark300">
@@ -99,7 +106,7 @@ export const Multiple: React.FC<MultipleProps> = ({
           <Stack space={2}>{checkboxes}</Stack>
         </Box>
       )}
-      {error && <InputError errorMessage={error} />}
+      {error && <InputError id={errorId} errorMessage={error} />}
     </Box>
   )
 }

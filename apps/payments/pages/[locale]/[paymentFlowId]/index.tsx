@@ -2,7 +2,8 @@ import type { ApolloError } from '@apollo/client'
 import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { isCompany } from 'kennitala'
 
 import { PaymentsGetFlowPaymentStatus } from '@island.is/api/schema'
 import {
@@ -30,7 +31,10 @@ import {
 } from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
-import { BankTransferPayment } from '../../../components/BankTransferPayment/BankTransferPayment'
+import {
+  BankTransferPayment,
+  CompanyPayer,
+} from '../../../components/BankTransferPayment/BankTransferPayment'
 import { BankTransferPendingScreen } from '../../../components/BankTransferPendingScreen/BankTransferPendingScreen'
 import { ALLOWED_LOCALES, Locale, isHttpsUrl } from '../../../utils'
 import { getConfigcatClient } from '../../../clients/configcat'
@@ -257,10 +261,29 @@ function PaymentPage({
       card: '',
       cardExpiry: '',
       cardCVC: '',
-      bankAccountNumber: '',
+      bank: '',
+      ledger: '',
+      account: '',
+      actorNationalId: '',
     },
   })
   const { formatMessage } = useLocale()
+
+  // Same message as the input's own check, which the server repeats.
+  const { setError } = methods
+  const onInvalidActorNationalId = useCallback(
+    () =>
+      setError(
+        'actorNationalId',
+        {
+          type: 'server',
+          message: formatMessage(bankTransfer.actorNationalIdInvalid),
+        },
+        { shouldFocus: true },
+      ),
+    [setError, formatMessage],
+  )
+
   const {
     selectedPaymentMethod,
     changePaymentMethod,
@@ -277,6 +300,7 @@ function PaymentPage({
     paymentFlow,
     productInformation,
     isApplePayPaymentEnabledForUser,
+    onInvalidActorNationalId,
   })
   const router = useRouter()
 
@@ -339,6 +363,13 @@ function PaymentPage({
     }
   }
 
+  // A company pays by bank transfer with an individual who has the rights to authorise it.
+  const companyPayer: CompanyPayer | undefined =
+    paymentFlow && isCompany(paymentFlow.payerNationalId)
+      ? { nationalId: paymentFlow.payerNationalId, name: paymentFlow.payerName }
+      : undefined
+  const isCompanyPayer = companyPayer !== undefined
+
   const availablePaymentMethods = useMemo(() => {
     const methods = [...(paymentFlow?.availablePaymentMethods ?? [])]
 
@@ -348,8 +379,10 @@ function PaymentPage({
 
     // TEMPORARY (testing): force-surface bank transfer via the rollout flag.
     // Once testing is done this flag is removed and the backend controls
-    // availability via availablePaymentMethods.
-    if (isBankTransferPaymentEnabledForUser) {
+    // availability via availablePaymentMethods. Never for a company: company bank
+    // transfers are controlled by the per-company flag in the payments service,
+    // which would refuse the transfer anyway.
+    if (isBankTransferPaymentEnabledForUser && !isCompanyPayer) {
       methods.push('bank_transfer')
     }
 
@@ -358,6 +391,7 @@ function PaymentPage({
     paymentFlow?.availablePaymentMethods,
     isInvoicePaymentEnabledForUser,
     isBankTransferPaymentEnabledForUser,
+    isCompanyPayer,
   ])
 
   // Card and bank transfer have input fields that must be valid before submitting; invoice has none.
@@ -365,7 +399,11 @@ function PaymentPage({
     selectedPaymentMethod === 'card' && !methods.formState.isValid
 
   const isBankTransferPaymentInvalid =
-    selectedPaymentMethod === 'bank_transfer' && !methods.formState.isValid
+    selectedPaymentMethod === 'bank_transfer' &&
+    (!methods.formState.isValid ||
+      // A server refusal of the approver is set with `setError`, which `isValid` does not reflect.
+      // Resubmitting the same value would only be refused again, so wait for it to be corrected.
+      !!methods.formState.errors.actorNationalId)
 
   const invalidFlowSetup =
     !organization ||
@@ -513,7 +551,7 @@ function PaymentPage({
                     />
                   )}
                   {selectedPaymentMethod === 'bank_transfer' && (
-                    <BankTransferPayment />
+                    <BankTransferPayment companyPayer={companyPayer} />
                   )}
                   <Button
                     type="submit"

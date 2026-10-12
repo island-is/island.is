@@ -1,7 +1,3 @@
-import { Model, Sequelize } from 'sequelize-typescript'
-
-import { getOptions } from '@island.is/nest/sequelize'
-
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseTableType,
@@ -11,7 +7,8 @@ import {
 
 import * as repository from '../repository'
 import { courtOfAppealsCasesAccessWhereOptions } from './whereOptions/access'
-import { getGlobalIncludes } from './caseTable.utils'
+import { captureSql, initCaseTableModels } from './caseTable.sqlProbe'
+import { getAccessIncludes, getGlobalIncludes } from './caseTable.utils'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
 /**
@@ -32,6 +29,13 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     institution: { id: 'court_id', type: InstitutionType.DISTRICT_COURT },
   } as User
 
+  // The access rule now carries the joins it reads, so building it needs a user.
+  const courtOfAppealsUserForAccess = {
+    id: 'coa_user_id',
+    role: UserRole.COURT_OF_APPEALS_JUDGE,
+    institution: { id: 'coa_id', type: InstitutionType.COURT_OF_APPEALS },
+  } as User
+
   const defenceUser = {
     id: 'defender_id',
     role: UserRole.DEFENDER,
@@ -47,96 +51,40 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     },
   } as User
 
-  beforeAll(() => {
-    const models = Object.values(repository).filter(
-      (exported) =>
-        typeof exported === 'function' && exported.prototype instanceof Model,
-    ) as typeof Model[]
-
-    // The same define options the app runs with - `underscored` decides whether
-    // the association scope names appeal_type or appealType, so a probe without
-    // it would assert against column names production never emits.
-    new Sequelize({
-      dialect: 'postgres',
-      models,
-      logging: false,
-      define: getOptions().define,
-    })
-  })
+  beforeAll(initCaseTableModels)
 
   // Builds the query a case table runs and returns its SQL, without touching a
   // database.
-  const sqlForTable = async (
+  const sqlForTable = (
     tableType: CaseTableType,
     user: User,
   ): Promise<string> => {
     const whereOptions = caseTableWhereOptions[tableType](user)
-    const [include, order] = getGlobalIncludes(whereOptions.includes ?? {})
+    const [include, order] = getGlobalIncludes(
+      whereOptions.includes ?? {},
+      user,
+    )
 
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await repository.Case.findAll({
+    return captureSql(() =>
+      repository.Case.findAll({
         attributes: ['id'],
         include,
         where: whereOptions.where,
         order,
-      })
-    } catch {
-      // Building the query is the subject here; running it is not, and the
-      // stubbed query layer answers with rows Sequelize cannot map.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return queries[0] ?? ''
+      }),
+    )
   }
 
   // The access options on their own, with no table where options - which is what
   // searchCases applies.
-  const sqlForAccessOptions = async (): Promise<string> => {
-    const sequelize = repository.Case.sequelize as Sequelize
-    const queries: string[] = []
-    const stub = (sql: unknown) => {
-      queries.push(typeof sql === 'string' ? sql : JSON.stringify(sql))
-      return Promise.resolve([[], {}])
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const anySequelize = sequelize as any
-    const originalQuery = anySequelize.query
-    const originalQueryRaw = anySequelize.queryRaw
-    anySequelize.query = stub
-    anySequelize.queryRaw = stub
-
-    try {
-      await repository.Case.findAll({
+  const sqlForAccessOptions = (): Promise<string> =>
+    captureSql(() =>
+      repository.Case.findAll({
         attributes: ['id'],
-        include: [
-          { association: 'appealCase', attributes: [], required: false },
-        ],
-        where: courtOfAppealsCasesAccessWhereOptions(),
-      })
-    } catch {
-      // Building the query is the subject here, not running it.
-    } finally {
-      anySequelize.query = originalQuery
-      anySequelize.queryRaw = originalQueryRaw
-    }
-
-    return queries[0] ?? ''
-  }
+        include: getAccessIncludes(courtOfAppealsUserForAccess, []),
+        where: courtOfAppealsCasesAccessWhereOptions().where,
+      }),
+    )
 
   // Every alias a query's WHERE names, other than the root. Sequelize emits a
   // reference to an association the query did not join without complaint, and
@@ -211,7 +159,25 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
       const sql = await sqlForTable(tableType, courtOfAppealsUser)
 
       expect(sql).toMatch(/appeal_type.{0,20}'RULING'/)
-      expect(sql).not.toMatch(/"verdictAppealCase"/)
+
+      // The alias is present: the access rule reads it, and asks for the join
+      // itself. What must not happen is the list selecting on it. So the join
+      // stays outer - an inner one would narrow the list to verdict appeals -
+      // and in the predicate the only column read is the id the access rule
+      // tests for null. The join's own ON clause is excluded, since matching
+      // the association scope is what a join is.
+      expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "verdictAppealCase"/)
+
+      const predicate = sql.slice(sql.indexOf(' WHERE '))
+
+      expect(predicate).toContain('"verdictAppealCase"."id" IS NOT NULL')
+      expect([
+        ...new Set(
+          [...predicate.matchAll(/"verdictAppealCase"\."(\w+)"/g)].map(
+            (m) => m[1],
+          ),
+        ),
+      ]).toEqual(['id'])
     })
 
     // The selection is driven by the verdict appeal: an inner join on the
@@ -263,7 +229,9 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
         .filter((arm) => arm.includes('INDICTMENT'))
 
       for (const arm of indictmentArms) {
-        expect(arm).toMatch(/appeal/)
+        // Case insensitive: the verdict arm now requires the appeal through the
+        // `verdictAppealCase` alias rather than a lower case column name.
+        expect(arm).toMatch(/appeal/i)
       }
     })
   })

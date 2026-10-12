@@ -978,7 +978,12 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     documents: CourtDocumentResponse[],
     emptyMessage: string,
   ) => (
-    <Box borderRadius="large" background="white" paddingX={2}>
+    <Box
+      borderRadius="large"
+      background="white"
+      paddingX={2}
+      className={styles.unfiledDocuments}
+    >
       <Accordion dividerOnBottom={false} dividerOnTop={false}>
         <AccordionItem
           id={id}

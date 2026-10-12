@@ -587,6 +587,15 @@ export const applyDativeCaseToCourtName = (courtName: string) => {
   return courtName
 }
 
+// ef to dómur ("dómi Héraðsdóms Reykjavíkur")
+export const applyGenitiveCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName.replace(target, 'dóms')
+  }
+  return courtName
+}
+
 export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
   return serviceStatus === ServiceStatus.DEFENDER
     ? 'Birt fyrir verjanda'

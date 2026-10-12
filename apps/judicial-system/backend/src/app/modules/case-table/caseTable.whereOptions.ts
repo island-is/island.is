@@ -1,5 +1,3 @@
-import { WhereOptions } from 'sequelize'
-
 import {
   CaseTableType,
   isCourtOfAppealsUser,
@@ -87,9 +85,14 @@ import {
   publicProsecutionOfficeIndictmentsReviewedWhereOptions,
   publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
 } from './whereOptions/publicProsecutionOffice'
-import { CaseWhereOptions } from './caseTable.types'
+import { CaseAccessOptions, CaseWhereOptions } from './caseTable.types'
 
-export const userAccessWhereOptions = (user: User): WhereOptions => {
+/**
+ * Everything this user may reach, and the joins the rule needs to be evaluated.
+ * The includes are applied centrally by getGlobalIncludes and getAllIncludes,
+ * so no individual list has to know which associations the rule reads.
+ */
+export const userAccessWhereOptions = (user: User): CaseAccessOptions => {
   if (isCourtOfAppealsUser(user)) {
     return courtOfAppealsCasesAccessWhereOptions()
   }
@@ -126,8 +129,11 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return defenceCasesAccessWhereOptions(user)
   }
 
-  return { id: null }
+  return { where: { id: null } }
 }
+
+export const userAccessIncludes = (user: User) =>
+  userAccessWhereOptions(user).includes
 
 export const caseTableWhereOptions: Record<
   CaseTableType,

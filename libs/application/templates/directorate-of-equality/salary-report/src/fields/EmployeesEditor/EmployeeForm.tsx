@@ -26,6 +26,7 @@ import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
   getSalaryComponentLabels,
+  getSalaryComponentTooltips,
   paidHoursFromFormValue,
   toFormValues,
 } from './utils'
@@ -58,6 +59,7 @@ export const EmployeeForm: FC<Props> = ({
   const requiredMsg = formatMessage(messages.errors.required)
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentTooltips(formatMessage)
 
   // Row 4 of the workbook, not the derived-total names: these head the input
   // columns, and Viðbótarlaun / Aukagreiðslur are columns P and Q.
@@ -147,6 +149,7 @@ export const EmployeeForm: FC<Props> = ({
               name="paidHours"
               label={formatMessage(m.paidHoursInputLabel)}
               placeholder={formatMessage(m.paidHoursPlaceholder)}
+              tooltip={formatMessage(m.paidHoursTooltip)}
               type="number"
               backgroundColor="white"
               size="sm"
@@ -172,6 +175,7 @@ export const EmployeeForm: FC<Props> = ({
               id="baseSalary"
               name="baseSalary"
               label={formatMessage(m.baseSalaryLabel)}
+              tooltip={formatMessage(m.baseSalaryTooltip)}
               type="number"
               thousandSeparator
               backgroundColor="white"
@@ -202,6 +206,7 @@ export const EmployeeForm: FC<Props> = ({
                     id={key}
                     name={key}
                     label={componentLabels[key]}
+                    tooltip={componentTooltips[key]}
                     type="number"
                     thousandSeparator
                     backgroundColor="white"

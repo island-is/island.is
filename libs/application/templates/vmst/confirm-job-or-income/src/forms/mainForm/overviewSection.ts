@@ -45,6 +45,7 @@ export const overviewSection = buildSection({
           backId: 'casualWorkMultiField',
           bottomLine: false,
           condition: isCasualWork,
+          hideIfEmpty: true,
           items: getCasualWorkOverviewItems,
         }),
         buildOverviewField({
@@ -53,6 +54,7 @@ export const overviewSection = buildSection({
           backId: 'partTimeMultiField',
           bottomLine: false,
           condition: isPartTime,
+          hideIfEmpty: true,
           items: getPartTimeOverviewItems,
         }),
         buildOverviewField({
@@ -61,6 +63,7 @@ export const overviewSection = buildSection({
           backId: 'contractWorkMultiField',
           bottomLine: false,
           condition: isContractWork,
+          hideIfEmpty: true,
           items: getContractWorkOverviewItems,
         }),
         buildOverviewField({
@@ -69,6 +72,7 @@ export const overviewSection = buildSection({
           backId: 'pensionMultiField',
           bottomLine: false,
           condition: isPension,
+          hideIfEmpty: true,
           items: getPensionOverviewItems,
         }),
         buildOverviewField({
@@ -77,6 +81,7 @@ export const overviewSection = buildSection({
           backId: 'capitalIncomeMultiField',
           bottomLine: false,
           condition: isCapitalIncome,
+          hideIfEmpty: true,
           items: getCapitalIncomeOverviewItems,
         }),
         buildOverviewField({
@@ -85,6 +90,7 @@ export const overviewSection = buildSection({
           backId: 'socialInsuranceMultiField',
           bottomLine: false,
           condition: isSocialInsurance,
+          hideIfEmpty: true,
           items: getSocialInsuranceOverviewItems,
         }),
         buildSubmitField({
