@@ -13,6 +13,7 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { AwsS3Service } from '../../aws-s3'
 import {
   AppealCase,
   AppealEventLog,
@@ -78,6 +79,7 @@ describe('AppealSummonsController - Update', () => {
 
   let mockAppealSummonsRepositoryService: AppealSummonsRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockAwsS3Service: AwsS3Service
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
 
@@ -86,11 +88,13 @@ describe('AppealSummonsController - Update', () => {
       sequelize,
       appealSummonsRepositoryService,
       appealEventLogRepositoryService,
+      awsS3Service,
       appealSummonsController: controller,
     } = await createTestingAppealSummonsModule()
 
     mockAppealSummonsRepositoryService = appealSummonsRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
+    mockAwsS3Service = awsS3Service
     appealSummonsController = controller
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -107,6 +111,10 @@ describe('AppealSummonsController - Update', () => {
     ;(
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
     ).mockResolvedValue(updated)
+    ;(mockAppealSummonsRepositoryService.update as jest.Mock).mockResolvedValue(
+      [1],
+    )
+    ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
   })
 
   it('replaces defendant rows and does not write an issued event', async () => {
@@ -139,7 +147,7 @@ describe('AppealSummonsController - Update', () => {
     expect(result).toBe(updated)
   })
 
-  it('rejects an edit once the summons has been confirmed', async () => {
+  it('clears confirmation and the cached PDF when a confirmed summons is edited', async () => {
     const summons = {
       id: summonsId,
       confirmedDate: new Date(),
@@ -147,20 +155,30 @@ describe('AppealSummonsController - Update', () => {
       hash: 'abc',
     } as AppealSummons
 
-    await expect(
-      appealSummonsController.update(
-        caseId,
-        summonsId,
-        theCase,
-        summons,
-        dto,
-        user,
-      ),
-    ).rejects.toBeInstanceOf(ForbiddenException)
+    await appealSummonsController.update(
+      caseId,
+      summonsId,
+      theCase,
+      summons,
+      dto,
+      user,
+    )
 
-    expect(
-      mockAppealSummonsRepositoryService.deleteDefendants,
-    ).not.toHaveBeenCalled()
+    expect(mockAppealSummonsRepositoryService.update).toHaveBeenCalledWith(
+      summonsId,
+      caseId,
+      {
+        confirmedById: null,
+        confirmedDate: null,
+        hash: null,
+        hashAlgorithm: null,
+      },
+      { transaction },
+    )
+    expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
+      theCase.type,
+      `${caseId}/appealSummons/${summonsId}.pdf`,
+    )
   })
 
   it('rejects an edit after the summons has been sent to the Court of Appeals', async () => {
