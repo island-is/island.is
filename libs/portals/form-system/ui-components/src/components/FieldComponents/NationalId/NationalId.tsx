@@ -136,6 +136,8 @@ export const NationalId = ({
     fetchPolicy: 'cache-first',
     skip: !shouldQueryIndividual,
     onCompleted: (nameData) => {
+      if (!shouldQueryIndividual) return
+
       handleLookupResult(removeTypename(nameData?.identity?.name) ?? '')
 
       if (showAddress && nameData?.identity?.address) {
@@ -170,7 +172,11 @@ export const NationalId = ({
         }
       }
     },
-    onError: () => handleLookupResult(''),
+    onError: () => {
+      if (!shouldQueryIndividual) return
+
+      handleLookupResult('')
+    },
   })
 
   const { loading: companyLoading } = useQuery(GET_COMPANY, {
@@ -178,9 +184,15 @@ export const NationalId = ({
     fetchPolicy: 'cache-first',
     skip: !shouldQueryCompany,
     onCompleted: (companyData) => {
+      if (!shouldQueryCompany) return
+
       handleLookupResult(companyData?.companyRegistryCompany?.name ?? '')
     },
-    onError: () => handleLookupResult(''),
+    onError: () => {
+      if (!shouldQueryCompany) return
+
+      handleLookupResult('')
+    },
   })
 
   useEffect(() => {

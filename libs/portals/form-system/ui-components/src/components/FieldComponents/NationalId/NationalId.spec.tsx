@@ -1,7 +1,7 @@
 import { MockedProvider, MockedResponse } from '@apollo/client/testing'
 import { FormSystemField } from '@island.is/api/schema'
 import { GET_COMPANY, IDENTITY_QUERY } from '@island.is/form-system/graphql'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
 import { m } from '../../../lib/messages'
@@ -310,6 +310,60 @@ describe.each([
     fireEvent.change(input, { target: { value: nationalId.slice(0, -1) } })
     await waitFor(() => expect(screen.queryByRole('status')).toBeNull())
   })
+
+  it.each([
+    { outcome: 'success', response: { result: { data: success } } },
+    {
+      outcome: 'API error',
+      response: { error: new Error('Registry unavailable') },
+    },
+  ])(
+    'ignores a late $outcome after switching lookup categories',
+    async ({ response }) => {
+      jest.useFakeTimers()
+      try {
+        const nextNationalId =
+          query === IDENTITY_QUERY ? '410130-2989' : '010130-2989'
+        const { dispatch } = renderField(
+          [
+            { request, delay: 50, ...response },
+            {
+              request: {
+                query: query === IDENTITY_QUERY ? GET_COMPANY : IDENTITY_QUERY,
+                variables: {
+                  input: { nationalId: nextNationalId.replace('-', '') },
+                },
+              },
+              delay: Infinity,
+              result: { data: {} },
+            },
+          ],
+          true,
+        )
+        const input = screen.getByRole('textbox', { name: 'National ID' })
+        fireEvent.change(input, { target: { value: nationalId } })
+        fireEvent.change(input, { target: { value: nextNationalId } })
+        dispatch.mockClear()
+
+        await act(async () => {
+          await jest.advanceTimersByTimeAsync(100)
+        })
+
+        expect(input.getAttribute('value')).toBe(nextNationalId)
+        for (const label of [m.namePerson, m.address, m.postalCode, m.city]) {
+          expect(
+            screen
+              .getByRole('textbox', { name: label.defaultMessage })
+              .getAttribute('value'),
+          ).toBe('')
+        }
+        expect(screen.queryByRole('alert')).toBeNull()
+        expect(dispatch).not.toHaveBeenCalled()
+      } finally {
+        jest.useRealTimers()
+      }
+    },
+  )
 
   it.each([
     {

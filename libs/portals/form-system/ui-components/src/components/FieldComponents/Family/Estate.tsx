@@ -53,6 +53,10 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
   }, [item, nameField, setValue, valueIndex])
 
   const handleLookupResult = (name: string) => {
+    if (!isValidFormat) {
+      return
+    }
+
     setValue(nameField, name, { shouldDirty: true, shouldValidate: true })
     if (!name) {
       const message = formatMessage(m.nationalIdLookupFailed)
