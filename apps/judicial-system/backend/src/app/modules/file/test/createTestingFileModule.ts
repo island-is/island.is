@@ -24,6 +24,7 @@ import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
 import { InternalFileController } from '../internalFile.controller'
 import { LimitedAccessFileController } from '../limitedAccessFile.controller'
+import { PoliceDigitalCaseFileService } from '../policeDigitalCaseFiles/policeDigitalCaseFile.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../../middleware/queueMessagesAfterCommit')
@@ -109,6 +110,9 @@ export const createTestingFileModule = async () => {
 
   const fileService = fileModule.get<FileService>(FileService)
 
+  const policeDigitalCaseFileService =
+    fileModule.get<PoliceDigitalCaseFileService>(PoliceDigitalCaseFileService)
+
   const fileController = fileModule.get<FileController>(FileController)
 
   const internalFileController = fileModule.get<InternalFileController>(
@@ -139,6 +143,7 @@ export const createTestingFileModule = async () => {
     caseFileRepositoryService,
     fileConfig,
     fileService,
+    policeDigitalCaseFileService,
     fileController,
     internalFileController,
     limitedAccessFileController,

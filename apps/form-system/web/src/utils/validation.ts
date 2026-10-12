@@ -1,6 +1,6 @@
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
-import { AssetTypes } from '@island.is/form-system/enums'
+import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 
 export const validateScreen = (state: ApplicationState): string[] => {
   const { currentScreen } = state
@@ -37,6 +37,12 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
       return value?.phoneNumber === '' || !value.phoneNumber
     case FieldTypesEnum.NATIONAL_ID:
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
+    case FieldTypesEnum.FAMILY:
+      return (
+        !validateNationalId(value?.nationalId ?? '', value?.name ?? '') ||
+        (field.fieldSettings?.familyType === FamilyTypes.SPOUSE &&
+          !value.maritalStatus)
+      )
     case FieldTypesEnum.ISK_NUMBERBOX:
       return !value?.iskNumber || value?.iskNumber.length === 0
     // case FieldTypesEnum.PROPERTY_NUMBER:
@@ -86,9 +92,10 @@ const validateEmail = (value?: string) => {
 const validateNationalId = (nationalId?: string, name?: string) => {
   // if (!nationalId || !name) return false
   if (!nationalId || !name) return false
+  const normalizedNationalId = nationalId.replace(/^(\d{6})(\d{4})$/, '$1-$2')
   const nationalIdRegex = /^\d{6}-\d{4}$/
 
-  if (!nationalIdRegex.test(nationalId)) return false
+  if (!nationalIdRegex.test(normalizedNationalId)) return false
   // if (name.length < 2) return false
   return true
 }

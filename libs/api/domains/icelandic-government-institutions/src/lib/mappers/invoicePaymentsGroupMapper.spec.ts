@@ -6,9 +6,6 @@ const baseDto: InvoicePaymentsGroupDto = {
   supplier: {
     legalId: '1234567890',
     name: 'Íslandspóstur ohf.',
-    isConfidential: false,
-    isPrivatePerson: false,
-    isPrivatePersonProxy: false,
   },
   debtor: {
     legalId: '5309672079',
@@ -36,9 +33,6 @@ describe('mapInvoicePaymentsGroup', () => {
       supplier: {
         legalId: '1234567890',
         name: 'Íslandspóstur ohf.',
-        isConfidential: false,
-        isPrivatePerson: false,
-        isPrivatePersonProxy: false,
       },
       debtor: {
         legalId: '5309672079',
@@ -55,7 +49,6 @@ describe('mapInvoicePaymentsGroup', () => {
           invoice: {
             id: 'a1b2c3d4-0000-4000-8000-000000000002',
             number: '191552084',
-            numberRedacted: false,
             totalAmount: 12683,
             itemization: [],
           },

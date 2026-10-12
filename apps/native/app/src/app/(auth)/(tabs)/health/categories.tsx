@@ -204,11 +204,6 @@ export default function HealthCategoriesScreen() {
       titleId: 'health.categories.waitingLists',
       url: `${origin}/minarsidur/heilsa/bidlistar`,
     },
-    {
-      id: 'medicalRecords',
-      titleId: 'health.categories.medicalRecords',
-      url: `${origin}/minarsidur/heilsa/sjukraskra/heimildir`,
-    },
     // One row per treatment, as on my pages. Names repeat, so key by id.
     ...treatments.map((treatment) => {
       const name = treatment.name.trim()
