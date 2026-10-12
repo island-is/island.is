@@ -340,10 +340,15 @@ export const drawTextWithEllipsisPDFKit = (
     return
   }
 
-  // Drop characters until the text and the ellipsis fit. When not even the
-  // ellipsis fits, the text runs out and the ellipsis alone is drawn.
-  const availableWidth =
-    maxWidth - font.type.widthOfTextAtSize(ellipsis, font.size)
+  // drawText does not clip, so when not even the ellipsis fits, draw nothing
+  // rather than let it cross the edge of the box.
+  const ellipsisWidth = font.type.widthOfTextAtSize(ellipsis, font.size)
+  if (ellipsisWidth > maxWidth) {
+    return
+  }
+
+  // Drop characters until the text and the ellipsis fit.
+  const availableWidth = maxWidth - ellipsisWidth
   while (text.length > 0 && width > availableWidth) {
     text = text.slice(0, -1)
     width = font.type.widthOfTextAtSize(text, font.size)

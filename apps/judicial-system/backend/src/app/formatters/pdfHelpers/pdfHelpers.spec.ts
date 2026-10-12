@@ -1284,9 +1284,15 @@ describe('drawTextWithEllipsisPDFKit', () => {
     expect(drawText).toHaveBeenCalledWith('abcd...', expect.anything())
   })
 
-  it('draws only the ellipsis when not even the ellipsis fits', () => {
-    drawTextWithEllipsisPDFKit(page, 'abcdefghij', font, 0, 0, 20)
+  it('draws only the ellipsis when nothing but the ellipsis fits', () => {
+    drawTextWithEllipsisPDFKit(page, 'abcdefghij', font, 0, 0, 30)
 
     expect(drawText).toHaveBeenCalledWith('...', expect.anything())
+  })
+
+  it('draws nothing when not even the ellipsis fits', () => {
+    drawTextWithEllipsisPDFKit(page, 'abcdefghij', font, 0, 0, 20)
+
+    expect(drawText).not.toHaveBeenCalled()
   })
 })
