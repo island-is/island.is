@@ -2,7 +2,7 @@ import type { Dispatch, FC, SetStateAction } from 'react'
 import { useState } from 'react'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
@@ -36,9 +36,9 @@ describe('AppealSections', () => {
     ...mockCase(CaseType.CUSTODY),
     sessionArrangements: SessionArrangements.ALL_PRESENT,
     defendants: [{ id: 'defendant_id' }],
-  } as Case
+  } as WorkingCase
 
-  const renderComponent = (workingCase: Case) =>
+  const renderComponent = (workingCase: WorkingCase) =>
     render(
       <IntlProviderWrapper>
         <AppealSections workingCase={workingCase} setWorkingCase={jest.fn()} />
@@ -92,7 +92,7 @@ describe('AppealSections', () => {
         appealState: AppealCaseState.APPEALED,
         appealedOutOfCourt: false,
       },
-    } as Case)
+    } as WorkingCase)
 
     expectAllControlsDisabled(false)
     expect(screen.queryByText(outOfCourtMessage)).not.toBeInTheDocument()
@@ -109,7 +109,7 @@ describe('AppealSections', () => {
         appealState: AppealCaseState.APPEALED,
         appealedOutOfCourt: true,
       },
-    } as Case)
+    } as WorkingCase)
 
     expectAllControlsDisabled(true)
     expect(screen.getByText(outOfCourtMessage)).toBeInTheDocument()
@@ -124,7 +124,7 @@ describe('AppealSections', () => {
         appealState: AppealCaseState.RECEIVED,
         appealedOutOfCourt: false,
       },
-    } as Case)
+    } as WorkingCase)
 
     expectAllControlsDisabled(true)
     expect(screen.getByText(progressedMessage)).toBeInTheDocument()
@@ -138,7 +138,7 @@ describe('AppealSections', () => {
         appealState: AppealCaseState.COMPLETED,
         appealedOutOfCourt: false,
       },
-    } as Case)
+    } as WorkingCase)
 
     expectAllControlsDisabled(true)
     expect(screen.getByText(progressedMessage)).toBeInTheDocument()
@@ -151,9 +151,9 @@ describe('AppealSections', () => {
     // Holds the working case the way FormProvider does, so the component's
     // optimistic update and its rollback can be observed.
     const Harness: FC<{
-      initialCase: Case
-      onWorkingCase: (workingCase: Case) => void
-      onSetWorkingCase: (set: Dispatch<SetStateAction<Case>>) => void
+      initialCase: WorkingCase
+      onWorkingCase: (workingCase: WorkingCase) => void
+      onSetWorkingCase: (set: Dispatch<SetStateAction<WorkingCase>>) => void
       onChange?: jest.Mock
     }> = ({ initialCase, onWorkingCase, onSetWorkingCase, onChange }) => {
       const [workingCase, setWorkingCase] = useState(initialCase)
@@ -171,9 +171,10 @@ describe('AppealSections', () => {
       )
     }
 
-    const renderHarness = (initialCase: Case) => {
+    const renderHarness = (initialCase: WorkingCase) => {
       let latest = initialCase
-      let setWorkingCase: Dispatch<SetStateAction<Case>> = () => undefined
+      let setWorkingCase: Dispatch<SetStateAction<WorkingCase>> = () =>
+        undefined
       const onChange = jest.fn()
       render(
         <Harness
@@ -191,7 +192,8 @@ describe('AppealSections', () => {
       return {
         workingCase: () => latest,
         // What FormProvider does when the route moves to another case
-        switchToCase: (theCase: Case) => act(() => setWorkingCase(theCase)),
+        switchToCase: (theCase: WorkingCase) =>
+          act(() => setWorkingCase(theCase)),
         onChange,
       }
     }
@@ -351,7 +353,7 @@ describe('AppealSections', () => {
             decision: CaseAppealDecision.ACCEPT,
           },
         ],
-      } as Case
+      } as WorkingCase
 
       fireEvent.click(prosecutorDecision())
       await switchToCase(otherCase)
@@ -381,7 +383,7 @@ describe('AppealSections', () => {
             decision: CaseAppealDecision.ACCEPT,
           },
         ],
-      } as Case)
+      } as WorkingCase)
 
       fireEvent.click(prosecutorDecision())
 
@@ -408,7 +410,7 @@ describe('AppealSections', () => {
             decision: CaseAppealDecision.POSTPONE,
           },
         ],
-      } as Case)
+      } as WorkingCase)
 
       fireEvent.click(prosecutorDecision())
 

@@ -25,6 +25,7 @@ export type ActionCardProps = {
   }
   cta?: {
     label: string
+    ariaLabel?: string
     /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
     variant?: ButtonTypes['variant']
     /** Allows for full buttonType control. Supersedes the variant property when both are defined. */

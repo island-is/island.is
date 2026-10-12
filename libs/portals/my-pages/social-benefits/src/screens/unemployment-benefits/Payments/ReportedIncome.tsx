@@ -47,7 +47,10 @@ export const ReportedIncome = () => {
     if (item.__typename === 'VmstApplicantTRPayment') {
       return formatMessage(um.reportedIncomeTRPayer)
     }
-    return 'employer' in item ? item.employer.name : DASH
+    if ('employerName' in item) {
+      return item.employerName ?? DASH
+    }
+    return DASH
   }
 
   const rows: ReportedIncomeRow[] = (data?.vmstApplicantIncomeRows ?? []).map(

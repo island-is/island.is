@@ -3,14 +3,14 @@ import { useIntl } from 'react-intl'
 
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { useLawTag } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
-export const useIndictmentsLawsBroken = (workingCase: Case) => {
+export const useIndictmentsLawsBroken = (workingCase: WorkingCase) => {
   const lawTag = useLawTag()
   const lawsBroken = new Set<string>()
 

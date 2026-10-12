@@ -69,7 +69,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -2490,18 +2490,42 @@ export class CaseService {
     ) {
       // The COMPLETE transition has already checked that the parent case is
       // received
-      const parentCase = theCase.mergeCase
 
-      // Update the latest court session if it is unconfirmed
+      // The parent's court sessions can change under this request: the guard
+      // locked this case's row, not the parent's. The parent's court session
+      // routes run under the parent's row lock (CaseExistsForUpdateGuard), so
+      // taking that lock here makes a confirmation of the parent's latest
+      // session, or a new session on it, either finish before the decision
+      // below or wait for this completion to commit - and the decision is
+      // taken from a fresh read under the lock, not from the guard's snapshot.
+      // Lock order is child then parent; nothing takes them the other way
+      // round - the parent's routes lock their own row and read the merged
+      // children without locking them.
+      const parentCaseLocked =
+        await this.caseRepositoryService.lockByIdForUpdate(
+          theCase.mergeCaseId,
+          transaction,
+        )
+
+      if (!parentCaseLocked) {
+        throw new InternalServerErrorException(
+          `Could not find parent case ${theCase.mergeCaseId} when completing merged case ${theCase.id}`,
+        )
+      }
+
+      // The merged case joins the parent's latest court session while that
+      // session is still open. Once it has been confirmed - or if the parent
+      // has no session yet - nothing happens here: the parent's next court
+      // session picks the merged case up when it is created.
       if (
-        parentCase?.withCourtSessions &&
-        parentCase.courtSessions &&
-        parentCase.courtSessions.length > 0 &&
-        !parentCase.courtSessions[parentCase.courtSessions.length - 1]
-          .isConfirmed
+        theCase.mergeCase?.withCourtSessions &&
+        (await this.courtSessionService.isLatestCourtSessionOpen(
+          theCase.mergeCaseId,
+          transaction,
+        ))
       ) {
         await this.courtSessionService.addMergedCaseToLatestCourtSession(
-          parentCase.id,
+          theCase.mergeCaseId,
           theCase.id,
           transaction,
         )
@@ -2546,19 +2570,35 @@ export class CaseService {
 
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
+    // Each of these events asserts that a transition happened, so they wait
+    // for the commit: TransactionCommitInterceptor drains the callbacks after
+    // the handler has returned and the request transaction, if there is one,
+    // has committed. The update and transition routes run inside the request
+    // transaction their guard opened; createCourtCase and the two signature
+    // confirmations call this inside a transaction their handler owns and
+    // return right after it commits, which is what keeps the drain behind the
+    // commit there too. Either way an update that rolls back announces
+    // nothing. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
     if (isReceivingCase) {
-      this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase),
+      )
     }
 
     if (requiresCourtTransition) {
-      this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
-        from: theCase.court?.name,
-        to: updatedCase?.court?.name,
-      })
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
+          from: theCase.court?.name,
+          to: updatedCase?.court?.name,
+        }),
+      )
     }
 
     if (isReopeningCase) {
-      this.eventService.postEvent(CaseTransition.REOPEN, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.REOPEN, updatedCase),
+      )
     }
 
     if (returnUpdatedCase) {

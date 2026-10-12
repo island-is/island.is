@@ -3,7 +3,10 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -40,6 +43,7 @@ import {
   TransactionContext,
 } from '../../../../middleware'
 import { randomDate, runInRequestContext } from '../../../../test'
+import { CourtSessionService } from '../../../court-session'
 import { EventService } from '../../../event'
 import { Case, CaseRepositoryService } from '../../../repository'
 import { UserService } from '../../../user'
@@ -73,6 +77,7 @@ describe('CaseController - Transition', () => {
   let transaction: Transaction
   let mockSequelize: Sequelize
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockCourtSessionService: CourtSessionService
   let mockVerdictService: VerdictService
   let mockEventService: EventService
   let mockUserService: UserService
@@ -84,6 +89,7 @@ describe('CaseController - Transition', () => {
       queuedMessages,
       sequelize,
       caseRepositoryService,
+      courtSessionService,
       verdictService,
       eventService,
       userService,
@@ -93,6 +99,7 @@ describe('CaseController - Transition', () => {
     mockQueuedMessages = queuedMessages
     mockSequelize = sequelize
     mockCaseRepositoryService = caseRepositoryService
+    mockCourtSessionService = courtSessionService
     mockVerdictService = verdictService
     mockEventService = eventService
     mockUserService = userService
@@ -672,6 +679,171 @@ describe('CaseController - Transition', () => {
         { defendantId: activeDefendantId },
         transaction,
       )
+    })
+  })
+
+  // An indictment case that completes by merging into a parent case joins the
+  // parent's latest court session, provided that session is still open. The
+  // court session service owns what joining means; this is the decision to
+  // call it. The guard locked this case's row, not the parent's, so the
+  // decision is taken on the parent's row - locked here - and from a fresh
+  // read of its latest session rather than from the guard's snapshot, which a
+  // confirmation or a new session on the parent can have outdated.
+  describe('completing an indictment case by merging it into a parent case', () => {
+    const caseId = uuid()
+    const parentCaseId = uuid()
+    const mergingCase = (latestSessionOpenInSnapshot: boolean) =>
+      ({
+        id: caseId,
+        origin: CaseOrigin.LOKE,
+        type: indictmentCases[0],
+        policeCaseNumbers: [uuid()],
+        courtCaseNumber: uuid(),
+        state: CaseState.RECEIVED,
+        indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
+        courtEndTime: randomDate(),
+        defendants: [{ id: uuid(), eventLogs: [] }],
+        mergeCaseId: parentCaseId,
+        mergeCase: {
+          id: parentCaseId,
+          state: CaseState.RECEIVED,
+          withCourtSessions: true,
+          courtSessions: [
+            { id: uuid(), isConfirmed: true },
+            { id: uuid(), isConfirmed: !latestSessionOpenInSnapshot },
+          ],
+        },
+      } as unknown as Case)
+
+    beforeEach(() => {
+      const mockLockByIdForUpdate =
+        mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+      mockLockByIdForUpdate.mockResolvedValue(true)
+    })
+
+    each`
+      snapshotSaysOpen | freshReadSaysOpen
+      ${true}          | ${true}
+      ${true}          | ${false}
+      ${false}         | ${true}
+      ${false}         | ${false}
+    `.describe(
+      'the guard snapshot says the latest session of the parent is open: $snapshotSaysOpen, the fresh read says: $freshReadSaysOpen',
+      ({ snapshotSaysOpen, freshReadSaysOpen }) => {
+        const theCase = mergingCase(snapshotSaysOpen)
+        let then: Then
+
+        beforeEach(async () => {
+          const mockIsLatestCourtSessionOpen =
+            mockCourtSessionService.isLatestCourtSessionOpen as jest.Mock
+          mockIsLatestCourtSessionOpen.mockResolvedValueOnce(freshReadSaysOpen)
+          const mockFindLiveById =
+            mockCaseRepositoryService.findLiveById as jest.Mock
+          mockFindLiveById.mockResolvedValueOnce({
+            ...theCase,
+            state: CaseState.COMPLETED,
+          })
+
+          then = await givenWhenThen(caseId, theCase, {
+            transition: CaseTransition.COMPLETE,
+          })
+        })
+
+        it('should lock the parent case before reading its latest court session', () => {
+          const mockLockByIdForUpdate =
+            mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+          const mockIsLatestCourtSessionOpen =
+            mockCourtSessionService.isLatestCourtSessionOpen as jest.Mock
+
+          expect(mockLockByIdForUpdate).toHaveBeenCalledWith(
+            parentCaseId,
+            transaction,
+          )
+          expect(mockIsLatestCourtSessionOpen).toHaveBeenCalledWith(
+            parentCaseId,
+            transaction,
+          )
+          expect(
+            mockLockByIdForUpdate.mock.invocationCallOrder[0],
+          ).toBeLessThan(
+            mockIsLatestCourtSessionOpen.mock.invocationCallOrder[0],
+          )
+        })
+
+        it(`should ${
+          freshReadSaysOpen ? 'add the case to' : 'leave alone'
+        } the latest court session of the parent case, as the fresh read says`, () => {
+          if (freshReadSaysOpen) {
+            expect(
+              mockCourtSessionService.addMergedCaseToLatestCourtSession,
+            ).toHaveBeenCalledWith(parentCaseId, caseId, transaction)
+          } else {
+            expect(
+              mockCourtSessionService.addMergedCaseToLatestCourtSession,
+            ).not.toHaveBeenCalled()
+          }
+        })
+
+        it('should complete the case', () => {
+          expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+            caseId,
+            expect.objectContaining({ state: CaseState.COMPLETED }),
+            { transaction },
+          )
+          expect(then.error).toBeUndefined()
+        })
+      },
+    )
+
+    describe('the parent case does not use court sessions', () => {
+      beforeEach(async () => {
+        const theCase = mergingCase(true)
+        theCase.mergeCase = {
+          ...theCase.mergeCase,
+          withCourtSessions: false,
+          courtSessions: [],
+        } as unknown as Case
+
+        await givenWhenThen(caseId, theCase, {
+          transition: CaseTransition.COMPLETE,
+        })
+      })
+
+      it('should still lock the parent case and not read its court sessions', () => {
+        expect(
+          mockCaseRepositoryService.lockByIdForUpdate,
+        ).toHaveBeenCalledWith(parentCaseId, transaction)
+        expect(
+          mockCourtSessionService.isLatestCourtSessionOpen,
+        ).not.toHaveBeenCalled()
+        expect(
+          mockCourtSessionService.addMergedCaseToLatestCourtSession,
+        ).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('the parent case is gone', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockLockByIdForUpdate =
+          mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
+        mockLockByIdForUpdate.mockResolvedValue(false)
+
+        then = await givenWhenThen(caseId, mergingCase(true), {
+          transition: CaseTransition.COMPLETE,
+        })
+      })
+
+      it('should fail the completion', () => {
+        expect(then.error).toBeInstanceOf(InternalServerErrorException)
+        expect(then.error.message).toBe(
+          `Could not find parent case ${parentCaseId} when completing merged case ${caseId}`,
+        )
+        expect(
+          mockCourtSessionService.addMergedCaseToLatestCourtSession,
+        ).not.toHaveBeenCalled()
+      })
     })
   })
 
