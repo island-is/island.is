@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -28,9 +28,9 @@ describe('VerdictAppealFiles', () => {
   const defenderNationalId = '1111111111'
 
   const theCase = (
-    caseFiles: Case['caseFiles'],
+    caseFiles: WorkingCase['caseFiles'],
     appealDefenderName?: string,
-  ): Case => ({
+  ): WorkingCase => ({
     ...mockCase(CaseType.INDICTMENT),
     defendants: [
       {
@@ -55,7 +55,7 @@ describe('VerdictAppealFiles', () => {
   }
 
   const renderSection = (
-    theCase: Case,
+    theCase: WorkingCase,
     userRole: UserRole = UserRole.DEFENDER,
   ) =>
     render(
@@ -117,7 +117,7 @@ describe('VerdictAppealFiles', () => {
   })
 
   describe('the appeal summons', () => {
-    const appealed = (caseFiles: Case['caseFiles']): Case => ({
+    const appealed = (caseFiles: WorkingCase['caseFiles']): WorkingCase => ({
       ...theCase(caseFiles),
       verdictAppealCase: {
         id: 'verdict_appeal_id',
@@ -166,6 +166,46 @@ describe('VerdictAppealFiles', () => {
       expect(
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
       ).not.toBeInTheDocument()
+    })
+  })
+
+  // Which parties get a letter is covered in the logic spec; what is left here
+  // is that the row reaches the page and opens the pdf route rather than a
+  // stored file.
+  describe('the letter of appointment', () => {
+    const confirmed = (caseFiles: WorkingCase['caseFiles']): WorkingCase => {
+      const base = theCase(caseFiles, 'Vaka Dagsdóttir')
+
+      return {
+        ...base,
+        defendants: (base.defendants ?? []).map((defendant) => ({
+          ...defendant,
+          isAppealDefenderConfirmed: true,
+        })),
+        verdictAppealCase: {
+          id: 'verdict_appeal_id',
+          appealType: AppealCaseType.VERDICT,
+          appealState: AppealCaseState.APPEALED,
+        },
+      }
+    }
+
+    it('should offer the court of appeals a row per confirmed advocate', async () => {
+      renderSection(confirmed([]), UserRole.COURT_OF_APPEALS_JUDGE)
+
+      expect(await screen.findByText('Áfrýjunarferli')).toBeInTheDocument()
+      expect(
+        screen.getByText('Skipunarbréf Vaka Dagsdóttir.pdf'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByTestId('appealAppointmentLetterPDFButton'),
+      ).toBeInTheDocument()
+    })
+
+    it('should not offer it to a defender', () => {
+      renderSection(confirmed([]))
+
+      expect(screen.queryByText('Áfrýjunarferli')).not.toBeInTheDocument()
     })
   })
 })

@@ -8,7 +8,6 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { GaldurExternalDomainModelsIncomeIrregularJobDTO } from '@island.is/clients/vmst-unemployment'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
@@ -22,6 +21,7 @@ import {
   buildCanRemoveRow,
   buildEmployerSSNDelete,
 } from '../../../utils/reconcile'
+import { getCasualWorkDefaults } from '../../../utils/persistedRows'
 import {
   getCompanyNationalId,
   toOptionalString,
@@ -33,27 +33,6 @@ type WorkshiftPeriod = {
   id?: string
   name?: string
   english?: string | null
-}
-
-const getCasualWorkDefaults = (application: Application) => {
-  const jobs =
-    getValueViaPath<GaldurExternalDomainModelsIncomeIrregularJobDTO[]>(
-      application.externalData,
-      'income.data.irregularJobs',
-    ) ?? []
-
-  return jobs.map((job) => ({
-    validationId: job.id,
-    company: {
-      nationalId: job.employerSSN ?? '',
-      name: job.employerName?.trim() ?? '',
-    },
-    dateFrom: job.periodFrom ?? '',
-    dateTo: job.periodTo ?? '',
-    estimatedIncome:
-      job.estimatedIncome != null ? String(job.estimatedIncome) : '',
-    workshiftPeriod: job.workShiftPeriodIds?.[0] ?? '',
-  }))
 }
 
 const casualWorkValidationProps: IncomeValidationFieldProps = {
@@ -118,6 +97,8 @@ export const casualWorkSection = buildSubSection({
               searchCompanies: true,
               searchPersons: false,
               required: true,
+              customNationalIdLabel: m.application.companyNationalId,
+              customNameLabel: m.application.companyName,
             },
             dateFrom: {
               component: 'date',

@@ -13,6 +13,7 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   DateTime,
@@ -20,10 +21,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -37,7 +35,7 @@ interface DateTimeValue {
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   onSubmit: (updateCase: UpdateCase) => Promise<boolean>
   isSendingNotification: boolean
   isUpdatingCase: boolean
@@ -45,7 +43,7 @@ interface Props {
 }
 
 const getModificationSuccessText = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   modifiedValidToDate: DateTimeValue | undefined,
   modifiedIsolationToDate: DateTimeValue | undefined,
   formatMessage: IntlShape['formatMessage'],

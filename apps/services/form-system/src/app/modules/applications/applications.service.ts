@@ -3,6 +3,8 @@ import {
   ApplicantTypesEnum,
   ApplicationEvents,
   ApplicationStatus,
+  AssetTypes,
+  FamilyTypes,
   FieldTypesEnum,
   FormStatus,
   ListTypesEnum,
@@ -24,6 +26,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { jwtDecode } from 'jwt-decode'
 import * as kennitala from 'kennitala'
+import pick from 'lodash/pick'
 import { Op, QueryTypes } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
@@ -186,11 +189,36 @@ export class ApplicationsService {
                     ) {
                       return
                     }
-                    const valueJson =
+                    let valueJson =
                       ValueTypeFactory.getClass(
                         field.fieldType,
                         new ValueType(),
                       ) ?? {}
+                    if (field.fieldType === FieldTypesEnum.ASSETS) {
+                      const assetType = field.fieldSettings?.assetType
+                      if (assetType === AssetTypes.REAL_ESTATE) {
+                        valueJson = pick(valueJson, [
+                          'address',
+                          'postalCode',
+                          'municipality',
+                          'propertyNumber',
+                        ])
+                      } else if (assetType === AssetTypes.VEHICLE) {
+                        valueJson = pick(valueJson, [
+                          'color',
+                          'model',
+                          'registrationNumber',
+                        ])
+                      }
+                    } else if (field.fieldType === FieldTypesEnum.FAMILY) {
+                      const keys = ['nationalId', 'name']
+                      if (
+                        field.fieldSettings?.familyType === FamilyTypes.SPOUSE
+                      ) {
+                        keys.push('maritalStatus')
+                      }
+                      valueJson = pick(valueJson, keys)
+                    }
                     if (field.fieldType === FieldTypesEnum.APPLICANT) {
                       const type = field.fieldSettings?.applicantType
                       if (type === ApplicantTypesEnum.INDIVIDUAL) {

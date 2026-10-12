@@ -445,6 +445,14 @@ export const addNormalRightAlignedText = (
   addAlignedText(doc, baseFontSize, text, 'right', font)
 }
 
+export const addNormalPlusRightAlignedText = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) => {
+  addAlignedText(doc, basePlusFontSize, text, 'right', font)
+}
+
 export const addNumberedList = (
   doc: PDFKit.PDFDocument,
   items: string[],
