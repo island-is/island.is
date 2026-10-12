@@ -150,24 +150,14 @@ export const richText: RichText = (
   // Duplicate React keys break reconciliation on client-side navigation
   // (reused slices get hoisted/reordered), so we give each occurrence of an id
   // its own stable ordinal (0, 1, 2 …) and scope the key by that rather than by
-  // the slice's current array index.
-  const occurrenceCountById = new Map<string, number>()
+  // the slice's current array index. The ordinal is always a trailing numeric
+  // suffix, so the `id:occurrence` key stays unambiguous even for ids that
+  // themselves contain a colon.
   const occurrenceById = new Map<string, number>()
-  documents.forEach((slice) => {
-    occurrenceCountById.set(
-      slice.id,
-      (occurrenceCountById.get(slice.id) ?? 0) + 1,
-    )
-  })
   return documents.map((slice) => {
     const occurrence = occurrenceById.get(slice.id) ?? 0
     occurrenceById.set(slice.id, occurrence + 1)
-    // Only disambiguate ids that actually repeat, so unique slices keep a clean
-    // key and duplicates each get a distinct, index-independent suffix.
-    const key =
-      (occurrenceCountById.get(slice.id) ?? 0) > 1
-        ? `${slice.id}:${occurrence}`
-        : slice.id
+    const key = `${slice.id}:${occurrence}`
     if (slice.__typename === 'Html') {
       return (
         <Fragment key={key}>
