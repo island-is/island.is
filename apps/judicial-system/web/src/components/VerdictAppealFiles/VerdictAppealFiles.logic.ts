@@ -11,16 +11,25 @@ import {
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import {
-  type AppealCase,
-  AppealCaseState,
-  type AppealSummons,
-  type CaseFile,
-  type CaseFileCategory,
-  type Defendant,
-  type User,
+import type {
+  AppealSummons,
+  CaseFile,
+  CaseFileCategory,
+  Defendant,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
+
+import { hasStandingVerdictAppeal } from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
+
+// Re-exported because this is where the section's callers and its spec have
+// always asked for them; the rules themselves are shared with the advocate
+// screen and live beside it.
+export {
+  getAppealAppointmentLetters,
+  hasStandingVerdictAppeal,
+} from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
+export type { AppealAppointmentLetterRow } from '../AppealAppointmentLetter/AppealAppointmentLetter.logic'
 
 // Whether this user may open a verdict appeal file of one of the given
 // categories.
@@ -80,17 +89,6 @@ export const getVerdictAppealFileGroups = (
   })
 }
 
-/**
- * Whether a verdict appeal currently stands. The association row persists after
- * withdrawal (and is reused if someone re-appeals within the deadline), so a
- * present `verdictAppealCase` alone is not enough.
- */
-export const hasStandingVerdictAppeal = (
-  verdictAppealCase?: Pick<AppealCase, 'appealState'> | null,
-): boolean =>
-  Boolean(verdictAppealCase) &&
-  verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
-
 export const showsAppealSummonses = (
   workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
@@ -111,7 +109,7 @@ export const showsAppealSummonses = (
 }
 
 export const getAppealSummonsRows = (
-  workingCase: Pick<Case, 'verdictAppealCase'>,
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
   user: User | undefined,
 ): AppealSummons[] => {
   if (isCourtOfAppealsUser(user)) {

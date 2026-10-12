@@ -11,6 +11,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import FileNotFoundModal from '@island.is/judicial-system-web/src/components/Modals/FileNotFoundModal/FileNotFoundModal'
 import { Modal } from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
+import PdfButton from '@island.is/judicial-system-web/src/components/PdfButton/PdfButton'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -26,6 +27,7 @@ import {
   formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
   formatAppealSummonsSentToCourtOfAppealsTooltip,
+  getAppealAppointmentLetters,
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
   getVerdictAppealFileGroups,
@@ -79,8 +81,13 @@ const VerdictAppealFiles: FC = () => {
   const showIssueButton =
     isIndictmentAppealEnabled && canShowIssueAppealSummons(workingCase, user)
   const summonses = getAppealSummonsRows(workingCase, user)
+  const appointmentLetters = getAppealAppointmentLetters(workingCase, user)
 
-  if (groups.length === 0 && !showSummonses) {
+  if (
+    groups.length === 0 &&
+    !showSummonses &&
+    appointmentLetters.length === 0
+  ) {
     return null
   }
 
@@ -322,6 +329,20 @@ const VerdictAppealFiles: FC = () => {
             />
           ))}
         </Box>
+      ))}
+      {/* Last, because the court writes the letter once the appeal has
+      reached it and it has settled who represents each party. Generated on
+      demand rather than stored, so there is nothing to date it by here - the
+      letter carries the date it was signed. */}
+      {appointmentLetters.map((letter) => (
+        <PdfButton
+          key={letter.key}
+          renderAs="row"
+          caseId={workingCase.id}
+          title={letter.fileName}
+          pdfType="appealAppointmentLetter"
+          elementId={letter.elementId}
+        />
       ))}
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}

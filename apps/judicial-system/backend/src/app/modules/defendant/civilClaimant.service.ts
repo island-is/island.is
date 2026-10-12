@@ -16,7 +16,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { queueMessagesAfterCommit } from '../../middleware'
-import { buildAdvocateConfirmedEvent } from '../appeal-case/appealCase.helpers'
+import {
+  buildAdvocateConfirmedEvent,
+  namesADifferentAdvocate,
+} from '../appeal-case/appealCase.helpers'
 import { CourtService } from '../court'
 import {
   AppealEventLogRepositoryService,
@@ -131,6 +134,29 @@ export class CivilClaimantService {
           update.defendantIds ?? civilClaimant.defendantIds,
           transaction,
         ),
+      }
+    }
+
+    // A confirmation names a person, so one cannot survive the person
+    // changing. The screen makes the court confirm again; the API has to
+    // enforce the same rule, or the letter would print the new advocate over
+    // the signatory and date of the confirmation that named the old one.
+    if (
+      civilClaimant.isAppealSpokespersonConfirmed &&
+      namesADifferentAdvocate(
+        {
+          name: civilClaimant.appealSpokespersonName,
+          nationalId: civilClaimant.appealSpokespersonNationalId,
+        },
+        {
+          name: update.appealSpokespersonName,
+          nationalId: update.appealSpokespersonNationalId,
+        },
+      )
+    ) {
+      effectiveUpdate = {
+        ...effectiveUpdate,
+        isAppealSpokespersonConfirmed: false,
       }
     }
 
