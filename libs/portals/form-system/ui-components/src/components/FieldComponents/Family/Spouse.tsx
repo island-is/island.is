@@ -77,7 +77,13 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
             name={nameField}
             control={control}
             defaultValue={getValue(item, 'name', valueIndex) ?? ''}
-            render={({ field }) =>
+            rules={{
+              required: {
+                value: item.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
+            }}
+            render={({ field, fieldState }) =>
               loading ? (
                 <SkeletonLoader
                   height={72}
@@ -90,6 +96,9 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
                   name="spouseName"
                   backgroundColor="blue"
                   value={field.value}
+                  required={item.isRequired ?? false}
+                  hasError={Boolean(fieldState.error)}
+                  errorMessage={fieldState.error?.message}
                   readOnly
                 />
               )
@@ -103,7 +112,13 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
             name={nationalIdField}
             control={control}
             defaultValue={getValue(item, 'nationalId', valueIndex) ?? ''}
-            render={({ field }) =>
+            rules={{
+              required: {
+                value: item.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
+            }}
+            render={({ field, fieldState }) =>
               loading ? (
                 <SkeletonLoader
                   height={72}
@@ -116,6 +131,9 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
                   name="spouseNationalId"
                   backgroundColor="blue"
                   value={field.value}
+                  required={item.isRequired ?? false}
+                  hasError={Boolean(fieldState.error)}
+                  errorMessage={fieldState.error?.message}
                   readOnly
                 />
               )
@@ -127,7 +145,13 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
             name={maritalStatusField}
             control={control}
             defaultValue={getValue(item, 'maritalStatus', valueIndex) ?? ''}
-            render={({ field }) =>
+            rules={{
+              required: {
+                value: item.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
+            }}
+            render={({ field, fieldState }) =>
               loading ? (
                 <SkeletonLoader
                   height={72}
@@ -140,6 +164,9 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
                   name="spouseMaritalStatus"
                   backgroundColor="blue"
                   value={field.value}
+                  required={item.isRequired ?? false}
+                  hasError={Boolean(fieldState.error)}
+                  errorMessage={fieldState.error?.message}
                   readOnly
                 />
               )
