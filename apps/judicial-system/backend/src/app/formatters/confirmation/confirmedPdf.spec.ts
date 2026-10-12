@@ -1,4 +1,4 @@
-import { PDFDocument } from 'pdf-lib'
+import { PDFDocument, PDFFont } from 'pdf-lib'
 
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
@@ -26,11 +26,14 @@ describe('createConfirmedPdf', () => {
     coatOfArmsHeight,
     offset,
     titleHeight,
+    padding,
+    boxLineHeight,
   } = confirmationLayout
   const totalWidth = pageWidth - pageMargin * 2
   const contentX = pageMargin + offset + coatOfArmsWidth
   const contentWidth = totalWidth - coatOfArmsWidth
   const contentTop = pageMargin - offset
+  const boxTop = contentTop + titleHeight
   const boxHeight = shadowHeight - titleHeight
   const fontSize = calculatePt(confirmationFontSize)
 
@@ -64,6 +67,30 @@ describe('createConfirmedPdf', () => {
 
   const texts = () => drawText.mock.calls.map(([text]) => text)
 
+  const positions = () =>
+    drawText.mock.calls.map(([, options]) => ({ x: options.x, y: options.y }))
+
+  // The fonts the stamp was drawn with: the title is bold, the rest regular
+  const fonts = () => ({
+    bold: drawText.mock.calls[0][1].font as PDFFont,
+    regular: drawText.mock.calls[1][1].font as PDFFont,
+  })
+
+  // Every line is placed by the middle of its cap height, measured from the
+  // top of the page like pdfkit does and flipped for pdf-lib
+  const lineY = (centerY: number, regular: PDFFont) =>
+    pageHeight -
+    (centerY + regular.heightAtSize(fontSize, { descender: false }) / 2)
+
+  const boxLines = (regular: PDFFont) => {
+    const titleCenterY = boxTop + (boxHeight - boxLineHeight) / 2
+
+    return {
+      title: lineY(titleCenterY, regular),
+      content: lineY(titleCenterY + boxLineHeight, regular),
+    }
+  }
+
   it('draws the shared stamp layout', async () => {
     await createConfirmedPdf(confirmation, pdf, CaseFileCategory.RULING)
 
@@ -91,6 +118,26 @@ describe('createConfirmedPdf', () => {
       'Réttarvörslugátt',
       'Rafræn staðfesting',
       '09.10.2026',
+    ])
+
+    const { bold, regular } = fonts()
+    const titleX = contentX + padding
+    const titleY = lineY(contentTop + titleHeight / 2, regular)
+
+    expect(positions().slice(0, 3)).toEqual([
+      { x: titleX, y: titleY },
+      {
+        x: titleX + bold.widthOfTextAtSize('Réttarvörslugátt  ', fontSize),
+        y: titleY,
+      },
+      {
+        x:
+          contentX +
+          contentWidth -
+          padding -
+          regular.widthOfTextAtSize('09.10.2026', fontSize),
+        y: titleY,
+      },
     ])
     for (const [, options] of drawText.mock.calls) {
       expect(options.size).toBe(fontSize)
@@ -125,6 +172,17 @@ describe('createConfirmedPdf', () => {
       'Samþykktaraðili',
       'Dóra Dómari héraðsdómari',
     ])
+
+    const lines = boxLines(fonts().regular)
+    const courtX = contentX + padding
+    const approverX = contentX + contentWidth / 2 + padding
+
+    expect(positions().slice(3)).toEqual([
+      { x: courtX, y: lines.title },
+      { x: courtX, y: lines.content },
+      { x: approverX, y: lines.title },
+      { x: approverX, y: lines.content },
+    ])
   })
 
   it('draws only the court on a court record', async () => {
@@ -141,6 +199,14 @@ describe('createConfirmedPdf', () => {
       },
     ])
     expect(texts().slice(3)).toEqual(['Dómstóll', 'Héraðsdómur Reykjavíkur'])
+
+    const lines = boxLines(fonts().regular)
+    const courtX = contentX + padding
+
+    expect(positions().slice(3)).toEqual([
+      { x: courtX, y: lines.title },
+      { x: courtX, y: lines.content },
+    ])
   })
 
   it('shortens an approver that does not fit the box but never the court', async () => {
