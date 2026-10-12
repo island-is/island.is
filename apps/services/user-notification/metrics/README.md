@@ -1,6 +1,6 @@
 # Tilkynningamælingar
 
-Klukkustundarsafnarar senda samantektir til Datadog með núverandi DogStatsD-tengingu.
+Næturkeyrðir safnarar (einu sinni á sólarhring, kl. 03 UTC) senda samantektir til Datadog með núverandi DogStatsD-tengingu.
 Þeir opna ekki HTTP-þjón, ræsa ekki SQS-vinnslu og senda ekki tilkynningar.
 Mælaborðið er í [dashboard.json](./dashboard.json).
 
@@ -8,10 +8,10 @@ Mælaborðið er í [dashboard.json](./dashboard.json).
 
 | Heimild           | Keyrsla (UTC)          | Staða                                                                                           |
 | ----------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
-| user-profile      | `10 * * * *`           | Push-stillingar úr gagnagrunni                                                                  |
-| user-notification | `15 * * * *`           | Fyrirtækjasendingar og sjö daga lestrarmæling                                                   |
-| Firebase          | `20 * * * *`           | Safnari tilbúinn; óvirkur þar til staðfest aggregate-view og aðgangur liggja fyrir              |
-| Pósthólf          | `20 * * * *`           | Safnari tilbúinn; óvirkur þar til full móttöku-/lestrargögn hafa verið tengd við aggregate-view |
+| user-profile      | `10 3 * * *`           | Push-stillingar úr gagnagrunni                                                                  |
+| user-notification | `15 3 * * *`           | Fyrirtækjasendingar og sjö daga lestrarmæling                                                   |
+| Firebase          | `20 3 * * *`           | Safnari tilbúinn; óvirkur þar til staðfest aggregate-view og aðgangur liggja fyrir              |
+| Pósthólf          | `20 3 * * *`           | Safnari tilbúinn; óvirkur þar til full móttöku-/lestrargögn hafa verið tengd við aggregate-view |
 | DLQ               | Fyrirspurn í mælaborði | Skipta þarf út fyrir staðfesta fyrirspurn í núverandi Datadog-logga                             |
 | Opt-in            | Ekki virkjað           | Bíður nýju virkninnar og skilgreiningar gjaldgengra notenda                                     |
 
@@ -24,8 +24,8 @@ Tíðni er stillt í infra-skrám viðkomandi þjónustu.
 ## Skilgreiningar
 
 Öll metric-heiti hér að neðan byrja á `islandis.notifications.analytics.`.
-Þetta eru **gauges**. Sama dagstala er endursend á klukkustund; ekki nota
-`sum`, `as_count()` eða summa klukkustundargildi til að reikna daglegar tölur.
+Þetta eru **gauges**. Hver dagstala er send einu sinni á sólarhring; ekki nota
+`sum`, `as_count()` eða summa gildi úr mörgum keyrslum til að reikna daglegar tölur.
 Mælaborðið notar `max` yfir replica/host-merki og tímabil og slekkur á interpolation.
 Við skoðun margra daga skal túlka þróun einstakra dagsgilda, ekki summu þeirra
 yfir sjálfvirkt stækkuð rollup-tímabil.
@@ -221,8 +221,8 @@ mælingar sé uppfyllt. `read_at` er áfram persónutengdur tími í upprunagagn
    tvítelja atvik þarf unique-count á stöðugu atviksauðkenni í stað `count`.
 6. Staðfesta DLQ-töluna gegn þekktu atviki og sendingatölur gegn DB. Kveikja aðeins
    á Firebase/pósthólfi eftir að view-samningur og heimild eru sannreynd.
-7. Fylgjast með ferskleika: safnari ætti að uppfæra á klukkustund. Setja no-data
-   monitor fyrir virkar heimildir með 90 mínútna mörkum og fylgjast sérstaklega
+7. Fylgjast með ferskleika: safnari ætti að uppfæra einu sinni á sólarhring. Setja no-data
+   monitor fyrir virkar heimildir með 26 klukkustunda mörkum og fylgjast sérstaklega
    með `external.available` og `external.period_start`; successful keyrsla getur
    staðfest að upstream-gögn séu enn ekki tiltæk.
 

@@ -11,7 +11,7 @@ import { generateOutputOne } from './processing/rendering-pipeline'
 
 describe('notification metrics scheduled jobs', () => {
   it.each(['dev', 'staging', 'prod'] as const)(
-    'renders isolated hourly jobs for %s',
+    'renders isolated nightly jobs for %s',
     async (type) => {
       const env: EnvironmentConfig = {
         auroraHost: 'database',
@@ -45,7 +45,7 @@ describe('notification metrics scheduled jobs', () => {
           startingDeadlineSeconds: 600,
         })
         expect(result.serviceDef[0].extra?.schedule).toMatch(
-          /^(10|15|20) \* \* \* \*$/,
+          /^(10|15|20) 3 \* \* \*$/,
         )
       }
     },

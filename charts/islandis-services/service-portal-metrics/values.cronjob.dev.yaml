@@ -80,7 +80,7 @@ resources:
   requests:
     cpu: '100m'
     memory: '256Mi'
-schedule: '10 * * * *'
+schedule: '10 3 * * *'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'

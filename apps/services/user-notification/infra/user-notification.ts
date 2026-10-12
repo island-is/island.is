@@ -29,7 +29,7 @@ export const userNotificationMetricsSetup = () =>
     .command('node')
     .args('main.cjs', '--job=metrics')
     .db({ name: serviceName })
-    .schedule('15 * * * *')
+    .schedule('15 3 * * *')
     .concurrencyPolicy('Forbid')
     .startingDeadlineSeconds(600)
     .resources({
@@ -53,7 +53,7 @@ export const userNotificationExternalMetricsSetup = (
       FIREBASE_METRICS_ENABLED: 'false',
       MAILBOX_METRICS_ENABLED: 'false',
     })
-    .schedule('20 * * * *')
+    .schedule('20 3 * * *')
     .concurrencyPolicy('Forbid')
     .startingDeadlineSeconds(600)
     .resources({

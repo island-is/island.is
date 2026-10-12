@@ -77,7 +77,7 @@ resources:
   requests:
     cpu: '100m'
     memory: '256Mi'
-schedule: '20 * * * *'
+schedule: '20 3 * * *'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
 securityContext:

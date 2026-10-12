@@ -65,7 +65,7 @@ export const queryAggregates = async (
         ],
         location,
         timeoutMs: 25000,
-        // Views must be partition-pruned/pre-aggregated; do not scan the full export hourly.
+        // Views must be partition-pruned/pre-aggregated; do not scan the full export on every run.
         maximumBytesBilled: '1000000000',
         maxResults: 10,
       }),

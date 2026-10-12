@@ -28,7 +28,7 @@ export const userProfileMetricsSetup = () =>
     .command('node')
     .args('main.cjs', '--job=metrics')
     .db({ name: serviceId })
-    .schedule('10 * * * *')
+    .schedule('10 3 * * *')
     .concurrencyPolicy('Forbid')
     .startingDeadlineSeconds(600)
     .resources({

@@ -72,5 +72,5 @@ yarn nx run services-user-notification:cleanup
 
 ### Notification metrics
 
-See [the metrics guide](./metrics/README.md) for hourly collectors, first-read
+See [the metrics guide](./metrics/README.md) for nightly collectors, first-read
 tracking, the Datadog dashboard, source configuration and tests.

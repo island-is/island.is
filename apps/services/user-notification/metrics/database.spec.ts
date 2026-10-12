@@ -14,6 +14,7 @@ describeDatabase('metrics PostgreSQL integration', () => {
   beforeAll(async () => {
     if (!databaseUrl) throw new Error('Missing test database URL')
     db = new Sequelize(databaseUrl, {
+      schema,
       logging: false,
       pool: { max: 1, min: 1 },
     })

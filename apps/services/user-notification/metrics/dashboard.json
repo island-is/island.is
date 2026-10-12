@@ -1,6 +1,6 @@
 {
   "title": "Ísland.is — Tilkynningar og lestur",
-  "description": "Hourly aggregate snapshots. See apps/services/user-notification/metrics/README.md for definitions, source setup and import requirements.",
+  "description": "Daily aggregate snapshots. See apps/services/user-notification/metrics/README.md for definitions, source setup and import requirements.",
   "layout_type": "ordered",
   "template_variables": [
     {
@@ -19,7 +19,7 @@
     {
       "definition": {
         "type": "note",
-        "content": "## Tilkynningamælingar\nAllir dagar miðast við UTC. Punktar sýna söfnunartíma: fyrirtækjasendingar eru fyrir gærdaginn, Firebase fyrir daginn fyrir þremur dögum og 7 daga mælingar fyrir móttökuhópinn fyrir átta dögum. Ekki leggja saman endurteknar klukkustundarmælingar. Vantar gögn ≠ núll. Push-stillingar fá nýjan grunnpunkt; 5,9% var önnur skilgreining.",
+        "content": "## Tilkynningamælingar\nAllir dagar miðast við UTC. Punktar sýna söfnunartíma: fyrirtækjasendingar eru fyrir gærdaginn, Firebase fyrir daginn fyrir þremur dögum og 7 daga mælingar fyrir móttökuhópinn fyrir átta dögum. Ekki leggja saman dagstölur yfir sjálfvirkt stækkuð tímabil. Vantar gögn ≠ núll. Push-stillingar fá nýjan grunnpunkt; 5,9% var önnur skilgreining.",
         "background_color": "white",
         "font_size": "14",
         "text_align": "left",
@@ -38,12 +38,12 @@
               {
                 "data_source": "metrics",
                 "name": "disabled",
-                "query": "max:islandis.notifications.analytics.push.disabled_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.disabled_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "known",
-                "query": "max:islandis.notifications.analytics.push.known_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.known_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -67,17 +67,17 @@
               {
                 "data_source": "metrics",
                 "name": "disabled",
-                "query": "max:islandis.notifications.analytics.push.disabled_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.disabled_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "known",
-                "query": "max:islandis.notifications.analytics.push.known_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.known_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "unknown",
-                "query": "max:islandis.notifications.analytics.push.unknown_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.unknown_users{$env,source:user-profile,$recipient_type} by {env,recipient_type}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -107,7 +107,7 @@
               {
                 "data_source": "metrics",
                 "name": "deliveries",
-                "query": "max:islandis.notifications.analytics.company.deliveries_previous_day{$env,source:user-notification} by {env,channel}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.company.deliveries_previous_day{$env,source:user-notification} by {env,channel}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -131,12 +131,12 @@
               {
                 "data_source": "metrics",
                 "name": "unread",
-                "query": "max:islandis.notifications.analytics.unread_7d.unread{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.unread_7d.unread{$env} by {env,kind}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "total",
-                "query": "max:islandis.notifications.analytics.unread_7d.total{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.unread_7d.total{$env} by {env,kind}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -160,7 +160,7 @@
               {
                 "data_source": "metrics",
                 "name": "unread",
-                "query": "max:islandis.notifications.analytics.unread_7d.unread{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.unread_7d.unread{$env} by {env,kind}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -184,7 +184,7 @@
               {
                 "data_source": "metrics",
                 "name": "total",
-                "query": "max:islandis.notifications.analytics.unread_7d.total{$env} by {env,kind}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.unread_7d.total{$env} by {env,kind}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -208,12 +208,12 @@
               {
                 "data_source": "metrics",
                 "name": "opened",
-                "query": "max:islandis.notifications.analytics.push.opened{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.opened{$env,source:firebase} by {env,platform}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "received",
-                "query": "max:islandis.notifications.analytics.push.received{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.received{$env,source:firebase} by {env,platform}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -237,12 +237,12 @@
               {
                 "data_source": "metrics",
                 "name": "opened",
-                "query": "max:islandis.notifications.analytics.push.opened{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.opened{$env,source:firebase} by {env,platform}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "received",
-                "query": "max:islandis.notifications.analytics.push.received{$env,source:firebase} by {env,platform}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.push.received{$env,source:firebase} by {env,platform}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -315,7 +315,7 @@
     {
       "definition": {
         "type": "timeseries",
-        "title": "Safnarar — heppnuð keyrsla á klukkustund (1/0)",
+        "title": "Safnarar — heppnuð keyrsla á sólarhring (1/0)",
         "requests": [
           {
             "response_format": "timeseries",
@@ -323,7 +323,7 @@
               {
                 "data_source": "metrics",
                 "name": "success",
-                "query": "max:islandis.notifications.analytics.collection.success{$env} by {env,source}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.collection.success{$env} by {env,source}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -347,7 +347,7 @@
               {
                 "data_source": "metrics",
                 "name": "duration",
-                "query": "max:islandis.notifications.analytics.collection.duration_ms{$env} by {env,source}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.collection.duration_ms{$env} by {env,source}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -371,12 +371,12 @@
               {
                 "data_source": "metrics",
                 "name": "enabled",
-                "query": "max:islandis.notifications.analytics.external.enabled{$env} by {env,source}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.external.enabled{$env} by {env,source}.rollup(max, 86400).fill(null)"
               },
               {
                 "data_source": "metrics",
                 "name": "available",
-                "query": "max:islandis.notifications.analytics.external.available{$env} by {env,source}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.external.available{$env} by {env,source}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -403,7 +403,7 @@
               {
                 "data_source": "metrics",
                 "name": "available",
-                "query": "max:islandis.notifications.analytics.unread_7d.available{$env,source:user-notification} by {env}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.unread_7d.available{$env,source:user-notification} by {env}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -427,7 +427,7 @@
               {
                 "data_source": "metrics",
                 "name": "last_success",
-                "query": "max:islandis.notifications.analytics.collection.last_success{$env} by {env,source}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.collection.last_success{$env} by {env,source}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -451,7 +451,7 @@
               {
                 "data_source": "metrics",
                 "name": "period",
-                "query": "max:islandis.notifications.analytics.external.period_start{$env} by {env,source}.rollup(max, 3600).fill(null)"
+                "query": "max:islandis.notifications.analytics.external.period_start{$env} by {env,source}.rollup(max, 86400).fill(null)"
               }
             ],
             "formulas": [
@@ -467,7 +467,7 @@
     {
       "definition": {
         "type": "note",
-        "content": "Ferskleiki: síðasta heppnaða söfnun á að vera innan 90 mínútna. Ytri heimildir eru óvirkar sjálfgefið og þurfa staðfest BigQuery-view og aðgang. Tómt hlutfall við núll í nefnara er eðlilegt. Lestrartímar tilkynninga mælast frá innleiðingu; umboðstilkynningar hafa ekki sjálfstæða lestrarskráningu í núverandi líkani.",
+        "content": "Ferskleiki: síðasta heppnaða söfnun á að vera innan 26 klukkustunda. Ytri heimildir eru óvirkar sjálfgefið og þurfa staðfest BigQuery-view og aðgang. Tómt hlutfall við núll í nefnara er eðlilegt. Lestrartímar tilkynninga mælast frá innleiðingu; umboðstilkynningar hafa ekki sjálfstæða lestrarskráningu í núverandi líkani.",
         "background_color": "white",
         "font_size": "14",
         "text_align": "left",

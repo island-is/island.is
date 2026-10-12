@@ -50,7 +50,7 @@ yarn start services-user-profile
 
 ## Notification metrics
 
-The hourly profile collector reports push notification preferences by user type.
+The nightly profile collector reports push notification preferences by user type.
 See [the metrics guide](../user-notification/metrics/README.md) for definitions,
 running the collector and the Datadog dashboard.
 
