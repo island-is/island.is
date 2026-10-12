@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsOptional, IsString, MaxLength } from 'class-validator'
 
 export class VerificationCallbackInput {
   @IsString()
@@ -39,4 +39,14 @@ export class VerificationCallbackInput {
     type: String,
   })
   dsTransId!: string
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(64)
+  @ApiPropertyOptional({
+    description:
+      'EMV 3DS message version from the callback, required by the gateway in the charge.',
+    type: String,
+  })
+  threeDSMessageVersion?: string
 }

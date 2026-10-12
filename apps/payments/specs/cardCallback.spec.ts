@@ -45,21 +45,21 @@ const createRes = () => {
     json: jest.fn().mockReturnThis(),
     redirect: jest.fn().mockReturnThis(),
   }
-  return (res as unknown) as NextApiResponse & typeof res
+  return res as unknown as NextApiResponse & typeof res
 }
 
 const createReq = (overrides: Partial<NextApiRequest> = {}) =>
-  (({
+  ({
     method: 'POST',
     headers: { 'content-type': FORM_CONTENT_TYPE },
     body: completedAuthBody,
     ...overrides,
-  } as unknown) as NextApiRequest)
+  } as unknown as NextApiRequest)
 
 describe('card verification callback handler', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;((initApollo as unknown) as jest.Mock).mockReturnValue({
+    ;(initApollo as unknown as jest.Mock).mockReturnValue({
       mutate: mockMutate,
     })
     mockMutate.mockResolvedValue({ errors: undefined })
@@ -77,6 +77,30 @@ describe('card verification callback handler', () => {
     await handler(createReq(), res)
 
     expect(mockMutate).toHaveBeenCalledTimes(1)
+    expect(res.redirect).toHaveBeenCalledWith(303, SUCCESS_REDIRECT)
+  })
+
+  it('signs the 3DS message version for the charge', async () => {
+    const res = createRes()
+
+    await handler(
+      createReq({
+        body: { ...completedAuthBody, threeDSMessageVersion: '2.2.0' },
+      }),
+      res,
+    )
+
+    expect(sign).toHaveBeenCalledWith(
+      {
+        xid: 'xid-1',
+        mdStatus: 'Y',
+        md: 'md-1',
+        cavv: 'cavv-1',
+        dsTransId: 'ds-1',
+        threeDSMessageVersion: '2.2.0',
+      },
+      expect.anything(),
+    )
     expect(res.redirect).toHaveBeenCalledWith(303, SUCCESS_REDIRECT)
   })
 

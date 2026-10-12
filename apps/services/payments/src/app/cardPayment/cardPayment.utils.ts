@@ -198,6 +198,20 @@ export const generateVerificationRequestOptions = ({
   return requestOptions
 }
 
+// The 3DS callback sends mdStatus as a number, the charge takes the gateway's
+// MdStatusType names (see MdStatusType in the gateway API). Values outside
+// this list mean the authentication failed and must not be charged.
+const GATEWAY_MD_STATUSES: Record<string, string> = {
+  '1': 'MdFullyAuthenticated',
+  '2': 'MdNotEnrolled',
+  '4': 'MdAttempt',
+  '5': 'MdUReceived',
+}
+
+export const toGatewayMdStatus = (mdStatus: string): string | undefined =>
+  GATEWAY_MD_STATUSES[mdStatus] ??
+  (Object.values(GATEWAY_MD_STATUSES).includes(mdStatus) ? mdStatus : undefined)
+
 export const generateChargeRequestOptions = ({
   chargeCardInput,
   verificationData,
@@ -236,7 +250,16 @@ export const generateChargeRequestOptions = ({
       currency: 'ISK',
       amount: iskToAur(amount),
       systemCalling,
-      cardVerificationData: verificationData,
+      // Only the fields of the gateway's CardVerificationData (xid was removed
+      // from it in gateway release 2.26)
+      cardVerificationData: {
+        cavv: verificationData.cavv,
+        mdStatus: verificationData.mdStatus,
+        dsTransId: verificationData.dsTransId,
+        ...(verificationData.threeDSMessageVersion && {
+          threeDSMessageVersion: verificationData.threeDSMessageVersion,
+        }),
+      },
       additionalData: {
         merchantReferenceData: paymentTrackingData.merchantReferenceData,
       },

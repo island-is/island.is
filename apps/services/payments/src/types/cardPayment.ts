@@ -11,14 +11,25 @@ export interface CachePaymentFlowStatus {
 
 export interface SavedVerificationPendingData {
   paymentFlowId: string
+  // From the CardVerification response, used for the charge when the 3DS
+  // callback does not include it
+  threeDSMessageVersion?: string
 }
 
 export interface SavedVerificationCompleteData {
+  // Kept so a repeated callback for the same attempt can be recognised
+  paymentFlowId: string
   cavv: string
+  // Gateway MdStatusType name, e.g. MdFullyAuthenticated
   mdStatus: string
-  xid: string
   dsTransId: string
+  // EMV 3DS message version, required by the gateway in the charge
+  threeDSMessageVersion?: string
 }
+
+export const isVerificationComplete = (
+  data: SavedVerificationPendingData | SavedVerificationCompleteData,
+): data is SavedVerificationCompleteData => 'cavv' in data
 
 export interface MdSerialized {
   c: string // payment transaction correlation id

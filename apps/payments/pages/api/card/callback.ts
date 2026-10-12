@@ -76,12 +76,8 @@ const reportFailedVerification = async (body: Record<string, unknown>) => {
     return
   }
 
-  const {
-    mdStatus,
-    callbackSource,
-    transStatus,
-    transStatusReason,
-  } = getCallbackDiagnostics(body)
+  const { mdStatus, callbackSource, transStatus, transStatusReason } =
+    getCallbackDiagnostics(body)
 
   const { verificationCallbackSigningSecret } = getServerRuntimeEnv()
 
@@ -176,10 +172,11 @@ export default async function cardVerificationCallbackHandler(
   const { xid, mdStatus, MD, cavv } = parsed.data
   const dsTransId = parsed.data['TDS2.dsTransID']
 
-  console.info(
-    'Card verification callback: received',
-    getCallbackDiagnostics((req.body ?? {}) as Record<string, unknown>),
+  const diagnostics = getCallbackDiagnostics(
+    (req.body ?? {}) as Record<string, unknown>,
   )
+
+  console.info('Card verification callback: received', diagnostics)
 
   const client = initApollo()
 
@@ -193,6 +190,8 @@ export default async function cardVerificationCallbackHandler(
       md: MD,
       cavv,
       dsTransId,
+      // Required by the gateway in the charge
+      threeDSMessageVersion: diagnostics.threeDSMessageVersion ?? undefined,
     },
     verificationCallbackSigningSecret,
   )

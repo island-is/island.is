@@ -21,6 +21,7 @@ import {
   CardVerificationErrorSchema,
   CardVerificationSuccessResponse,
   CardVerificationSuccessSchema,
+  isVerificationComplete,
   MdNormalised,
   PaymentTrackingData,
   RefundErrorSchema,
@@ -49,6 +50,7 @@ import {
   generateRefundRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
+  toGatewayMdStatus,
   validateAndParseApplePayValidationUrl,
 } from './cardPayment.utils'
 import {
@@ -172,6 +174,27 @@ export class CardPaymentService {
       throw new BadRequestException(CardErrorCode.VerificationFailed)
     }
 
+    // The charge needs the EMV 3DS message version. The callback normally
+    // includes it, keep the one from this response as a fallback. Only while
+    // the attempt is still pending, a completed callback must not be replaced.
+    if (data.threeDSMessageVersion) {
+      const savedData = (await this.cacheManager.get(correlationId)) as
+        | SavedVerificationPendingData
+        | SavedVerificationCompleteData
+        | undefined
+
+      if (savedData && !isVerificationComplete(savedData)) {
+        await this.cacheManager.set(
+          correlationId,
+          {
+            ...savedData,
+            threeDSMessageVersion: data.threeDSMessageVersion,
+          },
+          memCacheExpiryMinutes * 60000,
+        )
+      }
+    }
+
     return data
   }
 
@@ -193,10 +216,12 @@ export class CardPaymentService {
     }
   }
 
+  // Returns the complete data instead when a callback for this attempt has
+  // already been handled (the browser and the gateway server can both send one)
   async getSavedVerificationPendingData(correlationId: string) {
     const savedVerificationPendingData = (await this.cacheManager.get(
       correlationId,
-    )) as SavedVerificationPendingData
+    )) as SavedVerificationPendingData | SavedVerificationCompleteData
 
     if (!savedVerificationPendingData) {
       this.logger.error(
@@ -210,7 +235,12 @@ export class CardPaymentService {
   }
 
   async verifyThreeDSecureCallback({
-    cardVerificationCallbackInput: { cavv, mdStatus, xid, dsTransId },
+    cardVerificationCallbackInput: {
+      cavv,
+      mdStatus,
+      dsTransId,
+      threeDSMessageVersion,
+    },
     mdPayload,
     savedVerificationPendingData,
   }: {
@@ -232,13 +262,26 @@ export class CardPaymentService {
 
     const { paymentFlowId } = savedVerificationPendingData
 
+    const gatewayMdStatus = toGatewayMdStatus(mdStatus)
+
+    if (!gatewayMdStatus) {
+      this.logger.error(
+        `[${paymentFlowId}] Card verification callback with an mdStatus that cannot be charged`,
+        { mdStatus },
+      )
+      throw new BadRequestException(CardErrorCode.VerificationFailed)
+    }
+
     await this.cacheManager.del(correlationId)
 
     const savedVerificationCompleteData: SavedVerificationCompleteData = {
+      paymentFlowId,
       cavv,
-      mdStatus,
-      xid,
+      mdStatus: gatewayMdStatus,
       dsTransId,
+      threeDSMessageVersion:
+        threeDSMessageVersion ||
+        savedVerificationPendingData.threeDSMessageVersion,
     }
 
     // Save verified information to payment flow
@@ -537,10 +580,15 @@ export class CardPaymentService {
     if (
       !verificationData.cavv ||
       !verificationData.mdStatus ||
-      !verificationData.xid ||
       !verificationData.dsTransId
     ) {
       throw new BadRequestException(PaymentServiceCode.MissingVerification)
+    }
+
+    if (!verificationData.threeDSMessageVersion) {
+      this.logger.warn(
+        `[${chargeCardInput.paymentFlowId}] Card charge sent without threeDSMessageVersion`,
+      )
     }
 
     const {

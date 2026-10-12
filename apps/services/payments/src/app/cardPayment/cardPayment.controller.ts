@@ -24,6 +24,7 @@ import {
 } from '@island.is/shared/constants'
 
 import { PaymentMethod } from '../../types'
+import { isVerificationComplete } from '../../types/cardPayment'
 import { requireStepResult } from '../../utils/orchestrator'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
@@ -155,6 +156,17 @@ export class CardPaymentController {
     const { paymentFlowId } = savedVerificationPendingData
     this.logger.info(`[${paymentFlowId}] Card verification callback received`)
 
+    // The browser and the gateway server can both send the result of the same
+    // attempt. The first one wins, a repeat must not replace or clear its data.
+    if (isVerificationComplete(savedVerificationPendingData)) {
+      this.logger.info(
+        `[${paymentFlowId}] Ignoring repeated card verification callback`,
+      )
+      return { paymentFlowId }
+    }
+
+    let isVerified = false
+
     try {
       const { success } =
         await this.cardPaymentService.verifyThreeDSecureCallback({
@@ -166,6 +178,8 @@ export class CardPaymentController {
       if (!success) {
         throw new BadRequestException(PaymentServiceCode.CouldNotVerifyCallback)
       }
+
+      isVerified = true
 
       await this.paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId,
@@ -180,17 +194,20 @@ export class CardPaymentController {
         paymentFlowId,
       }
     } catch (e) {
-      // Let the client stop waiting instead of polling until it times out
-      await this.cardPaymentService
-        .markVerificationFailed({
-          paymentFlowId,
-          correlationId,
-        })
-        .catch((markError) =>
-          this.logger.warn(
-            `[${paymentFlowId}] Failed to mark verification as failed: ${markError.message}`,
-          ),
-        )
+      // Let the client stop waiting instead of polling until it times out.
+      // Not when only the flow update failed, the client can still charge.
+      if (!isVerified) {
+        await this.cardPaymentService
+          .markVerificationFailed({
+            paymentFlowId,
+            correlationId,
+          })
+          .catch((markError) =>
+            this.logger.warn(
+              `[${paymentFlowId}] Failed to mark verification as failed: ${markError.message}`,
+            ),
+          )
+      }
 
       try {
         await this.paymentFlowService.logPaymentFlowUpdate({
@@ -229,10 +246,21 @@ export class CardPaymentController {
   ): Promise<VerificationCallbackResponse> {
     const { md, ...outcome } = input
     const { correlationId } = this.cardPaymentService.getMdPayload(md)
-    const { paymentFlowId } =
+    const savedVerificationData =
       await this.cardPaymentService.getSavedVerificationPendingData(
         correlationId,
       )
+    const { paymentFlowId } = savedVerificationData
+
+    // A successful result for this attempt already arrived (e.g. from the
+    // payer's browser before the gateway server), keep it
+    if (isVerificationComplete(savedVerificationData)) {
+      this.logger.info(
+        `[${paymentFlowId}] Ignoring failed card verification result after a successful one`,
+        outcome,
+      )
+      return { paymentFlowId }
+    }
 
     const isCurrentAttempt =
       await this.cardPaymentService.markVerificationFailed({

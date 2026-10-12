@@ -144,7 +144,8 @@ export class PaymentsService {
       throw new Error('Invalid verification token')
     }
 
-    const { cavv, xid, md, mdStatus, dsTransId } = decoded
+    const { cavv, xid, md, mdStatus, dsTransId, threeDSMessageVersion } =
+      decoded
 
     if (!cavv || !xid || !md || !mdStatus || !dsTransId) {
       throw new Error('Invalid verification token contents')
@@ -157,6 +158,7 @@ export class PaymentsService {
         md,
         mdStatus,
         dsTransId,
+        threeDSMessageVersion,
       },
     })
   }

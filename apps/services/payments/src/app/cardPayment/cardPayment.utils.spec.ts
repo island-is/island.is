@@ -6,7 +6,9 @@ import {
   buildVerificationCardholderData,
   decryptApplePayPaymentToken,
   deriveApplePaySymmetricKey,
+  generateChargeRequestOptions,
   generateVerificationRequestOptions,
+  toGatewayMdStatus,
 } from './cardPayment.utils'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { VerifyCardInput } from './dtos'
@@ -444,5 +446,90 @@ describe('buildCardPayInfo', () => {
       payableAmount: 1500,
       correlationId: 'correlation-1',
     })
+  })
+})
+
+describe('generateChargeRequestOptions', () => {
+  const paymentApiConfig = {
+    paymentsApiSecret: 'secret',
+    paymentsApiHeaderKey: 'valitorpay-api-version',
+    paymentsApiHeaderValue: '2.0',
+    systemCalling: 'island-is',
+  } as CardPaymentModuleConfigType['paymentGateway']
+
+  const verificationData = {
+    paymentFlowId: 'flow-1',
+    cavv: 'cavv-1',
+    mdStatus: 'MdFullyAuthenticated',
+    dsTransId: 'ds-1',
+  }
+
+  const generate = (
+    data: typeof verificationData & {
+      threeDSMessageVersion?: string
+    },
+  ) =>
+    JSON.parse(
+      generateChargeRequestOptions({
+        chargeCardInput: {
+          paymentFlowId: 'flow-1',
+          cardNumber: '4111111111111111',
+          expiryMonth: 12,
+          expiryYear: 30,
+          cvc: '123',
+        },
+        verificationData: data,
+        paymentApiConfig,
+        paymentTrackingData: {
+          merchantReferenceData: 'ref-1',
+          correlationId: 'correlation-1',
+          paymentDate: new Date(),
+        },
+        amount: 100,
+      }).body as string,
+    )
+
+  it('sends only the gateway CardVerificationData fields, with the 3DS message version', () => {
+    const body = generate({
+      ...verificationData,
+      threeDSMessageVersion: '2.2.0',
+    })
+
+    expect(body.cardVerificationData).toEqual({
+      cavv: 'cavv-1',
+      mdStatus: 'MdFullyAuthenticated',
+      dsTransId: 'ds-1',
+      threeDSMessageVersion: '2.2.0',
+    })
+  })
+
+  it('omits the 3DS message version when it is unknown', () => {
+    const body = generate(verificationData)
+
+    expect(body.cardVerificationData).toEqual({
+      cavv: 'cavv-1',
+      mdStatus: 'MdFullyAuthenticated',
+      dsTransId: 'ds-1',
+    })
+  })
+})
+
+describe('toGatewayMdStatus', () => {
+  it('maps the callback mdStatus to the gateway MdStatusType name', () => {
+    expect(toGatewayMdStatus('1')).toBe('MdFullyAuthenticated')
+    expect(toGatewayMdStatus('2')).toBe('MdNotEnrolled')
+    expect(toGatewayMdStatus('4')).toBe('MdAttempt')
+    expect(toGatewayMdStatus('5')).toBe('MdUReceived')
+  })
+
+  it('keeps a value that is already a gateway name', () => {
+    expect(toGatewayMdStatus('MdAttempt')).toBe('MdAttempt')
+  })
+
+  it('returns undefined for statuses that must not be charged', () => {
+    expect(toGatewayMdStatus('0')).toBeUndefined()
+    expect(toGatewayMdStatus('6')).toBeUndefined()
+    expect(toGatewayMdStatus('96')).toBeUndefined()
+    expect(toGatewayMdStatus('')).toBeUndefined()
   })
 })
