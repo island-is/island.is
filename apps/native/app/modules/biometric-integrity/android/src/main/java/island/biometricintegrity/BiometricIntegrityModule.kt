@@ -6,6 +6,7 @@ import android.security.keystore.KeyProperties
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.security.KeyStore
+import java.security.UnrecoverableKeyException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -13,8 +14,9 @@ import javax.crypto.SecretKey
 // Detects when the set of enrolled biometrics changes after the user opted in.
 // Android exposes no enrollment fingerprint, so a Keystore key that the system
 // invalidates on biometric enrollment changes stands in for one:
-// KeyPermanentlyInvalidatedException means the enrolled biometrics changed.
-// Other initialization failures return "unknown".
+// an invalidated key (KeyPermanentlyInvalidatedException, or
+// UnrecoverableKeyException from getKey on some devices) means the enrolled
+// biometrics changed. Other failures return "unknown".
 class BiometricIntegrityModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("BiometricIntegrity")
@@ -62,6 +64,13 @@ class BiometricIntegrityModule : Module() {
   private fun check(): String {
     val key = try {
       keyStore().getKey(KEY_ALIAS, null) as? SecretKey
+    } catch (e: KeyPermanentlyInvalidatedException) {
+      return "changed"
+    } catch (e: UnrecoverableKeyException) {
+      // Some devices report an invalidated key here rather than on
+      // Cipher.init. Treat it as a change: biometrics get turned off and the
+      // user re-enables them, which is safer than keeping them on.
+      return "changed"
     } catch (e: Exception) {
       return "unknown"
     } ?: return "missing"
