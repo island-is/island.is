@@ -144,6 +144,8 @@ export const COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE =
   '/landsrettur/afryjun/yfirlit'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE =
   '/landsrettur/afryjun/verjandi'
+export const COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE =
+  '/landsrettur/afryjun/stada-og-lyktir'
 //#endregion Court of appeals user routes
 
 //#region District court user routes
