@@ -124,9 +124,10 @@ const HealthConversationDetail = () => {
       replyInputRef.current?.focus({ preventScroll: isPhoneWidth })
     } else if (replyWasOpenRef.current) {
       // Both reply triggers unmount while the form is open, so return focus
-      // to the re-rendered footer button
+      // to the re-rendered footer button, or the blocked alert when the
+      // reply made further replies unavailable
       replyWasOpenRef.current = false
-      replyButtonRef.current?.focus()
+      ;(replyButtonRef.current ?? sentAlertRef.current)?.focus()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [replyOpen])
@@ -192,6 +193,7 @@ const HealthConversationDetail = () => {
   const [replyToMessage, { loading: replySending }] =
     useReplyToHealthConversationMutation({
       refetchQueries: ['GetHealthConversationDetail'],
+      awaitRefetchQueries: true,
     })
 
   const item = data?.healthDirectorateHealthConversation
@@ -289,6 +291,11 @@ const HealthConversationDetail = () => {
     : undefined
 
   const canReply = item.replyAvailability === ReplyAvailability.CAN_REPLY
+  const blockedAvailability = justSent
+    ? ReplyAvailability.WAITING
+    : item.replyAvailability === ReplyAvailability.CAN_REPLY
+    ? null
+    : item.replyAvailability
 
   const handleBack = () => {
     /* On mobile, replying takes over the screen, so back should return to the
@@ -508,15 +515,13 @@ const HealthConversationDetail = () => {
               loading={replySending}
               fluid={isPhoneWidth}
             />
-          ) : justSent ? (
+          ) : blockedAvailability ? (
             <Box ref={sentAlertRef} tabIndex={-1} className={styles.sentAlert}>
-              <ReplyBlockedAlert availability={ReplyAvailability.WAITING} />
+              <ReplyBlockedAlert
+                availability={blockedAvailability}
+                replyWindowDays={item.patientReplyWindowDays}
+              />
             </Box>
-          ) : item.replyAvailability !== ReplyAvailability.CAN_REPLY ? (
-            <ReplyBlockedAlert
-              availability={item.replyAvailability}
-              replyWindowDays={item.patientReplyWindowDays}
-            />
           ) : (
             <Button
               ref={replyButtonRef}
