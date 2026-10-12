@@ -22,6 +22,7 @@ import {
 import { getCaseFileHash } from '../../formatters'
 import { queueMessagesAfterCommit } from '../../middleware'
 import { standingVerdictAppellants } from '../appeal-case'
+import { AwsS3Service } from '../aws-s3'
 import { PdfService } from '../case'
 import {
   AppealEventLogRepositoryService,
@@ -37,8 +38,22 @@ export class AppealSummonsService {
     private readonly appealSummonsRepositoryService: AppealSummonsRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly pdfService: PdfService,
+    private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private appealSummonsPdfKey(caseId: string, summonsId: string): string {
+    return `${caseId}/appealSummons/${summonsId}.pdf`
+  }
+
+  // Same key as pdf.service getAppealSummonsPdf. deleteObject already
+  // tolerates a missing object the way case-file deletes do.
+  private async tryDeleteCachedPdf(theCase: Case, summonsId: string) {
+    await this.awsS3Service.deleteObject(
+      theCase.type,
+      this.appealSummonsPdfKey(theCase.id, summonsId),
+    )
+  }
 
   async create(
     theCase: Case,
@@ -122,6 +137,21 @@ export class AppealSummonsService {
 
     const resolvedDefendants = this.resolveDefendants(theCase, dto)
 
+    if (summons.confirmedDate) {
+      await this.appealSummonsRepositoryService.update(
+        summons.id,
+        theCase.id,
+        {
+          confirmedById: null,
+          confirmedDate: null,
+          hash: null,
+          hashAlgorithm: null,
+        },
+        { transaction },
+      )
+      await this.tryDeleteCachedPdf(theCase, summons.id)
+    }
+
     await this.appealSummonsRepositoryService.deleteDefendants(summons.id, {
       transaction,
     })
@@ -167,9 +197,17 @@ export class AppealSummonsService {
       )
     }
 
-    return this.appealSummonsRepositoryService.delete(summons.id, theCase.id, {
-      transaction,
-    })
+    const deleted = await this.appealSummonsRepositoryService.delete(
+      summons.id,
+      theCase.id,
+      { transaction },
+    )
+
+    if (deleted) {
+      await this.tryDeleteCachedPdf(theCase, summons.id)
+    }
+
+    return deleted
   }
 
   async confirm(
