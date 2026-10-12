@@ -24,6 +24,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import useAppealSummons from '@island.is/judicial-system-web/src/utils/hooks/useAppealSummons'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   type AppealSummonsFormSection,
@@ -197,95 +198,95 @@ const AppealSummons = () => {
         <>
           <FormContentContainer>
             <PageTitle>Áfrýjunarstefna</PageTitle>
-            <Box component="section" marginBottom={5}>
-              <Text variant="h2" as="h2">
-                {`Mál nr. ${workingCase.courtCaseNumber}`}
-              </Text>
-              {earliestAppealDate && (
-                <DateLabel
-                  text="Dómi áfrýjað"
-                  date={earliestAppealDate}
-                  hideTime
-                  as="h3"
-                />
-              )}
-            </Box>
-            {sections.map((section) =>
-              section.included ? (
-                <Box
-                  key={section.defendantId}
-                  component="section"
-                  marginBottom={5}
-                  data-testid={`appealSummonsSection-${section.defendantId}`}
-                >
+            <div className={stack({ gap: 5 })}>
+              <Box component="section">
+                <Text variant="h2" as="h2">
+                  {`Mál nr. ${workingCase.courtCaseNumber}`}
+                </Text>
+                {earliestAppealDate && (
+                  <DateLabel
+                    text="Dómi áfrýjað"
+                    date={earliestAppealDate}
+                    hideTime
+                    as="h3"
+                  />
+                )}
+              </Box>
+              {sections.map((section) =>
+                section.included ? (
                   <Box
+                    key={section.defendantId}
+                    component="section"
+                    data-testid={`appealSummonsSection-${section.defendantId}`}
+                  >
+                    <Box
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      alignItems="center"
+                      marginBottom={1}
+                    >
+                      <Text variant="h3" as="h3">
+                        {section.name}
+                      </Text>
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={() =>
+                          updateSection(section.defendantId, {
+                            included: false,
+                          })
+                        }
+                      >
+                        Fjarlægja
+                      </Button>
+                    </Box>
+                    <Text marginBottom={3}>
+                      {appellantSideLabel(section.appellantSide)}
+                    </Text>
+                    <SectionHeading title="Kröfur áfrýjanda" required />
+                    <Input
+                      name={`claims-${section.defendantId}`}
+                      label="Kröfur áfrýjanda"
+                      value={section.claims}
+                      onChange={(event) =>
+                        updateSection(section.defendantId, {
+                          claims: event.target.value,
+                        })
+                      }
+                      textarea
+                      rows={10}
+                      required
+                    />
+                  </Box>
+                ) : (
+                  <Box
+                    key={section.defendantId}
                     display="flex"
                     justifyContent="spaceBetween"
                     alignItems="center"
-                    marginBottom={1}
+                    data-testid={`appealSummonsAdd-${section.defendantId}`}
                   >
-                    <Text variant="h3" as="h3">
-                      {section.name}
-                    </Text>
+                    <Text>{section.name}</Text>
                     <Button
                       variant="text"
                       size="small"
                       onClick={() =>
-                        updateSection(section.defendantId, {
-                          included: false,
-                        })
+                        updateSection(section.defendantId, { included: true })
                       }
                     >
-                      Fjarlægja
+                      Bæta við
                     </Button>
                   </Box>
-                  <Text marginBottom={3}>
-                    {appellantSideLabel(section.appellantSide)}
-                  </Text>
-                  <SectionHeading title="Kröfur áfrýjanda" required />
-                  <Input
-                    name={`claims-${section.defendantId}`}
-                    label="Kröfur áfrýjanda"
-                    value={section.claims}
-                    onChange={(event) =>
-                      updateSection(section.defendantId, {
-                        claims: event.target.value,
-                      })
-                    }
-                    textarea
-                    rows={10}
-                    required
-                  />
-                </Box>
-              ) : (
-                <Box
-                  key={section.defendantId}
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  marginBottom={3}
-                  data-testid={`appealSummonsAdd-${section.defendantId}`}
-                >
-                  <Text>{section.name}</Text>
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() =>
-                      updateSection(section.defendantId, { included: true })
-                    }
-                  >
-                    Bæta við
-                  </Button>
-                </Box>
-              ),
-            )}
-            <Box marginBottom={10}>
-              <PdfButton
-                title="Áfrýjunarstefna.pdf"
-                disabled={!isAppealSummonsFormReady(sections)}
-                handleClick={handlePreview}
-              />
-            </Box>
+                ),
+              )}
+              <Box marginBottom={10}>
+                <PdfButton
+                  title="Áfrýjunarstefna.pdf"
+                  disabled={!isAppealSummonsFormReady(sections)}
+                  handleClick={handlePreview}
+                />
+              </Box>
+            </div>
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
