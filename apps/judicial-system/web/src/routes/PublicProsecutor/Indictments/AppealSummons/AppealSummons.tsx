@@ -10,6 +10,7 @@ import {
   Feature,
 } from '@island.is/judicial-system/types'
 import {
+  DateLabel,
   FeatureContext,
   FormContentContainer,
   FormContext,
@@ -21,7 +22,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
 import { hasStandingVerdictAppeal } from '@island.is/judicial-system-web/src/components/VerdictAppealFiles/VerdictAppealFiles.logic'
 import useAppealSummons from '@island.is/judicial-system-web/src/utils/hooks/useAppealSummons'
 
