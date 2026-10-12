@@ -186,6 +186,8 @@ const ensureSpace = (document: PDFKit.PDFDocument, height: number) => {
   document.addPage()
 }
 
+type ValueLine = { prefix: string; text: string }
+
 const fieldLines = (
   field: {
     fieldType: string
@@ -193,21 +195,22 @@ const fieldLines = (
     values?: Array<{ json?: unknown }>
   },
   locale: Locale,
-): string[] => {
+): ValueLine[] => {
   const values = field.values ?? []
 
   return values.flatMap((value, index) => {
     const prefix = values.length > 1 ? `${index + 1}. ` : ''
     const json = value?.json
     if (field.fieldType === FieldTypesEnum.FILE) {
-      return fileNames(json).map((fileName, lineIndex) =>
-        lineIndex === 0 ? `${prefix}${fileName}` : fileName,
-      )
+      return fileNames(json).map((fileName, lineIndex) => ({
+        prefix: lineIndex === 0 ? prefix : '',
+        text: fileName,
+      }))
     }
 
     if (typeof json !== 'object' || json === null) {
       const formatted = formatValue(json, field.fieldType, locale)
-      return formatted ? [`${prefix}${formatted}`] : []
+      return formatted ? [{ prefix, text: formatted }] : []
     }
 
     const entries = Object.entries(json).filter(([key]) => {
@@ -242,12 +245,15 @@ const fieldLines = (
       const itemPrefix = entryIndex === 0 ? prefix : ''
       return isMultiAttribute
         ? [
-            `${itemPrefix}${textFor(
-              getLanguageTypeForValueTypeAttribute(key),
-              locale,
-            )}: ${formatted}`,
+            {
+              prefix: itemPrefix,
+              text: `${textFor(
+                getLanguageTypeForValueTypeAttribute(key),
+                locale,
+              )}: ${formatted}`,
+            },
           ]
-        : [`${itemPrefix}${formatted}`]
+        : [{ prefix: itemPrefix, text: formatted }]
     })
   })
 }
@@ -258,6 +264,7 @@ const drawValue = (
   value: string,
   showLabel: boolean,
   hasValue: boolean,
+  valueLines?: ValueLine[],
 ) => {
   const labelHeight = showLabel
     ? document
@@ -267,12 +274,22 @@ const drawValue = (
           width: contentWidth - fieldIndent - 32,
         }) + 6
     : 0
-  const valueHeight = document
-    .font('Helvetica')
-    .fontSize(10)
-    .heightOfString(value, {
-      width: contentWidth - fieldIndent - 32,
-    })
+  const valueWidth = contentWidth - fieldIndent - 32
+  document.fontSize(10)
+  const valueHeight = valueLines
+    ? valueLines.reduce((height, line) => {
+        const prefixWidth = document
+          .font('Helvetica-Bold')
+          .widthOfString(line.prefix)
+        return (
+          height +
+          document.font('Helvetica').heightOfString(line.text, {
+            width: valueWidth,
+            indent: prefixWidth,
+          })
+        )
+      }, 0)
+    : document.font('Helvetica').heightOfString(value, { width: valueWidth })
   const blockHeight = Math.max(42, labelHeight + valueHeight + 28)
 
   ensureSpace(document, blockHeight + 8)
@@ -303,9 +320,30 @@ const drawValue = (
     .fillColor(hasValue ? colors.ink : colors.muted)
     .font('Helvetica')
     .fontSize(10)
-    .text(value, pageMargin + fieldIndent + 16, textTop, {
-      width: contentWidth - fieldIndent - 32,
+  if (valueLines) {
+    document.y = textTop
+    for (const line of valueLines) {
+      if (line.prefix) {
+        document
+          .font('Helvetica-Bold')
+          .text(line.prefix, pageMargin + fieldIndent + 16, document.y, {
+            width: valueWidth,
+            continued: true,
+          })
+        document.font('Helvetica').text(line.text, { continued: false })
+      } else {
+        document
+          .font('Helvetica')
+          .text(line.text, pageMargin + fieldIndent + 16, document.y, {
+            width: valueWidth,
+          })
+      }
+    }
+  } else {
+    document.text(value, pageMargin + fieldIndent + 16, textTop, {
+      width: valueWidth,
     })
+  }
   document.y = top + blockHeight + 8
 }
 
@@ -374,9 +412,11 @@ const drawField = (
   drawValue(
     document,
     `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`,
-    lines.join('\n') || textFor(translations.noAnswer, locale),
+    lines.map((line) => `${line.prefix}${line.text}`).join('\n') ||
+      textFor(translations.noAnswer, locale),
     showLabel,
     lines.length > 0,
+    lines.some((line) => line.prefix) ? lines : undefined,
   )
 }
 
