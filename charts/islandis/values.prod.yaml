@@ -2813,7 +2813,7 @@ service-portal-metrics:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  schedule: '10 * * * *'
+  schedule: '10 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
@@ -4649,7 +4649,7 @@ user-notification-firebase-metrics:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  schedule: '20 * * * *'
+  schedule: '20 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
@@ -4722,7 +4722,7 @@ user-notification-mailbox-metrics:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  schedule: '20 * * * *'
+  schedule: '20 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
@@ -4796,7 +4796,7 @@ user-notification-metrics:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  schedule: '15 * * * *'
+  schedule: '15 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/user-notification/DB_PASSWORD'
