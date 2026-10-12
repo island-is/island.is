@@ -499,12 +499,7 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
       ).map((item) => item.title),
-    ).toEqual([
-      'Senda til Landsréttar',
-      'Breyta',
-      'Opna í nýjum flipa',
-      'Eyða',
-    ])
+    ).toEqual(['Senda til Landsréttar', 'Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
