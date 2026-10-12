@@ -43,8 +43,10 @@ const buildPublishSnapshot = (fields: NamespaceEntryFields) => ({
 const buildLatestPublishSnapshotItem = (
   id: string,
   createdAt = '2026-02-01T10:00:00.000Z',
+  version = 3,
 ) => ({
   sys: { id, snapshotType: 'publish', createdAt },
+  snapshot: { sys: { version } },
 })
 
 describe('ApplicationTranslationService', () => {
@@ -529,7 +531,7 @@ describe('ApplicationTranslationService', () => {
       )
       expect(managementSnapshotGetManyForEntrySpy).toHaveBeenCalledWith({
         entryId: 'test.ns',
-        query: { select: 'sys', limit: 5 },
+        query: { limit: 5 },
       })
       expect(result).toEqual({
         id: 'snap-4',
