@@ -154,7 +154,10 @@ export const richText: RichText = (
   const occurrenceCountById = new Map<string, number>()
   const occurrenceById = new Map<string, number>()
   documents.forEach((slice) => {
-    occurrenceCountById.set(slice.id, (occurrenceCountById.get(slice.id) ?? 0) + 1)
+    occurrenceCountById.set(
+      slice.id,
+      (occurrenceCountById.get(slice.id) ?? 0) + 1,
+    )
   })
   return documents.map((slice) => {
     const occurrence = occurrenceById.get(slice.id) ?? 0
