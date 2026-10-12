@@ -162,9 +162,7 @@ export const richText: RichText = (
     // Only disambiguate ids that actually repeat, so unique slices keep a clean
     // key and duplicates each get a distinct, index-independent suffix.
     const key =
-      occurrenceCountById[slice.id] > 1
-        ? `${slice.id}:${occurrence}`
-        : slice.id
+      occurrenceCountById[slice.id] > 1 ? `${slice.id}:${occurrence}` : slice.id
     if (slice.__typename === 'Html') {
       return (
         <Fragment key={key}>
