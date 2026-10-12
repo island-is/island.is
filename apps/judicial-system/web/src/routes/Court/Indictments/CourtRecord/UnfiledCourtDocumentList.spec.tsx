@@ -49,4 +49,20 @@ describe('UnfiledCourtDocumentList', () => {
 
     expect(onFile).not.toHaveBeenCalled()
   })
+
+  it('should hide the .pdf extension on additional document names', () => {
+    render(
+      <UnfiledCourtDocumentList
+        courtDocuments={
+          [{ id: 'document-3', name: 'Viðbótargögn.pdf' }] as CourtDocumentResponse[]
+        }
+        isDisabled={false}
+        onOpen={jest.fn()}
+        onFile={jest.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Viðbótargögn')).toBeInTheDocument()
+    expect(screen.queryByText('Viðbótargögn.pdf')).not.toBeInTheDocument()
+  })
 })

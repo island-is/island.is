@@ -27,6 +27,7 @@ import {
   capitalize,
   formatDate,
   lowercase,
+  stripPdfExtension,
 } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -1863,7 +1864,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -1878,7 +1881,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -1918,7 +1923,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
