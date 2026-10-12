@@ -151,18 +151,18 @@ export const richText: RichText = (
   // (reused slices get hoisted/reordered), so we give each occurrence of an id
   // its own stable ordinal (0, 1, 2 …) and scope the key by that rather than by
   // the slice's current array index.
-  const occurrenceCountById: Record<string, number> = {}
-  const occurrenceById: Record<string, number> = {}
+  const occurrenceCountById = new Map<string, number>()
+  const occurrenceById = new Map<string, number>()
   documents.forEach((slice) => {
-    occurrenceCountById[slice.id] = (occurrenceCountById[slice.id] ?? 0) + 1
+    occurrenceCountById.set(slice.id, (occurrenceCountById.get(slice.id) ?? 0) + 1)
   })
   return documents.map((slice) => {
-    const occurrence = occurrenceById[slice.id] ?? 0
-    occurrenceById[slice.id] = occurrence + 1
+    const occurrence = occurrenceById.get(slice.id) ?? 0
+    occurrenceById.set(slice.id, occurrence + 1)
     // Only disambiguate ids that actually repeat, so unique slices keep a clean
     // key and duplicates each get a distinct, index-independent suffix.
     const key =
-      occurrenceCountById[slice.id] > 1
+      (occurrenceCountById.get(slice.id) ?? 0) > 1
         ? `${slice.id}:${occurrence}`
         : slice.id
     if (slice.__typename === 'Html') {
