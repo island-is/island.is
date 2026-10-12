@@ -6,6 +6,10 @@ export const translation = defineMessages({
     id: 'web.taxiOperatingLicenceList:stationId',
     defaultMessage: 'Stöðvarnúmer',
   },
+  callNumber: {
+    id: 'web.taxiOperatingLicenceList:callNumber',
+    defaultMessage: 'Stöðvarnúmer',
+  },
   stationName: {
     id: 'web.taxiOperatingLicenceList:stationName',
     defaultMessage: 'Stöð',
