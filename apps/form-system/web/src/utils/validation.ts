@@ -1,6 +1,6 @@
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
-import { AssetTypes } from '@island.is/form-system/enums'
+import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 
 export const validateScreen = (state: ApplicationState): string[] => {
   const { currentScreen } = state
@@ -38,7 +38,11 @@ export const hasError = (field: FormSystemField, valueIndex = 0): boolean => {
     case FieldTypesEnum.NATIONAL_ID:
       return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
     case FieldTypesEnum.FAMILY:
-      return !validateNationalId(value?.nationalId ?? '', value?.name ?? '')
+      return (
+        !validateNationalId(value?.nationalId ?? '', value?.name ?? '') ||
+        (field.fieldSettings?.familyType === FamilyTypes.SPOUSE &&
+          !value.maritalStatus)
+      )
     case FieldTypesEnum.ISK_NUMBERBOX:
       return !value?.iskNumber || value?.iskNumber.length === 0
     // case FieldTypesEnum.PROPERTY_NUMBER:

@@ -6,13 +6,15 @@ import {
 } from '@island.is/api/schema'
 import { DECEASED_IDENTITY_QUERY } from '@island.is/form-system/graphql'
 import {
+  Box,
   GridColumn as Column,
   GridRow as Row,
   Input,
+  LoadingDots,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, useEffect } from 'react'
+import { Dispatch, useEffect, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
@@ -30,7 +32,11 @@ const nationalIdRegex = /^\d{6}-\d{4}$/
 export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control, setValue } = useFormContext()
+  const { control, setValue, clearErrors, setError, trigger } = useFormContext()
+  const [lookupError, setLookupError] = useState<{
+    nationalId: string
+    message: string
+  } | null>(null)
   const nationalIdField = `${item.id}.${valueIndex}`
   const nameField = `${item.id}.${valueIndex}_name`
   const watchedNationalId = useWatch({
@@ -46,6 +52,29 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
     setValue(nameField, getValue(item, 'name', valueIndex) ?? '')
   }, [item, nameField, setValue, valueIndex])
 
+  const handleLookupResult = (name: string) => {
+    if (!isValidFormat) {
+      return
+    }
+
+    setValue(nameField, name, { shouldDirty: true, shouldValidate: true })
+    if (!name) {
+      const message = formatMessage(m.nationalIdLookupFailed)
+      setLookupError({ nationalId, message })
+      setError(nationalIdField, {
+        type: 'validate',
+        message,
+      })
+    } else {
+      setLookupError(null)
+      clearErrors(nationalIdField)
+    }
+    dispatch?.({
+      type: 'SET_NAME',
+      payload: { id: item.id, value: name, valueIndex },
+    })
+  }
+
   const { loading } = useQuery<Query, { input: GetRegistryPersonInput }>(
     DECEASED_IDENTITY_QUERY,
     {
@@ -53,14 +82,9 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
       fetchPolicy: 'network-only',
       skip: !isValidFormat,
       onCompleted: (data) => {
-        const name = data?.syslumennGetRegistryPerson?.name ?? ''
-
-        setValue(nameField, name, { shouldDirty: true, shouldValidate: true })
-        dispatch?.({
-          type: 'SET_NAME',
-          payload: { id: item.id, value: name, valueIndex },
-        })
+        handleLookupResult(data?.syslumennGetRegistryPerson?.name ?? '')
       },
+      onError: () => handleLookupResult(''),
     },
   )
 
@@ -81,6 +105,10 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
                 value: nationalIdRegex,
                 message: formatMessage(m.InvalidNationalId),
               },
+              validate: (value) =>
+                !lookupError ||
+                value !== lookupError.nationalId ||
+                lookupError.message,
             }}
             render={({ field, fieldState }) => (
               <Input
@@ -98,7 +126,13 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
                       ? `${digits.slice(0, 6)}-${digits.slice(6)}`
                       : digits
 
-                  field.onChange(value)
+                  setValue(field.name, value, {
+                    shouldDirty: true,
+                    shouldValidate: digits.length === 10,
+                  })
+                  if (digits.length < 10) {
+                    clearErrors(field.name)
+                  }
                   dispatch?.({
                     type: 'SET_NATIONAL_ID',
                     payload: { id: item.id, value, valueIndex },
@@ -111,12 +145,24 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
                     })
                   }
                 }}
-                onBlur={field.onBlur}
+                onBlur={() => {
+                  field.onBlur()
+                  trigger(field.name)
+                }}
                 hasError={Boolean(fieldState.error)}
                 errorMessage={fieldState.error?.message}
               />
             )}
           />
+          {loading && (
+            <Box
+              paddingTop={1}
+              role="status"
+              aria-label={item.name?.[lang] ?? formatMessage(m.nationalId)}
+            >
+              <LoadingDots size="medium" />
+            </Box>
+          )}
         </Column>
       </Row>
       <Row>
@@ -125,14 +171,20 @@ export const Estate = ({ item, valueIndex = 0, dispatch }: Props) => {
             name={nameField}
             control={control}
             defaultValue={getValue(item, 'name', valueIndex) ?? ''}
+            rules={{
+              required: {
+                value: (item.isRequired ?? false) && !nationalId,
+                message: formatMessage(m.required),
+              },
+            }}
             render={({ field, fieldState }) => (
               <Input
                 label={formatMessage(m.namePerson)}
                 name="estateName"
+                required={item.isRequired ?? false}
                 backgroundColor="blue"
                 value={field.value}
                 readOnly
-                loading={loading}
                 hasError={Boolean(fieldState.error)}
                 errorMessage={fieldState.error?.message}
               />
