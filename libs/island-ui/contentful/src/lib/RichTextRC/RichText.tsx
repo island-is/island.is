@@ -145,12 +145,26 @@ export const richText: RichText = (
     ...opt.renderComponent,
     locale,
   }
-  return documents.map((slice, index) => {
-    // The same Contentful entry (e.g. an Asset or ProcessEntry) can be embedded
-    // more than once in a single body, so `slice.id` is not unique on its own.
-    // Duplicate React keys break reconciliation on client-side navigation
-    // (reused slices get hoisted/reordered), so we scope the key by position.
-    const key = `${slice.id}:${index}`
+  // The same Contentful entry (e.g. an Asset or ProcessEntry) can be embedded
+  // more than once in a single body, so `slice.id` is not unique on its own.
+  // Duplicate React keys break reconciliation on client-side navigation
+  // (reused slices get hoisted/reordered), so we give each occurrence of an id
+  // its own stable ordinal (0, 1, 2 …) and scope the key by that rather than by
+  // the slice's current array index.
+  const occurrenceCountById: Record<string, number> = {}
+  const occurrenceById: Record<string, number> = {}
+  documents.forEach((slice) => {
+    occurrenceCountById[slice.id] = (occurrenceCountById[slice.id] ?? 0) + 1
+  })
+  return documents.map((slice) => {
+    const occurrence = occurrenceById[slice.id] ?? 0
+    occurrenceById[slice.id] = occurrence + 1
+    // Only disambiguate ids that actually repeat, so unique slices keep a clean
+    // key and duplicates each get a distinct, index-independent suffix.
+    const key =
+      occurrenceCountById[slice.id] > 1
+        ? `${slice.id}:${occurrence}`
+        : slice.id
     if (slice.__typename === 'Html') {
       return (
         <Fragment key={key}>
