@@ -41,7 +41,7 @@ export const UnfiledCourtDocumentList: FC<Props> = ({
             paddingY={2}
           >
             <Text variant="h5" as="span" className={styles.documentName}>
-              {stripPdfExtension(courtDocument.name ?? '')}
+              {stripPdfExtension(courtDocument.name)}
             </Text>
             <Box marginLeft={1} flexShrink={0}>
               <Icon icon="open" type="outline" size="small" />

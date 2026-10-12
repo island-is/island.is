@@ -905,9 +905,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         enableDrag
         caseFile={{
           id: item.id,
-          displayText: stripPdfExtension(item.name ?? ''),
+          displayText: stripPdfExtension(item.name),
           name: item.name,
-          userGeneratedFilename: stripPdfExtension(item.name ?? ''),
+          userGeneratedFilename: stripPdfExtension(item.name),
           canOpen: item.documentType !== CourtDocumentType.EXTERNAL_DOCUMENT,
           canEdit: ['fileName'],
           supplement: courtDocumentSupplement(item),
