@@ -107,6 +107,7 @@ const CertificateCard = ({
     display="flex"
     flexDirection={['column', 'row']}
     alignItems={['stretch', 'center']}
+    flexWrap="wrap"
     borderColor="blue200"
     borderWidth="standard"
     borderRadius="large"
@@ -114,8 +115,15 @@ const CertificateCard = ({
     paddingX={[3, 3, 4]}
     paddingY={3}
     rowGap={3}
+    columnGap={[3, 3, 5]}
   >
-    <Box display="flex" alignItems="center" columnGap={2} flexGrow={1}>
+    <Box
+      display="flex"
+      alignItems="center"
+      columnGap={2}
+      flexGrow={1}
+      minWidth={0}
+    >
       <Box
         display="flex"
         justifyContent="center"
@@ -127,7 +135,7 @@ const CertificateCard = ({
       >
         <Icon icon={icon} type="outline" color="blue400" ariaHidden />
       </Box>
-      <Box>
+      <Box minWidth={0} className={styles.certificateText}>
         {heading && (
           <Text variant="h4" color="dark400">
             {heading}
@@ -136,7 +144,7 @@ const CertificateCard = ({
         {subText && <Text color="dark400">{subText}</Text>}
       </Box>
     </Box>
-    <Box flexShrink={0} marginLeft={[0, 0, 5]}>
+    <Box flexShrink={0}>
       <Button
         size="small"
         fluid
