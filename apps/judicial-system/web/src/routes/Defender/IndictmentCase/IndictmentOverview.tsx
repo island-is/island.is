@@ -294,7 +294,6 @@ const IndictmentOverview: FC = () => {
                   </Box>
                 ),
             )}
-          {/* Closed cases drop Ákæra birt; verdict service takes over (parity with court/prosecutor). */}
           {!caseIsClosed &&
             workingCase.defendants?.map((defendant) => (
               <Fragment key={defendant.id}>
