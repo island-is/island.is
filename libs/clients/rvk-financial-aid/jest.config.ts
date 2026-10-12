@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'clients-rvk-financial-aid',
   preset: './jest.preset.js',
   rootDir: '../../..',

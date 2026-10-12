@@ -36,21 +36,14 @@ import { messages } from '@island.is/application/templates/financial-aid'
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  AidModelTypeEnum,
-  AidModel,
-  MunicipalityModelChildrenAidEnum,
-} from '@island.is/clients/municipalities-financial-aid'
+
 import { AttachmentS3Service } from '../../shared/services'
 import {
   fetchDirectTaxPaymentsFromRsk,
   fetchPersonalTaxReturnFromRsk,
   shouldFetchTaxDataFromRsk,
 } from './taxDataFromRsk'
-import {
-  mapVeitaSettingsToMunicipalityModel,
-  VeitaMunicipalitySettingsResponse,
-} from './veitaMunicipalitySettings'
+import { mapVeitaSettingsToMunicipalityModel } from './veitaMunicipalitySettings'
 import {
   CreateIslandisApplicationRequest,
   ForIslandisApi,
@@ -108,28 +101,6 @@ export class FinancialAidService extends BaseTemplateApiService {
       },
       500,
     )
-  }
-
-  private createMockAidModel = (
-    type: AidModelTypeEnum,
-    amounts: {
-      ownPlace: number
-      registeredRenting: number
-      unregisteredRenting: number
-      livesWithParents: number
-      withOthers: number
-      unknown: number
-    },
-  ): AidModel => {
-    const now = new Date()
-    return {
-      id: `mock-aid-${type.toLowerCase()}`,
-      municipalityId: '0000',
-      type,
-      created: now,
-      modified: now,
-      ...amounts,
-    }
   }
 
   async createApplication({
@@ -470,13 +441,13 @@ export class FinancialAidService extends BaseTemplateApiService {
         return null
       }
 
-      const settings = (await this.rvkApplicationsApiWithAuth(
+      const settings = await this.rvkApplicationsApiWithAuth(
         auth,
       ).getFinaidServiceSettingsForIslandis({
         xTenantIdentifier: tenantIdentifier,
         xUserPermissions: 'financialaid:read',
         municipalityCode: municipalityCode,
-      })) as unknown as VeitaMunicipalitySettingsResponse | undefined
+      })
 
       if (!settings?.data) {
         this.logger.error('Veita returned no municipality settings', {
@@ -485,7 +456,10 @@ export class FinancialAidService extends BaseTemplateApiService {
         return null
       }
 
-      return mapVeitaSettingsToMunicipalityModel(settings.data)
+      return mapVeitaSettingsToMunicipalityModel(
+        settings.data,
+        municipalityCode,
+      )
     }
 
     return await this.municipalityApiWithAuth(auth)
