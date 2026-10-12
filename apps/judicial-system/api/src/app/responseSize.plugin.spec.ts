@@ -21,11 +21,14 @@ describe('responseSizePlugin', () => {
   let willSendResponse: WillSendResponse
 
   const context = (
-    operationName: string | null,
+    names: { requested?: string | null; resolved?: string },
     body: GraphQLRequestContextWillSendResponse<BaseContext>['response']['body'],
   ) =>
     ({
-      request: { operationName },
+      request: { operationName: names.requested },
+      operation: names.resolved
+        ? { kind: 'OperationDefinition', name: { value: names.resolved } }
+        : undefined,
       response: { body },
     } as GraphQLRequestContextWillSendResponse<BaseContext>)
 
@@ -53,7 +56,12 @@ describe('responseSizePlugin', () => {
       data: { case: { id: 'case-id', courtCaseNumber: 'S-1/2026' } },
     }
 
-    await willSendResponse(context('Case', { kind: 'single', singleResult }))
+    await willSendResponse(
+      context(
+        { requested: 'Case', resolved: 'Case' },
+        { kind: 'single', singleResult },
+      ),
+    )
 
     expect(activeSpan?.addTags).toHaveBeenCalledWith({
       [GRAPHQL_OPERATION_TAG]: 'Case',
@@ -63,9 +71,38 @@ describe('responseSizePlugin', () => {
     })
   })
 
+  it('takes the name from the resolved operation when the request omits it', async () => {
+    await willSendResponse(
+      context(
+        { requested: undefined, resolved: 'Case' },
+        { kind: 'single', singleResult: { data: null } },
+      ),
+    )
+
+    expect(activeSpan?.addTags).toHaveBeenCalledWith(
+      expect.objectContaining({ [GRAPHQL_OPERATION_TAG]: 'Case' }),
+    )
+  })
+
+  it('falls back to the requested name when no operation was resolved', async () => {
+    await willSendResponse(
+      context(
+        { requested: 'Case', resolved: undefined },
+        { kind: 'single', singleResult: { errors: [{ message: 'Syntax' }] } },
+      ),
+    )
+
+    expect(activeSpan?.addTags).toHaveBeenCalledWith(
+      expect.objectContaining({ [GRAPHQL_OPERATION_TAG]: 'Case' }),
+    )
+  })
+
   it('names an anonymous operation', async () => {
     await willSendResponse(
-      context(null, { kind: 'single', singleResult: { data: null } }),
+      context(
+        { requested: null, resolved: undefined },
+        { kind: 'single', singleResult: { data: null } },
+      ),
     )
 
     expect(activeSpan?.addTags).toHaveBeenCalledWith(
@@ -75,13 +112,16 @@ describe('responseSizePlugin', () => {
 
   it('skips incremental responses', async () => {
     await willSendResponse(
-      context('Case', {
-        kind: 'incremental',
-        initialResult: { data: null, hasNext: true },
-        subsequentResults: (async function* () {
-          /* nothing */
-        })(),
-      }),
+      context(
+        { requested: 'Case', resolved: 'Case' },
+        {
+          kind: 'incremental',
+          initialResult: { data: null, hasNext: true },
+          subsequentResults: (async function* () {
+            /* nothing */
+          })(),
+        },
+      ),
     )
 
     expect(activeSpan?.addTags).not.toHaveBeenCalled()
@@ -92,7 +132,10 @@ describe('responseSizePlugin', () => {
 
     await expect(
       willSendResponse(
-        context('Case', { kind: 'single', singleResult: { data: null } }),
+        context(
+          { requested: 'Case', resolved: 'Case' },
+          { kind: 'single', singleResult: { data: null } },
+        ),
       ),
     ).resolves.toBeUndefined()
   })
@@ -103,10 +146,13 @@ describe('responseSizePlugin', () => {
 
     await expect(
       willSendResponse(
-        context('Case', {
-          kind: 'single',
-          singleResult: { data: circular },
-        }),
+        context(
+          { requested: 'Case', resolved: 'Case' },
+          {
+            kind: 'single',
+            singleResult: { data: circular },
+          },
+        ),
       ),
     ).resolves.toBeUndefined()
     expect(activeSpan?.addTags).not.toHaveBeenCalled()

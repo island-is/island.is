@@ -20,7 +20,7 @@ export const GRAPHQL_RESPONSE_BYTES_TAG = 'graphql.response.bytes'
 export const responseSizePlugin: ApolloServerPlugin = {
   async requestDidStart() {
     return {
-      async willSendResponse({ request, response }) {
+      async willSendResponse({ operation, request, response }) {
         if (response.body.kind !== 'single') {
           return
         }
@@ -31,9 +31,17 @@ export const responseSizePlugin: ApolloServerPlugin = {
           return
         }
 
+        // The operation Apollo resolved is the authority on the name; the
+        // request's operationName is client-supplied and may be left out
+        // for a document with a single named operation. It is still the
+        // only name there is when the request failed before an operation
+        // was resolved.
+        const operationName =
+          operation?.name?.value ?? request.operationName ?? 'anonymous'
+
         try {
           span.addTags({
-            [GRAPHQL_OPERATION_TAG]: request.operationName ?? 'anonymous',
+            [GRAPHQL_OPERATION_TAG]: operationName,
             [GRAPHQL_RESPONSE_BYTES_TAG]: Buffer.byteLength(
               JSON.stringify(response.body.singleResult),
             ),
