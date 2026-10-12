@@ -1,5 +1,6 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  AppointmentBaseDto,
   ConversationAttachmentDto,
   ConversationBaseDto,
   ConversationDetailDto,
@@ -32,6 +33,7 @@ import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from './dto/appointments.input'
+import { HealthDirectoratePaginatedAppointmentsInput } from './dto/paginatedAppointments.input'
 import { HealthDirectorateCreateCertificatePaymentIntentInput } from './dto/createCertificatePaymentIntent.input'
 import { HealthDirectorateCreateCertificateRequestInput } from './dto/createCertificateRequest.input'
 import { HealthDirectorateCreateConversationInput } from './dto/createHealthConversation.input'
@@ -45,6 +47,7 @@ import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   getAppointmentLinkActivationWindow,
   mapAppointmentStatus,
+  mapAppointmentsOrder,
   toAppointmentAssigneeTypeEnum,
   toAppointmentCancelBlockedReason,
   toAppointmentLinkTypeEnum,
@@ -79,6 +82,7 @@ import {
 } from './mappers/medicineMapper'
 import { mapPermit, mapPermitHistoryEntry } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
+import { HealthDirectoratePaginatedAppointments } from './models/paginatedAppointments.model'
 import { AppointmentDetail } from './models/appointmentDetail.model'
 import { CancelAppointmentResponse } from './models/cancelAppointmentResponse.model'
 import {
@@ -763,7 +767,36 @@ export class HealthDirectorateService {
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
     })
 
-    const appointments: Array<Appointment> = sortedData.map((item) => ({
+    return { data: sortedData.map((item) => this.mapAppointment(item)) }
+  }
+
+  public async getPaginatedAppointments(
+    auth: Auth,
+    input?: HealthDirectoratePaginatedAppointmentsInput,
+  ): Promise<HealthDirectoratePaginatedAppointments | null> {
+    const status = input?.status
+      ?.map((status) => mapAppointmentStatus(status))
+      .filter(isDefined)
+    const page = await this.healthApi.getPaginatedAppointments(auth, {
+      fromStartTime: input?.from,
+      toStartTime: input?.to,
+      status: status?.length ? status : undefined,
+      order: input?.order && mapAppointmentsOrder(input.order),
+      limit: input?.limit,
+      after: input?.after,
+      before: input?.before,
+    })
+    if (!page) return null
+
+    return {
+      data: page.data.map((item) => this.mapAppointment(item)),
+      totalCount: page.totalCount,
+      pageInfo: page.pageInfo,
+    }
+  }
+
+  private mapAppointment(item: AppointmentBaseDto): Appointment {
+    return {
       id: item.id,
       date: item.startTime,
       title: item.description,
@@ -789,8 +822,7 @@ export class HealthDirectorateService {
             return type ? { type, name: a.name } : null
           })
           .filter(isDefined) ?? [],
-    }))
-    return { data: appointments }
+    }
   }
 
   public async getAppointmentById(

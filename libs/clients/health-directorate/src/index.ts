@@ -47,6 +47,7 @@ export {
 } from './lib/clients'
 export {
   ActivePregnancyDto,
+  AppointmentBaseDto,
   AttachmentDownloadResult,
   CancelAppointmentResult,
   CertificateDto,
@@ -74,6 +75,7 @@ export {
   ExaminationCommunicationDetailDto,
   ExaminationMeasurementDto,
   FetalHeartRateDto,
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data,
   MessageType,
   MessagingDayType,
   MessagingOpeningHoursDto,
@@ -81,6 +83,7 @@ export {
   NextOpeningDto,
   OpeningHoursWindowDto,
   AllowedInteraction,
+  PaginatedAppointmentsDto,
   PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,

@@ -57,10 +57,9 @@ query getBloodTypeOverview {
 }
 
 query getAppointmentsOverview(
-  $from: DateTime
-  $status: [HealthDirectorateAppointmentStatus!]
+  $input: HealthDirectoratePaginatedAppointmentsInput
 ) {
-  healthDirectorateAppointments(from: $from, status: $status) {
+  healthDirectoratePaginatedAppointments(input: $input) {
     data {
       __typename
       id

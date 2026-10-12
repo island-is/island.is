@@ -46,6 +46,8 @@ import {
   HealthDirectorateAppointmentInput,
   HealthDirectorateAppointmentsInput,
 } from '../dto/appointments.input'
+import { HealthDirectoratePaginatedAppointmentsInput } from '../dto/paginatedAppointments.input'
+import { HealthDirectoratePaginatedAppointments } from '../models/paginatedAppointments.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -173,6 +175,7 @@ export class BasicInformationResolver {
   @Query(() => Appointments, {
     name: 'healthDirectorateAppointments',
     nullable: true,
+    deprecationReason: 'Use healthDirectoratePaginatedAppointments.',
   })
   @Audit()
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
@@ -182,6 +185,24 @@ export class BasicInformationResolver {
     @CurrentUser() user: User,
   ): Promise<Appointments | null> {
     return this.api.getAppointments(user, input)
+  }
+
+  @Query(() => HealthDirectoratePaginatedAppointments, {
+    name: 'healthDirectoratePaginatedAppointments',
+    nullable: true,
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
+  @Scopes(ApiScope.internal, ApiScope.healthAppointments)
+  async getPaginatedAppointments(
+    @Args('input', {
+      type: () => HealthDirectoratePaginatedAppointmentsInput,
+      nullable: true,
+    })
+    input: HealthDirectoratePaginatedAppointmentsInput | undefined,
+    @CurrentUser() user: User,
+  ): Promise<HealthDirectoratePaginatedAppointments | null> {
+    return this.api.getPaginatedAppointments(user, input)
   }
 
   @Query(() => AppointmentDetail, {
