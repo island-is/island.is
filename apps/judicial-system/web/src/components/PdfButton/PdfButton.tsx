@@ -32,6 +32,7 @@ interface Props {
     | 'verdictServiceCertificate'
     | 'rulingSentToPrisonAdmin'
     | 'appealSummons'
+    | 'appealAppointmentLetter'
 
   disabled?: boolean
   renderAs?: 'button' | 'row'

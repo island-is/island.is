@@ -61,7 +61,6 @@ const renderResults = (
         inputSections: [],
         outputTotal: {
           uid: 'hero',
-          kind: 'value',
           key: 'total',
           label: { is: 'Samtals' },
         },
