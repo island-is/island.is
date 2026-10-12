@@ -54,7 +54,9 @@ describe('UnfiledCourtDocumentList', () => {
     render(
       <UnfiledCourtDocumentList
         courtDocuments={
-          [{ id: 'document-3', name: 'Viðbótargögn.pdf' }] as CourtDocumentResponse[]
+          [
+            { id: 'document-3', name: 'Viðbótargögn.pdf' },
+          ] as CourtDocumentResponse[]
         }
         isDisabled={false}
         onOpen={jest.fn()}
