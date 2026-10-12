@@ -47,6 +47,8 @@ export enum Routes {
   RVKSPOUSEINCOMEFILES = 'rvkSpouseIncomeFiles',
   SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
   RVKSPOUSETAXRETURNFILES = 'rvkSpouseTaxReturnFiles',
+  RVKSPOUSETAXRETURNFILESMULTIFIELD = 'rvkSpouseTaxReturnFilesMultiField',
+  RVKSPOUSETAXRETURNFILESDESCRIPTION = 'rvkSpouseTaxReturnFilesDescription',
   SPOUSECONTACTINFO = 'spouseContactInfo',
   SPOUSESUMMARY = 'spouseSummary',
   SPOUSECONFIRMATION = 'spouseConfirmation',

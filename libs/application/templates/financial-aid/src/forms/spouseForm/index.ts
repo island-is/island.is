@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -89,17 +90,26 @@ export const Spouse: Form = buildForm({
           title: m.taxReturnForm.general.pageTitle,
           component: 'TaxReturnFilesForm',
         }),
-        buildFileUploadField({
+        buildMultiField({
           condition: isRVKresident,
-          id: Routes.RVKSPOUSETAXRETURNFILES,
+          id: Routes.RVKSPOUSETAXRETURNFILESMULTIFIELD,
           title: m.taxReturnForm.general.pageTitle,
-          uploadAccept: UPLOAD_ACCEPT.join(','),
-          maxSize: FILE_SIZE_LIMIT,
-          maxSizeErrorText: m.filesText.sizeErrorMessage,
-          uploadHeader: m.filesText.header,
-          uploadDescription: m.taxReturnForm.general.description,
-          uploadButtonLabel: m.filesText.buttonLabel,
-          uploadMultiple: true,
+          children: [
+            buildDescriptionField({
+              id: Routes.RVKSPOUSETAXRETURNFILESDESCRIPTION,
+              description: m.taxReturnForm.general.description,
+            }),
+            buildFileUploadField({
+              id: Routes.RVKSPOUSETAXRETURNFILES,
+              title: m.taxReturnForm.general.pageTitle,
+              uploadAccept: UPLOAD_ACCEPT.join(','),
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: m.filesText.sizeErrorMessage,
+              uploadHeader: m.filesText.header,
+              uploadButtonLabel: m.filesText.buttonLabel,
+              uploadMultiple: true,
+            }),
+          ],
         }),
       ],
     }),
