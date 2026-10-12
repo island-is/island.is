@@ -86,35 +86,6 @@ type RealEstatePropertyVars = {
 
 const PROPERTY_NUMBER_REGEX = /^F?\d{7}$/i
 
-const USE_MOCK_REAL_ESTATE_DATA = true
-
-const MOCK_REAL_ESTATE_PROPERTIES: SimpleProperty[] = [
-  {
-    propertyNumber: '1234567',
-    defaultAddress: {
-      display: 'Laugavegur 10',
-      postNumber: 101,
-      municipality: 'Reykjavik',
-    },
-  },
-  {
-    propertyNumber: '2345678',
-    defaultAddress: {
-      display: 'Borgartun 21',
-      postNumber: 105,
-      municipality: 'Reykjavik',
-    },
-  },
-  {
-    propertyNumber: '3456789',
-    defaultAddress: {
-      display: 'Strandgata 12',
-      postNumber: 600,
-      municipality: 'Akureyri',
-    },
-  },
-]
-
 const normalizePropertyNumber = (propertyNumber: string) =>
   propertyNumber.trim().replace(/^F/i, '')
 
@@ -137,7 +108,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const municipalityField = `${item.id}.${valueIndex}_municipality`
 
   const shouldFetch = item.fieldSettings?.isDropdown ?? false
-  const cached = !USE_MOCK_REAL_ESTATE_DATA && (item.list?.length ?? 0) > 0
+  const cached = (item.list?.length ?? 0) > 0
 
   const toLanguage = (value: string): FormSystemLanguageType => ({
     is: value,
@@ -202,10 +173,6 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const fetchAllProperties = async (): Promise<
     (FormSystemListItem | null)[]
   > => {
-    if (USE_MOCK_REAL_ESTATE_DATA) {
-      return MOCK_REAL_ESTATE_PROPERTIES.map(buildListItem)
-    }
-
     let cursor = 1
     let hasNextPage = true
     const allItems: FormSystemListItem[] = []
@@ -282,23 +249,20 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     setSearchLoading(true)
 
     try {
-      const propertyData = USE_MOCK_REAL_ESTATE_DATA
-        ? MOCK_REAL_ESTATE_PROPERTIES.find(
-            (property) => property.propertyNumber === normalized,
-          )
-        : (
-            await client.query<RealEstatePropertyQuery, RealEstatePropertyVars>(
-              {
-                query: GET_REAL_ESTATE_PROPERTY,
-                variables: {
-                  input: {
-                    assetId: normalized,
-                  },
-                },
-                fetchPolicy: 'network-only',
-              },
-            )
-          ).data?.assetsDetail
+      const result = await client.query<
+        RealEstatePropertyQuery,
+        RealEstatePropertyVars
+      >({
+        query: GET_REAL_ESTATE_PROPERTY,
+        variables: {
+          input: {
+            assetId: normalized,
+          },
+        },
+        fetchPolicy: 'network-only',
+      })
+
+      const propertyData = result.data?.assetsDetail
 
       if (propertyData?.propertyNumber) {
         const propertyNumber = propertyData.propertyNumber
