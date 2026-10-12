@@ -294,30 +294,32 @@ const IndictmentOverview: FC = () => {
                   </Box>
                 ),
             )}
-          {workingCase.defendants?.map((defendant) => (
-            <Fragment key={defendant.id}>
-              {defendant.alternativeServiceDescription && (
-                <AlternativeServiceAnnouncement
-                  alternativeServiceDescription={
-                    defendant.alternativeServiceDescription
-                  }
-                  defendantName={defendant.name}
-                />
-              )}
-              {defendant.subpoenas
-                ?.filter((subpoena) =>
-                  isSuccessfulServiceStatus(subpoena.serviceStatus),
-                )
-                .map((subpoena) => (
-                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                    <ServiceAnnouncement
-                      defendant={defendant}
-                      subpoena={subpoena}
-                    />
-                  </Box>
-                ))}
-            </Fragment>
-          ))}
+          {/* Closed cases drop Ákæra birt; verdict service takes over (parity with court/prosecutor). */}
+          {!caseIsClosed &&
+            workingCase.defendants?.map((defendant) => (
+              <Fragment key={defendant.id}>
+                {defendant.alternativeServiceDescription && (
+                  <AlternativeServiceAnnouncement
+                    alternativeServiceDescription={
+                      defendant.alternativeServiceDescription
+                    }
+                    defendantName={defendant.name}
+                  />
+                )}
+                {defendant.subpoenas
+                  ?.filter((subpoena) =>
+                    isSuccessfulServiceStatus(subpoena.serviceStatus),
+                  )
+                  .map((subpoena) => (
+                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                      <ServiceAnnouncement
+                        defendant={defendant}
+                        subpoena={subpoena}
+                      />
+                    </Box>
+                  ))}
+              </Fragment>
+            ))}
           <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
