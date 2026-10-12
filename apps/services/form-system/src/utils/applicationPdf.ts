@@ -28,9 +28,35 @@ const translations = {
   applicationNumber: { is: 'Númer umsóknar', en: 'Application number' },
   received: { is: 'Móttekin', en: 'Received' },
   page: { is: 'Bls.', en: 'Page' },
-  selected: { is: 'Valið', en: 'Selected' },
-  notSelected: { is: 'Ekki valið', en: 'Not selected' },
+  selected: { is: 'Hakað við', en: 'checked' },
+  notSelected: { is: 'Ekki hakað við', en: 'Not checked' },
   noAnswer: { is: 'Ekkert svar skráð', en: 'No answer provided' },
+  premises: { is: 'Gagnaöflun', en: 'Data collection' },
+  premisesIntroduction: {
+    is: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
+    en: 'The following information will be retrieved electronically.',
+  },
+  nationalRegistryInformation: {
+    is: 'Upplýsingar frá Þjóðskrá',
+    en: 'Information from Registers Iceland',
+  },
+  nationalRegistryDescription: {
+    is: 'Upplýsingar um nafn, kennitölu og lögheimili',
+    en: 'Information about name, national ID and legal domicile',
+  },
+  islandIsInformation: {
+    is: 'Upplýsingar frá Ísland.is',
+    en: 'Information from Ísland.is',
+  },
+  islandIsDescription: {
+    is: 'Upplýsingar um símanúmer og netfang.',
+    en: 'Information about phone number and email address.',
+  },
+  premisesAgreement: {
+    is: 'Ég skil að ofangreindra upplýsinga verði aflað',
+    en: 'I understand that the above-mentioned information will be collected',
+  },
+  checked: { is: 'Hakað við', en: 'Checked' },
 }
 
 const textFor = (
@@ -226,21 +252,13 @@ const fieldLines = (
   })
 }
 
-const drawField = (
+const drawValue = (
   document: PDFKit.PDFDocument,
-  field: {
-    name: { is: string }
-    isRequired?: boolean
-    fieldType: string
-    fieldSettings?: { isAddressRequired?: boolean }
-    values?: Array<{ json?: unknown }>
-  },
+  label: string,
+  value: string,
   showLabel: boolean,
-  locale: Locale,
+  hasValue: boolean,
 ) => {
-  const lines = fieldLines(field, locale)
-  const value = lines.join('\n') || textFor(translations.noAnswer, locale)
-  const label = `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`
   const labelHeight = showLabel
     ? document
         .font('Helvetica-Bold')
@@ -282,13 +300,108 @@ const drawField = (
   }
 
   document
-    .fillColor(lines.length ? colors.ink : colors.muted)
+    .fillColor(hasValue ? colors.ink : colors.muted)
     .font('Helvetica')
     .fontSize(10)
     .text(value, pageMargin + fieldIndent + 16, textTop, {
       width: contentWidth - fieldIndent - 32,
     })
   document.y = top + blockHeight + 8
+}
+
+const drawMessage = (
+  document: PDFKit.PDFDocument,
+  header: string,
+  description: string,
+) => {
+  if (!header && !description) return
+
+  const textOptions = { width: contentWidth - fieldIndent - 32 }
+  const headerHeight = header
+    ? document
+        .font('Helvetica-Bold')
+        .fontSize(11)
+        .heightOfString(header, textOptions) + 6
+    : 0
+  const descriptionHeight = description
+    ? document
+        .font('Helvetica')
+        .fontSize(10)
+        .heightOfString(description, textOptions)
+    : 0
+  ensureSpace(document, headerHeight + descriptionHeight + 24)
+  document.y += 10
+  document.fillColor(colors.ink)
+  if (header) {
+    document
+      .font('Helvetica-Bold')
+      .fontSize(11)
+      .text(header, pageMargin + fieldIndent + 16, document.y, textOptions)
+    document.y += 6
+  }
+  if (description) {
+    document
+      .font('Helvetica')
+      .fontSize(10)
+      .text(description, pageMargin + fieldIndent + 16, document.y, textOptions)
+  }
+  document.y += 14
+}
+
+const drawField = (
+  document: PDFKit.PDFDocument,
+  field: {
+    name: { is: string }
+    description?: { is?: string; en?: string }
+    isRequired?: boolean
+    fieldType: string
+    fieldSettings?: { isAddressRequired?: boolean }
+    values?: Array<{ json?: unknown }>
+  },
+  showLabel: boolean,
+  locale: Locale,
+) => {
+  if (field.fieldType === FieldTypesEnum.MESSAGE) {
+    drawMessage(
+      document,
+      textFor(field.name, locale),
+      textFor(field.description, locale),
+    )
+    return
+  }
+
+  const lines = fieldLines(field, locale)
+  drawValue(
+    document,
+    `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`,
+    lines.join('\n') || textFor(translations.noAnswer, locale),
+    showLabel,
+    lines.length > 0,
+  )
+}
+
+const drawScreenHeading = (document: PDFKit.PDFDocument, name: string) => {
+  if (!name) return
+
+  ensureSpace(document, screenContentReservation)
+  document.moveDown(0.4)
+  const top = document.y
+  document
+    .roundedRect(
+      pageMargin + screenIndent,
+      top,
+      contentWidth - screenIndent,
+      30,
+      4,
+    )
+    .fillAndStroke(colors.accentMinimal, colors.accentSoft)
+    .fillColor(colors.ink)
+    .font('Helvetica-Bold')
+    .fontSize(11)
+    .text(name, pageMargin + screenIndent + 12, top + 9, {
+      width: contentWidth - screenIndent - 24,
+    })
+  document.y = top + 38
 }
 
 export const buildApplicationPdf = (
@@ -336,6 +449,59 @@ export const buildApplicationPdf = (
       )
     }
 
+    const premises = application.sections?.find(
+      (section) => section.sectionType === SectionTypes.PREMISES,
+    )
+    if (application.sectionInfo && !premises?.isHidden) {
+      ensureSpace(document, sectionContentReservation)
+      document.moveDown(1.2)
+      const top = document.y
+      document
+        .roundedRect(pageMargin, top, contentWidth, 32, 4)
+        .fill(colors.accent)
+        .fillColor(colors.white)
+        .font('Helvetica-Bold')
+        .fontSize(13)
+        .text(
+          textFor(premises?.name, locale) ||
+            textFor(translations.premises, locale),
+          pageMargin + 14,
+          top + 9,
+          { width: contentWidth - 28 },
+        )
+      document.y = top + 40
+
+      drawScreenHeading(
+        document,
+        textFor(translations.premisesIntroduction, locale),
+      )
+      const premiseValues = [
+        {
+          title: translations.nationalRegistryInformation,
+          description: translations.nationalRegistryDescription,
+        },
+        {
+          title: translations.islandIsInformation,
+          description: translations.islandIsDescription,
+        },
+        ...(application.sectionInfo.additionalPremises ?? []),
+      ]
+      for (const premise of premiseValues) {
+        drawMessage(
+          document,
+          textFor(premise.title, locale),
+          textFor(premise.description, locale),
+        )
+      }
+      drawValue(
+        document,
+        textFor(translations.premisesAgreement, locale),
+        textFor(translations.checked, locale),
+        true,
+        true,
+      )
+    }
+
     const sections =
       application.sections?.filter(
         (section) =>
@@ -348,53 +514,24 @@ export const buildApplicationPdf = (
     for (const section of sections) {
       ensureSpace(document, sectionContentReservation)
       document.moveDown(1.2)
-      if (section.sectionType !== SectionTypes.PARTIES) {
-        const top = document.y
-        document
-          .roundedRect(pageMargin, top, contentWidth, 32, 4)
-          .fill(colors.accent)
-          .fillColor(colors.white)
-          .font('Helvetica-Bold')
-          .fontSize(13)
-          .text(textFor(section.name, locale), pageMargin + 14, top + 9, {
-            width: contentWidth - 28,
-          })
-        document.y = top + 40
-      }
+      const top = document.y
+      document
+        .roundedRect(pageMargin, top, contentWidth, 32, 4)
+        .fill(colors.accent)
+        .fillColor(colors.white)
+        .font('Helvetica-Bold')
+        .fontSize(13)
+        .text(textFor(section.name, locale), pageMargin + 14, top + 9, {
+          width: contentWidth - 28,
+        })
+      document.y = top + 40
 
       for (const screen of section.screens ?? []) {
         if (screen.isHidden) continue
-        if (textFor(screen.name, locale)) {
-          ensureSpace(document, screenContentReservation)
-          document.moveDown(0.4)
-          const top = document.y
-          document
-            .roundedRect(
-              pageMargin + screenIndent,
-              top,
-              contentWidth - screenIndent,
-              30,
-              4,
-            )
-            .fillAndStroke(colors.accentMinimal, colors.accentSoft)
-            .fillColor(colors.ink)
-            .font('Helvetica-Bold')
-            .fontSize(11)
-            .text(
-              textFor(screen.name, locale),
-              pageMargin + screenIndent + 12,
-              top + 9,
-              {
-                width: contentWidth - screenIndent - 24,
-              },
-            )
-          document.y = top + 38
-        }
+        drawScreenHeading(document, textFor(screen.name, locale))
 
         for (const field of screen.fields ?? []) {
-          if (field.isHidden || field.fieldType === FieldTypesEnum.MESSAGE) {
-            continue
-          }
+          if (field.isHidden) continue
 
           drawField(
             document,
