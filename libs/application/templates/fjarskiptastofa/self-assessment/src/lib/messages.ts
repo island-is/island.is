@@ -442,6 +442,38 @@ export const m = {
       defaultMessage: 'Hlaða niður',
       description: 'Results screen: PDF download button label',
     },
+    pdfFileName: {
+      id: 'fjs.sa.application:results.pdf.fileName',
+      defaultMessage: 'Nidurstodur-sjalfsmats.pdf',
+      description: 'Results screen: downloaded PDF file name',
+    },
+  }),
+  resultsPdf: defineMessages({
+    scoresSectionTitle: {
+      id: 'fjs.sa.application:resultsPdf.scoresSection.title',
+      defaultMessage: 'Niðurstöður eftir flokkum',
+      description: 'Results PDF: category scores section heading',
+    },
+    answersSectionTitle: {
+      id: 'fjs.sa.application:resultsPdf.answersSection.title',
+      defaultMessage: 'Svör við spurningum',
+      description: 'Results PDF: submitted answers section heading',
+    },
+    answerColumn: {
+      id: 'fjs.sa.application:resultsPdf.column.answer',
+      defaultMessage: 'Svar',
+      description: 'Results PDF: answer column label',
+    },
+    remarkColumn: {
+      id: 'fjs.sa.application:resultsPdf.column.remark',
+      defaultMessage: 'Skýring',
+      description: 'Results PDF: remark/explanation column label',
+    },
+    dateLabel: {
+      id: 'fjs.sa.application:resultsPdf.dateLabel',
+      defaultMessage: 'Dagsetning',
+      description: 'Results PDF: submission date label',
+    },
   }),
   conclusion: defineMessages({
     sectionTitle: {

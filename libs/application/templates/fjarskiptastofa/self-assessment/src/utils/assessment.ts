@@ -1,10 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import { ExternalData, FormValue, StaticText } from '@island.is/application/types'
 import {
   ASSESSMENT_ANSWERS_ID,
+  AssessmentAnswer,
   QUESTIONS_EXTERNAL_DATA_ID,
   SUBMIT_EXTERNAL_DATA_ID,
 } from './constants'
+import { m } from '../lib/messages'
 import {
   AssessmentAnswers,
   AssessmentAnswerValue,
@@ -44,6 +46,16 @@ export const getSelfAssessmentResult = (
     `${SUBMIT_EXTERNAL_DATA_ID}.data`,
   )
 
+// Placeholder reference number shown until the submit API returns a real one.
+// TODO: remove once the API populates result.referenceNumber.
+export const PLACEHOLDER_REFERENCE_NUMBER = '117995'
+
+// The reference number flows from the submit result once the API returns it,
+// falling back to the placeholder so the screen and PDF stay in sync.
+export const getReferenceNumber = (
+  result: SelfAssessmentResult | undefined,
+): string => result?.referenceNumber ?? PLACEHOLDER_REFERENCE_NUMBER
+
 export const getAssessmentAnswers = (answers: FormValue): AssessmentAnswers =>
   getValueViaPath<AssessmentAnswers>(answers, ASSESSMENT_ANSWERS_ID) ?? {}
 
@@ -63,3 +75,20 @@ export const getAllQuestions = (
 export const isQuestionAnswered = (
   answer: AssessmentAnswerValue | undefined,
 ): boolean => Boolean(answer?.answerValue && answer.remark?.trim())
+
+// Maps a stored answer value to its human-readable label message, shared by the
+// overview and the downloadable results PDF so both read from one source.
+export const getAnswerLabel = (value?: string): StaticText => {
+  switch (value) {
+    case AssessmentAnswer.YES:
+      return m.shared.answerYes
+    case AssessmentAnswer.IN_ADOPTION:
+      return m.shared.answerInAdoption
+    case AssessmentAnswer.IN_PROGRESS:
+      return m.shared.answerInProgress
+    case AssessmentAnswer.NO:
+      return m.shared.answerNo
+    default:
+      return ''
+  }
+}

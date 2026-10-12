@@ -40,4 +40,7 @@ export interface AssessmentCategoryScore {
 export interface SelfAssessmentResult {
   averageOverallScore: number
   categoryScores: AssessmentCategoryScore[]
+  // The reference number (tilvísunarnúmer) the submit api assigns. Optional
+  // until the API returns it; a placeholder is shown in the meantime.
+  referenceNumber?: string
 }

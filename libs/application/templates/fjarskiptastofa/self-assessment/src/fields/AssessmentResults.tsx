@@ -1,4 +1,5 @@
 import { FC, ReactNode, useMemo } from 'react'
+import { usePDF } from '@react-pdf/renderer'
 import {
   AlertMessage,
   Box,
@@ -13,7 +14,12 @@ import { SpiderChart } from '@island.is/application/ui-components'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { getQuestionsData, getSelfAssessmentResult } from '../utils/assessment'
+import {
+  getQuestionsData,
+  getReferenceNumber,
+  getSelfAssessmentResult,
+} from '../utils/assessment'
+import { AssessmentResultsPdf } from './AssessmentResultsPdf'
 
 const formatScore = (score: number) =>
   Number.isInteger(score) ? String(score) : score.toFixed(1)
@@ -52,6 +58,17 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
     [result, categoryLabels],
   )
 
+  // Generate the downloadable PDF of the submitted answers and results on the
+  // client; it stays in sync with whatever the screen renders below.
+  const [pdfInstance] = usePDF({
+    document: (
+      <AssessmentResultsPdf
+        application={application}
+        formatMessage={formatMessage}
+      />
+    ),
+  })
+
   // The submit call may have failed or not returned scoring yet; the answers are
   // still safely submitted, so fall back to a gentle notice rather than nothing.
   if (!result) {
@@ -79,8 +96,7 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="h5" color="dark400">
             {formatMessage(m.results.referenceNumber)}
           </Text>
-          {/* TODO: Replace hardcoded reference number with dynamic application tilvisun */}
-          <Text variant="small">117995</Text>
+          <Text variant="small">{getReferenceNumber(result)}</Text>
         </Box>
       </Box>
 
@@ -202,15 +218,20 @@ export const AssessmentResults: FC<FieldBaseProps> = ({ application }) => {
             })}
           </Text>
         </Box>
-        <Button
-          icon="download"
-          iconType="outline"
-          onClick={() => {
-            // TODO: wire up PDF download of the submitted answers and results.
-          }}
+        <a
+          href={pdfInstance.url ?? undefined}
+          download={formatMessage(m.results.pdfFileName)}
+          style={{ textDecoration: 'none' }}
         >
-          {formatMessage(m.results.pdfDownloadButton)}
-        </Button>
+          <Button
+            icon="download"
+            iconType="outline"
+            loading={pdfInstance.loading}
+            disabled={!pdfInstance.url || Boolean(pdfInstance.error)}
+          >
+            {formatMessage(m.results.pdfDownloadButton)}
+          </Button>
+        </a>
       </Box>
     </Box>
   )

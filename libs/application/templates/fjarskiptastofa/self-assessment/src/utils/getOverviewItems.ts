@@ -3,30 +3,14 @@ import {
   ExternalData,
   FormValue,
   KeyValueItem,
-  StaticText,
 } from '@island.is/application/types'
-import { AssessmentAnswer } from './constants'
 import {
+  getAnswerLabel,
   getAssessmentAnswers,
   getQuestionsData,
   groupQuestionsByCategory,
 } from './assessment'
 import { m } from '../lib/messages'
-
-const answerLabel = (value?: string): StaticText => {
-  switch (value) {
-    case AssessmentAnswer.YES:
-      return m.shared.answerYes
-    case AssessmentAnswer.IN_ADOPTION:
-      return m.shared.answerInAdoption
-    case AssessmentAnswer.IN_PROGRESS:
-      return m.shared.answerInProgress
-    case AssessmentAnswer.NO:
-      return m.shared.answerNo
-    default:
-      return ''
-  }
-}
 
 export const getOverviewItems = (
   answers: FormValue,
@@ -61,7 +45,7 @@ export const getOverviewItems = (
         items.push({
           width: 'half',
           keyText: question.questionText,
-          valueText: answerLabel(answer?.answerValue),
+          valueText: getAnswerLabel(answer?.answerValue),
         })
       }
     }

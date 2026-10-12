@@ -1,5 +1,7 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   Accordion,
   AccordionItem,
@@ -31,8 +33,9 @@ export const AssessmentQuestions: FC<FieldBaseProps> = ({
   application,
   setBeforeSubmitCallback,
 }) => {
-  const { formatMessage } = useLocale()
-  const { control } = useFormContext()
+  const { formatMessage, locale } = useLocale()
+  const { control, getValues } = useFormContext()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const questionsData = getQuestionsData(application.externalData)
   const storedAnswers = getAssessmentAnswers(application.answers)
@@ -102,6 +105,27 @@ export const AssessmentQuestions: FC<FieldBaseProps> = ({
         groups.findIndex(({ category }) => String(category.id) === selectedId),
       )
 
+      // Persist what's been answered so far so category progress survives a
+      // reload. Stepping between categories stays on this single multiField
+      // screen (returns [false, '']), so the application-system's automatic
+      // per-screen save never runs until the last category; save it here.
+      try {
+        await updateApplication({
+          variables: {
+            locale,
+            input: {
+              id: application.id,
+              answers: {
+                [ASSESSMENT_ANSWERS_ID]: getValues(ASSESSMENT_ANSWERS_ID) ?? {},
+              },
+            },
+          },
+        })
+      } catch {
+        // Let navigation continue even if the save failed; the final screen
+        // submit still persists everything.
+      }
+
       if (currentIndex >= groups.length - 1) {
         return [true, null]
       }
@@ -110,7 +134,15 @@ export const AssessmentQuestions: FC<FieldBaseProps> = ({
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return [false, '']
     })
-  }, [selectedId, groups, setBeforeSubmitCallback])
+  }, [
+    selectedId,
+    groups,
+    setBeforeSubmitCallback,
+    updateApplication,
+    locale,
+    application.id,
+    getValues,
+  ])
 
   // When arriving from an overview "edit" button, jump to that question: switch
   // to its category, expand it and scroll it into view.
