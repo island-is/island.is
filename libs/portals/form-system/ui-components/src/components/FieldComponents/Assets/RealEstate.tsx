@@ -14,7 +14,14 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useApolloClient } from '@apollo/client'
 
@@ -150,6 +157,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const [propertiesFetchHasError, setPropertiesFetchHasError] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
   const [isPropertySearchFocused, setIsPropertySearchFocused] = useState(false)
+  const propertyRequestId = useRef(0)
 
   const buildListItem = (property: SimpleProperty): FormSystemListItem => {
     const propertyNumber = property.propertyNumber ?? ''
@@ -223,10 +231,12 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   const fetchProperty = async (propertyNumber: string) => {
+    const requestId = ++propertyRequestId.current
     const trimmed = propertyNumber.trim()
     const normalized = normalizePropertyNumber(trimmed)
 
     if (!trimmed) {
+      setSearchLoading(false)
       setValue(propertyNumberField, '')
       setValue(addressField, '')
       setValue(postalCodeField, '')
@@ -239,6 +249,7 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
     }
 
     if (!PROPERTY_NUMBER_REGEX.test(trimmed)) {
+      setSearchLoading(false)
       setError(propertyNumberField, {
         type: 'validate',
         message: formatMessage(m.invalidPropertyNumber),
@@ -261,6 +272,10 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         },
         fetchPolicy: 'network-only',
       })
+
+      if (requestId !== propertyRequestId.current) {
+        return
+      }
 
       const propertyData = result.data?.assetsDetail
 
@@ -314,6 +329,10 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         })
       }
     } catch (error) {
+      if (requestId !== propertyRequestId.current) {
+        return
+      }
+
       console.error('[FormSystemRealEstate] Failed to fetch assetsDetail', {
         fieldId: item.id,
         valueIndex,
@@ -341,7 +360,9 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
         message: '',
       })
     } finally {
-      setSearchLoading(false)
+      if (requestId === propertyRequestId.current) {
+        setSearchLoading(false)
+      }
     }
   }
 
@@ -562,6 +583,8 @@ export const RealEstate = ({ item, dispatch, valueIndex = 0 }: Props) => {
               backgroundColor="blue"
               onChange={(e) => {
                 const value = sanitizePropertyNumberInput(e.target.value)
+                propertyRequestId.current += 1
+                setSearchLoading(false)
                 field.onChange(value)
 
                 setValue(addressField, '')
