@@ -195,11 +195,8 @@ export class BasicInformationResolver {
   @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
   @Scopes(ApiScope.internal, ApiScope.healthAppointments)
   async getPaginatedAppointments(
-    @Args('input', {
-      type: () => HealthDirectoratePaginatedAppointmentsInput,
-      nullable: true,
-    })
-    input: HealthDirectoratePaginatedAppointmentsInput | undefined,
+    @Args('input', { type: () => HealthDirectoratePaginatedAppointmentsInput })
+    input: HealthDirectoratePaginatedAppointmentsInput,
     @CurrentUser() user: User,
   ): Promise<HealthDirectoratePaginatedAppointments | null> {
     return this.api.getPaginatedAppointments(user, input)

@@ -87,6 +87,7 @@ import { AppointmentDetail } from './models/appointmentDetail.model'
 import { CancelAppointmentResponse } from './models/cancelAppointmentResponse.model'
 import {
   AppointmentCancelOutcomeEnum,
+  AppointmentsOrderEnum,
   HealthConversationStatusFilterEnum,
   PermitStatusEnum,
 } from './models/enums'
@@ -772,19 +773,19 @@ export class HealthDirectorateService {
 
   public async getPaginatedAppointments(
     auth: Auth,
-    input?: HealthDirectoratePaginatedAppointmentsInput,
+    input: HealthDirectoratePaginatedAppointmentsInput,
   ): Promise<HealthDirectoratePaginatedAppointments | null> {
-    const status = input?.status
+    const status = input.status
       ?.map((status) => mapAppointmentStatus(status))
       .filter(isDefined)
     const page = await this.healthApi.getPaginatedAppointments(auth, {
-      fromStartTime: input?.from,
-      toStartTime: input?.to,
+      fromStartTime: input.from,
+      toStartTime: input.to,
       status: status?.length ? status : undefined,
-      order: input?.order && mapAppointmentsOrder(input.order),
-      limit: input?.limit,
-      after: input?.after,
-      before: input?.before,
+      order: mapAppointmentsOrder(input.order ?? AppointmentsOrderEnum.ASC),
+      limit: input.limit,
+      after: input.after,
+      before: input.before,
     })
     if (!page) return null
 

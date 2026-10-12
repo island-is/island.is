@@ -1,4 +1,4 @@
-query getAppointments($input: HealthDirectoratePaginatedAppointmentsInput) {
+query getAppointments($input: HealthDirectoratePaginatedAppointmentsInput!) {
   healthDirectoratePaginatedAppointments(input: $input) {
     data {
       __typename

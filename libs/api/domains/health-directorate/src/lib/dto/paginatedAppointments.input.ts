@@ -1,19 +1,10 @@
-import { Field, GraphQLISODateTime, InputType, Int } from '@nestjs/graphql'
-import {
-  IsDate,
-  IsEmpty,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-  ValidateIf,
-} from 'class-validator'
+import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql'
+import { IsDate, IsEnum, IsOptional } from 'class-validator'
+import { PaginationInput } from '@island.is/nest/pagination'
 import { AppointmentStatusEnum, AppointmentsOrderEnum } from '../models/enums'
 
 @InputType()
-export class HealthDirectoratePaginatedAppointmentsInput {
+export class HealthDirectoratePaginatedAppointmentsInput extends PaginationInput() {
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsDate()
   @IsOptional()
@@ -36,26 +27,4 @@ export class HealthDirectoratePaginatedAppointmentsInput {
   @IsEnum(AppointmentsOrderEnum)
   @IsOptional()
   order?: AppointmentsOrderEnum
-
-  @Field(() => Int, {
-    nullable: true,
-    defaultValue: 20,
-    description: '1-100.',
-  })
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  @IsOptional()
-  limit?: number
-
-  @Field({ nullable: true, description: 'Not combinable with before.' })
-  @IsString()
-  @IsOptional()
-  after?: string
-
-  @Field({ nullable: true, description: 'Not combinable with after.' })
-  @ValidateIf((input) => input.after != null && input.after !== '')
-  @IsEmpty({ message: 'before cannot be combined with after' })
-  @IsOptional()
-  before?: string
 }

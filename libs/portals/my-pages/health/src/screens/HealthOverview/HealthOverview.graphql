@@ -57,7 +57,7 @@ query getBloodTypeOverview {
 }
 
 query getAppointmentsOverview(
-  $input: HealthDirectoratePaginatedAppointmentsInput
+  $input: HealthDirectoratePaginatedAppointmentsInput!
 ) {
   healthDirectoratePaginatedAppointments(input: $input) {
     data {
