@@ -8,6 +8,7 @@ import {
   SkeletonLoader,
   Stack,
   Text,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -126,29 +127,10 @@ export const DocumentsOverview = () => {
                 alignItems={'center'}
               >
                 <GoBack display="inline" noUnderline marginBottom={0} />
-                <Box
-                  borderRadius="full"
-                  display={'inlineBlock'}
-                  marginY={0}
-                  marginX={1}
-                  className={styles.bullet}
-                />
-                <Text
-                  as="h1"
-                  variant="eyebrow"
-                  color="blue400"
-                  fontWeight="semiBold"
-                >
-                  <button
-                    onClick={() =>
-                      navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-                        replace: true,
-                      })
-                    }
-                  >
-                    {formatMessage(m.documents)}
-                  </button>
-                </Text>
+                {/* No visible crumb for the current page, but keep its heading */}
+                <h1>
+                  <VisuallyHidden>{formatMessage(m.documents)}</VisuallyHidden>
+                </h1>
               </Box>
             </Box>
             <DocumentsFilter
