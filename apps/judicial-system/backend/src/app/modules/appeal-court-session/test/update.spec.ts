@@ -116,6 +116,8 @@ describe('AppealCourtSessionController - Update', () => {
       ),
     ).rejects.toBeInstanceOf(BadRequestException)
 
-    expect(mockAppealCourtSessionRepositoryService.update).not.toHaveBeenCalled()
+    expect(
+      mockAppealCourtSessionRepositoryService.update,
+    ).not.toHaveBeenCalled()
   })
 })
