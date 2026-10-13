@@ -87,6 +87,7 @@ export const MainForm = buildForm({
         buildAccordionField({
           id: 'mainFormAccordion',
           marginTop: 4,
+          singleExpand: false,
           accordionItems: [
             {
               itemTitle: m.application.addressTitle,

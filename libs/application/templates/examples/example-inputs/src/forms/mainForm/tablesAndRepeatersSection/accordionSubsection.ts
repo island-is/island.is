@@ -48,6 +48,7 @@ export const accordionSubsection = buildSubSection({
         buildAccordionField({
           id: 'accordionDemo',
           title: 'Accordion demo',
+          singleExpand: false,
           accordionItems: [
             {
               itemTitle: 'Text only',
@@ -61,6 +62,7 @@ export const accordionSubsection = buildSubSection({
                   id: 'accordionTextField',
                   title: 'Full name',
                   placeholder: 'Enter your full name',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'accordionEmailField',
@@ -88,6 +90,7 @@ export const accordionSubsection = buildSubSection({
                 buildCheckboxField({
                   id: 'accordionCheckboxField',
                   title: '',
+                  required: true,
                   options: [
                     {
                       value: 'agree',
