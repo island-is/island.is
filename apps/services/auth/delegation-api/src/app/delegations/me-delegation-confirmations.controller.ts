@@ -1,21 +1,16 @@
 import {
-  Body,
   Controller,
   Get,
   Param,
   ParseUUIDPipe,
-  Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   DelegationConfirmationAuthenticationDTO,
-  DelegationConfirmationDTO,
-  DelegationConfirmationReceiptDTO,
   DelegationConfirmationService,
   DelegationsOutgoingService,
-  StartedDelegationConfirmationAuthenticationDTO,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -39,12 +34,13 @@ const confirmationId: DocumentationParamOptions = {
 }
 
 /**
- * Second half of "tvöfalt samþykki": completing a delegation whose sensitive
- * scopes were held pending a fresh, high-assurance authentication.
+ * Second half of "tvöfalt samþykki". Saving a grant with a sensitive scope
+ * holds the grant and starts the grantor's step-up; this is where the client
+ * follows it until the grant takes effect.
  *
- * Deliberately NOT feature-flag gated. Only the *creation* of confirmations is
- * flagged; if the flag were to gate this endpoint too, turning it off would
- * strand grants that are already awaiting confirmation.
+ * Deliberately NOT feature-flag gated. Only holding a grant is flagged; if the
+ * flag gated this endpoint too, turning it off would strand grants already
+ * waiting for their confirmation.
  */
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(...delegationScopes)
@@ -62,103 +58,10 @@ export class MeDelegationConfirmationsController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Get()
-  @Documentation({
-    response: { status: 200, type: [DelegationConfirmationDTO] },
-  })
-  @Audit<DelegationConfirmationDTO[]>({
-    resources: (confirmations) => confirmations.map((c) => c.id),
-  })
-  async findAll(
-    @CurrentUser() user: User,
-  ): Promise<DelegationConfirmationDTO[]> {
-    const confirmations =
-      await this.delegationConfirmationService.findAllForUser(user)
-
-    return confirmations.map(
-      (confirmation) => new DelegationConfirmationDTO(confirmation),
-    )
-  }
-
-  @Get(':confirmationId')
-  @Documentation({
-    includeNoContentResponse: true,
-    response: { status: 200, type: DelegationConfirmationDTO },
-    request: { params: { confirmationId } },
-  })
-  @Audit<DelegationConfirmationDTO>({
-    resources: (confirmation) => confirmation.id,
-  })
-  async findOne(
-    @CurrentUser() user: User,
-    @Param('confirmationId', new ParseUUIDPipe()) id: string,
-  ): Promise<DelegationConfirmationDTO> {
-    const confirmation =
-      await this.delegationConfirmationService.findByIdForUser(user, id)
-    const group = await this.delegationConfirmationService.findGroupForUser(
-      user,
-      confirmation,
-    )
-
-    return new DelegationConfirmationDTO(confirmation, group)
-  }
-
-  @Get(':confirmationId/receipt')
-  @Documentation({
-    includeNoContentResponse: true,
-    response: { status: 200, type: DelegationConfirmationReceiptDTO },
-    request: { params: { confirmationId } },
-  })
-  @Audit<DelegationConfirmationReceiptDTO>({
-    resources: (receipt) => receipt.confirmationId,
-  })
-  async findReceipt(
-    @CurrentUser() user: User,
-    @Param('confirmationId', new ParseUUIDPipe()) id: string,
-  ): Promise<DelegationConfirmationReceiptDTO> {
-    const confirmation =
-      await this.delegationConfirmationService.findConfirmedForReceipt(user, id)
-
-    return new DelegationConfirmationReceiptDTO(confirmation)
-  }
-
-  /**
-   * Starts the confirming authentication: the identity server asks Auðkenni to
-   * authenticate the grantor on their phone, showing the confirmation's binding
-   * message, by the method the grantor logged in with. Poll the GET endpoint
-   * for the result. For a confirmation in a group, this one authentication
-   * confirms every pending confirmation in it.
-   */
-  @Post(':confirmationId/authentication')
-  @Documentation({
-    includeNoContentResponse: true,
-    response: {
-      status: 200,
-      type: StartedDelegationConfirmationAuthenticationDTO,
-    },
-    request: { params: { confirmationId } },
-  })
-  async startAuthentication(
-    @CurrentUser() user: User,
-    @Param('confirmationId', new ParseUUIDPipe()) id: string,
-  ): Promise<StartedDelegationConfirmationAuthenticationDTO> {
-    const started =
-      await this.delegationConfirmationService.startAuthentication(user, id)
-
-    this.auditService.audit({
-      auth: user,
-      action: 'startAuthentication',
-      namespace,
-      resources: id,
-      meta: { method: started.method },
-    })
-
-    return started
-  }
-
   /**
    * Where the confirming authentication stands. Once the grantor has approved,
-   * this is the call that grants the held scopes.
+   * this is the call that grants the held scopes. Anything but pending or
+   * confirmed means nothing was granted, and the grantor saves again to retry.
    */
   @Get(':confirmationId/authentication')
   @Documentation({
@@ -170,13 +73,13 @@ export class MeDelegationConfirmationsController {
     @CurrentUser() user: User,
     @Param('confirmationId', new ParseUUIDPipe()) id: string,
   ): Promise<DelegationConfirmationAuthenticationDTO> {
-    const { status, confirmation, completedNow } =
+    const { status, completedNow } =
       await this.delegationConfirmationService.getAuthenticationStatus(user, id)
 
     // Only the poll that completes them is audited and notified, so a client
     // polling an already-confirmed row doesn't repeat either. One audit entry
-    // and one notification per confirmation the authentication confirmed.
-    for (const confirmed of completedNow ?? []) {
+    // per confirmation the authentication confirmed.
+    for (const { confirmation: confirmed } of completedNow ?? []) {
       this.auditService.audit({
         auth: user,
         action: 'confirm',
@@ -192,17 +95,21 @@ export class MeDelegationConfirmationsController {
           scopes: confirmed.scopes.map((scope) => scope.name),
         },
       })
-
-      // The recipient is told only now, when the access actually exists.
-      if (confirmed.delegationId) {
-        void this.delegationsOutgoingService.notifyConfirmedDelegation(
-          user,
-          confirmed.delegationId,
-          false,
-        )
-      }
     }
 
-    return new DelegationConfirmationAuthenticationDTO(status, confirmation)
+    // The recipients are told only now, when the access actually exists, and
+    // the same way as a grant that needed no confirmation.
+    if (completedNow?.length) {
+      void this.delegationsOutgoingService.notifyConfirmed(
+        user,
+        completedNow.flatMap(({ confirmation, hadExistingScopes }) =>
+          confirmation.delegationId
+            ? [{ delegationId: confirmation.delegationId, hadExistingScopes }]
+            : [],
+        ),
+      )
+    }
+
+    return new DelegationConfirmationAuthenticationDTO(status)
   }
 }

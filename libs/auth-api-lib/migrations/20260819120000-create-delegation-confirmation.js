@@ -110,11 +110,6 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          attempt_count: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
-          },
           auth_req_id: {
             type: Sequelize.STRING,
           },
@@ -123,11 +118,6 @@ module.exports = {
           },
           auth_started_at: {
             type: Sequelize.DATE,
-          },
-          auth_start_count: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
           },
           certificate_thumbprint: {
             type: Sequelize.STRING,

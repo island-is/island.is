@@ -1,9 +1,6 @@
 import {
   BadRequestException,
   ForbiddenException,
-  GoneException,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
 } from '@nestjs/common'
@@ -16,8 +13,8 @@ import { Sequelize } from 'sequelize-typescript'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CibaClient,
-  SessionCannotStepUpError,
-  StepUpUnavailableError,
+  StepUpTokenRejectedError,
+  type CibaPollResult,
   type StepUpClaims,
   type StepUpMethod,
 } from '@island.is/auth/step-up'
@@ -68,18 +65,23 @@ export interface StartAuthenticationResult {
 }
 
 export type AuthenticationStatus =
-  /** No step-up in progress: start one. */
-  | 'not_started'
   /** Waiting for the grantor to approve on their phone. */
   | 'pending'
   /** Done: the scopes are granted. */
   | 'confirmed'
-  /** The grantor declined, or someone else answered. Can be started again. */
+  /** The grantor declined, or someone else answered. Save the grant again. */
   | 'denied'
-  /** The step-up ran out of time. Can be started again. */
+  /** The step-up ran out of time. Save the grant again. */
   | 'timed_out'
-  /** The confirmation itself expired or was superseded. Grant again. */
+  /** The confirmation is over: expired, superseded or refused. Save again. */
   | 'expired'
+
+/** A confirmation one authentication completed, and what it changed. */
+export interface CompletedConfirmation {
+  confirmation: DelegationConfirmation
+  /** Whether the delegation already gave access before this, for the notice. */
+  hadExistingScopes: boolean
+}
 
 export interface AuthenticationStatusResult {
   status: AuthenticationStatus
@@ -89,7 +91,7 @@ export interface AuthenticationStatusResult {
    * authentication confirmed — this one, and the rest of its group — so the
    * caller can audit and notify exactly once however often the client polls.
    */
-  completedNow?: DelegationConfirmation[]
+  completedNow?: CompletedConfirmation[]
 }
 
 /**
@@ -271,17 +273,27 @@ export class DelegationConfirmationService {
   }
 
   /**
-   * Ends confirmations that can never be completed: they expire, and a
-   * delegation left with nothing granted is removed, so the grant is undone as
-   * if it had never been made.
+   * Ends the confirmations one step-up was started for, so none of them can be
+   * completed any more, and removes delegations left with nothing granted. A
+   * grant that is never confirmed leaves nothing behind. Trying again means
+   * saving the grant again, which starts a fresh confirmation.
    */
-  private async cancel(confirmations: DelegationConfirmation[]): Promise<void> {
+  private async end(authReqId: string): Promise<void> {
     await this.sequelize.transaction(async (transaction) => {
+      const ended = await this.delegationConfirmationModel.findAll({
+        attributes: ['id', 'delegationId'],
+        where: { authReqId, status: DelegationConfirmationStatus.Pending },
+        transaction,
+      })
+      if (ended.length === 0) {
+        return
+      }
+
       await this.delegationConfirmationModel.update(
         { status: DelegationConfirmationStatus.Expired, authReqId: null },
         {
           where: {
-            id: confirmations.map((confirmation) => confirmation.id),
+            id: ended.map((confirmation) => confirmation.id),
             status: DelegationConfirmationStatus.Pending,
           },
           transaction,
@@ -289,7 +301,7 @@ export class DelegationConfirmationService {
       )
 
       await this.removeEmptyDelegations(
-        confirmations.map((confirmation) => confirmation.delegationId),
+        ended.map((confirmation) => confirmation.delegationId),
         transaction,
       )
     })
@@ -322,73 +334,6 @@ export class DelegationConfirmationService {
     }
   }
 
-  /**
-   * Refuses a group that is no longer whole, expiring what is left of it: the
-   * grantor would be confirming less than they were shown, under a phone
-   * message that no longer fits.
-   */
-  private async assertWholeGroup(
-    confirmation: DelegationConfirmation,
-    pendingMembers: DelegationConfirmation[],
-  ): Promise<void> {
-    if (!confirmation.groupId) {
-      return
-    }
-
-    const size = await this.delegationConfirmationModel.count({
-      where: {
-        groupId: confirmation.groupId,
-        fromNationalId: confirmation.fromNationalId,
-      },
-    })
-    if (size === pendingMembers.length) {
-      return
-    }
-
-    await this.delegationConfirmationModel.update(
-      { status: DelegationConfirmationStatus.Expired, authReqId: null },
-      {
-        where: {
-          groupId: confirmation.groupId,
-          fromNationalId: confirmation.fromNationalId,
-          status: DelegationConfirmationStatus.Pending,
-        },
-      },
-    )
-    await this.removeEmptyDelegations(
-      pendingMembers.map((member) => member.delegationId),
-    )
-    throw new GoneException(
-      'Part of this grant has changed since it was made. Grant it again.',
-    )
-  }
-
-  /** Every confirmation in the group, whatever its status, for display. */
-  async findGroupForUser(
-    user: User,
-    confirmation: DelegationConfirmation,
-  ): Promise<DelegationConfirmation[]> {
-    if (!confirmation.groupId) {
-      return [confirmation]
-    }
-
-    return this.delegationConfirmationModel.findAll({
-      where: {
-        groupId: confirmation.groupId,
-        fromNationalId: user.nationalId,
-      },
-      order: [['id', 'ASC']],
-    })
-  }
-
-  /** Confirmations belonging to the current grantor. Never an oracle. */
-  async findAllForUser(user: User): Promise<DelegationConfirmation[]> {
-    return this.delegationConfirmationModel.findAll({
-      where: { fromNationalId: user.nationalId },
-      order: [['created', 'DESC']],
-    })
-  }
-
   async findByIdForUser(
     user: User,
     id: string,
@@ -405,110 +350,53 @@ export class DelegationConfirmationService {
   }
 
   /**
-   * The evidence record behind a completed confirmation, for the grantor's
-   * receipt. Readable indefinitely — it deliberately outlives the delegation.
-   */
-  async findConfirmedForReceipt(
-    user: User,
-    id: string,
-  ): Promise<DelegationConfirmation> {
-    const confirmation = await this.findByIdForUser(user, id)
-
-    if (confirmation.status !== DelegationConfirmationStatus.Confirmed) {
-      throw new NoContentException()
-    }
-
-    return confirmation
-  }
-
-  /**
-   * Starts the grantor's confirming authentication: a CIBA request to the
-   * identity server, which asks Auðkenni to authenticate them on their phone
-   * while they stay on the page.
+   * Starts the grantor's confirming authentication for what a save has just
+   * held: a CIBA request to the identity server, which asks Auðkenni to
+   * authenticate them on their phone while they stay on the page. One
+   * authentication covers every confirmation the save made.
    *
-   * The person asked is taken from the confirmation row — the grantor, or for a
-   * company the procuration holder who made the grant — never from the request.
-   * How they are reached is the identity server's decision; we only tell it how
-   * they logged in to this session. The message on the phone is the binding message in the
-   * hashed snapshot.
+   * Called inside the save's transaction. If it can't start — a session that
+   * can't be stepped up, the identity server refusing or unreachable — the
+   * error rolls the whole save back, so nothing is left waiting for a
+   * confirmation that can never come.
+   *
+   * The person asked is the one behind the caller's own token — the grantor,
+   * or for a company the procuration holder making the grant — and how they
+   * are reached is the identity server's decision. The message on the phone is
+   * the binding message in the hashed snapshot.
    */
   async startAuthentication(
     user: User,
-    id: string,
-  ): Promise<StartAuthenticationResult> {
-    const confirmation = await this.findByIdForUser(user, id)
-
-    await this.assertConfirmingUser(user, confirmation)
-    await this.assertPending(confirmation)
-
-    // The whole group is confirmed by this one authentication, and only as a
-    // whole: if any of it has been superseded or has expired, the grant has
-    // changed since the grantor saw it, so none of it can be started.
-    const members = await this.findPendingGroup(confirmation)
-    await this.assertWholeGroup(confirmation, members)
-    for (const member of members) {
-      await this.assertConfirmingUser(user, member)
+    confirmations: DelegationConfirmation[],
+    transaction: Transaction,
+  ): Promise<StartAuthenticationResult | undefined> {
+    if (confirmations.length === 0) {
+      return undefined
     }
-    const ids = members.map((member) => member.id)
 
-    // Counted before anything goes out, with a conditional increment, so
-    // concurrent starts can't slip past the cap. All of the group or none of
-    // it: a refused start must not use up the others' attempts.
-    await this.sequelize.transaction(async (transaction) => {
-      const [counted] = await this.delegationConfirmationModel.update(
-        { authStartCount: Sequelize.literal('auth_start_count + 1') },
-        {
-          where: {
-            id: ids,
-            status: DelegationConfirmationStatus.Pending,
-            authStartCount: {
-              [Op.lt]: this.delegationConfig.confirmationMaxAuthStarts,
-            },
-          },
-          transaction,
-        },
-      )
-      if (counted !== ids.length) {
-        throw new HttpException(
-          'Too many authentication attempts for this confirmation.',
-          HttpStatus.TOO_MANY_REQUESTS,
+    for (const confirmation of confirmations) {
+      if (!this.isConfirmingUser(user, confirmation)) {
+        throw new ForbiddenException(
+          'This grant can only be confirmed by the grantor themselves.',
         )
       }
-    })
+    }
 
     // Recorded before the request goes out, so the authentication that comes
     // back can be required to be no older than this.
     const startedAt = new Date()
 
-    // The identity server authenticates the person behind this token — the
-    // actor when acting for a company — which assertConfirmingUser has just
-    // checked is who this confirmation is for. It also reads from the token how
-    // that session was logged in, which decides the method.
-    const started = await this.cibaClient
-      .start({
-        userToken: user.authorization,
-        bindingMessage: confirmation.contentSnapshot.bindingMessage,
-        // Bound into what the grantor's key signs and echoed on the token, so the
-        // approval can only complete this exact content — every confirmation in
-        // the group, and no other.
-        contextHash: hashConfirmationGroup(
-          members.map((member) => member.contentHash),
-        ),
-      })
-      .catch(async (error) => {
-        // The step-up won't come: the session can't be stepped up (an ID card
-        // login the token doesn't show as one, or a SIM number we no longer
-        // have), or the identity server doesn't offer it to this person right
-        // now. Waiting for the confirmation to expire would only strand the
-        // grant, so it ends now and the grantor is told why.
-        if (
-          error instanceof SessionCannotStepUpError ||
-          error instanceof StepUpUnavailableError
-        ) {
-          await this.cancel(members)
-        }
-        throw error
-      })
+    const started = await this.cibaClient.start({
+      userToken: user.authorization,
+      // Grouped confirmations share one message, written into each snapshot.
+      bindingMessage: confirmations[0].contentSnapshot.bindingMessage,
+      // Bound into what the grantor's key signs and echoed on the token, so the
+      // approval can only complete this exact content: every confirmation the
+      // save made, and no other.
+      contextHash: hashConfirmationGroup(
+        confirmations.map((confirmation) => confirmation.contentHash),
+      ),
+    })
 
     await this.delegationConfirmationModel.update(
       {
@@ -516,11 +404,14 @@ export class DelegationConfirmationService {
         authMethod: started.method,
         authStartedAt: startedAt,
       },
-      { where: { id: ids } },
+      {
+        where: { id: confirmations.map((confirmation) => confirmation.id) },
+        transaction,
+      },
     )
 
     const expiresAt = Math.min(
-      ...members.map((member) => member.expiresAt.getTime()),
+      ...confirmations.map((confirmation) => confirmation.expiresAt.getTime()),
     )
     const secondsLeft = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
 
@@ -541,6 +432,9 @@ export class DelegationConfirmationService {
    * person who authenticated must be the one the row names, and their
    * authentication must not predate the step-up, so an authentication made for
    * some other purpose can't be passed off as this one.
+   *
+   * Anything that isn't a confirmation ends it: a decline, a timeout, or a
+   * refusal here. The grantor tries again by saving the grant again.
    */
   async getAuthenticationStatus(
     user: User,
@@ -548,8 +442,7 @@ export class DelegationConfirmationService {
   ): Promise<AuthenticationStatusResult> {
     const confirmation = await this.findByIdForUser(user, id)
 
-    // Only the person who confirms may follow it. Not counted as an attempt:
-    // reading is not trying.
+    // Only the person who confirms may follow it.
     if (!this.isConfirmingUser(user, confirmation)) {
       throw new ForbiddenException(
         'This confirmation can only be followed by the delegation grantor.',
@@ -560,68 +453,66 @@ export class DelegationConfirmationService {
       return { status: 'confirmed', confirmation }
     }
 
+    const authReqId = confirmation.authReqId
     if (
       confirmation.status !== DelegationConfirmationStatus.Pending ||
-      confirmation.expiresAt.getTime() <= Date.now()
+      !authReqId
     ) {
-      if (confirmation.status === DelegationConfirmationStatus.Pending) {
-        await confirmation.update({
-          status: DelegationConfirmationStatus.Expired,
-          authReqId: null,
-        })
-        await this.removeEmptyDelegations([confirmation.delegationId])
-      }
       return { status: 'expired', confirmation }
     }
 
-    if (!confirmation.authReqId) {
-      return { status: 'not_started', confirmation }
+    if (confirmation.expiresAt.getTime() <= Date.now()) {
+      await this.end(authReqId)
+      return { status: 'expired', confirmation }
     }
 
-    await this.assertConfirmingUser(user, confirmation)
-
-    const result = await this.cibaClient.poll(confirmation.authReqId)
-
-    const authReqId = confirmation.authReqId
-    const endStepUp = () =>
-      this.delegationConfirmationModel.update(
-        { authReqId: null },
-        { where: { authReqId } },
-      )
+    let result: CibaPollResult
+    try {
+      result = await this.cibaClient.poll(authReqId)
+    } catch (error) {
+      // The identity server handed out its token, and it was rejected here: it
+      // can't be collected again, so the step-up is over. An outage, by
+      // contrast, is passed on and the client simply polls again.
+      if (error instanceof StepUpTokenRejectedError) {
+        await this.end(authReqId)
+      }
+      throw error
+    }
 
     switch (result.status) {
       case 'pending':
         return { status: 'pending', confirmation }
       case 'denied':
         // The grantor declined, or the identity server refused the person who
-        // answered. The confirmations stay pending so they can try again.
-        await endStepUp()
+        // answered.
+        await this.end(authReqId)
         return { status: 'denied', confirmation }
       case 'expired':
-        await endStepUp()
+        // Not ended here: the identity server answers the same way when
+        // another poll has just collected the token, and that poll may be
+        // completing the confirmation right now. Left alone, it can't be
+        // completed anyway; it expires, or the next save supersedes it.
         return { status: 'timed_out', confirmation }
     }
 
-    // What this authentication was started for: the group as it stood then.
-    // If any of it has since been superseded or expired, the hash won't match
-    // and nothing is confirmed.
+    // What this authentication was started for: the confirmations as they
+    // stood then. If any of them has since been superseded or has expired, the
+    // hash won't match and nothing is confirmed.
     const members = (await this.findPendingGroup(confirmation)).filter(
       (member) => member.authReqId === authReqId,
     )
 
-    // The identity server has issued its token for this request, so it can't be
-    // collected again: whatever is refused here ends the step-up, and the next
-    // poll answers not_started rather than timed_out.
+    let completedNow: CompletedConfirmation[]
     try {
-      await this.assertStepUp(confirmation, members, result.claims)
-      await this.complete(user, members, result.claims)
+      this.assertStepUp(confirmation, members, result.claims)
+      completedNow = await this.complete(user, members, result.claims)
     } catch (error) {
-      await endStepUp()
+      await this.end(authReqId)
       throw error
     }
     await confirmation.reload()
 
-    return { status: 'confirmed', confirmation, completedNow: members }
+    return { status: 'confirmed', confirmation, completedNow }
   }
 
   /**
@@ -632,7 +523,7 @@ export class DelegationConfirmationService {
     user: User,
     confirmations: DelegationConfirmation[],
     claims: StepUpClaims,
-  ): Promise<void> {
+  ): Promise<CompletedConfirmation[]> {
     const delegations = await Promise.all(
       confirmations.map(async (confirmation) => {
         // The content hash is recomputed rather than trusted, so a tampered
@@ -676,7 +567,8 @@ export class DelegationConfirmationService {
       }),
     )
 
-    await this.sequelize.transaction(async (transaction) => {
+    const completed = await this.sequelize.transaction(async (transaction) => {
+      const results: CompletedConfirmation[] = []
       for (const [index, confirmation] of confirmations.entries()) {
         // Single-use: a conditional update that either claims the row or loses
         // the race. No locking and no read-then-write window.
@@ -711,6 +603,16 @@ export class DelegationConfirmationService {
           )
         }
 
+        // Read before writing, so the recipient is told about a new delegation
+        // or an updated one correctly.
+        const hadExistingScopes =
+          (
+            await this.delegationScopeService.findByDelegationId(
+              delegations[index].id,
+              transaction,
+            )
+          ).length > 0
+
         await this.delegationScopeService.createOrUpdate(
           delegations[index].id,
           confirmation.scopes.map((scope) => ({
@@ -720,7 +622,10 @@ export class DelegationConfirmationService {
           transaction,
           { confirmationId: confirmation.id },
         )
+
+        results.push({ confirmation, hadExistingScopes })
       }
+      return results
     })
 
     // Indexed after commit so the index never advertises a scope that rolled
@@ -737,24 +642,8 @@ export class DelegationConfirmationService {
     await Promise.all(
       confirmations.map((confirmation) => confirmation.reload()),
     )
-  }
 
-  private async assertPending(
-    confirmation: DelegationConfirmation,
-  ): Promise<void> {
-    if (confirmation.status !== DelegationConfirmationStatus.Pending) {
-      throw new BadRequestException(
-        `Confirmation is not pending (status: ${confirmation.status}).`,
-      )
-    }
-
-    if (confirmation.expiresAt.getTime() <= Date.now()) {
-      await confirmation.update({
-        status: DelegationConfirmationStatus.Expired,
-      })
-      await this.removeEmptyDelegations([confirmation.delegationId])
-      throw new GoneException('Confirmation has expired.')
-    }
+    return completed
   }
 
   /**
@@ -777,54 +666,20 @@ export class DelegationConfirmationService {
     )
   }
 
-  private async assertConfirmingUser(
-    user: User,
-    confirmation: DelegationConfirmation,
-  ): Promise<void> {
-    if (!this.isConfirmingUser(user, confirmation)) {
-      await this.delegationConfirmationModel.increment('attemptCount', {
-        where: { id: confirmation.id },
-      })
-
-      if (
-        confirmation.attemptCount + 1 >=
-        this.delegationConfig.confirmationMaxAttempts
-      ) {
-        await this.delegationConfirmationModel.update(
-          { status: DelegationConfirmationStatus.Expired },
-          {
-            where: {
-              id: confirmation.id,
-              status: DelegationConfirmationStatus.Pending,
-            },
-          },
-        )
-        await this.removeEmptyDelegations([confirmation.delegationId])
-      }
-
-      throw new ForbiddenException(
-        'This confirmation can only be completed by the delegation grantor.',
-      )
-    }
-  }
-
   /**
    * What must be true of the authentication the identity server vouches for.
    */
-  private async assertStepUp(
+  private assertStepUp(
     confirmation: DelegationConfirmation,
     members: DelegationConfirmation[],
     claims: StepUpClaims,
-  ): Promise<void> {
+  ): void {
     const expectedNationalId =
       confirmation.actorNationalId ?? confirmation.fromNationalId
 
     if (claims.nationalId !== expectedNationalId) {
       // The identity server already refuses an approval by the wrong person;
       // this is the same rule checked again on the token, where it matters.
-      await confirmation.update({
-        attemptCount: confirmation.attemptCount + 1,
-      })
       throw new ForbiddenException(
         'This confirmation can only be completed by the delegation grantor.',
       )

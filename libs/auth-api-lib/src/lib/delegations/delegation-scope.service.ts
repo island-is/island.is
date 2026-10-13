@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import addDays from 'date-fns/addDays'
@@ -87,7 +87,7 @@ export class DelegationScopeService {
         scopes.map((s) => s.name),
         transaction,
       )
-      return this.createMany(delegationId, scopes, transaction, options)
+      return this.insertMany(delegationId, scopes, transaction)
     }
 
     return []
@@ -123,8 +123,9 @@ export class DelegationScopeService {
 
     const sensitiveNames = sensitiveScopes.map((scope) => scope.name)
 
+    // A refusal, not a crash: a caller asked for something it may not have.
     if (!options) {
-      throw new Error(
+      throw new ForbiddenException(
         `Refusing to grant scopes which require confirmation without a redeemed confirmation: ${sensitiveNames.join(
           ', ',
         )}`,
@@ -147,7 +148,7 @@ export class DelegationScopeService {
     const uncovered = sensitiveNames.filter((name) => !confirmed.has(name))
 
     if (uncovered.length > 0) {
-      throw new Error(
+      throw new ForbiddenException(
         `Refusing to grant scopes not covered by confirmation ${
           options.confirmationId
         }: ${uncovered.join(', ')}`,
@@ -168,6 +169,15 @@ export class DelegationScopeService {
       options,
     )
 
+    return this.insertMany(delegationId, scopes, transaction)
+  }
+
+  /** The write itself. Every public path asserts first, exactly once. */
+  private async insertMany(
+    delegationId: string,
+    scopes: UpdateDelegationScopeDTO[],
+    transaction?: Transaction,
+  ): Promise<DelegationScope[]> {
     const validFrom = startOfDay(new Date())
     const defaultValidTo = addDays(
       validFrom,

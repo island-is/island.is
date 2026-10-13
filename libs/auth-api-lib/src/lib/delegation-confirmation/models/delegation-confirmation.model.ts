@@ -199,17 +199,10 @@ export class DelegationConfirmation extends Model<
     return this.contentSnapshot?.scopes ?? []
   }
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  })
-  attemptCount!: CreationOptional<number>
-
   /**
-   * The identity server's handle for the step-up in progress (CIBA
-   * auth_req_id). Only usable together with delegation-api's client secret, and
-   * cleared once the step-up ends.
+   * The identity server's handle for the confirmation's step-up (CIBA
+   * auth_req_id), set when the grant is saved. Only usable together with
+   * delegation-api's client secret, and cleared once the step-up ends.
    */
   @Column({ type: DataType.STRING })
   authReqId?: string | null
@@ -224,14 +217,6 @@ export class DelegationConfirmation extends Model<
    */
   @Column({ type: DataType.DATE })
   authStartedAt?: Date | null
-
-  /** How many step-ups have been started for this confirmation. */
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  })
-  authStartCount!: CreationOptional<number>
 
   /** SHA-256 fingerprint of the citizen certificate behind the confirmation. */
   @Column({ type: DataType.STRING })

@@ -2,7 +2,6 @@ export type StepUpMethod = 'app' | 'sim'
 
 /** Where a step-up stands, as the clients see it. Shared by every consumer. */
 export type StepUpStatus =
-  | 'not_started'
   | 'pending'
   | 'confirmed'
   | 'denied'

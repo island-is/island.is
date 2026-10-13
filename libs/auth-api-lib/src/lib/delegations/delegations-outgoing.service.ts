@@ -46,7 +46,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { isCardSession } from '@island.is/auth/step-up'
-import { DelegationConfirmationService } from '../delegation-confirmation/delegation-confirmation.service'
+import {
+  DelegationConfirmationService,
+  type StartAuthenticationResult,
+} from '../delegation-confirmation/delegation-confirmation.service'
 import type { DelegationConfirmation } from '../delegation-confirmation/models/delegation-confirmation.model'
 import { PendingConfirmationDTO } from '../delegation-confirmation/dto/delegation-confirmation.dto'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
@@ -244,16 +247,7 @@ export class DelegationsOutgoingService {
   ): Promise<DelegationDTO[]> {
     const results = await this.createOrUpdateMany(user, input.delegations)
 
-    const byRecipient = new Map<string, typeof results>()
-    for (const result of results) {
-      const recipient = result.delegation.toNationalId
-      const group = byRecipient.get(recipient) ?? []
-      group.push(result)
-      byRecipient.set(recipient, group)
-    }
-    for (const group of byRecipient.values()) {
-      void this.notifyDelegationUpdate(user, group)
-    }
+    void this.notifyByRecipient(user, results)
 
     return results.map((result) => result.delegation)
   }
@@ -266,23 +260,32 @@ export class DelegationsOutgoingService {
       await this.validateCreateDelegation(user, input)
     }
 
-    const written = await this.sequelize.transaction(async (transaction) => {
-      const rows: WrittenDelegation[] = []
-      for (const input of inputs) {
-        rows.push(await this.writeForDomain(user, input, transaction))
-      }
+    const { written, stepUp } = await this.sequelize.transaction(
+      async (transaction) => {
+        const rows: WrittenDelegation[] = []
+        for (const input of inputs) {
+          rows.push(await this.writeForDomain(user, input, transaction))
+        }
 
-      // One authentication confirms everything this grant holds, whatever
-      // recipients and domains it spans.
-      await this.delegationConfirmationService.group(
-        rows.flatMap((row) =>
-          row.pendingConfirmation ? [row.pendingConfirmation] : [],
-        ),
-        transaction,
-      )
+        // One authentication confirms everything this grant holds, whatever
+        // recipients and domains it spans. It starts now, as part of the save:
+        // if it can't, the save is undone and nothing waits for it.
+        const confirmations = await this.delegationConfirmationService.group(
+          rows.flatMap((row) =>
+            row.pendingConfirmation ? [row.pendingConfirmation] : [],
+          ),
+          transaction,
+        )
+        const started =
+          await this.delegationConfirmationService.startAuthentication(
+            user,
+            confirmations,
+            transaction,
+          )
 
-      return rows
-    })
+        return { written: rows, stepUp: started }
+      },
+    )
 
     // Reindex after commit so we never index changes that might roll back.
     for (const toNationalId of new Set(written.map((w) => w.toNationalId))) {
@@ -304,9 +307,9 @@ export class DelegationsOutgoingService {
             `Failed to find the newly created delegation with id ${id}`,
           )
         }
-        if (pendingConfirmation) {
+        if (pendingConfirmation && stepUp) {
           delegation.pendingConfirmations = [
-            new PendingConfirmationDTO(pendingConfirmation),
+            new PendingConfirmationDTO(pendingConfirmation, stepUp),
           ]
         }
         return { delegation, hadExistingScopes }
@@ -463,13 +466,20 @@ export class DelegationsOutgoingService {
       return { grantable: scopes }
     }
 
-    const sensitiveScopeNames =
-      await this.delegationResourceService.findSensitiveScopeNames(
-        user,
-        domainName,
-        DelegationDirection.OUTGOING,
-        scopes.map((scope) => scope.name),
-      )
+    // Straight from the scope table, like the guard below every write. The
+    // caller has already checked the grantor may give these scopes, so they
+    // are not filtered again: a filtered-out sensitive scope would otherwise
+    // count as an ordinary one here, and only be caught by that guard.
+    const sensitiveScopeNames = (
+      await this.apiScopeModel.findAll({
+        attributes: ['name'],
+        where: {
+          name: scopes.map((scope) => scope.name),
+          requiresConfirmation: true,
+        },
+        transaction,
+      })
+    ).map((scope) => scope.name)
 
     if (sensitiveScopeNames.length === 0) {
       return { grantable: scopes }
@@ -550,28 +560,54 @@ export class DelegationsOutgoingService {
   }
 
   /**
-   * Notifies the recipient once a held grant has actually taken effect.
+   * Notifies recipients once a held grant has actually taken effect, the same
+   * way a grant that needed no confirmation is notified: one notification per
+   * recipient, new or updated as it really was.
    *
    * The recipient is deliberately not notified when the scopes are merely
    * requested — otherwise they would be told about access they cannot use, and
    * an abandoned confirmation would leave a false notification behind.
    */
-  async notifyConfirmedDelegation(
+  async notifyConfirmed(
     user: User,
-    delegationId: string,
-    hadExistingScopes: boolean,
+    confirmed: Array<{ delegationId: string; hadExistingScopes: boolean }>,
   ): Promise<void> {
-    const delegation = await this.findOneInternal(
-      user,
-      DelegationDirection.OUTGOING,
-      { id: delegationId },
+    const results = await Promise.all(
+      confirmed.map(async ({ delegationId, hadExistingScopes }) => {
+        const delegation = await this.findOneInternal(
+          user,
+          DelegationDirection.OUTGOING,
+          { id: delegationId },
+        )
+        return delegation ? { delegation, hadExistingScopes } : null
+      }),
     )
 
-    if (!delegation) {
-      return
-    }
+    await this.notifyByRecipient(
+      user,
+      results.filter((result): result is NonNullable<typeof result> =>
+        Boolean(result),
+      ),
+    )
+  }
 
-    await this.notifyDelegationUpdate(user, [{ delegation, hadExistingScopes }])
+  /** One notification per recipient, covering every domain they were given. */
+  private async notifyByRecipient(
+    user: User,
+    results: Array<{ delegation: DelegationDTO; hadExistingScopes: boolean }>,
+  ): Promise<void> {
+    const byRecipient = new Map<string, typeof results>()
+    for (const result of results) {
+      const recipient = result.delegation.toNationalId
+      const group = byRecipient.get(recipient) ?? []
+      group.push(result)
+      byRecipient.set(recipient, group)
+    }
+    await Promise.all(
+      [...byRecipient.values()].map((group) =>
+        this.notifyDelegationUpdate(user, group),
+      ),
+    )
   }
 
   private async notifyDelegationUpdate(
@@ -668,6 +704,7 @@ export class DelegationsOutgoingService {
     }
 
     let pendingConfirmationId: string | undefined
+    let stepUp: StartAuthenticationResult | undefined
 
     const txResult = await this.sequelize.transaction(async (transaction) => {
       const currentDelegation = await this.delegationModel.findOne({
@@ -734,6 +771,15 @@ export class DelegationsOutgoingService {
 
         pendingConfirmationId = pendingConfirmation?.id
 
+        // Started as part of the save: if it can't, the save is undone.
+        if (pendingConfirmation) {
+          stepUp = await this.delegationConfirmationService.startAuthentication(
+            user,
+            [pendingConfirmation],
+            transaction,
+          )
+        }
+
         if (grantable.length > 0) {
           await this.delegationScopeService.createOrUpdate(
             delegationId,
@@ -790,14 +836,14 @@ export class DelegationsOutgoingService {
 
     const delegation = await this.findById(user, delegationId)
 
-    if (pendingConfirmationId) {
+    if (pendingConfirmationId && stepUp) {
       const pendingConfirmation =
         await this.delegationConfirmationService.findByIdForUser(
           user,
           pendingConfirmationId,
         )
       delegation.pendingConfirmations = [
-        new PendingConfirmationDTO(pendingConfirmation),
+        new PendingConfirmationDTO(pendingConfirmation, stepUp),
       ]
     }
 

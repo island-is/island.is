@@ -1,8 +1,14 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common'
-import { getModelToken } from '@nestjs/sequelize'
+import {
+  BadRequestException,
+  ForbiddenException,
+  ServiceUnavailableException,
+  Type,
+} from '@nestjs/common'
+import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import addYears from 'date-fns/addYears'
 import subMinutes from 'date-fns/subMinutes'
 import faker from 'faker'
+import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 
 import {
@@ -24,6 +30,7 @@ import { delegationScopes } from '@island.is/auth/scopes'
 import {
   CibaClient,
   SessionCannotStepUpError,
+  StepUpTokenRejectedError,
   StepUpUnavailableError,
 } from '@island.is/auth/step-up'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -126,12 +133,14 @@ describe('MeDelegationConfirmationsController', () => {
       .mockImplementation()
 
     startedContextHash = undefined
+    let started = 0
     ciba.start
       .mockReset()
       .mockImplementation(async (request: { contextHash?: string }) => {
         startedContextHash = request.contextHash
+        started += 1
         return {
-          authReqId: 'auth-req-1',
+          authReqId: `auth-req-${started}`,
           method: 'sim',
           expiresIn: 300,
           interval: 5,
@@ -160,15 +169,17 @@ describe('MeDelegationConfirmationsController', () => {
     })
   }
 
-  const grant = (scopes: string[]) =>
+  const grant = (scopes: string[], validTo = addYears(new Date(), 1)) =>
     server.post('/v1/me/delegations').send({
       toNationalId: recipientNationalId,
       domainName: domain.name,
-      scopes: scopes.map((name) => ({
-        name,
-        validTo: addYears(new Date(), 1),
-      })),
+      scopes: scopes.map((name) => ({ name, validTo })),
     })
+
+  const status = (confirmationId: string) =>
+    server.get(
+      `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
+    )
 
   const scopeNamesInDb = async (): Promise<string[]> => {
     const scopes = await app
@@ -178,10 +189,31 @@ describe('MeDelegationConfirmationsController', () => {
     return scopes.map((scope) => scope.scopeName).sort()
   }
 
+  const delegationsInDb = () =>
+    app.get<typeof Delegation>(getModelToken(Delegation)).findAll()
+
   const confirmations = () =>
     app.get<typeof DelegationConfirmation>(
       getModelToken(DelegationConfirmation),
     )
+
+  /** Starts a step-up the way a save does: inside a transaction. */
+  const startAs = async (
+    user: ReturnType<typeof createCurrentUser>,
+    confirmationId: string,
+  ) => {
+    const sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+    const row = await confirmations().findByPk(confirmationId)
+    return sequelize.transaction((transaction) =>
+      app
+        .get(DelegationConfirmationService)
+        .startAuthentication(
+          user,
+          [row as DelegationConfirmation],
+          transaction,
+        ),
+    )
+  }
 
   afterEach(async () => {
     // Some spies sit on shared mocks (the feature flag service), so they must
@@ -190,10 +222,10 @@ describe('MeDelegationConfirmationsController', () => {
     await app?.cleanUp()
   })
 
-  describe('holding sensitive scopes', () => {
+  describe('saving a grant', () => {
     beforeEach(() => setup())
 
-    it('grants an ordinary scope immediately', async () => {
+    it('grants an ordinary scope immediately, with no step-up', async () => {
       // Act
       const res = await grant([ORDINARY_SCOPE])
 
@@ -201,22 +233,77 @@ describe('MeDelegationConfirmationsController', () => {
       expect(res.status).toEqual(201)
       expect(res.body.pendingConfirmations).toBeUndefined()
       expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
+      expect(ciba.start).not.toHaveBeenCalled()
     })
 
-    it('does not write a sensitive scope, and returns a pending confirmation', async () => {
+    it('holds a sensitive scope and starts the step-up as part of the save', async () => {
       // Act
       const res = await grant([SENSITIVE_SCOPE])
 
-      // Assert
+      // Assert — held, with the step-up already on its way to the phone.
       expect(res.status).toEqual(201)
       expect(res.body.pendingConfirmations).toHaveLength(1)
       expect(res.body.pendingConfirmations[0]).toMatchObject({
         toNationalId: recipientNationalId,
-        requestedAcr: REQUIRED_ACR,
         scopeNames: [SENSITIVE_SCOPE],
+        authentication: {
+          method: 'sim',
+          verificationCode: '4821',
+          interval: 5,
+        },
       })
       // The whole point of reserve-don't-write: no row exists to leak.
       expect(await scopeNamesInDb()).toEqual([])
+
+      const row = await confirmations().findByPk(
+        res.body.pendingConfirmations[0].id,
+      )
+      // Only who and what. Who is the grantor's own token — the identity server
+      // authenticates the person behind it — and how they are reached is its
+      // decision, from the way they logged in.
+      expect(ciba.start).toHaveBeenCalledTimes(1)
+      expect(ciba.start).toHaveBeenCalledWith({
+        userToken: grantorToken,
+        bindingMessage: row?.contentSnapshot.bindingMessage,
+        // Bound into what the grantor's key signs.
+        contextHash: row?.contentHash,
+      })
+      expect(row?.contentSnapshot.bindingMessage).toMatch(
+        /^Umboð til .+ · 1 heimild$/,
+      )
+      expect(row).toMatchObject({ authReqId: 'auth-req-1', authMethod: 'sim' })
+      expect(row?.authStartedAt).toBeInstanceOf(Date)
+    })
+
+    it.each([
+      [
+        'the session can never be stepped up',
+        new SessionCannotStepUpError(),
+        403,
+      ],
+      ['step-up is not available', new StepUpUnavailableError(), 403],
+      [
+        'the identity server refuses for now',
+        new BadRequestException('access_denied (too many pending)'),
+        400,
+      ],
+      [
+        'the identity server is down',
+        new ServiceUnavailableException('unreachable'),
+        503,
+      ],
+    ])('undoes the whole save when %s', async (_, refusal, expectedStatus) => {
+      // Arrange
+      ciba.start.mockRejectedValue(refusal)
+
+      // Act
+      const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
+
+      // Assert — nothing written, nothing held, nothing left to expire.
+      expect(res.status).toEqual(expectedStatus)
+      expect(await scopeNamesInDb()).toEqual([])
+      expect(await confirmations().count()).toEqual(0)
+      expect(await delegationsInDb()).toHaveLength(0)
     })
 
     it('refuses a sensitive scope when the grantor does not have the feature', async () => {
@@ -234,6 +321,7 @@ describe('MeDelegationConfirmationsController', () => {
       expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
       expect(await confirmations().count()).toEqual(0)
+      expect(ciba.start).not.toHaveBeenCalled()
     })
 
     it('still grants ordinary scopes when the grantor does not have the feature', async () => {
@@ -280,8 +368,9 @@ describe('MeDelegationConfirmationsController', () => {
         undefined,
       )
 
-      // Assert — whoever calls it, with or without the feature, and without a
-      // transaction the scope it would have replaced is still there.
+      // Assert — refused as forbidden, not a crash, and without a transaction
+      // the scope it would have replaced is still there.
+      await expect(write).rejects.toBeInstanceOf(ForbiddenException)
       await expect(write).rejects.toThrow(/without a redeemed confirmation/)
       expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
     })
@@ -294,10 +383,11 @@ describe('MeDelegationConfirmationsController', () => {
       // Act
       const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
 
-      // Assert — nothing written, nothing held.
+      // Assert — nothing written, nothing held, no phone asked.
       expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
       expect(await confirmations().count()).toEqual(0)
+      expect(ciba.start).not.toHaveBeenCalled()
     })
 
     it('still grants ordinary scopes from a card session', async () => {
@@ -326,11 +416,8 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([])
 
       // Act — the grantor confirms.
-      const confirmationId = res.body.pendingConfirmations[0].id
-      const path = `/v1/me/delegation-confirmations/${confirmationId}/authentication`
-      await server.post(path)
       approvedBy(grantorNationalId)
-      const confirmed = await server.get(path)
+      const confirmed = await status(res.body.pendingConfirmations[0].id)
 
       // Assert — all of it, together.
       expect(confirmed.body.status).toEqual('confirmed')
@@ -339,27 +426,71 @@ describe('MeDelegationConfirmationsController', () => {
       )
     })
 
+    it('holds a sensitive scope added by a patch, starting its step-up', async () => {
+      // Arrange — a delegation that already gives an ordinary scope.
+      const { body: delegation } = await grant([ORDINARY_SCOPE])
+
+      // Act
+      const res = await server
+        .patch(`/v1/me/delegations/${delegation.id}`)
+        .send({
+          updateScopes: [
+            { name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) },
+          ],
+        })
+
+      // Assert — the ordinary scope stays, the sensitive one waits.
+      expect(res.status).toEqual(200)
+      expect(res.body.pendingConfirmations[0]).toMatchObject({
+        scopeNames: [SENSITIVE_SCOPE],
+        authentication: { method: 'sim', verificationCode: '4821' },
+      })
+      expect(ciba.start).toHaveBeenCalledTimes(1)
+      expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
+    })
+
+    it('undoes a patch whose step-up cannot start', async () => {
+      // Arrange
+      const { body: delegation } = await grant([ORDINARY_SCOPE])
+      ciba.start.mockRejectedValue(new SessionCannotStepUpError())
+
+      // Act — remove the ordinary scope and add a sensitive one in one patch.
+      const res = await server
+        .patch(`/v1/me/delegations/${delegation.id}`)
+        .send({
+          deleteScopes: [ORDINARY_SCOPE],
+          updateScopes: [
+            { name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 1) },
+          ],
+        })
+
+      // Assert — none of the patch applied.
+      expect(res.status).toEqual(403)
+      expect(await scopeNamesInDb()).toEqual([ORDINARY_SCOPE])
+      expect(await confirmations().count()).toEqual(0)
+    })
+
     describe('editing a delegation that already has a sensitive scope', () => {
-      const confirmGrant = async (scopes: string[]) => {
-        const res = await grant(scopes)
-        const id = res.body.pendingConfirmations[0].id
-        const path = `/v1/me/delegation-confirmations/${id}/authentication`
-        await server.post(path)
+      const confirmGrant = async (scopes: string[], validTo: Date) => {
+        const res = await grant(scopes, validTo)
         approvedBy(grantorNationalId)
-        await server.get(path)
+        await status(res.body.pendingConfirmations[0].id)
       }
 
       it('does not hold the edit for the sensitive scope sent back unchanged', async () => {
         // Arrange — granted and confirmed earlier.
-        await confirmGrant([SENSITIVE_SCOPE])
+        const validTo = addYears(new Date(), 1)
+        await confirmGrant([SENSITIVE_SCOPE], validTo)
+        ciba.start.mockClear()
 
         // Act — the edit form sends every selected scope back, the confirmed
         // sensitive one included, with the same date.
-        const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE])
+        const res = await grant([ORDINARY_SCOPE, SENSITIVE_SCOPE], validTo)
 
         // Assert — the new ordinary scope takes effect, nothing waits.
         expect(res.status).toEqual(201)
         expect(res.body.pendingConfirmations).toBeUndefined()
+        expect(ciba.start).not.toHaveBeenCalled()
         expect(await scopeNamesInDb()).toEqual(
           [ORDINARY_SCOPE, SENSITIVE_SCOPE].sort(),
         )
@@ -367,14 +498,10 @@ describe('MeDelegationConfirmationsController', () => {
 
       it('still holds it when its date changes', async () => {
         // Arrange
-        await confirmGrant([SENSITIVE_SCOPE])
+        await confirmGrant([SENSITIVE_SCOPE], addYears(new Date(), 1))
 
         // Act
-        const res = await server.post('/v1/me/delegations').send({
-          toNationalId: recipientNationalId,
-          domainName: domain.name,
-          scopes: [{ name: SENSITIVE_SCOPE, validTo: addYears(new Date(), 2) }],
-        })
+        const res = await grant([SENSITIVE_SCOPE], addYears(new Date(), 2))
 
         // Assert
         expect(res.status).toEqual(201)
@@ -394,20 +521,17 @@ describe('MeDelegationConfirmationsController', () => {
       await app.get(DelegationConfirmationService).expirePending()
 
       // Assert
-      const delegations = await app
-        .get<typeof Delegation>(getModelToken(Delegation))
-        .findAll()
-      expect(delegations).toHaveLength(0)
+      expect(await delegationsInDb()).toHaveLength(0)
     })
 
-    it('supersedes an earlier pending confirmation instead of duplicating it', async () => {
+    it('supersedes an earlier pending confirmation when the grant is saved again', async () => {
       // Arrange
       await grant([SENSITIVE_SCOPE])
 
-      // Act
+      // Act — a retry is simply saving again.
       await grant([SENSITIVE_SCOPE])
 
-      // Assert
+      // Assert — one waiting, with its own step-up; the earlier one is over.
       const rows = await confirmations().findAll()
       expect(rows).toHaveLength(2)
       expect(
@@ -420,6 +544,7 @@ describe('MeDelegationConfirmationsController', () => {
           (row) => row.status === DelegationConfirmationStatus.Superseded,
         ),
       ).toHaveLength(1)
+      expect(ciba.start).toHaveBeenCalledTimes(2)
     })
 
     it('does not return a held scope to the recipient', async () => {
@@ -435,141 +560,29 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([])
       expect(res.status).toBeLessThan(500)
     })
+
+    it('keeps the delegation envelope while a confirmation is pending', async () => {
+      // Act
+      await grant([SENSITIVE_SCOPE])
+
+      // Assert — the envelope the held scopes attach to on redemption.
+      const delegations = await delegationsInDb()
+      expect(delegations).toHaveLength(1)
+      expect(delegations[0].toNationalId).toEqual(recipientNationalId)
+    })
   })
 
-  describe('the confirming authentication', () => {
+  describe('following the step-up', () => {
     let confirmationId: string
-
-    const requestConfirmation = async () => {
-      const res = await grant([SENSITIVE_SCOPE])
-      confirmationId = res.body.pendingConfirmations[0].id
-    }
-
-    const start = () =>
-      server.post(
-        `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
-      )
-
-    const status = () =>
-      server.get(
-        `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
-      )
 
     beforeEach(async () => {
       await setup()
-      await requestConfirmation()
+      const res = await grant([SENSITIVE_SCOPE])
+      confirmationId = res.body.pendingConfirmations[0].id
     })
 
-    it('asks the identity server to authenticate the grantor, showing the binding message', async () => {
-      // Act
-      const res = await start()
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toMatchObject({
-        method: 'sim',
-        verificationCode: '4821',
-        interval: 5,
-      })
-
-      const row = await confirmations().findByPk(confirmationId)
-      // Only who and what. Who is the grantor's own token — the identity server
-      // authenticates the person behind it — and how they are reached is its
-      // decision, from the way they last logged in.
-      expect(ciba.start).toHaveBeenCalledWith({
-        userToken: grantorToken,
-        bindingMessage: row?.contentSnapshot.bindingMessage,
-        // Bound into what the grantor's key signs.
-        contextHash: row?.contentHash,
-      })
-      expect(row?.contentSnapshot.bindingMessage).toMatch(
-        /^Umboð til .+ · 1 heimild$/,
-      )
-      expect(row).toMatchObject({
-        authReqId: 'auth-req-1',
-        authMethod: 'sim',
-        authStartCount: 1,
-      })
-    })
-
-    it.each([
-      [{ method: 'app' }],
-      [{ phoneNumber: '699-1234' }],
-      [{ method: 'sim', phoneNumber: '699-1234' }],
-    ])(
-      'lets no one choose how or where the request goes (%j)',
-      async (body) => {
-        // Act — a client trying to name a method or a number.
-        const res = await server
-          .post(
-            `/v1/me/delegation-confirmations/${confirmationId}/authentication`,
-          )
-          .send(body)
-
-        // Assert — ignored: nothing but who and what reaches the identity
-        // server, which uses the method the grantor logged in with.
-        expect(res.status).toEqual(200)
-        expect(Object.keys(ciba.start.mock.calls[0][0]).sort()).toEqual([
-          'bindingMessage',
-          'contextHash',
-          'userToken',
-        ])
-      },
-    )
-
-    it('leaves the default method to the identity server', async () => {
-      // Act — no choice made: the identity server goes by how the session
-      // behind the grantor's token was logged in.
-      const res = await start()
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(Object.keys(ciba.start.mock.calls[0][0]).sort()).toEqual([
-        'bindingMessage',
-        'contextHash',
-        'userToken',
-      ])
-    })
-
-    it.each([
-      ['the session can never be stepped up', new SessionCannotStepUpError()],
-      [
-        'step-up is not available for the grantor',
-        new StepUpUnavailableError(),
-      ],
-    ])('undoes the grant when %s', async (_, refusal) => {
-      // Arrange — e.g. an ID card login from before card logins were marked,
-      // or the identity server's feature off for the grantor.
-      ciba.start.mockRejectedValue(refusal)
-
-      // Act
-      const res = await start()
-
-      // Assert — refused, and nothing is left waiting to expire.
-      expect(res.status).toEqual(403)
-      const row = await confirmations().findByPk(confirmationId)
-      expect(row?.status).toEqual(DelegationConfirmationStatus.Expired)
-      const delegations = await app
-        .get<typeof Delegation>(getModelToken(Delegation))
-        .findAll()
-      expect(delegations).toHaveLength(0)
-      expect(await scopeNamesInDb()).toEqual([])
-    })
-
-    it('keeps the grant waiting after a refusal that may pass', async () => {
-      // Arrange
-      ciba.start.mockRejectedValue(
-        new BadRequestException('access_denied (too many pending)'),
-      )
-
-      // Act
-      const res = await start()
-
-      // Assert
-      expect(res.status).toEqual(400)
-      const row = await confirmations().findByPk(confirmationId)
-      expect(row?.status).toEqual(DelegationConfirmationStatus.Pending)
-    })
+    const rowStatus = async () =>
+      (await confirmations().findByPk(confirmationId))?.status
 
     it('refuses an id that is not a confirmation id', async () => {
       // Act
@@ -581,22 +594,9 @@ describe('MeDelegationConfirmationsController', () => {
       expect(res.status).toEqual(400)
     })
 
-    it('reports not_started before anything is started', async () => {
-      // Act
-      const res = await status()
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body.status).toEqual('not_started')
-      expect(ciba.poll).not.toHaveBeenCalled()
-    })
-
     it('stays pending, with nothing granted, until the grantor approves', async () => {
-      // Arrange
-      await start()
-
       // Act
-      const res = await status()
+      const res = await status(confirmationId)
 
       // Assert
       expect(res.body.status).toEqual('pending')
@@ -605,28 +605,23 @@ describe('MeDelegationConfirmationsController', () => {
 
     it('grants the held scopes once the grantor approves', async () => {
       // Arrange
-      await start()
       approvedBy(grantorNationalId)
 
       // Act
-      const res = await status()
+      const res = await status(confirmationId)
 
       // Assert
       expect(res.status).toEqual(200)
-      expect(res.body.status).toEqual('confirmed')
-      expect(res.body.confirmation.status).toEqual(
-        DelegationConfirmationStatus.Confirmed,
-      )
+      expect(res.body).toEqual({ status: 'confirmed' })
       expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE])
     })
 
     it('records the authentication as evidence, and forgets the request handle', async () => {
       // Arrange
-      await start()
       approvedBy(grantorNationalId)
 
       // Act
-      await status()
+      await status(confirmationId)
 
       // Assert
       const row = await confirmations().findByPk(confirmationId)
@@ -642,112 +637,169 @@ describe('MeDelegationConfirmationsController', () => {
       expect(row?.confirmedAt).toBeInstanceOf(Date)
     })
 
-    it('completes once, however often the client polls', async () => {
-      // Arrange
-      // Request-scoped, so spy on the prototype rather than an instance.
+    it('completes and notifies once, however often the client polls', async () => {
+      // Arrange — request-scoped, so spy on the prototype.
       const notify = jest
-        .spyOn(
-          DelegationsOutgoingService.prototype,
-          'notifyConfirmedDelegation',
-        )
-        .mockResolvedValue(undefined as never)
-      await start()
+        .spyOn(DelegationsOutgoingService.prototype, 'notifyConfirmed')
+        .mockResolvedValue(undefined)
       approvedBy(grantorNationalId)
 
       // Act
-      await status()
-      const again = await status()
+      await status(confirmationId)
+      const again = await status(confirmationId)
 
-      // Assert
+      // Assert — a new delegation, as far as the recipient is concerned.
       expect(again.body.status).toEqual('confirmed')
       expect(ciba.poll).toHaveBeenCalledTimes(1)
       expect(notify).toHaveBeenCalledTimes(1)
+      expect(notify.mock.calls[0][1]).toEqual([
+        { delegationId: expect.any(String), hadExistingScopes: false },
+      ])
     })
 
-    it('refuses an approval by someone other than the grantor', async () => {
-      // Arrange
-      await start()
-      approvedBy(createNationalId('person'))
+    it('tells the recipient about an update when the delegation already gave access', async () => {
+      // Arrange — the delegation gives an ordinary scope; then a sensitive one
+      // is added, which supersedes the earlier held grant.
+      await grant([ORDINARY_SCOPE])
+      const res = await grant([SENSITIVE_SCOPE])
+      const notify = jest
+        .spyOn(DelegationsOutgoingService.prototype, 'notifyConfirmed')
+        .mockResolvedValue(undefined)
+      approvedBy(grantorNationalId)
 
       // Act
-      const res = await status()
-
-      // Assert — refused, counted, and still open for the real grantor.
-      expect(res.status).toEqual(403)
-      const row = await confirmations().findByPk(confirmationId)
-      expect(row).toMatchObject({
-        status: DelegationConfirmationStatus.Pending,
-        attemptCount: 1,
-        authReqId: null,
-      })
-      expect(await scopeNamesInDb()).toEqual([])
-    })
-
-    it('has expired it, and removed the empty delegation, by the time the last refused attempt answers', async () => {
-      // Arrange — one attempt left, and the grantor tries it while acting for
-      // someone else, which a personal grant does not allow.
-      await confirmations().update(
-        { attemptCount: 4 },
-        { where: { id: confirmationId } },
-      )
-      const actingForSomeone = createCurrentUser({
-        nationalId: grantorNationalId,
-        scope: [...delegationScopes],
-        actor: {
-          nationalId: createNationalId('person'),
-          scope: [...delegationScopes],
-        },
-      })
-
-      // Act
-      await expect(
-        app
-          .get(DelegationConfirmationService)
-          .startAuthentication(actingForSomeone, confirmationId),
-      ).rejects.toBeInstanceOf(ForbiddenException)
-
-      // Assert — already done when the refusal is thrown, not some time after.
-      const row = await confirmations().findByPk(confirmationId)
-      expect(row?.status).toEqual(DelegationConfirmationStatus.Expired)
-      const delegations = await app
-        .get<typeof Delegation>(getModelToken(Delegation))
-        .findAll()
-      expect(delegations).toHaveLength(0)
-      expect(ciba.start).not.toHaveBeenCalled()
-    })
-
-    it('refuses an approval made for other content', async () => {
-      // Arrange — the person approved, but what their key signed was bound to
-      // something else.
-      await start()
-      approvedBy(grantorNationalId, { contextHash: 'f'.repeat(64) })
-
-      // Act
-      const res = await status()
+      await status(res.body.pendingConfirmations[0].id)
 
       // Assert
+      expect(notify.mock.calls[0][1]).toEqual([
+        { delegationId: expect.any(String), hadExistingScopes: true },
+      ])
+    })
+
+    it.each([
+      ['someone other than the grantor approved', { nationalId: 'other' }],
+      ['the approval was for other content', { contextHash: 'f'.repeat(64) }],
+      [
+        'the authentication is weaker than required',
+        { acr: 'islandis-passkey' },
+      ],
+      [
+        'the authentication predates the step-up',
+        { authTime: subMinutes(new Date(), 5) },
+      ],
+    ])('refuses and ends it when %s', async (_, override) => {
+      // Arrange
+      const { nationalId, ...claims } = override as {
+        nationalId?: string
+        contextHash?: string
+        acr?: string
+        authTime?: Date
+      }
+      approvedBy(
+        nationalId ? createNationalId('person') : grantorNationalId,
+        claims,
+      )
+
+      // Act
+      const res = await status(confirmationId)
+
+      // Assert — refused, nothing granted, and over: retrying means saving
+      // again, and the empty first grant is gone.
       expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
+      expect(await rowStatus()).toEqual(DelegationConfirmationStatus.Expired)
+      expect(await delegationsInDb()).toHaveLength(0)
+      expect((await status(confirmationId)).body.status).toEqual('expired')
     })
 
     it('refuses to grant what the grantor can no longer give', async () => {
-      // Arrange — access lost between requesting and approving.
-      await start()
+      // Arrange — access lost between saving and approving.
       approvedBy(grantorNationalId)
       jest
         .spyOn(app.get(DelegationResourcesService), 'validateScopeAccess')
         .mockResolvedValue(false)
 
       // Act
-      const res = await status()
+      const res = await status(confirmationId)
 
       // Assert
       expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
+      expect(await rowStatus()).toEqual(DelegationConfirmationStatus.Expired)
+    })
+
+    it('ends it when the token the identity server handed out is rejected', async () => {
+      // Arrange — the token can't be collected again.
+      ciba.poll.mockRejectedValue(new StepUpTokenRejectedError('bad issuer'))
+
+      // Act
+      const res = await status(confirmationId)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(await rowStatus()).toEqual(DelegationConfirmationStatus.Expired)
+    })
+
+    it('keeps it waiting through an identity server outage', async () => {
+      // Arrange
+      ciba.poll.mockRejectedValue(new ServiceUnavailableException('down'))
+
+      // Act
+      const res = await status(confirmationId)
+
+      // Assert — the client polls again, and the approval can still come.
+      expect(res.status).toEqual(503)
+      const row = await confirmations().findByPk(confirmationId)
+      expect(row).toMatchObject({
+        status: DelegationConfirmationStatus.Pending,
+        authReqId: 'auth-req-1',
+      })
+    })
+
+    it('ends it when the grantor declines, and a new save starts over', async () => {
+      // Arrange
+      ciba.poll.mockResolvedValue({ status: 'denied' })
+
+      // Act
+      const declined = await status(confirmationId)
+      const retried = await grant([SENSITIVE_SCOPE])
+
+      // Assert
+      expect(declined.body.status).toEqual('denied')
+      expect(await rowStatus()).toEqual(DelegationConfirmationStatus.Expired)
+      expect(retried.status).toEqual(201)
+      expect(retried.body.pendingConfirmations[0].authentication).toBeDefined()
+      expect(ciba.start).toHaveBeenCalledTimes(2)
+    })
+
+    it('reports a step-up that ran out of time without ending the confirmation', async () => {
+      // Arrange — the identity server answers the same when another poll has
+      // just collected the token, so this must not undo that poll's work.
+      ciba.poll.mockResolvedValue({ status: 'expired' })
+
+      // Act
+      const res = await status(confirmationId)
+
+      // Assert
+      expect(res.body.status).toEqual('timed_out')
       const row = await confirmations().findByPk(confirmationId)
       expect(row?.status).toEqual(DelegationConfirmationStatus.Pending)
-      // The step-up has ended: the next poll says so rather than timed_out.
-      expect(row?.authReqId).toBeNull()
+    })
+
+    it('reports an expired confirmation without asking the identity server', async () => {
+      // Arrange
+      await confirmations().update(
+        { expiresAt: subMinutes(new Date(), 1) },
+        { where: { id: confirmationId } },
+      )
+
+      // Act
+      const res = await status(confirmationId)
+
+      // Assert
+      expect(res.body.status).toEqual('expired')
+      expect(ciba.poll).not.toHaveBeenCalled()
+      expect(await rowStatus()).toEqual(DelegationConfirmationStatus.Expired)
     })
 
     it('lets the procuration holder who granted for a company confirm it', async () => {
@@ -767,15 +819,14 @@ describe('MeDelegationConfirmationsController', () => {
       jest
         .spyOn(app.get(DelegationResourcesService), 'validateScopeAccess')
         .mockResolvedValue(true)
-      const service = app.get(DelegationConfirmationService)
+      ciba.start.mockClear()
 
       // Act
-      await service.startAuthentication(procurationHolder, confirmationId)
+      await startAs(procurationHolder, confirmationId)
       approvedBy(actorNationalId)
-      const result = await service.getAuthenticationStatus(
-        procurationHolder,
-        confirmationId,
-      )
+      const result = await app
+        .get(DelegationConfirmationService)
+        .getAuthenticationStatus(procurationHolder, confirmationId)
 
       // Assert — the holder's own token named the person to reach.
       expect(ciba.start).toHaveBeenCalledWith(
@@ -798,106 +849,17 @@ describe('MeDelegationConfirmationsController', () => {
         },
         delegationType: [AuthDelegationType.Custom],
       })
-      const service = app.get(DelegationConfirmationService)
+      ciba.start.mockClear()
 
       // Act / Assert — neither start nor follow it.
-      await expect(
-        service.startAuthentication(customActor, confirmationId),
-      ).rejects.toThrow(ForbiddenException)
-      await expect(
-        service.getAuthenticationStatus(customActor, confirmationId),
-      ).rejects.toThrow(ForbiddenException)
-      expect(ciba.start).not.toHaveBeenCalled()
-    })
-
-    it('refuses a weaker authentication than required', async () => {
-      // Arrange — e.g. a passkey. The dev override is off in tests.
-      await start()
-      approvedBy(grantorNationalId, { acr: 'islandis-passkey' })
-
-      // Act
-      const res = await status()
-
-      // Assert
-      expect(res.status).toEqual(403)
-      expect(await scopeNamesInDb()).toEqual([])
-    })
-
-    it('refuses an authentication made before the step-up started', async () => {
-      // Arrange
-      await start()
-      approvedBy(grantorNationalId, {
-        authTime: subMinutes(new Date(), 5),
-      })
-
-      // Act
-      const res = await status()
-
-      // Assert
-      expect(res.status).toEqual(403)
-      expect(await scopeNamesInDb()).toEqual([])
-    })
-
-    it('lets the grantor try again after declining', async () => {
-      // Arrange
-      await start()
-      ciba.poll.mockResolvedValue({ status: 'denied' })
-
-      // Act
-      const declined = await status()
-      const restarted = await start()
-
-      // Assert
-      expect(declined.body.status).toEqual('denied')
-      expect(restarted.status).toEqual(200)
-      expect(
-        (await confirmations().findByPk(confirmationId))?.authStartCount,
-      ).toEqual(2)
-    })
-
-    it('reports a step-up that ran out of time', async () => {
-      // Arrange
-      await start()
-      ciba.poll.mockResolvedValue({ status: 'expired' })
-
-      // Act
-      const res = await status()
-
-      // Assert
-      expect(res.body.status).toEqual('timed_out')
-      const row = await confirmations().findByPk(confirmationId)
-      expect(row?.status).toEqual(DelegationConfirmationStatus.Pending)
-      expect(row?.authReqId).toBeNull()
-    })
-
-    it('caps how many step-ups can be started', async () => {
-      // Arrange — the limit is 5 by default.
-      for (let i = 0; i < 5; i++) {
-        expect((await start()).status).toEqual(200)
-      }
-
-      // Act
-      const res = await start()
-
-      // Assert
-      expect(res.status).toEqual(429)
-      expect(ciba.start).toHaveBeenCalledTimes(5)
-    })
-
-    it('reports and refuses an expired confirmation', async () => {
-      // Arrange
-      await confirmations().update(
-        { expiresAt: subMinutes(new Date(), 1) },
-        { where: { id: confirmationId } },
+      await expect(startAs(customActor, confirmationId)).rejects.toThrow(
+        ForbiddenException,
       )
-
-      // Act
-      const startRes = await start()
-      const statusRes = await status()
-
-      // Assert
-      expect(startRes.status).toEqual(410)
-      expect(statusRes.body.status).toEqual('expired')
+      await expect(
+        app
+          .get(DelegationConfirmationService)
+          .getAuthenticationStatus(customActor, confirmationId),
+      ).rejects.toThrow(ForbiddenException)
       expect(ciba.start).not.toHaveBeenCalled()
     })
 
@@ -907,56 +869,14 @@ describe('MeDelegationConfirmationsController', () => {
         nationalId: createNationalId('person'),
         scope: [...delegationScopes],
       })
-      const service = app.get(DelegationConfirmationService)
 
       // Act / Assert — no oracle: the same answer as for an id that doesn't exist.
       await expect(
-        service.startAuthentication(otherUser, confirmationId),
+        app
+          .get(DelegationConfirmationService)
+          .getAuthenticationStatus(otherUser, confirmationId),
       ).rejects.toThrow()
-      await expect(
-        service.getAuthenticationStatus(otherUser, confirmationId),
-      ).rejects.toThrow()
-      expect(ciba.start).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('receipt', () => {
-    it('is available once confirmed and not before', async () => {
-      // Arrange
-      await setup()
-      const res = await grant([SENSITIVE_SCOPE])
-      const { id, contentHash } = res.body.pendingConfirmations[0]
-
-      // Act — before confirming
-      const before = await server.get(
-        `/v1/me/delegation-confirmations/${id}/receipt`,
-      )
-
-      // Assert
-      expect(before.status).toEqual(204)
-
-      // Act — after confirming
-      await server.post(`/v1/me/delegation-confirmations/${id}/authentication`)
-      approvedBy(grantorNationalId)
-      await server.get(`/v1/me/delegation-confirmations/${id}/authentication`)
-      const after = await server.get(
-        `/v1/me/delegation-confirmations/${id}/receipt`,
-      )
-
-      // Assert
-      expect(after.status).toEqual(200)
-      expect(after.body).toMatchObject({
-        confirmationId: id,
-        fromNationalId: grantorNationalId,
-        toNationalId: recipientNationalId,
-        acr: REQUIRED_ACR,
-        contentHash,
-        contentHashAlg: 'sha256',
-        certificateThumbprint: 'AB12CD',
-      })
-      expect(after.body.scopes).toHaveLength(1)
-      // Names the identity provider that attested the login, not a userinfo URL.
-      expect(after.body.receiptIssuer).toEqual('https://identity-server.test')
+      expect(ciba.poll).not.toHaveBeenCalled()
     })
   })
 
@@ -982,15 +902,9 @@ describe('MeDelegationConfirmationsController', () => {
           ),
       )
 
-    const start = (id: string) =>
-      server.post(`/v1/me/delegation-confirmations/${id}/authentication`)
-
-    const status = (id: string) =>
-      server.get(`/v1/me/delegation-confirmations/${id}/authentication`)
-
     beforeEach(() => setup())
 
-    it('groups what one grant holds, with one message for the phone', async () => {
+    it('groups what one save holds under one step-up, with one message for the phone', async () => {
       // Act
       const res = await grantToBoth()
 
@@ -1006,59 +920,46 @@ describe('MeDelegationConfirmationsController', () => {
         expect(row.contentSnapshot.bindingMessage).toEqual(
           'Umboð til 2 aðila · 2 heimildir',
         )
+        expect(row.authReqId).toEqual('auth-req-1')
       }
-    })
 
-    it('confirms all of it with one authentication', async () => {
-      // Arrange
-      const ids = pendingIds(await grantToBoth())
-
-      // Act
-      const started = await start(ids[0])
-      approvedBy(grantorNationalId)
-      const res = await status(ids[0])
-
-      // Assert — one step-up, bound to both confirmations together.
-      expect(started.status).toEqual(200)
+      // One step-up, bound to both confirmations together.
       expect(ciba.start).toHaveBeenCalledTimes(1)
-      const rows = await confirmations().findAll({ where: { id: ids } })
       expect(ciba.start.mock.calls[0][0].contextHash).toEqual(
         hashConfirmationGroup(rows.map((row) => row.contentHash)),
       )
+    })
 
+    it('confirms all of it with one authentication, and notifies once per recipient', async () => {
+      // Arrange
+      const ids = pendingIds(await grantToBoth())
+      const notify = jest
+        .spyOn(DelegationsOutgoingService.prototype, 'notifyConfirmed')
+        .mockResolvedValue(undefined)
+      approvedBy(grantorNationalId)
+
+      // Act
+      const res = await status(ids[0])
+
+      // Assert
       expect(res.body.status).toEqual('confirmed')
+      const rows = await confirmations().findAll({ where: { id: ids } })
       for (const row of rows) {
-        await row.reload()
         expect(row.status).toEqual(DelegationConfirmationStatus.Confirmed)
       }
       expect(await scopeNamesInDb()).toEqual([SENSITIVE_SCOPE, SENSITIVE_SCOPE])
+      expect(notify).toHaveBeenCalledTimes(1)
+      expect(notify.mock.calls[0][1]).toHaveLength(2)
 
       // Asking about the other one answers the same, without another step-up.
       expect((await status(ids[1])).body.status).toEqual('confirmed')
       expect(ciba.start).toHaveBeenCalledTimes(1)
     })
 
-    it('shows the whole group on each confirmation', async () => {
-      // Arrange
-      const ids = pendingIds(await grantToBoth())
-
-      // Act
-      const res = await server.get(`/v1/me/delegation-confirmations/${ids[1]}`)
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(
-        res.body.group
-          .map((member: { toNationalId: string }) => member.toNationalId)
-          .sort(),
-      ).toEqual([recipientNationalId, secondRecipientNationalId].sort())
-    })
-
-    it('confirms none of it if part of the group changed after starting', async () => {
-      // Arrange — the grant to the first recipient is replaced while the
+    it('confirms none of it if part of the grant changed after saving', async () => {
+      // Arrange — the grant to the first recipient is saved again while the
       // step-up runs, superseding its confirmation.
       const ids = pendingIds(await grantToBoth())
-      await start(ids[0])
       await grant([SENSITIVE_SCOPE])
       approvedBy(grantorNationalId)
 
@@ -1069,44 +970,14 @@ describe('MeDelegationConfirmationsController', () => {
       expect(res.status).toEqual(403)
       expect(await scopeNamesInDb()).toEqual([])
       expect((await status(ids[0])).body.status).toEqual('expired')
-    })
-
-    it('cannot be started once part of it has changed', async () => {
-      // Arrange — the grant to the first recipient is replaced before starting.
-      const ids = pendingIds(await grantToBoth())
-      await grant([SENSITIVE_SCOPE])
-
-      // Act
-      const res = await start(ids[1])
-
-      // Assert — nothing goes to the phone, and the rest expires.
-      expect(res.status).toEqual(410)
-      expect(ciba.start).not.toHaveBeenCalled()
-      const row = await confirmations().findByPk(ids[1])
-      expect(row?.status).toEqual(DelegationConfirmationStatus.Expired)
-    })
-
-    it("does not use up the others' attempts when a start is refused", async () => {
-      // Arrange — one member has no attempts left.
-      const ids = pendingIds(await grantToBoth())
-      await confirmations().update(
-        { authStartCount: 5 },
-        { where: { id: ids[0] } },
+      expect((await confirmations().findByPk(ids[1]))?.status).toEqual(
+        DelegationConfirmationStatus.Expired,
       )
-
-      // Act
-      const res = await start(ids[1])
-
-      // Assert
-      expect(res.status).toEqual(429)
-      const row = await confirmations().findByPk(ids[1])
-      expect(row?.authStartCount).toEqual(0)
     })
 
     it('confirms none of it if any of it can no longer be given', async () => {
       // Arrange
       const ids = pendingIds(await grantToBoth())
-      await start(ids[0])
       approvedBy(grantorNationalId)
       jest
         .spyOn(app.get(DelegationResourcesService), 'validateScopeAccess')
@@ -1121,25 +992,8 @@ describe('MeDelegationConfirmationsController', () => {
       expect(await scopeNamesInDb()).toEqual([])
       const rows = await confirmations().findAll({ where: { id: ids } })
       for (const row of rows) {
-        expect(row.status).toEqual(DelegationConfirmationStatus.Pending)
+        expect(row.status).toEqual(DelegationConfirmationStatus.Expired)
       }
-    })
-  })
-
-  describe('the delegation envelope', () => {
-    it('is kept while a confirmation is pending', async () => {
-      // Arrange
-      await setup()
-
-      // Act
-      await grant([SENSITIVE_SCOPE])
-
-      // Assert — the envelope the held scopes attach to on redemption.
-      const delegations = await app
-        .get<typeof Delegation>(getModelToken(Delegation))
-        .findAll()
-      expect(delegations).toHaveLength(1)
-      expect(delegations[0].toNationalId).toEqual(recipientNationalId)
     })
   })
 })

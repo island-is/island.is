@@ -5,6 +5,7 @@ import { sign } from 'jsonwebtoken'
 import {
   CibaClient,
   SessionCannotStepUpError,
+  StepUpTokenRejectedError,
   StepUpUnavailableError,
 } from './ciba.client'
 import { isCardSession } from './types'
@@ -296,6 +297,20 @@ describe('CibaClient', () => {
       await expect(new CibaClient(options).poll('req-1')).rejects.toThrow(
         'when the person authenticated',
       )
+    })
+
+    it('tells a rejected token apart from an outage', async () => {
+      // The identity server hands out a request's token once: a rejected one
+      // is final, and the caller must end the step-up rather than poll again.
+      respond(200, { access_token: issueToken({ client_id: 'someone-else' }) })
+      await expect(
+        new CibaClient(options).poll('req-1'),
+      ).rejects.toBeInstanceOf(StepUpTokenRejectedError)
+
+      jest.spyOn(global, 'fetch').mockRejectedValue(new Error('ECONNRESET'))
+      await expect(
+        new CibaClient(options).poll('req-1'),
+      ).rejects.toBeInstanceOf(ServiceUnavailableException)
     })
   })
 })

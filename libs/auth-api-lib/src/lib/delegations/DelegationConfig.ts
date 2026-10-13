@@ -42,27 +42,20 @@ const schema = z.object({
   // The assurance level a confirming authentication must assert. Every Auðkenni
   // method asserts eidas-loa-high; passkey logins do not.
   confirmationRequiredAcr: z.string(),
-  // How many wrong-person redemption attempts are tolerated before the
-  // confirmation is burned.
-  confirmationMaxAttempts: z.number().min(1),
   // Development only. Local fake login asserts acr "0", which the confirmation
   // guard correctly rejects, so the happy path is otherwise unreachable on a
   // developer machine. Ignored outside development — see the check in load().
   confirmationAllowAnyAcrInDev: z.boolean(),
   // The confirming authentication is a CIBA request to the identity server,
-  // made by delegation-api as its own confidential client.
-  // The identity server delegation-api asks for the confirming authentication.
-  // The same identity server as identityServerIssuerUrl everywhere but local
-  // development, where the step-up may run against a local identity server.
+  // made by delegation-api as its own confidential client when a grant is
+  // saved. The identity server is the same as identityServerIssuerUrl
+  // everywhere but local development, where it may be a local one.
   confirmationCibaIssuerUrl: z.string(),
   confirmationCibaClientId: z.string(),
   confirmationCibaClientSecret: z.string(),
   // Must include openid (CIBA requires it) and a scope that puts nationalId on
   // the access token.
   confirmationCibaScope: z.string(),
-  // How many times a step-up may be started for one confirmation, so a stolen
-  // session can't flood the grantor's phone with requests.
-  confirmationMaxAuthStarts: z.number().min(1),
 })
 
 export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
@@ -148,8 +141,6 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
       env.optionalJSON('DELEGATION_CONFIRMATION_LIFETIME_IN_MINUTES') ?? 15,
     confirmationRequiredAcr:
       env.optional('DELEGATION_CONFIRMATION_REQUIRED_ACR') ?? 'eidas-loa-high',
-    confirmationMaxAttempts:
-      env.optionalJSON('DELEGATION_CONFIRMATION_MAX_ATTEMPTS') ?? 5,
     // Deliberately gated on NODE_ENV rather than on the env var alone, so
     // setting the variable in a deployed environment does nothing.
     confirmationAllowAnyAcrInDev:
@@ -170,7 +161,5 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
     confirmationCibaScope:
       env.optional('DELEGATION_CONFIRMATION_CIBA_SCOPE') ??
       'openid @island.is/auth/delegation-confirmation',
-    confirmationMaxAuthStarts:
-      env.optionalJSON('DELEGATION_CONFIRMATION_MAX_AUTH_STARTS') ?? 5,
   }),
 })

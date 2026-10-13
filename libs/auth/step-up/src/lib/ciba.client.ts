@@ -55,6 +55,17 @@ export class StepUpUnavailableError extends ForbiddenException {
   }
 }
 
+/**
+ * The identity server answered with a token, but it failed verification here.
+ * Unlike an outage this is final: the identity server hands out a request's
+ * token only once, so polling again can only say the request is gone.
+ */
+export class StepUpTokenRejectedError extends BadRequestException {
+  constructor(reason: string) {
+    super(`The identity server token was rejected: ${reason}`)
+  }
+}
+
 /** How the identity server marks those refusals: the start of error_description. */
 const SESSION_CANNOT_STEP_UP = 'session_cannot_step_up'
 const STEP_UP_UNAVAILABLE = 'step_up_unavailable'
@@ -157,10 +168,15 @@ export class CibaClient {
     const { status, json } = await this.post('/connect/token', body)
 
     if (status === 200 && typeof json['access_token'] === 'string') {
-      return {
-        status: 'authenticated',
-        claims: await this.verifyAccessToken(json['access_token']),
+      let claims: StepUpClaims
+      try {
+        claims = await this.verifyAccessToken(json['access_token'])
+      } catch (error) {
+        throw new StepUpTokenRejectedError(
+          error instanceof Error ? error.message : String(error),
+        )
       }
+      return { status: 'authenticated', claims }
     }
 
     switch (json['error']) {
