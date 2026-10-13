@@ -58,6 +58,14 @@ export class CreateHnippNotificationDto {
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
   templateId!: string
 
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'Marks that this notification is a inbox notification that is marked as urgent.',
+  })
+  @IsBoolean()
+  urgent?: boolean
+
   @IsArray()
   @Type(() => ArgumentDto)
   @ValidateNested({ each: true })
