@@ -1,7 +1,9 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
+import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -17,6 +19,16 @@ import {
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 
 import VerdictAppealFiles from './VerdictAppealFiles'
+
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+      pathname: '',
+      query: {},
+    }
+  },
+}))
 
 /**
  * Which files reach the section, and for whom, is covered in
@@ -57,18 +69,21 @@ describe('VerdictAppealFiles', () => {
   const renderSection = (
     theCase: WorkingCase,
     userRole: UserRole = UserRole.DEFENDER,
+    features: Feature[] = [Feature.INDICTMENT_APPEAL],
   ) =>
     render(
       <MockedProvider mocks={[]} addTypename={false}>
         <IntlProviderWrapper>
-          <UserContextWrapper
-            userRole={userRole}
-            nationalId={defenderNationalId}
-          >
-            <FormContextWrapper theCase={theCase}>
-              <VerdictAppealFiles />
-            </FormContextWrapper>
-          </UserContextWrapper>
+          <FeatureContext.Provider value={{ features, isLoading: false }}>
+            <UserContextWrapper
+              userRole={userRole}
+              nationalId={defenderNationalId}
+            >
+              <FormContextWrapper theCase={theCase}>
+                <VerdictAppealFiles />
+              </FormContextWrapper>
+            </UserContextWrapper>
+          </FeatureContext.Provider>
         </IntlProviderWrapper>
       </MockedProvider>,
     )
@@ -117,12 +132,18 @@ describe('VerdictAppealFiles', () => {
   })
 
   describe('the appeal summons', () => {
-    const appealed = (caseFiles: WorkingCase['caseFiles']): WorkingCase => ({
+    const appealed = (
+      caseFiles: WorkingCase['caseFiles'],
+      appealSummonses: NonNullable<
+        WorkingCase['verdictAppealCase']
+      >['appealSummonses'] = [],
+    ): WorkingCase => ({
       ...theCase(caseFiles),
       verdictAppealCase: {
         id: 'verdict_appeal_id',
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.APPEALED,
+        appealSummonses,
       },
     })
 
@@ -135,17 +156,70 @@ describe('VerdictAppealFiles', () => {
       expect(
         screen.getByText('Áfrýjunarstefna hefur ekki verið gefin út'),
       ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).toBeInTheDocument()
     })
 
-    it('should list it above the declarations', async () => {
+    it('should hide the summons subsection while the feature is off', async () => {
+      renderSection(
+        appealed([declaration]),
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+        [],
+      )
+
+      expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should list a draft summons above the declarations', async () => {
+      renderSection(
+        appealed(
+          [declaration],
+          [
+            {
+              id: 'summons_id',
+              created: '2026-10-07T12:00:00.000Z',
+              defendants: [],
+            },
+          ],
+        ),
+        UserRole.PUBLIC_PROSECUTOR_STAFF,
+      )
+
+      const summons = await screen.findByText('Áfrýjunarstefna 07.10.2026.pdf')
+
+      expect(
+        screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByText('Áfrýjunarstefna', { exact: true }),
+      ).toBeInTheDocument()
+      expect(
+        summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+      expect(
+        screen.getByRole('button', {
+          name: 'Valmynd fyrir Áfrýjunarstefna 07.10.2026.pdf',
+        }),
+      ).toBeInTheDocument()
+    })
+
+    it('should list the empty summons line above the declarations', async () => {
       renderSection(appealed([declaration]), UserRole.PUBLIC_PROSECUTOR_STAFF)
 
-      const summons = await screen.findByText(
+      const empty = await screen.findByText(
         'Áfrýjunarstefna hefur ekki verið gefin út',
       )
 
       expect(
-        summons.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
+        empty.compareDocumentPosition(screen.getByText('yfirlysing.pdf')) &
           Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy()
     })
@@ -157,6 +231,9 @@ describe('VerdictAppealFiles', () => {
       expect(
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
       ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
+      ).not.toBeInTheDocument()
     })
 
     it('should not show it to the court of appeals', async () => {
@@ -165,6 +242,9 @@ describe('VerdictAppealFiles', () => {
       expect(await screen.findByText('yfirlysing.pdf')).toBeInTheDocument()
       expect(
         screen.queryByText('Áfrýjunarstefna hefur ekki verið gefin út'),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Gefa út áfrýjunarstefnu' }),
       ).not.toBeInTheDocument()
     })
   })

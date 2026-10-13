@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    courtsFrontpageLinkAlt: {
+      id: 'web.verdicts:listPage.courtsFrontpageLinkAlt',
+      defaultMessage: 'Dómstólar forsíða',
+      description: 'Alt texti á skjaldarmerki sem vísar á forsíðu dómstóla',
+    },
     downloadGuide: {
       id: 'web.verdicts:listPage.downloadGuide',
       defaultMessage: 'Sjá leiðbeiningar',
