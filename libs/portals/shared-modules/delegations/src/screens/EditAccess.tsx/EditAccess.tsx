@@ -266,6 +266,7 @@ const EditAccess = () => {
           onClose={() => setIsConfirmModalVisible(false)}
           isVisible={isConfirmModalVisible}
           removedScopes={removedScopes}
+          initialScopes={initialScopes}
         />
 
         {recipient && (

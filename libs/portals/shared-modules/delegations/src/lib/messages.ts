@@ -608,27 +608,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:read-and-write',
     defaultMessage: 'Skoða og breyta',
   },
-  confirmDelegationTitle: {
-    id: 'sp.access-control-delegations:confirm-delegation-title',
-    defaultMessage: 'Staðfesting umboðs',
-  },
-  confirmDelegationSuccessTitle: {
-    id: 'sp.access-control-delegations:confirm-delegation-success-title',
-    defaultMessage: 'Umboðið er í gildi',
-  },
-  confirmDelegationSuccessMessage: {
-    id: 'sp.access-control-delegations:confirm-delegation-success-message',
-    defaultMessage:
-      'Þú hefur staðfest umboðið með rafrænum skilríkjum og aðgangurinn er kominn í gildi.',
-  },
-  confirmDelegationAlreadyDoneTitle: {
-    id: 'sp.access-control-delegations:confirm-delegation-already-done-title',
-    defaultMessage: 'Umboðið hefur þegar verið staðfest',
-  },
-  confirmDelegationAlreadyDoneMessage: {
-    id: 'sp.access-control-delegations:confirm-delegation-already-done-message',
-    defaultMessage: 'Ekkert fleira þarf að gera.',
-  },
   confirmDelegationExpiredTitle: {
     id: 'sp.access-control-delegations:confirm-delegation-expired-title',
     defaultMessage: 'Staðfestingin er útrunnin',
@@ -636,42 +615,12 @@ export const m = defineMessages({
   confirmDelegationExpiredMessage: {
     id: 'sp.access-control-delegations:confirm-delegation-expired-message',
     defaultMessage:
-      'Umboðið var ekki staðfest í tæka tíð og tók því ekki gildi. Þú getur veitt það aftur.',
-  },
-  confirmDelegationNotFoundTitle: {
-    id: 'sp.access-control-delegations:confirm-delegation-not-found-title',
-    defaultMessage: 'Staðfestingin fannst ekki',
-  },
-  confirmDelegationNotFoundMessage: {
-    id: 'sp.access-control-delegations:confirm-delegation-not-found-message',
-    defaultMessage:
-      'Þetta getur gerst ef annar einstaklingur er skráður inn eða ef staðfestingin er útrunnin.',
+      'Umboðið var ekki staðfest í tæka tíð og tók því ekki gildi. Þú getur reynt aftur.',
   },
   confirmDelegationFailedMessage: {
     id: 'sp.access-control-delegations:confirm-delegation-failed-message',
     defaultMessage:
-      'Ekki tókst að staðfesta umboðið. Reyndu að veita það aftur.',
-  },
-  confirmDelegationIntro: {
-    id: 'sp.access-control-delegations:confirm-delegation-intro',
-    defaultMessage:
-      'Farðu yfir umboðið og staðfestu það með rafrænum skilríkjum. Aðgangurinn tekur gildi um leið og þú hefur staðfest.',
-  },
-  confirmDelegationRecipient: {
-    id: 'sp.access-control-delegations:confirm-delegation-recipient',
-    defaultMessage: 'Umboðshafi',
-  },
-  confirmDelegationPermissions: {
-    id: 'sp.access-control-delegations:confirm-delegation-permissions',
-    defaultMessage: 'Réttindi',
-  },
-  confirmDelegationValidTo: {
-    id: 'sp.access-control-delegations:confirm-delegation-valid-to',
-    defaultMessage: 'gildir til {date}',
-  },
-  confirmDelegationPhoneShows: {
-    id: 'sp.access-control-delegations:confirm-delegation-phone-shows',
-    defaultMessage: 'Í símanum þínum birtist',
+      'Ekki tókst að staðfesta umboðið og það var ekki veitt. Þú getur reynt aftur.',
   },
   stepUpTitle: {
     id: 'sp.access-control-delegations:step-up-title',
@@ -701,17 +650,9 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-up-retry',
     defaultMessage: 'Reyna aftur',
   },
-  stepUpProgress: {
-    id: 'sp.access-control-delegations:step-up-progress',
-    defaultMessage: 'Staðfesting {current} af {total}',
-  },
   stepUpConfirmed: {
     id: 'sp.access-control-delegations:step-up-confirmed',
     defaultMessage: 'Umboðið er komið í gildi',
-  },
-  stepUpStart: {
-    id: 'sp.access-control-delegations:step-up-start',
-    defaultMessage: 'Auðkenna',
   },
   stepUpYourSecurityCode: {
     id: 'sp.access-control-delegations:step-up-your-security-code',
@@ -747,38 +688,14 @@ export const m = defineMessages({
     defaultMessage:
       'Auðkenningin var ekki staðfest í tæka tíð og beiðnin hefur ekki verið samþykkt.',
   },
-  stepUpTooManyAttemptsTitle: {
-    id: 'sp.access-control-delegations:step-up-too-many-attempts-title',
-    defaultMessage: 'Of margar tilraunir',
-  },
   stepUpUnavailableTitle: {
     id: 'sp.access-control-delegations:step-up-unavailable-title',
     defaultMessage: 'Ekki hægt að staðfesta',
-  },
-  stepUpStartFailedTitle: {
-    id: 'sp.access-control-delegations:step-up-start-failed-title',
-    defaultMessage: 'Ekki tókst að hefja auðkenningu',
-  },
-  stepUpTooManyAttempts: {
-    id: 'sp.access-control-delegations:step-up-too-many-attempts',
-    defaultMessage: 'Veittu umboðið aftur til að hefja nýja staðfestingu.',
   },
   stepUpUnavailable: {
     id: 'sp.access-control-delegations:step-up-unavailable',
     defaultMessage:
       'Ekki er hægt að staðfesta umboðið með rafrænum skilríkjum, t.d. ef þú skráðir þig inn með skilríkjum á korti eða staðfesting er ekki í boði eins og er. Umboðið var ekki veitt.',
-  },
-  stepUpStartFailed: {
-    id: 'sp.access-control-delegations:step-up-start-failed',
-    defaultMessage: 'Reyndu aftur eftir smá stund.',
-  },
-  confirmDelegationRetry: {
-    id: 'sp.access-control-delegations:confirm-delegation-retry',
-    defaultMessage: 'Reyna aftur',
-  },
-  confirmDelegationBackToDelegations: {
-    id: 'sp.access-control-delegations:confirm-delegation-back',
-    defaultMessage: 'Til baka í mín umboð',
   },
   sensitiveScopeTag: {
     id: 'sp.access-control-delegations:sensitive-scope-tag',

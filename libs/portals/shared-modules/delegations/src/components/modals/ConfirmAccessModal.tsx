@@ -14,8 +14,16 @@ import { useNavigate } from 'react-router-dom'
 import * as styles from './Modals.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { StepUpAuthentication } from '../StepUpAuthentication/StepUpAuthentication'
+import { findProblemInApolloError } from '@island.is/shared/problem'
+import {
+  StepUpAuthentication,
+  type StepUpMethod,
+  type StepUpStart,
+} from '../StepUpAuthentication/StepUpAuthentication'
 import { useDelegationConfirmationStepUp } from '../StepUpAuthentication/useDelegationConfirmationStepUp'
+
+const isSameDay = (a?: Date, b?: Date) =>
+  Boolean(a && b) && a?.toDateString() === b?.toDateString()
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -23,6 +31,7 @@ export const ConfirmAccessModal = ({
   isVisible,
   loading,
   removedScopes,
+  initialScopes,
   isEdit = false,
 }: {
   onClose: () => void
@@ -30,6 +39,8 @@ export const ConfirmAccessModal = ({
   isVisible: boolean
   loading?: boolean
   removedScopes?: ScopeSelection[]
+  /** What the delegation already gives, when editing it. */
+  initialScopes?: ScopeSelection[]
   isEdit?: boolean
 }) => {
   const { width } = useWindowSize()
@@ -39,8 +50,17 @@ export const ConfirmAccessModal = ({
 
   const { identities, selectedScopes } = useDelegationForm()
 
+  // Only a sensitive scope that this save adds or changes needs a step-up. One
+  // the delegation already has, with the same date, is left as it is — the
+  // same rule the server applies.
   const hasSensitiveScopeSelected = selectedScopes.some(
-    (scope) => scope.requiresConfirmation,
+    (scope) =>
+      scope.requiresConfirmation &&
+      !initialScopes?.some(
+        (initial) =>
+          initial.name === scope.name &&
+          isSameDay(initial.validTo, scope.validTo),
+      ),
   )
 
   const [createAuthDelegations, { loading: createLoading }] =
@@ -50,33 +70,27 @@ export const ConfirmAccessModal = ({
   const [submitting, setSubmitting] = useState(false)
   const mutationLoading = submitting || createLoading || patchLoading
 
-  // Held confirmations returned by the grant, as step-ups. While there are any,
-  // this modal is the second act of "tvöfalt samþykki": the grantor confirms
-  // with electronic ID, right here. Confirmations the server grouped take one
-  // step-up together, started for any of them; normally that is all of them.
-  const [pending, setPending] = useState<{ id: string }[]>([])
-  const [current, setCurrent] = useState(0)
-  const [expired, setExpired] = useState(false)
-  const confirmationId = pending[current]?.id
+  // The step-up the save started for a held grant. While there is one, this
+  // modal is the second act of "tvöfalt samþykki": the grantor confirms with
+  // electronic ID, right here. One save holds everything it grants under one
+  // confirmation group, and one step-up confirms it all.
+  const [stepUp, setStepUp] = useState<{
+    confirmationId: string
+    start: StepUpStart
+  }>()
+  const confirmationId = stepUp?.confirmationId
 
-  const { start, check } = useDelegationConfirmationStepUp(confirmationId, {
-    onExpired: () => setExpired(true),
-  })
+  const { check } = useDelegationConfirmationStepUp(confirmationId)
 
   const handleStepUpConfirmed = () => {
-    if (current + 1 < pending.length) {
-      setCurrent(current + 1)
-      return
-    }
     toast.success(formatMessage(m.stepUpConfirmed))
     navigate(DelegationPaths.DelegationsNew)
   }
 
-  // The grant itself exists once the step-up has begun, so closing goes to the
-  // grantor's delegations rather than back to the form. An unfinished
-  // confirmation stays pending until it expires.
+  // Nothing held takes effect without the step-up, so closing it goes to the
+  // grantor's delegations; an unfinished confirmation simply expires.
   const handleClose = () =>
-    pending.length ? navigate(DelegationPaths.DelegationsNew) : onClose()
+    stepUp ? navigate(DelegationPaths.DelegationsNew) : onClose()
 
   const handleConfirm = async () => {
     if (onConfirm) {
@@ -128,31 +142,34 @@ export const ConfirmAccessModal = ({
 
       // Branch on what the server actually returned, never on our own feature
       // flag read: the two are cached independently and disagreeing with the
-      // server is how you strand a half-created grant.
-      const held = data?.createAuthDelegations?.flatMap((delegation) =>
-        delegation.__typename === 'AuthCustomDelegation'
-          ? (delegation.pendingConfirmations ?? []).map((confirmation) => ({
-              id: confirmation.id,
-              groupId: confirmation.groupId ?? confirmation.id,
-            }))
-          : [],
-      )
+      // server is how you strand a half-created grant. The step-up has already
+      // been started by the save; every confirmation of the group shares it.
+      const [held] =
+        data?.createAuthDelegations?.flatMap((delegation) =>
+          delegation.__typename === 'AuthCustomDelegation'
+            ? delegation.pendingConfirmations ?? []
+            : [],
+        ) ?? []
 
-      if (held?.length) {
-        // One step-up per group, started for any of its confirmations.
-        const stepUps = new Map<string, { id: string }>()
-        for (const confirmation of held) {
-          if (!stepUps.has(confirmation.groupId)) {
-            stepUps.set(confirmation.groupId, { id: confirmation.id })
-          }
-        }
-        setPending([...stepUps.values()])
+      if (held) {
+        setStepUp({
+          confirmationId: held.id,
+          start: {
+            ...held.authentication,
+            method: held.authentication.method as StepUpMethod,
+          },
+        })
         return
       }
 
       navigate(DelegationPaths.DelegationsNew)
-    } catch {
-      toast.error(formatMessage(m.confirmError))
+    } catch (error) {
+      // 403: the grant can't be confirmed from this session (e.g. an ID card
+      // login) or not right now. Nothing was granted.
+      const status = findProblemInApolloError(error as never)?.status
+      toast.error(
+        formatMessage(status === 403 ? m.stepUpUnavailable : m.confirmError),
+      )
     } finally {
       setSubmitting(false)
     }
@@ -183,39 +200,24 @@ export const ConfirmAccessModal = ({
           : formatMessage(coreMessages.digitalDelegations)
       }
     >
-      {confirmationId ? (
+      {stepUp ? (
         <Box
           display="flex"
           flexDirection="column"
           rowGap={2}
           paddingBottom={[3, 3, 6]}
         >
-          {pending.length > 1 && (
-            <Text variant="eyebrow" textAlign="center">
-              {formatMessage(m.stepUpProgress, {
-                current: current + 1,
-                total: pending.length,
-              })}
-            </Text>
-          )}
-          {expired ? (
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.confirmDelegationExpiredTitle)}
-              message={formatMessage(m.confirmDelegationExpiredMessage)}
-            />
-          ) : (
-            <StepUpAuthentication
-              key={confirmationId}
-              autoStart
-              start={start}
-              check={check}
-              onConfirmed={handleStepUpConfirmed}
-              onExpired={() => setExpired(true)}
-              context={formatMessage(m.stepUpContext)}
-              onBack={handleClose}
-            />
-          )}
+          {/* A retry is a new save, with a new confirmation: start afresh. */}
+          <StepUpAuthentication
+            key={stepUp.confirmationId}
+            stepUp={stepUp.start}
+            check={check}
+            onConfirmed={handleStepUpConfirmed}
+            onRetry={handleConfirm}
+            retrying={mutationLoading}
+            context={formatMessage(m.stepUpContext)}
+            onBack={handleClose}
+          />
         </Box>
       ) : (
         <>

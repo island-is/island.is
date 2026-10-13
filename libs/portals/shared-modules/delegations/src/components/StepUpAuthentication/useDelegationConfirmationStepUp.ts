@@ -2,63 +2,35 @@ import { useCallback } from 'react'
 
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
-import {
-  useAuthCheckDelegationConfirmationAuthenticationMutation,
-  useAuthStartDelegationConfirmationAuthenticationMutation,
-} from '../../screens/ConfirmDelegation/ConfirmDelegation.generated'
-import type {
-  StepUpMethod,
-  StepUpStart,
-  StepUpStartError,
-  StepUpStatus,
-} from './StepUpAuthentication'
+import { useAuthCheckDelegationConfirmationAuthenticationMutation } from './DelegationConfirmationStepUp.generated'
+import type { StepUpStatus } from './StepUpAuthentication'
 
 /**
- * Wires StepUpAuthentication to a held delegation: starting the grantor's
- * confirming authentication, and checking on it.
+ * Follows the step-up a held grant started. A refusal (any 4xx) is thrown as
+ * 'refused', so it can be shown; anything else is thrown as it is and the
+ * caller polls again.
  */
 export const useDelegationConfirmationStepUp = (
   confirmationId: string | undefined,
-  { onExpired }: { onExpired?: () => void } = {},
 ) => {
-  const [startMutation] =
-    useAuthStartDelegationConfirmationAuthenticationMutation()
   const [checkMutation] =
     useAuthCheckDelegationConfirmationAuthenticationMutation()
 
-  const start = useCallback(async (): Promise<StepUpStart> => {
+  const check = useCallback(async (): Promise<StepUpStatus> => {
     try {
-      const result = await startMutation({
+      const result = await checkMutation({
         variables: { input: { confirmationId: confirmationId as string } },
       })
-      const started = result.data?.authStartDelegationConfirmationAuthentication
-      if (!started) {
-        throw new Error('No response')
-      }
-      return { ...started, method: started.method as StepUpMethod }
+      return (result.data?.authCheckDelegationConfirmationAuthentication
+        .status ?? 'pending') as StepUpStatus
     } catch (error) {
       const status = findProblemInApolloError(error as never)?.status
-      if (status === 410) {
-        onExpired?.()
+      if (status && status >= 400 && status < 500) {
+        throw 'refused'
       }
-      // 403: this session can never confirm, and the grant has been undone.
-      const reason: StepUpStartError =
-        status === 429
-          ? 'too_many_attempts'
-          : status === 403
-          ? 'unavailable'
-          : 'failed'
-      throw reason
+      throw error
     }
-  }, [confirmationId, startMutation, onExpired])
-
-  const check = useCallback(async (): Promise<StepUpStatus> => {
-    const result = await checkMutation({
-      variables: { input: { confirmationId: confirmationId as string } },
-    })
-    return (result.data?.authCheckDelegationConfirmationAuthentication.status ??
-      'pending') as StepUpStatus
   }, [confirmationId, checkMutation])
 
-  return { start, check }
+  return { check }
 }
