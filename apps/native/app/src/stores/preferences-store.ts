@@ -108,8 +108,12 @@ export const preferencesStore = create<PreferencesStore>()(
       },
       setUseBiometrics(useBiometrics: boolean) {
         // Snapshot the enrolled biometrics so later changes can be detected.
+        // If that fails, changes couldn't be detected, so stay off.
         if (useBiometrics) {
-          enrollBiometricBaseline()
+          if (!enrollBiometricBaseline()) {
+            set({ useBiometrics: false })
+            return
+          }
         } else {
           clearBiometricBaseline()
         }
