@@ -109,6 +109,13 @@ const ProjectEventList: Screen<ProjectEventListProps> = ({
               eventList={eventList?.items ?? []}
               parentPageSlug={projectPage.slug}
               eventLinkType="projectevent"
+              noEventsFoundFallback={
+                <Text variant="h4">
+                  {activeLocale === 'is'
+                    ? 'Engir viðburðir framundan fundust'
+                    : 'No upcoming events found'}
+                </Text>
+              }
             />
           </Stack>
 
