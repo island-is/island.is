@@ -94,6 +94,10 @@ export {
   CaseAppealDecision,
 } from './lib/appealCase'
 export type { AppealCorrectionLock } from './lib/appealCase'
+export {
+  AppealCourtSessionType,
+  appealCourtSessionTypeNames,
+} from './lib/appealCourtSession'
 
 export { DateType, dateTypes } from './lib/dateLog'
 

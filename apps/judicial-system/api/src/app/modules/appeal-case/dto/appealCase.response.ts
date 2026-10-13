@@ -9,6 +9,7 @@ import {
 
 import { CaseFile } from '../../file'
 import { User } from '../../user'
+import { AppealCourtSession } from './appealCourtSession.response'
 import { AppealEventLog } from './appealEventLog.response'
 
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
@@ -142,4 +143,8 @@ export class AppealCase {
   // ruling appeal into the appealedBy* fields above and strips it from the payload.
   @Field(() => [AppealEventLog], { nullable: true })
   readonly appealEventLogs?: AppealEventLog[]
+
+  // Only a verdict appeal carries sessions; a ruling appeal is decided on the papers.
+  @Field(() => [AppealCourtSession], { nullable: true })
+  readonly courtSessions?: AppealCourtSession[]
 }
